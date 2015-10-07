@@ -13,6 +13,7 @@ import javafx.scene.text.*;
 import nars.guifx.JFX;
 import nars.guifx.NARfx;
 import nars.guifx.annotation.Range;
+import nars.guifx.util.ColorMatrix;
 import nars.term.Term;
 
 /**
@@ -61,10 +62,20 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
 
     final static Font mono = NARfx.mono(8);
 
+    public static final ColorMatrix colors = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
+            (op, activation) -> {
+                Color c = Color.hsb(op*360.0,
+                        0.5 + 0.4 * activation,
+                        0.35 + activation*0.65);
+                return c;
+            });
+
+
     public class HexTerm2Node extends TermNode {
 
 
         private final Canvas base;
+
         private GraphicsContext g;
         private boolean hover = false;
         private GraphicsContext d;
@@ -76,7 +87,6 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
             base = new Canvas();
             base.setLayoutX(-0.5f);
             base.setLayoutY(-0.5f);
-
 
 
 
@@ -152,7 +162,11 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
             final double H = base.getHeight();
             g.clearRect(0,0,W,H);
 
-            g.setFill(Color.ORANGE);
+            g.setFill(TermNode.getTermColor(term, colors, 0.5)); /*colors.get(
+                    ,
+                    //c==null ? 0 : c.getPriority()) //this can work if re-rendered
+                    0.5 //otherwise jus use medium
+            ));*/
             g.fillRect(0,0,W,H);
 
 
@@ -168,14 +182,14 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         }
 
         public void update() {
-            if (c == null) return;
-
-            double v = 0.5;
-            if (c.hasBeliefs())
-                v = c.getBeliefs().top().getConfidence();
-
-            d.setFill(Color.hsb(v*360,1,1));
-            d.fillRect(0,0,10,10);
+//            if (c == null) return;
+//
+//            double v = 0.5;
+//            if (c.hasBeliefs())
+//                v = c.getBeliefs().top().getConfidence();
+//
+//            d.setFill(Color.hsb(v*360,1,1));
+//            d.fillRect(0,0,10,10);
         }
     }
 

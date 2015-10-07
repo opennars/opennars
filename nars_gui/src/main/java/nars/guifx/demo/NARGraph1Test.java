@@ -8,7 +8,9 @@ import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.DefaultNARGraph;
+import nars.guifx.graph2.HexagonsVis;
 import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.layout.CanvasEdgeRenderer;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
 import nars.nar.Default;
@@ -41,7 +43,15 @@ public class NARGraph1Test {
 
         //n.frame(5);
 
-        NARGraph g = new DefaultNARGraph(n,256);
+        NARGraph g = new DefaultNARGraph(n,new HexagonsVis(), 256,
+                new CanvasEdgeRenderer() {
+                    @Override
+                    protected final void clear(double w, double h) {
+                        clearFade(w,h);
+                    }
+                });
+
+
 
         GenericControlPane c = new GenericControlPane(g);
         c.layout();

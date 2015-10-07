@@ -27,9 +27,9 @@ public class TermEdge /*implements ChangeListener*/ {
     public TaskLink taskLinkAB = null;
     public TaskLink taskLinkBA = null;
 
+
     public TermEdge(TermNode aSrc, TermNode bSrc) {
         super();
-
 
 
         //setAutoSizeChildren(true);

@@ -2,7 +2,10 @@ package nars.guifx.graph2;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import nars.Op;
 import nars.concept.Concept;
+import nars.guifx.util.ColorMatrix;
 import nars.term.Term;
 
 import java.util.LinkedHashMap;
@@ -23,7 +26,7 @@ abstract public class TermNode extends Group {
      */
     TermEdge[] edges = null;
 
-    protected final Term term;
+    public final Term term;
 
     /** priority normalized to visual context */
     public double priNorm = 0;
@@ -41,7 +44,6 @@ abstract public class TermNode extends Group {
     private double tx;
     private double ty;
 
-    //private Color stroke;
 
 
 
@@ -210,5 +212,11 @@ abstract public class TermNode extends Group {
 
     public boolean visible() {
         return getParent()!=null;
+    }
+
+    public static Color getTermColor(Term term, ColorMatrix colors, double v) {
+        return colors.get(
+                (term.op().ordinal() % colors.cc.length) / ((double) Op.values().length),
+                v);
     }
 }

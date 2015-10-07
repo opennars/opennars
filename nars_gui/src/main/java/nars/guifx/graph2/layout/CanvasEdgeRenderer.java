@@ -4,11 +4,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
+import nars.guifx.graph2.HexagonsVis;
 import nars.guifx.graph2.NARGraph;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.util.ColorMatrix;
-import nars.util.data.Util;
 
 /**
  * Created by me on 9/6/15.
@@ -20,11 +20,11 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
 //            Color.BLUE,
 //            Color.GREEN
 //    );
-    ColorMatrix colors = new ColorMatrix(24,24,
+    ColorMatrix colors = HexagonsVis.colors; /*new ColorMatrix(24,24,
         (pri,termTaskBalance) -> {
             return Color.hsb(30 + 120.0 * termTaskBalance, 0.75, 0.35 + 0.5 * pri);
         }
-    );
+    );*/
 
     Canvas floorCanvas;
     private GraphicsContext gfx;
@@ -32,25 +32,22 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
     private double ty;
     private double s;
 
-    //for iterative auto-normalization
-    public double maxPri = 1;
-    public double minPri = 0;
+//    //for iterative auto-normalization
+//    public double maxPri = 1;
+//    public double minPri = 0;
 
-    double minWidth = 2;
-    double maxWidth = 10;
+    double minWidth = 4;
+    double maxWidth = 8;
 
     @Override
-    public void accept(TermEdge i) {
+    public void accept(final TermEdge i) {
 
         TermNode aSrc = i.aSrc;
         TermNode bSrc = i.bSrc;
 
-        if (!aSrc.visible() || !bSrc.visible()) {
-            i.visible = false;
+        boolean v = i.visible = !(!aSrc.visible() || !bSrc.visible());
+        if (!v) {
             return;
-        }
-        else {
-            i.visible = true;
         }
 
 
@@ -60,6 +57,9 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
         if (!visible) return false;*/
 
 
+        final double tx = this.tx;
+        final double ty = this.ty;
+        final double s = this.s;
         double x1 = s*(tx+aSrc.x());// + fw / 2d;
         double y1 = s*(ty+aSrc.y());// + fh / 2d;
         double x2 = s*(tx+bSrc.x());// + tw / 2d;
@@ -81,31 +81,41 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
 
         double p = 0.5 * (te + ta);
 
-        double np = normalize(p);
+        //double np = normalize(p);
 
         //System.out.println(p + " " + np + " " + minPri + " " + maxPri);
 
         //gfx.setStroke(colors.get(np));
-        gfx.setStroke(colors.get(np, te/(te+ta)));
+        //gfx.setStroke(colors.get(np, te/(te+ta)));
+        gfx.setStroke(
+            TermNode.getTermColor(t.term, colors, p)
+        );
+        /*
+            colors.get(
+                (t.term.op().ordinal()%colors.cc.length)/((double) Op.values().length),
+                p
+            )
+        );*/
 
-        gfx.setLineWidth(minWidth + np * maxWidth);
+        final double mw = minWidth;
+        gfx.setLineWidth(mw + p * (maxWidth-mw));
 
         gfx.strokeLine(x1, y1, x2, y2);
     }
 
-    public double normalize(final double p) {
-        double maxPri = this.maxPri, minPri = this.minPri;
-
-        if (minPri > p)
-            this.minPri = minPri = p;
-
-        if (maxPri < p)
-            this.maxPri = maxPri = p;
-
-        if (maxPri == minPri) return p;
-
-        return (p - minPri) / (maxPri - minPri);
-    }
+//    public double normalize(final double p) {
+//        double maxPri = this.maxPri, minPri = this.minPri;
+//
+//        if (minPri > p)
+//            this.minPri = minPri = p;
+//
+//        if (maxPri < p)
+//            this.maxPri = maxPri = p;
+//
+//        if (maxPri == minPri) return p;
+//
+//        return (p - minPri) / (maxPri - minPri);
+//    }
 
     @Override
     public void reset(NARGraph g) {
@@ -130,20 +140,34 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
         ty = g.translate.getY();
         s = g.scale.getX();
 
-        //floorCanvas.resize(w, h);*/
 
+        clear(w, h);
+
+        //unnormalize(0.1);
+    }
+
+    protected void clear(double w, double h) {
+        clearTotally(w, h);
+    }
+
+    protected final void clearTotally(double w, double h) {
         gfx.clearRect(0, 0, w, h );
-
-        unnormalize(0.1);
     }
 
-    /** iteration in which min/max dynamic range is relaxed; if nothing has stretched it in the past cycle then it will expand the range to its limits */
-    private void unnormalize(double rate) {
-        double maxPriPre = maxPri;
-        double minPriPre = minPri;
-        minPri = Util.lerp(maxPriPre, minPri, rate);
-        maxPri = Util.lerp(minPriPre, maxPri, rate);
+    final Color FADEOUT = new Color(0,0,0,0.25);
+
+    protected final void clearFade(double w, double h) {
+        gfx.setFill(FADEOUT);
+        gfx.fillRect(0, 0, w, h );
     }
+
+//    /** iteration in which min/max dynamic range is relaxed; if nothing has stretched it in the past cycle then it will expand the range to its limits */
+//    private void unnormalize(double rate) {
+//        double maxPriPre = maxPri;
+//        double minPriPre = minPri;
+//        minPri = Util.lerp(maxPriPre, minPri, rate);
+//        maxPri = Util.lerp(minPriPre, maxPri, rate);
+//    }
 
 //    public boolean render(final GraphicsContext g) {
 //

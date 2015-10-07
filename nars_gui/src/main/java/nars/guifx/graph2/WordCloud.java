@@ -3,6 +3,7 @@ package nars.guifx.graph2;
 import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
+import nars.guifx.graph2.layout.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.HyperassociativeMap1D;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
@@ -16,7 +17,7 @@ import java.io.IOException;
 public class WordCloud extends DefaultNARGraph {
 
     public WordCloud(NAR nar) {
-        super(nar, new V(), 64);
+        super(nar, new V(), 64, new CanvasEdgeRenderer());
         layoutType.setValue(HyperassociativeMap1D.class);
     }
     public static void main(String[] args) throws IOException {

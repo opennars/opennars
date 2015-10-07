@@ -4,7 +4,6 @@ import automenta.vivisect.dimensionalize.IterativeLayout;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.paint.Color;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
 import nars.guifx.graph2.layout.None;
@@ -168,7 +167,7 @@ public class NARGraph<V> extends Spacegraph {
 
 
 
-    final Runnable clear = () -> {
+    protected final Runnable clear = () -> {
         this.displayed = TermNode.empty;
         getVertices().clear();
         edgeRenderer.get().reset(this);
@@ -225,8 +224,7 @@ public class NARGraph<V> extends Spacegraph {
 //    }
 
 
-    final Color FADEOUT = Color.BLACK;
-    //new Color(0,0,0,0.5);
+
 
     public interface EdgeRenderer<E> extends Consumer<E> {
         /**

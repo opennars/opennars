@@ -9,11 +9,23 @@ import javafx.scene.paint.Color;
 public class ColorArray {
     public final Color[] c;
 
-    public ColorArray(int n, Color start, Color end) {
-        this(n, start, end, false);
+    public ColorArray(int n, double  ha, double sa, double ba, double hb, double sb, double bb) {
+
+        c = new Color[n];
+        for (int i = 0; i < n; i++) {
+            float p = ((float) i) / n;
+            float q = 1 - p;
+
+            double h = ha * q + hb * p;
+            double s = sa * q + sb * p;
+            double b = ba * q + bb * p;
+
+
+            c[i] = Color.hsb(h, s, b);
+        }
     }
 
-    public ColorArray(int n, Color start, Color end, boolean hsb) {
+    public ColorArray(int n, Color start, Color end) {
 
         c = new Color[n];
         for (int i = 0; i < n; i++) {
@@ -25,11 +37,6 @@ public class ColorArray {
             double b = start.getBlue() * q + end.getBlue() * p;
             double a = start.getOpacity() * q + end.getOpacity() * p;
 
-            if (!hsb) {
-            }
-            else {
-                throw new RuntimeException("not impl yet");
-            }
             c[i] = new Color(r, g , b , a );
 
         }

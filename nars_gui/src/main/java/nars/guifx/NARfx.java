@@ -355,6 +355,14 @@ public class NARfx  {
         Application.launch(DummyApplication.class, sArArgs);
     }
 
+    public static final Color hashColor(Object op, ColorMatrix ca) {
+        int h = op.hashCode();
+        int p = h^(31*h);
+        if (p < 0) p = -p;
+
+        return ca.get(p % ca.cc.length, 0);
+    }
+
     // This must be public in order to instantiate successfully
     public static class DummyApplication extends Application {
 

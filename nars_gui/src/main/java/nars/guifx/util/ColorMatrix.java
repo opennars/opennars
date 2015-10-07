@@ -31,12 +31,17 @@ public class ColorMatrix {
     public final Color get(double px, double py) {
         int x = p(px, w);
         int y = p(py, h);
+
         Color[] c = cc[x];
         Color z;
         if ((z = c[y]) == null) {
             c[y] = z = compute.apply(px, py);
         }
         return z;
+    }
+
+    public final Color get(int x, int y) {
+        return get( (double)x/w, (double)y/h );
     }
 
     /** p = 0..1.0 */

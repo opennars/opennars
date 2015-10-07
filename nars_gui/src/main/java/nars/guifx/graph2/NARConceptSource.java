@@ -37,6 +37,7 @@ public class NARConceptSource extends NARGrapher<Object> {
         this.nar = nar;
 
         includeString.addListener((e) -> {
+            System.out.println(includeString.getValue());
             refresh();
         });
     }
@@ -189,7 +190,7 @@ public class NARConceptSource extends NARGrapher<Object> {
 
         Term t = link.getTerm();
         TermNode target = g.getTermNode(t);
-        if ((target == null) || (s == target)) return;
+        if ((target == null) || (s.equals(target))) return;
 
         TermEdge ee = getConceptEdge(g, s, target);
         if (ee != null) {

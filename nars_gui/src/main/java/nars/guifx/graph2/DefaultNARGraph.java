@@ -27,10 +27,10 @@ public class DefaultNARGraph extends NARGraph<Object> {
     public DefaultNARGraph(NAR nar, int capacity) {
         this(nar,
                 new HexagonsVis(),
-                capacity);
+                capacity, new CanvasEdgeRenderer());
     }
 
-    public DefaultNARGraph(NAR nar, VisModel v, int size) {
+    public DefaultNARGraph(NAR nar, VisModel v, int size, CanvasEdgeRenderer edgeRenderer) {
 
         super(new NARConceptSource(nar), size);
 
@@ -57,7 +57,7 @@ public class DefaultNARGraph extends NARGraph<Object> {
         vis.set(v);
 
 
-        edgeRenderer.set(new CanvasEdgeRenderer());
+        this.edgeRenderer.set(edgeRenderer);
         //g.setEdgeRenderer(new QuadPolyEdgeRenderer());
 
         //g.setLayout(new CircleLayout<>());
