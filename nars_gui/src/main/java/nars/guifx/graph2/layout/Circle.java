@@ -11,7 +11,7 @@ import java.util.function.ToDoubleFunction;
 /**
  * TODO rewrite as subclass of Linear
  */
-public class Circle<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
+public class Circle<N extends TermNode, E extends TermEdge> implements IterativeLayout<N> {
 
     public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(1);
     public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(4);

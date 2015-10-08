@@ -16,18 +16,14 @@ package hellblazer.gossip;
 
 
 import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Ring {
     private final GossipCommunications comms;
-    private final AtomicReference<InetSocketAddress> neighbor = new AtomicReference<>();
-    private final Endpoint                           endpoint;
-    private static final Logger log      = Logger.getLogger(Ring.class.getCanonicalName());
+    public final AtomicReference<InetSocketAddress> neighbor = new AtomicReference<>();
+    public final Endpoint                           endpoint;
+    public static final Logger log      = Logger.getLogger(Ring.class.getCanonicalName());
 
     public Ring(InetSocketAddress address, GossipCommunications comms) {
         endpoint = new Endpoint(address);
@@ -39,44 +35,22 @@ public class Ring {
      * 
      * @param state
      */
-    public void send(Update state) {
+    public final void send(Update state) {
         InetSocketAddress target = neighbor.get();
         if (target != null) {
             if (target.equals(state.node)) {
-                if (log.isLoggable(Level.FINE)) {
-                    log.fine(String.format("Not forwarding state %s to the node that owns it",
-                                            state));
-                }
+                //if (log.isLoggable(Level.FINE)) {
+                    //log.severe(String.format("Not forwarding state %s to the node that owns it",
+                                           // state));
+                //}
             } else {
                 comms.update(state, target);
             }
-        } else {
-            if (log.isLoggable(Level.FINE)) {
-                log.fine("Ring has not been formed, not forwarding state");
-            }
-        }
+        } //else {
+            //if (log.isLoggable(Level.FINE)) {
+                //log.severe("Ring has not been formed, not forwarding state");
+            //}
+        //}
     }
 
-    /**
-     * Update the neighboring members of the id on the ring represented by the
-     * members.
-     * 
-     * @param endpoints
-     */
-    public void update(Collection<Endpoint> endpoints) {
-        SortedSet<Endpoint> members = new TreeSet<>(endpoints);
-        members.remove(endpoint);
-        if (members.size() < 3) {
-            if (log.isLoggable(Level.FINE)) {
-                log.fine("Ring has not been formed");
-            }
-            return;
-        }
-        SortedSet<Endpoint> head = members.headSet(endpoint);
-        if (!head.isEmpty()) {
-            neighbor.set(head.last().getAddress());
-        } else {
-            neighbor.set(members.last().getAddress());
-        }
-    }
 }

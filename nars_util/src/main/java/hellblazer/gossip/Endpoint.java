@@ -24,7 +24,6 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class Endpoint implements Comparable<Endpoint> {
 
-    final static Logger logger = Logger.getLogger(Endpoint.class.toString());
+    //final static Logger logger = Logger.getLogger(Endpoint.class.toString());
 
     public enum State {
         CONNECTING, ALIVE, DEAD
@@ -48,18 +47,25 @@ public class Endpoint implements Comparable<Endpoint> {
     public static int compare(InetSocketAddress o1, InetSocketAddress o2) {
         if (o1 == o2) {
             return 0;
-        } else if (o1.isUnresolved() || o2.isUnresolved()) {
-            return o1.toString().compareTo(o2.toString());
         } else {
-            int compare = getIp(o1).compareTo(getIp(o2));
-            if (compare == 0) {
-                compare = Integer.valueOf(o1.getPort()).compareTo(o2.getPort());
+            boolean o1Unresoled = o1.isUnresolved();
+            boolean o2Unresolved = o2.isUnresolved();
+            if (o1Unresoled || o2Unresolved) {
+                if (o1Unresoled && !o2Unresolved) return -1;
+                else if (!o1Unresoled && o2Unresolved) return 1;
+                else
+                    return o1.toString().compareTo(o2.toString());
+            } else {
+                int compare = Integer.compare(getIp(o1), getIp(o2));
+                if (compare == 0) {
+                    compare = Integer.compare(o1.getPort(), o2.getPort());
+                }
+                return compare;
             }
-            return compare;
         }
     }
 
-    public static Integer getIp(InetSocketAddress addr) {
+    public static int getIp(InetSocketAddress addr) {
         byte[] a = addr.getAddress().getAddress();
         return (a[0] & 0xff) << 24 | (a[1] & 0xff) << 16 | (a[2] & 0xff) << 8
                | a[3] & 0xff;
@@ -113,11 +119,13 @@ public class Endpoint implements Comparable<Endpoint> {
     /**
      * @param digests
      */
-    public void addDigestsTo(ArrayList<Digest> digests) {
+    public void addDigestsTo(List<Digest> digests) {
         final ReentrantLock myLock = synch;
         myLock.lock();
         try {
-            digests.addAll(states.values().stream().map(state -> new Digest(address, state)).collect(Collectors.toList()));
+            states.values().stream().map(state -> new Digest(address, state)).collect(
+                    Collectors.toCollection( () -> digests )
+            );
         } finally {
             myLock.unlock();
         }

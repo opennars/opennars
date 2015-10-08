@@ -1,5 +1,6 @@
 package nars.guifx.graph2;
 
+import automenta.vivisect.dimensionalize.HyperOrganicLayout;
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.beans.InvalidationListener;
 import nars.NAR;
@@ -17,6 +18,7 @@ public class DefaultNARGraph extends NARGraph<Object> {
 //    @Implementation(values = {HexagonsVis.class})
 //    public final ImplementationProperty<EdgeRenderer> visType = new ImplementationProperty();
 
+    @Implementation(HyperOrganicLayout.class)
     @Implementation(HyperassociativeMap2D.class)
     @Implementation(Spiral.class)
     @Implementation(Circle.class)

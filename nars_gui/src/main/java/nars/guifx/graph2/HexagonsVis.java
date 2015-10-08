@@ -66,7 +66,7 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
             (op, activation) -> {
                 Color c = Color.hsb(op*360.0,
                         0.5 + 0.4 * activation,
-                        0.35 + activation*0.65);
+                        0.3 + activation*0.65);
                 return c;
             });
 

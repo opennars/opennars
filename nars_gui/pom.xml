@@ -60,20 +60,20 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.tinyjee.jgraphx</groupId>
-            <artifactId>jgraphx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.javabits.jgrapht</groupId>
-            <artifactId>jgrapht-ext</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.tinyjee.jgraphx</groupId>
-                    <artifactId>jgraphx</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.tinyjee.jgraphx</groupId>-->
+            <!--<artifactId>jgraphx</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.javabits.jgrapht</groupId>-->
+            <!--<artifactId>jgrapht-ext</artifactId>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.tinyjee.jgraphx</groupId>-->
+                    <!--<artifactId>jgraphx</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.abego.treelayout</groupId>
             <artifactId>org.abego.treelayout.core</artifactId>
@@ -82,10 +82,10 @@
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.fifesoft</groupId>
-            <artifactId>autocomplete</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.fifesoft</groupId>-->
+            <!--<artifactId>autocomplete</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx</artifactId>
@@ -94,24 +94,24 @@
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
         </dependency>
-        <dependency>
-            <groupId>jung</groupId>
-            <artifactId>jung</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.simplericity.macify</groupId>
-            <artifactId>macify</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>jung</groupId>-->
+            <!--<artifactId>jung</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.simplericity.macify</groupId>-->
+            <!--<artifactId>macify</artifactId>-->
+        <!--</dependency>-->
 
 
-        <dependency>
-            <groupId>org.piccolo2d</groupId>
-            <artifactId>piccolo2d-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.piccolo2d</groupId>
-            <artifactId>piccolo2d-extras</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.piccolo2d</groupId>-->
+            <!--<artifactId>piccolo2d-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.piccolo2d</groupId>-->
+            <!--<artifactId>piccolo2d-extras</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

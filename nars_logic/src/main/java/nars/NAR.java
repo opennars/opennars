@@ -115,7 +115,7 @@ abstract public class NAR implements Serializable, Level {
 
 
     //TODO use this to store all handler registrations, and decide if transient or not
-    final transient private List<Object> regs = new ArrayList();
+    public final transient List<Object> regs = new ArrayList();
 
 
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();

@@ -20,9 +20,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
@@ -51,7 +49,7 @@ import java.util.function.Consumer;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
+abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -70,8 +68,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
     private double scale = 1.0;
     private final int dimensions;
-    private final ExecutorService threadExecutor;
-    
+
     public final Map<N, ArrayRealVector> coordinates;
     
     private static final Random RANDOM = new XORShiftRandom();
@@ -151,59 +148,51 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
             align();
     }
 
-    private class Align implements Callable<ArrayRealVector> {
-
-        private final N node;
-
-        public Align(final N node) {
-            this.node = node;
-        }
-
-        @Override
-        public ArrayRealVector call() {
-            return align(node, null, vertices);
-        }
-    }
+//    private class Align implements Callable<ArrayRealVector> {
+//
+//        private final N node;
+//
+//        public Align(final N node) {
+//            this.node = node;
+//        }
+//
+//        @Override
+//        public ArrayRealVector call() {
+//            return align(node, null, vertices);
+//        }
+//    }
 
     abstract protected N[] getVertices();
 
-    public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance, final ExecutorService threadExecutor) {
+    public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
         if (dimensions <= 0) {
             throw new IllegalArgumentException("dimensions must be 1 or more");
         }
 
 
         this.dimensions = dimensions;
-        this.threadExecutor = threadExecutor;
         this.equilibriumDistance = Math.abs(equilibriumDistance);
         this.distanceFunction = distance;
         this.zero = new double[dimensions];
 
-        if (threadExecutor!=null) {
-            coordinates = Collections.synchronizedMap(new HashMap<N, ArrayRealVector>());
-        }
-        else {
-            coordinates = new LinkedHashMap<>();
-        }
+        coordinates = new LinkedHashMap<>();
+        //coordinates = Collections.synchronizedMap(new HashMap<N, ArrayRealVector>());
 
         reset();
     }
 
-    public HyperassociativeMap(final int dimensions, DistanceMetric distance, final ExecutorService threadExecutor) {
-        this(dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, threadExecutor);
-    }
 
-    public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
-        this(dimensions, equilibriumDistance, distance, null);
-    }
-
-    public HyperassociativeMap(DistanceMetric distance, final int dimensions) {
-        this(dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance, null);
-    }
-    
-    public HyperassociativeMap(final int dimensions) {
-        this(dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, Euclidean, null);
-    }
+//    public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
+//        this(dimensions, equilibriumDistance, distance);
+//    }
+//
+//    public HyperassociativeMap(DistanceMetric distance, final int dimensions) {
+//        this(dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, distance);
+//    }
+//
+//    public HyperassociativeMap(final int dimensions) {
+//        this(dimensions, DEFAULT_EQUILIBRIUM_DISTANCE, Euclidean);
+//    }
 
 
 
@@ -280,9 +269,9 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         totalMovement = DEFAULT_TOTAL_MOVEMENT;
         maxMovement = DEFAULT_MAX_MOVEMENT;
         ArrayRealVector center;
-        if (threadExecutor == null) {
+        //if (threadExecutor == null) {
             center = processLocally();
-        } else {
+        /*} else {
             // align all nodes in parallel
             final List<Future<ArrayRealVector>> futures = submitFutureAligns();
 
@@ -294,9 +283,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
                 //LOGGER.warn("waitAndProcessFutures was unexpectedly interrupted", caught);
                 throw new RuntimeException("Unexpected interruption. Get should block indefinitely", caught);
             }
-
-
-        }
+        }*/
 
         //LOGGER.debug("maxMove: " + maxMovement + ", Average Move: " + getAverageMovement());
 
@@ -653,14 +640,14 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         return Math.log(Math.abs((value + 1.0) / (1.0 - value))) / 2;
     }
 
-    private List<Future<ArrayRealVector>> submitFutureAligns() {
-        final ArrayList<Future<ArrayRealVector>> futures = new ArrayList<Future<ArrayRealVector>>();
-        pre(vertices);
-        for (final N node : vertices) {
-            futures.add(threadExecutor.submit(new Align(node)));
-        }
-        return futures;
-    }
+//    private List<Future<ArrayRealVector>> submitFutureAligns() {
+//        final ArrayList<Future<ArrayRealVector>> futures = new ArrayList<Future<ArrayRealVector>>();
+//        pre(vertices);
+//        for (final N node : vertices) {
+//            futures.add(threadExecutor.submit(new Align(node)));
+//        }
+//        return futures;
+//    }
 
 
 

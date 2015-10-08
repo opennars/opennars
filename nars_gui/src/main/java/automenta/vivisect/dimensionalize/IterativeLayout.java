@@ -4,13 +4,13 @@ package automenta.vivisect.dimensionalize;
 import nars.guifx.graph2.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
-public interface IterativeLayout<V,E> {
+public interface IterativeLayout<V> {
 
     @Deprecated default ArrayRealVector getPosition(V vertex) {
         return null;
     }
 
-    default void pre(V[] vertices) {
+    @Deprecated default void pre(V[] vertices) {
 
     }
 

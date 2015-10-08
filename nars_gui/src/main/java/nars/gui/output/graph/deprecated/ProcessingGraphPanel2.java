@@ -332,9 +332,9 @@
 //
 //
 //        /*
-//        mxOrganicLayout layout =
+//        HyperOrganicLayout layout =
 //                //new mxCompactTreeLayout(jgxAdapter);
-//                new mxOrganicLayout(jgxAdapter);
+//                new HyperOrganicLayout(jgxAdapter);
 //                //new mxCircleLayout(jgxAdapter);
 //        layout.setEdgeLengthCostFactor(0.001);*/
 //

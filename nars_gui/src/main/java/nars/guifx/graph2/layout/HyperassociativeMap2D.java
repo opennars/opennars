@@ -17,6 +17,8 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdg
     private TermNode[] termList;
 
 
+    //TODO equilibrum distance, speed, etc
+
     @Range(min=1, max=20)
     public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(15.0);
     @Range(min=1, max=20)
@@ -27,7 +29,7 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdg
     }
 
     public HyperassociativeMap2D(int dim) {
-        super(dim);
+        super(dim, 1.0, Manhattan);
 
         //reusedCurrentPosition = new ArrayRealVector(dim);
     }

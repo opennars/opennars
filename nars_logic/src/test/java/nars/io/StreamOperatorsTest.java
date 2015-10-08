@@ -4,6 +4,9 @@ import com.gs.collections.api.tuple.Pair;
 import com.gs.collections.impl.tuple.Tuples;
 import hellblazer.gossip.GossipPeer;
 import nars.NAR;
+import nars.nal.nal1.Inheritance;
+import nars.term.Atom;
+import nars.term.Term;
 import nars.util.event.DefaultTopic;
 import nars.util.event.Topic;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -27,12 +30,15 @@ public class StreamOperatorsTest {
     public static class UDPNetwork<O extends Serializable>  /* implements Network */
         implements Consumer<O> {
 
+        Atom id; //used for the term
+
         final GossipPeer peer;
         public final Topic<Pair<UUID,O>> in = new DefaultTopic<>();
         public final Topic<O> out = new DefaultTopic();
 
-        public UDPNetwork(int port) throws SocketException {
+        public UDPNetwork(String id, int port) throws SocketException {
 
+            this.id = Atom.the(id);
             peer = new GossipPeer(port) {
                 public final void onUpdate(UUID id, Object j) {
                     try {
@@ -66,14 +72,43 @@ public class StreamOperatorsTest {
 
         /** initialize a NAR with operators for this network */
         public void connect(NAR nar) {
+            nar.on("send", (Term[] args) -> {
+                if (args.length < 2) return null;
+                Term stream = args[0];
 
+                //TODO use a central dispatcher for all streams; not all streams watching for send(
+                if (stream.equals(id)) {
+                    Term message = args[1];
+                    send(nar, message);
+                }
+                return null;
+            });
+            //HACK dont use regs directly
+            nar.regs.add(
+                in.on(p -> {
+                    UUID u = p.getOne();
+                    O o = p.getTwo();
+
+                    //temporary
+                    nar.believe(
+                            Inheritance.make(
+                                    Atom.quote(u.toString()),
+                                    Atom.quote(o.toString())
+                            )
+                    );
+                })
+            );
+        }
+
+        void send(NAR nar, Term message) {
+            peer.put(message);
         }
     }
 
     @Test
     public void testUDP() throws SocketException, InterruptedException {
-        UDPNetwork<String> a = new UDPNetwork(10001);
-        UDPNetwork<String> b = new UDPNetwork(10002);
+        UDPNetwork<String> a = new UDPNetwork("a",10001);
+        UDPNetwork<String> b = new UDPNetwork("b",10002);
         b.peer.connect("localhost", 10001);
 
         System.out.println("Testing UDP pair at 60hz");

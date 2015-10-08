@@ -30,7 +30,7 @@ public class NARGraph<V> extends Spacegraph {
 
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
 
-    public final SimpleObjectProperty<IterativeLayout<TermNode, TermEdge>> layout = new SimpleObjectProperty<>();
+    public final SimpleObjectProperty<IterativeLayout<TermNode>> layout = new SimpleObjectProperty<>();
     public static final IterativeLayout nullLayout = new None();
 
 
@@ -240,7 +240,7 @@ public class NARGraph<V> extends Spacegraph {
     protected void rerender() {
 
         /** apply layout */
-        IterativeLayout<TermNode, TermEdge> l;
+        IterativeLayout<TermNode> l;
         if ((l = layout.get()) != null) {
             l.run(this, 1);
         } else {

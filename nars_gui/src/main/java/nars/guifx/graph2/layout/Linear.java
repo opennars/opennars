@@ -2,14 +2,13 @@ package nars.guifx.graph2.layout;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import nars.guifx.graph2.NARGraph;
-import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 
 /**
  * for layouts which process items according to their
  * linear sequence position
  */
-public abstract class Linear<N extends TermNode> implements IterativeLayout<N,TermEdge> {
+public abstract class Linear<N extends TermNode> implements IterativeLayout<N> {
 
     @Override
     public void init(N n) {

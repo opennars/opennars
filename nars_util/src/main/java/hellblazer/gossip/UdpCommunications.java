@@ -47,6 +47,14 @@ import static java.lang.String.format;
  */
 public class UdpCommunications implements GossipCommunications {
 
+
+    static final ByteBufferPool    bufferPool = new ByteBufferPool(
+            "UDP Comms",
+            100);
+    static final ThreadLocal<ByteBuffer> segmentBuffers = ThreadLocal.withInitial(
+            () -> bufferPool.allocate(GossipMessages.MAX_SEG_SIZE)
+    );
+
     private class GossipHandler implements GossipMessages {
         private final InetSocketAddress gossipper;
 
@@ -71,33 +79,42 @@ public class UdpCommunications implements GossipCommunications {
             update(states);
         }
 
+
+
         @Override
         public void update(List<Update> deltaState) {
-            ByteBuffer buffer = bufferPool.allocate(MAX_SEG_SIZE);
+
+            ByteBuffer buffer = segmentBuffers.get(); ;
+
             buffer.order(ByteOrder.BIG_ENDIAN);
+
+            final InetSocketAddress gossipper = this.gossipper;
+
             int n = deltaState.size();
             for (int i = 0; i < n; i++) {
                 Update state = deltaState.get(i);
                 if (state.node.equals(gossipper)) {
-                    log.fine(()->"Not sending % to the node that owns it " + state);
+                    //log.fine(()->"Not sending % to the node that owns it " + state);
 
                 } else {
                     UdpCommunications.this.update(UPDATE, state, gossipper,
                                                   buffer);
-                    buffer.clear();
+                    //buffer.clear();
                 }
             }
-            bufferPool.free(buffer);
+            //bufferPool.free(buffer);
         }
 
 
 
 
         private void sendDigests(Iterator<Digest> digests, byte messageType) {
-            ByteBuffer buffer = bufferPool.allocate(MAX_SEG_SIZE);
+            ByteBuffer buffer = segmentBuffers.get(); //bufferPool.allocate(MAX_SEG_SIZE);
+
             buffer.order(ByteOrder.BIG_ENDIAN);
 
             while (digests.hasNext()) {
+                //buffer.clear();
 
                 //skip data position, we'll add that last after knowing the count
                 buffer.position(DATA_POSITION + 1);
@@ -115,32 +132,35 @@ public class UdpCommunications implements GossipCommunications {
                 buffer.position(end);
 
                 send(messageType, buffer, gossipper);
-                buffer.clear();
             }
 
-            bufferPool.free(buffer);
+            //bufferPool.free(buffer);
         }
 
         private void sendDigests(List<Digest> digests, byte messageType) {
-            ByteBuffer buffer = bufferPool.allocate(MAX_SEG_SIZE);
+            ByteBuffer buffer = segmentBuffers.get(); //bufferPool.allocate(MAX_SEG_SIZE);
+
             buffer.order(ByteOrder.BIG_ENDIAN);
 
-            for (int i = 0; i < digests.size();) {
+            final InetSocketAddress gossipper = this.gossipper;
+            final int max = maxDigests;
+            final int size = digests.size();
 
-                byte count = (byte) min(maxDigests, digests.size() - i);
+            for (int i = 0; i < size;) {
+
+                byte count = (byte) min(max, size - i);
                 buffer.position(DATA_POSITION);
                 buffer.put(count);
-                //int position;
-                for (Digest digest : digests.subList(i, i + count)) {
-                    digest.writeTo(buffer);
-                    //position = buffer.position();
-                    //Integer.toString(position);
+
+                for (int j = 0; j < count ; j++) {
+                    digests.get(i+j).writeTo(buffer);
                 }
                 send(messageType, buffer, gossipper);
                 i += count;
+
                 buffer.clear();
             }
-            bufferPool.free(buffer);
+            //bufferPool.free(buffer);
         }
 
     }
@@ -215,9 +235,7 @@ public class UdpCommunications implements GossipCommunications {
         return baos.toString();
     }
 
-    private final ByteBufferPool    bufferPool = new ByteBufferPool(
-                                                                    "UDP Comms",
-                                                                    100);
+
     private final ExecutorService   dispatcher;
     private Gossip                  gossip;
     private final Mac               hmac;

@@ -17,6 +17,7 @@ package hellblazer.gossip;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
+import com.gs.collections.impl.map.mutable.ConcurrentHashMapUnsafe;
 import com.hellblazer.utils.fd.FailureDetectorFactory;
 import nars.util.data.list.FasterList;
 
@@ -27,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -85,7 +87,10 @@ public class Gossip {
     private int                                        interval;
     private TimeUnit                                   intervalUnit;
     private final AtomicReference<GossipListener>            listener                = new AtomicReference<>();
-    private final Map<UUID, ReplicatedState>                 localState              = new HashMap<>();
+
+    private final Map<UUID, ReplicatedState>                 localState
+            = new ConcurrentHashMapUnsafe<>(4);
+
     private final int                                        redundancy;
     private final Ring                                       ring;
     private final AtomicBoolean                              running                 = new AtomicBoolean();
@@ -214,9 +219,9 @@ public class Gossip {
         ReplicatedState state = new ReplicatedState(id,
                                                     System.currentTimeMillis(),
                                                     EMPTY_STATE);
-        synchronized (localState) {
+        //synchronized (localState) {
             localState.put(id, state);
-        }
+        //}
         /*if (log.isDebugEnabled()) {
             log.debug(String.format("Member: %s abandoning replicated state",
                                     me()));
@@ -256,9 +261,9 @@ public class Gossip {
         ReplicatedState state = new ReplicatedState(id,
                                                     System.currentTimeMillis(),
                                                     replicatedState);
-        synchronized (localState) {
+        //synchronized (localState) {
             localState.put(id, state);
-        }
+        //}
         /*if (log.isDebugEnabled()) {
             log.debug(String.format("Member: %s registering replicated state",
                                     me()));
@@ -365,14 +370,14 @@ public class Gossip {
         ReplicatedState state = new ReplicatedState(id,
                                                     System.currentTimeMillis(),
                                                     replicatedState);
-        synchronized (localState) {
+        //synchronized (localState) {
             localState.put(id, state);
-        }
+        //}
 //        if (log.isDebugEnabled()) {
 //            log.debug(String.format("Member: %s updating replicated state",
 //                                    me()));
 //        }
-        ring.update(endpoints.values());
+        updateRing();
         ring.send(new Update(me(), state));
     }
 
@@ -385,14 +390,14 @@ public class Gossip {
     private void addUpdatedLocalState(List<Update> deltaState, Digest digest) {
         UUID id = digest.getId();
         if (ALL_STATES.equals(id)) {
-            synchronized (localState) {
+            //synchronized (localState) {
                 deltaState.addAll(localState.values().stream().map(s -> new Update(digest.getAddress(), s)).collect(Collectors.toList()));
-            }
+            //}
         } else {
             ReplicatedState myState;
-            synchronized (localState) {
+            //synchronized (localState) {
                 myState = localState.get(id);
-            }
+            //}
             if (myState != null && myState.getTime() > digest.getTime()) {
                 deltaState.add(new Update(digest.getAddress(), myState));
             } else if (myState == null) {
@@ -414,12 +419,12 @@ public class Gossip {
                                     me()));
         }*/
         ReplicatedState heartbeat = new ReplicatedState(
-                                                        HEARTBEAT,
-                                                        System.currentTimeMillis(),
-                                                        EMPTY_STATE);
-        synchronized (localState) {
+                HEARTBEAT,
+                System.currentTimeMillis(),
+                EMPTY_STATE);
+        //synchronized (localState) {
             localState.put(HEARTBEAT, heartbeat);
-        }
+        //}
         ring.send(new Update(me(), heartbeat));
     }
 
@@ -530,7 +535,21 @@ public class Gossip {
             log.trace("Culling the unreachable...");
         }*/
         view.cullUnreachable(now);
-        ring.update(endpoints.values());
+        updateRing();
+    }
+
+    private void updateRing() {
+        SortedSet<Endpoint> members = new TreeSet<>(endpoints.values());
+        members.remove(ring.endpoint);
+        if (members.size() < 3) {
+            if (Ring.log.isLoggable(Level.FINE)) {
+                Ring.log.fine("Ring has not been formed");
+            }
+            return;
+        }
+        SortedSet<Endpoint> head = members.headSet(ring.endpoint);
+
+        ring.neighbor.set( (!head.isEmpty() ? head.last() : members.last()).getAddress() );
     }
 
 //    /**
@@ -672,20 +691,24 @@ public class Gossip {
 //            log.trace(String.format("Member: %s receiving gossip digests: %s",
 //                                    me(), Arrays.toString(digests)));
 //        }
-        List<Digest> deltaDigests = new ArrayList<>(digests.size());
-        List<Update> deltaState = new ArrayList<>(localState.size());
+        List<Digest> deltaDigests = new FasterList(digests.size());
+        List<Update> deltaState = new FasterList(localState.size());
         for (Digest digest : digests) {
-            if (ALL_STATES.equals(digest.getId())) {
+            UUID dID = digest.getId();
+            if (ALL_STATES.equals(dID)) {
 
                 // They want it all, baby
-                synchronized (localState) {
+                //synchronized (localState) {
                     deltaState.addAll(localState.values().stream().map(state -> new Update(me(), state)).collect(Collectors.toList()));
-                }
+                //}
             } else {
                 long remoteTime = digest.getTime();
+
+                //TODO if digest addess the same as the previous, we can re-use it and not call endpoints.get
+
                 Endpoint endpoint = endpoints.get(digest.getAddress());
                 if (endpoint != null) {
-                    ReplicatedState localState = endpoint.getState(digest.getId());
+                    ReplicatedState localState = endpoint.getState(dID);
                     if (localState != null) {
                         long localTime = localState.getTime();
                         if (remoteTime == localTime) {
@@ -699,14 +722,14 @@ public class Gossip {
                         }
                     } else {
                         deltaDigests.add(new Digest(digest.getAddress(),
-                                                    digest.getId(), -1L));
+                                dID, -1L));
                     }
                 } else {
                     if (me().equals(digest.getAddress())) {
                         addUpdatedLocalState(deltaState, digest);
                     } else {
                         deltaDigests.add(new Digest(digest.getAddress(),
-                                                    digest.getId(), -1L));
+                                dID, -1L));
                     }
                 }
             }
@@ -831,7 +854,9 @@ public class Gossip {
         }
 
         if (endpoint != null) {
-            Iterator<Digest> filtered = Iterators.concat(Iterators.filter(digests, new DigestPredicate(address)), Iterators.singletonIterator(new Digest(address, ALL_STATES, -1)));
+            Iterator<Digest> filtered = Iterators.concat(
+                    Iterators.filter(digests, new DigestPredicate(address)),
+                    Iterators.singletonIterator(new Digest(address, ALL_STATES, -1)));
             endpoint.getHandler().gossip(filtered);
         }
     }
@@ -976,13 +1001,14 @@ public class Gossip {
      * @return
      */
     protected List<Digest> randomDigests() {
-        ArrayList<Digest> digests = new ArrayList<>(endpoints.size() + 1);
+        List<Digest> digests = new FasterList<>(endpoints.size() + 1);
         for (Endpoint endpoint : endpoints.values()) {
             endpoint.addDigestsTo(digests);
         }
-        synchronized (localState) {
-            digests.addAll(localState.values().stream().map(state -> new Digest(me(), state)).collect(Collectors.toList()));
-        }
+        //synchronized (localState) {
+            localState.values().stream().map(state -> new Digest(me(), state))
+                    .collect(Collectors.toCollection(() -> digests));
+        //}
         Collections.shuffle(digests, entropy);
 //        if (log.isTraceEnabled()) {
 //            log.trace(format("Random gossip digests from %s are : %s",
@@ -1117,7 +1143,7 @@ public class Gossip {
         }
     }
 
-    private static class DigestPredicate implements Predicate<Digest> {
+    private static final class DigestPredicate implements Predicate<Digest> {
         private final InetSocketAddress address;
 
         public DigestPredicate(InetSocketAddress address) {
