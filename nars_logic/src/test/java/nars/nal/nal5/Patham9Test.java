@@ -106,4 +106,13 @@ public class Patham9Test extends AbstractNALTest {
         tester.run();
     }*/
 
+    @Test
+    public void multiple_variable_elimination3() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("(&&,<#x --> lock>,<<$y --> key> ==> <#x --> (/,open,$y,_)>>)"); //en("There is a lock that can be opened by every key.");
+        tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
+        tester.mustBelieve(100, "<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>", 1.00f, 0.42f); //en("I guess Lock-1 can be opened by every key.");
+        tester.run();
+    }
+
 }

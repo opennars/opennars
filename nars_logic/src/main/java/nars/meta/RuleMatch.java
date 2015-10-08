@@ -265,8 +265,7 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
-
-
+        derivedTerm = derivedTerm.cloneDeep();
         TaskSeed deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
 
