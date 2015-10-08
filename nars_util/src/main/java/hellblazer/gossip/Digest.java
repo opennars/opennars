@@ -17,6 +17,7 @@ package hellblazer.gossip;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.UUID;
 
 import static hellblazer.gossip.Endpoint.readInetAddress;
@@ -34,6 +35,7 @@ public class Digest implements Comparable<Digest> {
     private final InetSocketAddress address;
     private final UUID              id;
     private final long              time;
+    private transient int hash;
 
     public Digest(ByteBuffer msg) throws UnknownHostException {
         address = readInetAddress(msg);
@@ -56,16 +58,16 @@ public class Digest implements Comparable<Digest> {
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
-    public int compareTo(Digest o) {
-        int addressCompare = Endpoint.compare(address, o.address);
-        if (addressCompare != 0) {
-            return addressCompare;
-        }
+    public final int compareTo(Digest o) {
         int uuidCompare = id.compareTo(o.id);
         if (uuidCompare != 0) {
             return uuidCompare;
         }
-        return Long.valueOf(time).compareTo(Long.valueOf(o.time));
+        int addressCompare = Endpoint.compare(address, o.address);
+        if (addressCompare != 0) {
+            return addressCompare;
+        }
+        return Long.compare(time, o.time);
     }
 
     /* (non-Javadoc)
@@ -76,35 +78,33 @@ public class Digest implements Comparable<Digest> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        /*if (!(obj instanceof Digest)) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        }*/
         Digest other = (Digest) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        return time == other.time;
+        return Objects.equals(id, other.id) && time == other.time;
+//        if (id == null) {
+//            if (other.id != null) {
+//                return false;
+//            }
+//        } else if (!id.equals(other.id)) {
+//            return false;
+//        }
+//        return time == other.time;
     }
 
-    public InetSocketAddress getAddress() {
+    public final InetSocketAddress getAddress() {
         return address;
     }
 
     /**
      * @return the id
      */
-    public UUID getId() {
+    public final UUID getId() {
         return id;
     }
 
-    public long getTime() {
+    public final long getTime() {
         return time;
     }
 
@@ -113,10 +113,18 @@ public class Digest implements Comparable<Digest> {
      */
     @Override
     public int hashCode() {
+        if (this.hash == 0) {
+            return this.hash = hash();
+        }
+        return this.hash;
+    }
+
+    public int hash() {
         final int prime = 31;
         int result = 1;
         result = prime * result + (id == null ? 0 : id.hashCode());
         result = prime * result + (int) (time ^ time >>> 32);
+        if (result == 0) result = 1;
         return result;
     }
 

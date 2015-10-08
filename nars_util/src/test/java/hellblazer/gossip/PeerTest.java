@@ -1,11 +1,9 @@
 package hellblazer.gossip;
 
-import com.google.common.collect.Lists;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,7 +24,7 @@ public class PeerTest {
 
         };
 
-        final GossipPeer b = new GossipPeer(10002, Lists.newArrayList(new InetSocketAddress("localhost", 10001))) {
+        final GossipPeer b = new GossipPeer(10002) {
 
             @Override
 
@@ -41,13 +39,14 @@ public class PeerTest {
                 a.stop();
             }
         };
+        b.connect("localhost", 10001);
 
         //a.put((Serializable)new byte[] { 0, 1, 2, 3, 4, 5 });
         //a.put((Serializable)new byte[] { 0, 1, 2, 3, 4, 5 });
         //a.put("test");
         a.put(new TestBean("test"));
 
-        a.gossip.waitFor(10);
+        a.gossip.waitFor(2000);
 
         System.out.println("finished");
 

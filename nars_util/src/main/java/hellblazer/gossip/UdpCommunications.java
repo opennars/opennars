@@ -29,10 +29,7 @@ import java.nio.ByteOrder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -368,9 +365,9 @@ public class UdpCommunications implements GossipCommunications {
      * @param msg
      * @return
      */
-    private Digest[] extractDigests(SocketAddress sender, ByteBuffer msg) {
+    private TreeSet<Digest> extractDigests(SocketAddress sender, ByteBuffer msg) {
         int count = msg.get();
-        final Digest[] digests = new Digest[count];
+        final TreeSet<Digest> digests = new TreeSet<>();
         for (int i = 0; i < count; i++) {
             Digest digest;
             try {
@@ -385,13 +382,13 @@ public class UdpCommunications implements GossipCommunications {
 
                 continue;
             }
-            digests[i] = digest;
+            digests.add(digest);
         }
         return digests;
     }
 
     private final void handleGossip(final InetSocketAddress gossiper, ByteBuffer msg) {
-        Digest[] digests = extractDigests(gossiper, msg);
+        TreeSet<Digest> digests = extractDigests(gossiper, msg);
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Gossip from %s is %s", gossiper,
 //                                    Arrays.toString(digests)));
@@ -400,7 +397,7 @@ public class UdpCommunications implements GossipCommunications {
     }
 
     private final void handleReply(final InetSocketAddress gossiper, ByteBuffer msg) {
-        Digest[] digests = extractDigests(gossiper, msg);
+        TreeSet<Digest> digests = extractDigests(gossiper, msg);
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Reply from %s is %s", gossiper,
 //                                    Arrays.toString(digests)));
@@ -538,7 +535,7 @@ public class UdpCommunications implements GossipCommunications {
 
         socket.receive(packet);
         buffer.limit(packet.getLength());
-        if (log.isLoggable(Level.FINE)) {
+        /*if (log.isLoggable(Level.FINE)) {
             log.fine(String.format("Received packet %s",
                                     prettyPrint(packet.getSocketAddress(),
                                                 getLocalAddress(),
@@ -546,7 +543,7 @@ public class UdpCommunications implements GossipCommunications {
                                                 packet.getLength())));
         } else if (log.isLoggable(Level.INFO)) {
             log.info(() -> "Received packet from: " + packet.getSocketAddress());
-        }
+        }*/
         dispatcher.execute(() -> {
             int magic = buffer.getInt();
             if (GossipMessages.MAGIC == magic) {

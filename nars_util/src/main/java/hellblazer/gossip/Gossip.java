@@ -82,8 +82,8 @@ public class Gossip {
     private ScheduledFuture<?>                               gossipTask;
     private final int                                        heartbeatCycle;
     private int                                              heartbeatCounter        = 0;
-    private final int                                        interval;
-    private final TimeUnit                                   intervalUnit;
+    private int                                        interval;
+    private TimeUnit                                   intervalUnit;
     private final AtomicReference<GossipListener>            listener                = new AtomicReference<>();
     private final Map<UUID, ReplicatedState>                 localState              = new HashMap<>();
     private final int                                        redundancy;
@@ -277,17 +277,41 @@ public class Gossip {
     public Gossip start() {
         if (running.compareAndSet(false, true)) {
             communications.start();
-            gossipTask = scheduler.scheduleWithFixedDelay(gossipTask(),
-                                                          interval, interval,
-                                                          intervalUnit);
+            reschedule();
             listener.get().onStart();
+        }
+        else {
+            throw new RuntimeException("already stopped");
         }
         return this;
     }
 
-    public void waitFor(long timeoutSeconds) throws InterruptedException {
-        scheduler.awaitTermination(timeoutSeconds, TimeUnit.SECONDS);
+    void reschedule() {
+        gossipTask = scheduler.scheduleWithFixedDelay(gossipTask(),
+                                                      interval, interval,
+                                                      intervalUnit);
     }
+
+    public synchronized void setInterval(int num, TimeUnit unit) {
+        boolean wasRunning = running.get();
+        if (wasRunning)
+            unschedule();
+        this.interval = num;
+        this.intervalUnit = unit;
+        if (wasRunning)
+            reschedule();
+    }
+
+    public void unschedule() {
+        gossipTask.cancel(false);
+        gossipTask = null;
+    }
+
+    public void waitFor(long timeoutMS) throws InterruptedException {
+        scheduler.awaitTermination(timeoutMS, TimeUnit.MILLISECONDS);
+    }
+
+
 
     /**
      * Terminate the gossip replication process
@@ -296,9 +320,14 @@ public class Gossip {
         if (running.compareAndSet(true, false)) {
             listener.get().onStop();
             communications.terminate();
-            scheduler.shutdownNow();
-            gossipTask.cancel(true);
-            gossipTask = null;
+            unschedule();
+            if (gossipTask!=null) {
+                gossipTask.cancel(true);
+                gossipTask = null;
+            }
+        }
+        else {
+            throw new RuntimeException("already stopped");
         }
         return this;
     }
@@ -354,14 +383,15 @@ public class Gossip {
      * @param digest
      */
     private void addUpdatedLocalState(List<Update> deltaState, Digest digest) {
-        if (ALL_STATES.equals(digest.getId())) {
+        UUID id = digest.getId();
+        if (ALL_STATES.equals(id)) {
             synchronized (localState) {
                 deltaState.addAll(localState.values().stream().map(s -> new Update(digest.getAddress(), s)).collect(Collectors.toList()));
             }
         } else {
             ReplicatedState myState;
             synchronized (localState) {
-                myState = localState.get(digest.getId());
+                myState = localState.get(id);
             }
             if (myState != null && myState.getTime() > digest.getTime()) {
                 deltaState.add(new Update(digest.getAddress(), myState));
@@ -637,12 +667,12 @@ public class Gossip {
      * @param digests
      * @param gossipHandler
      */
-    protected void examine(Digest[] digests, GossipMessages gossipHandler) {
+    protected void examine(TreeSet<Digest> digests, GossipMessages gossipHandler) {
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Member: %s receiving gossip digests: %s",
 //                                    me(), Arrays.toString(digests)));
 //        }
-        List<Digest> deltaDigests = new ArrayList<>(digests.length);
+        List<Digest> deltaDigests = new ArrayList<>(digests.size());
         List<Update> deltaState = new ArrayList<>(localState.size());
         for (Digest digest : digests) {
             if (ALL_STATES.equals(digest.getId())) {
@@ -706,10 +736,12 @@ public class Gossip {
         updateHeartbeat();
 
         List<Digest> digests = randomDigests();
-        List<InetSocketAddress> members = new FasterList();
+
+        List<InetSocketAddress> members = new FasterList(redundancy);
         for (int i = 0; i < redundancy; i++) {
             members.add(gossipWithTheLiving(digests));
         }
+
         gossipWithTheDead(digests.iterator());
         gossipWithSeeds(digests.iterator(), members);
         checkStatus();
@@ -728,9 +760,9 @@ public class Gossip {
      * @param gossipHandler
      *            - the handler to send the reply of digests and states
      */
-    protected void gossip(Digest[] digests, GossipMessages gossipHandler) {
+    protected void gossip(TreeSet<Digest> digests, GossipMessages gossipHandler) {
         checkConnectionStatus(gossipHandler.getGossipper());
-        Arrays.sort(digests);
+
         examine(digests, gossipHandler);
     }
 
@@ -739,7 +771,7 @@ public class Gossip {
             try {
                 gossip();
             } catch (Throwable e) {
-                log.severe("Exception while performing gossip");
+                log.severe(e.toString());
             }
         };
     }
@@ -973,7 +1005,7 @@ public class Gossip {
      *            - the handler to send a list of replicated states that the
      *            gossiper would like updates for
      */
-    protected void reply(Digest[] digests, GossipMessages gossipHandler) {
+    protected void reply(TreeSet<Digest> digests, GossipMessages gossipHandler) {
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Member: %s receiving reply digests: %s",
 //                                    me(), Arrays.toString(digests)));
@@ -982,6 +1014,7 @@ public class Gossip {
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         List<Update> deltaState = new ArrayList();
+        //TODO use a consumer fucntion which calls the below gossipHandler.update itself
         for (Digest digest : digests) {
             addUpdatedState(deltaState, digest);
         }

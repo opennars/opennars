@@ -24,6 +24,7 @@ import com.hellblazer.utils.fd.impl.AdaptiveFailureDetectorFactory;
 import hellblazer.gossip.Gossip;
 import hellblazer.gossip.SystemView;
 import hellblazer.gossip.UdpCommunications;
+import nars.util.data.random.XorShift1024StarRandom;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -71,7 +72,7 @@ public class GossipConfiguration {
     public final long                    unreachableDelay        = (int) TimeUnit.DAYS.toMillis(2);
 
     public Gossip construct() throws SocketException {
-        Random entropy = new Random();
+        Random entropy = new XorShift1024StarRandom(System.currentTimeMillis());
         UdpCommunications comms = constructUdpComms();
         SystemView view = new SystemView(entropy, comms.getLocalAddress(),
                                          seeds, quarantineDelay,

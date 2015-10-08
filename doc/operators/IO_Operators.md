@@ -284,3 +284,10 @@ https://github.com/netty/netty/issues/3218#issuecomment-66256837
  * regions (so I can flush them independently)
  * pluggable pool key strategy
 
+## Notes
+```
+<(&&, commonCondition, {
+       specificConditionA,
+       specificConditionB
+   }) =/> commonConclusion>.
+```

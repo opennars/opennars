@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -311,29 +312,31 @@ public class GossipTest extends TestCase {
         InetSocketAddress localAddress = new InetSocketAddress("127.0.0.1", 0);
         when(communications.getLocalAddress()).thenReturn(localAddress);
 
-        Digest digest1 = new Digest(new InetSocketAddress("google.com", 1),
+        Digest digest1 = new Digest(new InetSocketAddress("w3c.org", 1),
                                     new UUID(0, 1), 3);
-        Digest digest2 = new Digest(new InetSocketAddress("google.com", 2),
+        Digest digest2 = new Digest(new InetSocketAddress("w3c.org", 2),
                                     new UUID(0, 2), 1);
-        Digest digest3 = new Digest(new InetSocketAddress("google.com", 3),
+        Digest digest3 = new Digest(new InetSocketAddress("w3c.org", 3),
                                     new UUID(0, 3), 1);
-        Digest digest4 = new Digest(new InetSocketAddress("google.com", 4),
+        Digest digest4 = new Digest(new InetSocketAddress("w3c.org", 4),
                                     new UUID(0, 4), 3);
-        Digest digest1a = new Digest(new InetSocketAddress("google.com", 1),
+        Digest digest1a = new Digest(new InetSocketAddress("w3c.org", 1),
                                      new UUID(0, 1), -1);
-        Digest digest2a = new Digest(new InetSocketAddress("google.com", 2),
+        Digest digest2a = new Digest(new InetSocketAddress("w3c.org", 2),
                                      new UUID(0, 2), -1);
-        Digest digest3a = new Digest(new InetSocketAddress("google.com", 3),
+        Digest digest3a = new Digest(new InetSocketAddress("w3c.org", 3),
                                      new UUID(0, 3), -1);
-        Digest digest4a = new Digest(new InetSocketAddress("google.com", 4),
+        Digest digest4a = new Digest(new InetSocketAddress("w3c.org", 4),
                                      new UUID(0, 4), -1);
 
         Gossip gossip = new Gossip(communications, view, fdFactory, random, 4,
                                    TimeUnit.DAYS);
         gossip.setListener(listener);
 
-        gossip.examine(new Digest[] { digest1, digest2, digest3, digest4 },
-                       gossipHandler);
+        TreeSet<Digest> dd = new TreeSet();
+        for (Digest d : new Digest[] { digest1, digest2, digest3, digest4 })
+            dd.add(d);
+        gossip.examine(dd, gossipHandler);
 
         verify(gossipHandler).reply(asList(digest1a, digest2a, digest3a,
                                            digest4a), new ArrayList<Update>());
@@ -387,8 +390,11 @@ public class GossipTest extends TestCase {
         endpoints.put(address3, new Endpoint(address3, state3, gossipHandler));
         endpoints.put(address4, new Endpoint(address4, state4, gossipHandler));
 
-        gossip.examine(new Digest[] { digest1, digest2, digest3, digest4 },
-                       gossipHandler);
+        TreeSet<Digest> dd = new TreeSet();
+        for (Digest d : new Digest[] { digest1, digest2, digest3, digest4 })
+            dd.add(d);
+        gossip.examine(dd, gossipHandler);
+
         verify(gossipHandler).reply(eq(asList(digest1a, digest3a)),
                                     eq(asList(new Update(address2, state2),
                                               new Update(address4, state4))));

@@ -1,15 +1,15 @@
 package hellblazer.gossip;
 
 import hellblazer.gossip.configuration.GossipConfiguration;
+import nars.util.data.list.FasterList;
 import org.infinispan.marshall.core.JBossMarshaller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * https://github.com/ChiralBehaviors/Chinese-Whispers/wiki/Usage
@@ -25,13 +25,10 @@ public class GossipPeer implements GossipListener {
     }
 
     public GossipPeer(int port) throws SocketException {
-        this(port, Collections.emptyList());
-    }
-
-    public GossipPeer(int port, List<InetSocketAddress> seeds) throws SocketException {
+        super();
 
         GossipConfiguration config = new GossipConfiguration();
-        config.seeds = seeds;
+        config.seeds = new FasterList();
         config.endpoint = new InetSocketAddress("localhost", port);
         config.gossipInterval = 1;
 
@@ -41,6 +38,12 @@ public class GossipPeer implements GossipListener {
 
         gossip.start();
 
+
+    }
+
+
+    public Logger log() {
+        return gossip.log;
     }
 
     public UUID put(byte[] replicatedState) {
@@ -141,6 +144,10 @@ public class GossipPeer implements GossipListener {
 
     public void connect(String host, int port) {
         connect(new InetSocketAddress(host, port));
+    }
+
+    public void log(Exception e) {
+        log().severe(e.toString());
     }
 
     /**
