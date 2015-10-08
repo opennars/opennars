@@ -3,7 +3,6 @@ package nars.meter;
 import nars.Global;
 import nars.NAR;
 import nars.event.CycleReaction;
-import nars.io.JSONOutput;
 import nars.meter.condition.TaskCondition;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
@@ -12,6 +11,7 @@ import nars.util.event.Topic;
 import nars.util.graph.TermLinkGraph;
 import nars.util.meter.event.HitMeter;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
@@ -204,7 +204,8 @@ public class TestNAR  {
 
         if (ocRelative!= Stamp.ETERNAL) {
             /** occurence time measured relative to the beginning */
-            tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, nar.memory().duration());
+            //tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, nar.memory().duration());
+            throw new RuntimeException("n/a until refactor");
         }
         requires.add(tc);
 
@@ -346,6 +347,31 @@ public class TestNAR  {
             return true;
         }
 
+        public void toString(PrintStream out) {
+
+            if (error!=null) {
+                out.println(error);
+            }
+            out.print("@" + time + " ");
+            out.print(Arrays.toString(eventMeters) + "\n");
+
+            for (Task t : inputs) {
+                out.println("IN " + t);
+            }
+
+            cond.forEach(c ->
+                c.toString(out)
+            );
+
+//                    "Report{" +
+//                    "time=" + time +
+//                    ", eventMeters=" + Arrays.toString(eventMeters) +
+//                    ", error=" + error +
+//                    ", inputs=" + Arrays.toString(inputs) +
+//                    ", cond=" + cond +
+//                    ", stackElements=" + stackElements +
+//                    '}';
+        }
     }
 
     public TestNAR run() {
@@ -391,7 +417,8 @@ public class TestNAR  {
 
     protected void report(Report report, boolean success) {
 
-        String s = JSONOutput.stringFromFieldsPretty(report);
+        //String s = //JSONOutput.stringFromFieldsPretty(report);
+            //report.toString();
 
         //explain all validated conditions
         if (requires!=null) {
@@ -406,15 +433,18 @@ public class TestNAR  {
 
 
         if (success) {
-
+            report.toString(System.out);
         }
         else if (!success) {
+
             System.err.append("\n");
             System.err.append(trace.getBuffer());
-            assertTrue(s, false);
+            report.toString(System.err);
+
+            assertTrue(false);
         }
 
-        System.out.println(s);
+        //System.out.println(s);
     }
 
     public TestNAR run(long extraCycles) {

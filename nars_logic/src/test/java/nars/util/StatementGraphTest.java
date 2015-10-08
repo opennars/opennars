@@ -1,6 +1,7 @@
 package nars.util;
 
 import nars.NAR;
+import nars.clock.FrameClock;
 import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
 import nars.term.Statement;
@@ -17,7 +18,7 @@ public class StatementGraphTest {
     @Test
     public void test() {
 
-        NAR n = new Default(100,1,1,1);
+        NAR n = new Default(100,1,1,1, new FrameClock());
 
         StatementGraph m = new StatementGraph(n) {
             @Override public boolean containsStatement(Statement term) {

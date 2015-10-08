@@ -47,9 +47,13 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      * array of lists of items, for items on different level
      */
     public final SortedIndex<V> items;
+
+    //TODO move sampler features to subclass of CurveBag which specifically provides sampling
     public final ToIntFunction<CurveBag> sampler;
 
-
+    public CurveBag(int capacity) {
+        this(null, capacity, null);
+    }
     public CurveBag() {
         this(null, 0, CurveBag.power6BagCurve);
     }

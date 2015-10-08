@@ -189,7 +189,8 @@ public class NARControlFX extends HBox {
         private final SimpleStringProperty cpuLabel;
 
         private final NSlider cpuSlider;
-        boolean running = false; //will be inverted first time, so false
+
+        boolean running = false;
 
         public LoopPane(NARLoop loop) {
             super();
@@ -213,13 +214,9 @@ public class NARControlFX extends HBox {
 
             runButton.setOnAction(e -> {
 
-                running = !running;
+                running = (!running);
 
-                if (running) {
-                    updateLoop();
-                } else {
-                    pause();
-                }
+                updateLoop();
 
             });
 
@@ -273,6 +270,11 @@ public class NARControlFX extends HBox {
         }
 
         private void updateLoop() {
+            if (!running) {
+                pause();
+                return;
+            }
+
             double v = cpuSlider.value[0].get();
 
             //slider (0..1.0) -> millisecond fixed period

@@ -7,6 +7,7 @@ import nars.audio.SoundProducer;
 import nars.audio.granular.Granulize;
 import nars.audio.sample.SampleLoader;
 import nars.audio.sample.SonarSample;
+import nars.clock.FrameClock;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.nar.Default;
@@ -83,7 +84,7 @@ public class ConceptSonification extends FrameReaction {
     }
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
-        Default d = new Default(1000, 2, 1, 2);
+        Default d = new Default(1000, 2, 1, 2, new FrameClock());
         Audio a = new Audio(32);
 
         new ConceptSonification(d, a);

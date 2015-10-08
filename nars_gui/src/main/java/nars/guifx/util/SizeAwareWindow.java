@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import nars.clock.FrameClock;
 import nars.guifx.NARfx;
 import nars.guifx.NARide;
 import nars.nar.Default;
@@ -200,7 +201,7 @@ public class SizeAwareWindow extends Scene {
     };
 
     private static Supplier<Parent> Default = () -> {
-        return new NARide(new Default(1000, 1, 1, 3).loop());
+        return new NARide(new Default(1000, 1, 1, 3, new FrameClock()).loop());
     };
 
     private static Supplier<Parent> Row = () -> {

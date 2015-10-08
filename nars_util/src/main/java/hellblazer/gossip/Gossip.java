@@ -984,7 +984,9 @@ public class Gossip {
         dispatcher.execute(() -> {
             try {
                 GossipListener gossipListener = listener.get();
+
                 if (gossipListener != null) {
+                    System.out.println(state.getId() + " " + state.getState());
                     gossipListener.onSet(state.getId(), state.getState());
                 }
             } catch (Throwable e) {

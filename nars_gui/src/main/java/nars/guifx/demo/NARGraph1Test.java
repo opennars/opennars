@@ -5,6 +5,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import nars.Global;
 import nars.NAR;
+import nars.clock.FrameClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.DefaultNARGraph;
@@ -64,7 +65,7 @@ public class NARGraph1Test {
     public static void main(String[] args)  {
 
 
-        NAR n = new Default(512, 2,3,5);
+        NAR n = new Default(512, 2,3,5, new FrameClock());
 
         NARide.show(n.loop(), ide -> {
 

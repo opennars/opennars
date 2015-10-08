@@ -1,35 +1,34 @@
 package nars.meter.condition;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.io.JSONOutput;
 import nars.nal.nal7.Temporal;
-import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
+import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Task> {
+public class TaskCondition extends DefaultTask implements Serializable, Predicate<Task>, Consumer<Task> {
 
     //@Expose
 
-    @JsonSerialize(using= JSONOutput.TermSerializer.class)
-    public  Term term;
+    //@JsonSerialize(using= JSONOutput.TermSerializer.class)
+    //public  Term term;
 
     //@Expose
-    public  char punc;
+    //public  char punc;
 
     //@Expose
     public  float freqMin;
@@ -53,11 +52,11 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     //@Expose
-    protected long creationTime;
+    //protected long creationTime;
 
 
     //@Expose
-    public Tense tense = Tense.Eternal;
+    //public Tense tense = Tense.Eternal;
 
 
     public List<Task> valid;
@@ -67,9 +66,27 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
     protected TreeMap<Double,Task> similar;
 
+//    public static class StringDistance extends Item<String> {
+//
+//        private final String text;
+//
+//        public StringDistance(String s, String other) {
+//            super();
+//            this.text = s;
+//            int dist = Texts.levenshteinDistance(s, other);
+//            setPriority(1.0f / (1.0f + dist));
+//        }
+//
+//        @Override
+//        public String name() {
+//            return text;
+//        }
+//    }
+//
+//    CurveBag<String,StringDistance> similar2 = new CurveBag(16);
 
     public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-
+        super(n.task(sentenceTerm + punc));
 
         this.nar = n;
 
@@ -81,7 +98,8 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
         if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
 
-        this.creationTime = n.time();
+
+        setCreationTime(n.time());
         this.cycleStart = cycleStart;
         this.cycleEnd = cycleEnd;
         setEternal();
@@ -89,73 +107,10 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         this.freqMin = Math.max(0.0f, freqMin);
         this.confMax = Math.min(1.0f, confMax);
         this.confMin = Math.max(0.0f, confMin);
-        this.punc = punc;
-        this.term = n.term(sentenceTerm);
+        setPunctuation(punc);
+        setTerm(n.term(sentenceTerm));
     }
 
-
-
-//    public TaskCondition(NAR n, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
-//
-//        this.nar = n;
-//
-//        //TODO verify that channel is included in the listened events
-//
-//        this.relativeToCondition = relativeToCondition;
-//
-//        /*this.taskRemoved = */getTaskRemoved(n);
-//
-//        if (t.isEternal()) {
-//            setEternal();
-//            t.setTime(creationTimeOffset, Stamp.ETERNAL);
-//        }
-//        else {
-//            long oc = t.getOccurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
-//            setRelativeOccurrenceTime(oc, n.memory.duration());
-//            t.setTime(creationTimeOffset, oc);
-//        }
-//
-//
-//        this.cycleStart = this.cycleEnd = -1;
-//        if (t.isJudgmentOrGoal()) {
-//            float f = t.getFrequency();
-//            float c = t.getConfidence();
-//            float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/ 2.0f; //error tolerance epsilon
-//            this.freqMin = f - e;
-//            this.freqMax = f + e;
-//            this.confMin = c - e;
-//            this.confMax = c + e;
-//        }
-//        else {
-//            this.freqMin = this.freqMax =this.confMin = this.confMax = -1;
-//        }
-//        this.punc = t.getPunctuation();
-//        this.term = t.getTerm();
-//    }
-
-
-//    public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-//
-//
-//        this.relativeToCondition = false;
-//        /*this.taskRemoved = */getTaskRemoved(n);
-//
-//        if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
-//        if (confMax < confMin) throw new RuntimeException("confMax < confMin");
-//
-//        if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
-//
-//        this.creationTime = n.time();
-//        this.cycleStart = cycleStart;
-//        this.cycleEnd = cycleEnd;
-//        setEternal();
-//        this.freqMax = Math.min(1.0f, freqMax);
-//        this.freqMin = Math.max(0.0f, freqMin);
-//        this.confMax = Math.min(1.0f, confMax);
-//        this.confMin = Math.max(0.0f, confMin);
-//        this.punc = punc;
-//        this.term = n.term(sentenceTerm);
-//    }
 
 
 
@@ -195,29 +150,37 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         //we could also calculate geometric/cartesian vector distance
     }
 
-    /** task's tense is compared by its occurence time delta to the current time when processing */
-    public void setRelativeOccurrenceTime(long ocRelative, int duration) {
-        //may be more accurate if duration/2
+////    public void setRelativeOccurrenceTime(Tense t, int duration) {
+////        setRelativeOccurrenceTime(Stamp.getOccurrenceTime(t, duration), duration);
+////    }
+//    /** task's tense is compared by its occurence time delta to the current time when processing */
+//    public void setRelativeOccurrenceTime(long ocRelative, int duration) {
+//        //may be more accurate if duration/2
+//
+//        Tense tense;
+//        final float ocRel = ocRelative; //cast to float for this compare
+//        if (ocRel > duration/2f) tense = Tense.Future;
+//        if (ocRel < -duration/2f) tense = Tense.Past;
+//        else tense = Tense.Present;
+//
+//        setRelativeOccurrenceTime(tense, nar.memory.duration());
+//
+//    }
 
-        if (ocRelative > duration/2) tense = Tense.Future;
-        if (ocRelative < -duration/2) tense = Tense.Past;
-        else tense = Tense.Present;
-    }
-    public void setRelativeOccurrenceTime(long creationTime, int ocRelative, int duration) {
-        this.creationTime = creationTime;
-        setRelativeOccurrenceTime(ocRelative, duration);
-    }
 
-    public void setEternal() {
-        this.tense = Tense.Eternal;
-    }
-    public boolean isEternal() { return this.tense == Tense.Eternal; }
+//
+//    public void setRelativeOccurrenceTime(long creationTime, int ocRelative, int duration) {
+//        setCreationTime(creationTime);
+//        setRelativeOccurrenceTime(ocRelative, duration);
+//    }
+
+
 
     public boolean matches(Task task) {
         if (task == null) {
             return false;
         }
-        if (task.getPunctuation() != punc)
+        if (task.getPunctuation() != getPunctuation())
             return false;
         //long now = nar.time();
 
@@ -275,25 +238,25 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
                     final int durationWindowFar = true ? durationWindowNear : durationWindow;
 
 
-                    long at = relativeToCondition ? creationTime : task.getCreationTime();
-
-                    final boolean tmatch;
-                    switch (tense) {
-                        case Past: tmatch = oc <= (-durationWindowNear + at); break;
-                        case Present: tmatch = oc >= (-durationWindowFar + at) && (oc <= +durationWindowFar + at); break;
-                        case Future: tmatch = oc > (+durationWindowNear + at); break;
-                        default:
+//                    long at = relativeToCondition ? getCreationTime() : task.getCreationTime();
+                    final boolean tmatch = false;
+//                    switch () {
+//                        //TODO write time matching
+////                        case Past: tmatch = oc <= (-durationWindowNear + at); break;
+////                        case Present: tmatch = oc >= (-durationWindowFar + at) && (oc <= +durationWindowFar + at); break;
+////                        case Future: tmatch = oc > (+durationWindowNear + at); break;
+//                        default:
                             throw new RuntimeException("Invalid tense for non-eternal TaskCondition: " + this);
-                    }
-                    if (!tmatch) {
-                        //beyond tense boundaries
-                        //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
-                        distance += 1; //tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
-                        match = false;
-                    }
-                    else {
-                        //System.out.println("matched time");
-                    }
+//                    }
+//                    if (!tmatch) {
+//                        //beyond tense boundaries
+//                        //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
+//                        distance += 1; //tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
+//                        match = false;
+//                    }
+//                    else {
+//                        //System.out.println("matched time");
+//                    }
 
             }
 
@@ -303,6 +266,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         //TODO use range of acceptable occurrenceTime's for non-eternal tests
 
 
+        char punc = getPunctuation();
         if ((punc == '.') || (punc == '!')) {
             float fr = task.getFrequency();
             float co = task.getConfidence();
@@ -329,6 +293,8 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
         if (distance > 0) {
             ensureSimilar();
+
+
 
             //TODO more efficient way than this
             if (!similar.values().contains(task))
@@ -391,10 +357,6 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 //        return succeeded  +": "  + JSONOutput.stringFromFields(this);
 //    }
 
-    public long getCreationTime() {
-        return creationTime;
-    }
-
 
     public Memory getMemory() {
         return nar.memory;
@@ -453,5 +415,10 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
     public final boolean isTrue() {
         return succeeded;
+    }
+
+    public void toString(PrintStream out) {
+        //TODO
+        out.println(toString());
     }
 }

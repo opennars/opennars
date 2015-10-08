@@ -3,6 +3,7 @@ package nars.nar;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
+import nars.clock.FrameClock;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meter.DerivationGraph;
@@ -67,7 +68,7 @@ public class SingleStepNAR extends Default {
 
 
     public SingleStepNAR() {
-        super(64, 1, 1, 16);
+        super(256, 1, 2, 2, new FrameClock());
 
         Global.DEBUG = true;
 

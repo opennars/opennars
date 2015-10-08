@@ -4,7 +4,6 @@ import hellblazer.gossip.configuration.GossipConfiguration;
 import nars.util.data.list.FasterList;
 import org.infinispan.marshall.core.JBossMarshaller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
@@ -32,6 +31,7 @@ public class GossipPeer implements GossipListener {
         config.endpoint = new InetSocketAddress("localhost", port);
         config.gossipInterval = 1;
 
+
         gossip = config.construct();
 
         gossip.setListener(this);
@@ -58,17 +58,27 @@ public class GossipPeer implements GossipListener {
 
     public UUID put(UUID u, Serializable j) {
 
-        byte[] ba;
+//        byte[] ba;
+//        try {
+
+        byte[] ba = new byte[0];
         try {
             ba = marshaller.objectToByteBuffer(j);
-            //serialize data
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(ba);
-
         } catch (Exception e) {
-            e.printStackTrace();
+            log(e);
             return null;
         }
+
+        //serialize data
+            //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //baos.write(ba);
+
+
+
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
 
 
 //        try {

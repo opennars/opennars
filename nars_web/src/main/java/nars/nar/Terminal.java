@@ -1,5 +1,6 @@
 package nars.nar;
 
+import nars.clock.FrameClock;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.term.Term;
@@ -15,7 +16,7 @@ import nars.term.Term;
 public class Terminal extends Default {
 
     public Terminal() {
-        super(0,0,0,0);
+        super(0,0,0,0, new FrameClock());
     }
 
     @Override

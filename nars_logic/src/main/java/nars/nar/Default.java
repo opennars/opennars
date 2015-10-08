@@ -9,6 +9,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
+import nars.clock.Clock;
 import nars.clock.FrameClock;
 import nars.concept.*;
 import nars.link.TaskLink;
@@ -79,11 +80,11 @@ public class Default extends NAR implements ConceptBuilder {
      * Default DEFAULTS
      */
     public Default() {
-        this(1024, 1, 2, 3);
+        this(1024, 1, 2, 3, new FrameClock());
     }
 
-    public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        this(new LocalMemory(new FrameClock()), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
+    public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
+        this(new LocalMemory(clock), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {

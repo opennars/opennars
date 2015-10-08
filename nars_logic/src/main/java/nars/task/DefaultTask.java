@@ -100,6 +100,14 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         );
     }
 
+    /** clone constructor */
+    public DefaultTask(Task<T> task) {
+        this(task.getTerm(), task.getPunctuation(), task.getTruth(),
+                task.getPriority(), task.getDuration(), task.getQuality(),
+                task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
+
+    }
+
 
     protected void setTerm(T t) {
         //if (Global.DEBUG) {

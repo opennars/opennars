@@ -17,6 +17,7 @@ public class NARLoop implements Runnable {
 
     volatile int cyclesPerFrame = 1;
     volatile int periodMS = 0;
+    //private boolean running;
 
     //TODO make this into a SimpleIntegerProperty also
 
@@ -158,5 +159,12 @@ public class NARLoop implements Runnable {
         setPeriodMS(-1);
     }
 
-
+//    //TODO not well tested
+//    public void setRunning(boolean r) {
+//        this.running = r;
+//    }
+//
+//    public boolean isRunning() {
+//        return running;
+//    }
 }

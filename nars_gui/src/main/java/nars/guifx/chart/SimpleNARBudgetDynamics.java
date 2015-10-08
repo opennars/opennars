@@ -2,6 +2,7 @@ package nars.guifx.chart;
 
 import nars.Global;
 import nars.NAR;
+import nars.clock.FrameClock;
 import nars.meter.MemoryBudget;
 import nars.nar.Default;
 import nars.narsese.NarseseParser;
@@ -44,7 +45,7 @@ public class SimpleNARBudgetDynamics {
         float qua = 0.25f;
 
 
-        Default d = new Default(1000, 1, 3, 4); //Equalized(1024, 1, 3);
+        Default d = new Default(1000, 1, 3, 4, new FrameClock()); //Equalized(1024, 1, 3);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
 

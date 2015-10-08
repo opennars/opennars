@@ -108,7 +108,16 @@ public class VariableNormalization implements VariableTransform {
 //            renamed = !vv.name().equals(v.name());
 //        }
 
+        /* 1.6.4:
+        CharSequence vname = v.name();
+        if (!v.hasVarIndep())
+            vname = vname + " " + v.getScope().name(); */
+
+
+        //int context = v.op() == Op.VAR_DEPENDENT ? -1 : serial;
         int context = -1; //(v.op() != Op.VAR_DEPENDENT) ? -1 : serial;
+        //int context = v.op() == Op.VAR_INDEPENDENT ? System.identityHashCode(v) : -1;
+
         IntObjectPair<Variable> scoping = PrimitiveTuples.pair(context, v);
 
 

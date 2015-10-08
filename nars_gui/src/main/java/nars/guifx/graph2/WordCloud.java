@@ -1,6 +1,7 @@
 package nars.guifx.graph2;
 
 import nars.NAR;
+import nars.clock.FrameClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.layout.CanvasEdgeRenderer;
@@ -23,7 +24,7 @@ public class WordCloud extends DefaultNARGraph {
     public static void main(String[] args) throws IOException {
 
 
-        NAR n = new Default(256, 1,2,2);
+        NAR n = new Default(256, 1,2,2, new FrameClock());
 
         NARide.show(n.loop(), ide -> {
 
