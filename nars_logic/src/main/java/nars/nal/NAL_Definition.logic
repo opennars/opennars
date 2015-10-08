@@ -435,6 +435,11 @@
     (A --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A_1..n))), substitute($Y,A) |- (&&,(#X --> L),A_1..n), (Truth:Deduction)
     (A --> K), (($X --> L) ==> (&&,(#Y --> K),A_1..n)), substitute(#Y,A) |- (($X --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
 
+//precondition combiner inference rule (variable_unification6):
+
+    ((&&,C,A_1..n) ==> Z), ((&&,C,B_1..m) ==> Z) |- ((&&,A_1..n) ==> (&&,B_1..m)), (Truth:Abduction)
+    ((&&,C,A_1..n) ==> Z), ((&&,C,B_1..m) ==> Z) |- ((&&,B_1..m) ==> (&&,A_1..n)), (Truth:Abduction)
+
 //second level variable introduction
 
     (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Induction)
@@ -442,7 +447,6 @@
 
 ////NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
-
 
     C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
     C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
