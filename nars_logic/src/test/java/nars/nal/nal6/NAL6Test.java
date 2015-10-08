@@ -111,7 +111,7 @@ public class NAL6Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<($x,worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly and eats worms, then it is a bird.");
         tester.believe("<<$y --> flyer> ==> <$y --> [withWings]>>"); //en("If something can fly, then it has wings.");
-        tester.mustBelieve(cycles, "<(&&,<$1 --> [withWings]>,<worms --> (/,food,$1,_)>) ==> <$1 --> bird>>", 1.00f, 0.45f); //en("If something has wings and eats worms, then I guess it is a bird.");
+        tester.mustBelieve(cycles, "<(&&,<$1 --> [withWings]>,<($1,worms) --> food>) ==> <$1 --> bird>>", 1.00f, 0.45f); //en("If something has wings and eats worms, then I guess it is a bird.");
         tester.run();
     }
 
