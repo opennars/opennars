@@ -74,8 +74,8 @@ abstract public class NAR implements Serializable, Level {
                     "               IRC:  http://webchat.freenode.net/?channels=nars \n";
 
     float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
-    float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
-    float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
+    protected float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
+    protected float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
     float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
     float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
     float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;

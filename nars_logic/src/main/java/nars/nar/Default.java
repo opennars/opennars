@@ -171,8 +171,8 @@ public class Default extends NAR implements ConceptBuilder {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(24);
-        setTermLinkBagSize(32);
+        setTaskLinkBagSize(16);
+        setTermLinkBagSize(16);
 
 
         m.duration.set(5);

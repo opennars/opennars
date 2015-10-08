@@ -68,7 +68,8 @@ public class SingleStepNAR extends Default {
 
 
     public SingleStepNAR() {
-        super(256, 1, 2, 2, new FrameClock());
+        super(128, 2, 1, 3, new FrameClock());
+
 
         Global.DEBUG = true;
 
@@ -154,7 +155,7 @@ public class SingleStepNAR extends Default {
                             out.println("\t NAL" + i + " has 0 specific rules\n");
                             continue;
                         }
-                        float p = (((float) un) / (us)) * 100.0f;
+                        float p = (1f-(((float) un) / (us))) * 100.0f;
                         out.println("\t NAL" + i + " Tested " + (us - un) + "/" + (us) + " (" +
                                 Math.ceil((int) p) + "% tested, " + un + " not tested): ");
                         final int finalI = i;
