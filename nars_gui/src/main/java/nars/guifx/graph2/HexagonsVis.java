@@ -3,11 +3,13 @@ package nars.guifx.graph2;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.*;
 import nars.guifx.JFX;
@@ -36,6 +38,9 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         nodeScale.addListener((e) -> {
             nodeScaleCache = nodeScale.get();
         });
+
+
+
     }
     //public Function<Term,TermNode> nodeBuilder;
 
@@ -70,6 +75,61 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
                 return c;
             });
 
+    final Rectangle hoverPanel = new Rectangle();
+
+    final EventHandler<MouseEvent> mouseActivity = e -> {
+        if (!hoverPanel.isVisible()) {
+            //runLater(() -> {
+
+
+            if (e.getTarget() instanceof Node) {
+                //base.widthProperty().bind( hoverPanel.widthProperty() );
+                //base.heightProperty().bind( hoverPanel.heightProperty() );
+
+                hoverPanel.setStroke(Color.ORANGE);
+                hoverPanel.setStrokeWidth(0.05);
+                hoverPanel.setFill(new Color(0.5, 0.5, 0.5, 0.5));
+
+
+                Node n = (Node)e.getTarget();
+
+                if (!(n instanceof TermNode))
+                    n = n.getParent();
+                //TODO recurse n levels up the tree
+
+                System.out.println(n + " " + n.getBoundsInParent());
+
+                hoverPanel.xProperty().bind(n.translateXProperty());
+                hoverPanel.yProperty().bind(n.translateYProperty());
+                hoverPanel.setWidth(300.0);
+                hoverPanel.setHeight(200.0);
+
+                hoverPanel.setVisible(true);
+            }
+
+            //});
+        }
+    };
+    EventHandler<MouseEvent> mouseUntivity = e -> {
+        if (hoverPanel.isVisible()) {
+            hoverPanel.setVisible(false);
+            //base.setStroke(null);
+            //base.setStrokeWidth(0);
+        }
+    };
+
+
+    @Override
+    public void start(NARGraph g) {
+        hoverPanel.setVisible(false);
+        hoverPanel.setMouseTransparent(true);
+        g.getChildren().add(hoverPanel);
+    }
+
+    @Override
+    public void stop(NARGraph g) {
+        g.getChildren().remove(hoverPanel);
+    }
 
     public class HexTerm2Node extends TermNode {
 
@@ -77,7 +137,7 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         private final Canvas base;
 
         private GraphicsContext g;
-        private boolean hover = false;
+
         private GraphicsContext d;
 
         public HexTerm2Node(Term t) {
@@ -93,29 +153,17 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
             base.setOnMouseClicked(e -> {
                 //System.out.println("click " + e.getClickCount());
                 if (e.getClickCount() == 2) {
-                    if (c != null)
-                        NARfx.run((a,b) -> {
+                    if (c != null) {
+                        //NARfx.run((a, b) -> {
                             System.out.println("doubleclicked " + t);
-                        });
+                        //});
+                    }
                 }
             });
 
-//            EventHandler<MouseEvent> mouseActivity = e -> {
-//                if (!hover) {
-////                    base.setStroke(Color.ORANGE);
-////                    base.setStrokeWidth(0.05);
-//                    hover = true;
-//                }
-//            };
-//            //base.setOnMouseMoved(mouseActivity);
-//            base.setOnMouseEntered(mouseActivity);
-//            base.setOnMouseExited(e -> {
-//                if (hover) {
-////                    base.setStroke(null);
-////                    base.setStrokeWidth(0);
-//                    hover = false;
-//                }
-//            });
+            base.setOnMouseEntered(mouseActivity);
+
+            base.setOnMouseExited(mouseUntivity);
 
             setPickOnBounds(false);
             setManaged(false);

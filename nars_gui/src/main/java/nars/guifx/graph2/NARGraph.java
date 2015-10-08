@@ -304,6 +304,14 @@ public class NARGraph<V> extends Spacegraph {
                 System.out.println("no signal");
             }
         });
+        vis.addListener((l, p, n) -> {
+            NARGraph<V> gg = NARGraph.this;
+            if (p!=null)
+                p.stop(gg);
+            if (n!=null) {
+                n.start(gg);
+            }
+        });
 
 
         //.onEachNthFrame(this::updateGraph, 1);
@@ -327,6 +335,7 @@ public class NARGraph<V> extends Spacegraph {
         parentProperty().addListener(v -> checkVisibility());
         visibleProperty().addListener(v -> checkVisibility());
         runLater(() -> checkVisibility() );
+
 
         source.set(g);
 
