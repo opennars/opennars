@@ -405,8 +405,12 @@
     (&&,(#X --> S), A_1..n), (M --> S), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
     (&&,(S --> #X), A_1..n), (S --> M), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
+//conditional abduction by dependent variable
+
+    ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A_1..n) ==> Z) |- (A --> B), (Truth:Abduction)
+    ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R)) ==> Z) |- (A --> B), (Truth:Abduction)
+
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
-//Decomposition with elimination of a variable
 
     (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
     ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
@@ -421,7 +425,7 @@
     (P <=> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
-//second level variable elimination (let's complete rest of NAL6 first)
+//second level variable elimination (termlink level2 growth needed in order for these rules to work)
 
     (A --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A_1..n))), substitute($Y,A) |- (&&,(#X --> L),A_1..n), (Truth:Deduction)
     (A --> K), (($X --> L) ==> (&&,(#Y --> K),A_1..n)), substitute(#Y,A) |- (($X --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
