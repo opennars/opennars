@@ -9,6 +9,14 @@ public interface VisModel<T extends TermNode> extends Consumer<T> {
 
     T newNode(Term t);
 
+    default void start(NARGraph g) {
+
+    }
+
+    default void stop(NARGraph gg) {
+
+    }
+
 
 //    void apply(TermNode t);
 
