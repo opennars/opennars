@@ -263,6 +263,9 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
 
         char punc = getPunctuation();
         if ((punc == '.') || (punc == '!')) {
+            if(task.getTruth() == null) {
+                return false;
+            }
             float fr = task.getFrequency();
             float co = task.getConfidence();
 

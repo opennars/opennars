@@ -19,10 +19,7 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -169,27 +166,30 @@ public class RuleMatch extends FindSubst {
             return null;
 
         //for now we assume 1
-        Map<Term,Term> Outp = null;
+        Map<Term,Term> ApplySubsSet = new HashMap<Term,Term>();
 
         for (final PreCondition c : outcome.afterConclusions) {
 
             if(c instanceof Substitute) {
                 //here we are interested how to transform the second to the first
                 Inp = map2;
+                for(Term t : this.map2.keySet()) { //doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
+                    ApplySubsSet.putAll(Inp);
+                }
             }
 
             if (!c.test(this))
                 return null;
 
             if(c instanceof Substitute) {
-                Outp = this.Outp;
+                ApplySubsSet.putAll(this.Outp);
             }
         }
 
         derivedTerm = resolve(derivedTerm);
 
-        if(Outp!=null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
-            derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
+        if(ApplySubsSet!=null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
+            derivedTerm = ((Compound) derivedTerm).applySubstitute(ApplySubsSet);
         }
 
         if (!(derivedTerm instanceof Compound))
@@ -433,10 +433,10 @@ public class RuleMatch extends FindSubst {
 
         return rules.
                 //filter( /* filter the entire rule */ pcFilter).
-                map(r -> run(r)).
+                        map(r -> run(r)).
                 flatMap(p -> Stream.of(p)).
                 //filter( /* filter each rule postcondition */ pcFilter).
-                map(p -> apply(p)).
+                        map(p -> apply(p)).
                 filter(t -> t != null);
     }
 
