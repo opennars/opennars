@@ -452,11 +452,11 @@ public class SpaceGrapher<V> extends Spacegraph {
     }
 
 
-    final static int defaultIdlePeriodMS = 30; //~60hz/2
+    final static int defaultFramePeriodMS = 30; //~60hz/2
 
     protected synchronized void checkVisibility() {
         if (isVisible() && getParent() != null && getScene()!=null) {
-            start(defaultIdlePeriodMS);
+            start(defaultFramePeriodMS);
         } else
             stop();
     }

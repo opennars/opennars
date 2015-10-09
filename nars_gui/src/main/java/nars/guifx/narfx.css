@@ -49,10 +49,21 @@
     -flatter-blue: rgb(0.0, 184.0, 222.0);*/
 
 }
+
 .button {
     -fx-padding: 5 5 5 5;
+    -fx-background: rgb(10, 10, 10);
     /*-fx-background: transparent;*/
 }
+
+/*
+.spaceselector {
+    -fx-fill: transparent !important;
+    -fx-stroke-width: 4px 4px 4px 4px !important;
+    -fx-stroke: rgb(255,100,10) !important;
+}
+*/
+
 /*.button:hover {
 
 }
@@ -62,6 +73,7 @@
 
 .thread_control .button {
     -fx-padding: 8 16 8 16;
+
 }
 
 
@@ -353,8 +365,8 @@
 }
 
 .title-bar .icon {
-    -fx-alignment: center-left;
-    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    /*-fx-alignment: center-left;
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
 
 .title-bar .title-label {

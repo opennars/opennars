@@ -49,6 +49,7 @@ public class TermNode extends Group {
         super();
 
         setManaged(false);
+        setPickOnBounds(true);
 
         this.term = t;
 

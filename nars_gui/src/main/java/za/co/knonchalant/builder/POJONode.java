@@ -394,7 +394,6 @@ public class POJONode {
             String name = getName(method);
             Label label = new Label(name);
             label.getStyleClass().addAll("built-label");
-            label.setPrefWidth(200);
             Node valueNode = getValueField(object, method, readOnly || getSetter(method) == null, name, params);
 
             methodBox.getChildren().addAll(label, valueNode);

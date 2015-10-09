@@ -1,7 +1,9 @@
 package nars.guifx.graph2;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -32,6 +34,8 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
 
     @Range(min=0, max=16)
     public final SimpleDoubleProperty nodeScale = new SimpleDoubleProperty(1.0);
+    private SpaceGrapher graph;
+    final Rectangle hoverPanel = new Rectangle();
 
     public HexagonsVis() {
         super();
@@ -40,6 +44,14 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         });
 
 
+        hoverPanel.setFill(Color.ORANGE);
+        //hoverPanel.setStrokeWidth(6);
+        //hoverPanel.setFill(new Color(0.5, 0.25, 0.25, 0.5) /* Color.TRANSPARENT */ );
+        //hoverPanel.getStyleClass().add("spaceselector");
+
+        hoverPanel.setSmooth(false);
+        hoverPanel.setMouseTransparent(true);
+        hoverPanel.setStrokeType(StrokeType.OUTSIDE);
 
     }
     //public Function<Term,TermNode> nodeBuilder;
@@ -75,10 +87,12 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
                 return c;
             });
 
-    final Rectangle hoverPanel = new Rectangle();
+
+
+    Node selected = null;
 
     final EventHandler<MouseEvent> mouseActivity = e -> {
-        if (!hoverPanel.isVisible()) {
+        //if (!hoverPanel.isVisible()) {
             //runLater(() -> {
 
 
@@ -86,33 +100,92 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
                 //base.widthProperty().bind( hoverPanel.widthProperty() );
                 //base.heightProperty().bind( hoverPanel.heightProperty() );
 
-                hoverPanel.setStroke(Color.ORANGE);
-                hoverPanel.setStrokeWidth(0.05);
-                hoverPanel.setFill(new Color(0.5, 0.5, 0.5, 0.5));
 
 
-                Node n = (Node)e.getTarget();
+                Node selected = (Node)e.getTarget();
 
-                if (!(n instanceof TermNode))
-                    n = n.getParent();
+                if (!(selected instanceof TermNode))
+                    selected = selected.getParent();
                 //TODO recurse n levels up the tree
 
-                System.out.println(n + " " + n.getBoundsInParent());
-
-                hoverPanel.xProperty().bind(n.translateXProperty());
-                hoverPanel.yProperty().bind(n.translateYProperty());
-                hoverPanel.setWidth(300.0);
-                hoverPanel.setHeight(200.0);
-
-                hoverPanel.setVisible(true);
+                setSelected(selected);
             }
 
             //});
-        }
+        //}
     };
+
+    ;
+    final ChangeListener changes = (c, p, v) -> {
+        if (this.selected == null) return;
+        updateSelection();
+    };
+
+
+    void updateSelection() {
+        final Rectangle hp = this.hoverPanel;
+        //System.out.print("hoverpanel -> " + v);
+
+        Bounds v = this.selected.localToScene(selected.getLayoutBounds());
+//        System.out.println("\t" + v);
+//        System.out.println("\t\t" + hp.isVisible() + " " + hp.getLayoutBounds());
+        //hp.setLayoutX();
+        //hp.setLayoutX(v.getMinY());
+
+        //TODO use more efficient transform
+        Bounds lb = hp.sceneToLocal(v);
+        double ww = lb.getWidth();
+        double hh = lb.getHeight();
+
+        double b = 8; //border width
+
+        //hp.setX(0.5*(lb.getMinX()+lb.getMaxX()));
+        //hp.setY(0.5*(lb.getMinY()+lb.getMaxY()));
+        hp.setX(lb.getMinX()-b);
+        hp.setY(lb.getMinY()-b);
+
+        hp.setWidth(ww+b*2);
+        hp.setHeight(hh+b*2);
+    }
+
+    private synchronized void setSelected(Node nextSelect) {
+
+        if (nextSelect == this.selected) {
+            return;
+        }
+        synchronized(hoverPanel) {
+
+            if (this.selected!=null) {
+                this.selected.layoutBoundsProperty().removeListener(changes);
+            }
+
+
+            this.selected = nextSelect;
+
+            if (this.selected!=null) {
+                this.selected.translateXProperty().addListener(changes);
+                hoverPanel.setVisible(true);
+            }
+            else {
+                hoverPanel.setVisible(false);
+            }
+
+
+                            //hoverPanel.translateXProperty().bind(graph.translate.xProperty());
+                            //hoverPanel.translateYProperty().bind(graph.translate.yProperty());
+            //
+            //                hoverPanel.xProperty().bind(n.translateXProperty());
+            //                hoverPanel.yProperty().bind(n.translateYProperty());
+            //                hoverPanel.setWidth(300.0);
+            //                hoverPanel.setHeight(200.0);
+
+
+        }
+    }
+
     EventHandler<MouseEvent> mouseUntivity = e -> {
         if (hoverPanel.isVisible()) {
-            hoverPanel.setVisible(false);
+            setSelected(null);
             //base.setStroke(null);
             //base.setStrokeWidth(0);
         }
@@ -121,14 +194,30 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
 
     @Override
     public void start(SpaceGrapher g) {
+        if (this.graph!=null)
+            throw new RuntimeException("already running this vis");
+
+        this.graph = g;
         hoverPanel.setVisible(false);
         hoverPanel.setMouseTransparent(true);
-        g.getChildren().add(hoverPanel);
+
+
+        //TODO see if this is destructive
+        g.setOnMouseMoved((MouseEvent e) -> {
+            //System.out.println("mouse moved: " + e.getTarget());
+            if (this.selected == null) return;
+            updateSelection();
+        });
+
+        //HACK this is supposed to insert the selection hover directly behind the vertices in NARGraph.. do a more robust index determination here
+        g.getChildren().add(0, hoverPanel);
     }
 
     @Override
     public void stop(SpaceGrapher g) {
         g.getChildren().remove(hoverPanel);
+        g.setOnMouseMoved(null); //TODO see if this is destructive
+        this.graph = null;
     }
 
     public class HexTerm2Node extends TermNode {
