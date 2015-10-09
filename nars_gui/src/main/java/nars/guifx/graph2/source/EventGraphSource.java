@@ -1,7 +1,10 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.source;
 
 import nars.Global;
 import nars.NAR;
+import nars.guifx.graph2.GraphSource;
+import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.layout.IterativeLayout;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.util.event.Active;
@@ -15,15 +18,17 @@ import java.util.function.BiConsumer;
 /**
  * Created by me on 10/9/15.
  */
-public class EventGraphSource implements GraphSource,
-        BiConsumer<String /* fieldName*/, Object /* value */> {
+public class EventGraphSource implements GraphSource<Task>,
+        IterativeLayout<TermNode<Task>>,
+        BiConsumer<String /* fieldName*/, Object /* value */>
+{
 
-    public final IntervalTree<Long,Set<TermNode>> map = new IntervalTree();
+    public final IntervalTree<Long,Set<TermNode<Task>>> map = new IntervalTree();
 
 
     private final NAR nar;
-    private SpaceGrapher graph;
-    private Active regs;
+    private SpaceGrapher graph = null;
+    private Active regs = null;
 
     public EventGraphSource(NAR n) {
         this.nar = n;
@@ -36,11 +41,13 @@ public class EventGraphSource implements GraphSource,
 
         this.graph = g;
 
-        Set<TermNode> start = Global.newHashSet(1);
-        start.add(g.getOrCreateTermNode(Atom.the("START")));
-        map.put(nar.time(), nar.time(), start);
+        if (map.isEmpty()) {
+            Set<TermNode<Task>> start = Global.newHashSet(1);
+            start.add(g.getOrCreateTermNode(nar.task("start:now.")));
+            map.put(nar.time(), nar.time(), start);
+        }
 
-        g.layout.set(this);
+        //g.layout.set(this);
 
 
         //.stdout()
@@ -60,15 +67,18 @@ public class EventGraphSource implements GraphSource,
 
     }
 
-    Set<TermNode> l = Global.newHashSet(4);
+    final Set<TermNode<Task>> l = Global.newHashSet(4);
 
-    private void update(SpaceGrapher g) {
+    @Override
+    public void accept(SpaceGrapher<Task, TermNode<Task>> g) {
         long now = 100;
         long oldest = 0;
 
-        map.root.getOverlap(new Interval<Long>(oldest, now),
+
+        map.root.getOverlap(new Interval(oldest, now),
             (s)-> l.addAll(s)
         );
+
 
         g.setVertices(l);
 
@@ -76,20 +86,19 @@ public class EventGraphSource implements GraphSource,
 
     }
 
-
     @Override
     public void accept(String s, Object o) {
 
-        System.out.println(s + " " + o );
+
 
         //temporal features, extract
         if (o instanceof Task) {
             Task t = (Task)o;
             Interval<Long> ii = new Interval<>(
                     (long)(t.getCreationTime()-1.0),
-                    (long)t.getCreationTime());
+                    t.getCreationTime());
 
-            Set<TermNode> exists = map.getEqual(ii);
+            Set<TermNode<Task>> exists = map.getEqual(ii);
             if (exists == null) {
                 exists = Global.newHashSet(1);
                 map.put(ii, exists);
@@ -99,10 +108,12 @@ public class EventGraphSource implements GraphSource,
                     taskAsTerm(t)
                     );
 
+
+
         }
 
         if (s.equals("eventFrameStart")) {
-            update(graph);
+            accept(graph);
         }
     }
 
@@ -111,7 +122,18 @@ public class EventGraphSource implements GraphSource,
     }
 
     @Override
-    public void accept(Object o) {
+    public void init(TermNode<Task> n) {
+
+        System.out.println("EVeNT: " + n );
+        System.out.println("\t" + n.getLayoutBounds());
+        System.out.println("\t" + n.isVisible());
+        System.out.println("\t" + n.getChildren());
+    }
+
+    @Override
+    public void run(SpaceGrapher graph, int iterations) {
 
     }
+
+
 }

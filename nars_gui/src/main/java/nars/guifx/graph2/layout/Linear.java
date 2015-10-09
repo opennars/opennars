@@ -1,7 +1,7 @@
 package nars.guifx.graph2.layout;
 
-import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.source.SpaceGrapher;
 
 /**
  * for layouts which process items according to their
@@ -9,10 +9,7 @@ import nars.guifx.graph2.TermNode;
  */
 public abstract class Linear<V extends TermNode<?>> implements IterativeLayout<V> {
 
-    @Override
-    public void init(V n) {
-        //n/a
-    }
+
 
     /** sets the position of a vertex at specified position order */
     public abstract void setPosition(TermNode vertex, int sequence, int max);

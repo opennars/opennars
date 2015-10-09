@@ -17,7 +17,6 @@ package automenta.vivisect.dimensionalize;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.IterativeLayout;
-import nars.term.Termed;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -52,7 +51,7 @@ import java.util.function.Consumer;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-abstract public class HyperassociativeMap<N extends Termed> implements IterativeLayout<TermNode<N>> {
+abstract public class HyperassociativeMap<N extends Comparable> implements IterativeLayout<TermNode<N>> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -108,11 +107,10 @@ abstract public class HyperassociativeMap<N extends Termed> implements Iterative
     }
 
     @Deprecated public ArrayRealVector getPosition(TermNode<N> node) {
-        ArrayRealVector location = coordinates.get(node);
-        if (location == null) {
-            location = newVector();
-            coordinates.put(node, location);
-        }
+        ArrayRealVector location = coordinates.computeIfAbsent(node,
+                (n) -> {
+                    return newVector();
+                });
         getPosition(node, location.getDataRef());
         return location;
     }
@@ -466,7 +464,8 @@ abstract public class HyperassociativeMap<N extends Termed> implements Iterative
         double nodeSpeed = getSpeedFactor(nodeToAlign);
 
         ArrayRealVector originalPosition = new ArrayRealVector(new double[2], true);
-            //getCurrentPosition(nodeToAlign);
+        getPosition(nodeToAlign);
+        //getCurrentPosition(nodeToAlign);
         nodeToAlign.getPosition(originalPosition.getDataRef());
 
         if (nodeSpeed == 0) return originalPosition;

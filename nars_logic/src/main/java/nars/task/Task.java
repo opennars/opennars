@@ -47,7 +47,7 @@ import java.util.Set;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence<T>>, Truthed {
+public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence<T>>, Truthed, Comparable {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {

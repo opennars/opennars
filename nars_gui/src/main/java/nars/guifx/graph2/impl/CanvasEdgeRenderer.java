@@ -1,15 +1,16 @@
-package nars.guifx.graph2.layout;
+package nars.guifx.graph2.impl;
 
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
-import nars.guifx.graph2.DefaultVis;
-import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.scene.DefaultVis;
+import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.ColorMatrix;
+import nars.term.Termed;
 
 /**
  * Created by me on 9/6/15.
@@ -27,18 +28,18 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         }
     );*/
 
-    Canvas floorCanvas;
-    private GraphicsContext gfx;
-    private double tx;
-    private double ty;
-    private double s;
+    Canvas floorCanvas = null;
+    private GraphicsContext gfx = null;
+    private double tx = 0.0;
+    private double ty = 0.0;
+    private double s = 0.0;
 
 //    //for iterative auto-normalization
 //    public double maxPri = 1;
 //    public double minPri = 0;
 
-    double minWidth = 4;
-    double maxWidth = 8;
+    double minWidth = 2;
+    double maxWidth = 10;
 
     @Override
     public void accept(final TermEdge i) {
@@ -88,9 +89,14 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 
         //gfx.setStroke(colors.get(np));
         //gfx.setStroke(colors.get(np, te/(te+ta)));
-        gfx.setStroke(
-            TermNode.getTermColor(t.term, colors, p)
-        );
+
+        //HACK specific to Term instances
+        if (t.term instanceof Termed) {
+            gfx.setStroke(
+                    TermNode.getTermColor((Termed)t.term, colors, p)
+            );
+        }
+
         /*
             colors.get(
                 (t.term.op().ordinal()%colors.cc.length)/((double) Op.values().length),

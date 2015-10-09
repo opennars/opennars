@@ -1,4 +1,4 @@
-package nars.guifx.graph2;
+package nars.util;
 
 import java.util.function.DoubleConsumer;
 
@@ -11,8 +11,8 @@ import java.util.function.DoubleConsumer;
  *
  */
 public class DoubleSummaryReusableStatistics implements DoubleConsumer {
-    private long count;
-    private double sum;
+    private long count = 0L;
+    private double sum = 0.0;
     //private double sumCompensation; // Low order bits of sum
 //    private double simpleSum; // Used to compute right sum for non-finite inputs
     private double min = Double.POSITIVE_INFINITY;

@@ -6,12 +6,13 @@ import nars.Op;
 import nars.concept.Concept;
 import nars.guifx.util.ColorMatrix;
 import nars.term.Termed;
+import nars.util.DoubleSummaryReusableStatistics;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-public class TermNode<K extends Termed> extends Group {
+public class TermNode<K extends Comparable> extends Group {
 
 
     public static final TermNode[] empty = new TermNode[0];
@@ -37,9 +38,9 @@ public class TermNode<K extends Termed> extends Group {
     /**
      * cached from last set
      */
-    private double scaled;
-    private double tx;
-    private double ty;
+    private double scaled = 0.0;
+    private double tx = 0.0;
+    private double ty = 0.0;
 
 
 

@@ -1,12 +1,13 @@
 package nars.guifx.graph2.layout;
 
+import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.graph2.TermNode;
 import nars.task.Task;
-import nars.util.data.random.XORShiftRandom;
+import nars.task.stamp.Stamp;
+import nars.term.Term;
 
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * Displays the short-term history of concept activation
@@ -14,6 +15,7 @@ import java.util.Random;
  */
 public class ConceptComet extends HyperassociativeMap2D {
 
+    private final NAR nar;
     double axisTheta = 0;
 
     final double thickness = 250;
@@ -21,46 +23,78 @@ public class ConceptComet extends HyperassociativeMap2D {
     double now = 0; /* center of view */
     double cutoff = 50;
 
-    final Random rng = new XORShiftRandom();
+    public ConceptComet(NAR nar /* TODO take any clock */) {
+        this.nar = nar;
+        nar.onEachFrame(n -> {
+            this.now = nar.time();
 
-    protected void init() {
-        resetLearning();
-        setLearningRate(0.4f);
-        setRepulsiveWeakness(repulseWeakness.get());
-        setAttractionStrength(attractionStrength.get());
-        setMaxRepulsionDistance(250);
-        setEquilibriumDistance(0.05f);
+            //reset? update?
+        });
     }
+    //final Random rng = new XORShiftRandom();
+
+//    @Override
+//    protected void init() {
+//        resetLearning();
+//        setLearningRate(0.4f);
+//        setRepulsiveWeakness(repulseWeakness.get());
+//        setAttractionStrength(attractionStrength.get());
+//        setMaxRepulsionDistance(250);
+//        setEquilibriumDistance(0.05f);
+//    }
+
+
 
     @Override
     public void apply(TermNode node, double[] dataRef) {
 
-        if (node.c == null) {
-            node.setVisible(false);
-            return;
+
+
+        Task x;
+        if (node.term instanceof Task) {
+            x = (Task)(node.term);
         }
+        else if (node.term instanceof Term) {
+            if (node.c == null) {
+                node.setVisible(false);
+                return;
+            }
 
 
-        Iterator<Task> ii = node.c.iterateTasks(true, true, true, true);
-        if (!ii.hasNext()) {
-            node.setVisible(false);
-            return;
+            Iterator<Task> ii = node.c.iterateTasks(true, true, true, true);
+            if (!ii.hasNext()) {
+                node.setVisible(false);
+                return;
+            } else {
+                node.setVisible(true);
+            }
+
+            x = Concept.taskCreationTime.max(ii);
         }
         else {
-            node.setVisible(true);
+            System.out.println("Wtf is " + node);
+            node.setVisible(false);
+            return;
         }
 
-        Task x = Concept.taskCreationTime.max(
-                ii
-        );
 
-        double dt = now - x.getCreationTime();
+        long xCreation = x.getCreationTime();
+        if (xCreation <= Stamp.TIMELESS) {
+            xCreation = (long) now;
+        }
+
+        double dt = now - xCreation;
+        now = nar.time(); //Math.max(now, xCreation);
+
+        System.out.println(dt + " " + now);
+
         if (dt > cutoff) {
             node.setVisible(false);
             return;
         }
 
-        now = Math.max(now, x.getCreationTime());
+
+
 
         double y = dataRef[1];
         if ((y > thickness) || (y< -thickness)) {
@@ -69,7 +103,7 @@ public class ConceptComet extends HyperassociativeMap2D {
         }
 
         dataRef[0] = -(dt * timeScale);
-        node.move(dataRef[0], dataRef[1], 0.25, 0.01);
+        node.move(dataRef[0], dataRef[1], 0.5, 0.01);
 
     }
 

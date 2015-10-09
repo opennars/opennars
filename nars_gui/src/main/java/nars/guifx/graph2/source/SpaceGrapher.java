@@ -1,4 +1,4 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.source;
 
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
@@ -8,10 +8,13 @@ import javafx.scene.Parent;
 import nars.Global;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
-import nars.guifx.graph2.layout.CanvasEdgeRenderer;
+import nars.guifx.graph2.GraphSource;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.VisModel;
+import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.layout.None;
-import nars.term.Termed;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,7 +29,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Spacegraph {
+public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends Spacegraph {
 
     final Map<K, V> terms = new UnifiedMap();
     //new WeakValueHashMap<>();
@@ -57,7 +60,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
      *  and a method of rendering them
      *  TODO does not yet support collections which change but this is feasible
      *  */
-    static public <X extends Object, K extends Termed> SpaceGrapher<K,TermNode<K>>
+    static public <X extends Object, K extends Comparable> SpaceGrapher<K,TermNode<K>>
     forCollection(
             final Collection<X> c,
             final Function<X,K> termize,
@@ -284,6 +287,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
                     this.displayed = toDisplay;
                     getVertices().setAll(
                             active
+                            //toDisplay
                     );
                     //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
                 });

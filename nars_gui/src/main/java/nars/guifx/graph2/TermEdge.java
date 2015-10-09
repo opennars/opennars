@@ -7,18 +7,14 @@ import nars.link.TermLink;
 /**
  * Created by me on 9/5/15.
  */
-public class TermEdge /*implements ChangeListener*/ {
+public class TermEdge<N extends TermNode> /*implements ChangeListener*/ {
 
 
     public static final TermEdge[] empty = new TermEdge[0];
-    public final TermNode bSrc;
-    public final TermNode aSrc;
+    public final N aSrc, //source
+                    bSrc; //target
 
-    //        private final Translate translate;
-//        private final Rotate rotate;
-//        private final Scale scale;
-    //private AtomicBoolean changed = new AtomicBoolean(true);
-    public double len;
+    public double len = 0.0;
     public boolean visible = false;
 
     //TODO use a Half inner class for this
@@ -28,7 +24,7 @@ public class TermEdge /*implements ChangeListener*/ {
     public TaskLink taskLinkBA = null;
 
 
-    public TermEdge(TermNode aSrc, TermNode bSrc) {
+    public TermEdge(N aSrc, N bSrc) {
         super();
 
 
@@ -42,8 +38,8 @@ public class TermEdge /*implements ChangeListener*/ {
         //b = new TermEdgeHalf(bSrc, aSrc, this);
         //b.setVisible(false);
 
-        if (aSrc.term.getTerm().compareTo(bSrc.term.getTerm()) > 0) {
-            throw new RuntimeException("invalid term order for TermEdge: " + aSrc + " " + bSrc);
+        if (aSrc.term.compareTo(bSrc.term) > 0) {
+            throw new RuntimeException("invalid term order for TermEdge: " + aSrc + ' ' + bSrc);
         }
 
         //getChildren().setAll(a, b);
@@ -66,10 +62,10 @@ public class TermEdge /*implements ChangeListener*/ {
         //setCacheHint(CacheHint.DEFAULT);
     }
 
-    public void delete() {
+    //public void delete() {
 //            aSrc.localToSceneTransformProperty().removeListener(this);
 //            bSrc.localToSceneTransformProperty().removeListener(this);
-    }
+    //}
 
 //        @Override
 //        public void changed(ObservableValue observable, Object oldValue, Object newValue) {

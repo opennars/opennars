@@ -31,10 +31,11 @@ import static nars.Global.dereference;
 import static nars.Global.reference;
 
 /**
- * Created by me on 8/17/15.
+ * Mutable
  */
 @JsonSerialize(using = ToStringSerializer.class)
 public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
+
     /**
      * The punctuation also indicates the type of the Sentence:
      * Judgment, Question, Goal, or Quest.
@@ -235,6 +236,40 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     @Override
     public final int getDuration() {
         return duration;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (this == o) return 0;
+
+        Task t = (Task)o;
+        int tc;
+        tc = term.compareTo(t.getTerm());
+        if (tc != 0) return tc;
+        tc = Character.compare(punctuation, t.getPunctuation());
+        if (tc != 0) return tc;
+
+        if (truth!=null) {
+            tc = truth.toString().compareTo( t.getTruth().toString());
+            if (tc != 0) return tc;
+        }
+
+        tc = Long.compare( getOccurrenceTime(), t.getOccurrenceTime() );
+        if (tc!=0) return tc;
+
+        long[] e1 = getEvidence();
+        long[] e2 = t.getEvidence();
+        tc = Integer.compare(e1.length,e2.length);
+        if (tc!=0) return tc;
+
+        for (int i = 0; i < e1.length; i++) {
+            tc = Long.compare(e1[i],e2[i]);
+            if (tc!=0) return tc;
+        }
+
+        //TODO merge contents for instance sharing?
+
+        return 0;
     }
 
     @Override

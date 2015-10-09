@@ -5,10 +5,11 @@ import nars.NAR;
 import nars.clock.FrameClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
-import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
+import nars.guifx.graph2.layout.ConceptComet;
 import nars.guifx.graph2.scene.DefaultVis;
 import nars.guifx.graph2.source.DefaultNARGraph;
+import nars.guifx.graph2.source.EventGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
@@ -17,7 +18,7 @@ import nars.nar.Default;
 /**
  * Created by me on 8/15/15.
  */
-public class NARGraph1Test {
+public class NARTimeGraph1Test {
 
     static {
         DerivationRules.maxVarArgsToMatch = 2;
@@ -27,7 +28,7 @@ public class NARGraph1Test {
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.8f;
 
 
-        n.memory.conceptForgetDurations.set(8);
+        n.memory.conceptForgetDurations.set(6);
         n.memory.termLinkForgetDurations.set(2);
         n.memory.taskLinkForgetDurations.set(2);
 
@@ -43,21 +44,18 @@ public class NARGraph1Test {
 
         SpaceGrapher<?,?> g = new DefaultNARGraph(
 
-                new ConceptsSource(n),
+                new EventGraphSource(n),
 
 
-                128,
+                64,
 
                 new DefaultVis(),
 
 
-                new CanvasEdgeRenderer() {
-                    @Override
-                    protected final void clear(double w, double h) {
-                        clearFade(w,h);
-                    }
-                });
+                new CanvasEdgeRenderer()
+        );
 
+        g.layout.set(new ConceptComet(n));
 
 
 

@@ -1,8 +1,8 @@
 package nars.guifx.graph2.layout;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.source.SpaceGrapher;
 
 import java.util.function.BiConsumer;
 import java.util.function.ToDoubleFunction;
@@ -17,11 +17,11 @@ public class Circle implements IterativeLayout {
 
 
 
-    public void run(TermNode[] verts,
-                    //PreallocatedResultFunction<N,double[]> getPosition,
-                    ToDoubleFunction<TermNode> radiusFraction,
-                    ToDoubleFunction<TermNode> angle,
-                    BiConsumer<TermNode, double[]> setPosition) {
+    public static void run(TermNode[] verts,
+                           //PreallocatedResultFunction<N,double[]> getPosition,
+                           ToDoubleFunction<TermNode> radiusFraction,
+                           ToDoubleFunction<TermNode> angle,
+                           BiConsumer<TermNode, double[]> setPosition) {
 
 
         double d[] = new double[2];
@@ -43,8 +43,8 @@ public class Circle implements IterativeLayout {
     public void run(SpaceGrapher graph, int iterations) {
         final TermNode[] termList = graph.displayed;
 
-        double[] i = new double[1];
-        double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
+        //double[] i = new double[1];
+        //double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
 
         final int num = graph.maxNodes.get(); //termList.length;
         double radiusMin = num * this.radiusMin.get();
@@ -53,9 +53,7 @@ public class Circle implements IterativeLayout {
         run(termList,
                 (v) -> {
                     double r = (v.c != null ? v.c.getPriority() : 0);
-                    double min = radiusMin;
-                    double max = radiusMax;
-                    return r * (max - min) + min;
+                    return r * (radiusMax - radiusMin) + radiusMin;
                 },
                 (v) -> {
                     return Math.PI * 2 * (v.term.hashCode() % 8192) / 8192.0;
@@ -66,11 +64,6 @@ public class Circle implements IterativeLayout {
                 (v, d) -> {
                     v.move(d[0], d[1]);//, 0.5f, 1f);
                 });
-
-    }
-
-    @Override
-    public void init(TermNode n) {
 
     }
 

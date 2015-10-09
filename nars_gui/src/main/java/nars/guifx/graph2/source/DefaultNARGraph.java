@@ -1,10 +1,16 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.source;
 
 import javafx.beans.InvalidationListener;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.demo.GenericControlPane;
+import nars.guifx.graph2.ConceptsSource;
+import nars.guifx.graph2.GraphSource;
+import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.VisModel;
+import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.*;
+import nars.guifx.graph2.scene.DefaultVis;
 import nars.term.Termed;
 
 import static javafx.application.Platform.runLater;
@@ -12,7 +18,7 @@ import static javafx.application.Platform.runLater;
 /**
  * provides defalut settings for a NARGraph view
  */
-public class DefaultNARGraph<K extends Termed, V extends TermNode<K>> extends SpaceGrapher<K,V> {
+public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K>> extends SpaceGrapher<K,V> {
 
     @Implementation(HyperOrganicLayout.class)
     @Implementation(HyperassociativeMap2D.class)
@@ -20,7 +26,7 @@ public class DefaultNARGraph<K extends Termed, V extends TermNode<K>> extends Sp
     @Implementation(Circle.class)
     @Implementation(Grid.class)
     @Implementation(HyperassociativeMap1D.class)
-    @Implementation(ConceptComet.class)
+    //@Implementation(TimeGraph.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
 

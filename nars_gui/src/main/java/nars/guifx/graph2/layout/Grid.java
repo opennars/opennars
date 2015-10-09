@@ -20,7 +20,7 @@ public class Grid extends Linear {
         double size = 50; //temproary
         double spacing = 50;
         int cols = (int) Math.ceil(Math.sqrt(max));
-        double x = i / cols, y = i % cols;
+        double x = i / ((double)cols), y = i % cols;
         v.move(x * (size + spacing/2), y* (size + spacing/2), 0.1, 0.05);
     }
 

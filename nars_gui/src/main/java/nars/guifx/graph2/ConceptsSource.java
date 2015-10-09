@@ -5,9 +5,11 @@ import javafx.beans.property.SimpleStringProperty;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
+import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
 import nars.nar.Default;
 import nars.term.Term;
+import nars.util.DoubleSummaryReusableStatistics;
 import nars.util.event.Active;
 
 import java.util.Iterator;
@@ -21,12 +23,12 @@ import static javafx.application.Platform.runLater;
 /**
  * Example Concept supplier with some filters
  */
-public class ConceptsSource implements GraphSource {
+public class ConceptsSource<T extends Term> implements GraphSource<T> {
 
 
     private final NAR nar;
     private Active regs = null;
-    private Set<TermNode> prevActive;
+    private Set<TermNode> prevActive = null;
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);
@@ -92,7 +94,7 @@ public class ConceptsSource implements GraphSource {
 
             int maxNodes = g.maxNodes.get();
 
-            Set<TermNode> active = new LinkedHashSet(maxNodes); //Global.newHashSet(maxNodes);
+            Set<TermNode> active = new LinkedHashSet<>(maxNodes); //Global.newHashSet(maxNodes);
 
             //synchronized (refresh)
             {
@@ -140,7 +142,7 @@ public class ConceptsSource implements GraphSource {
     }
 
 
-    public void refresh(SpaceGrapher g, TermNode tn, Concept cc/*, long now*/) {
+    public void refresh(SpaceGrapher<Term,TermNode<Term>> g, TermNode<Term> tn, Concept cc/*, long now*/) {
 
         //final Term source = c.getTerm();
 
@@ -148,7 +150,7 @@ public class ConceptsSource implements GraphSource {
         //conPri.accept(cc.getPriority());
         tn.priNorm = cc.getPriority();
 
-        final Term t = tn.term.getTerm();
+        final Term t = tn.term;
         final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
         final DoubleSummaryReusableStatistics te = tn.termLinkStat;
 
@@ -183,7 +185,7 @@ public class ConceptsSource implements GraphSource {
 
     }
 
-    public void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
+    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
 
 
         Term t = link.getTerm();
@@ -197,10 +199,11 @@ public class ConceptsSource implements GraphSource {
         }
     }
 
-    public TermEdge getConceptEdge(SpaceGrapher g, TermNode s, TermNode t) {
+    public static <K extends Comparable> TermEdge<TermNode<K>>
+        getConceptEdge(SpaceGrapher<K,TermNode<K>> g, TermNode<K> s, TermNode<K> t) {
 
         //re-order
-        final int i = s.term.getTerm().compareTo(t.term.getTerm());
+        final int i = s.term.compareTo(t.term);
         if (i == 0) return null;
             /*throw new RuntimeException(
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
@@ -222,7 +225,7 @@ public class ConceptsSource implements GraphSource {
     }
 
     @Override
-    public void accept(Object o) {
+    public void accept(SpaceGrapher<T, TermNode<T>> tTermNodeSpaceGrapher) {
 
     }
 }

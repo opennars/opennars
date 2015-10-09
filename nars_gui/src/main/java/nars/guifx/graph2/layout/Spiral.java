@@ -22,13 +22,5 @@ public class Spiral extends Linear {
     }
 
 
-    @Override
-    public double getRadius(TermNode vertex) {
-        return 0;
-    }
 
-    @Override
-    public void init(TermNode n) {
-
-    }
 }

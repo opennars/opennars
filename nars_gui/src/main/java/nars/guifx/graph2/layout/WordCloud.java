@@ -1,6 +1,6 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.layout;
 
-import nars.guifx.graph2.layout.IterativeLayout;
+import nars.guifx.graph2.VisModel;
 
 /**
  * TODO generic wordcloud/termcloud widget

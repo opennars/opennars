@@ -3,18 +3,17 @@ package nars.guifx.graph2.layout;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.annotation.Range;
-import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermNode;
-import nars.term.Termed;
+import nars.guifx.graph2.source.SpaceGrapher;
 
 import java.util.function.Consumer;
 
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap<N> {
+public class HyperassociativeMap2D<N extends Comparable> extends HyperassociativeMap<N> {
     double scaleFactor = 1;
-    private TermNode[] termList;
+    private TermNode[] termList = null;
 
 
     //TODO equilibrum distance, speed, etc
