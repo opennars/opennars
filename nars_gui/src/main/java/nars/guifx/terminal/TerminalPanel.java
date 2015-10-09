@@ -6,8 +6,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -16,7 +14,6 @@ import java.io.PrintStream;
  * @author sergei.malafeev
  */
 public class TerminalPanel extends StackPane {
-    private static final Logger logger = LoggerFactory.getLogger(TerminalPanel.class);
     private TextArea textArea;
 
 
@@ -48,7 +45,8 @@ public class TerminalPanel extends StackPane {
                         try {
                             printStream.write(code);
                         } catch (IOException e) {
-                            logger.warn("failed to write to stream", e);
+                            e.printStackTrace();
+                            //logger.warn("failed to write to stream", e);
                         }
                     } else {
                         printStream.print(event.getText());

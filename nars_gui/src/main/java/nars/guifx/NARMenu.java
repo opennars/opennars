@@ -19,7 +19,7 @@ import static javafx.application.Platform.runLater;
  * to the left or right of anything else, which contains a set of
  * buttons for controlling a nar
  */
-public class NARControlFX extends HBox {
+public class NARMenu extends HBox {
 
 
     //private final NARWindow.FXReaction busyBackgroundColor;
@@ -30,7 +30,7 @@ public class NARControlFX extends HBox {
     public final Menu tool;
 
 
-    public NARControlFX(NAR n) {
+    public NARMenu(NAR n) {
         super();
 
         this.nar = n;

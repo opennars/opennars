@@ -1,7 +1,7 @@
 package nars.guifx.graph2.layout;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermNode;
 
 /**
@@ -19,7 +19,7 @@ public abstract class Linear<N extends TermNode> implements IterativeLayout<N> {
     public abstract void setPosition(TermNode vertex, int sequence, int max);
 
     @Override
-    public void run(NARGraph graph, int iterations) {
+    public void run(SpaceGrapher graph, int iterations) {
         final TermNode[] verts = graph.displayed;
 
         int i = 0;

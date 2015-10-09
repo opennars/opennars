@@ -13,7 +13,7 @@ package automenta.vivisect.dimensionalize;
 
 import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.util.data.list.FasterList;
@@ -403,7 +403,7 @@ public class HyperOrganicLayout<V> implements IterativeLayout<V>
 	}
 
 	@Override
-	public void run(NARGraph graph, int iterations) {
+	public void run(SpaceGrapher graph, int iterations) {
 
 
 		TermNode[] vertexSet =  graph.displayed;

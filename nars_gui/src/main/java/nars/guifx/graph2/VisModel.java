@@ -9,11 +9,11 @@ public interface VisModel<T extends TermNode> extends Consumer<T> {
 
     T newNode(Term t);
 
-    default void start(NARGraph g) {
+    default void start(SpaceGrapher g) {
 
     }
 
-    default void stop(NARGraph gg) {
+    default void stop(SpaceGrapher gg) {
 
     }
 

@@ -2,7 +2,7 @@ package nars.guifx.graph2.layout;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.beans.property.SimpleDoubleProperty;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 
@@ -25,7 +25,7 @@ public class Circle<N extends TermNode, E extends TermEdge> implements Iterative
                     //PreallocatedResultFunction<N,double[]> getPosition,
                     ToDoubleFunction<TermNode> radiusFraction,
                     ToDoubleFunction<TermNode> angle,
-                    NARGraph.PairConsumer<TermNode, double[]> setPosition) {
+                    SpaceGrapher.PairConsumer<TermNode, double[]> setPosition) {
 
 
         double d[] = new double[2];
@@ -44,7 +44,7 @@ public class Circle<N extends TermNode, E extends TermEdge> implements Iterative
 
 
     @Override
-    public void run(NARGraph graph, int iterations) {
+    public void run(SpaceGrapher graph, int iterations) {
         final TermNode[] termList = graph.displayed;
 
         double[] i = new double[1];

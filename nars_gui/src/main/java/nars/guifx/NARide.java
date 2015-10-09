@@ -1,11 +1,13 @@
 package nars.guifx;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import nars.Global;
@@ -13,19 +15,24 @@ import nars.NAR;
 import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
-import nars.guifx.graph2.DefaultNARGraph;
+import nars.guifx.graph2.*;
+import nars.guifx.graph2.layout.CanvasEdgeRenderer;
+import nars.guifx.graph2.layout.Grid;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
+import nars.term.Atom;
+import nars.term.Term;
 import nars.util.NARLoop;
 import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static javafx.application.Platform.runLater;
 import static nars.guifx.NARfx.scrolled;
@@ -40,11 +47,13 @@ public class NARide extends BorderPane {
 
     public final TabPane content = new TabPane();
 
-    public final NARControlFX controlPane;
+    public final NARMenu controlPane;
     private final ScrollPane spp;
     public final PluginPanel pp;
 
-    public final Map<Object,Supplier<Node>> iconNodeBuilders = Global.newHashMap();
+    public final Map<Object,Supplier<Node>> nodeBuilders = Global.newHashMap();
+    private Map<String,Supplier<? extends Node>> tools = new HashMap();
+
 
     public static void show(NARLoop loop, Consumer<NARide> ide) {
 
@@ -144,6 +153,109 @@ public class NARide extends BorderPane {
 //        return ni;
     }
 
+    public class ToolDialog extends BorderPane {
+
+        public ToolDialog(Consumer<Collection<Node>> results) {
+            super();
+
+            Set<String> selected = new HashSet();
+
+            Set<TermNode> toolNodes = new HashSet();
+
+
+            GraphSource gs = new GraphSource() {
+
+
+                @Override
+                public void start(SpaceGrapher spaceGrapher) {
+                    super.start(spaceGrapher);
+
+                    tools.keySet().forEach(k -> {
+                        Term t = Atom.the(k, true);
+                        if (t != null) {
+                            TermNode tn = spaceGrapher.getOrCreateTermNode(t);
+                            System.out.println("\tTOOL " + tn);
+                            toolNodes.add(tn);
+                        } else
+                            throw new RuntimeException("Unable to create term for Tool ID" + k);
+                    });
+
+                    runLater(() -> accept(spaceGrapher));
+
+                }
+
+                @Override
+                public void accept(SpaceGrapher graph) {
+                    graph.setVertices(toolNodes);
+                    System.out.println("src: " + this);
+                    toolNodes.forEach(n -> System.out.println(n));
+                }
+
+            };
+            SpaceGrapher<?> chooser = new SpaceGrapher(gs,
+                    new VisModel() {
+
+                        @Override
+                        public void accept(Object o) {
+
+                        }
+
+                        @Override
+                        public TermNode newNode(Term t) {
+                            TermNode tn = new TermNode(t);
+                            tn.getChildren().add(new
+                                ToggleButton(t.toString())
+                            );
+                            return tn;
+                        }
+                    },
+                    new CanvasEdgeRenderer(),
+                    100);
+
+            runLater(() -> {
+                chooser.layout.set(new Grid());
+                //chooser.layout.set(new HyperOrganicLayout());
+                chooser.rerender();
+            } );
+
+//            chooser.minWidth(500);
+//            chooser.prefWidth(500);
+//            chooser.minHeight(500);
+//            chooser.prefHeight(500);
+
+
+
+            Button addButton = new Button("ADD");
+            addButton.setDefaultButton(true);
+            addButton.setOnMouseClicked((e)->{
+                results.accept(
+                    selected.stream().map(s -> tools.get(s).get()).collect(Collectors.toList())
+                );
+
+                hide();
+            });
+
+            Button cancelButton = new Button("CANCEL");
+            cancelButton.setOnMouseClicked((e)->{
+                hide();
+            });
+
+            FlowPane bottom = new FlowPane(cancelButton, addButton);
+            bottom.setAlignment(Pos.CENTER_RIGHT);
+
+            setCenter(new BorderPane(chooser));
+            setBottom(bottom);
+        }
+
+        public void hide() {
+            getChildren().clear();
+            getScene().getWindow().hide();
+        }
+    }
+
+    public void popupToolDialog(Consumer<Collection<Node>> x) {
+        NARfx.popup(new ToolDialog(x));
+    }
 
     public void addIcon(FXIconPaneBuilder n) {
         nar.memory().the(n);
@@ -164,11 +276,12 @@ public class NARide extends BorderPane {
         mi.setOnAction((e) -> {
             addView(builder.get());
         });
-        controlPane.tool.getItems().add(mi);
+        /* depr */ controlPane.tool.getItems().add(mi);
+        tools.put(name, builder);
     }
 
     public void addTool(Menu submenu) {
-        controlPane.tool.getItems().add(submenu);
+        /* depr */ controlPane.tool.getItems().add(submenu);
     }
 
 
@@ -178,22 +291,31 @@ public class NARide extends BorderPane {
     public NARide(NARLoop l) {
         super();
 
+
+
         this.nar = l.nar;
 
-        //default node builders
-        icon(FrameClock.class, () -> new NARControlFX.CycleClockPane(nar) );
-        icon(RealtimeMSClock.class, () -> new NARControlFX.RTClockPane(nar) );
-        icon(NARLoop.class, () -> new NARControlFX.LoopPane(l) );
-
         runLater(() -> {
-                    TabPaneDetacher tabDetacher = new TabPaneDetacher();
-                    tabDetacher.makeTabsDetachable(content);
-                    tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
+            TabPaneDetacher tabDetacher = new TabPaneDetacher();
+            tabDetacher.makeTabsDetachable(content);
+            tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
         });
 
+        //default node builders
+        icon(FrameClock.class, () -> new NARMenu.CycleClockPane(nar) );
+        icon(RealtimeMSClock.class, () -> new NARMenu.RTClockPane(nar) );
+        icon(NARLoop.class, () -> new NARMenu.LoopPane(l) );
 
 
-        controlPane = new NARControlFX(nar);
+
+
+        controlPane = new NARMenu(nar);
+        Button addIcon = new Button("+");
+        addIcon.setOnMouseClicked(e -> {
+            popupToolDialog(
+                controlPane.getChildren()::addAll);
+        });
+        controlPane.getChildren().add(addIcon);
 
 
         final BorderPane f = new BorderPane();
@@ -278,7 +400,7 @@ public class NARide extends BorderPane {
     }
 
     public NARide icon(Class c, Supplier<Node> iconBuilder) {
-        iconNodeBuilders.put(c, iconBuilder);
+        nodeBuilders.put(c, iconBuilder);
         return this;
     }
 

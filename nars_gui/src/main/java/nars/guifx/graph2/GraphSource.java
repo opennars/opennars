@@ -5,14 +5,14 @@ import java.util.function.Consumer;
 /**
  * Created by me on 9/6/15.
  */
-abstract public class NARGrapher<G> implements Consumer<NARGraph<G>> {
+abstract public class GraphSource<G> implements Consumer<SpaceGrapher<G>> {
 
 
     //DoubleSummaryReusableStatistics conPri = new DoubleSummaryReusableStatistics();
 
 
     @Override
-    public void accept(NARGraph<G> graph) {
+    public void accept(SpaceGrapher graph) {
 
 //        final NAR nar = graph.nar;
 //
@@ -63,7 +63,7 @@ abstract public class NARGrapher<G> implements Consumer<NARGraph<G>> {
 //
 //    }
 
-    public void start(NARGraph<G> narGraph) {
+    public void start(SpaceGrapher<G> spaceGrapher) {
 
 
     }
@@ -71,7 +71,7 @@ abstract public class NARGrapher<G> implements Consumer<NARGraph<G>> {
     /** called ex: invalidation */
     public void refresh() { }
 
-    public void stop(NARGraph<G> narGraph) {
+    public void stop(SpaceGrapher<G> spaceGrapher) {
 
 
     }

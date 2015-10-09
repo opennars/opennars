@@ -17,7 +17,8 @@ import org.jfxvnc.net.rfb.render.ProtocolConfiguration;
 import org.jfxvnc.ui.persist.SessionContext;
 import org.jfxvnc.ui.presentation.MainView;
 import org.jfxvnc.ui.service.VncRenderService;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /*
  * #%L
@@ -41,7 +42,8 @@ import org.slf4j.LoggerFactory;
 
 public class VncClientApp extends Application {
 
-    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(VncClientApp.class);
+    //private final static org.slf4j.Logger logger = LoggerFactory.getLogger(VncClientApp.class);
+    final static Logger logger = Logger.getLogger(VncClientApp.class.toString());
 
     private final StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
     private final StringExpression headerExpr = Bindings.format("JavaFX VNC Viewer (%s)", headerProperty);
@@ -62,7 +64,7 @@ public class VncClientApp extends Application {
         //offlineImg = new Image(VncClientApp.class.getResourceAsStream("icon.png"));
         //onlineImg = new Image(VncClientApp.class.getResourceAsStream("icon_green.png"));
 
-        Injector.setLogger((t) -> logger.trace(t));
+        Injector.setLogger((t) -> logger.fine(t));
 
         // Injector.setModelOrService(Stage.class, stage);
         Injector.setModelOrService(ProtocolConfiguration.class, Injector.instantiateModelOrService(DefaultProtocolConfiguration.class));
@@ -102,7 +104,7 @@ public class VncClientApp extends Application {
     }
 
     public static Pane newView() {
-        Injector.setLogger((t) -> logger.trace(t));
+        Injector.setLogger((t) -> logger.fine(t));
 
         final StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
 

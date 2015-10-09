@@ -3,13 +3,16 @@ package nars.guifx;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
@@ -361,6 +364,16 @@ public class NARfx  {
         if (p < 0) p = -p;
 
         return ca.get(p % ca.cc.length, 0);
+    }
+
+    public static void popup(Parent n) {
+        final Stage dialog = new Stage(StageStyle.UNDECORATED);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        //dialog.initOwner(n.
+        Scene dialogScene = new Scene(n, 500, 500);
+        dialog.setScene(dialogScene);
+        dialog.show();
+
     }
 
     // This must be public in order to instantiate successfully

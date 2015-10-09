@@ -123,7 +123,7 @@ public class PluginPanel extends VBox {
             return ((FXIconPaneBuilder) v).newIconPane();
         }
 
-        Supplier<Node> override = ide.iconNodeBuilders.get(v.getClass());
+        Supplier<Node> override = ide.nodeBuilders.get(v.getClass());
         if (override != null) {
             //create via the type-dependent override
             return override.get();

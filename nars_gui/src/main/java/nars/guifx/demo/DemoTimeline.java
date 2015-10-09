@@ -6,8 +6,10 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.AutoLabel;
 import nars.guifx.NARfx;
-import nars.guifx.graph2.NARConceptSource;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.ConceptsSource;
+import nars.guifx.graph2.HexagonsVis;
+import nars.guifx.graph2.SpaceGrapher;
+import nars.guifx.graph2.layout.CanvasEdgeRenderer;
 import nars.nal.nal7.Temporal;
 import nars.nar.Default;
 import nars.task.Task;
@@ -79,7 +81,7 @@ public class DemoTimeline  {
         }
     }
 
-    public static class TaskTimelinePane extends NARGraph {
+    public static class TaskTimelinePane extends SpaceGrapher {
 
         private final TaskTimeline<TaskEventButton> time;
         private final NAR nar;
@@ -91,7 +93,7 @@ public class DemoTimeline  {
         double d = 150.0; //duration window
 
         public TaskTimelinePane(NAR n) {
-            super(new NARConceptSource(n),64);
+            super(new ConceptsSource(n), new HexagonsVis(), new CanvasEdgeRenderer(), 64);
 
             this.nar = n;
 

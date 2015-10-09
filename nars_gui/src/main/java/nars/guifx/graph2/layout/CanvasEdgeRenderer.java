@@ -1,11 +1,12 @@
 package nars.guifx.graph2.layout;
 
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
 import nars.guifx.graph2.HexagonsVis;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.util.ColorMatrix;
@@ -13,7 +14,7 @@ import nars.guifx.util.ColorMatrix;
 /**
  * Created by me on 9/6/15.
  */
-public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
+public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 
 //    ColorArray colors = new ColorArray(
 //            32,
@@ -118,7 +119,7 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
 //    }
 
     @Override
-    public void reset(NARGraph g) {
+    public void reset(SpaceGrapher g) {
 
 
         if (floorCanvas == null) {
@@ -133,8 +134,11 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
 
         }
 
-        double w = g.getScene().getWindow().getWidth(); //g.getWidth();
-        double h = g.getScene().getWindow().getHeight();
+        Scene scene = g.getScene();
+        if (scene == null) return;
+
+        double w = scene.getWidth(); //g.getWidth();
+        double h = scene.getHeight();
 
         tx = g.translate.getX();
         ty = g.translate.getY();

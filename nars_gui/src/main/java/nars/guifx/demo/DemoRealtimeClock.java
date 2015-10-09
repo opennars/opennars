@@ -2,7 +2,7 @@
 //
 //import javafx.scene.layout.BorderPane;
 //import nars.NAR;
-//import nars.guifx.NARControlFX;
+//import nars.guifx.NARMenu;
 //import nars.guifx.NARfx;
 //import nars.guifx.util.SizeAwareWindow;
 //import nars.nar.experimental.Equalized;
@@ -12,7 +12,7 @@
 ///**
 // * Created by me on 9/2/15.
 // */
-//public class DemoRealtimeClock extends NARControlFX {
+//public class DemoRealtimeClock extends NARMenu {
 //
 //    public DemoRealtimeClock(NAR nar) {
 //        super(nar);

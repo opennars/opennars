@@ -3,7 +3,7 @@ package nars.guifx.graph2.layout;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.annotation.Range;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 
@@ -54,7 +54,7 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdg
 
 
     @Override
-    public void run(NARGraph graph, int i) {
+    public void run(SpaceGrapher graph, int i) {
 
         init();
 

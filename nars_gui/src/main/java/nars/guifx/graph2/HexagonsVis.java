@@ -120,14 +120,14 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
 
 
     @Override
-    public void start(NARGraph g) {
+    public void start(SpaceGrapher g) {
         hoverPanel.setVisible(false);
         hoverPanel.setMouseTransparent(true);
         g.getChildren().add(hoverPanel);
     }
 
     @Override
-    public void stop(NARGraph g) {
+    public void stop(SpaceGrapher g) {
         g.getChildren().remove(hoverPanel);
     }
 

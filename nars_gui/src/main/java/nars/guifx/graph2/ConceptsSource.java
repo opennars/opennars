@@ -21,7 +21,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Example Concept supplier with some filters
  */
-public class NARConceptSource extends NARGrapher<Object> {
+public class ConceptsSource extends GraphSource<Object> {
 
 
     private final NAR nar;
@@ -33,7 +33,7 @@ public class NARConceptSource extends NARGrapher<Object> {
 
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
-    public NARConceptSource(NAR nar) {
+    public ConceptsSource(NAR nar) {
         this.nar = nar;
 
         includeString.addListener((e) -> {
@@ -46,7 +46,7 @@ public class NARConceptSource extends NARGrapher<Object> {
 
 
     @Override
-    public synchronized void start(NARGraph g) {
+    public synchronized void start(SpaceGrapher g) {
 
 
         //.stdout()
@@ -82,12 +82,12 @@ public class NARConceptSource extends NARGrapher<Object> {
     }
 
     @Override
-    public void stop(NARGraph vnarGraph) {
+    public void stop(SpaceGrapher vnarGraph) {
         regs.off();
         regs = null;
     }
 
-    public final void update(NARGraph g) {
+    public final void update(SpaceGrapher g) {
 
 
         if (refresh.compareAndSet(true, false)) {
@@ -142,7 +142,7 @@ public class NARConceptSource extends NARGrapher<Object> {
     }
 
 
-    public void refresh(NARGraph g, TermNode tn, Concept cc/*, long now*/) {
+    public void refresh(SpaceGrapher g, TermNode tn, Concept cc/*, long now*/) {
 
         //final Term source = c.getTerm();
 
@@ -185,7 +185,7 @@ public class NARConceptSource extends NARGrapher<Object> {
 
     }
 
-    public void updateConceptEdges(NARGraph g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
+    public void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
 
 
         Term t = link.getTerm();
@@ -199,9 +199,9 @@ public class NARConceptSource extends NARGrapher<Object> {
         }
     }
 
-    public TermEdge getConceptEdge(NARGraph g, TermNode s, TermNode t) {
+    public TermEdge getConceptEdge(SpaceGrapher g, TermNode s, TermNode t) {
         //re-order
-        if (!NARGraph.order(s.term, t.term)) {
+        if (!SpaceGrapher.order(s.term, t.term)) {
             TermNode x = s;
             s = t;
             t = x;

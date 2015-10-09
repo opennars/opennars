@@ -4,8 +4,6 @@ import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import nars.io.Texts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +16,7 @@ import java.util.regex.Pattern;
  * @author sergei.malafeev
  */
 public class TerminalWatcher implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(TerminalWatcher.class);
+    //private static final Logger logger = LoggerFactory.getLogger(TerminalWatcher.class);
     private InputStream outFromChannel;
     private TextArea textArea;
 
@@ -81,7 +79,8 @@ public class TerminalWatcher implements Runnable {
         } catch (InterruptedIOException e) {
             //ignore
         } catch (IOException e) {
-            logger.warn("failed to read from ssh", e);
+            //logger.warn("failed to read from ssh", e);
+            e.printStackTrace();
         }
     }
 

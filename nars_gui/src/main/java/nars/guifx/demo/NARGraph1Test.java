@@ -7,7 +7,7 @@ import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.DefaultNARGraph;
 import nars.guifx.graph2.HexagonsVis;
-import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.layout.CanvasEdgeRenderer;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
@@ -22,7 +22,7 @@ public class NARGraph1Test {
         DerivationRules.maxVarArgsToMatch = 2;
     }
 
-    public static NARGraph newGraph(NAR n) {
+    public static SpaceGrapher newGraph(NAR n) {
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
 
 
@@ -39,7 +39,7 @@ public class NARGraph1Test {
 
         //n.frame(5);
 
-        NARGraph g = new DefaultNARGraph(n,new HexagonsVis(), 256,
+        SpaceGrapher g = new DefaultNARGraph(n,new HexagonsVis(), 256,
                 new CanvasEdgeRenderer() {
                     @Override
                     protected final void clear(double w, double h) {

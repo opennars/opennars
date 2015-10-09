@@ -11,10 +11,8 @@ import nars.term.Term;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Created by me on 9/5/15.
- */
-abstract public class TermNode extends Group {
+
+public class TermNode extends Group {
 
 
     public static final TermNode[] empty = new TermNode[0];

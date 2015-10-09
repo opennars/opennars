@@ -1,12 +1,16 @@
 package nars.guifx.graph2;
 
+import automenta.vivisect.dimensionalize.HyperOrganicLayout;
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import nars.guifx.Spacegraph;
+import nars.guifx.annotation.Implementation;
+import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.demo.Animate;
-import nars.guifx.graph2.layout.None;
+import nars.guifx.graph2.layout.*;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 
@@ -20,12 +24,11 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class NARGraph<V> extends Spacegraph {
+public class SpaceGrapher<V> extends Spacegraph {
 
     final Map<Term, TermNode> terms =
             new UnifiedMap();
-            //new WeakValueHashMap<>();
-
+    //new WeakValueHashMap<>();
 
 
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
@@ -35,14 +38,10 @@ public class NARGraph<V> extends Spacegraph {
 
 
     public final SimpleIntegerProperty maxNodes;
-    public final SimpleObjectProperty<NARGrapher<V>> source = new SimpleObjectProperty<>();
-
-
+    public final SimpleObjectProperty<GraphSource<V>> source = new SimpleObjectProperty<>();
 
 
     private Animate animator;
-
-
 
 
     static final Random rng = new XORShiftRandom();
@@ -96,7 +95,10 @@ public class NARGraph<V> extends Spacegraph {
             tn = terms.compute(t,
                     (k, prev) -> {
                         TermNode n = gv.newNode(k);
-                        layout.get().init(n);
+
+                        IterativeLayout<TermNode> l = layout.get();
+                        if (l != null)
+                            l.init(n);
 
                         if (prev != null) {
                             getVertices().remove(prev);
@@ -166,7 +168,6 @@ public class NARGraph<V> extends Spacegraph {
 //    }
 
 
-
     protected final Runnable clear = () -> {
         this.displayed = TermNode.empty;
         getVertices().clear();
@@ -179,8 +180,7 @@ public class NARGraph<V> extends Spacegraph {
 
         if (active.isEmpty()) {
             next = clear;
-        }
-        else {
+        } else {
             final TermNode[] toDisplay = active.toArray(displayed);
             if (toDisplay == null) {
                 throw new RuntimeException("null toDisplay");
@@ -188,8 +188,7 @@ public class NARGraph<V> extends Spacegraph {
 
             if (toDisplay.length == 0) {
                 next = clear; //necessary?
-            }
-            else {
+            } else {
                 next = (() -> {
                     this.displayed = toDisplay;
                     getVertices().setAll(
@@ -224,20 +223,18 @@ public class NARGraph<V> extends Spacegraph {
 //    }
 
 
-
-
     public interface EdgeRenderer<E> extends Consumer<E> {
         /**
          * called before any update begins
          */
-        public void reset(NARGraph g);
+        public void reset(SpaceGrapher g);
     }
 
 
     /**
      * called in JavaFX thread
      */
-    protected void rerender() {
+    public void rerender() {
 
         /** apply layout */
         IterativeLayout<TermNode> l;
@@ -285,8 +282,16 @@ public class NARGraph<V> extends Spacegraph {
 
     }
 
+    @Implementation(HyperOrganicLayout.class)
+    @Implementation(HyperassociativeMap2D.class)
+    @Implementation(Spiral.class)
+    @Implementation(Circle.class)
+    @Implementation(Grid.class)
+    @Implementation(HyperassociativeMap1D.class)
+    public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
-    public NARGraph(NARGrapher g, int size) {
+
+    public SpaceGrapher(GraphSource g, VisModel vv, CanvasEdgeRenderer edgeRenderer, int size) {
         super();
 
 
@@ -305,10 +310,10 @@ public class NARGraph<V> extends Spacegraph {
             }
         });
         vis.addListener((l, p, n) -> {
-            NARGraph<V> gg = NARGraph.this;
-            if (p!=null)
+            SpaceGrapher<V> gg = SpaceGrapher.this;
+            if (p != null)
                 p.stop(gg);
-            if (n!=null) {
+            if (n != null) {
                 n.start(gg);
             }
         });
@@ -332,30 +337,57 @@ public class NARGraph<V> extends Spacegraph {
         ;
 
         //TODO add enable override boolean switch
+        sceneProperty().addListener(v -> checkVisibility());
         parentProperty().addListener(v -> checkVisibility());
         visibleProperty().addListener(v -> checkVisibility());
-        runLater(() -> checkVisibility() );
 
+        runLater(() -> checkVisibility());
 
-        source.set(g);
+        InvalidationListener layoutChange = e -> {
+            Class<? extends IterativeLayout> lc = layoutType.get();
+            if (lc != null) {
+                try {
+                    IterativeLayout il = lc.newInstance();
+                    layout.set(il);
+                    source.getValue().refresh();
+                    rerender();
+                    return;
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                layout.set(nullLayout);
+            }
+        };
+        layoutType.addListener(layoutChange);
+
+        runLater(() -> layoutChange.invalidated(null));
+
+        this.edgeRenderer.set(edgeRenderer);
+
+        this.vis.set(vv); //set vis before source
+
+        this.source.set(g);
 
     }
 
     protected synchronized void checkVisibility() {
-        if (isVisible() && getParent() != null)
+        if (isVisible() && getParent() != null && getScene()!=null)
             start();
         else
             stop();
     }
 
     void start() {
-            if (this.animator == null) {
 
-                this.animator = new Animate(layoutPeriodMS, a -> {
-                    if (displayed.length != 0) {
-                        rerender();
-                    }
-                });
+        if (this.animator == null) {
+            System.out.println(this + " started");
+
+            this.animator = new Animate(layoutPeriodMS, a -> {
+                if (displayed.length != 0) {
+                    rerender();
+                }
+            });
 
                 /*this.updaterSlow = new Animate(updatePeriodMS, a -> {
                     if (!termList.isEmpty()) {
@@ -363,18 +395,21 @@ public class NARGraph<V> extends Spacegraph {
                         renderEdges();
                     }
                 });*/
-                animator.start();
-                //updaterSlow.start();
-            }
+            animator.start();
+            //updaterSlow.start();
+        }
 
     }
 
     void stop() {
-            if (this.animator != null) {
-                animator.stop();
-                animator = null;
-            }
 
+        if (this.animator != null) {
+            System.out.println(this + " stopped");
+
+            animator.stop();
+            animator = null;
+
+        }
     }
 
     //    private class TermEdgeConsumer implements Consumer<TermEdge> {
