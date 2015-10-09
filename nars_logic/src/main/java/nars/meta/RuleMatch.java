@@ -195,6 +195,9 @@ public class RuleMatch extends FindSubst {
         if (!(derivedTerm instanceof Compound))
             return null;
 
+
+        derivedTerm = derivedTerm.cloneDeep();
+
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {

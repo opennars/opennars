@@ -105,13 +105,22 @@ public class Patham9Test extends AbstractNALTest {
         tester.mustBelieve(1000,"<robin --> animal>",1.00f,0.81f); //en("A robin is an animal.");
         tester.run();
     }*/
-
+/*
     @Test
     public void multiple_variable_elimination3() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("(&&,<#x --> lock>,<<$y --> key> ==> <#x --> (/,open,$y,_)>>)"); //en("There is a lock that can be opened by every key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
         tester.mustBelieve(100, "<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>", 1.00f, 0.42f); //en("I guess Lock-1 can be opened by every key.");
+        tester.run();
+    }*/
+
+    @Test
+    public void second_level_variable_unification() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", 1.00f, 0.90f); //en("there is a lock which is opened by all keys");
+        tester.believe("<{key1} --> key>", 1.00f, 0.90f); //en("key1 is a key");
+        tester.mustBelieve(100, "(&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>)", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
     }
 
