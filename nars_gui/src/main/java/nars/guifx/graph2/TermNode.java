@@ -5,25 +5,25 @@ import javafx.scene.paint.Color;
 import nars.Op;
 import nars.concept.Concept;
 import nars.guifx.util.ColorMatrix;
-import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-public class TermNode extends Group {
+public class TermNode<K extends Termed> extends Group {
 
 
     public static final TermNode[] empty = new TermNode[0];
 
-    final public Map<Term, TermEdge> edge = new LinkedHashMap(8);
+    final public Map<K, TermEdge> edge = new LinkedHashMap(8);
 
     /**
      * copy of termedge values for fast iteration during rendering
      */
     TermEdge[] edges = null;
 
-    public final Term term;
+    public final K term;
 
     /** priority normalized to visual context */
     public double priNorm = 0;
@@ -44,7 +44,7 @@ public class TermNode extends Group {
 
 
 
-    public TermNode(Term t) {
+    public TermNode(K t) {
         super();
 
         setManaged(false);
@@ -54,8 +54,21 @@ public class TermNode extends Group {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        TermNode termNode = (TermNode) o;
 
+        return term.equals(termNode.term);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return term.hashCode();
+    }
 //    /**
 //     * NAR update thread
 //     */
@@ -164,7 +177,7 @@ public class TermNode extends Group {
         return ty;
     }
 
-    public final TermEdge putEdge(Term b, TermEdge e) {
+    public final TermEdge putEdge(K b, TermEdge e) {
         TermEdge r = edge.put(b, e);
         if (e != r)
             edges = null;
@@ -211,13 +224,14 @@ public class TermNode extends Group {
     }
 
 
+
     public boolean visible() {
         return isVisible() && getParent()!=null;
     }
 
-    public static Color getTermColor(Term term, ColorMatrix colors, double v) {
+    public static Color getTermColor(Termed term, ColorMatrix colors, double v) {
         return colors.get(
-                (term.op().ordinal() % colors.cc.length) / ((double) Op.values().length),
+                (term.getTerm().op().ordinal() % colors.cc.length) / ((double) Op.values().length),
                 v);
     }
 }

@@ -70,10 +70,7 @@ public class RunSpacegraph extends Application {
 //                    400, 400);
 //            wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
 
-            addNodes(
-                    wc,
-                    cc
-            );
+
 
 
 
@@ -84,7 +81,10 @@ public class RunSpacegraph extends Application {
                     np, 200, 200
             ).move(-200,300);
 
-            addNodes(nd);
+            setNodes(
+                    wc,
+                    cc, nd
+            );
 
         }
     }

@@ -1,7 +1,6 @@
 package nars.guifx.graph2.layout;
 
 import nars.guifx.graph2.TermNode;
-import org.apache.commons.math3.linear.ArrayRealVector;
 
 /**
  * Created by me on 10/7/15.
@@ -24,17 +23,12 @@ public class Spiral extends Linear {
 
 
     @Override
-    public ArrayRealVector getPosition(Object vertex) {
-        return null;
-    }
-
-    @Override
-    public double getRadius(Object vertex) {
+    public double getRadius(TermNode vertex) {
         return 0;
     }
 
     @Override
-    public void init(Object n) {
+    public void init(TermNode n) {
 
     }
 }

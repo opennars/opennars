@@ -1,13 +1,12 @@
 package nars.guifx.graph2.layout;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 
 /**
  * Created by me on 9/6/15.
  */
-public class Grid<N extends TermNode, E extends TermEdge> extends Linear<N> {
+public class Grid extends Linear {
 
     /** desired aspect ratio of the arrangement of rows/cols */
     public final SimpleDoubleProperty aspectRatio = new SimpleDoubleProperty(100);
@@ -25,9 +24,5 @@ public class Grid<N extends TermNode, E extends TermEdge> extends Linear<N> {
         v.move(x * (size + spacing/2), y* (size + spacing/2), 0.1, 0.05);
     }
 
-    @Override
-    public double getRadius(N vertex) {
-        return 0;
-    }
 
 }

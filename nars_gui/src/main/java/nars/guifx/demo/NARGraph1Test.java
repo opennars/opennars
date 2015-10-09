@@ -5,8 +5,9 @@ import nars.NAR;
 import nars.clock.FrameClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
+import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.DefaultNARGraph;
-import nars.guifx.graph2.HexagonsVis;
+import nars.guifx.graph2.DefaultVis;
 import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.layout.CanvasEdgeRenderer;
 import nars.guifx.util.TabX;
@@ -23,10 +24,10 @@ public class NARGraph1Test {
     }
 
     public static SpaceGrapher newGraph(NAR n) {
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
+        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.8f;
 
 
-        n.memory.conceptForgetDurations.set(5);
+        n.memory.conceptForgetDurations.set(8);
         n.memory.termLinkForgetDurations.set(2);
         n.memory.taskLinkForgetDurations.set(2);
 
@@ -39,7 +40,18 @@ public class NARGraph1Test {
 
         //n.frame(5);
 
-        SpaceGrapher g = new DefaultNARGraph(n,new HexagonsVis(), 256,
+
+        SpaceGrapher<?,?> g = new DefaultNARGraph(
+
+                new ConceptsSource(n),
+                //new EventGraphSource(n),
+
+
+                512,
+
+                new DefaultVis(),
+
+
                 new CanvasEdgeRenderer() {
                     @Override
                     protected final void clear(double w, double h) {

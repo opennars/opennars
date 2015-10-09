@@ -3,6 +3,7 @@ package nars.util.time;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTreeNode<K, V>, Entry<Interval<K>, V> {
 	
@@ -59,12 +60,12 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public K getLow() {
+	public final K getLow() {
 		return key.getLow();
 	}
 
 	@Override
-	public K getHigh() {
+	public final K getHigh() {
 		return key.getHigh();
 	}
 
@@ -100,8 +101,16 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 		return null;
 	}
 
+
 	@Override
-	public void getOverlap(Interval<K> range,
+	public final void getOverlap(Interval<K> range, Consumer<V> accumulator) {
+		if(range.overlaps(key)){
+			accumulator.accept(getValue());
+		}
+	}
+
+	@Override
+	public final void getOverlap(Interval<K> range,
 						   Collection<V> accumulator) {
 		if(range.overlaps(key)){
 			accumulator.add(getValue());

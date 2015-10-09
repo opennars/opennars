@@ -35,7 +35,7 @@ abstract public class WordCloud implements IterativeLayout, VisModel {
 //
 //    }
 //
-//    static class V extends HexagonsVis  {
+//    static class V extends DefaultVis  {
 //
 //        public V() {
 //            minSize = 32;

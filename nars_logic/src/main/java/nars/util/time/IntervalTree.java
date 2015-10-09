@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 public class IntervalTree<K extends Comparable<? super K>, V> {
 	
-	private IntervalTreeNode<K, V> root = null;
+	public IntervalTreeNode<K, V> root = null;
 
 	public List<V> searchOverlapping(Interval<K> range){
 		List<V> c = Global.newArrayList();

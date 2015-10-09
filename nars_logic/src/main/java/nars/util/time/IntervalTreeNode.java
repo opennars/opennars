@@ -3,8 +3,9 @@ package nars.util.time;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
-interface IntervalTreeNode<K extends Comparable<? super K>,V> {
+public interface IntervalTreeNode<K extends Comparable<? super K>,V> {
 
 	boolean isLeaf();
 	
@@ -26,7 +27,8 @@ interface IntervalTreeNode<K extends Comparable<? super K>,V> {
 	Interval<K> getRange();
 	
 	IntervalTreeNode<K, V> put(Interval<K> key, V value);
-	
+
+	void getOverlap(Interval<K> range, Consumer<V> accumulator);
 	void getOverlap(Interval<K> range, Collection<V> accumulator);
 	/**
 	 * Returns a collection of values that wholly contain the range specified.

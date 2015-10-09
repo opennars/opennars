@@ -7,10 +7,10 @@ import nars.guifx.graph2.TermNode;
  * for layouts which process items according to their
  * linear sequence position
  */
-public abstract class Linear<N extends TermNode> implements IterativeLayout<N> {
+public abstract class Linear<V extends TermNode<?>> implements IterativeLayout<V> {
 
     @Override
-    public void init(N n) {
+    public void init(V n) {
         //n/a
     }
 

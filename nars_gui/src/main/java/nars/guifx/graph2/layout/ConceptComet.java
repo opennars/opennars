@@ -9,9 +9,10 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * Created by me on 10/9/15.
+ * Displays the short-term history of concept activation
+ * in what can only be described as resembling a comet
  */
-public class Timeline extends HyperassociativeMap2D {
+public class ConceptComet extends HyperassociativeMap2D {
 
     double axisTheta = 0;
 
@@ -22,16 +23,23 @@ public class Timeline extends HyperassociativeMap2D {
 
     final Random rng = new XORShiftRandom();
 
-    @Override
-    public void init(TermNode n) {
-        super.init(n);
-        n.move(0, rng.nextDouble() * thickness);
+    protected void init() {
+        resetLearning();
+        setLearningRate(0.4f);
+        setRepulsiveWeakness(repulseWeakness.get());
+        setAttractionStrength(attractionStrength.get());
+        setMaxRepulsionDistance(250);
+        setEquilibriumDistance(0.05f);
     }
 
     @Override
     public void apply(TermNode node, double[] dataRef) {
-        if (!node.isVisible())
+
+        if (node.c == null) {
+            node.setVisible(false);
             return;
+        }
+
 
         Iterator<Task> ii = node.c.iterateTasks(true, true, true, true);
         if (!ii.hasNext()) {

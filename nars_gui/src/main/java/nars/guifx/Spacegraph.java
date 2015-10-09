@@ -39,7 +39,8 @@ public class Spacegraph extends ZoomFX {
     public void addNodes(Node... n) {
         verts.getChildren().addAll(n);
     }
-    public void setNodes(Node... n) {
+    @Deprecated public void setNodes(Node... n) {
+        //gets converted into a list in the setAll call anyway
         verts.getChildren().setAll(n);
     }
     public void addNodes(Collection<Node> n) {

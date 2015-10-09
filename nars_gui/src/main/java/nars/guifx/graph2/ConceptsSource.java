@@ -21,11 +21,11 @@ import static javafx.application.Platform.runLater;
 /**
  * Example Concept supplier with some filters
  */
-public class ConceptsSource extends GraphSource<Object> {
+public class ConceptsSource implements GraphSource {
 
 
     private final NAR nar;
-    private Active regs;
+    private Active regs = null;
     private Set<TermNode> prevActive;
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
@@ -37,17 +37,15 @@ public class ConceptsSource extends GraphSource<Object> {
         this.nar = nar;
 
         includeString.addListener((e) -> {
-            System.out.println(includeString.getValue());
+            //System.out.println(includeString.getValue());
             refresh();
         });
     }
 
     final AtomicBoolean refresh = new AtomicBoolean();
 
-
     @Override
-    public synchronized void start(SpaceGrapher g) {
-
+    public void start(SpaceGrapher g) {
 
         //.stdout()
         //.stdoutTrace()
@@ -150,7 +148,7 @@ public class ConceptsSource extends GraphSource<Object> {
         //conPri.accept(cc.getPriority());
         tn.priNorm = cc.getPriority();
 
-        final Term t = tn.term;
+        final Term t = tn.term.getTerm();
         final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
         final DoubleSummaryReusableStatistics te = tn.termLinkStat;
 
@@ -202,7 +200,7 @@ public class ConceptsSource extends GraphSource<Object> {
     public TermEdge getConceptEdge(SpaceGrapher g, TermNode s, TermNode t) {
 
         //re-order
-        final int i = s.term.compareTo(t.term);
+        final int i = s.term.getTerm().compareTo(t.term.getTerm());
         if (i == 0) return null;
             /*throw new RuntimeException(
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
@@ -223,4 +221,8 @@ public class ConceptsSource extends GraphSource<Object> {
         return e;
     }
 
+    @Override
+    public void accept(Object o) {
+
+    }
 }

@@ -15,8 +15,10 @@ import nars.NAR;
 import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
+import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.DefaultNARGraph;
 import nars.guifx.graph2.SpaceGrapher;
+import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.Grid;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
@@ -53,8 +55,8 @@ public class NARide extends BorderPane {
     private final ScrollPane spp;
     public final PluginPanel pp;
 
-    public final Map<Object,Supplier<Node>> nodeBuilders = Global.newHashMap();
-    private Map<Term,Supplier<? extends Node>> tools = new HashMap();
+    public final Map<Object, Supplier<Node>> nodeBuilders = Global.newHashMap();
+    private Map<Term, Supplier<? extends Node>> tools = new HashMap();
 
 
     public static void show(NARLoop loop, Consumer<NARide> ide) {
@@ -76,15 +78,15 @@ public class NARide extends BorderPane {
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
                 });*/
-                ni.addIcon(()-> {
-                   return new ConceptSonificationPanel(nar);
+                ni.addIcon(() -> {
+                    return new ConceptSonificationPanel(nar);
                 });
                 //ni.addView(additional components);
             }
 
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new DefaultNARGraph(nar,64));
+            ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
             ni.addTool("Webcam", () -> new WebcamFX());
@@ -125,7 +127,7 @@ public class NARide extends BorderPane {
             Scene scene = new Scene(ni, 900, 700,
                     false, SceneAntialiasing.DISABLED);
 
-            scene.getStylesheets().setAll(NARfx.css );
+            scene.getStylesheets().setAll(NARfx.css);
             b.setScene(scene);
 
 
@@ -133,7 +135,7 @@ public class NARide extends BorderPane {
 
             b.show();
 
-            if (ide!=null)
+            if (ide != null)
                 ide.accept(ni);
 
             b.setOnCloseRequest((e) -> {
@@ -165,7 +167,6 @@ public class NARide extends BorderPane {
         public UDPPane(UDPNetwork n) {
 
 
-
             //p = n.peer.getPeers();
         }
     }
@@ -178,18 +179,18 @@ public class NARide extends BorderPane {
             Set<Term> selected = new HashSet();
 
 
-            SpaceGrapher<?> chooser =
-                SpaceGrapher.forCollection(tools.keySet(), (t, tn) -> {
+            SpaceGrapher<Term, TermNode<Term>> chooser =
+                    SpaceGrapher.forCollection(tools.keySet(),
+                            t -> t,
+                            (t, tn) -> {
+                                ToggleButton tb = new ToggleButton(t.toString());
+                                tb.selectedProperty().addListener((c, p, v) -> {
+                                    if (v) selected.add(t);
+                                    else selected.remove(t);
+                                });
+                                tn.getChildren().add(tb);
 
-                    ToggleButton tb = new ToggleButton(t.toString());
-                    tb.selectedProperty().addListener((c,p,v) -> {
-                        if (v) selected.add(t);
-                        else selected.remove(t);
-                    });
-                    tn.getChildren().add(tb);
-
-                }, new Grid());
-
+                            }, new Grid());
 
 
 //            chooser.minWidth(500);
@@ -198,19 +199,18 @@ public class NARide extends BorderPane {
 //            chooser.prefHeight(500);
 
 
-
             Button addButton = new Button("ADD");
             addButton.setDefaultButton(true);
-            addButton.setOnMouseClicked((e)->{
+            addButton.setOnMouseClicked((e) -> {
                 results.accept(
-                    selected.stream().map(s -> tools.get(s).get()).collect(Collectors.toList())
+                        selected.stream().map(s -> tools.get(s).get()).collect(Collectors.toList())
                 );
 
                 hide();
             });
 
             Button cancelButton = new Button("CANCEL");
-            cancelButton.setOnMouseClicked((e)->{
+            cancelButton.setOnMouseClicked((e) -> {
                 hide();
             });
 
@@ -242,8 +242,8 @@ public class NARide extends BorderPane {
         nar.memory().the(n);
 
         content.getTabs().add(new TabX(
-            n.getClass().getSimpleName(),
-            n));
+                n.getClass().getSimpleName(),
+                n));
         pp.update();
     }
 
@@ -252,12 +252,14 @@ public class NARide extends BorderPane {
         mi.setOnAction((e) -> {
             addView(builder.get());
         });
-        /* depr */ controlPane.tool.getItems().add(mi);
+        /* depr */
+        controlPane.tool.getItems().add(mi);
         tools.put(Atom.the(name, true), builder);
     }
 
     public void addTool(Menu submenu) {
-        /* depr */ controlPane.tool.getItems().add(submenu);
+        /* depr */
+        controlPane.tool.getItems().add(submenu);
     }
 
 
@@ -268,16 +270,13 @@ public class NARide extends BorderPane {
         super();
 
 
-
         this.nar = l.nar;
 
 
-
         //default node builders
-        icon(FrameClock.class, () -> new NARMenu.CycleClockPane(nar) );
-        icon(RealtimeMSClock.class, () -> new NARMenu.RTClockPane(nar) );
-        icon(NARLoop.class, () -> new LoopPane(l) );
-
+        icon(FrameClock.class, () -> new NARMenu.CycleClockPane(nar));
+        icon(RealtimeMSClock.class, () -> new NARMenu.RTClockPane(nar));
+        icon(NARLoop.class, () -> new LoopPane(l));
 
 
         spp = scrolled(pp = new PluginPanel(this));
@@ -286,7 +285,7 @@ public class NARide extends BorderPane {
         Button addIcon = new Button("++");
         addIcon.setOnMouseClicked(e -> {
             popupToolDialog(
-                pp.getChildren()::addAll);
+                    pp.getChildren()::addAll);
         });
         controlPane.getChildren().add(addIcon);
 
@@ -307,7 +306,6 @@ public class NARide extends BorderPane {
 //
 //        VBox vb = new VBox(lp, lp2);
 //        vb.autosize();
-
 
 
 //        //taskBar.setSide(Side.LEFT);
@@ -455,13 +453,6 @@ public class NARide extends BorderPane {
             bp.widthProperty().bind(summary.widthProperty());
             bp.heightProperty().bind(summary.heightProperty());
         }
-
-
-
-
-
-
-
 
 
         return new SizeAwareWindow((d) -> {

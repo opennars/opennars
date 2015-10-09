@@ -45,9 +45,9 @@ public class NARspace extends Spacegraph {
         Function<Node, Node> wrap = (x) -> {
             return x;
         };
-        addNodes(wrap, cc, nd);
+        //addNodes(wrap, cc, nd);
 
-        addNodes(
+        setNodes(
                 new Windget("Web",
                         new NARWikiBrowser("Software"), 200, 200
                 ).move(-200, 300)

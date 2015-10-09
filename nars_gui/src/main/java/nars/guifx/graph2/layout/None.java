@@ -14,8 +14,6 @@ public class None implements IterativeLayout {
     }
 
 
-    @Override
-    public void init(Object n) {
 
-    }
+
 }

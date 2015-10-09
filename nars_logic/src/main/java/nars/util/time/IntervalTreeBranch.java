@@ -3,6 +3,7 @@ package nars.util.time;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
         IntervalTreeNode<K, V> {
@@ -108,6 +109,16 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
         }
         updateKeyRange();
         return this;
+    }
+
+    @Override
+    public void getOverlap(Interval<K> range, Consumer<V> accumulator) {
+        if (left != null && left.overlaps(range)) {
+            left.getOverlap(range, accumulator);
+        }
+        if (right != null && right.overlaps(range)) {
+            right.getOverlap(range, accumulator);
+        }
     }
 
     @Override

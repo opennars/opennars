@@ -89,7 +89,7 @@ import java.util.List;
  * that a finer granularity is required.
  * 
  */
-public class HyperOrganicLayout<V> implements IterativeLayout<V>
+public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 {
 
 	/**

@@ -17,7 +17,7 @@
 //import static processing.core.PConstants.HSB;
 //
 ///**
-// * Timeline view of an logic trace. Focuses on a specific window and certain
+// * ConceptComet view of an logic trace. Focuses on a specific window and certain
 // * features which can be adjusted dynamically. Can either analyze a trace while
 // * a NAR runs, or after it finishes.
 // */

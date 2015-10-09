@@ -202,11 +202,11 @@
 ////            });
 ////            m.add(mv);
 //
-////            JMenuItem tlp = new JMenuItem("+ Timeline");
+////            JMenuItem tlp = new JMenuItem("+ ConceptComet");
 ////            tlp.addActionListener(new ActionListener() {
 ////                @Override
 ////                public void actionPerformed(ActionEvent e) {
-////                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar, trace));
+////                    NWindow outputWindow = new NWindow("ConceptComet", new TimelinePanel(nar, trace));
 ////                    outputWindow.show(900, 700);
 ////                }
 ////            });

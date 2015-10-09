@@ -4,24 +4,24 @@ import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.annotation.Range;
 import nars.guifx.graph2.SpaceGrapher;
-import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
+import nars.term.Termed;
 
 import java.util.function.Consumer;
 
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
+public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap<N> {
     double scaleFactor = 1;
     private TermNode[] termList;
 
 
     //TODO equilibrum distance, speed, etc
 
-    @Range(min=1, max=20)
+    @Range(min = 1, max = 20)
     public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(15.0);
-    @Range(min=1, max=20)
+    @Range(min = 1, max = 20)
     public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(10.0);
 
     public HyperassociativeMap2D() {
@@ -31,6 +31,7 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
     public HyperassociativeMap2D(int dim) {
         this(dim, 1.0);
     }
+
     public HyperassociativeMap2D(int dim, double eqDist) {
         super(dim, eqDist,
                 //Manhattan
@@ -40,8 +41,8 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
     }
 
     @Override
-    public void init(TermNode n) {
-        n.move(Math.random()*200,Math.random()*200);
+    public void init(TermNode<N> n) {
+        n.move(Math.random() * 200, Math.random() * 200);
     }
 
 
@@ -77,10 +78,8 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
         setEquilibriumDistance(0.02f);
     }
 
-    @Override
-    public void getPosition(final TermNode node, final double[] v) {
-        node.getPosition(v);
-    }
+
+
 
             /*
             @Override
@@ -101,20 +100,27 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
 
 
     @Override
-    public double getRadius(TermNode termNode) {
+    public double getRadius(TermNode<N> termNode) {
 
-        return termNode.priNorm * 0.025;
+        return termNode.priNorm * 0.5;
 
     }
 
     @Override
-    public double getSpeedFactor(TermNode termNode) {
-        //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
-        return scaleFactor * 1.5f;
+    protected void edges(TermNode nodeToQuery, Consumer<TermNode<N>> updateFunc) {
+
     }
 
+
+//    @Override
+//    public double getSpeedFactor(TermNode<N> termNode) {
+//        //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
+//        return scaleFactor * 1.5f;
+//    }
+
+
     @Override
-    public void apply(final TermNode node, final double[] dataRef) {
+    public void apply(TermNode node, double[] dataRef) {
 
         node.move(dataRef[0], dataRef[1]);//, 1.0, 0);
     }
@@ -128,21 +134,27 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
         //TODO avoid copying
         return termList;
     }
-
-    @Override
-    protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc) {
-//                    for (final TermEdge e : edges.row(nodeToQuery.term).values()) {
-//                        updateFunc.accept(e.otherNode(nodeToQuery));
-//                    }
-
-        for (final TermEdge e : nodeToQuery.getEdges()) {
-            if (e!=null && e.visible)
-                updateFunc.accept(e.otherNode(nodeToQuery));
-        }
-
-            /*edges.values().forEach(e ->
-                    updateFunc.accept(e.otherNode(nodeToQuery)));*/
-
-    }
-
 }
+
+//    @Override
+//    protected void edges(TermNode nodeToQuery, Consumer<N> updateFunc) {
+//
+//    }
+//
+//    @Override
+//    protected void edges(final TermNode nodeToQuery, Consumer<TermNode<N>> updateFunc) {
+////                    for (final TermEdge e : edges.row(nodeToQuery.term).values()) {
+////                        updateFunc.accept(e.otherNode(nodeToQuery));
+////                    }
+//
+//        for (final TermEdge e : nodeToQuery.getEdges()) {
+//            if (e!=null && e.visible)
+//                updateFunc.accept(e.otherNode(nodeToQuery));
+//        }
+//
+//            /*edges.values().forEach(e ->
+//                    updateFunc.accept(e.otherNode(nodeToQuery)));*/
+//
+//    }
+//
+//}

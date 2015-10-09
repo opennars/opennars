@@ -106,7 +106,7 @@ abstract public class NAR implements Serializable, Level {
     /**
      * The name of the reasoner
      */
-    protected String name;
+    public String name;
     /**
      * Flag for running continuously
      */
@@ -1293,6 +1293,10 @@ abstract public class NAR implements Serializable, Level {
     /** convenience method shortcut for concept(t.getTerm()) */
     public final Concept concept(Termed termed) {
         return concept(termed.getTerm());
+    }
+
+    public String getName() {
+        return WEBSITE;
     }
 
 //    public NAR onAfterFrame(final Runnable r) {

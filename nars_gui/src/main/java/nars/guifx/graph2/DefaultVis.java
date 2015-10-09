@@ -23,7 +23,7 @@ import nars.term.Term;
 /**
  * Created by me on 10/2/15.
  */
-public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
+public class DefaultVis implements VisModel<Term,DefaultVis.HexTerm2Node> {
 
     final static Font nodeFont = NARfx.mono(0.25);
 
@@ -37,7 +37,7 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
     private SpaceGrapher graph;
     final Rectangle hoverPanel = new Rectangle();
 
-    public HexagonsVis() {
+    public DefaultVis() {
         super();
         nodeScale.addListener((e) -> {
             nodeScaleCache = nodeScale.get();
@@ -148,7 +148,7 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         hp.setHeight(hh+b*2);
     }
 
-    private synchronized void setSelected(Node nextSelect) {
+    private void setSelected(Node nextSelect) {
 
         if (nextSelect == this.selected) {
             return;
@@ -212,6 +212,8 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         //HACK this is supposed to insert the selection hover directly behind the vertices in NARGraph.. do a more robust index determination here
         g.getChildren().add(0, hoverPanel);
     }
+
+
 
     @Override
     public void stop(SpaceGrapher g) {
@@ -312,7 +314,7 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
             g.setFill(Color.BLACK);
             g.setFontSmoothingType(FontSmoothingType.LCD);
 
-            g.fillText(term.toStringCompact(),0,H/2);
+            g.fillText(term.getTerm().toStringCompact(),0,H/2);
 
 
 

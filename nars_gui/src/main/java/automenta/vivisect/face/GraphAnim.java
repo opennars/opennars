@@ -1153,7 +1153,7 @@ package automenta.vivisect.face;
 //	    FontMetrics fm = g.getFontMetrics(TIMEFONT);
 //	    int border = 5;
 //	    int y = SNAPHEIGHT / 2 + fm.getAscent() - fm.getHeight() / 2;
-//	    String ts = new String("Timeline");
+//	    String ts = new String("ConceptComet");
 //	    g.drawString(ts, border - scrPos, y);
 //	    if(timeArrow == null) {
 //		int lh = (SNAPHEIGHT - 2 * border) / 2;                                  // height of arrow line

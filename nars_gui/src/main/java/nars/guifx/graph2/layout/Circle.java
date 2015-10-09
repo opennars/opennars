@@ -2,29 +2,26 @@ package nars.guifx.graph2.layout;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.graph2.SpaceGrapher;
-import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 
+import java.util.function.BiConsumer;
 import java.util.function.ToDoubleFunction;
 
 /**
  * TODO rewrite as subclass of Linear
  */
-public class Circle<N extends TermNode, E extends TermEdge> implements IterativeLayout<N> {
+public class Circle implements IterativeLayout {
 
     public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(1);
     public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(4);
 
-    @Override
-    public void init(N n) {
-        //n/a
-    }
+
 
     public void run(TermNode[] verts,
                     //PreallocatedResultFunction<N,double[]> getPosition,
                     ToDoubleFunction<TermNode> radiusFraction,
                     ToDoubleFunction<TermNode> angle,
-                    SpaceGrapher.PairConsumer<TermNode, double[]> setPosition) {
+                    BiConsumer<TermNode, double[]> setPosition) {
 
 
         double d[] = new double[2];
@@ -69,6 +66,11 @@ public class Circle<N extends TermNode, E extends TermEdge> implements Iterative
                 (v, d) -> {
                     v.move(d[0], d[1]);//, 0.5f, 1f);
                 });
+
+    }
+
+    @Override
+    public void init(TermNode n) {
 
     }
 

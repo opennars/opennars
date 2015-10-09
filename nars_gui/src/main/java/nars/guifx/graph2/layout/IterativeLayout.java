@@ -2,12 +2,14 @@ package nars.guifx.graph2.layout;
 
 
 import nars.guifx.graph2.SpaceGrapher;
-import org.apache.commons.math3.linear.ArrayRealVector;
+import nars.guifx.graph2.TermNode;
 
-public interface IterativeLayout<V> {
+public interface IterativeLayout<V extends TermNode> {
 
-    @Deprecated default ArrayRealVector getPosition(V vertex) {
-        return null;
+
+    /** setup starting conditions for a new node */
+    default void init(V n) {
+
     }
 
     @Deprecated default void pre(V[] vertices) {
@@ -28,7 +30,7 @@ public interface IterativeLayout<V> {
 
 
 
-    /** setup starting conditions for a new node */
-    void init(V n);
+
+
 
 }
