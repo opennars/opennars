@@ -303,7 +303,7 @@ public class RuleMatch extends FindSubst {
 
                 occ = now + occurence_shift;
             } else {
-                occ = Stamp.ETERNAL;
+                occ = task.getOccurrenceTime();
             }
 
             if (budget.isDeleted()) {
