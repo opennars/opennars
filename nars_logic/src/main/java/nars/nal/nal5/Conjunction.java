@@ -198,7 +198,7 @@ public class Conjunction extends Junction<Term> {
      * @param argList the list of arguments
      * @return the Term generated from the arguments
      */
-    final public static Term make(final Term[] argList) {
+    public static Term make(final Term[] argList) {
 
         return make(argList, Temporal.ORDER_NONE);
     }

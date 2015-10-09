@@ -6,6 +6,7 @@ import javafx.beans.InvalidationListener;
 import nars.NAR;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
+import nars.guifx.demo.GenericControlPane;
 import nars.guifx.graph2.layout.*;
 
 import static javafx.application.Platform.runLater;
@@ -67,6 +68,11 @@ public class DefaultNARGraph extends NARGraph<Object> {
             layoutChange.invalidated(null));
 
         //g.setLayout(new TimelineLayout());
+
+        GenericControlPane c = new GenericControlPane(this);
+        c.layout();
+        c.autosize();
+        getChildren().add(c);
 
     }
 

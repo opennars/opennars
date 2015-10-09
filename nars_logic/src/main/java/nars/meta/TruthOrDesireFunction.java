@@ -12,5 +12,5 @@ public interface TruthOrDesireFunction {
      * @param B beliefTruth (possibly null)
      * @return
      */
-    abstract public Truth get(Truth T, Truth B);
+    Truth get(Truth T, Truth B);
 }

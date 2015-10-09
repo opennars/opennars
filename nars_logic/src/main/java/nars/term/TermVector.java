@@ -167,7 +167,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
     /**
-     * forced deep clone of terms
+     * forced deep clone of terms - should not be necessary
      */
     public Term[] cloneTermsDeep() {
         Term[] l = new Term[length()];

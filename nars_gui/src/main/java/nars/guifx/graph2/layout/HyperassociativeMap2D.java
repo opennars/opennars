@@ -29,7 +29,9 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdg
     }
 
     public HyperassociativeMap2D(int dim) {
-        super(dim, 1.0, Manhattan);
+        super(dim, 1.0,
+                //Manhattan
+                Euclidean);
 
         //reusedCurrentPosition = new ArrayRealVector(dim);
     }

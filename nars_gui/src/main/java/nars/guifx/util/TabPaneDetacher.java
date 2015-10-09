@@ -2,6 +2,7 @@ package nars.guifx.util;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -78,13 +79,23 @@ public class TabPaneDetacher {
             tapTransferMap.put(i, tabPane.getTabs().get(i));
         }
 
-        tabPane.getTabs().forEach(x -> {
-
-            Button p = new Button("^");
-            p.setOnMouseClicked(e -> { popout(x); });
-            x.setGraphic(p);
-
+        tabPane.getTabs().addListener((ListChangeListener<Tab>) change -> {
+            if (change.next()) {
+                change.getAddedSubList().forEach(x -> {
+                    Button p = new Button("^");
+                    p.setOnMouseClicked(en -> {
+                        popout(x);
+                    });
+                    x.setGraphic(p);
+                });
+            }
         });
+
+//        tabPane.getTabs().forEach(x -> {
+//
+//
+//
+//        });
 
 //        tabPane.setOnDragDetected(
 //                (MouseEvent event) -> {

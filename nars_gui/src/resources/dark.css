@@ -156,9 +156,11 @@
 .button:default:armed {
      -fx-background-color: derive(-flatter-red, -20.0%);
 }*/
-.tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: transparent;
-}
+/*.tab-pane *.tab-header-background {
+    -fx-background-color: rgb(0.25,0.25,0.25) !important;
+    -fx-border-color: rgb(0.5,0.5,0.5) !important;
+    -fx-border-width: 0.5 !important;
+}*/
 
 /*******************************************************************************
  *                                                                             *

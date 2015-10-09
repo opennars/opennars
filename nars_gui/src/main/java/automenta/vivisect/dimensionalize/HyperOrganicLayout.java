@@ -369,7 +369,7 @@ public class HyperOrganicLayout<V> implements IterativeLayout<V>
 	protected boolean resetEdges = false;
 
 	public HyperOrganicLayout() {
-		this(new Rectangle.Float(-400*3.0f,-400*3.0f,800.0f*3.0f,800.0f*3.0f));
+		this(new Rectangle.Float(-400*1.0f,-400*1.0f,800.0f*1.0f,800.0f*1.0f));
 	}
 
 	/**

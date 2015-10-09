@@ -11,8 +11,9 @@ import nars.guifx.util.TabXLazy;
 import nars.guifx.wikipedia.NARWikiBrowser;
 import nars.io.in.LibraryInput;
 import nars.io.nlp.Twenglish;
-import nars.nal.nal4.Product;
-import nars.term.Compound;
+import nars.nal.nal2.Similarity;
+import nars.nal.nal7.Sequence;
+import nars.term.Atom;
 import nars.term.Term;
 
 import java.util.Collection;
@@ -135,6 +136,7 @@ public class InputPane extends TabPane {
 
     static class NaturalLanguagePane extends CodeInput {
 
+        final Twenglish te = new Twenglish();
         private final NAR nar;
 
         public NaturalLanguagePane(NAR n) {
@@ -145,14 +147,25 @@ public class InputPane extends TabPane {
         /** return false to indicate input was not accepted, leaving it as-is.
          * otherwise, return true that it was accepted and the buffer will be cleared. */
         public boolean onInput(String s) {
+
+            te.parse(nar, s).forEach( nar::input );
+
             Collection<Term> tokens = Twenglish.tokenize(s);
 
             if (tokens == null)
                 return false;
-
-            nar.believe((Compound)Product.make( tokens ));
-
-            return true;
+            else {
+                if (!tokens.isEmpty())
+                    nar.believe(
+                        Similarity.make(
+                            Atom.quote(s),
+                            Sequence.makeSequence(
+                                    tokens.toArray(new Term[tokens.size()])
+                            )
+                        )
+                    );
+                return true;
+            }
         }
     }
 }

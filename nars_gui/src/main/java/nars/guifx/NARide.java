@@ -17,6 +17,7 @@ import nars.guifx.graph2.DefaultNARGraph;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.SizeAwareWindow;
+import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
 import nars.util.NARLoop;
 import nars.video.WebcamFX;
@@ -184,11 +185,11 @@ public class NARide extends BorderPane {
         icon(RealtimeMSClock.class, () -> new NARControlFX.RTClockPane(nar) );
         icon(NARLoop.class, () -> new NARControlFX.LoopPane(l) );
 
-//        runLater(() -> {
-//                    TabPaneDetacher tabDetacher = new TabPaneDetacher();
-//                    tabDetacher.makeTabsDetachable(content);
-//                    tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
-//        });
+        runLater(() -> {
+                    TabPaneDetacher tabDetacher = new TabPaneDetacher();
+                    tabDetacher.makeTabsDetachable(content);
+                    tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
+        });
 
 
 

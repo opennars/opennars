@@ -100,8 +100,7 @@ public class Default extends NAR implements ConceptBuilder {
 
         the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
 
-
-        //initTime();
+        initTime();
 
         //n.on(new RuntimeNARSettings());
 

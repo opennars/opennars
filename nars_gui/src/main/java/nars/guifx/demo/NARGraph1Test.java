@@ -1,8 +1,5 @@
 package nars.guifx.demo;
 
-import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import nars.Global;
 import nars.NAR;
 import nars.clock.FrameClock;
@@ -15,8 +12,6 @@ import nars.guifx.graph2.layout.CanvasEdgeRenderer;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
 import nars.nar.Default;
-import za.co.knonchalant.builder.POJONode;
-import za.co.knonchalant.builder.TaggedParameters;
 
 /**
  * Created by me on 8/15/15.
@@ -39,7 +34,7 @@ public class NARGraph1Test {
         n.input("<hydochloric --> acid>.");
         n.input("<#x-->base>. %0.65%");
         n.input("<neutralization --> (acid,base)>. %0.75;0.90%");
-        n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
+        //n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
         //n.input("<(&&,a,b,ca)-->#x>?");
 
         //n.frame(5);
@@ -54,10 +49,6 @@ public class NARGraph1Test {
 
 
 
-        GenericControlPane c = new GenericControlPane(g);
-        c.layout();
-        c.autosize();
-        g.getChildren().add(c);
 
         return g;
     }
@@ -98,25 +89,4 @@ public class NARGraph1Test {
 
     }
 
-    private static class GenericControlPane<X> extends BorderPane {
-
-        public final X obj;
-
-        public GenericControlPane(X obj) {
-            super();
-            this.obj = obj;
-
-            TaggedParameters taggedParameters = new TaggedParameters();
-
-            Region controls = POJONode.valueToNode(obj, taggedParameters, this); //new VBox();
-
-            ToggleButton toggle = new ToggleButton("[X]");
-            controls.visibleProperty().bind(toggle.selectedProperty());
-            toggle.setSelected(true);
-
-            setTop(toggle);            setCenter(controls);
-
-        }
-
-    }
 }

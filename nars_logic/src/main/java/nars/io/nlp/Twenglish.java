@@ -17,14 +17,13 @@
 package nars.io.nlp;
 
 import com.google.common.collect.Lists;
+import nars.Global;
 import nars.Memory;
+import nars.NAR;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Temporal;
 import nars.narsese.InvalidInputException;
-import nars.narsese.NarseseParser;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
@@ -34,7 +33,6 @@ import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Twitter English - english with additional tags for twitter-like content 
@@ -48,8 +46,8 @@ public class Twenglish {
     private Memory memory;
 
     
-    boolean languageBooted = true; //set to false to initialize on first twenglish input
-    boolean inputProduct = false;
+    //boolean languageBooted = true; //set to false to initialize on first twenglish input
+    boolean inputProduct = true;
     boolean inputConjSeq = true;
     
     
@@ -105,12 +103,8 @@ public class Twenglish {
         this.memory = memory;
     }
 
-    protected Collection<Task> parseSentence(List<Span> s, NarseseParser narsese, boolean modifyVocabulary) {
-        return spansToSentenceTerms(s);
-    }
-    
-    public Collection<Task> spansToSentenceTerms(Collection<Span> s) {
-        
+    protected Collection<Task> parseSentence(NAR n, List<Span> s) {
+
         LinkedList<Term> t = new LinkedList();
         Span last = null;
         for (Span c : s) {
@@ -118,7 +112,7 @@ public class Twenglish {
             last = c;
         }
         if (t.isEmpty()) return Collections.emptyList();
-        
+
         String sentenceType = "fragment";
         if ((last!=null) && (last.pattern.equals("punct"))) {
             switch (last.content) {
@@ -131,40 +125,37 @@ public class Twenglish {
             t.removeLast(); //remove the punctuation, it will be redundant
 
         List<Task> tt = new ArrayList();
-        
+
         //1. add the logical structure of the sequence of terms
         if (inputProduct) {
-            Term p = 
+            Term p =
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
             Compound q = Sentence.termOrNull( Instance.make( p, Atom.the(sentenceType,true)) );
             if (q != null) {
-                throw new RuntimeException("API Upgrade not finished here:");
-                /*tt.add(
-                        memory.newTask(q, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-                );*/
+                tt.add(n.task(q + ". %1.0;0.9%")); //TODO non-string construct
             }
+
         }
-        
+
         //2. add the 'heard' sequence of just the terms
-        if (inputConjSeq) {
-            LinkedList<Term> cont = s.stream().map(cp -> lexToTerm(cp.content)).collect(Collectors.toCollection(LinkedList::new));
-            //separate each by a duration interval
-//cont.add(Interval.interval(memory.duration(), memory));
-            cont.removeLast(); //remove trailnig interval term
+//        if (inputConjSeq) {
+//            LinkedList<Term> cont = s.stream().map(cp -> lexToTerm(cp.content)).collect(Collectors.toCollection(LinkedList::new));
+//            //separate each by a duration interval
+////cont.add(Interval.interval(memory.duration(), memory));
+//            cont.removeLast(); //remove trailnig interval term
+//
+//            Compound con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), Temporal.ORDER_FORWARD));
+//            if (con!=null) {
+//                throw new RuntimeException("API Upgrade not finished here:");
+//                /*tt.add(
+//                        memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
+//                );*/
+//            }
+//        }
 
-            Compound con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), Temporal.ORDER_FORWARD));
-            if (con!=null) {
-                throw new RuntimeException("API Upgrade not finished here:");
-                /*tt.add(
-                        memory.newTask(con, '.', 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY)
-                );*/
-            }
-        }
-        
         return tt;
-        
-    }
 
+    }
 
 
     public static Term spanToTerm(Span c) {
@@ -199,14 +190,14 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(Memory m, String s, NarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(NAR n, String s) throws InvalidInputException {
 
         
-        List<Task> results = new ArrayList();
+        List<Task> results = Global.newArrayList();
 
         List<Span> tokens = Twokenize.twokenize(s);
         
-        List<List<Span>> sentences = new ArrayList();
+        List<List<Span>> sentences = Global.newArrayList();
         
         List<Span> currentSentence = new LinkedList();
         for (Span p : tokens) {
@@ -231,20 +222,20 @@ public class Twenglish {
             sentences.add(currentSentence);
         
         for (List<Span> x : sentences) {
-            results.addAll( parseSentence(x, narsese, modifyVocabulary) );
+            results.addAll( parseSentence(n, x) );
         }
                 
         if (!results.isEmpty()) {
-            if (!languageBooted) {
-                
-                
-                results.add(0, narsese.task(new StringBuilder(
-                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString(), m));
-                results.add(0, narsese.task(new StringBuilder(
-                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString(), m));
-                
-                languageBooted = true;
-            }
+//            if (!languageBooted) {
+//
+//
+//                results.add(0, n.task(new StringBuilder(
+//                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString()));
+//                results.add(0, n.task(new StringBuilder(
+//                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString()));
+//
+//                languageBooted = true;
+//            }
                 
         }
         

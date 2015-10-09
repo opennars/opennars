@@ -74,8 +74,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         }
 
         Task pt = task.getParentTask();
-
-        Sentence pb = task.getParentBelief();
+        Task pb = task.getParentBelief();
         if (pb != null) {
             if (pt != null && pb.equals(pt)) {
 
@@ -87,7 +86,12 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         sb.append('\n');
 
         if (pt != null) {
-            getExplanation(pt, indent + 1, sb);
+            sb.append("  PARENT ");
+            getExplanation(pt, indent+1, sb);
+        }
+        if (pb != null) {
+            sb.append("  BELIEF ");
+            getExplanation(pb, indent+1, sb);
         }
     }
 

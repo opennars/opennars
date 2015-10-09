@@ -15,7 +15,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jgroups.util.Util.assertTrue;
 
@@ -31,6 +30,8 @@ public class TestNAR  {
     boolean showSuccess = false;
     boolean showExplanations = false;
     final boolean showOutput = false;
+
+    boolean collectTrace = false;
 
     boolean resetOnStop = true; //should help GC if successively run
 
@@ -81,7 +82,7 @@ public class TestNAR  {
 
     public TestNAR debug() {
         Global.DEBUG = true;
-        nar.stdout();
+        //nar.stdout();
         return this;
     }
 
@@ -158,21 +159,21 @@ public class TestNAR  {
         return mustEmit(outputEvents, withinCycles, task);
     }
 
-    public TestNAR onAnswer(String solution, AtomicBoolean solved /* for detecting outside of this */) throws InvalidInputException {
-
-        solved.set(false);
-
-        final Task expectedSolution = nar.task(solution);
-
-        nar.memory.eventAnswer.on(qa -> {
-             if (!solved.get() && qa.getTwo().equals(expectedSolution)) {
-                 solved.set(true);
-             }
-        });
-
-        return this;
-
-    }
+//    public TestNAR onAnswer(String solution, AtomicBoolean solved /* for detecting outside of this */) throws InvalidInputException {
+//
+//        solved.set(false);
+//
+//        final Task expectedSolution = nar.task(solution);
+//
+//        nar.memory.eventAnswer.on(qa -> {
+//             if (!solved.get() && qa.getTwo().equals(expectedSolution)) {
+//                 solved.set(true);
+//             }
+//        });
+//
+//        return this;
+//
+//    }
 
 //    public TestNAR mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
 //        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
@@ -224,19 +225,19 @@ public class TestNAR  {
         return temporalTolerance;
     }
 
-    public void setTemporalTolerance(int temporalTolerance) {
-        this.temporalTolerance = temporalTolerance;
-    }
+//    public void setTemporalTolerance(int temporalTolerance) {
+//        this.temporalTolerance = temporalTolerance;
+//    }
 
     public Exception getError() {
         return error;
     }
 
-    public TestNAR mustInput(long withinCycles, String task) {
-        return mustEmit(
-                new Topic[] { nar.memory.eventInput },
-                withinCycles, task);
-    }
+//    public TestNAR mustInput(long withinCycles, String task) {
+//        return mustEmit(
+//                new Topic[] { nar.memory.eventInput },
+//                withinCycles, task);
+//    }
 
 
     public final long time() { return nar.time(); }
@@ -319,7 +320,7 @@ public class TestNAR  {
         public final HitMeter[] eventMeters;
         protected Serializable error = null;
         protected Task[] inputs;
-        protected Set<TaskCondition> cond = Global.newHashSet(1);
+        protected List<TaskCondition> cond = Global.newArrayList(1);
         transient final int stackElements = 4;
 
         public Report(TestNAR n) {
@@ -362,15 +363,6 @@ public class TestNAR  {
             cond.forEach(c ->
                 c.toString(out)
             );
-
-//                    "Report{" +
-//                    "time=" + time +
-//                    ", eventMeters=" + Arrays.toString(eventMeters) +
-//                    ", error=" + error +
-//                    ", inputs=" + Arrays.toString(inputs) +
-//                    ", cond=" + cond +
-//                    ", stackElements=" + stackElements +
-//                    '}';
         }
     }
 
@@ -385,8 +377,8 @@ public class TestNAR  {
                 finalCycle = oc.cycleEnd+1;
         }
 
-
-        nar.trace(trace = new StringWriter());
+        if (collectTrace)
+            nar.trace(trace = new StringWriter());
 
         runUntil(finalCycle);
 
@@ -437,9 +429,9 @@ public class TestNAR  {
         }
         else if (!success) {
 
-            System.err.append("\n");
-            System.err.append(trace.getBuffer());
-            report.toString(System.err);
+            report.toString(System.out);
+            if (collectTrace)
+                System.err.println(trace.getBuffer());
 
             assertTrue(false);
         }

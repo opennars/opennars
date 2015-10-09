@@ -43,6 +43,10 @@ public class Sequence extends Conjunction implements Intermval {
         init(subterms);
     }
 
+    public static final Term make(final Term[] argList) {
+        throw new RuntimeException("Use Sequence.makeSequence");
+    }
+
     @Override
     public Sequence clone() {
         return new Sequence(term, intervals);

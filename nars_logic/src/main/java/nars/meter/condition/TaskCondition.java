@@ -4,6 +4,7 @@ package nars.meter.condition;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.io.Texts;
 import nars.nal.nal7.Temporal;
 import nars.narsese.InvalidInputException;
 import nars.task.DefaultTask;
@@ -17,6 +18,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -47,7 +49,6 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
     float temporalityCost = 0.75f;*/
 
 
-    protected  boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
     private final NAR nar;
     //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
@@ -64,7 +65,7 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
 
     transient int maxSimilars = 16;
 
-    protected TreeMap<Double,Task> similar;
+    protected TreeMap<Float,Task> similar;
 
 //    public static class StringDistance extends Item<String> {
 //
@@ -89,9 +90,6 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
         super(n.task(sentenceTerm + punc));
 
         this.nar = n;
-
-        this.relativeToCondition = false;
-
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
@@ -198,20 +196,19 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
     @Override
     public boolean test(Task task) {
 
-        if (!matches(task)) return false;
-
         /** how many errors accumulated while testing it  */
         double distance = 0;
+
+        if (!matches(task))
+            distance = 1;
 
         long now = nar.time();
 
 
-        boolean match = true;
 
         if ( ((cycleStart!=-1) && (now < cycleStart)) ||
                 ((cycleEnd!=-1) && (now > cycleEnd)))  {
             distance += 1; //getTimeDistance(now);
-            match = false;
         }
 
 
@@ -220,13 +217,11 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
         if (isEternal()) {
             if (!Temporal.isEternal(task.getOccurrenceTime())) {
                 distance += 1; //temporalityCost;
-                match = false;
             }
         }
         else {
             if (Temporal.isEternal(task.getOccurrenceTime())) {
                 distance += 1;// temporalityCost - 0.01;
-                match = false;
             }
             else {
 
@@ -272,13 +267,11 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
             float co = task.getConfidence();
 
             if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
-                match = false;
                 distance += getTruthDistance(task.getTruth());
             }
         }
 
-        if (!match && distance <= getAcceptableDistanceThreshold())
-            match = true;
+        boolean match = (distance == 0);
 
         if (match) {
             //TODO record a different score for fine-tune optimization?
@@ -290,21 +283,25 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
                 return true;
             }*/
         }
+        else {
 
-        if (distance > 0) {
-            ensureSimilar();
+            final float textDifference = Texts.levenshteinDistance(
+                    task.toString().split("\\{")[0], //HACK to avoi comparing stamps
+                    toString().split("\\{")[0]);
 
+            if (textDifference > 0) {
+                ensureSimilar();
 
+                //TODO more efficient way than this
+                if (!similar.values().contains(task))
+                    similar.put(textDifference, task);
 
-            //TODO more efficient way than this
-            if (!similar.values().contains(task))
-                similar.put(distance, task);
-
-            if (similar.size() > maxSimilars) {
-                similar.remove( similar.lastEntry().getKey() );
+                if (similar.size() > maxSimilars) {
+                    similar.remove(similar.lastEntry().getKey());
+                }
             }
-        }
 
+        }
         return match;
     }
 
@@ -417,8 +414,25 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
         return succeeded;
     }
 
+    public String toConditionString() {
+        return  "  freq in(" + freqMin + "," + freqMax +
+                "), conf in(" + confMin + "," + confMax +
+                "), cycle in(" + cycleStart + "," + cycleEnd + ")";
+    }
+
     public void toString(PrintStream out) {
-        //TODO
-        out.println(toString());
+        out.println(isTrue() ? " OK" : "ERR" + "\t" + toString() + " " + toConditionString());
+
+        BiConsumer<String,Task> printer = (label,s) -> {
+            out.print("\t" + label + " ");
+            out.println(s.getExplanation().replace("\n", "\n\t\t"));
+        };
+
+        if (valid!=null) {
+            valid.forEach(s -> printer.accept("VALID", s));
+        }
+        if (similar!=null) {
+            similar.values().forEach(s -> printer.accept("SIMILAR", s));
+        }
     }
 }

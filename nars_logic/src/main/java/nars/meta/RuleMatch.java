@@ -19,6 +19,7 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -97,6 +98,8 @@ public class RuleMatch extends FindSubst {
 
     public Task apply(final PostCondition outcome) {
 
+        ConceptProcess premise = this.premise;
+
         final Task task = premise.getTask();
 
         if (!rule.validTaskPunctuation(task.getPunctuation())) {
@@ -139,9 +142,15 @@ public class RuleMatch extends FindSubst {
             if (Global.DEBUG) {
                 Term termm = resolve(outcome.term);
                 if (termm != null) {
+
                     premise.memory().remove(
-                            new PreTask(termm, punct, truth, Budget.zero, occurence_shift, premise),
-                            "Cyclic");
+                            new PreTask(termm, punct, truth,
+                                    Budget.zero, occurence_shift, premise
+                            ),
+                            "Cyclic:" +
+                                    Arrays.toString(premise.getTask().getEvidence()) + "," +
+                                    Arrays.toString(premise.getBelief().getEvidence())
+                    );
                 }
 
             }
@@ -185,6 +194,7 @@ public class RuleMatch extends FindSubst {
 
         if (!(derivedTerm instanceof Compound))
             return null;
+
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
@@ -265,7 +275,6 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
-        derivedTerm = derivedTerm.cloneDeep();
         TaskSeed deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
 
@@ -327,9 +336,16 @@ public class RuleMatch extends FindSubst {
         final TruthOrDesireFunction f = getTruthFunction(punc, outcome);
         if (f == null) return null;
 
-        final Truth truth = f.get(T, B);
 
-        final float minConf = 0; //DefaultTruth.DEFAULT_TRUTH_EPSILON;
+        final Truth truth = f.get(T, B);
+//        if (T!=null && truth == T)
+//            throw new RuntimeException("tried to steal Task's truth instance: " + f);
+//        if (B!=null && truth == B)
+//            throw new RuntimeException("tried to steal Belief's truth instance: " + f);
+
+
+        //minConfidence pre-filter
+        final float minConf = Global.DEBUG ? Global.CONFIDENCE_PREFILTER_DEBUG : Global.CONFIDENCE_PREFILTER;
         return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
     }
 
