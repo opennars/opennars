@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdge> {
+public class HyperassociativeMap2D extends HyperassociativeMap<TermNode> {
     double scaleFactor = 1;
     private TermNode[] termList;
 
@@ -29,7 +29,10 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdg
     }
 
     public HyperassociativeMap2D(int dim) {
-        super(dim, 1.0,
+        this(dim, 1.0);
+    }
+    public HyperassociativeMap2D(int dim, double eqDist) {
+        super(dim, eqDist,
                 //Manhattan
                 Euclidean);
 

@@ -93,7 +93,7 @@ public class SizeAwareWindow extends Scene {
 
             finalWindow.setScene(this);
 
-            finalWindow.getScene().getStylesheets().setAll(NARfx.css, "dark.css");
+            finalWindow.getScene().getStylesheets().setAll(NARfx.css );
 
             AtomicBoolean sizeChanging = new AtomicBoolean(false);
 

@@ -1,22 +1,25 @@
 package nars.guifx.graph2;
 
+
 import automenta.vivisect.dimensionalize.HyperOrganicLayout;
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import nars.Global;
+import nars.guifx.NARide;
 import nars.guifx.Spacegraph;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.demo.Animate;
 import nars.guifx.graph2.layout.*;
+import nars.term.Atom;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
@@ -41,17 +44,94 @@ public class SpaceGrapher<V> extends Spacegraph {
     public final SimpleObjectProperty<GraphSource<V>> source = new SimpleObjectProperty<>();
 
 
-    private Animate animator;
+    private Animate animator; //TODO atomic reference
 
 
     static final Random rng = new XORShiftRandom();
 
 
-    int layoutPeriodMS = 30 /* slightly less than 2 * 17, approx sooner than 30fps */;
 
 
     public final SimpleObjectProperty<VisModel> vis = new SimpleObjectProperty<>();
     public TermNode[] displayed = new TermNode[0];
+
+    /** produces a spacegraph instance for a given collection of items
+     *  and a method of rendering them
+     *  TODO does not yet support collections which change but this is feasible
+     *  */
+    static public <X> SpaceGrapher forCollection(
+            final Collection<X> c,
+            final BiConsumer<X,TermNode> builder /* decorator actually */,
+            final IterativeLayout<TermNode> layout /* the initial one, it can be changed */
+    ) {
+
+        final Map<Term,X> termObject = new HashMap();
+
+        int defaultCapacity = 128;
+
+        return new SpaceGrapher(
+
+                new GraphSource<NARide>() {
+
+                    Set<TermNode> nodes = Global.newHashSet(16);
+
+                    @Override
+                    public void start(SpaceGrapher<NARide> spaceGrapher) {
+
+                        c.forEach(o -> {
+                            if (o!=null) {
+
+                                //TODO generalize this so term isnt needed here
+                                Term term = Atom.the(o.toString(),true);
+                                termObject.put(term, o);
+
+                                TermNode tn = spaceGrapher.getOrCreateTermNode(term);
+                                if (tn!=null) {
+                                    nodes.add(tn);
+                                }
+                            }
+                        });
+
+                        runLater(() -> {
+                            accept(spaceGrapher);
+                            spaceGrapher.layout.set(layout);
+                            spaceGrapher.rerender();
+                        } );
+
+
+                    }
+
+                    @Override
+                    public void accept(SpaceGrapher graph) {
+                        //a cache would need to be invalidated here if this will support mutable collections
+                        graph.setVertices(nodes);
+                    }
+
+                },
+                new VisModel<TermNode>() {
+
+                    @Override
+                    public void accept(TermNode termNode) {
+
+
+                        //t.update();
+
+                        //t.scale(minSize + (maxSize - minSize) * t.priNorm);
+                    }
+
+                    @Override
+                    public TermNode newNode(Term t) {
+                        TermNode tn = new TermNode(t);
+                        builder.accept(
+                                termObject.get(t),
+                                tn
+                        );
+                        return tn;
+                    }
+                },
+                new CanvasEdgeRenderer(),
+                defaultCapacity);
+    }
 
 
     /**
@@ -291,7 +371,7 @@ public class SpaceGrapher<V> extends Spacegraph {
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
 
-    public SpaceGrapher(GraphSource g, VisModel vv, CanvasEdgeRenderer edgeRenderer, int size) {
+    public SpaceGrapher(GraphSource<V> g, VisModel vv, CanvasEdgeRenderer edgeRenderer, int size) {
         super();
 
 
@@ -371,23 +451,27 @@ public class SpaceGrapher<V> extends Spacegraph {
 
     }
 
+
+    final static int defaultIdlePeriodMS = 30; //~60hz/2
+
     protected synchronized void checkVisibility() {
-        if (isVisible() && getParent() != null && getScene()!=null)
-            start();
-        else
+        if (isVisible() && getParent() != null && getScene()!=null) {
+            start(defaultIdlePeriodMS);
+        } else
             stop();
     }
 
-    void start() {
+    public synchronized void start(int layoutPeriodMS) {
 
         if (this.animator == null) {
-            System.out.println(this + " started");
-
             this.animator = new Animate(layoutPeriodMS, a -> {
                 if (displayed.length != 0) {
                     rerender();
                 }
             });
+
+            System.out.println(this + " started");
+
 
                 /*this.updaterSlow = new Animate(updatePeriodMS, a -> {
                     if (!termList.isEmpty()) {
@@ -401,14 +485,12 @@ public class SpaceGrapher<V> extends Spacegraph {
 
     }
 
-    void stop() {
-
+    public synchronized void stop() {
         if (this.animator != null) {
-            System.out.println(this + " stopped");
-
             animator.stop();
             animator = null;
 
+            System.out.println(this + " stopped");
         }
     }
 

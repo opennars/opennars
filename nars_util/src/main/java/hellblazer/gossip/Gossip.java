@@ -76,9 +76,9 @@ public class Gossip {
     private static final byte[]                              EMPTY_STATE             = new byte[0];
 
     private final int                                        cleanupCycles;
-    private final GossipCommunications communications;
+    public final GossipCommunications communications;
     private final Executor                                   dispatcher;
-    private final ConcurrentMap<InetSocketAddress, Endpoint> endpoints               = new ConcurrentHashMap<>();
+    public final ConcurrentMap<InetSocketAddress, Endpoint> endpoints               = new ConcurrentHashMap<>();
     private final Random                                     entropy;
     private final FailureDetectorFactory                     fdFactory;
     private ScheduledFuture<?>                               gossipTask;

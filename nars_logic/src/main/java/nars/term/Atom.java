@@ -357,11 +357,17 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return false;
     }
 
+    public String toStringUnquoted() {
+        return toUnquoted(toString());
+    }
 
     public static String unquote(final Term s) {
-        String x = s.toString();
+        return toUnquoted(s.toString());
+    }
+
+    public static String toUnquoted(String x) {
         if (x.startsWith("\"") && x.endsWith("\"")) {
-            return x.substring(1, x.length()-1);
+            return x.substring(1, x.length() - 1);
         }
         return x;
     }

@@ -371,6 +371,9 @@ public class HyperOrganicLayout<V> implements IterativeLayout<V>
 	public HyperOrganicLayout() {
 		this(new Rectangle.Float(-400*1.0f,-400*1.0f,800.0f*1.0f,800.0f*1.0f));
 	}
+    public HyperOrganicLayout(float scale) {
+        this(new Rectangle.Float(-scale/2.0f,-scale/2.0f,scale*1.0f,scale*1.0f));
+    }
 
 	/**
 	 * Constructor for HyperOrganicLayout.

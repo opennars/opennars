@@ -452,6 +452,17 @@ abstract public class NAR implements Serializable, Level {
         return memory.event.on(o, c);
     }
 
+
+
+    //TODO use specific names for these types of functons in this class
+    public void onExec(String operator, Function<Task<Operation>,List<Task>> f)  {
+        on(new OperatorReaction(operator) {
+            @Override public List<Task> apply(Task<Operation> t) {
+                return f.apply(t);
+            }
+        });
+    }
+
     public void on(Class<? extends Reaction<Class, Object[]>>... x) {
 
         for (Class<? extends Reaction<Class, Object[]>> c : x) {

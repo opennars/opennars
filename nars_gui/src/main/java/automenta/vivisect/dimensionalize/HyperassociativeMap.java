@@ -49,7 +49,7 @@ import java.util.function.Consumer;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N> {
+abstract public class HyperassociativeMap<N> implements IterativeLayout<N> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;

@@ -7,6 +7,7 @@ import org.infinispan.marshall.core.JBossMarshaller;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
 public class GossipPeer implements GossipListener {
 
     public final Gossip gossip;
-
+    private Object peers;
 
 
     public GossipPeer() throws SocketException {
@@ -158,6 +159,10 @@ public class GossipPeer implements GossipListener {
 
     public void log(Exception e) {
         log().severe(e.toString());
+    }
+
+    public Collection<Endpoint> getPeers() {
+        return gossip.endpoints.values();
     }
 
     /**

@@ -1,13 +1,15 @@
 package nars.guifx.demo;
 
+import automenta.vivisect.dimensionalize.HyperOrganicLayout;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
 import nars.Global;
 import nars.NAR;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARfx;
 import nars.guifx.NARide;
+import nars.guifx.graph2.SpaceGrapher;
+import nars.guifx.graph2.TermNode;
 import nars.io.UDPNetwork;
 import nars.nar.Default;
 import nars.util.data.Util;
@@ -16,13 +18,15 @@ import java.net.SocketException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * Created by me on 10/8/15.
  */
 public class InterNARSimulator {
 
     public static void main(String[] args) throws SocketException {
-        int num = 2;
+        int num = 5;
         float freq = 15f;
         List<NAR> group = Global.newArrayList();
         @Deprecated /* to be accessed with narsese commands */ List<UDPNetwork> networks = Global.newArrayList();
@@ -57,14 +61,21 @@ public class InterNARSimulator {
                         int n = 0;
                         a.stdout();
                         while (true) {
-                            Util.pause(4000);
+                            Util.pause(7000);
                             a.input("send(" +
-                                networks.get(i).id +
-                                ", ping:{" +
-                                (n++) + "});");
+                                    networks.get(i).id +
+                                    ", ping:{" +
+                                    (n++) + "})!");
                         }
 
                         //break;
+                    default:
+                        Util.pause(200);
+                        a.input("peer(" +
+                                networks.get(i).id +
+                                ",(\"localhost\",10001))!");
+
+                        break;
                 }
             }).start();
 
@@ -73,19 +84,30 @@ public class InterNARSimulator {
 
         NARfx.run((a, b) -> {
 
-            HBox w = new HBox(8);
 
-            group.stream().map(
-                    n -> {
-                        NARide x = new NARide(n.loop(250));
-                        x.addView(new IOPane(n));
-                        return x;
-                    })
-                    .collect(Collectors.toCollection(() ->
-                            w.getChildren()));
+            SpaceGrapher sg;
+            b.setScene(new Scene(
+                sg = SpaceGrapher.forCollection(group.stream().map(n -> {
+                            NARide x = new NARide(n.loop(250));//.start();
+                            if (Math.random() < 0.5)
+                                x.addView(new IOPane(n));
+                            else
+                                x.addView(NARGraph1Test.newGraph(n));
+                            return x;
+                        })
+                    .collect(Collectors.toList()),
+                        (NARide n, TermNode tn) -> {
+                            n.setScaleX(0.45);
+                            n.setScaleY(0.45);
+                            tn.getChildren().add(n);
+                        }, new HyperOrganicLayout(1000))
+                    , 800, 600));
 
-            b.setScene(new Scene(w, 800, 600));
+            b.getScene().getStylesheets().add(NARfx.css);
             b.show();
+
+            runLater(()->  sg.start(250) );
+
         });
 
     }

@@ -13,6 +13,9 @@ There are several types of __tasks__:
  * **Question** -  To process it means to find the best answer to it according to current beliefs.
  * **Goal** - To process it means to carry out some system operations to realize it.
 
+> _The design of NARS makes no assumption about the content or desire-value of the given goals. How to choose proper given goals for each application is a problem to be solved in the future by the people responsible for the application._
+
+
 As a reasoning system, the [architecture of NARS](http://www.cis.temple.edu/~pwang/Implementation/NARS/architecture.pdf) consists of a **memory**, an **inference engine**, and a **control mechanism**.
 
 The **memory** contains a collection of concepts, a list of operators, and a buffer for new tasks. Each concept is identified by a term, and contains tasks and beliefs directly on the term, as well as links to related tasks and terms.

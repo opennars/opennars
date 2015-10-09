@@ -242,7 +242,7 @@ public class NARfx  {
     public static Stage newWindow(String title, Region n) {
 
         Scene scene = new Scene(n);
-        scene.getStylesheets().setAll(NARfx.css, "dark.css" );
+        scene.getStylesheets().setAll(NARfx.css );
 
         Stage s = new Stage();
         s.setTitle(title);
@@ -261,7 +261,7 @@ public class NARfx  {
 
     public static Stage newWindow(String title, Scene scene, Stage stage) {
         stage.setScene(scene);
-        stage.getScene().getStylesheets().setAll(NARfx.css, "dark.css" );
+        stage.getScene().getStylesheets().setAll(NARfx.css );
 
         //scene.getRoot().maxWidth(Double.MAX_VALUE);
         //scene.getRoot().maxHeight(Double.MAX_VALUE);

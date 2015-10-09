@@ -5,8 +5,11 @@ import com.gs.collections.impl.tuple.Tuples;
 import hellblazer.gossip.GossipPeer;
 import nars.NAR;
 import nars.nal.nal2.Instance;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
 import nars.narsese.NarseseParser;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.event.DefaultTopic;
@@ -25,6 +28,8 @@ import java.util.function.Consumer;
  * */
 public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
     implements Consumer<O> {
+
+    public static final Atom udp = Atom.the("udp");
 
     public final Term id; //used for the stream identifier term
 
@@ -47,6 +52,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
 
         peer = new GossipPeer(port) {
             public final void onUpdate(UUID id, Object j) {
+
                 try {
                     in.emit( Tuples.pair(id, (O) j) );
                 }
@@ -54,6 +60,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
                     peer.log(e);
                 }
             }
+
         };
 
         out.on(this);
@@ -78,7 +85,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
 
 
     /** initialize a NAR with operators for this network */
-    public void connect(NAR nar) {
+    public UDPNetwork connect(NAR nar) {
         nar.on("send", (Term[] args) -> {
             if (args.length < 2) return null;
             Term stream = args[0];
@@ -90,6 +97,42 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
             }
             return null;
         });
+
+        nar.onExec("peer", (Task<Operation> t) -> {
+            Term[] args = t.getTerm().args();
+            if (args.length < 2) return null;
+            Term stream = args[0];
+
+            //TODO use a central dispatcher for all streams; not all streams watching for send(
+            if (stream.equals(id)) {
+                Term message = args[1];
+
+                //TODO Term pattern match strings
+                //Map<Term, Atom /* generic type */> matches =
+                //      message.extract("<%port --> udp>");
+
+                if (message instanceof Product) {
+                    Product i = (Product)message;
+                    String host = ((Atom)i.term(0)).toStringUnquoted();
+                    int port = Integer.parseInt(i.term(1).toString());
+
+                    peer.connect(host, port);
+
+                    //Term port = i.getSubject();
+                    //int pp = Integer.parseInt(port.toString());
+
+
+                }
+
+
+                //peer(t, message, nar);
+
+
+            }
+            return null;
+        });
+
+
         //HACK dont use regs directly
         nar.regs.add(
             in.on(p -> {
@@ -109,6 +152,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
                 );
             })
         );
+        return this;
     }
 
     void send(NAR sender, Term message) {
