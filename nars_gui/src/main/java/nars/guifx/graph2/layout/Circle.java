@@ -1,6 +1,5 @@
 package nars.guifx.graph2.layout;
 
-import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermEdge;

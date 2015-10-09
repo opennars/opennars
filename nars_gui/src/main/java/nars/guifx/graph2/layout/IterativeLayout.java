@@ -1,4 +1,4 @@
-package automenta.vivisect.dimensionalize;
+package nars.guifx.graph2.layout;
 
 
 import nars.guifx.graph2.SpaceGrapher;

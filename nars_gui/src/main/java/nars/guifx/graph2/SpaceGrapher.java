@@ -1,8 +1,6 @@
 package nars.guifx.graph2;
 
 
-import automenta.vivisect.dimensionalize.HyperOrganicLayout;
-import automenta.vivisect.dimensionalize.IterativeLayout;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -139,12 +137,6 @@ public class SpaceGrapher<V> extends Spacegraph {
      */
     public final TermEdge getConceptEdgeOrdered(TermNode s, TermNode t) {
         return getEdge(s.term, t.term);
-    }
-
-    static boolean order(final Term x, final Term y) {
-        final int i = x.compareTo(y);
-        if (i == 0) throw new RuntimeException("order=0 but must be non-equal");
-        return i < 0;
     }
 
     public final TermEdge getEdge(Term a, Term b) {
@@ -368,6 +360,7 @@ public class SpaceGrapher<V> extends Spacegraph {
     @Implementation(Circle.class)
     @Implementation(Grid.class)
     @Implementation(HyperassociativeMap1D.class)
+    @Implementation(Timeline.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
 
@@ -429,7 +422,8 @@ public class SpaceGrapher<V> extends Spacegraph {
                 try {
                     IterativeLayout il = lc.newInstance();
                     layout.set(il);
-                    source.getValue().refresh();
+                    reup();
+
                     rerender();
                     return;
                 } catch (Exception e1) {
@@ -449,6 +443,14 @@ public class SpaceGrapher<V> extends Spacegraph {
 
         this.source.set(g);
 
+    }
+
+    /** called before next layout changes */
+    private void reup() {
+        //reset visiblity state to true for all, in case previous layout had hidden then
+        getVertices().forEach(t -> t.setVisible(true));
+
+        source.getValue().refresh();
     }
 
 

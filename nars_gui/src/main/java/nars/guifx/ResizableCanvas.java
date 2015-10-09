@@ -1,14 +1,15 @@
 package nars.guifx;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 
 /**
  * Created by me on 9/13/15.
  */
 public class ResizableCanvas extends Canvas {
 
-    public final Pane parent;
 
     public ResizableCanvas(Pane parent, int w, int h) {
         this(parent);
@@ -16,13 +17,16 @@ public class ResizableCanvas extends Canvas {
         parent.prefHeight(h);
     }
 
-    public ResizableCanvas(Pane parent) {
+    public ResizableCanvas(Region parent) {
+        this(parent.widthProperty(), parent.heightProperty());
+    }
+
+    public ResizableCanvas(ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height) {
         super();
-        this.parent = parent;
 
         // Bind canvas size to stack pane size.
-        widthProperty().bind(parent.widthProperty());
-        heightProperty().bind(parent.heightProperty());
+        widthProperty().bind(width);
+        heightProperty().bind(height);
 
 
         final boolean bindRedraw = true; //TODO parameter to make this optional to avoid unnecessary event being attached

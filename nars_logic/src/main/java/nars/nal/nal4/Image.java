@@ -35,7 +35,7 @@ abstract public class Image extends Compound {
      * images with different relations
      */
     @Override
-    public int structure2() {
+    public final int structure2() {
         return relationIndex+1;
     }
 

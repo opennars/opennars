@@ -1,6 +1,5 @@
 package nars.guifx.graph2.layout;
 
-import automenta.vivisect.dimensionalize.IterativeLayout;
 import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermNode;
 

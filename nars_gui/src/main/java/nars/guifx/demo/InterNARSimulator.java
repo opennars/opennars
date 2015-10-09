@@ -1,6 +1,5 @@
 package nars.guifx.demo;
 
-import automenta.vivisect.dimensionalize.HyperOrganicLayout;
 import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
@@ -10,6 +9,7 @@ import nars.guifx.NARfx;
 import nars.guifx.NARide;
 import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.layout.HyperOrganicLayout;
 import nars.io.UDPNetwork;
 import nars.nar.Default;
 import nars.util.data.Util;

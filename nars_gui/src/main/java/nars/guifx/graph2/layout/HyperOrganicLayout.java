@@ -2,7 +2,7 @@
  * Copyright (c) 2007-2013, JGraph Ltd
  */
 
-package automenta.vivisect.dimensionalize;
+package nars.guifx.graph2.layout;
 
 //import com.mxgraph.layout.mxGraphLayout;
 //import com.mxgraph.model.mxGraphModel;

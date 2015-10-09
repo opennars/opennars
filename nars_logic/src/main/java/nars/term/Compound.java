@@ -547,6 +547,14 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
             final Term a = term(i);
             final Term b = c.term(i);
             final int d = a.compareTo(b);
+
+            if (Global.DEBUG) {
+                int d2 = b.compareTo(a);
+                if (d2!=-d)
+                    throw new RuntimeException("ordering inconsistency: " + a + ", " + b );
+            }
+
+
             if (d != 0) return d;
         }
 

@@ -18,6 +18,7 @@ import nars.event.FrameReaction;
 import nars.guifx.graph2.DefaultNARGraph;
 import nars.guifx.graph2.SpaceGrapher;
 import nars.guifx.graph2.layout.Grid;
+import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.SizeAwareWindow;
@@ -275,7 +276,7 @@ public class NARide extends BorderPane {
         //default node builders
         icon(FrameClock.class, () -> new NARMenu.CycleClockPane(nar) );
         icon(RealtimeMSClock.class, () -> new NARMenu.RTClockPane(nar) );
-        icon(NARLoop.class, () -> new NARMenu.LoopPane(l) );
+        icon(NARLoop.class, () -> new LoopPane(l) );
 
 
 

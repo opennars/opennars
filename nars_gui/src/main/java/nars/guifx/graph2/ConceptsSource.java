@@ -200,8 +200,15 @@ public class ConceptsSource extends GraphSource<Object> {
     }
 
     public TermEdge getConceptEdge(SpaceGrapher g, TermNode s, TermNode t) {
+
         //re-order
-        if (!SpaceGrapher.order(s.term, t.term)) {
+        final int i = s.term.compareTo(t.term);
+        if (i == 0) return null;
+            /*throw new RuntimeException(
+                "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
+                        + s.term.equals(t.term) + " " + t.term.equals(s.term) + ", hash=" + s.term.hashCode() + "," + t.term.hashCode() );*/
+
+        if (!(i < 0)) {
             TermNode x = s;
             s = t;
             t = x;

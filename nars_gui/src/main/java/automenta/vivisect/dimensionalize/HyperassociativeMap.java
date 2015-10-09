@@ -15,6 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
+import nars.guifx.graph2.layout.IterativeLayout;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 

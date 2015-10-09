@@ -1,6 +1,5 @@
 package nars.guifx.graph2;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import nars.Op;
@@ -101,13 +100,13 @@ public class TermNode extends Group {
         v[1] = ty;
     }
 
-    Point2D sceneCoord;// = new Point2D(0,0);
+    //Point2D sceneCoord;// = new Point2D(0,0);
 
     final public TermNode move(final double x, final double y) {
         setTranslateX(this.tx = x);
         setTranslateY(this.ty = y);
 
-        sceneCoord = null;
+        //sceneCoord = null;
         return this;
     }
 
@@ -147,15 +146,15 @@ public class TermNode extends Group {
         return scaled; //getScaleY();
     }
 
-    public double sx() {
-        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
-        return sceneCoord.getX();
-    }
-
-    public double sy() {
-        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
-        return sceneCoord.getY();
-    }
+//    public double sx() {
+//        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
+//        return sceneCoord.getX();
+//    }
+//
+//    public double sy() {
+//        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
+//        return sceneCoord.getY();
+//    }
 
     public final double x() {
         return tx;
@@ -197,12 +196,15 @@ public class TermNode extends Group {
 //        edges = null;
 //    }
 
-    public TermEdge[] getEdges() {
+    public final TermEdge[] getEdges() {
+        TermEdge[] edges = this.edges;
         if (edges == null) {
             if (edge.size() > 0)
-                updateEdges();
+                edges = updateEdges();
             else
                 edges = TermEdge.empty;
+
+            this.edges = edges;
         }
 
         return edges;
@@ -210,7 +212,7 @@ public class TermNode extends Group {
 
 
     public boolean visible() {
-        return getParent()!=null;
+        return isVisible() && getParent()!=null;
     }
 
     public static Color getTermColor(Term term, ColorMatrix colors, double v) {

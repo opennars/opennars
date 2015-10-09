@@ -21,6 +21,9 @@
 package nars.concept;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Ordering;
+import com.google.common.primitives.Longs;
+import infinispan.com.google.common.collect.Iterators;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
@@ -331,6 +334,33 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     List<TermLinkTemplate> getTermLinkTemplates();
+
+    final static Ordering<Task> taskCreationTime = new Ordering<Task>() {
+        @Override
+        public int compare(Task left, Task right) {
+            return Longs.compare(
+                    left.getCreationTime(),
+                    right.getCreationTime());
+        }
+    };
+
+    default Iterator<Task> iterateTasks(boolean onbeliefs, boolean ongoals, boolean onquestions, boolean onquests) {
+        Iterator<Task> b1, b2, b3, b4;
+
+        TaskTable beliefs = onbeliefs ? getBeliefs() : null;
+        TaskTable goals =   ongoals ? getGoals() : null ;
+        TaskTable questions = onquestions ?  getQuestions() : null;
+        TaskTable quests = onquests ? getQuests() : null;
+
+        b1 = beliefs!=null ? beliefs.iterator() : Iterators.emptyIterator();
+        b2 = goals!=null ? goals.iterator() : Iterators.emptyIterator();
+        b3 = questions!=null ? questions.iterator() : Iterators.emptyIterator();
+        b4 = quests!=null ? quests.iterator() : Iterators.emptyIterator();
+        return Iterators.concat(b1, b2, b3, b4);
+
+    }
+
+
 
 
 //    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
