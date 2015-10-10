@@ -165,8 +165,7 @@ public class RuleMatch extends FindSubst {
 
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
-
-        //for now we assume 1
+        
         Map<Term,Term> ApplySubsSet = new HashMap<Term,Term>();
         this.Outp = new HashMap<Term, Term>(); //this one contains the substitutions of the substitution predicaes, so this one has to be new
 
