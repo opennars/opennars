@@ -491,6 +491,7 @@
 //NAL3:
 
 ////composition on both sides of a statement:
+
     ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
@@ -498,6 +499,7 @@
     ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
 ////composition on one side of aay w statement:
+
     (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
@@ -518,7 +520,7 @@
 
 //NAL5:
 
-    --A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
+  --A,   A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
     A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgment)
 
 //compound composition one premise
