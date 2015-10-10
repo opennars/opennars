@@ -417,17 +417,10 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-
-    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
-    (P ==> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
-
-    (($X --> M) <=> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $X) <=> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-
-    (P <=> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
-    (P <=> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
+    (A ==> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
+    (C ==> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
+    (A <=> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
+    (C <=> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)

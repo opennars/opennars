@@ -6,6 +6,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
+import nars.meta.pre.SubsIfUnifies;
 import nars.meta.pre.Substitute;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
@@ -170,7 +171,7 @@ public class RuleMatch extends FindSubst {
 
         for (final PreCondition c : outcome.afterConclusions) {
 
-            if(c instanceof Substitute) {
+            if(c instanceof Substitute || c instanceof SubsIfUnifies) {
                 //here we are interested how to transform the second to the first
                 Inp = map2;
                 for(Term t : this.map2.keySet()) { //doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
@@ -181,7 +182,7 @@ public class RuleMatch extends FindSubst {
             if (!c.test(this))
                 return null;
 
-            if(c instanceof Substitute) {
+            if(c instanceof Substitute || c instanceof SubsIfUnifies) {
                 ApplySubsSet.putAll(this.Outp);
             }
         }
