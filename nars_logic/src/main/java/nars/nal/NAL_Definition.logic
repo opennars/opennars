@@ -420,7 +420,7 @@
     (A ==> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
     (C ==> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
     (A <=> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
-    (C <=> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
+    (C <=> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)

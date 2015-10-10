@@ -166,7 +166,6 @@ public class RuleMatch extends FindSubst {
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
 
-        //for now we assume 1
         Map<Term,Term> ApplySubsSet = new HashMap<Term,Term>();
 
         for (final PreCondition c : outcome.afterConclusions) {

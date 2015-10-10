@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Op;
 import nars.Symbols;
 import nars.meta.RuleMatch;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 
@@ -54,6 +55,7 @@ public class SubsIfUnifies extends PreCondition3 {
             }
 
             Outp.putAll(Left);
+            Inp.clear();
             return true;
         }
 
