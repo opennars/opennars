@@ -27,15 +27,12 @@ public class Substitute extends PreCondition2 {
         Map<Term, Term> Inp = m.Inp;// Global.newHashMap();
 
         if (b!=null) {
+
             Map<Term,Term> Outp = m.Outp; //Global.newHashMap();
 
-           // m.map2.put(this.arg1, b); //map2!
-            Term eventual_substituted_by_match = Inp.get(this.arg1);
-            if(eventual_substituted_by_match == null) {
-                eventual_substituted_by_match = this.arg1;
-            }
-            Outp.put(eventual_substituted_by_match,b);
+            Outp.put(Inp.get(this.arg1),b);
             Inp.clear();
+
             return true;
         }
         Inp.clear(); //new HashMap<Term,Term>();

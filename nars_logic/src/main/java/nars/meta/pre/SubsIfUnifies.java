@@ -56,6 +56,7 @@ public class SubsIfUnifies extends PreCondition3 {
 
             Outp.putAll(Left);
             Inp.clear();
+
             return true;
         }
 
