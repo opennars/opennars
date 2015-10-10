@@ -36,7 +36,7 @@ public class SubsIfUnifies extends PreCondition3 {
         if(b!=null && c!=null) {
 
             Map<Term,Term> Outp = m.Outp;
-            Op type = Op.VAR_INDEPENDENT;
+            Op type = Op.VAR_DEPENDENT;
 
             if(a.toString().contains("$")) {
                 type = Op.VAR_INDEPENDENT;

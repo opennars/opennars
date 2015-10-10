@@ -124,13 +124,21 @@ public class Patham9Test extends AbstractNALTest {
         tester.run();
     }*/
 
-    @Test
-    public void compiled_strong_unification() throws InvalidInputException {
+   /* @Test
+    public void strong_unification() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>.", 1.00f, 0.90f);
         tester.believe("<(*,bmw,is,car) --> sentence>.", 1.00f, 0.90f);
         tester.mustBelieve(2000, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
     }
-
+*/
+   @Test
+   public void variable_elimination4() throws InvalidInputException {
+       TestNAR tester = test();
+       tester.believe("(&&,<#x --> bird>,<#x --> swimmer>)"); //en("Some bird can swim.");
+       tester.believe("<swan --> bird>", 0.90f, 0.9f); //en("Swan is a type of bird.");
+       tester.mustBelieve(200, "<swan --> swimmer>", 0.90f, 0.43f); //en("I guess swan can swim.");
+       tester.run();
+   }
 }

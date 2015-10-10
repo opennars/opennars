@@ -402,8 +402,7 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,(#X --> S), A_1..n), (M --> S), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
-    (&&,(S --> #X), A_1..n), (S --> M), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
+    (&&,A, A_1..n), B, substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
 //conditional abduction by dependent variable
 
@@ -419,6 +418,7 @@
 
     (A ==> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
     (C ==> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
+
     (A <=> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
     (C <=> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
 
