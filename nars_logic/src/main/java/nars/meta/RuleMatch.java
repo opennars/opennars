@@ -166,16 +166,17 @@ public class RuleMatch extends FindSubst {
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
 
+        //for now we assume 1
         Map<Term,Term> ApplySubsSet = new HashMap<Term,Term>();
+        this.Outp = new HashMap<Term, Term>(); //this one contains the substitutions of the substitution predicaes, so this one has to be new
 
         for (final PreCondition c : outcome.afterConclusions) {
 
             if(c instanceof Substitute || c instanceof SubsIfUnifies) {
                 //here we are interested how to transform the second to the first
-                Inp = map2;
-                for(Term t : this.map2.keySet()) { //doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
-                    ApplySubsSet.putAll(Inp);
-                }
+                this.Inp = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
+                this.Inp.putAll(this.map2); //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
+                ApplySubsSet.putAll(this.map2); //<- doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
             }
 
             if (!c.test(this))
