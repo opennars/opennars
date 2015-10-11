@@ -2,7 +2,6 @@ package nars.guifx;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.*;
@@ -14,7 +13,6 @@ import nars.Global;
 import nars.NAR;
 import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
-import nars.event.FrameReaction;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.Grid;
@@ -23,7 +21,6 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
-import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
 import nars.io.UDPNetwork;
@@ -424,47 +421,47 @@ public class NARide extends BorderPane {
 //        }
 //    }
 
-    public static SizeAwareWindow show(NAR n, Parent main) {
-
-
-        BorderPane summary;
-        {
-            LinePlot bp = new LinePlot(
-                    "Concepts",
-                    () -> (n.memory.getConcepts().size()),
-                    300
-            );
-
-            new FrameReaction(n) {
-
-                @Override
-                public void onFrame() {
-                                /*for (Object o : lp.getChildren()) {
-                                    if (o instanceof LinePlot)
-                                        ((LinePlot) o).update();
-                                }*/
-
-                    bp.draw();
-
-                }
-            };
-
-            summary = new BorderPane(bp);
-            bp.widthProperty().bind(summary.widthProperty());
-            bp.heightProperty().bind(summary.heightProperty());
-        }
-
-
-        return new SizeAwareWindow((d) -> {
-            double W = d[0];
-            double H = d[1];
-            if (W < 150 && H < 150) {
-                return () -> summary;
-            } else {
-                return () -> main;
-            }
-        });
-    }
+//    public static SizeAwareWindow show(NAR n, Parent main) {
+//
+//
+//        BorderPane summary;
+//        {
+//            LinePlot bp = new LinePlot(
+//                    "Concepts",
+//                    () -> (n.memory.getConcepts().size()),
+//                    300
+//            );
+//
+//            new FrameReaction(n) {
+//
+//                @Override
+//                public void onFrame() {
+//                                /*for (Object o : lp.getChildren()) {
+//                                    if (o instanceof LinePlot)
+//                                        ((LinePlot) o).update();
+//                                }*/
+//
+//                    bp.draw();
+//
+//                }
+//            };
+//
+//            summary = new BorderPane(bp);
+//            bp.widthProperty().bind(summary.widthProperty());
+//            bp.heightProperty().bind(summary.heightProperty());
+//        }
+//
+//
+//        return new SizeAwareWindow((d) -> {
+//            double W = d[0];
+//            double H = d[1];
+//            if (W < 150 && H < 150) {
+//                return () -> summary;
+//            } else {
+//                return () -> main;
+//            }
+//        });
+//    }
 
 
 }

@@ -30,7 +30,8 @@ public class StatusPane extends HBox {
                             nConcepts = b.getLong(MemoryBudget.Budgeted.ActiveConcepts);
                             return nConcepts;
                         },
-                        300)
+                        300,
+                        200, 200)
                 ),
 
                 addPlot(new LinePlot(
@@ -39,13 +40,15 @@ public class StatusPane extends HBox {
                             if (nConcepts == 0) return 0;
                             return b.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum)/nConcepts;
                         },
-                        300)
+                        300,
+                        200, 200)
                 ),
 
                 addPlot(new LinePlot(
                         "Concept StdDev",
                         () -> b.getDouble(MemoryBudget.Budgeted.ActiveConceptPriorityStdDev),
-                        300)
+                        300,
+                        200, 200)
                 )
         );
 
@@ -56,8 +59,9 @@ public class StatusPane extends HBox {
 
                 b.update(nar.memory);
 
-                for (LinePlot p: plots)
-                    p.draw();
+                for (LinePlot p: plots) {
+                    p.update();
+                }
             }
         };
 

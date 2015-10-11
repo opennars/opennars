@@ -5,7 +5,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -14,7 +13,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.text.Text;
@@ -26,20 +24,13 @@ import static javafx.application.Platform.runLater;
 /**
  * versatile light-weight slider component for javafx
  */
-public class NSlider extends StackPane {
+public class NSlider extends NControl {
 
 
     public final SimpleDoubleProperty[] value;
     public final SimpleDoubleProperty min = new SimpleDoubleProperty(0);
     public final SimpleDoubleProperty max = new SimpleDoubleProperty(1);
 
-    private transient final GraphicsContext g;
-
-    public final ChangeListener<Number> redrawOnDoubleChange = (observable, oldValue, newValue) -> {
-        //TODO debounce these with a AtomicBoolean or something
-        redraw();
-    };
-    private final Canvas canvas;
     private final int dimensions;
 
     public NSlider(double w, double h, double... initialVector) {
@@ -101,12 +92,10 @@ public class NSlider extends StackPane {
      * control & vis must all support the same dimensionality as the specified initialVector. otherwise an error will appear
      */
     public NSlider(double w, double h, Control control, Vis vis, double... vector) {
-        super();
+        super(w, h);
 
         this.vis = vis;
         this.control = control;
-
-        this.canvas = new Canvas(w, h);
 
         if ((this.dimensions = vector.length) == 0)
             throw new RuntimeException("zero-length vector");
@@ -117,36 +106,8 @@ public class NSlider extends StackPane {
                     .addListener(redrawOnDoubleChange);
         }
 
-
-        if (h <= 0) {
-            canvas.maxHeight(Double.MAX_VALUE);
-            canvas.boundsInParentProperty().addListener((b) -> {
-                setHeight(boundsInParentProperty().get().getHeight());
-                redraw();
-            });
-        } else {
-            setHeight(h);
-        }
-        if (w <= 0) {
-            maxWidth(Double.MAX_VALUE);
-            boundsInParentProperty().addListener((b) -> {
-                setWidth(boundsInParentProperty().get().getWidth());
-                redraw();
-            });
-        } else {
-            setWidth(w);
-        }
-
-
         min.addListener(redrawOnDoubleChange);
         max.addListener(redrawOnDoubleChange);
-        canvas.widthProperty().addListener(redrawOnDoubleChange);
-        canvas.heightProperty().addListener(redrawOnDoubleChange);
-
-        g = canvas.getGraphicsContext2D();
-
-        getChildren().setAll(canvas);
-
         control.start(this);
 
         value(vector); //causes initial draw
@@ -355,11 +316,16 @@ public class NSlider extends StackPane {
 
     };
 
+    @Override
     protected void redraw() {
+        //HACK - called before initialized
+        if (vis == null) return;
+
         double W = canvas.getWidth();
         double H = canvas.getHeight();
 
         //background
+        GraphicsContext g = graphics();
 
         g.setFill(Color.BLACK);
         g.fillRect(0, 0, W, H);
