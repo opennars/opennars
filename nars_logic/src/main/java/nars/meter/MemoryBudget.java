@@ -41,11 +41,11 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
     }
 
     public double getDouble(Budgeted b) {
-        Double l = (Double ) get(b);
+        Number l = ((Number)get(b));
         if (l!=null)
             return l.doubleValue();
+        //return Double.NaN;
         return 0;
-        //return (double)get(b);
     }
 
     public Object getDoubleFinite(Budgeted b, double defaultVal) {

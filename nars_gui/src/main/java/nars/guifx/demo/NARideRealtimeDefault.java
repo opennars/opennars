@@ -11,18 +11,18 @@ import nars.nar.Default;
 /**
  * Created by me on 9/7/15.
  */
-public class NARfxDefaultIRealtime {
+public class NARideRealtimeDefault {
 
     public static void main(String[] arg) {
 
-        int cyclesPerFrame = 2;
+        int cyclesPerFrame = 8;
 
         Global.DEBUG = true;
 
         Memory mem = new LocalMemory(new RealtimeMSClock());
         NAR nar = new Default(mem, 1024, 3, 5, 7);
 
-        nar.memory.conceptForgetDurations.set(50);
+        nar.memory.conceptForgetDurations.set(5);
         nar.memory.duration.set(100);
         nar.setCyclesPerFrame(cyclesPerFrame);
         //nar.spawnThread(1000/60);

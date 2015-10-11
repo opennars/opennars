@@ -125,7 +125,7 @@ public class LocalRules {
      *  if failed, returns null
      * */
 //    public static <T extends Compound> Task<T> getRevision(final Task<T> newBelief, final Task<T> oldBelief, final boolean feedbackToLinks, final Premise nal) {
-        public static Task getRevision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final Premise nal) {
+    public static Task getRevision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final Premise nal) {
 
         if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
             return null;

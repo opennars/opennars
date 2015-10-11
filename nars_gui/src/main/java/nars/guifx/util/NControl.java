@@ -48,11 +48,14 @@ public abstract class NControl extends StackPane {
             setHeight(h);
         }
         if (w <= 0) {
-            maxWidth(Double.MAX_VALUE);
+            //maxWidth(Double.MAX_VALUE);
             boundsInParentProperty().addListener((b) -> {
+                canvas.setWidth(bp.get().getWidth());
                 setWidth(bp.get().getWidth());
                 redraw();
             });
+            //((DoubleProperty)widthProperty()).bind( canvas.widthProperty() );
+            //setWidth(bp.get().getWidth());
         } else {
             setWidth(w);
         }

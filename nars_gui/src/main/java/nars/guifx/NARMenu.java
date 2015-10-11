@@ -6,9 +6,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import nars.NAR;
 import nars.guifx.util.NSlider;
+import nars.io.NQuadsRDF;
 import nars.util.event.Active;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 import static javafx.application.Platform.runLater;
 
@@ -69,6 +74,27 @@ public class NARMenu extends HBox {
             main.getStyleClass().add("nar_main_menu");
             main.getItems().add(new MenuItem("", fontSlider));
             main.getItems().add(new MenuItem("New..."));
+
+            Menu loadMenu;
+            main.getItems().add(loadMenu = new Menu("Load..."));
+            {
+                loadMenu.getItems().add(new AsyncMenuItem(n, ".n3 RDF") {
+                    @Override public void run(NAR n) {
+                        FileChooser fileChooser = new FileChooser();
+                        fileChooser.setTitle("Load RDF File");
+                        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" /* .. */));
+                        File f = fileChooser.showOpenDialog(null);
+                        if (f!=null) {
+                            try {
+                                NQuadsRDF.input(n, new FileInputStream(f));
+                            } catch (Exception e) {
+                                n.memory.eventError.emit(e);
+                            }
+                        }
+                    }
+                });
+            }
+
             main.getItems().add(new MenuItem("Save..."));
             main.getItems().add(new MenuItem("Fork..."));
             main.getItems().add(new MenuItem("Discard..."));
@@ -230,4 +256,13 @@ public class NARMenu extends HBox {
     }
 
 
+    abstract static class AsyncMenuItem extends MenuItem {
+
+        public AsyncMenuItem(NAR n, String label) {
+            super(label);
+            this.setOnAction((e) -> run(n));
+        }
+
+        abstract public void run(NAR n);
+    }
 }

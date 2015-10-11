@@ -358,6 +358,11 @@ public class NARfx  {
         Application.launch(DummyApplication.class, sArArgs);
     }
 
+    /*TODO
+    public static final Color hashColor(Object op, float intensity, ColorMatrix ca) {
+
+    }*/
+
     public static final Color hashColor(Object op, ColorMatrix ca) {
         int h = op.hashCode();
         int p = h^(31*h);

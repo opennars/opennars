@@ -1,113 +1,155 @@
 package nars.io;
 
-import nars.Global;
 import nars.NAR;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
-import nars.narsese.InvalidInputException;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import org.semanticweb.yars.nx.Node;
+import org.semanticweb.yars.nx.parser.NxParser;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.io.File;
-import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.InputStream;
+import java.util.Collections;
 
 /**
  * Created by me on 6/4/15.
  */
-abstract public class NQuadsInput {
+abstract public class NQuadsRDF {
 
 
     private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-    private static String parentTagName = null;
+    //private static String parentTagName = null;
 
-    private final NAR nar;
+    //private final NAR nar;
 
-    final float beliefConfidence;
-    private boolean includeDataType = false;
+    //final float beliefConfidence;
+    //private boolean includeDataType = false;
 
-    public NQuadsInput(NAR n, String nqLoc, float beliefConfidence) throws Exception {
-        this.nar = n;
-        this.beliefConfidence = beliefConfidence;
-        input(new File(nqLoc));
+//    public NQuadsRDF(NAR n, float beliefConfidence) throws Exception {
+//        this.nar = n;
+//        this.beliefConfidence = beliefConfidence;
+//    }
+
+    //input(new FileInputStream(nqLoc));
+
+//
+//    final static Pattern nQuads = Pattern.compile(
+//            //"((?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?:@\\w+(?:-\\w+)?|\\^\\^<[^>]+>)?)|<[^>]+>|\\_\\:\\w+|\\.)"
+//            "(<[^\\s]+>|_:(?:[A-Za-z][A-Za-z0-9\\-_]*))\\s+(<[^\\s]+>)\\s+(<[^\\s]+>|_:(?:[A-Za-z][A-Za-z0-9\\-_]*)|\\\"(?:(?:\\\"|[^\"])*)\\\"(?:@(?:[a-z]+[\\-A-Za-z0-9]*)|\\^\\^<(?:[^>]+)>)?)\\s+(<[^\\s]+>).*"
+//    );
+
+    public static void input(NAR nar, String input) throws Exception {
+        NxParser p  = new NxParser();
+        p.parse(Collections.singleton(input));
+        input(nar, p);
     }
 
-
-
-    final static Pattern nQuads = Pattern.compile("((?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?:@\\w+(?:-\\w+)?|\\^\\^<[^>]+>)?)|<[^>]+>|\\_\\:\\w+|\\.)");
-
-
-    /**
-     * These parsing rules were devised by physically looking at the OWL file
-     * and figuring out what goes where. This should by no means be considered a
-     * generalized way to parse OWL files.
-     *
-     * Parsing rules:
-     *
-     * owl:Class@rdf:ID = entity (1), type=Wine optional:
-     * owl:Class/rdfs:subClassOf@rdf:resource = entity (2), type=Wine (2) --
-     * parent --> (1) if owl:Class/rdfs:subClassOf has no attributes, ignore if
-     * no owl:Class/rdfs:subClassOf entity, ignore it
-     * owl:Class/owl:Restriction/owl:onProperty@rdf:resource related to
-     * owl:Class/owl:Restriction/owl:hasValue@rdf:resource
-     *
-     * Region@rdf:ID = entity, type=Region optional:
-     * Region/locatedIn@rdf:resource=entity (2), type=Region (2) -- parent --
-     * (1) owl:Class/rdfs:subClassOf/owl:Restriction - ignore
-     *
-     * WineBody@rdf:ID = entity, type=WineBody WineColor@rdf:ID = entity,
-     * type=WineColor WineFlavor@rdf:ID = entity, type=WineFlavor
-     * WineSugar@rdf:ID = entity, type=WineSugar Winery@rdf:ID = entity,
-     * type=Winery WineGrape@rdf:ID = entity, type=WineGrape
-     *
-     * Else if no namespace, this must be a wine itself, capture as entity:
-     * ?@rdf:ID = entity, type=Wine all subtags are relations: tagname =
-     * relation_name tag@rdf:resource = target entity
-     */
-    public void input(File f) throws Exception {
-
-        List<String> items = Global.newArrayList(4);
-
-        new Scanner(f).useDelimiter("\n").forEachRemaining(s -> {
-            Matcher m = nQuads.matcher(s);
-            items.clear();
-            while(m.find()) {
-                String t = s.substring(m.start(), m.end());
-                items.add(t);
-            }
-
-            if (items.size() >= 3) {
-
-                Atom subj = resource(items.get(0));
-                Atom pred = resource(items.get(1));
-                Term obj = resourceOrValue(items.get(2));
-                if (subj != null && obj != null && pred != null) {
-                    if (!subj.equals(obj))  { //avoid equal subj & obj, if only namespace differs
-                        try {
-                            input(subj, pred, obj);
-                        }
-                        catch (InvalidInputException iie) {
-                            System.err.println(iie);
-                            //iie.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
+    public static void input(NAR nar, InputStream input) throws Exception {
+        NxParser p  = new NxParser();
+        p.parse(input);
+        input(nar, p);
     }
 
-    public Atom resource(String s) {
-        if (s.startsWith("<") && s.endsWith(">")) {
-            s = s.substring(1, s.length() - 1);
+    public static void input(NAR nar, NxParser nxp) throws Exception {
+        //input(nar, new Scanner(input));
+
+        for (Node[] nx : nxp)
+            if (nx.length >= 3) {
+                input(
+                        nar,
+                        resource(nx[0]),
+                        resource(nx[1]),
+                        resource(nx[2])
+                );
+            }
+
+    }
+
+//    public static void input(NAR nar, File input) throws Exception {
+//        input(nar, new Scanner(input));
+//    }
+
+
+
+
+//    /**
+//     * These parsing rules were devised by physically looking at the OWL file
+//     * and figuring out what goes where. This should by no means be considered a
+//     * generalized way to parse OWL files.
+//     *
+//     * Parsing rules:
+//     *
+//     * owl:Class@rdf:ID = entity (1), type=Wine optional:
+//     * owl:Class/rdfs:subClassOf@rdf:resource = entity (2), type=Wine (2) --
+//     * parent --> (1) if owl:Class/rdfs:subClassOf has no attributes, ignore if
+//     * no owl:Class/rdfs:subClassOf entity, ignore it
+//     * owl:Class/owl:Restriction/owl:onProperty@rdf:resource related to
+//     * owl:Class/owl:Restriction/owl:hasValue@rdf:resource
+//     *
+//     * Region@rdf:ID = entity, type=Region optional:
+//     * Region/locatedIn@rdf:resource=entity (2), type=Region (2) -- parent --
+//     * (1) owl:Class/rdfs:subClassOf/owl:Restriction - ignore
+//     *
+//     * WineBody@rdf:ID = entity, type=WineBody WineColor@rdf:ID = entity,
+//     * type=WineColor WineFlavor@rdf:ID = entity, type=WineFlavor
+//     * WineSugar@rdf:ID = entity, type=WineSugar Winery@rdf:ID = entity,
+//     * type=Winery WineGrape@rdf:ID = entity, type=WineGrape
+//     *
+//     * Else if no namespace, this must be a wine itself, capture as entity:
+//     * ?@rdf:ID = entity, type=Wine all subtags are relations: tagname =
+//     * relation_name tag@rdf:resource = target entity
+//     */
+//    public static void input(NAR nar, Scanner f) throws Exception {
+//
+//        List<String> items = Global.newArrayList(4);
+//
+//        f.useDelimiter("\n").forEachRemaining(s -> {
+//            s = s.trim();
+////            if (s.startsWith("#")) //?
+////                return;
+////            if (s.startsWith("@")) //@prefix not handled yet?
+////                return;
+//
+//            Matcher m = nQuads.matcher(s);
+//            items.clear();
+//            while(m.find()) {
+//                String t = s.substring(m.start(), m.end());
+//                items.add(t);
+//            }
+//
+//            System.out.println(s + " " + m.toMatchResult());
+//
+//            if (items.size() >= 3) {
+//
+//                Atom subj = resource(items.get(0));
+//                Atom pred = resource(items.get(1));
+//                Term obj = resourceOrValue(items.get(2));
+//                if (subj != null && obj != null && pred != null) {
+//                    if (!subj.equals(obj))  { //avoid equal subj & obj, if only namespace differs
+//                        //try {
+//                            input(nar, subj, pred, obj);
+//                        //}
+////                        catch (InvalidInputException iie) {
+////                            System.err.println(iie);
+////                            //iie.printStackTrace();
+////                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
+
+    //TODO interpret Node subclasses in special ways, possibly returning Compounds not only Atom's
+    public static Atom resource(Node n) {
+        String s = n.getLabel();
+        //if (s.startsWith("<") && s.endsWith(">")) {
+            //s = s.substring(1, s.length() - 1);
 
             if (s.contains("#")) {
                 String[] a = s.split("#");
@@ -122,24 +164,24 @@ abstract public class NQuadsInput {
 
 
             return Atom.the(s, true);
-        }
-        else
-            return null;
+        //}
+        //else
+          //  return null;
     }
-    public Term resourceOrValue(String s) {
-        Atom a = resource(s);
-        if (a == null) {
-            //...
-        }
-        return a;
-    }
+//    public static Term resourceOrValue(String s) {
+//        Atom a = resource(s);
+//        if (a == null) {
+//            //...
+//        }
+//        return a;
+//    }
 
-    protected abstract void believe(Compound assertion);
-
-    abstract public static class TagProcessor {
-
-        abstract protected void execute(XMLStreamReader parser);
-    }
+//
+//
+//    abstract public static class TagProcessor {
+//
+//        abstract protected void execute(XMLStreamReader parser);
+//    }
 
 
     static public Term atom(String uri) {
@@ -187,7 +229,10 @@ abstract public class NQuadsInput {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    private void input(final Atom subject, final Atom predicate, final Term object) {
+    public static void input(final NAR nar,
+
+             final Atom subject,
+             final Atom predicate, final Term object) {
 
         //http://www.w3.org/TR/owl-ref/
 
@@ -200,11 +245,11 @@ abstract public class NQuadsInput {
                 return;
             }
 
-            if (!includeDataType) {
+            //if (!includeDataType) {
                 if (object.equals(dataTypeProperty)) {
                     return;
                 }
-            }
+            //}
 
             belief = (Inheritance.make(subject, object));
 
@@ -248,12 +293,14 @@ abstract public class NQuadsInput {
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);
-            belief = (Inheritance.make(predicate,
-                    Product.make(subject, object)));
+            belief = Inheritance.make(
+                        Product.make(subject, object),
+                        predicate
+                    );
         }
 
         if (belief!=null) {
-            believe(belief);
+            nar.believe(belief);
         }
 
     }
@@ -315,7 +362,7 @@ abstract public class NQuadsInput {
 //
 //
 //
-//        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
+//        new NQuadsRDF(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
 //
 //            @Override
 //            protected void believe(Compound assertion) {

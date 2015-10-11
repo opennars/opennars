@@ -154,22 +154,22 @@ inference([inheritance(swan, swimmer), [0.9, 0.8]], [inheritance(swan, int_inter
 V = [0.9, 0.72]
 
 inference([inheritance(swan, swimmer), [0.9, 0.8]], [inheritance(swan, ext_difference(swimmer, bird)), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([inheritance(swan, swimmer), [0.9, 0.8]], [negation(inheritance(swan, ext_difference(bird, swimmer))), V]).
-V = [0.9, 0.72] 
+V = [0.9, 0.72]
 
 inference([inheritance(sport, competition), [0.9, 0.8]], [inheritance(int_intersection([sport, chess]), competition), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([inheritance(sport, competition), [0.9, 0.8]], [inheritance(ext_intersection([sport, chess]), competition), V]).
 V = [0.9, 0.72]
 
 inference([inheritance(sport, competition), [0.9, 0.8]], [inheritance(int_difference(sport, chess), competition), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([inheritance(sport, competition), [0.9, 0.8]], [negation(inheritance(int_difference(chess, sport), competition)), V]).
-V = [0.9, 0.72] 
+V = [0.9, 0.72]
 
 
 %% compound destruction, two premises
@@ -187,16 +187,16 @@ inference([inheritance(swan, bird), [0, 0.8]], [inheritance(swan, ext_difference
 T = [0, 0.64]
 
 inference([inheritance(sport, competition), [1, 0.8]], [inheritance(int_intersection([sport, chess]), competition), [0, 0.8]], [inheritance(chess, competition), V]).
-V = [0, 0.64] 
+V = [0, 0.64]
 
-inference([inheritance(sport, competition), [0, 0.8]], [inheritance(ext_intersection([sport, chess]), competition), [1, 0.8]], [inheritance(chess, competition), V]). 
+inference([inheritance(sport, competition), [0, 0.8]], [inheritance(ext_intersection([sport, chess]), competition), [1, 0.8]], [inheritance(chess, competition), V]).
 V = [1, 0.64]
 
-inference([inheritance(sport, competition), [1, 0.8]], [inheritance(int_difference(sport, chess), competition), [0, 0.8]], [inheritance(chess, competition), V]). 
-V = [1, 0.64] 
+inference([inheritance(sport, competition), [1, 0.8]], [inheritance(int_difference(sport, chess), competition), [0, 0.8]], [inheritance(chess, competition), V]).
+V = [1, 0.64]
 
-inference([inheritance(chess, competition), [0, 0.8]], [inheritance(int_difference(sport, chess), competition), [0, 0.8]], [inheritance(sport, competition), V]). 
-V = [0, 0.64] 
+inference([inheritance(chess, competition), [0, 0.8]], [inheritance(int_difference(sport, chess), competition), [0, 0.8]], [inheritance(sport, competition), V]).
+V = [0, 0.64]
 
 
 %% compound destruction, single premise
@@ -205,7 +205,7 @@ inference([inheritance(swan, ext_intersection([swimmer, bird])), [0.9, 0.8]], [i
 V = [0.9, 0.72]
 
 inference([inheritance(swan, int_intersection([swimmer, bird])), [0.9, 0.8]], [inheritance(swan, swimmer), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([inheritance(swan, ext_difference(swimmer, bird)), [0.9, 0.8]], [inheritance(swan, swimmer), V]).
 V = [0.9, 0.72]
@@ -214,16 +214,16 @@ inference([inheritance(swan, ext_difference(swimmer, bird)), [0.9, 0.8]], [negat
 V = [0.9, 0.72]
 
 inference([inheritance(int_intersection([sport, chess]), competition), [0.9, 0.8]], [inheritance(sport, competition), V]).
-V = [0.9, 0.72] 
+V = [0.9, 0.72]
 
 inference([inheritance(ext_intersection([sport, chess]), competition), [0.9, 0.8]], [inheritance(sport, competition), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([inheritance(int_difference(sport, chess), competition), [0.9, 0.8]], [inheritance(sport, competition), V]).
-V = [0.9, 0.72] 
+V = [0.9, 0.72]
 
 inference([inheritance(int_difference(sport, chess), competition), [0.9, 0.8]], [negation(inheritance(chess, competition)), V]).
-V = [0.9, 0.72] 
+V = [0.9, 0.72]
 
 
 %% operation on both sides of a relation
@@ -280,25 +280,25 @@ inference([inheritance(bird, animal), [0.9, 0.8]], [inheritance(ext_difference(s
 V = [0.9, 0.72] ;
 
 inference([inheritance(ext_difference(swimmer, animal), ext_difference(swimmer, bird)), [0.9, 0.8]], [inheritance(bird, animal), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([inheritance(bird, animal), [0.9, 0.8]], [inheritance(int_difference(swimmer, animal), int_difference(swimmer, bird)), V]).
 V = [0.9, 0.72] ;
 
 inference([inheritance(int_difference(swimmer, animal), int_difference(swimmer, bird)), [0.9, 0.8]], [inheritance(bird, animal), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([similarity(bird, animal), [0.9, 0.8]], [similarity(ext_difference(swimmer, animal), ext_difference(swimmer, bird)), V]).
 V = [0.9, 0.72] ;
 
 inference([similarity(ext_difference(swimmer, animal), ext_difference(swimmer, bird)), [0.9, 0.8]], [similarity(bird, animal), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([similarity(bird, animal), [0.9, 0.8]], [similarity(int_difference(swimmer, animal), int_difference(swimmer, bird)), V]).
 V = [0.9, 0.72] ;
 
 inference([similarity(int_difference(swimmer, animal), int_difference(swimmer, bird)), [0.9, 0.8]], [similarity(bird, animal), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 
 %% set operations
@@ -369,10 +369,10 @@ inference([inheritance(ext_image(reaction, [nil, base]), ext_image(reaction, [ni
 V = [0.9, 0.44]
 
 inference([inheritance(soda, base), [0.9, 0.8]], [inheritance(int_image(neutralization, [nil, base]), int_image(neutralization, [nil, soda])), V]).
-V = [0.9, 0.72] 
+V = [0.9, 0.72]
 
 inference([inheritance(int_image(neutralization, [nil, base]), int_image(neutralization, [nil, soda])), [0.9, 0.8]], [inheritance(soda, base), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 
 % ----- NAL-5 ----- %
@@ -448,13 +448,13 @@ R = [similarity(swan, bird), [0.1, 0.64]] ;
 inference([implication(inheritance(robin, bird), inheritance(robin, animal)), [0.9, 0.8]], [implication(inheritance(robin, bird), inheritance(robin, flyer)), [0.9, 0.8]], [equivalence(A, B), V]).
 A = inheritance(robin, flyer),
 B = inheritance(robin, animal),
-V = [0.82, 0.39] 
+V = [0.82, 0.39]
 
 inference([implication(inheritance(robin, bird), inheritance(robin, animal)), [0.9, 0.8]], [implication(inheritance(robin, flyer), inheritance(robin, animal)), [0.9, 0.8]], [equivalence(A, B), V]).
 R = [equivalence(inheritance(robin, flyer), inheritance(robin, bird)), [0.818182, 0.387855]] ;
 A = inheritance(robin, flyer),
 B = inheritance(robin, bird),
-V = [0.82, 0.39] 
+V = [0.82, 0.39]
 
 
 %% analogy
@@ -537,7 +537,7 @@ inference([implication(disjunction([inheritance(robin, bird), inheritance(robin,
 V = [0.9, 0.72] ;
 
 inference([implication(conjunction([inheritance(robin, bird), inheritance(robin, flyer)]), inheritance(robin, animal)), [0.9, 0.8]], [implication(inheritance(robin, bird), inheritance(robin, animal)), V]).
-V = [0.9, 0.44] 
+V = [0.9, 0.44]
 
 inference([conjunction([inheritance(robin, bird), inheritance(robin, flyer)]), [0.9, 0.8]], [inheritance(robin, bird),V]).
 V = [0.9, 0.72] ;
@@ -671,7 +671,7 @@ inference([implication(conjunction([inheritance(X, feathered), inheritance(X, fl
 R = [implication(inheritance(swan, flyer), inheritance(swan, bird)), [1, 0.81]] ;
 
 inference([conjunction([inheritance(var(X, []), bird), inheritance(var(X, []), swimmer)]), [1, 0.9]], [inheritance(swan, bird), [1, 0.9]], [inheritance(swan, swimmer), V]).
-V = [1, 0.42] 
+V = [1, 0.42]
 
 inference([conjunction([inheritance(var(X, []), flyer), inheritance(var(X, []), bird), inheritance(var(X, []), swimmer)]), [1, 0.9]], [inheritance(swan, bird), [1, 0.9]], R).
 R = [conjunction([inheritance(swan, flyer), inheritance(swan, swimmer)]), [1, 0.42]] ;

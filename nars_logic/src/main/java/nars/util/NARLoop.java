@@ -109,30 +109,36 @@ public class NARLoop implements Runnable {
 
         final NAR nar = this.nar;
 
-        while (!stopped) {
+        try {
+            while (!stopped) {
 
-            final int periodMS = this.periodMS;
+                final int periodMS = this.periodMS;
 
-            if (periodMS < 0) {
-                sleep(sleepTimeMS);
-                continue;
+                if (periodMS < 0) {
+                    sleep(sleepTimeMS);
+                    continue;
+                }
+
+
+                final long start = System.currentTimeMillis();
+
+                if (!nar.running.get()) {
+                    nar.frame(cyclesPerFrame);
+                } else {
+                    //wait until nar is free
+                }
+
+
+                final long frameTimeMS = System.currentTimeMillis() - start;
+
+
+                throttle(periodMS, frameTimeMS);
+
             }
-
-
-            final long start = System.currentTimeMillis();
-
-            if (!nar.running.get()) {
-                nar.frame(cyclesPerFrame);
-            } else {
-                //wait until nar is free
-            }
-
-
-            final long frameTimeMS = System.currentTimeMillis() - start;
-
-
-            throttle(periodMS, frameTimeMS);
-
+        }
+        catch (Exception e) {
+            nar.memory.eventError.emit(e);
+            stopped = true;
         }
 
         logger.info(() -> (this + " stopped") );
