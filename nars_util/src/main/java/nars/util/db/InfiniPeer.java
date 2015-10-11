@@ -18,7 +18,6 @@ import org.infinispan.notifications.cachelistener.event.Event;
 import org.infinispan.notifications.cachemanagerlistener.annotation.Merged;
 import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
-import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
 import org.jgroups.protocols.UDP;
 
 import java.io.PrintStream;
@@ -35,7 +34,7 @@ import java.util.logging.Logger;
 public class InfiniPeer extends DefaultCacheManager {
 
     static {
-        Logger.getLogger(JGroupsTransport.class.getName()).setLevel(Level.WARNING);
+        //Logger.getLogger(JGroupsTransport.class.getName()).setLevel(Level.WARNING);
         Logger.getLogger(UDP.class.getName()).setLevel(Level.SEVERE);
     }
 
@@ -133,29 +132,89 @@ public class InfiniPeer extends DefaultCacheManager {
 
     public static InfiniPeer the(GlobalConfigurationBuilder gconf, Configuration conf) {
         return new InfiniPeer(
-
                 gconf.build(),
                 conf
         );
+    }
+
+    //SIMPLE form
+//    public static InfiniPeer file2(String diskPath, int maxEntries) {
+//        ConfigurationBuilder builder = new ConfigurationBuilder().simpleCache(true);
+//        builder.eviction().
+//    }
+
+    /** creates a web-enabled infinipeer */
+    public static InfiniPeer cluster(String userID,
+                                     Consumer<TransportConfigurationBuilder> transportConfigger) {
+        return cluster(userID, transportConfigger, n -> { });
+    }
+
+    /** creates a web-enabled infinipeer */
+    public static InfiniPeer cluster(String userID,
+                                     Consumer<TransportConfigurationBuilder> transportConfigger,
+                                     Consumer<ConfigurationBuilder> c) {
+
+
+        GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder();
+        globalConfigBuilder
+                .globalJmxStatistics()
+                //.enable()
+                .cacheManagerName(userID);
+                //.security().authorization().disable();
+
+
+        transportConfigger.accept(
+                globalConfigBuilder.transport()
+                //.machineId(userID).siteId(userID)
+                .nodeName(userID) );
+
+        ConfigurationBuilder config = baseConfig();
+
+        config.persistence()
+                .addClusterLoader()
+                .clustering()
+                .cacheMode(CacheMode.DIST_SYNC).sync()
+                //.cacheMode(CacheMode.DIST_ASYNC).async()
+                //.remoteCallTimeout(500)
+                .l1().lifespan(25000L)
+                ;
+                //.hash().numOwners(?);
+
+        //TODO expand on these options
+
+        c.accept(config);
+
+        return new InfiniPeer(
+                globalConfigBuilder.build(),
+                config.build()
+        );
+    }
+
+    private static ConfigurationBuilder baseConfig() {
+        ConfigurationBuilder c = new ConfigurationBuilder();
+        //c.invocationBatching().enable();
+        //c.versioning().disable();
+        //zc.storeAsBinary().storeKeysAsBinary(true);
+        return c;
     }
 
 
     /** for local only mode on the same host, saved to disk */
     public static InfiniPeer file(String diskPath, int maxEntries) {
 
-        ConfigurationBuilder config = new ConfigurationBuilder();
-        config.versioning().disable();
-        config.persistence()
+        ConfigurationBuilder config = baseConfig();
 
-        //single file store:
-
-                .addSingleFileStore()
-                .location(diskPath)
-                .maxEntries(maxEntries);
-
-        config.unsafe();
+        return new InfiniPeer(
+                useFileStore(diskPath, maxEntries, config)
+        );
 
 
+        /* Eviction is disabled by default. If enabled (using an empty <eviction /> element), certain default values are used:
+            strategy: EvictionStrategy.NONE is assumed, if a strategy is not specified..
+            wakeupInterval: 5000 is used if not specified.
+            If you wish to disable the eviction thread, set wakeupInterval to -1.
+            maxEntries: -1 is used if not specified, which means unlimited entries.
+            0 means no entries, and the eviction thread will strive to keep the cache empty. */
 
         /*
 
@@ -197,22 +256,99 @@ public class InfiniPeer extends DefaultCacheManager {
 
         */
 
-        return new InfiniPeer(
-                config
-        );
 
 
     }
+
+    public static ConfigurationBuilder useFileStore(String diskPath, int maxEntries, ConfigurationBuilder config) {
+        config
+            .persistence()
+        //single file store:
+                .addSingleFileStore()
+                .shared(true)
+                .location(diskPath)
+                .fetchPersistentState(true)
+                .maxEntries(maxEntries)
+
+                //.async().enable()
+        /*.eviction().maxEntries(
+                (long)(maxEntries * 0.99f))
+            .expiration().wakeUpInterval(5000l).lifespan(-1).maxIdle(500l).build();*/
+        ;
+
+        return config;
+    }
+
+
+    /* JDBC
+    *
+    * ConfigurationBuilder builder = new ConfigurationBuilder();
+builder.persistence().addStore(JdbcStringBasedStoreConfigurationBuilder.class)
+      .fetchPersistentState(false)
+      .ignoreModifications(false)
+      .purgeOnStartup(false)
+      .table()
+         .dropOnExit(true)
+         .createOnStart(true)
+         .tableNamePrefix("ISPN_STRING_TABLE")
+         .idColumnName("ID_COLUMN").idColumnType("VARCHAR(255)")
+         .dataColumnName("DATA_COLUMN").dataColumnType("BINARY")
+         .timestampColumnName("TIMESTAMP_COLUMN").timestampColumnType("BIGINT")
+      .connectionPool()
+         .connectionUrl("jdbc:h2:mem:infinispan_binary_based;DB_CLOSE_DELAY=-1")
+         .username("sa")
+         .driverClass("org.h2.Driver");
+    * */
+
+    /* JMX
+    ConfigurationBuilder b = new ConfigurationBuilder();
+b.persistence()
+    .addStore(CLInterfaceLoaderConfigurationBuilder.class)
+    .connectionString("jmx://1.2.3.4:4444/MyCacheManager/myCache");
+     */
+    /*
+    Configuration cacheConfig = new ConfigurationBuilder().persistence()
+                                .addStore(LevelDBStoreConfigurationBuilder.class)
+                                .location("/tmp/leveldb/data")
+                                .expiredLocation("/tmp/leveldb/expired")
+                                .build();
+     */
+
+    /*
+    Configuration c = new ConfigurationBuilder()
+   .clustering()
+      .cacheMode(CacheMode.DIST_SYNC)
+      .hash()
+         .numOwners(2)
+         .numSegments(100)
+         .capacityFactor(2)
+   .build();
+     */
 
     /** creates a cluster infinipeer */
     public static InfiniPeer cluster(String userID) {
         return cluster(userID, t ->
                         t.nodeName(userID)
                                 .defaultTransport()
-                                .addProperty("configurationFile", "udp-largecluster.xml")
+                                //.addProperty("configurationFile", "udp-largecluster.xml")
+                                //.addProperty("configurationFile", "udp.xml")
+                                .addProperty("configurationFile", "fast.xml")
         );
-
     }
+    public static InfiniPeer clusterAndFile(String userID, String diskPath, int maxEntries) {
+        return cluster(userID, t -> {
+            t.nodeName(userID)
+                .defaultTransport()
+                //.addProperty("configurationFile", "udp-largecluster.xml")
+                //.addProperty("configurationFile", "udp.xml")
+                .addProperty("configurationFile", "fast.xml").build();
+            },
+            c -> {
+                useFileStore(diskPath, maxEntries, c);
+            }
+        );
+    }
+    //
 
 
     /** creates a web-scale (> 100 nodes) infinipeer */
@@ -228,34 +364,6 @@ public class InfiniPeer extends DefaultCacheManager {
         //https://github.com/infinispan/infinispan/blob/master/core/src/test/java/org/infinispan/test/fwk/JGroupsConfigBuilder.java
     }
 
-    /** creates a web-enabled infinipeer */
-    public static InfiniPeer cluster(String userID, Consumer<TransportConfigurationBuilder> transportConfigger) {
-
-
-        GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder();
-
-        transportConfigger.accept( globalConfigBuilder.transport() );
-
-
-
-        globalConfigBuilder.globalJmxStatistics().allowDuplicateDomains(true)
-                .build();
-
-        Configuration config = new ConfigurationBuilder()
-                .unsafe()
-                .clustering()
-                        //.cacheMode(CacheMode.DIST_SYNC)
-                .cacheMode(CacheMode.DIST_SYNC)
-                .sync()
-                .l1().lifespan(25000L)
-                .hash().numOwners(3)
-                .build();
-
-        return new InfiniPeer(
-                globalConfigBuilder.build(),
-                config
-        );
-    }
 
     public static InfiniPeer clusterLocal() {
         return clusterLocal("");
@@ -263,7 +371,11 @@ public class InfiniPeer extends DefaultCacheManager {
 
 
     public static InfiniPeer tmp() {
-        return file(getTempDir() + "/" + "opennars", 128*1024);
+        return file(tmpDefaultPath(), 128*1024);
+    }
+
+    public static String tmpDefaultPath() {
+        return getTempDir() + "/" + "opennars";
     }
 
     public static String getTempDir() {

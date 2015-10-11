@@ -24,10 +24,10 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.util.impl;
 
-import ca.nengo.model.Node;
-import ca.nengo.model.Probeable;
-import ca.nengo.model.SimulationException;
-import ca.nengo.model.Units;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.Probeable;
+import ca.nengo.sim.model.SimulationException;
+import ca.nengo.sim.model.Units;
 import ca.nengo.util.Probe;
 import ca.nengo.util.TimeSeries;
 
@@ -55,7 +55,7 @@ public class ProbeImpl implements Probe<String>, java.io.Serializable {
 	private ProbeTask myProbeTask;
 
 	/**
-	 * @see ca.nengo.util.Probe#connect(java.lang.String, ca.nengo.model.Probeable, java.lang.String, boolean)
+	 * @see ca.nengo.util.Probe#connect(java.lang.String, ca.nengo.sim.model.Probeable, java.lang.String, boolean)
 	 */
 	public void connect(String ensembleName, Probeable target,
 			String stateName, boolean record) throws SimulationException {
@@ -80,7 +80,7 @@ public class ProbeImpl implements Probe<String>, java.io.Serializable {
 	}
 	
 	/**
-	 * @see ca.nengo.util.Probe#reset() 
+	 * @see ca.nengo.util.Probe#reset()
 	 */
 	public void reset() {
 		myUnits = null; //will be reset on first doCollect()

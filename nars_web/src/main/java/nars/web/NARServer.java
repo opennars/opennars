@@ -17,7 +17,6 @@ import nars.nar.Default;
 import nars.util.NARLoop;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.db.InfiniPeer;
-import nars.util.event.Topic;
 import nars.util.io.JSON;
 
 import java.io.File;
@@ -31,13 +30,12 @@ import static io.undertow.Handlers.websocket;
 public class NARServer extends PathHandler {
 
 
+    public final NAR nar;
 
-    final NAR nar;
+    public final Undertow server;
+    public NARLoop loop;
 
-    private final Undertow server;
-
-    long updatePeriodMS = 500;
-    private Thread narThread;
+    long idleFPS = 7 /* low alpha brainwaves */;
 
 
     public class WebSocketCore extends AbstractReceiveListener implements WebSocketCallback<Void>, WebSocketConnectionCallback {
@@ -62,10 +60,22 @@ public class NARServer extends PathHandler {
             socket.getReceiveSetter().set(this);
             socket.resumeReceives();
 
-            Topic.all(nar.memory(), (k, v) -> {
+            /*Topic.all(nar.memory(), (k, v) -> {
                 send(socket, k + ":" + v);
-            });
+            });*/
 
+
+
+            nar.memory.eventInput.on(t -> send(socket,
+                    " IN: " + t));
+            nar.memory.eventDerived.on(t -> send(socket,
+                    "DER: " + t));
+            nar.memory.eventAnswer.on(t -> send(socket,
+                    "ANS: " + t));
+            nar.memory.eventExecute.on(t -> send(socket,
+                    "EXE: " + t));
+            nar.memory.eventError.on(t -> send(socket,
+                    "ERR: " + t));
 
 //            textOutput = new TextOutput(nar) {
 //
@@ -130,7 +140,6 @@ public class NARServer extends PathHandler {
         }
 
 
-
         public void send(WebSocketChannel socket, Object object) {
             try {
 
@@ -171,7 +180,6 @@ public class NARServer extends PathHandler {
         //TODO use resource path
         String clientPath = "./nars_web/src/main/web";
         File c = new File(clientPath);
-        System.out.println(c.getAbsolutePath());
 
         //https://github.com/undertow-io/undertow/blob/master/examples/src/main/java/io/undertow/examples/sessionhandling/SessionServer.java
         addPrefixPath("/", resource(
@@ -187,29 +195,32 @@ public class NARServer extends PathHandler {
                 .build();
 
 
-        NARLoop loop = nar.loop(updatePeriodMS);
-
     }
 
 
-    public synchronized void start() {
+    public void start() {
 
-        if (!nar.running()) {
-            System.out.println("starting");
-            narThread.start();
-            //TextOutput.out(nar).setShowInput(false);
-            server.start();
+        synchronized (server) {
+            if (loop == null) {
+                System.out.println("starting");
+                //narThread.start();
+                //TextOutput.out(nar).setShowInput(false);
+                server.start();
+
+                loop = nar.loop(idleFPS);
+            }
         }
 
     }
 
     public void stop() {
-        server.stop();
-        nar.stop();
-        try {
-            narThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized (server) {
+            try {
+                loop.waitForTermination();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            server.stop();
         }
     }
 
@@ -217,25 +228,25 @@ public class NARServer extends PathHandler {
 
 
         NAR nar = new Default(
-                new Memory(  new RealtimeMSClock(),
+                new Memory(
+                        new RealtimeMSClock(),
                         new XorShift1024StarRandom(1),
                         new InfiniCacheBag(
                                 InfiniPeer.tmp().the("default")
                         )),
                 1024,
-                1,2,3
+                1, 2, 3
         );
 
 
-        nar.memory.concepts.forEach(c->System.out.println(c));
+        nar.memory.concepts.forEach(c -> System.out.println(c));
 
         int httpPort;
 
         if (args.length < 1) {
             //System.out.println("Usage: NARServer <httpPort>");
             httpPort = 8080;
-        }
-        else {
+        } else {
             httpPort = Integer.parseInt(args[0]);
 
 
@@ -248,9 +259,10 @@ public class NARServer extends PathHandler {
             System.out.println("  NLP enabled, using: " + nlpHost + ":" + nlpPort);
         }*/
 
+
+
         s.start();
     }
-
 
 
     /**
@@ -267,7 +279,6 @@ public class NARServer extends PathHandler {
             }
         }
     }*/
-
 
 
 }

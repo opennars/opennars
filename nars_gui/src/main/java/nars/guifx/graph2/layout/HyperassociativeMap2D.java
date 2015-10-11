@@ -33,15 +33,18 @@ public class HyperassociativeMap2D<N extends Comparable> extends Hyperassociativ
 
     public HyperassociativeMap2D(int dim, double eqDist) {
         super(dim, eqDist,
-                //Manhattan
-                Euclidean);
+                Manhattan);
+                //Euclidean);
 
         //reusedCurrentPosition = new ArrayRealVector(dim);
     }
 
+    double scale = 100;
+
     @Override
     public void init(TermNode<N> n) {
-        n.move(Math.random() * 200, Math.random() * 200);
+        n.move(-scale/2 + Math.random() * scale,
+                -scale/2 + Math.random() * scale);
     }
 
 
@@ -73,8 +76,8 @@ public class HyperassociativeMap2D<N extends Comparable> extends Hyperassociativ
         setLearningRate(0.4f);
         setRepulsiveWeakness(repulseWeakness.get());
         setAttractionStrength(attractionStrength.get());
-        setMaxRepulsionDistance(150);
-        setEquilibriumDistance(0.02f);
+        setMaxRepulsionDistance(1000);
+        setEquilibriumDistance(0.01f);
     }
 
 
@@ -101,7 +104,7 @@ public class HyperassociativeMap2D<N extends Comparable> extends Hyperassociativ
     @Override
     public double getRadius(TermNode<N> termNode) {
 
-        return termNode.priNorm * 0.5;
+        return termNode.priNorm * 1;
 
     }
 
@@ -121,12 +124,12 @@ public class HyperassociativeMap2D<N extends Comparable> extends Hyperassociativ
     @Override
     public void apply(TermNode node, double[] dataRef) {
 
-        node.move(dataRef[0], dataRef[1]);//, 1.0, 0);
+        node.move(dataRef[0], dataRef[1], 0.65, 0);
     }
 
     @Override
     protected TermNode[] getVertices() {
-        scaleFactor = 150 + 70 * Math.sqrt(1 + termList.length);
+        scaleFactor = 35 + 3 * Math.sqrt(1 + termList.length);
         setScale(scaleFactor);
 
 

@@ -472,7 +472,7 @@ abstract public class NAR implements Serializable, Level {
         }
     }
 
-    public final TermFunction on(String operator, Function<Term[], Object> func) {
+    public final TermFunction onExecTerm(String operator, Function<Term[], Object> func) {
         return on(Atom.the(operator), func);
     }
 
@@ -502,14 +502,14 @@ abstract public class NAR implements Serializable, Level {
     }
 
 
-    public void on(Class<? extends OperatorReaction> c) {
+    public void onExec(Class<? extends OperatorReaction> c) {
         //for (Class<? extends OperatorReaction> c : x) {
         OperatorReaction v = memory().the(c);
         on(v);
         //}
     }
 
-    public final EventEmitter.Registrations on(Reaction<Term, Task<Operation>> o, Term... c) {
+    public final EventEmitter.Registrations onExec(Reaction<Term, Task<Operation>> o, Term... c) {
         return memory.exe.on(o, c);
     }
 
@@ -547,7 +547,7 @@ abstract public class NAR implements Serializable, Level {
 //    }
 
     public EventEmitter.Registrations on(OperatorReaction o) {
-        EventEmitter.Registrations reg = on(o, o.getOperatorTerm());
+        EventEmitter.Registrations reg = onExec(o, o.getOperatorTerm());
         o.setEnabled(this, true);
         return reg;
     }
@@ -781,7 +781,7 @@ abstract public class NAR implements Serializable, Level {
 
     final public NARLoop loop(final float initialFPS) {
         final float millisecPerFrame = 1000f / initialFPS;
-        return loop((long)millisecPerFrame);
+        return loop((int)millisecPerFrame);
     }
 
     /**
@@ -1284,7 +1284,7 @@ abstract public class NAR implements Serializable, Level {
 
         TaskProcess d = new TaskProcess(this, task);
 
-        d.process(null);
+        d.run();
 
         return d;
 

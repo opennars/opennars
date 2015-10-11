@@ -17,7 +17,7 @@ public interface IO {
 
     static void initStringOps(NAR n) {
 
-        n.on("str_replace", (Term[] X) -> {
+        n.onExecTerm("str_replace", (Term[] X) -> {
 
             //first argument is substitution map
             Compound<?> substitutions = (Compound<?>) X[0];

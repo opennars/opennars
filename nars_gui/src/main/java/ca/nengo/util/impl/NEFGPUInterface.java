@@ -1,19 +1,19 @@
 package ca.nengo.util.impl;
 
 import ca.nengo.math.impl.MultiLevelKLNetworkPartitioner;
-import ca.nengo.model.*;
-import ca.nengo.model.impl.GroupTarget;
-import ca.nengo.model.impl.NetworkArrayImpl;
-import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
-import ca.nengo.model.impl.NetworkImpl.TargetWrapper;
-import ca.nengo.model.impl.RealOutputImpl;
-import ca.nengo.neural.nef.NEFGroup;
-import ca.nengo.neural.nef.impl.DecodedSource;
-import ca.nengo.neural.nef.impl.DecodedTarget;
-import ca.nengo.neural.nef.impl.NEFGroupImpl;
-import ca.nengo.neural.neuron.impl.LIFSpikeGenerator;
-import ca.nengo.neural.neuron.impl.SpikingNeuron;
+import ca.nengo.math.neural.nef.NEFGroup;
+import ca.nengo.math.neural.nef.impl.DecodedSource;
+import ca.nengo.math.neural.nef.impl.DecodedTarget;
+import ca.nengo.math.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.math.neural.neuron.impl.LIFSpikeGenerator;
+import ca.nengo.math.neural.neuron.impl.SpikingNeuron;
+import ca.nengo.sim.model.*;
+import ca.nengo.sim.model.impl.GroupTarget;
+import ca.nengo.sim.model.impl.NetworkArrayImpl;
+import ca.nengo.sim.model.impl.NetworkImpl;
+import ca.nengo.sim.model.impl.NetworkImpl.SourceWrapper;
+import ca.nengo.sim.model.impl.NetworkImpl.TargetWrapper;
+import ca.nengo.sim.model.impl.RealOutputImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;

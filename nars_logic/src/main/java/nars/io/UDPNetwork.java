@@ -13,6 +13,7 @@ import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 import nars.util.event.Topic;
 import nars.util.java.DefaultTermizer;
 import nars.util.java.Termizer;
@@ -86,14 +87,14 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
 
     /** initialize a NAR with operators for this network */
     public UDPNetwork connect(NAR nar) {
-        nar.on("send", (Term[] args) -> {
+        nar.onExecTerm("send", (Term[] args) -> {
             if (args.length < 2) return null;
             Term stream = args[0];
 
             //TODO use a central dispatcher for all streams; not all streams watching for send(
             if (stream.equals(id)) {
                 Term message = args[1];
-                send(nar, message);
+                send(message);
             }
             return null;
         });
@@ -116,7 +117,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
                     String host = ((Atom)i.term(0)).toStringUnquoted();
                     int port = Integer.parseInt(i.term(1).toString());
 
-                    peer.connect(host, port);
+                    peer(host, port, t.getExpectation());
 
                     //Term port = i.getSubject();
                     //int pp = Integer.parseInt(port.toString());
@@ -133,7 +134,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
         });
 
 
-        //HACK dont use regs directly
+        //HACK dont modify regs directly
         nar.regs.add(
             in.on(p -> {
                 UUID u = p.getOne();
@@ -155,9 +156,33 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
         return this;
     }
 
-    void send(NAR sender, Term message) {
+    void send(Term message) {
         peer.put(message);
     }
 
+    /** specifies how strongly to "peer" with another host:port */
+    public void peer(String host, int port, float strength) {
+        if (strength > 0) {
+            peer.connect(host, port);
+        }
+        else {
+            //??
+            //peer.gossip.view.
+        }
+    }
 
+    public final On onIn(Consumer<Pair<UUID, O>> x) {
+        return in.on(x);
+    }
+    public final On onOut(Consumer<O> x) {
+        return out.on(x);
+    }
+
+    public void out(O s) {
+        out.emit(s);
+    }
+
+    public void stop() {
+        peer.stop();
+    }
 }

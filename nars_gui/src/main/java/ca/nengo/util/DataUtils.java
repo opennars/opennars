@@ -31,14 +31,14 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.util;
 
-import ca.nengo.dynamics.Integrator;
-import ca.nengo.dynamics.impl.EulerIntegrator;
-import ca.nengo.dynamics.impl.LTISystem;
-import ca.nengo.dynamics.impl.SimpleLTISystem;
-import ca.nengo.model.Group;
-import ca.nengo.model.Node;
-import ca.nengo.neural.nef.NEFGroup;
-import ca.nengo.neural.neuron.impl.SpikingNeuron;
+import ca.nengo.math.dynamics.Integrator;
+import ca.nengo.math.dynamics.impl.EulerIntegrator;
+import ca.nengo.math.dynamics.impl.LTISystem;
+import ca.nengo.math.dynamics.impl.SimpleLTISystem;
+import ca.nengo.math.neural.nef.NEFGroup;
+import ca.nengo.math.neural.neuron.impl.SpikingNeuron;
+import ca.nengo.sim.model.Group;
+import ca.nengo.sim.model.Node;
 import ca.nengo.util.impl.SpikePatternImpl;
 import ca.nengo.util.impl.TimeSeries1DImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;

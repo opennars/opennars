@@ -30,10 +30,10 @@ abstract public class AbstractCacheBag<K, V extends Itemized<K>> implements Cach
         return false;
     }
 
-    @Override
-    public int hashCode() {
-        throw new RuntimeException("not impl yet");
-    }
+//    @Override
+//    public int hashCode() {
+//        throw new RuntimeException("not impl yet");
+//    }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {

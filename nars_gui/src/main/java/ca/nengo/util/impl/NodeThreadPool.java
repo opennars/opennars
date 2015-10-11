@@ -2,11 +2,11 @@ package ca.nengo.util.impl;
 
 //import ca.nengo.model.InstantaneousOutput;
 
-import ca.nengo.model.Network;
-import ca.nengo.model.Node;
-import ca.nengo.model.Projection;
-import ca.nengo.model.SimulationException;
-import ca.nengo.model.impl.NetworkArrayImpl;
+import ca.nengo.sim.model.Network;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.Projection;
+import ca.nengo.sim.model.SimulationException;
+import ca.nengo.sim.model.impl.NetworkArrayImpl;
 import ca.nengo.util.TaskSpawner;
 import ca.nengo.util.ThreadTask;
 

@@ -1,14 +1,14 @@
 package ca.nengo.math.impl;
 
 import ca.nengo.math.NetworkPartitioner;
-import ca.nengo.model.NSource;
-import ca.nengo.model.NTarget;
-import ca.nengo.model.Node;
-import ca.nengo.model.Projection;
-import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
-import ca.nengo.model.impl.NetworkImpl.TargetWrapper;
-import ca.nengo.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.math.neural.nef.impl.NEFGroupImpl;
+import ca.nengo.sim.model.NSource;
+import ca.nengo.sim.model.NTarget;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.Projection;
+import ca.nengo.sim.model.impl.NetworkImpl;
+import ca.nengo.sim.model.impl.NetworkImpl.SourceWrapper;
+import ca.nengo.sim.model.impl.NetworkImpl.TargetWrapper;
 import org.jgrapht.Graph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;

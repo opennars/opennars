@@ -1,6 +1,6 @@
 package ca.nengo.util.impl;
 
-import ca.nengo.model.Node;
+import ca.nengo.sim.model.Node;
 
 
 public class DFSIterator {

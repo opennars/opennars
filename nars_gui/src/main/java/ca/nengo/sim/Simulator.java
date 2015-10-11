@@ -27,10 +27,10 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.sim;
 
-import ca.nengo.model.Network;
-import ca.nengo.model.Node;
-import ca.nengo.model.Probeable;
-import ca.nengo.model.SimulationException;
+import ca.nengo.sim.model.Network;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.Probeable;
+import ca.nengo.sim.model.SimulationException;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
 

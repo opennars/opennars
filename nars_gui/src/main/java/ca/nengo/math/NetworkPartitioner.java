@@ -1,7 +1,7 @@
 package ca.nengo.math;
 
-import ca.nengo.model.Node;
-import ca.nengo.model.Projection;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.Projection;
 
 import java.util.ArrayList;
 import java.util.Set;

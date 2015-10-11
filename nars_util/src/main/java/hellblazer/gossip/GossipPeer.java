@@ -17,12 +17,8 @@ import java.util.logging.Logger;
 public class GossipPeer implements GossipListener {
 
     public final Gossip gossip;
-    private Object peers;
+    //private Object peers;
 
-
-    public GossipPeer() throws SocketException {
-        this(0);
-    }
 
     public GossipPeer(int port) throws SocketException {
         super();
@@ -62,7 +58,7 @@ public class GossipPeer implements GossipListener {
 //        byte[] ba;
 //        try {
 
-        byte[] ba = new byte[0];
+        byte[] ba;
         try {
             ba = marshaller.objectToByteBuffer(j);
         } catch (Exception e) {
@@ -130,8 +126,9 @@ public class GossipPeer implements GossipListener {
             //Map<String,Object> x = Core.bson.readValue(bais, Map.class);
             //JsonNode x = Core.bson.readValue(bais, JsonNode.class);
             //bais.
-            Object x = marshaller.objectFromByteBuffer(state);
             //JsonNode x = Core.bson.readTree(bais);
+
+            Object x = marshaller.objectFromByteBuffer(state);
             onUpdate(id, x);
         } catch (Exception e) {
             e.printStackTrace();
@@ -140,7 +137,7 @@ public class GossipPeer implements GossipListener {
     }
 
     public void onUpdate(UUID id, Object j) {
-        System.out.println("onUpdate: " + id + " = " + j);
+        //System.out.println("onUpdate: " + id + " = " + j);
     }
 
     public void connect(InetSocketAddress seed) {

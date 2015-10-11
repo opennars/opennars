@@ -190,6 +190,11 @@
             <artifactId>infinispan-embedded</artifactId>
             <version>8.1.0.Alpha1</version>
         </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-tree</artifactId>
+            <version>8.1.0.Alpha1</version>
+        </dependency>
 
     </dependencies>
 

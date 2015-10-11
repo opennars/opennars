@@ -16,11 +16,10 @@ import nars.meter.LogicMeter;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Termed;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
 
@@ -37,9 +36,9 @@ public class TaskProcess extends NAL implements Serializable {
     /**
      * configuration
      */
-    boolean activateTermLinkTemplates = true;
-    boolean activateTermLinkTemplateTargetsFromTask = true;
-    boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
+    final static boolean activateTermLinkTemplates = true;
+    final static boolean activateTermLinkTemplateTargetsFromTask = true;
+    final static boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
 
     public TaskProcess(NAR nar, Task task) {
         super(nar);
@@ -210,11 +209,12 @@ public class TaskProcess extends NAL implements Serializable {
             return nar.concept(t.getTerm());
     }
 
-    Concept getTermLinkTemplateTarget(TermLinkTemplate t, Budget taskBudget) {
+    final Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget) {
+        Term tt = t.getTerm();
         if (activateTermLinkTemplateTargetsFromTask)
-            return nar.conceptualize(t.getTerm(), taskBudget);
+            return nar.conceptualize(tt, taskBudget);
         else
-            return nar.concept(t.getTerm());
+            return nar.concept(tt);
     }
 
     /**
@@ -245,10 +245,16 @@ public class TaskProcess extends NAL implements Serializable {
             return false;
 
 
-        taskLinkBuilder.setBudget(subBudget);
-
-        //give self transform task subBudget (previously it got the entire budget)
+        //ACTIVATE TASK LINKS
+        //   options: entire budget, or the sub-budget that downtsream receives
+        taskLinkBuilder.setBudget(
+                task.getBudget() //full budget
+                //subBudget //fractional budget
+        );
         activateTaskLink(c, taskLinkBuilder);
+
+
+        taskLinkBuilder.setBudget(subBudget);
 
 
         for (int i = 0; i < numTemplates; i++) {
@@ -352,7 +358,8 @@ public class TaskProcess extends NAL implements Serializable {
 
 
 
-    public Stream<Task> process(Function<TaskProcess, Stream<Task>> processor) {
+
+    public Concept run() {
 
 
         final Task task = getTask();
@@ -380,14 +387,13 @@ public class TaskProcess extends NAL implements Serializable {
 
             link(c, task);
 
+            return c;
         }
 
         return null;
+
     }
 
-    public void run() {
-        process(null);
-    }
 
 
 //    /**

@@ -28,7 +28,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.util;
 
-import ca.nengo.model.Units;
+import ca.nengo.sim.model.Units;
 
 /**
  * A TimeSeries that consists of 1-dimensional values, with convenience methods 

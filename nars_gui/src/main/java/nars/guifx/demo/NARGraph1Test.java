@@ -28,8 +28,8 @@ public class NARGraph1Test {
 
 
         n.memory.conceptForgetDurations.set(8);
-        n.memory.termLinkForgetDurations.set(2);
-        n.memory.taskLinkForgetDurations.set(2);
+        n.memory.termLinkForgetDurations.set(12);
+        n.memory.taskLinkForgetDurations.set(12);
 
         //n.input(new File("/tmp/h.nal"));
         n.input("<hydochloric --> acid>.");

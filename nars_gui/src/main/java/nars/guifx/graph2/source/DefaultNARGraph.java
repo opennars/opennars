@@ -26,6 +26,7 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
     @Implementation(Circle.class)
     @Implementation(Grid.class)
     @Implementation(HyperassociativeMap1D.class)
+    @Implementation(Hilbert.class)
     //@Implementation(TimeGraph.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 

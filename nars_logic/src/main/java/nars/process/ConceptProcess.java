@@ -187,12 +187,14 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         int n = 0;
         final Task pt = getTask();
         if (pt!=null) {
-            total += pt.isDeleted() ? 0 : pt.getPriority();
+            if (!pt.isDeleted())
+                total += pt.getPriority();
             n++;
         }
         final Task pb = getBelief();
         if (pb!=null) {
-            total += pb.isDeleted() ? 0 : pb.getPriority();
+            if (!pb.isDeleted())
+                total += pb.getPriority();
             n++;
         }
 

@@ -31,7 +31,7 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.math.impl;
 
 import ca.nengo.math.Function;
-import ca.nengo.model.Units;
+import ca.nengo.sim.model.Units;
 import ca.nengo.util.InterpolatorND;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.TimeSeries1D;

@@ -1,7 +1,7 @@
 package ca.nengo.util.impl;
 
-import ca.nengo.model.Probeable;
-import ca.nengo.model.SimulationException;
+import ca.nengo.sim.model.Probeable;
+import ca.nengo.sim.model.SimulationException;
 import ca.nengo.util.Probe;
 import ca.nengo.util.ThreadTask;
 

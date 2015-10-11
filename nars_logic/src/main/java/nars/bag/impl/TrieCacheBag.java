@@ -8,7 +8,7 @@ import org.magnos.trie.TrieSequencer;
 /**
  * Created by me on 7/8/15.
  */
-public class TrieCacheBag extends MapCacheBag<Term,Concept> {
+public class TrieCacheBag extends MapCacheBag<Term,Concept,Trie<Term,Concept>> {
 
     final public static class TermByteTrieSequencer implements TrieSequencer<Term>
     {
@@ -43,7 +43,7 @@ public class TrieCacheBag extends MapCacheBag<Term,Concept> {
     }
 
     /** TODO sequences in reverse, so that operator byte is last, allowing common subterms to fold as the prefix */
-    abstract public static class ReverseTermByteTrieSequencer implements TrieSequencer<Term>     {
+    //abstract static class ReverseTermByteTrieSequencer implements TrieSequencer<Term>     {
 
 //        @Override
 //        public int matches( Term a, int indexA, Term b, int indexB, int count )
@@ -70,7 +70,7 @@ public class TrieCacheBag extends MapCacheBag<Term,Concept> {
 //            return t.bytes()[i];
 //        }
 
-    }
+//    }
 
     //TODO sequence by subterm as a whole, since each subterm is hashed
 

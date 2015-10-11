@@ -48,7 +48,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
         ), derivelets);
     }
 
-    public DefaultAlann(MapCacheBag<Term, Concept> concepts, int numDerivelets) {
+    public DefaultAlann(MapCacheBag<Term, Concept,?> concepts, int numDerivelets) {
         this(new LocalMemory(new FrameClock(), concepts), numDerivelets);
     }
 

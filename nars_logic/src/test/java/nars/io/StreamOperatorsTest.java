@@ -1,5 +1,6 @@
 package nars.io;
 
+import nars.util.data.Util;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class StreamOperatorsTest {
     public void testUDP() throws SocketException, InterruptedException {
         UDPNetwork<String> a = new UDPNetwork("a",10001);
         UDPNetwork<String> b = new UDPNetwork("b",10002);
-        b.peer.connect("localhost", 10001);
+        b.peer("localhost", 10001, 1.0f);
 
         System.out.println("Testing UDP pair at 60hz");
         a.setFrequency(60);
@@ -30,11 +31,11 @@ public class StreamOperatorsTest {
 
         Thread test = Thread.currentThread();
 
-        a.in.on(aIn -> {
+        a.onIn(received -> {
             //System.out.println(aIn);
-            a.peer.put(aIn.getTwo());
+            a.out(received.getTwo());
         });
-        b.in.on(m -> {
+        b.onIn(m -> {
             long start = Long.valueOf(m.getTwo()).longValue();
             long now = System.currentTimeMillis();
 
@@ -50,11 +51,9 @@ public class StreamOperatorsTest {
         for (int i = 0; i < bursts; i++) {
             final long now = System.currentTimeMillis();
             for (int j = 0; j < burstSize; j++) {
-                b.out.emit(String.valueOf(now));
+                b.out(String.valueOf(now));
 
-                try {
-                    Thread.sleep((long) ( 1000.0 / 60.0));
-                } catch (Exception e) { }
+                Util.pause(((long) ( 1000.0 / 60.0)));
             }
 
             //System.out.println(stat);
@@ -70,8 +69,8 @@ public class StreamOperatorsTest {
                 (stat.getMean() - (1000.0/60.0)) + "ms"
         );
 
-        a.peer.stop();
-        b.peer.stop();
+        a.stop();
+        b.stop();
 
     }
 

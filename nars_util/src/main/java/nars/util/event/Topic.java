@@ -18,9 +18,10 @@ public interface Topic<V extends Serializable> extends Serializable, Named<Strin
     //List<Consumer<V>> all();
 
 
+
+
     /** registers to all public Topic fields in an object */
     static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f) {
-
 
         Active s = new Active();
 

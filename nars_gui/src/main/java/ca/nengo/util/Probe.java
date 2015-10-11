@@ -28,8 +28,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.util;
 
-import ca.nengo.model.Probeable;
-import ca.nengo.model.SimulationException;
+import ca.nengo.sim.model.Probeable;
+import ca.nengo.sim.model.SimulationException;
 import ca.nengo.util.impl.ProbeTask;
 
 /**

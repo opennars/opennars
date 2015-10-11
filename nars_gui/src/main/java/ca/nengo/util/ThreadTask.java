@@ -1,7 +1,7 @@
 package ca.nengo.util;
 
-import ca.nengo.model.Resettable;
-import ca.nengo.model.SimulationException;
+import ca.nengo.sim.model.Resettable;
+import ca.nengo.sim.model.SimulationException;
 
 /**
  * Any task in a Network that can be run independently but belongs to a specific part of the Network.

@@ -1,9 +1,9 @@
 package ca.nengo.util.impl;
 
-import ca.nengo.model.SimulationException;
-import ca.nengo.model.StructuralException;
-import ca.nengo.neural.plasticity.impl.PlasticGroupImpl;
-import ca.nengo.neural.plasticity.impl.PlasticGroupTarget;
+import ca.nengo.math.neural.plasticity.impl.PlasticGroupImpl;
+import ca.nengo.math.neural.plasticity.impl.PlasticGroupTarget;
+import ca.nengo.sim.model.SimulationException;
+import ca.nengo.sim.model.StructuralException;
 import ca.nengo.util.ThreadTask;
 
 /**
@@ -52,7 +52,7 @@ public class LearningTask implements ThreadTask {
     }
 
 	/**
-	 * @see ca.nengo.model.Resettable#reset(boolean)
+	 * @see ca.nengo.sim.model.Resettable#reset(boolean)
 	 */
     public void reset(boolean randomize) {
         finished = false;

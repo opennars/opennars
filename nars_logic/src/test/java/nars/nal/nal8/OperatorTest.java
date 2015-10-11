@@ -47,7 +47,7 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         NAR n = new Default();
-        n.on("exe", (Term[] event) -> {
+        n.onExecTerm("exe", (Term[] event) -> {
             //System.out.println("executed: " + Arrays.toString(args));
             executed.set(true);
             return null;

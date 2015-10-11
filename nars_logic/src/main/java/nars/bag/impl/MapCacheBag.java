@@ -5,20 +5,16 @@ import nars.budget.Itemized;
 
 import java.util.Iterator;
 import java.util.Map;
-
-/**
- * Created by me on 6/2/15.
- */
-public class MapCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V>  {
-
-    public final Map<K, V> data;
+import java.util.function.Consumer;
 
 
-    public MapCacheBag(Map<K, V> data) {
+public class MapCacheBag<K, V extends Itemized<K>, M extends Map<K,V>> extends AbstractCacheBag<K,V>  {
+
+    public final M data;
+
+    public MapCacheBag(M data) {
         super();
-
         this.data = data;
-
     }
 
     @Override
@@ -49,6 +45,14 @@ public class MapCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V>
     @Override
     public Iterator<V> iterator() {
         return data.values().iterator();
+    }
+
+    /** provides a direct method to forEach,
+     * in case the map implements a better
+     * alternative to iterator()'s default */
+    @Override
+    public void forEach(Consumer<? super V> consumer) {
+        data.forEach((k,v) -> consumer.accept(v));
     }
 
 }

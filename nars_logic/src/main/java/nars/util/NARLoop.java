@@ -3,20 +3,29 @@ package nars.util;
 import nars.NAR;
 import nars.util.data.Util;
 
-/** self managed set of processes which run a NAR
- *  as a loop at a certain frequency. */
+import java.util.logging.Logger;
+
+/**
+ * self managed set of processes which run a NAR
+ * as a loop at a certain frequency.
+ */
 public class NARLoop implements Runnable {
+
+    final static Logger logger = Logger.getLogger(NARLoop.class.getSimpleName());
 
     public final NAR nar;
 
     private final Thread thread;
 
-    /** sleep mode delay time */
+    /**
+     * sleep mode delay time
+     */
     static final long sleepTimeMS = 250;
 
 
     volatile int cyclesPerFrame = 1;
     volatile int periodMS = 0;
+    private volatile boolean stopped = false;
     //private boolean running;
 
     //TODO make this into a SimpleIntegerProperty also
@@ -29,7 +38,7 @@ public class NARLoop implements Runnable {
 
     //in Hz / fps
     public double getFrequency() {
-        return 1000.0/periodMS;
+        return 1000.0 / periodMS;
     }
 
     public int getPeriodMS() {
@@ -44,15 +53,13 @@ public class NARLoop implements Runnable {
 
         nar.the("loop", this);
 
-
         setPeriodMS(initialPeriod);
-
 
         this.thread = new Thread(this);
         thread.start();
+
+        logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
     }
-
-
 
 
     public final boolean setPeriodMS(final int period) {
@@ -63,20 +70,19 @@ public class NARLoop implements Runnable {
         this.periodMS = period;
 
         //thread priority control
-        if (thread!=null) {
+        if (thread != null) {
             int pri = thread.getPriority();
             final int fullThrottlePri = Thread.MIN_PRIORITY;
 
             final int targetPri;
             if (periodMS == 0) {
-                targetPri =fullThrottlePri;
-            }
-            else {
+                targetPri = fullThrottlePri;
+            } else {
                 final int normalPri = Thread.NORM_PRIORITY;
                 targetPri = normalPri;
             }
 
-            if (targetPri!=pri)
+            if (targetPri != pri)
                 thread.setPriority(fullThrottlePri);
 
             thread.interrupt();
@@ -84,19 +90,26 @@ public class NARLoop implements Runnable {
         }
 
 
-
-
         return true;
     }
 
+    public void stop() {
+        logger.info(() -> (this + " stop requested") );
+        stopped = true;
+    }
 
-    @Override final public void run() {
+    public void waitForTermination() throws InterruptedException {
+        stop();
+        thread.join();
+    }
 
+    @Override
+    final public void run() {
 
 
         final NAR nar = this.nar;
 
-        while (true) {
+        while (!stopped) {
 
             final int periodMS = this.periodMS;
 
@@ -110,8 +123,7 @@ public class NARLoop implements Runnable {
 
             if (!nar.running.get()) {
                 nar.frame(cyclesPerFrame);
-            }
-            else {
+            } else {
                 //wait until nar is free
             }
 
@@ -122,6 +134,8 @@ public class NARLoop implements Runnable {
             throttle(periodMS, frameTimeMS);
 
         }
+
+        logger.info(() -> (this + " stopped") );
     }
 
     protected long throttle(long minFramePeriodMS, long frameTimeMS) {
@@ -142,7 +156,6 @@ public class NARLoop implements Runnable {
         }
         return minFramePeriodMS;
     }
-
 
 
     public void sleep(long sleepTime) {

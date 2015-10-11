@@ -271,6 +271,7 @@ public class Endpoint implements Comparable<Endpoint> {
 //                        logger.debug(String.format("Notifiying registration of %s for %s",
 //                                                   newState.getId(), address));
 //                    }
+
                     gossip.notifyRegister(newState);
                 }
             } else {

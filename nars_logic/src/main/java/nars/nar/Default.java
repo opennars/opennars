@@ -126,7 +126,7 @@ public class Default extends NAR implements ConceptBuilder {
 
                 new FullInternalExperience(this);
                 new Abbreviation(this);
-                on(Counting.class);
+                onExec(Counting.class);
 
 //                /*if (internalExperience == Minimal) {
 //                    new InternalExperience(this);
@@ -564,7 +564,7 @@ public class Default extends NAR implements ConceptBuilder {
             Set<Task> batch = ia.keySet();
 
             //TODO move this to ItemAccumulator
-            Task.normalize( batch,  premise.getMeanPriority() );
+            //Task.normalize( batch,  premise.getMeanPriority() );
 
             return batch.stream();
 

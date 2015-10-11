@@ -1,8 +1,8 @@
 package ca.nengo.util.impl;
 
-import ca.nengo.model.Node;
-import ca.nengo.model.Projection;
-import ca.nengo.model.SimulationException;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.Projection;
+import ca.nengo.sim.model.SimulationException;
 import ca.nengo.util.ThreadTask;
 
 /**

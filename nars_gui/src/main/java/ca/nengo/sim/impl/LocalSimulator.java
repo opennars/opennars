@@ -28,13 +28,13 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.sim.impl;
 
-import ca.nengo.model.*;
-import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.model.impl.SocketUDPNode;
-import ca.nengo.neural.plasticity.impl.PlasticGroupTarget;
+import ca.nengo.math.neural.plasticity.impl.PlasticGroupTarget;
 import ca.nengo.sim.Simulator;
 import ca.nengo.sim.SimulatorEvent;
 import ca.nengo.sim.SimulatorListener;
+import ca.nengo.sim.model.*;
+import ca.nengo.sim.model.impl.NetworkImpl;
+import ca.nengo.sim.model.impl.SocketUDPNode;
 import ca.nengo.util.Probe;
 import ca.nengo.util.ThreadTask;
 import ca.nengo.util.VisiblyChanges;
@@ -79,7 +79,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
     }
 
     /**
-     * @see ca.nengo.sim.Simulator#update(ca.nengo.model.Network)
+     * @see ca.nengo.sim.Simulator#update(ca.nengo.sim.model.Network)
      */
     public void update(Network network) {
     	

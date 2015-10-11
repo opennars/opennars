@@ -28,8 +28,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.util;
 
-import ca.nengo.model.Node;
-import ca.nengo.model.StructuralException;
+import ca.nengo.sim.model.Node;
+import ca.nengo.sim.model.StructuralException;
 
 /**
  * An object that fires an event when its properties change in such a way that it expects 

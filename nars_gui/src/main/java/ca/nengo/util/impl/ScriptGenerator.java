@@ -1,7 +1,7 @@
 package ca.nengo.util.impl;
 
-import ca.nengo.model.Network;
-import ca.nengo.model.Node;
+import ca.nengo.sim.model.Network;
+import ca.nengo.sim.model.Node;
 import ca.nengo.util.ScriptGenException;
 
 import java.io.File;

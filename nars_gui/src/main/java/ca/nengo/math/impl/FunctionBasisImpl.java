@@ -27,12 +27,12 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.math.impl;
 
-import ca.nengo.config.Configuration;
-import ca.nengo.config.PropretiesUtil;
-import ca.nengo.config.impl.ConfigurationImpl;
-import ca.nengo.config.impl.ListPropertyImpl;
 import ca.nengo.math.Function;
 import ca.nengo.math.FunctionBasis;
+import ca.nengo.math.config.Configuration;
+import ca.nengo.math.config.PropretiesUtil;
+import ca.nengo.math.config.impl.ConfigurationImpl;
+import ca.nengo.math.config.impl.ListPropertyImpl;
 
 import java.lang.reflect.Method;
 

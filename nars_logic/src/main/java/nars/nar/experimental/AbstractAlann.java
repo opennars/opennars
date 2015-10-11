@@ -130,7 +130,7 @@ public abstract class AbstractAlann extends NAR {
 //            activationFactor = 1f;
 //        }
 
-        return ((MapCacheBag<Term,Concept>)(memory.getConcepts())).data.compute(term, (k, existing) -> {
+        return ((MapCacheBag<Term,Concept,?>)(memory.getConcepts())).data.compute(term, (k, existing) -> {
             if (existing!=null) {
                 existing.getBudget().mergePlus(budget, activationFactor);
                 return existing;

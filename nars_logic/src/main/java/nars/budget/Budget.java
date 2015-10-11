@@ -47,11 +47,12 @@ import static nars.nal.UtilityFunctions.*;
 public class Budget implements Cloneable, Prioritized, Serializable {
 
     public static final Procedure2<Budget,Budget> average =
-            //(Procedure2<Budget, Budget>) Budget::mergeAverage;
-            (Procedure2<Budget, Budget>) Budget::mergeAverageLERP;
-
-    public static final Procedure2<Budget,Budget> plus = (Procedure2<Budget, Budget>) Budget::mergePlus;
-    public static final Procedure2<Budget,Budget> max = (Procedure2<Budget, Budget>) Budget::mergeMax;
+        //(Serializable & Procedure2<Budget, Budget>) Budget::mergeAverage;
+        (Serializable & Procedure2<Budget, Budget>)Budget::mergeAverageLERP;
+    public static final Procedure2<Budget,Budget> plus =
+        (Serializable & Procedure2<Budget, Budget>)Budget::mergePlus;
+    public static final Procedure2<Budget,Budget> max =
+        (Serializable & Procedure2<Budget, Budget>)Budget::mergeMax;
 
 
 
