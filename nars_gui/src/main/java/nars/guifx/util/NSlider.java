@@ -149,7 +149,7 @@ public class NSlider extends StackPane {
 
         control.start(this);
 
-        value(vector); //causes initial draw
+        value(vector); //causes initial render
     }
 
     /**
@@ -335,13 +335,13 @@ public class NSlider extends StackPane {
 
         double np = 0.75 + (p * 0.25);
 
-        double ews = ew * np, ehs = eh * np; //scale by prop
+        //double ews = ew * np, ehs = eh * np; //scale by prop
 
-        double ul = (W - ews) / 2.0;
-        double ut = (H - ehs) / 2.0;
+        double ul = (W - ew) / 2.0;
+        double ut = (H - eh) / 2.0;
 
         g.setFill(Color.DARKGRAY);
-        g.fillOval(ul, ut, ews, ehs);
+        g.fillOval(ul, ut, ew, eh);
 
         double hp = 0.5 + 0.5 * p;
         g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
@@ -349,7 +349,7 @@ public class NSlider extends StackPane {
 
         final double atheta = theta * 180.0 / Math.PI; //radian to degree
         final double knobArc = 60;
-        g.fillArc(ul, ut, ews, ehs,
+        g.fillArc(ul, ut, ew, eh,
                 atheta - knobArc / 2, knobArc, ArcType.ROUND);
 
 
@@ -364,7 +364,7 @@ public class NSlider extends StackPane {
         g.setFill(Color.BLACK);
         g.fillRect(0, 0, W, H);
 
-        // draw the slider
+        // render the slider
         vis.redraw(normalized(), canvas, W, H, g);
     }
 

@@ -57,7 +57,7 @@ public class StatusPane extends HBox {
                 b.update(nar.memory);
 
                 for (LinePlot p: plots)
-                    p.draw();
+                    p.render();
             }
         };
 

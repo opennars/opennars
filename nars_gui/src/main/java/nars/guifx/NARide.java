@@ -427,13 +427,14 @@ public class NARide extends BorderPane {
     public static SizeAwareWindow show(NAR n, Parent main) {
 
 
-        BorderPane summary;
+        BorderPane summary = new BorderPane();
         {
             LinePlot bp = new LinePlot(
                     "Concepts",
                     () -> (n.memory.getConcepts().size()),
                     300
             );
+
 
             new FrameReaction(n) {
 
@@ -444,14 +445,14 @@ public class NARide extends BorderPane {
                                         ((LinePlot) o).update();
                                 }*/
 
-                    bp.draw();
+                    //TODO update but dont necessarily render  (queue render to runLateR)
+                    bp.render();
 
                 }
             };
 
-            summary = new BorderPane(bp);
-            bp.widthProperty().bind(summary.widthProperty());
-            bp.heightProperty().bind(summary.heightProperty());
+            summary.setCenter(bp);
+
         }
 
 

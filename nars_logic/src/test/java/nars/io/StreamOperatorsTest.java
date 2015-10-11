@@ -13,9 +13,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class StreamOperatorsTest {
 
-    @Test public void testNARComm() {
-
-    }
 
     @Test
     public void testUDP() throws SocketException, InterruptedException {

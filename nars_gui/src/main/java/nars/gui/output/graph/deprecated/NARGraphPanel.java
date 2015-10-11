@@ -76,12 +76,12 @@
 //        canvas = new PCanvas(vis) {
 //
 //            @Override
-//            public void draw() {
+//            public void render() {
 //                //MULTITHREADED RENDERING LOOP:
 //                if (!isPredrawing())
 //                    nar.memory.taskLater(super::predraw);
 //
-//                super.draw();
+//                super.render();
 //
 //            }
 //        };

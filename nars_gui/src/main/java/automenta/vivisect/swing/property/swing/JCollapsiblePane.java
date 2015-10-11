@@ -638,7 +638,7 @@ public class JCollapsiblePane extends JPanel {
         // and we paint it only if it has been created and only if we have a
         // valid graphics
         if (g != null && img != null) {
-          // draw the image with y being height - imageHeight
+          // render the image with y being height - imageHeight
           g.drawImage(img, 0, getHeight() - img.getHeight(), null);
         }
       }

@@ -194,7 +194,7 @@ public class WebcamShapes<T extends ImageBase> extends JPanel
     @Override
     public void paint (Graphics g) {
         if( workImage != null ) {
-            // draw the work image and be careful to make sure it isn't being manipulated at the same time
+            // render the work image and be careful to make sure it isn't being manipulated at the same time
             synchronized (workImage) {
                 ((Graphics2D) g).drawImage(workImage, 0, 0, null);
             }

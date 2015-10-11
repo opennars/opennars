@@ -124,7 +124,7 @@
 //    }
 //
 //    @Override
-//    public boolean draw(PGraphics g) {
+//    public boolean render(PGraphics g) {
 //
 //        if (getTimeAxis() == null)
 //            return true;
@@ -147,7 +147,7 @@
 //        float pos = chartMargin/2.0f;
 //        for (AxisPlot c : charts) {
 //            g.translate(0, pos);
-//            c.draw(this);
+//            c.render(this);
 //            pos = c.plotHeight+chartMargin;
 //        }
 //        g.popMatrix();
@@ -230,7 +230,7 @@
 //     picker = new Picker(this);
 //     }
 //
-//     void draw() {
+//     void render() {
 //     a += 0.01;
 //
 //     background(255);

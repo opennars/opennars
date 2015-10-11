@@ -12,11 +12,11 @@ abstract public class AutoCanvas extends Canvas {
     public AutoCanvas() {
         super();
         // Redraw canvas when size changes.
-        widthProperty().addListener(evt -> draw());
-        heightProperty().addListener(evt -> draw());
+        widthProperty().addListener(evt -> render());
+        heightProperty().addListener(evt -> render());
     }
 
-    abstract protected void draw();
+    abstract protected void render();
 
 
     @Override

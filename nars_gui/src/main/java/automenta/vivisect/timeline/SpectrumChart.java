@@ -110,7 +110,7 @@
 //            if ((w != prevWindow) && (w < windows.size())) {
 //                float t2 = t + windowSize;
 //                float x2 = t2 * timeScale;
-//                //draw window block
+//                //render window block
 //                
 //                Window win = windows.get((int)w);
 //                

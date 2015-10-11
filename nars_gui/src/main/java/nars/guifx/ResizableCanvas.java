@@ -2,7 +2,6 @@ package nars.guifx;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
 /**
@@ -11,14 +10,25 @@ import javafx.scene.layout.Region;
 public class ResizableCanvas extends Canvas {
 
 
-    public ResizableCanvas(Pane parent, int w, int h) {
-        this(parent);
-        parent.prefWidth(w);
-        parent.prefHeight(h);
-    }
 
-    public ResizableCanvas(Region parent) {
-        this(parent.widthProperty(), parent.heightProperty());
+
+    public ResizableCanvas() {
+        super();
+
+        parentProperty().addListener((z,p,n) -> {
+            if (n==null) return;
+
+            //n.boundsInParentProperty().addListener((c,a,b) -> {
+                //if (n instanceof Control) {
+                    Region x = (Region)n;
+                        //System.out.println(x + " ");
+                    widthProperty().bind(x.widthProperty());
+                    heightProperty().bind(x.heightProperty());
+                //}
+            //});
+        });
+
+        init();
     }
 
     public ResizableCanvas(ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height) {
@@ -28,6 +38,10 @@ public class ResizableCanvas extends Canvas {
         widthProperty().bind(width);
         heightProperty().bind(height);
 
+        init();
+    }
+
+    private void init() {
 
         final boolean bindRedraw = true; //TODO parameter to make this optional to avoid unnecessary event being attached
         if (bindRedraw) {
@@ -35,6 +49,7 @@ public class ResizableCanvas extends Canvas {
             widthProperty().addListener(evt -> draw());
             heightProperty().addListener(evt -> draw());
         }
+
     }
 
     protected void draw() {

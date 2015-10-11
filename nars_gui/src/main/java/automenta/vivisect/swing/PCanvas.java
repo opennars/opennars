@@ -199,7 +199,7 @@
 //        hnav.applyTransform(b);
 //
 //
-//        vis.draw(b);
+//        vis.render(b);
 //
 //        b.endDraw();
 //
@@ -225,7 +225,7 @@
 //    }
 //
 //    @Override
-//    public void draw() {
+//    public void render() {
 //
 //        if (predrawing && b!=null && b.width == getWidth() && b.height==getHeight())  {
 //            try {

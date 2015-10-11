@@ -1,7 +1,6 @@
 package nars.guifx;
 
-import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
-import javafx.scene.canvas.Canvas;
+import com.gs.collections.impl.list.mutable.primitive.FloatArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import nars.guifx.util.ColorArray;
@@ -15,11 +14,11 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/10/15.
  */
-public class LinePlot extends Canvas /*implements ChangeListener*/ {
+public class LinePlot extends ResizableCanvas /*implements ChangeListener*/ {
 
     public static final ColorArray BlueRed = new ColorArray(128, Color.BLUE, Color.RED);
 
-    private final DoubleArrayList history;
+    private final FloatArrayList history;
     private final DoubleSupplier valueFunc;
     private final String name;
     private final int maxHistory;
@@ -31,7 +30,7 @@ public class LinePlot extends Canvas /*implements ChangeListener*/ {
 
 
     public LinePlot(String name, DoubleSupplier valueFunc, int history) {
-        super(100, 100);
+        super();
 
 
         maxWidth(Double.MAX_VALUE);
@@ -53,20 +52,25 @@ public class LinePlot extends Canvas /*implements ChangeListener*/ {
 
 
         this.name = name;
-        this.history = new DoubleArrayList(history);
+        this.history = new FloatArrayList(history);
         this.maxHistory = history;
         this.valueFunc = valueFunc;
 
-        draw();
+
+        render();
 
     }
 
 
-
-    public void draw() {
+    public void update() {
         while (history.size() > maxHistory)
             history.removeAtIndex(0);
-        history.add(  valueFunc.getAsDouble() );
+        history.add( (float) valueFunc.getAsDouble() );
+    }
+
+    public void render() {
+
+        update();
 
         runLater( () -> {
             GraphicsContext g = getGraphicsContext2D();
@@ -145,6 +149,7 @@ public class LinePlot extends Canvas /*implements ChangeListener*/ {
         });
 
     }
+
 
 
 }
