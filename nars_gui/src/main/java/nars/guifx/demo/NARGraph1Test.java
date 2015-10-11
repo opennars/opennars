@@ -20,7 +20,7 @@ import nars.nar.Default;
 public class NARGraph1Test {
 
     static {
-        DerivationRules.maxVarArgsToMatch = 2;
+        DerivationRules.maxVarArgsToMatch = 3;
     }
 
     public static SpaceGrapher newGraph(NAR n) {
@@ -67,7 +67,7 @@ public class NARGraph1Test {
     public static void main(String[] args)  {
 
 
-        NAR n = new Default(512, 2,3,5, new FrameClock());
+        NAR n = new Default(512, 3,3,3, new FrameClock());
 
         NARide.show(n.loop(), ide -> {
 

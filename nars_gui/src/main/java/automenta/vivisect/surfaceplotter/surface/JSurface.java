@@ -596,7 +596,7 @@ public class JSurface extends javax.swing.JComponent {
 	}
 
 	/*
-	 * uses graphics variable to draw the plot
+	 * uses graphics variable to render the plot
 	 */
 	private synchronized void draw(Graphics graphics) {
 		this.graphics = graphics;
@@ -688,7 +688,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Draws the base plane. The base plane is the x-y plane.
 	 * 
 	 * @param g
-	 *            the graphics context to draw.
+	 *            the graphics context to render.
 	 * @param x
 	 *            used to retrieve x coordinates of drawn plane from this
 	 *            method.
@@ -725,7 +725,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * labels, base plane.
 	 * 
 	 * @param g
-	 *            the graphics context to draw
+	 *            the graphics context to render
 	 * @param draw_axes
 	 *            if <code>true</code>, only draws base plane and z axis
 	 */
@@ -1044,13 +1044,13 @@ public class JSurface extends javax.swing.JComponent {
 	 * Draws string at the specified coordinates with the specified alignment.
 	 * 
 	 * @param g
-	 *            graphics context to draw
+	 *            graphics context to render
 	 * @param x
 	 *            the x coordinate
 	 * @param y
 	 *            the y coordinate
 	 * @param s
-	 *            the string to draw
+	 *            the string to render
 	 * @param x_align
 	 *            the alignment in x direction
 	 * @param y_align
@@ -1083,13 +1083,13 @@ public class JSurface extends javax.swing.JComponent {
 	 * Draws float at the specified coordinates with the specified alignment.
 	 * 
 	 * @param g
-	 *            graphics context to draw
+	 *            graphics context to render
 	 * @param x
 	 *            the x coordinate
 	 * @param y
 	 *            the y coordinate
 	 * @param f
-	 *            the float to draw
+	 *            the float to render
 	 * @param x_align
 	 *            the alignment in x direction
 	 * @param y_align
@@ -1368,7 +1368,7 @@ public class JSurface extends javax.swing.JComponent {
 				}
 			}
 
-			// there is a problem in drawing two curves in the same draw only
+			// there is a problem in drawing two curves in the same render only
 			// for
 			// dualshade, dual color mode !
 			// other modes would have the same color for the secant segment

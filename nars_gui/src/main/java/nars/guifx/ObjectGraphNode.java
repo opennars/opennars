@@ -257,7 +257,7 @@
 //            g.setColor(new Color(255,200,0,128));
 //
 //
-//            //draw edges
+//            //render edges
 //            for (Object a : bodyGraph.edgeSet()) {
 //                String src = (String) bodyGraph.getEdgeSource(a);
 //                WorldObject sw = getGraphChild(src); //this function can be accelerated if children are stored as a map

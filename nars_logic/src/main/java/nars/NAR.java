@@ -788,7 +788,7 @@ abstract public class NAR implements Serializable, Level {
      * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
      * @param initialFramePeriodMS in milliseconds
      */
-    final public NARLoop loop(int initialFramePeriodMS) {
+    final NARLoop loop(int initialFramePeriodMS) {
 //        //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
         return new NARLoop(this, initialFramePeriodMS);

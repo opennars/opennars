@@ -510,7 +510,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
      * @param name Name of origin
      * @param targetSignal signal that the origin should produce
      * @param evalSignals evaluation signals used to calculate decoders
-     * @param nodeOrigin origin from which to draw output from each node
+     * @param nodeOrigin origin from which to render output from each node
      * @return the new DecodedOrigin created
      */
     public NSource addDecodedSignalOrigin(String name, TimeSeries targetSignal, TimeSeries[] evalSignals, String nodeOrigin) throws StructuralException {

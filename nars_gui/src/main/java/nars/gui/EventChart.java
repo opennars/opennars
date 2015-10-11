@@ -85,7 +85,7 @@ package nars.gui;
 //
 //    
 //    @Override
-//    public void draw(TimelineVis l, float y, float timeScale, float yScale) {
+//    public void render(TimelineVis l, float y, float timeScale, float yScale) {
 //        this.timeScale = timeScale;
 //        this.yScale = yScale * getHeight();
 //        this.l = l;

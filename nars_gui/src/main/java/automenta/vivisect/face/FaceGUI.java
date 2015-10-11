@@ -1056,7 +1056,7 @@ public class FaceGUI extends BaseClass {
 //	// FRAME-BY-FRAME STUFF FOR THE "MOVING" OBJECT HAPPENS HERE
 //
 //	int nFlexes = flexValue[0].length;
-//	/* The background is blanked anyway - if we don't draw, the face disappears
+//	/* The background is blanked anyway - if we don't render, the face disappears
 //	for (int s = 0 ; s < 2 ; s++)
 //	    for (int f = 0 ; f < nFlexes ; f++)
 //		if (flexTarget[s][f] != flexValue[s][f] || (addNoise && jitterAmpl[f] != 0))

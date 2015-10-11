@@ -185,7 +185,7 @@ public final class ClassRegistry {
 	/**
 	 * Registers public, non-abstract classes in the given Jar.
 	 *
-	 * @param jar Jar from which to draw classes to register
+	 * @param jar Jar from which to render classes to register
 	 * @throws ClassNotFoundException if the JarFile contains bad class files?
 	 */
 //	public void register(JarFile jar) throws ClassNotFoundException {

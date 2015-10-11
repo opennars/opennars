@@ -46,12 +46,12 @@
 //        //textFont(font);
 //    }
 //
-//    public void draw() {
+//    public void render() {
 //        //background(204);
 //        fill(255);
 //        rect(0,0,800,50);
 //        recorder.update();
-//        recorder.draw();
+//        recorder.render();
 //
 //        if (recorder.hasPoints) {
 //            Point[] points = recorder.points;
@@ -97,7 +97,7 @@
 //            }
 //        }
 //
-//        void draw() {
+//        void render() {
 //            int c = color(0, 0, 0);
 //            if (recording) {
 //                c = color(255, 255, 0);

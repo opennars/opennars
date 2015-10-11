@@ -78,7 +78,7 @@ public class LineAccumulator {
   /**
    * Draws all accumulated lines.
    *
-   * @param g the graphics context to draw
+   * @param g the graphics context to render
    */
    
   public void drawAll(Graphics g) {

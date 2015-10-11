@@ -71,7 +71,7 @@
 //
 //
 //    @Override
-//    public void draw(TimelineVis l) {
+//    public void render(TimelineVis l) {
 //
 //        screenyHi = l.g.screenY(x, y);
 //        screenyLo = l.g.screenY(x + plotWidth, y + plotHeight);
@@ -129,7 +129,7 @@
 //
 //    protected void drawOverlay(TimelineVis l, float screenyLo, float screenyHi) {
 //
-//        //draw overlay
+//        //render overlay
 //        l.g.pushMatrix();
 //        l.g.resetMatrix();
 //

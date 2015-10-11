@@ -441,7 +441,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     }
 
     /** called before next layout changes */
-    protected void layoutUpdated() {
+    void layoutUpdated() {
         //reset visiblity state to true for all, in case previous layout had hidden then
         getVertices().forEach(t -> t.setVisible(true));
 

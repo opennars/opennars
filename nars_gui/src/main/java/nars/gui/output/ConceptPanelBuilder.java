@@ -515,9 +515,9 @@
 //            g.setColor(new Color(0.1f, 0.1f, 0.1f));
 //            g.fillRect(0, 0, getWidth(), getHeight());
 //            for (Task s : belief)
-//                draw(g, s, true);
+//                render(g, s, true);
 //            for (Task s : goal)
-//                draw(g, s, false);
+//                render(g, s, false);
 //
 //
 //            // "now" axis
@@ -535,7 +535,7 @@
 //            return true;
 //        }
 //
-//        private void draw(Graphics2D g, Sentence s, boolean belief) {
+//        private void render(Graphics2D g, Sentence s, boolean belief) {
 //            if (s == null) return;
 //            if (Temporal.isEternal(s.getOccurrenceTime())) return;
 //            float freq = s.getTruth().getFrequency();
@@ -572,16 +572,16 @@
 //            g.setColor(new Color(0.1f, 0.1f, 0.1f));
 //            g.fillRect(0, 0, getWidth(), getHeight());
 //            for (Truthed s : beliefs) {
-//                draw(now, g, s, true);
+//                render(now, g, s, true);
 //            }
 //            for (Truthed s : goals) {
-//                draw(now, g, s, false);
+//                render(now, g, s, false);
 //            }
 //            g.dispose();
 //
 //        }
 //
-//        private void draw(final long now, final Graphics g, final Truthed s, final boolean belief) {
+//        private void render(final long now, final Graphics g, final Truthed s, final boolean belief) {
 //            final float freq = s.getTruth().getFrequency();
 //            final float conf = s.getTruth().getConfidence();
 //

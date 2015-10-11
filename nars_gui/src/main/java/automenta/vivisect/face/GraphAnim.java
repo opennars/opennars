@@ -88,7 +88,7 @@ package automenta.vivisect.face;
 //    public static final Font TIMEFONT = new Font("Helvetica", Font.BOLD, 24);
 //    public static final Font PALETTEFONT = new Font("Helvetica", Font.BOLD, 24);
 //
-//    // flags passed to draw() routine to control drawing of different parts of applet
+//    // flags passed to render() routine to control drawing of different parts of applet
 //    public static final int DRAWSNAP = 1;
 //    public static final int DRAWNUM = 1<<1;
 //    public static final int DRAWANIM = 2<<2;
@@ -557,7 +557,7 @@ package automenta.vivisect.face;
 //
 //	    FaceFrame ff = new FaceFrame(tar, post, w);
 //	    snaps.addElement(ff);
-//	    draw(DRAWSNAP);
+//	    render(DRAWSNAP);
 //	}
 //    }
 //
@@ -571,12 +571,12 @@ package automenta.vivisect.face;
 //    public void clearSnaps() {
 //	snaps = new Vector();
 //	currentSnap = -1;
-//	draw(DRAWSNAP);
+//	render(DRAWSNAP);
 //    }
 //
 //    public void clearFrames() {
 //	frames = new Vector();
-//	draw(DRAWANIM);
+//	render(DRAWANIM);
 //    }
 //
 //    // convert snapshot list to string for saving
@@ -780,7 +780,7 @@ package automenta.vivisect.face;
 //	titleTextDisp.setText(els[0]);
 //	storyTextDisp.setText(els[3]);
 //
-//	draw(DRAWALL);
+//	render(DRAWALL);
 //	return true;
 //    }
 //
@@ -818,7 +818,7 @@ package automenta.vivisect.face;
 //		if(deleteFrame == true) {
 //		    deleteFrame = false;
 //		    frames.removeElementAt(currentFrame);
-//		    draw(DRAWANIM);
+//		    render(DRAWANIM);
 //		}
 //		Graphics g = animFacePan.getGraphics();
 //		g.setXORMode(Color.white);
@@ -831,7 +831,7 @@ package automenta.vivisect.face;
 //		scrPos += diff;
 //		scrPos = Math.min(Math.max(scrPos, animScr.getMinimum()), animScr.getMaximum() - animScr.getVisible());
 //		timeArrow = null;
-//		draw(DRAWANIM | DRAWNUM);
+//		render(DRAWANIM | DRAWNUM);
 //		animScr.setValue(scrPos);
 //		g.drawImage(currentFace.getSnapshot(), im[0], im[1], null);
 //		g.setPaintMode();
@@ -946,7 +946,7 @@ package automenta.vivisect.face;
 //	    if(dragMode == DRAGNONE) {
 //		if(e.target == snap) {
 //		    getFaceFrame();
-//		    draw(DRAWSNAP);
+//		    render(DRAWSNAP);
 //		    return true;
 //		} else if(e.target == delete) {
 //		    deleteSnap();
@@ -1000,7 +1000,7 @@ package automenta.vivisect.face;
 //		    FaceFrame newAnim = new FaceFrame((FaceFrame)snaps.elementAt(currentSnap));
 //		    newAnim.setTime(newTime);
 //		    insertInOrder(frames, newAnim);
-//		    draw(DRAWANIM);
+//		    render(DRAWANIM);
 //		}
 //	    } else if(dragMode == DRAGANIM) {
 //		do_drag(e, true, false);
@@ -1012,7 +1012,7 @@ package automenta.vivisect.face;
 //			currentFace.setTime(newTime);
 //			insertInOrder(frames, currentFace);
 //		    }
-//		    draw(DRAWANIM);
+//		    render(DRAWANIM);
 //		}
 //	    }
 //	} else if(e.id == Event.MOUSE_DRAG) {
@@ -1035,10 +1035,10 @@ package automenta.vivisect.face;
 //		    dragMode = DRAGSNAP;
 //		    xOffset = p[0] % snapwidth;
 //		    yOffset = p[1] % SNAPHEIGHT;
-//		    //		    draw(DRAWANIM);
+//		    //		    render(DRAWANIM);
 //		}
 //		if(oldSnap != currentSnap)
-//		    draw(DRAWSNAP);
+//		    render(DRAWSNAP);
 //		if(e.clickCount > 1) {
 //		    FaceFrame ff = (FaceFrame)snaps.elementAt(currentSnap);
 //		    if(roll())
@@ -1080,7 +1080,7 @@ package automenta.vivisect.face;
 //	    synchronized(animScr) {
 //		scrPos = Math.min(((Integer)e.arg).intValue(), animScr.getMaximum() - animScr.getVisible());
 //		timeArrow = null;
-//		draw(DRAWNUM | DRAWANIM);
+//		render(DRAWNUM | DRAWANIM);
 //	    }
 //	}
 //
@@ -1088,7 +1088,7 @@ package automenta.vivisect.face;
 //    }
 //
 //    // handle redraw of custom areas:  snapshot, anim timeline, anim frames
-//    public void draw(int type) {
+//    public void render(int type) {
 //	if(!initdone)
 //	    return;
 //	if((type & DRAWSNAP) != 0) {
@@ -1181,7 +1181,7 @@ package automenta.vivisect.face;
 //
 //    public void paint(Graphics g) {
 //	if(initdone)
-//	    draw(DRAWALL);
+//	    render(DRAWALL);
 //    }
 //
 //    // recalculate size, logistical vars which change based on frame/applet size
@@ -1221,7 +1221,7 @@ package automenta.vivisect.face;
 //	    snaps.removeElementAt(currentSnap);
 //	if(currentSnap == snaps.size())
 //	    currentSnap -= 1;
-//	draw(DRAWSNAP);
+//	render(DRAWSNAP);
 //    }
 //
 //    public void startAnim() {
@@ -1248,7 +1248,7 @@ package automenta.vivisect.face;
 //	}
 //	currentFrame = -1;
 //	athread = null;
-//	draw(DRAWNUM);
+//	render(DRAWNUM);
 //    }
 //
 //    // scales an image to snapshot size.  not used.
@@ -1624,7 +1624,7 @@ package automenta.vivisect.face;
 //    }
 //
 //    public void paint(Graphics g) {
-//	rent.draw(type);
+//	rent.render(type);
 //    }
 //}
 //

@@ -42,22 +42,15 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
         super(source, v, edgeRenderer, size);
 
         InvalidationListener layoutChange = e -> {
-            Class<? extends IterativeLayout> lc = layoutType.get();
-            if (lc != null) {
-                try {
-                    IterativeLayout il = lc.newInstance();
-                    layout.set(il);
-                    layoutUpdated();
-
-
-                    return;
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+            IterativeLayout il = layoutType.getInstance();
+            if (il!=null) {
+                layout.set(il);
+                layoutUpdated();
             } else {
                 layout.set(nullLayout);
             }
         };
+
         layoutType.addListener(layoutChange);
 
         runLater(() -> layoutChange.invalidated(null));
