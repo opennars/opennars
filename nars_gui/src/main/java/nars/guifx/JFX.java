@@ -78,7 +78,7 @@ public class JFX {
 
     public static String fontSize(float pct) {
         return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(pct, 1), _v -> {
-            return "-fx-font-size: " + pct + "%";
+            return "-fx-font-size: " + pct + '%';
         });
     }
 

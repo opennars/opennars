@@ -48,7 +48,7 @@ public class ZoomFX extends AnchorPane {
 
     public final Scale scale = new Scale();
     public final Translate translate = new Translate();
-    Animate positionAnimation;
+    private Animate positionAnimation;
 
     public ZoomFX() {
         super();

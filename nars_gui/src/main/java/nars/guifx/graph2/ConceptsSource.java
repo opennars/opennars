@@ -14,6 +14,7 @@ import nars.util.event.Active;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -130,7 +131,7 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
                 }
 
 
-                if (prevActive == null || !prevActive.equals(active)) {
+                if (!Objects.equals(prevActive, active)) {
                     g.setVertices(active);
                 } else {
                     prevActive = active;

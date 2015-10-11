@@ -63,7 +63,7 @@ public class NARui {
             public MetricsCollector<X> set(String signal, X value) {
                 ObjectMeter<X> s = m.get(signal);
                 if (s == null) {
-                    s = new ObjectMeter<X>(signal);
+                    s = new ObjectMeter<>(signal);
                     meter.add(s);
                     m.put(signal, s);
                 }
@@ -127,7 +127,7 @@ public class NARui {
          */
 
         String[] signals = meter.getSignals().subList(1, meter.getSignals().size())
-                .stream().map(s -> s.id).toArray(n -> new String[n]);
+                .stream().map(s -> s.id).toArray(String[]::new);
 
 
         final String[] _signals = signals;

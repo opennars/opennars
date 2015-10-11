@@ -1,10 +1,8 @@
 package nars.guifx.graph2.impl;
 
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Control;
 import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
 import nars.guifx.graph2.TermEdge;
@@ -130,14 +128,9 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
     public void reset(SpaceGrapher g) {
 
 
-        Parent gp = g.getParent();
-        if (floorCanvas == null && gp !=null) {
+        if (floorCanvas == null) {
 
-            Control cp = (Control) gp;
-            floorCanvas = new ResizableCanvas(
-                    cp.prefWidthProperty(),
-                    cp.prefHeightProperty()
-            );
+            floorCanvas = new ResizableCanvas(g.widthProperty(), g.heightProperty());
 
             g.getChildren().
                     add(0, floorCanvas); //underneath, background must be transparent to see

@@ -39,7 +39,7 @@ public class LogPane extends BorderPane implements Runnable {
     private final NAR nar;
     final int maxLines = 64;
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
-    List<Node> pending;
+    private List<Node> pending;
 
     NSliderSet filter = new NSliderSet();
 
@@ -92,9 +92,7 @@ public class LogPane extends BorderPane implements Runnable {
         sceneProperty().addListener((c) -> {
             updateParent();
         });
-        Topic.all(nar.memory(), (k,v) -> {
-            output(k,v);
-        });
+        Topic.all(nar.memory(), this::output);
 
         nar.onEachFrame( (n) -> {
             List<Node> p = pending;
@@ -158,13 +156,13 @@ public class LogPane extends BorderPane implements Runnable {
 
         Node n = getNode(channel, signal);
         if (n != null) {
-            synchronized (toShow) {
+            //synchronized (toShow) {
                 if (pending == null)
                     pending = Global.newArrayList();
 
                 pending.add(n);
                 prev = n;
-            }
+            //}
         }
     }
 
@@ -191,11 +189,7 @@ public class LogPane extends BorderPane implements Runnable {
         public void commit() {
             for (Concept c : concept)
                 r.add(c, c.getPriority());
-            runLater(() -> {
-                update();
-                /*setCacheHint(CacheHint.SPEED);
-                setCache(true);*/
-            });
+            runLater(this::update);
         }
 
         public void add(Concept c) {

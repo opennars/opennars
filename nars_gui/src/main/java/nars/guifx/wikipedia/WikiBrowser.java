@@ -1,8 +1,6 @@
 package nars.guifx.wikipedia;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -50,19 +48,15 @@ abstract public class WikiBrowser extends BorderPane {
 
         webview = new WebView();
         webEngine = webview.getEngine();
-        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-
-            @Override
-            public void changed(ObservableValue<? extends State> ov, State oldState, State newState) {
-                if (newState == State.SUCCEEDED) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            processPage();
-                            webview.setVisible(true);
-                        }
-                    });
-                }
+        webEngine.getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
+            if (newState == State.SUCCEEDED) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        processPage();
+                        webview.setVisible(true);
+                    }
+                });
             }
         });
 
@@ -276,7 +270,7 @@ abstract public class WikiBrowser extends BorderPane {
 
     public void loadWikiPage(String urlOrTag) {
         webview.setVisible(false);
-        if (urlOrTag.indexOf("/") == -1)
+        if (!urlOrTag.contains("/"))
             urlOrTag = "http://en.m.wikipedia.org/wiki/" + urlOrTag;
         webEngine.load(urlOrTag);
     }
@@ -330,9 +324,7 @@ abstract public class WikiBrowser extends BorderPane {
         p.setRight(searchButton);
         p.setLeft(new HBox(nearButton, backButton));
 
-        nearButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        nearButton.setOnAction(event -> {
 //                SpacePoint location = SpacePoint.get(core.getMyself());
 //                if (location == null)
 //                    return;
@@ -348,15 +340,11 @@ abstract public class WikiBrowser extends BorderPane {
 //
 //                //Alternate method but requires html5 browser geolocation api:
 //                //"https://en.m.wikipedia.org/wiki/Special:Nearby"
-            }
         });
 
-        EventHandler<ActionEvent> search = new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadWikiSearchPage(searchField.getText());
-                searchField.setText("");
-            }
+        EventHandler<ActionEvent> search = event -> {
+            loadWikiSearchPage(searchField.getText());
+            searchField.setText("");
         };
 
         searchButton.setOnAction(search);

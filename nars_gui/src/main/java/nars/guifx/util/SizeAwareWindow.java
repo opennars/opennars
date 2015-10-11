@@ -173,7 +173,7 @@ public class SizeAwareWindow extends Scene {
 
             Parent old = this.current;
 
-            System.out.println("setting: " + next + " " + next.getLayoutBounds());
+            System.out.println("setting: " + next + ' ' + next.getLayoutBounds());
             setContent(this.current = next);
 
             if (old!=null)

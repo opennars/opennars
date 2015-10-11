@@ -5,7 +5,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -83,19 +82,13 @@ public class Windget extends DefaultWindow {
 
             setOpacity(0.75f);
 
-            setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    setFill(Color.GREEN);
-                    event.consume();
-                }
+            setOnMouseEntered(event -> {
+                setFill(Color.GREEN);
+                event.consume();
             });
-            setOnMouseExited(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    setFill(Color.ORANGE);
-                    event.consume();
-                }
+            setOnMouseExited(event -> {
+                setFill(Color.ORANGE);
+                event.consume();
             });
             /*setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override

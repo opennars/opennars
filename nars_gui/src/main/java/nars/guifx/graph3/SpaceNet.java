@@ -34,7 +34,6 @@ package nars.guifx.graph3;
 
 import javafx.event.EventHandler;
 import javafx.scene.*;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -130,18 +129,15 @@ abstract public class SpaceNet extends Group {
     }
     
     public void handleKeyboard(Scene scene) {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case Z:
-                        cameraXform2.t.setX(0.0);
-                        cameraXform2.t.setY(0.0);
-                        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-                        cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
-                        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
-                        break;
-                }
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case Z:
+                    cameraXform2.t.setX(0.0);
+                    cameraXform2.t.setY(0.0);
+                    camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+                    cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
+                    cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+                    break;
             }
         });
     }

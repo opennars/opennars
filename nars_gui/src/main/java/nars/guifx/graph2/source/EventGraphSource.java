@@ -76,7 +76,7 @@ public class EventGraphSource implements GraphSource<Task>,
 
 
         map.root.getOverlap(new Interval(oldest, now),
-            (s)-> l.addAll(s)
+                l::addAll
         );
 
 

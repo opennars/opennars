@@ -3,7 +3,6 @@ package nars.guifx.treemap;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Parent;
 
 import java.util.SortedSet;
@@ -27,12 +26,7 @@ public class TreemapChart extends Parent {
         this.root = root;
         final SortedSet<Item> items = root.getItems();
         treemapLayouter = elementFactory.createTreemapLayout(width.doubleValue(), height.doubleValue(), items);
-        ChangeListener<Number> changeListener = new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
-                treemapLayouter.update(width.doubleValue(), height.doubleValue(), items);
-            }
-        };
+        ChangeListener<Number> changeListener = (observableValue, number, number2) -> treemapLayouter.update(width.doubleValue(), height.doubleValue(), items);
         width.addListener(changeListener);
         height.addListener(changeListener);
         this.getChildren().add(treemapLayouter);

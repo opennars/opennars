@@ -190,7 +190,7 @@ public class Xform extends Group {
                            "ip = (" +
                            ip.getX() + ", " +
                            ip.getY() + ", " +
-                           ip.getZ() + ")");
+                           ip.getZ() + ')');
     }
 }
 

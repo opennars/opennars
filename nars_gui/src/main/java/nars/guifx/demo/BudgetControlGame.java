@@ -2,9 +2,10 @@ package nars.guifx.demo;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import nars.NAR;
-import nars.guifx.LinePlot;
 import nars.guifx.NARfx;
+import nars.guifx.Plot2D;
 import nars.guifx.util.NSlider;
 import nars.meter.MemoryBudget;
 import nars.nar.Default;
@@ -17,24 +18,35 @@ public class BudgetControlGame {
     MemoryBudget m = new MemoryBudget();
 
     public BudgetControlGame() {
-        NARfx.run((a,b)-> {
+        NARfx.run((a, b) -> {
 
             int h = 250;
 
-            LinePlot lp;
+            Plot2D lp,lp2;
             HBox r = new HBox();
             //r.addColumn(0,
             r.getChildren().setAll(
 
-                new NSlider("?", 150, h, 0.75)
+                    new NSlider("?", 150, h, 0.75)
 
-                ,
+                    ,
 
-                lp = new LinePlot(
-                        "Total Budget", () -> m.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum),
-                        256,
-                        400, h
-                )
+                    new VBox(
+                            lp = new Plot2D(
+                                    "Concept Pri StdDev",
+                                    Plot2D.Line,
+                                    () -> m.getDouble(MemoryBudget.Budgeted.ActiveConceptPriorityStdDev),
+                                    256,
+                                    400, h
+                            ),
+                            lp2 = new Plot2D(
+                                    "Concept Pri Sum",
+                                    Plot2D.BarWave,
+                                    () -> m.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum),
+                                    256,
+                                    400, h
+                            )
+                    )
             );
 
             r.getChildren().forEach(cr -> {
@@ -53,13 +65,12 @@ public class BudgetControlGame {
             b.show();
 
 
-
             NAR n = new Default();
             n.input("a:b. b:c. c:d. d:e.");
             n.loop(3.5f);
-            n.onEachFrame( x -> {
+            n.onEachFrame(x -> {
                 m = new MemoryBudget(x.memory);
-                lp.update();
+                lp.update(); lp2.update();
                 System.out.println(m);
             });
 

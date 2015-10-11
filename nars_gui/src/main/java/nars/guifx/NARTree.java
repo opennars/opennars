@@ -24,7 +24,7 @@ public class NARTree extends TreeView {
         super();
         this.nar = n;
         CheckBoxTreeItem<String> rootItem =
-                new CheckBoxTreeItem<String>("View Source Files");
+                new CheckBoxTreeItem<>("View Source Files");
 
         rootItem.setExpanded(true);
 
@@ -39,7 +39,7 @@ public class NARTree extends TreeView {
 
         for (int i = 0; i < 8; i++) {
             final TreeItem<String> checkBoxTreeItem =
-                    new TreeItem<String>("Sample" + (i+1));
+                    new TreeItem<>("Sample" + (i + 1));
 
             rootItem.getChildren().add(checkBoxTreeItem);
         }

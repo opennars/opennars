@@ -6,7 +6,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.util.Callback;
 import nars.NAR;
 import nars.event.FrameReaction;
 import nars.guifx.util.NSlider;
@@ -68,13 +67,8 @@ public class TreePane extends BorderPane {
 
 
         rootNode = new TaskTreeItem(root);
-        tree = new TreeView<Task>(rootNode);
-        tree.setCellFactory(new Callback<TreeView<Task>, TreeCell<Task>>() {
-            @Override
-            public TreeCell<Task> call(TreeView<Task> param) {
-                return new TaskCell();
-            }
-        });
+        tree = new TreeView<>(rootNode);
+        tree.setCellFactory(param -> new TaskCell());
 
         tree.setShowRoot(false);
 
@@ -217,9 +211,7 @@ public class TreePane extends BorderPane {
         if (t == null)
             return rootNode;
 
-        TaskTreeItem i = tasks.computeIfAbsent(t, _t -> {
-            return new TaskTreeItem(_t);
-        });
+        TaskTreeItem i = tasks.computeIfAbsent(t, TaskTreeItem::new);
 
         if (visible(t)) {
             if (!i.label.isVisible())

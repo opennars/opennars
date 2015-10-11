@@ -115,9 +115,7 @@ public class LanternaTerminal extends Application {
 
 
 
-            runLater(() -> {
-                updateFontSize();
-            });
+            runLater(this::updateFontSize);
 
             runLater(()-> {
                 getScene().getWindow().xProperty().addListener(cc);

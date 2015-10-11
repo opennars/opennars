@@ -71,7 +71,7 @@ class TreemapLayout extends Parent {
         widthLeft = this.width;
         AnchorPane.clearConstraints(anchorPane);
         anchorPane.getChildren().clear();
-        squarify(new ArrayDeque<>(children), new ArrayDeque<TreemapDtoElement>(), minimumSide());
+        squarify(new ArrayDeque<>(children), new ArrayDeque<>(), minimumSide());
         for (TreemapDtoElement child : children) {
             Node treeElementItem = elementFactory.createElement(child, colorGroup);
             anchorPane.getChildren().add(treeElementItem);
@@ -106,7 +106,7 @@ class TreemapLayout extends Parent {
             }
         } else {
             layoutrow(row, w);
-            squarify(children, new ArrayDeque<TreemapDtoElement>(), minimumSide());
+            squarify(children, new ArrayDeque<>(), minimumSide());
         }
     }
 

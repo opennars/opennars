@@ -84,7 +84,7 @@ public class HTMLBrowser extends Application {
                                 if (text.length() < minTextLength)
                                     continue;
                                 
-                                System.out.println(text + " " + width +  "x" + height + "=" + (width*height) + " @ " + ((width*height)/text.length()) + "/c"  );
+                                System.out.println(text + ' ' + width + 'x' + height + '=' + (width*height) + " @ " + ((width*height)/text.length()) + "/c"  );
                                 
                             }
                                     
@@ -99,7 +99,7 @@ public class HTMLBrowser extends Application {
  
     
     public static ArrayList<Node> getAllNodes(Parent root) {
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        ArrayList<Node> nodes = new ArrayList<>();
         addAllDescendents(root, nodes);
         return nodes;
     }

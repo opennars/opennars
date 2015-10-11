@@ -64,7 +64,7 @@ public class VncClientApp extends Application {
         //offlineImg = new Image(VncClientApp.class.getResourceAsStream("icon.png"));
         //onlineImg = new Image(VncClientApp.class.getResourceAsStream("icon_green.png"));
 
-        Injector.setLogger((t) -> logger.fine(t));
+        Injector.setLogger(logger::fine);
 
         // Injector.setModelOrService(Stage.class, stage);
         Injector.setModelOrService(ProtocolConfiguration.class, Injector.instantiateModelOrService(DefaultProtocolConfiguration.class));
@@ -104,7 +104,7 @@ public class VncClientApp extends Application {
     }
 
     public static Pane newView() {
-        Injector.setLogger((t) -> logger.fine(t));
+        Injector.setLogger(logger::fine);
 
         final StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
 

@@ -72,38 +72,7 @@ public class BeanPathAdapterTest extends Application {
         final PropertySheet p = new PropertySheet();
         p.setMode(PropertySheet.Mode.NAME);
         p.setModeSwitcherVisible(false);
-        p.getPropertyEditorFactory().call(new PropertySheet.Item() {
-
-            @Override
-            public Class<?> getType() {
-                return null;
-            }
-
-            @Override
-            public String getCategory() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return null;
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public Object getValue() {
-                return null;
-            }
-
-            @Override
-            public void setValue(Object value) {
-
-            }
-        });
+        p.getPropertyEditorFactory().call(new MyItem());
 
         p.getItems().addAll(
                 BeanPropertyUtils.getProperties(
@@ -118,7 +87,40 @@ public class BeanPathAdapterTest extends Application {
         Application.launch();
     }
 
-    public class SampleBean {
+    private static class MyItem implements PropertySheet.Item {
+
+        @Override
+        public Class<?> getType() {
+            return null;
+        }
+
+        @Override
+        public String getCategory() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+
+        @Override
+        public Object getValue() {
+            return null;
+        }
+
+        @Override
+        public void setValue(Object value) {
+
+        }
+    }
+
+    public static class SampleBean {
 
         public final NAR nar = new Default();
 

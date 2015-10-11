@@ -14,7 +14,7 @@ import java.util.List;
 public class StatusPane extends HBox {
 
 
-    final List<LinePlot> plots = Global.newArrayList();
+    final List<Plot2D> plots = Global.newArrayList();
 
     final MemoryBudget b = new MemoryBudget();
     private long nConcepts;
@@ -24,7 +24,7 @@ public class StatusPane extends HBox {
 
 
         getChildren().addAll(
-                addPlot(new LinePlot(
+                addPlot(new Plot2D(
                         "Concepts",
                         () -> {
                             nConcepts = b.getLong(MemoryBudget.Budgeted.ActiveConcepts);
@@ -34,7 +34,7 @@ public class StatusPane extends HBox {
                         200, 200)
                 ),
 
-                addPlot(new LinePlot(
+                addPlot(new Plot2D(
                         "Concept Pri Avg",
                         () -> {
                             if (nConcepts == 0) return 0;
@@ -44,7 +44,7 @@ public class StatusPane extends HBox {
                         200, 200)
                 ),
 
-                addPlot(new LinePlot(
+                addPlot(new Plot2D(
                         "Concept StdDev",
                         () -> b.getDouble(MemoryBudget.Budgeted.ActiveConceptPriorityStdDev),
                         300,
@@ -59,7 +59,7 @@ public class StatusPane extends HBox {
 
                 b.update(nar.memory);
 
-                for (LinePlot p: plots) {
+                for (Plot2D p: plots) {
                     p.update();
                 }
             }
@@ -73,7 +73,7 @@ public class StatusPane extends HBox {
 
     }
 
-    private LinePlot addPlot(LinePlot p) {
+    private Plot2D addPlot(Plot2D p) {
         plots.add(p);
         return p;
     }

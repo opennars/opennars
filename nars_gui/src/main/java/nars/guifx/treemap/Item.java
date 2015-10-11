@@ -70,6 +70,11 @@ public interface Item extends Comparable<Item> {
         }
 
         @Override
+        public boolean equals(Object o) {
+            return compareTo((Item)o)==0;
+        }
+
+        @Override
         public int compareTo(Item o) {
             return Double.compare(getSize(), o.getSize());
         }

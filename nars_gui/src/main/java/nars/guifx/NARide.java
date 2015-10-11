@@ -86,15 +86,15 @@ public class NARide extends BorderPane {
             ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
-            ni.addTool("Webcam", () -> new WebcamFX());
+            ni.addTool("Webcam", WebcamFX::new);
 
 
-            ni.addTool("Terminal (bash)", () -> new LocalTerminal());
+            ni.addTool("Terminal (bash)", LocalTerminal::new);
             ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
-            ni.addTool("Web Browser", () -> new WebBrowser());
+            ni.addTool("Web Browser", WebBrowser::new);
 
-            ni.addTool("HTTP Server", () -> new Pane());
+            ni.addTool("HTTP Server", Pane::new);
 
             ni.addTool(new Menu("Interface..."));
             ni.addTool(new Menu("Cognition..."));
