@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTest {
 
 
-    final int cycles = 200;
+    final int cycles = 500;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
@@ -324,6 +324,15 @@ public class NAL6Test extends AbstractNALTest {
         tester.believe("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", 1.00f, 0.90f); //en("whatever opens lock1 is a key");
         tester.believe("<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>", 1.00f, 0.90f); //en("there is a lock with the property that when opened by something, this something is a key");
         tester.mustBelieve(cycles, "<lock1 --> lock>", 1.00f, 0.45f); //en("lock1 is a lock");
+        tester.run();
+    }
+
+    @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
+    public void strong_unification() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>.", 1.00f, 0.90f);
+        tester.believe("<(*,bmw,is,car) --> sentence>.", 1.00f, 0.90f);
+        tester.mustBelieve(2000, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
     }
 

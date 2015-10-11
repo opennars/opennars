@@ -115,13 +115,30 @@ public class Patham9Test extends AbstractNALTest {
         tester.run();
     }*/
 
-    @Test
+   /* @Test
     public void second_level_variable_unification() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", 1.00f, 0.90f); //en("there is a lock which is opened by all keys");
         tester.believe("<{key1} --> key>", 1.00f, 0.90f); //en("key1 is a key");
         tester.mustBelieve(100, "(&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>)", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
-    }
+    }*/
 
+   /* @Test
+    public void strong_unification() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>.", 1.00f, 0.90f);
+        tester.believe("<(*,bmw,is,car) --> sentence>.", 1.00f, 0.90f);
+        tester.mustBelieve(2000, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+        tester.run();
+    }
+*/
+   @Test
+   public void variable_elimination4() throws InvalidInputException {
+       TestNAR tester = test();
+       tester.believe("(&&,<#x --> bird>,<#x --> swimmer>)"); //en("Some bird can swim.");
+       tester.believe("<swan --> bird>", 0.90f, 0.9f); //en("Swan is a type of bird.");
+       tester.mustBelieve(200, "<swan --> swimmer>", 0.90f, 0.43f); //en("I guess swan can swim.");
+       tester.run();
+   }
 }

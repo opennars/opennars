@@ -402,8 +402,7 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,(#X --> S), A_1..n), (M --> S), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
-    (&&,(S --> #X), A_1..n), (S --> M), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
+    (&&,A, A_1..n), B, substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
 //conditional abduction by dependent variable
 
@@ -417,17 +416,11 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    (A ==> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
+    (C ==> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
 
-    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
-    (P ==> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
-
-    (($X --> M) <=> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $X) <=> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-
-    (P <=> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
-    (P <=> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
+    (A <=> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
+    (C <=> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)
@@ -498,6 +491,7 @@
 //NAL3:
 
 ////composition on both sides of a statement:
+
     ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
@@ -505,6 +499,7 @@
     ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
 ////composition on one side of aay w statement:
+
     (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
@@ -525,7 +520,7 @@
 
 //NAL5:
 
-    --A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
+  --A,   A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
     A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgment)
 
 //compound composition one premise
