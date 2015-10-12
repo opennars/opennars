@@ -4,6 +4,7 @@ import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
+import nars.concept.ConceptBuilder;
 import nars.event.AnswerReaction;
 import nars.event.NARReaction;
 import nars.io.in.FileInput;
@@ -57,7 +58,7 @@ import java.util.stream.Stream;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-abstract public class NAR implements Serializable, Level {
+abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
 
     /**
@@ -129,6 +130,8 @@ abstract public class NAR implements Serializable, Level {
 
     public NAR(final Memory m) {
         super();
+
+
 
         setMemory(m);
 
@@ -934,11 +937,14 @@ abstract public class NAR implements Serializable, Level {
     public final void setMemory(Memory m) {
 
         m.the(NAR.class, this);
+        m.the(ConceptBuilder.class, this);
 
         if (running())
             throw new RuntimeException("NAR must be stopped to change memory");
 
         memory = m;
+        m.start();
+
 
         m.eventError.on(onError);
 

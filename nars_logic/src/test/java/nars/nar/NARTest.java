@@ -140,18 +140,18 @@ public class NARTest {
         assertTrue(b.get());
 
     }
-
-    @Test public void testFork() throws Exception {
-        NAR a = new Default();
-        a.input("b:a.");
-        a.input("c:b.");
-        a.frame(8);
-
-        NAR b = a.fork();
-
-        assertEquals(a, b);
-
-
-    }
+//
+//    @Test public void testFork() throws Exception {
+//        NAR a = new Default();
+//        a.input("b:a.");
+//        a.input("c:b.");
+//        a.frame(8);
+//
+//        NAR b = a.fork();
+//
+//        assertEquals(a, b);
+//
+//
+//    }
 
 }

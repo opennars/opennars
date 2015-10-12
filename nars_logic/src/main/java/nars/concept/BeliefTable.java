@@ -12,8 +12,7 @@ import nars.truth.Truth;
 import nars.truth.TruthWave;
 import nars.truth.Truthed;
 
-import java.io.PrintStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
@@ -46,6 +45,18 @@ public interface BeliefTable extends TaskTable {
         }
 
         @Override
+        public void writeValues(ObjectOutput output) throws IOException {
+            output.writeInt(0);
+            output.writeInt(0);
+        }
+
+        @Override
+        public <T> void readValues(ObjectInput input) throws IOException {
+            input.readInt();
+            input.readInt();
+        }
+
+        @Override
         public int getCapacity() {
             return 0;
         }
@@ -69,6 +80,7 @@ public interface BeliefTable extends TaskTable {
         public boolean isEmpty() {
             return true;
         }
+
 
 
         @Override
@@ -190,6 +202,10 @@ public interface BeliefTable extends TaskTable {
         if (max == -1) return Float.NaN;
         return max;
     }
+
+
+
+
 
     final class SolutionQualityMatchingOrderRanker implements Ranker {
 

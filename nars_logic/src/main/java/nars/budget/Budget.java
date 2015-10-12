@@ -86,7 +86,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * time at which this budget was last forgotten, for calculating accurate memory decay rates
      */
-    long lastForgetTime = Stamp.TIMELESS;
+    protected long lastForgetTime = Stamp.TIMELESS;
 
     public Budget(char punctuation, Truth qualityFromTruth) {
         this(punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_PRIORITY :
@@ -807,8 +807,12 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     final public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
-        //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
-        BudgetFunctions.forgetAlann(this, forgetCycles, now);
+        if (!isDeleted()) {
+            //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
+            BudgetFunctions.forgetAlann(this, forgetCycles, now);
+        }
+
+        setLastForgetTime(now);
         return this;
     }
 

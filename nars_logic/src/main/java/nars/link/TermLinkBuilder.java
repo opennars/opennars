@@ -13,22 +13,22 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.Variable;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
 
-public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey, Serializable {
+public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
 
     transient public final Termed concept;
 
-    final List<TermLinkTemplate> template;
+    protected final List<TermLinkTemplate> template;
 
     transient TermLinkTemplate currentTemplate;
     transient boolean incoming;
-    private int hash;
-    private float forgetCycles;
-    private long now;
+
+    protected int hash;
+    protected float forgetCycles;
+    protected long now;
 
     public TermLinkBuilder(Termed c) {
         super();

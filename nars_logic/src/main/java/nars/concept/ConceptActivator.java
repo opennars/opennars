@@ -54,8 +54,12 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
     @Override
     public final Concept newItem() {
-        Concept c = builder.apply(getKey());
-        nar.memory().put(c);
+        CacheBag<Term, Concept> i = nar.concepts();
+        Concept c = i.get(getKey());
+        if (c == null) {
+            c = builder.apply(getKey());
+            i.put(c);
+        }
         return c;
     }
 
@@ -78,13 +82,16 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
         this.createIfMissing = createIfMissing;
         this.now = now;
 
-        return bag.update(this);
+        Concept c = bag.update(this);
+        if (c!=null)
+            c.setMemory(nar.memory());
+        return c;
     }
 
-    public final CacheBag<Term, Concept> index() {
-        return nar.concepts();
-    }
-
+//    public final CacheBag<Term, Concept> index() {
+//        return nar.concepts();
+//    }
+//
 
 //
 //    public Concept forgottenOrNewConcept() {

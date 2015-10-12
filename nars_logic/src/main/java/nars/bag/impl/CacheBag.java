@@ -1,6 +1,7 @@
 package nars.bag.impl;
 
 import com.google.common.collect.Sets;
+import nars.Memory;
 import nars.budget.Itemized;
 import org.apache.commons.math3.util.FastMath;
 
@@ -22,6 +23,11 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
     V put(V v);
 
     int size();
+
+    /** called when memory is ready to begin using this,
+     *  allows letting the cache be aware of the memory
+     */
+    void start(Memory n);
 
 //    void setOnRemoval(Consumer<V> onRemoval);
 //    Consumer<V> getOnRemoval();

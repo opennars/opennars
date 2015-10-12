@@ -156,6 +156,9 @@ public class InfiniPeer extends DefaultCacheManager {
 
 
         GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder();
+
+
+
         globalConfigBuilder
                 .globalJmxStatistics()
                 //.enable()
@@ -278,6 +281,7 @@ public class InfiniPeer extends DefaultCacheManager {
 
         return config;
     }
+
 
 
     /* JDBC

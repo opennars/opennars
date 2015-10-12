@@ -341,16 +341,16 @@ public class NAL5Test extends AbstractNALTest {
     }*/
 
 
-    @Test
-    public void missingEdgeCase1() {
-        //((<p1 ==> p2>, <(&&, p1, p3) ==> p2>), (<p3 ==> p2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
-        //((<p1 ==> p2>, <(&&, p1, p3) ==> p2>), (<p3 ==> p2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
-        new RuleTest(
-                "<p1 ==> p2>. %0.05;0.9%", "<(&&, p1, p3) ==> p2>.",
-                "<p3 ==> p2>.",
-                0.95f, 0.95f, 0.77f, 0.77f)
-                .run();
-    }
+//    @Test
+//    public void missingEdgeCase1() {
+//        //((<p1 ==> p2>, <(&&, p1, p3) ==> p2>), (<p3 ==> p2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
+//        //((<p1 ==> p2>, <(&&, p1, p3) ==> p2>), (<p3 ==> p2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
+//        new RuleTest(
+//                "<p1 ==> p2>. %0.05;0.9%", "<(&&, p1, p3) ==> p2>.",
+//                "<p3 ==> p2>.",
+//                0.95f, 0.95f, 0.77f, 0.77f)
+//                .run();
+//    }
 
     @Test
     public void posNegQuestion() {

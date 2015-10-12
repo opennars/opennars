@@ -1,12 +1,11 @@
 package nars.util.event;
 
-import java.io.Serializable;
 import java.util.function.Consumer;
 
 /**
  * Represents the active state of a topic stream
  */
-public final class On<V extends Serializable> implements Serializable {
+public final class On<V> {
 
 
     public final Consumer<V> reaction;

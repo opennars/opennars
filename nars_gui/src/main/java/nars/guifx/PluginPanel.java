@@ -12,7 +12,7 @@ import nars.NAR;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import static javafx.application.Platform.runLater;
 
@@ -123,10 +123,10 @@ public class PluginPanel extends VBox {
             return ((FXIconPaneBuilder) v).newIconPane();
         }
 
-        Supplier<Node> override = ide.nodeBuilders.get(v.getClass());
+        Function<Object,Node> override = ide.nodeBuilders.get(v.getClass());
         if (override != null) {
             //create via the type-dependent override
-            return override.get();
+            return override.apply(v);
         } else {
             //create the default:
             BorderPane bp = new BorderPane();

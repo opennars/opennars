@@ -20,7 +20,6 @@
  */
 package nars.concept;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
 import infinispan.com.google.common.collect.Iterators;
@@ -37,15 +36,13 @@ import nars.term.Termed;
 import nars.truth.Truth;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.collect.Iterators.*;
+import static com.google.common.collect.Iterators.concat;
 
-public interface Concept extends Termed, Itemized<Term>, Serializable {
-
+public interface Concept extends Termed, Itemized<Term> {
 
     Bag<Sentence, TaskLink> getTaskLinks();
     Bag<TermLinkKey, TermLink> getTermLinks();
@@ -125,7 +122,7 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     TermLinkBuilder getTermLinkBuilder();
-    TaskLinkBuilder getTaskLinkBuilder();
+
 
     default String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);
@@ -261,7 +258,7 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     /** prints a summary of all termlink, tasklink, etc.. */
     default void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
-        long now = getMemory().time();
+        long now = time();
 
         out.println("CONCEPT: " + toInstanceString() + " @ " + now);
 
@@ -317,19 +314,19 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
         return getMemory().time();
     }
 
-    default Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
-        return transform(adjacentTermables(termLinks, taskLinks), Termed::getTerm);
-    }
+//    default Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
+//        return transform(adjacentTermables(termLinks, taskLinks), Termed::getTerm);
+//    }
 
-    default Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
-        final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termed, Concept>() {
-            @Override
-            public Concept apply(final Termed term) {
-                return getMemory().concept(term.getTerm());
-            }
-        });
-        return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
-    }
+//    default Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
+//        final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termed, Concept>() {
+//            @Override
+//            public Concept apply(final Termed term) {
+//                return getMemory().concept(term.getTerm());
+//            }
+//        });
+//        return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
+//    }
 
 
 
@@ -360,7 +357,9 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     }
 
+    void setMemory(Memory m);
 
+    void setCreationTime(long l);
 
 
 //    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);

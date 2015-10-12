@@ -156,7 +156,9 @@ public class Memory extends Param {
         this.logic = new LogicMeter(this);
         this.emotion = new EmotionMeter(this);
 
+
     }
+
 
 
     @Override
@@ -542,6 +544,10 @@ public class Memory extends Param {
      */
     String toTypeString() {
         return getClass().getSimpleName();
+    }
+
+    public void start() {
+        this.concepts.start(this);
     }
 
 

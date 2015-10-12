@@ -1,5 +1,6 @@
 package nars.guifx;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -39,6 +40,10 @@ public class LogPane extends BorderPane implements Runnable {
     private final NAR nar;
     final int maxLines = 64;
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
+
+    /** threshold for minimum displayable priority */
+    private final DoubleProperty volume;
+
     private List<Node> pending;
 
     NSliderSet filter = new NSliderSet();
@@ -74,9 +79,10 @@ public class LogPane extends BorderPane implements Runnable {
 
     }
 
-    public LogPane(NAR nar, Object... enabled) {
+    public LogPane(NAR nar, DoubleProperty volume, Object... enabled) {
         super();
 
+        this.volume = volume;
         this.nar = nar;
         content = new VBox(1);
 
@@ -332,8 +338,11 @@ public class LogPane extends BorderPane implements Runnable {
             return null;
             //
         } else if (channel.equals("eventInput")) {
-            return new AutoLabel((Task) signal, nar);
-
+            Task t = (Task)signal;
+            if (t.getPriority() >= volume.get())
+                return new AutoLabel((Task) signal, nar);
+            else
+                return null;
         } else if (signal instanceof Premise) {
             //return new PremisePane((Premise)signal);
             return null;

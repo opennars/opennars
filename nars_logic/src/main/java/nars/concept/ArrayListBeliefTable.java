@@ -167,6 +167,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         boolean added = tryAdd(input, ranking, nal.memory());
 
+        if (input.isDeleted()) {
+            return null;
+        }
+
+
 
 //            if (ranking == null) {
 //                //just return thie top item if no ranker is provided
@@ -232,8 +237,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
 
-    /** do not call from outside generally, will
-     * be called internally. */
+
     @Override public final boolean tryAdd(Task input, Ranker r, Memory memory) {
 
         float rankInput = r.rank(input);    // for the new isBelief
@@ -265,15 +269,17 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             if (i == siz) {
                 //reached the end of the list and there is no room to add at the end
                 memory.remove(input, "Unbelievable/Undesirable");
+                return false;
             } else {
                 Task removed = remove(siz - 1);
                 memory.remove(removed, "Forgotten");
                 add(i, input);
+                return true;
             }
         } else {
             add(i, input);
+            return true;
         }
-        return false;
     }
 
 

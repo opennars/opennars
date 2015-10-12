@@ -5,23 +5,83 @@ import nars.concept.Concept;
 import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by me on 9/7/15.
  */
 @RunWith(Parameterized.class)
-public class ConceptSerializationTest extends AbstractSerializationTest<String,Concept> {
-
+public class ConceptSerializationTest  {
 
     final NAR nar = new Default();
+    private final String input;
 
     public ConceptSerializationTest(String input) {
-        super(input);
+        this.input = input;
+    }
+
+    @Test
+    public void testConceptExternalizer() throws IOException, InterruptedException, ClassNotFoundException {
+        byte[] by;
+        Concept ac;
+        {
+            final NAR a = new Default();
+            ConceptExternalizer ae = new ConceptExternalizer((Default) a);
+
+            Task t = a.inputTask(input);
+            a.frame(1);
+            ac = a.concept(t.getTerm());
+            assertNotNull(ac);
+
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream o = new ObjectOutputStream(baos);
+            ae.writeObject(o, ac);
+            o.flush();
+
+            by = baos.toByteArray();
+            System.out.println(ac + " externalized to " + by.length + " bytes");
+        }
+
+
+
+        //TEST INPUT ===================
+        {
+            final NAR b = new Default();
+            ConceptExternalizer be = new ConceptExternalizer((Default) b);
+
+            Concept bc = be.readObject(new ObjectInputStream(new ByteArrayInputStream(by)));
+
+            assertEquals(ac, bc);
+        }
+
+//
+//
+////        ByteArrayInputStream bais = new ByteArrayInputStream(by);
+////        ObjectInputStream i = new ObjectInputStream(bais);
+////        i.readObject();
+//
+//        e.writeObject(jbossMarshaller.)
+//
+//            byte[] by = jbossMarshaller.objectToByteBuffer(c);
+
+
+//            Object x = jbossMarshaller.objectFromByteBuffer(by);
+//            if (x!=null)
+//                System.out.println(c + " internalized to " + x.getClass() + " " + x);
+
+
+
+
+
     }
 
     @Parameterized.Parameters(name = "{0}")
@@ -54,26 +114,7 @@ public class ConceptSerializationTest extends AbstractSerializationTest<String,C
         });
     }
 
-
-    @Override
-    Concept parse(String input) {
-
-        nar.reset();
-        Task t = nar.inputTask(input);
-        nar.frame(1);
-
-        if (t!=null)
-            return nar.concept(t.getTerm());
-        return null;
-    }
-
-    @Override
-    protected Concept post(Concept deserialized) {
-        return deserialized;
-    }
-
-    @Override
-    public void testEquality(Concept a, Concept b)  {
+    public void assertEquals(Concept a, Concept b)  {
 
         Assert.assertEquals(a.hashCode(), b.hashCode());
 

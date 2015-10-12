@@ -3,7 +3,6 @@ package nars.util.event;
 import infinispan.com.google.common.collect.Iterators;
 import nars.util.data.list.FasterList;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,19 +23,36 @@ import java.util.function.IntFunction;
  * iterate it in sequence and stop at the first null (this is the
  * end).
  */
-public class ArraySharingList<C> implements Iterable<C>, Serializable {
+public class ArraySharingList<C> implements Iterable<C> {
 
     protected final FasterList<C> data = new FasterList();
     protected final IntFunction<C[]> arrayBuilder;
-    protected C[] array = null;
-    protected AtomicBoolean change = new AtomicBoolean(true);
+    protected transient C[] array = null;
+    protected transient AtomicBoolean change = new AtomicBoolean(true);
 
     public ArraySharingList(IntFunction<C[]> arrayBuilder) {
         super();
         this.arrayBuilder = arrayBuilder;
     }
 
-
+//    @Override
+//    public void writeExternal(ObjectOutput objectOutput) throws IOException {
+//        objectOutput.writeInt(size());
+//        this.forEach(t -> {
+//            try {
+//                objectOutput.writeObject(t);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public void readExternal(ObjectInput objectInput) throws IOException, ClassNotFoundException {
+//        int num = objectInput.readInt();
+//        for (int i = 0; i < num; i++)
+//            add((C) objectInput.readObject());
+//    }
 
     public final boolean add(C x) {
         if (data.add(x)) {

@@ -11,18 +11,19 @@ import java.io.Serializable;
  */
 public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
 
+    /** where this termlink template points towards */
     protected Term target;
 
     /**
      * term of the concept or "host" where this template exists, ie. the host
      */
-    public final Term concept;
+    public Term concept;
 
     //cached names for prefix arrays
-    protected byte[] outgoing;
-    protected byte[] incoming;
-    private final int hashIn;
-    private final int hashOut;
+    //protected byte[] outgoing;
+    //protected byte[] incoming;
+    public int hashIn;
+    public int hashOut;
 
 
     /**

@@ -153,6 +153,11 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
         return null;
     }
 
+    @Override
+    public Concept apply(Term term) {
+        return null;
+    }
+
 
     private class MyDeriveletContext extends DeriveletContext {
         public MyDeriveletContext(NAR nar) {

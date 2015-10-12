@@ -16,6 +16,7 @@ import nars.util.sort.ArraySortedIndex;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -616,7 +617,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      */
 
     @FunctionalInterface
-    public interface BagCurve extends FloatToFloatFunction {
+    public interface BagCurve extends FloatToFloatFunction, Serializable {
         //public float valueOf(float x);
     }
 
@@ -648,7 +649,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         }
     }
 
-    public static class RandomSampler implements ToIntFunction<CurveBag> {
+    public static class RandomSampler implements ToIntFunction<CurveBag>, Serializable {
 
         public final BagCurve curve;
         public final Random rng;
@@ -660,8 +661,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         /** maps y in 0..1.0 to an index in 0..size */
         static final int index(float y, final int size) {
-
-            //y = 1f - y; //reverse for the ordering of the bag
 
             if (y <= 0) return 0;
 
@@ -700,6 +699,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
                 x = min + (x * (max-min));
             }
 
+            final BagCurve curve = this.curve;
             float y = curve.valueOf(x);
 
             if (normalizing) {

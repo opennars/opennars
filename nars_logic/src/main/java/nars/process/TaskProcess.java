@@ -39,11 +39,13 @@ public class TaskProcess extends NAL implements Serializable {
     final static boolean activateTermLinkTemplates = true;
     final static boolean activateTermLinkTemplateTargetsFromTask = true;
     final static boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
+    final private TaskLinkBuilder taskLinkBuilder;
 
     public TaskProcess(NAR nar, Task task) {
         super(nar);
 
         this.task = task;
+        this.taskLinkBuilder = new TaskLinkBuilder(nar.memory());
     }
 
     @Override
@@ -228,15 +230,15 @@ public class TaskProcess extends NAL implements Serializable {
     protected boolean linkTask(final Concept c, final Task task) {
 
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
-        final TaskLinkBuilder taskLinkBuilder = c.getTaskLinkBuilder();
+        final TaskLinkBuilder taskLinkBuilder = getTaskLinkBuilder();
 
-        final List<TermLinkTemplate> templates = termLinkBuilder.templates();
         final int numTemplates = termLinkBuilder.size();
         if (numTemplates == 0) {
             //distribute budget to incoming termlinks?
             return false;
         }
 
+        final List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
         taskLinkBuilder.setTask(task);
 
@@ -283,6 +285,10 @@ public class TaskProcess extends NAL implements Serializable {
         }
 
         return true;
+    }
+
+    private TaskLinkBuilder getTaskLinkBuilder() {
+        return taskLinkBuilder;
     }
 
     /**

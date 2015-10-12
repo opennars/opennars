@@ -2,13 +2,12 @@ package nars.util.event;
 
 import org.infinispan.commons.util.WeakValueHashMap;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /** single-thread synchronous (in-thread) event emitter with direct array access
  * */
-public class DefaultTopic<V extends Serializable> extends ArraySharingList<Consumer<V>> implements Topic<V> {
+public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements Topic<V> {
 
 
     //TODO extract this to Topics and a graph metamodel of the events

@@ -32,8 +32,8 @@ abstract public class AbstractSerializationTest<S,T> {
     abstract T parse(S input);
 
     /** adapted from GenericJBossMarshaller which was final: */
-    final static Marshaller jbossMarshaller = new MyAbstractJBossMarshaller();
-    final static Marshaller javaSerializationMarshaller = new JavaSerializationMarshaller() {
+    public final static Marshaller jbossMarshaller = new MyAbstractJBossMarshaller();
+    public final static Marshaller javaSerializationMarshaller = new JavaSerializationMarshaller() {
         @Override
         public String toString() {
             return "JavaSerializationMarshaller";
@@ -145,10 +145,15 @@ abstract public class AbstractSerializationTest<S,T> {
 
     static class MyAbstractJBossMarshaller extends AbstractJBossMarshaller {
 
+        //private ConceptExternalizer conExt;
+
         public MyAbstractJBossMarshaller() {
             super();
+            //this.conExt = new ConceptExternalizer(nar);
+
             baseCfg.setClassResolver(
                     new DefaultContextClassResolver(this.getClass().getClassLoader()));
+
         }
 
 

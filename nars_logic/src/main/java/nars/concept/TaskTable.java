@@ -8,38 +8,43 @@ import nars.task.Task;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.function.Consumer;
 
-/** holds a set of ranked question/quests tasks
- *  top ranking items are stored in the lower indexes so they will be first iterated
- * */
+/**
+ * holds a set of ranked question/quests tasks
+ * top ranking items are stored in the lower indexes so they will be first iterated
+ */
 public interface TaskTable extends Iterable<Task> {
 
     int getCapacity();
+
     void setCapacity(int newCapacity);
 
-    /** number of items in this collection */
+    /**
+     * number of items in this collection
+     */
     int size();
 
     void clear();
 
     boolean isEmpty();
 
-    /** attempt to insert a task.
+    /**
+     * attempt to insert a task.
      *
-     * @return:
-     *      the input task itself, it it was added to the table
-     *      an existing equivalent task if this was a duplicate
-     *
+     * @return: the input task itself, it it was added to the table
+     * an existing equivalent task if this was a duplicate
      */
 
 
     Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m);
 
-        /**
-         *
-         * @return null if no duplicate was discovered, or the first Task that matched if one was
-         */
+    /**
+     * @return null if no duplicate was discovered, or the first Task that matched if one was
+     */
     default Task getFirstEquivalent(final Task t, final Equality<Task> e) {
         for (final Task a : this) {
             if (e.areEqual(a, t))
@@ -70,5 +75,46 @@ public interface TaskTable extends Iterable<Task> {
         }
     }
 
+
+    public default void writeValues(ObjectOutput output) throws IOException {
+        int s = size(), c = getCapacity();
+        try {
+            output.writeInt(s);
+            output.writeInt(c);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        int written[] = new int[] { 0 }; //HACK to prevent writing more than the specified
+        forEach(t -> {
+            if (written[0] < s) {
+                try {
+                    output.writeObject(t);
+                    written[0] = written[0] + 1;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    default public <T> void readValues(ObjectInput input) throws IOException {
+
+
+        try {
+            int num = input.readInt();
+            int cap = input.readInt();
+            setCapacity(cap);
+            for (int i = 0; i < num; i++) {
+                Task t = (Task) input.readObject();
+                add(t);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+            //e.printStackTrace();
+        }
+    }
+
+    boolean add(Task t);
 
 }

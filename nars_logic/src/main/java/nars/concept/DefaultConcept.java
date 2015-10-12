@@ -16,13 +16,12 @@ import nars.task.Task;
 import nars.term.Term;
 
 
-
 public class DefaultConcept extends AtomConcept {
 
-    private final TaskTable questions;
-    private final TaskTable quests;
-    private final BeliefTable beliefs;
-    private final BeliefTable goals;
+    protected final TaskTable questions;
+    protected final TaskTable quests;
+    protected final BeliefTable beliefs;
+    protected final BeliefTable goals;
 
 
 //    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
@@ -68,7 +67,7 @@ public class DefaultConcept extends AtomConcept {
      * @param termLinks
      */
     public DefaultConcept(final Term term, final Memory memory, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks) {
-        super(term, memory, termLinks, taskLinks);
+        super(term, termLinks, taskLinks);
 
         this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue());
         this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue());

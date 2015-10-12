@@ -9,7 +9,7 @@ import nars.budget.Budget;
 import nars.budget.Itemized;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V> implements Consumer<V>, Supplier<V>  {
+public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V> implements Consumer<V>, Supplier<V>, Externalizable {
 
 
     transient protected final Budget temp = new Budget();
@@ -514,6 +514,27 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
 
     abstract public void setCapacity(int c);
 
+    public void writeValues(ObjectOutput output) throws IOException {
+        int s = size();
+        output.writeInt(s);
+        forEach(s, v -> {
+            try {
+                output.writeObject(v);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    public void readValues(ObjectInput input) throws IOException, ClassNotFoundException {
+        int s = input.readInt();
+        for (int i = 0; i < s; i++) {
+            V v = (V) input.readObject();
+            put(v);
+        }
+    }
+
 
 //    /**
 //     * for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible
@@ -594,5 +615,29 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
 //
 //        }
 //    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int num = in.readInt();
+        for (int i = 0; i < num; i++) {
+            put( (V) in.readObject());
+        }
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(size());
+
+        //TODO use forEach if it can do the right order
+
+        forEach(v -> {
+            try {
+                out.writeObject(v);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 }

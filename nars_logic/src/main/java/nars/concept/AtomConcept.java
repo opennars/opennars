@@ -1,6 +1,5 @@
 package nars.concept;
 
-import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.link.*;
@@ -13,8 +12,7 @@ import java.util.List;
 /**
  * Created by me on 9/2/15.
  */
-public class AtomConcept extends AbstractConcept {
-
+public class AtomConcept extends AbstractConcept  {
 
     protected final Bag<Sentence, TaskLink> taskLinks;
     protected final Bag<TermLinkKey, TermLink> termLinks;
@@ -23,19 +21,18 @@ public class AtomConcept extends AbstractConcept {
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
-    protected transient final TermLinkBuilder termLinkBuilder;
-    protected transient final TaskLinkBuilder taskLinkBuilder;
+    protected final TermLinkBuilder termLinkBuilder;
+
 
     /** creates with no termlink and tasklink ability */
-    public AtomConcept(Term atom, Memory memory) {
-        this(atom, memory, new NullBag(), new NullBag());
+    public AtomConcept(Term atom) {
+        this(atom, new NullBag(), new NullBag());
     }
 
-    public AtomConcept(Term atom, Memory memory, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks) {
-        super(atom, memory);
+    public AtomConcept(Term atom, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks) {
+        super(atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
-        this.taskLinkBuilder = new TaskLinkBuilder(memory);
         this.termLinkBuilder = new TermLinkBuilder(this);
     }
 
@@ -56,15 +53,6 @@ public class AtomConcept extends AbstractConcept {
     public Bag<TermLinkKey, TermLink> getTermLinks() {
         return termLinks;
     }
-
-
-
-    @Override
-    public TaskLinkBuilder getTaskLinkBuilder() {
-        return taskLinkBuilder;
-    }
-
-
 
     @Override
     public TermLinkBuilder getTermLinkBuilder() {
@@ -132,6 +120,5 @@ public class AtomConcept extends AbstractConcept {
     public final List<TermLinkTemplate> getTermLinkTemplates() {
         return getTermLinkBuilder().templates();
     }
-
 
 }

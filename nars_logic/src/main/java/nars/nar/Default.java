@@ -11,7 +11,10 @@ import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.clock.Clock;
 import nars.clock.FrameClock;
-import nars.concept.*;
+import nars.concept.AtomConcept;
+import nars.concept.Concept;
+import nars.concept.ConceptActivator;
+import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -61,7 +64,7 @@ import java.util.stream.Stream;
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
-public class Default extends NAR implements ConceptBuilder {
+public class Default extends NAR {
 
     public final DefaultCycle core;
     public final FIFOTaskPerception input;
@@ -91,6 +94,7 @@ public class Default extends NAR implements ConceptBuilder {
         super(memory);
 
         initDefaults(memory);
+
 
         the("input", input = initInput());
 
@@ -354,7 +358,7 @@ public class Default extends NAR implements ConceptBuilder {
         Memory m1 = memory();
 
         if (t instanceof Atom) {
-            return new AtomConcept(t, m1, termLinks, taskLinks);
+            return new AtomConcept(t, termLinks, taskLinks);
         } else {
             return new DefaultConcept(t, m1, taskLinks, termLinks);
         }
@@ -373,7 +377,7 @@ public class Default extends NAR implements ConceptBuilder {
 
     @Override
     protected final Concept doConceptualize(Term term, Budget b) {
-        return core.update(term, b, true, 1f, core.active);
+        return core.activate(term, b);
     }
 
 
@@ -533,6 +537,8 @@ public class Default extends NAR implements ConceptBuilder {
                     conceptForgetDurations,
                     this,
                     termlinksSelectedPerFiredConcept.intValue(), tasklinksSelectedPerFiredConcept.intValue()));
+
+
         }
 
 
@@ -540,9 +546,9 @@ public class Default extends NAR implements ConceptBuilder {
             return nar.time();
         }
 
-        public Concept update(Term term, Budget b, boolean b1, float v, Bag<Term, Concept> active) {
+        public Concept activate(Term term, Budget b) {
             active.setCapacity(capacity.intValue());
-            return ca.update(term.getTerm(), b, true, time(), 1f, active);
+            return ca.update(term, b, true, time(), 1f, active);
         }
 
         public Bag<Term,Concept> concepts() {

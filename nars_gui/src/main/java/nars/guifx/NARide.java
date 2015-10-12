@@ -11,8 +11,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
+import nars.concept.Concept;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.Grid;
@@ -23,7 +25,7 @@ import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
-import nars.io.UDPNetwork;
+import nars.nar.Default;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.NARLoop;
@@ -32,6 +34,7 @@ import org.jewelsea.willow.browser.WebBrowser;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -52,7 +55,7 @@ public class NARide extends BorderPane {
     private final ScrollPane spp;
     public final PluginPanel pp;
 
-    public final Map<Object, Supplier<Node>> nodeBuilders = Global.newHashMap();
+    public final Map<Class, Function<Object,Node>> nodeBuilders = Global.newHashMap();
     private Map<Term, Supplier<? extends Node>> tools = new HashMap();
 
 
@@ -160,13 +163,13 @@ public class NARide extends BorderPane {
     }
 
 
-    private static class UDPPane extends Pane {
-        public UDPPane(UDPNetwork n) {
-
-
-            //p = n.peer.getPeers();
-        }
-    }
+//    private static class UDPPane extends Pane {
+//        public UDPPane(UDPNetwork n) {
+//
+//
+//            //p = n.peer.getPeers();
+//        }
+//    }
 
     public class ToolDialog extends BorderPane {
 
@@ -271,9 +274,13 @@ public class NARide extends BorderPane {
 
 
         //default node builders
-        icon(FrameClock.class, () -> new NARMenu.CycleClockPane(nar));
-        icon(RealtimeMSClock.class, () -> new NARMenu.RTClockPane(nar));
-        icon(NARLoop.class, () -> new LoopPane(l));
+        //TODO make these Function<Object,Node>, not a supplier interface
+        icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
+        icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
+        icon(NARLoop.class, (ll) -> new LoopPane(l));
+        icon(Default.DefaultCycle.class, (c) ->
+                new DefaultCyclePane((Default.DefaultCycle)c) //cast is hack
+        );
 
 
         spp = scrolled(pp = new PluginPanel(this));
@@ -374,7 +381,7 @@ public class NARide extends BorderPane {
 
     }
 
-    public NARide icon(Class c, Supplier<Node> iconBuilder) {
+    public <C extends Object> NARide icon(Class<C> c, Function<Object,Node> iconBuilder) {
         nodeBuilders.put(c, iconBuilder);
         return this;
     }
@@ -404,6 +411,50 @@ public class NARide extends BorderPane {
 //                    sizeToScene();
         });
 
+    }
+
+    private class DefaultCyclePane extends BorderPane {
+
+        private final NAR nar;
+        private final Default.DefaultCycle cycle;
+
+        public DefaultCyclePane(Default.DefaultCycle l) {
+            this.cycle = l;
+            this.nar = l.nar;
+
+            Button sleep = new Button("Sleep");
+            sleep.setOnAction((e) -> {
+                System.out.println("BEFORE CLEAR # concepts: " + cycle.concepts().size());
+                cycle.concepts().clear();
+
+                System.out.println(" AFTER CLEAR # concepts: " + cycle.concepts().size());
+            });
+
+            Button wake = new Button("Wake");
+            wake.setOnAction((e) -> {
+                System.out.println("Subconcepts to sample from: " + nar.concepts().size());
+                System.out.println(" BEFORE WAKE # concepts: " + cycle.concepts().size());
+                cycle.concepts().clear();
+
+                Budget b = new Budget(0.1f, 0.1f, 0.1f);
+                for (Concept c : nar.concepts()) {
+                    cycle.activate(c.getTerm(), b);
+                }
+
+                System.out.println(" AFTER WAKE # concepts: " + cycle.concepts().size());
+
+                cycle.concepts().forEach(x -> {
+                    x.print(System.out);
+                });
+
+            });
+            //TODO sample randomly from main nar index
+
+            Button bake = new Button("Bake");
+            //TODO scramble concept memory, replace random % with subconcepts
+
+            setCenter( new FlowPane(sleep, wake, bake) );
+        }
     }
 
 

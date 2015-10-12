@@ -8,11 +8,6 @@ import nars.budget.Budget;
 import nars.task.Task;
 import nars.util.event.ArraySharingList;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
 /** implements a Task table suitable for Questions and Quests using an ArrayList.
  *  we use an ArrayList and not an ArrayDeque (which is seemingly ideal for the
  *  FIFO behavior) because we can iterate entries by numeric index avoiding
@@ -20,7 +15,7 @@ import java.io.ObjectOutput;
  *
  *
  */
-public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTable, Externalizable {
+public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTable {
 
     protected int capacity = 0;
 
@@ -37,19 +32,29 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         setCapacity(capacity);
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(capacity);
-        int s = size();
-        out.writeInt(s);
-
-        if (s == 0) return;
-
-        Task[] a = getCachedNullTerminatedArray();
-        for (int i = 0; i < s; i++) {
-            out.writeObject(a[i]);
-        }
-    }
+//    @Override
+//    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+//        setCapacity(in.readInt());
+//        int n = in.readInt();
+//        for (int i = 0; i < n; i++) {
+//            this.add((Task)in.readObject());
+//        }
+//    }
+//
+//
+//    @Override
+//    public void writeExternal(ObjectOutput out) throws IOException {
+//        out.writeInt(capacity);
+//        int s = size();
+//        out.writeInt(s);
+//
+//        if (s == 0) return;
+//
+//        Task[] a = getCachedNullTerminatedArray();
+//        for (int i = 0; i < s; i++) {
+//            out.writeObject(a[i]);
+//        }
+//    }
 
     @Override
     public int getCapacity() {
@@ -62,15 +67,6 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         TaskTable t = (TaskTable)obj;
         return getCapacity() == t.getCapacity() &&
                 Iterators.elementsEqual(iterator(), t.iterator());
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        setCapacity(in.readInt());
-        int n = in.readInt();
-        for (int i = 0; i < n; i++) {
-            this.add((Task)in.readObject());
-        }
     }
 
     @Override

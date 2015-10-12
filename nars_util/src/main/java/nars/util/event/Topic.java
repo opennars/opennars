@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 /**
  * notifies subscribers when a value is emitted
  */
-public interface Topic<V extends Serializable> extends Serializable, Named<String> {
+public interface Topic<V> extends Named<String> {
 
     void delete();
 

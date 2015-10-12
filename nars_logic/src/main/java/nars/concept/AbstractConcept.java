@@ -3,6 +3,7 @@ package nars.concept;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
+import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.term.Variable;
 
@@ -15,19 +16,22 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     protected final Term term;
 
-    final long creationTime;
-    Map<Object, Object> meta = null;
-    boolean constant = false;
+    long creationTime = Stamp.TIMELESS;
+    protected Map meta = null;
+    protected boolean constant = false;
 
-    @Deprecated protected transient final Memory memory;
+    @Deprecated protected transient Memory memory;
 
     @Deprecated final static Variable how = new Variable("?how");
 
-    public AbstractConcept(final Term term, final Memory memory) {
+    public AbstractConcept(final Term term) {
         super(Budget.zero);
-        this.memory = memory;
         this.term = term;
-        this.creationTime = memory.time();
+    }
+
+    @Override
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
     /**
@@ -49,6 +53,15 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     @Override
     final public Memory getMemory() {
         return memory;
+    }
+
+    public void setMemory(Memory memory) {
+        this.memory = memory;
+        if (memory!=null) {
+            if (this.creationTime == Stamp.TIMELESS) {
+                this.creationTime = memory.time();
+            }
+        }
     }
 
     /**
