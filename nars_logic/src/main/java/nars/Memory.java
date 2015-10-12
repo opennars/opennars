@@ -204,7 +204,7 @@ public class Memory extends Param {
 
         if (term instanceof Operation) {
             final Operation o = (Operation) term;
-            return exe.emit(o.getOperator(), goal);
+            return exe.emit(o.getOperatorTerm(), goal);
         }
         /*else {
             System.err.println("Unexecutable: " + goal);

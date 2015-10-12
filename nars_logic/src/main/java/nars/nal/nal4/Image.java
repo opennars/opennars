@@ -22,10 +22,10 @@ abstract public class Image extends Compound {
      */
     public final short relationIndex;
 
-    protected Image(Term[] components, short relationIndex) {
+    protected Image(Term[] components, int relationIndex) {
         super(components);
 
-        this.relationIndex = relationIndex;
+        this.relationIndex = (short) relationIndex;
 
         init(components);
     }

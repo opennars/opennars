@@ -88,8 +88,11 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     /**
      * gets the term wrapped by the Operator predicate
      */
-    public Term getOperator() {
-        return getPredicate().the();
+    public final Term getOperatorTerm() {
+        return getOperator().the();
+    }
+    public final Operator getOperator() {
+        return getPredicate();
     }
 
     public final Product<A> arg() {
@@ -223,7 +226,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     public static boolean isA(Term x, Term someOperatorTerm) {
         if (x instanceof Operation) {
             Operation o = (Operation) x;
-            if (o.getOperator().equals(someOperatorTerm))
+            if (o.getOperatorTerm().equals(someOperatorTerm))
                 return true;
         }
         return false;
@@ -234,7 +237,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     @Override
     public byte[] bytes() {
 
-        byte[] op = getOperator().bytes();
+        byte[] op = getOperatorTerm().bytes();
         //Term[] arg = argArray();
 
         int len = op.length + 1 + 1;
@@ -274,7 +277,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
 
-        Term predTerm = getOperator();
+        Term predTerm = getOperatorTerm();
 
         if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format

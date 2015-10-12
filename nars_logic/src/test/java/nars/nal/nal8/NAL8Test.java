@@ -1,49 +1,55 @@
-//package nars.nal.nal8;
-//
-//import nars.Global;
-//import nars.NAR;
-//import nars.nal.JavaNALTest;
-//import nars.nal.nal7.Tense;
-//import nars.nar.Default;
-//import nars.narsese.InvalidInputException;
-//import org.junit.Test;
-//import org.junit.runners.Parameterized;
-//
-//import java.util.Arrays;
-//import java.util.Collection;
-//
-//import static org.jgroups.util.Util.assertTrue;
-//
-//
-//public class NAL8Test extends JavaNALTest {
-//
-//    public NAL8Test(NAR b) { super(b); }
-//
-//    @Parameterized.Parameters(name= "{0}")
-//    public static Collection configurations() {
-//        return Arrays.asList(new Object[][]{
-//                {new Default()},
-//                {new Default()},
-//                //{new DefaultMicro() },
-//                //{new Classic() }
-//                //{new Discretinuous() },
-//        });
-//    }
-//
-//    @Test public void testQuest() throws InvalidInputException {
-//
-//        String goal = "<a --> b>";
-//
-//        tester.nar.goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
-//
-//        tester.run(50);
-//
-//        tester.mustDesire(60, goal, 1.0f, 0.9f);
-//        tester.nar.quest(goal);
-//
-//        tester.run(10);
-//    }
-//
+package nars.nal.nal8;
+
+import nars.NAR;
+import nars.nal.AbstractNALTest;
+import nars.nal.nal7.Tense;
+import nars.narsese.InvalidInputException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+
+import static org.jgroups.util.Util.assertTrue;
+
+@RunWith(Parameterized.class)
+public class NAL8Test extends AbstractNALTest {
+
+    public NAL8Test(Supplier<NAR> b) { super(b); }
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection configurations() {
+        return AbstractNALTest.core8;
+    }
+
+    @Test public void testQuest() throws InvalidInputException {
+
+        String term = "<a --> b>";
+
+        NAR nar = nar();
+
+        //nar.stdout();
+
+        nar.goal(nar.term(term), Tense.Eternal, 1.0f, 0.9f);
+
+        nar.quest(term);
+
+        AtomicBoolean valid = new AtomicBoolean(false);
+
+        //   eventAnswer: $0.10;0.90;1.00$ <a --> b>@ {0: 2} Input:$0.60;0.90;0.95$ <a --> b>! %1.00;0.90% {0: 1} Input
+        nar.answer(nar.task(term + "@"), a -> {
+            //System.out.println("answer: " + a);
+            if (a.toString().contains("<a --> b>!"))
+                valid.set(true);
+        });
+
+        nar.frame(3);
+
+        assertTrue(valid.get());
+    }
+
 //    protected void testGoalExecute(String condition, String action) {
 //
 //        //TextOutput.out(nar);
@@ -124,5 +130,5 @@
 //        tester.run(100);
 //
 //    }
-//
-//}
+
+}

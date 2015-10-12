@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
-import nars.narsese.InvalidInputException;
 import nars.term.Atom;
 
 /**
@@ -58,11 +57,11 @@ public class DeductiveChainTest extends TestNAR {
     static void test(NAR n, int chainLen) {
 
 
-        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, 100000) {
-            @Override
-            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
-                return this;
-            }
+        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, 3000) {
+//            @Override
+//            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
+//                return this;
+//            }
         };
 
         System.out.println("derivation chain test: " + test.q + "?");
@@ -83,7 +82,10 @@ public class DeductiveChainTest extends TestNAR {
 //        };
 
 
-        n.frame(50000);
+        test.run();
+
+        //n.stdout();
+        //n.frame(5000);
 
         int nc = ((Default)n).core.concepts().size();
         String ts = timestamp(start);

@@ -68,8 +68,10 @@ public class NAL7Test extends AbstractNALTest {
     @Test
     public void inference_on_tense() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(&/,<(*, $x, key_101) --> hold>,+1) =/> <(*, $x, room_101) --> enter>>", 0.95f, 0.9f);
-        tester.nar.input("<(*, John, key_101) --> hold>. :\\:");
+        tester.nar.stdout();
+
+        tester.believe("<(&/,<($x, key_101) --> hold>,/5) =/> <($x, room_101) --> enter>>", 0.95f, 0.9f);
+        tester.believe("<(John, key_101) --> hold>. :\\:");
 
         tester.mustBelieve(cycles, "<(*,John,room_101) --> enter>", 0.95f, 0.81f); //":\:" TODO HOW TEST FOR OCCURENCE?
         tester.run();

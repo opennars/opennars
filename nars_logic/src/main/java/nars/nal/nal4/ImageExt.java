@@ -40,7 +40,7 @@ public class ImageExt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    public ImageExt(final Term[] arg, final short index) {
+    public ImageExt(final Term[] arg, final int index) {
         super(arg, index);
     }
 
@@ -70,14 +70,15 @@ public class ImageExt extends Image {
     /**
      * Try to make an Image from a Product and a relation. Called by the logic rules.
      * @param product The product
-     * @param relation The relation
-     * @param index The index of the place-holder
+     * @param relation The relation (the operator)
+     * @param index The index of the place-holder (variable)
      * @return A compound generated or a term it reduced to
      */
     public static Term make(Product product, Term relation, short index) {
+        int pl = product.length();
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
-            if ((product.length() == 2) && (p2.length() == 2)) {
+            if ((pl == 2) && (p2.length() == 2)) {
                 if ((index == 0) && product.term(1).equals(p2.term(1))) { // (/,_,(*,a,b),b) is reduced to a
                     return p2.term(0);
                 }
@@ -86,9 +87,14 @@ public class ImageExt extends Image {
                 }
             }
         }
-        Term[] argument = product.cloneTerms(); //shallow clone necessary because the index argument is replaced
-        argument[index] = relation;
-        return new ImageExt(argument, index);
+        /*Term[] argument =
+            Terms.concat(new Term[] { relation }, product.cloneTerms()
+        );*/
+        Term[] argument = new Term[ pl  ];
+        argument[0] = relation;
+        System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
+
+        return new ImageExt(argument, index+1);
     }
 
     /**

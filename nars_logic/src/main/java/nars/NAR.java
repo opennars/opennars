@@ -961,8 +961,8 @@ abstract public class NAR implements Serializable, Level {
     }
 
     /** inputs the question and observes answer events for a solution */
-    public NAR answer(Task question, Consumer<Task> c) {
-        new AnswerReaction(this, question) {
+    public NAR answer(Task questionOrQuest, Consumer<Task> c) {
+        new AnswerReaction(this, questionOrQuest) {
 
             @Override
             public void onSolution(Task belief) {

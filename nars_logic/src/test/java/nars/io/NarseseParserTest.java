@@ -232,7 +232,7 @@ public class NarseseParserTest {
 
     protected void testBelieveAB(Operation t) {
         assertEquals(2, t.arg().length());
-        assertEquals("believe", t.getOperator().toString());
+        assertEquals("believe", t.getOperatorTerm().toString());
         assertEquals("a", t.arg(0).toString());
         assertEquals("b", t.arg(1).toString());
     }
@@ -484,7 +484,7 @@ public class NarseseParserTest {
 
     protected void ensureIsEcho(Operation op) {
         assertEquals(Atom.the(echo.class.getSimpleName()),
-                op.getOperator());
+                op.getOperatorTerm());
     }
 
 

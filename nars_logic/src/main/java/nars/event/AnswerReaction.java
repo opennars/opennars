@@ -35,7 +35,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
         this(n, n.task(questionTask));
     }
 
-    /** reacts to a specific question */
+    /** reacts to a specific question or quest */
     public AnswerReaction(NAR n, Task question) {
 
         this.nar = n;

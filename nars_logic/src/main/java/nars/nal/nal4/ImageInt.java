@@ -41,7 +41,7 @@ public class ImageInt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    public ImageInt(final Term[] arg, final short index) {
+    public ImageInt(final Term[] arg, final int index) {
         super(arg, index);
     }
 
@@ -109,10 +109,9 @@ public class ImageInt extends Image {
      * Try to make a new compound from a set of term. Called by the public make methods.
      * @param argument The argument list
      * @param index The index of the place-holder in the new Image
-     * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static ImageInt make(final Term[] argument, final short index) {        
+    public static ImageInt make(final Term[] argument, final int index) {
         return new ImageInt(argument, index);
     }
     

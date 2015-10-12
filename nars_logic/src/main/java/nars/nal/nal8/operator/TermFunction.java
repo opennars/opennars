@@ -76,10 +76,10 @@ public abstract class TermFunction<O> extends SyncOperator {
         //      <2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%
         //transform to image for perception variable introduction rule (is more efficient representation
 
-        Product originalArgs =  operation.arg();
+        Product a =  operation.arg();
         //final int numArgs = x0.length;
 
-        Inheritance inh = Operation.result(operation.getOperator(), originalArgs, y);
+        Inheritance inh = Operation.result(operation.getOperator(), a, y);
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 

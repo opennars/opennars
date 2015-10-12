@@ -83,8 +83,7 @@ public class NALObjectsTest extends TestCase {
         StringWriter ns;
         n.trace(new PrintWriter(ns = new StringWriter()));
 
-
-        n.stdout();
+        //n.stdout();
 
         nc.multiply(2,3);
 
@@ -105,7 +104,8 @@ public class NALObjectsTest extends TestCase {
         //System.out.println(ms.getBuffer().toString());
 
         String expect = "<{6} --> (/, ^TestClass_multiply, obj, 2, 3, _)>.";
-        assertTrue(ns.getBuffer().toString().contains(expect));
+        String bs = ns.getBuffer().toString();
+        assertTrue(bs.contains(expect));
 
     }
 

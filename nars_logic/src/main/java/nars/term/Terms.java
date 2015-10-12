@@ -858,4 +858,26 @@ public class Terms {
         });
         return max[0];
     }
+
+    public static Term[] concat(Term[] a, Term[] b) {
+
+        if (a == null) {
+            return null;
+        }
+
+        if (a.length == 0) return b;
+        if (b.length == 0) return a;
+
+        int L = a.length + b.length;
+
+        //TODO apply preventUnnecessaryDeepCopy to more cases
+
+        final Term[] arr = new Term[L];
+
+        final int l = a.length;
+        System.arraycopy(a, 0, arr, 0, l);
+        System.arraycopy(b, 0, arr, l, b.length);
+
+        return arr;
+    }
 }

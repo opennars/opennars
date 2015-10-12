@@ -165,7 +165,7 @@ public class Temporal {
     public static boolean containsMentalOperator(Term t, boolean recurse) {
         if (t instanceof Operation) {
             Operation o = (Operation) t;
-            if (o.getOperator() instanceof Mental) return true;
+            if (o.getOperatorTerm() instanceof Mental) return true;
         }
         if ((recurse) && (t instanceof Compound)) {
             for (Term s : ((Compound) t).term) {

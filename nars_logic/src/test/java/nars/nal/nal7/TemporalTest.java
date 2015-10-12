@@ -1,5 +1,9 @@
 package nars.nal.nal7;
 
+import nars.NAR;
+import nars.nar.Terminal;
+import nars.task.Task;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -20,5 +24,14 @@ public class TemporalTest {
         assertFalse("concurrent (by duration range)", Temporal.after(3, 4, 3));
 
     }
+
+    @Test public void parsedCorrectOccurrenceTime() {
+        NAR n = new Terminal();
+        Task t = n.inputTask("<a --> b>. :\\:");
+        Assert.assertEquals(0, t.getCreationTime());
+        Assert.assertEquals(-(n.memory.duration()), t.getOccurrenceTime());
+    }
+
+
 
 }

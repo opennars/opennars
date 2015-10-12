@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static org.jgroups.util.Util.assertEquals;
+import static org.jgroups.util.Util.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 @RunWith(Parameterized.class)
@@ -52,6 +52,7 @@ public class QueryVariableTest extends AbstractNALTest {
         Set<Task> derivations = new HashSet();
 
         NAR n = nar();
+        //n.stdout();
 
         int[] answers = new int[1];
 
@@ -73,7 +74,7 @@ public class QueryVariableTest extends AbstractNALTest {
         n.frame(16);
 
 
-        assertEquals("Answer/Solution reported?", 1, answers[0]);
+        assertTrue("Answer/Solution reported?", 0 < answers[0]);
 
 
 
