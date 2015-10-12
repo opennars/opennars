@@ -118,8 +118,8 @@ public class SimpleDeriver extends Deriver  {
     }
 
     public Stream<Task> forEachRule(final RuleMatch match) {
-        return forEachRuleExhaustive(match);
-        //return forEachRuleByType(match);
+        //return forEachRuleExhaustive(match);
+        return forEachRuleByType(match);
     }
 
     public Stream<Task> forEachRuleExhaustive(final RuleMatch match) {

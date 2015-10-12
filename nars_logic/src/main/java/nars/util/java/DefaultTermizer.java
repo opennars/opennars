@@ -1,6 +1,6 @@
 package nars.util.java;
 
-import com.gs.collections.impl.bimap.mutable.HashBiMap;
+import nars.Global;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Atom;
@@ -19,15 +19,15 @@ public class DefaultTermizer implements Termizer {
     final Map<Class, Term> classes = new HashMap();
 
 
-    final HashBiMap<Object, Term> objects = new HashBiMap<>();
-
+    final IdentityHashMap<Term, Object> instances = new IdentityHashMap();
+    final IdentityHashMap<Object, Term> objects = new IdentityHashMap();
 
 
     @Override
     public Object object(final Term t) {
         if (t == NULL) return null;
 
-        Object x = objects.inverse().get(t);
+        Object x = instances.get(t);
 //        if (x == null) {
 //            //compute it
 //            if (t instanceof Atom) {
@@ -55,6 +55,7 @@ public class DefaultTermizer implements Termizer {
 
         if (o == null)
             return NULL;
+
 
         if (o instanceof String)
             return Atom.the((String) o, true);
@@ -99,11 +100,22 @@ public class DefaultTermizer implements Termizer {
                     arg
             );
         } else if (o instanceof List) {
-            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
+            if (((List)o).isEmpty()) return EMPTY;
+
+            //TODO can this be done with an array to avoid duplicate collection allocation
+
+
+            Collection c = (Collection) o;
+            List<Term> arg = Global.newArrayList(c.size());
+            for (Object x : c) {
+                Term y = term(x);
+                arg.add(y);
+            }
+
             if (arg.isEmpty()) return EMPTY;
-            return Product.make(
-                    arg
-            );
+
+            return Product.make(arg);
+
         /*} else if (o instanceof Stream) {
             return Atom.quote(o.toString().substring(17));
         }*/

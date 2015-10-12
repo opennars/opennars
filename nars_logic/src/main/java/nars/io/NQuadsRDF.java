@@ -51,12 +51,21 @@ abstract public class NQuadsRDF {
     }
 
     public static void input(NAR nar, InputStream input) throws Exception {
-        NxParser p  = new NxParser();
-        p.parse(input);
-        input(nar, p);
+        //try {
+            NxParser p = new NxParser();
+            p.parse(input);
+            input(nar, p);
+        //}
+//        catch (Exception pe) {
+//            //try turtle parser
+//            TurtleParser p = new TurtleParser();
+//            p.parse(new InputStreamReader(input), URI.create("_"));
+//            input(nar, p);
+//        }
     }
 
-    public static void input(NAR nar, NxParser nxp) throws Exception {
+
+    public static void input(NAR nar, Iterable<Node[]> nxp) throws Exception {
         //input(nar, new Scanner(input));
 
         for (Node[] nx : nxp)

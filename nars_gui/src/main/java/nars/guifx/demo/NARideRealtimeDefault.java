@@ -4,11 +4,10 @@ import nars.Global;
 import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
-import nars.bag.impl.InfiniCacheBag;
+import nars.bag.impl.GuavaCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
 import nars.nar.Default;
-import nars.util.db.InfiniPeer;
 
 /**
  * Created by me on 9/7/15.
@@ -22,9 +21,10 @@ public class NARideRealtimeDefault {
         Global.DEBUG = true;
 
         Memory mem = new LocalMemory(new RealtimeMSClock(),
-            new InfiniCacheBag(
+            new GuavaCacheBag<>()
+            /*new InfiniCacheBag(
                 InfiniPeer.tmp().getCache()
-            )
+            )*/
         );
         NAR nar = new Default(mem, 1024, 3, 5, 7);
 

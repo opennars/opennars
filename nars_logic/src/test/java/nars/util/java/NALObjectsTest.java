@@ -1,7 +1,6 @@
 package nars.util.java;
 
 import com.google.common.collect.Lists;
-import junit.framework.TestCase;
 import nars.NAR;
 import nars.meter.EventCount;
 import nars.nar.Default;
@@ -10,11 +9,12 @@ import org.junit.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 
-public class NALObjectsTest extends TestCase {
+public class NALObjectsTest  {
 
     public static class TestClass {
 
@@ -69,15 +69,10 @@ public class NALObjectsTest extends TestCase {
     @Test public void testMethodOperators() throws Exception {
 
         NAR n = new Default();
-        NAR m = new Default();
 
         String instance = "obj";
         NALObjects no = new NALObjects(n);
         TestClass nc = no.build(instance, TestClass.class);
-
-
-
-
 
 
         StringWriter ns;
@@ -97,7 +92,7 @@ public class NALObjectsTest extends TestCase {
         n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
 
 
-        m.frame(32);
+
 
         //System.out.println(ns.getBuffer().toString());
         //System.out.println();
@@ -148,4 +143,32 @@ public class NALObjectsTest extends TestCase {
 
 
     }
+
+    @Test public void testWrappedArrayList() throws Exception {
+        NAR n = new Default();
+
+        NALObjects no = new NALObjects(n);
+        ArrayList nc = no.build("LIST", ArrayList.class);
+
+        n.stdout();
+        nc.add("item");
+        //nc.add("x");
+
+        n.frame(2);
+
+
+        nc.clear();
+
+        n.frame(2);
+
+
+/*        nc.add(1);
+        nc.get(0);
+        nc.get(1);
+        nc.size();
+        nc.clear();*/
+
+    }
+
+
 }

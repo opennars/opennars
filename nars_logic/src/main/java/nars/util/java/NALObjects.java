@@ -1,7 +1,6 @@
 package nars.util.java;
 
 import com.gs.collections.api.map.MutableMap;
-import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -34,7 +33,9 @@ import java.util.stream.Stream;
  * methods and generates reasoner events which can be
  * stored, input to one or more reasoners, etc..
  * <p>
- * http://bytebuddy.net/#/tutorial
+ *
+ * TODO option to include stack traces in conjunction with invocation
+ *
  */
 public class NALObjects extends DefaultTermizer implements MethodHandler, Termizer {
 
@@ -45,7 +46,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     //    final Map<Object, Term> instances = new com.google.common.collect.MapMaker()
 //            .concurrencyLevel(4).weakKeys().makeMap();
-    final HashBiMap<Object,Term> instances = new HashBiMap();
+    //final HashBiMap<Object,Term> instances = new HashBiMap();
 
     final Map<Method,MethodOperator> methodOps = Global.newHashMap();
 
@@ -57,6 +58,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         add("notifyAll");
         add("wait");
         add("finalize");
+        add("stream");
     }};
     private AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
@@ -215,6 +217,8 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         T instance = (T) clazz.newInstance();
 
+        instances.put(Atom.the(id), instance);
+        objects.put(instance, Atom.the(id));
 
         ((ProxyObject) instance).setHandler(
                 delegate == null ?
@@ -224,8 +228,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
 
 
-        instances.put(instance, Atom.the(id));
-        objects.put(instance, Atom.the(id));
+
 
         //add operators for public methods
 
