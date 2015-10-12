@@ -8,6 +8,7 @@ import nars.term.Statement;
 import nars.util.graph.StatementGraph;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -35,12 +36,11 @@ public class StatementGraphTest {
         n.input("<d --> b>. :|:");
         n.frame();
 
-        n.frame(4);
+        n.frame(3);
 
+        String g = m.graph.toString();
 
-        //String g = m.graph.toString();
-
-        assertTrue( m.graph.vertexSet().size() > 4 );
-        assertTrue( m.graph.edgeSet().size() > 4 );
+        assertTrue(g, m.graph.vertexSet().size() > 4 );
+        assertEquals(4, m.graph.edgeSet().size() );
     }
 }

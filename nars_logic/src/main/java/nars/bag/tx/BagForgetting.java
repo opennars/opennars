@@ -65,12 +65,12 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:*/
-            v.getBudget().forget(now, forgetCycles, 0);
-        //break;
-        //}
+        result.forget(now, forgetCycles, 0);
+
+        //break;		         //break;
+        //}		         //}
 
 
-        /** even if budget is unchanged, we need to set the last forget time */
 
         return result;
     }

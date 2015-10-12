@@ -203,6 +203,8 @@ public class DefaultTermizer implements Termizer {
             final Term finalClas = clas;
             post[0] = () ->  onInstanceOfClass(o, oterm, finalClas);
 
+            instances.put(oterm, o); //reverse
+
             return oterm;
         });
 
