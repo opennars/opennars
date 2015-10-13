@@ -18,11 +18,13 @@ public class AutoLabel extends Label implements ChangeListener {
 
     private final NAR nar;
     private final String prefix;
+
     private Task task;
     private TaskSummaryIcon summary;
     //private final NSlider slider;
     private float lastPri = -1;
     public final SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
+    private String text;
 
     public AutoLabel(String prefix, Task task, NAR n) {
         super();
@@ -30,9 +32,19 @@ public class AutoLabel extends Label implements ChangeListener {
         this.prefix = prefix;
         this.task = task;
         this.nar = n;
+        text = prefix + task.toString(new StringBuilder(), nar.memory(), true, false, false, false).toString();
+        setMaxWidth(Double.MAX_VALUE);
+        setMaxHeight(Double.MAX_VALUE);
 
         parentProperty().addListener(this);
+        setOnMouseClicked(onMouseClick);
     }
+
+    static private final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
+        AutoLabel a = (AutoLabel) e.getSource();
+        Task t = a.task;
+        a.setText(a.text = t.getExplanation());
+    };
 
     public void enablePopupClickHandler(NAR nar) {
 
@@ -77,8 +89,6 @@ public class AutoLabel extends Label implements ChangeListener {
 
         setTextFill(JFX.grayscale.get(pri*0.5+0.5));
 
-
-
     }
 
     @Override
@@ -97,14 +107,10 @@ public class AutoLabel extends Label implements ChangeListener {
         getStylesheets().setAll();
         getStyleClass().setAll();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix);
-
-        task.toString(sb, nar.memory(), true, false, false, false);
 
         //setTooltip(new Tooltip().on);
 
-        setText(sb.toString());
+        setText(text);
 
 
         //label.getStyleClass().add("tasklabel_text");

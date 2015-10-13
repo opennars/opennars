@@ -84,7 +84,11 @@ public class LogPane extends BorderPane implements Runnable {
 
         this.volume = volume;
         this.nar = nar;
-        content = new VBox(1);
+
+        this.content = new VBox(1);
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        ((VBox)content).setFillWidth(false);
 
 
         for (Object o : enabled)
