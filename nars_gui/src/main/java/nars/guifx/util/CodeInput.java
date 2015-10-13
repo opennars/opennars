@@ -5,6 +5,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * Created by me on 8/2/15.
  */
@@ -37,9 +39,11 @@ public class CodeInput extends BorderPane {
         codeArea.setOnKeyPressed(k -> {
             //ctrl-enter
             if (k.isControlDown() && k.getCode() == KeyCode.ENTER) {
-                if (onInput(codeArea.getText())) {
-                    codeArea.clear();
-                }
+                runLater(()-> {
+                    if (onInput(codeArea.getText())) {
+                        codeArea.clear();
+                    }
+                });
             }
         });
     }

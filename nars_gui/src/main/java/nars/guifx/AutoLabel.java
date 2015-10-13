@@ -43,7 +43,7 @@ public class AutoLabel extends Label implements ChangeListener {
     static private final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
         AutoLabel a = (AutoLabel) e.getSource();
         Task t = a.task;
-        a.setText(a.text = t.getExplanation());
+        NARfx.newWindow(a.nar, t);
     };
 
     public void enablePopupClickHandler(NAR nar) {

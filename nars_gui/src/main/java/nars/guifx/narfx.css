@@ -49,13 +49,13 @@
     -flatter-blue: rgb(0.0, 184.0, 222.0);*/
 
 }
-
+/*
 .button {
-    -fx-padding: 5 5 5 5;
-    -fx-background: rgb(10, 10, 10);
-    /*-fx-background: transparent;*/
+    -fx-padding: 10 10 10 10;
+    -fx-background: rgb(30, 30, 30);
+    -fx-background: transparent;
 }
-
+*/
 /*
 .spaceselector {
     -fx-fill: transparent !important;
@@ -230,9 +230,10 @@
 .label, .toggle-button, .button, .tree-cell {
     /*-fx-text-fill: -fx-text-base-color;
     -fx-fill: -fx-text-base-color;*/
-    -fx-padding: 0.05em;
+    -fx-padding: 1px;
     -fx-label-padding: 0em;
 }
+
 
 
 .tree-cell:focused {

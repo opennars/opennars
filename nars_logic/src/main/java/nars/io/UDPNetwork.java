@@ -43,6 +43,12 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
     public UDPNetwork(int port) throws SocketException {
         this("udp:" + port, port);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":" + peer;
+    }
+
     public UDPNetwork(String id, int port) throws SocketException {
         this( (Term)NarseseParser.the().term(id), port );
     }

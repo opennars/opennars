@@ -180,7 +180,8 @@ public class Twenglish {
     }
     
     public static Term lexToTerm(String c) {
-        return Atom.the(c, true);
+        //return Atom.the(c, true);
+        return Atom.quote(c);
     }
     public static Term tagToTerm(String c) {
         c = c.toLowerCase();

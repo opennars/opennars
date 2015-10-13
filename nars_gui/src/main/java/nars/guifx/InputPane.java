@@ -6,17 +6,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import nars.NAR;
 import nars.guifx.space.WebMap;
-import nars.guifx.util.CodeInput;
 import nars.guifx.util.TabXLazy;
 import nars.guifx.wikipedia.NARWikiBrowser;
 import nars.io.in.LibraryInput;
-import nars.io.nlp.Twenglish;
-import nars.nal.nal2.Similarity;
-import nars.nal.nal7.Sequence;
-import nars.term.Atom;
-import nars.term.Term;
 
-import java.util.Collection;
 import java.util.Map;
 
 import static javafx.application.Platform.runLater;
@@ -54,12 +47,10 @@ public class InputPane extends TabPane {
             //"Natural language input in any of the major languages, using optional strategies (ex: CoreNLP)"
             new NaturalLanguagePane(n)
         ));
-        {
-            /*getTabs().add(new Tab("En"));
-            getTabs().add(new Tab("Es"));
-            getTabs().add(new Tab("Fr"));
-            getTabs().add(new Tab("De"));*/
-        }
+        /*getTabs().add(new Tab("En"));
+        getTabs().add(new Tab("Es"));
+        getTabs().add(new Tab("Fr"));
+        getTabs().add(new Tab("De"));*/
         getTabs().add(new ComingSoonTab("Sensors", "List of live signals and data sources which can be enabled, disabled, and reprioritized"));
         getTabs().add(new ComingSoonTab("Data", "Spreadsheet view for entering tabular data"));
         getTabs().add(new ComingSoonTab("Draw", "Drawing/composing an image that can be input"));
@@ -102,7 +93,7 @@ public class InputPane extends TabPane {
 
             getItems().setAll(scrolled(index), bp);
 
-            absPath = nars.io.in.LibraryInput.getAllExamples();
+            absPath = LibraryInput.getAllExamples();
 
             index.getItems().addAll(absPath.keySet());
 
@@ -115,7 +106,7 @@ public class InputPane extends TabPane {
         }
 
         @Override
-        public synchronized void run() {
+        public void run() {
 
             StringBuilder sb = new StringBuilder();
             for (final String file : index.getSelectionModel().getSelectedItems()) {
@@ -134,38 +125,4 @@ public class InputPane extends TabPane {
         }
     }
 
-    static class NaturalLanguagePane extends CodeInput {
-
-        final Twenglish te = new Twenglish();
-        private final NAR nar;
-
-        public NaturalLanguagePane(NAR n) {
-            super();
-            this.nar = n;
-        }
-
-        /** return false to indicate input was not accepted, leaving it as-is.
-         * otherwise, return true that it was accepted and the buffer will be cleared. */
-        public boolean onInput(String s) {
-
-            te.parse(nar, s).forEach( nar::input );
-
-            Collection<Term> tokens = Twenglish.tokenize(s);
-
-            if (tokens == null)
-                return false;
-            else {
-                if (!tokens.isEmpty())
-                    nar.believe(
-                        Similarity.make(
-                            Atom.quote(s),
-                            Sequence.makeSequence(
-                                    tokens.toArray(new Term[tokens.size()])
-                            )
-                        )
-                    );
-                return true;
-            }
-        }
-    }
 }

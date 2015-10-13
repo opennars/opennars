@@ -1,12 +1,13 @@
 package nars.guifx;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.task.DefaultTask;
 import nars.task.Task;
 
 import static nars.guifx.NARfx.scrolled;
@@ -24,7 +25,13 @@ public class TaskPane extends BorderPane {
 
         setTop(scrolled(ta, true, false));
 
-        Button conceptButton = new Button(c.getTerm().toStringCompact());
+        Button reinforceButton = new Button("Reinforce");
+        reinforceButton.setAccessibleText("Re-input task");
+        reinforceButton.setOnMouseClicked(e -> {
+            nar.input(new DefaultTask(c));
+        });
+
+        Button conceptButton = new Button("Goto Concept:" + c.getTerm().toStringCompact());
         conceptButton.setOnMouseClicked(e -> {
             Concept concept = nar.concept(c.getTerm());
             if (concept!=null) {
@@ -38,12 +45,25 @@ public class TaskPane extends BorderPane {
 //                layout();
             }
         });
-        conceptButton.setTooltip(new Tooltip("Goto Concept"));
+        conceptButton.setAccessibleText("Goto Concept");
 
         FlowPane ctl = new FlowPane(
                 conceptButton
         );
         setBottom(ctl);
+
+        if (c.isQuestOrQuestion()) {
+            setCenter(new QuestionPane(c));
+        }
+        else {
+            //??
+        }
     }
 
+    private class QuestionPane extends BorderPane {
+        public QuestionPane(Task c) {
+            setTop(new Label("Answers:"));
+            //TODO ..
+        }
+    }
 }

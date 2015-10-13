@@ -42,8 +42,8 @@ public class NARfx  {
     );
 
 
-    /** NAR instances -> GUI windows */
-    public static Map<NAR, Stage> window = Global.newHashMap();
+    /** Object instances -> GUI windows */
+    public static Map<Object, Stage> window = Global.newHashMap();
 
     public static final ScrollPane scrolled(Node n) {
         return scrolled(n, true, true);
@@ -278,7 +278,7 @@ public class NARfx  {
 
         Stage st;
         Stage removed = window.put(nar, st = newWindow(c.toString(), wn));
-
+        st.setAlwaysOnTop(true); //? does this work
         st.show();
 
         if (removed!=null)
@@ -289,8 +289,10 @@ public class NARfx  {
         TaskPane wn = new TaskPane(nar, c);
 
         Stage st;
-        Stage removed = window.put(nar, st = newWindow(c.toString(), wn));
+        Stage removed = window.put(c, st = newWindow(
+                c.toString(), wn));
 
+        st.setAlwaysOnTop(true); //? does this work
         st.show();
 
         if (removed!=null)

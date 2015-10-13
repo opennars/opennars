@@ -59,9 +59,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         task.appendTo(sb);
 
-        List l = task.getLog();
+        /*List l = task.getLog();
         if (l!=null)
-            sb.append(" log=").append(l);
+            sb.append(" log=").append(l);*/
 
         if (task.getCause() != null)
             sb.append(" cause=").append(task.getCause());
