@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import nars.LocalMemory;
-import nars.Memory;
 import nars.NAR;
 import nars.bag.impl.GuavaCacheBag;
 import nars.clock.RealtimeMSClock;
@@ -35,14 +34,13 @@ public class UDPWidget extends BorderPane {
 
     public static void main(String[] args) {
 
-        Memory mem = new LocalMemory(new RealtimeMSClock(),
+        NAR n = new Default(
+            new LocalMemory(
+                new RealtimeMSClock(),
                 new GuavaCacheBag<>()
-            /*new InfiniCacheBag(
-                InfiniPeer.tmp().getCache()
-            )*/
-        );
-        NAR n = new Default(mem, 1024, 3, 5, 7);
-        NARide.show(n.loop(),(i)->{
+        ), 1024, 2, 3, 4);
+
+        NARide.show(n.loop(), (i)->{
 
             i.addView(new UDPPane(n));
 
@@ -64,8 +62,9 @@ public class UDPWidget extends BorderPane {
             }
 
             try {
-                u = new UDPNetwork(port);
-                nar.memory.eventSpeak.emit("Connect: " + u);
+                u = new UDPNetwork("udp", port);
+                u.connect(nar);
+                nar.memory.eventSpeak.emit("Connect: " + u.id + " " + u.toString());
             } catch (SocketException e) {
                 nar.memory.eventError.emit(e);
             }
@@ -75,7 +74,7 @@ public class UDPWidget extends BorderPane {
             super();
             this.nar = n;
 
-            start(0);
+            start((int)(Math.random()*100 + 10000));
 
         }
     }

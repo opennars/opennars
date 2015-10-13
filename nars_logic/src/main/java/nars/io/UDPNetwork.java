@@ -107,7 +107,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
 
         nar.onExec("peer", (Task<Operation> t) -> {
             Term[] args = t.getTerm().args();
-            if (args.length < 2) return null;
+            if (args.length < 1) return null;
             Term stream = args[0];
 
             //TODO use a central dispatcher for all streams; not all streams watching for send(
@@ -189,6 +189,8 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
     }
 
     public void stop() {
+        //TODO remove handlers
+
         peer.stop();
     }
 }
