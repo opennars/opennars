@@ -3,10 +3,10 @@ package nars.util.event;
 
 import nars.util.data.id.Named;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * notifies subscribers when a value is emitted
@@ -18,10 +18,12 @@ public interface Topic<V> extends Named<String> {
     //List<Consumer<V>> all();
 
 
-
+    static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f) {
+        return all(obj, f, (key)->true);
+    }
 
     /** registers to all public Topic fields in an object */
-    static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f) {
+    static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f, Predicate<String> includeKey) {
 
         Active s = new Active();
 
@@ -30,6 +32,10 @@ public interface Topic<V> extends Named<String> {
             Class returnType = field.getType();
             if (returnType.equals(Topic.class)) {
                 final String fieldName = field.getName();
+
+                if (!includeKey.test(fieldName))
+                    continue;
+
                 try {
                     Topic t = ((Topic) field.get(obj));
 
@@ -60,7 +66,7 @@ public interface Topic<V> extends Named<String> {
     On on(Consumer<V> o);
     void off(On<V> reaction);
 
-    static <V extends Serializable> Active onAll(final Consumer<V> o, final Topic<V>... w) {
+    static <V> Active onAll(final Consumer<V> o, final Topic<V>... w) {
         Active r = new Active(w.length);
     
         for (final Topic<V> c : w)

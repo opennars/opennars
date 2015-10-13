@@ -178,7 +178,7 @@ public class UdpCommunications implements GossipCommunications {
     private static final String      DEFAULT_MAC_TYPE                  = "HmacMD5";
     public static final Logger log                               = Logger.getLogger(UdpCommunications.class.toString());
 
-    public static DatagramSocket connect(InetSocketAddress endpoint)
+    public static DatagramSocket socket(InetSocketAddress endpoint)
                                                                     throws SocketException {
         try {
             return new DatagramSocket(endpoint);
@@ -256,9 +256,10 @@ public class UdpCommunications implements GossipCommunications {
         hmac = mac;
         dispatcher = executor;
         this.socket = socket;
+
         localAddress = new InetSocketAddress(
-                                                        socket.getLocalAddress(),
-                                                        socket.getLocalPort());
+                socket.getLocalAddress(),
+                socket.getLocalPort());
         try {
             socket.setReceiveBufferSize(GossipMessages.MAX_SEG_SIZE * receiveBufferMultiplier);
             socket.setSendBufferSize(GossipMessages.MAX_SEG_SIZE * sendBufferMultiplier);
@@ -283,7 +284,7 @@ public class UdpCommunications implements GossipCommunications {
                              int receiveBufferMultiplier,
                              int sendBufferMultiplier, Mac mac)
                                                                throws SocketException {
-        this(connect(endpoint), executor, receiveBufferMultiplier,
+        this(socket(endpoint), executor, receiveBufferMultiplier,
              sendBufferMultiplier, mac);
     }
 
@@ -335,7 +336,7 @@ public class UdpCommunications implements GossipCommunications {
     @Override
     public void terminate() {
         if (running.compareAndSet(true, false)) {
-            log.fine( () ->
+            log.info( () ->
                 String.format("Terminating UDP Communications on %s",
                                        socket.getLocalSocketAddress()) + ' ' +
                 bufferPool.toString());

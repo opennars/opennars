@@ -148,25 +148,38 @@ public class NALObjectsTest  {
         NAR n = new Default();
 
         NALObjects no = new NALObjects(n);
-        ArrayList nc = no.build("LIST", ArrayList.class);
+        ArrayList nc = no.build("ourList", ArrayList.class);
 
-        n.stdout();
+        //n.stdout();
         nc.add("item");
         //nc.add("x");
 
         n.frame(2);
 
+        nc.toArray();
+
+        nc.size();
 
         nc.clear();
 
-        n.frame(2);
-
-
-/*        nc.add(1);
-        nc.get(0);
-        nc.get(1);
         nc.size();
-        nc.clear();*/
+
+
+        nc.add("item");
+        nc.add("item");
+
+        nc.toArray();
+
+        nc.size();
+
+
+
+        nc.add(1);
+        nc.get(0);
+        nc.size();
+        nc.clear();
+
+        n.frame(50);
 
     }
 

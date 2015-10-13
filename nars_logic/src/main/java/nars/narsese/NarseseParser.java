@@ -29,7 +29,6 @@ import nars.op.io.echo;
 import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -248,7 +247,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
         Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
-        ttt.setCreationTime(Stamp.TIMELESS);
+        ttt.setCreationTime(memory.time());
 
 
         ttt.setOccurrenceTime(tense, memory.duration());

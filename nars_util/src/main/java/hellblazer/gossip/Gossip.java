@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -542,9 +541,9 @@ public class Gossip {
         SortedSet<Endpoint> members = new TreeSet<>(endpoints.values());
         members.remove(ring.endpoint);
         if (members.size() < 3) {
-            if (Ring.log.isLoggable(Level.FINE)) {
+            /*if (Ring.log.isLoggable(Level.FINE)) {
                 Ring.log.fine("Ring has not been formed");
-            }
+            }*/
             return;
         }
         SortedSet<Endpoint> head = members.headSet(ring.endpoint);

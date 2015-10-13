@@ -1,5 +1,6 @@
 package nars;
 
+import com.google.common.collect.Sets;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -35,16 +36,10 @@ import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.LongPredicate;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 
@@ -730,54 +725,71 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /* Print all statically known events (discovered via reflection)
     *  for this reasoner to a stream
     * */
-    public NAR trace(Appendable out) {
+    public NAR trace(Appendable out, Predicate<String> includeKey) {
 
 
         final String[] previous = {null};
 
         Topic.all(memory(), (k, v) -> {
             try {
-
-                //indent each cycle
-                if (!k.equals("eventCycleStart")) {
-                    out.append("  ");
-                }
-
-                String chan = k.toString();
-                if (!chan.equals(previous[0])) {
-                    out
-                            //.append(ANSI.COLOR_CONFIG)
-                            .append(chan)
-                            //.append(ANSI.COLOR_RESET )
-                            .append(": ");
-                    previous[0] = chan;
-                } else {
-                    //indent
-                    for (int i = 0; i < chan.length() + 2; i++)
-                        out.append(' ');
-                }
-
-                out
-                        .append(v.toString());
-
-                if (v instanceof Concept) {
-                    Concept c = (Concept) v;
-                    out.append(' ').append(c.getBudget().toBudgetString());
-                }
-
-                out.append('\n');
-
+                outputEvent(out, previous[0], k, v);
             } catch (IOException e) {
                 error(e);
             }
-
-        });
+        }, includeKey);
 
         return this;
     }
+    public NAR trace(Appendable out) {
+        return trace(out, (k)->true);
+    }
+
+    static final Set<String> logEvents = Sets.newHashSet(
+            "eventInput", "eventDerived", "eventAnswer",
+            "eventExecute", "eventError"
+    );
 
 
-//    /** creates a new loop which begins paused */
+    public NAR log() {
+        return log(System.out);
+    }
+    public NAR log(Appendable out) {
+        return trace(out, k->logEvents.contains(k));
+    }
+
+    public void outputEvent(Appendable out, String previou, String k, Object v) throws IOException {
+        //indent each cycle
+        if (!k.equals("eventCycleStart")) {
+            out.append("  ");
+        }
+
+        String chan = k.toString();
+        if (!chan.equals(previou)) {
+            out
+                    //.append(ANSI.COLOR_CONFIG)
+                    .append(chan)
+                    //.append(ANSI.COLOR_RESET )
+                    .append(": ");
+            previou = chan;
+        } else {
+            //indent
+            for (int i = 0; i < chan.length() + 2; i++)
+                out.append(' ');
+        }
+
+        out
+                .append(v.toString());
+
+        if (v instanceof Concept) {
+            Concept c = (Concept) v;
+            out.append(' ').append(c.getBudget().toBudgetString());
+        }
+
+        out.append('\n');
+    }
+
+
+    //    /** creates a new loop which begins paused */
     final public NARLoop loop() {
         return loop(-1);
     }
@@ -934,19 +946,23 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public final void setMemory(Memory m) {
+    public final void setMemory(Memory memory) {
 
-        m.the(NAR.class, this);
-        m.the(ConceptBuilder.class, this);
+        memory.the(NAR.class, this);
+        memory.the(ConceptBuilder.class, this);
 
         if (running())
             throw new RuntimeException("NAR must be stopped to change memory");
 
-        memory = m;
-        m.start();
+        this.memory = memory;
 
 
-        m.eventError.on(onError);
+        memory.eventError.on(onError);
+
+        memory.start();
+
+
+
 
     }
 

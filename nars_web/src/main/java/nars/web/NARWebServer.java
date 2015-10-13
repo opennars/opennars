@@ -17,6 +17,7 @@ import nars.nar.Default;
 import nars.util.NARLoop;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.db.InfiniPeer;
+import nars.util.event.Active;
 import nars.util.io.JSON;
 
 import java.io.File;
@@ -27,7 +28,7 @@ import static io.undertow.Handlers.resource;
 import static io.undertow.Handlers.websocket;
 
 
-public class NARServer extends PathHandler {
+public class NARWebServer extends PathHandler {
 
 
     public final NAR nar;
@@ -40,6 +41,8 @@ public class NARServer extends PathHandler {
 
     public class WebSocketCore extends AbstractReceiveListener implements WebSocketCallback<Void>, WebSocketConnectionCallback {
 
+
+        private Active active;
 
         public WebSocketCore() {
             super();
@@ -65,17 +68,18 @@ public class NARServer extends PathHandler {
             });*/
 
 
-
-            nar.memory.eventInput.on(t -> send(socket,
-                    " IN: " + t));
-            nar.memory.eventDerived.on(t -> send(socket,
-                    "DER: " + t));
-            nar.memory.eventAnswer.on(t -> send(socket,
-                    "ANS: " + t));
-            nar.memory.eventExecute.on(t -> send(socket,
-                    "EXE: " + t));
-            nar.memory.eventError.on(t -> send(socket,
-                    "ERR: " + t));
+            active = new Active(
+                nar.memory.eventInput.on(t -> send(socket,
+                        " IN: " + t)),
+                nar.memory.eventDerived.on(t -> send(socket,
+                        "DER: " + t)),
+                nar.memory.eventAnswer.on(t -> send(socket,
+                        "ANS: " + t)),
+                nar.memory.eventExecute.on(t -> send(socket,
+                        "EXE: " + t)),
+                nar.memory.eventError.on(t -> send(socket,
+                        "ERR: " + t))
+            );
 
 //            textOutput = new TextOutput(nar) {
 //
@@ -106,10 +110,7 @@ public class NARServer extends PathHandler {
         @Override
         protected void onClose(WebSocketChannel socket, StreamSourceFrameChannel channel) throws IOException {
 
-//            if (textOutput!=null) {
-//                textOutput.stop();
-//                textOutput=null;
-//            }
+            active.off();
 
             /*if (log.isInfoEnabled())
                 log.info(socket.getPeerAddress() + " disconnected websocket");*/
@@ -169,7 +170,7 @@ public class NARServer extends PathHandler {
         }
     }
 
-    public NARServer(NAR nar, int httpPort) throws IOException {
+    public NARWebServer(NAR nar, int httpPort) throws IOException {
         super();
 
         this.nar = nar;
@@ -252,7 +253,7 @@ public class NARServer extends PathHandler {
 
         }
 
-        NARServer s = new NARServer(nar, httpPort);
+        NARWebServer s = new NARWebServer(nar, httpPort);
 
         System.out.println("NARS Web Server ready. port: " + httpPort);
         /*if (nlp!=null) {
