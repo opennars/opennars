@@ -23,6 +23,7 @@ import nars.NAR;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Sequence;
 import nars.narsese.InvalidInputException;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -103,7 +104,9 @@ public class Twenglish {
         this.memory = memory;
     }
 
-    protected Collection<Task> parseSentence(NAR n, List<Span> s) {
+
+
+    protected Collection<Task> parseSentence(String source, NAR n, List<Span> s) {
 
         LinkedList<Term> t = new LinkedList();
         Span last = null;
@@ -129,10 +132,18 @@ public class Twenglish {
         //1. add the logical structure of the sequence of terms
         if (inputProduct) {
             Term p =
-                    /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
-            Compound q = Sentence.termOrNull( Instance.make( p, Atom.the(sentenceType,true)) );
+                    Sequence
+                    //Product
+                            .makeSequence(t.toArray(new Term[t.size()]));
+            Compound q = Sentence.termOrNull( Instance.make( p,
+                    //pair: the source and the type of sentence
+                    Product.make(
+                            Atom.the(source),
+                            Atom.the(sentenceType,true)
+                    )
+            ) );
             if (q != null) {
-                tt.add(n.task(q + ". %1.0;0.9%")); //TODO non-string construct
+                tt.add(n.task(q + ". :|: %1.0;0.9%")); //TODO non-string construct
             }
 
         }
@@ -191,7 +202,7 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(NAR n, String s) throws InvalidInputException {
+    public List<Task> parse(String source, NAR n, String s) throws InvalidInputException {
 
         
         List<Task> results = Global.newArrayList();
@@ -223,7 +234,7 @@ public class Twenglish {
             sentences.add(currentSentence);
         
         for (List<Span> x : sentences) {
-            results.addAll( parseSentence(n, x) );
+            results.addAll( parseSentence(source, n, x) );
         }
                 
         if (!results.isEmpty()) {

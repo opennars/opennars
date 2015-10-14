@@ -98,6 +98,11 @@ public class TestNAR  {
         return new TestNAR(nar);
     }
 
+    public TestNAR input(String s) {
+        nar.input(s);
+        return this;
+    }
+
     class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion

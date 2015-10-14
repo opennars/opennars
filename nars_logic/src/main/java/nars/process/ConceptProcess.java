@@ -4,7 +4,6 @@
  */
 package nars.process;
 
-import nars.Global;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.concept.Concept;
@@ -15,7 +14,6 @@ import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
 import java.io.Serializable;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -112,29 +110,29 @@ abstract public class ConceptProcess extends NAL implements Serializable {
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
     public static Stream<Task> nextPremiseSquare(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc, int maxTaskLinks, int maxTermLinks) {
 
-        Set<TaskLink> tasks = Global.newHashSet(maxTaskLinks);
-        //TODO replace with one batch selector call
-        for (int i = 0; i < maxTaskLinks; i++) {
-            TaskLink tl = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
-            if (tl!=null) tasks.add(tl);
-        }
-        if (tasks.isEmpty()) return Stream.empty();
 
-        Set<TermLink> terms = Global.newHashSet(maxTermLinks);
+        TaskLink[] tasks = new TaskLink[maxTaskLinks];
+        int tasksCount = concept.getTaskLinks().forgetNext(
+                taskLinkForgetDurations * nar.memory().duration(),
+                tasks, 0, tasks.length, nar.time(), 0 /* additional */);
+
+        if (tasksCount == 0) return Stream.empty();
+
+        TermLink[] terms = new TermLink[maxTermLinks];
         float termLinkForgetDurations = concept.getMemory().termLinkForgetDurations.floatValue();
+        int termsCount = concept.getTermLinks().forgetNext(
+                termLinkForgetDurations * nar.memory().duration(),
+                terms, 0, terms.length, nar.time(), 0 /* additional */);
 
-        //TODO replace with one batch selector call
-        for (int i = 0; i < maxTermLinks; i++) {
-            TermLink tl = concept.getTermLinks().forgetNext(termLinkForgetDurations, nar.memory());
-            if (tl!=null) terms.add(tl);
-        }
-        if (terms.isEmpty()) return Stream.empty();
+        if (termsCount == 0) return Stream.empty();
 
 
         Stream.Builder<Stream<Task>> streams = Stream.builder();
 
         for (final TaskLink a : tasks) {
+            if (a == null) break;
             for (final TermLink b : terms) {
+                if (b == null) break;
                 fireConcept(nar, concept, proc, streams, a, b);
             }
         }

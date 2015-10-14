@@ -82,7 +82,7 @@ public class Default extends NAR {
      * Default DEFAULTS
      */
     public Default() {
-        this(1024, 1, 2, 3, new FrameClock());
+        this(1024, 1, 3, 5, new FrameClock());
     }
 
     public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {

@@ -18,9 +18,15 @@ public class NaturalLanguagePane extends CodeInput {
     final Twenglish te = new Twenglish();
     private final NAR nar;
 
+
     public NaturalLanguagePane(NAR n) {
         super();
         this.nar = n;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() /*+ "_" + hashCode()*/;
     }
 
     /**
@@ -30,7 +36,7 @@ public class NaturalLanguagePane extends CodeInput {
     @Override
     public boolean onInput(String s) {
 
-        te.parse(nar, s).forEach(nar::input);
+        te.parse(toString(), nar, s).forEach(nar::input);
 
         Collection<Term> tokens = Twenglish.tokenize(s);
 
