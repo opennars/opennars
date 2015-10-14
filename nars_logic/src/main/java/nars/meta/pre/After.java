@@ -30,8 +30,11 @@ public class After extends PreCondition {
         final Task task = m.premise.getTask();
         final Task belief = m.premise.getBelief();
 
+        if(true)
+            return true;
+
         int dur = m.premise.duration();
-        if (taskBeforeBelief) {
+        if (!taskBeforeBelief) {
             return task.after(belief, dur);
         }
         else {
