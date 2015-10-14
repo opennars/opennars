@@ -8,7 +8,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/15/15.
  */
-abstract public class AbstractMeasureTime extends PreCondition3 {
+abstract public class AbstractMeasureTime extends PreCondition3Output {
 
     public AbstractMeasureTime(Term var1, Term var2, Term var3) {
         super(var1, var2, var3);
