@@ -63,7 +63,7 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
     public List<Task> valid;
 
 
-    transient int maxSimilars = 16;
+    transient int maxSimilars = 4;
 
     protected TreeMap<Float,Task> similar;
 

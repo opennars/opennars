@@ -20,6 +20,7 @@
  */
 package nars.budget;
 
+import nars.Global;
 import nars.Memory;
 import nars.concept.Concept;
 import nars.link.TaskLink;
@@ -235,9 +236,18 @@ public final class BudgetFunctions extends UtilityFunctions {
         //     lambda is (1 - durabilty) / forgetPeriod
         //     t is the delta
         final float currentPriority = budget.getPriority();
+
+        if (currentPriority == 0)
+            return 0;
+        if (currentPriority < Global.BUDGET_EPSILON) {
+            budget.setPriority(0);
+            return 0;
+        }
+
         final long t = budget.setLastForgetTime(currentTime);
 
         final double lambda = (1 - budget.getDurability()) / forgetPeriod;
+
 
         final float nextPriority = currentPriority *
                 //(float)Util.expFast(-lambda * t);

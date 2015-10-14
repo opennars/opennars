@@ -139,9 +139,9 @@ public class TestNAR  {
 
     public void stop() {
         nar.stop();
-        if (resetOnStop) {
+        /*if (resetOnStop) {
             nar.memory.delete();
-        }
+        }*/
     }
 
     //TODO initialize this once in constructor

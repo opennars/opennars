@@ -2,13 +2,12 @@ package nars.guifx.chart;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nars.NAR;
-import nars.guifx.NARfx;
 import nars.util.meter.TemporalMetrics;
 import nars.util.meter.event.ObjectMeter;
 
@@ -78,9 +77,10 @@ public class NARui {
         return this;
     }
 
-    public NARui viewAll() {
+    public NARui viewAll(Consumer<Pane> result) {
 
-        NARfx.run((a, s) -> {
+        /*NARfx.run((a, s) -> {
+*/
 
             VBox v = new VBox();
 
@@ -92,9 +92,12 @@ public class NARui {
 
             v.layout();
 
+        result.accept(v);
+        return this;
+
             //v.setMaxSize(MAX_VALUE, MAX_VALUE);
 
-            s.setScene(new Scene(NARfx.scrolled(v), 800, 600));
+  /*          s.setScene(new Scene(NARfx.scrolled(v), 800, 600));
 
             //s.sizeToScene();
 
@@ -102,7 +105,7 @@ public class NARui {
 
         });
 
-        return this;
+        return this;*/
     }
 
     private static Node linePlot(TemporalMetrics<Double> meter) {

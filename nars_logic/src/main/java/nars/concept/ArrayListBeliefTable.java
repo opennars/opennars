@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.Global;
 import nars.Memory;
 import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
@@ -167,9 +168,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         boolean added = tryAdd(input, ranking, nal.memory());
 
-        if (input.isDeleted()) {
-            return null;
-        }
 
 
 
@@ -181,6 +179,14 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         Task top = top(input, now);
 
+
+        if (!added) {
+            return top;
+        }
+
+        if (input.isDeleted()) {
+            return top;
+        }
 
         if (top != null) {
 
@@ -220,10 +226,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                     /*boolean addedRevised =
                         tryAdd(revised, ranking, nal.memory());*/
+                    //if (addedRevised) {
 
-                    //input the new task to memory here?
-                    nal.memory().eventDerived.emit(revised);
-                    //nal.nar().input(revised);
+                        //input the new task to memory here?
+                        nal.memory().eventDerived.emit(revised);
+                        //nal.nar().input(revised);
+                    //}
 
                     return revised;
                 }
@@ -250,20 +258,31 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         final Task[] tasks = getCachedNullTerminatedArray();
 
         int i = 0;
-        for (Task b; null!=(b = tasks[i++]); ) {
-            if (b.isDeleted()) {
-                //item will be inserted at this index, replacing it
-                break;
+        if (tasks!=null) {
+
+            if (Global.DEBUG) {
+                handleDeleted();
             }
 
-            float existingRank = r.rank(b, rankInput);
-            boolean inputGreater = (Float.isNaN(existingRank) && rankInput >= existingRank);
-            if (inputGreater) {
-                //item will be inserted at this index
-                break;
+            for (Task b; null != (b = tasks[i++]); ) {
+                if (b == input) return false;
+
+                if (b.equals(input)) {
+                    //these should be preventable earlier
+                    memory.remove(input, "Duplicate");
+                    return false;
+                }
+
+                float existingRank = r.rank(b, rankInput);
+                boolean inputGreater = (Float.isNaN(existingRank) || rankInput > existingRank);
+                if (inputGreater) {
+                    //item will be inserted at this index
+                    break;
+                }
             }
+            i--; //-1 is correct since after the above for loop it will be 1 ahead
         }
-        i--; //-1 is correct since after the above for loop it will be 1 ahead
+
 
         if (atCapacity) {
             if (i == siz) {
@@ -282,6 +301,16 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
     }
 
+    private void handleDeleted() {
+        if (data == null) return;
+        for (int i = 0; i < size(); i++) {
+            if (data.get(i).isDeleted()) {
+                throw new RuntimeException("deleted tasks should not be present in belief tables");
+                /*remove(i);
+                i--;*/
+            }
+        }
+    }
 
 
 //TODO provide a projected belief

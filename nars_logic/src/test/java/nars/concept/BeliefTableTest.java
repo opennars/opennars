@@ -14,25 +14,27 @@ import org.junit.Test;
  */
 public class BeliefTableTest extends TestCase {
 
+
+//    @Test public void testRevisionBeliefs() {
+//        NAR n = new Default();
 //
-//    @Test public void testArrayListBeliefTable1() {
-//        NAR n = new Terminal();
-//
-//        ArrayListBeliefTable t = new ArrayListBeliefTable(4);
+//        //ArrayListBeliefTable t = new ArrayListBeliefTable(4);
 //
 //        Task pos = n.inputTask("<a --> b>. %1.00;0.90%");
-//        Task neg = n.inputTask("<a --> b>. %0.00;0.90%");
+//        n.frame(1);
 //
-//        BeliefTable.Ranker ranker = BeliefTable.BeliefConfidenceOrOriginality;
+//        Concept c = n.concept("<a -->b>");
+//        BeliefTable b = c.getBeliefs();
+//        assertEquals(b.toString(), 1, b.size());
 //
-//        assertTrue( t.add(pos, ranker, n.memory) );
-//        assertEquals(1, t.size());
 //
 //        //after the 2nd belief, a revision is created
 //        //and inserted with the 2 input beliefs
 //        //to produce two beliefs.
-//        assertTrue( t.tryAdd(neg, ranker, n.memory) );
-//        assertEquals(3, t.size());
+//        Task neg = n.inputTask("<a --> b>. %0.00;0.90%");
+//
+//        n.frame(100);
+//        assertEquals(b.toString(), 3, b.size());
 //
 //        //sicne they are equal and opposite, the
 //        //revised belief will be the average of them
@@ -41,7 +43,7 @@ public class BeliefTableTest extends TestCase {
 //        //assertTrue(p && n);
 //        //assertTrue();
 //
-//        System.out.println(t);
+//        System.out.println(b);
 //
 //    }
 
@@ -64,18 +66,26 @@ public class BeliefTableTest extends TestCase {
     }
 
     @Test
-    public void testRevision() {
+    public void testRevision1() {
+        //short term immediate test for correct revisionb ehavior
+        testRevision(1);
+    }
+    @Test
+    public void testRevision32() {
+        //longer term test
+        testRevision(32);
+    }
 
+    void testRevision(int delay1) {
         Global.DEBUG = true;
 
         NAR n = newNAR(6);
 
 
         //arbitrary time delays in which to observe that certain behavior does not happen
-        int delay1 = 32;
         int delay2 = delay1;
 
-        n.stdout();
+        //n.stdout();
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
                 .believe(1.0f, 0.9f).run(1);
@@ -87,6 +97,7 @@ public class BeliefTableTest extends TestCase {
         b.run(delay1);
 
         b.print();
+        //List<Task> bb = Lists.newArrayList( b.beliefs() );
 
         assertEquals("revised", 3, b.size());
 

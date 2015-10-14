@@ -29,6 +29,7 @@ import static nars.nal.nal7.Temporal.solutionQualityMatchingOrder;
 public interface BeliefTable extends TaskTable {
 
     /** main method */
+
     Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
 
     Ranker BeliefConfidenceOrOriginality = (belief, bestToBeat) -> {
@@ -112,10 +113,12 @@ public interface BeliefTable extends TaskTable {
         }
     };
 
-    boolean tryAdd(Task input, BeliefTable.Ranker r, Memory memory);
 
-    /** add a task to the table */
+    /** innernal only: add a task to the table */
     boolean add(Task t);
+
+
+    boolean tryAdd(Task input, BeliefTable.Ranker r, Memory memory);
 
 
 

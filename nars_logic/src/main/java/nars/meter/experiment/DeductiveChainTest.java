@@ -49,7 +49,7 @@ public class DeductiveChainTest extends TestNAR {
 
         Global.DEBUG = false;
 
-        for (int length = 3; length < 10; length++) {
+        for (int length = 3; length < 11; length++) {
             test(new Default().nal(2), length);
         }
     }
@@ -92,12 +92,12 @@ public class DeductiveChainTest extends TestNAR {
         long time = n.time();
 
         //n.stdout();
-        n.frame(55); //to print the ending
+        //n.frame(55); //to print the ending
 
         //while (true) {
 
 
-        System.out.println("@" + time + " (" + ts + "ms) " +
+        System.err.println("@" + time + " (" + ts + "ms) " +
                 nc + " concepts");      //       }
 
 
