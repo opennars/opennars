@@ -1,6 +1,5 @@
 package nars.concept;
 
-import nars.Global;
 import nars.Memory;
 import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
@@ -255,14 +254,15 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         boolean atCapacity = (capacity == siz);
 
+
+        //if (Global.DEBUG) { //seems necessary?
+        handleDeleted();
+        //}
+
         final Task[] tasks = getCachedNullTerminatedArray();
 
         int i = 0;
         if (tasks!=null) {
-
-            if (Global.DEBUG) {
-                handleDeleted();
-            }
 
             for (Task b; null != (b = tasks[i++]); ) {
                 if (b == input) return false;
@@ -303,11 +303,15 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
     private void handleDeleted() {
         if (data == null) return;
-        for (int i = 0; i < size(); i++) {
-            if (data.get(i).isDeleted()) {
-                throw new RuntimeException("deleted tasks should not be present in belief tables");
-                /*remove(i);
-                i--;*/
+
+        for (int i = 0; i < data.size(); i++) {
+            Task dt = data.get(i);
+            if (dt == null)
+                throw new RuntimeException("wtf");
+            if (dt.isDeleted()) {
+                //throw new RuntimeException("deleted tasks should not be present in belief tables: " + dt);
+                remove(i);
+                i--;
             }
         }
     }

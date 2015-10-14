@@ -56,6 +56,7 @@ public class DefaultTermizer implements Termizer {
         if (o == null)
             return NULL;
 
+        if (o instanceof Term) return (Term)o;
 
         if (o instanceof String)
             return Atom.the((String) o, true);

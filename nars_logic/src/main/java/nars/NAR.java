@@ -390,7 +390,11 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         final Memory m = memory();
 
-        if (t == null || !t.init(m)) {
+        if (t == null) {
+            throw new RuntimeException("null input");
+        }
+
+        if (!t.init(m)) {
             m.remove(t, "Garbage");
             return false;
         }
@@ -745,8 +749,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     static final Set<String> logEvents = Sets.newHashSet(
-            "eventInput", "eventDerived", "eventAnswer",
-            "eventExecute", "eventError"
+            "eventInput",  "eventAnswer",
+            "eventExecute", "eventError",
+            "eventSpeak"
     );
 
 
