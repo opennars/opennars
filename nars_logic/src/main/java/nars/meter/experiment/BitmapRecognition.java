@@ -2,7 +2,8 @@ package nars.meter.experiment;
 
 import nars.Global;
 import nars.NAR;
-import nars.nal.nal2.Instance;
+import nars.nal.nal2.Property;
+import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Temporal;
@@ -16,6 +17,7 @@ import nars.term.Term;
 import nars.util.java.NALObjects;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by me on 10/13/15.
@@ -27,8 +29,7 @@ public class BitmapRecognition {
         int w;
         int h;
         private float[][] on;
-        private Compound[][] pixels;
-        private Term pixelTerms;
+        private Term[][] pixels;
 
         public TermBitmap() {
 
@@ -52,24 +53,23 @@ public class BitmapRecognition {
                 for (int y = 0; y < h; y++) {
                     //on[x][y] = 0;
                     p.add(
-                        pixels[x][y] = Instance.make(
-                            Product.make(Integer.toString(x), Integer.toString(y)),
-                            id
-                        )
+                        pixels[x][y] = //Instance.make(
+                            Product.make(Integer.toString(x), Integer.toString(y))
+                            //id
+                        //)
                     );
                 }
             }
-            this.pixelTerms = Conjunction.make(p, Temporal.ORDER_CONCURRENT);
         }
 
         public void askWhich(NAR n, Term... possibilities) {
-            applyAndGetPixelState(n);
+            Conjunction pixelTerms = applyAndGetPixelState(n);
 
 
 
             for (Term po : possibilities) {
-                Statement tt = Instance.make(
-                        id, po
+                Statement tt = Similarity.make(
+                    pixelTerms, po
                 );
                 Task q = n.task(tt + "?");// :|:");
                 System.err.println("ASK: " + q);
@@ -87,28 +87,49 @@ public class BitmapRecognition {
 
 
 
-        public Term applyAndGetPixelState(NAR n) {
+        public Conjunction applyAndGetPixelState(NAR n) {
+            List<Term> l = Global.newArrayList();
             for (int x = 0; x < w; x++) {
                 for (int y = 0; y < h; y++) {
-                    updatePixel(n, x, y);
+                    l.add( updatePixel(n, x, y) );
                 }
             }
-            return pixelTerms;
+            return (Conjunction) Conjunction.make(l, Temporal.ORDER_CONCURRENT);
         }
 
-        private void updatePixel(NAR n, int x, int y) {
-            Compound p = pixels[x][y];
+        private Term updatePixel(NAR n, int x, int y) {
+            Term p = pixels[x][y];
             float on = this.on[x][y];
+            Compound term = Property.make(p, f(on));
             n.believe(
-                p,
-                Tense.Present, on, 0.75f /* conf */);
+                term,
+                Tense.Present, 1f, 0.95f /* conf */);
+            return term;
         }
+
+        private Term f(float on) {
+            if (on > 0.5) {
+                return Atom.the("Y");//f(on));
+            }
+            else {
+                return Atom.the("N");
+            }
+        }
+
+
+//        private Term f(float on) {
+//            if (on > 0.5)
+//                return Atom.the(id + "_on");
+//            else
+//                return Atom.the(id + "_off");
+//        }
 
         public void tell(NAR n, Term similaritage) {
 
-            applyAndGetPixelState(n);
+            Conjunction pixelTerms = applyAndGetPixelState(n);
+
             n.believe(
-                Instance.make(
+                Similarity.make(
                     pixelTerms,
                     similaritage
                 ), Tense.Present, 1.0f, 0.95f
@@ -143,7 +164,7 @@ public class BitmapRecognition {
 
         tb = new NALObjects(n).build("i", tb);
 
-        int exposureCycles = 1000;
+        int exposureCycles = 2000;
 
         for (int i = 0; i < 5; i++) {
             tb.fill(0f);
@@ -168,6 +189,7 @@ public class BitmapRecognition {
             System.out.println(n.concepts().size());
             n.input("(--,<white <-> black>).");
 
+            tb.fill((float)Math.random());
             tb.askWhich(n,
                     Atom.the("white"),
                     Atom.the("black")

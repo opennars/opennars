@@ -29,7 +29,7 @@ import nars.op.io.reset;
 import nars.op.io.say;
 import nars.op.io.schizo;
 import nars.op.math.add;
-import nars.op.math.count;
+import nars.op.math.length;
 import nars.op.mental.*;
 import nars.op.meta.complexity;
 import nars.op.meta.reflect;
@@ -40,7 +40,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.util.attention.BagForgettingEnhancer;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.Active;
@@ -102,7 +101,9 @@ public class Default extends NAR {
                 conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle
         ));
 
+        /*
         the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
+        */
 
         initTime();
 
@@ -253,7 +254,7 @@ public class Default extends NAR {
             new feelBusy(),
 
             // math operations
-            new count(),
+            new length(),
             new add(),
             //new MathExpression(),
 

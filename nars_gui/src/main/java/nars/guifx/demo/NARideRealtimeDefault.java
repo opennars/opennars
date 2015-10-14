@@ -4,10 +4,12 @@ import nars.Global;
 import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
-import nars.bag.impl.GuavaCacheBag;
+import nars.bag.impl.MapCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
 import nars.nar.Default;
+
+import java.util.HashMap;
 
 /**
  * Created by me on 9/7/15.
@@ -16,12 +18,12 @@ public class NARideRealtimeDefault {
 
     public static void main(String[] arg) {
 
-        int cyclesPerFrame = 8;
 
         Global.DEBUG = true;
 
         Memory mem = new LocalMemory(new RealtimeMSClock(),
-            new GuavaCacheBag<>()
+            new MapCacheBag(new HashMap())
+            //new GuavaCacheBag<>()
             /*new InfiniCacheBag(
                 InfiniPeer.tmp().getCache()
             )*/
@@ -29,8 +31,7 @@ public class NARideRealtimeDefault {
         NAR nar = new Default(mem, 1024, 3, 5, 7);
 
         nar.memory.conceptForgetDurations.set(5);
-        nar.memory.duration.set(100);
-        nar.setCyclesPerFrame(cyclesPerFrame);
+        nar.memory.duration.set(100 /* ie, milliseconds */);
         //nar.spawnThread(1000/60);
 
 

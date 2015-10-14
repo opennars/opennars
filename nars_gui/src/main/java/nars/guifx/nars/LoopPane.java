@@ -2,7 +2,9 @@ package nars.guifx.nars;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
@@ -29,8 +31,13 @@ public class LoopPane extends VBox {
     private final SimpleStringProperty cpuLabel;
 
     private final NSlider cpuSlider;
+    private final ComboBox<Integer> multiplier;
 
     boolean running = false;
+
+    final ChangeListener<Number> updateLoopOnChange = (s, p, c) -> {
+        updateLoop();
+    };
 
     public LoopPane(NARLoop loop) {
         super();
@@ -88,18 +95,19 @@ public class LoopPane extends VBox {
 
 
         //-2 here is a magic number to indicate that nothing is pending and can be changed now
-        cpuSlider.value[0].addListener((s, p, c) -> {
+        cpuSlider.value[0].addListener(updateLoopOnChange);
 
-            updateLoop();
-
-        });
+        this.multiplier = new ComboBox<Integer>();
+        multiplier.getItems().addAll( 1, 4, 16, 64, 128, 512);
+        multiplier.setValue(1);
+        multiplier.valueProperty().addListener(updateLoopOnChange);
 
         pause();
 
         say("ready");
 
         getChildren().addAll(
-                new FlowPane(runButton, cpuSlider, stepButton),
+                new FlowPane(runButton, cpuSlider, stepButton, multiplier),
                 new FlowPane(label)
         );
 
@@ -122,6 +130,7 @@ public class LoopPane extends VBox {
         int minDelay = 17; //60hz
         int nMS = (int) Math.round((1.0 - Math.log(1 + v * logScale) / Math.log(1 + logScale)) * 1024.0) + minDelay;
 
+        loop.cyclesPerFrame = (multiplier.getValue());
         if (loop.setPeriodMS(nMS)) {
 
             //new delay set:
@@ -129,11 +138,17 @@ public class LoopPane extends VBox {
             final int MS = nMS;
 
             runLater(() -> {
-                cpuSlider.setMouseTransparent(false);
-                stepButton.setDisable(true);
+                unpause();
                 say("cycle period=" + MS + "ms (" + Texts.n4(1000f / MS) + "hz)");
             });
         }
+    }
+
+    private void unpause() {
+        cpuSlider.setMouseTransparent(false);
+        cpuSlider.setOpacity(1.0);
+        stepButton.setDisable(true);
+        cpuLabel.setValue("ON");
     }
 
     private void pause() {

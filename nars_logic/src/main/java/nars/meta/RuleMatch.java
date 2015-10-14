@@ -197,6 +197,10 @@ public class RuleMatch extends FindSubst {
 
 
         derivedTerm = derivedTerm.cloneDeep();
+        if (derivedTerm == null) {
+            //why does this happen?
+            return null;
+        }
 
         //test for reactor leak
         // TODO prevent this from happening

@@ -23,7 +23,7 @@ public class NARLoop implements Runnable {
     static final long sleepTimeMS = 250;
 
 
-    volatile int cyclesPerFrame = 1;
+    public volatile int cyclesPerFrame = 1;
     volatile int periodMS = 0;
     private volatile boolean stopped = false;
     //private boolean running;

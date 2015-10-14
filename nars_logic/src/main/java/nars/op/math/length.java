@@ -17,8 +17,6 @@
 
 package nars.op.math;
 
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
@@ -38,15 +36,17 @@ import nars.term.Term;
 
  * 
  */
-public class count extends TermFunction<Integer> implements Mental {
+public class length extends TermFunction<Integer> implements Mental {
+
+    //TODO 'volume' of any term
 
     @Override
     public Integer function(Operation o) {
         Term[] x = o.args();
         Term content = x[0];
-        if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
+        /*if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
             throw new RuntimeException("Requires 1 SetExt or SetInt argument");
-        }       
+        } */
         
         return content.length();
     }

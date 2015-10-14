@@ -100,7 +100,7 @@ public class LogicMeter extends FrameReaction {
     @Override
     public void onFrame() {
         conceptMeter.reset();
-        m.getConcepts().forEach(conceptMeter);
+        //m.getConcepts().forEach(conceptMeter);
         conceptMeter.commit(m);
     }
 
