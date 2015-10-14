@@ -119,6 +119,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.believe("<(*,John,door_101) --> open>. :|:");
+        tester.nar.frame(10);
         tester.believe("<(*,John,room_101) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<<(*,John,room_101) --> enter> =\\> (&/,<(*,John,door_101) --> open>)>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
@@ -131,6 +132,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.believe("<(*,John,door_101) --> open>. :|:");
+        tester.nar.frame(10);
         tester.believe("<(*,John,room_101) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
@@ -143,11 +145,77 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.believe("<(*,John,door_101) --> open>. :|:");
+        tester.nar.frame(10);
         tester.believe("<(*,John,room_101) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<(*,John,door_101) --> open>) </> <(*,John,room_101) --> enter>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
     }
 
+
+    @Test
+    public void induction_on_events_with_variable_introduction() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<John --> (/,open,_,door_101)>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<John --> (/,enter,_,room_101)>. :|:");
+
+        tester.mustBelieve(cycles, "<(&/,<$1 --> (/,open,_,door_101)>) </> <$1 --> (/,enter,_,room_101)>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+    @Test
+    public void induction_on_events_with_variable_introduction2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<John --> (/,open,_,door_101)>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<John --> (/,enter,_,room_101)>. :|:");
+
+        tester.mustBelieve(cycles, "<(&/,<$1 --> (/,open,_,door_101)>) =/> <$1 --> (/,enter,_,room_101)>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+    @Test
+    public void induction_on_events_with_variable_introduction3() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<John --> (/,open,_,door_101)>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<John --> (/,enter,_,room_101)>. :|:");
+
+        tester.mustBelieve(cycles, "<<$1 --> (/,enter,_,room_101)> =\\> (&/,<$1 --> (/,open,_,door_101)>)>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+    @Test
+    public void induction_on_events_composition() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<(*,John,key_101) --> hold>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<<(*,John,door_101) --> open> =/> <(*,John,room_101) --> enter>>. :|:");
+
+        tester.mustBelieve(cycles, "<(&/,<(*,John,key_101) --> hold>,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+    @Test
+    public void updating_and_revision() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<(*,John,key_101) --> hold>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<(*,John,key_101) --> hold>. :|: %0%");
+
+        tester.mustBelieve(cycles, "<(*,John,key_101) --> hold>", 0.4f, 0.91f); // :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
 
 }
