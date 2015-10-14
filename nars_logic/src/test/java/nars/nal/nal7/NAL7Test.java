@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public class NAL7Test extends AbstractNALTest {
 
 
-    final int cycles = 200;
+    final int cycles = 64;
 
     public NAL7Test(Supplier<NAR> b) {
         super(b);
@@ -118,9 +118,9 @@ public class NAL7Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.nar.stdout();
 
+
         tester.input("<(*,John,door) --> open>. :|:");
-        tester.nar.frame(10);
-        tester.input("<(*,John,room) --> enter>. :|:");
+        tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<<(*,John,room) --> enter> =\\> (&/,<(*,John,door) --> open>)>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -132,8 +132,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<(*,John,door) --> open>. :|:");
-        tester.nar.frame(10);
-        tester.input("<(*,John,room) --> enter>. :|:");
+        tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -145,8 +144,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<(*,John,door) --> open>. :|:");
-        tester.nar.frame(10);
-        tester.input("<(*,John,room) --> enter>. :|:");
+        tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<(*,John,door) --> open>) </> <(*,John,room) --> enter>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -159,8 +157,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<John --> (/,open,_,door)>. :|:");
-        tester.nar.frame(10);
-        tester.input("<John --> (/,enter,_,room)>. :|:");
+        tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -172,8 +169,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<John --> (/,open,_,door)>. :|:");
-        tester.nar.frame(10);
-        tester.input("<John --> (/,enter,_,room)>. :|:");
+        tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<$1 --> (/,open,_,door)>) =/> <$1 --> (/,enter,_,room)>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -185,8 +181,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<John --> (/,open,_,door)>. :|:");
-        tester.nar.frame(10);
-        tester.input("<John --> (/,enter,_,room)>. :|:");
+        tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
 
         tester.mustBelieve(cycles, "<<$1 --> (/,enter,_,room)> =\\> (&/,<$1 --> (/,open,_,door)>)>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();

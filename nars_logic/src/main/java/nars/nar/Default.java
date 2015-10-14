@@ -549,7 +549,7 @@ public class Default extends NAR {
 
         public Concept activate(Term term, Budget b) {
             active.setCapacity(capacity.intValue());
-            return ca.update(term, b, true, time(), 1f, active);
+            return ca.update(term, b, time(), 1f, active);
         }
 
         public Bag<Term,Concept> concepts() {

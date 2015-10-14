@@ -103,6 +103,10 @@ public class TestNAR  {
         return this;
     }
 
+    public void inputAt(long time, String s) {
+        nar.inputAt(time, s);
+    }
+
     class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion

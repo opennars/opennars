@@ -20,13 +20,16 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 
 /**
- * rule matching context, re-recyclable if thread local
+ * rule matching context, re-recyclable as thread local
  */
 public class RuleMatch extends FindSubst {
 
@@ -45,8 +48,9 @@ public class RuleMatch extends FindSubst {
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
 
     /** used by substitute: */
-    public Map<Term, Term> Inp = Global.newHashMap();
-    public Map<Term, Term> Outp = Global.newHashMap();
+    public final Map<Term, Term> Inp = Global.newHashMap();
+    public final Map<Term, Term> Outp = Global.newHashMap();
+    public final Map<Term, Term> ApplySubsSet = Global.newHashMap();
 
     @Override
     public String toString() {
@@ -166,14 +170,16 @@ public class RuleMatch extends FindSubst {
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
         
-        Map<Term,Term> ApplySubsSet = new HashMap<Term,Term>();
-        this.Outp = new HashMap<Term, Term>(); //this one contains the substitutions of the substitution predicaes, so this one has to be new
+        Map<Term,Term> ApplySubsSet = this.ApplySubsSet; //Global.newHashMap(0);
+        ApplySubsSet.clear();
+
+        this.Outp.clear(); // = new HashMap<Term, Term>(); //this one contains the substitutions of the substitution predicaes, so this one has to be new
 
         for (final PreCondition c : outcome.afterConclusions) {
 
             if(c instanceof Substitute || c instanceof SubsIfUnifies) {
                 //here we are interested how to transform the second to the first
-                this.Inp = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
+                this.Inp.clear();// = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
                 this.Inp.putAll(this.map2); //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
                 ApplySubsSet.putAll(this.map2); //<- doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
             }

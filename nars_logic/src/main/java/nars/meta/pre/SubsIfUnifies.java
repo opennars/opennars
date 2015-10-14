@@ -2,20 +2,20 @@ package nars.meta.pre;
 
 import nars.Global;
 import nars.Op;
-import nars.Symbols;
 import nars.meta.RuleMatch;
-import nars.term.Compound;
+import nars.term.Atom;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by me on 8/15/15.
  */
 public class SubsIfUnifies extends PreCondition3 {
+
+    final Atom INDEP_VAR = Atom.the("$", true);
+    final Atom QUERY_VAR = Atom.the("?", true);
 
     public SubsIfUnifies(Term arg1, Term arg2, Term arg3) {
         super(arg1, arg2, arg3);
@@ -33,35 +33,37 @@ public class SubsIfUnifies extends PreCondition3 {
         //no preconditions should store any state
         Map<Term, Term> Inp = m.Inp;// Global.newHashMap();
 
-        if(b!=null && c!=null) {
-
-            Map<Term,Term> Outp = m.Outp;
-            Op type = Op.VAR_DEPENDENT;
-
-            if(a.toString().contains("$")) {
-                type = Op.VAR_INDEPENDENT;
-            }
-
-            if(a.toString().contains("?")) {
-                type = Op.VAR_QUERY;
-            }
-
-            Map<Term,Term> Left = new HashMap<Term,Term>();
-            Map<Term,Term> Right = new HashMap<Term,Term>();
-            FindSubst sub = new FindSubst(type, Left, Right, new Random());
-
-            if(!sub.next(b,c,Global.UNIFICATION_POWER)) {
-                return false;
-            }
-
-            Outp.putAll(Left);
+        if (b == null || c == null) {
             Inp.clear();
-
-            return true;
+            return false;
         }
 
-        Inp.clear(); //new HashMap<Term,Term>();
-        return false;
+        Map<Term, Term> Outp = m.Outp;
+
+
+
+        final Op type;
+        if (a.equals(QUERY_VAR))  {
+            type = Op.VAR_QUERY;
+        } else if (a.equals(INDEP_VAR)) {
+            type = Op.VAR_INDEPENDENT;
+        } else {
+            type = Op.VAR_DEPENDENT;
+        }
+
+        Map<Term, Term> Left = Global.newHashMap(0);
+        Map<Term, Term> Right = Global.newHashMap(0);
+        FindSubst sub = new FindSubst(type, Left, Right, m.premise.getRandom());
+
+        if (!sub.next(b, c, Global.UNIFICATION_POWER)) {
+            return false;
+        }
+
+        Outp.putAll(Left);
+        Inp.clear();
+
+        return true;
+
     }
 
 //    public HashMap<Term,Term> GetRegularSubs() {

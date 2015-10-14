@@ -15,7 +15,6 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
     //static final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
 
-    private boolean createIfMissing;
     private long now;
 
     private float conceptForgetCycles;
@@ -69,7 +68,7 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
     }
 
 
-    public Concept update(Term term, Budget b, boolean createIfMissing, long now, float activationFactor, Bag<Term,Concept> bag) {
+    public Concept update(Term term, Budget b, long now, float activationFactor, Bag<Term, Concept> bag) {
 
         setKey(term);
 
@@ -79,7 +78,6 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
         final Param param = nar.memory;
         this.conceptForgetCycles = param.durationToCycles( (param.conceptForgetDurations ));
         this.activationFactor = activationFactor;
-        this.createIfMissing = createIfMissing;
         this.now = now;
 
         Concept c = bag.update(this);
