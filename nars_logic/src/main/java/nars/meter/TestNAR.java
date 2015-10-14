@@ -313,6 +313,7 @@ public class TestNAR  {
 
 
     public TestNAR believe(String termString, float freq, float conf) throws InvalidInputException {
+
         nar.believe(termString, freq, conf);
         return this;
     }
