@@ -38,7 +38,7 @@ public interface BeliefTable extends TaskTable {
         return or(confidence, originality);
     };
 
-    BeliefTable EMPTY = new BeliefTable() {
+    final static BeliefTable EMPTY = new BeliefTable() {
 
         @Override
         final public Iterator<Task> iterator() {

@@ -14,7 +14,6 @@ import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.util.java.NALObjects;
 
 import java.util.Collection;
 import java.util.List;
@@ -162,9 +161,9 @@ public class BitmapRecognition {
 
         TermBitmap tb = new TermBitmap("i",size,size);
 
-        tb = new NALObjects(n).build("i", tb);
+        //tb = new NALObjects(n).build("i", tb);
 
-        int exposureCycles = 2000;
+        int exposureCycles = 3000;
 
         for (int i = 0; i < 5; i++) {
             tb.fill(0f);

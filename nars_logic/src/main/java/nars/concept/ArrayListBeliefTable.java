@@ -166,8 +166,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         boolean added = tryAdd(input, ranking, nal.memory());
-
-
+        if (!added) {
+            return top(top(), now); //??
+        }
 
 
 //            if (ranking == null) {
@@ -179,9 +180,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         Task top = top(input, now);
 
 
-        if (!added) {
-            return top;
-        }
+
 
         if (input.isDeleted()) {
             return top;
@@ -255,8 +254,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         boolean atCapacity = (capacity == siz);
 
 
-        //if (Global.DEBUG) { //seems necessary?
-        handleDeleted();
+        //if (Global.DEBUG) {
+            checkForDeleted();
         //}
 
         final Task[] tasks = getCachedNullTerminatedArray();
@@ -301,17 +300,17 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
     }
 
-    private void handleDeleted() {
-        if (data == null) return;
+    private void checkForDeleted() {
 
         for (int i = 0; i < data.size(); i++) {
             Task dt = data.get(i);
-            if (dt == null)
-                throw new RuntimeException("wtf");
-            if (dt.isDeleted()) {
-                //throw new RuntimeException("deleted tasks should not be present in belief tables: " + dt);
-                remove(i);
-                i--;
+//            if (dt == null)
+//                throw new RuntimeException("wtf");
+            if (dt == null || dt.isDeleted()) {
+                throw new RuntimeException("deleted tasks should not be present in belief tables: " + dt);
+//                remove(i);
+//                i--;
+//
             }
         }
     }
