@@ -30,8 +30,8 @@ public class After extends PreCondition {
         final Task task = m.premise.getTask();
         final Task belief = m.premise.getBelief();
 
-        if(true)
-            return true;
+        if(true) //TODO: Why is occurence time of input tasks 0? After this is fixed, this one can be deleted again. I added it in order to be able to test the inference rules.
+            return true; //I added it in
 
         int dur = m.premise.duration();
         if (!taskBeforeBelief) {
