@@ -150,7 +150,7 @@ public class RuleMatch extends FindSubst {
                                     Budget.zero, occurence_shift, premise
                             ),
                             "Cyclic:" +
-                                    Arrays.toString(premise.getTask().getEvidence()) + "," +
+                                    Arrays.toString(premise.getTask().getEvidence()) + ',' +
                                     Arrays.toString(premise.getBelief().getEvidence())
                     );
                 }

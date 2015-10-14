@@ -18,8 +18,7 @@ public class FindSubst {
     public final Map<Term, Term> map2;
     private final Random random;
 
-    /** value is updated before and after a substitution. */
-    int consumed = 0;
+
 
     public FindSubst(Op type, Random random) {
         this(type, null, null, random);
@@ -58,13 +57,6 @@ public class FindSubst {
         System.out.println("     " + this);
     }
 
-//    public boolean next(final Term term1, final Term term2, int power) {
-//        long start = power;
-//
-//
-//        this.consumed = power;
-//    }
-
     /**
      * recursess into the next sublevel of the term
      */
@@ -81,14 +73,17 @@ public class FindSubst {
 
         final boolean termsEqual = term1.equals(term2);
 
-        if (op1.isVar() && op2.isVar() && termsEqual) {
-            return true;
-        }
 
-        if(op1.isVar() && op2.isVar() && op1==op2) {
-            return nextTerm1Var(
-                    (Variable) term1,
-                    term2);
+        if (op1.isVar() && op2.isVar()) {
+            if (termsEqual) {
+                return true;
+            }
+
+            if (op1 == op2) {
+                return nextTerm1Var(
+                        (Variable) term1,
+                        term2);
+            }
         }
 
         if (op1 == type) {
@@ -96,7 +91,7 @@ public class FindSubst {
             final Term t = map1.get(term1);
 
             if (t != null) {
-                //RECURSE, ie: return next(t, term2);
+                //RECURSE
                 return next(t, term2, power-1);
             }
 
@@ -110,7 +105,7 @@ public class FindSubst {
             final Term t = map2.get(term2);
 
             if (t != null) {
-                //RECURSE, ie: return next(term1, t);
+                //RECURSE
                 return next(term1, t, power-1);
             }
 
@@ -122,9 +117,6 @@ public class FindSubst {
         }
 
         return termsEqual;
-
-
-        //throw new RuntimeException("substitution escape");
     }
 
     /** decide whether to recurse into according to variable types */
@@ -303,9 +295,7 @@ public class FindSubst {
             order = (order + 1) % 6;
             tries++;
         } while (tries < maxTries && !solved);
-        /*if (solved && tries > 1) {
-            System.out.println("solved true after " + tries);
-        }*/
+
         return solved;
     }
 
@@ -326,11 +316,6 @@ public class FindSubst {
             solved = matchAll(cTerm2, list, --power);
             tries++;
         } while (tries < 2 && !solved);
-
-//   if (solved) {
-//      if (tries > 1)
-        //   System.out.println("got it " + tries);
-//   }
 
         return solved;
     }

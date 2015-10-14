@@ -101,7 +101,7 @@ public class SingleStepNAR extends Default {
                         out.println(k);// + " " v.actual.size() +
 
                         for (DerivationGraph.TaskResult t : v.actual) {
-                            out.println("\t" + t.key);
+                            out.println('\t' + t.key);
                         }
                         out.println();
 
@@ -156,7 +156,7 @@ public class SingleStepNAR extends Default {
                             continue;
                         }
                         float p = (1f-(((float) un) / (us))) * 100.0f;
-                        out.println("\t NAL" + i + " Tested " + (us - un) + "/" + (us) + " (" +
+                        out.println("\t NAL" + i + " Tested " + (us - un) + '/' + (us) + " (" +
                                 Math.ceil((int) p) + "% tested, " + un + " not tested): ");
                         final int finalI = i;
                         all[i].forEach(r -> {
@@ -206,8 +206,8 @@ public class SingleStepNAR extends Default {
 
         }
 
-        public PrintStream newReportStream(String file) throws FileNotFoundException {
-            String path = InfiniPeer.getTempDir() + "/" + file;
+        public static PrintStream newReportStream(String file) throws FileNotFoundException {
+            String path = InfiniPeer.getTempDir() + '/' + file;
 
             System.out.println("Saving results to: " + path);
 

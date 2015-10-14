@@ -18,7 +18,7 @@ public class RangeTerm extends Atom {
 
 
     public RangeTerm(String prefix, int from, char to) {
-        super(prefix + "_" + from + ".." + to);
+        super(prefix + '_' + from + ".." + to);
         this.prefix = prefix;
         this.from = from;
         this.to = to;
