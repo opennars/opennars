@@ -218,4 +218,65 @@ public class NAL7Test extends AbstractNALTest {
         tester.run();
     }
 
+    //NAL7 tests which were accidentally in NAL8 category:
+
+    @Test
+    public void variable_introduction_on_events() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<{t003} --> (/,at,SELF,_)>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<{t003} --> (/,on,{t002},_)>. :|:");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustBelieve(cycles, "(&&,<#1 --> (/,at,SELF,_)>,<#1 --> (/,on,{t002},_)>)", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+    //TODO: investigate
+    @Test
+    public void variable_elimination_on_temporal_statements() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|:");
+        tester.nar.frame(10);
+        tester.believe("<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>.");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>.", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+
+    @Test
+    public void further_detachment() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<(*,SELF,{t002}) --> reachable>. :|:");
+        tester.nar.frame(10);
+        tester.believe("(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustBelieve(cycles, "(^pick,{t002})!", 1.0f, 0.42f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+
+    @Test
+    public void further_detachment_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<(*,SELF,{t002}) --> reachable>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustBelieve(cycles, "<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>.", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
 }

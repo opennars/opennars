@@ -1,6 +1,7 @@
 package nars.nal.nal8;
 
 import nars.NAR;
+import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
@@ -48,6 +49,33 @@ public class NAL8Test extends AbstractNALTest {
         nar.frame(3);
 
         assertTrue(valid.get());
+    }
+
+    int cycles = 10;
+    @Test
+    public void subgoal_1() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("<{t001} --> [opened]>. :|:");
+        tester.nar.frame(10);
+        tester.believe("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,<(*,{t001}) --> ^open>) =/> <{t001} --> [opened]>>.");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustDesire(cycles, "(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,<(*,{t001}) --> ^open>)", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
+    }
+
+    @Test
+    public void subgoal_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.nar.stdout();
+
+        tester.believe("(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustDesire(cycles, "<(*,SELF,{t002}) --> hold>", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.run();
     }
 
 //    protected void testGoalExecute(String condition, String action) {
