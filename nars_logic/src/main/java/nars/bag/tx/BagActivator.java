@@ -45,14 +45,9 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
     abstract public long time();
 
     @Override public Budget updateItem(final V v, final Budget result) {
-
         result
-                .forget(time(), getForgetCycles(), 0)
-                .mergePlus(nextActivation, getActivationFactor());
-
-        v.getBudget().forget(time(), getForgetCycles(), 0);
-
-        v.getBudget().mergePlus(nextActivation, getActivationFactor());
+            .forget(time(), getForgetCycles(), 0)
+            .mergePlus(nextActivation, getActivationFactor());
 
         return result;
     }

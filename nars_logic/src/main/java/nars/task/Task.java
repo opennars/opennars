@@ -604,7 +604,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
      * @param premisePriority the total value that the derivation group should reach, effectively a final scalar factor determined by premise parent and possibly existing belief tasks
      * @return the input collection, unmodified (elements may be adjusted individually)
      */
-    static void normalize(final Iterable<Task> derived, final float premisePriority) {
+    static void normalizeCombined(final Iterable<Task> derived, final float premisePriority) {
 
 
         final float totalDerivedPriority = Budget.prioritySum(derived);
@@ -617,6 +617,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             throw new RuntimeException("NaN");
 
         derived.forEach(t -> t.getBudget().mulPriority(factor));
+    }
+    static void normalize(final Iterable<Task> derived, final float premisePriority) {
+        derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
     }
 
     static <X extends Term> Task<Operation<X>> command(Operation<X> op) {

@@ -315,7 +315,9 @@ public class TestNAR  {
     public TestNAR mustDesire(long withinCycles, String goalTerm, float freq, float conf) {
         return mustOutput(withinCycles, goalTerm, '!', freq, conf);
     }
-
+    public TestNAR mustDesire(long withinCycles, String goalTerm, float freq, float conf, long occ) {
+        return mustOutput(nar.time(), withinCycles, goalTerm, '!', freq, freq, conf, conf, occ);
+    }
 
     public TestNAR ask(String termString) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input

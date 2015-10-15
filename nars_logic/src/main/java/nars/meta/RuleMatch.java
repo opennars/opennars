@@ -47,7 +47,9 @@ public class RuleMatch extends FindSubst {
 
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
 
-    /** used by substitute: */
+    /**
+     * used by substitute:
+     */
     public final Map<Term, Term> Inp = Global.newHashMap();
     public final Map<Term, Term> Outp = Global.newHashMap();
     public final Map<Term, Term> ApplySubsSet = Global.newHashMap();
@@ -140,7 +142,7 @@ public class RuleMatch extends FindSubst {
         /** eliminate cyclic double-premise results
          *  TODO move this earlier to precondition check, or change to altogether new policy
          */
-        if ( (!single) && (cyclic(outcome, premise))               ) {
+        if ((!single) && (cyclic(outcome, premise))) {
             if (Global.DEBUG) {
                 Term termm = resolve(outcome.term);
                 if (termm != null) {
@@ -169,15 +171,15 @@ public class RuleMatch extends FindSubst {
 
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
-        
-        Map<Term,Term> ApplySubsSet = this.ApplySubsSet; //Global.newHashMap(0);
+
+        Map<Term, Term> ApplySubsSet = this.ApplySubsSet; //Global.newHashMap(0);
         ApplySubsSet.clear();
 
         this.Outp.clear(); // = new HashMap<Term, Term>(); //this one contains the substitutions of the substitution predicaes, so this one has to be new
 
         for (final PreCondition c : outcome.afterConclusions) {
 
-            if(c instanceof Substitute || c instanceof SubsIfUnifies) {
+            if (c instanceof Substitute || c instanceof SubsIfUnifies) {
                 //here we are interested how to transform the second to the first
                 this.Inp.clear();// = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
                 this.Inp.putAll(this.map2); //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
@@ -187,14 +189,14 @@ public class RuleMatch extends FindSubst {
             if (!c.test(this))
                 return null;
 
-            if(c instanceof Substitute || c instanceof SubsIfUnifies) {
+            if (c instanceof Substitute || c instanceof SubsIfUnifies) {
                 ApplySubsSet.putAll(this.Outp);
             }
         }
 
         derivedTerm = resolve(derivedTerm);
 
-        if(ApplySubsSet!=null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
+        if (ApplySubsSet != null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
             derivedTerm = ((Compound) derivedTerm).applySubstitute(ApplySubsSet);
         }
 
@@ -281,6 +283,7 @@ public class RuleMatch extends FindSubst {
         } else {
             budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
         }
+
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG) {
                 premise.memory().remove(new PreTask(derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
@@ -288,16 +291,16 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
+
         TaskSeed deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
-
 
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
             final long now = premise.time();
             final long occ;
 
-            if (occurence_shift != Stamp.TIMELESS) {//!t.isEternal()) {
+            if (occurence_shift > Stamp.TIMELESS) {//!t.isEternal()) {
 
 
                 //verify some conditions which should not produce a temporal task
@@ -311,21 +314,20 @@ public class RuleMatch extends FindSubst {
 //                }
 
 
-                occ = now + occurence_shift;
-            } else {
+                occ = task.getOccurrenceTime() + occurence_shift;
+            }
+            else {
                 occ = task.getOccurrenceTime();
             }
 
-            if (budget.isDeleted()) {
-                System.err.println("why is " + budget + " deleted");;
-            }
+
 
             final Task derived = premise.validate(deriving
-                            .punctuation(punct)
-                            .truth(truth)
-                            .budget(budget)
-                            .time(now, occ)
-                            .parent(task, single ? null : belief)
+                    .punctuation(punct)
+                    .truth(truth)
+                    .budget(budget)
+                    .time(now, occ)
+                    .parent(task, single ? null : belief)
             );
 
             if (derived != null) {
@@ -444,10 +446,10 @@ public class RuleMatch extends FindSubst {
         return rules.
                 //filter( /* filter the entire rule */ pcFilter).
                         map(r -> run(r)).
-                flatMap(p -> Stream.of(p)).
+                        flatMap(p -> Stream.of(p)).
                 //filter( /* filter each rule postcondition */ pcFilter).
                         map(p -> apply(p)).
-                filter(t -> t != null);
+                        filter(t -> t != null);
     }
 
     final private static PostCondition[] abortDerivation = new PostCondition[0];

@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public class NAL7Test extends AbstractNALTest {
 
 
-    final int cycles = 64;
+    final int cycles = 500;
 
     public NAL7Test(Supplier<NAR> b) {
         super(b);
@@ -254,7 +254,9 @@ public class NAL7Test extends AbstractNALTest {
         tester.inputAt(10, "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>.");
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
-        tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>.", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>.",
+                1.0f, 0.81f,
+                10); // :|:
         tester.run();
     }
 

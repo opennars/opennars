@@ -136,6 +136,10 @@ abstract public class ConceptProcess extends NAL  {
     }
 
     public boolean validateDerivedBudget(Budget budget) {
+        if (budget.isDeleted()) {
+            throw new RuntimeException("why is " + budget + " deleted");
+
+        }
         return !budget.summaryLessThan(memory().derivationThreshold.floatValue());
     }
 

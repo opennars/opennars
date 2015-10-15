@@ -14,6 +14,7 @@ abstract public class PreCondition1 extends PreCondition {
 
     @Override public boolean test(final RuleMatch m) {
         final Term a = m.resolve(arg1);
+        if (a == null) return false;
         return test(m, a);
     }
 

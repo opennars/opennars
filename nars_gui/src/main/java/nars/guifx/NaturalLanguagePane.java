@@ -3,12 +3,6 @@ package nars.guifx;
 import nars.NAR;
 import nars.guifx.util.CodeInput;
 import nars.io.nlp.Twenglish;
-import nars.nal.nal2.Similarity;
-import nars.nal.nal7.Sequence;
-import nars.term.Atom;
-import nars.term.Term;
-
-import java.util.Collection;
 
 /**
  * Created by me on 10/13/15.
@@ -17,7 +11,7 @@ public class NaturalLanguagePane extends CodeInput {
 
     final Twenglish te = new Twenglish();
     private final NAR nar;
-
+    float sentenceBudget = 0.05f;
 
     public NaturalLanguagePane(NAR n) {
         super();
@@ -36,23 +30,27 @@ public class NaturalLanguagePane extends CodeInput {
     @Override
     public boolean onInput(String s) {
 
-        te.parse(toString(), nar, s).forEach(nar::input);
 
-        Collection<Term> tokens = Twenglish.tokenize(s);
+        te.parse(toString(), nar, s).forEach(t -> {
+            t.getBudget().setPriority(sentenceBudget);
+            nar.input(t);
+        });
 
-        if (tokens == null)
-            return false;
-        else {
-            if (!tokens.isEmpty())
-                nar.believe(
-                        Similarity.make(
-                                Atom.quote(s),
-                                Sequence.makeSequence(
-                                        tokens.toArray(new Term[tokens.size()])
-                                )
-                        )
-                );
+//        Collection<Term> tokens = Twenglish.tokenize(s);
+//
+//        if (tokens == null)
+//            return false;
+//        else {
+//            if (!tokens.isEmpty())
+//                nar.believe(
+//                        Similarity.make(
+//                                Atom.quote(s),
+//                                Sequence.makeSequence(
+//                                        tokens.toArray(new Term[tokens.size()])
+//                                )
+//                        )
+//                );
             return true;
-        }
+//        }
     }
 }

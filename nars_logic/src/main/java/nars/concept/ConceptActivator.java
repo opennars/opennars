@@ -46,7 +46,7 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
     }
 
     @Override
-    public final float getActivationFactor() {
+    public float getActivationFactor() {
         return activationFactor;
     }
 

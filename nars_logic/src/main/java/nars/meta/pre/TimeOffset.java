@@ -4,8 +4,8 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.meta.RuleMatch;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
+import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Term;
 
@@ -29,21 +29,20 @@ public class TimeOffset extends PreCondition1 {
         this.positive = positive;
     }
 
-    @Override public boolean test(final RuleMatch m) {
-        return super.test(m);
-    }
 
     @Override
     public boolean test(RuleMatch m, Term arg) {
 
-        if (arg == null) return false;
-        if (arg.getTemporalOrder() != Temporal.ORDER_NONE) { //this is the expected case, namely that there is a order
-        } else {
+        /*if (arg.getTemporalOrder() == Temporal.ORDER_NONE) {
             return true; //and this means its no-order so dont shift
-        }
+        }*/
 
-        long s = positive ? +1 : -1;
-        m.occurenceAdd( s * timeOffsetForward(arg, m.premise) ); //shift since it has an order..
+        //there is a order:
+        long offset = timeOffsetForward(arg, m.premise);
+        if (offset > Stamp.TIMELESS) {
+            long s = positive ? +1 : -1;
+            m.occurenceAdd(s * offset); //shift since it has an order..
+        }
 
         return true;
     }
@@ -80,11 +79,11 @@ public class TimeOffset extends PreCondition1 {
 
         long cycles;
         if (arg instanceof Sequence) {
-            cycles = dur/2 + ((Sequence)arg).intervalLength();
+            cycles = dur + ((Sequence)arg).intervalLength();
         }
         else  {
             //default: assume duration or half-duration # of cycles for the term
-            cycles = dur/2;
+            cycles = dur;
         }
 
         return direction * cycles;

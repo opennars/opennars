@@ -82,7 +82,7 @@ public class Default extends NAR {
      * Default DEFAULTS
      */
     public Default() {
-        this(1024, 1, 3, 5, new FrameClock());
+        this(1024, 1, 2, 3, new FrameClock());
     }
 
     public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
@@ -155,16 +155,25 @@ public class Default extends NAR {
 
     public DefaultCycle initCore(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
+        //HACK:
+        final AtomicInteger[] tmpConceptsFiredPerCycle = new AtomicInteger[1];
+
         DefaultCycle c = new DefaultCycle(this,
                 newDeriver(),
                 newConceptBag(activeConcepts),
-                new ConceptActivator(this, this)
+                new ConceptActivator(this, this) {
+                    @Override public float getActivationFactor() {
+                        return 1f/tmpConceptsFiredPerCycle[0].get();
+                    }
+                }
         );
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
         c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
         c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
+
+        tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
         c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         c.capacity.set(activeConcepts);
@@ -570,8 +579,8 @@ public class Default extends NAR {
 
             Set<Task> batch = ia.keySet();
 
-            //TODO move this to ItemAccumulator
-            //Task.normalize( batch,  premise.getMeanPriority() );
+
+            Task.normalize( batch,  premise.getMeanPriority() );
 
             return batch.stream();
 

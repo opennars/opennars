@@ -2,6 +2,7 @@ package nars.meter.experiment;
 
 import nars.Global;
 import nars.NAR;
+import nars.clock.FrameClock;
 import nars.nal.nal2.Property;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
@@ -62,7 +63,7 @@ public class BitmapRecognition {
         }
 
         public void askWhich(NAR n, Term... possibilities) {
-            Conjunction pixelTerms = applyAndGetPixelState(n);
+            Term pixelTerms = applyAndGetPixelState(n);
 
 
 
@@ -86,14 +87,14 @@ public class BitmapRecognition {
 
 
 
-        public Conjunction applyAndGetPixelState(NAR n) {
+        public Term applyAndGetPixelState(NAR n) {
             List<Term> l = Global.newArrayList();
             for (int x = 0; x < w; x++) {
                 for (int y = 0; y < h; y++) {
                     l.add( updatePixel(n, x, y) );
                 }
             }
-            return (Conjunction) Conjunction.make(l, Temporal.ORDER_CONCURRENT);
+            return Conjunction.make(l, Temporal.ORDER_CONCURRENT);
         }
 
         private Term updatePixel(NAR n, int x, int y) {
@@ -125,7 +126,7 @@ public class BitmapRecognition {
 
         public void tell(NAR n, Term similaritage) {
 
-            Conjunction pixelTerms = applyAndGetPixelState(n);
+            Term pixelTerms = applyAndGetPixelState(n);
 
             n.believe(
                 Similarity.make(
@@ -154,16 +155,18 @@ public class BitmapRecognition {
 
     public static void main(String[] args) throws Exception {
 
-        Global.DEBUG = true;
+        //Global.DEBUG = true;
         int size = 2;
 
-        NAR n = new Default();
+        NAR n = new Default(1000, 3, 4, 5, new FrameClock()).nal(6);
+
+        n.log();
 
         TermBitmap tb = new TermBitmap("i",size,size);
 
         //tb = new NALObjects(n).build("i", tb);
 
-        int exposureCycles = 3000;
+        int exposureCycles = 300;
 
         for (int i = 0; i < 5; i++) {
             tb.fill(0f);
@@ -186,7 +189,7 @@ public class BitmapRecognition {
 
         for (int i = 0; i < 10; i++) {
             System.out.println(n.concepts().size());
-            n.input("(--,<white <-> black>).");
+            //n.input("(--,<white <-> black>).");
 
             tb.fill((float)Math.random());
             tb.askWhich(n,
