@@ -21,10 +21,8 @@
 package nars.task.stamp;
 
 import nars.Global;
-import nars.Memory;
 import nars.Symbols;
 import nars.nal.nal7.Temporal;
-import nars.nal.nal7.Tense;
 import nars.task.Sentence;
 
 import java.io.Serializable;
@@ -71,36 +69,6 @@ public interface Stamp extends Cloneable, Serializable {
             c[j++] = a[i1++];
         }
         return c;
-    }
-
-    static long getOccurrenceTime(final Tense tense, Memory m) {
-        return getOccurrenceTime(m.time(), tense, m.duration());
-    }
-
-    static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
-        return getOccurrenceTime(creationTime, tense, m.duration());
-    }
-
-    static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
-
-        if (creationTime == Stamp.TIMELESS) {
-            //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
-            //so we base it at zero to make this possible
-            creationTime = 0;
-        }
-
-        switch (tense) {
-            case Present:
-                return creationTime;
-            case Past:
-                return creationTime - duration;
-            case Future:
-                return creationTime + duration;
-            default:
-            //case Unknown:
-            //case Eternal:
-                return Stamp.ETERNAL;
-        }
     }
 
     static long[] toSetArray(final long[] x) {

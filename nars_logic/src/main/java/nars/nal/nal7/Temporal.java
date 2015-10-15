@@ -810,4 +810,34 @@ public class Temporal {
     public static boolean isEternal(final long t)  {
         return t <= Stamp.TIMELESS; /* includes ETERNAL */
     }
+
+    public static long getOccurrenceTime(final Tense tense, Memory m) {
+        return getOccurrenceTime(m.time(), tense, m.duration());
+    }
+
+    public static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
+        return getOccurrenceTime(creationTime, tense, m.duration());
+    }
+
+    public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
+
+        if (creationTime == Stamp.TIMELESS) {
+            //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
+            //so we base it at zero to make this possible
+            creationTime = 0;
+        }
+
+        switch (tense) {
+            case Present:
+                return creationTime;
+            case Past:
+                return creationTime - duration;
+            case Future:
+                return creationTime + duration;
+            default:
+            //case Unknown:
+            //case Eternal:
+                return Stamp.ETERNAL;
+        }
+    }
 }

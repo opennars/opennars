@@ -3,7 +3,9 @@ package nars.meter;
 import nars.Global;
 import nars.NAR;
 import nars.event.CycleReaction;
-import nars.meter.condition.TaskCondition;
+import nars.meter.condition.EternalTaskCondition;
+import nars.meter.condition.TemporalTaskCondition;
+import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -40,7 +42,7 @@ public class TestNAR  {
 
 
     /** "must" requirement conditions specification */
-    public final List<TaskCondition> requires = new ArrayList();
+    public final List<EternalTaskCondition> requires = new ArrayList();
     //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
     final transient private boolean exitOnAllSuccess = true;
@@ -73,7 +75,7 @@ public class TestNAR  {
      * completed prior to the limit.
      * */
     public double getCost() {
-        return TaskCondition.cost(requires);
+        return EternalTaskCondition.cost(requires);
     }
 
     public void setTruthTolerance(float truthTolerance) {
@@ -107,6 +109,7 @@ public class TestNAR  {
         nar.inputAt(time, s);
     }
 
+
     class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion
@@ -129,7 +132,7 @@ public class TestNAR  {
 
                 int nr = requires.size();
                 for (int i = 0; i < nr; i++) {
-                    final TaskCondition oc = requires.get(i);
+                    final EternalTaskCondition oc = requires.get(i);
                     if (!oc.isTrue()) {
                         finished = false;
                         break;
@@ -156,9 +159,10 @@ public class TestNAR  {
     //TODO initialize this once in constructor
     Topic<Task>[] outputEvents;
 
-    public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+
+    public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws InvalidInputException {
         if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved };
-        mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+        mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, occTimeAbsolute);
         return this;
     }
 
@@ -192,7 +196,11 @@ public class TestNAR  {
         return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
     }
 
-    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
+    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, Tense t) throws InvalidInputException {
+        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, nar.time(t));
+    }
+
+    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws InvalidInputException {
 
         float h = (freqMin!=-1) ? truthTolerance / 2.0f : 0;
 
@@ -203,20 +211,22 @@ public class TestNAR  {
         cycleStart -= tt;
         cycleEnd += tt;
 
-        TaskCondition tc = new TaskCondition(nar,
-                cycleStart,
-                cycleEnd,
-                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
+        EternalTaskCondition tc;
+        if (occTimeAbsolute== Stamp.ETERNAL) {
+            tc = new EternalTaskCondition(nar,
+                    cycleStart, cycleEnd,
+                    sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
+        } else {
+            tc = new TemporalTaskCondition(nar,
+                    cycleStart, cycleEnd,
+                    occTimeAbsolute,occTimeAbsolute,
+                    sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
+        }
 
         for (Topic<Task> cc : c) {
             cc.on(tc);
         }
 
-        if (ocRelative!= Stamp.ETERNAL) {
-            /** occurence time measured relative to the beginning */
-            //tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, nar.memory().duration());
-            throw new RuntimeException("n/a until refactor");
-        }
         requires.add(tc);
 
         return this;
@@ -270,12 +280,15 @@ public class TestNAR  {
 
     public TestNAR mustOutput(long withinCycles, String term, char punc, float freq, float conf) throws InvalidInputException {
         long now = time();
-        return mustOutput(now, now + withinCycles, term, punc, freq, freq, conf, conf);
+        return mustOutput(now, now + withinCycles, term, punc, freq, freq, conf, conf, nar.time(Tense.Eternal));
     }
 
     public TestNAR mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+        return mustBelieve(withinCycles, term, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL);
+    }
+    public TestNAR mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax, long tense) throws InvalidInputException {
         long now = time();
-        return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
+        return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax, tense);
     }
 //    public TestNAR mustBelievePast(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax, int maxPastWindow) throws InvalidInputException {
 //        long now = time();
@@ -285,8 +298,15 @@ public class TestNAR  {
 //        long now = time();
 //        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
 //    }
+    @Deprecated public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, Tense t) throws InvalidInputException {
+        return mustOutput(nar.time(), withinCycles, term, '.', freq, freq, confidence, confidence, nar.time(t));
+    }
+    public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, long occTimeAbsolute) throws InvalidInputException {
+        return mustOutput(nar.time(), withinCycles, term, '.', freq, freq, confidence, confidence,occTimeAbsolute);
+    }
+
     public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence) throws InvalidInputException {
-        return mustOutput(withinCycles, term, '.', freq, confidence);
+        return mustBelieve(withinCycles, term, freq, confidence, Tense.Eternal);
     }
     public TestNAR mustBelieve(long withinCycles, String term, float confidence) throws InvalidInputException {
         return mustBelieve(withinCycles, term, 1.0f, confidence);
@@ -330,7 +350,7 @@ public class TestNAR  {
         public final HitMeter[] eventMeters;
         protected Serializable error = null;
         protected Task[] inputs;
-        protected List<TaskCondition> cond = Global.newArrayList(1);
+        protected List<EternalTaskCondition> cond = Global.newArrayList(1);
         transient final int stackElements = 4;
 
         public Report(TestNAR n) {
@@ -347,12 +367,12 @@ public class TestNAR  {
             }
         }
 
-        public void add(TaskCondition o) {
+        public void add(EternalTaskCondition o) {
             cond.add(o);
         }
 
         public boolean isSuccess() {
-            for (TaskCondition t : cond)
+            for (EternalTaskCondition t : cond)
                 if (!t.isTrue())
                     return false;
             return true;
@@ -382,9 +402,9 @@ public class TestNAR  {
 
     public TestNAR run(boolean testAndPrintReport /* for use with JUnit */) {
         long finalCycle = 0;
-        for (TaskCondition oc : requires) {
-            if (oc.cycleEnd > finalCycle)
-                finalCycle = oc.cycleEnd+1;
+        for (EternalTaskCondition oc : requires) {
+            if (oc.creationEnd > finalCycle)
+                finalCycle = oc.creationEnd +1;
         }
 
         if (collectTrace)

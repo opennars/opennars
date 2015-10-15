@@ -12,6 +12,7 @@ import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
 import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.OperatorReaction;
@@ -22,7 +23,6 @@ import nars.process.Level;
 import nars.process.TaskProcess;
 import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -265,8 +265,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-    final long time(Tense tense) {
-        return Stamp.getOccurrenceTime(tense, memory);
+    public final long time(Tense tense) {
+        return Temporal.getOccurrenceTime(tense, memory);
     }
 
     public NAR believe(String termString, float freq, float conf) throws InvalidInputException {

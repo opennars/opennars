@@ -13,7 +13,6 @@ import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
-import java.io.Serializable;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -24,14 +23,14 @@ import java.util.stream.Stream;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends NAL implements Serializable {
+abstract public class ConceptProcess extends NAL  {
 
 
 
     protected final TaskLink taskLink;
     protected final Concept concept;
 
-    private Task currentBelief;
+    private Task currentBelief = null;
     private transient boolean cyclic;
 
     @Override public Task getTask() {
@@ -82,27 +81,23 @@ abstract public class ConceptProcess extends NAL implements Serializable {
 //        return c;
 //    }
 
-    @Override public void updateBelief(Task nextBelief) {
+    @Override public final void updateBelief(Task nextBelief) {
         this.currentBelief = nextBelief;
 
-        if (nextBelief == null)
-        cyclic = false;
-        else {
-            Task t = getTask();
-            cyclic = Stamp.overlapping(t, nextBelief);
-        }
+        this.cyclic = (nextBelief!=null) ? Stamp.overlapping(getTask(), nextBelief) :
+                            false;
     }
 
 
     @Override
-    public Task getBelief() {
+    public final Task getBelief() {
         return currentBelief;
     }
 
 
     //TODO cache this value
     @Override
-    public boolean isCyclic() {
+    public final boolean isCyclic() {
         return cyclic;
     }
 

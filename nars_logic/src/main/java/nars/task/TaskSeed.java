@@ -7,10 +7,10 @@ import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -191,7 +191,7 @@ import javax.annotation.Nullable;
     }
 
     public TaskSeed tense(Tense t, Memory memory) {
-        this.occurr(Stamp.getOccurrenceTime(memory.time(), t, memory));
+        this.occurr(Temporal.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
 

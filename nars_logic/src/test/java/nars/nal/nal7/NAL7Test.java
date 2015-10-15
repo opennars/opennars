@@ -193,8 +193,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<(*,John,key) --> hold>. :|:");
-        tester.nar.frame(10);
-        tester.input("<<(*,John,door) --> open> =/> <(*,John,room) --> enter>>. :|:");
+        tester.inputAt(10, "<<(*,John,door) --> open> =/> <(*,John,room) --> enter>>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<(*,John,key) --> hold>,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>", 1.00f, 0.45f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -206,8 +205,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<(*,John,key) --> hold>. :|:");
-        tester.nar.frame(10);
-        tester.input("<(*,John,key) --> hold>. :|: %0%");
+        tester.inputAt(10, "<(*,John,key) --> hold>. :|: %0%");
 
         tester.mustBelieve(cycles, "<(*,John,key) --> hold>", 0.4f, 0.91f); // :|: TODO HOW TEST FOR OCCURENCE?
         tester.run();
@@ -221,11 +219,12 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<{t003} --> (/,at,SELF,_)>. :|:");
-        tester.nar.frame(10);
-        tester.input("<{t003} --> (/,on,{t002},_)>. :|:");
+        tester.inputAt(10, "<{t003} --> (/,on,{t002},_)>. :|:");
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
-        tester.mustBelieve(cycles, "(&&,<#1 --> (/,at,SELF,_)>,<#1 --> (/,on,{t002},_)>)", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
+        tester.mustBelieve(cycles, "(&&,<#1 --> (/,at,SELF,_)>,<#1 --> (/,on,{t002},_)>)",
+                1.0f, 0.81f,
+                10);
         tester.run();
     }
 
@@ -236,8 +235,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|:");
-        tester.nar.frame(10);
-        tester.input("<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>.");
+        tester.inputAt(10, "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>.");
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>.", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
@@ -251,8 +249,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
-        tester.nar.frame(10);
-        tester.input("(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
+        tester.inputAt(10, "(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "(^pick,{t002})!", 1.0f, 0.42f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?
@@ -266,8 +263,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.nar.stdout();
 
         tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
-        tester.nar.frame(10);
-        tester.input("<(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.");
+        tester.inputAt(10, "<(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.");
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>.", 1.0f, 0.81f); //TODO:  :|: TODO HOW TEST FOR OCCURENCE?

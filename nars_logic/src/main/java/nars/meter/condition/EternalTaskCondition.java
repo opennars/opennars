@@ -5,7 +5,6 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.io.Texts;
-import nars.nal.nal7.Temporal;
 import nars.narsese.InvalidInputException;
 import nars.task.DefaultTask;
 import nars.task.Task;
@@ -22,7 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class TaskCondition extends DefaultTask implements Serializable, Predicate<Task>, Consumer<Task> {
+public class EternalTaskCondition extends DefaultTask implements Serializable, Predicate<Task>, Consumer<Task> {
 
     //@Expose
 
@@ -32,18 +31,11 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
     //@Expose
     //public  char punc;
 
-    //@Expose
     public  float freqMin;
-    //@Expose
     public  float freqMax;
-    //@Expose
     public  float confMin;
-    //@Expose
     public  float confMax;
-    //@Expose
-    public  long cycleStart; //-1 for not compared
-    //@Expose
-    public  long cycleEnd;  //-1 for not compared
+    public  long creationStart, creationEnd; //-1 for not compared
 
     /*float tenseCost = 0.35f;
     float temporalityCost = 0.75f;*/
@@ -86,7 +78,7 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
 //
 //    CurveBag<String,StringDistance> similar2 = new CurveBag(16);
 
-    public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+    public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n.task(sentenceTerm + punc));
 
         this.nar = n;
@@ -94,12 +86,12 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
 
-        if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
+        if (creationEnd - creationStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
 
 
         setCreationTime(n.time());
-        this.cycleStart = cycleStart;
-        this.cycleEnd = cycleEnd;
+        this.creationStart = creationStart;
+        this.creationEnd = creationEnd;
         setEternal();
         this.freqMax = Math.min(1.0f, freqMax);
         this.freqMin = Math.max(0.0f, freqMin);
@@ -134,10 +126,10 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
             return result;
     }
 
-    //time distance function
-    public double getTimeDistance(long now) {
-        return rangeError(now, cycleStart, cycleEnd, true);
-    }
+//    //time distance function
+//    public double getTimeDistance(long now) {
+//        return rangeError(now, creationStart, creationEnd, true);
+//    }
 
     //truth distance function
     public double getTruthDistance(Truth t) {
@@ -180,7 +172,9 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
         }
         if (task.getPunctuation() != getPunctuation())
             return false;
-        //long now = nar.time();
+
+        if (!timeMatches(task))
+            return false;
 
         Term tterm = task.getTerm();
 
@@ -189,7 +183,23 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
 
     }
 
+    public boolean timeMatches(Task t) {
+        return creationTimeMatches(t) && occurrenceTimeMatches(t);
+    }
 
+    boolean creationTimeMatches(Task t) {
+        long now = nar.time();
+        if ( ((creationStart !=-1) && (now < creationStart)) ||
+                ((creationEnd !=-1) && (now > creationEnd)))  {
+            //distance += 1; //getTimeDistance(now);
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean occurrenceTimeMatches(Task t) {
+        return (t.isEternal());
+    }
 
 
 
@@ -202,60 +212,13 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
         if (!matches(task))
             distance = 1;
 
-        long now = nar.time();
 
 
 
-        if ( ((cycleStart!=-1) && (now < cycleStart)) ||
-                ((cycleEnd!=-1) && (now > cycleEnd)))  {
-            distance += 1; //getTimeDistance(now);
-        }
 
 
 
-        //require right kind of tense
-        if (isEternal()) {
-            if (!Temporal.isEternal(task.getOccurrenceTime())) {
-                distance += 1; //temporalityCost;
-            }
-        }
-        else {
-            if (Temporal.isEternal(task.getOccurrenceTime())) {
-                distance += 1;// temporalityCost - 0.01;
-            }
-            else {
 
-                    final long oc = task.getOccurrenceTime();
-
-                    final int durationWindow = task.getDuration();
-
-                    final int durationWindowNear = durationWindow / 2;
-                    final int durationWindowFar = true ? durationWindowNear : durationWindow;
-
-
-//                    long at = relativeToCondition ? getCreationTime() : task.getCreationTime();
-                    final boolean tmatch = false;
-//                    switch () {
-//                        //TODO write time matching
-////                        case Past: tmatch = oc <= (-durationWindowNear + at); break;
-////                        case Present: tmatch = oc >= (-durationWindowFar + at) && (oc <= +durationWindowFar + at); break;
-////                        case Future: tmatch = oc > (+durationWindowNear + at); break;
-//                        default:
-                            throw new RuntimeException("Invalid tense for non-eternal TaskCondition: " + this);
-//                    }
-//                    if (!tmatch) {
-//                        //beyond tense boundaries
-//                        //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
-//                        distance += 1; //tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
-//                        match = false;
-//                    }
-//                    else {
-//                        //System.out.println("matched time");
-//                    }
-
-            }
-
-        }
 
 
         //TODO use range of acceptable occurrenceTime's for non-eternal tests
@@ -382,9 +345,9 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
      *  this is the soonest time at which all output conditions were successful.
      *  if any conditions were not successful, the cost is infinity
      * */
-    public static double cost(Iterable<TaskCondition> conditions) {
+    public static double cost(Iterable<EternalTaskCondition> conditions) {
         long lastSuccess = Stamp.TIMELESS;
-        for (TaskCondition e : conditions) {
+        for (EternalTaskCondition e : conditions) {
             long est = e.getSuccessTime();
             if (est != Stamp.TIMELESS) {
                 if (lastSuccess < est) {
@@ -404,7 +367,7 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
      *  monotonically increasing from -1..+1 (-1 if there were errors,
      *  0..1.0 if all successful.  limit 0 = takes forever, limit 1.0 = instantaneous
      */
-    public static double score(List<TaskCondition> requirements) {
+    public static double score(List<EternalTaskCondition> requirements) {
         double cost = cost(requirements);
         if (Double.isFinite(cost))
             return 1.0 / (1.0 + cost);
@@ -420,7 +383,7 @@ public class TaskCondition extends DefaultTask implements Serializable, Predicat
     public String toConditionString() {
         return  "  freq in(" + freqMin + "," + freqMax +
                 "), conf in(" + confMin + "," + confMax +
-                "), cycle in(" + cycleStart + "," + cycleEnd + ")";
+                "), cycle in(" + creationStart + "," + creationEnd + ")";
     }
 
     public void toString(PrintStream out) {

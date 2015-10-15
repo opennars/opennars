@@ -153,7 +153,7 @@ public class PerceptionAccel extends Active {
 
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-            boolean after = newEvent.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)), nal.nar.memory().duration.get());
+            boolean after = newEvent.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)));
 
             //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it

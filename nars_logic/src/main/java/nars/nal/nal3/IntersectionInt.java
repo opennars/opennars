@@ -77,6 +77,7 @@ public class IntersectionInt extends Intersect {
         
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set union
+            //TODO dont assume that all Sets are implemented via Compounds here:
             Term[] both = ObjectArrays.concat(
                     ((Compound) term1).term,
                     ((Compound) term2).term, Term.class);

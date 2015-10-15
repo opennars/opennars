@@ -193,7 +193,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     default Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
-        return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
+        return setOccurrenceTime(Temporal.getOccurrenceTime(creation, tense, duration));
     }
 
 
@@ -472,11 +472,11 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
 
-    default boolean after(Sentence s, int duration) {
+    default boolean after(Sentence s) {
         return Temporal.occurrsAfter(s, this);
     }
 
-    default boolean before(final Sentence s, final int duration) {
+    default boolean before(final Sentence s) {
         return Temporal.occurrsAfter(this, s);
     }
 
