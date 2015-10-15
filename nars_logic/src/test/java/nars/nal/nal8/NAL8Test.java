@@ -59,7 +59,6 @@ public class NAL8Test extends AbstractNALTest {
         tester.input("<{t001} --> [opened]>. :|:");
         tester.inputAt(10, "<(&/,<(SELF,{t002}) --> hold>,<(SELF,{t001}) --> at>,<({t001}) --> ^open>) =/> <{t001} --> [opened]>>.");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustDesire(cycles, "(&/,<(SELF,{t002}) --> hold>,<(SELF,{t001}) --> at>,<(*,{t001}) --> ^open>)",
                 1.0f, 0.81f,
                 10); // :|:
@@ -72,7 +71,6 @@ public class NAL8Test extends AbstractNALTest {
 
         tester.input("(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustDesire(cycles, "<(*,SELF,{t002}) --> hold>",
                 1.0f, 0.81f,
                 0); // :|:
@@ -87,7 +85,6 @@ public class NAL8Test extends AbstractNALTest {
         tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
         tester.inputAt(10, "(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustDesire(cycles, "(^pick,{t002})", 1.0f, 0.42f, 10); // :|:
         tester.run();
     }
@@ -101,7 +98,6 @@ public class NAL8Test extends AbstractNALTest {
         tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
         tester.inputAt(10, "<(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>.", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
@@ -114,7 +110,6 @@ public class NAL8Test extends AbstractNALTest {
         tester.input("(^pick,{t002}). :\\: ");
         tester.inputAt(10, "<(^pick,{t002})=/><(*,SELF,{t002}) --> hold>>. :\\: ");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> hold>", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
@@ -124,10 +119,9 @@ public class NAL8Test extends AbstractNALTest {
         TestNAR tester = test();
 
 
-        tester.input("<(*,SELF,{t002}) --> hold>");
+        tester.input("<(*,SELF,{t002}) --> hold>.");
         tester.inputAt(10, "(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustDesire(cycles, "(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))", 1.0f, 0.43f); // :|:
         tester.run();
     }
@@ -139,8 +133,150 @@ public class NAL8Test extends AbstractNALTest {
         tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>.");
         tester.inputAt(10, "<(*,SELF,{t002}) --> hold>. :|: ");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustDesire(cycles, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void detaching_condition() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>.");
+        tester.inputAt(10, "<(*,SELF,{t002}) --> hold>. :|:");
+
+        tester.mustBelieve(cycles, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void detaching_single_premise() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
+
+
+        tester.mustDesire(cycles, "<(*,SELF,{t002}) --> reachable>", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void detaching_single_premise2() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
+
+
+        tester.mustDesire(cycles, "<(*,SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void goal_deduction() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t001}) --> at>!");
+        tester.inputAt(10, "<(^goto,$1)=/><(*,SELF,$1) --> at>>.");
+
+        tester.mustDesire(cycles, "(^goto,{t001})", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void goal_deduction_2() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("(^go-to,{t001}). :\\: ");
+        tester.inputAt(10, "<(^go-to,$1)=/><(*,SELF,$1) --> at>>. ");
+
+        tester.mustBelieve(cycles, "<(*,SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void detaching_condition_2() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t001}) --> at>. :|: ");
+        tester.inputAt(10, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>. :|:");
+
+        tester.mustBelieve(cycles, "<(^open,{t001}) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void goal_abduction_2() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t001}) --> at>. :|:");
+        tester.inputAt(10, "(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
+
+        tester.mustDesire(cycles, "(^open,{t001})", 1.0f, 0.43f); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void belief_deduction_by_condition() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(^open,{t001})=/><{t001} --> [opened]>>. :|: ");
+        tester.inputAt(10, "(^open,{t001}). :|:");
+
+        tester.mustBelieve(cycles, "<{t001} --> [opened]>", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void condition_goal_deduction() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t002}) --> reachable>! ");
+        tester.inputAt(10, "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>)=|><(*,SELF,$1) --> reachable>>.");
+
+        tester.mustDesire(cycles, "(&|,<(*,SELF,#1) --> at>,<(*,{t002},#1) --> on>)", 1.0f, 0.81f); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void condition_goal_deduction_2() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,{t002},{t003}) --> on>. :|:");
+        tester.inputAt(10, "(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>)!");
+
+        tester.mustDesire(cycles, "<(*,SELF,{t003}) --> at>", 1.0f, 0.81f); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void condition_goal_deduction_3() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t003}) --> at>!");
+        tester.inputAt(10, "<(^go-to,$1)=/><(*,SELF,$1) --> at>>.");
+
+        tester.mustDesire(cycles, "(^go-to,{t003})", 1.0f, 0.81f); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void ded_with_var_temporal() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,{t003}) --> ^go-to>. :|: ");
+        tester.inputAt(10, "<<(*,$1) --> ^go-to> =/> <(*,SELF,$1) --> at>>. ");
+
+        tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void ded_with_var_temporal() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(*,{t003}) --> ^go-to>. :|: ");
+        tester.inputAt(10, "<<(*,$1) --> ^go-to> =/> <(*,SELF,$1) --> at>>. ");
+
+        tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f,10); // :|:
         tester.run();
     }
 

@@ -237,7 +237,6 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("<{t003} --> (/,at,SELF,_)>. :|:");
         tester.inputAt(10, "<{t003} --> (/,on,{t002},_)>. :|:");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "(&&,<#1 --> (/,at,SELF,_)>,<#1 --> (/,on,{t002},_)>)",
                 1.0f, 0.81f,
                 10);
@@ -253,7 +252,6 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|:");
         tester.inputAt(10, "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>.");
 
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>.",
                 1.0f, 0.81f,
                 10); // :|:
