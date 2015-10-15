@@ -141,6 +141,7 @@
     -fx-border-color: green;
 }
 
+
 .windget {
 
     -fx-border-width: 8px 8px 8px 8px;
@@ -631,3 +632,9 @@
 .progress-indicator:indeterminate .segment7 {-fx-shape:null;} */
 
 
+.error {
+    -fx-text-style: italic;
+    -fx-background-color: red;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}

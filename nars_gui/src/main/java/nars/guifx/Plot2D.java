@@ -214,11 +214,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
             g.setGlobalBlendMode(BlendMode.SRC_OVER /* default */);
 
             series.forEach(s -> {
-                final int histSize = s.history.size();
 
-                final double dx = (w / histSize);
-
-                double x = 0;
 
 
                 DoubleToDoubleFunction ypos = (v) -> {
@@ -236,8 +232,16 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
                 g.setLineWidth(2);
                 g.setStroke(s.color);
                 g.beginPath();
-                for (int i = 0; i < histSize; i++) {
-                    final double v = s.history.get(i);
+
+                FloatArrayList sh = s.history;
+
+                final int histSize = sh.size();
+
+                final double dx = (w / histSize);
+
+                double x = 0;
+                for (int i = 0; i < sh.size(); i++) { //TODO why does the array change
+                    final double v = sh.get(i);
 
                     double y = ypos.valueOf(v);
 

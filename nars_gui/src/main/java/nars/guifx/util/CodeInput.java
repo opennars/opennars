@@ -1,6 +1,7 @@
 package nars.guifx.util;
 
 import com.google.common.collect.Lists;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -40,8 +41,18 @@ public class CodeInput extends BorderPane {
             //ctrl-enter
             if (k.isControlDown() && k.getCode() == KeyCode.ENTER) {
                 runLater(()-> {
-                    if (onInput(codeArea.getText())) {
-                        codeArea.clear();
+                    try {
+                        if (onInput(codeArea.getText())) {
+                            codeArea.clear();
+                        }
+                        setRight(null);
+                        layout();
+                    }
+                    catch (Exception e) {
+                        Label err = new Label(e.getMessage());
+                        err.getStyleClass().add("error");
+                        setRight(err);
+                        layout();
                     }
                 });
             }

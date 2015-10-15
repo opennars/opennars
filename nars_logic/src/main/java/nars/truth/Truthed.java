@@ -5,12 +5,18 @@ public interface Truthed {
     Truth getTruth();
 
     default float getExpectation() {
-        return getTruth().getExpectation();
+        Truth t = getTruth();
+        if (t == null) return Float.NaN;
+        return t.getExpectation();
     }
     default float getConfidence() {
-        return getTruth().getConfidence();
+        Truth t = getTruth();
+        if (t == null) return Float.NaN;
+        return t.getConfidence();
     }
     default float getFrequency() {
-        return getTruth().getFrequency();
+        Truth t = getTruth();
+        if (t == null) return Float.NaN;
+        return t.getFrequency();
     }
 }
