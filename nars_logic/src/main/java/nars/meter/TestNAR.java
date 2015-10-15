@@ -298,7 +298,7 @@ public class TestNAR  {
 //        long now = time();
 //        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
 //    }
-    @Deprecated public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, Tense t) throws InvalidInputException {
+    public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, Tense t) throws InvalidInputException {
         return mustOutput(nar.time(), withinCycles, term, '.', freq, freq, confidence, confidence, nar.time(t));
     }
     public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, long occTimeAbsolute) throws InvalidInputException {

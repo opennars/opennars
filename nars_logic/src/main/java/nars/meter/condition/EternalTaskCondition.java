@@ -9,7 +9,6 @@ import nars.narsese.InvalidInputException;
 import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
@@ -170,16 +169,20 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
         if (task == null) {
             return false;
         }
+
+        if (!task.getTerm().equals(getTerm())) return false;
+
         if (task.getPunctuation() != getPunctuation())
             return false;
 
         if (!timeMatches(task))
             return false;
 
-        Term tterm = task.getTerm();
+
+
 
         //require exact term
-        return tterm.equals(this.term);
+        return true;
 
     }
 
@@ -383,7 +386,7 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
     public String toConditionString() {
         return  "  freq in(" + freqMin + "," + freqMax +
                 "), conf in(" + confMin + "," + confMax +
-                "), cycle in(" + creationStart + "," + creationEnd + ")";
+                "), creation in(" + creationStart + "," + creationEnd + ")";
     }
 
     public void toString(PrintStream out) {
