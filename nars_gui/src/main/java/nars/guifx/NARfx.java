@@ -364,13 +364,19 @@ public class NARfx  {
     public static final Color hashColor(Object op, float intensity, ColorMatrix ca) {
 
     }*/
-
     public static final Color hashColor(Object op, ColorMatrix ca) {
-        int h = op.hashCode();
-        int p = h^(31*h);
-        if (p < 0) p = -p;
+        return hashColor(op.hashCode(), ca);
+    }
 
-        return ca.get(p % ca.cc.length, 0);
+    public static final Color hashColor(int h, ColorMatrix ca) {
+        return hashColor(h, 0, ca);
+    }
+
+    public static final Color hashColor(int h, double b, ColorMatrix ca) {
+        int cl = ca.cc.length;
+        int i = (h % cl);
+        if (i < 0) i = -i;
+        return ca.get( ((double)i) / cl, b);
     }
 
     public static void popup(Parent n) {

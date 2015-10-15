@@ -270,7 +270,7 @@ public class NAL8Test extends AbstractNALTest {
     }
 
     @Test
-    public void ded_with_var_temporal() throws InvalidInputException {
+    public void ded_with_var_temporal2() throws InvalidInputException {
         TestNAR tester = test();
 
         tester.input("<(*,{t003}) --> ^go-to>. :|: ");

@@ -26,8 +26,8 @@ public abstract class NControl extends StackPane {
 
         final ReadOnlyObjectProperty<Bounds> bp = boundsInParentProperty();
 
-        maxWidth(Double.MAX_VALUE);
-        maxHeight(Double.MAX_VALUE);
+        //maxWidth(Double.MAX_VALUE);
+        //maxHeight(Double.MAX_VALUE);
 
         if (w <= 0 && h <= 0) {
 
@@ -51,6 +51,7 @@ public abstract class NControl extends StackPane {
             //maxWidth(Double.MAX_VALUE);
             boundsInParentProperty().addListener((b) -> {
                 canvas.setWidth(bp.get().getWidth());
+                setPrefWidth(bp.get().getWidth());
                 setWidth(bp.get().getWidth());
                 redraw();
             });

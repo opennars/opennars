@@ -28,6 +28,7 @@ public class ColorMatrix {
         this.compute = compute;
     }
 
+
     public final Color get(double px, double py) {
         int x = p(px, w);
         int y = p(py, h);

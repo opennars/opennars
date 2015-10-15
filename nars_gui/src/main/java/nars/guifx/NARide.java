@@ -4,14 +4,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.budget.Budget;
+import nars.budget.Budgeted;
 import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
 import nars.concept.Concept;
@@ -23,12 +26,14 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
+import nars.guifx.util.NControl;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.NARLoop;
+import nars.util.data.Util;
 import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
@@ -453,10 +458,51 @@ public class NARide extends BorderPane {
             Button bake = new Button("Bake");
             //TODO scramble concept memory, replace random % with subconcepts
 
-            setCenter( new FlowPane(sleep, wake, bake) );
+            BudgetScatterPane b = new BudgetScatterPane(() -> cycle.concepts());
+            nar.onEachFrame((n) -> b.redraw());
+            setCenter(b);
+
+            setBottom( new FlowPane(sleep, wake, bake) );
+        }
+
+
+    }
+    public static class BudgetScatterPane<X extends Budgeted> extends NControl {
+        private final Supplier<Iterable<X>> source;
+
+        public BudgetScatterPane(Supplier<Iterable<X>> source) {
+            super(350,250);
+            this.source = source;
+        }
+
+        @Override
+        protected void redraw() {
+
+            GraphicsContext g = canvas.getGraphicsContext2D();
+            double w = canvas.getWidth(), h = canvas.getHeight();
+            g.clearRect(0, 0, w, h);
+
+            final double iw = 6;
+            final double ih = 6;
+
+            if (source!=null) {
+                Iterable<X> si = source.get();
+
+                for (X i : si) {
+                    Budget b = i.getBudget();
+
+                    int c = i.hashCode();
+                    Color f = NARfx.hashColor(c, b.summary(), Plot2D.ca);
+                    g.setFill(f);
+
+                    float p = b.getPriorityIfNaNThenZero();
+                    double x = w * Math.abs(c % Util.PRIME2) / Util.PRIME2;
+                    double y = h * p;
+                    g.fillRect(x - iw / 2, y - ih / 2, iw, ih);
+                }
+            }
         }
     }
-
 
 //    public class NARReactionPane extends NARCollectionPane<Reaction> {
 //

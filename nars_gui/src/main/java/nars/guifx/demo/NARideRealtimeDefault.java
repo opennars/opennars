@@ -28,9 +28,9 @@ public class NARideRealtimeDefault {
                 InfiniPeer.tmp().getCache()
             )*/
         );
-        NAR nar = new Default(mem, 1024, 3, 5, 7);
+        NAR nar = new Default(mem, 1024, 1, 1, 3);
 
-        nar.memory.conceptForgetDurations.set(5);
+        nar.memory.conceptForgetDurations.set(25);
         nar.memory.duration.set(100 /* ie, milliseconds */);
         //nar.spawnThread(1000/60);
 
