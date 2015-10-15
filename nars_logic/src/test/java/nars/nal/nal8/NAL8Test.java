@@ -88,7 +88,7 @@ public class NAL8Test extends AbstractNALTest {
         tester.inputAt(10, "(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
-        tester.mustBelieve(cycles, "(^pick,{t002})!", 1.0f, 0.42f, 10); // :|:
+        tester.mustDesire(cycles, "(^pick,{t002})", 1.0f, 0.42f, 10); // :|:
         tester.run();
     }
 
@@ -103,6 +103,44 @@ public class NAL8Test extends AbstractNALTest {
 
         //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
         tester.mustBelieve(cycles, "<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>.", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void temporal_deduction_1() throws InvalidInputException {
+        TestNAR tester = test();
+
+
+        tester.input("(^pick,{t002}). :\\: ");
+        tester.inputAt(10, "<(^pick,{t002})=/><(*,SELF,{t002}) --> hold>>. :\\: ");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> hold>", 1.0f, 0.81f, 10); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void temporal_goal_detachment_1() throws InvalidInputException {
+        TestNAR tester = test();
+
+
+        tester.input("<(*,SELF,{t002}) --> hold>");
+        tester.inputAt(10, "(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustDesire(cycles, "(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))", 1.0f, 0.43f); // :|:
+        tester.run();
+    }
+
+    @Test
+    public void temporal_abduction_2() throws InvalidInputException {
+        TestNAR tester = test();
+
+        tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>.");
+        tester.inputAt(10, "<(*,SELF,{t002}) --> hold>. :|: ");
+
+        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
+        tester.mustDesire(cycles, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
         tester.run();
     }
 
