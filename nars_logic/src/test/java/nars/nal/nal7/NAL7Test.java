@@ -260,32 +260,4 @@ public class NAL7Test extends AbstractNALTest {
         tester.run();
     }
 
-
-    @Test
-    public void further_detachment() throws InvalidInputException {
-        TestNAR tester = test();
-         
-
-        tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
-        tester.inputAt(10, "(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
-
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
-        tester.mustBelieve(cycles, "(^pick,{t002})!", 1.0f, 0.42f, 10); // :|:
-        tester.run();
-    }
-
-
-    @Test
-    public void further_detachment_2() throws InvalidInputException {
-        TestNAR tester = test();
-         
-
-        tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
-        tester.inputAt(10, "<(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.");
-
-        //0.81 because from goal perspective it is deduction, following from the definition (A)! being equal to (A==>D).
-        tester.mustBelieve(cycles, "<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>.", 1.0f, 0.81f, 10); // :|:
-        tester.run();
-    }
-
 }
