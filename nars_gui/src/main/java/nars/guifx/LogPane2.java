@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import javafx.scene.Node;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
@@ -18,6 +17,7 @@ import static javafx.application.Platform.runLater;
  */
 public class LogPane2 extends LogPane {
 
+    private List<ConceptSummaryPane> displayed;
     LinkedHashSet<Concept> display = new LinkedHashSet();
     int maxShown = 64;
 
@@ -26,6 +26,10 @@ public class LogPane2 extends LogPane {
     public LogPane2(NAR n) {
         super();
 
+        n.onEachFrame(nn-> {
+            if (displayed!=null)
+                displayed.forEach(csp -> csp.update(true, false));
+        });
         n.memory.eventConceptChange.on((Concept c) -> {
             //TODO more efficient:
             display.remove(c);
@@ -35,7 +39,7 @@ public class LogPane2 extends LogPane {
             //  runLater(update);
             if (pendingShown.compareAndSet(false, true)) {
 
-                List<Node> displayed = Global.newArrayList();
+                displayed = Global.newArrayList();
                 Iterator<Concept> ii = display.iterator();
                 int toSkip = display.size() - maxShown;
                 while (ii.hasNext()) {
@@ -60,13 +64,13 @@ public class LogPane2 extends LogPane {
 
     }
 
-    WeakValueHashMap<Concept,ConceptSummaryPane> concepts = new WeakValueHashMap();
+    final WeakValueHashMap<Concept,ConceptSummaryPane> cache = new WeakValueHashMap();
 
-    Node node(Concept cc) {
-        ConceptSummaryPane cp = concepts.computeIfAbsent(cc, koncept -> {
+    ConceptSummaryPane node(Concept cc) {
+        ConceptSummaryPane cp = cache.computeIfAbsent(cc, koncept -> {
             return new ConceptSummaryPane(koncept);
         });
-        cp.update();
+        cp.update(true,true);
         return cp;
     }
 

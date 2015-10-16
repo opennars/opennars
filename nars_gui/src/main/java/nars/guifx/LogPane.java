@@ -38,7 +38,7 @@ public class LogPane extends BorderPane  {
 
     List<Node> pending;
 
-    NSliderSet filter = new NSliderSet();
+    //NSliderSet filter = new NSliderSet();
 
     ScrollPane scrollParent = null;
 
@@ -47,7 +47,7 @@ public class LogPane extends BorderPane  {
         content.getChildren().setAll(c);
         scrollBottom.run();
     }
-    public void commit(Collection<Node> c) {
+    public void commit(Collection<? extends Node> c) {
         content.getChildren().setAll(c);
         scrollBottom.run();
     }
@@ -204,12 +204,12 @@ public class LogPane extends BorderPane  {
         public PremisePane(Premise p, NAR nar) {
             super(
                     new Label(p.getClass().getSimpleName()),
-                    new AutoLabel.TaskLabel(p.getTask(),nar)
+                    new TaskLabel(p.getTask(),nar)
             );
 
             if (p.getBelief()!=null)
                 getChildren().add(
-                        new AutoLabel.TaskLabel( p.getBelief(),nar )
+                        new TaskLabel( p.getBelief(),nar )
                 );
 
             /*setScaleX(0.5);

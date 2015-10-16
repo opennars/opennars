@@ -51,7 +51,7 @@ public class TreePane extends BorderPane {
 
         this.nar = n;
 
-        newLabel = u -> new AutoLabel.TaskLabel(u, nar);
+        newLabel = u -> new TaskLabel(u, nar);
 
         NSlider ns = new NSlider("Min Task Priority", 80, 20, 0); //show everytihng initially
 

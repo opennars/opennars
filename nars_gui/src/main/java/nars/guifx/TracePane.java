@@ -146,7 +146,7 @@ public class TracePane extends LogPane implements Runnable {
         } else if (channel.equals("eventInput")) {
             Task t = (Task) signal;
             if (t.getPriority() >= volume.get())
-                return new AutoLabel.TaskLabel(t, nar);
+                return new TaskLabel(t, nar);
             else
                 return null;
         } else if (signal instanceof Premise) {
