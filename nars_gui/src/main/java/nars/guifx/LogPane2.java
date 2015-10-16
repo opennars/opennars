@@ -31,8 +31,6 @@ public class LogPane2 extends LogPane {
             display.remove(c);
             display.add(c);
 
-
-
             //if (!pendingUpdate) ..
             //  runLater(update);
             if (pendingShown.compareAndSet(false, true)) {

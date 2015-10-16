@@ -204,12 +204,12 @@ public class LogPane extends BorderPane  {
         public PremisePane(Premise p, NAR nar) {
             super(
                     new Label(p.getClass().getSimpleName()),
-                    new AutoLabel(p.getTask(),nar)
+                    new AutoLabel.TaskLabel(p.getTask(),nar)
             );
 
             if (p.getBelief()!=null)
                 getChildren().add(
-                        new AutoLabel( p.getBelief(),nar )
+                        new AutoLabel.TaskLabel( p.getBelief(),nar )
                 );
 
             /*setScaleX(0.5);

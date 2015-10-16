@@ -36,10 +36,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public Task top(final boolean eternal, final boolean temporal) {
 
-        if (isEmpty())
-            return null;
-
         final Task[] tasks = getCachedNullTerminatedArray();
+
+        if (tasks == null)
+            return null;
 
         if (eternal && temporal) {
             return tasks[0];
@@ -61,10 +61,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public final Task top(Ranker r) {
 
+        final Task[] tasks = getCachedNullTerminatedArray();
+        if (tasks == null) return null;
+
+
         float s = Float.NEGATIVE_INFINITY;
         Task b = null;
-
-        final Task[] tasks = getCachedNullTerminatedArray();
 
         Task t;
         for (int i = 0; null!=(t = tasks[i++]); ) {

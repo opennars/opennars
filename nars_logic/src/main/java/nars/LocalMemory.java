@@ -1,7 +1,7 @@
 package nars;
 
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.GuavaCacheBag;
+import nars.bag.impl.MapCacheBag;
 import nars.clock.Clock;
 import nars.clock.FrameClock;
 import nars.concept.Concept;
@@ -10,6 +10,7 @@ import nars.util.data.random.XorShift1024StarRandom;
 import org.infinispan.marshall.core.JBossMarshaller;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /** default for single-thread, in-memory processing */
 public class LocalMemory extends Memory {
@@ -20,7 +21,10 @@ public class LocalMemory extends Memory {
     }
 
     public LocalMemory(Clock clock) {
-        this(  clock, new GuavaCacheBag<>());
+        this(  clock,
+            //new GuavaCacheBag<>()
+            new MapCacheBag(new HashMap(256))
+        );
     }
 
     public LocalMemory() {

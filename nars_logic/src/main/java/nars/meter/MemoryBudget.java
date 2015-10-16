@@ -172,18 +172,29 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
             if (c == null) return; //HACK ?
 
             double p = c.getPriority();
+            if (Double.isNaN(p)) return;
 
             prisum.addValue(p);
+
+            double tlst, tmst;
 
             Bag<Sentence, TaskLink> tasklinks = c.getTaskLinks();
             tActiveTaskLinkPriority[0] += tasklinks.getPrioritySum();
             if (tasklinks.size() > 1)
-                taskLinkStdDev.increment( tasklinks.getStdDev(s) );
+                tlst = tasklinks.getStdDev(s);
+            else
+                tlst = 0;
+
+            taskLinkStdDev.increment(tlst);
 
             Bag<TermLinkKey, TermLink> termlinks = c.getTermLinks();
             tActiveTermLinkPriority[0] += termlinks.getPrioritySum();
             if (termlinks.size() > 1)
-                termLinkStdDev.increment( termlinks.getStdDev(s) );
+                tmst = termlinks.getStdDev(s);
+            else
+                tmst = 0;
+            termLinkStdDev.increment(tmst);
+
         });
 
         long N = prisum.getN();

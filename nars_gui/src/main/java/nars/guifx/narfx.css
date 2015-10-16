@@ -6,7 +6,9 @@
     -fx-font-family: monospace;
     /*-fx-font-family: 'Monospaced';*/
 
-    -fx-base: rgb(30,30,30);
+
+    -fx-base: transparent;
+
     -fx-text-base-color: rgb(230,230,230);
 
     -fx-background: rgb(0, 0, 0);
@@ -17,9 +19,8 @@
     -fx-background-radius: 0.0;
     -fx-border-radius:0,0;
     -fx-border-width: 0;
-    -fx-border-style: none;
 
-    -fx-control-inner-background: transparent;/*  rgb(30, 30, 30);*/
+    /*-fx-control-inner-background: transparent;*/
 
     /* A bright blue for highlighting/accenting objects.  For example: selected
      * text; selected items in menus, lists, trees, and tables; progress bars;
@@ -49,6 +50,18 @@
     -flatter-blue: rgb(0.0, 184.0, 222.0);*/
 
 }
+
+.control {
+    -fx-base-color: /*transparent;*/ /*rgb(30,30,30); */
+        rgba(0,0,0,0.25);
+}
+
+.text-input-control {
+    -fx-fill: gray;
+    -fx-base-color: /*transparent;*/ /*rgb(30,30,30); */
+        rgba(125,125,125,0.25);
+}
+
 /*
 .button {
     -fx-padding: 10 10 10 10;
@@ -242,11 +255,9 @@
 }
 
 .toggle-button, .button{
-    -fx-background-color: #222;
-    -fx-text-fill: -fx-text-base-color;
     /*-fx-fill: -fx-text-base-color;*/
     -fx-alignment: CENTER;
-    -fx-content-display: LEFT;
+    /*-fx-content-display: LEFT;*/
 }
 
 .toggle-button:hover, .button:hover, .slider:hover {
@@ -291,10 +302,14 @@
 
 
 .text-area , .text-field {
-    /*-fx-background-color: rgb(0,0,0);
-    -fx-background-insets:  0.0;*/
-    -fx-padding: 0.1em;
-    -fx-border-width: 0.0;
+
+    -fx-border-color: gray;
+    -fx-border-width: 1;
+    /*-fx-background-insets:  0.0;*/
+    -fx-text-fill: white;
+
+    -fx-padding: 2 2 2 2;
+
     /*-fx-prompt-text-fill: derive(-dark, 50.0%);*/
     -fx-highlight-fill: rgb(94.0, 233.0, 194.0);
 }
@@ -310,14 +325,14 @@
 }
 
 .text-area:focused  .content {
-     /*-fx-background-color: transparent;*/
+    -fx-background-color: transparent;
 }
 
 .text-area:focused, .text-field:focused {
 }
 
 .slider {
-    -fx-alignment: CENTER;
+   -fx-alignment: CENTER;
    -fx-background-color: #333; /*-flatter-blue; */
  }
 
@@ -631,6 +646,9 @@
 .progress-indicator:indeterminate .segment6 {-fx-shape:null;}
 .progress-indicator:indeterminate .segment7 {-fx-shape:null;} */
 
+.sublabel {
+    -fx-font-size: 75%;
+}
 
 .error {
     -fx-text-style: italic;
@@ -638,3 +656,4 @@
     -fx-fill: white;
     -fx-text-fill: white;
 }
+
