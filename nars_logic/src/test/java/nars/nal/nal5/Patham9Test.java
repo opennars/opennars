@@ -144,7 +144,7 @@ public class Patham9Test extends AbstractNALTest {
        tester.mustBelieve(200, "<swan --> swimmer>", 0.90f, 0.43f); //en("I guess swan can swim.");
        tester.run();
    }*/
-
+/*
     @Test
     public void pattern_trySubs_atomic() throws Exception {
         Default nar = new Default();
@@ -200,14 +200,14 @@ public class Patham9Test extends AbstractNALTest {
         if(!sub.next(t1,t2,99999)) {
             throw new Exception("Unification with pattern variable failed");
         }
-    }
-/*
+    }*/
+
     @Test
     public void temporalOrder() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<<a --> A> =/> <b --> B>>."); //en("Some bird can swim.");
-        tester.believe("<<b --> B> <|> <c --> C>>.", 0.90f, 0.9f); //en("Swan is a type of bird.");
-        tester.mustBelieve(200, "<<a --> A> =/> <b --> B>>", 0.90f, 0.43f); //en("I guess swan can swim.");
+        tester.believe("<<a --> A> =/> <b --> B>>.");
+        tester.believe("<<b --> B> <|> <c --> C>>.", 0.90f, 0.9f);
+        tester.mustBelieve(200, "<<a --> A> =/> <b --> B>>", 0.90f, 0.43f);
         tester.run();
-    }*/
+    }
 }
