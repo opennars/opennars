@@ -59,21 +59,20 @@ public class NAL7Test extends AbstractNALTest {
     public void temporal_analogy() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<<(*, $x, door) --> open> =/> <(*, $x, room) --> enter>>", 0.95f, 0.9f);
-        tester.believe("<<(*, $x, room) --> enter> <=> <(*, $x, corridor_100) --> leave>>", 1.0f, 0.9f);
+        tester.believe("<<(*, $x, room) --> enter> <|> <(*, $x, corridor_100) --> leave>>", 1.0f, 0.9f);
 
-        tester.mustBelieve(cycles, "<<door --> (/,open,$1,_)> =/> <corridor_100 --> (/,leave,$1,_)>>", 0.95f, 0.81f);
+        tester.mustBelieve(cycles, "<<(*, $x, door) --> open> =/> <(*, $x, corridor_100) --> leave>>", 0.95f, 0.81f);
         tester.run();
     }
 
     @Test
     public void inference_on_tense() throws InvalidInputException {
         TestNAR tester = test();
-         
 
         tester.believe("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>", 1.0f, 0.9f);
-        tester.input("<(John, key) --> hold>. :\\:");
+        tester.input("<(John, key) --> hold>. :|:");
 
-        tester.mustBelieve(cycles, "<(*,John,room) --> enter>", 1.00f, 0.81f, Tense.Past); //":\:"
+        tester.mustBelieve(cycles, "<(*,John,room) --> enter>", 1.00f, 0.81f, Tense.Future); //":\:"
         tester.run();
     }
 
@@ -221,7 +220,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("<(*,John,key) --> hold>. :|:");
         tester.inputAt(10, "<(*,John,key) --> hold>. :|: %0%");
 
-        tester.mustBelieve(cycles, "<(*,John,key) --> hold>",
+        tester.mustBelieve(cycles, "<(*,John,key) --> hold>", //TODO: Check truth value
                 0.4f, 0.91f,
                 10);
 
