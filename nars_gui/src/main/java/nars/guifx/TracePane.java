@@ -28,6 +28,7 @@ public class TracePane extends LogPane implements Runnable {
     private Node prev; //last node added
     ActivationTreeMap activationSet = null;
     //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
+    boolean trace = false;
 
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
@@ -77,20 +78,24 @@ public class TracePane extends LogPane implements Runnable {
     @Override
     public void run() {
 
-        Node[] c = toShow.toArray(new Node[toShow.size()]);
+        //Node[] c = toShow.toArray(new Node[toShow.size()]);
 
-        commit(c);
+        //commit(c);
+        commit(toShow);
     }
 
 
     protected void output(Object channel, Object signal) {
-        boolean trace = false;
+
+
 
         //double f = filter.value(channel);
 
         //temporary until filter working
         if (!trace && ((channel.equals("eventDerived") ||
-                channel.equals("eventTaskRemoved"))))
+                channel.equals("eventTaskRemoved") ||
+                channel.equals("eventConceptChanged"))
+        ) )
             return;
 
         Node n = getNode(channel, signal);

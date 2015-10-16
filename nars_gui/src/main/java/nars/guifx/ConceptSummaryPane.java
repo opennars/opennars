@@ -17,46 +17,48 @@ import static javafx.application.Platform.runLater;
 public class ConceptSummaryPane extends Button {
 
 
-    private final Concept obj;
+    private final Concept concept;
     //final Label subLabel = new Label();
     final AtomicBoolean pendingUpdate = new AtomicBoolean(false);
-    private final ConceptSummaryPaneIcon icon;
+    private ConceptSummaryPaneIcon icon;
     private float lastPri = -1f;
 
     public ConceptSummaryPane(Concept c) {
         super(c.getTerm().toStringCompact());
 
-        this.obj = c;
+        this.concept = c;
 
         //label.getStylesheets().clear();
         setTextAlignment(TextAlignment.LEFT);
 
-        final double iconWidth = 48f;
-        setGraphic(icon = new ConceptSummaryPaneIcon());
-        icon.size(iconWidth, iconWidth);
+        parentProperty().addListener(e -> {
 
-        //setAlignment(this, Pos.CENTER_LEFT);
+            if (getParent()!=null) {
+                if (icon==null) {
+                    final double iconWidth = 48f;
+                    setGraphic(icon = new ConceptSummaryPaneIcon());
+                    icon.size(iconWidth, iconWidth);
+                }
 
-//        setAlignment(subLabel, Pos.CENTER_LEFT);
-//        subLabel.setTextAlignment(TextAlignment.LEFT);
-//
-////        subLabel.setScaleX(0.5f);
-////        subLabel.setScaleY(0.5f);
-//        setAlignment(subLabel, Pos.CENTER_LEFT);
-//        subLabel.getStyleClass().add("sublabel");
-//
-//        setBottom(subLabel);
+                update(true,true);
+            }
+        });
 
-        update(true,true);
+        setOnMouseClicked( e -> {
+            Concept cc = ((ConceptSummaryPane)e.getTarget()).concept;
+            NARfx.newWindow(cc);
+        });
     }
 
     public void update(boolean priority, boolean icon) {
+
+        if (this.icon == null) return;
 
         if (icon) {
             this.icon.repaint();
         }
 
-        float pri = obj.getPriority();
+        float pri = concept.getPriority();
         if (Util.equal(lastPri, pri, 0.01)) {
             priority = false;
         }
@@ -117,17 +119,17 @@ public class ConceptSummaryPane extends Button {
 
             GraphicsContext g = getGraphicsContext2D();
 
-            Color c = NARfx.hashColor(obj.getTerm().hashCode(),
+            Color c = NARfx.hashColor(concept.getTerm().hashCode(),
                     1f, Plot2D.ca);
             g.setStroke(Color.GRAY);
             g.setLineWidth(m);
             g.strokeRect(m/2, m/2, W-m, H-m);
 
-            obj.getBeliefs().forEach(t-> {
-                plot(m, Wm, Hm, g, t, red);
+            concept.getBeliefs().forEach(t-> {
+                plot(m, Wm, Hm, g, t, false);
             });
-            obj.getGoals().forEach(t-> {
-                plot(m, Wm, Hm, g, t, blue);
+            concept.getGoals().forEach(t-> {
+                plot(m, Wm, Hm, g, t, true);
             });
 
         }
@@ -135,29 +137,39 @@ public class ConceptSummaryPane extends Button {
 
     }
 
-    static void plot(double m, double Wm, double hm, GraphicsContext g, Task t, ColorMatrix ca) {
-        final double w = 8;
-        final double wh = w/2.0;
+    static void plot(double m, double Wm, double hm, GraphicsContext g, Task t, boolean type) {
+
+        ColorMatrix ca = type ? red: blue;
+
+        final double w = 12;
+
 
         float freq = t.getFrequency();
         double y = (1f - freq) * Wm;
         float cnf = t.getConfidence();
         double x = cnf * hm;
 
-        g.setFill(ca.get(freq, cnf));
+        Color color = ca.get(freq, cnf);
 
-        g.fillRect(m + x-wh, m + y-wh, w, w);
+        //g.setFill(color);
+        //g.fillRect(m + x-wh, m + y-wh, w, w);
+
+
+        double cx = m + x;
+        double cy = m + y;
+
+        g.setStroke(color);
+        if (type)
+            g.strokeLine(cx-w/2, cy-w/2, cx+w/2, cy+w/2);
+        else
+            g.strokeLine(cx+w/2, cy-w/2, cx-w/2, cy+w/2);
     }
 
     final static ColorMatrix red  = new ColorMatrix(8,8,(x,y) -> {
-        double py = y * 0.5 + 0.5;
-        double ness = x * 0.9 + 0.1;
-        return new Color(1f-ness, ness, 0, py);
+        return Color.hsb(360 * (x * 0.25 + 0.25), 0.67, 0.5 + 0.5 * y);
     });
     final static ColorMatrix blue = new ColorMatrix(8,8,(x,y) -> {
-        double py = y * 0.5 + 0.5;
-        double ness = x * 0.9 + 0.1;
-        return new Color(0, 1f-ness, ness, py);
+        return Color.hsb(360 * (x * 0.25 + 0.65), 0.67, 0.5 + 0.5 * y);
     });
 
 }

@@ -19,15 +19,14 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
         super();
 
         this.obj = obj;
+        this.text = null;
 
-        setText(text = getText(obj));
+
 
         setMaxWidth(Double.MAX_VALUE);
         setMaxHeight(Double.MAX_VALUE);
 
-        changed(null, null, null);
 
-        //parentProperty().addListener(this);
 
 
     }
@@ -41,6 +40,9 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
 
     @Override
     public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+        if (text == null)
+            setText(text = getText(obj));
+
 
         /* parent changed */
         //getChildren().clear();
