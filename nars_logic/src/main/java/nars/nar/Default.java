@@ -36,7 +36,6 @@ import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.process.ConceptProcess;
-import nars.process.concept.QueryVariableExhaustiveResults;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
@@ -109,8 +108,6 @@ public class Default extends NAR {
         initTime();
 
         //n.on(new RuntimeNARSettings());
-
-        new QueryVariableExhaustiveResults(memory);
     }
 
     public void initTime() {

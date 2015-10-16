@@ -99,7 +99,7 @@ public class NAL2Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<swan --> bird>",0.9f,0.9f);//Swan is a type of bird.");
         tester.ask("<bird <-> swan>");//Is bird similar to swan?");
-        tester.mustBelieve(cycles,"<bird <-> swan>",0.9f,0.47f);//I guess that bird is similar to swan.");
+        tester.mustBelieve(cycles,"<bird <-> swan>",0.9f,0.45f);//I guess that bird is similar to swan.");
         tester.run();
     }
 

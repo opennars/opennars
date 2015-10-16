@@ -5,6 +5,7 @@ import nars.Op;
 import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.meter.TestNAR;
+import nars.nar.Default;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import org.junit.Test;
@@ -146,5 +147,62 @@ public class UnificationTest extends AbstractNALTest {
         if(!unifies)
             throw new Exception("Unification is doing nonsense");
 
+    }
+
+    @Test
+    public void pattern_trySubs_atomic() throws Exception {
+        Default nar = new Default();
+        String s1 = "<%A =/> %B>";
+        String s2 = "<<a --> A> =/> <b --> B>>";
+        nar.input(s1+".");
+        nar.input(s2+".");
+        nar.frame(10000);
+        Term t1 = nar.concept(s1).getTerm();
+        Term t2 = nar.concept(s2).getTerm();
+
+        HashMap<Term, Term> M1 = new HashMap<Term,Term>();
+        HashMap<Term, Term> M2 = new HashMap<Term,Term>();
+        FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
+        if(!sub.next(t1,t2,99999)) {
+            throw new Exception("Unification with pattern variable failed");
+        }
+    }
+
+    @Test
+    public void pattern_trySubs_Indep_Var() throws Exception {
+        Default nar = new Default();
+        String s1 = "<%A =/> %B>";
+        String s2 = "<<$1 --> A> =/> <$1 --> B>>";
+        nar.input(s1+".");
+        nar.input(s2+".");
+        nar.frame(10000);
+        Term t1 = nar.concept(s1).getTerm();
+        Term t2 = nar.concept(s2).getTerm();
+
+        HashMap<Term, Term> M1 = new HashMap<Term,Term>();
+        HashMap<Term, Term> M2 = new HashMap<Term,Term>();
+        FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
+        if(!sub.next(t1,t2,99999)) {
+            throw new Exception("Unification with pattern variable failed");
+        }
+    }
+
+    @Test
+    public void pattern_trySubs_Dep_Var() throws Exception {
+        Default nar = new Default();
+        String s1 = "<%A =/> %B>";
+        String s2 = "<<#1 --> A> =/> <$1 --> B>>";
+        nar.input(s1+".");
+        nar.input(s2+".");
+        nar.frame(10000);
+        Term t1 = nar.concept(s1).getTerm();
+        Term t2 = nar.concept(s2).getTerm();
+
+        HashMap<Term, Term> M1 = new HashMap<Term,Term>();
+        HashMap<Term, Term> M2 = new HashMap<Term,Term>();
+        FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
+        if(!sub.next(t1,t2,99999)) {
+            throw new Exception("Unification with pattern variable failed");
+        }
     }
 }
