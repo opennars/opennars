@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -11,17 +10,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
-import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.treemap.Item;
 import nars.guifx.treemap.TreemapChart;
 import nars.premise.Premise;
-import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.util.data.list.CircularArrayList;
-import nars.util.event.Topic;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,34 +28,27 @@ import static nars.guifx.NARfx.scrolled;
 /**
  * Created by me on 8/2/15.
  */
-public class LogPane extends BorderPane implements Runnable {
+public class LogPane extends BorderPane  {
 
     final Pane content;
 
-    //private final Output incoming;
-    private final NAR nar;
     final int maxLines = 64;
-    final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
-    /** threshold for minimum displayable priority */
-    private final DoubleProperty volume;
 
-    private List<Node> pending;
+
+    List<Node> pending;
 
     NSliderSet filter = new NSliderSet();
 
     ScrollPane scrollParent = null;
-    private Node prev; //last node added
 
 
-    /* to be run in javafx thread */
-    @Override public void run() {
-
-        Node[] c = toShow.toArray(new Node[toShow.size()]);
-
+    public void commit(Node[] c) {
         content.getChildren().setAll(c);
-
-
+        scrollBottom.run();
+    }
+    public void commit(Collection<Node> c) {
+        content.getChildren().setAll(c);
         scrollBottom.run();
     }
 
@@ -79,58 +68,20 @@ public class LogPane extends BorderPane implements Runnable {
 
     }
 
-    public LogPane(NAR nar, DoubleProperty volume, Object... enabled) {
+    public LogPane() {
         super();
-
-        this.volume = volume;
-        this.nar = nar;
 
         this.content = new VBox(1);
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ((VBox)content).setFillWidth(false);
 
-
-        for (Object o : enabled)
-            filter.value(o, 1);
-
-
         setCenter(scrollParent = scrolled(content));
-        setTop(filter);
+
 
 
         sceneProperty().addListener((c) -> {
             updateParent();
-        });
-        Topic.all(nar.memory(), this::output);
-
-        nar.onEachFrame( (n) -> {
-            List<Node> p = pending;
-            if (p!=null) {
-                pending = null;
-                //synchronized (nar) {
-                    int ps = p.size();
-                    int start = ps - Math.min(ps, maxLines);
-
-                    int tr = ((ps - start) + toShow.size()) - maxLines;
-                    if (tr > ps) {
-                        toShow.clear();
-                    }
-                    else {
-                        //remove first N
-                        for (int i = 0; i < tr; i++)
-                            toShow.removeFirst();
-                    }
-
-                    for (int i = start; i < ps; i++) {
-                        Node v = p.get(i);
-                        toShow.add(v);
-                    }
-                //}
-
-                //if (queueUpdate)
-                    runLater(LogPane.this);
-            }
         });
 
         /*incoming = new Output(nar) {
@@ -150,34 +101,13 @@ public class LogPane extends BorderPane implements Runnable {
             }
 
         };*/
+
+
     }
 
 
 
-    protected void output(Object channel, Object signal) {
-        boolean trace=false;
 
-        //double f = filter.value(channel);
-
-        //temporary until filter working
-        if (!trace && ((channel.equals("eventDerived") ||
-                channel.equals("eventTaskRemoved"))))
-            return;
-
-        Node n = getNode(channel, signal);
-        if (n != null) {
-            //synchronized (toShow) {
-                if (pending == null)
-                    pending = Global.newArrayList();
-
-                pending.add(n);
-                prev = n;
-            //}
-        }
-    }
-
-    ActivationTreeMap activationSet = null;
-    //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
 
     public static class ActivationTreeMap extends TreemapChart {
 
@@ -269,9 +199,9 @@ public class LogPane extends BorderPane implements Runnable {
 //    }
 
 
-    public class PremisePane extends TextFlow {
+    public static class PremisePane extends TextFlow {
 
-        public PremisePane(Premise p) {
+        public PremisePane(Premise p, NAR nar) {
             super(
                     new Label(p.getClass().getSimpleName()),
                     new AutoLabel(p.getTask(),nar)
@@ -297,67 +227,6 @@ public class LogPane extends BorderPane implements Runnable {
             setCache(true);
         }
 
-    }
-
-    boolean activationTreeMap = false;
-
-    private Node getNode(Object channel, Object signal) {
-        if (channel.equals("eventConceptActivated")) {
-            boolean newn = false;
-            if (activationSet==null && activationTreeMap) {
-                activationSet =
-                        //new ActivationSet();
-                        new ActivationTreeMap((Concept)signal);
-
-                //activationSet.prefWidth(getWidth());
-                activationSet.width.set(400);
-                activationSet.height.set(100);
-                newn = true;
-            }
-            else if (activationSet!=null) {
-                activationSet.add((Concept) signal);
-                newn = false;
-            }
-
-            if (!newn) return null;
-            else
-                return activationSet;
-        }
-        else if (channel.equals("eventCycleEnd")) {
-            if (prev!=null && (prev instanceof CycleActivationBar)) {
-                ((CycleActivationBar)prev).setTo(nar.time());
-                return null;
-            }
-            else {
-                return new CycleActivationBar(nar.time());
-            }
-//            if (activationSet!=null) {
-//                activationSet.commit();
-//                activationSet = null; //force a new one
-//            }
-            //return null;
-            //
-        }
-        else if (channel.equals("eventFrameStart")) {
-            return null;
-            //
-        } else if (channel.equals("eventInput")) {
-            Task t = (Task)signal;
-            if (t.getPriority() >= volume.get())
-                return new AutoLabel((Task) signal, nar);
-            else
-                return null;
-        } else if (signal instanceof Premise) {
-            //return new PremisePane((Premise)signal);
-            return null;
-        }
-
-        else {
-            return new Label(
-                    //channel.toString() + ": " +
-                    channel + ": " +
-                    signal.toString());
-        }
     }
 
 

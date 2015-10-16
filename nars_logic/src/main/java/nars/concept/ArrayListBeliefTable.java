@@ -161,6 +161,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         if (isEmpty()) {
             add(input);
+            onChanged(c, memory);
             return input;
         }
 
@@ -169,6 +170,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (!added) {
             return top(top(), now); //??
         }
+
+        onChanged(c, memory);
+
 
 
 //            if (ranking == null) {
@@ -242,6 +246,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         return (top !=null) ? top : input;
     }
 
+    void onChanged(Concept c, Memory memory) {
+        memory.eventConceptChange.emit(c);
+    }
 
 
     @Override public final boolean tryAdd(Task input, Ranker r, Memory memory) {

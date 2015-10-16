@@ -7,8 +7,8 @@ import nars.LocalMemory;
 import nars.NAR;
 import nars.bag.impl.GuavaCacheBag;
 import nars.clock.RealtimeMSClock;
-import nars.guifx.LogPane;
 import nars.guifx.NARide;
+import nars.guifx.TracePane;
 import nars.io.UDPNetwork;
 import nars.nar.Default;
 
@@ -26,7 +26,7 @@ public class UDPWidget extends BorderPane {
 
     public UDPWidget(NAR n) {
         super();
-        setCenter(new LogPane(n, new SimpleDoubleProperty(0), "eventCycle", "eventFrame"));
+        setCenter(new TracePane(n, new SimpleDoubleProperty(0), "eventCycle", "eventFrame"));
         runLater(()-> {
             setLeft(new UDPPane(n));
         });

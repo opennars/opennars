@@ -125,6 +125,7 @@ public class Memory extends Param {
     public transient final Topic<Task> eventDerived = new DefaultTopic<>();
 
     public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
+    public transient final Topic<Concept> eventConceptChange = new DefaultTopic();
 
 
     /**
