@@ -1,5 +1,6 @@
 package nars.guifx;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -27,6 +28,7 @@ import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.NControl;
+import nars.guifx.util.NSlider;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
@@ -35,6 +37,7 @@ import nars.term.Term;
 import nars.util.NARLoop;
 import nars.util.data.Util;
 import nars.video.WebcamFX;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jewelsea.willow.browser.WebBrowser;
 
 import java.util.*;
@@ -424,23 +427,55 @@ public class NARide extends BorderPane {
 
         private final NAR nar;
         private final Default.DefaultCycle cycle;
+        final NSlider activation;
 
         public DefaultCyclePane(Default.DefaultCycle l) {
             this.cycle = l;
             this.nar = l.nar;
 
+            this.activation = new NSlider(150, 50, 1.0) {
+
+                @Override
+                public SimpleDoubleProperty newValueEntry(int i) {
+
+                    //TODO abstract this to a Mutable* wrapper class
+
+                    final MutableFloat a = cycle.activationFactor;
+
+                    return new SimpleDoubleProperty() {
+
+                        @Override
+                        public double get() {
+                            double existing = super.get();
+                            double actual = a.getValue();
+                            if (existing!=actual)
+                                super.set(actual);
+                            return actual;
+                        }
+
+                        @Override
+                        public void set(double newValue) {
+                            super.set(newValue);
+                            a.setValue((float)newValue);
+                            //System.out.println(newValue + " "+ cycle + " activationFactor=" + cycle.activationFactor.getValue());
+                        }
+
+                    };
+                }
+            };
+
             Button sleep = new Button("Sleep");
             sleep.setOnAction((e) -> {
-                System.out.println("BEFORE CLEAR # concepts: " + cycle.concepts().size());
+                //System.out.println("BEFORE CLEAR # concepts: " + cycle.concepts().size());
                 cycle.concepts().clear();
 
-                System.out.println(" AFTER CLEAR # concepts: " + cycle.concepts().size());
+                //System.out.println(" AFTER CLEAR # concepts: " + cycle.concepts().size());
             });
 
             Button wake = new Button("Wake");
             wake.setOnAction((e) -> {
-                System.out.println("Subconcepts to sample from: " + nar.concepts().size());
-                System.out.println(" BEFORE WAKE # concepts: " + cycle.concepts().size());
+                //System.out.println("Subconcepts to sample from: " + nar.concepts().size());
+                //System.out.println(" BEFORE WAKE # concepts: " + cycle.concepts().size());
                 cycle.concepts().clear();
 
                 Budget b = new Budget(0.1f, 0.1f, 0.1f);
@@ -464,7 +499,7 @@ public class NARide extends BorderPane {
 //            nar.onEachFrame((n) -> b.redraw());
 //            setCenter(b);
 
-            setBottom( new FlowPane(sleep, wake, bake) );
+            setBottom( new FlowPane(activation, sleep, wake, bake) );
         }
 
 

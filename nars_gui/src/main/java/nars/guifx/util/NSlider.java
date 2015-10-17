@@ -102,7 +102,7 @@ public class NSlider extends NControl {
 
         this.value = new SimpleDoubleProperty[dimensions];
         for (int i = 0; i < dimensions; i++) {
-            (value[i] = new SimpleDoubleProperty())
+            (value[i] = newValueEntry(i))
                     .addListener(redrawOnDoubleChange);
         }
 
@@ -111,6 +111,10 @@ public class NSlider extends NControl {
         control.start(this);
 
         value(vector); //causes initial render
+    }
+
+    public SimpleDoubleProperty newValueEntry(int i) {
+        return new SimpleDoubleProperty();
     }
 
     /**

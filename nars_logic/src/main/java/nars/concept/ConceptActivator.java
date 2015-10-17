@@ -72,7 +72,6 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
         setKey(term);
 
-
         setBudget(b);
 
         final Param param = nar.memory;
@@ -159,6 +158,10 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
     public final void overflow(Concept c) {
         //getMemory().logic.CONCEPT_FORGET.hit();
         off(c);
+    }
+
+    public void setActivationFactor(float activationFactor) {
+        this.activationFactor = activationFactor;
     }
 
 //    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing, long time, Bag<Term, Concept> bag) {

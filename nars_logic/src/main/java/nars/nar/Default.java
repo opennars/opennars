@@ -45,6 +45,7 @@ import nars.term.Term;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.Active;
+import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.io.Serializable;
 import java.util.Random;
@@ -95,7 +96,7 @@ public class Default extends NAR {
 
         the("input", input = initInput());
 
-        the("core", core = initCore(memory, activeConcepts,
+        the("core", core = initCore(activeConcepts,
                 conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle
         ));
 
@@ -146,7 +147,7 @@ public class Default extends NAR {
         return input;
     }
 
-    public DefaultCycle initCore(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    public DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
         //HACK:
         final AtomicInteger[] tmpConceptsFiredPerCycle = new AtomicInteger[1];
@@ -154,11 +155,7 @@ public class Default extends NAR {
         DefaultCycle c = new DefaultCycle(this,
                 newDeriver(),
                 newConceptBag(activeConcepts),
-                new ConceptActivator(this, this) {
-                    @Override public float getActivationFactor() {
-                        return 1f/tmpConceptsFiredPerCycle[0].get();
-                    }
-                }
+                new ConceptActivator(this, this)
         );
 
         //TODO move these to a PremiseGenerator which supplies
@@ -408,7 +405,7 @@ public class Default extends NAR {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + '[' + nal() + +']';
+        return getClass().getSimpleName() + '[' + nal() + ']';
     }
 
     protected SimpleDeriver newDeriver() {
@@ -434,6 +431,8 @@ public class Default extends NAR {
 
         public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
         public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
+
+        public final MutableFloat activationFactor = new MutableFloat(1f);
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
 //            return LimitDerivationPriority.limitDerivation(d);
@@ -549,8 +548,12 @@ public class Default extends NAR {
             return nar.time();
         }
 
-        public Concept activate(Term term, Budget b) {
+        public final Concept activate(final Term term, final Budget b) {
+            final Bag<Term, Concept> active = this.active;
             active.setCapacity(capacity.intValue());
+
+            final ConceptActivator ca = this.ca;
+            ca.setActivationFactor( activationFactor.floatValue() );
             return ca.update(term, b, time(), 1f, active);
         }
 
