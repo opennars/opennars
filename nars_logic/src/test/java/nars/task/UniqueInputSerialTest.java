@@ -50,6 +50,7 @@ public class UniqueInputSerialTest {
 
     }
 
+
     @Test
     public void testDoublePremiseMultiEvidence() {
 

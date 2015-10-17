@@ -2,7 +2,7 @@ package nars.meter;
 
 import nars.Global;
 import nars.Memory;
-import nars.event.CycleReaction;
+import nars.event.FrameReaction;
 import nars.nal.nal3.SetInt;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 /**
  * emotional value; self-felt internal mental states; variables used to record emotional values
  */
-public class EmotionMeter extends CycleReaction implements Serializable {
+public class EmotionMeter extends FrameReaction implements Serializable {
 
     public static final Compound BUSYness = SetInt.make(Atom.the("busy"));
     private final Memory memory;
@@ -47,12 +47,15 @@ public class EmotionMeter extends CycleReaction implements Serializable {
 
         this.memory = memory;
 
-        commit();
+        onFrame(); //first update
     }
 
+
     @Override
-    public void onCycle() {
-        commit();
+    public final void onFrame() {
+        commitHappy();
+
+        commitBusy();
     }
 
     public float happy() {
@@ -197,12 +200,6 @@ public class EmotionMeter extends CycleReaction implements Serializable {
         this.busy = 0;
 
 
-    }
-
-    public void commit() {
-        commitHappy();
-
-        commitBusy();
     }
 
     public void clear() {

@@ -3,16 +3,14 @@ package nars.guifx;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
+import nars.util.event.ArraySharingList;
 import nars.util.event.On;
 import nars.util.event.Topic;
-
-import java.util.List;
 
 import static javafx.application.Platform.runLater;
 
@@ -32,6 +30,7 @@ public class TracePane extends LogPane {
     //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
     boolean trace = false;
     boolean visible = false;
+    ArraySharingList<Node> pending;
 
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
@@ -56,11 +55,14 @@ public class TracePane extends LogPane {
                         return;
                     }
 
-                    List<Node> p = pending;
+                    if (pending == null)
+                        return;
+
+                    Node[] p = pending.getCachedNullTerminatedArray();
                     if (p != null) {
                         pending = null;
                         //synchronized (nar) {
-                        int ps = p.size();
+                        int ps = p.length;
                         int start = ps - Math.min(ps, maxLines);
 
                         int tr = ((ps - start) + toShow.size()) - maxLines;
@@ -72,9 +74,12 @@ public class TracePane extends LogPane {
                                 toShow.removeFirst();
                         }
 
-                        for (int i = start; i < ps; i++) {
-                            Node v = p.get(i);
-                            toShow.add(v);
+                        for (int i = 0; i < ps; i++) {
+                            Node v = p[i];
+                            if (v == null)
+                                break;
+                            if (i >= start)
+                                toShow.add(v);
                         }
                         //}
 
@@ -112,7 +117,7 @@ public class TracePane extends LogPane {
         if (n != null) {
             //synchronized (toShow) {
             if (pending == null)
-                pending = Global.newArrayList();
+                pending = new ArraySharingList((bn)->new Node[bn]); //Global.newArrayList();
 
             pending.add(n);
             prev = n;

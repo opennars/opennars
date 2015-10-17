@@ -19,7 +19,6 @@ import nars.task.stamp.Stamp;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static javafx.application.Platform.runLater;
@@ -36,7 +35,6 @@ public class LogPane extends BorderPane  {
 
 
 
-    List<Node> pending;
 
     //NSliderSet filter = new NSliderSet();
 

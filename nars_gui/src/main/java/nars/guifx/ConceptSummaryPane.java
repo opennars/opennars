@@ -36,8 +36,8 @@ public class ConceptSummaryPane extends Button {
             if (getParent()!=null) {
                 if (icon==null) {
                     final double iconWidth = 48f;
-                    setGraphic(icon = new ConceptSummaryPaneIcon());
-                    icon.size(iconWidth, iconWidth);
+                    //setGraphic(icon = new ConceptSummaryPaneIcon());
+                    //icon.size(iconWidth, iconWidth);
                 }
 
                 update(true,true);
@@ -52,17 +52,16 @@ public class ConceptSummaryPane extends Button {
 
     public void update(boolean priority, boolean icon) {
 
-        if (this.icon == null) return;
+        if (this.icon == null)
+            icon = false;
 
         if (icon) {
             this.icon.repaint();
         }
 
         float pri = concept.getPriority();
-        if (Util.equal(lastPri, pri, 0.01)) {
+        if (Util.equal(lastPri, pri, 0.01))
             priority = false;
-        }
-
 
         if (priority && pendingUpdate.compareAndSet(false, true)) {
 

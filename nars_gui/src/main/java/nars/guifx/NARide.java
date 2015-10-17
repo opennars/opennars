@@ -460,9 +460,9 @@ public class NARide extends BorderPane {
             Button bake = new Button("Bake");
             //TODO scramble concept memory, replace random % with subconcepts
 
-            BudgetScatterPane b = new BudgetScatterPane(() -> cycle.concepts());
-            nar.onEachFrame((n) -> b.redraw());
-            setCenter(b);
+//            BudgetScatterPane b = new BudgetScatterPane(() -> cycle.concepts());
+//            nar.onEachFrame((n) -> b.redraw());
+//            setCenter(b);
 
             setBottom( new FlowPane(sleep, wake, bake) );
         }

@@ -127,7 +127,7 @@ public class LoopPane extends VBox {
                 2000.0 * v // / (1.0 - v)
         );*/
         float logScale = 50f;
-        int minDelay = 17; //60hz
+        int minDelay = 20; //slightly slower than 60hz, which is what javafx pulse runs at
         int nMS = (int) Math.round((1.0 - Math.log(1 + v * logScale) / Math.log(1 + logScale)) * 1024.0) + minDelay;
 
         loop.cyclesPerFrame = (multiplier.getValue());
