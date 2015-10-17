@@ -42,7 +42,7 @@ public class BudgetControlGame {
 
                     ,
 
-                    plots = new StatusPane(n)
+                    plots = new StatusPane(n, 384)
 
             );
 

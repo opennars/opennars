@@ -2,6 +2,7 @@ package nars.budget;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
+import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -12,8 +13,9 @@ import java.util.function.Consumer;
 
 /** priority queue which merges equal tasks and accumulates their budget.
  * stores the highest item in the last position, and lowest item in the first.
- *
- * TODO reimplement merging functions (currently uses default Plus method)
+ * one will generally only need to use these methods:
+ *      --limit(n) - until size <= n: remove lowest items
+ *      --next(n, consumer(n)) - visit N highest items
  *
  * */
 public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, Serializable {
@@ -97,11 +99,13 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 
     public final <J extends I> J removeHighest() {
         final I i = highest();
+        if (i == null) return null;
         items.remove(i);
         return (J)i;
     }
     public final <J extends I> J removeLowest() {
         final I i = lowest();
+        if (i == null) return null;
         items.remove(i);
         return (J)i;
     }
@@ -222,6 +226,21 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 
     public Set<I> keySet() {
         return items.keySet();
+    }
+
+    public void limit(int capacity) {
+        while (size() > capacity) {
+            removeLowest();
+        }
+    }
+
+    public void next(int rate, Consumer<Task> recv) {
+        int sent = 0;
+        Task next;
+        while ((sent < rate) && ((next = removeHighest())!=null)) {
+            recv.accept(next);
+            sent++;
+        }
     }
 
 

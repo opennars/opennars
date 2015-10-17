@@ -16,6 +16,7 @@ import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
 import nars.io.FIFOTaskPerception;
+import nars.io.TaskPerception;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -63,7 +64,7 @@ import java.util.stream.Stream;
 public class Default extends NAR {
 
     public final DefaultCycle core;
-    public final FIFOTaskPerception input;
+    public final TaskPerception input;
 
     /**
      * Size of TaskLinkBag
@@ -136,7 +137,7 @@ public class Default extends NAR {
         }
     }
 
-    public FIFOTaskPerception initInput() {
+    public TaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
             task -> exec(task) /* execute immediately */

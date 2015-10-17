@@ -81,8 +81,18 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     public Plot2D(PlotVis p, int history, double w, double h) {
         super(w, h);
 
-        maxWidth(Double.MAX_VALUE);
-        maxHeight(Double.MAX_VALUE);
+//        maxWidth(Double.MAX_VALUE);
+//        maxHeight(Double.MAX_VALUE);
+//
+//        if (w!=Double.MAX_VALUE) {
+//            minWidth(w);
+//            prefWidth(w);
+//        }
+//        if (h!=Double.MAX_VALUE) {
+//            prefHeight(h);
+//            minHeight(h);
+//        }
+
 
 //        parentProperty().addListener(p-> {
 //            if (p!=null) {

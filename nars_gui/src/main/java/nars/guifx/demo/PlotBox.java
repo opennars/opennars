@@ -12,9 +12,10 @@ public class PlotBox extends VBox {
     public PlotBox(Plot2D... plots) {
         super(plots);
 
-        for (int i = 0; i < plots.length; i++) {
+        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        /*for (int i = 0; i < plots.length; i++) {
 
-        }
+        }*/
     }
 
     public void update() {

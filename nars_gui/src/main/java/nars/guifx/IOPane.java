@@ -5,11 +5,8 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import nars.NAR;
 import nars.guifx.util.NSlider;
-
-import static nars.guifx.NARfx.scrolled;
 
 /**
  * Created by me on 8/2/15.
@@ -49,10 +46,10 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
     public Node newIconPane() {
 
 
-        return new VBox(
-            vs,
-            scrolled(new StatusPane(nar))
-        );
+        BorderPane b = new BorderPane();
+        b.setBottom(vs);
+        b.setCenter(new StatusPane(nar, 384));
+        return b;
 
         //return new NSlider(150, 60);
 

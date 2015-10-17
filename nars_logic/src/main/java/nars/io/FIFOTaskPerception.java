@@ -1,6 +1,5 @@
 package nars.io;
 
-import nars.Memory;
 import nars.NAR;
 import nars.task.Task;
 
@@ -37,15 +36,8 @@ public class FIFOTaskPerception extends TaskPerception {
 
 
     public FIFOTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
-        super(filter, receiver);
+        super(nar.memory(), filter, receiver);
 
-        final Memory m = nar.memory();
-        add(
-            m.eventInput.on(this),
-            m.eventDerived.on(this),
-            m.eventFrameStart.on((M) -> send()),
-            m.eventReset.on((M) -> buffer.clear() )
-        );
 
     }
 
@@ -60,6 +52,12 @@ public class FIFOTaskPerception extends TaskPerception {
             buffer.add(t);
         }
     }
+
+    @Override
+    public void clear() {
+        buffer.clear();
+    }
+
 
 
     //        @Override

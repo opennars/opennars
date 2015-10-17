@@ -1,12 +1,9 @@
 package nars.io;
 
-import nars.Global;
-import nars.budget.Budget;
-import nars.budget.ItemAccumulator;
+import nars.Memory;
 import nars.task.Task;
 import nars.util.event.Active;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -28,8 +25,16 @@ public abstract class TaskPerception extends Active implements Consumer<Task> {
      */
     protected final Consumer<Task> receiver;
 
-    public TaskPerception(Predicate<Task> filter, Consumer<Task> receiver) {
+    public TaskPerception(Memory m, Predicate<Task> filter, Consumer<Task> receiver) {
         super();
+        add(
+            m.eventInput.on(this),
+            m.eventDerived.on(this),
+            m.eventFrameStart.on((M) -> send()),
+            m.eventReset.on((M) -> clear() )
+        );
+
+
         this.filter = filter;
         this.receiver = receiver;
     }
@@ -39,25 +44,5 @@ public abstract class TaskPerception extends Active implements Consumer<Task> {
 
     public abstract void send();
 
-    /** sorts and de-duplicates incoming tasks into a capacity-limited buffer */
-    public static class SortedTaskPercepton extends TaskPerception {
-
-        final ItemAccumulator<Task> buffer = new ItemAccumulator(Budget.plus);
-
-        public SortedTaskPercepton(Predicate<Task> filter, Consumer<Task> receiver) {
-            super(filter, receiver);
-        }
-
-        @Override
-        public void accept(Task t) {
-            buffer.add(t);
-        }
-
-        private final List<Task> s = Global.newArrayList();
-        @Override
-        public void send() {
-            buffer.update(inputsMaxPerCycle.get(), s);
-            s.forEach(receiver::accept);
-        }
-    }
+    public abstract void clear();
 }

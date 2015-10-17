@@ -1,6 +1,8 @@
 package nars.nar;
 
 import nars.Memory;
+import nars.io.SortedTaskPerception;
+import nars.io.TaskPerception;
 import nars.process.concept.QueryVariableExhaustiveResults;
 
 /**
@@ -18,6 +20,20 @@ public class Default2 extends Default {
         /*
         the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
         */
+
+    }
+
+    @Override
+    public TaskPerception initInput() {
+        TaskPerception input = new SortedTaskPerception(
+                this,
+                task -> true /* allow everything */,
+                task -> exec(task) /* execute immediately */,
+                32,
+                1
+        );
+        //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
+        return input;
 
     }
 }
