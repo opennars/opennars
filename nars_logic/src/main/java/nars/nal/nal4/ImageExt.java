@@ -67,35 +67,7 @@ public class ImageExt extends Image {
 
 
 
-    /**
-     * Try to make an Image from a Product and a relation. Called by the logic rules.
-     * @param product The product
-     * @param relation The relation (the operator)
-     * @param index The index of the place-holder (variable)
-     * @return A compound generated or a term it reduced to
-     */
-    public static Term make(Product product, Term relation, short index) {
-        int pl = product.length();
-        if (relation instanceof Product) {
-            Product p2 = (Product) relation;
-            if ((pl == 2) && (p2.length() == 2)) {
-                if ((index == 0) && product.term(1).equals(p2.term(1))) { // (/,_,(*,a,b),b) is reduced to a
-                    return p2.term(0);
-                }
-                if ((index == 1) && product.term(0).equals(p2.term(0))) { // (/,(*,a,b),a,_) is reduced to b
-                    return p2.term(1);
-                }
-            }
-        }
-        /*Term[] argument =
-            Terms.concat(new Term[] { relation }, product.cloneTerms()
-        );*/
-        Term[] argument = new Term[ pl  ];
-        argument[0] = relation;
-        System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
-        return new ImageExt(argument, index+1);
-    }
 
     /**
      * Try to make an Image from an existing Image and a component. Called by the logic rules.

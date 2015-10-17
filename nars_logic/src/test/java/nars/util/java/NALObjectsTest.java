@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -127,7 +129,22 @@ public class NALObjectsTest  {
         testTermizer(new String[] { "x", "y" } );
     }
 
-    private void testTermizer(Object o) {
+    @Test public void testMapTermizer() {
+        Map map = new HashMap();
+        map.put("k1", "v1");
+        map.put("k2", "v2");
+        testTermizer(map, "{<{\"v2\"} --> \"k2\">, <{\"v1\"} --> \"k1\">}");
+
+    }
+
+    static void testTermizer(Object o, String termtoString) {
+        DefaultTermizer t = new DefaultTermizer();
+        Term term = t.term(o);
+        assertNotNull(term);
+        assertEquals(termtoString, term.toString());
+    }
+
+    static void testTermizer(Object o) {
         DefaultTermizer t = new DefaultTermizer();
         Term term = t.term(o);
         assertNotNull(term);
@@ -149,6 +166,7 @@ public class NALObjectsTest  {
 
         NALObjects no = new NALObjects(n);
         ArrayList nc = no.build("ourList", ArrayList.class);
+
 
         //n.stdout();
         nc.add("item");

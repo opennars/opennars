@@ -560,7 +560,7 @@ public class Default extends NAR {
             return ca.update(term, b, time(), 1f, active);
         }
 
-        public Bag<Term,Concept> concepts() {
+        public final Bag<Term,Concept> concepts() {
             return active;
         }
 

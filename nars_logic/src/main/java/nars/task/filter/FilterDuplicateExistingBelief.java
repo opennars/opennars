@@ -1,5 +1,6 @@
 package nars.task.filter;
 
+import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.premise.Premise;
 import nars.task.Task;
@@ -28,10 +29,10 @@ public class FilterDuplicateExistingBelief { //implements DerivationFilter {
 //    }
 
     public static boolean isUniqueBelief(Premise nal, Task t) {
-        return isUniqueBelief(nal, t.getTerm(), t.getTruth(), t.getOccurrenceTime(), t.getEvidence());
+        return isUniqueBelief(nal, t.getTerm(), t.isJudgment(), t.getTruth(), t.getOccurrenceTime(), t.getEvidence());
     }
 
-    public static boolean isUniqueBelief(Premise nal, Compound taskTerm, Truth taskTruth, long taskOccurrrence, long[] taskEvidence) {
+    public static boolean isUniqueBelief(Premise nal, Compound taskTerm, boolean isJudgOrGoal, Truth taskTruth, long taskOccurrrence, long[] taskEvidence) {
 
 
         //equality:
@@ -41,11 +42,25 @@ public class FilterDuplicateExistingBelief { //implements DerivationFilter {
         //  4. evidential set
 
         final Concept c = nal.concept(taskTerm);
-        if ((c == null) || //concept doesnt even exist so this is not a duplciate of anything
-                (!c.hasBeliefs())) //no beliefs exist at this concept
-            return true;
 
-        for (Task t : c.getBeliefs()) {
+        if (c == null) {
+            //concept doesnt even exist so this is not a duplciate of anything
+            return true;
+        }
+
+        if (isJudgOrGoal) {
+            if (!c.hasBeliefs())
+                return true; //no beliefs exist at this concept
+        }
+        else {
+            if (!c.hasGoals())
+                return true; //no goals exist at this concept
+        }
+
+
+        BeliefTable list = isJudgOrGoal ? c.getBeliefs() : c.getGoals();
+
+        for (Task t : list) {
 
             final Truth tt = t.getTruth();
 

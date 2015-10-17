@@ -270,4 +270,16 @@ abstract public class ConceptProcess extends NAL  {
 //
 //    }
 
+//    /** override-able filter for derivations which can be applied
+//     * once the term and the truth value are known */
+//    public boolean validJudgment(Term derivedTerm, Truth truth) {
+//        return true;
+//    }
+//
+//    /** override-able filter for derivations which can be applied
+//     * once the term and the truth value are known */
+//    public boolean validGoal(Term derivedTerm, Truth truth) {
+//        return true;
+//    }
+
 }

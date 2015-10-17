@@ -45,7 +45,7 @@ public class ConceptSummaryPane extends Button {
         });
 
         setOnMouseClicked( e -> {
-            Concept cc = ((ConceptSummaryPane)e.getTarget()).concept;
+            Concept cc = ((ConceptSummaryPane)e.getSource()).concept;
             NARfx.newWindow(cc);
         });
     }

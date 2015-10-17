@@ -29,7 +29,8 @@ import static nars.guifx.NARfx.scrolled;
  */
 public class SimpleNARBudgetDynamics {
 
-    static String[] abClosed = new String[] { "<a-->b>.", "<b-->a>." };
+    static String[] abFwdClosed = new String[] { "<a-->b>." };
+    static String[] abBidiClosed = new String[] { "<a-->b>.", "<b-->a>." };
     static String[] abcClosed = new String[] { "<a-->b>.", "<b-->c>." };
 
     static final Map<String,Term> terms = new HashMap();
@@ -49,9 +50,9 @@ public class SimpleNARBudgetDynamics {
 
     static final BiConsumer<NAR,Consumer<NAR>> update = (d,execution) -> new NARui(d)
 
-            .then(n -> {
-                //n.frame(preCycles);
-            })
+//            .then(n -> {
+//                //n.frame(preCycles);
+//            })
             .meter( (metrics, nar) -> {
                 metrics.set("# concepts", nar.concepts().size());
             })
@@ -134,12 +135,12 @@ public class SimpleNARBudgetDynamics {
     public static void main(String[] args) {
 
 
-        int cycles = 512;
+        int cycles = 256;
 
 
         float pri = 0.2f;
-        float dur = 0.8f;
-        float qua = 0.8f;
+        float dur = 0.5f;
+        float qua = 0.5f;
 
 
 
@@ -164,8 +165,9 @@ public class SimpleNARBudgetDynamics {
             //n.stdout();
 
             String[] x =
-                    //abClosed.clone();
-                    abcClosed.clone();
+                    //abFwdClosed;
+                    //abBidiClosed;
+                    abcClosed;
             for (int i = 0; i < x.length; i++) {
 
                 Task t = n.task(x[i]);
@@ -195,7 +197,7 @@ public class SimpleNARBudgetDynamics {
             x.setLeft(new GenericControlPane<>(vars));
 
 
-            Default d = new Default(1000, 3, 4, 7, new FrameClock()); //Equalized(1024, 1, 3);
+            Default d = new Default(1000, 1, 1, 1, new FrameClock()); //Equalized(1024, 1, 3);
             //Default d = new NewDefault().setInternalExperience(null);
             //d.memory.conceptForgetDurations.set(8);
             //d.getParam().conceptForgetDurations.set(1);

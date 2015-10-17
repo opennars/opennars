@@ -76,6 +76,11 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     @Override
     public void setCapacity(final int capacity) {
 
+        if (this.capacity==capacity) {
+            return;
+        }
+
+        final List<E> list = this.list;
         if (list!=null) {
             int n = list.size();
             //remove elements from end
@@ -179,16 +184,16 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     @Override
     public E insert(final E o) {
 
-        E removed;
+        E removed = null;
 
         final int s = size();
 
+        int insertPos;
         if (s == 0) {
-            list.add(o);
-            return null;
+            insertPos = 0;
         } else {
 
-            int insertPos = positionOf(o);
+            insertPos = positionOf(o);
 
             if (s >= capacity) {
 
@@ -204,10 +209,9 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
                 removed = null;
             }
 
-
-            list.add(insertPos, o);
-
         }
+
+        list.add(insertPos, o);
 
 
         return removed;
@@ -242,27 +246,27 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 //    }
 
     
-    @Override public E remove(int i) {
+    @Override public final E remove(int i) {
         return list.remove(i);
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return list.size();
     }
 
     @Override
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return list.isEmpty();
     }
 
     @Override
-    public boolean contains(Object o) {
+    public final boolean contains(Object o) {
         return list.contains(o);
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public final Iterator<E> iterator() {
         return list.iterator();
     }
 
@@ -277,7 +281,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
     
     @Override
-    public void clear() {
+    public final void clear() {
         list.clear();
     }
 

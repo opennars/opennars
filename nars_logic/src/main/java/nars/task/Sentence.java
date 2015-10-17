@@ -425,13 +425,13 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     default CharSequence toString(final Memory memory, final boolean showStamp) {
-        return toString(new StringBuilder(), memory, showStamp);
+        return appendTo(new StringBuilder(), memory, showStamp);
     }
 
     default @Deprecated
-    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+    StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
-        return toString(buffer, memory, true, notCommand, notCommand, true);
+        return appendTo(buffer, memory, true, notCommand, notCommand, true);
     }
 
     /**
@@ -442,7 +442,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      * @param showBudget
      * @return The String
      */
-    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
+    StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
 
 
     default boolean equalTerms(final Sentence s) {

@@ -210,13 +210,13 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
+
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
             String leakMsg = "reactor leak: " + derivedTerm;
             //throw new RuntimeException(leakMsg);
-            System.err.println(leakMsg);
-            return null;
+            System.err.println(leakMsg);   return null;
 
 //
 //            System.out.println(premise + "   -|-   ");
@@ -343,6 +343,7 @@ public class RuleMatch extends FindSubst {
 
         return null;
     }
+
 
 
     static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {

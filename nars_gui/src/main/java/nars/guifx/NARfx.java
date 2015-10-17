@@ -272,12 +272,12 @@ public class NARfx  {
         NARide.show(nar.loop(), (Consumer)null);
     }
 
-    public static void newWindow(NAR nar, Concept c) {
+    public static void newWindow(Concept c) {
         //TODO //ConceptPane wn = new ConceptPane(nar, c);
-        Pane wn = new Pane();
+        Pane wn = new ConceptPane(c);
 
         Stage st;
-        Stage removed = window.put(nar, st = newWindow(c.toString(), wn));
+        Stage removed = window.put(c, st = newWindow(c.toString(), wn));
         st.setAlwaysOnTop(true); //? does this work
         st.show();
 

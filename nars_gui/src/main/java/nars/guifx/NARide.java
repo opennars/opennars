@@ -90,9 +90,11 @@ public class NARide extends BorderPane {
             }
 
             ni.addTool("I/O", () -> new IOPane(nar));
+            ni.addTool("Active Concepts", () -> new LogPane2(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
+
 
             ni.addTool("Webcam", WebcamFX::new);
 

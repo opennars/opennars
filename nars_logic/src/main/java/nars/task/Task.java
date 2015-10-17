@@ -256,18 +256,17 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     @Override
     default StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
         if (sb == null) sb = new StringBuilder();
-        return toString(sb, memory, false);
+        return appendTo(sb, memory, false);
     }
 
-    @Override
-    default @Deprecated
-    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+    @Override @Deprecated
+    default StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
-        return toString(buffer, memory, true, notCommand, notCommand, true);
+        return appendTo(buffer, memory, true, showStamp && notCommand, showStamp && notCommand, showStamp);
     }
 
     @Override
-    default StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
+    default StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
 
 
         String contentName;

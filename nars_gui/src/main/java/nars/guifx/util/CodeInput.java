@@ -1,10 +1,9 @@
 package nars.guifx.util;
 
-import com.google.common.collect.Lists;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import org.fxmisc.richtext.StyleClassedTextArea;
 
 import static javafx.application.Platform.runLater;
 
@@ -20,10 +19,11 @@ public class CodeInput extends BorderPane {
     public CodeInput(String text) {
         super();
 
-        StyleClassedTextArea codeArea = new StyleClassedTextArea();
-        codeArea.getStyleClass().add("code-area");
+        //StyleClassedTextArea codeArea = new StyleClassedTextArea();
+        //codeArea.getStyleClass().add("code-area");
+        //codeArea.setStyle(0, Lists.newArrayList("code-area-default"));
 
-        codeArea.setStyle(0, Lists.newArrayList("code-area-default"));
+        TextArea codeArea= new TextArea();
 
         codeArea.appendText(text);
 
@@ -51,8 +51,9 @@ public class CodeInput extends BorderPane {
                     catch (Exception e) {
                         Label err = new Label(e.getMessage());
                         err.getStyleClass().add("error");
-                        setRight(err);
+                        setTop(err);
                         layout();
+                        e.printStackTrace();
                     }
                 });
             }

@@ -34,7 +34,7 @@ public class TermLinkTest {
         TermLinkGraph g = new TermLinkGraph(n);
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
-        assertEquals("[[x, <x --> y>, y], [(x,<x-->y>), (y,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
+        assertEquals("[[<x --> y>, y, x], [(<x-->y>,y), (<x-->y>,x), (x,<x-->y>), (y,<x-->y>)]]",
                 g.toString());
     }
 

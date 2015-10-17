@@ -342,13 +342,12 @@ public interface Premise extends Level {
         Task t = task.normalized();
 
         if (!FilterDuplicateExistingBelief.isUniqueBelief(this, t)) {
-            memory().remove(t);
+            memory.remove(t, "Duplicate");
             return null;
         }
 
         if (t!=null) {
             memory.eventDerived.emit(task);
-            memory.logic.TASK_DERIVED.hit();
         }
         return t;
     }

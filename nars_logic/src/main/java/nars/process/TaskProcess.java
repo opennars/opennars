@@ -81,7 +81,7 @@ public class TaskProcess extends NAL implements Serializable {
 
         sb.append(getClass().getSimpleName()).append('[');
 
-        getTask().toString(sb, nar.memory(), true, false, true, true);
+        getTask().appendTo(sb, nar.memory(), true, false, true, true);
 
         sb.append(']');
 

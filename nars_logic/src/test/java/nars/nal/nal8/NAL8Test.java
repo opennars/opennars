@@ -185,8 +185,8 @@ public class NAL8Test extends AbstractNALTest {
     public void goal_deduction_2() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("(^go-to,{t001}). :\\: ");
-        tester.inputAt(10, "<(^go-to,$1)=/><(*,SELF,$1) --> at>>. ");
+        tester.input("(^goto,{t001}). :\\: ");
+        tester.inputAt(10, "<(^goto,$1)=/><(*,SELF,$1) --> at>>. ");
 
         tester.mustBelieve(cycles, "<(*,SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
         tester.run();
@@ -252,9 +252,9 @@ public class NAL8Test extends AbstractNALTest {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t003}) --> at>!");
-        tester.inputAt(10, "<(^go-to,$1)=/><(*,SELF,$1) --> at>>.");
+        tester.inputAt(10, "<goto($1)=/><(*,SELF,$1) --> at>>.");
 
-        tester.mustDesire(cycles, "(^go-to,{t003})", 1.0f, 0.81f); // :|:
+        tester.mustDesire(cycles, "goto({t003})", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
@@ -262,8 +262,8 @@ public class NAL8Test extends AbstractNALTest {
     public void ded_with_var_temporal() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("<(*,{t003}) --> ^go-to>. :|: ");
-        tester.inputAt(10, "<<(*,$1) --> ^go-to> =/> <(*,SELF,$1) --> at>>. ");
+        tester.input("<(*,{t003}) --> ^goto>. :|: ");
+        tester.inputAt(10, "<<(*,$1) --> ^goto> =/> <(*,SELF,$1) --> at>>. ");
 
         tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f, 10); // :|:
         tester.run();
@@ -273,8 +273,8 @@ public class NAL8Test extends AbstractNALTest {
     public void ded_with_var_temporal2() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("<(*,{t003}) --> ^go-to>. :|: ");
-        tester.inputAt(10, "<<(*,$1) --> ^go-to> =/> <(*,SELF,$1) --> at>>. ");
+        tester.input("<(*,{t003}) --> ^goto>. :|: ");
+        tester.inputAt(10, "<<(*,$1) --> ^goto> =/> <(*,SELF,$1) --> at>>. ");
 
         tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f,10); // :|:
         tester.run();

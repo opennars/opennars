@@ -48,7 +48,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
      * @return the current termLink aka BeliefLink
      */
     @Override
-    public TermLink getTermLink() {
+    public final TermLink getTermLink() {
         return termLink;
     }
 

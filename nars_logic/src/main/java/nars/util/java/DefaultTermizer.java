@@ -1,6 +1,7 @@
 package nars.util.java;
 
 import nars.Global;
+import nars.nal.nal2.Instance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Atom;
@@ -59,7 +60,7 @@ public class DefaultTermizer implements Termizer {
         if (o instanceof Term) return (Term)o;
 
         if (o instanceof String)
-            return Atom.the((String) o, true);
+            return Atom.quote((String) o);
 
         if (o instanceof Boolean)
             return ((Boolean) o) ? TRUE : FALSE;
@@ -125,9 +126,21 @@ public class DefaultTermizer implements Termizer {
             if (arg.isEmpty()) return EMPTY;
             return SetExt.make(arg);
         } else if (o instanceof Map) {
-            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
-            if (arg.isEmpty()) return EMPTY;
-            return SetExt.make(arg);
+
+            Map mapo = (Map) o;
+            Set<Term> components = Global.newHashSet(mapo.size());
+            mapo.forEach((k, v) -> {
+                Term tv = obj2term(v);
+                Term tk = obj2term(k);
+
+                if ((tv != null) && (tk!=null)) {
+                    components.add(
+                        Instance.make(tv, tk)
+                    );
+                }
+            });
+            if (components.isEmpty()) return EMPTY;
+            return SetExt.make(components);
         }
 
         return termInstanceInClassInPackage(o);

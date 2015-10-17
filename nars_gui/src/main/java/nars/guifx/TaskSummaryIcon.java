@@ -1,8 +1,5 @@
 package nars.guifx;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -12,7 +9,7 @@ import nars.task.Task;
 /**
  * Created by me on 8/14/15.
  */
-public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<Number> {
+public class TaskSummaryIcon extends SummaryIcon implements Runnable {
 
     final static int colorLevels = 32;
     final static double VISIBLE_BUDGET_CHANGE = 0.5 / colorLevels;
@@ -21,7 +18,7 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
     final static ColorArray goalRange = new ColorArray(colorLevels, Color.BLUE, Color.GREEN);
 
     private final Task task;
-    private final GraphicsContext g;
+
 
     transient float lastPriority = -1;
 
@@ -30,41 +27,34 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
 
         this.task = i;
 
-        g = getGraphicsContext2D();
 
         parent.heightProperty().addListener(this);
-        repaint(parent.heightProperty().get());
+        changed(null,null,parent.heightProperty().get());
     }
 
-    public TaskSummaryIcon width(double w) {
-        if (getWidth()!=w) {
-            setWidth(w);
-            repaint();
-        }
-        return this;
-    }
-
+    @Override
     protected void repaint() {
         paintConstants();
 
         run();
     }
 
-    public final Color getBudgetColor(float pri) {
+    final Color getBudgetColor(float pri) {
         return grayRange.get(pri);
     }
-
-    public final Color getBeliefColor(float freq, float conf) {
+    final Color getBeliefColor(float freq, float conf) {
         return beliefRange.get(freq);
     }
-    public final Color getGoalColor(float freq, float conf) {
+    final Color getGoalColor(float freq, float conf) {
         return goalRange.get(freq);
     }
 
-    public void paintConstants() {
+    void paintConstants() {
         final double W = getWidth();
         final double H = getHeight();
         if (W*H == 0) return;
+
+        GraphicsContext g = getGraphicsContext2D();
 
         if (task.getTerm() == null) {
             //immediate?
@@ -106,23 +96,4 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
 
     }
 
-    @Override
-    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        double h = newValue.doubleValue();
-        repaint(h);
-    }
-
-    private void repaint(double h) {
-        h *= 0.5;
-
-        setHeight(h);
-        double w = h * 3;
-        setWidth(w);
-        prefWidth(w);
-
-        lastPriority = -1;
-
-
-        repaint();
-    }
 }

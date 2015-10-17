@@ -50,7 +50,7 @@ public class LogicMeter extends FrameReaction {
 
 
     public final HitMeter TASK_ADD_NEW = new HitMeter("task.new.add");
-    public final HitMeter TASK_DERIVED = new HitMeter("task.derived");
+    //public final HitMeter TASK_DERIVED = new HitMeter("task.derived");
     public final HitMeter TASK_EXECUTED = new HitMeter("task.executed");
     public final HitMeter TASK_ADD_NOVEL = new HitMeter("task.novel.add");
 
