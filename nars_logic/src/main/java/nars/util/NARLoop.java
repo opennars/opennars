@@ -24,7 +24,7 @@ public class NARLoop implements Runnable {
 
 
     public volatile int cyclesPerFrame = 1;
-    volatile int periodMS = 0;
+    volatile int periodMS = 1000;
     private volatile boolean stopped = false;
     //private boolean running;
 
@@ -58,7 +58,6 @@ public class NARLoop implements Runnable {
         this.thread = new Thread(this);
         thread.start();
 
-        logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
     }
 
 
@@ -105,7 +104,7 @@ public class NARLoop implements Runnable {
 
     @Override
     final public void run() {
-
+        logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
 
         final NAR nar = this.nar;
 

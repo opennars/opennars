@@ -28,7 +28,7 @@ public interface IO {
                     toKeyValueMap(substitutions);
 
             StringBuilder sb = new StringBuilder();
-            for (Term s : strings.term) {
+            for (Term s : strings) {
 
                 Term replacement = substs.get(s);
 

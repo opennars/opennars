@@ -29,9 +29,6 @@ public class DefaultTruth extends AbstractScalarTruth {
         super();
     }
 
-
-
-
     public DefaultTruth(AbstractScalarTruth toClone) {
         this(toClone.getFrequency(), toClone.getConfidence());
     }

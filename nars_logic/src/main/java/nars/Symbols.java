@@ -22,7 +22,6 @@ package nars;
 
 
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
-import nars.util.utf8.ByteBuf;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,22 +106,22 @@ abstract public class Symbols {
     public final static char STATEMENT_CLOSER = '>';
 
 
-    public static Op symbol(final byte b) {
-        if (b > byteSymbols.length)
-            throw new RuntimeException("value of " + b + " exceeds special character range");
-        return byteSymbols[b];
-    }
+//    public static Op symbol(final byte b) {
+//        if (b > byteSymbols.length)
+//            throw new RuntimeException("value of " + b + " exceeds special character range");
+//        return byteSymbols[b];
+//    }
 
-
-
-    public static void compact(final ByteBuf b, final Op n) {
-        if (n.has8BitRepresentation()) {
-            b.append(n.byt);
-        }
-        else {
-            b.append(n.str); //ordinary character
-        }
-    }
+//
+//
+//    public static void compact(final ByteBuf b, final Op n) {
+//        if (n.has8BitRepresentation()) {
+//            b.append(n.byt);
+//        }
+//        else {
+//            b.append(n.str); //ordinary character
+//        }
+//    }
 
     private static final Map<String,Op> _stringToOperator
             = new HashMap(Op.values().length * 2);
@@ -178,21 +177,21 @@ abstract public class Symbols {
     }
 
 
-    public static Op getOpener(final char c) {
-        Op o = getOperator(c);
-        if (o == null) return null;
-        if (o.opener)
-            return o;
-        return null;
-    }
-    
-    public static Op getCloser(final char c) {
-        Op o = getOperator(c);
-        if (o == null) return null;
-        if (o.closer)
-            return o;
-        return null;
-    }
+//    public static Op getOpener(final char c) {
+//        Op o = getOperator(c);
+//        if (o == null) return null;
+//        if (o.opener)
+//            return o;
+//        return null;
+//    }
+//
+//    public static Op getCloser(final char c) {
+//        Op o = getOperator(c);
+//        if (o == null) return null;
+//        if (o.closer)
+//            return o;
+//        return null;
+//    }
 
     
     /* Stamp, display only */
@@ -214,15 +213,15 @@ abstract public class Symbols {
     }
 
 
-    public static String getPunctuationWord(char punctuation) {
-        switch (punctuation) {
-            case '.': return "BELIEF";
-            case '!': return "GOAL";
-            case '@': return "QUEST";
-            case '?': return "QUESTION";
-        }
-        return "UNKNOWN";
-    }
+//    public static String getPunctuationWord(char punctuation) {
+//        switch (punctuation) {
+//            case '.': return "BELIEF";
+//            case '!': return "GOAL";
+//            case '@': return "QUEST";
+//            case '?': return "QUESTION";
+//        }
+//        return "UNKNOWN";
+//    }
 
     /** expands a byte to multi-char representation, for output.
      //     * if a special character, it prints the expanded string and returns true.

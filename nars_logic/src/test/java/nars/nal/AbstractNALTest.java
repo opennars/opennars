@@ -5,6 +5,7 @@ import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.nar.SingleStepNAR;
 import org.junit.Ignore;
 
@@ -97,6 +98,7 @@ abstract public class AbstractNALTest {
 
         final int finalLevel = level;
         l.add( () -> new Default().nal(finalLevel) );
+        l.add( () -> new Default2(1000,1,1,3).nal(finalLevel) );
 
         if (!multistep)
             l.add( () -> new SingleStepNAR().nal(finalLevel) );

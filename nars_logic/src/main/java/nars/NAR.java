@@ -160,15 +160,14 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         return this;
     }
-
-    /**
-     * Resets and deletes the entire system
-     */
-    public void delete() {
-
-        memory.delete();
-
-    }
+//    /**
+//     * Resets and deletes the entire system
+//     */
+//    public void delete() {
+//
+//        memory.delete();
+//
+//    }
 
     public FileInput input(final File input) throws IOException {
         FileInput fi = new FileInput(this, input);
@@ -804,8 +803,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
 
     //    /** creates a new loop which begins paused */
-    final public NARLoop loop() {
-        return loop(-1);
+    @Deprecated final public NARLoop loop() {
+        return loop(1000);
     }
 
     final public NARLoop loop(final float initialFPS) {
@@ -910,7 +909,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + memory.toTypeString() + "]";
+        return getClass().getSimpleName() + "[" + memory.toString() + "]";
     }
 
     /**
@@ -918,7 +917,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return The current time
      */
-    public long time() {
+    public final long time() {
         return memory.time();
     }
 
@@ -944,10 +943,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public Concept put(Concept concept) {
-        memory().put(concept);
-        return concept;
-    }
+//    public Concept put(Concept concept) {
+//        memory().put(concept);
+//        return concept;
+//    }
 
 
     public Concept remove(Term key) {

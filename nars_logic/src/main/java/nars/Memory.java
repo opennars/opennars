@@ -217,11 +217,11 @@ public class Memory extends Param {
     }
 
 
-    public void delete() {
-        clear();
-
-        event.delete();
-    }
+//    public void delete() {
+//        clear();
+//
+//        event.delete();
+//    }
 
 
     @Override
@@ -309,19 +309,19 @@ public class Memory extends Param {
 
     }
 
-    /**
-     * sends an event signal to listeners subscribed to channel 'c'
-     */
-    final public void emit(final Class c, final Object... signal) {
-        event.emit(c, signal);
-    }
+//    /**
+//     * sends an event signal to listeners subscribed to channel 'c'
+//     */
+//    final public void emit(final Class c, final Object... signal) {
+//        event.emit(c, signal);
+//    }
 
-    /**
-     * sends an event signal to listeners subscribed to channel 'c'
-     */
-    final public void emit(final Class c) {
-        event.emit(c);
-    }
+//    /**
+//     * sends an event signal to listeners subscribed to channel 'c'
+//     */
+//    final public void emit(final Class c) {
+//        event.emit(c);
+//    }
 
 
     /**
@@ -356,15 +356,15 @@ public class Memory extends Param {
         return clock;
     }
 
-    /**
-     * TODO return value
-     */
-    public void delete(Term term) {
-        Concept c = concept(term);
-        if (c == null) return;
-
-        delete(c);
-    }
+//    /**
+//     * TODO return value
+//     */
+//    public void delete(Term term) {
+//        Concept c = concept(term);
+//        if (c == null) return;
+//
+//        delete(c);
+//    }
 
 //    /** queues the deletion of a concept until after the current cycle ends.
 //     */
@@ -389,29 +389,29 @@ public class Memory extends Param {
 //            pendingDeletions.clear();
 //        }
 //    }
-
-    /**
-     * actually delete procedure for a concept; removes from indexes
-     * TODO return value
-     */
-    protected void delete(Concept c) {
-
-//        Concept removedFromActive = getCycleProcess().remove(c);
 //
-//        if (c!=removedFromActive) {
-//            throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
+//    /**
+//     * actually delete procedure for a concept; removes from indexes
+//     * TODO return value
+//     */
+//    protected void delete(Concept c) {
+//
+////        Concept removedFromActive = getCycleProcess().remove(c);
+////
+////        if (c!=removedFromActive) {
+////            throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
+////        }
+//
+//        Concept removedFromIndex = concepts.remove(c.getTerm());
+//        if (removedFromIndex == null) {
+//            throw new RuntimeException("concept " + c + " was not removed from memory");
 //        }
-
-        Concept removedFromIndex = concepts.remove(c.getTerm());
-        if (removedFromIndex == null) {
-            throw new RuntimeException("concept " + c + " was not removed from memory");
-        }
-        /*if (c!=removedFromIndex) {
-            throw new RuntimeException("another instances of concept " + c + " detected on removal: " + removedFromActive);
-        }*/
-
-        c.delete();
-    }
+//        /*if (c!=removedFromIndex) {
+//            throw new RuntimeException("another instances of concept " + c + " detected on removal: " + removedFromActive);
+//        }*/
+//
+//        c.delete();
+//    }
 
 
     @Override
@@ -447,9 +447,9 @@ public class Memory extends Param {
         return getClock().time();
     }
 
-    public final void put(final Concept c) {
-        concepts.put(c);
-    }
+//    public final void put(final Concept c) {
+//        concepts.put(c);
+//    }
 
     public final CacheBag<Term, Concept> getConcepts() {
         return concepts;
@@ -540,12 +540,12 @@ public class Memory extends Param {
         return concepts.size();
     }
 
-    /**
-     * identifies the type of memory as a string
-     */
-    String toTypeString() {
-        return getClass().getSimpleName();
-    }
+//    /**
+//     * identifies the type of memory as a string
+//     */
+//    String toTypeString() {
+//        return getClass().getSimpleName();
+//    }
 
     public void start() {
         this.concepts.start(this);

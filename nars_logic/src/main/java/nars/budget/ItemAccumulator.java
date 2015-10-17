@@ -56,8 +56,16 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 
 
     @Override
-    final public I  apply(final I t, final I accumulated) {
+    final public I  apply(final I t, I accumulated) {
+
+        if (t.getBudget().isDeleted())
+            return accumulated;
+
         if (accumulated!=null) {
+            if (accumulated.getBudget().isDeleted()) {
+                return t;
+            }
+
             merge.value(accumulated.getBudget(), t.getBudget());
             return accumulated;
         }
