@@ -70,10 +70,10 @@ public class TaskQueue extends ArrayDeque<Task> implements Input , Consumer<Task
         if (reg!=null)
             throw new RuntimeException("already inputting");
 
-        reg = n.memory.eventFrameStart.on(nn -> {
+        Consumer<NAR> inputNext = nn -> {
             int count = 0;
             Task next = null;
-            while ((count < numPerFrame) && ((next = get())!=null)) {
+            while ((count < numPerFrame) && ((next = get()) != null)) {
                 nn.input(next);
                 count++;
             }
@@ -81,7 +81,11 @@ public class TaskQueue extends ArrayDeque<Task> implements Input , Consumer<Task
                 reg.off();
                 reg = null;
             }
-        });
+        };
+
+        reg = n.memory.eventFrameStart.on(inputNext);
+
+        inputNext.accept(n);//first input
     }
 
 }

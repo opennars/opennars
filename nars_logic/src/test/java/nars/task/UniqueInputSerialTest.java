@@ -42,8 +42,6 @@ public class UniqueInputSerialTest {
         n.reset();
 
         TaskQueue z = n.inputs("<e --> f>.  <g --> h>. "); //test when they are input on the same parse
-        assertArrayEquals(new long[]{3}, z.get().getEvidence());
-        assertArrayEquals(new long[]{4}, z.get().getEvidence());
 
         n.frame(10);
 
