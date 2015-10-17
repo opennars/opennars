@@ -317,12 +317,9 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                                 )
                         )
                 ),
-                scrolled(taskLinkView = new BagView<Sentence, TaskLink>(c.getTaskLinks(),
-                        (t) -> new ItemButton( t, (i) -> i.toString(),
-                                (i) -> {
+                scrolled(taskLinkView = new BagView<>(c.getTaskLinks(),
+                        (t) -> new TaskLabel(t.getTask(), null)
 
-                                }
-                        )
                 ))
         );
         links.setOrientation(Orientation.VERTICAL);

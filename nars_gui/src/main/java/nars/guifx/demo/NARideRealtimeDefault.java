@@ -8,7 +8,8 @@ import nars.bag.impl.MapCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
 import nars.nar.Default2;
-import org.infinispan.commons.util.WeakValueHashMap;
+
+import java.util.HashMap;
 
 /**
  * Created by me on 9/7/15.
@@ -22,8 +23,8 @@ public class NARideRealtimeDefault {
 
         Memory mem = new LocalMemory(new RealtimeMSClock(),
             new MapCacheBag(
-                    //new HashMap()
-                    new WeakValueHashMap()
+                    new HashMap()
+                    //new WeakValueHashMap()
             )
             //new GuavaCacheBag<>()
             /*new InfiniCacheBag(
@@ -32,7 +33,7 @@ public class NARideRealtimeDefault {
         );
         NAR nar = new Default2(mem, 1024, 1, 1, 3);
 
-        nar.memory.conceptForgetDurations.set(10);
+        //nar.memory.conceptForgetDurations.set(10);
         nar.memory.duration.set(250 /* ie, milliseconds */);
         //nar.spawnThread(1000/60);
 

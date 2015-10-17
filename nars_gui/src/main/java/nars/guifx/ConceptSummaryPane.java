@@ -40,7 +40,7 @@ public class ConceptSummaryPane extends Button {
                     //icon.size(iconWidth, iconWidth);
                 }
 
-                update(true,true);
+                update(true,false);
             }
         });
 
