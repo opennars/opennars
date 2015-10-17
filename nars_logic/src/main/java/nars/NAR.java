@@ -10,6 +10,7 @@ import nars.event.AnswerReaction;
 import nars.event.NARReaction;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
+import nars.io.in.TaskQueue;
 import nars.io.in.TextInput;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Temporal;
@@ -40,6 +41,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -168,8 +170,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     }
 
-    public Input input(final File input) throws IOException {
-        return input(new FileInput(this, input));
+    public FileInput input(final File input) throws IOException {
+        FileInput fi = new FileInput(this, input);
+        input((Input) fi);
+        return fi;
     }
 
     /**
@@ -200,13 +204,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return result;
     }
 
-    public List<Task> inputs(final String parse) {
+    public TaskQueue inputs(final String parse) {
         return input(tasks(parse));
     }
 
     public TextInput input(final String text) {
         final TextInput i = new TextInput(this, text);
-        input(i);
+        input((Input) i);
         return i;
     }
 
@@ -436,15 +440,20 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return memory().getConcepts();
     }
 
-    public List<Task> input(final List<Task> t) {
-        t.forEach(x -> input(x));
-        return t;
+    public TaskQueue input(final Collection<Task> t) {
+        TaskQueue tq = new TaskQueue(t);
+        input((Input) tq);
+        return tq;
     }
 
-    public Task[] input(final Task[] t) {
-        for (Task x : t)
-            input(x);
-        return t;
+    public TaskQueue input(final Task[] t) {
+        TaskQueue tq = new TaskQueue(t);
+        input((Input) tq);
+        return tq;
+//
+//        for (Task x : t)
+//            input(x);
+//        return t;
     }
 
     /**
@@ -569,11 +578,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * Will remain added until it closes or it is explicitly removed.
      */
     public Input input(final Input i) {
-        Task t;
-
-        while ((t = i.get()) != null) {
-            input(t);
-        }
+//        Task t;
+//
+//        while ((t = i.get()) != null) {
+//            input(t);
+//        }
+        i.input(this, 1);
         return i;
     }
 
@@ -1291,7 +1301,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public final void input(final Stream<Task> taskStream) {
-        taskStream.forEach(this::input);
+//        taskStream.forEach(
+//                //TODO use a stream implementation, not just buffer into a collection:
+//
+//                this::input
+//        );
+        input((Input) new TaskQueue(taskStream.collect(Collectors.toList())));
     }
 
     /** execute a Task as a TaskProcess (synchronous) */

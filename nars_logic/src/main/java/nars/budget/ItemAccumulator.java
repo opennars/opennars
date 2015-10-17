@@ -238,8 +238,10 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
         int sent = 0;
         Task next;
         while ((sent < rate) && ((next = removeHighest())!=null)) {
-            recv.accept(next);
-            sent++;
+            if (!next.isDeleted()) {
+                recv.accept(next);
+                sent++;
+            }
         }
     }
 

@@ -19,6 +19,7 @@
 
 package nars.io.in;
 
+import nars.NAR;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
@@ -44,5 +45,7 @@ public interface Input extends Source<Task> {
 //        return i;
 //    }
 
+
+    void input(NAR n, int numPerFrame);
 
 }

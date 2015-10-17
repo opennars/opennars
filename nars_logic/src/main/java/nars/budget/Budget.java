@@ -609,8 +609,11 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      */
     final public boolean summaryGreaterOrEqual(final float budgetThreshold) {
 
+        if (isDeleted()) return false;
+
         /* since budget can only be positive.. */
         if (budgetThreshold <= 0) return true;
+
 
         return summaryNotLessThan(budgetThreshold);
     }

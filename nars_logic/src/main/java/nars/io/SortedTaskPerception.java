@@ -25,7 +25,8 @@ public class SortedTaskPerception extends TaskPerception {
 
     @Override
     public void accept(Task t) {
-        buffer.add(t);
+        if (!t.isDeleted())
+            buffer.add(t);
     }
 
     @Override

@@ -9,6 +9,7 @@ import nars.concept.Concept;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
+import nars.util.event.On;
 import nars.util.event.Topic;
 
 import java.util.List;
@@ -18,17 +19,19 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/15/15.
  */
-public class TracePane extends LogPane implements Runnable {
+public class TracePane extends LogPane {
 
     private final NAR nar;
     /**
      * threshold for minimum displayable priority
      */
     private final DoubleProperty volume;
+    private On reg;
     private Node prev; //last node added
     ActivationTreeMap activationSet = null;
     //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
     boolean trace = false;
+    boolean visible = false;
 
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
@@ -42,47 +45,54 @@ public class TracePane extends LogPane implements Runnable {
 //            for (Object o : enabled)
 //                filter.value(o, 1);
 
-        nar.onEachFrame((n) -> {
-            List<Node> p = pending;
-            if (p != null) {
-                pending = null;
-                //synchronized (nar) {
-                int ps = p.size();
-                int start = ps - Math.min(ps, maxLines);
+        parentProperty().addListener(e-> {
+            visible = (getParent()!=null);
+            if (reg == null) {
+                reg = nar.memory.eventFrameStart.on((n) -> {
 
-                int tr = ((ps - start) + toShow.size()) - maxLines;
-                if (tr > ps) {
-                    toShow.clear();
-                } else {
-                    //remove first N
-                    for (int i = 0; i < tr; i++)
-                        toShow.removeFirst();
-                }
+                    if (!visible) {
+                        reg.off();
+                        reg = null;
+                        return;
+                    }
 
-                for (int i = start; i < ps; i++) {
-                    Node v = p.get(i);
-                    toShow.add(v);
-                }
-                //}
+                    List<Node> p = pending;
+                    if (p != null) {
+                        pending = null;
+                        //synchronized (nar) {
+                        int ps = p.size();
+                        int start = ps - Math.min(ps, maxLines);
 
-                //if (queueUpdate)
-                runLater(nars.guifx.TracePane.this);
+                        int tr = ((ps - start) + toShow.size()) - maxLines;
+                        if (tr > ps) {
+                            toShow.clear();
+                        } else {
+                            //remove first N
+                            for (int i = 0; i < tr; i++)
+                                toShow.removeFirst();
+                        }
+
+                        for (int i = start; i < ps; i++) {
+                            Node v = p.get(i);
+                            toShow.add(v);
+                        }
+                        //}
+
+                        //if (queueUpdate)
+                        Node[] c = toShow.toArray(new Node[toShow.size()]);
+                        if (c != null) {
+                            runLater(()->commit(c));
+                        }
+                    }
+                });
+
             }
         });
 
 
+
     }
 
-
-    /* to be run in javafx thread */
-    @Override
-    public void run() {
-
-        //Node[] c = toShow.toArray(new Node[toShow.size()]);
-
-        //commit(c);
-        commit(toShow);
-    }
 
 
     protected void output(Object channel, Object signal) {

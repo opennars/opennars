@@ -42,7 +42,8 @@ public class STMTemporalLinkage {
 
 
         nar.memory.eventTaskProcess.on(n -> {
-            inductionOnSucceedingEvents(n, false);
+            if (!n.getTask().isDeleted())
+                inductionOnSucceedingEvents(n, false);
         });
         nar.memory.eventReset.on(n -> {
             stm.clear();
@@ -64,10 +65,6 @@ public class STMTemporalLinkage {
     public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
 
         final Task currentTask = nal.getTask();
-
-        if (currentTask.isDeleted()) {
-            throw new RuntimeException(currentTask + " deleted");
-        }
 
         stmSize = nal.memory().shortTermMemoryHistory.get();
 

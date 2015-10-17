@@ -2,10 +2,9 @@ package nars.task;
 
 import nars.Global;
 import nars.NAR;
+import nars.io.in.TaskQueue;
 import nars.nar.Default;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -42,9 +41,9 @@ public class UniqueInputSerialTest {
 
         n.reset();
 
-        List<Task> z = n.inputs("<e --> f>.  <g --> h>. "); //test when they are input on the same parse
-        assertArrayEquals(new long[]{3}, z.get(0).getEvidence());
-        assertArrayEquals(new long[]{4}, z.get(1).getEvidence());
+        TaskQueue z = n.inputs("<e --> f>.  <g --> h>. "); //test when they are input on the same parse
+        assertArrayEquals(new long[]{3}, z.get().getEvidence());
+        assertArrayEquals(new long[]{4}, z.get().getEvidence());
 
         n.frame(10);
 

@@ -6,6 +6,9 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -15,6 +18,8 @@ import org.semanticweb.yars.nx.parser.NxParser;
 import javax.xml.namespace.QName;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by me on 6/4/15.
@@ -64,19 +69,27 @@ abstract public class NQuadsRDF {
 //        }
     }
 
-
     public static void input(NAR nar, Iterable<Node[]> nxp) throws Exception {
-        //input(nar, new Scanner(input));
+        input(nar, StreamSupport.stream(nxp.spliterator(), false));
+    }
 
-        for (Node[] nx : nxp)
-            if (nx.length >= 3) {
-                input(
-                        nar,
-                        resource(nx[0]),
-                        resource(nx[1]),
-                        resource(nx[2])
-                );
-            }
+    public static void input(NAR nar, Stream<Node[]> nxp) throws Exception {
+
+        nar.input(
+            nxp.map( (Node[] nx) -> {
+                if (nx.length >= 3) {
+                    return input(
+                            nar,
+                            resource(nx[0]),
+                            resource(nx[1]),
+                            resource(nx[2])
+                    );
+                }
+                return null;
+            } ).filter(x -> x!=null)
+        );
+
+
 
     }
 
@@ -238,10 +251,10 @@ abstract public class NQuadsRDF {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    public static void input(final NAR nar,
+    public static Task input(final NAR nar,
 
-             final Atom subject,
-             final Atom predicate, final Term object) {
+                             final Atom subject,
+                             final Atom predicate, final Term object) {
 
         //http://www.w3.org/TR/owl-ref/
 
@@ -251,12 +264,12 @@ abstract public class NQuadsRDF {
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
 
             if (object.equals(owlClass)) {
-                return;
+                return null;
             }
 
             //if (!includeDataType) {
                 if (object.equals(dataTypeProperty)) {
-                    return;
+                    return null;
                 }
             //}
 
@@ -309,9 +322,14 @@ abstract public class NQuadsRDF {
         }
 
         if (belief!=null) {
-            nar.believe(belief);
+            return new TaskSeed(nar.memory).term(belief).
+                    belief().truth(1f,0.9f)
+                    .time(nar.time(),
+                    Stamp.ETERNAL //TODO Tense parameter
+                    );
         }
 
+        return null;
     }
 
 
