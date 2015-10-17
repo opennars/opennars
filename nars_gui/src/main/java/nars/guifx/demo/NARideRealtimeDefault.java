@@ -7,7 +7,7 @@ import nars.NAR;
 import nars.bag.impl.MapCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
-import nars.nar.Default;
+import nars.nar.Default2;
 import org.infinispan.commons.util.WeakValueHashMap;
 
 /**
@@ -30,7 +30,7 @@ public class NARideRealtimeDefault {
                 InfiniPeer.tmp().getCache()
             )*/
         );
-        NAR nar = new Default(mem, 1024, 1, 1, 3);
+        NAR nar = new Default2(mem, 1024, 1, 1, 3);
 
         nar.memory.conceptForgetDurations.set(10);
         nar.memory.duration.set(250 /* ie, milliseconds */);

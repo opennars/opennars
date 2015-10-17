@@ -15,6 +15,7 @@ import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
+import nars.io.FIFOTaskPerception;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -45,14 +46,10 @@ import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.Active;
 
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
@@ -100,10 +97,6 @@ public class Default extends NAR {
         the("core", core = initCore(memory, activeConcepts,
                 conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle
         ));
-
-        /*
-        the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
-        */
 
         initTime();
 
@@ -649,135 +642,4 @@ public class Default extends NAR {
 //    }
 
 
-    /**
-     * accumulates a buffer of iasks which can be delivered at a specific rate.
-     * <p>
-     * consists of 2 buffers which are sampled in some policy each cycle
-     * <p>
-     * "input" - a dequeue in which input tasks are appended
-     * in the order they are received
-     * <p>
-     * "newTasks" - a priority buffer, emptied in batches,
-     * in which derived tasks and other feedback accumulate
-     * <p>
-     * Sub-interfaces
-     * <p>
-     * Storage
-     * <p>
-     * Delivery (procedure for cyclical input policy
-     */
-    public static class FIFOTaskPerception extends Active implements Consumer<Task> {
-
-
-        /**
-         * determines if content can enter
-         */
-        private final Predicate<Task> filter;
-
-        /**
-         * where to send output
-         */
-        private final Consumer<Task> receiver;
-
-        /* ?? public interface Storage { void put(Task t); }*/
-
-        //public final ItemAccumulator<Task> newTasks;
-
-        public final Deque<Task> buffer = new ArrayDeque();
-
-
-        /**
-         * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
-         */
-        public final AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
-
-
-        public FIFOTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
-            super();
-
-            this.filter = filter;
-            this.receiver = receiver;
-
-            final Memory m = nar.memory();
-            add(
-                m.eventInput.on(this),
-                m.eventDerived.on(this),
-                m.eventFrameStart.on((M) -> send()),
-                m.eventReset.on((M) -> buffer.clear() )
-            );
-
-        }
-
-        @Override
-        public void accept(Task t) {
-            if (filter == null || filter.test(t)) {
-
-//                if (t.isDeleted()) {
-//                    throw new RuntimeException("task deleted");
-//                }
-
-                buffer.add(t);
-            }
-        }
-
-
-        //        @Override
-//        public void accept(Task t) {
-//            if (t.isInput())
-//                percepts.add(t);
-//            else {
-////                if (t.getParentTask() != null && t.getParentTask().getTerm().equals(t.getTerm())) {
-////                } else {
-//                    newTasks.add(t);
-//                }
-//            }
-//        }
-
-        /** sends the next batch of tasks to the receiver */
-        public void send() {
-
-
-            int s = buffer.size();
-            int n = Math.min(s, inputsMaxPerCycle.get()); //counts down successful sends
-            int r = n; //actual cycles counted
-
-
-            //n will be equal to or greater than r
-            for (; n > 0 && r > 0; r--) {
-                final Task t = buffer.removeFirst();
-
-                if (t.isDeleted()) {
-                    //the task became deleted while this was in the buffer. no need to repeat Memory.removed
-                    continue;
-                }
-
-                receiver.accept(t);
-                n--;
-            }
-
-        }
-
-//        protected void runNewTasks() {
-//            runNewTasks(newTasks.size()); //all
-//        }
-//
-//        protected void runNewTasks(int max) {
-//
-//            int numNewTasks = Math.min(max, newTasks.size());
-//            if (numNewTasks == 0) return;
-//
-//            //queueNewTasks();
-//
-//            for (int n = newTasks.size() - 1; n >= 0; n--) {
-//                Task highest = newTasks.removeHighest();
-//                if (highest == null) break;
-//                if (highest.isDeleted()) continue;
-//
-//                run(highest);
-//            }
-//            //commitNewTasks();
-//        }
-
-
-    }
 }

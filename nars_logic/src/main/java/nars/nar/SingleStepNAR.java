@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
 import nars.clock.FrameClock;
+import nars.io.FIFOTaskPerception;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meter.DerivationGraph;

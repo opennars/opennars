@@ -32,7 +32,7 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
         split.setOrientation(Orientation.VERTICAL);
 
         split.getItems().addAll(
-                new TracePane(nar, volume, "eventCycle", "eventFrame"),
+                new TracePane(nar, volume),
                 new InputPane(nar));
 
         split.setDividerPosition(0,0.85);

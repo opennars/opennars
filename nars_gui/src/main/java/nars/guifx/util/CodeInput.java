@@ -45,7 +45,7 @@ public class CodeInput extends BorderPane {
                         if (onInput(codeArea.getText())) {
                             codeArea.clear();
                         }
-                        setRight(null);
+                        setTop(null);
                         layout();
                     }
                     catch (Exception e) {

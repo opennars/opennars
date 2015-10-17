@@ -2,8 +2,6 @@ package nars.budget;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
-import nars.Memory;
-import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -192,22 +190,22 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
         x.forEach( this::add );
     }
 
-    /** if size() capacity, remove lowest elements until size() is at capacity
-     * @return how many remain
-     * */
-    public int limit(int capacity, Consumer<I> onRemoved, @Nullable List<I> sortedResult) {
+//    /** if size() capacity, remove lowest elements until size() is at capacity
+//     * @return how many remain
+//     * */
+//    public int limit(int capacity, Consumer<I> onRemoved, @Nullable List<I> sortedResult) {
+//
+//        final int numToRemove = size() - capacity;
+//
+//        if (numToRemove > 0)
+//            return update(numToRemove, sortedResult);
+//
+//        return 0;
+//    }
 
-        final int numToRemove = size() - capacity;
-
-        if (numToRemove > 0)
-            return update(numToRemove, sortedResult);
-
-        return 0;
-    }
-
-    public static int limit(ItemAccumulator<Task> acc, int capacity, List<Task> temporary, Memory m) {
-        return acc.limit(capacity, task -> m.remove(task, "Ignored"), temporary);
-    }
+//    public static int limit(ItemAccumulator<Task> acc, int capacity, List<Task> temporary, Memory m) {
+//        return acc.limit(capacity, task -> m.remove(task, "Ignored"), temporary);
+//    }
 
 
     /** iterates in no-specific order */

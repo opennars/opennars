@@ -26,7 +26,7 @@ public class UDPWidget extends BorderPane {
 
     public UDPWidget(NAR n) {
         super();
-        setCenter(new TracePane(n, new SimpleDoubleProperty(0), "eventCycle", "eventFrame"));
+        setCenter(new TracePane(n, new SimpleDoubleProperty(0)));
         runLater(()-> {
             setLeft(new UDPPane(n));
         });

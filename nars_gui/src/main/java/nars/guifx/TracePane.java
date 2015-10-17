@@ -32,7 +32,7 @@ public class TracePane extends LogPane implements Runnable {
 
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
-    public TracePane(NAR nar, DoubleProperty volume, Object... enabled) {
+    public TracePane(NAR nar, DoubleProperty volume) {
         super();
 
         this.volume = volume;
@@ -92,9 +92,9 @@ public class TracePane extends LogPane implements Runnable {
         //double f = filter.value(channel);
 
         //temporary until filter working
-        if (!trace && ((channel.equals("eventDerived") ||
+        if (!trace && (/*channel.equals("eventDerived")||*/
                 channel.equals("eventTaskRemoved") ||
-                channel.equals("eventConceptChanged"))
+                channel.equals("eventConceptChange")
         ) )
             return;
 

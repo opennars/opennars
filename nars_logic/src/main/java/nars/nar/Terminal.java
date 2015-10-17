@@ -5,6 +5,7 @@ import nars.bag.impl.TrieCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
+import nars.io.FIFOTaskPerception;
 import nars.task.Task;
 import nars.term.Term;
 
