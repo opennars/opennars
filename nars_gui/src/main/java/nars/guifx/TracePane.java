@@ -107,7 +107,7 @@ public class TracePane extends LogPane {
         //double f = filter.value(channel);
 
         //temporary until filter working
-        if (!trace && (/*channel.equals("eventDerived")||*/
+        if (!trace && (channel.equals("eventDerived")||
                 channel.equals("eventTaskRemoved") ||
                 channel.equals("eventConceptChange")
         ) )
