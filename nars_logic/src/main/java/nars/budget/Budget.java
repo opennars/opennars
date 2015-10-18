@@ -272,7 +272,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final float dp = addPriority * factor;
 
-        final float currentPriority = getPriority();
+        final float currentPriority = getPriorityIfNaNThenZero();
 
         final float nextPriority = FastMath.min(1,currentPriority + dp);
 

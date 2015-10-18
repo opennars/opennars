@@ -51,8 +51,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The quality of the judgment, according to truth value only
      */
     public final static float truthToQuality(final Truth t) {
-        if (t == null)
-            throw new RuntimeException("truth null");
+//        if (t == null)
+//            throw new RuntimeException("truth null");
         final float exp = t.getExpectation();
         return Math.max(exp, (1f - exp) * 0.75f);
     }
@@ -72,8 +72,9 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         final float difT = truth.getExpDifAbs(tTruth);
 
-        task.getBudget().andPriority(1f - difT);
-        task.getBudget().andDurability(1f - difT);
+        final Budget tb = task.getBudget();
+        tb.andPriority(1f - difT);
+        tb.andDurability(1f - difT);
 
         boolean feedbackToLinks = (p instanceof ConceptProcess);
         if (feedbackToLinks) {
@@ -93,8 +94,8 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (dif < 0) dif = 0;  
         
         
-        float priority = or(dif, task.getPriority());
-        float durability = aveAri(dif, task.getDurability());
+        float priority = or(dif, tb.getPriority());
+        float durability = aveAri(dif, tb.getDurability());
         float quality = truthToQuality(truth);
         
         /*

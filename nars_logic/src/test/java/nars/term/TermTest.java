@@ -586,5 +586,14 @@ public class TermTest {
 
         Term c = n.term("<(&&, <#1 --> M>, <#2 --> M>) ==> <#1 --> nonsense>>");
         assertNotEquals(a, c);
+
+        Compound x= n.term("(&&, <#1 --> M>, <#2 --> M>)");
+        Term xa = x.term(0);
+        Term xb = x.term(1);
+        int o1 = xa.compareTo(xb);
+        int o2 = xb.compareTo(xa);
+        assertEquals(o1, -o2);
+        assertNotEquals(0, o1);
+        assertNotEquals(xa, xb);
     }
 }

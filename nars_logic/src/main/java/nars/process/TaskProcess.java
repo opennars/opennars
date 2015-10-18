@@ -374,12 +374,11 @@ public class TaskProcess extends NAL implements Serializable {
 
         final Memory memory = this.nar.memory();
         memory.eventTaskProcess.emit(this);
-        memory.logic.TASK_PROCESS.hit();
 
         final Concept c = nar.conceptualize(task, Budget.zero);
 
         if (c == null) {
-            memory.remove(task, "Unable to conceptualize");
+            memory.remove(task, "Inconceivable");
             return null;
         }
 

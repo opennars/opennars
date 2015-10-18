@@ -1,6 +1,5 @@
 package nars.nal.nal6;
 
-import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
@@ -19,11 +18,10 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTest {
 
 
-    final int cycles = 500;
+    final int cycles = 300;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
-        Global.DEBUG = true;
     }
 
     @Parameterized.Parameters(name = "{0}")

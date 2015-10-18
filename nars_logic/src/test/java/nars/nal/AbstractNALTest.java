@@ -12,6 +12,8 @@ import org.junit.Ignore;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static nars.util.data.LabeledSupplier.supply;
+
 /**
  * Created by me on 2/10/15.
  */
@@ -19,8 +21,9 @@ import java.util.function.Supplier;
 abstract public class AbstractNALTest {
 
     @Deprecated public static final List<Supplier<NAR>> core1 = Lists.newArrayList(
-            //() -> new Default().nal(2),
-            () -> new SingleStepNAR().nal(2)
+            //() -> new Default().nal(1),
+            //() -> new Default2(1000,1,1,3).nal(1),
+            () -> new SingleStepNAR().nal(1)
     );
     public static final List<Supplier<NAR>> core2 = Lists.newArrayList(
             /** for some reason, NAL2 tests require nal(3) level */
@@ -67,11 +70,12 @@ abstract public class AbstractNALTest {
     private final NAR the;
 
     protected AbstractNALTest(NAR nar) {
+        Global.DEBUG = true;
         this.the = nar;
     }
 
     protected AbstractNALTest(Supplier<NAR> nar) {
-        //this.nar = nar;
+        Global.DEBUG = true;
         this.the = nar.get();
     }
 
@@ -85,24 +89,29 @@ abstract public class AbstractNALTest {
         return the;
     }
 
-    public static Iterable<Supplier<NAR>> nars(int level, boolean multistep) {
+    public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
 
         //HACK why are these levels not accurate:
         {
             switch (level) {
-                case 1: level = 2; break;
+                case 1: level = 1; break;
             }
         }
 
         List<Supplier<NAR>> l = Global.newArrayList();
 
         final int finalLevel = level;
-        l.add( () -> new Default().nal(finalLevel) );
-        l.add( () -> new Default2(1000,1,1,3).nal(finalLevel) );
+        l.add( supply("Default[NAL<=" + level + "]",
+                () -> new Default().nal(finalLevel) ) );
+        l.add( supply("Default2[NAL<=" + level + "]",
+                () -> new Default2(1000,1,2,3).nal(finalLevel) ) );
 
-        if (!multistep)
-            l.add( () -> new SingleStepNAR().nal(finalLevel) );
+        if (!requireMultistep) {
+            l.add( supply("SingleStep[NAL<=" + level + "]",
+                    () -> new SingleStepNAR().nal(finalLevel) ) );
+        }
 
         return l;
     }
+
 }

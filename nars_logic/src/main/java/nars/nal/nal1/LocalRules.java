@@ -170,6 +170,8 @@ public class LocalRules {
      */
     public static Task trySolution(final Task question, final Task solution, final Premise nal) {
 
+        if ((solution == null) || (solution.isDeleted()))
+            throw new RuntimeException("proposedBelief " + solution + " deleted or null");
 
         if (!Temporal.matchingOrder(question, solution)) {
             //System.out.println("Unsolved: Temporal order not matching");
@@ -177,8 +179,6 @@ public class LocalRules {
             return null;
 
         }
-        if ((solution == null) || (solution.isDeleted()))
-            throw new RuntimeException("proposedBelief " + solution + " deleted or null");
 
         Task sol = solution;
 

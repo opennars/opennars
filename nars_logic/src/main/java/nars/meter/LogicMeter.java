@@ -23,9 +23,9 @@ public class LogicMeter extends FrameReaction {
 
     public final Memory m;
 
-    public final HitMeter TASK_PROCESS = new HitMeter("task.immediate_process");
+    //public final HitMeter TASK_PROCESS = new HitMeter("task.immediate_process");
 
-    public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
+    //public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
 
     public final DoubleMeter CONCEPTS_ACTIVE = new DoubleMeter("concepts.active");
     public final DoubleMeter CONCEPTS_TOTAL = new DoubleMeter("concepts.total");

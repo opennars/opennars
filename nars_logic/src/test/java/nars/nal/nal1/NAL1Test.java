@@ -26,7 +26,7 @@ public class NAL1Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
-        return AbstractNALTest.core1;
+        return AbstractNALTest.nars(1, false);
     }
 //
 //                new Supplier[]{
@@ -87,7 +87,7 @@ public class NAL1Test extends AbstractNALTest {
     @Test
     public void abduction() throws InvalidInputException {
 
-        int time = 64;
+        int time = 128;
         test().mustBelieve(time, "<sport --> chess>", 1.0f, 0.42f)
               /*  .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
