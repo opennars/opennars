@@ -97,7 +97,7 @@ public class TaskProcess extends NAL implements Serializable {
     public boolean link(Concept c, Task t) {
 
         if (linkTask(c, t))
-            return linkTerms(c, t.getBudget(), true);  // recursively insert TermLink
+            return linkTemplates(c, t.getBudget(), true);  // recursively insert TermLink
 
         return false;
     }
@@ -114,23 +114,16 @@ public class TaskProcess extends NAL implements Serializable {
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTerms(final Concept c, final Budget b, boolean updateTLinks) {
+    public boolean linkTemplates(final Concept c, final Budget b, boolean updateTLinks) {
 
         if ((b == null) || (b.isDeleted())) return false;
 
-        final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
-
-        final List<TermLinkTemplate> tl = termLinkBuilder.templates();
-        if (tl == null) return false;
-
-        int recipients = termLinkBuilder.templates().size();
-        if (recipients == 0) return false;
-
-
-
+        final List<TermLinkTemplate> tl = c.getTermLinkTemplates();
+        if (tl == null || tl.isEmpty())
+            return false;
 
         //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-        final float factor = 1f / (recipients);
+        final float factor = 1f / (tl.size());
         Budget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
 
         if (subBudget.summaryLessThan(nar.memory().termLinkThreshold.floatValue()))
@@ -146,16 +139,14 @@ public class TaskProcess extends NAL implements Serializable {
 
             final TermLinkTemplate t = tl.get(i);
 
-                /*if (t.type == TermLink.TRANSFORM)
-                    continue;*/
-
-            //only apply this loop to non-transform termlink templates
-            DEFAULT_TERMLINK_ACCUMULATION_MERGE.value(t, subBudget);
-
             if ((t.getTarget().equals(getTerm()))) {
+                //self
                 continue;
             }
 
+
+            //only apply this loop to non-transform termlink templates
+            DEFAULT_TERMLINK_ACCUMULATION_MERGE.value(t, subBudget);
 
             if (updateTLinks) {
                 if (t.summaryGreaterOrEqual(termLinkThresh)) {
@@ -171,27 +162,26 @@ public class TaskProcess extends NAL implements Serializable {
     }
 
 
-    public boolean link(TermLinkTemplate t, Concept c) {
+    public boolean link(TermLinkTemplate t, Concept concept) {
 
-        TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
-
-        termLinkBuilder.set(t, false, c.getMemory());
-
+        TermLinkBuilder termLinkBuilder = concept.getTermLinkBuilder();
         Concept otherConcept = getTermLinkTemplateTarget(t);
+        if (otherConcept == concept)
+            return false;
 
+        termLinkBuilder.set(t, false, concept.getMemory());
 
         //activate this termlink to peer
-        c.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+        concept.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
 
         //activate peer termlink to this
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
-        final Budget termlinkBudget = termLinkBuilder.getBudget();
-
-        //if (otherConcept.getTerm() instanceof Compound) {
-
-        linkTerms(otherConcept, termlinkBudget, immediateTermLinkPropagation);
+        //if (otherConcept.getTermLinkTemplates()) {
+            final Budget termlinkBudget = termLinkBuilder.getBudget();
+            linkTemplates(otherConcept, termlinkBudget, immediateTermLinkPropagation);
         //}
+
         /*} else {
 
         }*/

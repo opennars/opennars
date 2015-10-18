@@ -22,21 +22,19 @@ abstract public class RealtimeClock implements Clock {
 
 
     @Override
-    public void preFrame(Memory memory) {
+    public final void preFrame(Memory memory) {
         update();
-
-
-        if (memory.resource!=null) {
-            final double frameTime = memory.resource.FRAME_DURATION.stop();
-
-            //in real-time mode, warn if frame consumed more time than reasoner duration
-            final int d = memory.duration();
-
-            if (frameTime > d) {
-                memory.eventError.emit(new Lag(d, frameTime));
-            }
-
-        }
+//        if (memory.resource!=null) {
+//            final double frameTime = memory.resource.FRAME_DURATION.stop();
+//
+//            //in real-time mode, warn if frame consumed more time than reasoner duration
+//            final int d = memory.duration();
+//
+//            if (frameTime > d) {
+//                memory.eventError.emit(new Lag(d, frameTime));
+//            }
+//
+//        }
     }
 
     static class Lag implements Serializable {

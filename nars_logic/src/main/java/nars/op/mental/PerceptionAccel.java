@@ -60,12 +60,12 @@ public class PerceptionAccel extends Active {
                     Term t = c.getTerm();
                     if (t instanceof Sequence)
                         handleConjunctionSequence((Sequence) t, true);
-                }),
-                n.memory.eventConceptForget.on(c -> {
-                    Term t = c.getTerm();
-                    if (t instanceof Sequence)
-                        handleConjunctionSequence((Sequence) t, false);
                 })
+//                n.memory.eventConceptForget.on(c -> {
+//                    Term t = c.getTerm();
+//                    if (t instanceof Sequence)
+//                        handleConjunctionSequence((Sequence) t, false);
+//                })
         );
     }
 

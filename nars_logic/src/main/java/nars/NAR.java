@@ -804,7 +804,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     //    /** creates a new loop which begins paused */
     @Deprecated final public NARLoop loop() {
-        return loop(1000);
+        return loop((int)1000);
     }
 
     final public NARLoop loop(final float initialFPS) {
@@ -1294,10 +1294,6 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-    public NAR onConceptForget(final Consumer<Concept> c) {
-        regs.add(this.memory.eventConceptForget.on(c));
-        return this;
-    }
 
     public final void input(final Stream<Task> taskStream) {
 //        taskStream.forEach(

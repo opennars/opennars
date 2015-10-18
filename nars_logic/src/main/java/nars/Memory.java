@@ -39,7 +39,6 @@ import nars.term.Term;
 import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
 import nars.util.event.Topic;
-import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
@@ -71,16 +70,13 @@ public class Memory extends Param {
     transient public final Topic<Memory> eventReset = new DefaultTopic<>();
 
     transient public final Topic<Concept> eventConceptActivated = new DefaultTopic<>();
-    transient public final Topic<Concept> eventConceptForget = new DefaultTopic<>();
 
-    //transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
     transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
 
     /**
      * fired at the end of each memory cycle
      */
-    transient public final Topic<Memory>
-            /* @Deprecated  */ eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
+    transient public final Topic<Memory> eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
 
     transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
@@ -93,33 +89,6 @@ public class Memory extends Param {
 
     transient public final Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
 
-    transient public final EventEmitter<Term, Task<Operation>> exe;
-
-
-    transient public final EmotionMeter emotion;
-    transient public final LogicMeter logic;
-    transient public final ResourceMeter resource;
-
-
-    /*transient private final Set<Concept> questionConcepts = Global.newHashSet(16);
-    transient private final Set<Concept> goalConcepts = Global.newHashSet(16);
-
-    transient private final Set<Concept> pendingDeletions = Global.newHashSet(16);*/
-
-    //transient final ConceptBuilder conceptBuilder;
-
-
-    public final Clock clock;
-
-    public final CacheBag<Term, Concept> concepts;
-
-
-    int level;
-
-    long currentStampSerial = 1;
-    //protected  boolean inCycle = false;
-
-
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
     public transient final Topic<Serializable> eventError = new DefaultTopic<>();
     public transient final Topic<Task> eventDerived = new DefaultTopic<>();
@@ -127,6 +96,27 @@ public class Memory extends Param {
     public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
     public transient final Topic<Concept> eventConceptChange = new DefaultTopic();
 
+    /** executables (incl. operators) */
+    transient public final EventEmitter<Term, Task<Operation>> exe;
+
+
+    //TODO move these to separate components, not part of Memory:
+    transient public final EmotionMeter emotion;
+    transient public final LogicMeter logic;
+
+
+    public final Clock clock;
+
+    public final CacheBag<Term, Concept> concepts;
+
+
+    /** maximum NAL level currently supported by this memory, for restricting it to activity below NAL8 */
+    int level;
+
+    /** for creating new stamps
+     * TODO move this to and make this the repsonsibility of Clock implementations
+     * */
+    volatile long currentStampSerial = 1;
 
     /**
      * Create a new memory
@@ -141,19 +131,14 @@ public class Memory extends Param {
 
         this.concepts = concepts;
 
-        /*final Consumer<Concept> deleteOnConceptRemove = c -> delete(c);
-        concepts.setOnRemoval(deleteOnConceptRemove);*/
 
         this.self = Global.DEFAULT_SELF; //default value
 
         this.event = new EventEmitter.DefaultEventEmitter();
-        //this.event = new EventEmitter.FastDefaultEventEmitter();
         this.exe = new EventEmitter.DefaultEventEmitter();
-        //this.exe = new EventEmitter.FastDefaultEventEmitter();
 
 
-        //optional:
-        this.resource = null; //new ResourceMeter();
+        //temporary
         this.logic = new LogicMeter(this);
         this.emotion = new EmotionMeter(this);
 
@@ -301,10 +286,7 @@ public class Memory extends Param {
             if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
                 task.log(Premise.getStack());
 
-            //System.err.println("REMOVED: " + task.getExplanation());
-
             eventTaskRemoved.emit(task);
-
         }
 
     }

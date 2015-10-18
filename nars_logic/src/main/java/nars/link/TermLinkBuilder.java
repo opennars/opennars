@@ -15,6 +15,7 @@ import nars.term.Variable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
@@ -44,7 +45,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
             template = Global.newArrayList(/* initial size estimate */complexity + 1);
 
-            prepareComponentLinks((Compound)host);
+            Set<Term> components = Global.newHashSet(host.complexity());
+            prepareComponentLinks((Compound)host, components);
+
+            components.forEach(t -> addTemplate(new TermLinkTemplate(host, t)));
 
         }
         else {
@@ -58,12 +62,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
      * <p>
      *
      * @param t The CompoundTerm for which to build links
+     * @param components set of components being accumulated, to avoid duplicates
      */
-    void prepareComponentLinks(final Compound t) {
+    void prepareComponentLinks(final Compound t, Set<Term> components) {
 
         /** add self link for structural transform: */
-        addTemplate(new TermLinkTemplate(concept, t));
-
+        components.add(t);
 
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
@@ -81,12 +85,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             }
 
             if (!(ti instanceof Variable)) {
-                addTemplate(new TermLinkTemplate(concept, ti));
+                components.add(ti);
             }
 
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
-                prepareComponentLinks((Compound) ti);
+                prepareComponentLinks((Compound) ti, components);
 
             } else if (ti instanceof Compound) {
                 final Compound cti = (Compound)ti;
@@ -98,7 +102,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                     if (!(tj instanceof Variable)) {
                         if (t1Grow) {
-                            addTemplate(new TermLinkTemplate(concept, tj));
+                            components.add(tj);
                         }
                     }
 
@@ -110,7 +114,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                                 final Term tk = ((Compound) ctj).term[k].normalized();
 
                                 if (!(tk instanceof Variable)) {
-                                    addTemplate(new TermLinkTemplate(concept, tk));
+                                    components.add(tk);
                                 }
                             }
                         }

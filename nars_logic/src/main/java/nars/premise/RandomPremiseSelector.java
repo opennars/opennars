@@ -1,8 +1,8 @@
-package nars.premise;
-
-/**
- * Decides randomly
- */
-public class RandomPremiseSelector {
-    //TODO
-}
+//package nars.premise;
+//
+///**
+// * Decides randomly
+// */
+//public class RandomPremiseSelector {
+//    //TODO
+//}
