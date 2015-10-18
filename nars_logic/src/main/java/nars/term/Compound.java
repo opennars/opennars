@@ -36,7 +36,6 @@ import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -608,16 +607,16 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return false;
     }
 
-    /**
-     * true if equal operate and all terms contained
-     */
-    public boolean containsAllTermsOf(final Term t) {
-        if ((op() == t.op())) {
-            return Terms.containsAll(term, ((Compound) t).term);
-        } else {
-            return this.containsTerm(t);
-        }
-    }
+//    /**
+//     * true if equal operate and all terms contained
+//     */
+//    public boolean containsAllTermsOf(final Term t) {
+//        if ((op() == t.op())) {
+//            return Terms.containsAll(term, ((Compound) t).term);
+//        } else {
+//            return this.containsTerm(t);
+//        }
+//    }
 
     //    /**
     //     * Try to add a component into a compound
@@ -840,15 +839,15 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return changed;
     }
 
-    /**
-     * forced deep clone of terms
-     */
-    public ArrayList<Term> cloneTermsListDeep() {
-        ArrayList<Term> l = new ArrayList(length());
-        for (final Term t : term)
-            l.add(t.clone());
-        return l;
-    }
+//    /**
+//     * forced deep clone of terms
+//     */
+//    public ArrayList<Term> cloneTermsListDeep() {
+//        ArrayList<Term> l = new ArrayList(length());
+//        for (final Term t : term)
+//            l.add(t.clone());
+//        return l;
+//    }
 
 
     

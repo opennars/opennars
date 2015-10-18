@@ -2,11 +2,12 @@ package nars.term;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterators;
-import nars.Global;
 import nars.term.transform.CompoundTransform;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.copyOf;
@@ -101,70 +102,70 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         return copyOf(term, term.length);
     }
 
-    /**
-     * Cloned array of Terms, except for one or more Terms.
-     *
-     * @param toRemove
-     * @return the cloned array with the missing terms removed,
-     * OR null if no terms were actually removed when requireModification=true
-     */
-    public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
+//    /**
+//     * Cloned array of Terms, except for one or more Terms.
+//     *
+//     * @param toRemove
+//     * @return the cloned array with the missing terms removed,
+//     * OR null if no terms were actually removed when requireModification=true
+//     */
+//    public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
+//
+//        final int toRemoveLen = toRemove.length;
+//        if (toRemoveLen == 0)
+//            throw new RuntimeException("no removals specified");
+//        else if (toRemoveLen == 1) {
+//            //use the 1-term optimized version of this method
+//            return cloneTermsExcept(requireModification, toRemove[0]);
+//        }
+//
+//        final int n = length();
+//        final Term[] l = new Term[n];
+//
+//        final Set<Term> toRemoveSet = Terms.toSet(toRemove);
+//
+//
+//        int remain = 0;
+//        for (int i = 0; i < n; i++) {
+//            final Term x = term(i);
+//            if (!toRemoveSet.contains(x))
+//                l[remain++] = x;
+//        }
+//
+//        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
+//    }
 
-        final int toRemoveLen = toRemove.length;
-        if (toRemoveLen == 0)
-            throw new RuntimeException("no removals specified");
-        else if (toRemoveLen == 1) {
-            //use the 1-term optimized version of this method
-            return cloneTermsExcept(requireModification, toRemove[0]);
-        }
-
-        final int n = length();
-        final Term[] l = new Term[n];
-
-        final Set<Term> toRemoveSet = Terms.toSet(toRemove);
-
-
-        int remain = 0;
-        for (int i = 0; i < n; i++) {
-            final Term x = term(i);
-            if (!toRemoveSet.contains(x))
-                l[remain++] = x;
-        }
-
-        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
-    }
-
-    /**
-     * Cloned array of Terms, except for a specific Term.
-     *
-     * @param toRemove
-     * @return the cloned array with the missing terms removed,
-     * OR null if no terms were actually removed when requireModification=true
-     */
-    public Term[] cloneTermsExcept(final boolean requireModification, final Term toRemove) {
-
-        final int n = length();
-        final Term[] l = new Term[n];
-
-
-        int remain = 0;
-        for (int i = 0; i < n; i++) {
-            final Term x = term(i);
-            if (!toRemove.equals(x))
-                l[remain++] = x;
-        }
-
-        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
-    }
-
-    /**
-     * creates a new ArrayList for terms
-     */
-    public List<Term> asTermList() {
-        List<Term> l = Global.newArrayList(length());
-        addTermsTo(l);
-        return l;
-    }
+//    /**
+//     * Cloned array of Terms, except for a specific Term.
+//     *
+//     * @param toRemove
+//     * @return the cloned array with the missing terms removed,
+//     * OR null if no terms were actually removed when requireModification=true
+//     */
+//    public Term[] cloneTermsExcept(final boolean requireModification, final Term toRemove) {
+//
+//        final int n = length();
+//        final Term[] l = new Term[n];
+//
+//
+//        int remain = 0;
+//        for (int i = 0; i < n; i++) {
+//            final Term x = term(i);
+//            if (!toRemove.equals(x))
+//                l[remain++] = x;
+//        }
+//
+//        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
+//    }
+//
+//    /**
+//     * creates a new ArrayList for terms
+//     */
+//    public List<Term> asTermList() {
+//        List<Term> l = Global.newArrayList(length());
+//        addTermsTo(l);
+//        return l;
+//    }
 
     /**
      * forced deep clone of terms - should not be necessary
@@ -182,36 +183,36 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
 //    public Compound cloneVariablesDeep() {
 //        return (Compound) clone(cloneTermsDeepIfContainingVariables());
 //    }
+//
+//    public Term[] cloneTermsDeepIfContainingVariables() {
+//        Term[] l = new Term[length()];
+//        for (int i = 0; i < l.length; i++) {
+//            Term t = term[i];
+//
+//            if ((!(t instanceof Variable)) && (t.hasVar())) {
+//                t = t.cloneDeep();
+//            }
+//
+//            //else it is an atomic term or a compoundterm with no variables, so use as-is:
+//            l[i] = t;
+//        }
+//        return l;
+//    }
 
-    public Term[] cloneTermsDeepIfContainingVariables() {
-        Term[] l = new Term[length()];
-        for (int i = 0; i < l.length; i++) {
-            Term t = term[i];
 
-            if ((!(t instanceof Variable)) && (t.hasVar())) {
-                t = t.cloneDeep();
-            }
-
-            //else it is an atomic term or a compoundterm with no variables, so use as-is:
-            l[i] = t;
-        }
-        return l;
-    }
-
-
-    public int varDep() {
+    public final int varDep() {
         return hasVarDeps;
     }
 
-    public int varIndep() {
+    public final int varIndep() {
         return hasVarIndeps;
     }
 
-    public int varQuery() {
+    public final int varQuery() {
         return hasVarQueries;
     }
 
-    public int vars() {
+    public final int vars() {
         return varTotal;
     }
 

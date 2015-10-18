@@ -310,7 +310,10 @@ public class TaskProcess extends NAL implements Serializable {
         final Task task = getTask();
 
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
-        task.setTermShared((Compound) c.getTerm());
+        Term cterm = c.getTerm();
+        if (cterm.equals(task.getTerm()))
+            task.setTermShared((Compound) c.getTerm());
+
 
         final LogicMeter logicMeter = nar.memory().logic;
 

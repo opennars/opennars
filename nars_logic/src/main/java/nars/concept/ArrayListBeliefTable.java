@@ -319,6 +319,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 //throw new RuntimeException(
                 System.err.println(
                         "deleted tasks should not be present in belief tables: " + dt);
+                System.err.println(dt.getExplanation());
                 remove(i);
                 i--;
 //

@@ -189,11 +189,9 @@ public class Default extends NAR {
         m.termLinkForgetDurations.set(3.0);
 
         m.conceptActivationFactor.set(1.0);
-        m.conceptFireThreshold.set(0.0);
 
         m.derivationThreshold.set(0);
 
-        m.activeConceptThreshold.set(0.0);
 
         m.taskProcessThreshold.set(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
 

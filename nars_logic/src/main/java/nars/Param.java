@@ -89,17 +89,6 @@ public abstract class Param extends Container implements Serializable, Level {
     /** budget summary necessary to create a derived task. this will compare the summary of the raw original derivation */
     public final AtomicDouble derivationThreshold = new AtomicDouble(0);
 
-    /**
-     * Minimum required priority for a concept
-     * to be allowed to process if it has been sampled from the bag,
-     * (TODO otherwise it accumulates the priority in its budget?)
-     */
-    public AtomicDouble conceptFireThreshold = new AtomicDouble(0.0);
-
-    /** budget summary necessary for Concept to be set ACTIVE.
-     *  if it is not enough, the concept will be immediately forgotten
-     *  into subconcepts. */
-    public final AtomicDouble activeConceptThreshold = new AtomicDouble(0);
 
 //    /** budget summary necessary to execute a desired Goal */
 //    public final AtomicDouble questionFromGoalThreshold = new AtomicDouble(0);

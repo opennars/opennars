@@ -23,6 +23,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
 import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class TermTest {
         Global.DEBUG = true;
     }
 
-    NAR n = new Default();
+    NAR n = new Terminal(); //Default();
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
@@ -564,7 +565,6 @@ public class TermTest {
     }
 
     @Test public void testSubTermStructure() {
-        NAR n = new Default();
 
         assertTrue(
                 n.term("<a --> b>").impossibleSubterm(
@@ -577,5 +577,14 @@ public class TermTest {
                 )
         );
 
+    }
+
+    @Test public void testCommutativeWithVariableEquality() {
+        Term a = n.term("<(&&, <#1 --> M>, <#2 --> M>) ==> <#2 --> nonsense>>");
+        Term b = n.term("<(&&, <#2 --> M>, <#1 --> M>) ==> <#2 --> nonsense>>");
+        assertEquals(a, b);
+
+        Term c = n.term("<(&&, <#1 --> M>, <#2 --> M>) ==> <#1 --> nonsense>>");
+        assertNotEquals(a, c);
     }
 }
