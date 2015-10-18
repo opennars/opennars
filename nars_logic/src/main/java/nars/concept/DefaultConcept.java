@@ -8,6 +8,7 @@ import nars.bag.NullBag;
 import nars.budget.Budget;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.link.TermLinkBuilder;
 import nars.link.TermLinkKey;
 import nars.nal.nal1.LocalRules;
 import nars.premise.Premise;
@@ -22,6 +23,12 @@ public class DefaultConcept extends AtomConcept {
     protected final TaskTable quests;
     protected final BeliefTable beliefs;
     protected final BeliefTable goals;
+
+    /**
+     * Link templates of TermLink, only in concepts with CompoundTerm Templates
+     * are used to improve the efficiency of TermLink building
+     */
+    protected TermLinkBuilder termLinkBuilder = null;
 
 
 //    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
@@ -79,10 +86,19 @@ public class DefaultConcept extends AtomConcept {
 
     }
 
+    @Override
+    public TermLinkBuilder getTermLinkBuilder() {
+        final TermLinkBuilder termLinkBuilder = this.termLinkBuilder;
+        if (termLinkBuilder == null) {
+            return this.termLinkBuilder = new TermLinkBuilder(this);
+        }
+        return termLinkBuilder;
+    }
+
     /**
      * Pending Quests to be answered by new desire values
      */
-    public TaskTable getQuests() {
+    public final TaskTable getQuests() {
         return quests;
     }
 
@@ -90,14 +106,14 @@ public class DefaultConcept extends AtomConcept {
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
-    public BeliefTable getBeliefs() {
+    public final BeliefTable getBeliefs() {
         return beliefs;
     }
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public BeliefTable getGoals() {
+    public final BeliefTable getGoals() {
         return goals;
     }
 
@@ -514,5 +530,6 @@ public class DefaultConcept extends AtomConcept {
 //
 //        return true;
 //    }
+
 
 }

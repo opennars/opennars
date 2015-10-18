@@ -33,8 +33,8 @@ public class NARideRealtimeDefault {
         NAR nar = new Default2(mem, 1024, 1, 1, 3);
 
 
-        nar.memory.conceptForgetDurations.set(10);
-        nar.memory.termLinkForgetDurations.set(100);
+        /*nar.memory.conceptForgetDurations.set(10);
+        nar.memory.termLinkForgetDurations.set(100);*/
 
         nar.memory.duration.set(250 /* ie, milliseconds */);
         //nar.spawnThread(1000/60);

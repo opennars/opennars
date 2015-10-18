@@ -142,7 +142,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 //    }
 
     @Override
-    public Term getTerm() {
+    public final Term getTerm() {
         return getTarget();
     }
 
@@ -170,7 +170,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     /**
      * The linked Term
      */
-    public Term getTarget() {
+    public final Term getTarget() {
         return target;
     }
 

@@ -7,6 +7,7 @@ import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.term.Term;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,12 +17,6 @@ public class AtomConcept extends AbstractConcept  {
 
     protected final Bag<Sentence, TaskLink> taskLinks;
     protected final Bag<TermLinkKey, TermLink> termLinks;
-
-    /**
-     * Link templates of TermLink, only in concepts with CompoundTerm Templates
-     * are used to improve the efficiency of TermLink building
-     */
-    protected final TermLinkBuilder termLinkBuilder;
 
 
     /** creates with no termlink and tasklink ability */
@@ -33,7 +28,6 @@ public class AtomConcept extends AbstractConcept  {
         super(atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
-        this.termLinkBuilder = new TermLinkBuilder(this);
     }
 
 
@@ -56,7 +50,7 @@ public class AtomConcept extends AbstractConcept  {
 
     @Override
     public TermLinkBuilder getTermLinkBuilder() {
-        return termLinkBuilder;
+        return null;
     }
 
 
@@ -118,7 +112,10 @@ public class AtomConcept extends AbstractConcept  {
 
     @Override
     public final List<TermLinkTemplate> getTermLinkTemplates() {
-        return getTermLinkBuilder().templates();
+        TermLinkBuilder b = getTermLinkBuilder();
+        if (b!=null)
+            return b.templates();
+        return Collections.emptyList();
     }
 
 }

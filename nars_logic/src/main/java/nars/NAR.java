@@ -1119,49 +1119,19 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * @return an existing Concept, or a new one, or null
      */
     public Concept conceptualize(Termed termed, final Budget budget) {
-
-        if (termed == null)
-            return null;
-
-        //validation here is to avoid checking a term if we know it is already normalized
-        final boolean needsValidation;
-
-        needsValidation = true;
-        //needsValidation = (termed instanceof Term);
-
-
-//        if (termed instanceof Term) {
-//            needsValidation = true;
-//        }
-//        else if (termed instanceof Task) {
-//            //in a task should mean it's already valid
-//            needsValidation = false;
-//        }
-//        else if (termed instanceof TaskLink) {
-//            needsValidation = false;
-//        }
-//        else if (termed instanceof TermLinkTemplate) {
-//            needsValidation = false;
-//        }
-//        else if (termed instanceof TermLinkKey) {
-//            needsValidation = false;
-//        }
-//        else {
-//            throw new RuntimeException("unknown validation requirement: " + termed + " " + termed.getClass());
-//        }
+        /*if (termed == null)
+            return null;*/
 
         Term term = termed.getTerm();
-
-        if (needsValidation) {
-            if (!validConceptTerm(term)) {
-                throw new RuntimeException("invalid term attempts to conceptualize: " + term);
-                //return null;
-            }
-        }
 
         if ((term = term.normalized()) == null) {
             //throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
             return null;
+        }
+
+        if (!validConceptTerm(term)) {
+            throw new RuntimeException("invalid term attempts to conceptualize: " + term);
+            //return null;
         }
 
         final Concept c = doConceptualize(term, budget);

@@ -150,6 +150,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             if (updateTLinks) {
                 if (t.summaryGreaterOrEqual(termLinkThresh)) {
+
                     if (link(t, c))
                         activity = true;
                 }
@@ -194,11 +195,13 @@ public class TaskProcess extends NAL implements Serializable {
 
     }
 
-    Concept getTermLinkTemplateTarget(TermLinkTemplate t) {
+    final Concept getTermLinkTemplateTarget(TermLinkTemplate t) {
+        final Term target = t.getTarget();
+        final NAR nar = this.nar;
         if (activateTermLinkTemplates)
-            return nar.conceptualize(t.getTerm(), t);
+            return nar.conceptualize(target, t);
         else
-            return nar.concept(t.getTerm());
+            return nar.concept(target);
     }
 
     final Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget) {
@@ -370,7 +373,7 @@ public class TaskProcess extends NAL implements Serializable {
         memory.eventTaskProcess.emit(this);
         memory.logic.TASK_PROCESS.hit();
 
-        final Concept c = nar.conceptualize(task, task.getBudget());
+        final Concept c = nar.conceptualize(task, Budget.zero);
 
         if (c == null) {
             memory.remove(task, "Unable to conceptualize");
@@ -380,6 +383,8 @@ public class TaskProcess extends NAL implements Serializable {
         memory.emotion.busy(task, this);
 
         if (processConcept(c)) {
+
+            nar.conceptualize(task, task.getBudget());
 
             link(c, task);
 
