@@ -1,14 +1,11 @@
 package nars.op.app;
 
 import com.google.common.collect.Iterators;
-import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.event.NARReaction;
 import nars.nal.nal7.Temporal;
 import nars.task.Task;
-import nars.util.event.On;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -26,32 +23,36 @@ import java.util.function.Consumer;
  * Analogous to a continuous echo/delay effect,
  * or a sustain effecct.
  */
-public class Commander extends NARReaction implements Consumer<Memory> {
+public class Commander implements Consumer<NAR> {
 
     public final ItemAccumulator<Task> commands;
     public final Iterator<Task> commandIterator;
-    private final On cycleEnd;
-    private final NAR nar;
+//    private final On cycleEnd;
+//    private final NAR nar;
 
     /** how far away from the occurence time of a temporal belief before it is deleted */
     private final int maxTemporalBeliefAge;
     private final int maxTemporalBeliefDurations = 16 /* should be tuned */;
 
+    int inputsPerFrame = 1;
+    int cycleDivisor = 6;
 
-    float priorityPerCycle = 1,
-            priorityRemaining = 0; //change left over from last cycle
+//    float priorityPerCycle = 1,
+//            priorityRemaining = 0; //change left over from last cycle
 
     public Commander(NAR nar, boolean active) {
         this(nar, new ItemAccumulator<>(Budget.plus), active);
     }
 
     public Commander(NAR nar, ItemAccumulator<Task> buffer, boolean active) {
-        super(nar);
+        super();
 
-        this.nar = nar;
+        //this.nar = nar;
 
-        this.cycleEnd = active ?
-                nar.memory.eventCycleEnd.on(this) : null;
+        //TODO reset event
+        //this.cycleEnd = active ?
+                nar.memory.eventFrameStart.on(this);
+                //: null;
 
         this.commands = buffer;
         commandIterator = Iterators.cycle(commands.items.keySet());
@@ -62,24 +63,20 @@ public class Commander extends NARReaction implements Consumer<Memory> {
 
         nar.memory.eventTaskProcess.on((tp) -> {
             Task t = tp.getTask();
-            if (!t.isDeleted())
+            if (t.isInput() && !commands.contains(t))
                 input(t);
         });
     }
 
 
-    @Override
-    public void setActive(boolean b) {
-        super.setActive(b);
-        if (!b) {
-            commands.clear();
-        }
-    }
+//    @Override
+//    public void setActive(boolean b) {
+//        super.setActive(b);
+//        if (!b) {
+//            commands.clear();
+//        }
+//    }
 
-    @Override
-    public void event(Class event, Object... args) {
-
-    }
 
     protected void input(Task t) {
         if (/*(t.isGoal() || t.isQuestOrQuestion()) && */ t.isInput()) {
@@ -89,19 +86,20 @@ public class Commander extends NARReaction implements Consumer<Memory> {
 
 
     @Override
-    public void accept(Memory memory) {
+    public void accept(NAR nar) {
 
         //TODO iterate tasks until allotted priority has been reached,
         //  TaskProcess each
 
-        if (commands.size() == 0) return;
+        int cs = commands.size();
+        if (cs == 0) return;
 
-        int inputsPerCycle = 1; //Math.min(1, commands.size());
 
         final long now = nar.time();
+        if (now%cycleDivisor!= 0) return;
 
         final Iterator<Task> commandIterator = this.commandIterator;
-        for (int i = 0; i < inputsPerCycle; i++) {
+        for (int i = 0; i < inputsPerFrame; i++) {
             if (commandIterator.hasNext()) {
                 final Task next = commandIterator.next();
                 if (valid(now, next))

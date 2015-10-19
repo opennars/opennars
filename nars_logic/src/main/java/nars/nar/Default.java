@@ -532,10 +532,12 @@ public class Default extends NAR {
                     conceptForgetDurations,
                     conceptProcessor, now );*/
 
-            nar.input(ConceptProcess.nextPremiseSquare(nar, c,
+            nar.input(
+                ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
                     this,
-                    termlinksSelectedPerFiredConcept.intValue(), tasklinksSelectedPerFiredConcept.intValue()));
+                    termlinksSelectedPerFiredConcept.intValue(),
+                    tasklinksSelectedPerFiredConcept.intValue()));
 
 
         }

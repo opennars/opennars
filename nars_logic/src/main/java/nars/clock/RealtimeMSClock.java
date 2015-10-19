@@ -4,14 +4,13 @@ package nars.clock;
 public class RealtimeMSClock extends RealtimeClock {
 
 
-
     @Override
-    protected long getRealTime() {
+    protected final long getRealTime() {
         return System.currentTimeMillis();
     }
 
     @Override
-    protected float unitsToSeconds(final long l) {
+    protected final float unitsToSeconds(final long l) {
         return (l / 1000f);
     }
 }

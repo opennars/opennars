@@ -447,7 +447,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
     public V forgetNext() {
         peekNext(forgetNext);
-        return forgetNext.lastForgotten;
+        return forgetNext.current;
     }
 
     /**

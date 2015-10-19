@@ -829,14 +829,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     public final void deleteBudget() {
-
         this.priority = Float.NaN;
-        this.durability = 0; //trying a mix of NaN and 0's
+        this.durability = 0;
         this.quality = 0;
-
-
-                //Float.NaN, Float.NaN);
-        //this.lastForgetTime = Stamp.TIMELESS;
     }
 
     public static final boolean isDeleted(float pri) {

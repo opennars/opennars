@@ -4,16 +4,18 @@ import nars.Global;
 import nars.NAR;
 import nars.clock.FrameClock;
 import nars.nal.nal2.Property;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
+import nars.nal.nal4.Product1;
 import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Implication;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
-import nars.term.Statement;
 import nars.term.Term;
 
 import java.util.Collection;
@@ -63,15 +65,15 @@ public class BitmapRecognition {
         }
 
         public void askWhich(NAR n, Term... possibilities) {
-            Term pixelTerms = applyAndGetPixelState(n);
+            //Term pixelTerms = applyAndGetPixelState(n);
 
 
 
             for (Term po : possibilities) {
-                Statement tt = Similarity.make(
+                /*Statement tt = Similarity.make(
                     pixelTerms, po
-                );
-                Task q = n.task(tt + "?");// :|:");
+                );*/
+                Task q = n.task("echo(" + po + ")@");// :|:");
                 System.err.println("ASK: " + q);
                 n.input(q);
             }
@@ -128,11 +130,19 @@ public class BitmapRecognition {
 
             Term pixelTerms = applyAndGetPixelState(n);
 
-            n.believe(
+            /*n.believe(
                 Similarity.make(
                     pixelTerms,
                     similaritage
                 ), Tense.Present, 1.0f, 0.95f
+            );*/
+            n.believe(
+                    Implication.make(
+                            pixelTerms,
+                            new Operation(Operator.the("echo"),
+                                    new Product1(similaritage)),
+                            Temporal.ORDER_CONCURRENT
+                    ), Tense.Eternal, 1.0f, 0.95f
             );
         }
 
@@ -158,9 +168,15 @@ public class BitmapRecognition {
         //Global.DEBUG = true;
         int size = 2;
 
-        NAR n = new Default(1000, 3, 4, 5, new FrameClock()).nal(6);
+        NAR n = new Default(1000, 1, 2, 3, new FrameClock()).nal(8);
 
         n.log();
+
+//        n.input("echo(white)@");
+//        n.input("echo(black)@");
+        n.input("$0.25;0.9;0.5$ echo(white)! %0.50;0.25%");
+        n.input("$0.25;0.9;0.5$ echo(black)! %0.50;0.25%");
+
 
         TermBitmap tb = new TermBitmap("i",size,size);
 
@@ -168,7 +184,7 @@ public class BitmapRecognition {
 
         int exposureCycles = 300;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             tb.fill(0f);
             tb.tell(n, Atom.the("black"));
             n.frame(exposureCycles);

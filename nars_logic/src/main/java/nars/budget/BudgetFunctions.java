@@ -32,6 +32,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.Truth;
+import nars.util.data.Util;
 
 import static java.lang.Math.pow;
 
@@ -236,7 +237,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         // priority * e^(-lambda*t)
         //     lambda is (1 - durabilty) / forgetPeriod
         //     t is the delta
-        final float currentPriority = budget.getPriority();
+        final float currentPriority = budget.getPriorityIfNaNThenZero();
 
         if (currentPriority == 0)
             return 0;
@@ -247,12 +248,20 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         final long t = budget.setLastForgetTime(currentTime);
 
-        final double lambda = (1 - budget.getDurability()) / forgetPeriod;
+        final float lambda = (1f - budget.getDurability()) / forgetPeriod;
 
+        final float relativeThreshold = 0.1f;
 
-        final float nextPriority = currentPriority *
-                //(float)Util.expFast(-lambda * t);
-                (float)Math.exp(-lambda * t);
+        float expDecayed = currentPriority * (float) Util.expFast(-lambda * t);
+        float threshold = budget.getQuality() * relativeThreshold;
+
+        final float nextPriority =
+                Float.isNaN(expDecayed) ? threshold :
+                Math.max(
+                    expDecayed,
+                    threshold
+                );
+                    //(float)Math.exp(-lambda * t);
 
         //self limiting to [0,1] interval so no need for checks
         budget.setPriority(nextPriority);

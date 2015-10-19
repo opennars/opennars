@@ -11,11 +11,8 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
     protected K key;
 
+    //TODO make this thread safe
     final transient private Budget nextActivation = new Budget();
-
-    public final K getKey() {
-        return key;
-    }
 
 
     public final void setBudget(Budget budget) {

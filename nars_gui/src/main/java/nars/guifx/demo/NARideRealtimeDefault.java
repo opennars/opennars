@@ -1,6 +1,5 @@
 package nars.guifx.demo;
 
-import nars.Global;
 import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
@@ -18,7 +17,7 @@ public class NARideRealtimeDefault {
     public static void main(String[] arg) {
 
 
-        Global.DEBUG = true;
+        //Global.DEBUG = true;
 
         Memory mem = new LocalMemory(new RealtimeMSClock(),
             new MapCacheBag(
@@ -30,7 +29,7 @@ public class NARideRealtimeDefault {
                 InfiniPeer.tmp().getCache()
             )*/
         );
-        NAR nar = new Default2(mem, 1024, 1, 1, 3);
+        NAR nar = new Default2(mem, 1024, 1, 2, 3);
 
 
         /*nar.memory.conceptForgetDurations.set(10);

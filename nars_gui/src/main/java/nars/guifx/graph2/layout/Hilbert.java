@@ -61,7 +61,7 @@ public class Hilbert extends Linear {
 
     @Override
     public void setPosition(TermNode v, int i, int max) {
-        if ( i > poly.size() )
+        if ( i*2 > poly.size() )
             return;
 
         double x = poly.get(i*2);

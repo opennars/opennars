@@ -17,7 +17,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
     /** provides a way for callee to get the current/last affected item,
      *  because it may have been removed in the update,
      *  in which case would update() return null*/
-    public V lastForgotten = null;
+    public V current = null;
 
     protected long now;
 
@@ -38,7 +38,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
 
     @Override
     public void updateItem(V v, Budget result) {
-        this.lastForgotten = v;
+        this.current = v;
 
         //final float priorityStart = v.getPriority();
 

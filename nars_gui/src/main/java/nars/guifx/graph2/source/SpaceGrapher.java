@@ -43,6 +43,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
     public final SimpleIntegerProperty maxNodes;
     public final SimpleObjectProperty<GraphSource<K>> source = new SimpleObjectProperty<>();
+    private int animatinPeriodMS = -1;
 
 
     private Animate animator; //TODO atomic reference
@@ -441,13 +442,22 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     }
 
     /** called before next layout changes */
-    void layoutUpdated() {
+    synchronized void layoutUpdated() {
+        int animationPeriod = this.animatinPeriodMS;
+        if (this.animator!=null) {
+            this.animator.stop();
+            this.animator = null;
+        }
+
         //reset visiblity state to true for all, in case previous layout had hidden then
         getVertices().forEach(t -> t.setVisible(true));
 
         source.getValue().refresh();
 
         rerender();
+
+        if (animationPeriod!=-1)
+            start(animationPeriod);
     }
 
 
@@ -478,6 +488,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
                         renderEdges();
                     }
                 });*/
+            animatinPeriodMS=layoutPeriodMS;
             animator.start();
             //updaterSlow.start();
         }
@@ -488,6 +499,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
         if (this.animator != null) {
             animator.stop();
             animator = null;
+            animatinPeriodMS = -1;
 
             System.out.println(this + " stopped");
         }

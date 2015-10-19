@@ -1,5 +1,6 @@
 package nars.io.in;
 
+import nars.NAR;
 import nars.task.Task;
 
 import java.util.ArrayDeque;
@@ -55,6 +56,16 @@ public class TaskQueue extends ArrayDeque<Task> implements Input , Consumer<Task
         }
         return null;
     }
+
+    public void addIfNotNull(Task task) {
+        if (task!=null)
+            add(task);
+    }
+
+    public void input(NAR nar) {
+        nar.input((Input)this);
+    }
+
 
 //    @Override
 //    public void stop() {

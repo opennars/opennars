@@ -526,18 +526,18 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             int center = this.sampler.applyAsInt(this);
             istart = center - r;
             iend = center + r;
+            if (r%2 == 1) istart--; //if odd, give extra room to the start (higher priority)
+
             //TODO test and if possible use more fair policy that accounts for clipping
             if (iend > s) {
-                int over = iend - s;
                 iend = s;
-                istart -= over;
+                istart -= s-len;
             }
-            if (istart < 0) {
-                int over = 0 - istart;
+            else if (istart < 0) {
                 istart = 0;
-                iend += over;
+                iend = len;
             }
-            if (iend > s) iend = s;
+
 
         }
 

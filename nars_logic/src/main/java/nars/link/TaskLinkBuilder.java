@@ -39,11 +39,11 @@ public class TaskLinkBuilder extends BagActivator<Task,TaskLink> {
 
     @Override
     public final TaskLink newItem() {
-         return new TaskLink(getKey());
+         return new TaskLink(name());
     }
 
     @Override
     public String toString() {
-        return getKey().toString();
+        return name().toString();
     }
 }

@@ -31,6 +31,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 //                    AnyEquivalence.getInstance(Budget.class),
 //                    AnyEquivalence.getInstance(Budget.class));
 
+            //new ConcurrentHashMapUnsafe<>();
             new ConcurrentHashMap();
             //new UnifiedMap<>();
 
@@ -251,6 +252,10 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
                 sent++;
             }
         }
+    }
+
+    public final boolean contains(I t) {
+        return items.containsKey(t);
     }
 
 

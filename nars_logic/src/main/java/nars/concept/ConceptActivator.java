@@ -54,9 +54,10 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
     @Override
     public final Concept newItem() {
         CacheBag<Term, Concept> i = nar.concepts();
-        Concept c = i.get(getKey());
+        Term n = name();
+        Concept c = i.get(n);
         if (c == null) {
-            c = builder.apply(getKey());
+            c = builder.apply(n);
             i.put(c);
         }
         return c;

@@ -24,6 +24,7 @@ package nars.nal.nal8;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
@@ -204,12 +205,18 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
      */
     protected void noticeExecuted(final Task<Operation> operation) {
 
+        Budget b;
+        if (!operation.isDeleted())
+            b = operation.getBudget();
+        else
+            b = Budget.zero;//if operation was cancelled, at least provide some result feedback
+
         final Memory memory = nar().memory();
 
         nar().input(TaskSeed.make(memory, operation.getTerm()).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
-                budget(operation.getBudget()).
+                budget(b).
                 present(memory).
                 parent(operation).
                 cause(operation.getTerm()).

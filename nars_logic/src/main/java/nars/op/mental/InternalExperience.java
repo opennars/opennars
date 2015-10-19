@@ -256,7 +256,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         }
 
         return nal.input(nal.newTask(ret).judgment()
-                        .parent(full ? null : task, nal.time())
+                        .parent(task, nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
                         .reason("Remembered Action (Internal Experience)"));
