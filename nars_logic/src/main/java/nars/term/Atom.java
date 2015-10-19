@@ -263,7 +263,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 
     @Override
     public final Term cloneDeep() {
-        return clone();
+        return this;
     }
 
     @Override

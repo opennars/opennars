@@ -208,8 +208,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         return updateItem(tx, item);
     }
 
-    protected V updateItem(BagSelector<K, V> selector, V item) {
-        if (!updateItemBudget(selector, item))
+
+    protected V updateItem(BagSelector<K, V> selector, V item, Budget reusableTemporary) {
+        if (!updateItemBudget(selector, item, reusableTemporary))
             return item;
         return updateReinsert(selector, item);
     }
@@ -224,7 +225,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
             if (item == null)
                 return null;
         } else {
-            if (!updateItemBudget(tx, item))
+            if (!updateItemBudget(tx, item, new Budget()))
                 return item;
         }
 
@@ -237,16 +238,16 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         if (overflow != null)
             selector.overflow(overflow);
 
-        if (overflow == item)
-            return null;
+        /*if (overflow == item)
+            return null;*/
 
         return item;
     }
 
-    public boolean updateItemBudget(BagSelector<K, V> selector, V item) {
+    public boolean updateItemBudget(BagSelector<K, V> selector, V item, Budget nextBudget /* temporary, re-usable instance */) {
         final Budget currentBudget = item.getBudget();
 
-        final Budget nextBudget = new Budget(currentBudget, true);
+        nextBudget.budget(currentBudget);
 
         selector.updateItem(item, nextBudget.budget(currentBudget));
 
@@ -290,7 +291,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         } while (item == null);
 
-        updateItem(selector, item);
+        updateItem(selector, item, new Budget());
 
         return item;
     }

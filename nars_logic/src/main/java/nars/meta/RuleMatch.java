@@ -196,19 +196,11 @@ public class RuleMatch extends FindSubst {
 
         derivedTerm = resolve(derivedTerm);
 
-        if (ApplySubsSet != null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
+        if (!ApplySubsSet.isEmpty() && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
             derivedTerm = ((Compound) derivedTerm).applySubstitute(ApplySubsSet);
         }
 
-        if (!(derivedTerm instanceof Compound))
-            return null;
-
-
-        derivedTerm = derivedTerm.cloneDeep();
-        if (derivedTerm == null) {
-            //why does this happen?
-            return null;
-        }
+        if (derivedTerm == null) return null;
 
 
         //test for reactor leak
@@ -216,7 +208,8 @@ public class RuleMatch extends FindSubst {
         if (Variable.hasPatternVariable(derivedTerm)) {
             String leakMsg = "reactor leak: " + derivedTerm;
             //throw new RuntimeException(leakMsg);
-            System.err.println(leakMsg);   return null;
+            System.err.println(leakMsg);
+            return null;
 
 //
 //            System.out.println(premise + "   -|-   ");
@@ -235,6 +228,13 @@ public class RuleMatch extends FindSubst {
 //                System.err.println("  " + rule);
 //            }
 //        }
+
+
+        derivedTerm = derivedTerm.normalized();
+
+        if (!(derivedTerm instanceof Compound))
+            return null;
+
 
 
 //        if (punct == task.getPunctuation() && derive.equals(task.getTerm())) {

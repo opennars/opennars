@@ -544,13 +544,16 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         List<K> toRemove = Global.newArrayList(0);
 
         fill = 0;
+
+        Budget b = new Budget();
+
         for (int i = istart; (i < iend) && (fill < len); i++) {
             V v = a.get(i);
             if (v.isDeleted()) {
                 toRemove.add(v.name());
             }
             else {
-                updateItem(tx, v);
+                updateItem(tx, v, b);
                 batch[bstart + (fill++)] = v;
             }
         }
