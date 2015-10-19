@@ -57,8 +57,8 @@ public class SingleStepNAR extends Default {
                 ;
                 Stream<Task> s = super.forEachRule(match).peek(t -> {
                     DerivationGraph.DerivationPattern dd =
-                            derivations.add(match.premise, t);
-                    ruleDerivations.put(match.rule, dd.key);
+                        derivations.add(match.premise, t);
+                        ruleDerivations.put(match.rule, dd.key);
                     //derivationRules.put(dd.key, match.rule);
                 });
 

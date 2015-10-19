@@ -436,7 +436,7 @@ public class RuleMatch extends FindSubst {
     }
 
 
-    public Stream<Task> run(final List<TaskRule> u, final int maxNAL) {
+    public final Stream<Task> run(final List<TaskRule> u, final int maxNAL) {
         return run(u.stream(), maxNAL);
     }
 

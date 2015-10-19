@@ -1,7 +1,5 @@
 package nars.term.transform;
 
-import com.gs.collections.api.tuple.primitive.IntObjectPair;
-import com.gs.collections.impl.tuple.primitive.PrimitiveTuples;
 import nars.Global;
 import nars.Op;
 import nars.term.Compound;
@@ -61,7 +59,7 @@ public class VariableNormalization implements VariableTransform {
     public static final VariableTransform singleVariableNormalization =
             (containing, current, depth) -> Variable.the(current.op(), 1);
 
-    Map<IntObjectPair<Variable>, Variable> rename;
+    Map<Variable, Variable> rename;
 
     final Compound result;
     boolean renamed = false;
@@ -96,7 +94,7 @@ public class VariableNormalization implements VariableTransform {
 //                vname = vname.toString() + v.getScope().name();
 
 
-        Map<IntObjectPair<Variable>, Variable> rename = this.rename;
+        Map<Variable, Variable> rename = this.rename;
 
         if (rename == null) this.rename = rename = Global.newHashMap(0); //lazy allocate
 
@@ -115,15 +113,15 @@ public class VariableNormalization implements VariableTransform {
 
 
         //int context = v.op() == Op.VAR_DEPENDENT ? -1 : serial;
-        int context = -1; //(v.op() != Op.VAR_DEPENDENT) ? -1 : serial;
+        //int context = -1; //(v.op() != Op.VAR_DEPENDENT) ? -1 : serial;
         //int context = v.op() == Op.VAR_INDEPENDENT ? System.identityHashCode(v) : -1;
 
-        IntObjectPair<Variable> scoping = PrimitiveTuples.pair(context, v);
+        //IntObjectPair<Variable> scoping = PrimitiveTuples.pair(-1, v);
 
 
 
-        final Map<IntObjectPair<Variable>,Variable> finalRename = rename;
-        Variable vv = rename.computeIfAbsent(scoping, _vname -> {
+        final Map<Variable,Variable> finalRename = rename;
+        Variable vv = rename.computeIfAbsent(v, _vname -> {
             //type + id
             Variable rvv = newVariable(v.op(), finalRename.size() + 1);
             if (!renamed) //test for any rename to know if we need to rehash
@@ -140,11 +138,7 @@ public class VariableNormalization implements VariableTransform {
         return Variable.the(type, i);
     }
 
-    public boolean hasRenamed() {
-        return renamed;
-    }
-
-    public Compound getResult() {
+    public final Compound getResult() {
         return result;
     }
 }
