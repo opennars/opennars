@@ -225,13 +225,13 @@ public class TaskProcess extends NAL implements Serializable {
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
         final TaskLinkBuilder taskLinkBuilder = getTaskLinkBuilder();
 
-        final int numTemplates = termLinkBuilder.size();
-        if (numTemplates == 0) {
-            //distribute budget to incoming termlinks?
-            return false;
-        }
+
+
 
         final List<TermLinkTemplate> templates = termLinkBuilder.templates();
+        final int numTemplates = templates.size();
+        if (numTemplates == 0)
+            return false;
 
         taskLinkBuilder.setTask(task);
 

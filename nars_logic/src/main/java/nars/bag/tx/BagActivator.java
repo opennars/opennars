@@ -9,11 +9,9 @@ import nars.budget.Itemized;
 */
 abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransaction<K,V> {
 
-
-
     protected K key;
-    Budget nextActivation = new Budget();
 
+    final transient private Budget nextActivation = new Budget();
 
     public final K getKey() {
         return key;
@@ -44,12 +42,11 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
     abstract public long time();
 
-    @Override public Budget updateItem(final V v, final Budget result) {
-        result
-            .forget(time(), getForgetCycles(), 0)
-            .mergePlus(nextActivation, getActivationFactor());
+    @Override public void updateItem(final V v, final Budget result) {
+        result.forget(time(), getForgetCycles(), 0);
 
-        return result;
+        //TODO make this merge function parametric
+        result.mergePlus(nextActivation, getActivationFactor());
     }
 
     abstract public float getForgetCycles();

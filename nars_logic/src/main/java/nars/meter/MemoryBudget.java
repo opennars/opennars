@@ -9,7 +9,7 @@ import nars.io.Texts;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
 import nars.util.meter.Signal;
 import nars.util.meter.Signals;
@@ -178,7 +178,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
             double tlst, tmst;
 
-            Bag<Sentence, TaskLink> tasklinks = c.getTaskLinks();
+            Bag<Task, TaskLink> tasklinks = c.getTaskLinks();
             tActiveTaskLinkPriority[0] += tasklinks.getPrioritySum();
             if (tasklinks.size() > 1)
                 tlst = tasklinks.getStdDev(s);

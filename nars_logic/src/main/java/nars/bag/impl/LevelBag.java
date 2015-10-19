@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
-import nars.bag.BagTransaction;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.util.data.ReversibleRecyclableArrayIterator;
@@ -405,52 +404,53 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
         return true;
     }
 
-    @Override
-    public E update(final BagTransaction<K, E> selector) {
-
-        final K key = selector.name();
-        final DD<E> bx;
-        if (key != null) {
-            bx = index.get(key);
-        }
-        else {
-            bx = rotateNext();
-        }
-
-
-        if ((bx == null) || (bx.item == null)) {
-            //allow selector to provide a new instance
-            E n = selector.newItem();
-            if (n!=null) {
-                E overflow = put(n);
-
-                if (overflow!=null)
-                    selector.overflow(overflow);
-
-                if (overflow == n)
-                    return null;
-
-                return n; //return the new instance
-            }
-            //no instance provided, nothing to do
-            return null;
-        }
-
-        E b = bx.item;
-
-        final float priPrev = b.getPriority();
-
-        //allow selector to modify it, then if it returns non-null, reinsert
-
-        Budget c = selector.updateItem(b, temp.budget( b.getBudget() ));
-        if ((c!=null && !c.equalsByPrecision(b.getBudget()))) {
-
-            b.getBudget().budget(c);
-            relevel(bx, b);
-        }
-
-        return b;
-    }
+    //TODO handle deleted items like Bag.update(..)
+//    @Override
+//    public E update(final BagTransaction<K, E> selector) {
+//
+//        final K key = selector.name();
+//        final DD<E> bx;
+//        if (key != null) {
+//            bx = index.get(key);
+//        }
+//        else {
+//            bx = rotateNext();
+//        }
+//
+//
+//        if ((bx == null) || (bx.item == null)) {
+//            //allow selector to provide a new instance
+//            E n = selector.newItem();
+//            if (n!=null) {
+//                E overflow = put(n);
+//
+//                if (overflow!=null)
+//                    selector.overflow(overflow);
+//
+//                if (overflow == n)
+//                    return null;
+//
+//                return n; //return the new instance
+//            }
+//            //no instance provided, nothing to do
+//            return null;
+//        }
+//
+//        E b = bx.item;
+//
+//        final float priPrev = b.getPriority();
+//
+//        //allow selector to modify it, then if it returns non-null, reinsert
+//
+//        Budget c = selector.updateItem(b, temp.budget( b.getBudget() ));
+//        if ((c!=null && !c.equalsByPrecision(b.getBudget()))) {
+//
+//            b.getBudget().budget(c);
+//            relevel(bx, b);
+//        }
+//
+//        return b;
+//    }
 
     protected DD<E> rotateNext() {
         if (!nextNonEmptyLevel())

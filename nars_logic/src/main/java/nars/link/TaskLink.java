@@ -20,9 +20,7 @@
  */
 package nars.link;
 
-import nars.budget.Budget;
 import nars.budget.Item;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -34,7 +32,7 @@ import nars.term.Term;
  * <p>
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Sentence> implements TLink<Task> {
+public class TaskLink extends Item<Task> implements TLink<Task> {
 
     /**
      * The Task linked
@@ -42,11 +40,13 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
     public final Task targetTask;
 
 
-    public TaskLink(Task t, Budget v) {
-        super(v);
+    public TaskLink(Task t) {
+        super(t.getBudget());
 
         if (t == null)
             throw new RuntimeException(this + " null task");
+        if (t.isDeleted())
+            throw new RuntimeException(this + " deleted task");
 
         this.targetTask = t;
     }
@@ -55,7 +55,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
 
 
     @Override
-    public final Sentence name() { return targetTask; }
+    public final Task name() { return targetTask; }
 
 
 
@@ -110,6 +110,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
 
 
 
+
     @Override
     public String toString() {
         return name().toString();
@@ -130,8 +131,17 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
         return targetTask;
     }
 
+    public boolean isDeleted() {
+        boolean b = super.isDeleted();
+        if (!b) {
+            if (isTaskDeleted()) {
+                return true;
+            }
+        }
+        return b;
+    }
 
-    public boolean isTaskDeleted() {
+    boolean isTaskDeleted() {
         //delete the tasklink for a task which has been deleted.
         //the task will be useless anyway, and this signals
         //to any bag holding it to discard it

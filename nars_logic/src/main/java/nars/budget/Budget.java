@@ -735,6 +735,10 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return this;
     }
 
+    public final Budget budget(@Nullable final Budgeted source) {
+        return budget(source.getBudget());
+    }
+
     /** if source is null, it deletes the budget */
     public Budget budget(@Nullable final Budget source) {
         if (source == null) {
@@ -839,7 +843,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return Float.isNaN(pri);
     }
 
-    public final boolean isDeleted() {
+    public boolean isDeleted() {
         return isDeleted(getPriority());
     }
 

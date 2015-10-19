@@ -1,7 +1,6 @@
 package nars.nal.nal3;
 
 
-import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
@@ -10,19 +9,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTest {
 
-    public static final int cycles = 64;
+    public static final int cycles = 384;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{index}:{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core3;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(3, false);
     }
 
 
@@ -76,7 +74,6 @@ public class NAL3Test extends AbstractNALTest {
 
     @Test
     public void set_operations2() throws InvalidInputException {
-        Global.DEBUG = true;
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> {Pluto,Saturn}>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
@@ -88,6 +85,7 @@ public class NAL3Test extends AbstractNALTest {
     @Test
     public void set_operations3() throws InvalidInputException {
         TestNAR tester = test();
+        tester.nar.stdout();
         tester.believe("<planetX --> [marsy,earthly,venusy]>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> [earthly,saturny]>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
         tester.mustBelieve(cycles, "<planetX --> [marsy,earthly,saturny,venusy]>", 0.1f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");

@@ -31,7 +31,7 @@ public class Default2 extends Default {
         TaskPerception input = new SortedTaskPerception(
                 this,
                 task -> true /* allow everything */,
-                task -> exec(task) /* execute immediately */,
+                task -> exec(task),
                 32,
                 1
         );

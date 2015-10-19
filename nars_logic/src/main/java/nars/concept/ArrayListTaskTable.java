@@ -112,7 +112,9 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         if (siz + 1 > capacity) {
             // FIFO, remove oldest question (last)
             Task removed = remove(siz - 1);
-            m.remove(removed, "TaskTable FIFO Out");
+
+            //m.remove(removed, "TaskTable FIFO Out");
+
             //m.emit(Events.ConceptQuestionRemove.class, c, removed /*, t*/);
         }
 

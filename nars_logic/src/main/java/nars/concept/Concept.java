@@ -29,7 +29,6 @@ import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.link.*;
 import nars.premise.Premise;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
@@ -44,7 +43,7 @@ import static com.google.common.collect.Iterators.concat;
 
 public interface Concept extends Termed, Itemized<Term> {
 
-    Bag<Sentence, TaskLink> getTaskLinks();
+    Bag<Task, TaskLink> getTaskLinks();
     Bag<TermLinkKey, TermLink> getTermLinks();
 
     Map<Object, Object> getMeta();

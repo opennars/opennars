@@ -2,6 +2,7 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.LocalMemory;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nar.Default;
@@ -23,17 +24,17 @@ abstract public class AbstractNALTest {
     @Deprecated public static final List<Supplier<NAR>> core1 = Lists.newArrayList(
             //() -> new Default().nal(1),
             //() -> new Default2(1000,1,1,3).nal(1),
-            () -> new SingleStepNAR().nal(1)
+            () -> new SingleStepNAR().nal(2)
     );
     public static final List<Supplier<NAR>> core2 = Lists.newArrayList(
             /** for some reason, NAL2 tests require nal(3) level */
             //() -> new Default().nal(3),
             () -> new SingleStepNAR().nal(3)
     );
-    public static final List<Supplier<NAR>> core3 = Lists.newArrayList(
-            //() -> new Default().nal(4),
-            () -> new SingleStepNAR().nal(4)
-    );
+//    public static final List<Supplier<NAR>> core3 = Lists.newArrayList(
+//            //() -> new Default().nal(4),
+//            () -> new SingleStepNAR().nal(4)
+//    );
     @Deprecated public static final List<Supplier<NAR>> core4 = Lists.newArrayList(
             () -> new Default().nal(4),
             () -> new SingleStepNAR().nal(4)
@@ -94,7 +95,7 @@ abstract public class AbstractNALTest {
         //HACK why are these levels not accurate:
         {
             switch (level) {
-                case 1: level = 1; break;
+                case 1: level = 2; break;
             }
         }
 
@@ -102,9 +103,9 @@ abstract public class AbstractNALTest {
 
         final int finalLevel = level;
         l.add( supply("Default[NAL<=" + level + "]",
-                () -> new Default().nal(finalLevel) ) );
+                () -> new Default(new LocalMemory(), 256,2,2,3).nal(finalLevel) ) );
         l.add( supply("Default2[NAL<=" + level + "]",
-                () -> new Default2(1000,1,2,3).nal(finalLevel) ) );
+                () -> new Default2(256,2,2,3).nal(finalLevel) ) );
 
         if (!requireMultistep) {
             l.add( supply("SingleStep[NAL<=" + level + "]",

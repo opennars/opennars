@@ -4,7 +4,7 @@ import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.link.*;
 import nars.premise.Premise;
-import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Collections;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class AtomConcept extends AbstractConcept  {
 
-    protected final Bag<Sentence, TaskLink> taskLinks;
+    protected final Bag<Task, TaskLink> taskLinks;
     protected final Bag<TermLinkKey, TermLink> termLinks;
 
 
@@ -24,7 +24,7 @@ public class AtomConcept extends AbstractConcept  {
         this(atom, new NullBag(), new NullBag());
     }
 
-    public AtomConcept(Term atom, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks) {
+    public AtomConcept(Term atom, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Task, TaskLink> taskLinks) {
         super(atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
@@ -36,7 +36,7 @@ public class AtomConcept extends AbstractConcept  {
      * Task links for indirect processing
      */
     @Override
-    public Bag<Sentence, TaskLink> getTaskLinks() {
+    public Bag<Task, TaskLink> getTaskLinks() {
         return taskLinks;
     }
 

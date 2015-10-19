@@ -12,7 +12,6 @@ import nars.link.TermLinkBuilder;
 import nars.link.TermLinkKey;
 import nars.nal.nal1.LocalRules;
 import nars.premise.Premise;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -73,7 +72,7 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(final Term term, final Memory memory, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks) {
+    public DefaultConcept(final Term term, final Memory memory, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks) {
         super(term, termLinks, taskLinks);
 
         this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue());

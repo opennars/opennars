@@ -21,7 +21,6 @@ import nars.nal.SimpleDeriver;
 import nars.op.app.Commander;
 import nars.process.ConceptProcess;
 import nars.process.ConceptTaskTermLinkProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
@@ -197,7 +196,7 @@ public abstract class AbstractAlann extends NAR {
 
     public Concept newConcept(final Term t, final Memory m) {
 
-        Bag<Sentence, TaskLink> taskLinks =
+        Bag<Task, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
         taskLinks.mergePlus();
 

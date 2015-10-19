@@ -172,8 +172,8 @@ abstract public class ConceptProcess extends NAL  {
         if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
             return null;
 
-        if (taskLink.isTaskDeleted())
-            return null;
+        if (taskLink.isDeleted())
+            throw new RuntimeException("tasklink null"); //bag should not have returned this
 
         return new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
     }

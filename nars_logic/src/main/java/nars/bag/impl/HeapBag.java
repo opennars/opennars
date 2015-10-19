@@ -2,8 +2,6 @@ package nars.bag.impl;
 
 import nars.Global;
 import nars.bag.Bag;
-import nars.bag.BagTransaction;
-import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.CollectorMap;
 import nars.util.data.list.CircularArrayList;
@@ -473,44 +471,46 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         return selected;
     }
 
-    @Override
-    public E update(BagTransaction<K, E> selector) {
 
-        final K key = selector.name();
-        final E b;
-        if (key != null) {
-            b = index.get(key);
-        }
-        else {
-            b = peekNext();
-        }
-
-
-        if (b == null) {
-            //allow selector to provide a new instance
-            E n = selector.newItem();
-            if (n!=null) {
-                return putReplacing(n, selector);
-            }
-            //no instance provided, nothing to do
-            return null;
-        }
-        else  {
-            //allow selector to modify it, then if it returns non-null, reinsert
-            temp.budget( b.getBudget() );
-
-            final Budget c = selector.updateItem(b, temp);
-
-            if ((c!=null) && (!c.equalsByPrecision(b))) {
-                b.getBudget().budget(c);
-                return putReplacing(b, selector);
-            }
-            else
-                return b;
-        }
-
-
-    }
+    //TODO handle deleted items like Bag.update(..)
+//    @Override
+//    public E update(BagTransaction<K, E> selector) {
+//
+//        final K key = selector.name();
+//        final E b;
+//        if (key != null) {
+//            b = index.get(key);
+//        }
+//        else {
+//            b = peekNext();
+//        }
+//
+//
+//        if (b == null) {
+//            //allow selector to provide a new instance
+//            E n = selector.newItem();
+//            if (n!=null) {
+//                return putReplacing(n, selector);
+//            }
+//            //no instance provided, nothing to do
+//            return null;
+//        }
+//        else  {
+//            //allow selector to modify it, then if it returns non-null, reinsert
+//            temp.budget( b.getBudget() );
+//
+//            final Budget c = selector.updateItem(b, temp);
+//
+//            if ((c!=null) && (!c.equalsByPrecision(b))) {
+//                b.getBudget().budget(c);
+//                return putReplacing(b, selector);
+//            }
+//            else
+//                return b;
+//        }
+//
+//
+//    }
 
     @Override
     public int capacity() {

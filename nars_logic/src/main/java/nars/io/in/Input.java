@@ -22,6 +22,9 @@ package nars.io.in;
 import nars.NAR;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
+import nars.util.event.On;
+
+import java.util.function.Consumer;
 
 /**
  *
@@ -46,6 +49,31 @@ public interface Input extends Source<Task> {
 //    }
 
 
-    void input(NAR n, int numPerFrame);
+    //void input(NAR n, int numPerFrame);
 
+
+    default void input(NAR n, int numPerFrame) {
+        if (numPerFrame == 0)
+            throw new RuntimeException("0 rate");
+        /*if (reg!=null)
+            throw new RuntimeException("already inputting");*/
+
+        final On[] reg = {null};
+        Consumer<NAR> inputNext = nn -> {
+            int count = 0;
+            Task next = null;
+            while ((count < numPerFrame) && ((next = get()) != null)) {
+                nn.input(next);
+                count++;
+            }
+            if (next == null) {
+                reg[0].off();
+                reg[0] = null;
+            }
+        };
+
+        reg[0] = n.memory.eventFrameStart.on(inputNext);
+
+        inputNext.accept(n);//first input
+    }
 }

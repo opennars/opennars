@@ -6,6 +6,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
 import org.jgrapht.alg.ConnectivityInspector;
@@ -34,7 +35,7 @@ public class TermLinkTest {
         TermLinkGraph g = new TermLinkGraph(n);
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
-        assertEquals("[[<x --> y>, y, x], [(<x-->y>,y), (<x-->y>,x), (x,<x-->y>), (y,<x-->y>)]]",
+        assertEquals("[[<x --> y>, x, y], [(<x-->y>,x), (<x-->y>,y), (x,<x-->y>), (y,<x-->y>)]]",
                 g.toString());
     }
 
@@ -144,7 +145,7 @@ public class TermLinkTest {
 
     @Test
     public void testIdentifier() {
-        NAR n = new Default();
+        NAR n = new Default2(100, 1, 1, 3);
         n.input("<a --> b>.");
         n.input("<<a --> b> --> d>.");
         n.input("<<a --> b> --> e>.");

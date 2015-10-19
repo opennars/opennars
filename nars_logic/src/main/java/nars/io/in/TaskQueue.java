@@ -1,8 +1,6 @@
 package nars.io.in;
 
-import nars.NAR;
 import nars.task.Task;
-import nars.util.event.On;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -12,7 +10,7 @@ import java.util.function.Consumer;
 /** an input that generates tasks in batches, which are stored in a buffer */
 public class TaskQueue extends ArrayDeque<Task> implements Input , Consumer<Task> {
 
-    private On reg=null;
+    //private On reg=null;
 
     public TaskQueue() {
         this(1);
@@ -58,34 +56,11 @@ public class TaskQueue extends ArrayDeque<Task> implements Input , Consumer<Task
         return null;
     }
 
-    @Override
-    public void stop() {
-        clear();
-    }
+//    @Override
+//    public void stop() {
+//        clear();
+//    }
 
-    @Override
-    public void input(NAR n, int numPerFrame) {
-        if (numPerFrame == 0)
-            throw new RuntimeException("0 rate");
-        if (reg!=null)
-            throw new RuntimeException("already inputting");
 
-        Consumer<NAR> inputNext = nn -> {
-            int count = 0;
-            Task next = null;
-            while ((count < numPerFrame) && ((next = get()) != null)) {
-                nn.input(next);
-                count++;
-            }
-            if (next == null) {
-                reg.off();
-                reg = null;
-            }
-        };
-
-        reg = n.memory.eventFrameStart.on(inputNext);
-
-        inputNext.accept(n);//first input
-    }
 
 }

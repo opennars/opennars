@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 
 public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> implements Serializable {
@@ -20,7 +21,10 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 //    final static private Comparator<Itemized> priorityComparator = (a, b) -> Float.compare(b.getPriority(), a.getPriority());
 
 
-
+    @Override
+    public final void forEach(Consumer<? super E> consumer) {
+        list.forEach(consumer);
+    }
 
     @Override
     public boolean equals(final Object obj) {

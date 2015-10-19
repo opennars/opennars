@@ -35,6 +35,7 @@ public class EventCount {
     }
 
 
+    public long numTaskProcesses() { return getHitMeter("eventTaskProcess").count(); }
     public long numOutputs() { return getHitMeter("eventDerived").count(); }
     public long numInputs() { return getHitMeter("eventInput").count(); }
     public long numExecutions() { return getHitMeter("eventExecute").count(); }

@@ -3,8 +3,6 @@ package nars.bag.impl.experimental;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
-import nars.bag.BagTransaction;
-import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
@@ -160,47 +158,47 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         return null;
     }
 
-    @Override
-    public V update(BagTransaction<K, V> selector) {
-
-        final K key = selector.name();
-        final DD<V> bx;
-        if (key != null) {
-            bx = index.get(key);
-        }
-        else {
-            bx = next(true);
-        }
-
-
-        if ((bx == null) || (bx.item == null)) {
-            //allow selector to provide a new instance
-            V n = selector.newItem();
-            if (n!=null) {
-                return putReplacing(n, selector);
-            }
-            //no instance provided, nothing to do
-            return null;
-        }
-
-        final V b = bx.item;
-
-        //allow selector to modify it, then if it returns non-null, reinsert
-
-        if (!b.getBudget().isDeleted())
-            temp.budget( b.getBudget() );
-        else
-            temp.zero();
-
-        final Budget c = selector.updateItem(b, temp);
-        if ((c!=null) && (!c.equalsByPrecision(b.getBudget()))) {
-            b.getBudget().budget(c);
-            updatePercentile(b.getPriority());
-        }
-
-        return b;
-
-    }
+    //TODO handle deleted items like Bag.update(..)
+//    @Override
+//    public V update(BagTransaction<K, V> selector) {
+//
+//        final K key = selector.name();
+//        final DD<V> bx;
+//        if (key != null) {
+//            bx = index.get(key);
+//        }
+//        else {
+//            bx = next(true);
+//        }
+//
+//        if ((bx == null) || (bx.item == null)) {
+//            //allow selector to provide a new instance
+//            V n = selector.newItem();
+//            if (n!=null) {
+//                return putReplacing(n, selector);
+//            }
+//            //no instance provided, nothing to do
+//            return null;
+//        }
+//
+//        final V b = bx.item;
+//
+//        //allow selector to modify it, then if it returns non-null, reinsert
+//
+//        if (!b.getBudget().isDeleted())
+//            temp.budget( b.getBudget() );
+//        else
+//            temp.zero();
+//
+//        final Budget c = selector.updateItem(b, temp);
+//        if ((c!=null) && (!c.equalsByPrecision(b.getBudget()))) {
+//            b.getBudget().budget(c);
+//            updatePercentile(b.getPriority());
+//        }
+//
+//        return b;
+//
+//    }
 
     @Override
     public V put(V newItem) {

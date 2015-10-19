@@ -4,8 +4,6 @@ import nars.bag.BagSelector;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 
-import java.util.function.Function;
-
 /**
 * Applies forgetting to the next sequence of sampled bag items
  *
@@ -36,25 +34,10 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
         return this;
     }
 
-    private final Function<V, ForgetAction> defaultModel = o -> ForgetAction.SelectAndForget;
-
-    @Override
-    public Function<V, ForgetAction> getModel() {
-        return defaultModel;
-    }
-
-    //    @Override
-//    public Function<V, ForgetAction> getModel() {
-////        @Override
-////        public ForgetAction apply(TermLink termLink) {
-////            return ForgetAction.SelectAndForget;
-////        }
-//        return null;
-//    }
 
 
     @Override
-    public Budget updateItem(V v, Budget result) {
+    public void updateItem(V v, Budget result) {
         this.lastForgotten = v;
 
         //final float priorityStart = v.getPriority();
@@ -70,9 +53,6 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
         //break;		         //break;
         //}		         //}
 
-
-
-        return result;
     }
 
 }

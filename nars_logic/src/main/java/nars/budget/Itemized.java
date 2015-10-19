@@ -16,4 +16,9 @@ public interface Itemized<K> extends Budgeted, Named<K> {
      * @return if it was already deleted, will immediately return false.
      */
      boolean delete();
+
+    default boolean isDeleted() {
+        return getBudget().isDeleted();
+    }
+
 }

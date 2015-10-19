@@ -69,7 +69,7 @@ public class SingleStepNAR extends Default {
 
 
     public SingleStepNAR() {
-        super(128, 2, 1, 3, new FrameClock());
+        super(128, 2, 2, 3, new FrameClock());
 
 
         Global.DEBUG = true;

@@ -8,10 +8,8 @@ import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
 import nars.event.AnswerReaction;
 import nars.event.NARReaction;
-import nars.io.in.FileInput;
-import nars.io.in.Input;
+import nars.io.in.*;
 import nars.io.in.TaskQueue;
-import nars.io.in.TextInput;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
@@ -41,7 +39,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -393,9 +390,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         final Memory m = memory();
 
-        if (t == null) {
-            throw new RuntimeException("null input");
-        }
+//        if (t == null) {
+//            throw new RuntimeException("null input");
+//        }
 
         if (!t.init(m)) {
             m.remove(t, "Garbage");
@@ -410,14 +407,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
             return false;
         }
 
-        if (!t.getTerm().levelValid(nal())) {
-            m.remove(t, "Insufficient NAL level");
-            return false;
+        if (!t.isDeleted()) {
+            m.eventInput.emit(t);
+            return true;
         }
 
-        m.eventInput.emit(t);
-
-        return true;
+        return false;
     }
 
 
@@ -1264,14 +1259,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-
     public final void input(final Stream<Task> taskStream) {
-//        taskStream.forEach(
-//                //TODO use a stream implementation, not just buffer into a collection:
-//
-//                this::input
-//        );
-        input((Input) new TaskQueue(taskStream.collect(Collectors.toList())));
+        input((Input) new TaskStream(taskStream));
     }
 
     /** execute a Task as a TaskProcess (synchronous) */
@@ -1283,8 +1272,16 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //            taskBudget.mulPriority(inputPriorityFactor);
 //        }
 
-        if (!taskBudget.summaryGreaterOrEqual(memory().taskProcessThreshold)) {
-            memory().remove(task, "Insufficient Budget to TaskProcess");
+        final Memory memory = this.memory;
+
+        if (!taskBudget.summaryGreaterOrEqual(memory.taskProcessThreshold)) {
+            memory.remove(task, "Insufficient Budget to TaskProcess");
+            return null;
+        }
+
+
+        if (!task.getTerm().levelValid(nal())) {
+            memory.remove(task, "Insufficient NAL level");
             return null;
         }
 

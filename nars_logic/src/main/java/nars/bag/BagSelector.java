@@ -3,22 +3,12 @@ package nars.bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 
-import java.util.function.Function;
-
 /**
  * TODO make a version which accepts an array or list of keys to select in batch
  */
 public interface BagSelector<K, V extends Itemized<K>> {
 
-    enum ForgetAction {
-        Select, SelectAndForget, Ignore, IgnoreAndForget
-    }
 
-    //final static Function<Object,ForgetAction> defaultModel = (o) -> ForgetAction.SelectAndForget;
-
-    default Function<V, ForgetAction> getModel() {
-        return null;
-    }
 
 
     /**
@@ -29,7 +19,7 @@ public interface BagSelector<K, V extends Itemized<K>> {
      *
      * @param result will be intialized to v's original budget value
      * */
-    Budget updateItem(V v, Budget result);
+    void updateItem(V v, Budget result);
 
 
 
@@ -53,8 +43,8 @@ public interface BagSelector<K, V extends Itemized<K>> {
     class AnyItemSelector implements BagSelector {
 
         @Override
-        public Budget updateItem(Itemized v, Budget result) {
-            return null;
+        public void updateItem(Itemized v, Budget result) {
+
         }
 
     }

@@ -148,7 +148,7 @@ public class ExhaustPremises extends TestNAR {
         c.concept(task).getTermLinks().forEach(tl -> {
             ConceptProcess p = new ConceptTaskTermLinkProcess(c,
                     c.concept(task),
-                    new TaskLink(task, new Budget(1, 1, 1)), tl, belief);
+                    new TaskLink(task), tl, belief);
 
             List<Task> s = p.derive(sd).collect(Collectors.toList());
             System.out.println("\t" + s);

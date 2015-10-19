@@ -38,7 +38,6 @@ import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.process.ConceptProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
@@ -347,7 +346,7 @@ public class Default extends NAR {
 
     public Concept apply(final Term t) {
 
-        Bag<Sentence, TaskLink> taskLinks =
+        Bag<Task, TaskLink> taskLinks =
                 new CurveBag<>(rng, getConceptTaskLinks()).mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =

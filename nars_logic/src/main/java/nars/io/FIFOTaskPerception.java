@@ -45,9 +45,9 @@ public class FIFOTaskPerception extends TaskPerception {
     public void accept(Task t) {
         if (filter == null || filter.test(t)) {
 
-//                if (t.isDeleted()) {
-//                    throw new RuntimeException("task deleted");
-//                }
+                if (t.isDeleted()) {
+                    throw new RuntimeException("task deleted");
+                }
 
             buffer.add(t);
         }

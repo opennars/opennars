@@ -26,7 +26,6 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nar.Default;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.truth.Truth;
 
@@ -45,7 +44,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     private final Concept concept;
     private final Scatter3D tasks;
-    private final BagView<Sentence, TaskLink> taskLinkView;
+    private final BagView<Task, TaskLink> taskLinkView;
     private final BagView<TermLinkKey, TermLink> termLinkView;
     private FrameReaction reaction;
 

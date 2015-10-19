@@ -2,13 +2,11 @@ package nars.link;
 
 import nars.Memory;
 import nars.bag.tx.BagActivator;
-import nars.task.Sentence;
 import nars.task.Task;
 
 /** adjusts budget of items in a Bag. ex: merge */
-public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
+public class TaskLinkBuilder extends BagActivator<Task,TaskLink> {
 
-    private Task task;
     public final Memory memory;
     private float forgetCycles;
     private long now;
@@ -19,16 +17,13 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     }
 
     public void setTask(Task t) {
-        this.task = t;
-//        if (template == null)
-//            setKey(TaskLink.key(TermLink.SELF, null, t));
-//        else
-//            setKey(TaskLink.key(template.type, template.index, t));
+
         setKey(t);
         setBudget(t.getBudget());
-        this.forgetCycles = memory.durationToCycles(
-                memory.taskLinkForgetDurations.floatValue()
-        );
+
+        this.forgetCycles = t.getDuration() *
+                memory.taskLinkForgetDurations.floatValue();
+
         this.now = memory.time();
     }
 
@@ -42,17 +37,13 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
         return forgetCycles;
     }
 
-    public final Task getTask() {
-        return task;
-    }
-
     @Override
     public final TaskLink newItem() {
-         return new TaskLink(getTask(), getBudget());
+         return new TaskLink(getKey());
     }
 
     @Override
     public String toString() {
-        return task.toString();
+        return getKey().toString();
     }
 }

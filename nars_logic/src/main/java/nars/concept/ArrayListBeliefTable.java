@@ -175,8 +175,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         onChanged(c, memory);
 
-
-
 //            if (ranking == null) {
 //                //just return thie top item if no ranker is provided
 //                return table.top();
@@ -184,8 +182,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         Task top = top(input, now);
-
-
 
 
         if (input.isDeleted()) {
@@ -295,11 +291,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (atCapacity) {
             if (i == siz) {
                 //reached the end of the list and there is no room to add at the end
-                memory.remove(input, "Unbelievable/Undesirable");
+                onBeliefRemoved(input, "Unbelievable/Undesirable");
                 return false;
             } else {
                 Task removed = remove(siz - 1);
-                memory.remove(removed, "Forgotten");
+                onBeliefRemoved(removed, "Forgotten");
                 add(i, input);
                 return true;
             }
@@ -307,6 +303,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             add(i, input);
             return true;
         }
+    }
+
+    private final void onBeliefRemoved(Task t, String reason) {
+        //memory.remove(t, reason)
     }
 
     private void checkForDeleted() {
