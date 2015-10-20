@@ -591,6 +591,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      * searches for a subterm
      * TODO parameter for max (int) level to scan down
      */
+    @Override
     public boolean containsTermRecursively(final Term target) {
         if (impossibleSubterm(target)) return false;
 

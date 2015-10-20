@@ -1,5 +1,7 @@
 package za.co.knonchalant.builder;
 
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.tuple.Twin;
 import com.gs.collections.impl.tuple.Tuples;
 import javafx.beans.binding.Bindings;
@@ -23,7 +25,9 @@ import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.annotation.Implementations;
 import nars.guifx.annotation.Range;
 import nars.guifx.graph2.layout.None;
+import nars.guifx.util.MutableFloatProperty;
 import nars.guifx.util.NSlider;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
 import za.co.knonchalant.builder.exception.ComponentException;
 
@@ -200,7 +204,6 @@ public class POJONode {
      * and additional information provided by parameters.
      *
      * @param object   POJO to read
-     * @param params   additional parameters
      * @return the GUI
      */
 //    public static Collection<Node> methodNodes(Object object, TaggedParameters params) {
@@ -220,30 +223,28 @@ public class POJONode {
 //        return nodes;
 //    }
 
-    public static Node propertyNodes(Object object, TaggedParameters params) {
+    public static List<Node> propertyNodes(Object object) {
 
-        if (object instanceof ObjectProperty) {
 
-            ObjectProperty op = (ObjectProperty)object;
-            return new ObjectPropertyNode(op);
-        }
 
-        if (object == null) return new Text("null"); //Collections.emptyList();
+
+        if (object == null) return Lists.newArrayList(new Text("null")); //Collections.emptyList();
 
         Field[] fields = object.getClass().getFields();
         //System.out.println("fields for : " + object + " (" + object.getClass() + "): " + Arrays.toString(fields));
 
         //List<Twin<Node>> nodes = Global.newArrayList();
 
-        final Pane node = new VBox(); //TODO use a lambda parameter builder
+        //final Pane node = new VBox(); //TODO use a lambda parameter builder
 
+        List<Node> nodes = new ArrayList();
         for (Field f : fields) {
             if (f.getAnnotation(Ignore.class) != null) {
                 continue;
             }
 
-            if (!Property.class.isAssignableFrom(f.getType()))
-                continue;
+//            if (!Property.class.isAssignableFrom(f.getType()))
+//                continue;
 
             int mod = f.getModifiers();
             if (!(Modifier.isPublic(mod)
@@ -253,11 +254,13 @@ public class POJONode {
             }
 
 
-            Twin<Node> methodBox = newFieldNode(object, /* readOnly*/ false, params, f);
 
-            node.getChildren().addAll(methodBox.getOne(), methodBox.getTwo());
+            Twin<Node> methodBox = newFieldNode(object, /* readOnly*/ false, f);
+            if (methodBox == null) return null;
+
+            nodes.add(new HBox(methodBox.getOne(), methodBox.getTwo()));
         }
-        return node;
+        return nodes;
     }
 
 
@@ -401,7 +404,7 @@ public class POJONode {
         return methodBox;
     }
 
-    private static Twin<Node> newFieldNode(Object object, boolean readOnly, TaggedParameters params, Field field) {
+    private static Twin<Node> newFieldNode(Object object, boolean readOnly, Field field) {
 
 
         String name = getName(field);
@@ -413,8 +416,12 @@ public class POJONode {
         Node valueNode;
         try {
             Object value = getField(object, field);
+            if (value == object)
+                return null;
+            if (value == null) return null;
+
             if (value!=null)
-                valueNode = valueToNode(value, params, field);
+                valueNode = valueToNode(value, false);
             else
                 valueNode = new Text("null");
         } catch (IllegalAccessException e) {
@@ -618,42 +625,18 @@ public class POJONode {
         return "";
     }
 
-    public static <X> Region valueToNode(X obj, TaggedParameters taggedParameters, Object parentValue) {
+    public static <X> Region valueToNode(X obj, Object parentValue) {
         FlowPane ctl = new FlowPane();
         ObservableList<Node> chi = ctl.getChildren();
         ctl.getStyleClass().add("graphpopup"); //TODO revise these css rules
 
-        if (obj instanceof StringProperty) {
-            StringProperty d = (StringProperty)obj;
+        if (obj instanceof ObjectProperty) {
 
-            TextField n = new TextField();
-            n.setText(d.getValue());
-            d.bind(n.textProperty());
-            chi.add(n);
+            ObjectProperty op = (ObjectProperty)obj;
+            return new ObjectPropertyNode(op);
         }
-        if (obj instanceof DoubleProperty) {
-            DoubleProperty d = (DoubleProperty)obj;
 
-            double min = 0;
-            double max = 1;
-
-            if (parentValue instanceof Field) {
-                Field p = (Field)parentValue;
-                Range range = p.getDeclaredAnnotation(Range.class);
-                if (range!=null) {
-                    min = range.min();
-                    max = range.max();
-                }
-            }
-            NSlider w = new NSlider("" /*shortLabel(parentValue)*/,
-                    64, 16, NSlider.BarSlider, min);
-            w.min.set(min);
-            w.max.set(max);
-            w.value(d.getValue());
-            d.bind(w.value[0]);
-            chi.add(w);
-        }
-        else if (obj instanceof ImplementationProperty) {
+        if (obj instanceof ImplementationProperty) {
             ImplementationProperty d = (ImplementationProperty)obj;
 
             Class[] impls = null;
@@ -671,7 +654,6 @@ public class POJONode {
 
                 }
             }
-
             ComboBox<Class> w = new ComboBox();
             w.setConverter(new StringConverter<Class>() {
                 @Override
@@ -684,6 +666,7 @@ public class POJONode {
                     return null;
                 }
             });
+
             if (impls == null) { w.setDisable(true); }
             else {
                 w.getItems().addAll(impls);
@@ -691,11 +674,71 @@ public class POJONode {
             d.bind(w.valueProperty());
             chi.add(w);
         }
-        else {
-            Node n = POJONode.propertyNodes(obj, taggedParameters);
+        if (obj instanceof StringProperty) {
+            StringProperty d = (StringProperty)obj;
+
+            TextField n = new TextField();
+            n.setText(d.getValue());
+            d.bind(n.textProperty());
             chi.add(n);
         }
+        if (obj instanceof DoubleProperty) {
+            DoubleProperty d = (DoubleProperty)obj;
+
+            NSlider w = new NSlider("" /*shortLabel(parentValue)*/,
+                    64, 16, NSlider.BarSlider, 0);
+
+
+            applyFieldAnnotationsToNSlider(parentValue, w);
+            w.value(d.getValue());
+            d.bind(w.value[0]);
+            chi.add(w);
+        }
+
+        if (obj instanceof AtomicDouble) {
+            NSlider w;
+            chi.add( w = new NSlider(150, 50, (((AtomicDouble)obj).doubleValue()) ) {
+                @Override public SimpleDoubleProperty newValueEntry(int i) {
+                    return new MutableFloatProperty(((AtomicDouble)obj));
+                }
+            });
+            applyFieldAnnotationsToNSlider(parentValue, w);
+        }
+        if (obj instanceof MutableFloat) {
+            NSlider w;
+            chi.add( w = new NSlider(150, 50, (((MutableFloat)obj).doubleValue())) {
+                @Override public SimpleDoubleProperty newValueEntry(int i) {
+                    return new MutableFloatProperty(((MutableFloat)obj));
+                }
+            });
+            applyFieldAnnotationsToNSlider(parentValue, w);
+        }
+        /*if (chi.isEmpty()) {
+            try {
+                Node n = POJONode.propertyNodes(obj, taggedParameters);
+                if (n != null)
+                    chi.add(n);
+            }
+            catch (Throwable e) {
+                System.err.println(e);
+            }
+        }*/
         return ctl;
+    }
+
+    public static void applyFieldAnnotationsToNSlider(Object parentValue, NSlider w) {
+        double min = 0;
+        double max = 1;
+        if (parentValue instanceof Field) {
+            Field p = (Field)parentValue;
+            Range range = p.getDeclaredAnnotation(Range.class);
+            if (range!=null) {
+                min = range.min();
+                max = range.max();
+            }
+        }
+        w.min.set(min);
+        w.max.set(max);
     }
 
     private static String shortLabel(Object v) {
@@ -720,7 +763,7 @@ public class POJONode {
             if (newValue == null)
                 getChildren().setAll(new Text("null"));
             else
-                getChildren().setAll( propertyNodes( newValue, null ) );
+                getChildren().setAll( propertyNodes( newValue ) );
         }
     }
 }

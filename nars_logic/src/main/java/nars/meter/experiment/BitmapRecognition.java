@@ -182,9 +182,9 @@ public class BitmapRecognition {
 
         //tb = new NALObjects(n).build("i", tb);
 
-        int exposureCycles = 300;
+        int exposureCycles = 150;
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 5; i++) {
             tb.fill(0f);
             tb.tell(n, Atom.the("black"));
             n.frame(exposureCycles);

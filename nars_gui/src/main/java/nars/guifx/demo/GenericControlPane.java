@@ -1,15 +1,18 @@
 package nars.guifx.demo;
 
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import za.co.knonchalant.builder.POJONode;
-import za.co.knonchalant.builder.TaggedParameters;
+
+import java.util.List;
 
 /**
  * Created by me on 10/8/15.
  */
-public class GenericControlPane<X> extends VBox {
+public class GenericControlPane<X> extends BorderPane {
 
     public final X obj;
 
@@ -17,24 +20,30 @@ public class GenericControlPane<X> extends VBox {
         super();
         this.obj = obj;
 
-        TaggedParameters taggedParameters = new TaggedParameters();
+        List<Node> pn = POJONode.propertyNodes(obj);
 
-        Region controls = POJONode.valueToNode(obj, taggedParameters, this); //new VBox();
+        if (pn!=null) {
+            VBox controls = new VBox();
+            controls.getChildren().addAll(pn);
+            ToggleButton toggle = new ToggleButton("[X]");
+            toggle.selectedProperty().addListener(e->{
+                if (toggle.isSelected()) {
+                    setCenter(controls);
+                }
+                else {
+                    setCenter(null);
+                }
+                layout();
+            });
 
-        ToggleButton toggle = new ToggleButton("[X]");
-        toggle.selectedProperty().addListener(e->{
-            if (toggle.isSelected()) {
-                getChildren().add(controls);
-            }
-            else {
-                getChildren().remove(controls);
-            }
-        });
+            toggle.setSelected(true);
 
+            setTop(toggle);
+        }
+        else {
+            setCenter(new Label(obj.toString()));
+        }
 
-        toggle.setSelected(true);
-
-        getChildren().setAll(toggle, controls);
 
     }
 

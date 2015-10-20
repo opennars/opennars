@@ -454,8 +454,10 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return equals(target);
     }
 
-
-
+    @Override
+    public boolean containsTermRecursively(Term target) {
+        return false;
+    }
 
     @Override
     public int varIndep() {

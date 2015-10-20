@@ -78,6 +78,9 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     }
 
     boolean containsTerm(final Term target);
+
+    boolean containsTermRecursively(Term target);
+
     boolean equalsOrContainsTermRecursively(final Term target);
 
 

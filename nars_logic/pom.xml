@@ -282,8 +282,27 @@
             <version>2.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jacop</groupId>
+            <artifactId>jacop</artifactId>
+            <version>4.3.0</version>
+        </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>CSLTH</id>
+            <name>CS LTH maven repo</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+            <url>http://maven.cs.lth.se/content/repositories/public/</url>
+        </repository>
+    </repositories>
 
 </project>
 
