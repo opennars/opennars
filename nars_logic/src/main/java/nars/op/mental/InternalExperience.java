@@ -7,7 +7,7 @@ import nars.event.NARReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -286,7 +286,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
                     valid = false; //the expected needed term is not included
                 }
                 for (int i = 1; i < conj.term.length; i++) {
-                    if (!(conj.term[i] instanceof AbstractInterval)) {
+                    if (!(conj.term[i] instanceof CyclesInterval)) {
                         valid = false;
                         break;
                     }

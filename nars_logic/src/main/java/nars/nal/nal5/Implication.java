@@ -21,7 +21,7 @@
 package nars.nal.nal5;
 
 import nars.Op;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Temporal;
 import nars.term.Statement;
 import nars.term.Term;
@@ -109,7 +109,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
         }
         
         if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence) ||
-                (subject instanceof AbstractInterval) || (predicate instanceof AbstractInterval)) {
+                (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
             return null;
         }
         

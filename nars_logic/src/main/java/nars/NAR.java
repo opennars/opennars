@@ -10,7 +10,7 @@ import nars.event.AnswerReaction;
 import nars.event.NARReaction;
 import nars.io.in.*;
 import nars.io.in.TaskQueue;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -1146,7 +1146,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     abstract protected Concept doConceptualize(Term term, Budget budget);
 
     private boolean validConceptTerm(Term term) {
-        return !((term instanceof Variable) || (term instanceof AbstractInterval));
+        return !((term instanceof Variable) || (term instanceof CyclesInterval));
     }
 
 

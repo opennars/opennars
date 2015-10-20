@@ -7,7 +7,7 @@ import nars.concept.Concept;
 import nars.io.Texts;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.OperatorReaction;
 import nars.narsese.NarseseParser;
@@ -515,7 +515,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         else if (t instanceof Compound) {
             return genericLiteral(t, unique);
         }
-        else if (t instanceof AbstractInterval) {
+        else if (t instanceof CyclesInterval) {
             //Interval, etc..
             return t.toString();
         }

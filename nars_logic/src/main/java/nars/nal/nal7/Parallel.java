@@ -13,7 +13,7 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
 /**
  * Parallel Conjunction (&|)
  */
-public class Parallel extends Conjunctive implements Intermval {
+public class Parallel extends Conjunctive implements Interval {
 
     //local duration, a virtual sub-term at the top level of the parallel term
     private final long duration;
@@ -62,11 +62,6 @@ public class Parallel extends Conjunctive implements Intermval {
     }
 
     @Override
-    public final int[] intervals() {
-        return null; //N/A
-    }
-
-    @Override
     public final int getByteLen() {
         return super.getByteLen() + 4 /* for storing 'duration' */;
     }
@@ -81,12 +76,14 @@ public class Parallel extends Conjunctive implements Intermval {
 
 
     @Override public void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
-        super.appendArgs(p, pretty, appendedOperator);
+        p.append(ARGUMENT_SEPARATOR);
+        if (pretty) p.append(' ');
+
+        super.appendArgs(p, pretty, false);
 
         if (duration!=0) {
             p.append(ARGUMENT_SEPARATOR);
-            if (pretty)
-                p.append(' ');
+            if (pretty) p.append(' ');
             Temporal.appendInterval(p, duration);
         }
     }
@@ -101,10 +98,10 @@ public class Parallel extends Conjunctive implements Intermval {
 
             //add embedded terms with temporal duration
             for (Term t : this) {
-                if (t instanceof Intermval) {
+                if (t instanceof Interval) {
                     totalDuration = Math.max(
                             totalDuration,
-                            ((Intermval)t).duration()
+                            ((Interval)t).duration()
                     );
                 }
             }
@@ -117,7 +114,7 @@ public class Parallel extends Conjunctive implements Intermval {
     public static Parallel makeParallel(final Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
-        final int intervalsPresent = AbstractInterval.intervalCount(a);
+        final int intervalsPresent = Interval.intervalCount(a);
 
         if (intervalsPresent == 0) {
             return new Parallel(a, 0);
@@ -130,8 +127,8 @@ public class Parallel extends Conjunctive implements Intermval {
             long duration = 0;
             int p = 0;
             for (final Term x : a) {
-                if (x instanceof AbstractInterval) {
-                    duration = Math.max(duration, ((AbstractInterval) x).cycles(null));
+                if (x instanceof CyclesInterval) {
+                    duration = Math.max(duration, ((CyclesInterval) x).duration());
                 } else {
                     b[p++] = x;
                 }

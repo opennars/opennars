@@ -330,7 +330,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     public void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
         int nterms = term.length;
         for (int i = 0; i < nterms; i++) {
-            if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
+             if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
                 p.append(ARGUMENT_SEPARATOR);
                 if (pretty)
                     p.append(' ');

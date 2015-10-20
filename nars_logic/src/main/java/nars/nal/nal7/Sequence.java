@@ -56,8 +56,8 @@ public class Sequence extends Conjunctive implements Intermval {
 
             //add embedded terms with temporal duration
             for (Term t : this) {
-                if (t instanceof Intermval) {
-                    l += ((Intermval)t).duration();
+                if (t instanceof Interval) {
+                    l += ((Interval)t).duration();
                 }
             }
 
@@ -125,7 +125,7 @@ public class Sequence extends Conjunctive implements Intermval {
     public static Sequence makeSequence(final Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
-        final int intervalsPresent = AbstractInterval.intervalCount(a);
+        final int intervalsPresent = Interval.intervalCount(a);
 
         if (intervalsPresent == 0)
             return new Sequence(a, new int[a.length+1] /* empty */);
@@ -137,8 +137,8 @@ public class Sequence extends Conjunctive implements Intermval {
 
         int p = 0;
         for (final Term x : a) {
-            if (x instanceof AbstractInterval) {
-                i[p] += ((AbstractInterval) x).cycles(null);
+            if (x instanceof CyclesInterval) {
+                i[p] += ((CyclesInterval) x).duration();
             } else {
                 b[p++] = x;
             }

@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TermLink;
-import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Temporal;
 import nars.process.Level;
@@ -154,7 +153,7 @@ public interface Premise extends Level {
         return memory().duration();
     }
 
-    default public AbstractInterval newInterval(final long cycles) {
+    default public CyclesInterval newInterval(final long cycles) {
         //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
         return CyclesInterval.make(cycles, duration());
 

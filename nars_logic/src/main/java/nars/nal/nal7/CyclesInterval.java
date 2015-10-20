@@ -13,7 +13,7 @@ import java.io.IOException;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-public class CyclesInterval extends Atom implements AbstractInterval {
+public class CyclesInterval extends Atom implements Interval {
 
     //final static int bytesPrecision = 4;
 
@@ -82,7 +82,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     }
 
     @Override
-    public final long cycles(Memory m) {
+    public final long duration() {
         return cyc;
     }
 

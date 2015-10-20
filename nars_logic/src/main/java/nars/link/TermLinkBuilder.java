@@ -7,7 +7,7 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
@@ -129,7 +129,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     /** determines whether to grow a 1st-level termlink to a subterm */
     protected static boolean growComponent(Term t) {
-        if /*Global.DEBUG ... */ (t instanceof AbstractInterval) {
+        if /*Global.DEBUG ... */ (t instanceof CyclesInterval) {
             throw new RuntimeException("interval terms should not exist at this point");
         }
         return true;

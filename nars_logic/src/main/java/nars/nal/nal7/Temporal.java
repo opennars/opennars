@@ -189,16 +189,16 @@ public class Temporal {
     }
 
 
-    public static long applyExpectationOffset(final Memory memory, final Term temporalStatement, final long occurrenceTime) {
+    public static long applyExpectationOffset(final Term temporalStatement, final long occurrenceTime) {
         if (occurrenceTime == Stamp.ETERNAL) return Stamp.ETERNAL;
 
         if (temporalStatement != null && temporalStatement instanceof Implication) {
             Implication imp = (Implication) temporalStatement;
             if (imp.getSubject() instanceof Conjunction && imp.getTemporalOrder() == Temporal.ORDER_FORWARD) {
                 Conjunction conj = (Conjunction) imp.getSubject();
-                if (conj.term[conj.term.length - 1] instanceof AbstractInterval) {
-                    AbstractInterval intv = (AbstractInterval) conj.term[conj.term.length - 1];
-                    long time_offset = intv.cycles(memory);
+                if (conj.term[conj.term.length - 1] instanceof Interval) {
+                    Interval intv = (Interval) conj.term[conj.term.length - 1];
+                    long time_offset = intv.duration();
                     return (occurrenceTime + time_offset);
                 }
             }

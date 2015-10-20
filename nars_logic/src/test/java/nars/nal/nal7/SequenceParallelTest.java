@@ -5,19 +5,19 @@ import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Term;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 public class SequenceParallelTest {
+    final Terminal t = new Terminal();
 
     @Test public void testEmbeddedSequence() {
-        Terminal t = new Terminal();
 
         String es = "(&/, b, /10, c)";
         Sequence e = t.term(es);
@@ -33,7 +33,6 @@ public class SequenceParallelTest {
     }
 
     @Test public void testEmbeddedParallel() {
-        Terminal t = new Terminal();
 
         String fs = "(&|, b, c, /10)";
         Parallel f = t.term(fs);
@@ -50,9 +49,10 @@ public class SequenceParallelTest {
         String ts = "(&|, a, " + fs + ", /5)";
         Parallel s = t.term(ts);
 
+        assertEquals(ts, s.toString());
+
         assertEquals(10, s.duration()); //maximum contained duration = 10
 
-        assertEquals(ts, s.toString());
     }
 
     @Test public void testSequenceBytes() {
@@ -61,9 +61,44 @@ public class SequenceParallelTest {
     @Test public void testParallelBytes() {
         //TODO
     }
+    @Test public void testSemiDuplicateParallels() {
+        String ts = "(&&, (&|, x, /3), (&|, x, /1))";
+        Compound c = t.term(ts);
+
+        //TODO decide if this is correct handling
+        assertEquals(1, c.length());
+        assertEquals(Parallel.class, c.getClass());
+        assertEquals(2, ((Parallel)c).duration()); //interpolated duration
+    }
+    @Test public void testSemiDuplicateSequences() {
+        String ts = "(&&, (&/, x, /3), (&/, x, /1))";
+        Compound c = t.term(ts);
+
+        //TODO decide if this is correct handling
+        assertEquals(1, c.length());
+        assertEquals(Sequence.class, c.getClass());
+        assertEquals(2, ((Sequence)c).duration()); //interpolated duration
+    }
+
     @Test public void testEmbeddedParallelInSequence() {
     }
     @Test public void testEmbeddedSequenceInParallel() {
+    }
+
+    @Test public void testEquivalentSequencesAndParallels() {
+
+        assertEqualTerms("(&/, x, /0)", "(&/, x)");
+        assertEqualTerms("(&|, x, /0)", "(&|, x)");
+        assertEqualTerms("(&|, x, /3, /5)", "(&|, x, /5)");
+    }
+
+    private  void assertEqualTerms(String abnormal, String normalized) {
+        Term ta = t.term(abnormal);
+        Term tb = t.term(normalized);
+        assertEquals(ta, tb);
+        assertEquals(ta.toString(), tb.toString());
+        assertEquals(normalized, tb.toString());
+        assertArrayEquals(ta.bytes(), tb.bytes());
     }
 
 

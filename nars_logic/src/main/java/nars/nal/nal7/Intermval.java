@@ -1,14 +1,10 @@
 package nars.nal.nal7;
 
-import nars.term.TermMetadata;
-
 /**
- * Stores a set of intervals that will be associated with a
- * conjunction sequence or other temporal term with which
- * this can describe the delays between and around zero
- * or more subterms in the sequence
+ * Stores a sequence of "inner intervals" that quantify the
+ * timing of Sequence subterms
  */
-public interface Intermval extends TermMetadata {
+public interface Intermval extends Interval {
 
     /** a conj sequence will return a long[NUM_TERMS+1]
      * index i means the interval preceding term i
@@ -17,8 +13,6 @@ public interface Intermval extends TermMetadata {
     int[] intervals();
 
 
-    /** number of cycles that this sequence spans from start to end (= sum of intermval values) */
-    abstract long duration();
 
     /** l1 distance: sum absolute differnce of items normalized to total length
      *  distance = 0: equal
