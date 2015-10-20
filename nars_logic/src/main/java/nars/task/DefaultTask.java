@@ -11,6 +11,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;
+import nars.nal.nal7.Interval;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
@@ -57,7 +58,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
     long creationTime = Stamp.TIMELESS;
     long occurrenceTime = Stamp.ETERNAL;
-    int duration = 0;
+    private long duration = Stamp.TIMELESS;
 
 
     /**
@@ -104,17 +105,22 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /** copy/clone constructor */
     public DefaultTask(Task<T> task) {
         this(task.getTerm(), task.getPunctuation(), task.getTruth(),
-                task.getPriority(), task.getDuration(), task.getQuality(),
+                task.getPriority(), task.duration(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
 
 
-    protected void setTerm(T t) {
+    protected final void setTerm(T t) {
         //if (Global.DEBUG) {
         if (Sentence.invalidSentenceTerm(t)) {
             throw new RuntimeException("Invalid sentence content term: " + t);
         }
         //}
+
+        if (t instanceof Interval) {
+            //specify a duration described by the term
+            this.duration = ((Interval)t).duration();
+        }
 
         term = t;
     }
@@ -201,6 +207,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
+    public final void setDuration(long duration) {
+        if (this.duration!=Stamp.TIMELESS)
+            throw new RuntimeException(this + " has corrupted duration");
+        this.duration = duration;
+    }
+
+    @Override
     public Task log(List<String> historyToCopy) {
         if (!Global.DEBUG_TASK_LOG)
             return this;
@@ -233,7 +246,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public final int getDuration() {
+    public final long duration() {
         return duration;
     }
 
@@ -450,7 +463,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         int hash = this.hash;
         if (hash == 0) {
             //throw new RuntimeException(this + " not normalized");
-            hash = this.hash = rehash();
+            return this.hash = rehash();
         }
         return hash;
     }
@@ -467,7 +480,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         if (this == that) return true;
         if (that instanceof Sentence) {
 
-            if (hashCode() != that.hashCode()) return false;
+            //hash test has probably already occurred, coming from a HashMap
+            //if (hashCode() != that.hashCode()) return false;
 
             return equivalentTo((Sentence) that, true, true, true, true, false);
         }

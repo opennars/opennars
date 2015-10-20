@@ -4,7 +4,7 @@ package nars.nal.nal7;
  * Stores a sequence of "inner intervals" that quantify the
  * timing of Sequence subterms
  */
-public interface Intermval extends Interval {
+interface Intermval extends Interval {
 
     /** a conj sequence will return a long[NUM_TERMS+1]
      * index i means the interval preceding term i
@@ -27,10 +27,11 @@ public interface Intermval extends Interval {
         final int[] a = intervals();
         final int[] b = other.intervals();
 
-        if (a.length!=b.length)
+        int alength = a.length;
+        if (alength !=b.length)
             throw new RuntimeException("differnt length arrays comparison not impl yet");
         long dist = 0;
-        for (int i = 0; i < a.length; i++) {
+        for (int i = 0; i < alength; i++) {
             float d = a[i] - b[i];
             if (d < 0) d = -d;
             dist += d;

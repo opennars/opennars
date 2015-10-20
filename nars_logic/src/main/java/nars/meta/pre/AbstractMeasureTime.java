@@ -1,8 +1,7 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
-import nars.nal.nal7.Temporal;
-import nars.task.Task;
+import nars.process.ConceptProcess;
 import nars.term.Term;
 
 /**
@@ -16,29 +15,13 @@ abstract public class AbstractMeasureTime extends PreCondition3Output {
 
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
-        final Task task = m.premise.getTask();
-        final Task belief = m.premise.getBelief();
+        final ConceptProcess premise = m.premise;
 
-        //This part is used commonly, extract into its own precondition
-        if (belief == null) {
+        if (!premise.isTaskAndBeliefEvent())
             return false;
-        }
-        if (Temporal.isEternal(task.getOccurrenceTime()) || Temporal.isEternal(belief.getOccurrenceTime())) {
-            return false;
-        }
 
-        long time1 = 0, time2 = 0;
-        if (a.equals(task.getTerm())) {
-            time1 = task.getOccurrenceTime();
-            time2 = belief.getOccurrenceTime();
-        }
-        else if (a.equals(belief.getTerm())) {
-            time1 = task.getOccurrenceTime();
-            time2 = belief.getOccurrenceTime();
-        }
-
-        return test(m, a, b, time1, time2, c);
+        return testEvents(m, a, b, c);
     }
 
-    protected abstract boolean test(RuleMatch m, Term a, Term b, long time1, long time2, Term c);
+    protected abstract boolean testEvents(RuleMatch m, Term a, Term b, Term c);
 }

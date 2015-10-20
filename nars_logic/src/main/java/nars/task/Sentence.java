@@ -56,8 +56,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     long getCreationTime();
     @Override
     long getOccurrenceTime();
-    @Override
-    int getDuration();
+
     @Override
     Sentence setCreationTime(long c);
     @Override
@@ -472,13 +471,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
 
-    default boolean after(Sentence s) {
-        return Temporal.occurrsAfter(s, this);
-    }
 
-    default boolean before(final Sentence s) {
-        return Temporal.occurrsAfter(this, s);
-    }
 
     default boolean concurrent(final Sentence s, final int duration) {
         return Temporal.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);

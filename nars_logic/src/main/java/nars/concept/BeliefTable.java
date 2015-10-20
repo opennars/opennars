@@ -352,54 +352,54 @@ public interface BeliefTable extends TaskTable {
         return b;
     }
 
-
-    /** TODO experimental and untested */
-    class BeliefConfidenceAndCurrentTime implements Ranker {
-
-        private final Concept concept;
-
-        /** controls dropoff rate, measured in durations */
-        float relevanceWindow = 0.9f;
-        float temporalityFactor = 1f;
-
-
-
-        public BeliefConfidenceAndCurrentTime(Concept c) {
-            this.concept = c;
-        }
-
-        /** if returns c itself, this is a 1:1 linear mapping of confidence to starting
-         * score before penalties applied. this could also be a curve to increase
-         * or decrease the apparent relevance of certain confidence amounts.
-         * @return value >=0, <=1
-         */
-        public float confidenceScore(final float c) {
-            return c;
-        }
-
-        @Override
-        public float rank(Task t, float bestToBeat) {
-            float r = confidenceScore(t.getTruth().getConfidence());
-
-            if (!Temporal.isEternal(t.getOccurrenceTime())) {
-
-                final long now = concept.getMemory().time();
-                float dur = t.getDuration();
-                float durationsToNow = Math.abs(t.getOccurrenceTime() - now) / dur;
-
-
-                //float agePenalty = (1f - 1f / (1f + (durationsToNow / relevanceWindow))) * temporalityFactor;
-                float agePenalty = (durationsToNow / relevanceWindow) * temporalityFactor;
-                r -= agePenalty; // * temporalityFactor;
-            }
-
-            float unoriginalityPenalty = 1f - t.getOriginality();
-            r -= unoriginalityPenalty * 1;
-
-            return r;
-        }
-
-    }
+//
+//    /** TODO experimental and untested */
+//    class BeliefConfidenceAndCurrentTime implements Ranker {
+//
+//        private final Concept concept;
+//
+//        /** controls dropoff rate, measured in durations */
+//        float relevanceWindow = 0.9f;
+//        float temporalityFactor = 1f;
+//
+//
+//
+//        public BeliefConfidenceAndCurrentTime(Concept c) {
+//            this.concept = c;
+//        }
+//
+//        /** if returns c itself, this is a 1:1 linear mapping of confidence to starting
+//         * score before penalties applied. this could also be a curve to increase
+//         * or decrease the apparent relevance of certain confidence amounts.
+//         * @return value >=0, <=1
+//         */
+//        public float confidenceScore(final float c) {
+//            return c;
+//        }
+//
+//        @Override
+//        public float rank(Task t, float bestToBeat) {
+//            float r = confidenceScore(t.getTruth().getConfidence());
+//
+//            if (!Temporal.isEternal(t.getOccurrenceTime())) {
+//
+//                final long now = concept.getMemory().time();
+//                float dur = t.getDuration();
+//                float durationsToNow = Math.abs(t.getOccurrenceTime() - now) / dur;
+//
+//
+//                //float agePenalty = (1f - 1f / (1f + (durationsToNow / relevanceWindow))) * temporalityFactor;
+//                float agePenalty = (durationsToNow / relevanceWindow) * temporalityFactor;
+//                r -= agePenalty; // * temporalityFactor;
+//            }
+//
+//            float unoriginalityPenalty = 1f - t.getOriginality();
+//            r -= unoriginalityPenalty * 1;
+//
+//            return r;
+//        }
+//
+//    }
 
 
 //    default public Task top(boolean eternal, boolean nonEternal) {

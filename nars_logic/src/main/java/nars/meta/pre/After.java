@@ -33,12 +33,13 @@ public class After extends PreCondition {
         final Task task = premise.getTask();
         final Task belief = premise.getBelief();
 
+        int pdur = premise.duration();
+
         if (!taskBeforeBelief) {
-            return task.after(belief);
+            return task.startsAfter(belief, pdur);
         }
         else {
-            return belief.after(task);
+            return belief.startsAfter(task, pdur);
         }
-
     }
 }

@@ -32,36 +32,31 @@ public class ConceptSerializationTest  {
     public void testConceptExternalizer() throws IOException, InterruptedException, ClassNotFoundException {
         byte[] by;
         Concept ac;
-        {
-            final NAR a = new Default();
-            ConceptExternalizer ae = new ConceptExternalizer((Default) a);
+        final NAR a = new Default();
+        ConceptExternalizer ae = new ConceptExternalizer(a);
 
-            Task t = a.inputTask(input);
-            a.frame(1);
-            ac = a.concept(t.getTerm());
-            assertNotNull(ac);
+        Task t = a.inputTask(input);
+        a.frame(1);
+        ac = a.concept(t.getTerm());
+        assertNotNull(ac);
 
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream o = new ObjectOutputStream(baos);
-            ae.writeObject(o, ac);
-            o.flush();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream o = new ObjectOutputStream(baos);
+        ae.writeObject(o, ac);
+        o.flush();
 
-            by = baos.toByteArray();
-            System.out.println(ac + " externalized to " + by.length + " bytes");
-        }
-
+        by = baos.toByteArray();
+        System.out.println(ac + " externalized to " + by.length + " bytes");
 
 
         //TEST INPUT ===================
-        {
-            final NAR b = new Default();
-            ConceptExternalizer be = new ConceptExternalizer((Default) b);
+        final NAR b = new Default();
+        ConceptExternalizer be = new ConceptExternalizer(b);
 
-            Concept bc = be.readObject(new ObjectInputStream(new ByteArrayInputStream(by)));
+        Concept bc = be.readObject(new ObjectInputStream(new ByteArrayInputStream(by)));
 
-            assertEquals(ac, bc);
-        }
+        assertEquals(ac, bc);
 
 //
 //

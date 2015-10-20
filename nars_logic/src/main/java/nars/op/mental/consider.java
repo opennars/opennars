@@ -46,6 +46,11 @@ public class consider extends SyncOperator implements Mental {
      */
     @Override
     public ArrayList<Task> apply(Task<Operation> operation) {
+        if (deriver == null) {
+            System.err.println(this + " unconfigured");
+            return null;
+        }
+
         Term term = operation.getTerm().arg(0);
         
         Concept concept = nar.conceptualize(term, operation.getBudget());
@@ -55,7 +60,8 @@ public class consider extends SyncOperator implements Mental {
         if ((taskLink!=null) && (termLink!=null)) {
 
             nar.input(
-                new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink).derive(deriver)
+                new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink)
+                        .derive(deriver)
             );
 
         }

@@ -4,28 +4,44 @@ import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal2.Similarity;
+import nars.nal.nal5.Equivalence;
+import nars.nal.nal5.Implication;
 import nars.nar.Default;
 import nars.term.Atom;
+import nars.term.Statement;
 
 /**
  * Created by me on 8/25/15.
  */
 public class DeductiveChainTest extends TestNAR {
 
-    public final Inheritance q;
-    public final Inheritance[] beliefs;
+    public final Statement q;
+    public final Statement[] beliefs;
 
-    public DeductiveChainTest(NAR n, int length, int timeLimit) {
+    @FunctionalInterface
+    public interface IndexedStatementBuilder {
+        public Statement apply(int x, int y);
+    }
+
+    final static public IndexedStatementBuilder inh = (int x, int y) ->
+        Inheritance.make(a(x), a(y));
+    final static public IndexedStatementBuilder sim = (int x, int y) ->
+        Similarity.make(a(x), a(y));
+    final static public IndexedStatementBuilder impl = (int x, int y) ->
+        Implication.make(a(x), a(y));
+    final static public IndexedStatementBuilder equiv = (int x, int y) ->
+        Equivalence.make(a(x), a(y));
+
+    public DeductiveChainTest(NAR n, int length, int timeLimit, IndexedStatementBuilder b) {
         super(n);
-
-
 
         beliefs = new Inheritance[length];
         for (int x = 0; x < length; x++) {
-            beliefs[x] = i(x, x+1);
+            beliefs[x] = b.apply(x, x+1);
         }
 
-        q = i(0, length);
+        q = b.apply(0, length);
 
         for (int x = 0; x < beliefs.length; x++) {
             n.believe( beliefs[x]  );
@@ -41,9 +57,6 @@ public class DeductiveChainTest extends TestNAR {
         return Atom.the((byte)('a' + i));
     }
 
-    public static Inheritance i(int x, int y) {
-        return Inheritance.make(a(x), a(y));
-    }
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -57,7 +70,7 @@ public class DeductiveChainTest extends TestNAR {
     static void test(NAR n, int chainLen) {
 
 
-        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, 3000) {
+        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, 3000, inh) {
 //            @Override
 //            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
 //                return this;

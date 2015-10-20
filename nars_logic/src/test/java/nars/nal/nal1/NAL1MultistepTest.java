@@ -9,6 +9,8 @@ import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
 
+import static nars.meter.experiment.DeductiveChainTest.inh;
+
 @RunWith(Parameterized.class)
 public class NAL1MultistepTest extends AbstractNALTest {
 
@@ -24,15 +26,15 @@ public class NAL1MultistepTest extends AbstractNALTest {
 
 
     @Test public void multistep2() {
-        new DeductiveChainTest(nar(), 2, 1000).run();
+        new DeductiveChainTest(nar(), 2, 1000, inh).run();
     }
 
     @Test public void multistep3() {
-        new DeductiveChainTest(nar(), 3, 2000).run();
+        new DeductiveChainTest(nar(), 3, 2000, inh).run();
     }
 
     @Test public void multistep4() {
-        new DeductiveChainTest(nar(), 4, 6000).run();
+        new DeductiveChainTest(nar(), 4, 8000, inh).run();
     }
 
 

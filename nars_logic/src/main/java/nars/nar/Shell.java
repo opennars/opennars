@@ -1,8 +1,5 @@
 package nars.nar;
 
-import nars.Memory;
-import nars.meter.experiment.DeductiveChainTest;
-import nars.task.Task;
 import nars.util.java.NALObjects;
 
 /**
@@ -22,24 +19,24 @@ public class Shell extends Terminal {
         super();
     }
 
-    public static void main(String[] arg) throws Exception {
-
-        Shell n = Shell.make();
-        n.stdout();
-        Task t = n.task("echo(hi);");
-
-        n.frame(1);
-
-        n.input(t);
-
-        Memory m = n.memory();
-        //n.frame(2);
-
-        n.term("a:b");
-
-        new DeductiveChainTest(n,3,2).run(false);
-
-        n.frame(1);
-
-    }
+//    public static void main(String[] arg) throws Exception {
+//
+//        Shell n = Shell.make();
+//        n.stdout();
+//        Task t = n.task("echo(hi);");
+//
+//        n.frame(1);
+//
+//        n.input(t);
+//
+//        Memory m = n.memory();
+//        //n.frame(2);
+//
+//        n.term("a:b");
+//
+//        new DeductiveChainTest(n,3,2, DeductiveChainTest.sim).run(false);
+//
+//        n.frame(1);
+//
+//    }
 }

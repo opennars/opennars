@@ -324,7 +324,7 @@ abstract public class NQuadsRDF {
         }
 
         if (belief!=null) {
-            return new TaskSeed(nar.memory).term(belief).
+            return new TaskSeed().term(belief).
                     belief().truth(1f,0.9f)
                     .time(nar.time(),
                     Stamp.ETERNAL //TODO Tense parameter

@@ -70,10 +70,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
     }
 
     public boolean setEnabled(NAR n, boolean enabled) {
-        if (enabled)
-            this.nar = n;
-        else
-            this.nar = null;
+        this.nar = enabled ? n : null;
         return enabled;
     }
 
@@ -121,8 +118,9 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
         if (async()) {
             return nar.execAsync(() -> executeSynch(op));
         }
-        else
+        else {
             return executeSynch(op);
+        }
     }
 
     final boolean executeSynch(Task<Operation> op) {

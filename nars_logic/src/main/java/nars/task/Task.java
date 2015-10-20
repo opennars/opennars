@@ -111,6 +111,8 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return s;
     }
 
+    void setDuration(long l);
+
     Task getParentTask();
 
     Reference<Task> getParentTaskRef();
@@ -499,25 +501,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         if (!isCommand()) {
 
-            //if a task has an unperceived creationTime,
-            // set it to the memory's current time here,
-            // and adjust occurenceTime if it's not eternal
-
-            if (getCreationTime() <= Stamp.TIMELESS) {
-                final long now = memory.time();
-                long oc = getOccurrenceTime();
-                if (oc != Stamp.ETERNAL)
-                    oc += now;
-
-                setTime(now, oc);
-            }
-
-            if (getDuration() == 0)
-                setDuration(memory.duration());
-
-            if (getEvidence().length == 0) {
-                setEvidence(memory.newStampSerial());
-            }
 
             switch (getPunctuation()) {
                 case Symbols.JUDGMENT:
@@ -537,15 +520,33 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             if ((getParentTaskRef() != null && getParentTask() == null))
                 throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
 
+
+            //if a task has an unperceived creationTime,
+            // set it to the memory's current time here,
+            // and adjust occurenceTime if it's not eternal
+
+            if (getCreationTime() <= Stamp.TIMELESS) {
+                final long now = memory.time();
+                long oc = getOccurrenceTime();
+                if (oc != Stamp.ETERNAL)
+                    oc += now;
+
+                setTime(now, oc);
+            }
+
+
+            if (getEvidence().length == 0) {
+                setEvidence(memory.newStampSerial());
+            }
+
         /*
         if (t.equals( t.getParentTask()) ) {
             throw new RuntimeException(t + " has parentTask equal to itself");
-        }
-        */
-
-            if (getEvidence().length == 0)
-                throw new RuntimeException(this + " from premise " + getParentTask() + ',' + getParentBelief()
-                        + " yet no evidence provided");
+        }        */
+//
+//            if (getEvidence().length == 0)
+//                throw new RuntimeException(this + " from premise " + getParentTask() + ',' + getParentBelief()
+//                        + " yet no evidence provided");
 
             if (Global.DEBUG) {
                 if (Sentence.invalidSentenceTerm(getTerm())) {
@@ -553,6 +554,10 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                 }
             }
 
+            if (duration() == Stamp.TIMELESS) {
+                //assume the default perceptual duration
+                setDuration(memory.duration());
+            }
         }
 
         if (normalized() != null) {
@@ -590,6 +595,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     void setBestSolution(Task belief, Memory memory);
 
 
+    @Override
     boolean isDeleted();
 
 
@@ -622,8 +628,17 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return new DefaultTask<>(op, Symbols.COMMAND, null, 0, 0, 0);
     }
 
-    default public boolean isEternal() {
+    default boolean isEternal() {
         return getOccurrenceTime()==Stamp.ETERNAL;
     }
 
+//    public static enum Temporally {
+//        Before, After
+//    }
+    default boolean startsAfter(Task other, int perceptualDuration) {
+        return start() - other.end() >= perceptualDuration;
+    }
+
+    default long start() { return getOccurrenceTime(); }
+    default long end() { return start() + duration(); }
 }

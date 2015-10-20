@@ -787,7 +787,7 @@ public class Temporal {
     /**
      * whether two times are concurrent with respect ao a specific duration ("present moment") # of cycles
      */
-    public static boolean concurrent(final long a, final long b, final int durationCycles) {
+    public static boolean concurrent(final long a, final long b, final int perceptualDuration) {
         //since Stamp.ETERNAL is Integer.MIN_VALUE, 
         //avoid any overflow errors by checking eternal first
 
@@ -798,24 +798,19 @@ public class Temporal {
         } else if (b == Stamp.ETERNAL) {
             return false; //a==b was compared above
         } else {
-            return order(a, b, durationCycles) == ORDER_CONCURRENT;
+            return order(a, b, perceptualDuration) == ORDER_CONCURRENT;
         }
     }
 
-    public static boolean before(long a, long b, int duration) {
-        return after(b, a, duration);
+    public static boolean before(long a, long b, int perceptualDuration) {
+        return after(b, a, perceptualDuration);
     }
 
     /** true if B is after A */
-    public static boolean after(long a, long b, int duration) {
+    public static boolean after(long a, long b, int perceptualDuration) {
         if (a == Stamp.ETERNAL || b == Stamp.ETERNAL)
             return false;
-        return order(a, b, duration) == Temporal.ORDER_FORWARD;
-    }
-
-    /** true if B is after A */
-    public static boolean occurrsAfter(Stamp a, Stamp b) {
-        return after(a.getOccurrenceTime(), b.getOccurrenceTime(), a.getDuration());
+        return order(a, b, perceptualDuration) == Temporal.ORDER_FORWARD;
     }
 
 
@@ -856,5 +851,19 @@ public class Temporal {
     public static final void appendInterval(Appendable p, long iii) throws IOException {
         p.append(Symbols.INTERVAL_PREFIX);
         p.append(Long.toString(iii));
+    }
+
+    /** inner between: time difference of later.start() - earlier.end() */
+    public static long between(Task task, Task belief) {
+        long tStart = task.start();
+        long bStart = belief.start();
+
+        Task earlier = tStart <= bStart ? task : belief;
+        Task later = earlier == task ? belief : task;
+
+        long a = earlier.end();
+        long b = later.start();
+
+        return b-a;
     }
 }

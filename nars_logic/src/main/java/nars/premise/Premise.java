@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TermLink;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Temporal;
 import nars.process.Level;
 import nars.task.Task;
@@ -149,15 +148,16 @@ public interface Premise extends Level {
 
     }
 
+
     default public int duration() {
         return memory().duration();
     }
 
-    default public CyclesInterval newInterval(final long cycles) {
-        //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
-        return CyclesInterval.make(cycles, duration());
-
-    }
+//    default public CyclesInterval newInterval(final long cycles) {
+//        //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
+//        return CyclesInterval.make(cycles, duration());
+//
+//    }
 
 
 
@@ -444,6 +444,7 @@ public interface Premise extends Level {
         return nar().concept(x);
     }
 
+    /** TODO This part is used commonly, extract into its own precondition */
     default boolean isTaskAndBeliefEvent() {
         if (getBelief() == null) return false;
 

@@ -22,6 +22,7 @@ package nars.task.stamp;
 
 import nars.Global;
 import nars.Symbols;
+import nars.nal.nal7.Interval;
 import nars.nal.nal7.Temporal;
 import nars.task.Sentence;
 
@@ -35,7 +36,7 @@ import static nars.nal.nal7.Temporal.ORDER_FORWARD;
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
  */
 
-public interface Stamp extends Cloneable, Serializable {
+public interface Stamp extends Interval, Cloneable, Serializable {
 
     /**
      * default for atemporal events
@@ -163,8 +164,6 @@ public interface Stamp extends Cloneable, Serializable {
     long getCreationTime();
 
     Stamp setCreationTime(long t);
-
-    int getDuration();
 
     long getOccurrenceTime();
 

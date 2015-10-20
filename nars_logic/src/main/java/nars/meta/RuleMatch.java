@@ -466,10 +466,12 @@ public class RuleMatch extends FindSubst {
         return rule.postconditions;
     }
 
-    public void occurenceAdd(final long cyclesDelta) {
-        if (occurence_shift == Stamp.TIMELESS)
-            occurence_shift = 0;
-        occurence_shift += cyclesDelta;
+    public final void occurenceAdd(final long cyclesDelta) {
+        long oc = this.occurence_shift;
+        if (oc == Stamp.TIMELESS)
+            oc = 0;
+        oc += cyclesDelta;
+        this.occurence_shift = oc;
     }
 
 //    public void run(TaskRule rule, Stream.Builder<Task> stream) {

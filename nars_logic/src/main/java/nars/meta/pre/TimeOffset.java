@@ -3,8 +3,6 @@ package nars.meta.pre;
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.meta.RuleMatch;
-import nars.nal.nal7.Sequence;
-import nars.premise.Premise;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Term;
@@ -38,10 +36,22 @@ public class TimeOffset extends PreCondition1 {
         }*/
 
         //there is a order:
-        long offset = timeOffsetForward(arg, m.premise);
+        int dir = this.direction;
+
+        //NOTE intervals should not appear this point;
+        // add here a general purpose 'interval span' method
+        // that any term will report its total interval.
+        // a sequence will return the sum of its intermvals, for example
+        //
+//        if (arg instanceof AbstractInterval) {
+//            return ((AbstractInterval) arg).cycles(nal.memory());
+//        }
+
+        long offset = dir != 0 ? m.premise.getTask().duration() : 0;
+
         if (offset > Stamp.TIMELESS) {
             long s = positive ? +1 : -1;
-            m.occurenceAdd(s * offset); //shift since it has an order..
+            m.occurenceAdd(dir * s * offset); //shift since it has an order..
         }
 
         return true;
@@ -62,32 +72,6 @@ public class TimeOffset extends PreCondition1 {
         r.value("<=>", 0);
     }
 
-
-    long timeOffsetForward(final Term arg, final Premise nal) {
-
-        //NOTE intervals should not appear this point;
-        // add here a general purpose 'interval span' method
-        // that any term will report its total interval.
-        // a sequence will return the sum of its intermvals, for example
-        //
-//        if (arg instanceof AbstractInterval) {
-//            return ((AbstractInterval) arg).cycles(nal.memory());
-//        }
-        if (direction == 0) return 0;
-
-        int dur = nal.duration();
-
-        long cycles;
-        if (arg instanceof Sequence) {
-            cycles = dur + ((Sequence)arg).duration();
-        }
-        else  {
-            //default: assume duration or half-duration # of cycles for the term
-            cycles = dur;
-        }
-
-        return direction * cycles;
-    }
 
     @Override
     public String toString() {

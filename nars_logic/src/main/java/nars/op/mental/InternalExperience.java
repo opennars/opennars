@@ -3,16 +3,14 @@ package nars.op.mental;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.budget.Budget;
-import nars.event.NARReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Interval;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -22,7 +20,6 @@ import nars.truth.Truth;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Consumer;
 
 /**
  * https://www.youtube.com/watch?v=ia4wMU-vfrw
@@ -31,7 +28,7 @@ import java.util.function.Consumer;
  * <p>
  * called from Concept
  */
-public class InternalExperience extends NARReaction implements Consumer<ConceptProcess> {
+public class InternalExperience {
 
 
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE = 0.5f; //0.92
@@ -113,13 +110,9 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         return false;
     }
 
-    @Override
-    public void event(Class event, Object[] args) {
-
-    }
 
     public InternalExperience(NAR n) {
-        super(n);
+        super();
 
         n.memory.eventTaskProcess.on(tp -> {
 
@@ -128,13 +121,30 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
             //old strategy always, new strategy only for QUESTION and QUEST:
             ///final char punc = task.getPunctuation();
 
-            if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && task.isQuestOrQuestion())) {
+            if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
+                    (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && task.isQuestOrQuestion())) {
                 experienceFromTaskInternal(tp, task, isFull());
             }
             //we also need Mr task process to be able to have the task process, this is a hack..
 
         });
+        n.memory.eventConceptProcess.on(p -> {
+            final Task belief = p.getBelief();
+            if (belief == null) return;
 
+            final Task task = p.getTask();
+            final Random r = p.getRandom();
+
+            if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY) {
+                nonInnate(belief, task, p, randomNonInnate(r) );
+            }
+
+            final Term beliefTerm = belief.getTerm();
+
+            if (beliefTerm instanceof Implication && r.nextFloat() <= INTERNAL_EXPERIENCE_PROBABILITY) {
+                internalizeImplication(task, p, (Implication) beliefTerm);
+            }
+        });
     }
 
     public static Operation toTerm(final Sentence s, final NAL mem, float conceptCreationExpectation) {
@@ -182,26 +192,6 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
     }
 
 
-    @Override
-    public void accept(final ConceptProcess p) {
-        final Sentence belief = p.getBelief();
-        if (belief == null) return;
-
-        final Task task = p.getTask();
-        final Memory m = p.memory();
-        final Random r = m.random;
-
-        if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY) {
-            nonInnate(belief, task, p, randomNonInnate(r) );
-        }
-
-        final Term beliefTerm = belief.getTerm();
-
-        if (beliefTerm instanceof Implication && r.nextFloat() <= INTERNAL_EXPERIENCE_PROBABILITY) {
-            internalizeImplication(task, p, (Implication) beliefTerm);
-        }
-
-    }
 
     public static Operator randomNonInnate(Random r) {
         return nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)];
@@ -280,27 +270,27 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         if (imp.getTemporalOrder() == Temporal.ORDER_FORWARD) {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
             boolean valid = true;
-            if (imp.getSubject() instanceof Conjunction) {
-                Conjunction conj = (Conjunction) imp.getSubject();
-                if (!conj.term[0].equals(taskTerm)) {
+            Term impsub = imp.getSubject();
+            if (impsub instanceof Conjunction) {
+                Conjunction conj = (Conjunction) impsub;
+                if (!conj.term(0).equals(taskTerm)) {
                     valid = false; //the expected needed term is not included
                 }
-                for (int i = 1; i < conj.term.length; i++) {
-                    if (!(conj.term[i] instanceof CyclesInterval)) {
-                        valid = false;
-                        break;
-                    }
-                }
             } else {
-                if (!imp.getSubject().equals(taskTerm)) {
+                if (!impsub.equals(taskTerm)) {
                     valid = false;
                 }
             }
 
+            //TODO use interval?
+
+
             if (valid) {
+                long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
+
                 beliefReasonDerive(task,
                         $.opr(Product.only(imp.getPredicate()), anticipate),
-                        nal);
+                        nal, interval);
             }
         }
     }
@@ -311,17 +301,19 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
             beliefReasonDerive(task,
                     $.opr(Product.only(belief.getTerm()), op),
-                    nal);
+                    nal, 0);
     }
 
-    protected static void beliefReasonDerive(Task parent, Compound new_term, Premise p) {
+    protected static void beliefReasonDerive(Task parent, Compound new_term, Premise p, long delay) {
 
         //TODO should this be a mew stamp or attached to parent.. originally it was a fresh new stamp from memory
 
+        long now = p.time();
         p.input(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
                                 Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                        .parent(parent).occurrNow(p.memory()));
+                        .parent(parent)
+                        .time(now, now + delay));
 
     }
 

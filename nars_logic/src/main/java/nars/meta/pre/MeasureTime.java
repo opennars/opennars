@@ -2,6 +2,8 @@ package nars.meta.pre;
 
 import nars.meta.RuleMatch;
 import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Temporal;
+import nars.premise.Premise;
 import nars.term.Term;
 
 /**
@@ -14,14 +16,16 @@ public class MeasureTime extends AbstractMeasureTime {
     }
 
     @Override
-    protected boolean test(RuleMatch m, Term a, Term b, long time1, long time2, Term c) {
-        long time = time1 - time2;
+    protected boolean testEvents(RuleMatch m, Term a, Term b, Term c) {
+        Premise p = m.premise;
+
+        long time = Temporal.between(p.getTask(), p.getBelief());
         if (time < 0) {
             return false;
         }
 
-        m.map1.put(c,
-                CyclesInterval.make(time, m.premise.memory())); // I:=+8 for example
+        CyclesInterval interval = CyclesInterval.make(time, p.memory());
+        m.map1.put(c, interval );
 
         return true;
     }

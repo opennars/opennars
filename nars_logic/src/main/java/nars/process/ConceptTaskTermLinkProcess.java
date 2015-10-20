@@ -56,7 +56,10 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     @Override
     public final Stream<Task> derive(final Function<ConceptProcess,Stream<Task>> p) {
         nar.memory.eventConceptProcess.emit(this);
-        return p.apply(this);
+        Stream<Task> s = p.apply(this);
+        if (s == null)
+            return Stream.empty();
+        return s;
     }
 
 //    /**

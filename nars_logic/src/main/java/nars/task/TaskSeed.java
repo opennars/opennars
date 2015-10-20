@@ -46,16 +46,15 @@ import javax.annotation.Nullable;
 
 
     public static <C extends Compound> TaskSeed make(Memory memory) {
-        return new TaskSeed(memory);
+        return new TaskSeed();
     }
 
-    public TaskSeed(Memory memory) {
+    public TaskSeed() {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char) 0, null, 0, 0, 0);
 
         budget(0, Float.NaN, Float.NaN);
 
-        setDuration(memory.duration());
         setOccurrenceTime(TIMELESS);
     }
 
@@ -232,12 +231,6 @@ import javax.annotation.Nullable;
         return this;
     }
 
-
-
-    public TaskSeed duration(int duration) {
-        this.setDuration(duration);
-        return this;
-    }
 
 
 //    /**

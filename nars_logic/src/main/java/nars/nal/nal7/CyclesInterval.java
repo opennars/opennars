@@ -11,6 +11,13 @@ import java.io.IOException;
 /**
  * Interval represented directly as a measure of cycles encoded as an integer in some # of bits
  *
+ * A virtual term which does not survive past normalization,
+ * its value being collected into Sequence or Parallel intermval
+ * components
+ *
+ * Its appearance in terms other than Sequence and Parallel
+ * is meaningless.
+ *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
 public class CyclesInterval extends Atom implements Interval {

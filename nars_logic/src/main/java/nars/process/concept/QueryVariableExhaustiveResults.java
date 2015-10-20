@@ -60,7 +60,7 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
             if (!terms.isEmpty()) {
 
                 //generates a similarity group
-                Task x = new TaskSeed(memory).term(
+                Task x = new TaskSeed().term(
                     Property.make(
                         SetExt.make(terms),
                         t.getTerm()

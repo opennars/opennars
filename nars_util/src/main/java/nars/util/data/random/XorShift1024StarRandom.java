@@ -74,7 +74,7 @@ public class XorShift1024StarRandom extends Random {
 	}
 	
 	@Override
-	public long nextLong() {
+	public final long nextLong() {
 		final long s[] = this.s;
         int p = this.p;
 
@@ -104,7 +104,7 @@ public class XorShift1024StarRandom extends Random {
      * @param n the positive bound on the random number to be returned.
      * @return the next pseudorandom {@code long} value between {@code 0} (inclusive) and {@code n} (exclusive).
      */
-	public long nextLong( final long n ) {
+	public final long nextLong( final long n ) {
         if ( n <= 0 ) throw new IllegalArgumentException();
 		// No special provision for n power of two: all our bits are good.
 		for(;;) {
