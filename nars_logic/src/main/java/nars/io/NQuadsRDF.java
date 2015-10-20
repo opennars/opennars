@@ -184,6 +184,7 @@ abstract public class NQuadsRDF {
                 s = a[a.length - 1];
             }
 
+            if (s.isEmpty()) return null;
 
             return Atom.the(s, true);
         //}
@@ -315,10 +316,12 @@ abstract public class NQuadsRDF {
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);
-            belief = Inheritance.make(
+            if (subject!=null && object!=null && predicate!=null) {
+                belief = Inheritance.make(
                         Product.make(subject, object),
                         predicate
-                    );
+                );
+            }
         }
 
         if (belief!=null) {

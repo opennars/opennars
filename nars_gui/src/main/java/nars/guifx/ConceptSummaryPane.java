@@ -1,12 +1,13 @@
 package nars.guifx;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import nars.concept.Concept;
 import nars.guifx.util.ColorMatrix;
 import nars.task.Task;
+import nars.truth.Truth;
 import nars.util.data.Util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static javafx.application.Platform.runLater;
 
 
-public class ConceptSummaryPane extends Button {
+public class ConceptSummaryPane extends Text {
 
 
     private final Concept concept;
@@ -22,9 +23,15 @@ public class ConceptSummaryPane extends Button {
     final AtomicBoolean pendingUpdate = new AtomicBoolean(false);
     private ConceptSummaryPaneIcon icon;
     private float lastPri = -1f;
+    private ColorMatrix truthColors = new ColorMatrix(11,11,(freq,conf)->{
+        return Color.hsb(360.0 * (freq * 0.3 + 0.25),
+                conf, //all the way down to gray
+                0.1 + 0.9f * conf);
+    });
 
     public ConceptSummaryPane(Concept c) {
         super(c.getTerm().toStringCompact());
+
 
         this.concept = c;
 
@@ -60,10 +67,22 @@ public class ConceptSummaryPane extends Button {
         }
 
         float pri = concept.getPriority();
-        if (Util.equal(lastPri, pri, 0.01))
+        if (Util.equal(lastPri, pri, 0.01) )
             priority = false;
 
-        if (priority && pendingUpdate.compareAndSet(false, true)) {
+        //HACK //TODO add truth value / color caching
+        boolean truth = true;
+
+        if (priority && truth && pendingUpdate.compareAndSet(false, true)) {
+
+            Color color;
+            if (concept.hasBeliefs()) {
+                Truth tv = concept.getBeliefs().topTruth();
+                color = truthColors.get(tv.getFrequency(), tv.getConfidence());
+            }
+            else {
+                color = Color.GRAY;
+            }
 
             runLater(() -> {
                 pendingUpdate.set(false);
@@ -71,12 +90,7 @@ public class ConceptSummaryPane extends Button {
                 this.lastPri = pri;
                 setStyle(JFX.fontSize(((1.0f + pri) * 100.0f)));
 
-                //setTextFill(color);
-
-                /*setBackground(new Background(
-                        new BackgroundFill(
-                            Color.BLUE, new CornerRadii(0), new Insets(0,0,0,0)
-                )));*/
+                setFill(color);
 
 //                StringBuilder sb = new StringBuilder();
 //

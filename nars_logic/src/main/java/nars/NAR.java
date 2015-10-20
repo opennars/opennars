@@ -752,8 +752,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     static final Set<String> logEvents = Sets.newHashSet(
-            "eventInput",  "eventAnswer",
-            "eventExecute", "eventDerived", "eventError",
+            "eventTaskProcess",  "eventAnswer",
+            "eventExecute", /*"eventDerived",*/ "eventError",
             "eventSpeak"
     );
 
@@ -785,8 +785,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
                 out.append(' ');
         }
 
-        out
-                .append(v.toString());
+        if (v instanceof Object[])
+            v = Arrays.toString((Object[])v);
+
+        out.append(v.toString());
 
         if (v instanceof Concept) {
             Concept c = (Concept) v;

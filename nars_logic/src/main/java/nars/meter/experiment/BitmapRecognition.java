@@ -2,8 +2,6 @@ package nars.meter.experiment;
 
 import nars.Global;
 import nars.NAR;
-import nars.clock.FrameClock;
-import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
 import nars.nal.nal5.Conjunction;
@@ -13,6 +11,7 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -73,7 +72,7 @@ public class BitmapRecognition {
                 /*Statement tt = Similarity.make(
                     pixelTerms, po
                 );*/
-                Task q = n.task("echo(" + po + ")@");// :|:");
+                Task q = n.task("echo(" + po + ")@ :|:");
                 System.err.println("ASK: " + q);
                 n.input(q);
             }
@@ -102,14 +101,15 @@ public class BitmapRecognition {
         private Term updatePixel(NAR n, int x, int y) {
             Term p = pixels[x][y];
             float on = this.on[x][y];
-            Compound term = Property.make(p, f(on));
+            Product term = Product.make(p, f(on));
             n.believe(
-                term,
-                Tense.Present, 1f, 0.95f /* conf */);
+                (Compound)term,
+                Tense.Present,
+                0.9f /* conf */, 0.95f /* conf */);
             return term;
         }
 
-        private Term f(float on) {
+        private Atom f(float on) {
             if (on > 0.5) {
                 return Atom.the("Y");//f(on));
             }
@@ -168,7 +168,10 @@ public class BitmapRecognition {
         //Global.DEBUG = true;
         int size = 2;
 
-        NAR n = new Default(1000, 1, 2, 3, new FrameClock()).nal(8);
+        Default n = new Default2(1000, 1, 3, 7);
+        n.nal(8);
+        n.setTaskLinkBagSize(32);
+        n.setTermLinkBagSize(128);
 
         n.log();
 

@@ -2,7 +2,6 @@ package nars.guifx.demo;
 
 import nars.LocalMemory;
 import nars.Memory;
-import nars.NAR;
 import nars.bag.impl.MapCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
@@ -29,8 +28,9 @@ public class NARideRealtimeDefault {
                 InfiniPeer.tmp().getCache()
             )*/
         );
-        NAR nar = new Default2(mem, 1024, 1, 2, 3);
-
+        Default2 nar = new Default2(mem, 1024, 1, 2, 3);
+        nar.setTaskLinkBagSize(32);
+        nar.setTermLinkBagSize(128);
 
         /*nar.memory.conceptForgetDurations.set(10);
         nar.memory.termLinkForgetDurations.set(100);*/

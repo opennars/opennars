@@ -79,11 +79,11 @@ public class TaskProcess extends NAL implements Serializable {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(getClass().getSimpleName()).append('[');
+        //sb.append(getClass().getSimpleName()).append('[');
 
         getTask().appendTo(sb, nar.memory(), true, false, true, true);
 
-        sb.append(']');
+        //sb.append(']');
 
         return sb.toString();
 
