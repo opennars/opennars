@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.primitive.DoubleProcedure;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.util.data.MutableDouble;
+import nars.util.data.MutableInteger;
 import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,6 +29,9 @@ public class MutableFloatProperty extends SimpleDoubleProperty {
         this( () -> a.doubleValue(), (v) -> a.set(v));
     }
     public MutableFloatProperty(AtomicInteger a) {
+        this( () -> a.doubleValue(), (v) -> a.set((int)v));
+    }
+    public MutableFloatProperty(MutableInteger a) {
         this( () -> a.doubleValue(), (v) -> a.set((int)v));
     }
 

@@ -38,6 +38,12 @@ public class Terminal extends Default {
     }
 
     @Override
+    public DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+        //nothing
+        return null;
+    }
+
+    @Override
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
                 taskFilter,

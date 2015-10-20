@@ -79,7 +79,7 @@ public class TimeOffset extends PreCondition1 {
 
         long cycles;
         if (arg instanceof Sequence) {
-            cycles = dur + ((Sequence)arg).intervalLength();
+            cycles = dur + ((Sequence)arg).duration();
         }
         else  {
             //default: assume duration or half-duration # of cycles for the term

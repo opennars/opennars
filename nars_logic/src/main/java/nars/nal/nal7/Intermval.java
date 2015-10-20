@@ -14,16 +14,11 @@ public interface Intermval extends TermMetadata {
      * index i means the interval preceding term i
      * the final index is the interval following the final term
      */
-    long[] intervals();
+    int[] intervals();
 
 
     /** number of cycles that this sequence spans from start to end (= sum of intermval values) */
-    default long intervalLength() {
-        long l = 0;
-        for (final long x : intervals())
-            l += x;
-        return l;
-    }
+    abstract long duration();
 
     /** l1 distance: sum absolute differnce of items normalized to total length
      *  distance = 0: equal
@@ -35,8 +30,8 @@ public interface Intermval extends TermMetadata {
     /** return distance1 but as soon as distance exceeds 'onlyIfLessThan'
      *  threshold. otherwise returns Long.MAX_VALUE */
     default long distance1(final Intermval other, final long onlyIfLessthan) {
-        final long[] a = intervals();
-        final long[] b = other.intervals();
+        final int[] a = intervals();
+        final int[] b = other.intervals();
 
         if (a.length!=b.length)
             throw new RuntimeException("differnt length arrays comparison not impl yet");

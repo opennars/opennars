@@ -4,7 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
-import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Conjunctive;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
@@ -95,7 +95,7 @@ public class BitmapRecognition {
                     l.add( updatePixel(n, x, y) );
                 }
             }
-            return Conjunction.make(l, Temporal.ORDER_CONCURRENT);
+            return Conjunctive.make(l, Temporal.ORDER_CONCURRENT);
         }
 
         private Term updatePixel(NAR n, int x, int y) {

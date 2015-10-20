@@ -41,7 +41,7 @@ abstract public class Image extends Compound {
 
 
     //TODO replace with a special Term type
-    public static boolean isPlaceHolder(final Term t) {
+    static boolean isPlaceHolder(final Term t) {
         if (t instanceof Compound) return false;
         byte[] n = t.bytes();
         if (n.length != 1) return false;

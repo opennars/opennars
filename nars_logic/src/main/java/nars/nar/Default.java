@@ -49,7 +49,6 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -96,10 +95,12 @@ public class Default extends NAR {
         the("input", input = initInput());
 
         the("core", core = initCore(activeConcepts,
-                conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle
+                conceptsFirePerCycle,
+                termLinksPerCycle, taskLinksPerCycle
         ));
 
-        initTime();
+        if (core!=null)
+            initTime();
 
         //n.on(new RuntimeNARSettings());
     }
@@ -140,16 +141,15 @@ public class Default extends NAR {
     public TaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
-            task -> exec(task) /* execute immediately */
+            task -> exec(task)
         );
-        //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
     }
 
     public DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
         //HACK:
-        final AtomicInteger[] tmpConceptsFiredPerCycle = new AtomicInteger[1];
+        final MutableInteger[] tmpConceptsFiredPerCycle = new MutableInteger[1];
 
         DefaultCycle c = new DefaultCycle(this,
                 newDeriver(),
@@ -187,7 +187,6 @@ public class Default extends NAR {
         m.taskLinkForgetDurations.set(2.0);
         m.termLinkForgetDurations.set(3.0);
 
-        m.conceptActivationFactor.set(1.0);
 
         m.derivationThreshold.set(0);
 
@@ -344,13 +343,14 @@ public class Default extends NAR {
         return this;
     }
 
+    /** ConceptBuilder: */
     public Concept apply(final Term t) {
 
         Bag<Task, TaskLink> taskLinks =
-                new CurveBag<>(rng, getConceptTaskLinks()).mergePlus();
+                new CurveBag<>(rng, taskLinkBagSize).mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(rng, getConceptTermLinks()).mergePlus();
+                new CurveBag<>(rng, termLinkBagSize).mergePlus();
 
         Memory m1 = memory();
 
@@ -382,17 +382,9 @@ public class Default extends NAR {
         return new CurveBag<>(rng, initialCapacity).mergePlus();
     }
 
-    public int getConceptTaskLinks() {
-        return taskLinkBagSize;
-    }
-
     public Default setTaskLinkBagSize(int taskLinkBagSize) {
         this.taskLinkBagSize = taskLinkBagSize;
         return this;
-    }
-
-    public int getConceptTermLinks() {
-        return termLinkBagSize;
     }
 
     public Default setTermLinkBagSize(int termLinkBagSize) {
@@ -420,7 +412,7 @@ public class Default extends NAR {
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
          */
-        public final AtomicInteger conceptsFiredPerCycle;
+        public final MutableInteger conceptsFiredPerCycle;
 
 
         public final Function<ConceptProcess,Stream<Task>>  deriver;
@@ -476,13 +468,13 @@ public class Default extends NAR {
 
             this.conceptForget = nar.memory().conceptForgetDurations;
 
-            this.conceptsFiredPerCycle = new AtomicInteger(1);
+            this.conceptsFiredPerCycle = new MutableInteger(1);
             this.active = concepts;
 
 
             add(
                     nar.memory.eventCycleEnd.on((m) -> {
-                        fireConcepts(conceptsFiredPerCycle.get());
+                        fireConcepts(conceptsFiredPerCycle.intValue());
                     }),
                     nar.memory.eventReset.on((m) -> {
                         reset();

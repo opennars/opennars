@@ -16,7 +16,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -27,6 +30,7 @@ import nars.guifx.annotation.Range;
 import nars.guifx.graph2.layout.None;
 import nars.guifx.util.MutableFloatProperty;
 import nars.guifx.util.NSlider;
+import nars.util.data.MutableInteger;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
 import za.co.knonchalant.builder.exception.ComponentException;
@@ -258,7 +262,7 @@ public class POJONode {
             Twin<Node> methodBox = newFieldNode(object, /* readOnly*/ false, f);
             if (methodBox == null) return null;
 
-            nodes.add(new HBox(methodBox.getOne(), methodBox.getTwo()));
+            nodes.add(new VBox(methodBox.getOne(), methodBox.getTwo()));
         }
         return nodes;
     }
@@ -626,7 +630,7 @@ public class POJONode {
     }
 
     public static <X> Region valueToNode(X obj, Object parentValue) {
-        FlowPane ctl = new FlowPane();
+        VBox ctl = new VBox();
         ObservableList<Node> chi = ctl.getChildren();
         ctl.getStyleClass().add("graphpopup"); //TODO revise these css rules
 
@@ -709,6 +713,16 @@ public class POJONode {
             chi.add( w = new NSlider(150, 50, (((MutableFloat)obj).doubleValue())) {
                 @Override public SimpleDoubleProperty newValueEntry(int i) {
                     return new MutableFloatProperty(((MutableFloat)obj));
+                }
+            });
+            applyFieldAnnotationsToNSlider(parentValue, w);
+        }
+        if (obj instanceof MutableInteger) {
+
+            NSlider w;
+            chi.add( w = new NSlider(150, 50, (((MutableInteger)obj).intValue())) {
+                @Override public SimpleDoubleProperty newValueEntry(int i) {
+                    return new MutableFloatProperty((MutableInteger)obj);
                 }
             });
             applyFieldAnnotationsToNSlider(parentValue, w);

@@ -253,7 +253,6 @@ abstract public class NQuadsRDF {
      *
      */
     public static Task input(final NAR nar,
-
                              final Atom subject,
                              final Atom predicate, final Term object) {
 

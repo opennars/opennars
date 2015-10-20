@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Sequence;
@@ -39,6 +38,11 @@ import java.util.*;
  * Twitter English - english with additional tags for twitter-like content 
  */
 public class Twenglish {
+    public static final Atom GOAL = Atom.the("goal");
+    public static final Atom QUESTION = Atom.the("question");
+    public static final Atom QUEST = Atom.the("quest");
+    public static final Atom JUDGMENT = Atom.the("judgment");
+    public static final Atom FRAGMENT = Atom.the("fragment");
 
     //public final ArrayList<String> vocabulary = new ArrayList<>();
     
@@ -116,12 +120,13 @@ public class Twenglish {
         }
         if (t.isEmpty()) return Collections.emptyList();
 
-        String sentenceType = "fragment";
+        Atom sentenceType = FRAGMENT;
         if ((last!=null) && (last.pattern.equals("punct"))) {
             switch (last.content) {
-                case ".": sentenceType = "judgment"; break;
-                case "?": sentenceType = "question"; break;
-                case "!": sentenceType = "goal"; break;
+                case ".": sentenceType = JUDGMENT; break;
+                case "?": sentenceType = QUESTION; break;
+                case "@": sentenceType = QUEST; break;
+                case "!": sentenceType = GOAL; break;
             }
         }
         if (!sentenceType.equals("fragment"))
@@ -132,18 +137,18 @@ public class Twenglish {
         //1. add the logical structure of the sequence of terms
         if (inputProduct) {
             Term p =
-                    Sequence
-                    //Product
-                            .makeSequence(t.toArray(new Term[t.size()]));
-            Compound q = Sentence.termOrNull( Instance.make( p,
-                    //pair: the source and the type of sentence
+                Sequence
+                //Product
+                    .makeSequence(t.toArray(new Term[t.size()]));
+            Compound q = Sentence.termOrNull(
                     Product.make(
-                            Atom.the(source),
-                            Atom.the(sentenceType,true)
+                            //Atom.the(source),
+                            p,
+                            sentenceType
                     )
-            ) );
+            );
             if (q != null) {
-                tt.add(n.task(q + ". :|: %1.0;0.9%")); //TODO non-string construct
+                tt.add(n.task(q + ". %0.95|0.95%")); //TODO non-string construct
             }
 
         }
@@ -211,7 +216,7 @@ public class Twenglish {
         
         List<List<Span>> sentences = Global.newArrayList();
         
-        List<Span> currentSentence = new LinkedList();
+        List<Span> currentSentence = Global.newArrayList(tokens.size());
         for (Span p : tokens) {
             
             currentSentence.add(p);
@@ -223,7 +228,7 @@ public class Twenglish {
                     case "!":
                         if (!currentSentence.isEmpty()) {
                             sentences.add(currentSentence);
-                            currentSentence = new LinkedList();
+                            currentSentence = Global.newArrayList();
                             break;
                         }
                 }

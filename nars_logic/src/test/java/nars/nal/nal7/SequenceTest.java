@@ -1,8 +1,8 @@
 package nars.nal.nal7;
 
 import nars.NAR;
-import nars.nal.nal5.Conjunction;
 import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
@@ -18,10 +18,60 @@ import static org.junit.Assert.assertNotNull;
  */
 public class SequenceTest {
 
+    @Test public void testEmbeddedSequence() {
+        Terminal t = new Terminal();
+
+        String es = "(&/, b, /10, c)";
+        Sequence e = t.term(es);
+        //System.out.println(es + "\n" + e);
+        assertEquals( 10, e.duration() );
+        assertEquals( es, e.toString() );
+
+        String ts = "(&/, a, " + es + ", /1, d)";
+        Sequence s = t.term(ts);
+        assertEquals( 11, s.duration() );
+        assertEquals( ts, s.toString() );
+
+    }
+
+    @Test public void testEmbeddedParallel() {
+        Terminal t = new Terminal();
+
+        String fs = "(&|, b, c, /10)";
+        Parallel f = t.term(fs);
+
+        String es = "(&|, b, /10, c)";
+        Parallel e = t.term(es);
+
+        assertEquals(e, f); //commutative
+        assertEquals(es.toString(), f); //interval at end
+
+        assertEquals(10, e.duration());
+
+
+        String ts = "(&|, a, " + es + ", d, /5)";
+        Sequence s = t.term(ts);
+
+        assertEquals(10, s.duration()); //maximum contained duration = 10
+
+        System.out.println(ts + "\n" + s);
+        assertEquals(ts, s.toString());
+    }
+
+    @Test public void testEmbeddedParallelInSequence() {
+    }
+    @Test public void testEmbeddedSequenceInParallel() {
+    }
+
+
+    @Test public void testChangingDuration() {
+        //TODO test: tasks formed by a NAR with a duration that is being changed reflect these changes
+
+    }
     @Test public void testParallel() {
         String seq = "(&|, <a-->b>, <a-->b>, <b-->c> )";
 
-        Conjunction x = NarseseParser.the().term(seq);
+        Parallel x = NarseseParser.the().term(seq);
 
         assertEquals(2, x.length());
 
@@ -41,7 +91,7 @@ public class SequenceTest {
 
         assertEquals(s.length() + 1, s.intervals().length);
         assertEquals("[1, 2, 0]", Arrays.toString(s.intervals()));
-        assertEquals(3, s.intervalLength());
+        assertEquals(3, s.duration());
 
         assertEquals("output matches input", seq, ss);
 

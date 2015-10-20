@@ -20,26 +20,14 @@
  */
 package nars.nal.nal5;
 
-import nars.Global;
 import nars.Op;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Temporal;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Terms;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
- * Conjunction of statements
+ * Conjunction (&&)
  */
-public class Conjunction extends Junction<Term> {
-
-
-    protected Op op;
+public class Conjunction extends Conjunctive {
 
     public Conjunction() {
         super();
@@ -50,37 +38,37 @@ public class Conjunction extends Junction<Term> {
      *
      * @param arg The component list of the term
      */
-    protected Conjunction(Term[] arg, final int order) {
-        super(flatten(arg, order));
+    protected Conjunction(Term[] arg) {/*
+        , final int order
+        super(
+            //flatten only if no temporal order (&&)
+            order == Temporal.ORDER_NONE ?
+                    flatten(arg, order) : arg
+        );*/
+        super(flatten(arg, Temporal.ORDER_NONE));
 
-        if ((order == Temporal.ORDER_BACKWARD) ||
-                (order == Temporal.ORDER_INVALID)) {
-            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(this.term));
-        }
+//        if ((order == Temporal.ORDER_BACKWARD) ||
+//                (order == Temporal.ORDER_INVALID)) {
+//            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(this.term));
+//        }
 
-        if (((order == Temporal.ORDER_FORWARD) && (!(this instanceof Sequence)))) {
-            throw new RuntimeException("should be creating a Sequence instance not Conjunction");
-        }
+//        if (((order == Temporal.ORDER_FORWARD) && (!(this instanceof Sequence)))) {
+//            throw new RuntimeException("should be creating a Sequence instance not Conjunction");
+//        }
 
 
-        switch (order) {
-            case Temporal.ORDER_FORWARD:
-                this.op = Op.SEQUENCE;
-                break;
-            case Temporal.ORDER_CONCURRENT:
-                this.op = Op.PARALLEL;
-                break;
-            default:
-                this.op = Op.CONJUNCTION;
-                break;
-        }
+//        switch (order) {
+//            case Temporal.ORDER_FORWARD:
+//                this.op = Op.SEQUENCE;
+//                break;
+//            case Temporal.ORDER_CONCURRENT:
+//                this.op = Op.PARALLEL;
+//                break;
+//            default:
+//                this.op = Op.CONJUNCTION;
+//                break;
+//        }
 
-        if (Global.DEBUG) {
-            if (isCommutative()) {
-                if (Terms.toSortedSetArray(this.term).length!=this.term.length)
-                    throw new RuntimeException("duplicates in commutative: " + this);
-            }
-        }
 
         init(this.term);
 
@@ -88,13 +76,7 @@ public class Conjunction extends Junction<Term> {
 
     @Override
     public final int getTemporalOrder() {
-        switch(op) {
-            case SEQUENCE: return Temporal.ORDER_FORWARD;
-            case PARALLEL: return Temporal.ORDER_CONCURRENT;
-            case CONJUNCTION: return Temporal.ORDER_NONE;
-            default:
-                throw new RuntimeException("invalid op for Conjunction: " + this);
-        }
+        return Temporal.ORDER_NONE;
     }
 
     @Override
@@ -109,67 +91,9 @@ public class Conjunction extends Junction<Term> {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(term, getTemporalOrder());
+        return new Conjunction(term);
     }
 
-
-    /**
-     * returns null if not conjunction with same order
-     */
-    public static Conjunction isConjunction(Term t, int order) {
-        if (t instanceof Conjunction) {
-            Conjunction c = (Conjunction) t;
-            if (c.getTemporalOrder() == order) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * recursively flatten a embedded conjunction subterms if they are of a specific order
-     */
-    public static Term[] flatten(Term[] args, int order) {
-        //determine how many there are with same order
-
-        int expandedSize;
-        while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
-            args = _flatten(args, order, expandedSize);
-        }
-        return args;
-    }
-
-    private static Term[] _flatten(Term[] args, int order, int expandedSize) {
-        final Term[] ret = new Term[expandedSize];
-        int k = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
-            Conjunction c = isConjunction(a, order);
-            if (c != null) {
-                //arraycopy?
-                for (Term t : c.term) {
-                    ret[k++] = t;
-                }
-            } else {
-                ret[k++] = a;
-            }
-        }
-
-        return Terms.toSortedSetArray(ret);
-    }
-
-    protected static int getFlattenedLength(Term[] args, int order) {
-        int sz = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
-            Conjunction c = isConjunction(a, order);
-            if (c != null)
-                sz += c.length();
-            else
-                sz += 1;
-        }
-        return sz;
-    }
 
 
     /**
@@ -178,8 +102,8 @@ public class Conjunction extends Junction<Term> {
      * @return the operate of the term
      */
     @Override
-    public Op op() {
-        return op;
+    public final Op op() {
+        return Op.CONJUNCTION;
     }
 
     /**
@@ -188,59 +112,55 @@ public class Conjunction extends Junction<Term> {
      * @return true for commutative
      */
     @Override
-    public boolean isCommutative() {
-        return op!=Op.SEQUENCE;
+    public final boolean isCommutative() {
+        return true;
     }
 
-    /**
-     * Try to make a new compound from a list of term. Called by StringParser.
-     *
-     * @param argList the list of arguments
-     * @return the Term generated from the arguments
-     */
-    public static Term make(final Term[] argList) {
 
-        return make(argList, Temporal.ORDER_NONE);
-    }
 
-    /**
-     * Try to make a new compound from a list of term
-     *
-     * @param temporalOrder The temporal order among term
-     * @param argList       the list of arguments
-     * @return the Term generated from the arguments, or null if not possible
-     */
-    final public static Term make(Term[] argList, final int temporalOrder) {
-
-        final int len = argList.length;
-
-        if (Global.DEBUG) {
-            Terms.verifyNonNull(argList);
-        }
-
-        if (len == 0) {
-            return null;
-        }                         // special case: single component
-
-        if (temporalOrder == Temporal.ORDER_FORWARD) {
-            //allow sequences of len 1
-            return Sequence.makeSequence(argList);
-        }
-
-        if (len == 1) {
-            return argList[0];
-        }
-
-        if (temporalOrder == Temporal.ORDER_BACKWARD) {
-            throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
-            //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
-            //return null;
-        } else {
-            Term[] a = Terms.toSortedSetArray(argList);
-            if (a.length == 1) return a[0];
-            return new Conjunction(a, temporalOrder);
-        }
-    }
+//    /**
+//     * Try to make a new compound from a list of term
+//     *
+//     * @param temporalOrder The temporal order among term
+//     * @param argList       the list of arguments
+//     * @return the Term generated from the arguments, or null if not possible
+//     */
+//    final public static Term make(Term[] argList, final int temporalOrder) {
+//
+//        final int len = argList.length;
+//
+//        if (Global.DEBUG) {
+//            Terms.verifyNonNull(argList);
+//        }
+//
+//        if (len == 0) {
+//            return null;
+//        }                         // special case: single component
+//
+//        if (temporalOrder == Temporal.ORDER_FORWARD) {
+//            //allow sequences of len 1
+//            return Sequence.makeSequence(argList);
+//        }
+//
+//
+//        //parallel and none: one arg collapses to itself
+//        if (len == 1) {
+//            return argList[0];
+//        }
+//
+//        switch (temporalOrder)
+//        if (temporalOrder == Temporal.ORDER_BACKWARD) {
+//            throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
+//            //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
+//            //return null;
+//        }
+//
+//        else {
+//            Term[] a = Terms.toSortedSetArray(argList);
+//            if (a.length == 1) return a[0];
+//            return new Conjunction(a, temporalOrder);
+//        }
+//    }
 
 //    final public static Term make(final int temporalOrder, final Term prefix, final Term... suffix) {
 //        final int suffixLen = suffix.length;
@@ -249,16 +169,6 @@ public class Conjunction extends Junction<Term> {
 //        System.arraycopy(suffix, 0, t, 1, suffixLen);
 //        return make(t, temporalOrder);
 //    }
-
-
-    /**
-     * @param c a set of Term as term
-     * @return the Term generated from the arguments
-     */
-    public final static Term make(final Collection<Term> c, int temporalOrder) {
-        Term[] argument = c.toArray(new Term[c.size()]);
-        return make(argument, temporalOrder);
-    }
 
 
     // overload this method by term type?
@@ -273,43 +183,6 @@ public class Conjunction extends Junction<Term> {
 //    final public static Term make(final Term term1, final Term term2) {
 //        return make(term1, term2, Temporal.ORDER_NONE);
 //    }
-
-
-    final public static Term make(final Term term1, final Term term2, int temporalOrder) {
-        if (temporalOrder == Temporal.ORDER_FORWARD) {
-            return Sequence.makeSequence(term1, term2);
-        } else if (temporalOrder == Temporal.ORDER_BACKWARD) {
-            //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
-            return Sequence.makeSequence(term2, term1);
-            //return null;
-        } else {
-            if (term1 instanceof Conjunction) {
-                Compound ct1 = ((Compound) term1);
-                final List<Term> set = Global.newArrayList(ct1.length() + 1);
-                Collections.addAll(set, ct1.term);
-                if (term2 instanceof Conjunction) {
-                    // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                    Collections.addAll(set, ((Compound) term2).term);
-                } else {
-                    // (&,(&,P,Q),R) = (&,P,Q,R)
-                    set.add(term2);
-                }
-                return make(set, temporalOrder);
-            } else if (term2 instanceof Conjunction) {
-                Compound ct2 = ((Compound) term2);
-                final List<Term> set = Global.newArrayList(ct2.length() + 1);
-                Collections.addAll(set, ct2.term);
-                set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
-                return make(set, temporalOrder);
-            } else {
-                return make(new Term[]{term1, term2}, temporalOrder);
-            }
-
-        }
-    }
-
-
-
 
 
     @Override

@@ -10,6 +10,7 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.nal.UtilityFunctions;
 import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Conjunctive;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Sequence;
@@ -188,8 +189,8 @@ public class PerceptionAccel extends Active {
                     h++;
                 }
             }
-            Term firstC = Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
-            Term secondC = Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Term firstC = Conjunctive.make(firstHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Term secondC = Conjunctive.make(secondHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             Concept C1 = nal.nar.concept(firstC);
             Concept C2 = nal.nar.concept(secondC);
 
@@ -227,7 +228,7 @@ public class PerceptionAccel extends Active {
             Term[] relterms2_real = new Term[u];
             System.arraycopy(relterms2, 0, relterms2_real, 0, u);
 
-            Term C0 = Conjunction.make(relterms2_real, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Term C0 = Conjunctive.make(relterms2_real, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             if (!(C0 instanceof Conjunction)) {
                 continue;
             }

@@ -1,7 +1,9 @@
 package nars.util.data.sorted;
 
 //package net.sourceforge.nite.other;
-import java.util.ArrayList;
+
+import nars.util.data.list.FasterList;
+
 import java.util.Comparator;
 
 /**
@@ -12,11 +14,19 @@ import java.util.Comparator;
  * according to the comparator, will be in the list in the order that they were
  * added to this list. Add only objects that the comparator can compare.</p>
  */
-public class SortedList<E> extends ArrayList<E> {
+public class SortedList<E> extends FasterList<E> {
 
-    private final Comparator<E> comparator;
-    private boolean allowDuplicate = true;
-    
+    private Comparator<E> comparator = defaultComparator;
+
+    final static Comparator defaultComparator = new Comparator() {
+        @Override
+        public final int compare(Object x, Object y) {
+            return ((Comparable) x).compareTo(y);
+        }
+    };
+
+    private boolean allowDuplicate = false;
+
     /**
      * <p>
      * Constructs a new sorted list. The objects in the list will be sorted
@@ -27,19 +37,30 @@ public class SortedList<E> extends ArrayList<E> {
     public SortedList(Comparator<E> c) {
         this.comparator = c;
     }
+
     public SortedList() {
-        this.comparator = null;
     }
+
     public SortedList(int capacity) {
         super(capacity);
-        this.comparator = null;
-    }    
+    }
+
+    public SortedList(E singleton) {
+        super(singleton);
+    }
+
+    /** uses array directly */
+    public SortedList(E... x) {
+        super(x.length);
+        for (E e : x)
+            add(e); //must add them sequentially to remove duplicates and sort
+    }
 
     public void setAllowDuplicate(boolean allowDuplicate) {
         this.allowDuplicate = allowDuplicate;
     }
 
-    
+
     /**
      * <p>
      * Adds an object to the list. The object will be inserted in the correct
@@ -50,45 +71,53 @@ public class SortedList<E> extends ArrayList<E> {
      * @param o the object to be added
      */
     @Override
-    public boolean add(E o) {
+    public final boolean add(E o) {
+        int low = 0;
 
-        if (size() > 0) {
 
-            //binary search
-            int low = 0;
-            int high = size() - 1;
+        int s = size();
+        if (s == 0)
+            return super.add(o);
 
-            while (low <= high) {
-                int mid = (low + high) >>> 1;
-                E midVal = get(mid);
-                
-                int cmp = 
-                        comparator!=null ?
-                            comparator.compare(midVal, o) :
-                            ((Comparable)midVal).compareTo(o);
 
-                if (cmp < 0) {
-                    low = mid + 1;
-                } else if (cmp > 0) {
-                    high = mid - 1;
-                } else {
-                    // key found, insert after it
-                    if (!allowDuplicate) 
-                        return false;
-                    super.add(mid, o);
-                    return true;
-                }
+        //binary search
+        int high = s - 1;
+
+        final boolean allowDuplicate = this.allowDuplicate;
+
+        final Comparator<E> cmpr = this.comparator;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            E midVal = get(mid);
+
+            int cmp = cmpr.compare(midVal, o);
+
+            if (cmp < 0) {
+                low = mid + 1;
+            } else if (cmp > 0) {
+                high = mid - 1;
+            } else {
+                // key found, insert after it
+                if (!allowDuplicate)
+                    return false;
+                super.add(mid, o);
+                return true;
             }
-            super.add(low, o);
-            return true;
-        } else {
-            super.add(0, o);
-            return true;
         }
+
+        if (low == s) {
+            super.add(o); //HACK for using FastList
+        }
+        else {
+            super.add(low, o);
+        }
+
+        return true;
     }
 
-    @Override
-    public Object clone() {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
-    }
+//    @Override
+//    public Object clone() {
+//        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+//    }
 }

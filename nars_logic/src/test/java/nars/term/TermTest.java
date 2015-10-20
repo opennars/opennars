@@ -79,7 +79,7 @@ public class TermTest {
 
     @Test
     public void testTermSort() throws Exception {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         Term a = n.term("a");
         Term b = n.term("b");

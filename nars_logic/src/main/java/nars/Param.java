@@ -46,17 +46,6 @@ public abstract class Param extends Container implements Serializable, Level {
     }
 
 
-    /**
-     * How much a concept is activated.
-     * 1.0 means all activation is applied,
-     * 0.0 means none is.
-     */
-    public AtomicDouble conceptActivationFactor = new AtomicDouble(1.0);
-
-//    /** scaling factor for priority of input tasks */
-//    public AtomicDouble inputActivationFactor = new AtomicDouble(1.0);
-
-
 
 
 

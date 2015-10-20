@@ -30,7 +30,9 @@ import java.util.Map;
 
 abstract public class Symbols {
 
-    /* sentence type and delimitors */
+    /* sentence type and delimitors
+       TODO use an enum
+    */
     public static final char JUDGMENT = '.';
     public static final char QUESTION = '?';
     public static final char GOAL = '!';
@@ -52,12 +54,10 @@ abstract public class Symbols {
     /* variable type  ------------------ */
    
     public static final char VAR_INDEPENDENT = '$';
-    public static final String VAR_INDEPENDENT_DEFAULT = VAR_INDEPENDENT + "it";
-    
+
     //#sth talks about a thinkg without naming it
     public static final char VAR_DEPENDENT = '#';
-    public static final String VAR_DEPENDENT_DEFAULT = VAR_DEPENDENT + "sth";
-    
+
     //?any asks for a concrete thing
     public static final char VAR_QUERY = '?';
 

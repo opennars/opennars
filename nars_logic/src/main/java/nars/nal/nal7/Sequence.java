@@ -3,6 +3,7 @@ package nars.nal.nal7;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Conjunctive;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -14,15 +15,16 @@ import static java.lang.System.arraycopy;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 /**
- * Created by me on 7/1/15.
+ * Sequential Conjunction (&/)
  */
-public class Sequence extends Conjunction implements Intermval {
+public class Sequence extends Conjunctive implements Intermval {
 
-    protected final long[] intervals;
+    protected final int[] intervals;
 
+    transient private long duration = -1;
 
-    Sequence(Term[] subterms, long[] intervals) {
-        super(subterms, Temporal.ORDER_FORWARD);
+    Sequence(Term[] subterms, int[] intervals) {
+        super(subterms);
 
         if (intervals.length != 1 + subterms.length)
             throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
@@ -30,7 +32,6 @@ public class Sequence extends Conjunction implements Intermval {
 
         final int s = subterms.length;
 
-        //public Sequence cloneRemovingSuffixInterval() {
         //operate on a clone in case this will be created from a subrange of another array etc */
         if (intervals[s]!=0) {
             intervals = Arrays.copyOf(intervals, s+1);
@@ -41,11 +42,38 @@ public class Sequence extends Conjunction implements Intermval {
 
 
         init(subterms);
+
+    }
+
+    @Override
+    public final long duration() {
+        long duration = this.duration;
+        if (duration == -1) {
+            long l = 0;
+            for (final int x : intervals())
+                l += x;
+
+            //add embedded terms with temporal duration
+            for (Term t : this) {
+                if (t instanceof Intermval) {
+                    l += ((Intermval)t).duration();
+                }
+            }
+
+            return this.duration = l;
+        }
+        return duration;
     }
 
     public static final Term make(final Term[] argList) {
         throw new RuntimeException("Use Sequence.makeSequence");
     }
+
+    @Override
+    public final int getTemporalOrder() {
+        return Temporal.ORDER_FORWARD;
+    }
+
 
     @Override
     public Sequence clone() {
@@ -72,7 +100,7 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
-    public final long[] intervals() {
+    public final int[] intervals() {
         return intervals;
     }
 
@@ -80,6 +108,7 @@ public class Sequence extends Conjunction implements Intermval {
     public final Op op() {
         return Op.SEQUENCE;
     }
+
 
     /**
      * the input Terms here is "unnormalized" meaning it may contain
@@ -98,12 +127,12 @@ public class Sequence extends Conjunction implements Intermval {
         final int intervalsPresent = AbstractInterval.intervalCount(a);
 
         if (intervalsPresent == 0)
-            return new Sequence(a, new long[a.length+1] /* empty */);
+            return new Sequence(a, new int[a.length+1] /* empty */);
 
 
         //if intervals are present:
         Term[] b = new Term[a.length - intervalsPresent];
-        long[] i = new long[b.length + 1];
+        int[] i = new int[b.length + 1];
 
         int p = 0;
         for (final Term x : a) {
@@ -170,7 +199,7 @@ public class Sequence extends Conjunction implements Intermval {
 
         int nterms = term.length;
 
-        long[] ii = intervals();
+        int[] ii = intervals();
 
         for (int i = 0; i < nterms+1; i++) {
 

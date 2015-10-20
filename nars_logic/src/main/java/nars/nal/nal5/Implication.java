@@ -119,7 +119,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
             if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
                 return null;
             }
-            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder);
+            final Term newCondition = Conjunctive.make(subject, oldCondition, temporalOrder);
             return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
             return new Implication(subject, predicate, temporalOrder);

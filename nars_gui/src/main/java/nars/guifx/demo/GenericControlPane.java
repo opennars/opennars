@@ -9,6 +9,8 @@ import za.co.knonchalant.builder.POJONode;
 
 import java.util.List;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * Created by me on 10/8/15.
  */
@@ -24,8 +26,12 @@ public class GenericControlPane<X> extends BorderPane {
 
         if (pn!=null) {
             VBox controls = new VBox();
+
+            //controls.maxWidth(Double.MAX_VALUE);
+            //controls.maxHeight(Double.MAX_VALUE);
             controls.getChildren().addAll(pn);
-            ToggleButton toggle = new ToggleButton("[X]");
+
+            ToggleButton toggle = new ToggleButton("[X] " + obj.toString());
             toggle.selectedProperty().addListener(e->{
                 if (toggle.isSelected()) {
                     setCenter(controls);
@@ -35,10 +41,11 @@ public class GenericControlPane<X> extends BorderPane {
                 }
                 layout();
             });
-
-            toggle.setSelected(true);
-
             setTop(toggle);
+
+            runLater(()->{
+                toggle.setSelected(true);
+            });
         }
         else {
             setCenter(new Label(obj.toString()));

@@ -42,11 +42,20 @@ import nars.truth.Truth;
  */
 public class Temporal {
 
+    //TODO make an enum for these Orders
+
     public static final int ORDER_NONE = 2;
+
+    /** forward = sequential */
     public static final int ORDER_FORWARD = 1;
+
+    /** concurrent = parallel */
     public static final int ORDER_CONCURRENT = 0;
+
     public static final int ORDER_BACKWARD = -1;
-    public static final int ORDER_INVALID = -2;
+
+    @Deprecated public static final int ORDER_INVALID = -2;
+
 
     public final static int reverseOrder(final int order) {
 

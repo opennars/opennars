@@ -13,7 +13,7 @@ import nars.nal.nal4.Image;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.ImageInt;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Conjunctive;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
@@ -582,13 +582,8 @@ public class Terms {
         //TODO fast sorted array for arg.length == 3
 
         //terms > 2:
-
-        SortedList<Term> s = new SortedList(arg.length);
-        s.setAllowDuplicate(false);
-
-        Collections.addAll(s, arg);
-
-        return s.toArray(new Term[s.size()] );
+        SortedList<Term> s = new SortedList(arg);
+        return s.toArray((int xs) -> new Term[xs]);
 
         /*
         TreeSet<Term> s = toSortedSet(arg);
@@ -743,11 +738,11 @@ public class Terms {
             case DISJUNCTION:
                 return Disjunction.make(a);
             case CONJUNCTION:
-                return Conjunction.make(a);
+                return Conjunctive.make(a, Temporal.ORDER_NONE);
             case SEQUENCE:
-                return Conjunction.make(a, Temporal.ORDER_FORWARD);
+                return Conjunctive.make(a, Temporal.ORDER_FORWARD);
             case PARALLEL:
-                return Conjunction.make(a, Temporal.ORDER_CONCURRENT);
+                return Conjunctive.make(a, Temporal.ORDER_CONCURRENT);
 
             //STATEMENTS --------------------------
             case PROPERTY:

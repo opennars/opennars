@@ -5,6 +5,7 @@ import com.gs.collections.impl.list.mutable.FastList;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
 
 /**
  * Less-safe faster FastList with direct array access
@@ -27,6 +28,11 @@ public class FasterList<X> extends FastList<X> {
         super(x);
     }
 
+    /** uses array directly */
+    public FasterList(X... x) {
+        super(x);
+    }
+
     @Override
     final public X get(final int index) {
         //if (index < this.size) {
@@ -42,35 +48,50 @@ public class FasterList<X> extends FastList<X> {
      *      early
      **
      */
-    public final Object[] array() {
+    public final X[] array() {
         return items;
     }
 
-    @Override
-    public <E> E[] toArray(E[] array) {
-        array = toArrayUnpadded(array);
-        if (array.length > this.size)
-        {
-            array[this.size] = null;
-        }
-        return array;
+//    /** use this to get the fast null-terminated version;
+//     *  slightly faster; use with caution
+//     * */
+//    public <E> E[] toNullTerminatedArray(E[] array) {
+//        array = toArrayUnpadded(array);
+//        final int size = this.size;
+//        if (array.length > size) {
+//            array[size] = null;
+//        }
+//        return array;
+//    }
+
+    public X[] toArray(IntFunction<X[]> arrayBuilder) {
+//HACK broken return the internal array if of the necessary size, otherwise returns a new array of precise size
+//        X[] current = this.array();
+//        if (size() == current.length)
+//            return current;
+        return fillArray(arrayBuilder.apply(size()));
     }
 
+
     /** does not pad the remaining values in the array with nulls */
-    public <E> E[] toArrayUnpadded(E[] array) {
-        if (array.length < this.size)
-        {
-            array = (E[]) Array.newInstance(array.getClass().getComponentType(), this.size);
+    X[] toArrayUnpadded(X[] array) {
+        if (array.length < this.size)        {
+            //resize larger
+            array = (X[]) Array.newInstance(array.getClass().getComponentType(), this.size);
         }
+        return fillArray(array);
+    }
+
+    private X[] fillArray(X[] array) {
         System.arraycopy(this.items, 0, array, 0, this.size);
         return array;
     }
 
 
-    public <E> E[] toNullTerminatedUnpaddedArray(E[] array) {
+    public X[] toNullTerminatedUnpaddedArray(X[] array) {
         final int s = this.size; //actual size
         if (array.length < (s+1)) {
-            array = (E[]) Array.newInstance(array.getClass().getComponentType(), s+1);
+            array = (X[]) Array.newInstance(array.getClass().getComponentType(), s+1);
         }
         System.arraycopy(this.items, 0, array, 0, s);
         array[s] = null;
