@@ -38,13 +38,13 @@ package nars.util.utf8;
  *    "append": adds content to the end, growing as necessary
  *    "write": like append but can do some interpretation of the input value
  */
-public class ByteBuf  {
+public final class ByteBuf  {
 
 
 
-    protected int length = 0;
+    private int length = 0;
 
-    protected byte[] buffer;
+    private byte[] buffer;
 
 
 //    public static ByteBuf createExact( final int capacity ) {
@@ -71,12 +71,6 @@ public class ByteBuf  {
         buffer = new byte[ capacity ];
     }
 
-
-    protected ByteBuf() {
-        this(16);
-    }
-
-
     final public ByteBuf append(final String str) {
         this.append(Utf8.toUtf8(str));
         return this;
@@ -90,11 +84,7 @@ public class ByteBuf  {
 
     public ByteBuf append(final int value) {
 
-        if ( 4 + length > getCapacity()) {
-            buffer = Byt.grow( buffer, buffer.length * 2 + 4 );
-
-        }
-
+        grow(4);
         Byt.intTo( buffer, length, value );
         length += 4;
         return this;
@@ -105,10 +95,7 @@ public class ByteBuf  {
 
     public ByteBuf append(final float value) {
 
-        if ( 4 + length > getCapacity()) {
-            buffer = Byt.grow( buffer, buffer.length * 2 + 4 );
-
-        }
+        grow(4);
         Byt.floatTo( buffer, length, value );
 
         length += 4;
@@ -125,12 +112,7 @@ public class ByteBuf  {
 
     public ByteBuf append(final char value) {
 
-        if ( 2 + length > getCapacity()) {
-            buffer = Byt.grow( buffer, buffer.length * 2 + 2 );
-            
-
-
-        }
+        grow(2);
         add(value);
 
         return this;
@@ -143,8 +125,6 @@ public class ByteBuf  {
             Byt.shortTo( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer, buffer.length * 2 + 2 );
-            
-
             Byt.shortTo( buffer, length, value );
         }
 
@@ -162,11 +142,7 @@ public class ByteBuf  {
 
     public ByteBuf append(long value) {
 
-        if ( 8 + length > getCapacity()) {
-            buffer = Byt.grow( buffer, buffer.length * 2 + 8 );
-            
-
-        }
+        grow(8);
         Byt.longTo( buffer, length, value );
 
         length += 8;
@@ -174,12 +150,15 @@ public class ByteBuf  {
 
     }
 
+    final void grow(int bytes) {
+        if ( bytes + length > getCapacity()) {
+            buffer = Byt.grow( buffer, buffer.length * 2 + bytes );
+        }
+    }
+
     public ByteBuf addUnsignedInt( long value ) {
 
-        if ( 4 + length > getCapacity()) {
-            buffer = Byt.grow( buffer, buffer.length * 2 + 4 );
-            
-        }
+        grow(4);
         Byt.unsignedIntTo( buffer, length, value );
         length += 4;
         return this;
@@ -188,10 +167,7 @@ public class ByteBuf  {
 
     public ByteBuf append(double value) {
 
-        if ( 8 + length > getCapacity()) {
-            buffer = Byt.grow( buffer, buffer.length * 2 + 8 );
-            
-        }
+        grow(8);
 
         Byt.doubleTo( buffer, length, value );
         length += 8;
@@ -416,16 +392,12 @@ public class ByteBuf  {
         this.append(b);
     }
 
-    public void write( byte[] b, int off, int len ) {
-        this.append(b, len);
-    }
+//    public void write( byte[] b, int off, int len ) {
+//        this.append(b, len);
+//    }
 
     public void writeBoolean( boolean v ) {
-        if ( v == true ) {
-            this.addByte( 1 );
-        } else {
-            this.addByte( 0 );
-        }
+        this.addByte( v ? 1 : 0 );
     }
 
     public void writeByte( byte v ) {
@@ -478,7 +450,6 @@ public class ByteBuf  {
 
     
     public void writeChar( char v ) {
-
         this.append(v);
     }
 

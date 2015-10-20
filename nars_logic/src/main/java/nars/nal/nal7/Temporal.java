@@ -18,6 +18,7 @@ package nars.nal.nal7;
 
 
 import nars.Memory;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.UtilityFunctions;
@@ -34,6 +35,8 @@ import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
+
+import java.io.IOException;
 
 /**
  * @author peiwang
@@ -848,5 +851,10 @@ public class Temporal {
             //case Eternal:
                 return Stamp.ETERNAL;
         }
+    }
+
+    public static final void appendInterval(Appendable p, long iii) throws IOException {
+        p.append(Symbols.INTERVAL_PREFIX);
+        p.append(Long.toString(iii));
     }
 }

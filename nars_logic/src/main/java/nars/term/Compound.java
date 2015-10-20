@@ -127,7 +127,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return 0;
     }
 
-    public static void appendSeparator(final Appendable p, final boolean pretty) throws IOException {
+    public static final void appendSeparator(final Appendable p, final boolean pretty) throws IOException {
         p.append(ARGUMENT_SEPARATOR);
         if (pretty) p.append(' ');
     }
@@ -267,36 +267,45 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     }
 
     @Override
-    public byte[] bytes() {
+    public int getByteLen() {
+        int len = /* opener byte */1;
+
+        for (final Term t : term) {
+            len += t.getByteLen() + 1 /* separator or closer if end*/;
+        }
+
+        return len;
+    }
+
+
+    @Override public byte[] bytes() {
 
         final int numArgs = term.length;
 
-        byte[] opBytes = op().bytes;
+        ByteBuf b = ByteBuf.create(getByteLen());
 
-        int len = opBytes.length + 1;
+        b.add((byte)op().ordinal()); //header
 
-        for (final Term t : term) {
-            len += t.bytes().length + 1;
-        }
+        appendBytes(numArgs, b);
 
-        ByteBuf b = ByteBuf.create(len);
+        b.add(COMPOUND_TERM_CLOSERbyte); //closer
 
-        b.add(opBytes);
+        return b.toBytes();
+    }
+
+    protected void appendBytes(int numArgs, ByteBuf b) {
+
+        final Term[] term = this.term;
 
         for (int i = 0; i < numArgs; i++) {
             Term t = term[i];
 
             if (i != 0) {
-                b.add(((byte) ARGUMENT_SEPARATOR));
+                b.add(ARGUMENT_SEPARATORbyte);
             }
 
             b.add(t.bytes());
-
         }
-
-        b.add((byte) COMPOUND_TERM_CLOSER);
-
-        return b.toBytes();
 
     }
 
@@ -311,6 +320,14 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         final boolean appendedOperator = appendOperator(p);
 
 
+        appendArgs(p, pretty, appendedOperator);
+
+
+        appendCloser(p);
+
+    }
+
+    public void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
         int nterms = term.length;
         for (int i = 0; i < nterms; i++) {
             if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
@@ -321,10 +338,6 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
             term[i].append(p, pretty);
         }
-
-
-        appendCloser(p);
-
     }
 
 

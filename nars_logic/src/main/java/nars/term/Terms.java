@@ -21,6 +21,7 @@ import nars.nal.nal7.Temporal;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
+import java.util.function.IntFunction;
 
 /**
  * Static utility class for static methods related to Terms
@@ -29,6 +30,7 @@ import java.util.*;
 public class Terms {
 
     public final static Term[] EmptyTermArray = new Term[0];
+    public static final IntFunction<Term[]> TermArrayBuilder = (int xs) -> new Term[xs];
 
 
 //    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type */
@@ -559,19 +561,19 @@ public class Terms {
     public static Term[] toSortedSetArray(final Term... arg) {
         switch (arg.length) {
             case 0: return EmptyTermArray;
-            case 1: return new Term[] { arg[0] };
+            case 1: return arg; //new Term[] { arg[0] };
             case 2:
-                Term a = arg[0];
-                Term b = arg[1];
-                int c = a.compareTo(b);
+                final Term a = arg[0];
+                final Term b = arg[1];
+                final int c = a.compareTo(b);
 
-                if (Global.DEBUG) {
-                    //verify consistency of compareTo() and equals()
-                    boolean equal = a.equals(b);
-                    if ((equal && (c!=0)) || (!equal && (c==0))) {
-                        throw new RuntimeException("invalid order (" + c + "): " + a + " = " + b);
-                    }
-                }
+//                if (Global.DEBUG) {
+//                    //verify consistency of compareTo() and equals()
+//                    boolean equal = a.equals(b);
+//                    if ((equal && (c!=0)) || (!equal && (c==0))) {
+//                        throw new RuntimeException("invalid order (" + c + "): " + a + " = " + b);
+//                    }
+//                }
 
                 if (c < 0) return new Term[] { a, b };
                 else if (c > 0) return new Term[] { b, a };
@@ -582,8 +584,9 @@ public class Terms {
         //TODO fast sorted array for arg.length == 3
 
         //terms > 2:
-        SortedList<Term> s = new SortedList(arg);
-        return s.toArray((int xs) -> new Term[xs]);
+        return new SortedList<>(arg).toArray(TermArrayBuilder);
+
+
 
         /*
         TreeSet<Term> s = toSortedSet(arg);

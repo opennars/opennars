@@ -154,6 +154,11 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         setBytes(id);
     }
 
+    @Override
+    public int getByteLen() {
+        return bytes().length;
+    }
+
     /** interns the atomic term given a name, storing it in the static symbol table */
     public final static Atom theCached(final String name) {
         return atoms.computeIfAbsent(name, AtomInterner);

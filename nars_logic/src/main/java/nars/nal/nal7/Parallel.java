@@ -3,17 +3,38 @@ package nars.nal.nal7;
 import nars.Op;
 import nars.nal.nal5.Conjunctive;
 import nars.term.Term;
+import nars.term.Terms;
+import nars.util.utf8.ByteBuf;
+
+import java.io.IOException;
+
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 
 /**
  * Parallel Conjunction (&|)
  */
 public class Parallel extends Conjunctive implements Intermval {
 
-    transient private long duration = -1;
+    //local duration, a virtual sub-term at the top level of the parallel term
+    private final long duration;
 
-    public Parallel(Term... arg) {
-        super(arg);
+    //total duration (cached), the maximum duration of all included temporal terms
+    transient long totalDuration = -1;
+
+
+//    private Parallel(Term... arg) {
+//        this(arg, 0);
+//    }
+
+    private Parallel(Term[] arg, long duration) {
+        super(arg = Terms.toSortedSetArray(arg));
+        this.duration = duration;
         init(arg);
+    }
+
+    @Override
+    public boolean isCommutative() {
+        return true;
     }
 
     @Override
@@ -26,9 +47,13 @@ public class Parallel extends Conjunctive implements Intermval {
         return Temporal.ORDER_CONCURRENT;
     }
 
+    @Deprecated public static final Term make(final Term[] argList) {
+        throw new RuntimeException("Use Parallel.makeParallel");
+    }
+
     @Override
     public Term clone() {
-        return new Parallel(term);
+        return new Parallel(term, duration);
     }
 
     @Override
@@ -42,7 +67,78 @@ public class Parallel extends Conjunctive implements Intermval {
     }
 
     @Override
-    public final long duration() {
-        return duration;
+    public final int getByteLen() {
+        return super.getByteLen() + 4 /* for storing 'duration' */;
     }
+
+    @Override
+    protected final void appendBytes(int numArgs, ByteBuf b) {
+        super.appendBytes(numArgs, b);
+
+        //add intermval suffix
+        b.addUnsignedInt(duration);
+    }
+
+
+    @Override public void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
+        super.appendArgs(p, pretty, appendedOperator);
+
+        if (duration!=0) {
+            p.append(ARGUMENT_SEPARATOR);
+            if (pretty)
+                p.append(' ');
+            Temporal.appendInterval(p, duration);
+        }
+    }
+
+    @Override
+    public final long duration() {
+        long totalDuration = this.totalDuration;
+
+        if (totalDuration == -1) {
+
+            totalDuration = duration;
+
+            //add embedded terms with temporal duration
+            for (Term t : this) {
+                if (t instanceof Intermval) {
+                    totalDuration = Math.max(
+                            totalDuration,
+                            ((Intermval)t).duration()
+                    );
+                }
+            }
+
+            return this.totalDuration = totalDuration;
+        }
+        return totalDuration;
+    }
+
+    public static Parallel makeParallel(final Term[] a) {
+
+        //count how many intervals so we know how to resize the final arrays
+        final int intervalsPresent = AbstractInterval.intervalCount(a);
+
+        if (intervalsPresent == 0) {
+            return new Parallel(a, 0);
+        }
+        else {
+
+            //if intervals are present:
+            Term[] b = new Term[a.length - intervalsPresent];
+
+            long duration = 0;
+            int p = 0;
+            for (final Term x : a) {
+                if (x instanceof AbstractInterval) {
+                    duration = Math.max(duration, ((AbstractInterval) x).cycles(null));
+                } else {
+                    b[p++] = x;
+                }
+            }
+
+            return new Parallel(b, duration);
+        }
+    }
+
 }

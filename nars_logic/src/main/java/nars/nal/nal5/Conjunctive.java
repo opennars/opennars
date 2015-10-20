@@ -48,14 +48,14 @@ public abstract class Conjunctive extends Junction<Term> {
     /**
      * recursively flatten a embedded conjunction subterms if they are of a specific order
      */
-    public static Term[] flatten(Term[] args, int order) {
+    public static Term[] flattenAndSort(Term[] args, int order) {
         //determine how many there are with same order
 
         int expandedSize;
         while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
             args = _flatten(args, order, expandedSize);
         }
-        return args;
+        return Terms.toSortedSetArray(args);
     }
 
     private static Term[] _flatten(Term[] args, int order, int expandedSize) {
@@ -74,7 +74,7 @@ public abstract class Conjunctive extends Junction<Term> {
             }
         }
 
-        return Terms.toSortedSetArray(ret);
+        return ret;
     }
 
     protected static int getFlattenedLength(Term[] args, int order) {
@@ -107,27 +107,14 @@ public abstract class Conjunctive extends Junction<Term> {
      * @return the Term generated from the arguments
      */
     public static Term make(Term[] argList, int temporalOrder) {
-
-        if (temporalOrder == Temporal.ORDER_FORWARD) {
-            //allow sequences of len 1
-            return Sequence.makeSequence(argList);
+        switch (temporalOrder) {
+            case Temporal.ORDER_NONE:
+                return Conjunction.make(argList);
+            case Temporal.ORDER_FORWARD:
+                return Sequence.makeSequence(argList);
+            case Temporal.ORDER_CONCURRENT:
+                return Parallel.makeParallel(argList);
         }
-        else {
-
-            //commutative
-            argList = Terms.toSortedSetArray(argList);
-
-            //collapse to a singular term if none and parallel
-            if (argList.length < 2) return argList[0];
-
-            switch (temporalOrder) {
-                case Temporal.ORDER_NONE:
-                    return new Conjunction(argList);
-                case Temporal.ORDER_CONCURRENT:
-                    return new Parallel(argList);
-            }
-        }
-
         throw new RuntimeException("invalid: " + Arrays.toString(argList) + " " + temporalOrder);
     }
 

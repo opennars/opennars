@@ -83,6 +83,7 @@ abstract public class Symbols {
 
     /* special characters in argument list */
     public static final char ARGUMENT_SEPARATOR = ',';
+    public static final byte ARGUMENT_SEPARATORbyte = (byte)',';
     public static final char IMAGE_PLACE_HOLDER = '_';
     
     /* prefix of special Term name */
@@ -102,6 +103,7 @@ abstract public class Symbols {
     public final static char SET_EXT_CLOSER = '}';
     public final static char COMPOUND_TERM_OPENER = '(';
     public final static char COMPOUND_TERM_CLOSER = ')';
+    public final static byte COMPOUND_TERM_CLOSERbyte = (byte)COMPOUND_TERM_CLOSER;
     public final static char STATEMENT_OPENER = '<';
     public final static char STATEMENT_CLOSER = '>';
 

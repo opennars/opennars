@@ -1,11 +1,11 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.Symbols;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Conjunctive;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import static java.lang.System.arraycopy;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
+import static nars.nal.nal7.Temporal.appendInterval;
 
 /**
  * Sequential Conjunction (&/)
@@ -23,7 +24,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
     transient private long duration = -1;
 
-    Sequence(Term[] subterms, int[] intervals) {
+    private Sequence(Term[] subterms, int[] intervals) {
         super(subterms);
 
         if (intervals.length != 1 + subterms.length)
@@ -65,7 +66,7 @@ public class Sequence extends Conjunctive implements Intermval {
         return duration;
     }
 
-    public static final Term make(final Term[] argList) {
+    @Deprecated public static final Term make(final Term[] argList) {
         throw new RuntimeException("Use Sequence.makeSequence");
     }
 
@@ -185,6 +186,7 @@ public class Sequence extends Conjunctive implements Intermval {
         return makeSequence(components);
     }
 
+    //TODO maybe override only Compound.appendArgs
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
 
@@ -242,14 +244,36 @@ public class Sequence extends Conjunctive implements Intermval {
 
     }
 
-    protected static void appendInterval(Appendable p, long iii) throws IOException {
-        p.append(Symbols.INTERVAL_PREFIX);
-        p.append(Long.toString(iii));
+    @Override
+    public int getByteLen() {
+        int add;
+        if (duration == 0) {
+            add = 1; //null for entire array being zero
+        }
+        else {
+            add = intervals.length * 4; //32 bit int
+        }
+        return super.getByteLen() + add;
+    }
+
+    @Override
+    protected void appendBytes(int numArgs, ByteBuf b) {
+        super.appendBytes(numArgs, b);
+
+        //add intermval suffix
+
+        if (this.duration == 0) {
+            b.addUnsignedInt(0); //no intervals case
+        }
+        else {
+            for (int i : intervals) //the intermval array
+                b.addUnsignedInt(i);
+        }
     }
 
 
 
-//    public Sequence cloneRemovingSuffixInterval() {
+    //    public Sequence cloneRemovingSuffixInterval() {
 //        final int s = size();
 //        long[] ni = Arrays.copyOf(intervals(), s+1);
 //        ni[s] = 0;

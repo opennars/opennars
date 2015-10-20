@@ -414,6 +414,9 @@ public class NarseseParser extends BaseParser<Object>  {
 
                         Operator(),
 
+                        //IntervalLog(),
+                        Interval(),
+
                         RangeTerm(),
                         TaskRule(),
 
@@ -480,8 +483,6 @@ public class NarseseParser extends BaseParser<Object>  {
 //                        sequence( NALOperator.COMPOUND_TERM_OPENER.symbol,
 //                        ),
 
-                        //IntervalLog(),
-                        Interval(),
 
 
                         ColonReverseInheritance(),

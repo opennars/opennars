@@ -48,8 +48,7 @@ public interface Intermval extends TermMetadata {
     }
 
 
-
-        //TODO: interpolating distance between two terms that start and end at different times. the area they share in common is evaluated for
+    //TODO: interpolating distance between two terms that start and end at different times. the area they share in common is evaluated for
     // alignment, optionally: absolute, scaled, or translated in time.
 
 }

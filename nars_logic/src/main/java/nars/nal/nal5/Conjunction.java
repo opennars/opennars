@@ -38,14 +38,14 @@ public class Conjunction extends Conjunctive {
      *
      * @param arg The component list of the term
      */
-    protected Conjunction(Term[] arg) {/*
+    private Conjunction(Term[] arg) {/*
         , final int order
         super(
             //flatten only if no temporal order (&&)
             order == Temporal.ORDER_NONE ?
                     flatten(arg, order) : arg
         );*/
-        super(flatten(arg, Temporal.ORDER_NONE));
+        super(arg);
 
 //        if ((order == Temporal.ORDER_BACKWARD) ||
 //                (order == Temporal.ORDER_INVALID)) {
@@ -189,6 +189,16 @@ public class Conjunction extends Conjunctive {
     public Term _car() {
         return term[0];
     }
+
+    static Term make(Term[] argList) {
+        argList = flattenAndSort(argList, Temporal.ORDER_NONE);
+
+        //collapse to a singular term if none and parallel
+        if (argList.length < 2) return argList[0];
+
+        return new Conjunction(argList);
+    }
+
 
 //    public Term last() {
 //        return term[term.length - 1];

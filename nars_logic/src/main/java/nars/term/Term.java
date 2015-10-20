@@ -146,6 +146,9 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     byte[] bytes();
 
+    int getByteLen();
+
+
 //    default public byte[] bytes() {
 //        return name().bytes();
 //    }

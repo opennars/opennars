@@ -13,10 +13,8 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by me on 7/1/15.
- */
-public class SequenceTest {
+
+public class SequenceParallelTest {
 
     @Test public void testEmbeddedSequence() {
         Terminal t = new Terminal();
@@ -44,20 +42,25 @@ public class SequenceTest {
         Parallel e = t.term(es);
 
         assertEquals(e, f); //commutative
-        assertEquals(es.toString(), f); //interval at end
+        assertEquals(fs, e.toString()); //interval at end
 
         assertEquals(10, e.duration());
 
 
-        String ts = "(&|, a, " + es + ", d, /5)";
-        Sequence s = t.term(ts);
+        String ts = "(&|, a, " + fs + ", /5)";
+        Parallel s = t.term(ts);
 
         assertEquals(10, s.duration()); //maximum contained duration = 10
 
-        System.out.println(ts + "\n" + s);
         assertEquals(ts, s.toString());
     }
 
+    @Test public void testSequenceBytes() {
+        //TODO
+    }
+    @Test public void testParallelBytes() {
+        //TODO
+    }
     @Test public void testEmbeddedParallelInSequence() {
     }
     @Test public void testEmbeddedSequenceInParallel() {
