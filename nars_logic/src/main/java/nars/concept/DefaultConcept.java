@@ -75,6 +75,7 @@ public class DefaultConcept extends AtomConcept {
     public DefaultConcept(final Term term, final Memory memory, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks) {
         super(term, termLinks, taskLinks);
 
+        //TODO lazy instantiate?
         this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue());
         this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue());
 
@@ -247,9 +248,9 @@ public class DefaultConcept extends AtomConcept {
         final Task goal = nal.getTask();
         final float successBefore = getSuccess();
 
-        final Task newSolution = getGoals().add( goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
+        final Task strongest = getGoals().add( goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
 
-        if (newSolution==null) {
+        if (strongest==null) {
             return false;
         }
         else {

@@ -109,6 +109,10 @@ public class TestNAR  {
         nar.inputAt(time, s);
     }
 
+    public void believe(String t, Tense tense, float f, float c) {
+        nar.believe(t, tense, f, c);
+    }
+
 
     class EarlyExit extends CycleReaction {
 
@@ -480,7 +484,7 @@ public class TestNAR  {
         error = null;
 
         if (showOutput)
-            nar.stdout();
+            nar.trace();
 
 
         //try {

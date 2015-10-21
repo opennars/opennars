@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
 import nars.task.Task;
+import nars.util.data.Util;
 
 import static nars.nal.nal1.LocalRules.getRevision;
 import static nars.nal.nal1.LocalRules.revisible;
@@ -12,19 +13,19 @@ import static nars.nal.nal1.LocalRules.revisible;
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)
  */
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
+    private static final float RANK_EPSILON = 0.0001f;
 
 
-    /** warning this will create a 0-capacity table,
-     * rejecting all attempts at inputs.  either use the
-     * other constructor or change capacity after construction. */
-    public ArrayListBeliefTable() {
-        this(0);
-    }
+//    /** warning this will create a 0-capacity table,
+//     * rejecting all attempts at inputs.  either use the
+//     * other constructor or change capacity after construction. */
+//    public ArrayListBeliefTable() {
+//        this(0);
+//    }
 
     public ArrayListBeliefTable(int cap) {
         super(cap);
     }
-
 
 
 //    @Override
@@ -47,7 +48,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             ///final int n = size();
 
             Task t;
-            for (int i = 0; null!=(t = tasks[i++]); ) {
+            for (int i = 0; null != (t = tasks[i++]); ) {
                 final boolean tEtern = Temporal.isEternal(t.getOccurrenceTime());
                 if (eternal && tEtern) return t;
                 if (temporal && !tEtern) return t;
@@ -69,7 +70,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         Task b = null;
 
         Task t;
-        for (int i = 0; null!=(t = tasks[i++]); ) {
+        for (int i = 0; null != (t = tasks[i++]); ) {
             float x = r.rank(t, s);
             if (x > s) {
                 s = x;
@@ -138,7 +139,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
      * ordinarily this should never return null.
      * it will return the best matching old or new (input or
      * revised here) belief corresponding to the input.
-     *
+     * <p>
      * the input will either be added or not depending
      * on its relation to the table's contents.
      *
@@ -169,11 +170,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         boolean added = tryAdd(input, ranking, nal.memory());
-        if (!added) {
-            return top(top(), now); //??
+        if (added) {
+            onChanged(c, memory);
         }
-
-        onChanged(c, memory);
 
 //            if (ranking == null) {
 //                //just return thie top item if no ranker is provided
@@ -184,64 +183,24 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         Task top = top(input, now);
 
 
-        if (input.isDeleted()) {
-            return top;
-        }
+        //TODO make sure input.isDeleted() can not happen
 
-        if (top != null) {
-
-            if (top == input) {
-
-                //the same task instance existed here already
-                //bounce
-                return input;
-
-            } else if (input.equivalentTo(top, false, false, true, true, false)) {
-                //equal but different instances; discard the new one
-
-                /*if (!t.isInput() && t.isJudgment()) {
-                    strongest.decPriority(0);    // duplicated task
-                }   // else: activated belief*/
+        if (!input.isDeleted() && revisible(input, top)) {
 
 
-                //activate the strongest belief?
-                //strongest.getBudget().mergePlus( input.getBudget() );
+            Task revised = getRevision(input, top, false, nal);
+            if (revised != null && !input.equals(revised)) {
 
-                //removing like this seems that it causes problems elsewhere
-                //memory.remove(input, "Duplicate Existed"); //"has no effect" on belief/desire, etc
+                //input the new task to memory
+                nal.memory().eventDerived.emit(revised);
 
-                nal.updateBelief(top);
-
-                return top;
-            }
-
-            if (revisible(input, top)) {
-
-
-                Task revised = getRevision(input, top, false, nal);
-                if (revised != null && !input.equals(revised)) {
-
-                    nal.updateBelief(revised);
-
-
-                    /*boolean addedRevised =
-                        tryAdd(revised, ranking, nal.memory());*/
-                    //if (addedRevised) {
-
-                        //input the new task to memory here?
-                        nal.memory().eventDerived.emit(revised);
-                        //nal.nar().input(revised);
-                    //}
-
-                    return revised;
-                }
-
+                top = revised;
             }
 
         }
 
-        /** choose between strongest and input (may be the same) */
-        return (top !=null) ? top : input;
+        nal.updateBelief(top);
+        return top;
     }
 
     void onChanged(Concept c, Memory memory) {
@@ -249,7 +208,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
 
-    @Override public final boolean tryAdd(Task input, Ranker r, Memory memory) {
+    @Override
+    public final boolean tryAdd(Task input, Ranker r, Memory memory) {
 
         float rankInput = r.rank(input);    // for the new isBelief
 
@@ -260,13 +220,13 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         //if (Global.DEBUG) {
-            checkForDeleted();
+        checkForDeleted();
         //}
 
         final Task[] tasks = getCachedNullTerminatedArray();
 
         int i = 0;
-        if (tasks!=null) {
+        if (tasks != null) {
 
             for (Task b; null != (b = tasks[i++]); ) {
                 if (b == input) return false;
@@ -280,8 +240,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 float existingRank = r.rank(b, rankInput);
                 boolean inputGreater = (Float.isNaN(existingRank) || rankInput > existingRank);
                 if (inputGreater) {
-                    //item will be inserted at this index
-                    break;
+                    break; //item will be inserted at this index
+                } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {
+                    //allow a newer task to override an older one of the same rank
+                    //if it is input (any other conditions?)
+                    if (input.getCreationTime() > b.getCreationTime())
+                        break; //item will be inserted at this index
                 }
             }
             i--; //-1 is correct since after the above for loop it will be 1 ahead
@@ -306,6 +270,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     private final void onBeliefRemoved(Task t, String reason) {
+        //patrick says to not delete these
         //memory.remove(t, reason)
     }
 
@@ -316,12 +281,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //            if (dt == null)
 //                throw new RuntimeException("wtf");
             if (dt == null || dt.isDeleted()) {
-                //throw new RuntimeException(
-                System.err.println(
+                throw new RuntimeException(
+                        //System.err.println(
                         "deleted tasks should not be present in belief tables: " + dt);
-                System.err.println(dt.getExplanation());
-                remove(i);
-                i--;
+                //System.err.println(dt.getExplanation());
+                //remove(i);
+                //i--;
 //
             }
         }

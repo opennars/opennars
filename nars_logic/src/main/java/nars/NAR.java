@@ -264,6 +264,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         believe(defaultJudgmentPriority, term, time(tense), freq, conf);
         return this;
     }
+    public NAR believe(String term, Tense tense, float freq, float conf) throws InvalidInputException {
+        believe(defaultJudgmentPriority, term(term), time(tense), freq, conf);
+        return this;
+    }
 
     public final long time(Tense tense) {
         return Temporal.getOccurrenceTime(tense, memory);
@@ -1212,7 +1216,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-    public NAR stdout() {
+    public NAR trace() {
 
         trace(System.out);
 

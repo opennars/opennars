@@ -77,7 +77,7 @@ public class LocalRules {
 
         //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
 
-        if (newBelief.isRevisible()) {
+        if ((!newBelief.equals(oldBelief)) && newBelief.isRevisible()) {
             if (Temporal.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
                 return true;
         }

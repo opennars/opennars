@@ -7,6 +7,7 @@ import nars.meter.BeliefAnalysis;
 import nars.meter.MemoryBudget;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
+import nars.nar.Default2;
 import org.junit.Test;
 
 /**
@@ -47,8 +48,8 @@ public class BeliefTableTest extends TestCase {
 //
 //    }
 
-    public NAR newNAR(int maxBeliefs) {
-        Default d = new Default();// {
+    public Default newNAR(int maxBeliefs) {
+        Default d = new Default2(256,1,2,3).nal(7);// {
 
             /*
             @Override
@@ -79,13 +80,14 @@ public class BeliefTableTest extends TestCase {
     void testRevision(int delay1) {
         Global.DEBUG = true;
 
-        NAR n = newNAR(6);
+        Default n = newNAR(6);
 
 
         //arbitrary time delays in which to observe that certain behavior does not happen
         int delay2 = delay1;
 
         //n.stdout();
+
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
                 .believe(1.0f, 0.9f).run(1);
@@ -150,6 +152,56 @@ public class BeliefTableTest extends TestCase {
 
 
     }
+
+
+    @Test
+    public void testTruthOscillation2() {
+
+        int maxBeliefs = 16;
+        NAR n = newNAR(maxBeliefs);
+        n.log();
+
+        n.memory().duration.set(1);
+
+
+        BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");
+
+        assertEquals(0.0, (Double)b.energy().get(MemoryBudget.Budgeted.ActiveConceptPrioritySum), 0.001);
+
+        int period = 8;
+        int loops = 4;
+        for (int i = 0; i < loops; i++) {
+            b.believe(1.0f, 0.9f, Tense.Present);
+
+
+            b.run(period);
+            //b.printEnergy();
+
+            b.believe(0.0f, 0.9f, Tense.Present);
+
+            b.run(period);
+            //b.printEnergy();
+            b.print();
+        }
+
+        b.run(period);
+
+        b.print();
+
+
+//        b.believe(1.0f, 0.9f, Tense.Present).run(offCycles)
+//                .believe(0.0f, 0.9f, Tense.Present);
+
+        /*for (int i = 0; i < 16; i++) {
+            b.printEnergy();
+            b.print();
+            n.frame(1);
+        }*/
+
+
+
+    }
+
 
 //    @Ignore
 //    @Test

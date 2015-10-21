@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -21,8 +20,8 @@ public class NAL8Test extends AbstractNALTest {
     public NAL8Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name = "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core8;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(8, false);
     }
 
     @Test public void testQuest() throws InvalidInputException {

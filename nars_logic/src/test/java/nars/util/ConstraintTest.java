@@ -89,7 +89,7 @@ public class ConstraintTest {
         n.input("<(&&,<a-->b>,<c-->d>) ==> <x-->y>>.");
         n.input("<x-->y>?");
 
-        n.stdout();
+        n.trace();
         n.frame(5);
 
         sat.solve();

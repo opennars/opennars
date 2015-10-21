@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -27,8 +26,8 @@ public class NAL7Test extends AbstractNALTest {
     }
 
     @Parameterized.Parameters(name = "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core8;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(7, false);
     }
 
 
@@ -58,8 +57,10 @@ public class NAL7Test extends AbstractNALTest {
     @Test
     public void temporal_analogy() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<<(*, $x, door) --> open> =/> <(*, $x, room) --> enter>>", 0.95f, 0.9f);
-        tester.believe("<<(*, $x, room) --> enter> <|> <(*, $x, corridor_100) --> leave>>", 1.0f, 0.9f);
+        tester.believe("<<(*, $x, door) --> open> =/> <(*, $x, room) --> enter>>",
+                0.95f, 0.9f);
+        tester.believe("<<(*, $x, room) --> enter> <|> <(*, $x, corridor_100) --> leave>>",
+                1.0f, 0.9f);
 
         tester.mustBelieve(cycles, "<<(*, $x, door) --> open> =/> <(*, $x, corridor_100) --> leave>>", 0.95f, 0.81f);
         tester.run();

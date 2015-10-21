@@ -124,12 +124,12 @@ public class NARTest {
                 "<b --> a>" /* existing solution, to test finding existing solutions */;
 
         new Default2(100, 1, 1, 3).nal(2)
-                .stdout()
+                .trace()
                 .input("<a <-> b>. %1.0;0.5%",
                        "<b --> a>. %1.0;0.5%").frame(cyclesBeforeQuestion);
 
         NAR nar = new Default2(100, 1, 1, 3).nal(2)
-                .stdout()
+                .trace()
                 .input("<a <-> b>. %1.0;0.5%",
                         "<b --> a>. %1.0;0.5%")
                 .answer(question, t -> b.set(true) )

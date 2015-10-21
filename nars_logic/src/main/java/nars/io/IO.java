@@ -53,7 +53,7 @@ public interface IO {
 
     default void testStrReplace() {
         NAR n = new Default();
-        n.stdout();
+        n.trace();
 
         IO.initStringOps(n);
         String cmd = "str_replace( {(#number,3)}, (&/, it_, is_, #number), #result);";

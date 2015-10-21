@@ -60,7 +60,7 @@ public class InterNARSimulator {
                 switch (i) {
                     case 0:
                         int n = 0;
-                        a.stdout();
+                        a.trace();
                         while (true) {
                             Util.pause(7000);
                             a.input("send(" +

@@ -75,7 +75,7 @@ public class OperatorTest {
             }
         });
 
-        n.stdout();
+        n.trace();
         n.input("exe(a,b,c)!");
 
         n.frame(2);
