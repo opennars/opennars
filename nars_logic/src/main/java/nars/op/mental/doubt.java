@@ -17,11 +17,9 @@
 
 package nars.op.mental;
 
-import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
-import nars.term.Term;
 
 import java.util.List;
 
@@ -41,9 +39,15 @@ public class doubt extends SyncOperator implements Mental {
      */
     @Override
     public List<Task> apply(Task<Operation> operation) {
-        Term term = operation.getTerm().arg();
-        Concept concept = nar.conceptualize(term, operation.getBudget());
-        concept.discountBeliefConfidence();
+        System.err.println("^doubt unimpl");
+//        Term term = operation.getTerm().arg();
+//        Budget b = operation.getBudget();
+//
+//        nar.beforeNextFrame(() -> {
+//            Concept concept = nar.conceptualize(term, b);
+//            concept.discountBeliefConfidence();
+//        });
+//        return null;
         return null;
     }
 

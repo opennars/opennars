@@ -230,6 +230,7 @@ public class RuleMatch extends FindSubst {
 //        }
 
 
+
         derivedTerm = derivedTerm.normalized();
 
         if (!(derivedTerm instanceof Compound))
