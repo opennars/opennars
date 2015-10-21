@@ -157,6 +157,8 @@ public class BeliefTableTest extends TestCase {
     @Test
     public void testTruthOscillation2() {
 
+        Global.DEBUG = true;
+
         int maxBeliefs = 16;
         NAR n = newNAR(maxBeliefs);
         n.log();
@@ -187,6 +189,27 @@ public class BeliefTableTest extends TestCase {
         b.run(period);
 
         b.print();
+
+        //TODO test the belief table for something like the following:
+        /*
+        Beliefs[@72] 16/16
+        <a --> b>. %0.27;0.98% [1, 2, 3, 4, 6] [Revision]
+        <a --> b>. %0.38;0.98% [1, 2, 3, 4, 6, 7] [Revision]
+        <a --> b>. %0.38;0.98% [1, 2, 3, 4, 5, 6] [Revision]
+        <a --> b>. %0.23;0.98% [1, 2, 3, 4, 6, 8] [Revision]
+        <a --> b>. %0.35;0.97% [1, 2, 3, 4] [Revision]
+        <a --> b>. %0.52;0.95% [1, 2, 3] [Revision]
+        <a --> b>. 56+0 %0.00;0.90% [8] [Input]
+        <a --> b>. 48+0 %1.00;0.90% [7] [Input]
+        <a --> b>. 40+0 %0.00;0.90% [6] [Input]
+        <a --> b>. 32+0 %1.00;0.90% [5] [Input]
+        <a --> b>. 24+0 %0.00;0.90% [4] [Input]
+        <a --> b>. 16+0 %1.00;0.90% [3] [Input]
+        <a --> b>. 8+0 %0.00;0.90% [2] [Input]
+        <a --> b>. 0+0 %1.00;0.90% [1] [Input]
+        <a --> b>. %0.09;0.91% [1, 2] [Revision]
+        <a --> b>. 28-20 %0.00;0.18% [1, 2, 3] [((%1, <%1 </> %2>, shift_occurrence_forward(%2, "=/>")), (%2, (<Analogy --> Truth>, <Strong --> Desire>, <ForAllSame --> Order>)))]
+         */
 
 
 //        b.believe(1.0f, 0.9f, Tense.Present).run(offCycles)

@@ -3,7 +3,6 @@ package nars.nal;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
-import nars.link.TermLink;
 import nars.meter.TestNAR;
 import nars.nar.Default;
 import nars.term.Term;
@@ -12,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -25,8 +23,8 @@ public class UnificationTest extends AbstractNALTest {
     public UnificationTest(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core6;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(6, false);
     }
 
     @Test

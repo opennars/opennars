@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
@@ -18,8 +17,8 @@ public class NAL5Test extends AbstractNALTest {
     public NAL5Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core5;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(5, false);
     }
 
     @Test

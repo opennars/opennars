@@ -66,6 +66,7 @@ public class Memory extends Param {
 
     transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic<>();
     transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
+    transient public final Topic<Task> eventRevision = new DefaultTopic<>();
 
     transient public final Topic<Memory> eventReset = new DefaultTopic<>();
 

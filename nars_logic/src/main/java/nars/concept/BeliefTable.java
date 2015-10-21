@@ -13,6 +13,7 @@ import nars.truth.TruthWave;
 import nars.truth.Truthed;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
@@ -224,10 +225,12 @@ public interface BeliefTable extends TaskTable {
 
         @Override
         public final float rank(final Task t, final float bestToBeat) {
-            if (t.equals(query)) return Float.NaN; //dont compare to self
+            Task q = this.query;
+
+            if (t.equals(q)) return Float.NaN; //dont compare to self
 
             //TODO use bestToBeat to avoid extra work
-            return solutionQualityMatchingOrder(query, t, now, hasQueryVar);
+            return solutionQualityMatchingOrder(q, t, now, hasQueryVar);
         }
     }
 
@@ -285,7 +288,7 @@ public interface BeliefTable extends TaskTable {
 
     default void print(PrintStream out) {
         for (Task t : this) {
-            System.out.println(t + " " + t.getLog());
+            out.println(t + " " + Arrays.toString(t.getEvidence()) + " " + t.getLog());
         }
     }
 

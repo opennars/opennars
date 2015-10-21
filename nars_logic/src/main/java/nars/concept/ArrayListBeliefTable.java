@@ -160,8 +160,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         final Memory memory = c.getMemory();
 
 
-        long now = memory.time();
-
+        //empty (special case)
         if (isEmpty()) {
             add(input);
             onChanged(c, memory);
@@ -169,34 +168,41 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
 
 
-        boolean added = tryAdd(input, ranking, nal.memory());
+
+        boolean tableChanged = false;
+
+        boolean added = tryAdd(input, ranking, memory);
         if (added) {
-            onChanged(c, memory);
+            tableChanged = true;
         }
 
-//            if (ranking == null) {
-//                //just return thie top item if no ranker is provided
-//                return table.top();
-//            }
 
-
+        long now = memory.time();
         Task top = top(input, now);
 
 
         //TODO make sure input.isDeleted() can not happen
-
         if (!input.isDeleted() && revisible(input, top)) {
 
 
-            Task revised = getRevision(input, top, false, nal);
+            Task revised = getRevision(input, top, nal);
             if (revised != null && !input.equals(revised)) {
 
-                //input the new task to memory
-                nal.memory().eventDerived.emit(revised);
+                boolean addedRevision = tryAdd(revised, ranking, memory);
+                if (addedRevision) {
+                    tableChanged = true;
+                }
+
+                nal.memory().eventRevision.emit(revised);
+                //nal.memory().logic.BELIEF_REVISION.hit();
 
                 top = revised;
             }
 
+        }
+
+        if (tableChanged) {
+            onChanged(c, memory);
         }
 
         nal.updateBelief(top);
@@ -270,7 +276,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     private final void onBeliefRemoved(Task t, String reason) {
-        //patrick says to not delete these
+        //patrick says to not delete() these tasks
         //memory.remove(t, reason)
     }
 

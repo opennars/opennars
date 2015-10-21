@@ -571,6 +571,10 @@ public class Util {
     public static void run(final Deque<Runnable> tasks, int maxTasksToRun, int threads) {
 
         final int concurrency = Math.min(threads, maxTasksToRun);
+        if (concurrency == 1) {
+            tasks.forEach(Runnable::run);
+            return;
+        }
 
         final ConcurrentContext ctx = ConcurrentContext.enter();
         ctx.setConcurrency(concurrency);

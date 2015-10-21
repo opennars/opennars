@@ -761,7 +761,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     static final Set<String> logEvents = Sets.newHashSet(
             "eventTaskProcess",  "eventAnswer",
-            "eventExecute", /*"eventDerived",*/ "eventError",
+            "eventExecute", "eventRevision", /* eventDerive */ "eventError",
             "eventSpeak"
     );
 

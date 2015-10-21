@@ -65,7 +65,7 @@ public class LogicMeter extends FrameReaction {
     public final HitMeter QUESTION_PROCESS = new HitMeter("question.process");
 
 
-    public final HitMeter BELIEF_REVISION = new HitMeter("rule.belief.revised");
+    //public final HitMeter BELIEF_REVISION = new HitMeter("rule.belief.revised");
     public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS = new HitMeter("rule.ded2ndunifterms");
     public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION = new HitMeter("rule.ded2ndunif");
     public final HitMeter DED_CONJUNCTION_BY_QUESTION = new HitMeter("rule.dedconjbyquestion");

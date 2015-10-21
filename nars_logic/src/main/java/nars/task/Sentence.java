@@ -283,22 +283,21 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
         final Truth currentTruth = getTruth();
 
+        long occurrenceTime = getOccurrenceTime();
 
-        if (!Temporal.isEternal(getOccurrenceTime()) && (targetTime != Stamp.ETERNAL)) {
+        if (!Temporal.isEternal(occurrenceTime) && (targetTime != Stamp.ETERNAL)) {
             ProjectedTruth eternalTruth  = TruthFunctions.eternalize(currentTruth);
 
-            long occurrenceTime = getOccurrenceTime();
-            float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-            float projectedConfidence = factor * currentTruth.getConfidence();
-            if (projectedConfidence > eternalTruth.getConfidence()) {
-                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, targetTime);
-            }
-            else {
-                return eternalTruth;
-            }
+            float factor = TruthFunctions.temporalProjection(targetTime, occurrenceTime, currentTime);
+            if (factor>=1) return eternalTruth;
+
+
+            float projectedConfidence = factor * eternalTruth.getConfidence();
+
+            return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, targetTime);
 
         } else {
-            return new ProjectedTruth(currentTruth, getOccurrenceTime());
+            return new ProjectedTruth(currentTruth, occurrenceTime);
             //return truth;
         }
     }

@@ -4,6 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.io.in.TaskQueue;
 import nars.nar.Default;
+import nars.nar.Default2;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -54,12 +55,12 @@ public class UniqueInputSerialTest {
     @Test
     public void testDoublePremiseMultiEvidence() {
 
-        Default d = new Default();
+        Default d = new Default2(100,1,1,3).nal(2);
         d.input("<a --> b>.", "<b --> c>.");
 
         final long ev[] = {1 , 2};
         d.memory.eventDerived.on(t -> {
-            assertArrayEquals("all derived terms should be double premise",
+            assertArrayEquals("all derived terms should be double premise: " + t,
                     ev, t.getEvidence());
 
             //System.out.println(t);

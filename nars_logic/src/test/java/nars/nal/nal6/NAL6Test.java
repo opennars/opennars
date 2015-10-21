@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -25,9 +24,8 @@ public class NAL6Test extends AbstractNALTest {
     }
 
     @Parameterized.Parameters(name = "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core6;
-        // return AbstractNALTest.fullDeclarativeTest;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(6, false);
     }
 
 

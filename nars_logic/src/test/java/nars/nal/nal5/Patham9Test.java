@@ -1,26 +1,13 @@
 package nars.nal.nal5;
 
 import nars.NAR;
-import nars.Op;
-import nars.bag.Bag;
-import nars.concept.Concept;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
-import nars.nar.Default;
 import nars.narsese.InvalidInputException;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.transform.FindSubst;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
 import java.util.function.Supplier;
 
 //don't touch this file - patham9
@@ -31,8 +18,8 @@ public class Patham9Test extends AbstractNALTest {
     public Patham9Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core6;
+    public static Iterable configurations() {
+        return AbstractNALTest.nars(6, false);
     }
 
 /*
