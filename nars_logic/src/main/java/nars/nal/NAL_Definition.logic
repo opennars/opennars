@@ -446,13 +446,13 @@
     C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    (S --> M), ((&&,($X --> M),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), ((&&,($X --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    (S --> M), ((&&,C,I) ==> ($X --> M)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    ((&&,X,A_1..n) ==> B), Y, substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    ((&&,X,I) ==> B), Y, shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    ((&&,C,I) ==> X), Y, shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    (M --> S), ((&&,(M --> $X),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), ((&&,(M --> $X),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    (M --> S), ((&&,C,I) ==> (M --> $X)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    ((&&,X,A_1..n) ==> B), Y, substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    ((&&,X,I) ==> B), Y, shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    ((&&,C,I) ==> X), Y, shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.

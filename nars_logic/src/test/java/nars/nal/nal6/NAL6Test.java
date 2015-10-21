@@ -334,6 +334,15 @@ public class NAL6Test extends AbstractNALTest {
         tester.run();
     }
 
+    @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
+    public void strong_elimination() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<(&&,<(*,$a,is,cat) --> test>,<(*,$a,is,$b) --> sentence>) ==> <$a --> $b>>.", 1.00f, 0.90f);
+        tester.believe("<(*,tim,is,cat) --> test>");
+        tester.mustBelieve(2000, "<<(*,tim,is,$b) --> sentence> ==> <tim --> $b>>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+        tester.run();
+    }
+
 
 
 /* Will be moved to NALMultistepTest.java
