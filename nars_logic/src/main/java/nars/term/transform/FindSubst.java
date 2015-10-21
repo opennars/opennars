@@ -123,6 +123,10 @@ public class FindSubst {
     final boolean recurseInto(final Term compound1, final Term compound2) {
         final Op typ = this.type;
 
+        if(true) { //Why would it ever be allowed to skip this? this generate nonsensical results like not being able to unify (&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>)
+            return true; //with (&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>) under $ type, same for all other types...
+        }
+
         if (typ == Op.VAR_PATTERN) return true;
 
         return compound1.hasVar(typ) || compound2.hasVar(typ);
