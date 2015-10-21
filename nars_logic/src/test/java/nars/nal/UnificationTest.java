@@ -203,4 +203,23 @@ public class UnificationTest extends AbstractNALTest {
             throw new Exception("Unification with pattern variable failed");
         }
     }
+
+    @Test
+    public void pattern_trySubs_Indep_Var_2() throws Exception {
+        Default nar = new Default();
+        String s1 = "(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>)";
+        String s2 = "(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>)";
+        nar.input(s1+".");
+        nar.input(s2+".");
+        nar.frame(10000);
+        Term t1 = nar.concept(s1).getTerm();
+        Term t2 = nar.concept(s2).getTerm();
+
+        HashMap<Term, Term> M1 = new HashMap<Term,Term>();
+        HashMap<Term, Term> M2 = new HashMap<Term,Term>();
+        FindSubst sub = new FindSubst(Op.VAR_INDEPENDENT,M1,M2,new Random());
+        if(!sub.next(t1,t2,99999)) {
+            throw new Exception("Unification with pattern variable failed");
+        }
+    }
 }
