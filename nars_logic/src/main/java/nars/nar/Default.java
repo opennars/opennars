@@ -112,23 +112,27 @@ public class Default extends NAR {
         if (nal() >= 7) {
 
             //NAL7 plugins
-
             memory.the(new STMTemporalLinkage(this, core.deriver));
 
-            if (nal() >= 8) {
+            if (nal() > 8) {
+                initNAL9();
+            }
+        }
+    }
 
-                //NAL8 plugins
+    protected  void initNAL9() {
+        //NAL8 plugins
 
-                for (OperatorReaction o : defaultOperators)
-                    on(o);
+        for (OperatorReaction o : defaultOperators)
+            on(o);
                 /*for (OperatorReaction o : exampleOperators)
                     on(o);*/
 
-                //n.on(Anticipate.class);      // expect an event
+        //n.on(Anticipate.class);      // expect an event
 
-                new FullInternalExperience(this);
-                new Abbreviation(this);
-                onExec(Counting.class);
+        new FullInternalExperience(this);
+        new Abbreviation(this);
+        onExec(Counting.class);
 
 //                /*if (internalExperience == Minimal) {
 //                    new InternalExperience(this);
@@ -137,8 +141,6 @@ public class Default extends NAR {
 //                    on(FullInternalExperience.class);
 //                    on(Counting.class);
 //                }
-            }
-        }
     }
 
     public TaskPerception initInput() {

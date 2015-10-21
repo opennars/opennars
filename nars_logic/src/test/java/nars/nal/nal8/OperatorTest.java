@@ -6,12 +6,15 @@ import nars.Op;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.jgroups.util.Util.assertEquals;
@@ -103,6 +106,30 @@ public class OperatorTest {
         assertTrue(executed.get());
 
     }
+
+    @Test public void testPatternMap() {
+        AtomicInteger count = new AtomicInteger();
+
+        PatternFunction f = new PatternFunction("(%A,%B)") {
+            @Override
+            public List<Task> run(Task<Operation> operationTask, Map<Term, Term> map1) {
+                System.out.println(this.pattern + " " + operationTask + "\n\t" + map1);
+                count.getAndIncrement();
+                return null;
+            }
+        };
+        Terminal t = new Terminal();
+
+        Task matching = t.task("(x,y).");
+        f.apply(matching);
+
+        Task nonMatching = t.task("(x,y,z).");
+        f.apply(nonMatching);
+
+        //should only be triggered once, by the matching term
+        assertEquals(1, count.get());
+    }
+
 
 //TODO: allow this in a special eval operator
 
