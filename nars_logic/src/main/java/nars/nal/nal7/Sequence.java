@@ -61,6 +61,7 @@ public class Sequence extends Conjunctive implements Intermval {
                 }
             }
 
+
             return this.duration = l;
         }
         return duration;
@@ -138,7 +139,11 @@ public class Sequence extends Conjunctive implements Intermval {
         int p = 0;
         for (final Term x : a) {
             if (x instanceof CyclesInterval) {
-                i[p] += ((CyclesInterval) x).duration();
+                long dd = ((CyclesInterval) x).duration();
+                if (dd < 0)
+                    throw new RuntimeException("cycles must be >= 0");
+
+                i[p] += dd;
             } else {
                 b[p++] = x;
             }

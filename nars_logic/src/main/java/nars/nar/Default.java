@@ -99,8 +99,11 @@ public class Default extends NAR {
                 termLinksPerCycle, taskLinksPerCycle
         ));
 
-        if (core!=null)
-            initTime();
+        if (core!=null) {
+            beforeNextFrame(() -> {
+                initTime();
+            });
+        }
 
         //n.on(new RuntimeNARSettings());
     }

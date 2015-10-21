@@ -105,7 +105,7 @@ abstract public class AbstractNALTest {
         l.add( supply("Default[NAL<=" + level + "]",
                 () -> new Default(new LocalMemory(), 256,1,2,4).nal(finalLevel) ) );
         l.add( supply("Default2[NAL<=" + level + "]",
-                () -> new Default2(512,1,2,3).nal(finalLevel) ) );
+                () -> new Default2(256,1,2,4).nal(finalLevel) ) );
 
         if (!requireMultistep) {
             l.add( supply("SingleStep[NAL<=" + level + "]",

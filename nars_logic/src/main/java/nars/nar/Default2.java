@@ -32,11 +32,10 @@ public class Default2 extends Default {
                 this,
                 task -> true /* allow everything */,
                 task -> exec(task),
-                32,
+                64,
                 1
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
-
     }
 }

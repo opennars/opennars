@@ -554,7 +554,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                 }
             }
 
-            if (duration() == Stamp.TIMELESS) {
+            if (duration() <= 0) {
                 //assume the default perceptual duration
                 setDuration(memory.duration());
             }
@@ -572,12 +572,12 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
 
-    default Task projectTask(final long targetTime, final long currentTime) {
-
-        final ProjectedTruth t = projection(targetTime, currentTime);
-
-        return clone(getTerm(), t, t.getTargetTime());
-    }
+//    default Task projectTask(final long targetTime, final long currentTime) {
+//
+//        final ProjectedTruth t = projection(targetTime, currentTime);
+//
+//        return clone(getTerm(), t, t.getTargetTime());
+//    }
 
 
 

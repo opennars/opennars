@@ -71,6 +71,9 @@ public class CyclesInterval extends Atom implements Interval {
     protected CyclesInterval(long numCycles, int duration) {
         super((byte[]) null); //interval(numCycles, bytesPrecision));
 
+        if (numCycles < 0)
+            throw new RuntimeException("cycles must be >= 0");
+
         this.cyc = numCycles;
         this.duration = duration;
     }

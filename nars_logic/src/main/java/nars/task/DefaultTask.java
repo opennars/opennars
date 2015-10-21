@@ -58,7 +58,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
     long creationTime = Stamp.TIMELESS;
     long occurrenceTime = Stamp.ETERNAL;
-    private long duration = Stamp.TIMELESS;
+    private long duration = 0;
 
 
     /**

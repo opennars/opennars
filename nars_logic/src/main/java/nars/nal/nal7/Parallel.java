@@ -106,6 +106,9 @@ public class Parallel extends Conjunctive implements Interval {
                 }
             }
 
+            if (totalDuration < 0)
+                throw new RuntimeException("cycles must be >= 0");
+
             return this.totalDuration = totalDuration;
         }
         return totalDuration;
