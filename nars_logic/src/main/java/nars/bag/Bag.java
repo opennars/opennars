@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
 import nars.bag.impl.AbstractCacheBag;
+import nars.bag.tx.BagActivator;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.Itemized;
@@ -244,12 +245,28 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         return item;
     }
 
-    public boolean updateItemBudget(BagSelector<K, V> selector, V item, Budget nextBudget /* temporary, re-usable instance */) {
-        final Budget currentBudget = item.getBudget();
+    //item.getbudget();
+    //selector.getBudget()
+
+    boolean updateItemBudget(BagSelector<K, V> selector, V item, Budget nextBudget /* temporary, re-usable instance */) {
+        Budget src;
+        /*if (selector instanceof BagActivator)
+            src = ((BagActivator)selector).getBudget();
+        else*/
+            src = item.getBudget();
+        return updateItemBudget(selector, src, item, nextBudget);
+    }
+
+    boolean updateItemBudget(BagSelector<K, V> selector, Budget sourceBudget, V item, Budget nextBudget /* temporary, re-usable instance */) {
+        final Budget currentBudget = sourceBudget;
 
         nextBudget.budget(currentBudget);
 
-        selector.updateItem(item, nextBudget.budget(currentBudget));
+        //HACK for ConceptActivator / TLink activation inconsistency
+        if ((nextBudget.isZero() && (selector instanceof BagActivator)))
+            nextBudget.budget(((BagActivator)selector).getBudget());
+
+        selector.updateItem(item, nextBudget);
 
         if ((nextBudget == null) || (nextBudget.isDeleted()) || (nextBudget.equalsByPrecision(currentBudget)))
             return false;

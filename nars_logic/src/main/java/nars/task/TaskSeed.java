@@ -110,21 +110,21 @@ import javax.annotation.Nullable;
         return this;
     }
 
-    /**
-     * uses default budget generation and multiplies it by gain factors
-     */
-    public TaskSeed budgetScaled(float priorityFactor, float durFactor) {
-
-        //TODO maybe lift this to Budget class
-        if (!applyDefaultBudget()) {
-            throw new RuntimeException("budgetScaled unable to determine original budget values");
-        }
-
-
-        this.priority *= priorityFactor;
-        this.durability *= durFactor;
-        return this;
-    }
+//    /**
+//     * uses default budget generation and multiplies it by gain factors
+//     */
+//    public TaskSeed budgetScaled(float priorityFactor, float durFactor) {
+//
+//        //TODO maybe lift this to Budget class
+//        if (!applyDefaultBudget()) {
+//            throw new RuntimeException("budgetScaled unable to determine original budget values");
+//        }
+//
+//
+//        this.priority *= priorityFactor;
+//        this.durability *= durFactor;
+//        return this;
+//    }
 
 //    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
 //        if (this.truth == null)

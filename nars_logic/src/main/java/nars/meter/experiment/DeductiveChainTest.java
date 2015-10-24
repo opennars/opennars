@@ -36,7 +36,7 @@ public class DeductiveChainTest extends TestNAR {
     public DeductiveChainTest(NAR n, int length, int timeLimit, IndexedStatementBuilder b) {
         super(n);
 
-        beliefs = new Inheritance[length];
+        beliefs = new Statement[length];
         for (int x = 0; x < length; x++) {
             beliefs[x] = b.apply(x, x+1);
         }
@@ -48,7 +48,7 @@ public class DeductiveChainTest extends TestNAR {
         }
         n.ask( q );
 
-        mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 0.99f);
+        mustBelieve(timeLimit, q.toString(), 0.75f, 1f, 0.01f, 1f);
 
     }
 

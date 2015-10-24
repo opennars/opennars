@@ -5,7 +5,6 @@ import nars.budget.Budget;
 import nars.budget.Item;
 import nars.task.stamp.Stamp;
 import nars.term.Term;
-import nars.term.Variable;
 
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     @Deprecated protected transient Memory memory;
 
-    @Deprecated final static Variable how = new Variable("?how");
+    //@Deprecated final static Variable how = new Variable("?how");
 
     public AbstractConcept(final Term term) {
         super(Budget.zero);

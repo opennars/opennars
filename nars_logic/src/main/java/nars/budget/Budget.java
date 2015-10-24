@@ -68,7 +68,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * The relative share of time resource to be allocated
      */
-    protected float priority;
+    private float priority;
 
     /**
      * The percent of priority to be kept in a constant period; All priority
@@ -76,12 +76,12 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * "durability" factor in (0, 1) to specify the percentage of priority level
      * left after each reevaluation
      */
-    protected float durability;
+    private float durability;
 
     /**
      * The overall (context-independent) evaluation
      */
-    protected float quality;
+    private float quality;
 
     /**
      * time at which this budget was last forgotten, for calculating accurate memory decay rates
@@ -409,6 +409,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      */
     public final void setDurability(final float d) {
         this.durability = Util.clamp(d);
+//        if (this.durability < 0.5) {
+//            System.err.println("low durability");
+//        }
     }
 
     /**
@@ -448,7 +451,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @return The current quality
      */
-    public float getQuality() {
+    public final float getQuality() {
         return quality;
     }
 
@@ -840,6 +843,10 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
     public boolean isDeleted() {
         return isDeleted(getPriority());
+    }
+
+    public boolean isZero() {
+        return summaryLessThan(BUDGET_EPSILON);
     }
 
 

@@ -35,10 +35,6 @@ public class BagOperationsTest {
             this.id= id;
         }    
 
-        @Override
-        public float getQuality() {
-            return 0;
-        }
 
         @Override
         public String name() {

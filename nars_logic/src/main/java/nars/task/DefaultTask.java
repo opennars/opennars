@@ -371,7 +371,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         setDurability(Budget.newDefaultDurability(punc));
 
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
-        if (Float.isNaN(quality)) {
+        if (Float.isNaN(getQuality())) {
             setQuality(BudgetFunctions.truthToQuality(truth));
         }
 

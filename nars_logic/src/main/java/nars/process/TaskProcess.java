@@ -375,7 +375,7 @@ public class TaskProcess extends NAL implements Serializable {
         final Memory memory = this.nar.memory();
         memory.eventTaskProcess.emit(this);
 
-        final Concept c = nar.conceptualize(task, Budget.zero);
+        final Concept c = nar.conceptualize(task, task.getBudget());
 
         if (c == null) {
             memory.remove(task, "Inconceivable");
@@ -385,8 +385,6 @@ public class TaskProcess extends NAL implements Serializable {
         memory.emotion.busy(task, this);
 
         if (processConcept(c)) {
-
-            nar.conceptualize(task, task.getBudget());
 
             link(c, task);
 

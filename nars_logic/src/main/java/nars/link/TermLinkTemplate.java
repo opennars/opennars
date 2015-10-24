@@ -34,7 +34,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
      * @param target  Target Term
      */
     public TermLinkTemplate(final Termed host, Term target) {
-        super(0, 0, 0);
+        super(0, 0.5f, 0.5f);
 
         this.concept = host.getTerm();
 
