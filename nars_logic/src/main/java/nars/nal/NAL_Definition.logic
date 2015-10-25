@@ -416,11 +416,11 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    (A ==> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
-    (C ==> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Abduction, Order:ForAllSame)
+    B, (A ==> C), substitute_if_unifies("$",A,B), shift_occurrence_forward(A,"==>")  |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (C ==> A), substitute_if_unifies("$",A,B), shift_occurrence_backward(A,"==>") |- C, (Truth:Abduction, Order:ForAllSame)
 
-    (A <=> C), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
-    (C <=> A), B, substitute_if_unifies("$",A,B) |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (A <=> C), substitute_if_unifies("$",A,B), shift_occurrence_backward(C,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (C <=> A), substitute_if_unifies("$",A,B), shift_occurrence_forward(C,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)
@@ -446,13 +446,13 @@
     C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    ((&&,X,A_1..n) ==> B), Y, substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    ((&&,X,I) ==> B), Y, shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    ((&&,C,I) ==> X), Y, shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    Y, ((&&,X,I) ==> B), shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    Y, ((&&,C,I) ==> X), shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    ((&&,X,A_1..n) ==> B), Y, substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    ((&&,X,I) ==> B), Y, shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    ((&&,C,I) ==> X), Y, shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    Y,((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    Y, ((&&,X,I) ==> B), shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    Y, ((&&,C,I) ==> X), shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
@@ -526,3 +526,10 @@
 //compound composition one premise
 
     (||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+
+//////FINISHING NAL7/8:
+//back to temporal forward inference, the missing part, TODO: Sort into relevant rule categories.
+
+//NAL7 specific:
+    (&/,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
+    (&/,A_1..n), A_1, task("!") |- A_1, (Truth:StructuralDeduction, Punctuation:Goal)

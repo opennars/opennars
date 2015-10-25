@@ -3,6 +3,7 @@ package nars.meta.pre;
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.meta.RuleMatch;
+import nars.nal.nal7.Temporal;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Term;
@@ -13,18 +14,29 @@ import nars.term.Term;
 public class TimeOffset extends PreCondition1 {
 
     final boolean positive;
-    final int direction;
+    public int direction = 0;
 
     public TimeOffset(Term arg1, Term operator, boolean positive) {
         super(arg1);
-
+/* doesnt seem to work so my way for now
         if ((
             this.direction = relationDirection
                     .getIfAbsent(operator, Integer.MIN_VALUE)
         ) == Integer.MIN_VALUE)
             throw new RuntimeException("unrecognized TimeOffset parameter: " + operator);
-
+*/
         this.positive = positive;
+        //if(operator.getTemporalOrder()== Temporal.ORDER_FORWARD) {
+        //as long as this TemporalOrder()  check deosnt work we use string comparison:
+        int ret = operator.getTemporalOrder();
+        String str = operator.toString().replace("\"","");
+        if(str.equals("=/>") || str.equals("</>")) {
+           // direction = 1;
+        }
+        else
+        if(str.equals("=\\>")) {
+         //   direction = -1;
+        }
     }
 
 
@@ -35,9 +47,6 @@ public class TimeOffset extends PreCondition1 {
             return true; //and this means its no-order so dont shift
         }*/
 
-        //there is a order:
-        int dir = this.direction;
-
         //NOTE intervals should not appear this point;
         // add here a general purpose 'interval span' method
         // that any term will report its total interval.
@@ -47,11 +56,11 @@ public class TimeOffset extends PreCondition1 {
 //            return ((AbstractInterval) arg).cycles(nal.memory());
 //        }
 
-        long offset = dir != 0 ? m.premise.getTask().duration() : 0;
+        long offset = direction * m.premise.getTask().duration();
 
         if (offset > Stamp.TIMELESS) {
             long s = positive ? +1 : -1;
-            m.occurenceAdd(dir * s * offset); //shift since it has an order..
+            m.occurenceAdd(s * offset); //shift since it has an order..
         }
 
         return true;
