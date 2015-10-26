@@ -28,7 +28,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     });
 
     abstract public static class Series {
-        protected final FloatArrayList history = new FloatArrayList(); //TODO make Float
+        public final FloatArrayList history = new FloatArrayList(); //TODO make Float
         final String name;
         final Color color; //main color
 
@@ -184,7 +184,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
                 DoubleToDoubleFunction ypos = (v) -> {
                     double py = (v - minValue) / (maxValue - minValue);
                     if (py < 0) py = 0;
-                    if (py > 1.0) py = 1.0;
+                    else if (py > 1.0) py = 1.0;
                     return m + (1.0 - py) * h;
                 };
 

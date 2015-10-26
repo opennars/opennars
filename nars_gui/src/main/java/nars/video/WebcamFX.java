@@ -9,14 +9,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import nars.guifx.NARfx;
 import nars.guifx.Plot2D;
+import nars.util.signal.OneDHaar;
 
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +27,12 @@ import static javafx.application.Platform.runLater;
 
 public class WebcamFX extends StackPane implements Runnable {
 
-    private SourceDataLine mLine;
-    private ShortBuffer audioSamples;
+    //private SourceDataLine mLine;
+   // private ShortBuffer audioSamples;
     public ImageView view;
     public Webcam webcam = null;
-    final Plot2D audioPlot = new Plot2D(Plot2D.Line, 6400,150,75);
+    final Plot2D audioPlot = new Plot2D(Plot2D.Line, 8192, 350, 75);
+    final Plot2D audioPlot2 = new Plot2D(Plot2D.Line, 8192, 350, 75);
 
     boolean running = true;
 
@@ -80,22 +82,23 @@ public class WebcamFX extends StackPane implements Runnable {
 //                };
                 final short[][] samples = {null};
 
-                audioPlot.add(new Plot2D.Series("Audio") {
+
+
+                Plot2D.Series audioSeries;
+                audioPlot.add(audioSeries = new Plot2D.Series("Audio") {
 
                     @Override
                     public void update(int maxHistory) {
                         short[] ss = samples[0];
                         if (ss == null) return;
+                        //samples[0] = null;
 
                         for (short s : ss) {
                             history.add((float)s);
                         }
 
-
                         while (history.size() > maxHistory)
                             history.removeAtIndex(0);
-
-                        System.out.println("\t" + history.size());
 
                         minValue = Float.POSITIVE_INFINITY;
                         maxValue = Float.NEGATIVE_INFINITY;
@@ -112,6 +115,61 @@ public class WebcamFX extends StackPane implements Runnable {
                     }
 
                 });
+                audioPlot2.add(new Plot2D.Series("Wavelet") {
+
+                    @Override
+                    public void update(int maxHistory) {
+                        short[] ss = samples[0];
+                        if (ss == null) return;
+                        //samples[0] = null;
+
+                        for (short s : ss) {
+                            history.add((float)s);
+                        }
+
+                        while (history.size() > maxHistory)
+                            history.removeAtIndex(0);
+
+
+                        double[] x = new double[history.size()];
+                        for (int i= 0; i < x.length; i++)
+                            x[i] = history.get(i);
+
+                        //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
+
+                        OneDHaar.inPlaceFastHaarWaveletTransform(x);
+
+                        double[] p =x;
+
+                        //OneDHaar.displayOrderedFreqsFromInPlaceHaar(p);
+
+
+                        history.clear();
+
+                        for (double s : p) {
+                            history.add((float) s);
+
+                        }
+
+
+                        minValue = Float.POSITIVE_INFINITY;
+                        maxValue = Float.NEGATIVE_INFINITY;
+
+                        history.forEach(v -> {
+                            if (Double.isFinite(v)) {
+                                if (v < minValue) minValue = v;
+                                if (v > maxValue) maxValue = v;
+                            }
+                            //mean += v;
+                        });
+
+
+                    }
+
+                });
+
+                audioPlot.update();
+                audioPlot2.update();
 
                 // Using a ScheduledThreadPoolExecutor vs a while loop with
                 // a Thread.sleep will allow
@@ -138,15 +196,12 @@ public class WebcamFX extends StackPane implements Runnable {
                         // Let's wrap our short[] into a ShortBuffer and
                         // pass it to recordSamples
                         ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(samples[0]);
-                        System.out.println(nSamplesRead);
 
                         //audioSamples = ShortBuffer.wrap(samples, 0, nSamplesRead);
 
                         audioPlot.update();
+                        audioPlot2.update();
 
-//                        for (int i = 0; i < samples[0].length; i++) {
-//                            audioPlot.update();
-//                        }
 
                         //System.out.println(audioSamples);
                         // recorder is instance of
@@ -187,9 +242,11 @@ public class WebcamFX extends StackPane implements Runnable {
 
 //            view.maxWidth(Double.MAX_VALUE);
 //            view.maxHeight(Double.MAX_VALUE);
-
-            getChildren().addAll(view, audioPlot);
             setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+            getChildren().addAll(
+                    view,
+                    new VBox(audioPlot, audioPlot2));
 
 
             new Thread(this).start();
