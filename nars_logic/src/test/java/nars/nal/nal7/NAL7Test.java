@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.narsese.InvalidInputException;
+import nars.task.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -249,11 +250,11 @@ public class NAL7Test extends AbstractNALTest {
         TestNAR tester = test();
          
 
-        tester.input("(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|:");
+        Task T1= tester.nar.inputTask("(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>). :|:");
         tester.inputAt(10, "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>.");
 
         tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>",
-                1.0f, 0.81f); //  TODO: find a way to check whether the occurence time is equal to the one of the first input
+                1.0f, 0.81f, T1.getOccurrenceTime()); //  TODO: find a way to check whether the occurence time is equal to the one of the first input
         tester.run();
     }
 
