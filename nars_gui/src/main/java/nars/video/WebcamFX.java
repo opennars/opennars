@@ -10,6 +10,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import nars.guifx.NARfx;
+import nars.guifx.Plot2D;
 
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
@@ -25,16 +26,18 @@ import static javafx.application.Platform.runLater;
 
 public class WebcamFX extends StackPane implements Runnable {
 
-    private static SourceDataLine mLine;
+    private SourceDataLine mLine;
+    private ShortBuffer audioSamples;
     public ImageView view;
     public Webcam webcam = null;
+    final Plot2D audioPlot = new Plot2D(Plot2D.Line, 6400,150,75);
 
     boolean running = true;
 
-    final int fps = 5;
+    final int fps = 15;
 
-    final private static int FRAME_RATE = 30;
-    static Thread newAudioCaptureThread(int device) {
+    final private static int FRAME_RATE = 15;
+    Thread newAudioCaptureThread(int device) {
         // Thread for audio capture, this could be in a nested private class if you prefer...
         return new Thread(() -> {
             // Pick a format...
@@ -69,7 +72,46 @@ public class WebcamFX extends StackPane implements Runnable {
 
                 // Let's initialize our audio buffer...
                 int audioBufferSize = sampleRate * numChannels;
-                byte[] audioBytes = new byte[audioBufferSize];
+                byte[] audioBytes = new byte[audioBufferSize*2];
+
+//                double nextDouble[] = new double[1];
+//                DoubleSupplier waveSupplier = () -> {
+//                    return nextDouble[0];
+//                };
+                final short[][] samples = {null};
+
+                audioPlot.add(new Plot2D.Series("Audio") {
+
+                    @Override
+                    public void update(int maxHistory) {
+                        short[] ss = samples[0];
+                        if (ss == null) return;
+
+                        for (short s : ss) {
+                            history.add((float)s);
+                        }
+
+
+                        while (history.size() > maxHistory)
+                            history.removeAtIndex(0);
+
+                        System.out.println("\t" + history.size());
+
+                        minValue = Float.POSITIVE_INFINITY;
+                        maxValue = Float.NEGATIVE_INFINITY;
+
+                        history.forEach(v -> {
+                            if (Double.isFinite(v)) {
+                                if (v < minValue) minValue = v;
+                                if (v > maxValue) maxValue = v;
+                            }
+                            //mean += v;
+                        });
+
+
+                    }
+
+                });
 
                 // Using a ScheduledThreadPoolExecutor vs a while loop with
                 // a Thread.sleep will allow
@@ -91,20 +133,26 @@ public class WebcamFX extends StackPane implements Runnable {
                         // (see source from FFmpegFrameRecorder.recordSamples for AV_SAMPLE_FMT_S16)
                         // Let's initialize our short[] array
                         int nSamplesRead = nBytesRead / 2;
-                        short[] samples = new short[nSamplesRead];
+                        samples[0] = new short[nSamplesRead];
 
                         // Let's wrap our short[] into a ShortBuffer and
                         // pass it to recordSamples
-                        ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(samples);
-                        ShortBuffer sBuff = ShortBuffer.wrap(samples, 0, nSamplesRead);
+                        ByteBuffer.wrap(audioBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(samples[0]);
+                        System.out.println(nSamplesRead);
 
-                        System.out.println(sBuff);
+                        //audioSamples = ShortBuffer.wrap(samples, 0, nSamplesRead);
+
+                        audioPlot.update();
+
+//                        for (int i = 0; i < samples[0].length; i++) {
+//                            audioPlot.update();
+//                        }
+
+                        //System.out.println(audioSamples);
                         // recorder is instance of
                         // org.bytedeco.javacv.FFmpegFrameRecorder
                         //recorder.recordSamples(sampleRate, numChannels, sBuff);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e)  {
                         e.printStackTrace();
                     }
                 }, 0, (long) 1000 / FRAME_RATE, TimeUnit.MILLISECONDS);
@@ -140,7 +188,7 @@ public class WebcamFX extends StackPane implements Runnable {
 //            view.maxWidth(Double.MAX_VALUE);
 //            view.maxHeight(Double.MAX_VALUE);
 
-            getChildren().add(view);
+            getChildren().addAll(view, audioPlot);
             setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 
