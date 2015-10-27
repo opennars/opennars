@@ -2,6 +2,7 @@ package nars.video;
 
 import boofcv.io.webcamcapture.UtilWebcamCapture;
 import com.github.sarxos.webcam.Webcam;
+import com.gs.collections.impl.list.mutable.primitive.FloatArrayList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -33,7 +34,7 @@ public class WebcamFX extends StackPane implements Runnable {
     public Webcam webcam = null;
 
     final int audioBuffer = 1024;
-    final Plot2D audioPlot = new Plot2D(Plot2D.Line, audioBuffer, 450, 175);
+    final Plot2D audioPlot = new Plot2D(Plot2D.BarWave, audioBuffer, 450, 175);
     final Plot2D audioPlot2 = new Plot2D(Plot2D.Line, audioBuffer, 450, 175);
 
     boolean running = true;
@@ -86,14 +87,15 @@ public class WebcamFX extends StackPane implements Runnable {
 
 
 
-                Plot2D.Series audioSeries;
-                audioPlot.add(audioSeries = new Plot2D.Series("Audio") {
+                audioPlot.add( new Plot2D.Series("Audio") {
 
                     @Override
                     public void update(int maxHistory) {
                         short[] ss = samples[0];
                         if (ss == null) return;
                         //samples[0] = null;
+
+                        final FloatArrayList history = this.history;
 
                         for (short s : ss) {
                             history.add((float)s);
@@ -114,12 +116,11 @@ public class WebcamFX extends StackPane implements Runnable {
 //                            }
 //                            //mean += v;
 //                        });
-
-
                     }
 
                 });
                 audioPlot2.add(new Plot2D.Series("Wavelet") {
+                    float[] x;
 
                     @Override
                     public void update(int maxHistory) {
@@ -127,39 +128,40 @@ public class WebcamFX extends StackPane implements Runnable {
                         if (ss == null) return;
                         //samples[0] = null;
 
-                        for (short s : ss) {
-                            history.add((float)s);
+                        final FloatArrayList history = this.history;
+
+//                        for (short s : ss) {
+//                            history.add((float)s);
+//                        }
+//
+//
+//                        while (history.size() > maxHistory)
+//                            history.removeAtIndex(0);
+//
+//                        while (history.size() < maxHistory)
+//                            history.add(0);
+
+                        float[] x = this.x;
+                        if (x == null || x.length!=maxHistory) {
+                            this.x = x = new float[maxHistory];
                         }
 
-
-                        while (history.size() > maxHistory)
-                            history.removeAtIndex(0);
-
-                        while (history.size() < maxHistory)
-                            history.add(0);
-
-
-                        double[] x = new double[maxHistory];
-                        for (int i= 0; i < x.length; i++)
-                            x[i] = history.get(i);
-
+                        int start = Math.max(0, ss.length - maxHistory);
+                        int end = ss.length;
+                        int j = 0;
+                        for (int i= start; i < end; i++)
+                            x[j++] = ss[i];
 
 
                         //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
 
                         OneDHaar.inPlaceFastHaarWaveletTransform(x);
 
-                        double[] p =x;
 
                         //OneDHaar.displayOrderedFreqsFromInPlaceHaar(p);
 
-
                         history.clear();
-
-                        for (double s : p) {
-                            history.add((float) s);
-
-                        }
+                        history.addAll(x);
 
 
 
@@ -167,10 +169,10 @@ public class WebcamFX extends StackPane implements Runnable {
                         maxValue = Float.NEGATIVE_INFINITY;
 
                         history.forEach(v -> {
-                            if (Double.isFinite(v)) {
+                            //if (Float.isFinite(v)) {
                                 if (v < minValue) minValue = v;
                                 if (v > maxValue) maxValue = v;
-                            }
+                            //}
                             //mean += v;
                         });
 

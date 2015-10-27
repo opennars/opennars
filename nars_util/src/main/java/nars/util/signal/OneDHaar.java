@@ -82,10 +82,51 @@ public class OneDHaar {
         if (!OneDHaar.isPowerOf2(sample.length)) {
             return;
         }
-        final int num_sweeps = (int) (Math.log(sample.length) * oneOverLog2);
+        final int num_sweeps = (int) (Math.log(sample.length) / oneOverLog2);
+        inPlaceFastHaarWaveletTransformForNumIters(sample, num_sweeps);
+    }
+    // compute in-place fast haar wavelet transform.
+    public static void inPlaceFastHaarWaveletTransform(float[] sample) {
+        if (sample.length < 2) {
+            return;
+        }
+        if (!OneDHaar.isPowerOf2(sample.length)) {
+            return;
+        }
+        final int num_sweeps = (int) (Math.log(sample.length) / oneOverLog2);
         inPlaceFastHaarWaveletTransformForNumIters(sample, num_sweeps);
     }
 
+    // apply in-place fast haar wavelet transform for num_sweeps sweeps.
+    public static void inPlaceFastHaarWaveletTransformForNumIters(float[] sample, int num_iters) {
+        if (sample.length < 2) {
+            return;
+        }
+        if (!OneDHaar.isPowerOf2(sample.length)) {
+            return;
+        }
+        int NUM_SAMPLE_VALS = sample.length; // number of values in the sample
+        final int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
+        if (num_iters < 1 || num_iters > n) {
+            return;
+        }
+        int GAP_SIZE = 2; // number of elements b/w averages
+        int I = 1; // index increment
+        for (int ITER_NUM = 1; ITER_NUM <= num_iters; ITER_NUM++) {
+            NUM_SAMPLE_VALS /= 2;
+            for (int K = 0; K < NUM_SAMPLE_VALS; K++) {
+                int KGAPSIZE = GAP_SIZE * K;
+                float sampleAtKGAPSIZE = sample[KGAPSIZE];
+                float sampleAtKGAPSIZEPlusI = sample[KGAPSIZE + I];
+                float a = (sampleAtKGAPSIZE + sampleAtKGAPSIZEPlusI) / 2;
+                float c = (sampleAtKGAPSIZE - sampleAtKGAPSIZEPlusI) / 2;
+                sample[KGAPSIZE] = a;
+                sample[KGAPSIZE + I] = c;
+            }
+            I = GAP_SIZE;
+            GAP_SIZE *= 2;
+        }
+    }
     // apply in-place fast haar wavelet transform for num_sweeps sweeps.
     public static void inPlaceFastHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
         if (sample.length < 2) {

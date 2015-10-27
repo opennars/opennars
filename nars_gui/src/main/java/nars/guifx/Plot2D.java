@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import nars.Global;
 import nars.guifx.util.ColorMatrix;
 import nars.guifx.util.NControl;
+import org.apache.commons.math3.util.FastMath;
 
 import java.util.Collection;
 import java.util.List;
@@ -127,34 +128,39 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
         void draw(Collection<Series> series, GraphicsContext g, double minValue, double maxValue);
     }
 
-    public final static PlotVis BarWave = (Collection<Series> history, GraphicsContext g, double minValue, double maxValue) -> {
+    public final static PlotVis BarWave = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
         if (minValue != maxValue) {
 
             final double w = g.getCanvas().getWidth();
             final double h = g.getCanvas().getHeight();
 
-            double prevX = -1;
-            final int histSize = history.size();
 
-            final double dx = (w / histSize);
+            series.forEach(s -> {
+                final int histSize = s.history.size();
 
-//            double x = 0;
-//            for (int i = 0; i < histSize; i++) {
-//                final double v = history.get(i);
-//
-//                double py = (v - minValue) / (maxValue - minValue);
-//                if (py < 0) py = 0;
-//                if (py > 1.0) py = 1.0;
-//
-//                double y = py * h;
-//
-//                g.setFill(BlueRed.get(py));
-//
-//                g.fillRect(prevX + 1, (h / 2f - y / 2), FastMath.ceil(x - prevX), y);
-//
-//                prevX = x;
-//                x += dx;
-//            }
+                final double dx = (w / histSize);
+
+                double x = 0;
+                double prevX = -1;
+
+                for (int i = 0; i < histSize; i++) {
+                    final double v = s.history.get(i);
+
+                    double py = (v - minValue) / (maxValue - minValue);
+                    if (py < 0) py = 0;
+                    if (py > 1.0) py = 1.0;
+
+                    double y = py * h;
+
+                    g.setFill(s.color);
+
+                    g.fillRect(prevX + 1, (h / 2f - y / 2), FastMath.ceil(x - prevX), y);
+
+                    prevX = x;
+                    x += dx;
+                }
+
+            });
         }
     };
     public static final PlotVis Line = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
