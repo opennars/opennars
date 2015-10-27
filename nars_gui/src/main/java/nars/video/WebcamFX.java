@@ -31,14 +31,16 @@ public class WebcamFX extends StackPane implements Runnable {
    // private ShortBuffer audioSamples;
     public ImageView view;
     public Webcam webcam = null;
-    final Plot2D audioPlot = new Plot2D(Plot2D.Line, 8192, 350, 75);
-    final Plot2D audioPlot2 = new Plot2D(Plot2D.Line, 8192, 350, 75);
+
+    final int audioBuffer = 1024;
+    final Plot2D audioPlot = new Plot2D(Plot2D.Line, audioBuffer, 450, 175);
+    final Plot2D audioPlot2 = new Plot2D(Plot2D.Line, audioBuffer, 450, 175);
 
     boolean running = true;
 
     final int fps = 15;
 
-    final private static int FRAME_RATE = 15;
+    final private static int FRAME_RATE = 30;
     Thread newAudioCaptureThread(int device) {
         // Thread for audio capture, this could be in a nested private class if you prefer...
         return new Thread(() -> {
@@ -100,16 +102,18 @@ public class WebcamFX extends StackPane implements Runnable {
                         while (history.size() > maxHistory)
                             history.removeAtIndex(0);
 
-                        minValue = Float.POSITIVE_INFINITY;
-                        maxValue = Float.NEGATIVE_INFINITY;
-
-                        history.forEach(v -> {
-                            if (Double.isFinite(v)) {
-                                if (v < minValue) minValue = v;
-                                if (v > maxValue) maxValue = v;
-                            }
-                            //mean += v;
-                        });
+                        minValue = Short.MIN_VALUE;
+                        maxValue = Short.MAX_VALUE;
+//                        minValue = Float.POSITIVE_INFINITY;
+//                        maxValue = Float.NEGATIVE_INFINITY;
+//
+//                        history.forEach(v -> {
+//                            if (Double.isFinite(v)) {
+//                                if (v < minValue) minValue = v;
+//                                if (v > maxValue) maxValue = v;
+//                            }
+//                            //mean += v;
+//                        });
 
 
                     }
@@ -127,13 +131,19 @@ public class WebcamFX extends StackPane implements Runnable {
                             history.add((float)s);
                         }
 
+
                         while (history.size() > maxHistory)
                             history.removeAtIndex(0);
 
+                        while (history.size() < maxHistory)
+                            history.add(0);
 
-                        double[] x = new double[history.size()];
+
+                        double[] x = new double[maxHistory];
                         for (int i= 0; i < x.length; i++)
                             x[i] = history.get(i);
+
+
 
                         //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
 
@@ -150,6 +160,7 @@ public class WebcamFX extends StackPane implements Runnable {
                             history.add((float) s);
 
                         }
+
 
 
                         minValue = Float.POSITIVE_INFINITY;
@@ -211,13 +222,11 @@ public class WebcamFX extends StackPane implements Runnable {
                         e.printStackTrace();
                     }
                 }, 0, (long) 1000 / FRAME_RATE, TimeUnit.MILLISECONDS);
-            }
-            catch (LineUnavailableException e1)
-            {
+            } catch (LineUnavailableException e1) {
                 e1.printStackTrace();
             }
         });
-    };
+    }
 
     public WebcamFX() {
         super();
