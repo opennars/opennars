@@ -38,7 +38,6 @@ public class Equivalence extends Statement {
     /**
      * Constructor with partial values, called by make
      *
-     * @param arg The component list of the term
      */
     private Equivalence(Term subject, Term predicate, int order) {
         super(subject, predicate);
@@ -98,41 +97,33 @@ public class Equivalence extends Statement {
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
 
-        if (invalidStatement(subject, predicate)) {
-            return null;
-        }
-        
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
                 (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
             return null;
         }
-                
-        if ((temporalOrder == Temporal.ORDER_BACKWARD)
-                || ((subject.compareTo(predicate) > 0) && (temporalOrder != Temporal.ORDER_FORWARD))) {
+
+        if (invalidStatement(subject, predicate)) {
+            return null;
+        }
+
+        //swap terms for commutivity, or to reverse a backward order
+        final boolean reverse;
+        if (temporalOrder == Temporal.ORDER_BACKWARD) {
+            temporalOrder = Temporal.ORDER_FORWARD;
+            reverse = true;
+        }
+        else if (temporalOrder != Temporal.ORDER_FORWARD)
+            reverse = subject.compareTo(predicate) > 0;
+        else
+            reverse = false;
+
+        if (reverse) {
             //swap
             Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
-
-        if (temporalOrder == Temporal.ORDER_BACKWARD)
-            temporalOrder = Temporal.ORDER_FORWARD;
-
-        //Term[] t;
-        if (temporalOrder== Temporal.ORDER_FORWARD) {
-            //already in final order
-        }
-        else {
-            int c = subject.compareTo(predicate);
-            if (c > 0) {
-                //swap
-                Term interm = subject;
-                subject = predicate;
-                predicate = interm;
-            }
-        }
-
 
         return new Equivalence(subject, predicate, temporalOrder);
     }
@@ -143,7 +134,7 @@ public class Equivalence extends Statement {
      * @return the operate of the term
      */
     @Override
-    public Op op() {
+    public final Op op() {
         switch (temporalOrder) {
             case Temporal.ORDER_FORWARD:
                 return Op.EQUIVALENCE_AFTER;

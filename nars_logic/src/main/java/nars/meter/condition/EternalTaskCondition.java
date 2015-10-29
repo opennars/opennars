@@ -54,7 +54,7 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
     public List<Task> valid;
 
 
-    transient int maxSimilars = 4;
+    transient int maxSimilars = 7;
 
     protected TreeMap<Float,Task> similar;
 
@@ -76,6 +76,12 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 //    }
 //
 //    CurveBag<String,StringDistance> similar2 = new CurveBag(16);
+
+
+    @Override
+    public final Truth getTruth() {
+        return DefaultTruth.NULL;
+    }
 
     public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n.task(sentenceTerm + punc));

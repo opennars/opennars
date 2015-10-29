@@ -10,17 +10,15 @@ import java.util.function.Predicate;
  */
 abstract public class PreCondition implements Predicate<RuleMatch>, Serializable {
 
-    //abstract public boolean test(RuleMatch m);
-
     abstract public String toString();
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return toString().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         return toString().equals(obj.toString());
     }
 

@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTest {
 
 
-    final int cycles = 300;
+    final int cycles = 600;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
@@ -328,8 +328,8 @@ public class NAL6Test extends AbstractNALTest {
     @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
     public void strong_unification() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>.", 1.00f, 0.90f);
-        tester.believe("<(*,bmw,is,car) --> sentence>.", 1.00f, 0.90f);
+        tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>", 1.00f, 0.90f);
+        tester.believe("<(*,bmw,is,car) --> sentence>", 1.00f, 0.90f);
         tester.mustBelieve(2000, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
     }
@@ -337,9 +337,9 @@ public class NAL6Test extends AbstractNALTest {
     @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
     public void strong_elimination() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(&&,<(*,$a,is,cat) --> test>,<(*,$a,is,$b) --> sentence>) ==> <$a --> $b>>.", 1.00f, 0.90f);
-        tester.believe("<(*,tim,is,cat) --> test>");
         tester.mustBelieve(2000, "<<(*,tim,is,$b) --> sentence> ==> <tim --> $b>>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+        tester.believe("<(&&,<(*,$a,is,cat) --> test>,<(*,$a,is,$b) --> sentence>) ==> <$a --> $b>>");
+        tester.believe("<(*,tim,is,cat) --> test>");
         tester.run();
     }
 

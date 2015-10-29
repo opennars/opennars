@@ -1,5 +1,6 @@
 package nars.meta;
 
+import com.google.common.collect.Sets;
 import nars.Global;
 import nars.Op;
 import nars.Symbols;
@@ -318,10 +319,10 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
                 //TODO apply similar pattern to these as after and concurrent
                 case "shift_occurrence_forward":
-                    next = new TimeOffset(arg1, arg2, true);
+                    next = ShiftOccurrence.make(arg1, arg2, true);
                     break;
                 case "shift_occurrence_backward":
-                    next = new TimeOffset(arg1, arg2, false);
+                    next = ShiftOccurrence.make(arg1, arg2, false);
                     break;
                 case "measure_time":
                     if (args.length==3)
@@ -388,7 +389,6 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
         List<PostCondition> postConditionsList = Global.newArrayList(postcons.length);
 
-        int k = 0;
         for (int i = 0; i < postcons.length; ) {
             Term t = postcons[i++];
             if (i >= postcons.length)
@@ -400,8 +400,10 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
                     ((Product) postcons[i++]).terms());
             if (pc!=null)
                 postConditionsList.add( pc );
-
         }
+
+        if (Sets.newHashSet(postConditionsList).size()!=postConditionsList.size())
+            throw new RuntimeException("postcondition duplicates:\n\t" + postConditionsList);
 
         this.postconditions = postConditionsList.toArray( new PostCondition[postConditionsList.size() ] );
 
@@ -498,23 +500,21 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     }
 
     /**
-     * returns +1 if first arg=task, second arg = belief, -1 if opposite, and 0 if there was an incomplete match
-     *
-     * @param arg1
-     * @param arg2
-     * @param rule
-     * @return
+     * -1 or +1 depending on how arg1 and arg2 match either Task/Belief of the premise
+     * @return +1 if first arg=task, second arg = belief, -1 if opposite,
+     * throws exception if incomplete match
      */
-    public int getTaskOrder(Term arg1, Term arg2) {
+    public final int getTaskOrder(Term arg1, Term arg2) {
 
-        Term taskPattern = getPremises().term(0);
-        Term beliefPattern = getPremises().term(1);
+        Product p = getPremises();
+        Term taskPattern = p.term(0);
+        Term beliefPattern = p.term(1);
         if (arg2.equals(taskPattern) && arg1.equals(beliefPattern)) {
             return -1;
         } else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
             return 1;
         } else {
-            throw new RuntimeException("after(%X,%Y) needs to match both taks and belief patterns, in one of 2 orderings");
+            throw new RuntimeException("after(X,Y) needs to match both taks and belief patterns, in one of 2 orderings");
         }
 
     }
@@ -522,11 +522,11 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
     public After after(Term arg1, Term arg2) {
         int order = getTaskOrder(arg1, arg2);
-        return new After(order == 1);
+        return new After(order == -1);
     }
 
     public Concurrent concurrent(Term arg1, Term arg2) {
-        int order = getTaskOrder(arg1, arg2);
+        //int order = getTaskOrder(arg1, arg2);
         return new Concurrent();
     }
 

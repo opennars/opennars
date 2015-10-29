@@ -16,7 +16,7 @@ public class MeasureTime extends AbstractMeasureTime {
     }
 
     @Override
-    protected boolean testEvents(RuleMatch m, Term a, Term b, Term c) {
+    protected boolean testEvents(RuleMatch m, Term a, Term b, Term target) {
         Premise p = m.premise;
 
         long time = Temporal.between(p.getTask(), p.getBelief());
@@ -24,8 +24,8 @@ public class MeasureTime extends AbstractMeasureTime {
             return false;
         }
 
-        CyclesInterval interval = CyclesInterval.make(time, p.memory());
-        m.map1.put(c, interval );
+        CyclesInterval interval = CyclesInterval.make(time);
+        m.map1.put(target, interval );
 
         return true;
     }

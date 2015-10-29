@@ -15,7 +15,10 @@ public interface Interval extends TermMetadata {
     static int intervalCount(Term[] a) {
         int c = 0;
         for (Term x : a) {
-            if (x instanceof CyclesInterval) c++;
+            if (x instanceof CyclesInterval) {
+                //long d = ((CyclesInterval)x).duration();
+                c++;
+            }
         }
         return c;
     }

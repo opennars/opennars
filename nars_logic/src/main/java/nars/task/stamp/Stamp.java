@@ -416,8 +416,6 @@ public interface Stamp extends Interval, Cloneable, Serializable {
         return this;
     }
 
-
-    Stamp setDuration(int duration);
 }
 
 

@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public class NAL7Test extends AbstractNALTest {
 
 
-    final int cycles = 200;
+    final int cycles = 64;
 
     public NAL7Test(Supplier<NAR> b) {
         super(b);
@@ -71,19 +71,18 @@ public class NAL7Test extends AbstractNALTest {
     public void inference_on_tense() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.believe("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>", 1.0f, 0.9f);
+        tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
         tester.input("<(John, key) --> hold>. :|:");
 
-        tester.mustBelieve(cycles, "<(*,John,room) --> enter>", 1.00f, 0.81f, Tense.Future); //":\:"
+        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, Tense.Future); //":\:"
         tester.run();
     }
 
     @Test
     public void inference_on_tense_2() throws InvalidInputException {
         TestNAR tester = test();
-         
 
-        tester.believe("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>", 1.0f, 0.9f);
+        tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
         tester.input("<(*,John,room) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, Tense.Past); //":\:"
@@ -125,10 +124,10 @@ public class NAL7Test extends AbstractNALTest {
         
 
 
-        tester.input("<(*,John,door) --> open>. :|:");
-        tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
+        tester.input("<(John,door) --> open>. :|:");
+        tester.inputAt(10, "<(John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<<(*,John,room) --> enter> =\\> (&/,<(*,John,door) --> open>)>",
+        tester.mustBelieve(cycles, "<<(John,room) --> enter> =\\> (&/,<(John,door) --> open>, /5)>",
                 1.00f, 0.45f,
                 10);
         tester.run();
@@ -141,7 +140,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("<(*,John,door) --> open>. :|:");
         tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>",
+        tester.mustBelieve(cycles, "<(&/,<(*,John,door) --> open>, /5) =/> <(*,John,room) --> enter>>",
                 1.00f, 0.45f,
                 10);
         tester.run();
@@ -163,14 +162,20 @@ public class NAL7Test extends AbstractNALTest {
 
     @Test
     public void induction_on_events_with_variable_introduction() throws InvalidInputException {
+
         TestNAR tester = test();
+        tester.nar.trace();
 
         tester.input("<John --> (/,open,_,door)>. :|:");
         tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
+        tester.mustBelieve(cycles,
+                //"<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
+                "<<$1 --> (/,open,_,door)> </> <$1 --> (/,enter,_,room)>>",
                 1.00f, 0.45f,
-                10);
+                //10
+                0
+        );
         tester.run();
     }
 
@@ -181,7 +186,8 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("<John --> (/,open,_,door)>. :|:");
         tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/,<$1 --> (/,open,_,door)>) =/> <$1 --> (/,enter,_,room)>>",
+        tester.mustBelieve(cycles,
+                "<<$1 --> (/,open,_,door)> =/> <$1 --> (/,enter,_,room)>>",
                 1.00f, 0.45f,
                 10);
         tester.run();

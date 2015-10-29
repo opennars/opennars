@@ -501,7 +501,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         if (!isCommand()) {
 
-
             switch (getPunctuation()) {
                 case Symbols.JUDGMENT:
                 case Symbols.QUESTION:
@@ -521,6 +520,18 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                 throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
 
 
+            if (Global.DEBUG) {
+                if (Sentence.invalidSentenceTerm(getTerm())) {
+                    throw new RuntimeException("Invalid sentence content term: " + getTerm());
+                }
+            }
+
+        }
+
+        if (normalized() != null) {
+            if (isInput())
+                log("Input");
+
             //if a task has an unperceived creationTime,
             // set it to the memory's current time here,
             // and adjust occurenceTime if it's not eternal
@@ -534,35 +545,17 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                 setTime(now, oc);
             }
 
+            if (duration() <= 0) {
+                setDuration(
+                        memory.duration() //assume the default perceptual duration?
+                );
+            }
 
+            //finally, assign a unique stamp if none specified (input)
             if (getEvidence().length == 0) {
                 setEvidence(memory.newStampSerial());
             }
 
-        /*
-        if (t.equals( t.getParentTask()) ) {
-            throw new RuntimeException(t + " has parentTask equal to itself");
-        }        */
-//
-//            if (getEvidence().length == 0)
-//                throw new RuntimeException(this + " from premise " + getParentTask() + ',' + getParentBelief()
-//                        + " yet no evidence provided");
-
-            if (Global.DEBUG) {
-                if (Sentence.invalidSentenceTerm(getTerm())) {
-                    throw new RuntimeException("Invalid sentence content term: " + getTerm());
-                }
-            }
-
-            if (duration() <= 0) {
-                //assume the default perceptual duration
-                setDuration(memory.duration());
-            }
-        }
-
-        if (normalized() != null) {
-            if (isInput())
-                log("Input");
             return true;
         }
 
@@ -636,7 +629,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //        Before, After
 //    }
     default boolean startsAfter(Task other, int perceptualDuration) {
-        return start() - other.end() >= perceptualDuration;
+        return start() - other.end() > perceptualDuration;
     }
 
     default long start() { return getOccurrenceTime(); }

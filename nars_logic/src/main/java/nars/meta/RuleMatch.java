@@ -448,26 +448,30 @@ public class RuleMatch extends FindSubst {
         return rules.
                 //filter( /* filter the entire rule */ pcFilter).
                         map(r -> run(r)).
-                        flatMap(p -> Stream.of(p)).
+                        flatMap(p ->
+                            (p != null) ? Stream.of(p) : Stream.empty()
+                        ).
                 //filter( /* filter each rule postcondition */ pcFilter).
                         map(p -> apply(p)).
                         filter(t -> t != null);
     }
 
-    final private static PostCondition[] abortDerivation = new PostCondition[0];
 
+    /** return null if no postconditions match (equivalent to an empty array)
+     *  or an array of matching PostConditions to apply */
     public PostCondition[] run(TaskRule rule) {
 
         start(rule);
 
         for (final PreCondition p : rule.preconditions) {
             if (!p.test(this))
-                return abortDerivation;
+                return null;
         }
+
         return rule.postconditions;
     }
 
-    public final void occurenceAdd(final long cyclesDelta) {
+    public final void occurrenceAdd(final long cyclesDelta) {
         long oc = this.occurence_shift;
         if (oc == Stamp.TIMELESS)
             oc = 0;

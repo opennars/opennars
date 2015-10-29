@@ -7,26 +7,22 @@ import nars.term.Term;
 /** tests the resolved terms specified by pattern variable terms */
 abstract public class PreCondition2 extends PreCondition {
     public final Term arg1, arg2;
+    private final String str;
 
     public PreCondition2(Term var1, Term var2) {
         this.arg1 = var1;
         this.arg2 = var2;
+        this.str = getClass().getSimpleName() + '[' + arg1 + ',' + arg2 + ']';
     }
+
     @Override public final boolean test(RuleMatch m) {
-        //these should not resolve to null
-        Term a = m.resolve(arg1);
-//        if ((a == null) && (arg1 instanceof Variable))
-//            a = arg1;
-        Term b = m.resolve(arg2);
-//        if ((b == null) && (arg2 instanceof Variable))
-//            b = arg2;
-        return test(m, a, b);
+        return test(m, m.resolve(arg1), m.resolve(arg2));
     }
 
     abstract public boolean test(RuleMatch m, Term a, Term b);
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName() + '[' + arg1 + ',' + arg2 + ']';
+    public final String toString() {
+        return str;
     }
 }

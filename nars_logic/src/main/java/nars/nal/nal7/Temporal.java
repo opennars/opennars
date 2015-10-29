@@ -866,4 +866,13 @@ public class Temporal {
 
         return b-a;
     }
+
+    /** true if there is a non-zero overlap interval of the tasks */
+    public static boolean overlaps(Task a, Task b) {
+        return overlaps(a.start(), a.end(), b.start(), b.end());
+    }
+
+    public static boolean overlaps(long xStart, long xEnd, long yStart, long yEnd) {
+        return Math.max(xStart,yStart) <= Math.min(xEnd,yEnd);
+    }
 }

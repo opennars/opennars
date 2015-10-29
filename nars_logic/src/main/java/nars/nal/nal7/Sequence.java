@@ -24,20 +24,32 @@ public class Sequence extends Conjunctive implements Intermval {
 
     transient private long duration = -1;
 
+    /**
+     * for subterms: (A, B, C) and intervals (i0, i1, i2, i3)
+     * the effective sequence is:
+     *      (&/,   /i0, A, /i1, B, /i2, C, /i3)
+     *
+     */
     private Sequence(Term[] subterms, int[] intervals) {
         super(subterms);
 
-        if (intervals.length != 1 + subterms.length)
-            throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
-
-
-        final int s = subterms.length;
-
-        //operate on a clone in case this will be created from a subrange of another array etc */
-        if (intervals[s]!=0) {
-            intervals = Arrays.copyOf(intervals, s+1);
-            intervals[s] = 0;
+        if (intervals == null) {
+            //TODO leave as null, avoiding allocating this array if all zeros
+            intervals = new int[subterms.length+1];
         }
+        else {
+            if (intervals.length != 1 + subterms.length)
+                throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
+        }
+
+
+
+//        //operate on a clone in case this will be created from a subrange of another array etc */
+//        final int s = subterms.length;
+//        if (intervals[s]!=0) {
+//            intervals = Arrays.copyOf(intervals, s+1);
+//            intervals[s] = 0;
+//        }
 
         this.intervals = intervals;
 
@@ -83,7 +95,7 @@ public class Sequence extends Conjunctive implements Intermval {
     }
 
     @Override
-    public Sequence clone(final Term[] t) {
+    public Term clone(final Term[] t) {
 //        return clone(t, intervals);
 //    }
 //
@@ -123,17 +135,24 @@ public class Sequence extends Conjunctive implements Intermval {
      * @param a
      * @return
      */
-    public static Sequence makeSequence(final Term[] a) {
+    public static Term makeSequence(final Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
         final int intervalsPresent = Interval.intervalCount(a);
 
-        if (intervalsPresent == 0)
-            return new Sequence(a, new int[a.length+1] /* empty */);
+        if (intervalsPresent == 0) {
+            if (a.length == 1) return a[0]; //TODO combine this with singleton condition at end of this method
+            return new Sequence(a, null);
+        }
 
 
         //if intervals are present:
         Term[] b = new Term[a.length - intervalsPresent];
+
+        int blen = b.length;
+        if (blen == 0)
+            throw new RuntimeException("empty sequence containing only intervals");
+
         int[] i = new int[b.length + 1];
 
         int p = 0;
@@ -147,6 +166,12 @@ public class Sequence extends Conjunctive implements Intermval {
             } else {
                 b[p++] = x;
             }
+        }
+
+        if (blen == 1) {
+            //detect if this is reducible to the singleton term (no preceding or following interval)
+            if ((i[0]==0) && (i[1]==0))
+                return b[0];
         }
 
         return new Sequence(b, i);

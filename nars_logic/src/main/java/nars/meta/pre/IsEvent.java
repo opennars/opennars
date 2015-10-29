@@ -2,6 +2,7 @@ package nars.meta.pre;
 
 import nars.meta.RuleMatch;
 import nars.nal.nal7.Temporal;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -21,16 +22,17 @@ public class IsEvent extends PreCondition2 {
 
     @Override
     public boolean test(final RuleMatch m, Term a, Term b) {
-        Task task = m.premise.getTask();
+        ConceptProcess premise = m.premise;
 
+        Task task = premise.getTask();
 
         if (!isTemporal(a, task)) {
             return false;
         }
 
         if (b != null) {
-            Task belief = m.premise.getBelief();
-            return !(isTemporal(b, belief));
+            Task belief = premise.getBelief();
+            return isTemporal(b, belief);
         }
 
         //require both task and belief to be events

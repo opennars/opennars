@@ -2,6 +2,8 @@ package nars.meta.pre;
 
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
+import nars.nal.nal7.Temporal;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 
 /**
@@ -14,19 +16,22 @@ public class Concurrent extends PreCondition {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getClass().getSimpleName();
     }
 
     @Override
-    public boolean test(RuleMatch m) {
-        if (!m.premise.isTaskAndBeliefEvent())
+    public final boolean test(RuleMatch m) {
+        final ConceptProcess premise = m.premise;
+
+        if (!premise.isTaskAndBeliefEvent())
             return false;
 
-        final Task task = m.premise.getTask();
-        final Task belief = m.premise.getBelief();
+        final Task task = premise.getTask();
+        final Task belief = premise.getBelief();
 
-        return task.concurrent(belief, m.premise.duration());
+        //return task.concurrent(belief, m.premise.duration());
+        return Temporal.overlaps(task, belief);
     }
 
 }

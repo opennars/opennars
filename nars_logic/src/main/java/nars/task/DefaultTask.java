@@ -58,7 +58,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
     long creationTime = Stamp.TIMELESS;
     long occurrenceTime = Stamp.ETERNAL;
-    private long duration = 0;
+    private long duration = Stamp.TIMELESS;
 
 
     /**
@@ -208,8 +208,10 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     @Override
     public final void setDuration(long duration) {
-        if (this.duration!=Stamp.TIMELESS)
-            throw new RuntimeException(this + " has corrupted duration");
+        /*if (this.duration!=Stamp.TIMELESS)
+            throw new RuntimeException(this + " has corrupted duration");*/
+        if (duration < 0)
+            throw new RuntimeException(this + " negative duration");
         this.duration = duration;
     }
 
@@ -451,12 +453,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-
-    @Override
-    public final Sentence setDuration(int d) {
-        this.duration = d;
-        return this;
-    }
 
     @Override
     public final int hashCode() {

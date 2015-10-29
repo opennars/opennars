@@ -21,10 +21,10 @@ import java.util.Set;
  */
 public class DerivationRules extends ArrayList<TaskRule> {
 
-    @Deprecated public static int maxVarArgsToMatch = 3;
+    @Deprecated
+    public static int maxVarArgsToMatch = 3;
 
     static final NarseseParser parser = NarseseParser.the();
-
 
 
     public DerivationRules() throws IOException, URISyntaxException {
@@ -61,7 +61,6 @@ public class DerivationRules extends ArrayList<TaskRule> {
 //    }
 
 
-
     static List<String> loadRuleStrings(Iterable<String> lines) {
 
         List<String> unparsed_rules = Global.newArrayList(2048);
@@ -70,8 +69,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
         boolean single_rule_test = false;
 
         for (String s : lines) {
-            if(s.startsWith("try:")) {
-                single_rule_test=true;
+            if (s.startsWith("try:")) {
+                single_rule_test = true;
                 break;
             }
         }
@@ -83,8 +82,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
                 if (!currentRuleEmpty) {
 
-                    if(!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
-                        unparsed_rules.add(current_rule.toString().trim().replace("try:","")); //rule is finished, add it
+                    if (!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
+                        unparsed_rules.add(current_rule.toString().trim().replace("try:", "")); //rule is finished, add it
                     }
                     current_rule.setLength(0); //start identifying a new rule
                 }
@@ -94,8 +93,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
                 //its already a new rule, in which case the old rule has to be added before we go on
                 if (!currentRuleEmpty && s.contains("|-")) {
 
-                    if(!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
-                        unparsed_rules.add(current_rule.toString().trim().replace("try:","")); //rule is finished, add it
+                    if (!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
+                        unparsed_rules.add(current_rule.toString().trim().replace("try:", "")); //rule is finished, add it
                     }
                     current_rule.setLength(0); //start identifying a new rule
 
@@ -104,8 +103,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
             }
         }
 
-        if (current_rule.length()> 0) {
-            if(!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
+        if (current_rule.length() > 0) {
+            if (!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
                 unparsed_rules.add(current_rule.toString());
             }
         }
@@ -126,29 +125,29 @@ public class DerivationRules extends ArrayList<TaskRule> {
     }
 
 
-
     final static String[] equFull = {"<=>", "</>", "<|>"};
-    final static String[] implFull = { "==>", "=/>", "=|>" };
+    final static String[] implFull = {"==>", "=/>", "=|>"};
     final static String[] conjFull = {"&&", "&|", "&/"};
     final static String[] unchanged = {null};
 
     /**
      * //TODO do this on the parsed rule, because string contents could be unpredictable:
      * permute(rule, Map<Op,Op[]> alternates)
+     *
      * @param rules
      * @param ruleString
      */
-    static void addAndPermuteTenses(Collection<String> rules /* results collection */,
-                                    String ruleString) {
+    static void addAndPermuteTenses0(Collection<String> rules /* results collection */,
+                                     String ruleString) {
 
+        //Original version which permutes in different tenses
 
-
-        if(ruleString.contains("Order:ForAllSame")) {
+        if (ruleString.contains("Order:ForAllSame")) {
 
             final String[] equs =
-                ruleString.contains("<=>") ?
-                        equFull :
-                        unchanged;
+                    ruleString.contains("<=>") ?
+                            equFull :
+                            unchanged;
 
 
             final String[] impls =
@@ -164,26 +163,25 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
             //rules.add(ruleString);
 
-            for(String equ : equs) {
+            for (String equ : equs) {
 
-                String p1 = equ!=null ? ruleString.replace("<=>",equ) : ruleString;
+                String p1 = equ != null ? ruleString.replace("<=>", equ) : ruleString;
 
-                for(String imp : impls) {
+                for (String imp : impls) {
 
-                    String p2 = imp!=null ? p1.replace("==>",imp) : p1;
+                    String p2 = imp != null ? p1.replace("==>", imp) : p1;
 
-                    for(String conj : conjs) {
+                    for (String conj : conjs) {
 
-                        String p3 = conj!=null ? p2.replace("&&",conj) : p2;
+                        String p3 = conj != null ? p2.replace("&&", conj) : p2;
 
-                        rules.add( p3 );
-
+                        //System.out.println(ruleString + " " + p3);
+                        rules.add(p3);
                     }
                 }
             }
 
-        }
-        else {
+        } else {
             rules.add(ruleString);
         }
 
@@ -191,14 +189,38 @@ public class DerivationRules extends ArrayList<TaskRule> {
     }
 
 
+    /**
+     * //TODO do this on the parsed rule, because string contents could be unpredictable:
+     * permute(rule, Map<Op,Op[]> alternates)
+     *
+     * @param rules
+     * @param ruleString
+     */
+    static void addAndPermuteTenses(Collection<String> rules /* results collection */,
+                                    String ruleString) {
+
+        //add the original, which should be tenseless/eternal
+        rules.add(ruleString);
+
+        if (!ruleString.contains("Order:ForAllSame")) {
+            return;
+        }
+
+        for (int order : new int[] { 0, 1}) {
+            String r = ruleString;
+            r = r.replace("<=>", order == 0 ? "<|>" : "</>");
+            r = r.replace("&&", order == 0 ? "&|" : "&/");
+            r = r.replace("==>", order == 0 ? "=|>" : "=/>");
+            rules.add(r);
+        }
+
+    }
 
 
     static Set<TaskRule> parseRules(final Collection<String> rawRules) {
 
 
-
         final Set<String> expanded = new ConcurrentHashSet(); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
-
 
 
         rawRules.parallelStream().forEach(rule -> {
@@ -280,7 +302,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
         for (int i = 0; i < maxVarArgs; i++) {
             if (p.contains("A_i")) {
                 for (int j = 0; j <= i; j++) {
-                    if(p.contains("B_1..m")) {
+                    if (p.contains("B_1..m")) {
                         String str2 = "B_1";
                         for (int k = 0; k < maxVarArgs; k++) {
                             String A_i = "A_" + String.valueOf(j + 1);
@@ -290,10 +312,9 @@ public class DerivationRules extends ArrayList<TaskRule> {
                             }
                             String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..m", str2).replace("A_i", A_i);
                             addAndPermuteTenses(expanded, parsable_unrolled);
-                            str2 += ", B_" + (k+2);
+                            str2 += ", B_" + (k + 2);
                         }
-                    }
-                    else {
+                    } else {
                         String A_i = "A_" + String.valueOf(j + 1);
                         String strrep = str;
                         if (p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
@@ -304,15 +325,14 @@ public class DerivationRules extends ArrayList<TaskRule> {
                     }
                 }
             } else {
-                if(p.contains("B_1..m")) {
+                if (p.contains("B_1..m")) {
                     String str2 = "B_1";
                     for (int k = 0; k < maxVarArgs; k++) {
-                        str2 += ", B_" + (k+2);
-                        String parsable_unrolled = p.replace("A_1..n", str+ ' ').replace("B_1..m", str2+ ' ');
+                        str2 += ", B_" + (k + 2);
+                        String parsable_unrolled = p.replace("A_1..n", str + ' ').replace("B_1..m", str2 + ' ');
                         addAndPermuteTenses(expanded, parsable_unrolled);
                     }
-                }
-                else {
+                } else {
                     String parsable_unrolled = p.replace("A_1..n", str);
                     addAndPermuteTenses(expanded, parsable_unrolled);
                 }

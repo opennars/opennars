@@ -1,10 +1,7 @@
 package nars.nal.nal7;
 
-import com.google.common.primitives.Longs;
-import nars.Memory;
 import nars.Op;
 import nars.term.Atom;
-import nars.term.Term;
 
 import java.io.IOException;
 
@@ -20,16 +17,13 @@ import java.io.IOException;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-public class CyclesInterval extends Atom implements Interval {
+final public class CyclesInterval extends Atom implements Interval {
 
     //final static int bytesPrecision = 4;
 
-    final static CyclesInterval zero = new CyclesInterval(0, 0);
+    final static CyclesInterval zero = new CyclesInterval(0);
 
     final long cyc;
-    final int duration;
-
-
 
     @Override
     public void rehash() {
@@ -50,32 +44,18 @@ public class CyclesInterval extends Atom implements Interval {
         throw new RuntimeException("N/A");
     }
 
-
     public static CyclesInterval make(long numCycles) {
+        if (numCycles == 0) return zero;
         return new CyclesInterval(numCycles);
     }
 
-    public static CyclesInterval make(long numCycles, Memory m) {
-        return make(numCycles, m.duration());
-    }
-
-    public static CyclesInterval make(long numCycles, int duration) {
-        if (numCycles == 0) return zero;
-        return new CyclesInterval(numCycles, duration);
-    }
-
     protected CyclesInterval(long numCycles) {
-        this(numCycles, 0);
-    }
-
-    protected CyclesInterval(long numCycles, int duration) {
         super((byte[]) null); //interval(numCycles, bytesPrecision));
 
         if (numCycles < 0)
             throw new RuntimeException("cycles must be >= 0");
 
         this.cyc = numCycles;
-        this.duration = duration;
     }
 
 
@@ -83,13 +63,13 @@ public class CyclesInterval extends Atom implements Interval {
 //        long time = Math.round( LogInterval.time(mag, 5 /* memory.duration()*/) );
 //        return new CyclesInterval(time, 0);
 //    }
-
-    public static byte[] interval(long numCycles, int bytesPrecision) {
-        /*switch (bytesPrecision) {
-            case 1:
-        }*/
-        return Longs.toByteArray(numCycles);
-    }
+//
+//    public static byte[] interval(long numCycles, int bytesPrecision) {
+//        /*switch (bytesPrecision) {
+//            case 1:
+//        }*/
+//        return Longs.toByteArray(numCycles);
+//    }
 
     @Override
     public final long duration() {
@@ -134,19 +114,19 @@ public class CyclesInterval extends Atom implements Interval {
         return toStringBuilder(false).toString();
     }
 
-    /** filter any zero CyclesIntervals from the list and return a new one */
-    public static Term[] removeZeros(final Term[] relterms) {
-        int zeros = 0;
-        for (Term x : relterms)
-            if (x == zero)
-                zeros++;
-        Term[] t = new Term[relterms.length - zeros];
-
-        int p = 0;
-        for (Term x : relterms)
-            if (x != zero)
-                t[p++] = x;
-
-        return t;
-    }
+//    /** filter any zero CyclesIntervals from the list and return a new one */
+//    public static Term[] removeZeros(final Term[] relterms) {
+//        int zeros = 0;
+//        for (Term x : relterms)
+//            if (x == zero)
+//                zeros++;
+//        Term[] t = new Term[relterms.length - zeros];
+//
+//        int p = 0;
+//        for (Term x : relterms)
+//            if (x != zero)
+//                t[p++] = x;
+//
+//        return t;
+//    }
 }

@@ -6,7 +6,9 @@ import nars.process.ConceptProcess;
 import nars.task.Task;
 
 /**
- * After(%X,%Y) Means that the task matching the pattern of the first argument is after the task of the pattern of the 2nd
+ * After(%X,%Y) Means that
+ * %X is after %Y
+ * TODO use less confusing terminology and order convention
  */
 public class After extends PreCondition {
 
@@ -33,7 +35,8 @@ public class After extends PreCondition {
         final Task task = premise.getTask();
         final Task belief = premise.getBelief();
 
-        int pdur = premise.duration();
+        int pdur = 0;
+                //premise.duration();
 
         if (!taskBeforeBelief) {
             return task.startsAfter(belief, pdur);
