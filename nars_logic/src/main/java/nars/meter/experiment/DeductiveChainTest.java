@@ -48,7 +48,7 @@ public class DeductiveChainTest extends TestNAR {
         }
         n.ask( q );
 
-        mustBelieve(timeLimit, q.toString(), 0.75f, 1f, 0.01f, 1f);
+        mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 1f);
 
     }
 
@@ -62,22 +62,23 @@ public class DeductiveChainTest extends TestNAR {
 
         Global.DEBUG = false;
 
-        for (int length = 3; length < 11; length++) {
-            test(new Default().nal(2), length);
+        for (int length = 3; length < 10; length++) {
+            test(new Default().nal(6), length, 1000*length, inh);
         }
     }
 
-    static void test(NAR n, int chainLen) {
+    static void test(NAR n, int chainLen, int cycles, IndexedStatementBuilder statementType) {
 
 
-        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, 3000, inh) {
+        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, cycles, statementType) {
 //            @Override
 //            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
 //                return this;
 //            }
         };
 
-        System.out.println("derivation chain test: " + test.q + "?");
+        System.out.print(DeductiveChainTest.class.getSimpleName() + " test: "
+                + test.q + "?\t");
 
         final long start = System.currentTimeMillis();
 
@@ -95,7 +96,8 @@ public class DeductiveChainTest extends TestNAR {
 //        };
 
 
-        test.run();
+        test.run(false);
+
 
         //n.stdout();
         //n.frame(5000);
@@ -109,9 +111,12 @@ public class DeductiveChainTest extends TestNAR {
 
         //while (true) {
 
+        Report r = test.getReport();
 
-        System.err.println("@" + time + " (" + ts + "ms) " +
-                nc + " concepts");      //       }
+        System.out.println(
+                (r.isSuccess() ? "OK" : "ERR") +
+                "\t@" + time + " (" + ts + "ms) " +
+                nc + "C");
 
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);

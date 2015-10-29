@@ -17,9 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.jgroups.util.Util.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 //don't touch this file - patham9
 
@@ -97,7 +95,7 @@ public class LinkageTest extends AbstractNALTest {
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (TermLink entry : ret.getTermLinks()) {
-                if(entry.getTerm().toString().equals(premise2)) {
+                if(entry.getTerm().equals(premise2)) {
                     passed = true;
                     break;
                 }
@@ -106,7 +104,7 @@ public class LinkageTest extends AbstractNALTest {
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
-                        if(entry2.getTerm().toString().equals(premise2)) {
+                        if(entry2.getTerm().equals(premise2)) {
                             passed = true;
                             break;
                         }
@@ -119,7 +117,7 @@ public class LinkageTest extends AbstractNALTest {
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
             for (TermLink entry : ret2.getTermLinks()) {
-                if(entry.getTerm().toString().equals(premise1)) {
+                if(entry.getTerm().equals(premise1)) {
                     passed2 = true;
                     break;
                 }
@@ -127,7 +125,7 @@ public class LinkageTest extends AbstractNALTest {
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
-                        if(entry2.getTerm().toString().equals(premise1)) {
+                        if(entry2.getTerm().equals(premise1)) {
                             passed2 = true;
                             break;
                         }
@@ -256,47 +254,61 @@ public class LinkageTest extends AbstractNALTest {
 
     @Test
     public void Indirect_Linkage_NAL6_multiple_variable_elimination4() throws Exception {
-        ProperlyLinkedIndirectlyTest("(&&,<#1 --> (/,open,#2,_)>,<#1 --> lock>,<#2 --> key>)", "<{lock1} --> lock>");
+        ProperlyLinkedIndirectlyTest(
+                "(&&, <#1 --> (/, open, #2, _)>, <#1 --> lock>, <#2 --> key>)",
+                "<{lock1} --> lock>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_abduction_with_variable_elimination_abduction() throws Exception {
-        ProperlyLinkedIndirectlyTest("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", "<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
+        ProperlyLinkedIndirectlyTest(
+                "<<lock1 --> (/, open, $1, _)> ==> <$1 --> key>>",
+                "<(&&, <#1 --> (/, open, $2, _)>, <#1 --> lock>) ==> <$2 --> key>>"
+        );
     }
 
     @Test
     public void Indirect_Linkage_NAL6_second_variable_introduction_induction() throws Exception {
-        ProperlyLinkedIndirectlyTest("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", "<lock1 --> lock>");
+        ProperlyLinkedIndirectlyTest("<<lock1 --> (/, open, $1, _)> ==> <$1 --> key>>", "<lock1 --> lock>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_multiple_variable_elimination() throws Exception {
-        ProperlyLinkedIndirectlyTest("<(&&,<$x --> key>,<$y --> lock>) ==> <$y --> (/,open,$x,_)>>", "<{lock1} --> lock>");
+        ProperlyLinkedIndirectlyTest("<(&&, <$1 --> lock>, <$2 --> key>) ==> <$1 --> (/, open, $2, _)>>",
+                "<{lock1} --> lock>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_second_level_variable_unification2() throws Exception {
-        ProperlyLinkedIndirectlyTest("<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>", "<{key1} --> key>");
+        ProperlyLinkedIndirectlyTest(
+                "<<$1 --> lock> ==> (&&, <$1 --> (/, open, #2, _)>, <#2 --> key>)>",
+                "<{key1} --> key>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_variable_elimination_deduction() throws Exception {
-        ProperlyLinkedIndirectlyTest("<lock1 --> lock>", "<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
+        ProperlyLinkedIndirectlyTest(
+                "<lock1 --> lock>",
+                "<(&&, <#1 --> (/, open, $2, _)>, <#1 --> lock>) ==> <$2 --> key>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_variable_unification7() throws Exception {
-        ProperlyLinkedIndirectlyTest("<(&&,<$x --> flyer>,<($x,worms) --> food>) ==> <$x --> bird>>", "<<$y --> flyer> ==> <$y --> [withWings]>>");
+        ProperlyLinkedIndirectlyTest(
+                "<(&&, <$1 --> flyer>, <($1, worms) --> food>) ==> <$1 --> bird>>",
+                "<<$1 --> flyer> ==> <$1 --> [withWings]>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_variable_unification6() throws Exception {
-        ProperlyLinkedIndirectlyTest("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>", "<(&&,<$y --> [chirping]>,<$y --> [withWings]>) ==> <$y --> bird>>");
+        ProperlyLinkedIndirectlyTest(
+                "<(&&, <$1 --> flyer>, <$1 --> [chirping]>, <($1, worms) --> food>) ==> <$1 --> bird>>",
+                "<(&&, <$1 --> [chirping]>, <$1 --> [withWings]>) ==> <$1 --> bird>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_second_level_variable_unification() throws Exception {
-        ProperlyLinkedIndirectlyTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", "<{key1} --> key>");
+        ProperlyLinkedIndirectlyTest("(&&, <#1 --> lock>, <<$2 --> key> ==> <#1 --> (/, open, $2, _)>>)", "<{key1} --> key>");
     }
 
     @Test
@@ -357,7 +369,7 @@ public class LinkageTest extends AbstractNALTest {
 
     @Test
     public void Advanced_Concept_Formation_Test3() throws Exception {
-        ConceptFormationTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
+        ConceptFormationTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/, open, $2, _)>>)");
     }
 
     @Test

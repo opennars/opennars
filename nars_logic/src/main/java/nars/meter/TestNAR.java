@@ -57,6 +57,13 @@ public class TestNAR  {
 
         this.nar = nar;
 
+        //HACK sends 'answer' events' answers through derived so they can be detected by TaskCondition
+        nar.memory.eventAnswer.on(tt -> {
+            Task t = tt.getTwo();
+            t.log("Answer via Derived");
+            nar.memory.eventDerived.emit(t);
+        });
+
         if (exitOnAllSuccess) {
             new EarlyExit(1);
         }
@@ -165,14 +172,17 @@ public class TestNAR  {
 
 
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws InvalidInputException {
-        if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved, nar.memory().eventRevision };
+        if (outputEvents == null) outputEvents = new Topic[] {
+            nar.memory().eventDerived, nar.memory().eventTaskRemoved, nar.memory().eventRevision
+        };
         mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, occTimeAbsolute);
         return this;
     }
 
 
     public TestNAR mustOutput(long withinCycles, String task) throws InvalidInputException {
-        if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved, nar.memory().eventRevision };
+        if (outputEvents == null) outputEvents = new Topic[] {
+                nar.memory().eventDerived, nar.memory().eventTaskRemoved, nar.memory().eventRevision };
         return mustEmit(outputEvents, withinCycles, task);
     }
 
@@ -424,7 +434,9 @@ public class TestNAR  {
 
             //assertTrue("No cycles elapsed", tester.nar.memory().time/*SinceLastCycle*/() > 0);
 
-            getReport();
+            Report r = getReport();
+            report(r, r.isSuccess());
+
         }
 
 
@@ -438,7 +450,6 @@ public class TestNAR  {
 
         requires.forEach(report::add);
 
-        report(report, report.isSuccess());
 
         return report;
     }
