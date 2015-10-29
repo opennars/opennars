@@ -1,12 +1,16 @@
 package objenome;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+import com.gs.collections.impl.set.mutable.UnifiedSet;
+import nars.util.data.list.FasterList;
 import objenome.solution.dependency.*;
 import objenome.util.InjectionUtils;
 import objenome.util.InjectionUtils.Provider;
 import objenome.util.bean.BeanProxyBuilder;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Container extends AbstractPrototainer implements AbstractContainer {
 
 
-    private final Map<String, Object> singletonsCache;
+    private final Map singletonsCache;
 
     private final Map<String, ThreadLocal<Object>> threadLocalsCache;
 
@@ -29,27 +33,27 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
     
     public Container(boolean concurrent) {
         super(concurrent);
-        singletonsCache = concurrent ? new ConcurrentHashMap() : new HashMap();
-        threadLocalsCache = concurrent ? new ConcurrentHashMap() : new HashMap();        
+        singletonsCache = concurrent ? new ConcurrentHashMap() : new UnifiedMap(0);
+        threadLocalsCache = concurrent ? new ConcurrentHashMap() : new UnifiedMap(0);
     }
 
     public Container(final AbstractPrototainer parent) {
         super(
                 //TODO clone according to concurrent implementation:                
-                new HashMap(parent.builders), 
-                new HashMap(parent.scopes), 
-                new HashSet(parent.setterDependencies), 
-                new HashSet(parent.constructorDependencies), 
-                new HashSet(parent.forConstructMethod));
+                new UnifiedMap(parent.builders),
+                new UnifiedMap(parent.scopes),
+                new UnifiedSet(parent.setterDependencies),
+                new UnifiedSet(parent.constructorDependencies),
+                new UnifiedSet(parent.forConstructMethod));
         
-        singletonsCache = parent.concurrent ? new ConcurrentHashMap() : new HashMap();
-        threadLocalsCache = parent.concurrent ? new ConcurrentHashMap() : new HashMap();
+        singletonsCache = parent.concurrent ? new ConcurrentHashMap() : new UnifiedMap(0);
+        threadLocalsCache = parent.concurrent ? new ConcurrentHashMap() : new UnifiedMap(0);
     }
     
     
     
     
-    public <T> T get(Object key, T defaultValue) {
+    public final <T> T get(Object key, T defaultValue) {
         T existing = get(key);
         if (existing == null)
             return defaultValue;
@@ -82,14 +86,11 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
                 synchronized (singletonsCache) {
 
-                    if (singletonsCache.containsKey(name)) {
-
-                        target = singletonsCache.get(name);
-
+                    target = singletonsCache.get(name);
+                    if (target!=null) {
                         return (T) target; // no need to wire again...
 
                     } else {
-
                         needsToCreate = true;
                     }
                 }
@@ -101,10 +102,10 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
                     checkInterceptable(c, target);
 
-                    synchronized (this) {
+                    //synchronized (this) {
 
                         singletonsCache.put(name, target);
-                    }
+                    //}
                 }
 
             } else if (scope == Scope.THREAD) {
@@ -115,11 +116,12 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
                 ThreadLocal<Object> t = null;
 
-                synchronized (this) {
+                //synchronized (this) {
 
-                    if (threadLocalsCache.containsKey(name)) {
+                t = threadLocalsCache.get(name);
+                    if (t!=null) {
 
-                        t = threadLocalsCache.get(name);
+                        //t = threadLocalsCache.get(name);
 
                         target = t.get();
 
@@ -144,7 +146,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
                         // let it be wired...
                     }
-                }
+
 
                 if (needsToCreate) {
 
@@ -158,10 +160,10 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
                 if (needsToAddToCache) {
 
-                    synchronized (this) {
+                    //synchronized (this) {
 
                         threadLocalsCache.put(name, t);
-                    }
+                    //}
                 }
 
             } else if (scope == Scope.NONE) {
@@ -219,11 +221,8 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
     }
 
     private static void checkInterceptable(Builder f, Object value) {
-
         if (f instanceof Interceptor) {
-
-            Interceptor i = (Interceptor) f;
-
+            //Interceptor i = (Interceptor) f;
             ((Interceptor) f).onCreated(value);
         }
     }
@@ -318,16 +317,16 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
     @Override
     public void remove(Scope scope) {
         if (scope == Scope.SINGLETON) {
-            List<ClearableHolder> listToClear = new LinkedList<>();
+            List<ClearableHolder> listToClear = new FasterList<>();
             synchronized (this) {
-                for (Map.Entry<String, Object> stringObjectEntry : singletonsCache.entrySet()) {
-                    Builder factory = builders.get(stringObjectEntry.getKey());
+                singletonsCache.forEach((k,value) -> {
+                    Builder factory = builders.get(k);
                     if (factory instanceof Interceptor) {
                         Interceptor c = (Interceptor) factory;
-                        Object value = stringObjectEntry.getValue();
                         listToClear.add(new ClearableHolder(c, value));
-                    }                    
-                }
+                    }
+
+                });
                 singletonsCache.clear();
             }
             // remove everything inside a non-synchronized block...
@@ -335,7 +334,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 cp.clear();
             }
         } else if (scope == Scope.THREAD) {
-            List<ClearableHolder> listToClear = new LinkedList<>();
+            List<ClearableHolder> listToClear = new FasterList<>();
             synchronized (this) {
                 for (Map.Entry<String, ThreadLocal<Object>> stringThreadLocalEntry : threadLocalsCache.entrySet()) {
                     Builder factory = builders.get(stringThreadLocalEntry.getKey());

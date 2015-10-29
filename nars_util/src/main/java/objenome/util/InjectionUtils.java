@@ -383,12 +383,13 @@ public class InjectionUtils {
         if (obj instanceof Class<?>) {
             Class<?> k = (Class<?>) obj;
             String s = k.getSimpleName();
-            StringBuilder sb = new StringBuilder(s.length());
+            return s;
+            /*StringBuilder sb = new StringBuilder(s.length());
             sb.append(s.substring(0, 1).toLowerCase());
             if (s.length() > 1) {
                 sb.append(s.substring(1));
             }
-            return sb.toString();
+            return sb.toString();*/
         }        
         return obj.toString();
     }

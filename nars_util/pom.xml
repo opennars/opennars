@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.9.6</version>
+            <version>6.9.9</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -192,12 +192,12 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-embedded</artifactId>
-            <version>8.1.0.Alpha1</version>
+            <version>8.1.0.Alpha2</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-tree</artifactId>
-            <version>8.1.0.Alpha1</version>
+            <version>8.1.0.Alpha2</version>
         </dependency>
 
     </dependencies>

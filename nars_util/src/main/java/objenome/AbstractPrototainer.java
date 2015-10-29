@@ -5,10 +5,15 @@
  */
 package objenome;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+import com.gs.collections.impl.set.mutable.UnifiedSet;
 import objenome.solution.dependency.*;
 import objenome.util.InjectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,11 +34,11 @@ public class AbstractPrototainer implements Prototainer  {
     
     public AbstractPrototainer(final boolean concurrent) {
         this(
-            concurrent ? new ConcurrentHashMap() : new HashMap(),
-            concurrent ? new ConcurrentHashMap() : new HashMap(),
-            concurrent ? Collections.synchronizedSet(new HashSet()) : new HashSet(),
-            concurrent ? Collections.synchronizedSet(new HashSet()) : new HashSet(),
-            concurrent ? Collections.synchronizedSet(new HashSet()) : new HashSet()
+                (Map)(concurrent ? new ConcurrentHashMap() : new UnifiedMap(0)),
+                (Map)(concurrent ? new ConcurrentHashMap() : new UnifiedMap(0)),
+                (Set)(concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0)),
+                (Set)(concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0)),
+                (Set)(concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0))
         );
     }
 
@@ -54,13 +59,13 @@ public class AbstractPrototainer implements Prototainer  {
     }
 
     
-    public Map<String, Builder> getBuilders() {
+    public final Map<String, Builder> getBuilders() {
         return this.builders;
     }
 
         
     @Override
-    public Class type(Object key) {        
+    public final Class type(Object key) {
         Builder f = getBuilder(key);
         if (f == null) {
             return null;
@@ -69,7 +74,7 @@ public class AbstractPrototainer implements Prototainer  {
     }
 
  
-    public Builder getBuilder(Object key) {
+    public final Builder getBuilder(Object key) {
         String k = InjectionUtils.getKeyName(key);
         return builders.get(k);        
     }
@@ -156,7 +161,7 @@ public class AbstractPrototainer implements Prototainer  {
         return c;        
     }
 
-    protected static class ClearableHolder {
+    protected static final class ClearableHolder {
 
         public final Interceptor c;
         public final Object value;

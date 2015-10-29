@@ -1,6 +1,7 @@
 package nars.guifx.demo;
 
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -117,6 +119,11 @@ public class BeanPathAdapterTest extends Application {
         @Override
         public void setValue(Object value) {
 
+        }
+
+        @Override
+        public Optional<ObservableValue<? extends Object>> getObservableValue() {
+            return null;
         }
     }
 
