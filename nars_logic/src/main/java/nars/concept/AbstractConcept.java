@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public abstract class AbstractConcept extends Item<Term> implements Concept {
 
-    protected final Term term;
+    private final Term term;
 
     long creationTime = Stamp.TIMELESS;
     protected Map meta = null;

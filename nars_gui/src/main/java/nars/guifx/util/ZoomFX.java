@@ -1,6 +1,5 @@
 package nars.guifx.util;
 
-import dejv.commons.jfx.geometry.ObservableBounds;
 import dejv.commons.jfx.geometry.ObservableDimension2D;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
@@ -8,7 +7,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import nars.guifx.demo.Animate;
@@ -26,9 +24,9 @@ public class ZoomFX extends AnchorPane {
 
     @Deprecated private static final double SCROLLING_DIVISOR = 200.0d;
 
-    private static final double SCROLL_MIN = 0.0;
-    private static final double SCROLL_MAX = 1.0;
-    private static final double SCROLL_UNIT_INC = 0.1;
+//    private static final double SCROLL_MIN = 0.0;
+//    private static final double SCROLL_MAX = 1.0;
+//    private static final double SCROLL_UNIT_INC = 0.1;
 
     // Properties
     private final LerpDoubleProperty zoomFactor = new LerpDoubleProperty(1.0);
@@ -39,8 +37,10 @@ public class ZoomFX extends AnchorPane {
     /*private final ScrollBar hscroll = new ScrollBar();
     private final ScrollBar vscroll = new ScrollBar();*/
     //private final Pane contentPane = new Pane();
+    //private final Rectangle clip = new Rectangle();
+
     public final Group content = new Group();
-    private final Rectangle clip = new Rectangle();
+
 
 
     private ArrayRealVector panStart = null;
@@ -59,7 +59,7 @@ public class ZoomFX extends AnchorPane {
 
         //setupConstraints();
         setupStyle();
-        setupClipping();
+        //setupClipping();
         setupBindings();
 
 
@@ -68,7 +68,7 @@ public class ZoomFX extends AnchorPane {
 
 
         content.setAutoSizeChildren(false);
-        setCenterShape(false);
+        //setCenterShape(false);
 
 
         //hscroll.setValue(0.5);
@@ -178,6 +178,8 @@ public class ZoomFX extends AnchorPane {
         if (panStart == null) {
             //startPan(sceneX, sceneY);
         } else {
+            final ArrayRealVector panStart = this.panStart;
+
             final double dX = (sceneX - panStart.getEntry(0)) / 1f; //(pivotLogicalExtent.widthProperty().get() * zoomFactor.get());
             final double dY = (sceneY - panStart.getEntry(1)) / 1f; //(pivotLogicalExtent.heightProperty().get() * zoomFactor.get());
 
@@ -185,8 +187,8 @@ public class ZoomFX extends AnchorPane {
             panStart.setEntry(0, sceneX);
             panStart.setEntry(1, sceneY);
 
-            panX.set(panX.getTarget() + -dX);
-            panY.set(panY.getTarget() + -dY);
+            panX.setTargetPlus(-dX);
+            panY.setTargetPlus(-dY);
 
         }
     }
@@ -224,12 +226,12 @@ public class ZoomFX extends AnchorPane {
 //    }
 
 
-    private void setupClipping() {
-        clip.widthProperty().bind(widthProperty());
-        clip.heightProperty().bind(heightProperty());
-        setClip(clip);
-        setNeedsLayout(false);
-    }
+//    private void setupClipping() {
+//        clip.widthProperty().bind(widthProperty());
+//        clip.heightProperty().bind(heightProperty());
+//        //setClip(clip);
+//        setNeedsLayout(false);
+//    }
 
 
     private void setupStyle() {
@@ -240,7 +242,7 @@ public class ZoomFX extends AnchorPane {
 
     private void setupBindings() {
         final ObservableDimension2D viewportPhysicalSize = new ObservableDimension2D();
-        final ObservableBounds contentLogicalBounds = new ObservableBounds();
+        //final ObservableBounds contentLogicalBounds = new ObservableBounds();
 
         setOnScroll((event) -> {
             double mult = 1.0d + (event.getDeltaY() / SCROLLING_DIVISOR);

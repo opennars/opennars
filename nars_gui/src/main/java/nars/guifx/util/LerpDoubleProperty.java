@@ -49,4 +49,8 @@ public class LerpDoubleProperty extends SimpleDoubleProperty {
     private void updateStability() {
         stable = (Math.abs(target - get()) <= epsilon);
     }
+
+    public void setTargetPlus(double d) {
+        set(getTarget() + d);
+    }
 }

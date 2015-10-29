@@ -253,7 +253,7 @@ public class NARide extends BorderPane {
         pp.update();
     }
 
-    public void addView(Pane n) {
+    public void addView(Node n) {
         nar.memory().the(n);
 
         content.getTabs().add(new TabX(
@@ -265,7 +265,7 @@ public class NARide extends BorderPane {
         pp.update();
     }
 
-    public void addTool(String name, Supplier<Pane> builder) {
+    public void addTool(String name, Supplier<? extends Node> builder) {
         MenuItem mi = new MenuItem(name);
         mi.setOnAction((e) -> {
             addView(builder.get());

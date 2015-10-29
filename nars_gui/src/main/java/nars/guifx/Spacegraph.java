@@ -28,7 +28,7 @@ public class Spacegraph extends ZoomFX {
 
     static final String spacegraphCSS = Spacegraph.class.getResource("spacegraph.css").toExternalForm();
 
-    private final GridCanvas grid = null;
+    //private final GridCanvas grid = null;
 
     public void addNodes(Function<Node,Node> wrap, Node... n) {
         for (Node a : n) {
@@ -88,8 +88,8 @@ public class Spacegraph extends ZoomFX {
         public void update() {
 
 
-            setWidth(Spacegraph.this.getWidth());
-            setHeight(Spacegraph.this.getHeight());
+            //setWidth(Spacegraph.this.getWidth());
+            //setHeight(Spacegraph.this.getHeight());
 
             double w = getWidth();
             double h = getHeight();
@@ -163,7 +163,7 @@ public class Spacegraph extends ZoomFX {
     public Spacegraph() {
         super();
 
-        setCacheShape(false);
+        //setCacheShape(false);
         //getChildren().add(0, grid = new GridCanvas(true));
 
 //        verts.maxWidth(Double.MAX_VALUE);

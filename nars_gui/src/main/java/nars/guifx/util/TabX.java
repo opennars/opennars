@@ -2,7 +2,6 @@ package nars.guifx.util;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.HBox;
@@ -49,7 +48,7 @@ public class TabX extends Tab {
 
     boolean closed = false;
 
-    public TabX(String name, Parent content) {
+    public TabX(String name, Node content) {
         super(name,content);
         selectedProperty().addListener(s -> {
             update();

@@ -130,7 +130,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 
         if (floorCanvas == null) {
 
-            floorCanvas = new ResizableCanvas(g.widthProperty(), g.heightProperty());
+            floorCanvas = new ResizableCanvas();//g.widthProperty(), g.heightProperty());
 
             g.getChildren().
                     add(0, floorCanvas); //underneath, background must be transparent to see

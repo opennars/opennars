@@ -61,7 +61,9 @@ public class Hilbert extends Linear {
 
     @Override
     public void setPosition(TermNode v, int i, int max) {
-        if ( i*2 > poly.size() )
+        final FloatArrayList poly = this.poly;
+
+        if ( i*2 >= poly.size() )
             return;
 
         double x = poly.get(i*2);
@@ -90,8 +92,7 @@ public class Hilbert extends Linear {
             return power(2, ord) - 1;
         }
 
-        void move( int d )
-        {
+        void move( int d )        {
             switch( d )
             {
                 case NORTH:
