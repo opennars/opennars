@@ -20,7 +20,6 @@ import nars.guifx.util.ColorMatrix;
 import nars.task.Task;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 
 /**
@@ -268,9 +267,9 @@ public class NARfx  {
         return stage;
     }
 
-    public static void newWindow(NAR nar) {
-        NARide.show(nar.loop(), (Consumer)null);
-    }
+//    public static void newWindow(NAR nar) {
+//        NARide.show(nar.loop(), (Consumer)null);
+//    }
 
     public static void newWindow(Concept c) {
         //TODO //ConceptPane wn = new ConceptPane(nar, c);

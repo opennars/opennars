@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.arraycopy;
+import static java.lang.System.out;
+
 /**
  * ============================================================================
  * @author Vladimir Kulyukin
@@ -21,26 +24,26 @@ import java.util.List;
  */
 public class OneDHaar {
 
-    public final static double FSNORM = Math.sqrt(2);
-    public final static double FDNORM = 1/FSNORM;
-    public final static double oneOverLog2 = Math.log(2);
+    private final static double FSNORM = Math.sqrt(2);
+    private final static double FDNORM = 1/FSNORM;
+    public final static double log2 = Math.log(2);
     
-    public final static double ISNORM = FDNORM;
-    public final static double IDNORM = FSNORM;
+    private final static double ISNORM = FDNORM;
+    private final static double IDNORM = FSNORM;
     
-    public static void displaySample(double[] sample) {
-        System.out.print("Sample: ");
+    private static void displaySample(double[] sample) {
+        out.print("Sample: ");
         for (double aSample : sample) {
-            System.out.print(aSample + " ");
+            out.print(aSample + " ");
         }
-        System.out.println();
+        out.println();
     }
 
-    public static boolean isPowerOf2(int n) {
+    private static boolean isPowerOf2(int n) {
         if (n < 1) {
             return false;
         } else {
-            double p_of_2 = (Math.log(n) / oneOverLog2);
+            double p_of_2 = (Math.log(n) / log2);
             return Math.abs(p_of_2 - Math.round((int) p_of_2)) == 0;
         }
     }
@@ -66,10 +69,10 @@ public class OneDHaar {
         if ( isPowerOf2(signal.length) )
             return signal;
         else {
-            int i = OneDHaar.largestPowerOf2NoGreaterThan(signal.length);
+            int i = largestPowerOf2NoGreaterThan(signal.length);
             if ( i == 0 ) return null;
             double[] subsignal = new double[i];
-            System.arraycopy(signal, 0, subsignal, 0, i);
+            arraycopy(signal, 0, subsignal, 0, i);
             return subsignal;
         }
     }
@@ -79,36 +82,36 @@ public class OneDHaar {
         if (sample.length < 2) {
             return;
         }
-        if (!OneDHaar.isPowerOf2(sample.length)) {
+        if (!isPowerOf2(sample.length)) {
             return;
         }
-        final int num_sweeps = (int) (Math.log(sample.length) / oneOverLog2);
-        inPlaceFastHaarWaveletTransformForNumIters(sample, num_sweeps);
+        final int num_sweeps = (int) (Math.log(sample.length) / log2);
+        inPlaceFastHaarWaveletTransform(sample, num_sweeps);
     }
     // compute in-place fast haar wavelet transform.
     public static void inPlaceFastHaarWaveletTransform(float[] sample) {
-        if (sample.length < 2) {
-            return;
-        }
-        if (!OneDHaar.isPowerOf2(sample.length)) {
-            return;
-        }
-        final int num_sweeps = (int) (Math.log(sample.length) / oneOverLog2);
-        inPlaceFastHaarWaveletTransformForNumIters(sample, num_sweeps);
+//        if (sample.length < 2) {
+//            throw new RuntimeException(sample.length + " is not enough samples");
+//        }
+//        if (!isPowerOf2(sample.length)) {
+//            throw new RuntimeException(sample.length + " is not power of 2");
+//        }
+        final int num_sweeps = (int) (Math.log(sample.length) / log2);
+        inPlaceFastHaarWaveletTransform(sample, num_sweeps);
     }
 
     // apply in-place fast haar wavelet transform for num_sweeps sweeps.
-    public static void inPlaceFastHaarWaveletTransformForNumIters(float[] sample, int num_iters) {
+    public static void inPlaceFastHaarWaveletTransform(float[] sample, int num_iters) {
         if (sample.length < 2) {
-            return;
+            throw new RuntimeException(sample.length + " is not enough samples");
         }
-        if (!OneDHaar.isPowerOf2(sample.length)) {
-            return;
+        if (!isPowerOf2(sample.length)) {
+            throw new RuntimeException(sample.length + " is not power of 2");
         }
         int NUM_SAMPLE_VALS = sample.length; // number of values in the sample
         final int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
         if (num_iters < 1 || num_iters > n) {
-            return;
+            throw new RuntimeException(sample.length + " invalid number sweeps");
         }
         int GAP_SIZE = 2; // number of elements b/w averages
         int I = 1; // index increment
@@ -128,11 +131,11 @@ public class OneDHaar {
         }
     }
     // apply in-place fast haar wavelet transform for num_sweeps sweeps.
-    public static void inPlaceFastHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
+    private static void inPlaceFastHaarWaveletTransform(double[] sample, int num_iters) {
         if (sample.length < 2) {
             return;
         }
-        if (!OneDHaar.isPowerOf2(sample.length)) {
+        if (!isPowerOf2(sample.length)) {
             return;
         }
         int NUM_SAMPLE_VALS = sample.length; // number of values in the sample
@@ -171,8 +174,8 @@ public class OneDHaar {
             return;
         }
         NUM_SAMPLE_VALS /= (int) (Math.pow(2.0, sweep_number));
-        double c = 0;
-        double a = 0;
+        double c;
+        double a;
         for (int K = 0; K < NUM_SAMPLE_VALS; K++) {
             a = (sample[GAP_SIZE * K] + sample[GAP_SIZE * K + I]) / 2;
             c = (sample[GAP_SIZE * K] - sample[GAP_SIZE * K + I]) / 2;
@@ -195,7 +198,7 @@ public class OneDHaar {
         file.close();
     }
     
-    public static double[] fileToPrimitiveDoubles(String filePath) throws IOException {
+    private static double[] fileToPrimitiveDoubles(String filePath) throws IOException {
         FileInputStream fstream = new FileInputStream(filePath);
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
         List<Double> aryOfDoubles = new ArrayList<>();
@@ -204,7 +207,7 @@ public class OneDHaar {
         //Read File Line By Line
         while (( strLine = br.readLine()) != null )   {
             // Print the content on the console
-            System.out.println (strLine);
+            out.println (strLine);
             aryOfDoubles.add(Double.valueOf(strLine));
         }
 
@@ -220,10 +223,10 @@ public class OneDHaar {
         return prims;
     }
 
-    public static void orderedFastHaarWaveletTransform(double[] signal) {
+    private static void orderedFastHaarWaveletTransform(double[] signal) {
         final int n = signal.length;
         // if n is not an integral power of 2, then return
-        if (!OneDHaar.isPowerOf2(n)) {
+        if (!isPowerOf2(n)) {
             return;
         }
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
@@ -297,10 +300,10 @@ public class OneDHaar {
     }
     
     // the transform as defined on p. 21 in "Ripples in Mathematics."
-    public static void orderedNormalizedFastHaarWaveletTransform(double[] sample) {
+    private static void orderedNormalizedFastHaarWaveletTransform(double[] sample) {
         final int n = sample.length;
         // if n is not an integral power of 2, then return
-        if (!OneDHaar.isPowerOf2(n)) {
+        if (!isPowerOf2(n)) {
             return;
         }
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
@@ -374,10 +377,10 @@ public class OneDHaar {
     }
     
     // same as above but does ordered FHWT for a specified number of iterations
-    public static void orderedFastHaarWaveletTransformForNumIters(double[] signal, int num_iters) {
+    private static void orderedFastHaarWaveletTransformForNumIters(double[] signal, int num_iters) {
         final int n = signal.length;
         // if n is not an integral power of 2, then return
-        if ( !OneDHaar.isPowerOf2(n) ) return;
+        if ( !isPowerOf2(n) ) return;
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
         final int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
         if ( num_iters > NUM_SWEEPS ) return;
@@ -426,10 +429,10 @@ public class OneDHaar {
     
     // same as above but does ordered FHWT for a specified number of iterations but
     // normalized.
-    public static void orderedNormalizedFastHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
+    private static void orderedNormalizedFastHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
         final int n = sample.length;
         // if n is not an integral power of 2, then return
-        if ( !OneDHaar.isPowerOf2(n) ) return;
+        if ( !isPowerOf2(n) ) return;
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
         final int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
         if ( num_iters > NUM_SWEEPS ) return;
@@ -476,9 +479,9 @@ public class OneDHaar {
         return signal;
     }
 
-    public static void orderedFastInverseHaarWaveletTransform(double[] sample) {
+    private static void orderedFastInverseHaarWaveletTransform(double[] sample) {
         int n = sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -498,7 +501,7 @@ public class OneDHaar {
             }
             // copy restoredVals[0],   restoredVals[1], ...,  restoredVals[2*GAP-1] into
             //      sample[0], sampe[1], ..., sample[2*GAP-1]
-            System.arraycopy(restored_vals, 0, sample, 0, 2 * GAP);
+            arraycopy(restored_vals, 0, sample, 0, 2 * GAP);
             //System.out.print("L == " + L + " ");
             //OneDHaar.displaySample(sample);
         }
@@ -511,9 +514,9 @@ public class OneDHaar {
     }
     
     // same as above but does ordered FHWT for a specific number of iters.
-    public static void orderedFastInverseHaarWaveletTransformForNumIters(double[] signal, int numIters) {
+    private static void orderedFastInverseHaarWaveletTransformForNumIters(double[] signal, int numIters) {
         int n = signal.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -537,13 +540,13 @@ public class OneDHaar {
             }
             // copy restoredVals[0],   restoredVals[1], ...,  restoredVals[2*GAP-1] into
             //      signal[0], sampe[1], ..., signal[2*GAP-1]
-            System.arraycopy(restoredVals, 0, signal, 0, 2 * GAP);
+            arraycopy(restoredVals, 0, signal, 0, 2 * GAP);
             //System.out.print("Inverse SWEEP_NUM: " + L + " ");
             //OneDHaar.displaySample(signal);
         }
     }
     
-    public static void thresholdSignal(double[] signal, double thresh) {
+    private static void thresholdSignal(double[] signal, double thresh) {
         final int n = signal.length;
         double thresholdedSignal[] = new double[n];
         //System.out.println("n = " + n);
@@ -554,13 +557,13 @@ public class OneDHaar {
                 thresholdedSignal[t] = 0;
         }
         
-        System.arraycopy(thresholdedSignal, 0, signal, 0, n);
+        arraycopy(thresholdedSignal, 0, signal, 0, n);
         double[] o = null;
     }
     // same as above but does ordered FHWT for a specific number of iters.
     public static void orderedFastInverseHaarWaveletTransformForNumIters(double[] signal, int numIters, double thresh) {
         int n = signal.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -583,9 +586,9 @@ public class OneDHaar {
     }
     
     // as specified on p. 21 in "Ripples in Mathematics."
-    public static void orderedNormalizedFastInverseHaarWaveletTransform(double[] sample) {
+    private static void orderedNormalizedFastInverseHaarWaveletTransform(double[] sample) {
         int n = sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -604,7 +607,7 @@ public class OneDHaar {
             }
             // copy restoredVals[0],   restoredVals[1], ...,  restoredVals[2*GAP-1] into
             //      sample[0], sampe[1], ..., sample[2*GAP-1]
-            System.arraycopy(restored_vals, 0, sample, 0, 2 * GAP);
+            arraycopy(restored_vals, 0, sample, 0, 2 * GAP);
             //System.out.print("L == " + L + " ");
             //OneDHaar.displaySample(sample);
         }
@@ -617,9 +620,9 @@ public class OneDHaar {
     }
     
     // same as orderedNormalizedFastInverseHaarWaveletTransform() but goes back for a specified number of iterations.
-    public static void orderedNormalizedFastInverseHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
+    private static void orderedNormalizedFastInverseHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
         int n = sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -641,7 +644,7 @@ public class OneDHaar {
             }
             // copy restoredVals[0],   restoredVals[1], ...,  restoredVals[2*GAP-1] into
             //      sample[0], sampe[1], ..., sample[2*GAP-1]
-            System.arraycopy(restored_vals, 0, sample, 0, 2 * GAP);
+            arraycopy(restored_vals, 0, sample, 0, 2 * GAP);
             //System.out.print("Inverse SWEEP_NUM: " + L + " ");
             //OneDHaar.displaySample(sample);
             GAP *= 2;
@@ -677,7 +680,7 @@ public class OneDHaar {
     // be computed completely.
     public static void inPlaceFastInverseHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
         int n = sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -703,7 +706,7 @@ public class OneDHaar {
 
     public static void doNthIterOfInPlaceFastInverseHaarWaveletTransform(double[] sample, int iter_number) {
         int n = sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -726,7 +729,7 @@ public class OneDHaar {
     // by applying fast inverse haar transform a given number of iterations.
     public static void reconstructSampleTransformedInPlaceForNumIters(double[] haar_transformed_sample, int num_iters) {
         int n = haar_transformed_sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -754,7 +757,7 @@ public class OneDHaar {
     // sweep.
     public static void reconstructSampleTransformedInPlaceForNumItersWithOutput(double[] haar_transformed_sample, int num_iters) {
         int n = haar_transformed_sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2.0));
@@ -764,8 +767,8 @@ public class OneDHaar {
         int GAP_SIZE = (int) (Math.pow(2.0, num_iters - 1));
         int JUMP = 2 * GAP_SIZE;
         int NUM_FREQS = (int) (Math.pow(2.0, n - num_iters));
-        System.out.print("Reconstruction Sweep 0: ");
-        OneDHaar.displaySample(haar_transformed_sample);
+        out.print("Reconstruction Sweep 0: ");
+        displaySample(haar_transformed_sample);
         for (int ITER_NUM = 1; ITER_NUM <= num_iters; ITER_NUM++) {
             for (int K = 0; K < NUM_FREQS; K++) {
                 double aPlus = haar_transformed_sample[JUMP * K] + haar_transformed_sample[JUMP * K + GAP_SIZE];
@@ -773,8 +776,8 @@ public class OneDHaar {
                 haar_transformed_sample[JUMP * K] = aPlus;
                 haar_transformed_sample[JUMP * K + GAP_SIZE] = aMinus;
             }
-            System.out.print("Reconstruction Sweep " + ITER_NUM + ": ");
-            OneDHaar.displaySample(haar_transformed_sample);
+            out.print("Reconstruction Sweep " + ITER_NUM + ": ");
+            displaySample(haar_transformed_sample);
             JUMP = GAP_SIZE;
             GAP_SIZE /= 2;
             NUM_FREQS *= 2;
@@ -784,58 +787,94 @@ public class OneDHaar {
     // display ordered frequencies from lowest to highest in the ordered_sample
     // that has been obtained from the original by the ordered haar wavelet
     // transform.  
-    public static void displayOrderedFreqsFromOrderedHaar(double[] ordered_sample) {
+    public static void displayOrderedFreqsFromOrderedHaar(double[] ordered_sample, PrintStream out) {
         int n = ordered_sample.length;
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if ((n < 2) || !isPowerOf2(n)) {
             return;
         }
         n = (int) (Math.log(n) / Math.log(2));
-        System.out.println(ordered_sample[0]);
+        out.println(ordered_sample[0]);
         int start = 1;
         for (int sweep_num = 1; sweep_num <= n; sweep_num++) {
             int NUM_FREQS = (int) (Math.pow(2.0, sweep_num - 1));
-            for (int i = start; i < start + NUM_FREQS; i++) {
-                System.out.print(ordered_sample[i] + "\t");
+            for (int i = start; i < (start + NUM_FREQS); i++) {
+                out.print(ordered_sample[i] + "\t");
             }
             start += NUM_FREQS;
-            System.out.println();
+            out.println();
         }
     }
 
     // display ordered frequences from lowest to highest in the sample
     // that has been obtained from the original by the in-place fast
     // haar wavelet transform
-    public static void displayOrderedFreqsFromInPlaceHaar(double[] in_place_sample) {
+    public static void displayOrderedFreqsFromInPlaceHaar(double[] in_place_sample, PrintStream out) {
         int n = in_place_sample.length;
         //System.out.println("N = " + n);
-        if (n < 2 || !OneDHaar.isPowerOf2(n)) {
+        if (n < 2 || !isPowerOf2(n)) {
             return;
         }
         if (n == 2) {
-            System.out.println(in_place_sample[0]);
-            System.out.println(in_place_sample[1]);
+            out.println(in_place_sample[0]);
+            out.println(in_place_sample[1]);
             return;
         }
-        System.out.println(in_place_sample[0]);
-        System.out.println(in_place_sample[n / 2]);
+        out.println(in_place_sample[0]);
+        out.println(in_place_sample[n / 2]);
         int START_INDEX = n / 4;
         int NUM_FREQS = 2;
         while (START_INDEX > 1) {
             int ODD = 1;
             for (int K = 0; K < NUM_FREQS; K++) {
-                System.out.print(in_place_sample[START_INDEX * ODD] + "\t");
+                out.print(in_place_sample[START_INDEX * ODD] + "\t");
                 ODD += 2;
             }
-            System.out.println();
+            out.println();
             START_INDEX /= 2;
             NUM_FREQS *= 2;
         }
         // START_INDEX must be one for the next loop to run
         assert (START_INDEX == 1);
         for (int i = 1; i < n; i += 2) {
-            System.out.print(in_place_sample[i] + "\t");
+            out.print(in_place_sample[i] + "\t");
         }
-        System.out.println();
+        out.println();
+    }
+
+    // display ordered frequences from lowest to highest in the sample
+    // that has been obtained from the original by the in-place fast
+    // haar wavelet transform
+    public static void displayOrderedFreqsFromInPlaceHaar(float[] in_place_sample, PrintStream out) {
+        int n = in_place_sample.length;
+        //System.out.println("N = " + n);
+        if (n < 2 || !isPowerOf2(n)) {
+            return;
+        }
+        if (n == 2) {
+            out.println(in_place_sample[0]);
+            out.println(in_place_sample[1]);
+            return;
+        }
+        out.println(in_place_sample[0]);
+        out.println(in_place_sample[n / 2]);
+        int START_INDEX = n / 4;
+        int NUM_FREQS = 2;
+        while (START_INDEX > 1) {
+            int ODD = 1;
+            for (int K = 0; K < NUM_FREQS; K++) {
+                out.print(in_place_sample[START_INDEX * ODD] + "\t");
+                ODD += 2;
+            }
+            out.println();
+            START_INDEX /= 2;
+            NUM_FREQS *= 2;
+        }
+        // START_INDEX must be one for the next loop to run
+        assert (START_INDEX == 1);
+        for (int i = 1; i < n; i += 2) {
+            out.print(in_place_sample[i] + "\t");
+        }
+        out.println();
     }
 
     public static double reconstructSingleValueFromOrderedHaarWaveletTransform(double[] sample, int n, int k) {
@@ -883,7 +922,7 @@ public class OneDHaar {
                 else
                     base_vector[i] = 0;
             }
-            OneDHaar.orderedFastHaarWaveletTransform(base_vector);
+            orderedFastHaarWaveletTransform(base_vector);
             for(int row_num = 0; row_num < size; row_num++) {
                 fhw[row_num][col_num] = base_vector[row_num];
             }
@@ -904,7 +943,7 @@ public class OneDHaar {
                 else
                     base_vector[i] = 0;
             }
-            OneDHaar.orderedFastInverseHaarWaveletTransform(base_vector);
+            orderedFastInverseHaarWaveletTransform(base_vector);
             for(int row_num = 0; row_num < size; row_num++) {
                 ihw[row_num][col_num] = base_vector[row_num];
             }

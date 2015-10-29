@@ -24,6 +24,7 @@ import javafx.scene.paint.Color;
 import nars.guifx.NARfx;
 import nars.util.event.ArraySharingList;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.awt.image.BufferedImage;
 
 
@@ -66,7 +67,7 @@ public class ExampleTrackerObjectQuad extends WebcamFX {
 
     }
 
-    public ExampleTrackerObjectQuad() {
+    public ExampleTrackerObjectQuad() throws LineUnavailableException {
         super();
 
         motionOverlay.setOpacity(0.5);

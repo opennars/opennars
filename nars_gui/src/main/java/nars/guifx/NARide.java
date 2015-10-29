@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import nars.Global;
@@ -37,6 +38,7 @@ import nars.util.data.Util;
 import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -96,7 +98,13 @@ public class NARide extends BorderPane {
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
 
-            ni.addTool("Webcam", WebcamFX::new);
+            ni.addTool("Webcam", () -> {
+                try {
+                    return new WebcamFX();
+                } catch (LineUnavailableException e) {
+                    return new VBox(new Label(e.toString()));
+                }
+            });
 
 
             ni.addTool("Terminal (bash)", LocalTerminal::new);

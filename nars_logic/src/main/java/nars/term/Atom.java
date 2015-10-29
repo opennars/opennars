@@ -155,7 +155,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     @Override
-    public int getByteLen() {
+    public final int getByteLen() {
         return bytes().length;
     }
 
