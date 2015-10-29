@@ -11,9 +11,7 @@ import nars.guifx.Plot2D;
 import nars.util.event.DefaultTopic;
 import nars.util.event.On;
 import nars.util.event.Topic;
-import org.apache.commons.math3.transform.DctNormalization;
-import org.apache.commons.math3.transform.FastCosineTransformer;
-import org.apache.commons.math3.transform.TransformType;
+import nars.util.signal.OneDHaar;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -173,20 +171,22 @@ public class WaveCapture implements Runnable {
                 //                            history.add(0);
 
 
+                //1d haar wavelet transform
+                {
+                    //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
+                    OneDHaar.inPlaceFastHaarWaveletTransform(samples);
+                    //OneDHaar.displayOrderedFreqsFromInPlaceHaar(samples, System.out);
+                }
 
-
-                /*
-                //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
-                OneDHaar.inPlaceFastHaarWaveletTransform(samples);
-                //OneDHaar.displayOrderedFreqsFromInPlaceHaar(samples, System.out);
-                */
-
-                double[] dsamples = new double[samples.length+1];
-                for (int i = 0; i < samples.length; i++)
-                    dsamples[i] = samples[i];
-                dsamples = new FastCosineTransformer(DctNormalization.STANDARD_DCT_I).transform(dsamples, TransformType.FORWARD);
-                for (int i = 0; i < samples.length; i++)
-                    samples[i] = (float)dsamples[i];
+//                //apache commons math - discrete cosine transform
+//                {
+//                    double[] dsamples = new double[samples.length + 1];
+//                    for (int i = 0; i < samples.length; i++)
+//                        dsamples[i] = samples[i];
+//                    dsamples = new FastCosineTransformer(DctNormalization.STANDARD_DCT_I).transform(dsamples, TransformType.FORWARD);
+//                    for (int i = 0; i < samples.length; i++)
+//                        samples[i] = (float) dsamples[i];
+//                }
 
                 history.clear();
                 history.addAll(samples);

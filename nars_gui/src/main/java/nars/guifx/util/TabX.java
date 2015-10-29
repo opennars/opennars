@@ -55,7 +55,6 @@ public class TabX extends Tab {
             update();
         });
 
-
         onClosedProperty().addListener(c -> {
             closed = true;
             update();

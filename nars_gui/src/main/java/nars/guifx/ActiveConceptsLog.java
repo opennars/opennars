@@ -15,7 +15,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/15/15.
  */
-public class LogPane2 extends LogPane {
+public class ActiveConceptsLog extends LogPane {
 
     private List<ConceptSummaryPane> displayed;
     LinkedHashSet<Concept> display = new LinkedHashSet();
@@ -23,7 +23,7 @@ public class LogPane2 extends LogPane {
 
     final AtomicBoolean pendingShown = new AtomicBoolean(false);
 
-    public LogPane2(NAR n) {
+    public ActiveConceptsLog(NAR n) {
         super();
 
         n.onEachFrame(nn-> {

@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import nars.NAR;
 import nars.clock.FrameClock;
 import nars.guifx.NARfx;
-import nars.guifx.demo.GenericControlPane;
+import nars.guifx.demo.POJOPane;
 import nars.meter.MemoryBudget;
 import nars.nar.Default;
 import nars.narsese.NarseseParser;
@@ -194,7 +194,7 @@ public class SimpleNARBudgetDynamics {
         NARfx.run((a,b) -> {
 
 
-            x.setLeft(new GenericControlPane<>(vars));
+            x.setLeft(new POJOPane<>(vars));
 
 
             Default d = new Default(1000, 1, 1, 1, new FrameClock()); //Equalized(1024, 1, 3);

@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by me on 10/2/15.
  */
-public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.HexTerm2Node<C>> {
+public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.LabeledCanvasNode<C>> {
 
     final static Font nodeFont = NARfx.mono(0.25);
 
@@ -62,12 +62,12 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
     //public Function<Term,TermNode> nodeBuilder;
 
     @Override
-    public HexTerm2Node<C> newNode(C term) {
-        return new HexTerm2Node(term, mouseActivity, mouseUntivity);
+    public LabeledCanvasNode<C> newNode(C term) {
+        return new LabeledCanvasNode(term, mouseActivity, mouseUntivity);
     }
 
     @Override
-    public void accept(HexTerm2Node<C> t) {
+    public void accept(LabeledCanvasNode<C> t) {
 
         if (t == null) {
             return;
@@ -230,16 +230,14 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
         this.graph = null;
     }
 
-public static class HexTerm2Node<N extends Comparable> extends TermNode<N> {
+public static class LabeledCanvasNode<N extends Comparable> extends TermNode<N> {
 
 
     private final Canvas base;
 
     private GraphicsContext g = null;
 
-    private GraphicsContext d = null;
-
-    public HexTerm2Node(N t, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
+    public LabeledCanvasNode(N t, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
         super(t);
 
 
@@ -247,6 +245,7 @@ public static class HexTerm2Node<N extends Comparable> extends TermNode<N> {
         base.setLayoutX(-0.5f);
         base.setLayoutY(-0.5f);
 
+        g = base.getGraphicsContext2D();
 
         base.setOnMouseClicked(e -> {
             //System.out.println("click " + e.getClickCount());
@@ -284,9 +283,6 @@ public static class HexTerm2Node<N extends Comparable> extends TermNode<N> {
      * re-render to image buffer
      */
     public void render(double w, double h) {
-
-        g = base.getGraphicsContext2D();
-        d = base.getGraphicsContext2D();
 
 
         base.setWidth(w);
@@ -362,11 +358,11 @@ public static class HexTermNode extends TermNode {
 
         base.setOnMouseClicked(e -> {
             //System.out.println("click " + e.getClickCount());
-            if (e.getClickCount() == 2) {
-                if (c != null)
+            if ((c != null) && (e.getClickCount() == 2)) {
                     NARfx.run((a, b) -> {
                         //...
                     });
+
             }
         });
 

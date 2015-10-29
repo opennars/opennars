@@ -3,7 +3,7 @@ package nars.guifx.graph2.source;
 import javafx.beans.InvalidationListener;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
-import nars.guifx.demo.GenericControlPane;
+import nars.guifx.demo.POJOPane;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.GraphSource;
 import nars.guifx.graph2.TermNode;
@@ -55,7 +55,7 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
 
         runLater(() -> layoutChange.invalidated(null));
 
-        GenericControlPane c = new GenericControlPane(this);
+        POJOPane c = new POJOPane(this);
         c.layout();
         c.autosize();
         getChildren().add(c);

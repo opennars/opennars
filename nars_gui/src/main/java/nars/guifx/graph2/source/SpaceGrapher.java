@@ -444,10 +444,11 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     /** called before next layout changes */
     synchronized void layoutUpdated() {
         int animationPeriod = this.animatinPeriodMS;
-        if (this.animator!=null) {
-            this.animator.stop();
-            this.animator = null;
-        }
+//        if (this.animator!=null) {
+//            this.animator.stop();
+//            this.animator = null;
+//        }
+        stop();
 
         //reset visiblity state to true for all, in case previous layout had hidden then
         getVertices().forEach(t -> t.setVisible(true));
@@ -471,6 +472,8 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     }
 
     public synchronized void start(int layoutPeriodMS) {
+
+        stop();
 
         if (this.animator == null) {
             this.animator = new Animate(layoutPeriodMS, a -> {

@@ -77,7 +77,7 @@ public class NSlider extends NControl {
         text.setBlendMode(BlendMode.DIFFERENCE);
 
         text.setBoundsType(TextBoundsType.VISUAL);
-        text.setCache(true);
+        //text.setCache(true);
 
         getChildren().add(text);
 

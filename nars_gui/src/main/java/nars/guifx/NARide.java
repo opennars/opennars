@@ -18,7 +18,7 @@ import nars.budget.Budget;
 import nars.budget.Budgeted;
 import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
-import nars.guifx.demo.GenericControlPane;
+import nars.guifx.demo.POJOPane;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.Grid;
@@ -92,7 +92,7 @@ public class NARide extends BorderPane {
             }
 
             ni.addTool("I/O", () -> new IOPane(nar));
-            ni.addTool("Active Concepts", () -> new LogPane2(nar));
+            ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
@@ -259,6 +259,9 @@ public class NARide extends BorderPane {
         content.getTabs().add(new TabX(
                 n.getClass().getSimpleName(),
                 n));
+        int nn = content.getTabs().size()-1;
+        content.getSelectionModel().select(nn);
+
         pp.update();
     }
 
@@ -438,7 +441,7 @@ public class NARide extends BorderPane {
             this.cycle = l;
             this.nar = l.nar;
 
-            setCenter(new GenericControlPane(l));
+            setCenter(new POJOPane(l));
         }
 //            this.activation = new NSlider(150, 50, 1.0) {
 //
