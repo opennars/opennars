@@ -19,7 +19,8 @@ public class ShiftOccurrence extends PreCondition1 {
         int dir = getDirection(operator);
         //if (dir == 0) return null;
         if (dir == Integer.MIN_VALUE)
-            return null;
+            throw new RuntimeException("invalid operator: " + operator);
+            //return null;
 
         return new ShiftOccurrence(arg1, positive, dir);
     }
@@ -66,7 +67,7 @@ public class ShiftOccurrence extends PreCondition1 {
 //            return ((AbstractInterval) arg).cycles(nal.memory());
 //        }
 
-        long offset = direction * m.premise.getTask().duration();
+        long offset = direction != 0 ? m.premise.getTask().duration() : 0;
 
         //if (offset > Stamp.TIMELESS) {
             //shift since it has an order..
@@ -87,15 +88,15 @@ public class ShiftOccurrence extends PreCondition1 {
         r.value("=/>", +1);
         r.value("=\\>", -1);
         r.value("=|>", 0);
-        //r.value("==>", null);
+        r.value("==>", 0);
 
         r.value("<|>", 0);
         r.value("</>", +1);
-        //r.value("<=>", null);
+        r.value("<=>", 0);
 
-        r.value("&/", +1);
-        r.value("&|", 0);
-        //r.value("&&", null);
+//        r.value("&/", +1);
+//        r.value("&|", 0);
+//        //r.value("&&", null);
     }
 
     static int getDirection(Term operator) {

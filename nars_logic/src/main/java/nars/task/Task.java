@@ -547,7 +547,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
             if (duration() <= 0) {
                 setDuration(
-                        memory.duration() //assume the default perceptual duration?
+                    memory.duration() //assume the default perceptual duration?
                 );
             }
 

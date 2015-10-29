@@ -127,7 +127,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("<(John,door) --> open>. :|:");
         tester.inputAt(10, "<(John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<<(John,room) --> enter> =\\> (&/,<(John,door) --> open>, /5)>",
+        tester.mustBelieve(cycles, "<<(*,John,room) --> enter> =\\> (&/,<(*,John,door) --> open>)>",
                 1.00f, 0.45f,
                 10);
         tester.run();
@@ -140,7 +140,7 @@ public class NAL7Test extends AbstractNALTest {
         tester.input("<(*,John,door) --> open>. :|:");
         tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/,<(*,John,door) --> open>, /5) =/> <(*,John,room) --> enter>>",
+        tester.mustBelieve(cycles, "<(&/,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>",
                 1.00f, 0.45f,
                 10);
         tester.run();
@@ -171,10 +171,9 @@ public class NAL7Test extends AbstractNALTest {
     /**
      * @param delay a # of frames to delay at the start in order to test start time independence
      */
-    public void induction_on_events_with_variable_introduction(int delay) throws InvalidInputException {
+    void induction_on_events_with_variable_introduction(int delay) throws InvalidInputException {
 
         TestNAR tester = test();
-        tester.nar.trace();
 
         tester.nar.frame(delay);
 
@@ -185,8 +184,7 @@ public class NAL7Test extends AbstractNALTest {
                 //"<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
                 "<<$1 --> (/,open,_,door)> </> <$1 --> (/,enter,_,room)>>",
                 1.00f, 0.45f,
-                //10 + delay
-                0 + delay
+                10 + delay
         );
         tester.run();
     }

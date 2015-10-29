@@ -137,7 +137,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
      * @param rules
      * @param ruleString
      */
-    static void addAndPermuteTenses0(Collection<String> rules /* results collection */,
+    static void addAndPermuteTenses(Collection<String> rules /* results collection */,
                                      String ruleString) {
 
         //Original version which permutes in different tenses
@@ -189,32 +189,32 @@ public class DerivationRules extends ArrayList<TaskRule> {
     }
 
 
-    /**
-     * //TODO do this on the parsed rule, because string contents could be unpredictable:
-     * permute(rule, Map<Op,Op[]> alternates)
-     *
-     * @param rules
-     * @param ruleString
-     */
-    static void addAndPermuteTenses(Collection<String> rules /* results collection */,
-                                    String ruleString) {
-
-        //add the original, which should be tenseless/eternal
-        rules.add(ruleString);
-
-        if (!ruleString.contains("Order:ForAllSame")) {
-            return;
-        }
-
-        for (int order : new int[] { 0, 1}) {
-            String r = ruleString;
-            r = r.replace("<=>", order == 0 ? "<|>" : "</>");
-            r = r.replace("&&", order == 0 ? "&|" : "&/");
-            r = r.replace("==>", order == 0 ? "=|>" : "=/>");
-            rules.add(r);
-        }
-
-    }
+//    /**
+//     * //TODO do this on the parsed rule, because string contents could be unpredictable:
+//     * permute(rule, Map<Op,Op[]> alternates)
+//     *
+//     * @param rules
+//     * @param ruleString
+//     */
+//    static void addAndPermuteTensesWrong(Collection<String> rules /* results collection */,
+//                                    String ruleString) {
+//
+//        //add the original, which should be tenseless/eternal
+//        rules.add(ruleString);
+//
+//        if (!ruleString.contains("Order:ForAllSame")) {
+//            return;
+//        }
+//
+//        for (int order : new int[] { 0, 1}) {
+//            String r = ruleString;
+//            r = r.replace("<=>", order == 0 ? "<|>" : "</>");
+//            r = r.replace("&&", order == 0 ? "&|" : "&/");
+//            r = r.replace("==>", order == 0 ? "=|>" : "=/>");
+//            rules.add(r);
+//        }
+//
+//    }
 
 
     static Set<TaskRule> parseRules(final Collection<String> rawRules) {

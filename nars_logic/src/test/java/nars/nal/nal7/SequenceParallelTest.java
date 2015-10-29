@@ -3,7 +3,6 @@ package nars.nal.nal7;
 import nars.NAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
-import nars.narsese.NarseseParser;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -14,9 +13,11 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 
+/** various tests of the Sequence and Parallel term types */
 public class SequenceParallelTest {
 
     static final Terminal t = new Terminal(); //DURATION=5 by default
+    static final int DURATION = t.memory.duration();
 
     @Test public void testSequenceReduction1() {
         assertEqualTerms("(&/, x, /0)", "x" );
@@ -28,6 +29,7 @@ public class SequenceParallelTest {
     @Test public void testParallelMaxCycles() {
         assertEqualTerms("(&|, x, /3, /5)", "(&|, x, /5)");
     }
+
     @Test public void testSequenceReductionComplex() {
         assertEqualTerms(
             "<(&/, <$1 --> (/, open, _, door)>) </> <$1 --> (/, enter, _, room)>>",
@@ -58,17 +60,19 @@ public class SequenceParallelTest {
         assertEquals( "b", t.term("(&/, /0, b, /0)").toString() );
     }
 
-    @Test public void testEmbeddedSequence() {
+    @Test public void testEmbeddedSequenceAndTotalDuration() {
 
         String es = "(&/, b, /10, c)";
         Sequence e = t.term(es);
         //System.out.println(es + "\n" + e);
-        assertEquals( 10, e.duration() );
+
+        int esDuration = (10 + 2 * DURATION);
+        assertEquals( esDuration, e.duration() );
         assertEquals( es, e.toString() );
 
         String ts = "(&/, a, " + es + ", /1, d)";
         Sequence s = t.term(ts);
-        assertEquals( 11, s.duration() );
+        assertEquals( esDuration + 1 + 2 * DURATION, s.duration() );
         assertEquals( ts, s.toString() );
 
     }
@@ -91,7 +95,6 @@ public class SequenceParallelTest {
         Parallel s = t.term(ts);
 
         assertEquals(ts, s.toString());
-
         assertEquals(10, s.duration()); //maximum contained duration = 10
 
     }
@@ -151,13 +154,24 @@ public class SequenceParallelTest {
         //TODO test: tasks formed by a NAR with a duration that is being changed reflect these changes
 
     }
+    
+    @Test public void testDefaultParallelDuration() {
+        //these all should have the same duration (DEFAULT)
+        String par1 = "(&|, <a-->b> )";
+        String par2 = "(&|, <a-->b>, <c --> d> )";
+        String par3 = "(&|, <a-->b>, <c --> d>, /1 )"; // "/1" has no influence here because the terms each have DURATION=5
+
+        assertEquals( DURATION, ((Parallel)t.term(par1)).duration() );
+        assertEquals( ((Parallel)t.term(par1)).duration(),  ((Parallel)t.term(par2)).duration());
+        assertEquals( ((Parallel)t.term(par2)).duration(),  ((Parallel)t.term(par3)).duration());
+    }
+    
     @Test public void testParallel() {
         String seq = "(&|, <a-->b>, <a-->b>, <b-->c> )";
 
-        Parallel x = NarseseParser.the().term(seq);
+        Parallel x = t.term(seq);
 
         assertEquals(2, x.length());
-
     }
 
     @Test public void testConstuction() {
@@ -197,6 +211,16 @@ public class SequenceParallelTest {
 
     private void testSeqTermString(NAR nar, String s) {
         assertEquals(s, nar.term(s).toString());
+    }
+    @Test public void testTrailingSuffix() {
+        //trailing suffix allowed if the top-level term
+        assertEqualTerms("(&/, x, /1)", "(&/, x, /1)");
+
+        //trailing suffix interval removed if not top-level term
+        assertEqualTerms("<(&/, x, /1) =/> y>", "<x =/> y>");
+
+        //leading prefix interval remains
+        assertEqualTerms("<(&/, /1, x, /2) =/> y>", "<(&/, /1, x) =/> y>");
     }
 
 //    @Test public void testSequenceSentenceNormalization() {
