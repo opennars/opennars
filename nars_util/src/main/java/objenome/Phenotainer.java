@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +39,7 @@ public class Phenotainer extends Container {
      *  instanced objects */
     public Phenotainer commit() {
         //remove all builders with ambiguosity
-        List<String> toRemove = new ArrayList();
+        Collection<String> toRemove = new ArrayList();
         for (Map.Entry<String, Builder> e : this.builders.entrySet()) {
             if (e.getValue() instanceof Problem)
                 toRemove.add(e.getKey());

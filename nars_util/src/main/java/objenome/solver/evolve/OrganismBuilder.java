@@ -33,21 +33,21 @@ public interface OrganismBuilder<I extends Organism> {
      * The key for setting and retrieving whether the initialisation method
      * should allow duplicate individuals or not
      */
-    public static final GPKey<Boolean> ALLOW_DUPLICATES = new GPKey<>();
+    GPKey<Boolean> ALLOW_DUPLICATES = new GPKey<>();
 
     /**
      * Returns a newly created individual.
      *
      * @return a newly created individual.
      */
-    public I newOrganism();
+    I newOrganism();
 
     /**
      * Returns a population of new individuals.
      *
      * @return a population of new individuals.
      */
-    public Population<I> createPopulation(Population<I> survivors, GPContainer config);
+    Population<I> createPopulation(Population<I> survivors, GPContainer config);
 
     void populate(Population<I> population, int populationSize);
 

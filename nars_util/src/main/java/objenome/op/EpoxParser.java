@@ -166,13 +166,13 @@ public class EpoxParser {
      * they can themselves be parsed individually.
      */
     private static List<String> splitArguments(String argStr) {
-        int depth = 0;
 
         List<String> args = new ArrayList<>(5);
         StringBuilder buffer = new StringBuilder();
 
         argStr = argStr.trim();
 
+        int depth = 0;
         for (int i = 0; i < argStr.length(); i++) {
             char c = argStr.charAt(i);
 

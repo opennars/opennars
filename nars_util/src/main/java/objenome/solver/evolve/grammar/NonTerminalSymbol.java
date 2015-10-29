@@ -22,6 +22,7 @@
 package objenome.solver.evolve.grammar;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -489,7 +490,7 @@ public class NonTerminalSymbol implements Symbol {
      * @return a <code>List</code> of <code>NonTerminalSymbol</code> instances
      * from the parse tree rooted at this symbol.
      */
-    public List<NonTerminalSymbol> getNonTerminalSymbols() {
+    public Collection<NonTerminalSymbol> getNonTerminalSymbols() {
         List<NonTerminalSymbol> nonTerminals = new ArrayList<>();
 
         // Start by adding self.
@@ -570,7 +571,7 @@ public class NonTerminalSymbol implements Symbol {
      * @return a <code>List</code> of <code>Symbol</code> instances from the
      * parse tree rooted at this symbol.
      */
-    public List<Symbol> getAllSymbols() {
+    public Collection<Symbol> getAllSymbols() {
         List<Symbol> symbols = new ArrayList<>();
 
         symbols.add(this);
@@ -686,7 +687,7 @@ public class NonTerminalSymbol implements Symbol {
     public boolean equals(Object obj) {
         boolean equal = true;
 
-        if ((obj != null) && (obj instanceof NonTerminalSymbol)) {
+        if ((obj instanceof NonTerminalSymbol)) {
             NonTerminalSymbol otherSymbol = (NonTerminalSymbol) obj;
 
             if (getGrammarRule() == otherSymbol.getGrammarRule()) {

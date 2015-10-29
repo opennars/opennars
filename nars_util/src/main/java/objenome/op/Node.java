@@ -258,7 +258,6 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             return nodeCount;
         }
 
-        int result = -1;
         for (Node child : current.children) {
             int noNodes = child.length();
             int noFunctions = child.countNonTerminals();
@@ -276,6 +275,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             nodeCount += noNodes;
         }
 
+        int result = -1;
         return result;
     }
 
@@ -309,7 +309,6 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             }
         }
 
-        int result = -1;
         for (Node child : children) {
             int noNodes = child.length();
             int noTerminals = child.countTerminals();
@@ -327,6 +326,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             nodeCount += noNodes;
         }
 
+        int result = -1;
         return result;
     }
 
@@ -337,7 +337,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * @param depth the specified depth of the nodes to return
      * @return a <code>List</code> of all the nodes at the specified depth
      */
-    public List<Node> nodesAtDepth(int depth) {
+    public Collection<Node> nodesAtDepth(int depth) {
         List<Node> nodes = new ArrayList<>((depth + 1) * 3);
         if (depth >= 0) {
             nodesAtDepth(nodes, depth, 0);
@@ -421,7 +421,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         List<Node> terminals = listTerminals();
 
         // Remove duplicates.
-        Set<Node> terminalHash = new UnifiedSet<>(terminals);
+        Collection<Node> terminalHash = new UnifiedSet<>(terminals);
 
         return terminalHash.size();
     }
@@ -508,7 +508,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         List<Node> nonTerminals = listNonTerminals();
 
         // Remove duplicates. Cannot use equals because that compares children
-        List<String> identifiers = new ArrayList<>();
+        Collection<String> identifiers = new ArrayList<>();
         for (Node f : nonTerminals) {
             String name = f.getIdentifier();
             if (!identifiers.contains(name)) {

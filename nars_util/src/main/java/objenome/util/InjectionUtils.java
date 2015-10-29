@@ -1,5 +1,7 @@
 package objenome.util;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,9 +20,9 @@ public class InjectionUtils {
 
     public static final char PREFIX_SEPARATOR = '.';
 
-    private static final Map<Class<?>, Map<String, Object>> settersMaps = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Object>> settersMaps = new UnifiedMap(0);
 
-    private static final Map<Class<?>, Map<String, Object>> fieldsMaps = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Object>> fieldsMaps = new UnifiedMap(0);
 
     public static void prepareForInjection(Class<?> klass, Map<String, Object> setters, Map<String, Object> fields) {
 
@@ -190,14 +192,13 @@ public class InjectionUtils {
 
     }
 
-    public static Object tryToConvert(Object source, Class<?> targetType) {
-
+    public static Object tryToConvert(Object source, Class targetType) {
         return tryToConvert(source, targetType, false);
     }
 
-    public static Object tryToConvert(Object source, Class<?> targetType, boolean tryNumber) {
+    public static Object tryToConvert(Object source, Class targetType, boolean tryNumber) {
 
-        String value = null;
+        String value;
 
         if (source instanceof String) {
 
@@ -290,9 +291,7 @@ public class InjectionUtils {
 
             try {
 
-                Class k = targetType; // not sure how to avoid this raw type!
-
-                newValue = Enum.valueOf(k, value);
+                newValue = Enum.valueOf(targetType, value);
 
             } catch (Exception e) {
 
@@ -382,8 +381,7 @@ public class InjectionUtils {
     public static String getKeyName(Object obj) {
         if (obj instanceof Class<?>) {
             Class<?> k = (Class<?>) obj;
-            String s = k.getSimpleName();
-            return s;
+            return k.getSimpleName();
             /*StringBuilder sb = new StringBuilder(s.length());
             sb.append(s.substring(0, 1).toLowerCase());
             if (s.length() > 1) {
@@ -499,7 +497,7 @@ public class InjectionUtils {
 
     private static final boolean isBlank(Object value) {
 
-        if (value != null && value instanceof String) {
+        if (value instanceof String) {
 
             String s = ((String) value).trim();
 
@@ -797,11 +795,11 @@ public class InjectionUtils {
 
         if (fields != null) {
 
-            iter = fields.entrySet().iterator();
+            Iterator<Map.Entry<String, Object>> x = fields.entrySet().iterator();
 
-            while (iter.hasNext()) {
+            while (x.hasNext()) {
 
-                Map.Entry<String, Object> evar = iter.next();
+                Map.Entry<String, Object> evar = x.next();
                 String var = evar.getKey();
 
                 boolean hasValue = provider.hasValue(var);

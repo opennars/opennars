@@ -21,7 +21,7 @@
  */
 package objenome.util;
 
-import com.gs.collections.api.set.primitive.CharSet;
+import com.gs.collections.api.CharIterable;
 import com.gs.collections.impl.set.mutable.primitive.CharHashSet;
 
 /**
@@ -43,8 +43,8 @@ public final class StringUtils {
      * characters from the <code>chrs</code> array, and <code>false</code> if it
      * contains none
      */
-    public static boolean containsAny(final String str, final char[] chrs) {
-        CharSet x = new CharHashSet(chrs);
+    public static boolean containsAny(final CharSequence str, final char[] chrs) {
+        CharIterable x = new CharHashSet(chrs);
 
         for (int i = 0; i < str.length(); i++) {
             if (x.contains(str.charAt(i)))

@@ -40,7 +40,7 @@ public final class BooleanUtils {
      * @return an array of <code>boolean</code> values which is equivalent to
      * the input <code>String</code>.
      */
-    public static boolean[] toArray(String input) {
+    public static boolean[] toArray(CharSequence input) {
         int len = input.length();
         boolean[] bools = new boolean[len];
 
@@ -79,7 +79,7 @@ public final class BooleanUtils {
             int rep = (int) Math.pow(2, i + 1);
 
             for (int j = 0; j < noInputs; j++) {
-                inputs[j][i] = (j % rep) > Math.floor(rep / 2) - 1;
+                inputs[j][i] = (j % rep) > Math.floor(rep / 2f) - 1;
             }
         }
 
@@ -113,7 +113,7 @@ public final class BooleanUtils {
         for (int i = 0; i < noBits; i++) {
             int rep = (int) Math.pow(2, i + 1);
 
-            inputs[i] = (index % rep) > Math.floor(rep / 2) - 1;
+            inputs[i] = (index % rep) > Math.floor(rep / 2f) - 1;
         }
 
         return inputs;

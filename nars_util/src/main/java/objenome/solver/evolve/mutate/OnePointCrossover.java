@@ -310,7 +310,7 @@ public class OnePointCrossover extends AbstractOrganismOperator implements Liste
      *
      * @since 2.0
      */
-    public class EndEvent extends OperatorEvent.EndOperator {
+    public static class EndEvent extends OperatorEvent.EndOperator {
 
         private Node[] subtrees;
         private int[] points;

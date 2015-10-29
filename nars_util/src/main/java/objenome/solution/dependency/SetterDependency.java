@@ -1,9 +1,9 @@
 package objenome.solution.dependency;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import objenome.util.InjectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ public class SetterDependency {
 
     private final Class<?> sourceType;
 
-    private final Map<String, Method> cache = new HashMap<>();
+    private final Map<String, Method> cache = new UnifiedMap(0);
 
     public SetterDependency(String targetProperty, String sourceFromContainer, Class<?> sourceType) {
 
@@ -48,6 +48,8 @@ public class SetterDependency {
 
     @Override
     public boolean equals(Object obj) {
+
+        if (obj == this) return true;
 
         if (!(obj instanceof SetterDependency)) {
             return false;
@@ -124,7 +126,7 @@ public class SetterDependency {
 
             synchronized (cache) {
 
-                cache.put(className, m);
+                cache.put(className, m );
 
             }
 

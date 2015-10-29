@@ -39,14 +39,13 @@ public class LevelsParser {
     }
     
     public Token<Object> parseLevels(TokenList<?> tokened) throws ParseException {
-        int indexOn;
-        
+
         ArrayList<TokenList<Object>> parenContextStack = new ArrayList<TokenList<Object>>();
         parenContextStack.add(new TokenList<Object>(tokened.fromStrBegin));
         ArrayList<Token<Object>> parenStack = new ArrayList<Token<Object>>();
         parenStack.add(new Token<Object>("stringBeg"));
-        
-        indexOn = 0;
+
+        int indexOn = 0;
         while (indexOn < tokened.size()) {
             if (debug) System.err.println("--------------");
             if (debug) System.err.println("contexts: " + parenContextStack);

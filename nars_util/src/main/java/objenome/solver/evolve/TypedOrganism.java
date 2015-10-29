@@ -256,7 +256,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
     @Override
     public boolean equals(Object obj) {
         boolean equal = false;
-        if ((obj != null) && (obj instanceof TypedOrganism)) {
+        if ((obj instanceof TypedOrganism)) {
             TypedOrganism p = (TypedOrganism) obj;
             if (Objects.equals(root, p.root)) {
                 equal = true;

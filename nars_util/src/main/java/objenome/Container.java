@@ -9,7 +9,7 @@ import objenome.util.InjectionUtils.Provider;
 import objenome.util.bean.BeanProxyBuilder;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,10 +76,9 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
         Scope scope = scopes.get(name);
 
-        Object target = null;
-
         try {
 
+            Object target = null;
             if (scope == Scope.SINGLETON) {
 
                 boolean needsToCreate = false;
@@ -110,16 +109,12 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
             } else if (scope == Scope.THREAD) {
 
-                boolean needsToCreate = false;
-
-                boolean needsToAddToCache = false;
-
-                ThreadLocal<Object> t = null;
-
                 //synchronized (this) {
 
-                t = threadLocalsCache.get(name);
-                    if (t!=null) {
+                ThreadLocal<Object> t = threadLocalsCache.get(name);
+                boolean needsToAddToCache = false;
+                boolean needsToCreate = false;
+                if (t!=null) {
 
                         //t = threadLocalsCache.get(name);
 
@@ -317,7 +312,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
     @Override
     public void remove(Scope scope) {
         if (scope == Scope.SINGLETON) {
-            List<ClearableHolder> listToClear = new FasterList<>();
+            Collection<ClearableHolder> listToClear = new FasterList<>();
             synchronized (this) {
                 singletonsCache.forEach((k,value) -> {
                     Builder factory = builders.get(k);
@@ -334,7 +329,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 cp.clear();
             }
         } else if (scope == Scope.THREAD) {
-            List<ClearableHolder> listToClear = new FasterList<>();
+            Collection<ClearableHolder> listToClear = new FasterList<>();
             synchronized (this) {
                 for (Map.Entry<String, ThreadLocal<Object>> stringThreadLocalEntry : threadLocalsCache.entrySet()) {
                     Builder factory = builders.get(stringThreadLocalEntry.getKey());

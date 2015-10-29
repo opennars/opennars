@@ -17,9 +17,8 @@ public class TokenListMapper {
     public TokenList<Object> mapTokens(TokenList<?> tokenedW) {
         // if (debug) System.err.println("mapping tokens");
         TokenList<Object> tokened = tokenedW.castValuesTo(Object.class);
-        int indexOn;
-        
-        indexOn = 0;
+
+        int indexOn = 0;
         while (indexOn < tokened.size()) {
             Token<Object> tokenOn = tokened.get(indexOn);
             Object tokenValueOn = tokenOn.tokenValue;

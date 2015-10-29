@@ -29,7 +29,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
  * this will be performed by evaluating the quality of each individual against
  * problem specific requirements.
  */
-public class FitnessEvaluator extends ProxyComponent<FitnessFunction> {
+public class FitnessEvaluator<I extends Organism> extends ProxyComponent<FitnessFunction> implements PopulationProcess<I> {
 
     /**
      * The key for setting and retrieving the <code>FitnessFunction</code> used
@@ -56,7 +56,7 @@ public class FitnessEvaluator extends ProxyComponent<FitnessFunction> {
      * <code>FitnessFunction</code> object.
      */
     @Override
-    public Population process(Population population) {
+    public Population<I> process(Population<I> population) {
         if (this.config == null)
             setConfig(population.getConfig());
         

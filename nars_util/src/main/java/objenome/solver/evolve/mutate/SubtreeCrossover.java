@@ -158,10 +158,6 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
         List<Integer> matchingIndexes = new ArrayList<>();
         nodesOfType(program2.getRoot(), subtree1Type, 0, matchingNodes, matchingIndexes);
 
-        TypedOrganism[] children = new TypedOrganism[0];
-        int[] swapPoints = new int[0];
-        Node[] subtrees = new Node[0];
-
         if (matchingNodes.size() > 0) {
             // Select second swap point with the same data-type
             int index = selectNodeIndex(matchingNodes);
@@ -176,20 +172,20 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
                 int depth1 = program1.depth();
                 int depth2 = program2.depth();
 
-                children = new TypedOrganism[2];
+                TypedOrganism[] children = new TypedOrganism[2];
 
                 if (depth1 <= maxDepth && depth2 <= maxDepth) {
                     children = new TypedOrganism[]{program1, program2};
                 } else if (depth1 <= maxDepth) {
-                    children = new TypedOrganism[]{program1};
+                    children  = new TypedOrganism[]{program1};
                 } else if (depth2 <= maxDepth) {
-                    children = new TypedOrganism[]{program2};
+                    children  = new TypedOrganism[]{program2};
                 } else {
-                    children = new TypedOrganism[0];
+                    children  = new TypedOrganism[0];
                 }
 
-                swapPoints = new int[]{swapPoint1, swapPoint2};
-                subtrees = new Node[]{subtree1, subtree2};
+                int[] swapPoints = new int[]{swapPoint1, swapPoint2};
+                Node[] subtrees = new Node[]{subtree1, subtree2};
 
                 ((EndEvent) event).setCrossoverPoints(swapPoints);
                 ((EndEvent) event).setSubtrees(subtrees);
@@ -402,7 +398,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
      *
      * @since 2.0
      */
-    public class EndEvent extends OperatorEvent.EndOperator {
+    public static class EndEvent extends OperatorEvent.EndOperator {
 
         private Node[] subtrees;
         private int[] points;

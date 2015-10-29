@@ -39,7 +39,7 @@ public abstract class NumericSolver<C> implements Solver  {
         final List<SetNumericValue> variables = new ArrayList();
         
         //store backup in case it needs restored
-        HashMap originalProblems = new HashMap(p);
+        Map originalProblems = new HashMap(p);
         
         for (Map.Entry<Problem, Solution> e : p.entrySet()) {
             if (e.getValue() == null) {
@@ -63,11 +63,10 @@ public abstract class NumericSolver<C> implements Solver  {
         if (variables.isEmpty()) {
             return;
         }
-    
-        
-        Objenome o;
+
+
         try {
-            o = g.solve(targets, p);
+            Objenome o = g.solve(targets, p);
             solve(o, variables);
             
         } catch (IncompleteSolutionException ex) {

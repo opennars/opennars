@@ -27,7 +27,6 @@ import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.OnePointCrossover;
 import objenome.solver.evolve.mutate.PointMutation;
@@ -37,9 +36,8 @@ import objenome.solver.evolve.selection.TournamentSelector;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -62,14 +60,14 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
 
     private final DescriptiveStatistics ds = new DescriptiveStatistics();
 
-    public final EventManager events = new EventManager();
 
-    public final HashMap<Class<?>, Object> stat = new HashMap<>();
+
+    //public final HashMap<Class<?>, Object> stat = new HashMap<>();
 
     private final ExecutorService exe;
     private final int threads;
     private final int populationSize;
-    protected Pipeline pipeline;
+    //protected Pipeline pipeline;
 
     public final List<EGoal<Civilized>> goals = new ArrayList();
 
@@ -81,7 +79,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         this(threads, populationSize, maximumDepth, Sets.newHashSet(additionalOperators));
     }
 
-    public Civilization(int threads, int populationSize, int maximumDepth, Set<Node> additionalOperators) {
+    public Civilization(int threads, int populationSize, int maximumDepth, Collection<Node> additionalOperators) {
         super();
         this.threads = threads;
         this.populationSize = populationSize;
@@ -106,7 +104,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         //the(Breeder.SELECTOR, new RouletteSelector());
         the(Breeder.SELECTOR, new TournamentSelector(7));
 
-        List<OrganismOperator> operators = new ArrayList<>();
+        Collection<OrganismOperator> operators = new ArrayList<>();
         {
             operators.add(new PointMutation());
             the(PointMutation.PROBABILITY, 0.1);
@@ -126,16 +124,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
 
     @Override
     protected Population<Civilized> newPopulation() {
-        return new Population<Civilized>(this) {
-
-
-            @Override
-            protected void onRemoved(Civilized i) {
-                super.onRemoved(i);
-                i.onDeath();
-            }
-
-        };
+        return new CivilizedPopulation();
     }
 
     @Override
@@ -327,7 +316,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     protected void updatePopulation() {
 
 
-        List<Civilized> toKill = new ArrayList();
+        Collection<Civilized> toKill = new ArrayList();
 
 
         final Population<Civilized> pop = getPopulation();
@@ -352,7 +341,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         }
 
 
-        synchronized (pop) {
+        synchronized (stat) {
 
             pop.removeAll(toKill);
 
@@ -595,4 +584,18 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     @Deprecated public static class GPKey<T> {
     }
 
+    private class CivilizedPopulation extends Population<Civilized> {
+
+
+        public CivilizedPopulation() {
+            super(Civilization.this);
+        }
+
+        @Override
+        protected void onRemoved(Civilized i) {
+            super.onRemoved(i);
+            i.onDeath();
+        }
+
+    }
 }

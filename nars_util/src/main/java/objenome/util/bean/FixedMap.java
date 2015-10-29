@@ -1,9 +1,9 @@
 package objenome.util.bean;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Map with a fixed size (no resize possible) so this implementation is threadsafe.
@@ -19,7 +19,7 @@ public class FixedMap<K, V> implements Serializable {
 
     private final Map<K, V> map;
 
-    public FixedMap(final Set<K> keys) {
+    public FixedMap(final Collection<K> keys) {
         this.map = new HashMap<K, V>(keys.size(), 1f);
         for (final K key : keys) {
             // init all keys using null value so all keys exists (and beside the map guaranteed has

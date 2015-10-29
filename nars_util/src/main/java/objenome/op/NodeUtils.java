@@ -22,6 +22,7 @@
 package objenome.op;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public final class NodeUtils {
      * @return a <code>List</code> of <code>Node</code> objects from the
      * <code>syntax</code> with arity of <code>0</code>
      */
-    public static List<Node> terminals(List<Node> syntax) {
+    public static List<Node> terminals(Collection<Node> syntax) {
         if (syntax == null) {
             throw new IllegalArgumentException("syntax must not be null");
         }
@@ -70,7 +71,7 @@ public final class NodeUtils {
      * @return a <code>List</code> of <code>Node</code> objects from the
      * <code>syntax</code> with arity <code>&gt;0</code>
      */
-    public static List<Node> nonTerminals(List<Node> syntax) {
+    public static List<Node> nonTerminals(Collection<Node> syntax) {
         if (syntax == null) {
             throw new IllegalArgumentException("syntax must not be null");
         }

@@ -359,8 +359,6 @@ public class ClassBuilder implements ConfigurableBuilder {
     @Override
     public <T> T instance(objenome.Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere) {
 
-        Object obj = null;
-
         Object[] values = null;
 
         synchronized (container) {
@@ -456,6 +454,7 @@ public class ClassBuilder implements ConfigurableBuilder {
             return null;
         }
 
+        Object obj = null;
         try {
 
             obj = constructor.newInstance(values);

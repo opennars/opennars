@@ -630,7 +630,7 @@ public final class SgClass {
 
     private void addFields(final StringBuffer sb) {
         for (int i = 0; i < getFields().size(); i++) {
-            sb.append(getFields().get(i)).append("\n");
+            sb.append(getFields().get(i)).append('\n');
             sb.append('\n');
         }
         sb.append('\n');
@@ -638,7 +638,7 @@ public final class SgClass {
 
     private void addConstructors(final StringBuffer sb) {
         for (int i = 0; i < constructors.size(); i++) {
-            sb.append(constructors.get(i)).append("\n");
+            sb.append(constructors.get(i)).append('\n');
             sb.append('\n');
         }
         sb.append('\n');
@@ -646,14 +646,14 @@ public final class SgClass {
 
     private void addMethods(final StringBuffer sb) {
         for (int i = 0; i < methods.size(); i++) {
-            sb.append(methods.get(i)).append("\n");
+            sb.append(methods.get(i)).append('\n');
             sb.append('\n');
         }
     }
 
     private void addInnerClasses(final StringBuffer sb) {
         for (int i = 0; i < classes.size(); i++) {
-            sb.append(classes.get(i)).append("\n");
+            sb.append(classes.get(i)).append('\n');
         }
         sb.append("}\n");
     }

@@ -311,7 +311,7 @@ public class SubtreeMutation extends AbstractOrganismOperator implements Listene
      *
      * @since 2.0
      */
-    public class SubtreeMutationEndEvent extends OperatorEvent.EndOperator {
+    public static class SubtreeMutationEndEvent extends OperatorEvent.EndOperator {
 
         private Node subtree;
         private int point;

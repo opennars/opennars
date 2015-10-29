@@ -8,7 +8,6 @@ package objenome.goal.numeric;
 import objenome.Objenome;
 import objenome.solution.SetNumericValue;
 import objenome.solver.NumericSolver;
-import objenome.solver.Solution;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BisectionSolver;
 
@@ -32,15 +31,14 @@ public class FindZeros<C> extends NumericSolver<C> {
             //bind variables values to objenome
             
             SetNumericValue var = variables.get(0);
-            Solution sol = var;
-            
+
             double best = solver.solve(1000, new UnivariateFunction() {
                 @Override
                 public double value(final double d) {
                     var.setValue(d);
                     return eval(o);
                 }
-            }, getMin(var, sol), getMax(var, sol)); //var.getMin().doubleValue(), var.getMax().doubleValue());
+            }, getMin(var, var), getMax(var, var)); //var.getMin().doubleValue(), var.getMax().doubleValue());
             
             var.setValue(best);
         } else {

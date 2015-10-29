@@ -94,9 +94,8 @@ public class Civilized<I> extends TypedOrganism implements Runnable {
                     @Override
                     public Double call() throws Exception {
                         //System.out.println(i + " evaluating " + g);
-                        double s = g.cost(Civilized.this);
                         //System.out.println("SCORE=" + s);
-                        return s;
+                        return g.cost(Civilized.this);
                     }
                 }).get();
 

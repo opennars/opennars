@@ -322,9 +322,7 @@ public class Division extends Operation {
         if (isCot()) return "cot" + (((Operation) numerator).getExpr(0).functionalParens()?"(":" ") + ((Operation) numerator).getExpr(0).pretty() + (((Operation) numerator).getExpr(0).functionalParens()?")":"");
         if (isSec()) return "sec" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
         if (isCsc()) return "csc" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
-        
-        String string = "";
-        
+
         Integer thisClassOrder = this.classOrder();
         
         boolean numeratorParens = false;
@@ -333,7 +331,8 @@ public class Division extends Operation {
         boolean denomParens = false;
         if (thisClassOrder > denom.printLevelLeft()) denomParens = true;
         // if (debug) System.err.println("Division toString(): for expr=" + denom + ", printLevelLeft=" + denom.printLevelLeft());
-        
+
+        String string = "";
         string = string.concat((numeratorParens?"(":"") + numerator.pretty() + (numeratorParens?")":""));
         string = string.concat("/");
         string = string.concat((denomParens?"(":"") + denom.pretty() + (denomParens?")":""));

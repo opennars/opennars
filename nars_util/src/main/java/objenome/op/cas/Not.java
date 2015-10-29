@@ -2,6 +2,7 @@ package objenome.op.cas;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Not extends Operation {
     
@@ -16,7 +17,7 @@ public class Not extends Operation {
         return new Not(notExpr).simplify();
     }
     
-    public static Expr make(ArrayList<? extends Expr> exprs) {
+    public static Expr make(List<? extends Expr> exprs) {
         return make(exprs.get(0));
     }
     
@@ -70,11 +71,10 @@ public class Not extends Operation {
     
     public String pretty() {
         if (!printSimplified) return printSimplify().pretty();
-        
-        String string;
+
         boolean parens = notExpr.functionalParens();
-        
-        string = "not";
+
+        String string = "not";
         if (!parens) string = string.concat(" ");
                 
         string = string.concat((parens?"(":"") + notExpr.pretty() + (parens?")":""));

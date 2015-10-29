@@ -1,5 +1,6 @@
 package objenome.op.cas;
 
+import com.google.common.collect.Lists;
 import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
@@ -9,20 +10,20 @@ public class Product extends Operation {
     
     private ArrayList<Expr> exprs;
     
-    private <E extends Expr> Product(ArrayList<E> exprs) {
+    private Product(ArrayList<Expr> exprs) {
         this.exprs = ArrayLists.castAll(exprs, Expr.class);
     }
     
-    public static Expr make(ArrayList<? extends Expr> exprs) {
+    public static Expr make(ArrayList<Expr> exprs) {
         return make(exprs, true);
     }
     
-    public static Expr make(ArrayList<? extends Expr> exprs, boolean simplify) {
+    public static Expr make(ArrayList<Expr> exprs, boolean simplify) {
         Product product = new Product(exprs);
         return simplify ? product.simplify() : product;
     }
     
-    public static Expr makeDefined(ArrayList<? extends Expr> exprs) {
+    public static Expr makeDefined(ArrayList<Expr> exprs) {
         return make(exprs);
     }
     
@@ -31,17 +32,11 @@ public class Product extends Operation {
     }
     
     public static Expr make(Expr expr1, Expr expr2, boolean simplify) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>(2);
-        tmp1.add(expr1);
-        tmp1.add(expr2);
-        return make(tmp1, simplify);
+        return make(Lists.newArrayList(expr1, expr2), simplify);
     }
     
     public static Expr negative(Expr expr) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>(2);
-        tmp1.add(Num.make(-1));
-        tmp1.add(expr);
-        return make(tmp1);
+        return make(Lists.newArrayList(Num.make(-1), expr));
     }
     
     public Expr deriv(Var respected) {
@@ -193,24 +188,22 @@ public class Product extends Operation {
         
         String string = "";
         Integer classOrder = this.classOrder();
-        boolean lastMinus;
         boolean nowMinus = false;
         Expr lastExpr = null;
-        boolean lastParens;
         boolean parens = false;
         
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);
-            
-            lastMinus = nowMinus;
+
+            boolean lastMinus = nowMinus;
             nowMinus = false;
             
             Integer exprLevelLeft = expr.printLevelLeft();
             Integer exprLevelRight = expr.printLevelRight();
             // if (debug) System.err.println("Product toString(): for i=" + i + ", classOrder=" + exprClassOrder);
             // if (debug) System.err.println("Product toString(): for expr=" + expr + ", exprLevelLeft=" + exprLevelLeft + ", exprLevelRight=" + exprLevelRight);
-            
-            lastParens = parens;
+
+            boolean lastParens = parens;
             parens = false;
             if (i != 0 && exprLevelLeft != null && classOrder > exprLevelLeft) parens = true;
             if (i != exprs.size() - 1 && exprLevelRight != null && classOrder > exprLevelRight) parens = true;

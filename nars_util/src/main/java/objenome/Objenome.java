@@ -10,7 +10,10 @@ import objenome.solver.Solution;
 import objenome.solver.Solver;
 import org.apache.commons.math3.genetics.InvalidRepresentationException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 /**
@@ -32,7 +35,7 @@ public class Objenome {
         */
     private Phenotainer pheno = null;
 
-    public Objenome(Multitainer context, Collection<Solution> parameters) throws InvalidRepresentationException {
+    public Objenome(Multitainer context, Iterable<Solution> parameters) throws InvalidRepresentationException {
         super();
                 
         for (Solution o : parameters)

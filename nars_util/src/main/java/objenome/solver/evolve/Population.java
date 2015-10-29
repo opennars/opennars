@@ -190,13 +190,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
      * individuals' fitness from best to worst.
      */
     public void sort() {
-        Collections.sort(individuals, new Comparator<Organism>() {
-
-            @Override
-            public int compare(Organism o1, Organism o2) {
-                return o2.compareTo(o1);
-            }
-        });
+        Collections.sort(individuals, OrganismComparator);
     }
 
     /**
@@ -243,4 +237,11 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
         return s;
     }
 
+    private static final Comparator<Organism> OrganismComparator = new Comparator<Organism>() {
+
+        @Override
+        public int compare(Organism o1, Organism o2) {
+            return o2.compareTo(o1);
+        }
+    };
 }

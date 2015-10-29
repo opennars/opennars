@@ -79,7 +79,7 @@ import java.util.List;
      */
     public <T extends Event> boolean remove(Class<? extends T> key, Listener<T> listener) {
         List<Listener<?>> listeners = mapping.get(key);
-        return listeners == null ? false : listeners.remove(listener);
+        return listeners != null && listeners.remove(listener);
     }
 
     /**

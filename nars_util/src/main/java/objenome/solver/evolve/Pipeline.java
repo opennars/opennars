@@ -21,26 +21,28 @@
  */
 package objenome.solver.evolve;
 
-import java.util.ArrayList;
+import nars.util.data.list.FasterList;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
  * A <code>Pipeline</code> applies a sequence of population processes
  * Pipelines are themselves population processes.
  */
-public class Pipeline implements PopulationProcess {
+public class Pipeline<I extends Organism> implements PopulationProcess<I> {
 
     /**
      * The list of components in this pipeline.
      */
-    private final List<PopulationProcess> pipeline;
-    private GPContainer container;
+    private final List<PopulationProcess<I>> pipeline;
+    //private GPContainer container;
 
     /**
      * Constructs an empty <code>Pipeline</code>.
      */
     public Pipeline() {
-        pipeline = new ArrayList<>();
+        pipeline = new FasterList();
     }
 
     /**
@@ -57,8 +59,8 @@ public class Pipeline implements PopulationProcess {
      * provided as a parameter.
      */
     @Override
-    public <I extends Organism> Population<I> process(Population<I> population) {
-        this.container = population.getConfig();
+    public Population<I> process(Population<I> population) {
+        //this.container = population.getConfig();
         for (PopulationProcess component : pipeline) {            
             population = component.process(population);
             if (population == null)
@@ -83,7 +85,7 @@ public class Pipeline implements PopulationProcess {
      *
      * @param components a list of components to be added to this pipeline
      */
-    public void addAll(List<PopulationProcess> components) {
+    public void addAll(Collection<PopulationProcess<I>> components) {
         pipeline.addAll(components);
     }
 

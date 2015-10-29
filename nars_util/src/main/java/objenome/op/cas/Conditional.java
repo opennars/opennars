@@ -42,8 +42,7 @@ public class Conditional extends Operation {
     }
     
     public String pretty() {
-        String string = "";
-        
+
         Integer thisClassOrder = this.classOrder();
         
         boolean thenParens = false;
@@ -52,7 +51,8 @@ public class Conditional extends Operation {
         boolean ifIsParens = false;
         if (thisClassOrder > ifIs.printLevelLeft()) ifIsParens = true;
         // if (debug) System.err.println("Division toString(): for expr=" + ifIs + ", printLevelLeft=" + ifIs.printLevelLeft());
-        
+
+        String string = "";
         string = string.concat((thenParens?"(":"") + then.pretty() + (thenParens?")":""));
         string = string.concat(" if ");
         string = string.concat((ifIsParens?"(":"") + ifIs.pretty() + (ifIsParens?")":""));

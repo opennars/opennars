@@ -34,7 +34,7 @@ public final class ObjectUtil {
         return methods.toArray(new Method[methods.size()]);
     }
 
-    protected static void fillGetters(final Class<?> clazz, final List<Method> methods) {
+    protected static void fillGetters(final Class<?> clazz, final Collection<Method> methods) {
         final PropertyDescriptor[] descriptors = getBeanInfo(clazz).getPropertyDescriptors();
         for (final PropertyDescriptor descriptor : descriptors) {
             final Method method = descriptor.getReadMethod();
@@ -61,7 +61,7 @@ public final class ObjectUtil {
         return methods.toArray(new Method[methods.size()]);
     }
 
-    protected static void fillSetters(final Class<?> clazz, final List<Method> methods) {
+    protected static void fillSetters(final Class<?> clazz, final Collection<Method> methods) {
         for (final PropertyDescriptor propertyDescriptor : getBeanInfo(clazz).getPropertyDescriptors()) {
             final Method method = propertyDescriptor.getWriteMethod();
             if (method != null) {
@@ -190,7 +190,7 @@ public final class ObjectUtil {
     }
 
     public static Collection<Class<?>> collectInterfaces(final Class<?> clazz) {
-        final Set<Class<?>> all = new HashSet<Class<?>>();
+        final Collection<Class<?>> all = new HashSet<Class<?>>();
         if (Modifier.isInterface(clazz.getModifiers())) {
             all.add(clazz);
         }

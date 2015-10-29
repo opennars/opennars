@@ -67,25 +67,23 @@ public abstract class AbstractOrganismOperator implements OrganismOperator {
         this.config = population.getConfig();
         setConfig(population.getConfig());
 
-        Organism[] parents = individuals; //clone(individuals);
-
         // fires the start event
         StartOperator start = getStartEvent(individuals);
         population.getConfig().fire(start);
 
         EndOperator end = getEndEvent(individuals);
-        Organism[] newParents = perform(end, parents);
+        Organism[] newParents = perform(end, individuals);
 
         for (Organism o : newParents)
             o.normalize();
 
         // fires the end event only if the operator was successful
-        if (parents != null) {
+        if (individuals != null) {
             end.setChildren(newParents);
             population.getConfig().fire(end);
         }
 
-        return parents;
+        return individuals;
     }
 
     /**

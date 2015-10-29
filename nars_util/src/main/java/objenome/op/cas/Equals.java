@@ -2,6 +2,7 @@ package objenome.op.cas;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Equals extends Comparison {
     
@@ -14,7 +15,7 @@ public class Equals extends Comparison {
         return new Equals(expr1, expr2).simplify();
     }
     
-    public Expr make(ArrayList<Expr> exprs) {
+    public Expr make(List<Expr> exprs) {
         if (exprs.size() <= 2) return make(exprs.get(0), exprs.get(1));
         throw new UnsupportedOperationException("Equals chaining");
     }
@@ -37,8 +38,7 @@ public class Equals extends Comparison {
     }
     
     public String pretty() {
-        String string = "";
-        
+
         Integer thisClassOrder = this.classOrder();
         
         boolean expr1Parens = false;
@@ -47,7 +47,8 @@ public class Equals extends Comparison {
         boolean expr2Parens = false;
         if (thisClassOrder > expr2.printLevelLeft()) expr2Parens = true;
         // if (debug) System.err.println("Division toString(): for expr=" + expr2 + ", printLevelLeft=" + expr2.printLevelLeft());
-        
+
+        String string = "";
         string = string.concat((expr1Parens?"(":"") + expr1.pretty() + (expr1Parens?")":""));
         string = string.concat("=");
         string = string.concat((expr2Parens?"(":"") + expr2.pretty() + (expr2Parens?")":""));

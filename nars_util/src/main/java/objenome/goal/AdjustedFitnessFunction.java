@@ -171,9 +171,7 @@ public class AdjustedFitnessFunction extends AbstractFitnessFunction implements 
             throw new IllegalArgumentException("Standardised fitness must be 0.0 or greater");
         }
 
-        double adjusted = 1.0 / (1.0 + standardised);
-
-        return adjusted;
+        return 1.0 / (1.0 + standardised);
     }
 
     /**

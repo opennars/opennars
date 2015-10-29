@@ -27,8 +27,6 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
     public DefaultProblemSTGP(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
         super();
 
-        double elitismRate = 0.2;
-
         the(Population.SIZE, populationSize);
 
         //List<TerminationCriteria> criteria = new ArrayList<>();
@@ -56,6 +54,7 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
         }
         the(Breeder.OPERATORS, operators);
 
+        double elitismRate = 0.2;
         the(BranchedBreeder.ELITISM, (int)Math.ceil(populationSize * elitismRate));
 
 

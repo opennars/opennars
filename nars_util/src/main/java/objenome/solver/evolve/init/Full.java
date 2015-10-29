@@ -341,8 +341,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
 
         final List<Node> nonTerminals = this.nonTerminals;
 
-        final List<Node> validNodes = validNodeTemporary;
-        validNodes.clear();
+        validNodeTemporary.clear();
 
         if (remainingDepth > 0) {
             int nts = nonTerminals.size();
@@ -353,7 +352,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
                 for (Class<?>[] argTypes : argTypeSets) {
                     Class<?> type = n.dataType(argTypes);
                     if ((type != null) && requiredType.isAssignableFrom(type)) {
-                        validNodes.add(n);
+                        validNodeTemporary.add(n);
                         break;
                     }
                 }
@@ -363,22 +362,14 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
             for (int i = 0; i < nts; i++) {
                 Node n = terminals.get(i);
                 if (n.dataType().isAssignableFrom(requiredType)) {
-                    validNodes.add(n);
+                    validNodeTemporary.add(n);
                 }
             }
         }
-        return validNodes;
+        return validNodeTemporary;
     }
 
-    public final Comparator<Class<?>> classNameComparator = new Comparator<Class<?>>() {
-
-        @Override
-        public int compare(Class<?> o1, Class<?> o2) {
-            return Integer.compare(o1.hashCode(), o2.hashCode());
-            //return String.compare(o1.getName(), o2.getName());
-        }
-        
-    };
+    public final Comparator<Class<?>> classNameComparator = new ClassComparator();
     
     /*
      * Generates the "type possibilities table" from the syntax and return
@@ -595,5 +586,15 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
     @Override
     public void setConfig(GPContainer c) {
         setup(c);
+    }
+
+    private static class ClassComparator implements Comparator<Class<?>> {
+
+        @Override
+        public int compare(Class<?> o1, Class<?> o2) {
+            return Integer.compare(o1.hashCode(), o2.hashCode());
+            //return String.compare(o1.getName(), o2.getName());
+        }
+
     }
 }

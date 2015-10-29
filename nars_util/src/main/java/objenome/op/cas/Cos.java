@@ -44,10 +44,9 @@ public class Cos extends Function {
     }
     
     public String pretty() {
-        String string;
         boolean parens = ofExpr.functionalParens();
-        
-        string = "cos";
+
+        String string = "cos";
         if (!parens) string = string.concat(" ");
                 
         string = string.concat((parens?"(":"") + ofExpr.pretty() + (parens?")":""));

@@ -6,6 +6,7 @@ import objenome.op.cas.Num;
 import objenome.op.cas.Product;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public final class ArrayLists {
         if (direction == 0) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexIn(arrayList, splitOn, objectFound));
-                ArrayList<T> tmp = new ArrayList<T>(subList);
+                List<T> tmp = new ArrayList<T>(subList);
                 if (tmp.size() > 0) {
                     splitted.add(tmp);
                 }
@@ -68,7 +69,7 @@ public final class ArrayLists {
         }
         else if (direction == -1) {
             List<? extends T> subList = arrayList.subList(0, indexIn(arrayList, splitOn, objectFound));
-            ArrayList<T> tmp = new ArrayList(subList);
+            List<T> tmp = new ArrayList(subList);
             
             splitted.add(tmp);
             
@@ -79,7 +80,7 @@ public final class ArrayLists {
         }
         else if (direction == 1) {
             List<T> subList = arrayList.subList(lastIndexIn(arrayList, splitOn, objectFound) + 1, arrayList.size());
-            ArrayList<T> tmp = new ArrayList<T>(subList);
+            List<T> tmp = new ArrayList<T>(subList);
             
             splitted.add(tmp);
             
@@ -91,7 +92,7 @@ public final class ArrayLists {
         else if (direction == 2) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexInMultFound(arrayList, splitOn, objectFound));
-                ArrayList<T> tmp = new ArrayList<T>(subList);
+                List<T> tmp = new ArrayList<T>(subList);
                 if (tmp.size() > 0) {
                     splitted.add(tmp);
                 } else {
@@ -111,7 +112,7 @@ public final class ArrayLists {
         return splitted;
     }
 
-    public static <T> int indexIn(ArrayList<? extends T> arrayList, T[] objects) {
+    public static <T> int indexIn(List<? extends T> arrayList, T[] objects) {
 	    return indexIn(arrayList, objects, null);
     }
     
@@ -160,7 +161,7 @@ public final class ArrayLists {
 	    return lastIndexIn(arrayList, objects, null);
     }
     
-    public static <T extends ArrayList> int lastIndexIn(List<T> arrayList, T[] objects, ArrayList<T> objectFound) {
+    public static <T extends ArrayList> int lastIndexIn(List<T> arrayList, T[] objects, List<T> objectFound) {
         int index = -1;
         
         for (T object : objects) {
@@ -180,14 +181,14 @@ public final class ArrayLists {
         return index;
     }
     
-    public static <T> boolean containsIn(List<? extends T> arrayList, T[] objects) {
+    public static <T> boolean containsIn(Collection<? extends T> arrayList, T[] objects) {
         for (T object : objects) {
             if (arrayList.contains(object)) return true;
         }
         return false;
     }
     
-    public static ArrayList<Expr> copyAll(ArrayList<Expr> exprs, HashMap<Expr, Expr> subs) {
+    public static ArrayList<Expr> copyAll(List<Expr> exprs, HashMap<Expr, Expr> subs) {
         ArrayList<Expr> copies = new ArrayList(exprs.size());
         for (Expr expr : exprs) {
             copies.add(expr.copy(subs));
@@ -205,7 +206,7 @@ public final class ArrayLists {
         return Product.make(exprs, simplify);
     }
     
-    public static <T> ArrayList<T> castAll(ArrayList arrList, Class<T> toClass) {
+    public static <T> ArrayList<T> castAll(Iterable arrList, Class<T> toClass) {
         ArrayList<T> newArrList = new ArrayList<T>();
         for (Object o : arrList) {
             newArrList.add((T) o);
@@ -213,7 +214,7 @@ public final class ArrayLists {
         return newArrList;
     }
     
-    public static String dumpAll(ArrayList<Expr> exprs) {
+    public static String dumpAll(Iterable<Expr> exprs) {
         ArrayList<String> strs = new ArrayList<String>();
         for (Expr expr: exprs) {
             strs.add(expr.toString());
@@ -221,7 +222,7 @@ public final class ArrayLists {
         return strs.toString();
     }
     
-    public static boolean elemExprsEqual(ArrayList<? extends Expr> al1, ArrayList<? extends Expr> al2) {
+    public static boolean elemExprsEqual(List<? extends Expr> al1, List<? extends Expr> al2) {
         if (al1.size() != al2.size()) return false;
         for (int i = 0; i < al1.size(); i++) {
             if (!al1.get(i).equalsExpr(al2.get(i))) return false;

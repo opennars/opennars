@@ -142,8 +142,8 @@ public class Grammar {
         BufferedReader input = new BufferedReader(new FileReader(grammarFile));
         StringBuilder grammarStr = new StringBuilder();
 
-        String line = null;
         try {
+            String line = null;
             while ((line = input.readLine()) != null) {
                 grammarStr.append(line);
                 grammarStr.append(System.getProperty("line.separator"));
@@ -171,18 +171,17 @@ public class Grammar {
      * Mapper.ContextFreeGrammar class of GEVA v.1.0.
      */
     protected void parseGrammar(String grammar) {
-        State state = State.START;
         StringBuilder buffer = new StringBuilder();
-        GrammarRule lhs = null;
         GrammarProduction grammarProduction = new GrammarProduction();
-
-        boolean quoted = false;
-        boolean terminal = true;
-        boolean special = false;
 
         // Append a \n to ensure we detect the end of file.
         grammar += '\n';
 
+        boolean special = false;
+        boolean terminal = true;
+        boolean quoted = false;
+        GrammarRule lhs = null;
+        State state = State.START;
         for (int i = 0; i < grammar.length(); i++) {
             char ch = grammar.charAt(i);
 

@@ -76,13 +76,12 @@ public class CachedFitnessFunction<I extends Organism> extends AbstractFitnessFu
      */
     @Override
     public Fitness evaluate(Population<I> population, I individual) {
-        I key = individual;
 
         //TODO Use source generator if one is set
-        Fitness fitness = cache.get(key);
+        Fitness fitness = cache.get(individual);
         if (fitness == null) {
             fitness = delegate.evaluate(population, individual);
-            cache.put(key, fitness);
+            cache.put(individual, fitness);
         }
         else {
             //System.out.println("cache hit: " + cache.size());

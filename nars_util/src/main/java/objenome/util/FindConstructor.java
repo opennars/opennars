@@ -93,10 +93,8 @@ public class FindConstructor {
             Parameter[] params = c.getParameters();
             Parameter[] paramsActual = actual.getParameters();
 
-            int j;
-
             int k = 0;
-            for (j = 0; j < params.length; j++) {
+            for (int j = 0; j < params.length; j++) {
                 Object specificValue = specific.get(params[j] );
                 
                 if (specificValue!=null) {                    

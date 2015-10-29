@@ -25,7 +25,7 @@ package objenome.solver.evolve;
  * A <code>PopulationProcess</code> defines an object which performs a population wide
  * process.
  */
-public interface PopulationProcess {
+public interface PopulationProcess<I extends Organism> {
 
     /**
      * Processes the provided <code>Population</code> and returns the resultant
@@ -35,6 +35,6 @@ public interface PopulationProcess {
      * @return a <code>Population</code> which is the result of some form of
      * processing of the provided population
      */
-    public <I extends Organism> Population<I> process(Population<I> population);
+    Population<I> process(Population<I> population);
     
 }

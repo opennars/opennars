@@ -31,7 +31,7 @@ import objenome.solver.evolve.event.Listener;
  * them as {@link PopulationProcess}s. The wrapped object is specified by a
  * <code>ConfigKey</code> and changes in the configuration are monitored.
  */
-public abstract class ProxyComponent<T> implements PopulationProcess, Listener<ConfigEvent>, GPContainerAware {
+public abstract class ProxyComponent<T> implements Listener<ConfigEvent>, GPContainerAware {
 
     /**
      * The <code>ConfigKey</code> of the proxied object.

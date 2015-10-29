@@ -80,10 +80,9 @@ public class Sin extends Function {
     }
     
     public String pretty() {
-        String string;
         boolean parens = ofExpr.functionalParens();
-        
-        string = "sin";
+
+        String string = "sin";
         if (!parens) string = string.concat(" ");
                 
         string = string.concat((parens?"(":"") + ofExpr.pretty() + (parens?")":""));

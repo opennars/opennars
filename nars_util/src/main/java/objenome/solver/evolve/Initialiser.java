@@ -27,7 +27,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
  * <code>Initialiser</code> components are responsible for creating individuals,
  * delegating the creation to an {@link OrganismBuilder} instance.
  */
-public class Initialiser<I extends Organism> extends ProxyComponent<OrganismBuilder<I>> {
+public class Initialiser<I extends Organism> extends ProxyComponent<OrganismBuilder<I>> implements PopulationProcess<I> {
 
     /**
      * The key for setting and retrieving the <code>InitialisationMethod</code>
@@ -40,6 +40,7 @@ public class Initialiser<I extends Organism> extends ProxyComponent<OrganismBuil
      */
     public Initialiser() {        
         super(METHOD);
+
     }
 
     /**
@@ -47,7 +48,7 @@ public class Initialiser<I extends Organism> extends ProxyComponent<OrganismBuil
      * <code>InitialisationMethod</code> object.
      */
     @Override
-    public <I extends Organism> Population<I> process(Population<I> population) {
+    public Population<I> process(Population<I> population) {
         if (getConfig()==null)
             setConfig(population.getConfig());
         

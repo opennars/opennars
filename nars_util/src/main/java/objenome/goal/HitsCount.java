@@ -195,11 +195,11 @@ public class HitsCount extends TypedFitnessFunction implements Listener<ConfigEv
             Double dblResult = (Double) result;
             Double dblExpectedResult = (Double) expectedResult;
 
-            if (dblResult == Double.NaN && dblExpectedResult == Double.NaN) {
+            if (Double.isNaN(dblResult) && Double.isNaN(dblExpectedResult)) {
                 return true;
             } else {
                 double error = Math.abs(dblResult - dblExpectedResult);
-                return (error != Double.NaN && error <= pointError);
+                return (!Double.isNaN(error) && error <= pointError);
             }
         } else {
             return result.equals(expectedResult);

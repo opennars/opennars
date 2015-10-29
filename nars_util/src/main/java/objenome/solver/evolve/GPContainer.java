@@ -34,6 +34,7 @@ import objenome.solver.evolve.event.stat.AbstractStat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides a centralised store for configuration parameters. It uses a
@@ -59,7 +60,7 @@ import java.util.List;
     /**
      * stats repository, TODO rename
      */
-    public final HashMap<Class<?>, Object> stat = new HashMap<>();
+    public final Map<Class<?>, Object> stat = new HashMap<>();
     protected Pipeline pipeline;
     protected Population<I> population = null;
 
@@ -193,7 +194,7 @@ import java.util.List;
      * repository.
      */
     public <E extends Event> void resetStats() {
-        List<Class<?>> registered = new ArrayList<>(stat.keySet());
+        Iterable<Class<?>> registered = new ArrayList<>(stat.keySet());
 
         for (Class<?> type : registered) {
             remove(type);

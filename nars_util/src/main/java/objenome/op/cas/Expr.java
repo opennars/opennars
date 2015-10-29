@@ -20,7 +20,7 @@ public abstract class Expr {
                                                   {Product.class, Division.class},
                                                   {Exponent.class}};
     
-    public static final HashMap<Class,Integer> classOrder = new HashMap<Class,Integer>();
+    public static final Map<Class, Integer> classOrder = new HashMap<Class,Integer>();
     static {
         for (int i = 0; i < Array.getLength(classOrderA); i++) {
             for (int j = 0; j < Array.getLength(classOrderA[i]); j++) {
@@ -270,7 +270,6 @@ public abstract class Expr {
     }
     
     public Expr[] toBasePower() {
-        Expr[] basePower = new Expr[2];
         Expr base;
         Expr power;
         
@@ -281,7 +280,8 @@ public abstract class Expr {
             base = this;
             power = Num.make(1);
         }
-        
+
+        Expr[] basePower = new Expr[2];
         basePower[0] = base;
         basePower[1] = power;
         return basePower;

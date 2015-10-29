@@ -523,7 +523,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
      *
      * @since 2.0
      */
-    public class EndEvent extends InitialisationEvent.EndInitialisation {
+    public static class EndEvent extends InitialisationEvent.EndInitialisation {
 
         private Method[] method;
 

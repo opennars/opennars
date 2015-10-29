@@ -1,5 +1,6 @@
 package objenome.op.cas;
 
+import com.google.common.collect.Lists;
 import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
@@ -22,10 +23,7 @@ public class And extends Operation {
     }
     
     public static Expr make(Expr expr1, Expr expr2) {
-        ArrayList<Expr> exprs = new ArrayList<Expr>();
-        exprs.add(expr1);
-        exprs.add(expr2);
-        return make(exprs);
+        return make(Lists.newArrayList(expr1, expr2));
     }
     
     public Expr simplify() {

@@ -2,6 +2,7 @@ package objenome.op.cas;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class LessThan extends Comparison {
     
@@ -14,7 +15,7 @@ public class LessThan extends Comparison {
         return new LessThan(expr1, expr2).simplify();
     }
     
-    public static Expr make(ArrayList<? extends Expr> exprs) {
+    public static Expr make(List<? extends Expr> exprs) {
         if (exprs.size() <= 2) return make(exprs.get(0), exprs.get(1));
         throw new UnsupportedOperationException("LessThan chaining");
     }
@@ -34,8 +35,7 @@ public class LessThan extends Comparison {
     }
     
     public String pretty() {
-        String string = "";
-        
+
         Integer thisClassOrder = this.classOrder();
         
         boolean expr1Parens = false;
@@ -44,7 +44,8 @@ public class LessThan extends Comparison {
         boolean expr2Parens = false;
         if (thisClassOrder > expr2.printLevelLeft()) expr2Parens = true;
         // if (debug) System.err.println("Division toString(): for expr=" + expr2 + ", printLevelLeft=" + expr2.printLevelLeft());
-        
+
+        String string = "";
         string = string.concat((expr1Parens?"(":"") + expr1.pretty() + (expr1Parens?")":""));
         string = string.concat("<");
         string = string.concat((expr2Parens?"(":"") + expr2.pretty() + (expr2Parens?")":""));

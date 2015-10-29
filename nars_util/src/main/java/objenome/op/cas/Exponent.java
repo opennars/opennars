@@ -88,16 +88,15 @@ public class Exponent extends Operation {
     
     public String pretty() {
         if (exponent.equalsExpr(Num.make(0.5))) return "sqrt" + (base.functionalParens()?"(":" ") + base.pretty() + (base.functionalParens()?")":"");
-        
-        String string = "";
-        
+
         Integer thisClassOrder = this.classOrder();
         
         boolean baseParens = false;
         if (thisClassOrder > base.printLevelRight() || base.isNegated()) baseParens = true;
         boolean exponentParens = false;
         if (thisClassOrder > exponent.printLevelLeft()) exponentParens = true;
-        
+
+        String string = "";
         string = string.concat((baseParens?"(":"") + base.pretty() + (baseParens?")":""));
         string = string.concat("^");
         string = string.concat((exponentParens?"(":"") + exponent.pretty() + (exponentParens?")":""));

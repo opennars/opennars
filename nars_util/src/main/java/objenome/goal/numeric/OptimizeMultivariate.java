@@ -8,6 +8,7 @@ package objenome.goal.numeric;
 import objenome.Objenome;
 import objenome.solution.SetNumericValue;
 import objenome.solver.NumericSolver;
+import objenome.solver.Solver;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
@@ -35,12 +36,12 @@ import static org.apache.commons.math3.optim.nonlinear.scalar.GoalType.MAXIMIZE;
  */
 public class OptimizeMultivariate<C> extends NumericSolver<C> implements MultivariateFunction {
 
-    int numStarts = 4;
+    private int numStarts = 4;
     //double convergeRel = 0.01;
     //double convergeAbs = 0.02;
     private Double bestValue;
-    int evaluations = 200;
-    GoalType goal = MAXIMIZE;
+    private int evaluations = 200;
+    private GoalType goal = MAXIMIZE;
     private List<SetNumericValue> variables;
     private Objenome objenome;
 
@@ -124,7 +125,7 @@ public class OptimizeMultivariate<C> extends NumericSolver<C> implements Multiva
 //        return new UnitSphereRandomVectorGenerator(variables.size());
 //    }
 
-    public OptimizeMultivariate minimize() {
+    public Solver minimize() {
         this.goal = GoalType.MINIMIZE;
         return this;
     }

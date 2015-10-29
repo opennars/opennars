@@ -145,9 +145,8 @@ public class SumOfError<I,O> extends TypedFitnessFunction implements Listener<Co
         setConfig(population.getConfig());
 
         //TODO validate number of inputs etc
-        TypedOrganism program = individual;
 
-        if (program.dataType() != Double.class) {
+        if (individual.dataType() != Double.class) {
             throw new IllegalArgumentException("Unsupported data-type");
         }
 
@@ -164,7 +163,7 @@ public class SumOfError<I,O> extends TypedFitnessFunction implements Listener<Co
             }
 
             // Run the program
-            Object result = program.evaluate();
+            Object result = individual.evaluate();
 
             if (o.output instanceof Double) {
                 if (result instanceof Double) {
@@ -186,7 +185,7 @@ public class SumOfError<I,O> extends TypedFitnessFunction implements Listener<Co
             }
         }
 
-        onEvaluate(program, errorSum);
+        onEvaluate(individual, errorSum);
 
         return new DoubleFitness.Minimize(errorSum);
     }

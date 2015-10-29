@@ -363,7 +363,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      *
      * @since 2.0
      */
-    public class EndEvent extends OperatorEvent.EndOperator {
+    public static class EndEvent extends OperatorEvent.EndOperator {
 
         private List<Integer> points;
 

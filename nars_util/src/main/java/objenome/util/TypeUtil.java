@@ -355,8 +355,6 @@ public final class TypeUtil {
             return Character.class;
         } else if (byte.class == type) {
             return Byte.class;
-        } else if (short.class == type) {
-            return Short.class;
         } else {
             throw new IllegalArgumentException();
         }

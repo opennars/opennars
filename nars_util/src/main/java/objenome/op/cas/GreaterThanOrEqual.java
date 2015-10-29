@@ -31,15 +31,15 @@ public class GreaterThanOrEqual extends Comparison {
     }
     
     public String pretty() {
-        String string = "";
-        
+
         Integer thisClassOrder = this.classOrder();
         
         boolean expr1Parens = false;
         if (thisClassOrder > expr1.printLevelRight()) expr1Parens = true;
         boolean expr2Parens = false;
         if (thisClassOrder > expr2.printLevelLeft()) expr2Parens = true;
-        
+
+        String string = "";
         string = string.concat((expr1Parens?"(":"") + expr1.pretty() + (expr1Parens?")":""));
         string = string.concat(">=");
         string = string.concat((expr2Parens?"(":"") + expr2.pretty() + (expr2Parens?")":""));
