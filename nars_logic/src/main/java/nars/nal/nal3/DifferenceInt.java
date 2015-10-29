@@ -25,7 +25,7 @@ import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term
@@ -39,21 +39,10 @@ public class DifferenceInt extends Difference {
      */
     private DifferenceInt(final Term[] arg) {
         super(arg);
-        
-        ensureValidDifferenceArguments(arg);
-        
+
         init(arg);
     }
 
-    public static void ensureValidDifferenceArguments(Term[] arg) {
-        if (arg.length!=2)
-            throw new RuntimeException("Requires 2 components");
-        
-        if (Global.DEBUG) {
-            if (arg[0].equals(arg[1]))
-                throw new RuntimeException("Equal arguments invalid");
-        }                
-    }
 
     /**
      * Clone an object
@@ -75,25 +64,16 @@ public class DifferenceInt extends Difference {
      * @param memory Reference to the memory
      */
     public static Term make(Term[] arg) {
-        if (arg.length == 1) { // special case from CompoundTerm.reduceComponent
-            return arg[0];
-        }
-        if (arg.length != 2) {
-            return null;
-        }
-        
+        ensureValidDifferenceSubterms(arg);
+
         if ((arg[0] instanceof SetInt) && (arg[1] instanceof SetInt)) {
             //TODO maybe a faster way to calculate:
-            TreeSet<Term> set = new TreeSet<>();
+            Set<Term> set = Global.newHashSet(arg[0].volume());
             ((Compound<?>) arg[0]).forEach(set::add);
             ((Compound<?>) arg[1]).forEach(set::remove);
             return SetInt.make(set);
         }
-                
-        if (arg[0].equals(arg[1])) {
-            return null;
-        }
-            
+
         return new DifferenceInt(arg);
     }
 
@@ -105,9 +85,6 @@ public class DifferenceInt extends Difference {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t1, final Term t2) {
-        if (t1.equals(t2))
-            return null;        
-
         return make(new Term[] { t1, t2 });
     }
 

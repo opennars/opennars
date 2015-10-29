@@ -16,13 +16,13 @@ public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt<T
     }
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.SET_INT;
     }
 
     @Override
     public Term clone() {
-        return new nars.nal.nal3.SetInt1(the());
+        return new SetInt1(the());
     }
 
     @Override

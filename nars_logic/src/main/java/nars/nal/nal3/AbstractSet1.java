@@ -12,14 +12,13 @@ abstract public class AbstractSet1<T extends Term> extends Compound1<T> implemen
         super(the);
     }
 
-
     @Override
-    public boolean appendTermOpener() {
+    public final boolean appendTermOpener() {
         return false;
     }
 
     @Override
-    public Term[] terms() {
+    public final Term[] terms() {
         return this.term;
     }
 

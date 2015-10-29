@@ -1,5 +1,6 @@
 package nars.meta.pre;
 
+import nars.Global;
 import nars.meta.RuleMatch;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
@@ -9,7 +10,7 @@ import nars.term.Term;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.TreeSet;
+import java.util.List;
 
 /**
  * Created by me on 8/15/15.
@@ -29,7 +30,7 @@ public class Union extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        TreeSet<Term> terms = new TreeSet<>();
+        List<Term> terms = Global.newArrayList(A.volume() + B.volume());
         Collections.addAll(terms, A.terms());
         Collections.addAll(terms, B.terms());
 
@@ -38,6 +39,7 @@ public class Union extends PreCondition3Output {
 
     public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Collection<Term> termsArray) {
         final Compound res;
+
         if(a instanceof SetExt) {
             res = SetExt.make(termsArray);
         }
@@ -46,7 +48,8 @@ public class Union extends PreCondition3Output {
         }
 
         if(res==null)
-            return false;
+            throw new RuntimeException("this condition should have been trapped earlier");
+            //return false;
 
         m.map1.put(c, res);
 
@@ -54,7 +57,8 @@ public class Union extends PreCondition3Output {
     }
 
     public static boolean invalid(Term a, Term b, Term c) {
-        return c==null ||
-                !((a instanceof SetTensional) && (a.op()==b.op()));
+        return  c==null ||
+                !((a instanceof SetTensional) &&
+                (a.op()==b.op()));
     }
 }

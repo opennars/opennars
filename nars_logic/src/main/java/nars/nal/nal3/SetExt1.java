@@ -16,7 +16,7 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt<T
     }
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.SET_EXT;
     }
 
@@ -34,7 +34,5 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt<T
     public void appendCloser(Appendable p) throws IOException {
         p.append(Symbols.SET_EXT_CLOSER);
     }
-
-
 
 }

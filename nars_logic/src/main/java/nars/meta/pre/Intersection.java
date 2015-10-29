@@ -42,6 +42,8 @@ public class Intersection extends PreCondition3Output {
         Collections.addAll(bb, B.terms());
 
         MutableSet<Term> terms = Sets.intersect(bb,aa);
+        if (terms.isEmpty()) return false;
+
         return Union.createSetAndAddToSubstitutes(m, a, c, terms);
     }
 }

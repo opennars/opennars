@@ -39,6 +39,9 @@ public class Difference extends PreCondition3Output {
                 terms.add(t);
             }
         }
+
+        if (terms.isEmpty()) return false;
+
         return Union.createSetAndAddToSubstitutes(m, a, c, terms);
     }
 }

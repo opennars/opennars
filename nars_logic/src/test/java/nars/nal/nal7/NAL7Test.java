@@ -159,22 +159,34 @@ public class NAL7Test extends AbstractNALTest {
         tester.run();
     }
 
-
     @Test
     public void induction_on_events_with_variable_introduction() throws InvalidInputException {
+        induction_on_events_with_variable_introduction(0);
+    }
+    @Test
+    public void induction_on_events_with_variable_introduction_d1000() throws InvalidInputException {
+        induction_on_events_with_variable_introduction(1000);
+    }
+
+    /**
+     * @param delay a # of frames to delay at the start in order to test start time independence
+     */
+    public void induction_on_events_with_variable_introduction(int delay) throws InvalidInputException {
 
         TestNAR tester = test();
         tester.nar.trace();
 
+        tester.nar.frame(delay);
+
         tester.input("<John --> (/,open,_,door)>. :|:");
-        tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
+        tester.inputAt(delay + 10, "<John --> (/,enter,_,room)>. :|:");
 
         tester.mustBelieve(cycles,
                 //"<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
                 "<<$1 --> (/,open,_,door)> </> <$1 --> (/,enter,_,room)>>",
                 1.00f, 0.45f,
-                //10
-                0
+                //10 + delay
+                0 + delay
         );
         tester.run();
     }

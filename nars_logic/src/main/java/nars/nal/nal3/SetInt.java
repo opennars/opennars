@@ -11,20 +11,21 @@ import java.util.Collection;
  */
 public interface SetInt<T extends Term> extends SetTensional<T> {
 
-
-    static Compound make(Collection<Term> l) {
-        return make(l.toArray(new Term[l.size()]));
-    }
-
-
     static Compound make(final Term... t) {
         switch (t.length) {
-            case 0: return null;
+            case 0: throw new RuntimeException("Set requires >1 terms");
             case 1: return new SetInt1(t[0]);
             default: return new SetIntN(Terms.toSortedSetArray(t));
         }
     }
 
+    static Compound make(Collection<Term> t) {
+        switch (t.size()) {
+            case 0: throw new RuntimeException("empty set");
+            case 1: return new SetInt1(t.iterator().next());
+            default: return new SetIntN( Terms.toSortedSetArray(t) );
+        }
+    }
 //    default void appendCloser(Writer p) throws IOException {
 //        p.append(Symbols.SET_INT_CLOSER);
 //    }

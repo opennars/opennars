@@ -44,7 +44,7 @@ public class SetIntN extends AbstractSetN implements SetInt {
 
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.SET_INT;
     }
 

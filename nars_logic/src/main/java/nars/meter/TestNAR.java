@@ -313,10 +313,12 @@ public class TestNAR  {
 //        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
 //    }
     public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, Tense t) throws InvalidInputException {
-        return mustOutput(nar.time(), withinCycles, term, '.', freq, freq, confidence, confidence, nar.time(t));
+        long ttt = nar.time();
+        return mustOutput(ttt, ttt + withinCycles, term, '.', freq, freq, confidence, confidence, nar.time(t));
     }
     public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence, long occTimeAbsolute) throws InvalidInputException {
-        return mustOutput(nar.time(), withinCycles, term, '.', freq, freq, confidence, confidence,occTimeAbsolute);
+        long t = nar.time();
+        return mustOutput(t, t + withinCycles, term, '.', freq, freq, confidence, confidence,occTimeAbsolute);
     }
 
     public TestNAR mustBelieve(long withinCycles, String term, float freq, float confidence) throws InvalidInputException {

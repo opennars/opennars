@@ -8,7 +8,13 @@ import nars.term.Term;
  */
 abstract public class Difference extends Compound {
 
-    public Difference(Term[] arg) {
+    Difference(Term[] arg) {
         super(arg);
+    }
+
+    public static void ensureValidDifferenceSubterms(Term[] arg) {
+        if ((arg.length  != 2) || (arg[0].equals(arg[1]))) {
+            throw new RuntimeException("invalid differene subterms");
+        }
     }
 }

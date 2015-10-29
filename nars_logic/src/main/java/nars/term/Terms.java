@@ -600,28 +600,25 @@ public class Terms {
         */
     }
 
-//    public static <T extends Term> T[] toSortedSetArray(final Collection<T>... c) {
-//        TreeSet<T> t = new TreeSet<>();
-//        for (Collection<T> it : c) {
-//            t.addAll(it);
-//        }
-//        return t.toArray((T[]) new Term[t.size()]);
-//    }
-
-
-    /** tests if any subterms are in common, effectively a bidirectional Terms.contains(Term[], Term) */
-    public static boolean shareAnyTerms(Term[] a, Term[] b) {
-
-        //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
-        //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
-
-
-        for (final Term x : b)
-            if (Terms.contains(a, x)) return true;
-        for (final Term x : a)
-            if (Terms.contains(b, x)) return true;
-        return false;
+    public static <T extends Term> T[] toSortedSetArray(final Collection<T> c) {
+        TreeSet<T> t = new TreeSet<>(c);
+        return t.toArray((T[]) new Term[t.size()]);
     }
+
+//
+//    /** tests if any subterms are in common, effectively a bidirectional Terms.contains(Term[], Term) */
+//    public static boolean shareAnyTerms(Term[] a, Term[] b) {
+//
+//        //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
+//        //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
+//
+//
+//        for (final Term x : b)
+//            if (Terms.contains(a, x)) return true;
+//        for (final Term x : a)
+//            if (Terms.contains(b, x)) return true;
+//        return false;
+//    }
 
 //    /** tests if any subterms are in common, effectively abidirectional Terms.contains(Term[], Term) */
 //    public static boolean shareAnySubTerms(Compound a, Compound b) {
