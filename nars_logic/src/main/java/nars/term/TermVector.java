@@ -51,15 +51,6 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         this.term = components;
     }
 
-    protected void init(Term[] t) {
-
-    }
-
-    protected void setTerm(T[] term) {
-        init(term);
-    }
-
-
     @Override
     public final int structure() {
         return structureHash;

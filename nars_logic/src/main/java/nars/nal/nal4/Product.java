@@ -34,7 +34,7 @@ import java.util.List;
  */
 public interface Product<T extends Term> extends Term, Iterable<T> {
 
-    Product empty = new ProductN();
+    Product empty = new ProductN(); //length 0 product
 
     /**
      * Get the operate of the term.
@@ -95,8 +95,11 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
 
     static <T extends Term> Product<T> make(final T... arg) {
         int l = arg.length;
+
+        //length 0 product are allowd
         if (l == 0)
-            throw new RuntimeException("null product");
+            return empty;
+
         if (l == 1)
             return only(arg[0]);
 

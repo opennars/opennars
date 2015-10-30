@@ -59,10 +59,8 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
      */
-    @Override
-    protected void init(final Term... term) {
 
-        super.init(term);
+    protected void init(final Term... term) {
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1, vol = 1;
@@ -98,7 +96,6 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
         ensureFeasibleVolume(vol);
 
-
         this.structureHash = subt;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
@@ -113,11 +110,10 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         this.volume = (short) vol;
     }
 
-    private void ensureFeasibleVolume(int vol) {
+    private static final void ensureFeasibleVolume(int vol) {
         if (vol > Global.COMPOUND_VOLUME_MAX) {
-            throw new RuntimeException("volume limit exceeded for new Compound[" + op() + "] " + Arrays.toString(term));
+            throw new RuntimeException("volume limit exceeded");
         }
-
     }
 
     protected int getStructureBase() {
@@ -170,14 +166,14 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     public <U extends Term> U setDuration(int duration) {
         //recursively set duration to interval subterms
-        int len = length();
-        for (int i = 0; i < len; i++) {
-            Term x = term(i);
-            T y = x.setDuration(duration);
-            if (y!=x)
-                term[i] = y;
+        final int len = length();
+        final Term[] tt = this.term;
+        int i = 0;
+        for (final Term x : tt) {
+            tt[i++] = x.setDuration(duration);
         }
-        forEach(t -> t.setDuration(duration));
+//        for (final Term t : tt)
+//            t.setDuration(duration);
         return (U)this;
     }
 

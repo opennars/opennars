@@ -15,26 +15,20 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
  */
 public class Parallel extends Conjunctive implements Interval {
 
-    //local duration, a virtual sub-term at the top level of the parallel term
-    private final long additionalDuration;
-
     //total duration (cached), the maximum duration of all included temporal terms
     transient long totalDuration = -1;
-    private int eventDuration = -1;
+
+    //supplied by the memory, used as the default subterm event duration if they do not implement their own Interval.duration()
+    private int eventDuration;
 
 
-//    private Parallel(Term... arg) {
-//        this(arg, 0);
-//    }
-
-    private Parallel(Term[] arg, long additionalDuration) {
+    private Parallel(Term[] arg) {
         super(arg = Terms.toSortedSetArray(arg));
-        this.additionalDuration = additionalDuration;
         init(arg);
     }
 
     @Override
-    public boolean isCommutative() {
+    public final boolean isCommutative() {
         return true;
     }
 
@@ -54,7 +48,7 @@ public class Parallel extends Conjunctive implements Interval {
 
     @Override
     public Term clone() {
-        return new Parallel(term, additionalDuration);
+        return new Parallel(term);
     }
 
     @Override
@@ -65,7 +59,6 @@ public class Parallel extends Conjunctive implements Interval {
     @Override
     public final int getByteLen() {
         return super.getByteLen()
-                + 4 /* for storing 'duration' */
                 + 4 /* for storing eventDuration */
                 ;
     }
@@ -75,7 +68,6 @@ public class Parallel extends Conjunctive implements Interval {
         super.appendBytes(numArgs, b);
 
         //add intermval suffix
-        b.addUnsignedInt(additionalDuration);
         b.addUnsignedInt(eventDuration);
     }
 
@@ -85,12 +77,6 @@ public class Parallel extends Conjunctive implements Interval {
         if (pretty) p.append(' ');
 
         super.appendArgs(p, pretty, false);
-
-        if (additionalDuration > eventDuration) {
-            p.append(ARGUMENT_SEPARATOR);
-            if (pretty) p.append(' ');
-            Temporal.appendInterval(p, additionalDuration);
-        }
     }
 
     @Override
@@ -98,41 +84,32 @@ public class Parallel extends Conjunctive implements Interval {
         super.setDuration(duration);
         this.eventDuration = duration;
         this.totalDuration = -1; //force recalc
-
-        //if there is one element and additionalDuration does not influence the overall duration,
-        //return that singleton subterm (unwrapped)
-        if ((length() == 1) && (duration() > additionalDuration))
-            return (T)term(0);
-
         return (T)this;
     }
 
     @Override
     public final long duration() {
-        long totalDuration = this.totalDuration;
-
+        final long totalDuration = this.totalDuration;
         if (totalDuration == -1) {
             return this.totalDuration = calculateTotalDuration();
         }
         return totalDuration;
     }
 
-    public long calculateTotalDuration() {
-        long totalDuration;
-        totalDuration = Math.max(eventDuration, additionalDuration);
+    long calculateTotalDuration() {
+        long totalDuration = eventDuration;
 
         //add embedded terms with temporal duration
         for (Term t : this) {
             if (t instanceof Interval) {
-                totalDuration = Math.max(
-                        totalDuration,
-                        ((Interval)t).duration()
-                );
+                totalDuration = Math.max(totalDuration,
+                        ((Interval)t).duration());
             }
         }
 
-        if (totalDuration < 0)
-            throw new RuntimeException("cycles must be >= 0");
+        if (totalDuration <= 0)
+            throw new RuntimeException("cycles must be > 0");
+
         return totalDuration;
     }
 
@@ -140,42 +117,29 @@ public class Parallel extends Conjunctive implements Interval {
 
         //count how many intervals so we know how to resize the final arrays
         final int intervalsPresent = Interval.intervalCount(a);
+        final int subterms = a.length - intervalsPresent;
 
-        if (intervalsPresent == 0) {
-            return new Parallel(a, 0);
+        if (subterms == 0)
+            return null;
+
+        if (subterms == 1)
+            return Interval.firstNonIntervalIn(a); //unwrap the only non-interval subterm
+
+        if (intervalsPresent == 0)
+            return new Parallel(a); //no intervals need to be removed
+
+        //otherwise, intervals are present:
+
+        Term[] b = new Term[subterms];
+
+        int p = 0;
+        for (final Term x : a) {
+            if (!(x instanceof CyclesInterval))
+                b[p++] = x;
         }
-        else {
 
-            //if intervals are present:
-            Term[] b = new Term[a.length - intervalsPresent];
+        return new Parallel(b);
 
-            if (b.length == 0)
-                throw new RuntimeException("Parallel with no non-Interval terms");
-
-            long duration = 0;
-            int p = 0;
-            long minTermDuration = 0;
-            for (final Term x : a) {
-                if (x instanceof CyclesInterval) {
-                    duration = Math.max(duration, ((CyclesInterval) x).duration());
-                } else {
-                    b[p++] = x;
-                    if (x instanceof Interval) {
-                        minTermDuration = Math.max(minTermDuration, ((Interval)x).duration() );
-                    }
-                }
-            }
-            if (duration <= minTermDuration)
-                duration = 0; //will have no effect
-
-
-            //return a singleton if no additional timing information present
-            if ((duration == 0) && (b.length == 1)) {
-                return b[0];
-            }
-
-            return new Parallel(b, duration);
-        }
     }
 
 }

@@ -26,11 +26,10 @@ public class SequenceParallelTest {
     @Test public void testParalllelReduction1() {
         assertEqualTerms("(&|, x, /0)", "x");
     }
-
-    @Test public void testParallelMaxCycles() {
-        int dur1 = DURATION + 1; //+1 to override the default duration and cause the change we test here
-        assertEqualTerms("(&|, x, /3, /" + dur1 + ")", "(&|, x, /" + dur1 + ")");
+    @Test public void testParalllelReduction2() {
+        assertEqualTerms("(&|, x, y, /10)", "(&|, x, y)");
     }
+
 
     @Test public void testSequenceReductionComplex() {
         assertEqualTerms(
@@ -86,25 +85,33 @@ public class SequenceParallelTest {
 
     @Test public void testEmbeddedParallel() {
 
-        String fs = "(&|, b, c, /10)";
+        String fs = "(&|, b, c)";
         Parallel f = t.term(fs);
 
-        String es = "(&|, b, /10, c)";
+        String es = "(&|, c, b)";
         Parallel e = t.term(es);
 
         assertEquals(e, f); //commutative
         assertEquals(fs, e.toString()); //interval at end
 
-        assertEquals(10, e.duration());
+        assertEquals(DURATION * 1, e.duration());
 
 
         String ts = "(&|, a, " + fs + ")";
         Parallel s = t.term(ts);
 
         assertEquals(ts, s.toString());
-        assertEquals(10, s.duration()); //maximum contained duration = 10
+        assertEquals(DURATION * 1, s.duration()); //maximum contained duration = 10
 
     }
+
+    @Test public void testSequencesInParallel() {
+
+        String fs = "(&|, (&/, a, b), c)";
+        Parallel f = t.term(fs);
+        assertEquals(DURATION * 2, f.duration()); //duration is determined by the maximum enduring subterm, ie. the sub-sequence
+    }
+
 
     @Test public void testSequenceBytes() {
         //TODO
@@ -113,17 +120,17 @@ public class SequenceParallelTest {
         //TODO
     }
 
-    @Test public void testSemiDuplicateParallels() {
-        //TODO decide if this is correct handling
-
-        int dur1 = DURATION + 1;
-        Compound c = t.term("(&&, (&|, x, /" + dur1 + "), (&|, x, /1))");
-
-
-        assertEquals(1, c.length());
-        assertEquals(Parallel.class, c.getClass());
-        assertEquals(dur1 /*?*/, ((Parallel)c).duration()); //interpolated duration
-    }
+//    @Test public void testSemiDuplicateParallels() {
+//        //TODO decide if this is correct handling
+//
+//        int dur1 = DURATION + 1;
+//        Compound c = t.term("(&&, (&|, x, /" + dur1 + "), (&|, x, /1))");
+//
+//
+//        assertEquals(1, c.length());
+//        assertEquals(Parallel.class, c.getClass());
+//        assertEquals(dur1 /*?*/, ((Parallel)c).duration()); //interpolated duration
+//    }
 
     @Test public void testParallelWithoutSlashZero() {
 

@@ -117,11 +117,6 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
         }
         //}
 
-        if (t instanceof Interval) {
-            //specify a duration described by the term
-            this.duration = ((Interval)t).duration();
-        }
-
         term = t;
     }
 
@@ -258,6 +253,8 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
 
     @Override
     public final long duration() {
+        if (term instanceof Interval)
+            return ((Interval)term).duration();
         return duration;
     }
 
