@@ -106,19 +106,22 @@ public class SequenceParallelTest {
     }
 
     @Test public void testSequencesInParallel() {
-
-        String fs = "(&|, (&/, a, b), c)";
-        Parallel f = t.term(fs);
-        assertEquals(DURATION * 2, f.duration()); //duration is determined by the maximum enduring subterm, ie. the sub-sequence
+        //for parallel conjunction, duration is determined by the maximum enduring subterm, ie. the sub-sequence
+        Parallel f = t.term("(&|, (&/, a, b), c)");
+        assertEquals(DURATION * 2, f.duration());
+    }
+    @Test public void testParallelInSequence() {
+        Sequence f = t.term("(&/, (&|, (&/, a, /1), c), d )");
+        assertEquals(1 + DURATION * 2, f.duration());
     }
 
-
-    @Test public void testSequenceBytes() {
-        //TODO
-    }
-    @Test public void testParallelBytes() {
-        //TODO
-    }
+//
+//    @Test public void testSequenceBytes() {
+//        //TODO
+//    }
+//    @Test public void testParallelBytes() {
+//        //TODO
+//    }
 
 //    @Test public void testSemiDuplicateParallels() {
 //        //TODO decide if this is correct handling
