@@ -65,15 +65,12 @@ public class Sequence extends Conjunctive implements Intermval {
     }
 
     @Override
-    public final <T extends Term> T  setDuration(int duration) {
+    public final void setDuration(int duration) {
         super.setDuration(duration);
-
         if (this.eventDuration!=duration) {
             this.eventDuration = duration;
             this.duration = -1; //force recalculate
         }
-
-        return (T) this;
     }
 
     @Override

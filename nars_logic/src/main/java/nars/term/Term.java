@@ -143,9 +143,8 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
      *  other transformation. in any case, the callee should
      *  replace the called term with the result
      * */
-    default <T extends Term> T setDuration(int duration) {
+    default void setDuration(int duration) {
         //nothing
-        return (T)this;
     }
 
     default boolean hasVarQuery() {

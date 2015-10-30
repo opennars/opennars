@@ -15,6 +15,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
+import nars.term.Term;
 import nars.term.TermMetadata;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -105,7 +106,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     /** copy/clone constructor */
     public DefaultTask(Task<T> task) {
         this(task.getTerm(), task.getPunctuation(), task.getTruth(),
-                task.getPriority(), task.duration(), task.getQuality(),
+                task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
 
@@ -205,18 +206,21 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     public final void setDuration(long duration) {
         /*if (this.duration!=Stamp.TIMELESS)
             throw new RuntimeException(this + " has corrupted duration");*/
-        if (duration < 0)
+        if (duration <= 0)
             throw new RuntimeException(this + " negative duration");
 
-        term = term.setDuration((int)duration); //HACK int<->long stuff
+        final Term term = this.term;
 
+        term.setDuration((int)duration); //HACK int<->long stuff
+
+        final long d;
         if (term instanceof Interval) {
-            Interval it = ((Interval) term);
-            this.duration = it.duration(); //set the task's duration to the term's actual (expanded) duration
+            d = ((Interval) term).duration(); //set the task's duration to the term's actual (expanded) duration
         }
         else {
-            this.duration = duration;
+            d = duration;
         }
+        this.duration = d;
     }
 
     @Override

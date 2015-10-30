@@ -233,6 +233,7 @@ public enum Op implements Serializable {
         return type == Op.OpType.Variable;
     }
 
+    /** top-level Op categories */
     public enum OpType {
         Relation,
         Variable,

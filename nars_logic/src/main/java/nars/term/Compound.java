@@ -164,17 +164,10 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return Terms.concat(original, additional );
     }
 
-    public <U extends Term> U setDuration(int duration) {
-        //recursively set duration to interval subterms
-        final int len = length();
-        final Term[] tt = this.term;
-        int i = 0;
-        for (final Term x : tt) {
-            tt[i++] = x.setDuration(duration);
-        }
-//        for (final Term t : tt)
-//            t.setDuration(duration);
-        return (U)this;
+    /** recursively set duration to interval subterms */
+    @Override public void setDuration(int duration) {
+        for (final Term x : this.term)
+            x.setDuration(duration);
     }
 
 //    @Override

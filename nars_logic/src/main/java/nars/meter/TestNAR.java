@@ -332,7 +332,8 @@ public class TestNAR  {
         return mustOutput(withinCycles, goalTerm, '!', freq, conf);
     }
     public TestNAR mustDesire(long withinCycles, String goalTerm, float freq, float conf, long occ) {
-        return mustOutput(nar.time(), withinCycles, goalTerm, '!', freq, freq, conf, conf, occ);
+        long t = nar.time();
+        return mustOutput(t, t + withinCycles, goalTerm, '!', freq, freq, conf, conf, occ);
     }
 
     public TestNAR ask(String termString) throws InvalidInputException {

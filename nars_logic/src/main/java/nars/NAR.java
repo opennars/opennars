@@ -215,7 +215,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
-        x = x.setDuration(memory.duration());
+        x.setDuration(memory.duration());
 
         return x;
     }

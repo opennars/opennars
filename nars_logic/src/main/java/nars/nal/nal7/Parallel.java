@@ -80,11 +80,12 @@ public class Parallel extends Conjunctive implements Interval {
     }
 
     @Override
-    public <T extends Term> T  setDuration(int duration) {
+    public void setDuration(int duration) {
         super.setDuration(duration);
-        this.eventDuration = duration;
-        this.totalDuration = -1; //force recalc
-        return (T)this;
+        if (duration!=this.eventDuration) {
+            this.eventDuration = duration;
+            this.totalDuration = -1; //force recalc
+        }
     }
 
     @Override

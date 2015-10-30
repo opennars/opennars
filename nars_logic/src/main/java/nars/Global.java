@@ -56,7 +56,7 @@ public class Global {
     public static final boolean DEBUG_DERIVATION_GRAPH = false;
     /** allow everything */
 
-    public static int UNIFICATION_POWER = 1024;
+    public static int UNIFICATION_POWER = 4096;
 
     public static int DEFAULT_NAL_LEVEL = 8;
 

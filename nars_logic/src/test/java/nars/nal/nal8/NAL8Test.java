@@ -16,6 +16,7 @@ import static org.jgroups.util.Util.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTest {
+    final int cycles = 100;
 
     public NAL8Test(Supplier<NAR> b) { super(b); }
 
@@ -50,7 +51,6 @@ public class NAL8Test extends AbstractNALTest {
         assertTrue(valid.get());
     }
 
-    int cycles = 30;
     @Test
     public void subgoal_1() throws InvalidInputException {
         TestNAR tester = test();
@@ -93,11 +93,10 @@ public class NAL8Test extends AbstractNALTest {
     public void further_detachment_2() throws InvalidInputException {
         TestNAR tester = test();
 
+        tester.input("<(SELF,{t002}) --> reachable>. :|:");
+        tester.inputAt(10, "<(&/,<(SELF,{t002}) --> reachable>,pick({t002}))=/><(SELF,{t002}) --> hold>>.");
 
-        tester.input("<(*,SELF,{t002}) --> reachable>. :|:");
-        tester.inputAt(10, "<(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.");
-
-        tester.mustBelieve(cycles, "<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>.", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF,{t002}) --> hold>>", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
 
@@ -129,10 +128,11 @@ public class NAL8Test extends AbstractNALTest {
     public void temporal_abduction_2() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>.");
+        tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,open({t001}))=/><{t001} --> [opened]>>.");
         tester.inputAt(10, "<(*,SELF,{t002}) --> hold>. :|: ");
 
-        tester.mustDesire(cycles, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
+        //mustBelieve?
+        tester.mustDesire(cycles, "<(&/,<(*,SELF,{t001}) --> at>,open({t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
         tester.run();
     }
 
@@ -140,7 +140,7 @@ public class NAL8Test extends AbstractNALTest {
     public void detaching_condition() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>.");
+        tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,open({t001}))=/><{t001} --> [opened]>>.");
         tester.inputAt(10, "<(*,SELF,{t002}) --> hold>. :|:");
 
         tester.mustBelieve(cycles, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
@@ -151,7 +151,7 @@ public class NAL8Test extends AbstractNALTest {
     public void detaching_single_premise() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!");
+        tester.input("(&/,<(*,SELF,{t002}) --> reachable>,pick({t002}))!");
 
 
         tester.mustDesire(cycles, "<(*,SELF,{t002}) --> reachable>", 1.0f, 0.81f, 10); // :|:
@@ -162,10 +162,10 @@ public class NAL8Test extends AbstractNALTest {
     public void detaching_single_premise2() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
+        tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) )!");
 
 
-        tester.mustDesire(cycles, "<(*,SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
+        tester.mustDesire(cycles, "<(SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
 
@@ -173,10 +173,10 @@ public class NAL8Test extends AbstractNALTest {
     public void goal_deduction() throws InvalidInputException {
         TestNAR tester = test();
 
-        tester.input("<(*,SELF,{t001}) --> at>!");
-        tester.inputAt(10, "<(^goto,$1)=/><(*,SELF,$1) --> at>>.");
+        tester.input("<(SELF,{t001}) --> at>!");
+        tester.inputAt(10, "<goto($1)=/><(SELF,$1) --> at>>.");
 
-        tester.mustDesire(cycles, "(^goto,{t001})", 1.0f, 0.81f, 10); // :|:
+        tester.mustDesire(cycles, "goto({t001})", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
 

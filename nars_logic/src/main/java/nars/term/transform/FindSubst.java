@@ -62,7 +62,7 @@ public class FindSubst {
      */
     public boolean next(final Term term1, final Term term2, int power) {
 
-        if (power <= 0)
+        if ((power -= costFunction(term1, term2)) <= 0)
             return false;
 
         final Op type = this.type;
@@ -92,7 +92,7 @@ public class FindSubst {
 
             if (t != null) {
                 //RECURSE
-                return next(t, term2, power-1);
+                return next(t, term2, power);
             }
 
             return nextTerm1Var(
@@ -106,7 +106,7 @@ public class FindSubst {
 
             if (t != null) {
                 //RECURSE
-                return next(term1, t, power-1);
+                return next(term1, t, power);
             }
 
             put2To1(term1, (Variable) term2);
@@ -121,6 +121,10 @@ public class FindSubst {
         }
 
         return termsEqual;
+    }
+
+    static int costFunction(Term term1, Term term2) {
+        return term1.volume() + term2.volume();
     }
 
 //    /** decide whether to recurse into according to variable types */
@@ -211,9 +215,14 @@ public class FindSubst {
     }
 
     boolean permuteN(final Compound cTerm1, final Compound cTerm2, int power) {
+        //TODO repeat with a new shuffle until power depleted?
+
+        if ((power -= costFunction(cTerm1, cTerm2)) <= 0)
+            return false;
+
         Term[] list = cTerm1.cloneTerms();
         Compound.shuffle(list, random);
-        return matchAll(cTerm2, list, power-1);
+        return matchAll(cTerm2, list, power);
     }
 
 
@@ -256,6 +265,10 @@ public class FindSubst {
     }
 
     private boolean permute3(final Term[] c3, final Compound cTerm2, int power) {
+
+        if ((power/=3) <= 0)
+            return false;
+
         int order = random.nextInt(6);
         final Term a = c3[0];
         final Term b = c3[1];
@@ -300,7 +313,7 @@ public class FindSubst {
                     throw new RuntimeException("invalid permutation");
             }
             //TODO make a special matchAll3 which specializes in 3-arity match, avoiding array allocation (just use 3 variables passed as params)
-            solved = matchAll(cTerm2, list, --power);
+            solved = matchAll(cTerm2, list, power);
             order = (order + 1) % 6;
             tries++;
         } while (tries < maxTries && !solved);
@@ -309,6 +322,9 @@ public class FindSubst {
     }
 
     private boolean permute2(final Term cTerm1_0, final Term cTerm1_1, final Compound cTerm2, int power) {
+        if ((power/=2) <= 0)
+            return false;
+
         Term[] list = new Term[2];
         boolean order = random.nextBoolean();
         int tries = 0;
@@ -324,7 +340,7 @@ public class FindSubst {
             //TODO make a special matchAll2 which specializes in 2-arity match, avoiding array allocation (just use 3 variables passed as params)
 
             order = !order;
-            solved = matchAll(cTerm2, list, --power);
+            solved = matchAll(cTerm2, list, power);
             tries++;
         } while (tries < 2 && !solved);
 
@@ -337,18 +353,15 @@ public class FindSubst {
     final protected boolean matchAll(final Compound x, final Term[] t, int power) {
 
         final int tlen = t.length;
-        final int subPower = power/tlen;
-        if (subPower == 0) return false;
+        if ((power/=tlen) <= 0) return false;
 
         final Term X[] = x.term;
 
-        for (int i = 0; i < tlen; i++) {
-            final boolean r = next(t[i], X[i], subPower);
-            if (!r) {
-                return false;
-            }
+        boolean r = true;
+        for (int i = 0; r && i < tlen; i++) {
+            r = next(t[i], X[i], power);
         }
-        return true;
+        return r;
     }
 
 
