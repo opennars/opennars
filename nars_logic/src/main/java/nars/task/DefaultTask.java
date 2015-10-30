@@ -35,7 +35,7 @@ import static nars.Global.reference;
  * Mutable
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
+public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
 
     /**
      * The punctuation also indicates the type of the Sentence:
@@ -212,7 +212,16 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             throw new RuntimeException(this + " has corrupted duration");*/
         if (duration < 0)
             throw new RuntimeException(this + " negative duration");
-        this.duration = duration;
+
+        term = term.setDuration((int)duration); //HACK int<->long stuff
+
+        if (term instanceof Interval) {
+            Interval it = ((Interval) term);
+            this.duration = it.duration(); //set the task's duration to the term's actual (expanded) duration
+        }
+        else {
+            this.duration = duration;
+        }
     }
 
     @Override

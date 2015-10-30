@@ -142,7 +142,7 @@ public class BitmapRecognition {
                             new Operation(Operator.the("echo"),
                                     new Product1(similaritage)),
                             Temporal.ORDER_CONCURRENT
-                    ), Tense.Eternal, 1.0f, 0.95f
+                            ), Tense.Eternal, 1.0f, 0.95f
             );
         }
 

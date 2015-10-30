@@ -39,7 +39,7 @@ import nars.util.data.id.Named;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -101,36 +101,17 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //        return ((Compound)t);
 //    }
 
-    /** returns a valid sentence CompoundTerm, or returns null */
-    static <X extends Compound> X termOrNull(Term t) {
-        //if (invalidSentenceTerm(t))
-            //return null;
-        Term x = t.normalized();
-//        if (Global.DEBUG) {
-//            if (invalidSentenceTerm(x)) {
-//                throw new RuntimeException("invalidity determined after normalization, wtf: " + t + " became " + x);
-//            }
-//        }
-
-//        X x = (X)t.normalized();
-        if (invalidSentenceTerm(x)) {
-            return null;
-        }
-
-        return (X)x;
-    }
-
-    static List<Sentence> sortExpectation(Collection<Sentence> s) {
-        List<Sentence> l = new ArrayList(s);
-        Collections.sort(l, ExpectationComparator.the);
-        return l;
-    }
-
-    static List<Sentence> sortConfidence(Collection<Sentence> s) {
-        List<Sentence> l = new ArrayList(s);
-        Collections.sort(l, ConfidenceComparator.the);
-        return l;
-    }
+//    static List<Sentence> sortExpectation(Collection<Sentence> s) {
+//        List<Sentence> l = new ArrayList(s);
+//        Collections.sort(l, ExpectationComparator.the);
+//        return l;
+//    }
+//
+//    static List<Sentence> sortConfidence(Collection<Sentence> s) {
+//        List<Sentence> l = new ArrayList(s);
+//        Collections.sort(l, ConfidenceComparator.the);
+//        return l;
+//    }
 
 //    public void hash(PrimitiveSink into) {
 //
@@ -151,11 +132,9 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
     /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
      * returns true if the term is invalid for use as sentence content term
+     * TODO invert boolean to: isValidSentenceTerm
      * */
     static boolean invalidSentenceTerm(final Term t) {
-        if (!(t instanceof Compound)) { //(t instanceof Interval) || (t instanceof Variable)
-            return true;
-        }
 
         if (t instanceof Statement) {
             Statement st = (Statement) t;
@@ -167,11 +146,12 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
             if (Statement.invalidStatement(st))
                 return true;
 
+            return false;
+        }
+        else {
+            return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)
         }
 
-
-        //ok valid
-        return false;
     }
 
 

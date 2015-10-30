@@ -204,25 +204,31 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return input(tasks(parse));
     }
 
-    public TextInput input(final String text) {
+    public final TextInput input(final String text) {
         final TextInput i = new TextInput(this, text);
         input((Input) i);
         return i;
     }
 
-    public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
-        return NarseseParser.the().term(t);
+    public final <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
+        T x = NarseseParser.the().term(t);
+
+        //this is applied automatically when a task is entered.
+        //it's only necessary here where a term is requested
+        x = x.setDuration(memory.duration());
+
+        return x;
     }
 
-    public Concept concept(final Term term) {
+    public final Concept concept(final Term term) {
         return memory.concept(term);
     }
 
     /**
      * gets a concept if it exists, or returns null if it does not
      */
-    public Concept concept(final String conceptTerm) throws InvalidInputException {
-        return concept((Term) NarseseParser.the().term(conceptTerm));
+    public final Concept concept(final String conceptTerm) throws InvalidInputException {
+        return concept((Term)term(conceptTerm));
     }
 
 
@@ -237,7 +243,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public Task quest(String questString) throws InvalidInputException {
-        return ask(NarseseParser.the().term(questString), Symbols.QUEST);
+        return ask(term(questString), Symbols.QUEST);
     }
 
 

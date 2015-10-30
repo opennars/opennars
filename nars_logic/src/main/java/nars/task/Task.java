@@ -25,19 +25,26 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.nal.nal7.Sequence;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.Truthed;
+import nars.util.data.array.LongArrays;
 
 import javax.annotation.Nullable;
 import java.lang.ref.Reference;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import static nars.Symbols.GOAL;
+import static nars.Symbols.JUDGMENT;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -109,6 +116,77 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         for (Task t : tasks)
             s.add(t);
         return s;
+    }
+
+    public static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+
+        if (p == null)
+            throw new RuntimeException("character is null");
+
+        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
+            t = new DefaultTruth(p);
+
+        if (b != null && ((b.length == 0) || (Float.isNaN(b[0]))))
+            b = null;
+
+        //TODO use a switch and combine !=null with above comparison
+
+        Budget B = (b == null) ? new Budget(p, t) :
+                b.length == 1 ? new Budget(b[0], p, t) :
+                        b.length == 2 ? new Budget(b[0], b[1], t) :
+                                new Budget(b[0], b[1], b[2]);
+
+        if (!(content instanceof Compound)) {
+            return null;
+        }
+
+        //avoid cloning by transforming this new compound directly
+        Term ccontent = ((Compound)content).normalizeDestructively();
+        if (ccontent!=null)
+            ccontent = termOrNull(ccontent);
+
+        if (ccontent==null) return null;
+
+
+        Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
+        ttt.setCreationTime(memory.time());
+
+
+        ttt.setOccurrenceTime(tense, memory.duration());
+        ttt.setEvidence(LongArrays.EMPTY_ARRAY);
+
+        return ttt;
+
+        /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
+            return new Stamp(
+                    newStamp ? new long[] { memory.newStampSerial() } : new long[] { blank },
+                    //memory, creationTime, tense);
+        }*/
+    }
+
+    /** returns a valid Task term, or returns null */
+    public static <X extends Compound> X termOrNull(Term t) {
+        //if (invalidSentenceTerm(t))
+            //return null;
+        Term x = t.normalized();
+//        if (Global.DEBUG) {
+//            if (invalidSentenceTerm(x)) {
+//                throw new RuntimeException("invalidity determined after normalization, wtf: " + t + " became " + x);
+//            }
+//        }
+
+
+        //HACK maybe this should be done elsewhere
+        if (x instanceof Sequence) {
+            x = ((Sequence)x).cloneRemovingSuffixInterval();
+        }
+
+//        X x = (X)t.normalized();
+        if (Sentence.invalidSentenceTerm(x)) {
+            return null;
+        }
+
+        return (X)x;
     }
 
     void setDuration(long l);
@@ -545,11 +623,11 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                 setTime(now, oc);
             }
 
-            if (duration() <= 0) {
+            //if (duration() <= 0) {
                 setDuration(
                     memory.duration() //assume the default perceptual duration?
                 );
-            }
+            //}
 
             //finally, assign a unique stamp if none specified (input)
             if (getEvidence().length == 0) {

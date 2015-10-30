@@ -24,10 +24,8 @@ import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Sequence;
 import nars.narsese.InvalidInputException;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
@@ -140,15 +138,17 @@ public class Twenglish {
                 Sequence
                 //Product
                     .makeSequence(t.toArray(new Term[t.size()]));
-            Compound q = Sentence.termOrNull(
+            Product q =
                     Product.make(
                             //Atom.the(source),
                             p,
                             sentenceType
                     )
-            );
+            ;
             if (q != null) {
-                tt.add(n.task(q + ". %0.95|0.95%")); //TODO non-string construct
+                Task newtask = n.task(q + ". %0.95|0.95%");
+                if (newtask!=null)
+                    tt.add(newtask); //TODO non-string construct
             }
 
         }

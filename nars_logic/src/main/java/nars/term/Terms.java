@@ -230,26 +230,24 @@ public class Terms {
 //    }
 
     public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
-        return equalSubjectPredicateInRespectToImageAndProduct(a, b, true);
+        return equalSubjectPredicateInRespectToImageAndProduct((Statement)a, (Statement)b, true);
     }
 
-    public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b, boolean requireEqualImageRelation) {
+    static boolean equalSubjectPredicateInRespectToImageAndProduct(final Statement A, final Statement B, boolean requireEqualImageRelation) {
         
-        if (a == null || b == null) {
-            return false;
-        }
+//        if (a == null || b == null) {
+//            return false;
+//        }
         
-        if (!(a instanceof Statement) || !(b instanceof Statement)) {
-            return false;
-        }
+//        if (!(a instanceof Statement) || !(b instanceof Statement)) {
+//            return false;
+//        }
         
-        if (a.equals(b)) {
+        if (A.equals(B)) {
             return true;
         }
         
-        Statement A = (Statement) a;
-        Statement B = (Statement) b;
-        
+
         /*
         //REMOVED this prevents the non-statement cases further down
             "if ((predA instanceof Product) && (subjB instanceof ImageInt))"
@@ -350,30 +348,30 @@ public class Terms {
 
 
 
-    //TODO move this to a utility method
-    public static <T> int indexOf(final T[] array, final T v) {
-        int i = 0;
-        for (final T e : array) {
-            if (v.equals(e)) {
-                return i;
-            }
-            i++;
-        }
-        return -1;
-    }
+//    //TODO move this to a utility method
+//    public static <T> int indexOf(final T[] array, final T v) {
+//        int i = 0;
+//        for (final T e : array) {
+//            if (v.equals(e)) {
+//                return i;
+//            }
+//            i++;
+//        }
+//        return -1;
+//    }
 
-    /** compres a set of terms (assumed to be unique) with another set to find if their
-     * contents match. they can be in different order and still match.  this is useful for
-     * comparing whether compound terms in which order doesn't matter (ex: conjunction)
-     * are equivalent.
-     */ 
-    public static <T> boolean containsAll(final T[] container, final T[] content) {
-        for (final T x : content) {
-            if (!contains(container, x))
-                return false;
-        }
-        return true;
-    }
+//    /** compres a set of terms (assumed to be unique) with another set to find if their
+//     * contents match. they can be in different order and still match.  this is useful for
+//     * comparing whether compound terms in which order doesn't matter (ex: conjunction)
+//     * are equivalent.
+//     */
+//    public static <T> boolean containsAll(final T[] container, final T[] content) {
+//        for (final T x : content) {
+//            if (!contains(container, x))
+//                return false;
+//        }
+//        return true;
+//    }
 
 //    public static <T extends Term> boolean containsAll(final Compound container, final T[] content) {
 //        for (final T x : content) {
@@ -383,29 +381,29 @@ public class Terms {
 //        return true;
 //    }
     
-    /** a contains any of b  NOT TESTED YET */
-    public static boolean containsAny(Compound<?> a, final Collection<Term> b) {
-        for (final Term bx : b) {
-            if (a.containsTerm(bx))
-                return true;
-        }
-        for (final Term ax : a) {
-            if (ax instanceof Compound)
-                if (containsAny(((Compound)ax), b))
-                    return true;
-        }
-        
-        return false;
-    }
-
-    public static <T> boolean contains(final T[] container, final T v) {
-        for (final T e : container) {
-            if (v.equals(e)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    /** a contains any of b  NOT TESTED YET */
+//    public static boolean containsAny(Compound<?> a, final Collection<Term> b) {
+//        for (final Term bx : b) {
+//            if (a.containsTerm(bx))
+//                return true;
+//        }
+//        for (final Term ax : a) {
+//            if (ax instanceof Compound)
+//                if (containsAny(((Compound)ax), b))
+//                    return true;
+//        }
+//
+//        return false;
+//    }
+//
+//    public static <T> boolean contains(final T[] container, final T v) {
+//        for (final T e : container) {
+//            if (v.equals(e)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     public static boolean contains(final Term[] container, final Term v) {
         for (final Term e : container)
@@ -414,20 +412,20 @@ public class Terms {
         return false;
     }
 
-    public static boolean equals(final Term[] a, final Term[] b) {
-        if (a.length!=b.length) return false;
-        for (int i = 0; i < a.length; i++) {
-            if (!a[i].equals(b[i]))
-                return false;            
-        }
-        return true;
-    }
-
-    public static void verifyNonNull(Term... t) {
-        for (Object o : t)
-            if (o == null)
-                throw new RuntimeException("Element null in: " + Arrays.toString(t));
-    }    
+//    public static boolean equals(final Term[] a, final Term[] b) {
+//        if (a.length!=b.length) return false;
+//        for (int i = 0; i < a.length; i++) {
+//            if (!a[i].equals(b[i]))
+//                return false;
+//        }
+//        return true;
+//    }
+//
+//    public static void verifyNonNull(Term... t) {
+//        for (Object o : t)
+//            if (o == null)
+//                throw new RuntimeException("Element null in: " + Arrays.toString(t));
+//    }
     
     public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
         if (arg.length == 0) {
@@ -674,27 +672,27 @@ public class Terms {
         }
     }
 
-    /**
-     * Try to make a compound term from a template and a list of term
-     *
-     * @param compound The template
-     * @param components The term
-     * @return A compound term or null
-     */
-    public static Term term(final Compound compound, final Term[] components) {
-        if (compound instanceof ImageExt) {
-            return new ImageExt(components, ((Image) compound).relationIndex);
-        } else if (compound instanceof ImageInt) {
-            return new ImageInt(components, ((Image) compound).relationIndex);
-        } else {
-            return term(compound.op(), components);
-        }
-    }
+//    /**
+//     * Try to make a compound term from a template and a list of term
+//     *
+//     * @param compound The template
+//     * @param components The term
+//     * @return A compound term or null
+//     */
+//    public static Term term(final Compound compound, final Term[] components) {
+//        if (compound instanceof ImageExt) {
+//            return new ImageExt(components, ((Image) compound).relationIndex);
+//        } else if (compound instanceof ImageInt) {
+//            return new ImageInt(components, ((Image) compound).relationIndex);
+//        } else {
+//            return term(compound.op(), components);
+//        }
+//    }
 
-    public static Term term(final Compound compound, Collection<Term> components) {
-        Term[] c = components.toArray(new Term[components.size()]);
-        return term(compound, c);
-    }
+//    public static Term term(final Compound compound, Collection<Term> components) {
+//        Term[] c = components.toArray(new Term[components.size()]);
+//        return term(compound, c);
+//    }
 
     private static boolean ensureTermLength(int num, Term[] a) {
         return (a.length==num);
@@ -713,7 +711,6 @@ public class Terms {
     public static Term term(final Op op, final Term... a) {
 
         switch (op) {
-
 
             case SET_EXT_OPENER:
                 return SetExt.make(a);
@@ -759,7 +756,7 @@ public class Terms {
                 if (ensureTermLength(2, a)) return Similarity.makeTerm(a[0], a[1]); break;
 
             case IMPLICATION:
-                if (ensureTermLength(2, a)) return Implication.makeTerm(a[0], a[1]); break;
+                if (ensureTermLength(2, a)) return Implication.makeImplication(a[0], a[1]); break;
             case IMPLICATION_AFTER:
                 if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Temporal.ORDER_FORWARD); break;
             case IMPLICATION_BEFORE:

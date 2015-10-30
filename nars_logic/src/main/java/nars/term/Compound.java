@@ -168,23 +168,35 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return Terms.concat(original, additional );
     }
 
-
-    @Override
-    public final boolean hasVar(final Op type) {
-
-        switch (type) {
-            case VAR_DEPENDENT:
-                return hasVarDep();
-            case VAR_INDEPENDENT:
-                return hasVarIndep();
-            case VAR_QUERY:
-                return hasVarQuery();
-            case VAR_PATTERN:
-                //return Variable.hasPatternVariable(this);
-                throw new RuntimeException("determining this would require exhaustive check because " + this + " does not cache # of pattern variables");
+    public <U extends Term> U setDuration(int duration) {
+        //recursively set duration to interval subterms
+        int len = length();
+        for (int i = 0; i < len; i++) {
+            Term x = term(i);
+            T y = x.setDuration(duration);
+            if (y!=x)
+                term[i] = y;
         }
-        throw new RuntimeException("Invalid variable type: " + type);
+        forEach(t -> t.setDuration(duration));
+        return (U)this;
     }
+
+//    @Override
+//    public final boolean hasVar(final Op type) {
+//
+//        switch (type) {
+//            case VAR_DEPENDENT:
+//                return hasVarDep();
+//            case VAR_INDEPENDENT:
+//                return hasVarIndep();
+//            case VAR_QUERY:
+//                return hasVarQuery();
+//            case VAR_PATTERN:
+//                //return Variable.hasPatternVariable(this);
+//                throw new RuntimeException("determining this would require exhaustive check because " + this + " does not cache # of pattern variables");
+//        }
+//        throw new RuntimeException("Invalid variable type: " + type);
+//    }
 
     /**
      * from: http://stackoverflow.com/a/19333201

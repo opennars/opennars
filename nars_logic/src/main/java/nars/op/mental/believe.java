@@ -26,7 +26,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
@@ -48,7 +47,7 @@ public class believe extends SyncOperator implements Mental {
 
         //TODO convert to TaskSeed
 
-        Compound content = Sentence.termOrNull(op.getTerm().arg(0));
+        Compound content = Task.termOrNull(op.getTerm().arg(0));
         if (content == null)
             return null;
 

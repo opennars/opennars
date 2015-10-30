@@ -106,7 +106,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return Temporal.ORDER_NONE;
     }
 
-    boolean hasVar(final Op type);
+    //boolean hasVar(final Op type);
 
 
 
@@ -134,6 +134,18 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     default boolean hasVarDep() {
         return varDep()!=0;
+    }
+
+    /** set the system's perceptual duration (cycles)
+     *  for measuring event timings
+     *  can return a different term than 'this', in
+     *  case the duration causes a reduction or some
+     *  other transformation. in any case, the callee should
+     *  replace the called term with the result
+     * */
+    default <T extends Term> T setDuration(int duration) {
+        //nothing
+        return (T)this;
     }
 
     default boolean hasVarQuery() {

@@ -8,7 +8,6 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
@@ -50,7 +49,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
     }
 
     public UDPNetwork(String id, int port) throws SocketException {
-        this( (Term)NarseseParser.the().term(id), port );
+        this( Atom.the(id), port );
     }
     public UDPNetwork(Term id, int port) throws SocketException {
         super();

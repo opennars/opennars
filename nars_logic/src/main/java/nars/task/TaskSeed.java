@@ -3,7 +3,6 @@ package nars.task;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Memory;
-import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -24,16 +23,16 @@ import javax.annotation.Nullable;
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-@Deprecated public class TaskSeed extends DefaultTask<Compound>  {
+@Deprecated public class TaskSeed extends DefaultTask<Compound<?>>  {
 
 
-    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
-        return make(nar.memory(), t);
-    }
+//    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
+//        return make(nar.memory(), t);
+//    }
 
     public static <C extends Compound> TaskSeed make(Memory memory, C t) {
         t.normalizeDestructively();
-        Compound u = Sentence.termOrNull(t);
+        Compound u = Task.termOrNull(t);
         if (u == null)
             return null;
 
@@ -90,13 +89,13 @@ import javax.annotation.Nullable;
 
 
 
-    /**
-     * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
-     */
-    public TaskSeed budget(Budget bv, float priMult, float durMult) {
-        budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
-        return this;
-    }
+//    /**
+//     * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
+//     */
+//    public TaskSeed budget(Budget bv, float priMult, float durMult) {
+//        budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
+//        return this;
+//    }
 
     @Override
     public final TaskSeed budget(float p, float d, float q) {
@@ -142,20 +141,21 @@ import javax.annotation.Nullable;
         return this;
     }
 
-    public TaskSeed termIfValid(Compound t) {
-        t = Sentence.termOrNull(t);
-        if (t == null) return null;
-        term(t);
-        return this;
-    }
-
-    public TaskSeed truth(boolean freqAsBoolean, float conf) {
-        return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
-    }
+//    public TaskSeed termIfValid(Compound t) {
+//        t = Task.termOrNull(t);
+//        if (t == null) return null;
+//        term(t);
+//        return this;
+//    }
+//
+//    public TaskSeed truth(boolean freqAsBoolean, float conf) {
+//        return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
+//    }
 
     public TaskSeed truth(float freq, float conf) {
         if (this.truth != null) {
-            System.err.println("warning: " + this + " modifying existing truth: " + this.truth);
+            //System.err.println
+              throw new RuntimeException(this + " modifying existing truth: " + this.truth);
         }
         this.truth = new DefaultTruth(freq, conf);
         return this;
@@ -199,7 +199,7 @@ import javax.annotation.Nullable;
         return tense(Tense.Eternal);
     }*/
 
-    public TaskSeed present(Memory memory) {
+    public final TaskSeed present(Memory memory) {
         return tense(Tense.Present, memory);
     }
 
@@ -318,10 +318,10 @@ import javax.annotation.Nullable;
         return this;
     }
 
-    public TaskSeed solution(Task solutionBelief, Memory memory) {
-        setBestSolution(solutionBelief, memory);
-        return this;
-    }
+//    public TaskSeed solution(Task solutionBelief, Memory memory) {
+//        setBestSolution(solutionBelief, memory);
+//        return this;
+//    }
 
     public TaskSeed occurr(long occurrenceTime) {
         this.setOccurrenceTime(occurrenceTime);
@@ -350,37 +350,37 @@ import javax.annotation.Nullable;
     }
 
 
-    public TaskSeed temporalInductable(boolean b) {
-        setTemporalInducting(b);
-        return this;
-    }
+//    public TaskSeed temporalInductable(boolean b) {
+//        setTemporalInducting(b);
+//        return this;
+//    }
 
 
-    public TaskSeed parent(Task parentTask, Task parentBelief, long occurrence) {
-        parent(parentTask, parentBelief);
-        setOccurrenceTime(occurrence);
-        return this;
-    }
-
-    public TaskSeed parent(Task task, long occurrenceTime) {
-        parent(task, null);
-        setOccurrenceTime(occurrenceTime);
-        return this;
-    }
+//    public TaskSeed parent(Task parentTask, Task parentBelief, long occurrence) {
+//        parent(parentTask, parentBelief);
+//        setOccurrenceTime(occurrence);
+//        return this;
+//    }
+//
+//    public TaskSeed parent(Task task, long occurrenceTime) {
+//        parent(task, null);
+//        setOccurrenceTime(occurrenceTime);
+//        return this;
+//    }
 
     public TaskSeed parent(Task task) {
         parent(task, null);
         return this;
     }
 
-    public final TaskSeed occurrNow(final NAR nar) {
-        return occurrNow(nar.memory);
-    }
-
-    public TaskSeed occurrNow(final Memory memory) {
-        setOccurrenceTime(memory.time());
-        return this;
-    }
+//    public final TaskSeed occurrNow(final NAR nar) {
+//        return occurrNow(nar.memory);
+//    }
+//
+//    public TaskSeed occurrNow(final Memory memory) {
+//        setOccurrenceTime(memory.time());
+//        return this;
+//    }
 
 
     /**

@@ -264,17 +264,15 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return this;
     }
 
-
-
     @Override
     public final Term cloneDeep() {
         return this;
     }
 
-    @Override
-    public boolean hasVar(Op type) {
-        return false;
-    }
+//    @Override
+//    public boolean hasVar(Op type) {
+//        return false;
+//    }
 
 //    /**
 //     * Equal terms have identical name, though not necessarily the same

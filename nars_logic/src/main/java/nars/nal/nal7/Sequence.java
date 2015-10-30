@@ -1,5 +1,6 @@
 package nars.nal.nal7;
 
+import nars.Global;
 import nars.Op;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Conjunctive;
@@ -8,8 +9,8 @@ import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.System.arraycopy;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
@@ -21,6 +22,12 @@ import static nars.nal.nal7.Temporal.appendInterval;
 public class Sequence extends Conjunctive implements Intermval {
 
     protected final int[] intervals;
+
+    /** duration of terms themselves, as events.
+     *  (not intervals between them).
+     *  this should be set to the reasoner's perceptual
+     *  duration at the time the Sequence is formed. */
+    private int eventDuration = -1;
 
     transient private long duration = -1;
 
@@ -53,23 +60,39 @@ public class Sequence extends Conjunctive implements Intermval {
 
         this.intervals = intervals;
 
-
         init(subterms);
 
     }
 
     @Override
+    public final <T extends Term> T  setDuration(int duration) {
+        super.setDuration(duration);
+
+        if (this.eventDuration!=duration) {
+            this.eventDuration = duration;
+            this.duration = -1; //force recalculate
+        }
+
+        return (T) this;
+    }
+
+    @Override
     public final long duration() {
         long duration = this.duration;
-        if (duration == -1) {
+        if (duration < 0) {
             long l = 0;
             for (final int x : intervals())
                 l += x;
+
+            final int defaultEventDuration = this.eventDuration;
 
             //add embedded terms with temporal duration
             for (Term t : this) {
                 if (t instanceof Interval) {
                     l += ((Interval)t).duration();
+                }
+                else {
+                    l += defaultEventDuration;
                 }
             }
 
@@ -124,6 +147,7 @@ public class Sequence extends Conjunctive implements Intermval {
     }
 
 
+
     /**
      * the input Terms here is "unnormalized" meaning it may contain
      * Interval whch will need removed as subterms and inserted into the
@@ -168,7 +192,11 @@ public class Sequence extends Conjunctive implements Intermval {
             }
         }
 
-        if (blen == 1) {
+        return makeSequence(b, i);
+    }
+
+    public static Term makeSequence(Term[] b, int[] i) {
+        if (b.length == 1) {
             //detect if this is reducible to the singleton term (no preceding or following interval)
             if ((i[0]==0) && (i[1]==0))
                 return b[0];
@@ -178,12 +206,6 @@ public class Sequence extends Conjunctive implements Intermval {
     }
 
 
-//    public static Sequence makeSequence(final Collection<Term> a) {
-//        //TODO make more efficient version of this that doesnt involve array copy
-//        return makeSequence(a.toArray(new Term[a.size()]));
-//    }
-
-
     public static Term makeSequence(Term term1, Term term2) {
         final Term[] components;
 
@@ -191,7 +213,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
             Compound cterm1 = (Compound) term1;
 
-            ArrayList<Term> list = new ArrayList<>(cterm1.length());
+            List<Term> list = Global.newArrayList(cterm1.length());
             cterm1.addTermsTo(list);
 
             if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
@@ -277,12 +299,9 @@ public class Sequence extends Conjunctive implements Intermval {
     @Override
     public int getByteLen() {
         int add;
-        if (duration == 0) {
-            add = 1; //null for entire array being zero
-        }
-        else {
-            add = intervals.length * 4; //32 bit int
-        }
+
+        add = intervals.length * 4; //32 bit int
+        add += 4; //eventDuration int
         return super.getByteLen() + add;
     }
 
@@ -290,24 +309,27 @@ public class Sequence extends Conjunctive implements Intermval {
     protected void appendBytes(int numArgs, ByteBuf b) {
         super.appendBytes(numArgs, b);
 
-        //add intermval suffix
+        b.addUnsignedInt(eventDuration);
 
-        if (this.duration == 0) {
-            b.addUnsignedInt(0); //no intervals case
-        }
-        else {
-            for (int i : intervals) //the intermval array
-                b.addUnsignedInt(i);
-        }
+        //add intermval suffix
+        for (int i : intervals) //the intermval array
+            b.addUnsignedInt(i);
     }
 
 
 
-    //    public Sequence cloneRemovingSuffixInterval() {
-//        final int s = size();
-//        long[] ni = Arrays.copyOf(intervals(), s+1);
-//        ni[s] = 0;
-//        return clone(term, ni);
-//    }
+    public Term cloneRemovingSuffixInterval() {
+        final int s = length();
+        int[] ii = intervals();
+
+        if (ii[s]!=0) {
+            //dont disturb the original copy
+            ii = Arrays.copyOf(intervals(), s + 1);
+            ii[s] = 0;
+        }
+
+        Term[] t = term;
+        return makeSequence(t, ii);
+    }
 
 }

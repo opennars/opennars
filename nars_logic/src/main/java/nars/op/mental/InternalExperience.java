@@ -246,7 +246,7 @@ public class InternalExperience {
         }
 
         return nal.input(nal.newTask(ret).judgment()
-                        .parent(task, nal.time())
+                        .parent(task).occurr(nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
                         .reason("Remembered Action (Internal Experience)"));

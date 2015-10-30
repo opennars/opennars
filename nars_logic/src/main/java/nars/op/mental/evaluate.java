@@ -22,7 +22,6 @@ import nars.Global;
 import nars.Symbols;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 
@@ -42,7 +41,7 @@ public class evaluate extends SyncOperator implements Mental {
     public List<Task> apply(Task<Operation> op) {
 
 
-        Compound content = Sentence.termOrNull(op.getTerm().arg(0));
+        Compound content = Task.termOrNull(op.getTerm().arg(0));
         if (content == null)
             return null;
 

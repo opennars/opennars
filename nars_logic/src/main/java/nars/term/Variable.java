@@ -236,9 +236,9 @@ public class Variable extends Atom {
         return Byted.equals(this, vthat);
     }
 
-    @Override final public boolean hasVar(final Op type) {
-        return op() == type;
-    }
+//    @Override final public boolean hasVar(final Op type) {
+//        return op() == type;
+//    }
 
 
 //    public boolean isCommon() {

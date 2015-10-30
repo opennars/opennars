@@ -22,4 +22,6 @@ public interface Interval extends TermMetadata {
         }
         return c;
     }
+
+
 }

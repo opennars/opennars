@@ -80,7 +80,7 @@ public class Conjunction extends Conjunctive {
     }
 
     @Override
-    public Term clone(Term[] t) {
+    public final Term clone(Term[] t) {
         return make(t, getTemporalOrder());
     }
 

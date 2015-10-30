@@ -10,7 +10,7 @@ import nars.link.TermLink;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.OperatorReaction;
-import nars.narsese.NarseseParser;
+import nars.nar.Terminal;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -97,7 +97,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 //    private final boolean includeDerivedParents = true;
 
 
-    static final NarseseParser np = NarseseParser.the();
+    static final Terminal np = new Terminal();
     static final Map<String, String> parsedTerm = new HashMap(1024);
 
     public DerivationPattern add(ConceptProcess n, Task... derived) {

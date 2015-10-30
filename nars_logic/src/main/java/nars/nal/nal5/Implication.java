@@ -69,7 +69,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     }
 
 
-    public static Term makeTerm(final Term subject, final Term predicate) {
+    public static Term makeImplication(final Term subject, final Term predicate) {
         if (subject.equals(predicate))
             return subject;
         return make(subject, predicate, Temporal.ORDER_NONE);

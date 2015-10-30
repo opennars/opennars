@@ -1,6 +1,7 @@
 package nars.nal.nal7;
 
 import nars.NAR;
+import nars.Op;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.term.Atom;
@@ -27,7 +28,8 @@ public class SequenceParallelTest {
     }
 
     @Test public void testParallelMaxCycles() {
-        assertEqualTerms("(&|, x, /3, /5)", "(&|, x, /5)");
+        int dur1 = DURATION + 1; //+1 to override the default duration and cause the change we test here
+        assertEqualTerms("(&|, x, /3, /" + dur1 + ")", "(&|, x, /" + dur1 + ")");
     }
 
     @Test public void testSequenceReductionComplex() {
@@ -48,8 +50,8 @@ public class SequenceParallelTest {
     @Test public void testParallelNegligibleCycles() {
         //since the supplied extra interval duration is less
         //than the effective duration of '(&/,x,/1)',
-        //anything less than /5 (the system duration) is
-        //meaningless
+        //anything less than the supplied eventDuration
+        //is meaningless
         assertEqualTerms("(&|, (&/, x, /1), /1)", "(&/, x, /1)");
     }
 
@@ -58,6 +60,10 @@ public class SequenceParallelTest {
     }
     @Test public void testSequenceReduction3() {
         assertEquals( "b", t.term("(&/, /0, b, /0)").toString() );
+    }
+
+    @Test public void testSequenceDuration() {
+        assertEquals(DURATION + 1, ((Sequence)t.term("(&/, x, /1)")).duration());
     }
 
     @Test public void testEmbeddedSequenceAndTotalDuration() {
@@ -72,8 +78,9 @@ public class SequenceParallelTest {
 
         String ts = "(&/, a, " + es + ", /1, d)";
         Sequence s = t.term(ts);
-        assertEquals( esDuration + 1 + 2 * DURATION, s.duration() );
+
         assertEquals( ts, s.toString() );
+        assertEquals( esDuration + 1 + 2 * DURATION, s.duration() );
 
     }
 
@@ -108,14 +115,17 @@ public class SequenceParallelTest {
 
     @Test public void testSemiDuplicateParallels() {
         //TODO decide if this is correct handling
-        String ts = "(&&, (&|, x, /3), (&|, x, /1))";
-        Compound c = t.term(ts);
+
+        int dur1 = DURATION + 1;
+        Compound c = t.term("(&&, (&|, x, /" + dur1 + "), (&|, x, /1))");
 
 
         assertEquals(1, c.length());
         assertEquals(Parallel.class, c.getClass());
-        assertEquals(2, ((Parallel)c).duration()); //interpolated duration
+        assertEquals(dur1 /*?*/, ((Parallel)c).duration()); //interpolated duration
     }
+
+
     @Test public void testSemiDuplicateSequences() {
         //TODO decide if this is correct handling
 
@@ -124,7 +134,7 @@ public class SequenceParallelTest {
 
         assertEquals(1, c.length());
         assertEquals(Sequence.class, c.getClass());
-        assertEquals(2, ((Sequence)c).duration()); //interpolated duration
+        assertEquals(DURATION + 3 /*?*/, ((Sequence)c).duration()); //interpolated duration
     }
 
     @Test public void testEmbeddedParallelInSequence() {
@@ -143,7 +153,7 @@ public class SequenceParallelTest {
     private static void assertEqualTerms(String abnormal, String normalized) {
         Term ta = t.term(abnormal);
         Term tb = t.term(normalized);
-        assertEquals(ta, tb);
+        assertEquals(tb, ta);
         assertEquals(ta.toString(), tb.toString());
         assertEquals(normalized, tb.toString());
         assertArrayEquals(ta.bytes(), tb.bytes());
@@ -154,12 +164,18 @@ public class SequenceParallelTest {
         //TODO test: tasks formed by a NAR with a duration that is being changed reflect these changes
 
     }
-    
+
+    @Test public void testDefaultParallelReduction() {
+        //these all should have the same duration (DEFAULT)
+        String par1 = "(&|, <a --> b> )";
+        assertEquals(Op.INHERITANCE, t.term(par1).op());
+    }
+
     @Test public void testDefaultParallelDuration() {
         //these all should have the same duration (DEFAULT)
-        String par1 = "(&|, <a-->b> )";
-        String par2 = "(&|, <a-->b>, <c --> d> )";
-        String par3 = "(&|, <a-->b>, <c --> d>, /1 )"; // "/1" has no influence here because the terms each have DURATION=5
+        String par1 = "(&|, <a --> b>, <c --> d>, /2 )";
+        String par2 = "(&|, <a --> b>, <c --> d> )";
+        String par3 = "(&|, <a --> b>, <c --> d>, /1 )"; // "/1" has no influence here because the terms each have DURATION=5
 
         assertEquals( DURATION, ((Parallel)t.term(par1)).duration() );
         assertEquals( ((Parallel)t.term(par1)).duration(),  ((Parallel)t.term(par2)).duration());
@@ -174,7 +190,7 @@ public class SequenceParallelTest {
         assertEquals(2, x.length());
     }
 
-    @Test public void testConstuction() {
+    @Test public void testConstruction() {
         NAR nar = new Default();
 
         String seq = "(&/, /1, a, /2, b)";
@@ -188,7 +204,7 @@ public class SequenceParallelTest {
 
         assertEquals(s.length() + 1, s.intervals().length);
         assertEquals("[1, 2, 0]", Arrays.toString(s.intervals()));
-        assertEquals(3, s.duration());
+        assertEquals(1 + DURATION + 2 + DURATION, s.duration());
 
         assertEquals("output matches input", seq, ss);
 
@@ -205,23 +221,28 @@ public class SequenceParallelTest {
         NAR nar = new Default();
 
         testSeqTermString(nar, "(&/, a, /1, b)");
-        //testSeqTermString(nar, "(&/, a, /2, b, /4)");
         testSeqTermString(nar, "(&/, a, /3, b, /5, c, /10, d)");
     }
 
-    private void testSeqTermString(NAR nar, String s) {
+    static void testSeqTermString(NAR nar, String s) {
         assertEquals(s, nar.term(s).toString());
     }
-    @Test public void testTrailingSuffix() {
-        //trailing suffix allowed if the top-level term
-        assertEqualTerms("(&/, x, /1)", "(&/, x, /1)");
 
-        //trailing suffix interval removed if not top-level term
-        assertEqualTerms("<(&/, x, /1) =/> y>", "<x =/> y>");
-
-        //leading prefix interval remains
-        assertEqualTerms("<(&/, /1, x, /2) =/> y>", "<(&/, /1, x) =/> y>");
+    @Test public void testTrailingSequenceInterval() {
+        //trailing suffix interval not removed ordinarily
+        assertEquals("<(&/, x, /1) =/> y>. %1.00;0.90%",
+              t.task("<(&/, x, /1) =/> y>.").toString());
     }
+    @Test public void testTrailingSequenceIntervalRemovedIfTaskTerm() {
+        //trailing suffix removed as the top-level term
+        assertEquals("<a --> b>. %1.00;0.90%",
+              t.task("(&/, <a --> b>, /1).").toString());
+    }
+    @Test public void testInvalidSequenceAsTask() {
+        //the suffix will remove, x will fall through, and not be valid task term
+        assertNull(t.task("(&/, x, /1)."));
+    }
+
 
 //    @Test public void testSequenceSentenceNormalization() {
 //        //sequences at the top level as terms must not have any trailing intervals

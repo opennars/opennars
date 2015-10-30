@@ -20,6 +20,7 @@ public class Parallel extends Conjunctive implements Interval {
 
     //total duration (cached), the maximum duration of all included temporal terms
     transient long totalDuration = -1;
+    private int eventDuration = -1;
 
 
 //    private Parallel(Term... arg) {
@@ -58,12 +59,15 @@ public class Parallel extends Conjunctive implements Interval {
 
     @Override
     public Term clone(Term[] replaced) {
-        return Conjunctive.make(replaced, Temporal.ORDER_CONCURRENT);
+        return Parallel.makeParallel(replaced);
     }
 
     @Override
     public final int getByteLen() {
-        return super.getByteLen() + 4 /* for storing 'duration' */;
+        return super.getByteLen()
+                + 4 /* for storing 'duration' */
+                + 4 /* for storing eventDuration */
+                ;
     }
 
     @Override
@@ -72,6 +76,7 @@ public class Parallel extends Conjunctive implements Interval {
 
         //add intermval suffix
         b.addUnsignedInt(additionalDuration);
+        b.addUnsignedInt(eventDuration);
     }
 
 
@@ -81,7 +86,7 @@ public class Parallel extends Conjunctive implements Interval {
 
         super.appendArgs(p, pretty, false);
 
-        if (additionalDuration !=0) {
+        if (additionalDuration > eventDuration) {
             p.append(ARGUMENT_SEPARATOR);
             if (pretty) p.append(' ');
             Temporal.appendInterval(p, additionalDuration);
@@ -89,28 +94,45 @@ public class Parallel extends Conjunctive implements Interval {
     }
 
     @Override
+    public <T extends Term> T  setDuration(int duration) {
+        super.setDuration(duration);
+        this.eventDuration = duration;
+        this.totalDuration = -1; //force recalc
+
+        //if there is one element and additionalDuration does not influence the overall duration,
+        //return that singleton subterm (unwrapped)
+        if ((length() == 1) && (duration() > additionalDuration))
+            return (T)term(0);
+
+        return (T)this;
+    }
+
+    @Override
     public final long duration() {
         long totalDuration = this.totalDuration;
 
         if (totalDuration == -1) {
-
-            totalDuration = additionalDuration;
-
-            //add embedded terms with temporal duration
-            for (Term t : this) {
-                if (t instanceof Interval) {
-                    totalDuration = Math.max(
-                            totalDuration,
-                            ((Interval)t).duration()
-                    );
-                }
-            }
-
-            if (totalDuration < 0)
-                throw new RuntimeException("cycles must be >= 0");
-
-            return this.totalDuration = totalDuration;
+            return this.totalDuration = calculateTotalDuration();
         }
+        return totalDuration;
+    }
+
+    public long calculateTotalDuration() {
+        long totalDuration;
+        totalDuration = Math.max(eventDuration, additionalDuration);
+
+        //add embedded terms with temporal duration
+        for (Term t : this) {
+            if (t instanceof Interval) {
+                totalDuration = Math.max(
+                        totalDuration,
+                        ((Interval)t).duration()
+                );
+            }
+        }
+
+        if (totalDuration < 0)
+            throw new RuntimeException("cycles must be >= 0");
         return totalDuration;
     }
 

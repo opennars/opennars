@@ -273,17 +273,21 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return Whether The Statement is invalid
      */
     final public static boolean invalidStatement(final Term subject, final Term predicate) {
-        if (subject == null || predicate == null) return true;
+        if (subject == null || predicate == null)
+            return true;
 
-        if (subject.equals(predicate)) {
+        if (subject.equals(predicate))
             return true;
-        }
-        if (invalidReflexive(subject, predicate)) {
+
+
+        //TODO combine these mirrored invalidReflexive calls into one combined, unredundant operation
+        if (invalidReflexive(subject, predicate))
             return true;
-        }
-        if (invalidReflexive(predicate, subject)) {
+
+        if (invalidReflexive(predicate, subject))
             return true;
-        }
+
+
         if ((subject instanceof Statement) && (predicate instanceof Statement)) {
             final Statement s1 = (Statement) subject;
             final Statement s2 = (Statement) predicate;
@@ -298,10 +302,6 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
             if (t12.equals(t21))
                 return true;
 
-
-            /*if (t11.equals(t22) && t12.equals(t21))
-                return true;
-            */
         }
         return false;
     }
@@ -327,12 +327,12 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     }
 
 
-    public static boolean invalidPair(final Term s1, final Term s2) {
-        boolean s1Indep = s1.hasVarIndep();
-        boolean s2Indep = s2.hasVarIndep();
-        //return (s1Indep && !s2Indep || !s1Indep && s2Indep);
-        return s1Indep ^ s2Indep;
-    }
+//    public static boolean invalidPair(final Term s1, final Term s2) {
+//        boolean s1Indep = s1.hasVarIndep();
+//        boolean s2Indep = s2.hasVarIndep();
+//        //return (s1Indep && !s2Indep || !s1Indep && s2Indep);
+//        return s1Indep ^ s2Indep;
+//    }
 
     public boolean subjectOrPredicateIsIndependentVar() {
         if (!hasVarIndep()) return false;
