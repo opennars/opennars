@@ -206,9 +206,11 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         for (int i = count; i > 1; i--) {
             int a = i - 1;
             int b = random.nextInt(i);
-            final T t = array[b];
-            array[b] = array[a];
-            array[a] = t;
+            if (b!=a) {
+                final T t = array[b];
+                array[b] = array[a];
+                array[a] = t;
+            }
         }
     }
 

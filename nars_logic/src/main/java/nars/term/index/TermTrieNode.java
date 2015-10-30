@@ -40,7 +40,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
 
     @Override
     public String toString() {
-        return (prefix != null ? Utf8.fromUtf8(prefix) : "?") + value + ":= " + super.toString();
+        return (prefix != null ? Utf8.fromUtf8toString(prefix) : "?") + value + ":= " + super.toString();
     }
 
     @Override

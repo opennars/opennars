@@ -830,10 +830,10 @@ public class IntBuf {
     }
 
     public static String asString(byte[] b) {
-        return Utf8.fromUtf8( b );
+        return Utf8.fromUtf8toString( b );
     }
     public static String asString(byte[] b, int bytes) {
-        return Utf8.fromUtf8( b, bytes );
+        return Utf8.fromUtf8toString( b, bytes );
     }
 
     public String asString() {

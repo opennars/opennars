@@ -154,7 +154,7 @@ public class UnificationTest extends AbstractNALTest {
         String s2 = "<<a --> A> =/> <b --> B>>";
         nar.input(s1+".");
         nar.input(s2+".");
-        nar.frame(10000);
+        nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
@@ -173,7 +173,7 @@ public class UnificationTest extends AbstractNALTest {
         String s2 = "<<$1 --> A> =/> <$1 --> B>>";
         nar.input(s1+".");
         nar.input(s2+".");
-        nar.frame(10000);
+        nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
@@ -192,7 +192,7 @@ public class UnificationTest extends AbstractNALTest {
         String s2 = "<<#1 --> A> =/> <$1 --> B>>";
         nar.input(s1+".");
         nar.input(s2+".");
-        nar.frame(10000);
+        nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
@@ -211,7 +211,7 @@ public class UnificationTest extends AbstractNALTest {
         String s2 = "(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>)";
         nar.input(s1+".");
         nar.input(s2+".");
-        nar.frame(10000);
+        nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
@@ -231,7 +231,7 @@ public class UnificationTest extends AbstractNALTest {
         String s2 = "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>";
         nar.input(s1+".");
         nar.input(s2+".");
-        nar.frame(10000);
+        nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 

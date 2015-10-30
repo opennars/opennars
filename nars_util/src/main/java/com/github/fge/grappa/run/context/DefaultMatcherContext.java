@@ -202,15 +202,16 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public char getFirstMatchChar()
+    public final char getFirstMatchChar()
     {
+        final DefaultMatcherContext<V> subContext = this.subContext;
         final int index = subContext.startIndex;
         if (subContext.currentIndex > index)
             return inputBuffer.charAt(index);
 
         // TODO: figure out why it says that
-        throw new InvalidGrammarException("getFirstMatchChar called "
-            + "but previous rule did not match anything");
+        throw new InvalidGrammarException(
+                "getFirstMatchChar called but previous rule did not match anything");
     }
 
     @Override

@@ -76,21 +76,24 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
     }
 
     @Override
-    public char charAt(final int index) {
+    public final char charAt(final int index) {
         return sequence[index];
     }
 
     @Override
-    public byte depth() {
+    public final byte depth() {
         return 0;
     }
 
     @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = Arrays.hashCode(sequence);
+    public final int hashCode() {
+        int h = this.hash;
+        if (h == 0) {
+            int newhash = Arrays.hashCode(sequence);
+            if (newhash == 0) newhash = 1;
+            return this.hash = newhash;
         }
-        return hash;
+        return h;
     }
 
     
@@ -218,7 +221,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
 
     
     @Override
-    public int length() {
+    public final int length() {
         return len;
     }
 

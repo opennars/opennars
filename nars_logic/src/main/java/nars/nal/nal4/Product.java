@@ -94,7 +94,10 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     }
 
     static <T extends Term> Product<T> make(final T... arg) {
-        if (arg.length == 1)
+        int l = arg.length;
+        if (l == 0)
+            throw new RuntimeException("null product");
+        if (l == 1)
             return only(arg[0]);
 
         return new ProductN<>(arg);

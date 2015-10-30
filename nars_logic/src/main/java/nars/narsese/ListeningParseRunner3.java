@@ -103,7 +103,7 @@ public class ListeningParseRunner3<V>
     }
 
     @Override
-    public <T> boolean match(final MatcherContext<T> context)
+    public final <T> boolean match(final MatcherContext<T> context)
     {
         final Matcher matcher = context.getMatcher();
 

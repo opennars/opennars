@@ -13,7 +13,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -81,24 +80,27 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
-        w.append(CharBuffer.wrap(Utf8.fromUtf8ToChars(bytes())));
+        Utf8.fromUtf8ToAppendable(bytes(), w);
     }
 
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public StringBuilder toStringBuilder(final boolean pretty) {
-        char[] c = chars(pretty);
-        return new StringBuilder(c.length).append(c);
+        StringBuilder sb = new StringBuilder();
+        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
+        return sb;
     }
 
 
     @Override
     public String toString() {
-        return new String(chars(true));
-        //return toStringBuilder(true).toString();
+        return Utf8.fromUtf8toString(bytes());
     }
 
-    public char[] chars(final boolean pretty) {
+//    public final char[] chars(final boolean pretty) {
+//        return chars();
+//    }
+    public final char[] chars() {
         return Utf8.fromUtf8ToChars(bytes());
     }
 
@@ -106,7 +108,8 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     public boolean equals(final Object x) {
         if (this == x) return true;
         if (!(x instanceof Atom)) return false;
-        return Byted.equals(this, (Byted)x);
+        Atom ax = (Atom)x;
+        return (ax.op() == op()) && Byted.equals(this, ax);
     }
 
 

@@ -82,13 +82,13 @@ public class FasterList<X> extends FastList<X> {
         return fillArray(array);
     }
 
-    private X[] fillArray(X[] array) {
+    private final X[] fillArray(X[] array) {
         System.arraycopy(this.items, 0, array, 0, this.size);
         return array;
     }
 
 
-    public X[] toNullTerminatedUnpaddedArray(X[] array) {
+    public final X[] toNullTerminatedUnpaddedArray(X[] array) {
         final int s = this.size; //actual size
         if (array.length < (s+1)) {
             array = (X[]) Array.newInstance(array.getClass().getComponentType(), s+1);
@@ -99,20 +99,10 @@ public class FasterList<X> extends FastList<X> {
     }
 
     public final void forEach(final Consumer c) {
-//        for (Object o : items) {
-//            if (o == null) break;
-//            c.accept(o);
-//        }
-
-        int size = size();
-        final Object[] a = array();
-        for (int i = 0; i < size; i++) {
-            final Object j = a[i];
+        for (Object j : array()) {
             if (j == null) break; //end of list
             c.accept(j);
         }
     }
-
-
 
 }

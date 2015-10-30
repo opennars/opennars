@@ -135,9 +135,8 @@ public class ArraySharingList<C> implements Iterable<C> {
 
         C[] a;
         if (!consumers.isEmpty()) {
-            a = this.array;
-            if (a == null)
-                a = arrayBuilder.apply(data.size()+1);  //+1 for padding
+            if ((a = this.array) == null)
+                a = arrayBuilder.apply(consumers.size()+1);  //+1 for padding
             a = consumers.toNullTerminatedUnpaddedArray(a);
         }
         else {

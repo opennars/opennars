@@ -23,7 +23,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     /**
      * list of (direct) term
      */
-    public T[] term;
+    public final T[] term;
 
 
     /**
@@ -41,9 +41,9 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     transient protected byte hasVarIndeps;
     transient protected byte hasVarDeps;
 
-    public TermVector() {
-        this(null);
-    }
+//    public TermVector() {
+//        this(null);
+//    }
 
     public TermVector(@JsonProperty("term") final T... components) {
         super();
@@ -98,7 +98,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     /**
      * (shallow) Clone the component list
      */
-    public T[] cloneTerms() {
+    public final T[] cloneTerms() {
         return copyOf(term, term.length);
     }
 
@@ -170,7 +170,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     /**
      * forced deep clone of terms - should not be necessary
      */
-    public Term[] cloneTermsDeep() {
+    public final Term[] cloneTermsDeep() {
         Term[] l = new Term[length()];
         for (int i = 0; i < l.length; i++)
             l[i] = term[i].cloneDeep();
@@ -253,14 +253,14 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
 
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return length() != 0;
     }
 
     /**
      * first level only, not recursive
      */
-    public boolean contains(Object o) {
+    public final boolean contains(Object o) {
         if (o instanceof Term)
             return containsTerm((Term) o);
         return false;
@@ -272,9 +272,11 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
     @Override
-    public void forEach(Consumer<? super T> action, int start, int stop) {
-        for (int i = start; i < stop; i++)
-            action.accept(this.term[i]);
+    public final void forEach(Consumer<? super T> action, int start, int stop) {
+        final T[] tt = this.term;
+        for (int i = start; i < stop; i++) {
+            action.accept(tt[i]);
+        }
     }
 
     @Override
@@ -290,7 +292,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      * @return Whether the target is in the current term
      */
     @Override
-    public boolean containsTerm(final Term t) {
+    public final boolean containsTerm(final Term t) {
         if (impossibleSubterm(t))
             return false;
         return Terms.contains(term, t);

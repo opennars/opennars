@@ -299,6 +299,7 @@ public class FindSubst {
                 default:
                     throw new RuntimeException("invalid permutation");
             }
+            //TODO make a special matchAll3 which specializes in 3-arity match, avoiding array allocation (just use 3 variables passed as params)
             solved = matchAll(cTerm2, list, --power);
             order = (order + 1) % 6;
             tries++;
@@ -320,6 +321,8 @@ public class FindSubst {
                 list[0] = cTerm1_1;
                 list[1] = cTerm1_0;
             }
+            //TODO make a special matchAll2 which specializes in 2-arity match, avoiding array allocation (just use 3 variables passed as params)
+
             order = !order;
             solved = matchAll(cTerm2, list, --power);
             tries++;

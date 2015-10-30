@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.Global;
 import nars.Memory;
 import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
@@ -13,7 +14,7 @@ import static nars.nal.nal1.LocalRules.revisible;
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)
  */
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
-    private static final float RANK_EPSILON = 0.0001f;
+    private static final float RANK_EPSILON = 0.000001f;
 
 
 //    /** warning this will create a 0-capacity table,
@@ -63,7 +64,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     public final Task top(Ranker r) {
 
         final Task[] tasks = getCachedNullTerminatedArray();
-        if (tasks == null) return null;
+        //if (tasks == null) return null;
 
 
         float s = Float.NEGATIVE_INFINITY;
@@ -81,57 +82,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         return b;
     }
 
-//    /**
-//     * Select a belief to interact with the given task in logic
-//     * <p/>
-//     * get the first qualified one
-//     * <p/>
-//     * only called in RuleTables.rule
-//     *
-//     * @return The selected isBelief
-//     */
-////    @Override
-//    public Task match(final Task task, long now) {
-//        if (isEmpty()) return null;
-//
-//        long occurrenceTime = task.getOccurrenceTime();
-//
-//        final int b = size();
-//
-//        if (task.isEternal()) {
-//            Task eternal = top(true, false);
-//
-//        }
-//        else {
-//
-//        }
-//
-//        for (final Task belief : this) {
-//
-//            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
-//
-//
-//            return belief;
-//        }
-//
-//
-//        Task projectedBelief = belief.projectTask(occurrenceTime, now);
-//
-//        //TODO detect this condition before constructing Task
-//        if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
-//            //belief = nal.derive(projectedBelief); // return the first satisfying belief
-//            return projectedBelief;
-//        }
-//
-//        return null;
-//    }
-
-//    @Override
-//    public Task project(Task t, long now) {
-//        Task closest = topRanked();
-//        if (closest == null) return null;
-//        return closest.projectTask(t.getOccurrenceTime(), now);
-//    }
 
 
     /**
@@ -217,22 +167,17 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public final boolean tryAdd(Task input, Ranker r, Memory memory) {
 
-        float rankInput = r.rank(input);    // for the new isBelief
+        if (Global.DEBUG) {
+            checkForDeleted();
+        }
 
+        final float rankInput = r.rank(input);    // for the new isBelief
 
         final int siz = data.size();
-
-        boolean atCapacity = (capacity == siz);
-
-
-        //if (Global.DEBUG) {
-        checkForDeleted();
-        //}
-
+        final boolean atCapacity = (capacity == siz);
         final Task[] tasks = getCachedNullTerminatedArray();
 
         int i = 0;
-        if (tasks != null) {
 
             for (Task b; null != (b = tasks[i++]); ) {
                 if (b == input) return false;
@@ -244,7 +189,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 }
 
                 float existingRank = r.rank(b, rankInput);
-                boolean inputGreater = (Float.isNaN(existingRank) || rankInput > existingRank);
+
+                final boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
                 if (inputGreater) {
                     break; //item will be inserted at this index
                 } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {
@@ -255,7 +201,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 }
             }
             i--; //-1 is correct since after the above for loop it will be 1 ahead
-        }
+
 
 
         if (atCapacity) {
@@ -266,13 +212,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             } else {
                 Task removed = remove(siz - 1);
                 onBeliefRemoved(removed, "Forgotten");
-                add(i, input);
-                return true;
             }
-        } else {
-            add(i, input);
-            return true;
         }
+
+        add(i, input);
+        return true;
     }
 
     private final void onBeliefRemoved(Task t, String reason) {
@@ -429,4 +373,56 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //    }
 
 
+
+//    /**
+//     * Select a belief to interact with the given task in logic
+//     * <p/>
+//     * get the first qualified one
+//     * <p/>
+//     * only called in RuleTables.rule
+//     *
+//     * @return The selected isBelief
+//     */
+////    @Override
+//    public Task match(final Task task, long now) {
+//        if (isEmpty()) return null;
+//
+//        long occurrenceTime = task.getOccurrenceTime();
+//
+//        final int b = size();
+//
+//        if (task.isEternal()) {
+//            Task eternal = top(true, false);
+//
+//        }
+//        else {
+//
+//        }
+//
+//        for (final Task belief : this) {
+//
+//            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
+//
+//
+//            return belief;
+//        }
+//
+//
+//        Task projectedBelief = belief.projectTask(occurrenceTime, now);
+//
+//        //TODO detect this condition before constructing Task
+//        if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
+//            //belief = nal.derive(projectedBelief); // return the first satisfying belief
+//            return projectedBelief;
+//        }
+//
+//        return null;
+//    }
+
+//    @Override
+//    public Task project(Task t, long now) {
+//        Task closest = topRanked();
+//        if (closest == null) return null;
+//        return closest.projectTask(t.getOccurrenceTime(), now);
+//    }
 }

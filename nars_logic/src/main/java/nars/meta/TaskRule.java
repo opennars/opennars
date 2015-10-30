@@ -43,6 +43,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     /** maximum of the minimum NAL levels involved in the postconditions of this rule */
     public int minNAL;
     private int numPatternVar;
+    private String str;
 
     public Product getPremises() {
         return (Product) term(0);
@@ -151,12 +152,18 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
                 patternVars.add(v);
         });
         this.numPatternVar = patternVars.size();
+        this.str = super.toString();
     }
 
-    public Term task() {
+    @Override
+    public final String toString() {
+        return str;
+    }
+
+    public final Term task() {
         return pattern.term(0);
     }
-    public Term belief() {
+    public final Term belief() {
         return pattern.term(1);
     }
 
@@ -165,7 +172,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
 
         @Override
-        public boolean test(Term term) {
+        public final boolean test(Term term) {
             if (term instanceof Atom) {
                 String name = term.toString();
                 return (Character.isUpperCase(name.charAt(0)));

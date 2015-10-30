@@ -279,7 +279,6 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
         if (subject.equals(predicate))
             return true;
 
-
         //TODO combine these mirrored invalidReflexive calls into one combined, unredundant operation
         if (invalidReflexive(subject, predicate))
             return true;

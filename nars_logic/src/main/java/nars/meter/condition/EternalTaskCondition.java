@@ -107,12 +107,9 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
         setDuration(n.memory.duration());
     }
 
-
-
-
-    public double getAcceptableDistanceThreshold() {
-        return 0.01;
-    }
+//    public double getAcceptableDistanceThreshold() {
+//        return 0.01;
+//    }
 
     //how many multiples of the range it is away from the acceptable time interval
     public static double rangeError(double value, double min, double max, boolean squash) {

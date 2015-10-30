@@ -18,8 +18,8 @@ package com.github.fge.grappa.buffers;
 
 import com.github.fge.grappa.support.Position;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
+import nars.util.data.list.FasterList;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.Tainted;
@@ -31,7 +31,7 @@ import java.util.List;
 public final class LineCounter
 {
     // TODO: replace with IntRange from largetext
-    private final List<Range<Integer>> lines = Lists.newArrayList();
+    private final List<Range<Integer>> lines = new FasterList();
     private final int nrLines;
     private final int len;
 

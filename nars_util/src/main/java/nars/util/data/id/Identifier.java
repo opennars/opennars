@@ -182,7 +182,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
     @Override
     public String toString() {
-        return Utf8.fromUtf8(bytes());
+        return Utf8.fromUtf8toString(bytes());
         //return toString(true);
     }
 

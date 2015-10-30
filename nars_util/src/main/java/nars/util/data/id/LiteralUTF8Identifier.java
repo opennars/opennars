@@ -177,7 +177,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     /** string representation formed by the UTF8 bytes() */
     public String stringFromBytes() {
-        return Utf8.fromUtf8(bytes());
+        return Utf8.fromUtf8toString(bytes());
     }
 
     /** this should only be used when setting a value and the hash will be invalidated,

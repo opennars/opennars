@@ -19,16 +19,16 @@ public class MemorySerializationTest extends AbstractSerializationTest<Memory,Me
     @Parameterized.Parameters(name = "{0}")
     public static Collection configurations() {
 
-        new Default()
-                .believe("b:a")
-                .believe("c:b.").frame(4);
+//        new Default()
+//                .believe("b:a")
+//                .believe("c:b.").frame(4);
 
         return Arrays.asList(new Object[][]{
                 { new Default().memory },
 
                 { new Default()
                         .believe("b:a")
-                        .believe("c:b.").memory }
+                        .believe("c:b.").frame(4).memory }
         });
     }
 

@@ -131,9 +131,9 @@ public class XorShift1024StarRandom extends Random {
 	
 	@Override
 	public void nextBytes( final byte[] bytes ) {
-		int i = bytes.length, n = 0;
+		int i = bytes.length;
 		while( i != 0 ) {
-			n = Math.min( i, 8 );
+			int n = Math.min(i, 8);
 			for ( long bits = nextLong(); n-- != 0; bits >>= 8 ) bytes[ --i ] = (byte)bits;
 		}
 	}
@@ -281,7 +281,7 @@ public class XorShift1024StarRandom extends Random {
 
 		@Override
 		public void nextBytes( final byte[] bytes ) {
-			int i = bytes.length, n = 0;
+			int i = bytes.length, n;
 			while( i != 0 ) {
 				n = Math.min( i, 8 );
 				for ( long bits = staffordMix13( x += PHI ); n-- != 0; bits >>= 8 ) bytes[ --i ] = (byte)bits;

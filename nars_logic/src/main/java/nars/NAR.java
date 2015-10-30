@@ -710,7 +710,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return total time in seconds elapsed in realtime
      */
-    public void frame(final int frames) {
+    public NAR frame(final int frames) {
 
         if (!running.compareAndSet(false, true)) {
             throw new RuntimeException("already running");
@@ -741,6 +741,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         if (resourceMeter != null)
             resourceMeter.FRAME_DURATION.start();
         */
+
+        return this;
     }
 
     /* Print all statically known events (discovered via reflection)

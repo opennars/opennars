@@ -206,9 +206,11 @@ public class RuleMatch extends FindSubst {
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
-            String leakMsg = "reactor leak: " + derivedTerm;
-            //throw new RuntimeException(leakMsg);
-            System.err.println(leakMsg);
+            if (Global.DEBUG) {
+                String leakMsg = "reactor leak: " + derivedTerm;
+                //throw new RuntimeException(leakMsg);
+                System.err.println(leakMsg);
+            }
             return null;
 
 //
