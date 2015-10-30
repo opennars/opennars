@@ -104,6 +104,7 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
         this.confMin = Math.max(0.0f, confMin);
         setPunctuation(punc);
         setTerm(n.term(sentenceTerm));
+        setDuration(n.memory.duration());
     }
 
 

@@ -125,6 +125,12 @@ public class SequenceParallelTest {
         assertEquals(dur1 /*?*/, ((Parallel)c).duration()); //interpolated duration
     }
 
+    @Test public void testParallelWithoutSlashZero() {
+
+        assertEquals(
+                    "(&|, <John --> (/, hold, _, key)>, <hold --> (/, _, John, key)>). %1.00;0.90%",
+        t.inputTask("(&|, <John --> (/, hold, _, key)>, <hold --> (/, _, John, key)>, /0).").toString());
+    }
 
     @Test public void testSemiDuplicateSequences() {
         //TODO decide if this is correct handling
