@@ -30,7 +30,7 @@ abstract public class PatternFunction implements Function<Task<Operation>, List<
     public List<Task> apply(Task<Operation> operationTask) {
         FindSubst s = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(1));
         if (s.next(pattern, operationTask.getTerm(), Global.UNIFICATION_POWER)) {
-            return run(operationTask, s.map1);
+            return run(operationTask, s.xy);
         }
         return null;
     }

@@ -2,6 +2,7 @@ package nars.nar;
 
 import nars.LocalMemory;
 import nars.bag.impl.TrieCacheBag;
+import nars.budget.Budget;
 import nars.clock.RealtimeMSClock;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
@@ -30,6 +31,7 @@ public class Terminal extends Default {
                         new TrieCacheBag()
                 ),
                 0,0,0,0);
+
     }
 
     @Override
@@ -42,6 +44,23 @@ public class Terminal extends Default {
         //nothing
         return null;
     }
+
+    @Override
+    protected Concept doConceptualize(Term term, Budget b) {
+        Concept exists = memory.concept(term);
+        if (exists!=null) {
+            exists.getBudget().mergePlus(b);
+            return exists;
+        }
+        else {
+            Concept c = apply(term);
+            c.getBudget().budget(b);
+            memory.concepts.put(c);
+            return c;
+        }
+    }
+
+
 
     @Override
     public FIFOTaskPerception initInput() {

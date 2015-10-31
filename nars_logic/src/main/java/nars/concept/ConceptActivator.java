@@ -81,8 +81,6 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
         this.now = now;
 
         Concept c = bag.update(this);
-        if (c!=null)
-            c.setMemory(nar.memory());
         return c;
     }
 

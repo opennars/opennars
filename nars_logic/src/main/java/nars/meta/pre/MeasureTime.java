@@ -25,7 +25,7 @@ public class MeasureTime extends AbstractMeasureTime {
         }
 
         CyclesInterval interval = CyclesInterval.make(time);
-        m.map1.put(target, interval );
+        m.xy.put(target, interval );
 
         return true;
     }

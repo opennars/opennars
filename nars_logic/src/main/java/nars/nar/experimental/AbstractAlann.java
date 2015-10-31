@@ -206,13 +206,9 @@ public abstract class AbstractAlann extends NAR {
 
         final Concept c;
         if (t instanceof Atom) {
-            c = new AtomConcept(t,
-                    termLinks, taskLinks
-            );
+            c = new AtomConcept(t, termLinks, taskLinks);
         } else {
-            c = new DefaultConcept(t,
-                    memory, taskLinks, termLinks
-            );
+            c = new DefaultConcept(t, taskLinks, termLinks, memory);
         }
 
         return c;

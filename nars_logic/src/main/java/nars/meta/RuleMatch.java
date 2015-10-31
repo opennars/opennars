@@ -182,8 +182,8 @@ public class RuleMatch extends FindSubst {
             if (c instanceof Substitute || c instanceof SubsIfUnifies) {
                 //here we are interested how to transform the second to the first
                 this.Inp.clear();// = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
-                this.Inp.putAll(this.map2); //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
-                ApplySubsSet.putAll(this.map2); //<- doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
+                this.Inp.putAll(this.yx); //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
+                ApplySubsSet.putAll(this.yx); //<- doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
             }
 
             if (!c.test(this))
@@ -405,7 +405,7 @@ public class RuleMatch extends FindSubst {
     }
 
     final Function<Term, Term> resolver = k ->
-            k != null ? k.substituted(map1) : null;
+            k != null ? k.substituted(xy) : null;
 
 //    public Term resolveTest(final Term t) {
 //        Term r = resolver.apply(t);

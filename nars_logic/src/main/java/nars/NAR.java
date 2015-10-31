@@ -1148,7 +1148,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         }
 
         final Concept c = doConceptualize(term, budget);
-        if (c == null) {
+        if (c!=null)
+            c.setMemory(memory);
+        else {
             throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
         }
         memory.eventConceptActivated.emit(c);
@@ -1270,12 +1272,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //
 //        return this;
 //    }
-
-
-    public NAR onConceptActive(final Consumer<Concept> c) {
-        regs.add(this.memory.eventConceptActivated.on(c));
-        return this;
-    }
+//
+//
+//    public NAR onConceptActive(final Consumer<Concept> c) {
+//        regs.add(this.memory.eventConceptActivated.on(c));
+//        return this;
+//    }
 
     public final void input(final Stream<Task> taskStream) {
         input((Input) new TaskStream(taskStream));

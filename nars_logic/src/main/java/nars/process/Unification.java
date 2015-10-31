@@ -65,7 +65,7 @@ public class Unification {
         Term aa = a;
 
         if (a instanceof Compound) {
-            aa = applySubstituteAndRenameVariables(((Compound) a), f.map1);
+            aa = applySubstituteAndRenameVariables(((Compound) a), f.xy);
             if (aa == null) return false;
 
             final Op aaop = aa.op();
@@ -78,7 +78,7 @@ public class Unification {
         Term bb = b;
 
         if (b instanceof Compound) {
-            bb = applySubstituteAndRenameVariables(((Compound) b), f.map2);
+            bb = applySubstituteAndRenameVariables(((Compound) b), f.yx);
             if (bb == null) return false;
 
             final Op bbop = bb.op();

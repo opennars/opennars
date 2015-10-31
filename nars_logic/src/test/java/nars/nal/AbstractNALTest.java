@@ -8,6 +8,7 @@ import nars.meter.TestNAR;
 import nars.nar.Default;
 import nars.nar.Default2;
 import nars.nar.SingleStepNAR;
+import nars.nar.Terminal;
 import org.junit.Ignore;
 
 import java.util.List;
@@ -84,6 +85,12 @@ abstract public class AbstractNALTest {
 
     public final NAR nar() {
         return the;
+    }
+
+    public static Iterable<Supplier<NAR>> terminal() {
+        return Lists.newArrayList(
+            new Supplier[] {supply("Terminal", Terminal::new)}
+        );
     }
 
     public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {

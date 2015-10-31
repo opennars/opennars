@@ -357,12 +357,12 @@ public class Default extends NAR {
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(rng, termLinkBagSize).mergePlus();
 
-        Memory m1 = memory();
+        Memory m = memory();
 
         if (t instanceof Atom) {
             return new AtomConcept(t, termLinks, taskLinks);
         } else {
-            return new DefaultConcept(t, m1, taskLinks, termLinks);
+            return new DefaultConcept(t, taskLinks, termLinks, memory);
         }
 
     }
@@ -378,7 +378,7 @@ public class Default extends NAR {
 //    }
 
     @Override
-    protected final Concept doConceptualize(Term term, Budget b) {
+    protected Concept doConceptualize(Term term, Budget b) {
         return core.activate(term, b);
     }
 
@@ -452,7 +452,7 @@ public class Default extends NAR {
 
         public final MutableInteger capacity = new MutableInteger();
 
-        public final ConceptActivator ca;
+        public final ConceptActivator conceptActivator;
 
         public final AtomicDouble conceptForget;
 
@@ -467,7 +467,7 @@ public class Default extends NAR {
             super();
 
             this.nar = nar;
-            this.ca = ca;
+            this.conceptActivator = ca;
 
             this.deriver = deriver;
 
@@ -548,7 +548,7 @@ public class Default extends NAR {
             final Bag<Term, Concept> active = this.active;
             active.setCapacity(capacity.intValue());
 
-            final ConceptActivator ca = this.ca;
+            final ConceptActivator ca = this.conceptActivator;
             ca.setActivationFactor( activationFactor.floatValue() );
             return ca.update(term, b, time(), 1f, active);
         }

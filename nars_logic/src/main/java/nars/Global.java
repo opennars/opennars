@@ -51,20 +51,20 @@ public class Global {
     //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("I");
 
-    public static final float CONFIDENCE_PREFILTER = 0.005f; /** some non-zero epsilon */
+    public static final float CONFIDENCE_PREFILTER = 0.0025f; /** some non-zero epsilon */
     public static final float CONFIDENCE_PREFILTER_DEBUG = 0;
     public static final boolean DEBUG_DERIVATION_GRAPH = false;
     /** allow everything */
 
-    public static int UNIFICATION_POWER = 4096;
+    public static int UNIFICATION_POWER = 768;
 
     public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
-    public static final boolean DEBUG_BAG_MASS = false;
-    public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
+    //public static final boolean DEBUG_BAG_MASS = false;
+    //public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
     public static boolean DEBUG_DERIVATION_STACKTRACES = false; //includes stack trace in task's derivation rule string
     public static boolean DEBUG_INVALID_SENTENCES = true;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;

@@ -2,7 +2,7 @@ package nars.concept;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
-import nars.Memory;
+import nars.Param;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.budget.Budget;
@@ -60,26 +60,24 @@ public class DefaultConcept extends AtomConcept {
     /** how incoming budget is merged into its existing duplicate quest/question */
     final static Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
 
-    public DefaultConcept(final Term term, final Memory memory) {
-        this(term, memory, new NullBag(), new NullBag());
+    public DefaultConcept(final Term term, Param p) {
+        this(term, new NullBag(), new NullBag(), p);
     }
 
     /**
      * Constructor, called in Memory.getConcept only
-     * @param b
      * @param term      A term corresponding to the concept
-     * @param memory    A reference to the memory
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(final Term term, final Memory memory, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks) {
+    public DefaultConcept(final Term term, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, Param p) {
         super(term, termLinks, taskLinks);
 
         //TODO lazy instantiate?
-        this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue());
-        this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue());
+        this.beliefs = new ArrayListBeliefTable(p.conceptBeliefsMax.intValue());
+        this.goals = new ArrayListBeliefTable(p.conceptGoalsMax.intValue());
 
-        final int maxQuestions = memory.conceptQuestionsMax.intValue();
+        final int maxQuestions = p.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
         this.quests = new ArrayListTaskTable(maxQuestions);
 

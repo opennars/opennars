@@ -1,6 +1,8 @@
 package nars.term.transform;
 
 import nars.Global;
+import nars.Memory;
+import nars.NAR;
 import nars.Op;
 import nars.nal.nal4.Image;
 import nars.term.CommonVariable;
@@ -15,37 +17,48 @@ import java.util.Random;
 
 
 public class FindSubst {
+
     public final Op type;
-    public final Map<Term, Term> map1;
-    public final Map<Term, Term> map2;
+
+    /** X -> Y term mapping */
+    public final Map<Term, Term> xy;
+
+    /** Y -> X term mapping */
+    public final Map<Term, Term> yx;
+
     private final Random random;
 
-    public FindSubst(Op type, Random random) {
-        this(type, null, null, random);
+    public FindSubst(Op type, NAR nar) {
+        this(type, nar.memory);
     }
 
-    public FindSubst(Op type, Map<Term, Term> map1, Map<Term, Term> map2, Random random) {
-        if (map1 == null)
-            map1 = Global.newHashMap(0);
-        if (map2 == null)
-            map2 = Global.newHashMap(0);
+    public FindSubst(Op type, Memory memory) {
+        this(type, memory.random);
+    }
 
+    public FindSubst(Op type, Random random) {
+        this(type, newDefaultMap(), newDefaultMap(), random);
+    }
+
+    private static final Map<Term,Term> newDefaultMap() {
+        return Global.newHashMap(0);
+    }
+
+    public FindSubst(Op type, Map<Term, Term> xy, Map<Term, Term> yx, Random random) {
         this.type = type;
-        this.map1 = map1;
-        this.map2 = map2;
+        this.xy = xy;
+        this.yx = yx;
         this.random = random;
-
     }
 
     public void clear() {
-        map1.clear();
-        map2.clear();
+        xy.clear();
+        yx.clear();
     }
-
 
     @Override
     public String toString() {
-        return type + ":" + map1 + ',' + map2;
+        return type + ":" + xy + ',' + yx;
     }
 
     private void print(String prefix, Term a, Term b) {
@@ -61,8 +74,8 @@ public class FindSubst {
      * this method should be used only from the outside.
      * all internal purposes should use the find() method
      * in order to manage decrease in power correctly */
-    public final boolean next(final Term term1, final Term term2, int power) {
-        int endPower = find(term1, term2, power);
+    public final boolean next(final Term x, final Term y, int power) {
+        int endPower = find(x, y, power);
         return endPower >= 0; //non-negative power value indicates success
     }
 
@@ -71,74 +84,67 @@ public class FindSubst {
      * @return
      *      if success: a POSITIVE next power value, after having subtracted the cost (>0)
      *      if fail: the NEGATED next power value (<=0)
-     *
-     *      (this should never return 0 because its non-invertable)
-     *
+     **
      * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
      */
-    int find(final Term term1, final Term term2, int power) {
+    int find(final Term x, final Term y, int power) {
 
-        if ((power = power - costFunction(term1, term2)) <= 0)
+        if ((power = power - costFunction(x, y)) <= 0)
             return power; //fail due to insufficient power
 
         final Op type = this.type;
 
-        final Op op1 = term1.op();
-        final Op op2 = term2.op();
+        final Op xOp = x.op();
+        final Op yOp = y.op();
 
-        final boolean termsEqual = term1.equals(term2);
+        final boolean termsEqual = x.equals(y);
 
 
-        if (op1.isVar() && op2.isVar()) {
+        if (xOp.isVar() && yOp.isVar()) {
             if (termsEqual) {
-                return power;
+                return power; //match
             }
 
-            if (op1 == op2) {
-                return nextTerm1Var(
-                        (Variable) term1,
-                        term2) ? power : -power;
+            if (xOp == yOp) {
+                return nextVarX((Variable) x, y) ?
+                        power : -power;
             }
         }
 
-        if (op1 == type) {
+        if (xOp == type) {
 
-            final Term t = map1.get(term1);
+            final Term xSubst = xy.get(x);
 
-            if (t != null) {
-                return find(t, term2, power); //RECURSE
+            if (xSubst != null) {
+                return find(xSubst, y, power);
+            }
+            else {
+                return nextVarX((Variable) x, y) ?
+                        power : -power;
             }
 
-            return nextTerm1Var(
-                    (Variable) term1,
-                    term2
-            ) ? power : -power;
+        } else if (yOp == type) {
 
-        } else if (op2 == type) {
+            final Term ySubst = yx.get(y);
 
-            final Term t = map2.get(term2);
-
-            if (t != null) {
-                return find(term1, t, power); //RECURSE
+            if (ySubst != null) {
+                return find(x, ySubst, power);
+            }
+            else {
+                return putVarY(x, (Variable) y) ?
+                        power : -power;
             }
 
-            return put2To1(term1, (Variable) term2) ?
-                    power : -power;
-
-        } else if (
-                    (op1 == op2) &&
-                    (term1 instanceof Compound)
-                    //(recurseInto(term1, term2))
-                ) {
-            return recurseAndPermute((Compound) term1, (Compound) term2, power);
+        } else if ((xOp == yOp) && (x instanceof Compound)) {
+            return recurseAndPermute((Compound) x, (Compound) y, power);
         }
 
         return termsEqual ? power : -power;
     }
 
     /** cost subtracted in the re-entry method: next(x, y, power) */
-    static int costFunction(Term term1, Term term2) {
-        return Math.max(term1.volume(), term2.volume());
+    static int costFunction(Term x, Term y) {
+        return Math.max(x.volume(), y.volume());
     }
 
 //    /** decide whether to recurse into according to variable types */
@@ -154,74 +160,71 @@ public class FindSubst {
 //        return compound1.hasVar(typ) || compound2.hasVar(typ);
 //    }
 
-    boolean nextTerm1Var(final Variable term1Var, final Term term2) {
-        Op op2 = null;
+    boolean nextVarX(final Variable xVar, final Term y) {
+        Op yOp = null;
 
-        final Variable term2Var;
-        if (term2 instanceof Variable) {
-            term2Var = (Variable) term2;
-            op2 = term2Var.op();
+        final Variable yVar;
+        if (y instanceof Variable) {
+            yVar = (Variable) y;
+            yOp = yVar.op();
+
+            Op xOp = xVar.op();
 
             //variables can and need sometimes to change name in order to unify
-            if(term1Var.op() == term2Var.op()) {  //and if its same op, its indeed variable renaming
-                return putCommon(term2Var, term1Var);
+            if(xOp == yOp) {  //and if its same op, its indeed variable renaming
+                return putCommon(yVar, xVar);
             }
-            if(type == Op.VAR_PATTERN && term1Var.op() == Op.VAR_PATTERN) {
-                return put1To2(term2,term1Var);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
+            if(type == Op.VAR_PATTERN && xOp == Op.VAR_PATTERN) {
+                return putVarX(xVar, y);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
             }
 
-        } else
-            term2Var = null;
+        } else {
+            yVar = null;
+        }
 
-
-
-        if ((term2Var != null) && (op2 == type)) {
-            return putCommon(term1Var, term2Var);
+        if ((yVar != null) && (yOp == type)) {
+            return putCommon(xVar, yVar);
         } else {
 
-            if ((term2Var != null) && !queryVarMatch(term1Var.op(), op2)) { //i highly doubt this is conceptionally correct, but this I will check another time
+            if ((yVar != null) && !queryVarMatch(xVar.op(), yOp)) { //i highly doubt this is conceptionally correct, but this I will check another time
                 return false;
             }
 
-            return put1To2(term2, term1Var);
+            return putVarX(xVar, y);
         }
 
     }
 
     /**
-     * term1 and term2 are of the same operator type and length (arity)
+     * X and Y are of the same operator type and length (arity)
      */
-    protected int recurseAndPermute(final Compound term1, final Compound term2, final int power) {
+    protected int recurseAndPermute(final Compound X, final Compound Y, final int power) {
 
         /** must have same # subterms */
-        final int c1Len = term1.length();
-        if (c1Len != term2.length()) {
+        final int xLen = X.length();
+        if (xLen != Y.length()) {
             return -power; //fail
         }
 
+        //TODO see if there is a volume or structural constraint that can terminate early here
+
         /** if they are images, they must have same relationIndex */
         //TODO simplify comparison with Image base class
-        if (term1 instanceof Image) {
-            if (((Image) term1).relationIndex != ((Image) term2).relationIndex)
+        if (X instanceof Image) {
+            if (((Image) X).relationIndex != ((Image) Y).relationIndex)
                 return -power; //fail
         }
 
-        if (term1.isCommutative() && c1Len > 1) {
+        if (X.isCommutative() && xLen > 1) {
 
-            switch (c1Len) {
-                case 2:
-                    return permute2(term1.term(0), term1.term(1),
-                            term2, power);
-                case 3:
-                    return permute3(term1.term /* 3 subterms */,
-                            term2, power);
-                default:
-                    return permuteN(term1,
-                            term2, power);
+            switch (xLen) {
+                case 2:  return permute2(X, Y, power);
+                case 3:  return permute3(X, Y, power);
+                default: return permuteN(X, Y, power);
             }
         }
 
-        return matchAll(term1, term2, power);
+        return matchAll(X, Y, power);
     }
 
 
@@ -229,58 +232,59 @@ public class FindSubst {
     /**
      * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
      */
-    static protected boolean queryVarMatch(final Op term1Var, final Op term2Var) {
+    static protected boolean queryVarMatch(final Op xVar, final Op yVar) {
 
-        final boolean t1Query = (term1Var == Op.VAR_QUERY);
-        final boolean t2Query = (term2Var == Op.VAR_QUERY);
+        final boolean xQuery = (xVar == Op.VAR_QUERY);
+        final boolean yQuery = (yVar == Op.VAR_QUERY);
 
-        return (t1Query ^ t2Query);
+        return (xQuery ^ yQuery);
     }
 
     /**
      * elimination
      */
-    private final boolean put2To1(final Term term1, final Variable term2Var) {
-        if (term2Var instanceof CommonVariable) {
-            map1.put(term2Var, term1);
+    private final boolean putVarY(final Term x, final Variable yVar) {
+        yx.put(yVar, x);
+        if (yVar instanceof CommonVariable) {
+            xy.put(yVar, x);
         }
-        map2.put(term2Var, term1);
         return true;
     }
 
     /**
      * elimination
      */
-    private final boolean put1To2(final Term term2, final Variable term1Var) {
-        map1.put(term1Var, term2);
-        if (term1Var instanceof CommonVariable) {
-            map2.put(term1Var, term2);
+    private final boolean putVarX(final Variable xVar, final Term y) {
+        xy.put(xVar, y);
+        if (xVar instanceof CommonVariable) {
+            yx.put(xVar, y);
         }
         return true;
     }
 
 
-    protected final boolean putCommon(final Variable a, final Variable b) {
-        final Variable commonVar = CommonVariable.make(a, b);
-        map1.put(a, commonVar);
-        map2.put(b, commonVar);
+    protected final boolean putCommon(final Variable x, final Variable y) {
+        final Variable commonVar = CommonVariable.make(x, y);
+        xy.put(x, commonVar);
+        yx.put(y, commonVar);
         return true;
     }
 
-    int permuteN(final Compound cTerm1, final Compound cTerm2, int power) {
+    /** unoptimized N-ary permute, which requires allocating a temporary array for shuffling */
+    int permuteN(final Compound X, final Compound Y, int power) {
         //TODO repeat with a new shuffle until power depleted?
 
-        final Term[] cTerm1Subterms = cTerm1.term;
-        final int numSubterms = cTerm1Subterms.length;
+        final Term[] yOriginalSubterms = Y.term;
+        final int numSubterms = yOriginalSubterms.length;
 
         final long permutations = ArithmeticUtils.factorial(numSubterms);
 
-        final Term[] c1 = Arrays.copyOf(cTerm1Subterms, numSubterms);
+        final Term[] ySubterms = Arrays.copyOf(yOriginalSubterms, numSubterms);
 
         int count = 0;
         do {
-            Compound.shuffle(c1, random);
-            if ((power = matchAll(c1, cTerm2, power)) > 0)
+            Compound.shuffle(ySubterms, random);
+            if ((power = matchAll(power, X, ySubterms)) >= 0)
                 return power; //success
             else
                 power = -power; //try again; reverse negated power back to a positive value for next attempt
@@ -292,30 +296,31 @@ public class FindSubst {
     }
 
 
-    private int permute3(final Term[] c3, final Compound cTerm2, int power) {
+    private int permute3(final Compound X, final Compound Y, int power) {
 
-        final Term a = c3[0];
-        final Term b = c3[1];
-        final Term c = c3[2];
+        final Term[] ySubterms = Y.term;
+        final Term a = ySubterms[0];
+        final Term b = ySubterms[1];
+        final Term c = ySubterms[2];
 
         int tries = 6;
-        Term x, y, z;
+        Term d, e, f;
 
         int order = random.nextInt(6); //random starting permutation
 
         do {
             switch (order) {
-                case 0: x = a; y = b; z = c;     break;
-                case 1: x = a; y = c; z = b;     break;
-                case 2: x = b; y = a; z = c;     break;
-                case 3: x = b; y = c; z = a;     break;
-                case 4: x = c; y = a; z = b;     break;
-                case 5: x = c; y = b; z = a;     break;
+                case 0: d = a; e = b; f = c;     break;
+                case 1: d = a; e = c; f = b;     break;
+                case 2: d = b; e = a; f = c;     break;
+                case 3: d = b; e = c; f = a;     break;
+                case 4: d = c; e = a; f = b;     break;
+                case 5: d = c; e = b; f = a;     break;
                 default:
                     throw new RuntimeException("invalid permutation");
             }
 
-            if ((power = matchAll3(x, y, z, cTerm2, power)) > 0)
+            if ((power = matchAll(power, X, d, e, f)) >= 0)
                 return power; //success
             else {
                 power = -power; //try again; reverse negated power back to a positive value for next attempt
@@ -327,85 +332,84 @@ public class FindSubst {
         return -power; //fail
     }
 
-    private int permute2(final Term cTerm1_0, final Term cTerm1_1, final Compound cTerm2, int power) {
+    private int permute2(final Compound X, final Compound Y, int power) {
 
-        final Term a, b;
+        final Term[] yOriginalSubterms = Y.term;
+        Term y0 = yOriginalSubterms[0];
+        Term y1 = yOriginalSubterms[1];
+
+
+        //50% probabilty of swap
         if (random.nextBoolean()) {
-            a = cTerm1_0;  b = cTerm1_1;
-        }
-        else {
-            a = cTerm1_1;  b = cTerm1_0;
+            Term t = y0;
+            y0 = y1;
+            y1 = t;
         }
 
-        if ((power = matchAll2(a, b, cTerm2, power)) > 0)
+        if ((power = matchAll(power, X, y0, y1)) >= 0)
             return power; //success
-
-        power = -power; //restore to non-negative for next attempt
-        return       matchAll2(b, a, cTerm2, power);
+        else {
+            power = -power; //restore to non-negative for next attempt
+            return matchAll(power, X, y1, y0);
+        }
     }
 
     /** matches all subterms in their existing order */
-    final protected int matchAll(final Compound T, final Compound x, int power) {
-        Term[] t = T.term;
-        switch (t.length) {
+    final protected int matchAll(final Compound X, final Compound Y, int power) {
+        Term[] ySubterms = Y.term;
+        switch (ySubterms.length) {
             case 0:
                 return Math.max(0, power - 1); //ex: empty product, success by default so it is min 0
-            case 1:
-                return matchAll1(t[0], x, power);
-            case 2:
-                return matchAll2(t[0], t[1], x, power);
-            case 3:
-                return matchAll3(t[0], t[1], t[2], x, power);
             default:
-                return matchAll(t, x, power);
+                return matchAll(power, X, ySubterms);
         }
     }
 
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected int matchAll(final Term[] t, final Compound x, int power) {
+    final protected int matchAll(int power, final Compound X, final Term... ySubterms) {
 
-        final int tlen = t.length;
+        final int yLen = ySubterms.length;
 
-        final Term X[] = x.term;
+        final Term xSubterms[] = X.term;
 
-        for (int i = 0; i < tlen; i++) {
-            if ((power = find(t[i], X[i], power)) <= 0)
+        for (int i = 0; i < yLen; i++) {
+            if ((power = find(xSubterms[i], ySubterms[i], power)) < 0)
                 return power; //fail
         }
 
         return Math.max(0, power); //success
     }
 
-    /**
-     * optimized 3-arity case of matchAll
-     */
-    final protected int matchAll3(final Term a, final Term b, final Term c, final Compound x, int power) {
-
-        final Term X[] = x.term;
-
-        if ((power = find(a, X[0], power)) <= 0) return power;
-        if ((power = find(b, X[1], power)) <= 0) return power;
-        return       find(c, X[2], power);
-    }
-
-    /**
-     * optimized 2-arity case of matchAll
-     */
-    final protected int matchAll2(final Term a, final Term b, final Compound x, int power) {
-        final Term X[] = x.term;
-
-        if ((power = find(a, X[0], power)) <= 0) return power;
-        return       find(b, X[1], power);
-    }
-
-    /**
-     * optimized 1-arity case of matchAll
-     */
-    final protected int matchAll1(final Term a, final Compound x, int power) {
-        return find(a, x.term[0], power);
-    }
+//    /**
+//     * optimized 3-arity case of matchAll
+//     */
+//    final protected int matchAll3(final Term a, final Term b, final Term c, final Compound x, int power) {
+//
+//        final Term X[] = x.term;
+//
+//        if ((power = find(a, X[0], power)) <= 0) return power;
+//        if ((power = find(b, X[1], power)) <= 0) return power;
+//        return       find(c, X[2], power);
+//    }
+//
+//    /**
+//     * optimized 2-arity case of matchAll
+//     */
+//    final protected int matchAll2(final Term a, final Term b, final Compound x, int power) {
+//        final Term X[] = x.term;
+//
+//        if ((power = find(a, X[0], power)) <= 0) return power;
+//        return       find(b, X[1], power);
+//    }
+//
+//    /**
+//     * optimized 1-arity case of matchAll
+//     */
+//    final protected int matchAll1(final Term a, final Compound x, int power) {
+//        return find(a, x.term[0], power);
+//    }
 
 }
 

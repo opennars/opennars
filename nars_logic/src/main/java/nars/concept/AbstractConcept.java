@@ -54,7 +54,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
         return memory;
     }
 
-    public void setMemory(Memory memory) {
+    public final void setMemory(Memory memory) {
         this.memory = memory;
         if (memory!=null) {
             if (this.creationTime == Stamp.TIMELESS) {

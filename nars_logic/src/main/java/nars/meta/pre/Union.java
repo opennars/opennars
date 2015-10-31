@@ -51,7 +51,7 @@ public class Union extends PreCondition3Output {
             throw new RuntimeException("this condition should have been trapped earlier");
             //return false;
 
-        m.map1.put(c, res);
+        m.xy.put(c, res);
 
         return true;
     }
