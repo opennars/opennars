@@ -336,7 +336,7 @@ public class FindSubst {
         Term x1 = xSubterms[1];
 
 
-        //50% probabilty of swap
+        //50% probabilty of an initial swap
         if (random.nextBoolean()) {
             Term t = x0;
             x0 = x1;
@@ -345,17 +345,19 @@ public class FindSubst {
 
         final Term[] ySubterms = Y.term;
 
+        //allocate half of the power for the first attempt.
+        //2nd attempt will have at least this much (what remains from the first).
         int subPower = power/2;
 
-        int remainingSubPower = matchAll(subPower,
-                new Term[] { x0, x1 }, ySubterms);
+        int remainingSubPower =
+               matchAll2(subPower, x0, x1, ySubterms);
+
+        //subtract expense and add the surplus
         power -= (subPower - Math.abs(remainingSubPower));
         if (remainingSubPower >= 0) //success
             return power;
 
-        //invert power to non-negative for next attempt
-        return matchAll(power,
-                new Term[] { x1, x0 }, ySubterms);
+        return matchAll2(power, x1, x0, ySubterms);
     }
 
     static final int fail(int powerMagnitude) {
@@ -372,11 +374,15 @@ public class FindSubst {
 
         for (int i = 0; i < yLen; i++) {
             if ((power = find(xSubterms[i], ySubterms[i], power)) < 0)
-                return power; //fail
+                break; //fail
         }
 
         return power; //success
     }
 
-
+    final protected int matchAll2(int power, final Term x0, final Term x1, final Term[] ySubterms) {
+        if ((power = find(x0, ySubterms[0], power)) < 0)
+            return power;
+        return       find(x1, ySubterms[1], power);
+    }
 }
