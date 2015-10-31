@@ -57,15 +57,13 @@ public class UnificationTest extends AbstractNALTest {
 
 
 
-        if ((t2 instanceof Compound) && (t1 instanceof Compound)) {
+        if (shouldSub && (t2 instanceof Compound) && (t1 instanceof Compound)) {
             Set<Term> t1u = ((Compound) t1).unique(type);
             Set<Term> t2u = ((Compound) t2).unique(type);
 
             int n1 = Sets.difference(t1u, t2u).size();
             int n2 = Sets.difference(t2u, t1u).size();
 
-
-            //int t1u = ((Compound) t1).unique(type).size();
             assertTrue( (n2) <= (sub.yx.size()));
             assertTrue( (n1) <= (sub.xy.size()));
         }
@@ -384,6 +382,24 @@ public class UnificationTest extends AbstractNALTest {
         test(Op.VAR_PATTERN,
                 "{a,b,c}",
                 "{%1,b,%2}",
+                true);
+    }
+    @Test public void pattern_trySubs_set3_1_b_revesre()  {
+        test(Op.VAR_PATTERN,
+                "{%1,b,%2}",
+                "{a,b,c}",
+                true);
+    }
+    @Test public void pattern_trySubs_set3_1_b_commutative_inside_statement()  {
+        test(Op.VAR_PATTERN,
+                "<{a,b,c} --> d>",
+                "<{%1,b,%2} --> %3>",
+                true);
+    }
+    @Test public void pattern_trySubs_set3_1_statement_of_specific_commutatives()  {
+        test(Op.VAR_PATTERN,
+                "<{a,b} --> {c,d}>",
+                "<{%1,b} --> {c,%2}>",
                 true);
     }
     @Test public void pattern_trySubs_set3_1_c()  {

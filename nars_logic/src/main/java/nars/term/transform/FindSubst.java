@@ -286,7 +286,8 @@ public class FindSubst {
             else {
                 power = -power; //try again; reverse negated power back to a positive value for next attempt
 
-                yx.clear(); //start over
+                //xy.clear();
+                //yx.clear(); //start over
             }
 
             count++;
@@ -362,7 +363,8 @@ public class FindSubst {
         if (remainingSubPower >= 0) //success
             return power;
 
-        yx.clear(); //start over
+        //yx.clear(); //start over
+        //xy.clear();
 
         return matchAll2(power, x1, x0, ySubterms);
     }
