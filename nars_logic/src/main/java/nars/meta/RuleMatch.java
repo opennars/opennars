@@ -50,8 +50,8 @@ public class RuleMatch extends FindSubst {
     /**
      * used by substitute:
      */
-    public final Map<Term, Term> Inp = Global.newHashMap();
-    public final Map<Term, Term> Outp = Global.newHashMap();
+    public final Map<Variable, Variable> Inp = Global.newHashMap();
+    public final Map<Variable, Term> Outp = Global.newHashMap();
     public final Map<Term, Term> ApplySubsSet = Global.newHashMap();
 
     @Override
@@ -182,8 +182,17 @@ public class RuleMatch extends FindSubst {
             if (c instanceof Substitute || c instanceof SubsIfUnifies) {
                 //here we are interested how to transform the second to the first
                 this.Inp.clear();// = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
-                this.Inp.putAll(this.yx); //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
-                ApplySubsSet.putAll(this.yx); //<- doesnt hurt anyway, since $1 $2 will result in $1$2 a conflict should be impossible
+
+                //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
+
+                //put all yx's entries that have a variable value into Inp
+                yx.forEach((a,b) -> {
+                    if (b instanceof Variable)
+                        Inp.put(a, (Variable) b);
+                    else {
+                        int x = 0;
+                    }
+                });
             }
 
             if (!c.test(this))

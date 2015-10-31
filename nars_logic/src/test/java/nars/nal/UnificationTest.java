@@ -39,21 +39,21 @@ public class UnificationTest extends AbstractNALTest {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        int power = 1 + t1.volume() * t2.volume();
+        int power = 1 + t1.volume() * t2.volume() * 4;
 
         FindSubst sub = new FindSubst(type, nar);
         boolean subbed = sub.next(t1, t2, power);
-        assertEquals(subbed, shouldSub);
+        assertEquals(shouldSub, subbed);
     }
 
     @Test
-    public void unification1()  { //its not clear anymore how to build atomic terms so we will just get them out with hands crossed...
+    public void unification1()  { 
 
         String T1 = "<(*,$1,$1) --> wu>";
         String T2 = "<(*,a,b) --> wu>";
         TestNAR tester = test();
-        tester.believe(T1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(T2); //.en("Robin is a type of bird.");
+        tester.believe(T1); 
+        tester.believe(T2); 
         tester.run(10);
 
         Concept ret = tester.nar.concept(T1);
@@ -71,13 +71,13 @@ public class UnificationTest extends AbstractNALTest {
     }
 
     @Test
-    public void unification2()  { //its not clear anymore how to build atomic terms so we will just get them out with hands crossed...
+    public void unification2()  { 
 
         String T1 = "<(*,#1,$1) --> wu>";
         String T2 = "<(*,a,b) --> wu>";
         TestNAR tester = test();
-        tester.believe(T1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(T2); //.en("Robin is a type of bird.");
+        tester.believe(T1); 
+        tester.believe(T2); 
         tester.run(10);
 
         Concept ret = tester.nar.concept(T1);
@@ -95,13 +95,13 @@ public class UnificationTest extends AbstractNALTest {
     }
 
     @Test
-    public void unification3()  { //its not clear anymore how to build atomic terms so we will just get them out with hands crossed...
+    public void unification3()  { 
 
         String T1 = "<(*,%1,%1,$1) --> wu>";
         String T2 = "<(*,lol,lol2,$1) --> wu>";
         TestNAR tester = test();
-        tester.believe(T1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(T2); //.en("Robin is a type of bird.");
+        tester.believe(T1); 
+        tester.believe(T2); 
         tester.run(10);
 
         Concept ret = tester.nar.concept(T1);
@@ -119,43 +119,28 @@ public class UnificationTest extends AbstractNALTest {
     }
 
     @Test
-    public void unification4()  { //its not clear anymore how to build atomic terms so we will just get them out with hands crossed...
-
-        String T1 = "<(*,%1,%2,%3,$1) --> wu>";
-        String T2 = "<(*,%1,lol2,%1,$1) --> wu>";
-        TestNAR tester = test();
-        tester.believe(T1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(T2); //.en("Robin is a type of bird.");
-        tester.run(10);
-
-        Concept ret = tester.nar.concept(T1);
-        Concept ret2 = tester.nar.concept(T2);
-
-        //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.getTerm();
-        Term Term2 = ret2.getTerm();
-
-        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
-        boolean unifies = wu.next(Term1, Term2, 1024);
-        if (!unifies)
-            assertTrue("Unification is nonsensical", false);
-
+    public void unification4()  {
+        test(Op.VAR_PATTERN,
+            "<(*,%1,%2,%3,$1) --> wu>",
+            "<(*,%1,lol2,%1,$1) --> wu>",
+            true
+        );
     }
 
     @Test
-    public void unification_multiple_variable_elimination4()  { //its not clear anymore how to build atomic terms so we will just get them out with hands crossed...
+    public void unification_multiple_variable_elimination4()  { 
 
         String T1 = "<#x --> lock>";
         String T2 = "<{lock1} --> lock>";
         TestNAR tester = test();
-        tester.believe(T1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(T2); //.en("Robin is a type of bird.");
+        tester.believe(T1); 
+        tester.believe(T2); 
         tester.run(10);
 
         Concept ret = tester.nar.concept(T1);
         Concept ret2 = tester.nar.concept(T2);
 
-        //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
+        
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
@@ -211,14 +196,135 @@ public class UnificationTest extends AbstractNALTest {
                 true);
     }
 
-    @Test public void pattern_trySubs_Indep_Var_2()  {
+    @Test public void pattern_trySubs_Indep_Var_2_parallel()  {
         test(Op.VAR_INDEPENDENT,
               "(&|,<($1,#2) --> on>,<(SELF,#2) --> at>)",
               "(&|,<({t002},#1) --> on>,<(SELF,#1) --> at>)",
               true);
     }
+    @Test public void pattern_trySubs_Indep_Var_2_product_and_common_depvar()  {
+        test(Op.VAR_INDEPENDENT,
+                "(<($1,#2) --> on>,<(SELF,#2) --> at>)",
+                "(<({t002},#1) --> on>,<(SELF,#1) --> at>)",
+                true);
+    }
+    @Test public void pattern_trySubs_Indep_Var_2_product()  {
+        test(Op.VAR_INDEPENDENT,
+                "(<($1,x) --> on>,<(SELF,x) --> at>)",
+                "(<({t002},x) --> on>,<(SELF,x) --> at>)",
+                true);
+    }
+    @Test public void pattern_trySubs_Dep_Var_2_product()  {
+        test(Op.VAR_DEPENDENT,
+                "(<(#1,x) --> on>,<(SELF,x) --> at>)",
+                "(<({t002},x) --> on>,<(SELF,x) --> at>)",
+                true);
+    }
+    @Test public void pattern_trySubs_Indep_Var_2_set()  {
+        test(Op.VAR_INDEPENDENT,
+                "{<($1,x) --> on>,<(SELF,x) --> at>}",
+                "{<({t002},x) --> on>,<(SELF,x) --> at>}",
+                true);
+    }
+    @Test public void pattern_trySubs_Indep_Var_2_set2()  {
+        test(Op.VAR_INDEPENDENT,
+                "{<($1,x) --> on>,<(SELF,x) --> at>}",
+                "{<(z,x) --> on>,<(SELF,x) --> at>}",
+                true);
+    }
+
+    @Test public void pattern_trySubs_Pattern_Var_2_setSimple()  {
+        test(Op.VAR_PATTERN,
+                "{%1,y}",
+                "{z,y}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setSimpler()  {
+        test(Op.VAR_PATTERN,
+                "{%1}",
+                "{z}",
+                true);
+    }
+
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>,y}",
+                "{<(z,x) --> on>,y}",
+                true);
+    }
 
 
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_1()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>,<x-->y>}",
+                "{<(z,x) --> on>,<x-->y>}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_2()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>,(a,b)}",
+                "{<(z,x) --> on>,(a,b)}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_3()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>, c:(a)}",
+                "{<(z,x) --> on>, c:(a)}",
+                true);
+    }
+
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_4()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>, c:a:b}",
+                "{<(z,x) --> on>, c:a:b}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>, c:(a,b)}",
+                "{<(z,x) --> on>, c:(a,b)}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_n()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>, c:(a,b)}",
+                "{<(z,x) --> on>, c:(b,a)}",
+                false);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_1()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>, c:(a &/ b)}",
+                "{<(z,x) --> on>, c:(a &/ b)}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_c()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>, c:{a,b}}",
+                "{<(z,x) --> on>, c:{a,b}}",
+                true);
+    }
+
+
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex1()  {
+        test(Op.VAR_PATTERN,
+                "{%1,<(SELF,x) --> at>}",
+                "{z,<(SELF,x) --> at>}",
+                true);
+    }
+
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex2()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1,x) --> on>,<(SELF,x) --> at>}",
+                "{<(z,x) --> on>,<(SELF,x) --> at>}",
+                true);
+    }
+
+    @Test public void pattern_trySubs_Dep_Var_2_set()  {
+        test(Op.VAR_DEPENDENT,
+                "{<(#1,x) --> on>,<(SELF,x) --> at>}",
+                "{<({t002},x) --> on>,<(SELF,x) --> at>}",
+                true);
+    }
 
 
     @Test public void pattern_trySubs_Indep_Var_32()  {

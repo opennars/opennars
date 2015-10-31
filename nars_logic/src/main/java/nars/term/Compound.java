@@ -193,12 +193,15 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     public static <T> void shuffle(final T[] array, final Random random) {
         int count = array.length;
         for (int i = count; i > 1; i--) {
-            int a = i - 1;
-            int b = random.nextInt(i);
+            final int a = i - 1;
+            final int b = random.nextInt(i);
             if (b!=a) {
                 final T t = array[b];
                 array[b] = array[a];
                 array[a] = t;
+            }
+            else {
+                int y = 0;
             }
         }
     }

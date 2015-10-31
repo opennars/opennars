@@ -7,6 +7,7 @@ import nars.nal.nal7.Temporal;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.FindSubst;
 
 import java.util.Map;
@@ -96,7 +97,7 @@ public class Unification {
      * appliesSubstitute and renameVariables, resulting in a cloned object,
      * will not change this instance
      */
-    public static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term, Term> subs) {
+    public static Term applySubstituteAndRenameVariables(final Compound t, final Map<Variable, Term> subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;

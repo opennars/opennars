@@ -5,6 +5,7 @@ import nars.Op;
 import nars.meta.RuleMatch;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.FindSubst;
 
 import java.util.Map;
@@ -31,14 +32,14 @@ public class SubsIfUnifies extends PreCondition3 {
 
         //the rule match context stores the Inp and Outp. not in this class.
         //no preconditions should store any state
-        Map<Term, Term> Inp = m.Inp;// Global.newHashMap();
+        Map<Variable, Variable> Inp = m.Inp;// Global.newHashMap();
 
         if (b == null || c == null) {
             Inp.clear();
             return false;
         }
 
-        Map<Term, Term> Outp = m.Outp;
+        Map<Variable, Term> Outp = m.Outp;
 
 
 
@@ -51,8 +52,8 @@ public class SubsIfUnifies extends PreCondition3 {
             type = Op.VAR_DEPENDENT;
         }
 
-        Map<Term, Term> Left = Global.newHashMap(0);
-        Map<Term, Term> Right = Global.newHashMap(0);
+        Map<Variable, Term> Left = Global.newHashMap(0);
+        Map<Variable, Term> Right = Global.newHashMap(0);
         FindSubst sub = new FindSubst(type, Left, Right, m.premise.getRandom());
 
         if (!sub.next(b, c, Global.UNIFICATION_POWER)) {

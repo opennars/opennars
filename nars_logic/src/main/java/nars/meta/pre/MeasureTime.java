@@ -5,6 +5,7 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
 import nars.term.Term;
+import nars.term.Variable;
 
 /**
  * Created by me on 8/15/15.
@@ -25,7 +26,7 @@ public class MeasureTime extends AbstractMeasureTime {
         }
 
         CyclesInterval interval = CyclesInterval.make(time);
-        m.xy.put(target, interval );
+        m.xy.put((Variable)target, interval );
 
         return true;
     }

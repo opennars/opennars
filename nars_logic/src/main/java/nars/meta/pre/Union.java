@@ -7,6 +7,7 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +52,7 @@ public class Union extends PreCondition3Output {
             throw new RuntimeException("this condition should have been trapped earlier");
             //return false;
 
-        m.xy.put(c, res);
+        m.xy.put((Variable)c, res);
 
         return true;
     }

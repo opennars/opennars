@@ -1,21 +1,38 @@
 package nars.meta.pre;
 
+import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
+import nars.term.Variable;
 
 import java.util.Map;
 
-/**
- * Created by me on 8/15/15.
- */
-public class Substitute extends PreCondition2 {
 
-    public Substitute(Term arg1, Term arg2) {
-        super(arg1, arg2);
+public class Substitute extends PreCondition {
+
+    public final Term arg1, arg2;
+    private final String str;
+
+    public Substitute(Term var1, Term var2) {
+        this.arg1 = var1;
+        this.arg2 = var2;
+        this.str = getClass().getSimpleName() + "[" + var1 + "," + var2 + "]";
     }
 
     @Override
-    public boolean test(RuleMatch m, Term a, Term b) {
+    public final String toString() {
+        return str;
+    }
+
+    @Override public final boolean test(RuleMatch m) {
+        Term b = m.resolve(arg2);
+        if (b == null) return false;
+
+        Map<Variable, Variable> i = m.Inp;
+
+        Variable a = i.get(this.arg1);
+        if (a == null)
+            return false;
 
         //Term M = b; //this one got substituted, but with what?
         //Term with = m.assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
@@ -24,24 +41,9 @@ public class Substitute extends PreCondition2 {
 
         //the rule match context stores the Inp and Outp. not in this class.
         //no preconditions should store any state
-        Map<Term, Term> Inp = m.Inp;// Global.newHashMap();
-
-        if (b!=null) {
-
-            Map<Term,Term> Outp = m.Outp; //Global.newHashMap();
-
-            Outp.put(Inp.get(this.arg1),b);
-            Inp.clear();
-
-            return true;
-        }
-        Inp.clear(); //new HashMap<Term,Term>();
-        return false;
+        m.Outp.put(a,b);
+        i.clear();
+        return true;
     }
 
-//    public HashMap<Term,Term> GetRegularSubs() {
-//        HashMap<Term,Term> ret = new HashMap<Term,Term>();
-//        ret.put(this.arg1, b);
-//        return ret;
-//    }
 }

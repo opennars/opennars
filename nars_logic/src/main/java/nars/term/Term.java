@@ -196,7 +196,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     }
 
     /** returns the effective term as substituted by the set of subs */
-    default Term substituted(final Map<Term, Term> subs) {
+    default Term substituted(final Map<Variable, Term> subs) {
 
         //TODO hypothesis: if # of variables of the specified type
         //exceeds entries in subs, then match is probably
