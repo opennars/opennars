@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static org.junit.Assert.assertTrue;
+
 //don't touch this file - patham9
 
 @RunWith(Parameterized.class)
@@ -47,7 +49,7 @@ public class UnificationTest extends AbstractNALTest {
         FindSubst wu = new FindSubst(Op.VAR_INDEPENDENT, new HashMap<Term,Term>(), new HashMap<Term,Term>(), new Random());
         boolean unifies = wu.next(Term1,Term2,1024);
         if(unifies)
-            throw new Exception("Unification is doing nonsense");
+            assertTrue("Unification is nonsensical", false);
 
     }
 
@@ -71,7 +73,7 @@ public class UnificationTest extends AbstractNALTest {
         FindSubst wu = new FindSubst(Op.VAR_PATTERN, new HashMap<Term,Term>(), new HashMap<Term,Term>(), new Random());
         boolean unifies = wu.next(Term1,Term2,1024);
         if(unifies)
-            throw new Exception("Unification is doing nonsense");
+            assertTrue("Unification is nonsensical", false);
 
     }
 
@@ -95,7 +97,7 @@ public class UnificationTest extends AbstractNALTest {
         FindSubst wu = new FindSubst(Op.VAR_PATTERN, new HashMap<Term,Term>(), new HashMap<Term,Term>(), new Random());
         boolean unifies = wu.next(Term1,Term2,1024);
         if(unifies)
-            throw new Exception("Unification is doing nonsense");
+            assertTrue("Unification is nonsensical", false);
 
     }
 
@@ -119,7 +121,7 @@ public class UnificationTest extends AbstractNALTest {
         FindSubst wu = new FindSubst(Op.VAR_PATTERN, new HashMap<Term,Term>(), new HashMap<Term,Term>(), new Random());
         boolean unifies = wu.next(Term1,Term2,1024);
         if(!unifies)
-            throw new Exception("Unification is doing nonsense");
+            assertTrue("Unification is nonsensical", false);
 
     }
 
@@ -143,7 +145,7 @@ public class UnificationTest extends AbstractNALTest {
         FindSubst wu = new FindSubst(Op.VAR_DEPENDENT, new HashMap<Term,Term>(), new HashMap<Term,Term>(), new Random());
         boolean unifies = wu.next(Term1,Term2,1024);
         if(!unifies)
-            throw new Exception("Unification is doing nonsense");
+            assertTrue("Unification is nonsensical", false);
 
     }
 
@@ -162,7 +164,7 @@ public class UnificationTest extends AbstractNALTest {
         HashMap<Term, Term> M2 = new HashMap<Term,Term>();
         FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
         if(!sub.next(t1,t2,99999)) {
-            throw new Exception("Unification with pattern variable failed");
+            assertTrue("Unification is nonsensical", false);
         }
     }
 
@@ -181,7 +183,7 @@ public class UnificationTest extends AbstractNALTest {
         HashMap<Term, Term> M2 = new HashMap<Term,Term>();
         FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
         if(!sub.next(t1,t2,99999)) {
-            throw new Exception("Unification with pattern variable failed");
+            assertTrue("Unification with pattern variable failed", false);
         }
     }
 
@@ -200,7 +202,7 @@ public class UnificationTest extends AbstractNALTest {
         HashMap<Term, Term> M2 = new HashMap<Term,Term>();
         FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
         if(!sub.next(t1,t2,99999)) {
-            throw new Exception("Unification with pattern variable failed");
+            assertTrue("Unification with pattern variable failed", false);
         }
     }
 
@@ -219,7 +221,7 @@ public class UnificationTest extends AbstractNALTest {
         HashMap<Term, Term> M2 = new HashMap<Term,Term>();
         FindSubst sub = new FindSubst(Op.VAR_INDEPENDENT,M1,M2,new Random());
         if(!sub.next(t1,t2,99999)) {
-            throw new Exception("Unification with pattern variable failed");
+            assertTrue("Unification with pattern variable failed", false);
         }
     }
 
@@ -239,7 +241,7 @@ public class UnificationTest extends AbstractNALTest {
         HashMap<Term, Term> M2 = new HashMap<Term,Term>();
         FindSubst sub = new FindSubst(Op.VAR_PATTERN,M1,M2,new Random());
         if(!sub.next(t1,t2,99999)) {
-            throw new Exception("Unification with pattern variable failed");
+            assertTrue("Unification with pattern variable failed", false);
         }
     }
 }

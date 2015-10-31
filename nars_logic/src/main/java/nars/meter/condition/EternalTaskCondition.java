@@ -2,7 +2,6 @@ package nars.meter.condition;
 
 
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.io.Texts;
 import nars.narsese.InvalidInputException;
@@ -327,24 +326,19 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 //        return succeeded  +": "  + JSONOutput.stringFromFields(this);
 //    }
 
-
-    public Memory getMemory() {
-        return nar.memory;
-    }
-
     boolean succeeded = false;
 
     long successTime = Stamp.TIMELESS;
 
     @Override
-    public void accept(Task task) {
+    public final void accept(Task task) {
         if (!succeeded && test(task)) {
             succeeded = true;
             successTime = nar.time();
         }
     }
 
-    public long getSuccessTime() {
+    public final long getSuccessTime() {
         return successTime;
     }
 
