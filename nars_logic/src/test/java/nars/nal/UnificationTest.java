@@ -1,15 +1,18 @@
 package nars.nal;
 
+import com.gs.collections.impl.factory.Sets;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
 import nars.meter.TestNAR;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -39,11 +42,33 @@ public class UnificationTest extends AbstractNALTest {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        int power = 1 + t1.volume() * t2.volume() * 4;
+        //a somewhat strict lower bound
+        int power = 1 + t1.volume() * t2.volume();
 
         FindSubst sub = new FindSubst(type, nar);
         boolean subbed = sub.next(t1, t2, power);
+
+        System.out.println();
+        System.out.println(t1 + " " + t2 + " " + subbed);
+        System.out.println(sub.xy);
+        System.out.println(sub.yx);
+
         assertEquals(shouldSub, subbed);
+
+
+
+        if ((t2 instanceof Compound) && (t1 instanceof Compound)) {
+            Set<Term> t1u = ((Compound) t1).unique(type);
+            Set<Term> t2u = ((Compound) t2).unique(type);
+
+            int n1 = Sets.difference(t1u, t2u).size();
+            int n2 = Sets.difference(t2u, t1u).size();
+
+
+            //int t1u = ((Compound) t1).unique(type).size();
+            assertTrue( (n2) <= (sub.yx.size()));
+            assertTrue( (n1) <= (sub.xy.size()));
+        }
     }
 
     @Test
@@ -331,6 +356,46 @@ public class UnificationTest extends AbstractNALTest {
         test(Op.VAR_PATTERN,
                 "<%A =|> <(*,SELF,$1) --> reachable>>",
                 "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>",
+                true);
+    }
+
+    @Test public void pattern_trySubs_set3()  {
+        test(Op.VAR_PATTERN,
+                "{a,b,c}",
+                "{%1,%2,%3}",
+                true);
+    }
+    @Test public void pattern_trySubs_set2_1()  {
+        test(Op.VAR_PATTERN,
+                "{a,b}", "{%1,b}",
+                true);
+    }
+    @Test public void pattern_trySubs_set2_1_reverse()  {
+        test(Op.VAR_PATTERN,
+                "{%1,b}", "{a,b}",
+                true);
+    }
+    @Test public void pattern_trySubs_set2_2()  {
+        test(Op.VAR_PATTERN,
+                "{a,b}", "{a,%1}",
+                true);
+    }
+    @Test public void pattern_trySubs_set3_1_b()  {
+        test(Op.VAR_PATTERN,
+                "{a,b,c}",
+                "{%1,b,%2}",
+                true);
+    }
+    @Test public void pattern_trySubs_set3_1_c()  {
+        test(Op.VAR_PATTERN,
+                "{a,b,c}",
+                "{%1,%2,c}",
+                true);
+    }
+    @Test public void pattern_trySubs_set4()  {
+        test(Op.VAR_PATTERN,
+                "{a,b,c,d}",
+                "{%1,%2,%3,%4}",
                 true);
     }
 

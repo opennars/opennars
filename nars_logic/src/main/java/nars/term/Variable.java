@@ -160,14 +160,23 @@ public class Variable extends Atom {
         return new Variable(name(type, counter));
     }
 
+    //TODO replace this with a generic counting method of how many subterms there are present
+    public static int numPatternVariables(Term t) {
+        final int[] has = {0};
+        t.recurseTerms((t1, superterm) -> {
+            if (t1.op() == Op.VAR_PATTERN)
+                has[0]++;
+        });
+        return has[0];
+    }
+
     /** necessary because VAR_PATTERN are hidden from substructure */
     public static boolean hasPatternVariable(Term t) {
         final boolean[] has = {false};
         t.recurseTerms((t1, superterm) -> {
             if (!has[0]) {
-                if (t1 instanceof Variable)
-                    if (( (/*Variable*/ t1) .op() == Op.VAR_PATTERN))
-                        has[0] = true;
+                if (t1.op() == Op.VAR_PATTERN)
+                    has[0] = true;
             }
         });
         return has[0];
@@ -304,4 +313,6 @@ public class Variable extends Atom {
     @Override public final int varQuery() {
         return hasVarQuery() ? 1 : 0;
     }
+
+
 }

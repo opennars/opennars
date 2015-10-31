@@ -43,7 +43,7 @@ public class PremiseExhaustion {
                 "(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.90%",
                 "<{key1} --> key>. %1.00;0.90%"
                 //|-
-        ).mustBelieve(50 /*cycles*/,
+        ).mustBelieve(150 /*cycles*/,
                 "(&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>).",
                 1.00f /* f */, 0.81f /* c */)
         .run();

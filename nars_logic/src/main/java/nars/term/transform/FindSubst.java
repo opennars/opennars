@@ -136,10 +136,11 @@ public class FindSubst {
             }
 
         } else if ((xOp == yOp) && (x instanceof Compound)) {
-            return recurseAndPermute((Compound) x, (Compound) y, power);
+            power = recurseAndPermute((Compound) x, (Compound) y, power);
         } else {
-            return termsEqual ? power : -power;
+            if (!termsEqual) power = -power;
         }
+        return power;
     }
 
     /** cost subtracted in the re-entry method: next(x, y, power) */
@@ -279,10 +280,14 @@ public class FindSubst {
         int count = 0;
         do {
             Compound.shuffle(xSubterms, random);
+
             if ((power = matchAll(power, xSubterms, yTerms)) >= 0)
                 return power; //success
-            else
+            else {
                 power = -power; //try again; reverse negated power back to a positive value for next attempt
+
+                yx.clear(); //start over
+            }
 
             count++;
         } while ((power > 0) && (count < permutations));
@@ -291,42 +296,42 @@ public class FindSubst {
     }
 
 
-    private int permute3(final Compound X, final Compound Y, int power) {
-
-        final Term[] ySubterms = Y.term;
-        final Term a = ySubterms[0];
-        final Term b = ySubterms[1];
-        final Term c = ySubterms[2];
-
-        int tries = 6;
-        Term d, e, f;
-
-        int order = random.nextInt(6); //random starting permutation
-
-        do {
-            switch (order) {
-                case 0: d = a; e = b; f = c;     break;
-                case 1: d = a; e = c; f = b;     break;
-                case 2: d = b; e = a; f = c;     break;
-                case 3: d = b; e = c; f = a;     break;
-                case 4: d = c; e = a; f = b;     break;
-                case 5: d = c; e = b; f = a;     break;
-                default:
-                    throw new RuntimeException("invalid permutation");
-            }
-
-            if ((power = matchAll(power, X.term,
-                    new Term[]{ d, e, f}) )  >= 0)
-                return power; //success
-            else {
-                power = -power; //try again; reverse negated power back to a positive value for next attempt
-                order = (order + 1) % 6;
-                tries--;
-            }
-        } while (tries > 0);
-
-        return fail(power); //fail
-    }
+//    private int permute3(final Compound X, final Compound Y, int power) {
+//
+//        final Term[] ySubterms = Y.term;
+//        final Term a = ySubterms[0];
+//        final Term b = ySubterms[1];
+//        final Term c = ySubterms[2];
+//
+//        int tries = 6;
+//        Term d, e, f;
+//
+//        int order = random.nextInt(6); //random starting permutation
+//
+//        do {
+//            switch (order) {
+//                case 0: d = a; e = b; f = c;     break;
+//                case 1: d = a; e = c; f = b;     break;
+//                case 2: d = b; e = a; f = c;     break;
+//                case 3: d = b; e = c; f = a;     break;
+//                case 4: d = c; e = a; f = b;     break;
+//                case 5: d = c; e = b; f = a;     break;
+//                default:
+//                    throw new RuntimeException("invalid permutation");
+//            }
+//
+//            if ((power = matchAll(power, X.term,
+//                    new Term[]{ d, e, f}) )  >= 0)
+//                return power; //success
+//            else {
+//                power = -power; //try again; reverse negated power back to a positive value for next attempt
+//                order = (order + 1) % 6;
+//                tries--;
+//            }
+//        } while (tries > 0);
+//
+//        return fail(power); //fail
+//    }
 
 
     private int permute2(final Compound X, final Compound Y, int power) {
@@ -356,6 +361,8 @@ public class FindSubst {
         power -= (subPower - Math.abs(remainingSubPower));
         if (remainingSubPower >= 0) //success
             return power;
+
+        yx.clear(); //start over
 
         return matchAll2(power, x1, x0, ySubterms);
     }

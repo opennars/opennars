@@ -48,7 +48,7 @@ public class TestNAR  {
     final transient private boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
     private int temporalTolerance = 0;
-    protected float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
+    protected final static float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 
 
@@ -85,9 +85,7 @@ public class TestNAR  {
         return EternalTaskCondition.cost(requires);
     }
 
-    public void setTruthTolerance(float truthTolerance) {
-        this.truthTolerance = truthTolerance;
-    }
+
 
     public TestNAR debug() {
         Global.DEBUG = true;

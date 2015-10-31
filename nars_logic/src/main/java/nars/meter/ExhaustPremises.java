@@ -37,8 +37,9 @@ public class ExhaustPremises extends TestNAR {
         super(nar);
 
         Global.DEBUG = true;
-        setTruthTolerance(0.01f); //strict
 
+
+        //nar.trace();
 
         //1. get termlink graph results on each independently
         //  measure cycles to stabilization

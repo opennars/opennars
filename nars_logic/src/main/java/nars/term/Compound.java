@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static nars.Symbols.*;
 
@@ -168,6 +169,34 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     @Override public void setDuration(int duration) {
         for (final Term x : this.term)
             x.setDuration(duration);
+    }
+
+    public final int numVars(final Op type) {
+
+        switch (type) {
+            case VAR_DEPENDENT:
+                return varDep();
+            case VAR_INDEPENDENT:
+                return varIndep();
+            case VAR_QUERY:
+                return varQuery();
+            case VAR_PATTERN:
+                return Variable.numPatternVariables(this);
+        }
+        throw new RuntimeException("Invalid variable type: " + type);
+    }
+
+    /** gets the set of unique recursively contained terms of a specific type
+     * TODO generalize to a provided lambda predicate selector
+     * */
+    public final Set<Term> unique(final Op type) {
+        Set<Term> t = Global.newHashSet(0);
+        final int[] has = {0};
+        recurseTerms((t1, superterm) -> {
+            if (t1.op() == type)
+                t.add(t1);
+        });
+        return t;
     }
 
 //    @Override
