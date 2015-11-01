@@ -257,16 +257,18 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
         }
         else {
 
-            final float textDifference = Texts.levenshteinDistance(
-                    task.toString().split("\\{")[0], //HACK to avoi comparing stamps
-                    toString().split("\\{")[0]);
+            //TODO add the levenshtein distance of other task components
 
-            if (textDifference > 0) {
+            final float termDifference = Texts.levenshteinDistance(
+                    task.getTerm().toString().split("\\{")[0], //HACK to avoi comparing stamps
+                    getTerm().toString().split("\\{")[0]);
+
+            /*if (termDifference > 0)*/ {
                 ensureSimilar();
 
                 //TODO more efficient way than this
                 if (!similar.values().contains(task))
-                    similar.put(textDifference, task);
+                    similar.put(termDifference, task);
 
                 if (similar.size() > maxSimilars) {
                     similar.remove(similar.lastEntry().getKey());

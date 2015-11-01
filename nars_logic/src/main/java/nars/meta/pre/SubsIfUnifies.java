@@ -13,17 +13,29 @@ import java.util.Map;
 /**
  * Created by me on 8/15/15.
  */
-public class SubsIfUnifies extends PreCondition3 {
+public class SubsIfUnifies extends PreCondition2 {
 
     final Atom INDEP_VAR = Atom.the("$", true);
     final Atom QUERY_VAR = Atom.the("?", true);
+    final Atom DEP_VAR = Atom.the("#", true);
+    private final Op type;
 
-    public SubsIfUnifies(Term arg1, Term arg2, Term arg3) {
-        super(arg1, arg2, arg3);
+    public SubsIfUnifies(Term a, Term arg2, Term arg3) {
+        super(arg2, arg3);
+
+        if (a.equals(QUERY_VAR))  {
+            type = Op.VAR_QUERY;
+        } else if (a.equals(INDEP_VAR)) {
+            type = Op.VAR_INDEPENDENT;
+        } else if (a.equals(DEP_VAR)) {
+            type = Op.VAR_DEPENDENT;
+        } else {
+            throw new RuntimeException("invalid variable type: " + a);
+        }
     }
 
     @Override
-    public boolean test(RuleMatch m, Term a, Term b, Term c) {
+    public boolean test(RuleMatch m, Term b, Term c) {
 
         //Term M = b; //this one got substituted, but with what?
         //Term with = m.assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
@@ -32,25 +44,14 @@ public class SubsIfUnifies extends PreCondition3 {
 
         //the rule match context stores the Inp and Outp. not in this class.
         //no preconditions should store any state
-        Map<Variable, Variable> Inp = m.Inp;// Global.newHashMap();
 
         if (b == null || c == null) {
-            Inp.clear();
             return false;
         }
 
         Map<Variable, Term> Outp = m.Outp;
 
 
-
-        final Op type;
-        if (a.equals(QUERY_VAR))  {
-            type = Op.VAR_QUERY;
-        } else if (a.equals(INDEP_VAR)) {
-            type = Op.VAR_INDEPENDENT;
-        } else {
-            type = Op.VAR_DEPENDENT;
-        }
 
         Map<Variable, Term> Left = Global.newHashMap(0);
         Map<Variable, Term> Right = Global.newHashMap(0);
@@ -61,7 +62,6 @@ public class SubsIfUnifies extends PreCondition3 {
         }
 
         Outp.putAll(Left);
-        Inp.clear();
 
         return true;
 

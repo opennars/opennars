@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.gs.collections.impl.factory.Sets;
+import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
@@ -33,6 +34,7 @@ public class UnificationTest extends AbstractNALTest {
 
     void test(Op type, String s1, String s2, boolean shouldSub) {
 
+        Global.DEBUG = true;
         TestNAR test = test();
         NAR nar = test.nar;
         nar.believe(s1);
@@ -44,6 +46,7 @@ public class UnificationTest extends AbstractNALTest {
 
         //a somewhat strict lower bound
         int power = 1 + t1.volume() * t2.volume();
+        power*=power;
 
         FindSubst sub = new FindSubst(type, nar);
         boolean subbed = sub.next(t1, t2, power);
@@ -414,5 +417,16 @@ public class UnificationTest extends AbstractNALTest {
                 "{%1,%2,%3,%4}",
                 true);
     }
-
+    @Test public void diffVarTypes1()  {
+        test(Op.VAR_DEPENDENT,
+                "(a,$1)",
+                "(#1,$1)",
+                true);
+    }
+    @Test public void impossibleMatch1()  {
+        test(Op.VAR_DEPENDENT,
+                "(a,#1)",
+                "(b,b)",
+                false);
+    }
 }

@@ -172,10 +172,7 @@ public class RuleMatch extends FindSubst {
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
 
-        Map<Term, Term> ApplySubsSet = this.ApplySubsSet; //Global.newHashMap(0);
-        ApplySubsSet.clear();
-
-        this.Outp.clear(); // = new HashMap<Term, Term>(); //this one contains the substitutions of the substitution predicaes, so this one has to be new
+        final Map<Variable, Term> Outp = this.Outp; //Global.newHashMap(0);
 
         for (final PreCondition c : outcome.afterConclusions) {
 
@@ -190,7 +187,7 @@ public class RuleMatch extends FindSubst {
                     if (b instanceof Variable)
                         Inp.put(a, (Variable) b);
                     else {
-                        int x = 0;
+                        System.err.println("what is it: " + b);
                     }
                 });
             }
@@ -198,15 +195,18 @@ public class RuleMatch extends FindSubst {
             if (!c.test(this))
                 return null;
 
-            if (c instanceof Substitute || c instanceof SubsIfUnifies) {
-                ApplySubsSet.putAll(this.Outp);
-            }
+
+            //if (c instanceof Substitute || c instanceof SubsIfUnifies) {
+                Inp.clear();
+//                //Outp.putAll(this.Outp);
+            //}
         }
 
         derivedTerm = resolve(derivedTerm);
 
-        if (!ApplySubsSet.isEmpty() && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
-            derivedTerm = ((Compound) derivedTerm).applySubstitute(ApplySubsSet);
+        if (!Outp.isEmpty() && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
+            derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
+            Outp.clear();
         }
 
         if (derivedTerm == null) return null;

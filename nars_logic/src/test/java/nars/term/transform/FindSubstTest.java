@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 
-public class FindSubstTest {
+@Deprecated public class FindSubstTest {
 
     @Test
     public void testFindSubst1() {

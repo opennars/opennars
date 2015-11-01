@@ -42,7 +42,6 @@ public class Substitute extends PreCondition {
         //the rule match context stores the Inp and Outp. not in this class.
         //no preconditions should store any state
         m.Outp.put(a,b);
-        i.clear();
         return true;
     }
 

@@ -1,5 +1,6 @@
 package nars.term.transform;
 
+import com.google.common.collect.Maps;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -12,6 +13,7 @@ import nars.term.Variable;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -76,6 +78,9 @@ public class FindSubst {
      * in order to manage decrease in power correctly */
     public final boolean next(final Term x, final Term y, int power) {
         int endPower = find(x, y, power);
+
+        //System.out.println(x + " " + y + " " + endPower);
+
         return endPower >= 0; //non-negative power value indicates success
     }
 
@@ -104,10 +109,12 @@ public class FindSubst {
             if (termsEqual) {
                 return power; //match
             }
-
-            if (xOp == yOp) {
-                return nextVarX((Variable) x, y) ?
-                        power : -power;
+            else {
+                Variable xVar = (Variable) x;
+                if (nextVarX(xVar, y)) {
+                    return power;
+                }
+                return -power; //no match
             }
         }
 
@@ -136,11 +143,29 @@ public class FindSubst {
             }
 
         } else if ((xOp == yOp) && (x instanceof Compound)) {
-            power = recurseAndPermute((Compound) x, (Compound) y, power);
-        } else {
-            if (!termsEqual) power = -power;
+            Compound cx = (Compound) x;
+            Compound cy = (Compound) y;
+            if (!isPossibleMatch(cx, cy))
+                power = -power;
+            else
+                power = permute(cx, cy, power);
         }
+        else {
+            if (!termsEqual)
+                power = -power;
+        }
+
         return power;
+    }
+
+    /** compare variable types to determine if one can match for another */
+    private boolean isPossibleMatch(Op xVarOp, Op yOp) {
+        if (xVarOp == Op.VAR_PATTERN) return true;
+//        if (xVarOp == Op.VAR_QUERY) {
+//            return yOp!=Op.VAR_QUERY; //dep or indep. it will not be the same query variable because equality has already been tested
+//        }
+
+        return (xVarOp == type);
     }
 
     /** cost subtracted in the re-entry method: next(x, y, power) */
@@ -149,48 +174,48 @@ public class FindSubst {
     }
 
 
+
     boolean nextVarX(final Variable xVar, final Term y) {
         final Op xOp = xVar.op();
         final Op yOp = y.op();
 
-        final Variable yVar;
-        if (y instanceof Variable) {
-            yVar = (Variable) y;
+        boolean subsumes = isPossibleMatch(xOp, yOp);
+        boolean sameType = (yOp == xOp);
 
-            //variables can and need sometimes to change name in order to unify
-            if(xOp == yOp) {  //and if its same op, its indeed variable renaming
-                return putCommon(xVar, yVar);
-            }
-            if(type == Op.VAR_PATTERN && xOp == Op.VAR_PATTERN) {
-                return putVarX(xVar, y);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
-            }
-
-        } else {
-            yVar = null;
-        }
-
-        if ((yVar != null) && (yOp == type)) {
-            return putCommon(xVar, yVar);
-        } else {
-
-            if ((yVar != null) && !queryVarMatch(xOp, yOp)) { //i highly doubt this is conceptionally correct, but this I will check another time
-                return false; //FAIL
-            }
-
+        if (subsumes) {
             return putVarX(xVar, y);
         }
+//        if (!subsumes && type == xOp && sameType) {
+//            return putCommon(xVar, (Variable)y);
+//        }
+//        else
+        else if (sameType ) {
+            return putCommon(xVar, (Variable)y);
+        }
+
+        return false;
+
+//
+//            if(type == Op.VAR_PATTERN && xOp == Op.VAR_PATTERN) {
+//                return putVarX(xVar, yVar);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
+//            }
+//
+//            //variables can and need sometimes to change name in order to unify
+//            if(xOp == yOp) {  //and if its same op, its indeed variable renaming
+//                return putCommon(xVar, yVar);
+//            }
+//
+//        } else {
+//            yVar = null;
+//        }
 
     }
 
-    /**
-     * X and Y are of the same operator type and length (arity)
-     */
-    protected int recurseAndPermute(final Compound X, final Compound Y, final int power) {
 
+    protected final boolean isPossibleMatch(final Compound X, final Compound Y) {
         /** must have same # subterms */
-        final int xLen = X.length();
-        if (xLen != Y.length()) {
-            return -power; //FAIL
+        if (X.length() != Y.length()) {
+            return false;
         }
 
         //TODO see if there is a volume or structural constraint that can terminate early here
@@ -199,8 +224,18 @@ public class FindSubst {
         //TODO simplify comparison with Image base class
         if (X instanceof Image) {
             if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                return -power; //FAIL
+                return false;
         }
+
+        return true;
+    }
+
+    /**
+     * X and Y are of the same operator type and length (arity)
+     */
+    protected int permute(final Compound X, final Compound Y, final int power) {
+
+        final int xLen = X.length();
 
         if ((xLen <= 1) || (!X.isCommutative())) {
             //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
@@ -234,9 +269,12 @@ public class FindSubst {
      * elimination
      */
     private final boolean putVarY(final Term x, final Variable yVar) {
-        yx.put(yVar, x);
+        if (yVar.op()!=type) {
+            throw new RuntimeException("tried to set invalid map: " + yVar + "->" + x + " but type=" + type);
+        }
+        yxPut(yVar, x);
         if (yVar instanceof CommonVariable) {
-            xy.put(yVar, x);
+            xyPut(yVar, x);
         }
         return true;
     }
@@ -245,19 +283,33 @@ public class FindSubst {
      * elimination
      */
     private final boolean putVarX(final Variable xVar, final Term y) {
-        xy.put(xVar, y);
+        if (xVar.op()!=type) {
+            throw new RuntimeException("tried to set invalid map: " + xVar + "->" + y + " but type=" + type);
+        }
+        xyPut(xVar, y);
         if (xVar instanceof CommonVariable) {
-            yx.put(xVar, y);
+            yxPut(xVar, y);
         }
         return true;
     }
 
 
     protected final boolean putCommon(final Variable x, final Variable y) {
+//        if ((x.op()!=type) || (y.op()!=type)) {
+//            throw new RuntimeException("tried to map common variable of wrong type: " + x + "->" + y + " but type=" + type);
+//        }
         final Variable commonVar = CommonVariable.make(x, y);
-        xy.put(x, commonVar);
-        yx.put(y, commonVar);
+        xyPut(x, commonVar);
+        yxPut(y, commonVar);
         return true;
+    }
+
+    private final void yxPut(Variable y, Term x) {
+        yx.put(y, x);
+    }
+
+    private final void xyPut(Variable x, Term y) {
+        xy.put(x, y);
     }
 
     /**
@@ -273,24 +325,34 @@ public class FindSubst {
         final int numSubterms = xOriginalSubterms.length;
 
         int permutations = (int)ArithmeticUtils.factorial(numSubterms);
+        permutations*=10; //HACK
 
         final Term[] xSubterms = Arrays.copyOf(xOriginalSubterms, numSubterms);
         final Term[] yTerms = Y.term;
+
+
+        //push/save:
+        HashMap<Variable, Term> tmpXY = Maps.newHashMap(xy);
+        HashMap<Variable, Term> tmpYX = Maps.newHashMap(yx);
+
 
         int count = 0;
         do {
             Compound.shuffle(xSubterms, random);
 
-            if ((power = matchAll(power, xSubterms, yTerms)) >= 0)
+            if ((power = matchAll(power, xSubterms, yTerms)) >= 0) {
                 return power; //success
+            }
             else {
                 power = -power; //try again; reverse negated power back to a positive value for next attempt
 
-                //xy.clear();
-                //yx.clear(); //start over
-            }
+                //pop/restore (TODO only if changed and will attempt again):
+                xy.clear(); xy.putAll(tmpXY);
+                yx.clear(); yx.putAll(tmpYX);
 
-            count++;
+
+                count++;
+            }
         } while ((power > 0) && (count < permutations));
 
         return fail(power); //fail
@@ -349,6 +411,10 @@ public class FindSubst {
             x1 = t;
         }
 
+        //SAVE
+        HashMap<Variable, Term> tmpXY = Maps.newHashMap(xy);
+        HashMap<Variable, Term> tmpYX = Maps.newHashMap(yx);
+
         final Term[] ySubterms = Y.term;
 
         //allocate half of the power for the first attempt.
@@ -363,10 +429,18 @@ public class FindSubst {
         if (remainingSubPower >= 0) //success
             return power;
 
-        //yx.clear(); //start over
-        //xy.clear();
+        //RESTORE
+        xy.clear(); xy.putAll(tmpXY);
+        yx.clear(); yx.putAll(tmpYX);
 
-        return matchAll2(power, x1, x0, ySubterms);
+        power = matchAll2(power, x1, x0, ySubterms);
+        if (power < 0) {
+            //RESTORE
+            xy.clear(); xy.putAll(tmpXY);
+            yx.clear(); yx.putAll(tmpYX);
+        }
+
+        return power;
     }
 
     static final int fail(int powerMagnitude) {
