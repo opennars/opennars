@@ -27,14 +27,14 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (!(obj instanceof ArraySortedIndex)) return false;
         ArraySortedIndex o = (ArraySortedIndex) obj;
         return list.equals(o.list) && capacity == o.capacity;
     }
 
     @Override
-    public List<E> getList() {
+    public final List<E> getList() {
         return list;
     }
 
@@ -78,12 +78,16 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public void setCapacity(final int capacity) {
+    public final void setCapacity(final int capacity) {
 
         if (this.capacity==capacity) {
             return;
         }
 
+        updateCapacity(capacity);
+    }
+
+    private void updateCapacity(int capacity) {
         final List<E> list = this.list;
         if (list!=null) {
             int n = list.size();
@@ -155,7 +159,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 //        return low;
 //    }
 
-    public int validStorePosition(final int i) {
+    public final int validStorePosition(final int i) {
         final int size = size();
         if (i >= size) return size-1;
         if (i < 0) return 0;

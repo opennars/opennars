@@ -210,7 +210,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     }
 
 
-    protected V updateItem(BagSelector<K, V> selector, V item, Budget reusableTemporary) {
+    protected final V updateItem(BagSelector<K, V> selector, V item, Budget reusableTemporary) {
         if (!updateItemBudget(selector, item, reusableTemporary))
             return item;
         return updateReinsert(selector, item);
@@ -368,6 +368,11 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
                 batch, start, stop, maxAdditionalAttempts);
     }
 
+    public final int forgetNext(float forgetCycles, V[] batch, final long now, final int maxAdditionalAttempts) {
+        return forgetNext(forgetCycles, batch, 0, batch.length, now, maxAdditionalAttempts);
+    }
+
+
     /**
      * receive a batch (up to specific) of values.
      * implementations can override this to
@@ -384,7 +389,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * <p>
      * TODO option for if duplicates are allowed
      */
-    protected int peekNext(final BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
+    protected final int peekNext(final BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
         final int batchlen = Math.min(size(), stop - start);
         final int maxAttempts = batchlen + maxAdditionalAttempts;
@@ -392,25 +397,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         return peekNextFill(tx, batch, start, batchlen, maxAttempts);
     }
 
+    /** bag implementations will probably want to re-implement this for optimized accesses */
     protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
         int fill = 0;
 
-
-//        if (len == size()) {
-//            //optimization: if len==s then just add all elements
-//
-//            forEach(x -> {
-//
-//                if (x is not null and not deleted..)
-//                //HACK
-//                BagSelector.ForgetAction p = (filter == null) ? BagSelector.ForgetAction.Select : filter.apply(x);
-//
-//                if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
-//                    batch[start + (fill++)] = x;
-//            });
-//
-//            return fill;
-//        }
 
         for (int i = 0; (fill < len) && (i < maxAttempts); i++) {
             final V x = peekNext(tx);

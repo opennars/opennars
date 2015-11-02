@@ -36,7 +36,7 @@ public class Active<T extends Topic> extends FasterList<On> {
 //                r.cancelAfterUse();
 //        }
 
-    public synchronized void off() {
+    public void off() {
         for (int i = 0; i < this.size(); i++) {
             this.get(i).off();
         }

@@ -43,6 +43,8 @@ import static com.google.common.collect.Iterators.concat;
 
 public interface Concept extends Termed, Itemized<Term> {
 
+
+
     Bag<Task, TaskLink> getTaskLinks();
     Bag<TermLinkKey, TermLink> getTermLinks();
 
@@ -64,6 +66,24 @@ public interface Concept extends Termed, Itemized<Term> {
     @Override
     float getPriority();
 
+
+    /** attempts to fill the supplied array with next termlinks
+     *  from this concept's bag.
+     */
+    default int nextTermLinks(int dur, long now, float termLinkForgetDurations, TermLink[] result) {
+        return getTermLinks().forgetNext(
+                termLinkForgetDurations * dur,
+                result,
+                now,
+                0 /* additional */);
+    }
+    default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, TaskLink[] result) {
+        return getTaskLinks().forgetNext(
+                taskLinkForgetDurations * dur,
+                result,
+                now,
+                0 /* additional */);
+    }
 
     default void discountBeliefConfidence() {
         if (hasBeliefs()) {

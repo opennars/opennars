@@ -477,12 +477,12 @@ public class Default extends NAR {
 
 
             add(
-                    nar.memory.eventCycleEnd.on((m) -> {
-                        fireConcepts(conceptsFiredPerCycle.intValue());
-                    }),
-                    nar.memory.eventReset.on((m) -> {
-                        reset();
-                    })
+                nar.memory.eventCycleEnd.on((m) -> {
+                    fireConcepts(conceptsFiredPerCycle.intValue());
+                }),
+                nar.memory.eventReset.on((m) -> {
+                    reset();
+                })
             );
         }
 
@@ -493,7 +493,7 @@ public class Default extends NAR {
 
         protected void fireConcepts(int conceptsToFire) {
 
-            active.setCapacity(capacity.intValue());
+            active.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
 
             //1 concept if (memory.newTasks.isEmpty())*/
             if (conceptsToFire == 0) return;
@@ -515,15 +515,34 @@ public class Default extends NAR {
             }
         }
 
+        /** temporary re-usable array for batch firing */
+        private TermLink[] firingTermLinks = null;
+
+        /** temporary re-usable array for batch firing */
+        private TaskLink[] firingTaskLinks = null;
 
         private final void fireConcept(Concept concept) {
-            ConceptProcess.nextPremiseSquare(
+
+            {
+                int num = termlinksSelectedPerFiredConcept.intValue();
+                if (firingTermLinks == null ||
+                        firingTermLinks.length != num)
+                    firingTermLinks = new TermLink[num];
+            }
+            {
+                int num = tasklinksSelectedPerFiredConcept.intValue();
+                if (firingTaskLinks == null ||
+                        firingTaskLinks.length != num)
+                    firingTaskLinks = new TaskLink[num];
+            }
+
+            ConceptProcess.firePremiseSquare(
                 nar, deriver,
-                concept,
-                nar.memory.taskLinkForgetDurations.intValue(),
                 nar::input,
-                termlinksSelectedPerFiredConcept.intValue(),
-                tasklinksSelectedPerFiredConcept.intValue()
+                concept,
+                firingTaskLinks,
+                firingTermLinks,
+                nar.memory.taskLinkForgetDurations.intValue()
             );
         }
 

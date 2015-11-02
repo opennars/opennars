@@ -4,6 +4,7 @@
  */
 package nars.process;
 
+import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.concept.Concept;
@@ -33,15 +34,15 @@ abstract public class ConceptProcess extends NAL  {
     private Task currentBelief = null;
     private transient boolean cyclic;
 
-    @Override public Task getTask() {
+    @Override final public Task getTask() {
         return getTaskLink().getTask();
     }
 
-    public TaskLink getTaskLink() {
+    public final TaskLink getTaskLink() {
         return taskLink;
     }
 
-    @Override public Concept getConcept() {
+    @Override public final Concept getConcept() {
         return concept;
     }
 
@@ -105,26 +106,31 @@ abstract public class ConceptProcess extends NAL  {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void nextPremiseSquare(NAR nar, Deriver deriver, final Concept concept, float taskLinkForgetDurations, Consumer<Task> proc, int maxTaskLinks, int maxTermLinks) {
+    public static void firePremiseSquare(NAR nar, Deriver deriver, Consumer<Task> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
 
-        int dur = nar.memory().duration();
+        Memory m = nar.memory();
+        int dur = m.duration();
 
-        TaskLink[] tasks = new TaskLink[maxTaskLinks]; //TODO reuse
-        int tasksCount = concept.getTaskLinks().forgetNext(
+        final long now = nar.time();
+
+        int tasksCount = concept.nextTaskLinks(dur, now,
                 taskLinkForgetDurations * dur,
-                tasks, 0, tasks.length, nar.time(), 0 /* additional */);
+                tasks);
 
         if (tasksCount == 0) return;
 
-        TermLink[] terms = new TermLink[maxTermLinks];  //TODO reus
-        float termLinkForgetDurations = concept.getMemory().termLinkForgetDurations.floatValue();
-        int termsCount = concept.getTermLinks().forgetNext(
-                termLinkForgetDurations * dur,
-                terms, 0, terms.length, nar.time(), 0 /* additional */);
+        int termsCount = concept.nextTermLinks(dur, now,
+                m.termLinkForgetDurations.floatValue(),
+                terms);
 
         if (termsCount == 0) return;
 
 
+        firePremises(nar, deriver, proc, concept, tasks, terms);
+
+    }
+
+    public static void firePremises(NAR nar, Deriver deriver, Consumer<Task> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
         for (final TaskLink taskLink : tasks) {
             if (taskLink == null) break;
             for (final TermLink termLink : terms) {
@@ -138,7 +144,6 @@ abstract public class ConceptProcess extends NAL  {
                     proc);
             }
         }
-
     }
 
     public boolean validateDerivedBudget(Budget budget) {

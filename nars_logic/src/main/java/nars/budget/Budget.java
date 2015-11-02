@@ -845,7 +845,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return isDeleted(getPriority());
     }
 
-    public boolean isZero() {
+    public final boolean isZero() {
         return summaryLessThan(BUDGET_EPSILON);
     }
 

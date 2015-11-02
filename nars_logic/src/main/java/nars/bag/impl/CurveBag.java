@@ -514,7 +514,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         final List<V> a = items.getList();
 
         int istart, iend;
-        int fill;
 
         if (len == s) {
             //optimization: if len==s then just add all elements, so dont sample
@@ -541,13 +540,15 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         }
 
-        fill = 0;
 
         List<K> toRemove = null;
 
         Budget b = new Budget(); //TODO avoid creating this
 
-        for (int i = istart; (i < iend) && (fill < len); i++) {
+
+        int bend = bstart + len;
+        int next = bstart;
+        for (int i = istart; (i < iend) && (next < bend); i++) {
             V v = a.get(i);
 
             if (v == null) break; //HACK wtf?
@@ -558,15 +559,24 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
                 toRemove.add(v.name());
             }
             else {
-                updateItem(tx, v, b);
-                batch[bstart + (fill++)] = v;
+                batch[next++] = v;
             }
+        }
+
+        //pad with nulls. helpful for garbage collection incase they contain old values (the array is meant to be re-used)
+        if (next!=bend)
+            Arrays.fill(batch, next, bend, null);
+
+        //update after they have been selected because this will modify their order in the curvebag
+        for (int i = bstart; i < next; i++) {
+            V v = batch[i];
+            updateItem(tx, v, b);
         }
 
         if (toRemove!=null)
             toRemove.forEach(this::remove);
 
-        return fill;
+        return next-bstart; //# of items actually filled in the array
     }
 
     @Override
