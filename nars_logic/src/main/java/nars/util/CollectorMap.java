@@ -13,12 +13,13 @@ import java.util.Set;
 public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializable {
 
     public final Map<K, V> map;
-    public final Procedure2<Budget, Budget> merge;
 
-    public CollectorMap(Map<K, V> map, Procedure2<Budget,Budget> merge) {
+
+    public CollectorMap(Map<K, V> map) {
         this.map = map;
-        this.merge = merge;
     }
+
+    abstract public Procedure2<Budget, Budget> getMerge();
 
     /** implementation for adding the value to another collecton (called internally)  */
     abstract protected V addItem(final V e);
@@ -37,7 +38,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         final V valPrev = putKey(key, value);
 
 
-        merge.value(value.getBudget(), valPrev.getBudget());
+        getMerge().value(value.getBudget(), valPrev.getBudget());
 
         /*if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
             return;*/

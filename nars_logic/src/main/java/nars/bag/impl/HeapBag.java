@@ -1,11 +1,13 @@
 package nars.bag.impl;
 
+import com.gs.collections.api.block.procedure.Procedure2;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
+import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.CollectorMap;
 import nars.util.data.list.CircularArrayList;
-import nars.util.data.map.CuckooMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 import org.apache.commons.math3.util.FastMath;
@@ -58,14 +60,21 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    class HeapMap extends CollectorMap<K, E> {
+    protected class HeapMap extends CollectorMap<K, E> {
 
         public HeapMap(int capacity) {
-            super(new CuckooMap(rng, capacity + 1), CurveBag.DEFAULT_MERGE_METHOD);
+            //super(new CuckooMap(rng, capacity + 1));
+            super(new UnifiedMap(capacity+1));
         }
 
         public HeapMap(Map<K, E> map) {
-            super(map, CurveBag.DEFAULT_MERGE_METHOD);
+            super(map);
+        }
+
+
+        @Override
+        public Procedure2<Budget, Budget> getMerge() {
+            return mergeFunction;
         }
 
         @Override

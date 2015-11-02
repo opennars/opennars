@@ -1,6 +1,5 @@
 package nars.budget;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -10,8 +9,7 @@ import nars.term.Compound;
  */
 public class TaskAccumulator<C extends Compound> extends ItemAccumulator<Sentence<C>, Task<C>> {
 
-    public TaskAccumulator(Procedure2<Budget, Budget> merge, int capacity) {
-        super(merge, capacity);
-        mergePlus();
+    public TaskAccumulator(int capacity) {
+        super(capacity);
     }
 }

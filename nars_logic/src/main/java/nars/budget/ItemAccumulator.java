@@ -1,6 +1,5 @@
 package nars.budget;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.bag.impl.ArrayBag;
 import nars.util.sort.ArraySortedIndex;
 
@@ -17,47 +16,30 @@ import java.util.Comparator;
  * */
 public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> implements Iterable<V> {
 
-    //implements BiFunction<I,I,I>, Serializable {
 
-//    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
-//        @Override public final int compare(final I o1, final I o2) {
-//            return Float.compare( o1.getPriority(), o2.getPriority() );
-//        }
-//    };
-
-    //final static Comparator highestFirst = new HighestFirstComparator();
-    //final static Comparator lowestFirst = new LowestFirstComparator();
-
-    /** ex: Bag.max, Bag.plus, Bag.average
-     * first budget = target where the data is accumulated
-     * second budget = incoming budget
-     * */
-    public final Procedure2<Budget, Budget> merge;
-
-    public ItemAccumulator(Procedure2<Budget, Budget> merge, int capacity) {
+    public ItemAccumulator(int capacity) {
         super(new ArraySortedIndex<>(capacity));
-
-        this.merge = merge;
+        mergePlus();
     }
 
 
-    //@Override
-    final public Itemized<K> apply(final Itemized<K> t, Itemized<K> accumulated) {
-
-        if (t.getBudget().isDeleted())
-            return accumulated;
-
-        if (accumulated!=null) {
-            if (accumulated.getBudget().isDeleted()) {
-                return t;
-            }
-
-            merge.value(accumulated.getBudget(), t.getBudget());
-            return accumulated;
-        }
-        else
-            return t;
-    }
+//    //@Override
+//    final public Itemized<K> apply(final Itemized<K> t, Itemized<K> accumulated) {
+//
+//        if (t.getBudget().isDeleted())
+//            return accumulated;
+//
+//        if (accumulated!=null) {
+//            if (accumulated.getBudget().isDeleted()) {
+//                return t;
+//            }
+//
+//            merge.value(accumulated.getBudget(), t.getBudget());
+//            return accumulated;
+//        }
+//        else
+//            return t;
+//    }
 
 
 

@@ -13,7 +13,7 @@ public class BudgetMergeTest {
 
 
     @Test public void testMax() {
-        ItemAccumulator<CharSequence,NullItem> a = new ItemAccumulator(Budget.max, 8);
+        ItemAccumulator<CharSequence,NullItem> a = new ItemAccumulator(8);
         NullItem x0 = new NullItem(0.5f, "x");
         NullItem x1 = new NullItem(0.1f, "x");
         NullItem y = new NullItem(0.3f, "y");
@@ -43,7 +43,7 @@ public class BudgetMergeTest {
     }
 
     @Test public void testMean() {
-        ItemAccumulator<CharSequence, NullItem> a = new ItemAccumulator(Budget.average, 2);
+        ItemAccumulator<CharSequence, NullItem> a = new ItemAccumulator(2);
         NullItem x0 = new NullItem(0.3f, "x");
         NullItem x1 = new NullItem(0.1f, "x");
 
@@ -59,7 +59,7 @@ public class BudgetMergeTest {
     @Test
     public void testPlus() throws Exception {
 
-        ItemAccumulator<CharSequence, NullItem> a = new ItemAccumulator(Budget.plus, 3);
+        ItemAccumulator<CharSequence, NullItem> a = new ItemAccumulator(3);
 
         NullItem x = new NullItem(0.5f, "x");
         NullItem y = new NullItem(0.3f, "y");

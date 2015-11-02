@@ -2,7 +2,6 @@ package nars.op.app;
 
 import com.google.common.collect.Iterators;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.budget.TaskAccumulator;
 import nars.nal.nal7.Temporal;
 import nars.task.Task;
@@ -41,7 +40,7 @@ public class Commander implements Consumer<NAR> {
 //            priorityRemaining = 0; //change left over from last cycle
 
     public Commander(NAR nar, boolean active, int capacity) {
-        this(nar, new TaskAccumulator(Budget.plus, capacity), active);
+        this(nar, new TaskAccumulator(capacity), active);
     }
 
     public Commander(NAR nar, TaskAccumulator buffer, boolean active) {

@@ -4,7 +4,6 @@ import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.budget.TaskAccumulator;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
@@ -62,7 +61,7 @@ public class Default2 extends Default {
             super(nar, deriver, concepts, ca);
 
             derivationAccumulator =
-                    new TaskAccumulator(Budget.plus, initialCapacity);
+                    new TaskAccumulator(initialCapacity);
         }
 
 

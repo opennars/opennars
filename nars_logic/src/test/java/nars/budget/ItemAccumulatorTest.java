@@ -17,8 +17,7 @@ public class ItemAccumulatorTest {
     @Test
     public void testAccumulatorDeduplication() {
         TaskAccumulator ii = new TaskAccumulator<>(
-            Budget.plus,
-            2 //capacity = 2 but this test will only grow to size 1 if successful
+                2 //capacity = 2 but this test will only grow to size 1 if successful
         );
         assertEquals(0, ii.size());
 
@@ -44,7 +43,7 @@ public class ItemAccumulatorTest {
         final int capacity = 4;
 
         TaskAccumulator<?> ii = new TaskAccumulator<>(
-                Budget.plus, capacity
+                capacity
         );
 
 
@@ -79,5 +78,41 @@ public class ItemAccumulatorTest {
 
         //batch remove should return these in order: (d,c,b|a,)
 
+    }
+
+
+
+    @Test public void testDurQuaRankingForEqualPri() {
+
+        final int capacity = 4;
+
+        TaskAccumulator<?> ii = new TaskAccumulator<>(
+                capacity
+        );
+
+
+        String s = ". %1.00;0.90%";
+        ii.put(n.task("$0.05$ <z --> x>" + s));
+        ii.put(n.task("$0.1$ <a --> x>" + s));
+        ii.put(n.task("$0.1$ <b --> x>" + s));
+        ii.put(n.task("$0.2$ <c --> x>" + s));
+        ii.put(n.task("$0.3$ <d --> x>" + s));
+        assertEquals(4, ii.size());
+
+        //z should be ignored
+        //List<Task> buffer = Global.newArrayList();
+
+
+        assertEquals(capacity, ii.size());
+
+        Task<?> one = ii.pop();
+        assertEquals("$0.30;0.80;0.95$ <d --> x>. %1.00;0.90%", one.toString());
+
+        List<Task> two = new ArrayList();
+        two.add(ii.pop());
+        two.add(ii.pop());
+        assertEquals("[$0.20;0.80;0.95$ <c --> x>. %1.00;0.90%, $0.10;0.80;0.95$ <b --> x>. %1.00;0.90%]", two.toString());
+
+        assertEquals(1, ii.size());
     }
 }

@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.NAR;
-import nars.budget.Budget;
 import nars.budget.TaskAccumulator;
 import nars.task.Task;
 import nars.util.data.MutableInteger;
@@ -25,7 +24,7 @@ public class SortedTaskPerception extends TaskPerception {
         this.inputPerCycle.set( inputPerCycle );
 
         //TODO use MutableInteger for capacity for all Bags
-        buffer = new TaskAccumulator(Budget.plus, capacity);
+        buffer = new TaskAccumulator(capacity);
     }
 
     @Override

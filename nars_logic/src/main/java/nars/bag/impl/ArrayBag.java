@@ -360,16 +360,19 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
 
 
 
-    public static class ArrayMapping<K, V extends Itemized<K>> extends CollectorMap<K, V> {
+    public class ArrayMapping<K, V extends Itemized<K>> extends CollectorMap<K, V> {
 
         final SortedIndex<V> items;
 
         public ArrayMapping(Map<K, V> map, SortedIndex<V> items) {
-            super(map, DEFAULT_MERGE_METHOD);
+            super(map);
             this.items = items;
         }
 
-
+        @Override
+        public final Procedure2<Budget, Budget> getMerge() {
+            return mergeFunction;
+        }
 
         @Override
         protected V removeItem(final V removed) {
