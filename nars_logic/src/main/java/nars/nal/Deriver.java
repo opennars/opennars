@@ -1,7 +1,7 @@
 package nars.nal;
 
 import nars.meta.RuleMatch;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.task.Task;
 
 import java.util.function.Consumer;
@@ -29,11 +29,11 @@ abstract public class Deriver  {
      *  this method does not provide a way to stop or interrupt
      *  the process once it begins.
      */
-    public final void run(ConceptProcess premise, Consumer<Task> t) {
+    public final void run(Premise premise, Consumer<Task> t) {
         run(premise, RuleMatch.matchers.get(), t);
     }
 
-    public final void run(ConceptProcess premise, RuleMatch m, Consumer<Task> t) {
+    public final void run(Premise premise, RuleMatch m, Consumer<Task> t) {
         m.start(premise);
         forEachRule(m, t);
     }

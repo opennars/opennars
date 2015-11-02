@@ -2,7 +2,7 @@ package nars.meta.pre;
 
 import nars.meta.RuleMatch;
 import nars.nal.nal7.Temporal;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -22,7 +22,7 @@ public class IsEvent extends PreCondition2 {
 
     @Override
     public boolean test(final RuleMatch m, Term a, Term b) {
-        ConceptProcess premise = m.premise;
+        Premise premise = m.premise;
 
         Task task = premise.getTask();
 

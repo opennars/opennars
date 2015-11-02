@@ -7,7 +7,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -43,7 +42,7 @@ public class RuleMatch extends FindSubst {
 
     public TaskRule rule;
 
-    public ConceptProcess premise;
+    public Premise premise;
 
 
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
@@ -68,7 +67,7 @@ public class RuleMatch extends FindSubst {
     /**
      * set the next premise
      */
-    public void start(ConceptProcess p) {
+    public void start(Premise p) {
         this.premise = p;
         taskBelief.set(
                 p.getTask().getTerm(),
@@ -98,7 +97,7 @@ public class RuleMatch extends FindSubst {
 
     public Task apply(final PostCondition outcome) {
 
-        ConceptProcess premise = this.premise;
+        Premise premise = this.premise;
 
         final Task task = premise.getTask();
 
@@ -321,12 +320,12 @@ public class RuleMatch extends FindSubst {
     }
 
     /** for debugging */
-    private void removeInsufficientBudget(ConceptProcess premise, PreTask task) {
+    private void removeInsufficientBudget(Premise premise, PreTask task) {
         premise.memory().remove(task, "Insufficient Derivation Budget");
     }
 
     /** for debugging */
-    private void removeCyclic(PostCondition outcome, ConceptProcess premise, Truth truth, char punct) {
+    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
         Term termm = resolve(outcome.term);
         if (termm != null) {
             premise.memory().remove(

@@ -14,6 +14,7 @@ import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
@@ -245,11 +246,13 @@ public class InternalExperience {
             dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
         }
 
-        return nal.input(nal.newTask(ret).judgment()
+        TaskSeed t;
+        nal.nar().input(t = nal.newTask(ret).judgment()
                         .parent(task).occurr(nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
                         .reason("Remembered Action (Internal Experience)"));
+        return t;
     }
 
 
@@ -309,7 +312,8 @@ public class InternalExperience {
         //TODO should this be a mew stamp or attached to parent.. originally it was a fresh new stamp from memory
 
         long now = p.time();
-        p.input(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+
+        p.nar().input(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
                                 Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
                         .parent(parent)

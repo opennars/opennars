@@ -5,6 +5,7 @@ import nars.Global;
 import nars.task.Task;
 
 import javax.annotation.Nullable;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -222,8 +223,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 
 
     /** iterates in no-specific order */
-    public void forEach(Consumer<I> recv) {
-
+    public final void forEach(Consumer<I> recv) {
         items.forEach((k,v) -> recv.accept(k));
         //items.forEachKey(recv::accept);
     }
@@ -233,17 +233,17 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
         return items.toString();
     }
 
-    public Set<I> keySet() {
+    public final Set<I> keySet() {
         return items.keySet();
     }
 
-    public void limit(int capacity) {
+    public final void limit(int capacity) {
         while (size() > capacity) {
             removeLowest();
         }
     }
 
-    public void next(int rate, Consumer<Task> recv) {
+    public final  void next(int rate, Consumer<Task> recv) {
         int sent = 0;
         Task next;
         while ((sent < rate) && ((next = removeHighest())!=null)) {
@@ -256,6 +256,10 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 
     public final boolean contains(I t) {
         return items.containsKey(t);
+    }
+
+    public void print(PrintStream out) {
+        forEach(x -> out.println(x));
     }
 
 

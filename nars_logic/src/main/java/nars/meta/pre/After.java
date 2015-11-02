@@ -2,7 +2,7 @@ package nars.meta.pre;
 
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.task.Task;
 
 /**
@@ -27,7 +27,7 @@ public class After extends PreCondition {
 
     @Override
     public boolean test(RuleMatch m) {
-        final ConceptProcess premise = m.premise;
+        final Premise premise = m.premise;
 
         if (!premise.isTaskAndBeliefEvent())
             return false;

@@ -1,7 +1,7 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.term.Term;
 
 /**
@@ -16,7 +16,7 @@ abstract public class AbstractMeasureTime extends PreCondition3Output {
 
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term target) {
-        final ConceptProcess premise = m.premise;
+        final Premise premise = m.premise;
 
         if (!premise.isTaskAndBeliefEvent())
             return false;

@@ -6,11 +6,11 @@ package nars.process;
 
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.Deriver;
+import nars.premise.Premise;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Terms;
@@ -106,7 +106,7 @@ abstract public class ConceptProcess extends NAL  {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void firePremiseSquare(NAR nar, Deriver deriver, Consumer<Task> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
+    public static void firePremiseSquare(NAR nar, Consumer<Premise> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
 
         Memory m = nar.memory();
         int dur = m.duration();
@@ -126,11 +126,11 @@ abstract public class ConceptProcess extends NAL  {
         if (termsCount == 0) return;
 
 
-        firePremises(nar, deriver, proc, concept, tasks, terms);
+        firePremises(nar, proc, concept, tasks, terms);
 
     }
 
-    public static void firePremises(NAR nar, Deriver deriver, Consumer<Task> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
+    public static void firePremises(NAR nar, Consumer<Premise> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
         for (final TaskLink taskLink : tasks) {
             if (taskLink == null) break;
             for (final TermLink termLink : terms) {
@@ -139,20 +139,12 @@ abstract public class ConceptProcess extends NAL  {
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
                     continue;
 
-                deriver.run(
-                    new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink),
-                    proc);
+                Premise p = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
+                proc.accept(p);
             }
         }
     }
 
-    public boolean validateDerivedBudget(Budget budget) {
-        if (budget.isDeleted()) {
-            throw new RuntimeException("why is " + budget + " deleted");
-
-        }
-        return !budget.summaryLessThan(memory().derivationThreshold.floatValue());
-    }
 
     //    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
 //    public static Stream<Task> nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc) {
@@ -177,25 +169,7 @@ abstract public class ConceptProcess extends NAL  {
 //
 //    }
 
-    /** gets the average summary of one or both task/belief task's */
-    public float getMeanPriority() {
-        float total = 0;
-        int n = 0;
-        final Task pt = getTask();
-        if (pt!=null) {
-            if (!pt.isDeleted())
-                total += pt.getPriority();
-            n++;
-        }
-        final Task pb = getBelief();
-        if (pb!=null) {
-            if (!pb.isDeleted())
-                total += pb.getPriority();
-            n++;
-        }
 
-        return total/n;
-    }
 
 //    public abstract Stream<Task> derive(final Deriver p);
 

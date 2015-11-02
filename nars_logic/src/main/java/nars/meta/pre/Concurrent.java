@@ -3,7 +3,7 @@ package nars.meta.pre;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.nal.nal7.Temporal;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.task.Task;
 
 /**
@@ -22,7 +22,7 @@ public class Concurrent extends PreCondition {
 
     @Override
     public final boolean test(RuleMatch m) {
-        final ConceptProcess premise = m.premise;
+        final Premise premise = m.premise;
 
         if (!premise.isTaskAndBeliefEvent())
             return false;

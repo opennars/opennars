@@ -2,6 +2,7 @@ package nars.premise;
 
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal7.Temporal;
@@ -17,7 +18,6 @@ import nars.truth.DefaultTruth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
  * Defines the conditions used in an instance of a derivation
@@ -479,21 +479,49 @@ public interface Premise extends Level {
         return false;
     }
 
-    default Task input(Task t) {
-        if (((t = validate(t))!=null)) {
-            nar().input(t);
-            return t;
+    /** gets the average summary of one or both task/belief task's */
+    default public float getMeanPriority() {
+        float total = 0;
+        int n = 0;
+        final Task pt = getTask();
+        if (pt!=null) {
+            if (!pt.isDeleted())
+                total += pt.getPriority();
+            n++;
         }
-        return null;
+        final Task pb = getBelief();
+        if (pb!=null) {
+            if (!pb.isDeleted())
+                total += pb.getPriority();
+            n++;
+        }
+
+        return total/n;
     }
 
-    default void input(Stream<Task> t) {
-        t.forEach(this::input);
-    }
+//    default Task input(Task t) {
+//        if (((t = validate(t))!=null)) {
+//            nar().input(t);
+//            return t;
+//        }
+//        return null;
+//    }
+
+//    default void input(Stream<Task> t) {
+//        t.forEach(this::input);
+//    }
 
     /** may be called during inference to update the premise
      * with a better belief than what it had previously. */
     void updateBelief(Task revised);
+
+    default public boolean validateDerivedBudget(Budget budget) {
+        if (budget.isDeleted()) {
+            throw new RuntimeException("why is " + budget + " deleted");
+
+        }
+        return !budget.summaryLessThan(memory().derivationThreshold.floatValue());
+    }
 
 
 }

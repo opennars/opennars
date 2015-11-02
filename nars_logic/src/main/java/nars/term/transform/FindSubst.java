@@ -371,8 +371,11 @@ public class FindSubst {
                 power = -power; //try again; invert negated power back to a positive value for next attempt
 
                 //pop/restore (TODO only if changed and will attempt again):
-                xy.clear(); xy.putAll(savedXY);
-                yx.clear(); yx.putAll(savedYX);
+                restore(savedYX, yx);
+                restore(savedXY, xy);
+
+                //ready to continue on next permutation
+
             } else {
                 returnMap(savedXY, savedYX);
                 return power; //success
@@ -383,15 +386,20 @@ public class FindSubst {
         return fail(power); //fail
     }
 
-    private Map<Variable, Term> getMap(Map<Variable, Term> init) {
+    private final void restore(Map<Variable, Term> savedCopy, Map<Variable, Term> originToRevert) {
+        originToRevert.clear(); yx.putAll(savedCopy);
+    }
+
+    private final Map<Variable, Term> getMap(Map<Variable, Term> init) {
         Map<Variable, Term> m = mapPool.get();
         m.putAll(init);
         return m;
     }
 
-    private void returnMap(Map<Variable, Term> a, Map<Variable, Term> b) {
-        mapPool.put(a);
-        mapPool.put(b);
+    private final void returnMap(Map<Variable, Term> a, Map<Variable, Term> b) {
+        final DequePool<Map<Variable, Term>> mp = this.mapPool;
+        mp.put(a);
+        mp.put(b);
     }
 
 

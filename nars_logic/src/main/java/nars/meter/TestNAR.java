@@ -33,7 +33,6 @@ public class TestNAR  {
     boolean showExplanations = false;
     final boolean showOutput = false;
 
-    boolean collectTrace = false;
 
 
 
@@ -46,6 +45,16 @@ public class TestNAR  {
     private int temporalTolerance = 0;
     protected final static float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
+
+    /** enable this to print reports even if the test was successful.
+     * it can cause a lot of output that can be noisy and slow down
+     * the test running.
+     * TODO separate way to generate a test report containing
+     * both successful and unsuccessful tests
+     *
+     */
+    private static final boolean reportPrintIfSuccess = false;
+    static final boolean collectTrace = false;
 
 
     public TestNAR(NAR nar) {
@@ -432,7 +441,9 @@ public class TestNAR  {
             //assertTrue("No cycles elapsed", tester.nar.memory().time/*SinceLastCycle*/() > 0);
 
             Report r = getReport();
-            report(r, r.isSuccess());
+
+            if (reportPrintIfSuccess || !r.isSuccess())
+                report(r, r.isSuccess());
 
         }
 

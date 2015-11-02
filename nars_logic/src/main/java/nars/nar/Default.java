@@ -8,7 +8,6 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
-import nars.budget.ItemAccumulator;
 import nars.clock.Clock;
 import nars.clock.FrameClock;
 import nars.concept.AtomConcept;
@@ -38,6 +37,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Atom;
@@ -49,7 +49,7 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.io.Serializable;
 import java.util.Random;
-import java.util.Set;
+import java.util.function.Consumer;
 
 
 /**
@@ -150,16 +150,16 @@ public class Default extends NAR {
         return input;
     }
 
-    public DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
         //HACK:
         final MutableInteger[] tmpConceptsFiredPerCycle = new MutableInteger[1];
 
-        DefaultCycle c = new DefaultCycle(this,
+        DefaultCycle c = initCore(
+                activeConcepts,
                 newDeriver(),
                 newConceptBag(activeConcepts),
-                new ConceptActivator(this, this)
-        );
+                new ConceptActivator(this, this));
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
@@ -172,6 +172,10 @@ public class Default extends NAR {
         c.capacity.set(activeConcepts);
 
         return c;
+    }
+
+    protected DefaultCycle initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
+        return new DefaultCycle(this, deriver, conceptBag, activator);
     }
 
     public void initDefaults(Memory m) {
@@ -515,13 +519,20 @@ public class Default extends NAR {
             }
         }
 
+        protected void fireConcept(Concept c) {
+            fireConcept(c, p -> {
+                //direct: just input to nar
+                deriver.run(p, nar::input);
+            });
+        }
+
         /** temporary re-usable array for batch firing */
         private TermLink[] firingTermLinks = null;
 
         /** temporary re-usable array for batch firing */
         private TaskLink[] firingTaskLinks = null;
 
-        private final void fireConcept(Concept concept) {
+        protected final void fireConcept(Concept concept, Consumer<Premise> withResult) {
 
             {
                 int num = termlinksSelectedPerFiredConcept.intValue();
@@ -537,8 +548,8 @@ public class Default extends NAR {
             }
 
             ConceptProcess.firePremiseSquare(
-                nar, deriver,
-                nar::input,
+                nar,
+                withResult,
                 concept,
                 firingTaskLinks,
                 firingTermLinks,
@@ -564,32 +575,7 @@ public class Default extends NAR {
             return active;
         }
 
-        public void apply(ConceptProcess premise) {
 
-            //used to estimate the fraction this batch should be scaled but this is not accurate
-            //final int numPremises = termlinks*tasklinks;
-
-            ItemAccumulator<Task> ia = new ItemAccumulator(Budget.plus);
-
-            premise.derive(deriver, ia::add);
-
-            Set<Task> batch = ia.keySet();
-
-
-            Task.normalize( batch,  premise.getMeanPriority() );
-
-            //return batch;
-
-
-            //OPTION 1: re-input to input buffers
-            //t.input(nar, deriver, derivationPostProcess);
-
-            //OPTION 2: immediate process
-                /*t.apply(deriver).forEach(r -> {
-                    run(r);
-                });*/
-
-        }
 
 
         //try to implement some other way, this is here because of serializability

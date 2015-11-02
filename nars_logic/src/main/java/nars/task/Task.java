@@ -342,7 +342,10 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     @Override @Deprecated
     default StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
-        return appendTo(buffer, memory, true, showStamp && notCommand, showStamp && notCommand, showStamp);
+        return appendTo(buffer, memory, true, showStamp && notCommand,
+                notCommand, //budget
+                showStamp //log
+        );
     }
 
     @Override

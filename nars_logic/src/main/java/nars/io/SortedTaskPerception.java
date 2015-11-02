@@ -24,15 +24,22 @@ public class SortedTaskPerception extends TaskPerception {
     }
 
     @Override
-    public void accept(Task t) {
+    final public void accept(Task t) {
         if (!t.isDeleted())
             buffer.add(t);
     }
 
     @Override
-    public void send() {
-        buffer.limit(capacity.intValue());
-        buffer.next(inputPerCycle.intValue(), receiver);
+    final public void send() {
+        ItemAccumulator<Task> b = this.buffer;
+        if (!b.isEmpty()) {
+
+            /*b.print(System.out);
+            System.out.println();*/
+
+            b.limit(capacity.intValue());
+            b.next(inputPerCycle.intValue(), receiver);
+        }
     }
 
     @Override
