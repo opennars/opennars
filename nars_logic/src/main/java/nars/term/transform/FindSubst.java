@@ -1,6 +1,5 @@
 package nars.term.transform;
 
-import com.google.common.collect.Maps;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.Memory;
@@ -11,9 +10,11 @@ import nars.term.CommonVariable;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import org.apache.commons.math3.util.ArithmeticUtils;
+import nars.util.math.ShuffledPermutations;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Random;
 
 
 public class FindSubst {
@@ -25,6 +26,8 @@ public class FindSubst {
 
     /** Y var -> X term mapping */
     public final Map<Variable, Term> yx;
+
+
 
     private final Random random;
 
@@ -226,24 +229,27 @@ public class FindSubst {
 
     /**
      * X and Y are of the same operator type and length (arity)
+     * X's permutations matched against constant Y
      */
     protected int permute(final Compound X, final Compound Y, final int power) {
 
         final int xLen = X.length();
 
-        if ((xLen <= 1) || (!X.isCommutative())) {
+
+        if ((xLen > 1) && (!X.isCommutative())) {
             //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
             return matchAll(power, X.term, Y.term);
         }
         else {
-            //X's permutations matched against Y
             switch (xLen) {
-                case 2:  return permute2(X, Y, power);
+                case 0: return power-1;
+                case 1: return find(X.term[0], Y.term[0], power);
+
+                //case 2:  return permute2(X, Y, power);
                 //case 3:  return permute3(Y, X, power);
                 default: return permuteN(X, Y, power);
             }
         }
-
     }
 
 
@@ -307,22 +313,23 @@ public class FindSubst {
      * @param X the compound which is permuted/shuffled
      * @param Y what is being compared against
      *
+     * use with compounds with >= 2 subterms
+     *
      * unoptimized N-ary permute,
      *  which requires allocating a temporary array for shuffling */
     int permuteN(final Compound X, final Compound Y, int power) {
-        //TODO repeat with a new shuffle until power depleted?
 
-        final Term[] xOriginalSubterms = X.term;
-        final int numSubterms = xOriginalSubterms.length;
+        //TODO object pool these
+        final ShuffledPermutations perm = new ShuffledPermutations();
 
-        int permutations = (int)ArithmeticUtils.factorial(numSubterms);
+        final Term[] xTerms = X.term;
 
-        //HACK
-        permutations += permutations/2; //to allow for repeats that may occurr
-
-        final Term[] xSubterms = Arrays.copyOf(xOriginalSubterms, numSubterms);
+        //final Term[] xSubterms = Arrays.copyOf(xTerms, len);
         final Term[] yTerms = Y.term;
 
+        final int len = xTerms.length;
+        perm.restart(len, random);
+        //int permutations = perm.total();
 
         //push/save:
         Map<Variable, Term> tmpXY = xy.isEmpty() ? Collections.emptyMap() :
@@ -330,23 +337,31 @@ public class FindSubst {
         Map<Variable, Term> tmpYX = yx.isEmpty() ? Collections.emptyMap() :
                 new UnifiedMap(yx);
 
-        int count = 0;
-        do {
-            Compound.shuffle(xSubterms, random);
+        while (power > 0 && perm.hasNext()) {
 
-            if ((power = matchAll(power, xSubterms, yTerms)) >= 0) {
-                return power; //success
+            perm.next();
+
+            //matchAll:
+            for (int i = 0; i < len; i++) {
+                int s = perm.get(i);
+                if (s >= xTerms.length) {
+                    System.err.println("wtf");
+                    perm.get(i);
+                }
+                if ((power = find(xTerms[s], yTerms[i], power)) < 0)
+                    break; //fail
             }
-            else {
-                power = -power; //try again; reverse negated power back to a positive value for next attempt
+
+            if (power >= 0) {
+                return power; //success
+            } else {
+                power = -power; //try again; invert negated power back to a positive value for next attempt
 
                 //pop/restore (TODO only if changed and will attempt again):
                 xy.clear(); xy.putAll(tmpXY);
                 yx.clear(); yx.putAll(tmpYX);
-
-                count++;
             }
-        } while ((power > 0) && (count < permutations));
+        }
 
         return fail(power); //fail
     }
@@ -389,52 +404,51 @@ public class FindSubst {
 //        return fail(power); //fail
 //    }
 
-
-    private int permute2(final Compound X, final Compound Y, int power) {
-
-        final Term[] xSubterms = X.term;
-        Term x0 = xSubterms[0];
-        Term x1 = xSubterms[1];
-
-
-        //50% probabilty of an initial swap
-        if (random.nextBoolean()) {
-            Term t = x0;
-            x0 = x1;
-            x1 = t;
-        }
-
-        //SAVE
-        HashMap<Variable, Term> tmpXY = Maps.newHashMap(xy);
-        HashMap<Variable, Term> tmpYX = Maps.newHashMap(yx);
-
-        final Term[] ySubterms = Y.term;
-
-        //allocate half of the power for the first attempt.
-        //2nd attempt will have at least this much (what remains from the first).
-        int subPower = power/2;
-
-        int remainingSubPower =
-               matchAll2(subPower, x0, x1, ySubterms);
-
-        //subtract expense and add the surplus
-        power -= (subPower - Math.abs(remainingSubPower));
-        if (remainingSubPower >= 0) //success
-            return power;
-
-        //RESTORE
-        xy.clear(); xy.putAll(tmpXY);
-        yx.clear(); yx.putAll(tmpYX);
-
-        power = matchAll2(power, x1, x0, ySubterms);
-        if (power < 0) {
-            //RESTORE
-            xy.clear(); xy.putAll(tmpXY);
-            yx.clear(); yx.putAll(tmpYX);
-        }
-
-        return power;
-    }
+//
+//    private int permute2(final Compound X, final Compound Y, int power) {
+//
+//        final Term[] xSubterms = X.term;
+//        Term x0 = xSubterms[0];
+//        Term x1 = xSubterms[1];
+//
+//        //50% probabilty of an initial swap
+//        if (random.nextBoolean()) {
+//            Term t = x0;
+//            x0 = x1;
+//            x1 = t;
+//        }
+//
+//        //SAVE
+//        HashMap<Variable, Term> tmpXY = Maps.newHashMap(xy);
+//        HashMap<Variable, Term> tmpYX = Maps.newHashMap(yx);
+//
+//        final Term[] ySubterms = Y.term;
+//
+//        //allocate half of the power for the first attempt.
+//        //2nd attempt will have at least this much (what remains from the first).
+//        int subPower = power/2;
+//
+//        int remainingSubPower =
+//               matchAll2(subPower, x0, x1, ySubterms);
+//
+//        //subtract expense and add the surplus
+//        power -= (subPower - Math.abs(remainingSubPower));
+//        if (remainingSubPower >= 0) //success
+//            return power;
+//
+//        //RESTORE
+//        xy.clear(); xy.putAll(tmpXY);
+//        yx.clear(); yx.putAll(tmpYX);
+//
+//        power = matchAll2(power, x1, x0, ySubterms);
+//        if (power < 0) {
+//            //RESTORE
+//            xy.clear(); xy.putAll(tmpXY);
+//            yx.clear(); yx.putAll(tmpYX);
+//        }
+//
+//        return power;
+//    }
 
     static final int fail(int powerMagnitude) {
         return (powerMagnitude > 0) ? -powerMagnitude : powerMagnitude;
@@ -456,9 +470,9 @@ public class FindSubst {
         return power; //success
     }
 
-    final protected int matchAll2(int power, final Term x0, final Term x1, final Term[] ySubterms) {
-        if ((power = find(x0, ySubterms[0], power)) < 0)
-            return power;
-        return       find(x1, ySubterms[1], power);
-    }
+//    final protected int matchAll2(int power, final Term x0, final Term x1, final Term[] ySubterms) {
+//        if ((power = find(x0, ySubterms[0], power)) < 0)
+//            return power;
+//        return       find(x1, ySubterms[1], power);
+//    }
 }

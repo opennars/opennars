@@ -102,4 +102,7 @@ public class Permutations  {
     }
 
 
+    public int total() {
+        return num;
+    }
 }

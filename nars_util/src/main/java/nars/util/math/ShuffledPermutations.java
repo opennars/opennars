@@ -21,7 +21,10 @@ public class ShuffledPermutations extends Permutations {
         super.restart(size);
 
         //shuffle = random.nextInt(num);
-        shuffle = new int[size];
+        int[] shuffle = this.shuffle;
+        if (shuffle == null || shuffle.length < size)
+            this.shuffle = shuffle = new int[size];
+
         for (int i = 0; i < size; i++)
             shuffle[i] = i;
         Arrays.shuffle(shuffle, size, random);
@@ -33,7 +36,6 @@ public class ShuffledPermutations extends Permutations {
     public final int get(int index) {
         return super.get(this.shuffle[index]);
     }
-
 
     public int[] nextShuffled(int[] n) {
         next();

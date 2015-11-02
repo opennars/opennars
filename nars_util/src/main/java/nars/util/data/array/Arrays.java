@@ -325,17 +325,6 @@ public class Arrays {
 
 	public static void shuffle(final int[] array, int len, final Random random) {
 
-//
-//        if (len == 2) {
-//            //special case: 50% random swap
-//            if (random.nextBoolean()) {
-//                final T t = array[0];
-//                array[0] = array[1];
-//                array[1] = t;
-//            }
-//            return;
-//        }
-
 		//probabality for no shuffle at all:
 		if (random.nextInt(factorial(len)) == 0) return;
 
