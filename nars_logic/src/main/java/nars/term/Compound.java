@@ -221,16 +221,16 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      */
     public static <T> void shuffle(final T[] array, final Random random) {
         int count = array.length;
-
-        if (count == 2) {
-            //special case: 50% random swap
-            if (random.nextBoolean()) {
-                final T t = array[0];
-                array[0] = array[1];
-                array[1] = t;
-            }
-            return;
-        }
+//
+//        if (count == 2) {
+//            //special case: 50% random swap
+//            if (random.nextBoolean()) {
+//                final T t = array[0];
+//                array[0] = array[1];
+//                array[1] = t;
+//            }
+//            return;
+//        }
 
         for (int i = count; i > 1; i--) {
             final int a = i - 1;
@@ -239,9 +239,6 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
                 final T t = array[b];
                 array[b] = array[a];
                 array[a] = t;
-            }
-            else {
-                int y = 0;
             }
         }
     }

@@ -17,6 +17,10 @@ package nars.util.data.array;
  */
 
 
+import java.util.Random;
+
+import static com.google.common.math.IntMath.factorial;
+
 /** A class providing static methods and objects that do useful things with arrays.
  *
  * <p>In addition to commodity methods, this class contains {@link Swapper}-based implementations
@@ -318,4 +322,31 @@ public class Arrays {
 	private static void vecSwap( final Swapper swapper, int from, int l, final int s ) {
 		for ( int i = 0; i < s; i++, from++, l++ ) swapper.swap( from, l );
 	}
+
+	public static void shuffle(final int[] array, int len, final Random random) {
+
+//
+//        if (len == 2) {
+//            //special case: 50% random swap
+//            if (random.nextBoolean()) {
+//                final T t = array[0];
+//                array[0] = array[1];
+//                array[1] = t;
+//            }
+//            return;
+//        }
+
+		//probabality for no shuffle at all:
+		if (random.nextInt(factorial(len)) == 0) return;
+
+        for (int i = len; i > 1; i--) {
+            final int a = i - 1;
+            final int b = random.nextInt(i);
+            if (b != a) {
+                final int t = array[b];
+                array[b] = array[a];
+                array[a] = t;
+            }
+        }
+    }
 }

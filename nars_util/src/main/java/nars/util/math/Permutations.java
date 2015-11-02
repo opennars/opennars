@@ -1,79 +1,98 @@
 package nars.util.math;
 
-import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import org.apache.commons.math3.util.ArithmeticUtils;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** * from http://stackoverflow.com/questions/2920315/permutation-of-array */
-public class Permutations<E> implements Iterator<E[]> {
+public class Permutations  {
 
-    private E[] arr;
+    int size = 0;
+
+    /** total possible */
+    int num;
+
+    /** current iteration */
+    int count;
+
+    //private E[] arr;
     private int[] ind;
-    private boolean has_next;
 
-    public E[] output;//next() returns this array, make it public
+    //public E[] output;//next() returns this array, make it public
 
-    Permutations(E[] arr){
-        this.arr = arr.clone();
-        ind = new int[arr.length];
-        //convert an array of any elements into array of integers - first occurrence is used to enumerate
-        ObjectIntHashMap<E> hm = new ObjectIntHashMap();
-        for(int i = 0; i < arr.length; i++){
-            int n = hm.getIfAbsentPut(arr[i], i);
-            ind[i] = n;
+    public Permutations() {
+        super();
+    }
+
+    public Permutations restart(int size) {
+
+
+        //this.arr = arr; //TODO clone option: arr.clone();
+        this.size = size; //size = arr.length;
+
+        if (ind==null || ind.length<size) {
+            ind = new int[size];
         }
 
-        //TODO shuffle option
-        Arrays.sort(ind);//start with ascending sequence of integers
+        for(int i = 0; i < size; i++){
+            ind[i] = i;
+        }
+        count = 0;
+        num = (int) ArithmeticUtils.factorial(size);
 
-
-        //output = new E[arr.length]; <-- cannot do in Java with generics, so use reflection
-        output = (E[]) Array.newInstance(arr.getClass().getComponentType(), arr.length);
-        has_next = true;
+        return this;
     }
 
     public final boolean hasNext() {
-        return has_next;
+        return count < num;
     }
 
     /**
      * Computes next permutations. Same array instance is returned every time!
      * @return
      */
-    public final E[] next() {
-        if (!has_next)
+    public final int[] next() {
+        final int size = this.size;
+        if (count++ == (1+num) || size == 0)
             throw new NoSuchElementException();
 
-        for(int i = 0; i < ind.length; i++){
-            output[i] = arr[ind[i]];
+        final int[] ind = this.ind;
+
+        if (count == 1) {
+            //first access since restart()
+            return ind;
         }
 
+        //final E[] output = this.output;
+        //final E[] arr = this.arr;
 
         //get next permutation
-        has_next = false;
-        for(int tail = ind.length - 1;tail > 0;tail--){
-            if (ind[tail - 1] < ind[tail]){//still increasing
+        for(int tail = size - 1;tail > 0;tail--){
+
+            final int tailMin1 = tail - 1;
+
+            if (ind[(tailMin1)] < ind[tail]){//still increasing
 
                 //find last element which does not exceed ind[tail-1]
-                int s = ind.length - 1;
-                while(ind[tail-1] >= ind[s])
+                int s = size - 1;
+                while(ind[(tailMin1)] >= ind[s])
                     s--;
 
-                swap(ind, tail-1, s);
+                swap(ind, tailMin1, s);
 
                 //reverse order of elements in the tail
-                for(int i = tail, j = ind.length - 1; i < j; i++, j--){
+                for(int i = tail, j = size - 1; i < j; i++, j--){
                     swap(ind, i, j);
                 }
-                has_next = true;
                 break;
             }
 
         }
-        return output;
+        return ind;
+    }
+
+    public int get(int index) {
+        return ind[index];
     }
 
     private static final void swap(int[] arr, int i, int j){
