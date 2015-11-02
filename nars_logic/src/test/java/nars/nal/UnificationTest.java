@@ -32,7 +32,7 @@ public class UnificationTest extends AbstractNALTest {
         return terminal();
     }
 
-    void test(Op type, String s1, String s2, boolean shouldSub) {
+    FindSubst test(Op type, String s1, String s2, boolean shouldSub) {
 
         Global.DEBUG = true;
         TestNAR test = test();
@@ -70,6 +70,8 @@ public class UnificationTest extends AbstractNALTest {
             assertTrue( (n2) <= (sub.yx.size()));
             assertTrue( (n1) <= (sub.xy.size()));
         }
+
+        return sub;
     }
 
     @Test
@@ -229,10 +231,14 @@ public class UnificationTest extends AbstractNALTest {
               true);
     }
     @Test public void pattern_trySubs_Indep_Var_2_product_and_common_depvar()  {
-        test(Op.VAR_INDEPENDENT,
+        FindSubst sub = test(Op.VAR_INDEPENDENT,
                 "(<($1,#2) --> on>,<(SELF,#2) --> at>)",
                 "(<({t002},#1) --> on>,<(SELF,#1) --> at>)",
                 true);
+
+        //additional test that verifies correct common variable substitution result
+        assertEquals("{$1={t002}, #2=#1#2}", sub.xy.toString());
+        assertEquals("{#1=#1#2}", sub.yx.toString());
     }
     @Test public void pattern_trySubs_Indep_Var_2_product()  {
         test(Op.VAR_INDEPENDENT,

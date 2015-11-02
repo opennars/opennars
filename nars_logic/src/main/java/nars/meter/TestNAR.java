@@ -35,10 +35,6 @@ public class TestNAR  {
 
     boolean collectTrace = false;
 
-    boolean resetOnStop = true; //should help GC if successively run
-
-
-
 
 
     /** "must" requirement conditions specification */

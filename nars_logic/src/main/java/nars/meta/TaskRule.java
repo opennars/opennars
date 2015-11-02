@@ -339,11 +339,11 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
                     break;
 
                 case "substitute":
-                    afterConcs.add(new Substitute(arg1, arg2));
+                    afterConcs.add(new Substitute(arg1, (Variable)arg2));
                     break;
 
                 case "substitute_if_unifies":
-                    afterConcs.add(new SubsIfUnifies(arg1, arg2, args[2]));
+                    afterConcs.add(new SubsIfUnifies(arg1, arg2, (Variable)args[2]));
                     break;
 
                 case "intersection":

@@ -1,47 +1,82 @@
 package nars.meta.pre;
 
+import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
 import nars.term.Variable;
 
-import java.util.Map;
-
 
 public class Substitute extends PreCondition {
 
-    public final Term arg1, arg2;
-    private final String str;
+    public final Term x;
+    public final Variable y;
+    private String str = null;
 
-    public Substitute(Term var1, Term var2) {
-        this.arg1 = var1;
-        this.arg2 = var2;
-        this.str = getClass().getSimpleName() + "[" + var1 + "," + var2 + "]";
+    /**
+     *
+     * @param x  original term
+     * @param y  replacement term
+     */
+    public Substitute(Term x, Variable y) {
+        this.x = x;
+        this.y = y;
+
+    }
+
+    protected String id() {
+        return getClass().getSimpleName() + "[" + x + "," + y + "]";
     }
 
     @Override
     public final String toString() {
+        if (str == null) {
+            this.str = id(); //must be computed outside of constructor, because of subclassing
+        }
         return str;
     }
 
     @Override public final boolean test(RuleMatch m) {
-        Term b = m.resolve(arg2);
-        if (b == null) return false;
 
-        Map<Variable, Variable> i = m.Inp;
-
-        Variable a = i.get(this.arg1);
+        Term a = resolve(m, (Variable)this.x);
         if (a == null)
             return false;
+
+        Term b = resolve(m, this.y);
+        if (b == null)
+            return false;
+
+
+        //Map<Variable, Term> i = m.Inp;
+
+//        if (a == null)
+//            return false;
 
         //Term M = b; //this one got substituted, but with what?
         //Term with = m.assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
         //args[0] now encodes a variable which we want to replace with what M was assigned to
         //(relevant for variable elimination rules)
 
-        //the rule match context stores the Inp and Outp. not in this class.
-        //no preconditions should store any state
-        m.Outp.put(a,b);
+
+        if (!a.equals(b) && substitute(m, a, b)) {
+            m.Outp.put(a, b);
+        }
+        return true;
+    }
+
+    private final Term resolve(RuleMatch m, Variable y) {
+        final Term b;
+        if (y.op() == Op.VAR_PATTERN) {
+            b = m.xy.get(y);
+        }
+        else {
+            b = y;
+        }
+        return b;
+    }
+
+    protected boolean substitute(RuleMatch m, Term a, Term b) {
+        //for subclasses to override
         return true;
     }
 

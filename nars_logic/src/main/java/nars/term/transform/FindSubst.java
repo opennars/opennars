@@ -12,10 +12,7 @@ import nars.term.Term;
 import nars.term.Variable;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 public class FindSubst {
@@ -185,11 +182,7 @@ public class FindSubst {
         if (subsumes) {
             return putVarX(xVar, y);
         }
-//        if (!subsumes && type == xOp && sameType) {
-//            return putCommon(xVar, (Variable)y);
-//        }
-//        else
-        else if (sameType ) {
+        else if (sameType) {
             return putCommon(xVar, (Variable)y);
         }
 
@@ -295,9 +288,6 @@ public class FindSubst {
 
 
     protected final boolean putCommon(final Variable x, final Variable y) {
-//        if ((x.op()!=type) || (y.op()!=type)) {
-//            throw new RuntimeException("tried to map common variable of wrong type: " + x + "->" + y + " but type=" + type);
-//        }
         final Variable commonVar = CommonVariable.make(x, y);
         xyPut(x, commonVar);
         yxPut(y, commonVar);
@@ -325,16 +315,19 @@ public class FindSubst {
         final int numSubterms = xOriginalSubterms.length;
 
         int permutations = (int)ArithmeticUtils.factorial(numSubterms);
-        permutations*=10; //HACK
+
+        //HACK
+        permutations += permutations/2; //to allow for repeats that may occurr
 
         final Term[] xSubterms = Arrays.copyOf(xOriginalSubterms, numSubterms);
         final Term[] yTerms = Y.term;
 
 
         //push/save:
-        HashMap<Variable, Term> tmpXY = Maps.newHashMap(xy);
-        HashMap<Variable, Term> tmpYX = Maps.newHashMap(yx);
-
+        Map<Variable, Term> tmpXY = xy.isEmpty() ? Collections.emptyMap() :
+                Maps.newHashMap(xy);
+        Map<Variable, Term> tmpYX = yx.isEmpty() ? Collections.emptyMap() :
+                Maps.newHashMap(yx);
 
         int count = 0;
         do {
@@ -349,7 +342,6 @@ public class FindSubst {
                 //pop/restore (TODO only if changed and will attempt again):
                 xy.clear(); xy.putAll(tmpXY);
                 yx.clear(); yx.putAll(tmpYX);
-
 
                 count++;
             }

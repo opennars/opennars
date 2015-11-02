@@ -1,8 +1,7 @@
-package nars.nal.nal5;
+package nars.nal;
 
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;

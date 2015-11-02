@@ -259,16 +259,29 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 
             //TODO add the levenshtein distance of other task components
 
-            final float termDifference = Texts.levenshteinDistance(
-                    task.getTerm().toString().split("\\{")[0], //HACK to avoi comparing stamps
-                    getTerm().toString().split("\\{")[0]);
+            final float termDifference =
+                    Texts.levenshteinDistancePercent(
+                        task.getTerm().toString().split("\\{")[0], //HACK to avoi comparing stamps
+                        getTerm().toString().split("\\{")[0]);
+
+            final float freqDiff = Math.min(
+                    Math.abs(task.getFrequency() - freqMin),
+                    Math.abs(task.getFrequency() - freqMax));
+            final float confDiff = Math.min(
+                    Math.abs(task.getConfidence() - confMin),
+                    Math.abs(task.getConfidence() - confMax));
+
+            final float difference =
+                    3 * termDifference +
+                    2 * freqDiff +
+                    1 * confDiff;
 
             /*if (termDifference > 0)*/ {
                 ensureSimilar();
 
                 //TODO more efficient way than this
                 if (!similar.values().contains(task))
-                    similar.put(termDifference, task);
+                    similar.put(difference, task);
 
                 if (similar.size() > maxSimilars) {
                     similar.remove(similar.lastEntry().getKey());

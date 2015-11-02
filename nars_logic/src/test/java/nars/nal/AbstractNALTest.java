@@ -2,7 +2,6 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.LocalMemory;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nar.Default;
@@ -105,8 +104,10 @@ abstract public class AbstractNALTest {
         List<Supplier<NAR>> l = Global.newArrayList();
 
         final int finalLevel = level;
-        l.add( supply("Default[NAL<=" + level + "]",
-                () -> new Default(new LocalMemory(), 512,1,2,3).nal(finalLevel) ) );
+
+        /*l.add( supply("Default[NAL<=" + level + "]",
+                () -> new Default(new LocalMemory(), 512,1,2,3).nal(finalLevel) ) );*/
+
         l.add( supply("Default2[NAL<=" + level + "]",
                 () -> new Default2(512,1,2,3).nal(finalLevel) ) );
 

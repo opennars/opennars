@@ -541,15 +541,16 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         }
 
-        List<K> toRemove = Global.newArrayList(0);
-
         fill = 0;
 
-        Budget b = new Budget();
+        List<K> toRemove = null;
+
+        Budget b = new Budget(); //TODO avoid creating this
 
         for (int i = istart; (i < iend) && (fill < len); i++) {
             V v = a.get(i);
             if (v.isDeleted()) {
+                if (toRemove == null) toRemove = Global.newArrayList(0); //TODO avoid creating this
                 toRemove.add(v.name());
             }
             else {
@@ -558,7 +559,8 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             }
         }
 
-        toRemove.forEach(this::remove);
+        if (toRemove!=null)
+            toRemove.forEach(this::remove);
 
         return fill;
     }

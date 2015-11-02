@@ -171,6 +171,13 @@ abstract public class Texts {
     }
      */
 
+    /** returns lev distance divided by max(a.length(), b.length() */
+    public static float levenshteinDistancePercent(final CharSequence a, final CharSequence b) {
+        float len = Math.max(a.length(), b.length());
+        if (len == 0) return 0;
+        return levenshteinDistance(a,b) / len;
+    }
+
     /**
      * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */

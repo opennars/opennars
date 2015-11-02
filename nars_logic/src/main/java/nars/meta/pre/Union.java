@@ -52,7 +52,7 @@ public class Union extends PreCondition3Output {
             throw new RuntimeException("this condition should have been trapped earlier");
             //return false;
 
-        m.xy.put((Variable)c, res);
+        m.Outp.put((Variable)c, res);
 
         return true;
     }
@@ -62,4 +62,6 @@ public class Union extends PreCondition3Output {
                 !((a instanceof SetTensional) &&
                 (a.op()==b.op()));
     }
+
+
 }

@@ -6,8 +6,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
-import nars.meta.pre.SubsIfUnifies;
-import nars.meta.pre.Substitute;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.PreTask;
@@ -24,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 
@@ -41,7 +38,6 @@ public class RuleMatch extends FindSubst {
 
     public TaskRule rule;
 
-    final Map<Term, Term> resolutions = Global.newHashMap();
     public ConceptProcess premise;
 
 
@@ -50,15 +46,12 @@ public class RuleMatch extends FindSubst {
     /**
      * used by substitute:
      */
-    public final Map<Variable, Variable> Inp = Global.newHashMap();
-    public final Map<Variable, Term> Outp = Global.newHashMap();
-    public final Map<Term, Term> ApplySubsSet = Global.newHashMap();
+    public final Map<Term, Term> Outp = Global.newHashMap();
 
     @Override
     public String toString() {
-        return taskBelief.toString() + ":<" + super.toString() + ">:" + resolutions;
+        return taskBelief.toString() + ":<" + super.toString() + ">:";
     }
-
 
     public RuleMatch(Random random) {
         super(Op.VAR_PATTERN,
@@ -92,8 +85,6 @@ public class RuleMatch extends FindSubst {
 
         super.clear();
 
-
-        resolutions.clear();
         occurence_shift = Stamp.TIMELESS;
 
         this.rule = rule;
@@ -110,12 +101,11 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
-
+        /** calculate derived task truth value */
         final Task belief = premise.getBelief();
-
-
-        final boolean single = (belief == null);
-
+        final Truth T = task.getTruth();
+        final Truth B = belief == null ? null : belief.getTruth();
+        final Truth truth;
 
         /** calculate derived task punctuation */
         char punct = outcome.puncOverride;
@@ -123,93 +113,53 @@ public class RuleMatch extends FindSubst {
             /** use the default policy determined by parent task */
             punct = task.getPunctuation();
         }
-
-
-        /** calculate derived task truth value */
-        final Truth T = task.getTruth();
-        final Truth B = belief == null ? null : belief.getTruth();
-        final Truth truth;
         if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
-
             truth = getTruth(outcome, punct, T, B);
-
-            if (truth == null)
-                return null; //no truth value function was applicable but it was necessary, abort
+            if (truth == null) {
+                //no truth value function was applicable but it was necessary, abort
+                return null;
+            }
         } else {
+            //question or quest, no truth is involved
             truth = null;
         }
 
         /** eliminate cyclic double-premise results
          *  TODO move this earlier to precondition check, or change to altogether new policy
          */
+        final boolean single = (belief == null);
         if ((!single) && (cyclic(outcome, premise))) {
             if (Global.DEBUG) {
-                Term termm = resolve(outcome.term);
-                if (termm != null) {
-
-                    premise.memory().remove(
-                            new PreTask(termm, punct, truth,
-                                    Budget.zero, occurence_shift, premise
-                            ),
-                            "Cyclic:" +
-                                    Arrays.toString(premise.getTask().getEvidence()) + ',' +
-                                    Arrays.toString(premise.getBelief().getEvidence())
-                    );
-                }
-
+                removeCyclic(outcome, premise, truth, punct);
             }
             return null;
         }
 
-        //test and apply late preconditions
-//        for (final PreCondition c : outcome.beforeConclusions) {
-//            if (!c.test(this))
-//                return null;
-//        }
 
         Term derivedTerm;
 
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
 
-        final Map<Variable, Term> Outp = this.Outp; //Global.newHashMap(0);
+        final Map<Term, Term> Outp = this.Outp;
 
         for (final PreCondition c : outcome.afterConclusions) {
-
-            if (c instanceof Substitute || c instanceof SubsIfUnifies) {
-                //here we are interested how to transform the second to the first
-                this.Inp.clear();// = new HashMap<Term,Term>(); //Inp is temporary for the substitution predicates
-
-                //since it gets cleared again and again by the predicates this.Inp has to be another HashMap instance than map2
-
-                //put all yx's entries that have a variable value into Inp
-                yx.forEach((a,b) -> {
-                    if (b instanceof Variable)
-                        Inp.put(a, (Variable) b);
-                    else {
-                        System.err.println("what is it: " + b);
-                    }
-                });
-            }
-
-            if (!c.test(this))
+            if (!c.test(this)) {
+                //Outp.clear();
                 return null;
-
-
-            //if (c instanceof Substitute || c instanceof SubsIfUnifies) {
-                Inp.clear();
-//                //Outp.putAll(this.Outp);
-            //}
+            }
         }
 
-        derivedTerm = resolve(derivedTerm);
-
-        if (!Outp.isEmpty() && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
-            derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
+        if (!Outp.isEmpty()) {
+            //derivedTerm = derivedTerm.normalized();
+            derivedTerm = ((Compound)derivedTerm).applySubstitute(Outp);
             Outp.clear();
         }
 
-        if (derivedTerm == null) return null;
+        derivedTerm = derivedTerm.normalized();
+
+        if (!(derivedTerm instanceof Compound))
+            return null;
 
 
         //test for reactor leak
@@ -241,11 +191,6 @@ public class RuleMatch extends FindSubst {
 //        }
 
 
-
-        derivedTerm = derivedTerm.normalized();
-
-        if (!(derivedTerm instanceof Compound))
-            return null;
 
 
 
@@ -356,6 +301,19 @@ public class RuleMatch extends FindSubst {
         return null;
     }
 
+    private void removeCyclic(PostCondition outcome, ConceptProcess premise, Truth truth, char punct) {
+        Term termm = resolve(outcome.term);
+        if (termm != null) {
+            premise.memory().remove(
+                    new PreTask(termm, punct, truth,
+                            Budget.zero, occurence_shift, premise
+                    ),
+                    "Cyclic:" +
+                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
+                            Arrays.toString(premise.getBelief().getEvidence())
+            );
+        }
+    }
 
 
     static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
@@ -403,18 +361,13 @@ public class RuleMatch extends FindSubst {
     }
 
     static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
-        if ((truth == null) || (truth.getConfidence() < minConf)) {
-            return false;
-        }
-        return true;
+        return !((truth == null) || (truth.getConfidence() < minConf));
     }
 
     protected static boolean cyclic(PostCondition outcome, Premise premise) {
         return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
     }
 
-    final Function<Term, Term> resolver = k ->
-            k != null ? k.substituted(xy) : null;
 
 //    public Term resolveTest(final Term t) {
 //        Term r = resolver.apply(t);
@@ -439,12 +392,7 @@ public class RuleMatch extends FindSubst {
 //            //return null;
 //        }
 
-        //cached:
-        //return resolutions.computeIfAbsent(t, resolver);
-
-
-        //uncached:
-        return resolver.apply(t);
+        return t.substituted(xy);
     }
 
 

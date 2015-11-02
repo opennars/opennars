@@ -214,6 +214,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     public String toString() {
         return "PostCondition{" +
                 "term=" + term +
+                ", afterConc=" + Arrays.toString(afterConclusions) +
                 ", modifiers=" + Arrays.toString(modifiers) +
                 ", truth=" + truth +
                 ", desire=" + desire +

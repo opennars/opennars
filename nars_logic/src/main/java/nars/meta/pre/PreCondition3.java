@@ -10,7 +10,6 @@ import nars.term.Term;
 abstract public class PreCondition3 extends PreCondition {
     public Term arg1=null, arg2=null, arg3=null;
 
-    public PreCondition3(){}
 
     /** no arguments should be null */
     public PreCondition3(Term var1, Term var2, Term var3) {
