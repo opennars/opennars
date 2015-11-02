@@ -274,4 +274,12 @@ public class NAL7Test extends AbstractNALTest {
         tester.run();
     }
 
+    @Test
+    public void temporalOrder() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<<a --> A> =/> <b --> B>>");
+        tester.believe("<<b --> B> <|> <c --> C>>", 0.90f, 0.9f);
+        tester.mustBelieve(200, "<<a --> A> =/> <b --> B>>", 0.90f, 0.43f);
+        tester.run();
+    }
 }

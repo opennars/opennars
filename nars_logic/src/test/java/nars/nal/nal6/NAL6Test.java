@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTest {
 
 
-    final int cycles = 300;
+    final int cycles = 700;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
@@ -116,7 +116,7 @@ public class NAL6Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<<$x --> bird> ==> <$x --> animal>>"); //en("If something is a bird, then it is an animal.");
         tester.believe("<robin --> bird>"); //en("A robin is a bird.");
-        tester.mustBelieve(cycles, "<robin --> animal>", 1.00f, 0.81f); //en("A robin is an animal.");
+        tester.mustBelieve(16, "<robin --> animal>", 1.00f, 0.81f); //en("A robin is an animal.");
         tester.run();
     }
 

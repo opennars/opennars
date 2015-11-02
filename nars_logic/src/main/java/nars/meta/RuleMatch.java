@@ -150,13 +150,23 @@ public class RuleMatch extends FindSubst {
             }
         }
 
-        if (!Outp.isEmpty()) {
-            //derivedTerm = derivedTerm.normalized();
-            derivedTerm = ((Compound)derivedTerm).applySubstitute(Outp);
-            Outp.clear();
-        }
 
-        derivedTerm = derivedTerm.normalized();
+        if (!Outp.isEmpty()) {
+            Term rederivedTerm = ((Compound)derivedTerm).applySubstitute(Outp);
+            Outp.clear();
+
+            //its possible that the substitution produces an invalid term, ex: an invalid statement
+            if (rederivedTerm == null)
+                return null;
+
+
+            //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
+            derivedTerm = rederivedTerm;
+        }
+        else {
+            //necessary?
+            derivedTerm = derivedTerm.normalized();
+        }
 
         if (!(derivedTerm instanceof Compound))
             return null;
@@ -243,7 +253,7 @@ public class RuleMatch extends FindSubst {
 
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG) {
-                premise.memory().remove(new PreTask(derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
+                removeInsufficientBudget(premise, new PreTask(derivedTerm, punct, truth, budget, occurence_shift, premise));
             }
             return null;
         }
@@ -270,6 +280,12 @@ public class RuleMatch extends FindSubst {
 //                    }
 //                }
 
+                if (!premise.nal(7)) {
+                    if (Global.DEBUG) {
+                        throw new RuntimeException("temporal change with lower than NAL7");
+                    }
+                    return null;
+                }
 
                 occ = task.getOccurrenceTime() + occurence_shift;
             }
@@ -295,12 +311,17 @@ public class RuleMatch extends FindSubst {
 
                 return derived;
             }
-
         }
 
         return null;
     }
 
+    /** for debugging */
+    private void removeInsufficientBudget(ConceptProcess premise, PreTask task) {
+        premise.memory().remove(task, "Insufficient Derivation Budget");
+    }
+
+    /** for debugging */
     private void removeCyclic(PostCondition outcome, ConceptProcess premise, Truth truth, char punct) {
         Term termm = resolve(outcome.term);
         if (termm != null) {

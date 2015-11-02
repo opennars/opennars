@@ -2,11 +2,13 @@ package nars.nal.nal6;
 
 import nars.meter.ExhaustPremises;
 import nars.narsese.InvalidInputException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Created by me on 10/4/15.
  */
+@Ignore
 public class PremiseExhaustion {
 
 

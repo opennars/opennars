@@ -1,6 +1,7 @@
 package nars.term.transform;
 
 import com.google.common.collect.Maps;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -325,9 +326,9 @@ public class FindSubst {
 
         //push/save:
         Map<Variable, Term> tmpXY = xy.isEmpty() ? Collections.emptyMap() :
-                Maps.newHashMap(xy);
+                new UnifiedMap(xy);
         Map<Variable, Term> tmpYX = yx.isEmpty() ? Collections.emptyMap() :
-                Maps.newHashMap(yx);
+                new UnifiedMap(yx);
 
         int count = 0;
         do {

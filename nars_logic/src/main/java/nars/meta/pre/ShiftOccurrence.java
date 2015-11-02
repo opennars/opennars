@@ -50,6 +50,15 @@ public class ShiftOccurrence extends PreCondition1 {
 //        }
     }
 
+    @Override public boolean test(final RuleMatch m) {
+
+        if (m.premise.isEternal()) {
+            //continue with derivation but dont apply shift
+            return true;
+        }
+
+        return super.test(m);
+    }
 
     @Override
     public final boolean test(RuleMatch m, Term arg) {

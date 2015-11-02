@@ -549,6 +549,10 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         for (int i = istart; (i < iend) && (fill < len); i++) {
             V v = a.get(i);
+
+            if (v == null) break; //HACK wtf?
+                //throw new RuntimeException("null");
+
             if (v.isDeleted()) {
                 if (toRemove == null) toRemove = Global.newArrayList(0); //TODO avoid creating this
                 toRemove.add(v.name());

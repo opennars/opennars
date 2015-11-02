@@ -259,6 +259,8 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 
             //TODO add the levenshtein distance of other task components
 
+            final int opDifference = task.getTerm()==getTerm() ? 0 : 1;
+
             final float termDifference =
                     Texts.levenshteinDistancePercent(
                         task.getTerm().toString().split("\\{")[0], //HACK to avoi comparing stamps
@@ -272,6 +274,7 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
                     Math.abs(task.getConfidence() - confMax));
 
             final float difference =
+                    (opDifference * getTerm().volume()) +
                     3 * termDifference +
                     2 * freqDiff +
                     1 * confDiff;

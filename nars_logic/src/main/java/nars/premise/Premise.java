@@ -444,12 +444,26 @@ public interface Premise extends Level {
         return nar().concept(x);
     }
 
-    /** TODO This part is used commonly, extract into its own precondition */
-    default boolean isTaskAndBeliefEvent() {
-        if (getBelief() == null) return false;
 
-        return (!Temporal.isEternal(getTask().getOccurrenceTime()) && (!Temporal.isEternal(getBelief().getOccurrenceTime())));
+    /** true if both task and (non-null) belief are temporal events */
+    default boolean isTaskAndBeliefEvent() {
+        /* TODO This part is used commonly, extract into its own precondition */
+        Task b = getBelief();
+        if (b == null) return false;
+        Task t = getTask();
+        return (!Temporal.isEternal(t.getOccurrenceTime()) &&
+                (!Temporal.isEternal(b.getOccurrenceTime())));
     }
+
+    /** true if neither task nor belief are temporal */
+    default boolean isEternal() {
+        Task b = getBelief();
+        if ((b != null) && (!b.isEternal()))
+            return false;
+        Task t = getTask();
+        return t.isEternal();
+    }
+
 
 //    default boolean isTaskEvent() {
 //        return !Temporal.isEternal(getTask().getOccurrenceTime());

@@ -1,6 +1,5 @@
 package nars.meta.pre;
 
-import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
@@ -38,11 +37,11 @@ public class Substitute extends PreCondition {
 
     @Override public final boolean test(RuleMatch m) {
 
-        Term a = resolve(m, (Variable)this.x);
+        Term a = m.resolve(this.x);
         if (a == null)
             return false;
 
-        Term b = resolve(m, this.y);
+        Term b = m.resolve(this.y);
         if (b == null)
             return false;
 
@@ -59,21 +58,11 @@ public class Substitute extends PreCondition {
 
 
         if (!a.equals(b) && substitute(m, a, b)) {
-            m.Outp.put(a, b);
+            m.Outp.put(b, a);
         }
         return true;
     }
 
-    private final Term resolve(RuleMatch m, Variable y) {
-        final Term b;
-        if (y.op() == Op.VAR_PATTERN) {
-            b = m.xy.get(y);
-        }
-        else {
-            b = y;
-        }
-        return b;
-    }
 
     protected boolean substitute(RuleMatch m, Term a, Term b) {
         //for subclasses to override

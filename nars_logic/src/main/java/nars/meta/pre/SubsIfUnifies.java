@@ -55,6 +55,7 @@ public class SubsIfUnifies extends Substitute {
         FindSubst sub = new FindSubst(type, Left, Right, m.premise.getRandom());
 
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
+            m.Outp.putAll(Left);
             return true;
         }
 

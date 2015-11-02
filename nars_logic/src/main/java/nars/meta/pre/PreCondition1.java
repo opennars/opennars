@@ -12,7 +12,7 @@ abstract public class PreCondition1 extends PreCondition {
         this.arg1 = var1;
     }
 
-    @Override public final boolean test(final RuleMatch m) {
+    @Override public boolean test(final RuleMatch m) {
         final Term a = m.resolve(arg1);
         if (a == null) return false;
         return test(m, a);
