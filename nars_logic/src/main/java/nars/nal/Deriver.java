@@ -1,87 +1,42 @@
 package nars.nal;
 
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.MultimapBuilder;
 import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
-import nars.meta.pre.PairMatchingProduct;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.util.data.random.XorShift1024StarRandom;
 
-import java.io.Serializable;
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 /**
+ *
+ * Implements a strategy for managing submitted derivation processes
+ * ( via the run() methods )
+ *
  * Created by patrick.hammer on 30.07.2015.
  */
-abstract public class Deriver implements Function<ConceptProcess,Stream<Task>>, Serializable {
+abstract public class Deriver  {
 
     public final DerivationRules rules;
 
-    public final ListMultimap<PairMatchingProduct, TaskRule> ruleIndex;
-
 
     public Deriver(DerivationRules rules) {
-
         this.rules = rules;
-
-        this.ruleIndex = MultimapBuilder.treeKeys().arrayListValues().build();
-
-        rules.forEach(r -> ruleIndex.put(r.pattern, r));
     }
 
+    abstract protected void forEachRule(final RuleMatch match, Consumer<Task> receiver);
 
-    abstract public Stream<Task> forEachRule(final RuleMatch match);
-
-
-    /** thread-specific pool of RuleMatchers
-        this pool is local to this deriver */
-    static final transient ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
-        //TODO use the memory's RNG for complete deterministic reproducibility
-        return new RuleMatch(new XorShift1024StarRandom(1));
-    });
-
-    @Override
-    public final Stream<Task> apply(final ConceptProcess f) {
-        RuleMatch m = matchers.get();
-        m.start(f);
-        return forEachRule(m);
+    /** runs a ConceptProcess (premise) and supplies
+     *  a consumer with all resulting derived tasks.
+     *  this method does not provide a way to stop or interrupt
+     *  the process once it begins.
+     */
+    public final void run(ConceptProcess premise, Consumer<Task> t) {
+        run(premise, RuleMatch.matchers.get(), t);
     }
 
+    public final void run(ConceptProcess premise, RuleMatch m, Consumer<Task> t) {
+        m.start(premise);
+        forEachRule(m, t);
+    }
 
-
-//    public final List<DerivationFilter> derivationFilters = Global.newArrayList();
-//
-//    public List<DerivationFilter> getDerivationFilters() {
-//        return derivationFilters;
-//    }
-
-//    public boolean test(Task task) {
-//
-//        String rejectionReason = getDerivationRejection(this, task, solution, revised, singleOrDouble, getBelief(), getTask());
-//        if (rejectionReason != null) {
-//            memory.removed(task, rejectionReason);
-//            return false;
-//        }
-//        return true;
-//    }
-
-//    /** tests validity of a derived task; if valid returns null, else returns a String rule explaining why it is invalid */
-//    public String getDerivationRejection(final Premise nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
-//
-//        List<DerivationFilter> derivationFilters = getDerivationFilters();
-//        final int dfs = derivationFilters.size();
-//
-//        for (int i = 0; i < dfs; i++) {
-//            DerivationFilter d = derivationFilters.get(i);
-//            String rejectionReason = d.reject(nal, task, solution, revised);
-//            if (rejectionReason != null) {
-//                return rejectionReason;
-//            }
-//        }
-//        return null;
-//    }
 
 }

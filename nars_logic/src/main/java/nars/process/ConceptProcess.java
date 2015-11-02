@@ -9,12 +9,12 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.nal.Deriver;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -53,6 +53,8 @@ abstract public class ConceptProcess extends NAL  {
         this.concept = concept;
 
     }
+
+    public abstract void derive(Deriver p, Consumer<Task> t);
 
     @Override
     public String toString() {
@@ -103,36 +105,40 @@ abstract public class ConceptProcess extends NAL  {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static Stream<Task> nextPremiseSquare(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc, int maxTaskLinks, int maxTermLinks) {
+    public static void nextPremiseSquare(NAR nar, Deriver deriver, final Concept concept, float taskLinkForgetDurations, Consumer<Task> proc, int maxTaskLinks, int maxTermLinks) {
 
+        int dur = nar.memory().duration();
 
-        TaskLink[] tasks = new TaskLink[maxTaskLinks];
+        TaskLink[] tasks = new TaskLink[maxTaskLinks]; //TODO reuse
         int tasksCount = concept.getTaskLinks().forgetNext(
-                taskLinkForgetDurations * nar.memory().duration(),
+                taskLinkForgetDurations * dur,
                 tasks, 0, tasks.length, nar.time(), 0 /* additional */);
 
-        if (tasksCount == 0) return Stream.empty();
+        if (tasksCount == 0) return;
 
-        TermLink[] terms = new TermLink[maxTermLinks];
+        TermLink[] terms = new TermLink[maxTermLinks];  //TODO reus
         float termLinkForgetDurations = concept.getMemory().termLinkForgetDurations.floatValue();
         int termsCount = concept.getTermLinks().forgetNext(
-                termLinkForgetDurations * nar.memory().duration(),
+                termLinkForgetDurations * dur,
                 terms, 0, terms.length, nar.time(), 0 /* additional */);
 
-        if (termsCount == 0) return Stream.empty();
+        if (termsCount == 0) return;
 
 
-        Stream.Builder<Stream<Task>> streams = Stream.builder();
+        for (final TaskLink taskLink : tasks) {
+            if (taskLink == null) break;
+            for (final TermLink termLink : terms) {
+                if (termLink == null) break;
 
-        for (final TaskLink a : tasks) {
-            if (a == null) break;
-            for (final TermLink b : terms) {
-                if (b == null) break;
-                fireConcept(nar, concept, proc, streams, a, b);
+                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
+                    continue;
+
+                deriver.run(
+                    new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink),
+                    proc);
             }
         }
 
-        return streams.build().flatMap(s -> s);
     }
 
     public boolean validateDerivedBudget(Budget budget) {
@@ -143,18 +149,7 @@ abstract public class ConceptProcess extends NAL  {
         return !budget.summaryLessThan(memory().derivationThreshold.floatValue());
     }
 
-    private static ConceptProcess fireConcept(NAR nar, Concept concept, Function<ConceptProcess, Stream<Task>> proc, Stream.Builder<Stream<Task>> streams, TaskLink a, TermLink b) {
-        ConceptProcess p = premise(nar, concept, a, b);
-
-        if (p!=null) {
-            final Stream<Task> substream = proc.apply(p);
-            if (substream!=null)
-                streams.accept(substream);
-        }
-        return p;
-    }
-
-//    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
+    //    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
 //    public static Stream<Task> nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc) {
 //
 //        TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
@@ -168,15 +163,14 @@ abstract public class ConceptProcess extends NAL  {
 //
 //    }
 
-    public static ConceptProcess premise(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink) {
-        if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
-            return null;
-
-        if (taskLink.isDeleted())
-            throw new RuntimeException("tasklink null"); //bag should not have returned this
-
-        return new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
-    }
+//    public static ConceptProcess premise(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink) {
+////        if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
+////            return null;
+//
+////        if (taskLink.isDeleted())
+////            throw new RuntimeException("tasklink null"); //bag should not have returned this
+//
+//    }
 
     /** gets the average summary of one or both task/belief task's */
     public float getMeanPriority() {
@@ -198,7 +192,7 @@ abstract public class ConceptProcess extends NAL  {
         return total/n;
     }
 
-    public abstract Stream<Task> derive(final Function<ConceptProcess,Stream<Task>> p);
+//    public abstract Stream<Task> derive(final Deriver p);
 
 //    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
 //        if (concept == null) return;

@@ -1,9 +1,13 @@
 package nars.nal;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import nars.Global;
 import nars.Op;
+import nars.meta.PostCondition;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
+import nars.meta.pre.PairMatchingProduct;
 import nars.task.Task;
 import nars.term.Term;
 import nars.util.db.TemporaryCache;
@@ -11,10 +15,14 @@ import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 /** separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations */
 public class SimpleDeriver extends Deriver  {
+
+    /** maps rule patterns to one or more rules which involve it */
+    public final ListMultimap<PairMatchingProduct, TaskRule> ruleIndex;
+
 
 
     //not ready yet
@@ -61,8 +69,8 @@ public class SimpleDeriver extends Deriver  {
      * default set of rules, statically available
      */
     public static DerivationRules standard;
-    private final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
-    private final EnumMap<Op, List<TaskRule>> beliefTypeMap;
+    protected final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
+    protected final EnumMap<Op, List<TaskRule>> beliefTypeMap;
 
     public SimpleDeriver() {
         this(SimpleDeriver.standard);
@@ -70,6 +78,12 @@ public class SimpleDeriver extends Deriver  {
 
     public SimpleDeriver(DerivationRules rules) {
         super(rules);
+
+
+        this.ruleIndex = MultimapBuilder.treeKeys().arrayListValues().build();
+
+        rules.forEach(r -> ruleIndex.put(r.pattern, r));
+
 
         taskTypeMap = new EnumMap(Op.class);
         beliefTypeMap = new EnumMap(Op.class);
@@ -106,6 +120,48 @@ public class SimpleDeriver extends Deriver  {
 
     }
 
+    @Override
+    public void forEachRule(RuleMatch match, Consumer<Task> receiver) {
+
+
+        final PairMatchingProduct taskBelief = match.taskBelief;
+        final Term taskTerm = taskBelief.term(0);
+        final Term beliefTerm = taskBelief.term(1);
+
+
+        final int n = match.premise.nal();
+
+
+        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
+        if (taskSpecific!=null) {
+
+
+            // <T>,<B>
+            List<TaskRule> taskSpecificBeliefSpecific = taskSpecific.get(beliefTerm.op());
+            if (taskSpecificBeliefSpecific != null)
+                run(match, taskSpecificBeliefSpecific, n, receiver);
+
+
+            // <T>,%
+            List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
+            if (taskSpecificBeliefAny != null)
+                run(match, taskSpecificBeliefAny, n, receiver);
+        }
+
+
+        // %,<B>
+        List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
+        if (beliefSpecific!=null)
+            run(match, beliefSpecific, n, receiver);
+
+
+        // %,%
+        List<TaskRule> any = beliefTypeMap.get(Op.VAR_PATTERN);
+        if (any!=null)
+            run(match, any, n, receiver);
+
+    }
+
     public void printSummary() {
         taskTypeMap.entrySet().forEach(k -> {
             k.getValue().entrySet().forEach(m -> {
@@ -117,69 +173,22 @@ public class SimpleDeriver extends Deriver  {
         });
     }
 
-    public Stream<Task> forEachRule(final RuleMatch match) {
-        //return forEachRuleExhaustive(match);
-        return forEachRuleByType(match);
+
+    final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {
+        rules.forEach(r -> {
+            if (r.minNAL > level) return;
+
+            PostCondition[] pc = m.run(r);
+            if (pc == null) return;
+
+            for (PostCondition p : pc) {
+                if (p.minNAL > level) return;
+                Task x = m.apply(p);
+                if (x!=null)
+                    t.accept(x);
+            }
+        });
     }
-
-    public Stream<Task> forEachRuleExhaustive(final RuleMatch match) {
-        return match.run(rules, match.premise.nal());
-    }
-
-    public Stream<Task> forEachRuleByType(final RuleMatch match) {
-
-
-        final Term taskTerm = match.taskBelief.term(0);
-        final Term beliefTerm = match.taskBelief.term(1);
-
-
-        Stream.Builder<Stream<Task>> sb = Stream.builder();
-
-        final int n = match.premise.nal();
-
-
-        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
-        if (taskSpecific!=null) {
-
-
-            // <T>,<B>
-            List<TaskRule> u = taskSpecific.get(beliefTerm.op());
-            if (u != null)
-                sb.accept( match.run(u, n) );
-
-
-            // <T>,%
-            List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
-            if (taskSpecificBeliefAny != null)
-                sb.accept( match.run(taskSpecificBeliefAny, n) );
-        }
-
-
-        // %,<B>
-        List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
-        if (beliefSpecific!=null)
-            sb.accept( match.run( beliefSpecific, n) );
-
-
-        // %,%
-        List<TaskRule> bAny = beliefTypeMap.get(Op.VAR_PATTERN);
-        if (bAny!=null)
-            sb.accept( match.run(bAny, n) );
-
-        return sb.build().flatMap(s->s);
-    }
-
-
-
-//    public void fire(final Premise fireConcept) {
-//        final List<LogicStage<Premise>> rules = this.rules;
-//        final int n = rules.size();
-//        for (int l = 0; l < n; l++) {
-//            if (!rules.get(l).test(fireConcept))
-//                break;
-//        }
-//    }
-
 
 
 }

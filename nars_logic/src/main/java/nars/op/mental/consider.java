@@ -59,10 +59,8 @@ public class consider extends SyncOperator implements Mental {
         TermLink termLink = concept.getTermLinks().peekNext();
         if ((taskLink!=null) && (termLink!=null)) {
 
-            nar.input(
-                new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink)
-                        .derive(deriver)
-            );
+            new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink)
+                .derive(deriver, nar::input);
 
         }
         

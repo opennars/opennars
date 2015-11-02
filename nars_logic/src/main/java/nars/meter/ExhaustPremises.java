@@ -18,7 +18,6 @@ import nars.util.graph.TermLinkGraph;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -151,7 +150,9 @@ public class ExhaustPremises extends TestNAR {
                     c.concept(task),
                     new TaskLink(task), tl, belief);
 
-            List<Task> s = p.derive(sd).collect(Collectors.toList());
+
+            List<Task> s = Global.newArrayList();
+            p.derive(sd, s::add);
             System.out.println("\t" + s);
 
         });

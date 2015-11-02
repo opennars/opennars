@@ -4,8 +4,8 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.nal.Deriver;
 import nars.nal.nal7.Temporal;
-import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Compound;
@@ -14,8 +14,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static nars.nal.nal7.Temporal.containsMentalOperator;
 import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -26,14 +24,14 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 public class STMTemporalLinkage {
 
     public final Deque<Task> stm;
-    private final Function<ConceptProcess,Stream<Task>> deriver;
+    private final Deriver deriver;
     int stmSize;
     //public static STMTemporalLinkage I=null;
 
 
 
 
-    public STMTemporalLinkage(NAR nar, final Function<ConceptProcess,Stream<Task>> deriver) {
+    public STMTemporalLinkage(NAR nar, Deriver deriver) {
 
         this.deriver = deriver;
         this.stmSize = 1;

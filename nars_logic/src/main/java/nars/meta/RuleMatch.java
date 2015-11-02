@@ -17,12 +17,11 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
+import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Stream;
 
 
 /**
@@ -30,6 +29,12 @@ import java.util.stream.Stream;
  */
 public class RuleMatch extends FindSubst {
 
+    /** thread-specific pool of RuleMatchers
+        this pool is local to this deriver */
+    public static final transient ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+        //TODO use the memory's RNG for complete deterministic reproducibility
+        return new RuleMatch(new XorShift1024StarRandom(1));
+    });
     /**
      * if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset
      */
@@ -416,24 +421,7 @@ public class RuleMatch extends FindSubst {
     }
 
 
-    public final Stream<Task> run(final List<TaskRule> u, final int maxNAL) {
-        return run(u.stream(), maxNAL);
-    }
 
-    public Stream<Task> run(final Stream<TaskRule> rules, final int maxNAL) {
-
-        //Predicate<Level> pcFilter = Level.maxFilter(maxNAL);
-
-        return rules.
-                //filter( /* filter the entire rule */ pcFilter).
-                        map(r -> run(r)).
-                        flatMap(p ->
-                            (p != null) ? Stream.of(p) : Stream.empty()
-                        ).
-                //filter( /* filter each rule postcondition */ pcFilter).
-                        map(p -> apply(p)).
-                        filter(t -> t != null);
-    }
 
 
     /** return null if no postconditions match (equivalent to an empty array)

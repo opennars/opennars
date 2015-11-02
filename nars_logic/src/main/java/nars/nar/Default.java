@@ -20,6 +20,7 @@ import nars.io.TaskPerception;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.nal.Deriver;
 import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.NullOperator;
@@ -49,8 +50,6 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 
 /**
@@ -411,7 +410,7 @@ public class Default extends NAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static class DefaultCycle extends Active implements Serializable, Function<ConceptProcess, Stream<Task>> {
+    public static class DefaultCycle extends Active implements Serializable {
 
 
         /**
@@ -420,7 +419,7 @@ public class Default extends NAR {
         public final MutableInteger conceptsFiredPerCycle;
 
 
-        public final Function<ConceptProcess,Stream<Task>>  deriver;
+        public final Deriver  deriver;
 
 
         public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
@@ -463,7 +462,7 @@ public class Default extends NAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public DefaultCycle(NAR nar, SimpleDeriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
+        public DefaultCycle(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
             super();
 
             this.nar = nar;
@@ -509,34 +508,23 @@ public class Default extends NAR {
 //            int n = active.forgetNext(conceptForgetDurations, buffer, time());
 //            if (n == 0) return;
 
-            final long now = nar.time();
-
             for (int i = 0; i < conceptsToFire; i++) {
-                //active.forgetNext(conceptForgetDurations, nar.memory(), 1)
-                Concept[] buffer = new Concept[]{active.forgetNext(conceptForgetDurations, nar.memory())};
-
-                for (final Concept c : buffer) {
-                    if (c == null) break;
-                    fireConcept(conceptForgetDurations, now, c);
-                }
+                Concept c = active.forgetNext(conceptForgetDurations, nar.memory());
+                if (c == null) break;
+                fireConcept(c);
             }
         }
 
 
-        private void fireConcept(float conceptForgetDurations, long now, Concept c) {
-
-            /*ConceptProcess.nextPremise(nar, c,
-                    conceptForgetDurations,
-                    conceptProcessor, now );*/
-
-            nar.input(
-                ConceptProcess.nextPremiseSquare(nar, c,
-                    conceptForgetDurations,
-                    this,
-                    termlinksSelectedPerFiredConcept.intValue(),
-                    tasklinksSelectedPerFiredConcept.intValue()));
-
-
+        private final void fireConcept(Concept concept) {
+            ConceptProcess.nextPremiseSquare(
+                nar, deriver,
+                concept,
+                nar.memory.taskLinkForgetDurations.intValue(),
+                nar::input,
+                termlinksSelectedPerFiredConcept.intValue(),
+                tasklinksSelectedPerFiredConcept.intValue()
+            );
         }
 
 
@@ -557,24 +545,21 @@ public class Default extends NAR {
             return active;
         }
 
-        @Override
-        public Stream<Task> apply(ConceptProcess premise) {
+        public void apply(ConceptProcess premise) {
 
             //used to estimate the fraction this batch should be scaled but this is not accurate
             //final int numPremises = termlinks*tasklinks;
 
             ItemAccumulator<Task> ia = new ItemAccumulator(Budget.plus);
 
-            premise.derive(deriver).forEach( (Task d) -> {
-                ia.add(d);
-            } );
+            premise.derive(deriver, ia::add);
 
             Set<Task> batch = ia.keySet();
 
 
             Task.normalize( batch,  premise.getMeanPriority() );
 
-            return batch.stream();
+            //return batch;
 
 
             //OPTION 1: re-input to input buffers

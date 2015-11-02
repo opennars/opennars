@@ -5,11 +5,9 @@ import com.google.common.collect.Multimaps;
 import nars.Global;
 import nars.clock.FrameClock;
 import nars.io.FIFOTaskPerception;
-import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meter.DerivationGraph;
 import nars.nal.SimpleDeriver;
-import nars.task.Task;
 import nars.util.data.FasterHashMap;
 import nars.util.db.InfiniPeer;
 
@@ -21,7 +19,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Stream;
 
 public class SingleStepNAR extends Default {
 
@@ -39,39 +36,41 @@ public class SingleStepNAR extends Default {
     });*/
 
 
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(new RuleReport()));
-    }
+//    static {
+//        if (Global.DEBUG_DERIVATION_GRAPH) {
+//            Runtime.getRuntime().addShutdownHook(new Thread(new RuleReport()));
+//        }
+//    }
 
     @Override
     protected SimpleDeriver newDeriver() {
-        if (Global.DEBUG_DERIVATION_GRAPH) {
-
-
-            return new SimpleDeriver(SimpleDeriver.standard) {
-
-                @Override
-                public Stream<Task> forEachRule(RuleMatch match) {
-
-                    //record an empty derivation, in case nothing is returned in the stream
-                    //allowing us to see what is mising
-                    derivations.add(match.premise /* none */);
-
-                    ;
-                    Stream<Task> s = super.forEachRule(match).peek(t -> {
-                        DerivationGraph.DerivationPattern dd =
-                                derivations.add(match.premise, t);
-                        ruleDerivations.put(match.rule, dd.key);
-                        //derivationRules.put(dd.key, match.rule);
-                    });
-
-                    return s;
-                }
-            };
-        }
-        else {
+//        if (Global.DEBUG_DERIVATION_GRAPH) {
+//
+//
+//            return new SimpleDeriver(SimpleDeriver.standard) {
+//
+//                @Override
+//                public Stream<Task> forEachRule(RuleMatch match) {
+//
+//                    //record an empty derivation, in case nothing is returned in the stream
+//                    //allowing us to see what is mising
+//                    derivations.add(match.premise /* none */);
+//
+//                    ;
+//                    Stream<Task> s = super.forEachRule(match).peek(t -> {
+//                        DerivationGraph.DerivationPattern dd =
+//                                derivations.add(match.premise, t);
+//                        ruleDerivations.put(match.rule, dd.key);
+//                        //derivationRules.put(dd.key, match.rule);
+//                    });
+//
+//                    return s;
+//                }
+//            };
+//        }
+//        else {
             return new SimpleDeriver();
-        }
+        //}
     }
 
 
