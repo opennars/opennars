@@ -10,9 +10,9 @@ import nars.term.CommonVariable;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
+import nars.util.data.DequePool;
 import nars.util.math.ShuffledPermutations;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
@@ -27,9 +27,25 @@ public class FindSubst {
     /** Y var -> X term mapping */
     public final Map<Variable, Term> yx;
 
-
-
     private final Random random;
+
+    final DequePool<ShuffledPermutations> permutationPool = new DequePool<ShuffledPermutations>(1) {
+        @Override public ShuffledPermutations create() {
+            return new ShuffledPermutations();
+        }
+    };
+    final DequePool<Map<Variable,Term>> mapPool = new DequePool<Map<Variable,Term>>(1) {
+        @Override public Map<Variable,Term> create() {
+            return new UnifiedMap<>();
+        }
+
+        @Override
+        public void put(Map<Variable, Term> i) {
+            i.clear();
+            super.put(i);
+        }
+    };
+
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -252,6 +268,16 @@ public class FindSubst {
         }
     }
 
+    private final int permuteN(Compound x, Compound y, int power) {
+        DequePool<ShuffledPermutations> pp = this.permutationPool;
+
+        final ShuffledPermutations perm = pp.get();
+        final int result = permuteN(perm, x, y, power);
+
+        pp.put(perm);
+
+        return result;
+    }
 
 
     /**
@@ -317,14 +343,9 @@ public class FindSubst {
      *
      * unoptimized N-ary permute,
      *  which requires allocating a temporary array for shuffling */
-    int permuteN(final Compound X, final Compound Y, int power) {
-
-        //TODO object pool these
-        final ShuffledPermutations perm = new ShuffledPermutations();
+    int permuteN(final ShuffledPermutations perm, final Compound X, final Compound Y, int power) {
 
         final Term[] xTerms = X.term;
-
-        //final Term[] xSubterms = Arrays.copyOf(xTerms, len);
         final Term[] yTerms = Y.term;
 
         final int len = xTerms.length;
@@ -332,10 +353,8 @@ public class FindSubst {
         //int permutations = perm.total();
 
         //push/save:
-        Map<Variable, Term> tmpXY = xy.isEmpty() ? Collections.emptyMap() :
-                new UnifiedMap(xy);
-        Map<Variable, Term> tmpYX = yx.isEmpty() ? Collections.emptyMap() :
-                new UnifiedMap(yx);
+        Map<Variable, Term> savedXY = getMap(xy);
+        Map<Variable, Term> savedYX = getMap(yx);
 
         while (power > 0 && perm.hasNext()) {
 
@@ -344,26 +363,35 @@ public class FindSubst {
             //matchAll:
             for (int i = 0; i < len; i++) {
                 int s = perm.get(i);
-                if (s >= xTerms.length) {
-                    System.err.println("wtf");
-                    perm.get(i);
-                }
                 if ((power = find(xTerms[s], yTerms[i], power)) < 0)
                     break; //fail
             }
 
-            if (power >= 0) {
-                return power; //success
-            } else {
+            if (power < 0) {
                 power = -power; //try again; invert negated power back to a positive value for next attempt
 
                 //pop/restore (TODO only if changed and will attempt again):
-                xy.clear(); xy.putAll(tmpXY);
-                yx.clear(); yx.putAll(tmpYX);
+                xy.clear(); xy.putAll(savedXY);
+                yx.clear(); yx.putAll(savedYX);
+            } else {
+                returnMap(savedXY, savedYX);
+                return power; //success
             }
         }
 
+        returnMap(savedXY, savedYX);
         return fail(power); //fail
+    }
+
+    private Map<Variable, Term> getMap(Map<Variable, Term> init) {
+        Map<Variable, Term> m = mapPool.get();
+        m.putAll(init);
+        return m;
+    }
+
+    private void returnMap(Map<Variable, Term> a, Map<Variable, Term> b) {
+        mapPool.put(a);
+        mapPool.put(b);
     }
 
 

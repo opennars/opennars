@@ -12,8 +12,8 @@ public class ShuffledPermutations extends Permutations {
     /** starting index of the current shuffle */
     int[] shuffle;
 
-    @Override
-    public ShuffledPermutations restart(int size) {
+    /** you probably want to supply your own RNG and use the other restart method */
+    @Override public ShuffledPermutations restart(int size) {
         return restart(size, new Random());
     }
 
@@ -34,14 +34,14 @@ public class ShuffledPermutations extends Permutations {
 
     @Override
     public final int get(int index) {
-        return super.get(this.shuffle[index]);
+        return ind[shuffle[index]];
     }
 
-    public int[] nextShuffled(int[] n) {
+    public int[] nextShuffled(int[] target) {
         next();
         final int l = this.size;
         for (int i = 0; i < l; i++)
-            n[i] = get(i);
-        return n;
+            target[i] = get(i);
+        return target;
     }
 }

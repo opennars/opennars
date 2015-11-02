@@ -4,7 +4,7 @@ import org.apache.commons.math3.util.ArithmeticUtils;
 
 import java.util.NoSuchElementException;
 
-/** * from http://stackoverflow.com/questions/2920315/permutation-of-array */
+/** from http://stackoverflow.com/questions/2920315/permutation-of-array */
 public class Permutations  {
 
     int size = 0;
@@ -16,7 +16,7 @@ public class Permutations  {
     int count;
 
     //private E[] arr;
-    private int[] ind;
+    protected int[] ind;
 
     //public E[] output;//next() returns this array, make it public
 
@@ -30,21 +30,22 @@ public class Permutations  {
         //this.arr = arr; //TODO clone option: arr.clone();
         this.size = size; //size = arr.length;
 
+        int[] ind = this.ind;
         if (ind==null || ind.length<size) {
-            ind = new int[size];
+            this.ind = ind = new int[size];
         }
 
         for(int i = 0; i < size; i++){
             ind[i] = i;
         }
-        count = 0;
+        count = -1;
         num = (int) ArithmeticUtils.factorial(size);
 
         return this;
     }
 
     public final boolean hasNext() {
-        return count < num;
+        return count < num-1;
     }
 
     /**
@@ -53,29 +54,30 @@ public class Permutations  {
      */
     public final int[] next() {
         final int size = this.size;
-        if (count++ == (1+num) || size == 0)
+
+        final int count = (++this.count);
+
+        if (count == (num))
             throw new NoSuchElementException();
 
         final int[] ind = this.ind;
 
-        if (count == 1) {
+        if (count == 0) {
             //first access since restart()
             return ind;
         }
 
-        //final E[] output = this.output;
-        //final E[] arr = this.arr;
-
-        //get next permutation
         for(int tail = size - 1;tail > 0;tail--){
 
             final int tailMin1 = tail - 1;
 
-            if (ind[(tailMin1)] < ind[tail]){//still increasing
+            final int itm = ind[tailMin1];
+
+            if (itm < ind[tail]){//still increasing
 
                 //find last element which does not exceed ind[tail-1]
                 int s = size - 1;
-                while(ind[(tailMin1)] >= ind[s])
+                while(itm >= ind[s])
                     s--;
 
                 swap(ind, tailMin1, s);
@@ -88,6 +90,7 @@ public class Permutations  {
             }
 
         }
+
         return ind;
     }
 

@@ -15,11 +15,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Holds an array of derivation rules
  */
 public class DerivationRules extends ArrayList<TaskRule> {
+
+    private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
+    private static final Pattern twoSpacePattern = Pattern.compile("  ", Pattern.LITERAL);
+    private static final Pattern equivOperatorPattern = Pattern.compile("<=>", Pattern.LITERAL);
+    private static final Pattern implOperatorPattern = Pattern.compile("==>", Pattern.LITERAL);
+    private static final Pattern conjOperatorPattern = Pattern.compile("&&", Pattern.LITERAL);
 
     @Deprecated
     public static int maxVarArgsToMatch = 3;
@@ -78,7 +86,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
         for (String s : lines) {
             boolean currentRuleEmpty = current_rule.length() == 0;
 
-            if (s.startsWith("//") || s.replace(" ", "").isEmpty()) {
+            if (s.startsWith("//") || spacePattern.matcher(s).replaceAll(Matcher.quoteReplacement("")).isEmpty()) {
 
                 if (!currentRuleEmpty) {
 
@@ -118,7 +126,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
         String ret = '<' + rule + '>';
 
         while (ret.contains("  ")) {
-            ret = ret.replace("  ", " ");
+            ret = twoSpacePattern.matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
         }
 
         return ret.replace("\n", "");/*.replace("A_1..n","\"A_1..n\"")*/ //TODO: implement A_1...n notation, needs dynamic term construction before matching
@@ -165,15 +173,15 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
             for (String equ : equs) {
 
-                String p1 = equ != null ? ruleString.replace("<=>", equ) : ruleString;
+                String p1 = equ != null ? equivOperatorPattern.matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
 
                 for (String imp : impls) {
 
-                    String p2 = imp != null ? p1.replace("==>", imp) : p1;
+                    String p2 = imp != null ? implOperatorPattern.matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
 
                     for (String conj : conjs) {
 
-                        String p3 = conj != null ? p2.replace("&&", conj) : p2;
+                        String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
 
                         //System.out.println(ruleString + " " + p3);
                         rules.add(p3);
@@ -223,7 +231,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
         final Set<String> expanded = new ConcurrentHashSet(); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
 
-        rawRules.parallelStream().forEach(rule -> {
+        rawRules/*.parallelStream()*/.forEach(rule -> {
 
             final String p = preprocess(rule);
 

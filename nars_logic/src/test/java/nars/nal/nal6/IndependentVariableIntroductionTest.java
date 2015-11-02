@@ -20,10 +20,10 @@ public class IndependentVariableIntroductionTest {
     @Test public void testA() {
         testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
     }
-    @Test public void testB1() {
-        //??
-        //testIntroduction(somethingIsBird, Op.EQUIVALENCE, somethingIsAnimal, "bird:robin", "robin:bird");
-    }
+//    @Test public void testB1() {
+//        //??
+//        //testIntroduction(somethingIsBird, Op.EQUIVALENCE, somethingIsAnimal, "bird:robin", "robin:bird");
+//    }
 //    @Test public void testC() {
 //        //<<$x --> bird> ==> <$x --> animal>>, <tiger --> animal>
 //

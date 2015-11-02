@@ -21,12 +21,16 @@ public class PermutationsTest {
     public void testPerm1() {
         Permutations perm = new Permutations().restart(3);
         int count = 0;
+        String x = "";
         while(perm.hasNext()){
-            System.out.println(Arrays.toString(perm.next()));
+            String aa = Arrays.toString(perm.next());
+            System.out.println(aa + " "+perm.hasNext());
+            x += aa + " ";
             count++;
         }
         System.out.println("total: " + count);
         assertEquals(6, count);
+        assertEquals("[0, 1, 2] [0, 2, 1] [1, 0, 2] [1, 2, 0] [2, 0, 1] [2, 1, 0] ", x);
     }
 
     @Test public void testShuffleReset2() {
