@@ -3,7 +3,7 @@ package nars.op.app;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.budget.Budget;
-import nars.budget.ItemAccumulator;
+import nars.budget.TaskAccumulator;
 import nars.nal.nal7.Temporal;
 import nars.task.Task;
 
@@ -25,8 +25,8 @@ import java.util.function.Consumer;
  */
 public class Commander implements Consumer<NAR> {
 
-    public final ItemAccumulator<Task> commands;
-    public final Iterator<Task> commandIterator;
+    public final TaskAccumulator commands;
+    public final Iterator<Task<?>> commandIterator;
 //    private final On cycleEnd;
 //    private final NAR nar;
 
@@ -40,11 +40,11 @@ public class Commander implements Consumer<NAR> {
 //    float priorityPerCycle = 1,
 //            priorityRemaining = 0; //change left over from last cycle
 
-    public Commander(NAR nar, boolean active) {
-        this(nar, new ItemAccumulator<>(Budget.plus), active);
+    public Commander(NAR nar, boolean active, int capacity) {
+        this(nar, new TaskAccumulator(Budget.plus, capacity), active);
     }
 
-    public Commander(NAR nar, ItemAccumulator<Task> buffer, boolean active) {
+    public Commander(NAR nar, TaskAccumulator buffer, boolean active) {
         super();
 
         //this.nar = nar;
@@ -55,7 +55,7 @@ public class Commander implements Consumer<NAR> {
                 //: null;
 
         this.commands = buffer;
-        commandIterator = Iterators.cycle(commands.items.keySet());
+        commandIterator = Iterators.cycle(commands);
 
 
         this.maxTemporalBeliefAge = nar.memory.duration() * maxTemporalBeliefDurations;
@@ -80,7 +80,7 @@ public class Commander implements Consumer<NAR> {
 
     protected void input(Task t) {
         if (/*(t.isGoal() || t.isQuestOrQuestion()) && */ t.isInput()) {
-            commands.add(t);
+            commands.put(t);
         }
     }
 
@@ -98,7 +98,7 @@ public class Commander implements Consumer<NAR> {
         final long now = nar.time();
         if (now%cycleDivisor!= 0) return;
 
-        final Iterator<Task> commandIterator = this.commandIterator;
+        Iterator<Task<?>> commandIterator = this.commandIterator;
         for (int i = 0; i < inputsPerFrame; i++) {
             if (commandIterator.hasNext()) {
                 final Task next = commandIterator.next();

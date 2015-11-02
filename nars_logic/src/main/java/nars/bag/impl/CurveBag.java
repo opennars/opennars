@@ -1,25 +1,18 @@
 package nars.bag.impl;
 
-import com.google.common.collect.Sets;
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
-import nars.bag.Bag;
 import nars.bag.BagSelector;
 import nars.budget.Budget;
 import nars.budget.Itemized;
-import nars.util.CollectorMap;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.ToIntFunction;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -34,45 +27,26 @@ import java.util.function.ToIntFunction;
  * <p>
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
-public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
+public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
-    public final static Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.average;
     public final static BagCurve power4BagCurve = new Power4BagCurve();
     public final static BagCurve power6BagCurve = new Power6BagCurve();
-    /**
-     * mapping from key to item
-     */
-    public final CurveMap<K,V> index;
-    /**
-     * array of lists of items, for items on different level
-     */
-    public final SortedIndex<V> items;
 
     //TODO move sampler features to subclass of CurveBag which specifically provides sampling
-    public final ToIntFunction<CurveBag> sampler;
+    public final BagCurve curve;
+    private final Random random;
 
-    public CurveBag(int capacity) {
-        this(null, capacity, null);
-    }
-    public CurveBag() {
-        this(null, 0, CurveBag.power6BagCurve);
-    }
 
-    public CurveBag(Random rng, int capacity) {
-        this(rng, capacity, CurveBag.power6BagCurve);
-    }
-
-    public CurveBag(Random rng, int capacity, BagCurve curve, SortedIndex<V> ind) {
-        this(capacity, new RandomSampler(rng, curve), ind);
+    public CurveBag(int capacity, Random rng) {
+        this(CurveBag.power6BagCurve, capacity, rng);
     }
 
 
-
-    public CurveBag(Random rng, int capacity, BagCurve curve) {
-        this(capacity, new RandomSampler(rng, curve), defaultIndex(capacity));
+    public CurveBag(BagCurve curve, int capacity, Random rng) {
+        this(new ArraySortedIndex<>(capacity), curve, rng);
 
                                 /*if (capacity < 128)*/
-                //items = new ArraySortedItemList<>(capacity);
+        //items = new ArraySortedItemList<>(capacity);
                 /*else  {
                     //items = new FractalSortedItemList<>(capacity);
                     //items = new RedBlackSortedItemList<>(capacity);
@@ -80,187 +54,21 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     }
 
-    public CurveBag(int capacity, ToIntFunction<CurveBag> sampler, SortedIndex<V> items) {
-        super();
+    public CurveBag(SortedIndex<V> items, BagCurve curve, Random rng) {
+        super(items);
 
-        this.sampler = sampler;
-        this.items = items;
-        items.clear();
-        items.setCapacity(capacity);
-
-
-        index = newIndex(capacity);
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(capacity());
-        super.writeExternal(out);
-    }
-
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        setCapacity( in.readInt() );
-        super.readExternal(in);
-    }
-
-    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
-        //if (capacity < 50)
-        return new ArraySortedIndex(capacity);
-        //else
-        //    return new FractalSortedItemList<E>();
-    }
-
-//FOR linear scanner, if re-implemented
-//    /**
-//     * Rate of sampling index when in non-random "scanning" removal mode.
-//     * The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
-//     * Default scanning behavior is to start at 1.0 (highest priority) and decrement.
-//     * When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
-//     * <p>
-//     * Valid values are: -1.0 <= x <= 1.0, x!=0
-//     */
-//    final float scanningRate = -1.0f;
-
-    public boolean isSorted() {
-        return items.isSorted();
-    }
-
-    protected CurveMap newIndex(int capacity) {
-        return new CurveMap(
-                //new HashMap(capacity)
-                Global.newHashMap(capacity),
-                //new UnifiedMap(capacity)
-                //new CuckooMap(capacity)
-                items
-        );
-    }
-
-
-    @Override
-    public final void clear() {
-        items.clear();
-        index.clear();
-    }
-
-    /**
-     * The number of items in the bag
-     *
-     * @return The number of items
-     */
-    @Override
-    final public int size() {
-        /*if (Global.DEBUG)
-            validate();*/
-        return items.size();
-    }
-
-    public void validate() {
-        int in = index.size();
-        int is = items.size();
-            if (Math.abs(is-in) > 0) {
-//                System.err.println("INDEX");
-//                for (Object o : index.values()) {
-//                    System.err.println(o);
-//                }
-//                System.err.println("ITEMS:");
-//                for (Object o : items) {
-//                    System.err.println(o);
-//                }
-
-                Set<V> difference = Sets.symmetricDifference(
-                        new HashSet(index.values()),
-                        new HashSet(items)
-                );
-
-                System.err.println("DIFFERENCE");
-                for (Object o : difference) {
-                    System.err.println("  " + o);
-                }
-
-                throw new RuntimeException("curvebag fault: " + in + " index, " + is + " items");
-            }
-
-//            //test for a discrepency of +1/-1 difference between name and items
-//            if ((is - in > 2) || (is - in < -2)) {
-//                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
-//                /*System.out.println(nameTable);
-//                System.out.println(items);
-//                if (is > in) {
-//                    List<E> e = new ArrayList(items);
-//                    for (E f : nameTable.values())
-//                        e.remove(f);
-//                    System.out.println("difference: " + e);
-//                }*/
-//                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
-//            }
-    }
-
-
-    @Override
-    public void setCapacity(int capacity) {
-        items.setCapacity(capacity);
-    }
-
-    /**
-     * Check if an item is in the bag
-     *
-     * @param it An item
-     * @return Whether the Item is in the Bag
-     */
-    @Override
-    public boolean contains(final V it) {
-        return index.containsValue(it);
-    }
-
-    /**
-     * Get an Item by key
-     *
-     * @param key The key of the Item
-     * @return The Item with the given key
-     */
-    @Override
-    public V get(final K key) {
-        //TODO combine into one Map operation
-        V v = index.get(key);
-        if (v!=null && v.getBudget().isDeleted()) {
-            index.remove(key);
-            return null;
-        }
-        return v;
-    }
-
-    @Override
-    public V remove(final K key) {
-        return index.remove(key);
-    }
-
-
-    /**
-     * Choose an Item according to priority distribution and take it out of the
-     * Bag
-     *
-     * @return The selected Item, or null if this bag is empty
-     */
-    @Override
-    final public V pop() {
-        return peekNext(true);
-    }
-
-    @Override
-    final public V peekNext() {
-        return peekNext(false);
+        this.curve = curve;
+        this.random = rng;
     }
 
     public V peekNext(final boolean remove) {
 
         while (!isEmpty()) {
 
-            final int index = sampler.applyAsInt(this);
+            final int index = sample();
 
-            final V i =
-                    remove ? removeItem(index): items.get(index);
+            final V i = remove ?
+                    removeItem(index) : items.get(index);
 
             if (!i.getBudget().isDeleted()) {
                 return i;
@@ -278,7 +86,23 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
 
+    //TODO
+    //FOR linear scanner, if re-implemented
+//    /**
+//     * Rate of sampling index when in non-random "scanning" removal mode.
+//     * The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
+//     * Default scanning behavior is to start at 1.0 (highest priority) and decrement.
+//     * When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
+//     * <p>
+//     * Valid values are: -1.0 <= x <= 1.0, x!=0
+//     */
+//    final float scanningRate = -1.0f;
 
+
+    @Override
+    final public V peekNext() {
+        return peekNext(false);
+    }
 
 
 //    public static long fastRound(final double d) {
@@ -289,8 +113,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 //        }
 //    }
 //    
-
-
 
 
     //    /**
@@ -363,150 +185,13 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 //
 //    }
 
-    /**
-     * Insert an item into the itemTable, and return the overflow
-     *
-     * @param i The Item to put in
-     * @return The overflow Item, or null if nothing displaced
-     */
-    @Override
-    public V put(final V i) {
-
-
-        final CurveMap<K,V> index = this.index;
-
-        final V overflow = index.putKey(i.name(), i);
-
-        if (overflow!=null) {
-
-            index.removeItem(overflow);
-
-            /*if (index.removeItem(overflow) == null)
-                throw new RuntimeException("put fault");*/
-
-            merge(i.getBudget(), overflow.getBudget());
-
-            index.addItem(i);
-
-            /*if (!i.name().equals(overflow.name())) {
-                throw new RuntimeException("wtf: notEqual " + i.name() + " and " + overflow.name() );
-            }*/
-
-            /* absorbed */
-            return null;
-        }
-
-        else {
-
-            V displaced = null;
-
-            if (full()) {
-
-
-                if (getPriorityMin() > i.getPriority()) {
-                    //insufficient priority to enter the bag
-                    //remove the key which was put() at beginning of this method
-                    index.removeKey(i.name());
-                    return i;
-                }
-
-                displaced = removeLowest();
-            }
-
-            //now that room is available:
-            index.addItem(i);
-
-            return displaced;
-        }
-    }
-
-
-    /** TODO make this work for the original condition: (size() >= capacity)
-     * all comparisons like this should use this same condition
-     * */
-    final boolean full() {
-        return (size() >= capacity());
-    }
-
-
-    final protected V removeLowest() {
-        if (isEmpty()) return null;
-        return removeItem(size()-1);
-    }
 
     /**
-     * Take out the first or last E in a level from the itemTable
-     *
-     * @return The first Item
+     * optimized peek implementation that scans the curvebag
+     * iteratively surrounding a randomly selected point
      */
-    final V removeItem(final int index) {
-
-        final V ii = items.get(index);
-        /*if (ii == null)
-            throw new RuntimeException("invalid index: " + index + ", size=" + size());*/
-
-        //        if (ii!=jj) {
-//            throw new RuntimeException("removal fault");
-//        }
-
-        return remove( ii.name() );
-    }
-
-
-
     @Override
-    final public int capacity() {
-        return items.capacity();
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + '{' + items.getClass().getSimpleName() + '}';
-    }
-
-    @Override
-    final public Set<K> keySet() {
-        return index.keySet();
-    }
-
-    @Override
-    final public Collection<V> values() {
-        return items; //index.values();
-    }
-
-    @Override
-    final public Iterator<V> iterator() {
-        return items.iterator();
-    }
-
-    @Override
-    public void forEach(final Consumer<? super V> action) {
-
-        items.forEach(action);
-//
-//        final List<V> l = items.getList();
-//
-//        //start at end
-//        for (int i = l.size()-1; i >= 0; i--){
-//            action.accept(l.get(i));
-//        }
-//
-    }
-
-    /** default implementation; more optimal implementations will avoid instancing an iterator */
-    @Override
-    public void forEach(final int max, final Consumer<V> action) {
-        final List<V> l = items.getList();
-        final int n = Math.min(l.size(), max);
-        //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex
-        for (int i = 0; i < n; i++){
-            action.accept(l.get(i));
-        }
-    }
-
-    /** optimized peek implementation that scans the curvebag
-     *  iteratively surrounding a randomly selected point */
-    @Override protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int bstart, int len, int maxAttempts) {
+    protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int bstart, int len, int maxAttempts) {
 
 
         final int s = size();
@@ -519,20 +204,18 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             //optimization: if len==s then just add all elements, so dont sample
             istart = 0;
             iend = s;
-        }
-        else {
-            int r = len/2;
-            int center = this.sampler.applyAsInt(this);
+        } else {
+            int r = len / 2;
+            int center = sample();
             istart = center - r;
             iend = center + r;
-            if (r%2 == 1) istart--; //if odd, give extra room to the start (higher priority)
+            if (r % 2 == 1) istart--; //if odd, give extra room to the start (higher priority)
 
             //TODO test and if possible use more fair policy that accounts for clipping
             if (iend > s) {
                 iend = s;
-                istart -= s-len;
-            }
-            else if (istart < 0) {
+                istart -= s - len;
+            } else if (istart < 0) {
                 istart = 0;
                 iend = len;
             }
@@ -552,19 +235,18 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             V v = a.get(i);
 
             if (v == null) break; //HACK wtf?
-                //throw new RuntimeException("null");
+            //throw new RuntimeException("null");
 
             if (v.isDeleted()) {
                 if (toRemove == null) toRemove = Global.newArrayList(0); //TODO avoid creating this
                 toRemove.add(v.name());
-            }
-            else {
+            } else {
                 batch[next++] = v;
             }
         }
 
         //pad with nulls. helpful for garbage collection incase they contain old values (the array is meant to be re-used)
-        if (next!=bend)
+        if (next != bend)
             Arrays.fill(batch, next, bend, null);
 
         //update after they have been selected because this will modify their order in the curvebag
@@ -573,22 +255,10 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             updateItem(tx, v, b);
         }
 
-        if (toRemove!=null)
+        if (toRemove != null)
             toRemove.forEach(this::remove);
 
-        return next-bstart; //# of items actually filled in the array
-    }
-
-    @Override
-    public float getPriorityMax() {
-        if (isEmpty()) return 0;
-        return items.getFirst().getPriority();
-    }
-
-    @Override
-    public float getPriorityMin() {
-        if (isEmpty()) return 0;
-        return items.getLast().getPriority();
+        return next - bstart; //# of items actually filled in the array
     }
 
     /**
@@ -600,99 +270,71 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     @FunctionalInterface
     public interface BagCurve extends FloatToFloatFunction, Serializable {
-        //public float valueOf(float x);
     }
 
-    public static class CurveMap<K, V extends Itemized<K>> extends CollectorMap<K, V> {
+//    public static class RandomSampler implements ToIntFunction<CurveBag>, Serializable {
+//
+//        public final BagCurve curve;
+//        public final Random rng;
+//
+//        public RandomSampler(Random rng, BagCurve curve) {
+//            this.curve = curve;
+//            this.rng = rng;
+//        }
 
-        final SortedIndex<V> items;
+    /**
+     * maps y in 0..1.0 to an index in 0..size
+     */
+    static final int index(float y, final int size) {
 
-        public CurveMap(Map<K, V> map, SortedIndex<V> items) {
-            super(map, DEFAULT_MERGE_METHOD);
-            this.items = items;
-        }
+        if (y <= 0) return 0;
 
+        int i = Util.floorInt(y * size);
 
+        if (i >= size) return size - 1;
+        if (i < 0) return 0;
 
-        @Override
-        protected V removeItem(final V removed) {
+        i = (size - 1) - i; //invert order = select highest pri most frequently
 
-            if (items.remove(removed)) {
-                return removed;
-            }
-
-            return null;
-        }
-
-        @Override
-        protected V addItem(final V i) {
-
-            return items.insert(i);
-        }
-    }
-
-    public static class RandomSampler implements ToIntFunction<CurveBag>, Serializable {
-
-        public final BagCurve curve;
-        public final Random rng;
-
-        public RandomSampler(Random rng, BagCurve curve) {
-            this.curve = curve;
-            this.rng = rng;
-        }
-
-        /** maps y in 0..1.0 to an index in 0..size */
-        static final int index(float y, final int size) {
-
-            if (y <= 0) return 0;
-
-            int i= Util.floorInt(y * size);
-
-            if (i >= size) return size-1;
-            if (i < 0) return 0;
-
-            i = (size-1)-i; //invert order = select highest pri most frequently
-
-            return i;
+        return i;
 
             /*if (result == size) {
                 //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
                 return (size - 1);
             }*/
 
-            //return result;
+        //return result;
 
-        }
-
-
-        @Override
-        public int applyAsInt(final CurveBag b) {
-            final int s = b.size();
-            if (s == 1) return 0;
-
-            float x = rng.nextFloat();
-
-            //TODO cache these curvepoints when min/max dont change
-            final float min = b.getPriorityMin();
-            final float max = b.getPriorityMax();
-            final boolean normalizing = (min!=max);
-            if (normalizing) {
-                //rescale to dynamic range
-                x = min + (x * (max-min));
-            }
-
-            final BagCurve curve = this.curve;
-            float y = curve.valueOf(x);
-
-            if (normalizing) {
-                final float yMin = curve.valueOf(min);
-                final float yMax = curve.valueOf(max);
-                y = (y - yMin) / (yMax - yMin);
-            }
-
-            return index(y, s);
-        }
     }
+
+
+    public final int sample() {
+        final int s = size();
+        if (s == 1) return 0;
+
+        float x = random.nextFloat();
+
+        //TODO cache these curvepoints when min/max dont change
+        final float min = getPriorityMin();
+        final float max = getPriorityMax();
+        final boolean normalizing = (min != max);
+        if (normalizing) {
+            //rescale to dynamic range
+            x = min + (x * (max - min));
+        }
+
+        final BagCurve curve = this.curve;
+        float y = curve.valueOf(x);
+
+        if (normalizing) {
+            final float yMin = curve.valueOf(min);
+            final float yMax = curve.valueOf(max);
+            y = (y - yMin) / (yMax - yMin);
+        }
+
+        return index(y, s);
+    }
+
 
     public static class CubicBagCurve implements BagCurve {
 
@@ -716,7 +358,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         @Override
         public final float valueOf(final float x) {
-            float nx = 1-x;
+            float nx = 1 - x;
             float nnx = nx * nx;
             return 1 - (nnx * nnx);
         }
@@ -732,9 +374,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         @Override
         public final float valueOf(final float x) {
             /** x=0, y=0 ... x=1, y=1 */
-            float nx = 1-x;
+            float nx = 1 - x;
             float nnx = nx * nx;
-            return 1-(nnx * nnx * nnx);
+            return 1 - (nnx * nnx * nnx);
         }
 
         @Override

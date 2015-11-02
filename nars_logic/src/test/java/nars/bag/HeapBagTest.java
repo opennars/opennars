@@ -154,7 +154,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
         c.mergePlus();
-        CurveBag<CharSequence, NullItem> d = new CurveBag(rng, capacity);
+        CurveBag<CharSequence, NullItem> d = new CurveBag(capacity, rng);
         d.mergePlus();
         
         assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);

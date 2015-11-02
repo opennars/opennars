@@ -54,7 +54,8 @@ import static nars.Symbols.JUDGMENT;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence<T>>, Truthed, Comparable {
+public interface Task<T extends Compound> extends Sentence<T>,
+        Itemized<Sentence<T>>, Truthed, Comparable {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -694,7 +695,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         derived.forEach(t -> t.getBudget().mulPriority(factor));
     }
-    static void normalize(final Iterable<Task> derived, final float premisePriority) {
+    static <E extends Compound> void normalize(final Iterable<Task<E>> derived, final float premisePriority) {
         derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
     }
 

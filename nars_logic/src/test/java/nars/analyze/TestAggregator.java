@@ -2,7 +2,7 @@ package nars.analyze;
 
 import nars.NAR;
 import nars.meter.MemoryBudget;
-import nars.nar.experimental.DefaultAlann;
+import nars.nar.Default2;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -102,7 +102,7 @@ public class TestAggregator extends RunListener {
 
     }
     public static void main(String args[])  {
-        DefaultAlann da = new DefaultAlann(128);
+        Default2 da = new Default2(128, 1, 2, 3);
         //da.memory.realTime();
         NAR nar = da;
 

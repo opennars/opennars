@@ -2,7 +2,7 @@ package nars.io;
 
 import nars.NAR;
 import nars.budget.Budget;
-import nars.budget.ItemAccumulator;
+import nars.budget.TaskAccumulator;
 import nars.task.Task;
 import nars.util.data.MutableInteger;
 
@@ -12,34 +12,47 @@ import java.util.function.Predicate;
 /** sorts and de-duplicates incoming tasks into a capacity-limited buffer */
 public class SortedTaskPerception extends TaskPerception {
 
-    final ItemAccumulator<Task> buffer = new ItemAccumulator(Budget.plus);
+    final TaskAccumulator<?> buffer;
 
-    final MutableInteger capacity = new MutableInteger();
     final MutableInteger inputPerCycle = new MutableInteger();
 
-    public SortedTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver, int capacity, int inputPerCycle) {
+    public SortedTaskPerception(NAR nar,
+                                Predicate<Task> filter,
+                                Consumer<Task> receiver,
+                                int capacity, int inputPerCycle) {
         super(nar.memory, filter, receiver);
-        this.capacity.set(capacity);
+
         this.inputPerCycle.set( inputPerCycle );
+
+        //TODO use MutableInteger for capacity for all Bags
+        buffer = new TaskAccumulator(Budget.plus, capacity);
     }
 
     @Override
     final public void accept(Task t) {
         if (!t.isDeleted())
-            buffer.add(t);
+            buffer.put(t);
     }
 
     @Override
     final public void send() {
-        ItemAccumulator<Task> b = this.buffer;
-        if (!b.isEmpty()) {
+        //ItemAccumulator<> b = this.buffer;
+        if (!buffer.isEmpty()) {
 
-            /*b.print(System.out);
-            System.out.println();*/
+            buffer.print(System.out);
+            System.out.println();
 
-            b.limit(capacity.intValue());
-            b.next(inputPerCycle.intValue(), receiver);
+            //TODO special case where size <= inputPerCycle, the entire bag can be flushed in one operation
+
+            int n = Math.min(size(), inputPerCycle.intValue());
+            for (int i = 0; i < n; i++)
+                receiver.accept(buffer.pop());
+
         }
+    }
+
+    public final int size() {
+        return buffer.size();
     }
 
     @Override

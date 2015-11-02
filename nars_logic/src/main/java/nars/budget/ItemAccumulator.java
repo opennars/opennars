@@ -1,16 +1,12 @@
 package nars.budget;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Global;
-import nars.task.Task;
+import nars.bag.impl.ArrayBag;
+import nars.util.sort.ArraySortedIndex;
 
-import javax.annotation.Nullable;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
+import java.util.Comparator;
 
 /** priority queue which merges equal tasks and accumulates their budget.
  * stores the highest item in the last position, and lowest item in the first.
@@ -19,22 +15,9 @@ import java.util.function.Consumer;
  *      --next(n, consumer(n)) - visit N highest items
  *
  * */
-public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, Serializable {
+public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> implements Iterable<V> {
 
-
-    public final Map<I,I> items =
-
-
-//            new BoundedConcurrentHashMap(
-//                        /* capacity */ 1024,
-//                        /* concurrency */ 1,
-//                        /* key equivalence */
-//                    AnyEquivalence.getInstance(Budget.class),
-//                    AnyEquivalence.getInstance(Budget.class));
-
-            //new ConcurrentHashMapUnsafe<>();
-            new ConcurrentHashMap();
-            //new UnifiedMap<>();
+    //implements BiFunction<I,I,I>, Serializable {
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
 //        @Override public final int compare(final I o1, final I o2) {
@@ -42,11 +25,8 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 //        }
 //    };
 
-
-
-
-    final static Comparator highestFirst = new HighestFirstComparator();
-    final static Comparator lowestFirst = new LowestFirstComparator();
+    //final static Comparator highestFirst = new HighestFirstComparator();
+    //final static Comparator lowestFirst = new LowestFirstComparator();
 
     /** ex: Bag.max, Bag.plus, Bag.average
      * first budget = target where the data is accumulated
@@ -54,11 +34,15 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
      * */
     public final Procedure2<Budget, Budget> merge;
 
-    //final BiFunction<I,I,I> updater;
+    public ItemAccumulator(Procedure2<Budget, Budget> merge, int capacity) {
+        super(new ArraySortedIndex<>(capacity));
+
+        this.merge = merge;
+    }
 
 
-    @Override
-    final public I  apply(final I t, I accumulated) {
+    //@Override
+    final public Itemized<K> apply(final Itemized<K> t, Itemized<K> accumulated) {
 
         if (t.getBudget().isDeleted())
             return accumulated;
@@ -75,134 +59,111 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
             return t;
     }
 
-    public ItemAccumulator(Procedure2<Budget, Budget> merge) {
-        super();
-
-        this.merge = merge;
-    }
 
 
 //
 //    public Stream<I> stream() {
 //        return items.keySet().stream();
 //    }
-
-    public void clear() {
-        items.clear();
-    }
-
-
-
-
-    public final boolean add(final I t0) {
-        items.compute(t0, this /*updater*/);
-        return true;
-    }
-
-    public final int size() {
-        return items.size();
-    }
-
-    public final boolean isEmpty() {
-        return items.isEmpty();
-    }
-
-    public final <J extends I> J removeHighest() {
-        final I i = highest();
-        if (i == null) return null;
-        items.remove(i);
-        return (J)i;
-    }
-    public final <J extends I> J removeLowest() {
-        final I i = lowest();
-        if (i == null) return null;
-        items.remove(i);
-        return (J)i;
-    }
-
-    public final I lowest() {
-        if (items.isEmpty()) return null;
-        return lowestFirstKeyValues().get(0);
-    }
-
-    public final I highest() {
-        if (items.isEmpty()) return null;
-        return highestFirstKeyValues().get(0);
-    }
-
-
-    private List<I> lowestFirstKeyValues() {
-        return lowestFirstKeyValues(null);
-    }
-    private List<I> highestFirstKeyValues() {
-        return highestFirstKeyValues(null);
-    }
-
-    private List<I> lowestFirstKeyValues(@Nullable List<I> result) {
-        return sortedKeyValues(lowestFirst, result);
-    }
-
-    private List<I> highestFirstKeyValues(@Nullable List<I> result) {
-        return sortedKeyValues(highestFirst, result);
-    }
-
-    private List<I> sortedKeyValues(Comparator<Budgeted> c, List<I> result) {
-        if (result == null)
-            result = Global.newArrayList(items.size());
-        else {
-            result.clear();
-        }
-
-        result.addAll(items.keySet());
-        result.sort(c);
-
-        return result;
-    }
-
-    /** iterates the items highest first */
-    public Iterator<I> iterateHighestFirst() {
-        return highestFirstKeyValues().iterator();
-    }
-
-    /** iterates the items highest first */
-    public Iterator<I> iterateHighestFirst(List<I> temporary) {
-        return highestFirstKeyValues(temporary).iterator();
-    }
-
-    public Iterator<I> iterateLowestFirst() {
-        return lowestFirstKeyValues().iterator();
-    }
+//    public final boolean add(final I t0) {
+//        items.compute(t0, this /*updater*/);
+//        return true;
+//    }
+//    public final <J extends I> J removeHighest() {
+//        final I i = highest();
+//        if (i == null) return null;
+//        items.remove(i);
+//        return (J)i;
+//    }
+//    public final <J extends I> J removeLowest() {
+//        final I i = lowest();
+//        if (i == null) return null;
+//        items.remove(i);
+//        return (J)i;
+//    }
+//
+//    public final I lowest() {
+//        if (items.isEmpty()) return null;
+//        return lowestFirstKeyValues().get(0);
+//    }
+//
+//    public final I highest() {
+//        if (items.isEmpty()) return null;
+//        return highestFirstKeyValues().get(0);
+//    }
+//
+//    private List<I> lowestFirstKeyValues() {
+//        return lowestFirstKeyValues(null);
+//    }
+//    private List<I> highestFirstKeyValues() {
+//        return highestFirstKeyValues(null);
+//    }
+//
+//    private List<I> lowestFirstKeyValues(@Nullable List<I> result) {
+//        return sortedKeyValues(lowestFirst, result);
+//    }
+//
+//    private List<I> highestFirstKeyValues(@Nullable List<I> result) {
+//        return sortedKeyValues(highestFirst, result);
+//    }
+//
+//    private List<I> sortedKeyValues(Comparator<Budgeted> c, List<I> result) {
+//        if (result == null)
+//            result = Global.newArrayList(items.size());
+//        else {
+//            result.clear();
+//        }
+//
+//        result.addAll(items.keySet());
+//        result.sort(c);
+//
+//        return result;
+//    }
+//
+//    /** iterates the items highest first */
+//    public Iterator<I> iterateHighestFirst() {
+//        return highestFirstKeyValues().iterator();
+//    }
+//
+//    /** iterates the items highest first */
+//    public Iterator<I> iterateHighestFirst(List<I> temporary) {
+//        return highestFirstKeyValues(temporary).iterator();
+//    }
+//
+//    public Iterator<I> iterateLowestFirst() {
+//        return lowestFirstKeyValues().iterator();
+//    }
 
 
 
-    public int update(final int targetSize, List<I> sortedResult) {
-
-        sortedResult.clear();
-
-        final int s = items.size();
-
-        lowestFirstKeyValues(sortedResult);
-
-        if (s <= targetSize) {
-            //size is small enough, nothing is discarded. everything retained
-            //sortedResult has been sorted
-            items.clear();
-            return s;
-        }
-
-        final int toDiscard = s - targetSize;
-
-        int r;
-        for (r = 0; r < toDiscard; r++) {
-            items.remove( sortedResult.get(r) );
-        }
-
-        return s - r;
-    }
-
-    public void addAll(final Iterable<I> x) {
-        x.forEach( this::add );
-    }
+//    public int update(final int targetSize, List<I> sortedResult) {
+//
+//        sortedResult.clear();
+//
+//        final int s = items.size();
+//
+//        lowestFirstKeyValues(sortedResult);
+//
+//        if (s <= targetSize) {
+//            //size is small enough, nothing is discarded. everything retained
+//            //sortedResult has been sorted
+//            items.clear();
+//            return s;
+//        }
+//
+//        final int toDiscard = s - targetSize;
+//
+//        int r;
+//        for (r = 0; r < toDiscard; r++) {
+//            items.remove( sortedResult.get(r) );
+//        }
+//
+//        return s - r;
+//    }
+//
+//    public void addAll(final Iterable<I> x) {
+//        x.forEach( this::add );
+//    }
 
 //    /** if size() capacity, remove lowest elements until size() is at capacity
 //     * @return how many remain
@@ -221,42 +182,43 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 //        return acc.limit(capacity, task -> m.remove(task, "Ignored"), temporary);
 //    }
 
-
-    /** iterates in no-specific order */
-    public final void forEach(Consumer<I> recv) {
-        items.forEach((k,v) -> recv.accept(k));
-        //items.forEachKey(recv::accept);
-    }
+//
+//    /** iterates in no-specific order */
+//    public final void forEach(Consumer<I> recv) {
+//        items.forEach((k,v) -> recv.accept(k));
+//        //items.forEachKey(recv::accept);
+//    }
+//
+//    public final void limit(int capacity) {
+//        while (size() > capacity) {
+//            removeLowest();
+//        }
+//    }
+//
+//    public final  void next(int rate, Consumer<Task> recv) {
+//        int sent = 0;
+//        Task next;
+//        while ((sent < rate) && ((next = removeHighest())!=null)) {
+//            if (!next.isDeleted()) {
+//                recv.accept(next);
+//                sent++;
+//            }
+//        }
+//    }
 
     @Override
-    public String toString() {
-        return items.toString();
+    public final V peekNext() {
+        return items.getFirst();
+    }
+    @Override
+    public final V peekNext(boolean remove) {
+        return removeHighest();
     }
 
-    public final Set<I> keySet() {
-        return items.keySet();
+    public final boolean contains(V t) {
+        return index.containsKey(t.name());
     }
 
-    public final void limit(int capacity) {
-        while (size() > capacity) {
-            removeLowest();
-        }
-    }
-
-    public final  void next(int rate, Consumer<Task> recv) {
-        int sent = 0;
-        Task next;
-        while ((sent < rate) && ((next = removeHighest())!=null)) {
-            if (!next.isDeleted()) {
-                recv.accept(next);
-                sent++;
-            }
-        }
-    }
-
-    public final boolean contains(I t) {
-        return items.containsKey(t);
-    }
 
     public void print(PrintStream out) {
         forEach(x -> out.println(x));

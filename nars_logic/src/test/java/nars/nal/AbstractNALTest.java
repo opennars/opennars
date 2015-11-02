@@ -94,12 +94,6 @@ abstract public class AbstractNALTest {
 
     public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
 
-        //HACK why are these levels not accurate:
-        {
-            switch (level) {
-                case 1: level = 1; break;
-            }
-        }
 
         List<Supplier<NAR>> l = Global.newArrayList();
 

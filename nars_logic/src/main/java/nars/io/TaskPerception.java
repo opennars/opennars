@@ -11,32 +11,40 @@ import java.util.function.Predicate;
 /**
  * Created by me on 10/16/15.
  */
-public abstract class TaskPerception extends Active implements Consumer<Task> {
+public abstract class TaskPerception implements Consumer<Task> {
+
     /**
      * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
      */
-    public final AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
+    public final AtomicInteger inputsPerCycleMax = new AtomicInteger(1);
+
     /**
      * determines if content can enter
      */
     protected final Predicate<Task> filter;
+
     /**
      * where to send output
      */
     protected final Consumer<Task> receiver;
 
-    public TaskPerception(Memory m, Predicate<Task> filter, Consumer<Task> receiver) {
+    private final Active active = new Active();
+
+    public TaskPerception(Memory m,
+                          Predicate<Task> filter,
+                          Consumer<Task> receiver) {
         super();
-        add(
+
+        this.filter = filter;
+        this.receiver = receiver;
+
+        active.add(
             m.eventInput.on(this),
             m.eventDerived.on(this),
             m.eventFrameStart.on((M) -> send()),
             m.eventReset.on((M) -> clear() )
         );
 
-
-        this.filter = filter;
-        this.receiver = receiver;
     }
 
     @Override

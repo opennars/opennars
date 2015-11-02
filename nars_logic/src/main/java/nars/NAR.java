@@ -396,7 +396,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
-    public final boolean input(final Task t) {
+    public final boolean input(final Task<?> t) {
 
         final Memory m = memory();
 

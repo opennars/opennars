@@ -13,15 +13,17 @@ import java.util.function.Consumer;
 /**
  * Synchronized thread-safe CurveBag subclass
  */
-public class SynchronizedCurveBag<K,V extends Itemized<K>> extends CurveBag<K,V> {
+public class SynchronizedCurveBag<K, V extends Itemized<K>> extends CurveBag<K, V> {
 
     final Object lock = new Object();
 
     public SynchronizedCurveBag(Random rng, int capacity) {
-        super(capacity, new RandomSampler(rng, CurveBag.power6BagCurve),
-                new ArraySortedIndex(capacity,
-                        new FasterList(capacity).asSynchronized()));
-
+        super(new ArraySortedIndex<V>(
+                    new FasterList<V>(capacity).asSynchronized(),
+                    capacity
+              ),
+              CurveBag.power6BagCurve,
+              rng);
 
     }
 
@@ -53,12 +55,6 @@ public class SynchronizedCurveBag<K,V extends Itemized<K>> extends CurveBag<K,V>
         }
     }
 
-    @Override
-    public void forEach(Consumer<? super V> action) {
-        synchronized (lock) {
-            super.forEach(action);
-        }
-    }
 
     @Override
     public void forEach(int max, Consumer<V> action) {

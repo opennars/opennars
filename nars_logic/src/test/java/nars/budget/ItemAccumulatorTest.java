@@ -10,30 +10,29 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
-/**
- * Created by me on 10/16/15.
- */
+
 public class ItemAccumulatorTest {
     NAR n = new Terminal();
 
     @Test
     public void testAccumulatorDeduplication() {
-        ItemAccumulator<Task> ii = new ItemAccumulator(
-            Budget.plus
+        TaskAccumulator ii = new TaskAccumulator<>(
+            Budget.plus,
+            2 //capacity = 2 but this test will only grow to size 1 if successful
         );
         assertEquals(0, ii.size());
 
         Task t = n.task("$0.1$ <a --> b>. %1.00;0.90%");
         assertEquals(0.1f, t.getPriority(), 0.001);
 
-        ii.add(t);
+        ii.put(t);
         assertEquals(1, ii.size());
 
-        ii.add(t);
+        ii.put(t);
         assertEquals(1, ii.size());
 
         //plus:
-        assertEquals(0.1f+0.1f, ii.items.values().iterator().next().getPriority(), 0.001f);
+        assertEquals(0.1f+0.1f, ii.peekNext().getPriority(), 0.001f);
 
     }
 
@@ -42,37 +41,34 @@ public class ItemAccumulatorTest {
      * */
     @Test public void testAccumulatorBatchDeque() {
 
-        ItemAccumulator<Task> ii = new ItemAccumulator(
-                Budget.plus
-        );
-
         final int capacity = 4;
 
+        TaskAccumulator<?> ii = new TaskAccumulator<>(
+                Budget.plus, capacity
+        );
+
+
         String s = ". %1.00;0.90%";
-        ii.add(n.task("$0.05$ <z --> x>" + s ));
-        ii.add(n.task("$0.1$ <a --> x>" + s ));
-        ii.add(n.task("$0.1$ <b --> x>" + s ));
-        ii.add(n.task("$0.2$ <c --> x>" + s ));
-        ii.add(n.task("$0.3$ <d --> x>" + s ));
-        assertEquals(ii.size(), 5);
+        ii.put(n.task("$0.05$ <z --> x>" + s ));
+        ii.put(n.task("$0.1$ <a --> x>" + s ));
+        ii.put(n.task("$0.1$ <b --> x>" + s ));
+        ii.put(n.task("$0.2$ <c --> x>" + s ));
+        ii.put(n.task("$0.3$ <d --> x>" + s ));
+        assertEquals(4, ii.size());
 
         //z should be ignored
         //List<Task> buffer = Global.newArrayList();
 
-        ii.limit(capacity);
+
         assertEquals(capacity, ii.size());
 
-        List<Task> one = new ArrayList();
-        ii.next(1, x-> {
-            one.add(x);
-        });
-        assertEquals("[<d --> x>. %1.00;0.90%]", one.toString());
+        Task<?> one = ii.pop();
+        assertEquals("$0.30;0.80;0.95$ <d --> x>. %1.00;0.90%", one.toString());
 
         List<Task> two = new ArrayList();
-        ii.next(2, x-> {
-            two.add(x);
-        });
-        assertEquals("[<c --> x>. %1.00;0.90%, <b --> x>. %1.00;0.90%]", two.toString());
+        two.add(ii.pop());
+        two.add(ii.pop());
+        assertEquals("[$0.20;0.80;0.95$ <c --> x>. %1.00;0.90%, $0.10;0.80;0.95$ <b --> x>. %1.00;0.90%]", two.toString());
 
         assertEquals(1, ii.size());
 

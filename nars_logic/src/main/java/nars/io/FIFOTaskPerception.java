@@ -78,7 +78,7 @@ public class FIFOTaskPerception extends TaskPerception {
 
 
         int s = buffer.size();
-        int n = Math.min(s, inputsMaxPerCycle.get()); //counts down successful sends
+        int n = Math.min(s, inputsPerCycleMax.get()); //counts down successful sends
         int r = n; //actual cycles counted
 
 

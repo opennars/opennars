@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.google.common.collect.Lists;
+import com.gs.collections.impl.list.mutable.FastList;
 import nars.Global;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
@@ -11,7 +12,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * Holds an array of derivation rules
  */
-public class DerivationRules extends ArrayList<TaskRule> {
+public class DerivationRules extends FastList<TaskRule> {
 
     private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
     private static final Pattern twoSpacePattern = Pattern.compile("  ", Pattern.LITERAL);

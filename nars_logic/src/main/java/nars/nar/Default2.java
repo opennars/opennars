@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.budget.ItemAccumulator;
+import nars.budget.TaskAccumulator;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.io.SortedTaskPerception;
@@ -41,19 +41,28 @@ public class Default2 extends Default {
 
     @Override
     protected DefaultCycle2 initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
-        return new DefaultCycle2(this, deriver, conceptBag, activator);
+
+        final int inputCapacity = activeConcepts/4; //HACK heuristic
+
+        return new DefaultCycle2(this, deriver,
+                conceptBag, activator,
+                inputCapacity);
     }
 
-    /** normalizes each derivation's tasks as a group before inputting into
+    /**
+     * normalizes each derivation's tasks as a group before inputting into
      * the main perception buffer.
      * ex: this can ensure that a premise which produces many derived tasks
      * will not consume budget unfairly relative to another premise
      * with less tasks but equal budget.
-     * */
+     */
     public static class DefaultCycle2 extends DefaultCycle {
 
-        public DefaultCycle2(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
+        public DefaultCycle2(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca, int initialCapacity) {
             super(nar, deriver, concepts, ca);
+
+            derivationAccumulator =
+                    new TaskAccumulator(Budget.plus, initialCapacity);
         }
 
 
@@ -62,7 +71,7 @@ public class Default2 extends Default {
          * be normalized or some other filter or aggregation
          * applied collectively.
          */
-        final ItemAccumulator<Task> derivationAccumulator = new ItemAccumulator(Budget.plus);
+        final TaskAccumulator<?> derivationAccumulator;
 
         @Override
         protected void fireConcept(Concept c) {
@@ -71,15 +80,18 @@ public class Default2 extends Default {
 
             fireConcept(c, p -> {
 
-                deriver.run(p, derivationAccumulator::add);
+                deriver.run(p, derivationAccumulator::put);
 
                 if (!derivationAccumulator.isEmpty()) {
 
+
                     Task.normalize(
-                            derivationAccumulator.keySet(),
+                            derivationAccumulator,
                             p.getMeanPriority());
 
-                    derivationAccumulator.forEach(nar::input);
+                    derivationAccumulator.forEach(
+                        t -> nar.input(t)
+                    );
 
                     derivationAccumulator.clear();
                 }

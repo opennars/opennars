@@ -49,14 +49,14 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }*/
 
     public ArraySortedIndex(int capacity) {
-        this(capacity, Global.newArrayList(capacity));
+        this(Global.newArrayList(capacity), capacity);
         /*
                 Global.THREADS == 1 ?  :
                         Collections.synchronizedList(bestList(capacity))
         );*/
     }
     
-    public ArraySortedIndex(int capacity, List<E> list) {
+    public ArraySortedIndex(List<E> list, int capacity) {
         super();
         this.list = list;
         setCapacity(capacity);

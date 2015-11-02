@@ -355,10 +355,10 @@ public class Default extends NAR {
     public Concept apply(final Term t) {
 
         Bag<Task, TaskLink> taskLinks =
-                new CurveBag<>(rng, taskLinkBagSize).mergePlus();
+                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(rng, termLinkBagSize).mergePlus();
+                new CurveBag<>(termLinkBagSize, rng).mergePlus();
 
         Memory m = memory();
 
@@ -387,7 +387,7 @@ public class Default extends NAR {
 
 
     public Bag<Term, Concept> newConceptBag(int initialCapacity) {
-        return new CurveBag<>(rng, initialCapacity).mergePlus();
+        return new CurveBag<>(initialCapacity, rng).mergePlus();
     }
 
     public Default setTaskLinkBagSize(int taskLinkBagSize) {

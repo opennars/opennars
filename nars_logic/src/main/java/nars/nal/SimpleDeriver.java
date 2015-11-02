@@ -1,6 +1,6 @@
 package nars.nal;
 
-import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.Global;
 import nars.Op;
@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 public class SimpleDeriver extends Deriver  {
 
     /** maps rule patterns to one or more rules which involve it */
-    public final ListMultimap<PairMatchingProduct, TaskRule> ruleIndex;
+    public final Multimap<PairMatchingProduct, TaskRule> ruleIndex;
 
 
 
@@ -80,40 +80,53 @@ public class SimpleDeriver extends Deriver  {
         super(rules);
 
 
-        this.ruleIndex = MultimapBuilder.treeKeys().arrayListValues().build();
+        this.ruleIndex = MultimapBuilder.treeKeys()
+                .arrayListValues()
+                //.treeSetValues()
+                .build();
 
-        rules.forEach(r -> ruleIndex.put(r.pattern, r));
+        {
+            rules.forEach((Consumer<TaskRule>) ((r) -> {
+                ruleIndex.put(r.pattern, r);
+            }));
+
+            if (rules.size() != ruleIndex.size()) {
+                //this could indicate that rules are not identified properly so that different rules alias to the same equal/hash identity or something
+                throw new RuntimeException("duplicate rules detected");
+            }
+        }
 
 
         taskTypeMap = new EnumMap(Op.class);
         beliefTypeMap = new EnumMap(Op.class);
 
-        int rs = rules.size();
-        for (int i = 0; i < rs; i++) {
-            final TaskRule r = rules.get(i);
+        {
 
-            //final PreCondition[] p = r.preconditions;
+            rules.forEach((Consumer<TaskRule>)r -> {
 
-            final Op o1 = r.getTaskTermType();
-            final Op o2 = r.getBeliefTermType();
+                //final PreCondition[] p = r.preconditions;
 
-            if (o1!=Op.VAR_PATTERN) {
-                EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o1, op -> {
-                    return new EnumMap(Op.class);
-                });
+                final Op o1 = r.getTaskTermType();
+                final Op o2 = r.getBeliefTermType();
 
-                List<TaskRule> lt = subtypeMap.computeIfAbsent(o2, x -> {
-                    return Global.newArrayList();
-                });
-                lt.add(r);
+                if (o1 != Op.VAR_PATTERN) {
+                    EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o1, op -> {
+                        return new EnumMap(Op.class);
+                    });
 
-            }
-            else {
-                List<TaskRule> lt = beliefTypeMap.computeIfAbsent(o2, x -> {
-                    return Global.newArrayList();
-                });
-                lt.add(r);
-            }
+                    List<TaskRule> lt = subtypeMap.computeIfAbsent(o2, x -> {
+                        return Global.newArrayList();
+                    });
+                    lt.add(r);
+
+                } else {
+                    List<TaskRule> lt = beliefTypeMap.computeIfAbsent(o2, x -> {
+                        return Global.newArrayList();
+                    });
+                    lt.add(r);
+                }
+            });
+
         }
 
         //printSummary();

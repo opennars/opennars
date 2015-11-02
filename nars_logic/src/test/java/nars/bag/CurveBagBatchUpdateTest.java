@@ -27,7 +27,7 @@ public class CurveBagBatchUpdateTest {
     public void testDefaultBatchImpl() {
 
         testDefaultBatchImpl(
-                new CurveBag<>(rng, 32)
+                new CurveBag<>(32, rng)
         );
     }
     @Test

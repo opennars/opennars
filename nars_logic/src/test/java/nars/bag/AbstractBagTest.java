@@ -111,8 +111,8 @@ public class AbstractBagTest {
         return count;
     }
 
-    public static int[] testRemovalPriorityDistribution(int capacity, SortedIndex<NullItem> items) {
-        CurveBag<CharSequence, NullItem> f = new CurveBag(rng, capacity, CurveBag.power6BagCurve, items);
-        return BagGenerators.testRemovalPriorityDistribution(8, capacity, 0.2f, f);
+    public static int[] testRemovalPriorityDistribution(SortedIndex<NullItem> items) {
+        CurveBag<CharSequence, NullItem> f = new CurveBag(items, CurveBag.power6BagCurve, rng);
+        return BagGenerators.testRemovalPriorityDistribution(8, f.capacity(), 0.2f, f);
     }
 }
