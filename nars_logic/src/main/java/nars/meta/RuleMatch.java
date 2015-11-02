@@ -159,9 +159,8 @@ public class RuleMatch extends FindSubst {
             if (rederivedTerm == null)
                 return null;
 
-
             //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
-            derivedTerm = rederivedTerm;
+            derivedTerm = rederivedTerm.normalized();
         }
         else {
             //necessary?

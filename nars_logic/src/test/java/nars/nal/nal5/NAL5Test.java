@@ -21,7 +21,7 @@ public class NAL5Test extends AbstractNALTest {
         return AbstractNALTest.nars(5, false);
     }
 
-    final int cycles = 650;
+    final int cycles = 950;
     @Test
     public void revision() throws InvalidInputException {
         TestNAR tester = test();
