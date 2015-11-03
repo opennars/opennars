@@ -58,6 +58,8 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
     @Override
     public boolean isSorted() {
+        if (size() < 2) return true;
+
         Iterator<E> ii = this.iterator();
         float pp = Float.MAX_VALUE;
 
@@ -93,24 +95,29 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
 
-    public final int positionOf(final E o) {
-        int low = 0;
-        int high = size()-1;
-        final float op = score(o);
+    public final int pos(final E o) {
+        return pos(score(o));
+    }
 
-        while (low <= high) {
-            final int mid = (low + high) >>> 1;
+    public final int pos(float score) {
+        int upperBound = 0;
+        int lowerBound = size()-1;
+
+        while (upperBound <= lowerBound) {
+            final int mid = (upperBound + lowerBound) /2; // >>> 1;
             final float mp = score(get(mid));
 
-            if (mp > op)
-                low = mid + 1;
-            else if (mp < op)
-                high = mid - 1;
+//            System.err.println(upperBound + "(" + score(get(upperBound)) +
+//                    " " + mid + "(" + mp + " " + lowerBound + "(" + score(get(lowerBound))  );
+
+            if (mp < score) //midpoint is new lowerBound, so we need to go to the upper half
+                lowerBound = mid - 1;
+            else if (mp > score) //midpoint is new upperBound so go to lowerBound half
+                upperBound = mid + 1;
             else
                 return mid; // key found
         }
-        return low;
-        //return -(low + 1);  // key not found
+        return lowerBound;
     }
 
     @Override
@@ -119,7 +126,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public E insert(final E o) {
+    public E insert(final E incoming) {
 
         E removed = null;
 
@@ -130,25 +137,34 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
             //first element in empty list, insert at beginning
             insertPos = 0;
         } else {
-            insertPos = positionOf(o);
+
+            float incomingScore = score(incoming);
 
             if (s >= capacity) {
 
-                if (insertPos == 0) {
-                    //priority too low to join this list
-                    return o;
+                int lastIndex = size() - 1;
+                float lowestScore = score(get(lastIndex));
+
+                if (incomingScore < lowestScore) {
+                    //priority too low to join this list, bounce
+                    return incoming;
                 }
 
-                removed = remove(size()-1);
-                if (insertPos > 0) insertPos--;
+                removed = remove(lastIndex);
             }
             else {
                 removed = null;
             }
 
+            insertPos = pos(incomingScore);
+
+            if (insertPos < 0) insertPos = 0;
+            else
+                insertPos++;
+
         }
 
-        list.add(insertPos, o);
+        list.add(insertPos, incoming);
 
         return removed;
     }
@@ -175,7 +191,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         //estimated position according to current priority,
         //which if it hasnt changed much has a chance of being
         //close to the index
-        int p = positionOf((E)o);
+        int p = pos((E)o);
         if (p >= s) p = s-1;
         if (p < 0)  p = 0;
 

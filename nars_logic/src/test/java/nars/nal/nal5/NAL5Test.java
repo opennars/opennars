@@ -1,7 +1,6 @@
 package nars.nal.nal5;
 
 import nars.NAR;
-import nars.meter.RuleTest;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTester;
 import nars.narsese.InvalidInputException;
@@ -21,7 +20,7 @@ public class NAL5Test extends AbstractNALTester {
         return AbstractNALTester.nars(5, false);
     }
 
-    final int cycles = 950;
+    final int cycles = 750;
     @Test
     public void revision() throws InvalidInputException {
         TestNAR tester = test();
@@ -352,16 +351,7 @@ public class NAL5Test extends AbstractNALTester {
 //                .run();
 //    }
 
-    @Test
-    public void posNegQuestion() {
-        //((p1, (--,p1), task("?")), (p1, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
-        //  ((a:b, (--,a:b), task("?")), (a:b, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
-        new RuleTest(
-                "a:b?", "(--,a:b).",
-                "a:b.",
-                0,0,0.9f,0.9f)
-                .run();
-    }
+
 
 
     //NO	((<(--,p1) ==> p2>, p2), (<(--,p2) ==> p1>, (<Contraposition --> Truth>, <AllowBackward --> Derive>)))

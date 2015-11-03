@@ -10,22 +10,38 @@ import static org.junit.Assert.assertTrue;
  */
 public class ArraySortedIndexTest {
 
-    @Test
-    public void test1() {
-        test(100, 200);
-        test(100, 100);
-        test(100, 50);
-    }
+    @Test public void test01() { test(2, 1); }
+    @Test public void test02() { test(3, 2); }
+    @Test public void test03() { test(4, 3); }
+    @Test public void test111111() { test(5, 5); }
+    @Test public void test11111() { test(10, 5); }
+    @Test public void test1111() { test(15, 5); }
+    @Test public void test111() { test(20, 5); }
 
-    protected void test(int insertions, int capacity) {
+    @Test public void test1() { test(100, 50); }
+    @Test public void test2() { test(100, 100); }
+    @Test public void test3() { test(100, 200); }
+
+    void test(int insertions, int capacity) {
         ArraySortedIndex<NullItem> x = new ArraySortedIndex(capacity);
         for (int i = 0; i < insertions; i++) {
+            //ensureSorted(x, i);
             x.insert(new NullItem());
-            assertTrue(x.isSorted());
+            ensureSorted(x, i);
         }
 
         //x.forEach(y -> System.out.println(y));
 
-        assertTrue(x.size() <= capacity);
+    }
+
+    private void ensureSorted(ArraySortedIndex<NullItem> x, int i) {
+        boolean s = x.isSorted();
+        if (!s) {
+            System.err.println("improper sorting detected on cycle " + i);
+            x.print(System.err);
+        }
+        assertTrue(x.isSorted());
+        assertTrue(x.size() <= x.capacity());
+        //assertTrue(x.size() <= i);
     }
 }

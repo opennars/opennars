@@ -5,11 +5,14 @@ import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
+import nars.meter.RuleTest;
 import nars.meter.TestNAR;
+import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
+import nars.util.graph.TermLinkGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /** "don't touch this file" - patham9 */
-//@RunWith(Parameterized.class)
 public class UnificationTest  {
 
     private TestNAR t;
@@ -434,4 +436,51 @@ public class UnificationTest  {
                 "(b,b)",
                 false);
     }
+
+    @Test
+    public void posNegQuestion() {
+        //((p1, (--,p1), task("?")), (p1, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
+        //  ((a:b, (--,a:b), task("?")), (a:b, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
+        new RuleTest(
+                "a:b?", "(--,a:b).",
+                "a:b.",
+                0,0,0.9f,0.9f)
+                .run();
+    }
+
+
+
+
+    @Test public void testA() {
+        final String somethingIsBird = "bird:$x";
+        final String somethingIsAnimal = "animal:$x";        testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
+    }
+
+
+    void testIntroduction(String subj, Op relation, String pred, String belief, String concl) {
+
+        new TestNAR(new Default().nal(6))
+                .believe("<" + subj + " " + relation + " " + pred + ">")
+                .believe(belief)
+                .mustBelieve(16, concl, 0.81f)
+                .run();
+        //.next()
+        //.run(1).assertTermLinkGraphConnectivity();
+
+    }
+
+    @Test
+    public void testIndVarConnectivity() {
+
+        String c = "<<$x --> bird> ==> <$x --> animal>>.";
+
+        NAR n = new Default().nal(6);
+        n.input(c);
+        n.frame(1);
+
+        TermLinkGraph g = new TermLinkGraph(n);
+        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
+
+    }
+
 }

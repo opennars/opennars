@@ -43,7 +43,7 @@ public class BagOperationsTest {
 
         @Override
         public String toString() {
-            return id;
+            return getBudgetString() + " " +  id;
         }
     }
 
@@ -53,7 +53,7 @@ public class BagOperationsTest {
     
     
     @Test public void testCurveBag() {
-        testBagSequence(new CurveBag(new CurveBag.FairPriorityProbabilityCurve(), 2, rng));
+        testBagSequence(new CurveBag(2, rng));
     }
 
     /** test with a bag of capacity 2 */
@@ -72,8 +72,8 @@ public class BagOperationsTest {
         assertEquals(0, b.size());
         assertTrue(b.isEmpty());
 
-        //same priority, different id
-        b.put(new NullConcept("a", 0.1f));
+        //different id
+        b.put(new NullConcept("a", 0.05f));
         b.put(new NullConcept("b", 0.1f));
         assertEquals(2, b.size());
         

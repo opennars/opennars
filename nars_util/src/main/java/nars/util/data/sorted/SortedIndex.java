@@ -1,6 +1,7 @@
 package nars.util.data.sorted;
 
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,4 +49,8 @@ abstract public class SortedIndex<T> implements Collection<T>, Serializable {
     abstract public boolean isSorted();
 
     public abstract int capacity();
+
+    public void print(PrintStream out) {
+        forEach(out::println);
+    }
 }
