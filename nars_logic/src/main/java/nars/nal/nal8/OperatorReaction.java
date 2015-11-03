@@ -27,8 +27,8 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
+import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.event.Reaction;
@@ -188,8 +188,8 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
             for (final Task f : feedback) {
                 if (t == null) continue;
-                f.setCause(t);
-                f.log("Feedback");
+
+                f.log(t /*"Feedback"*/);
 
                 n.input(f);
             }
@@ -211,13 +211,12 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
         final Memory memory = nar().memory();
 
-        nar().input(TaskSeed.make(memory, operation.getTerm()).
+        nar().input(DefaultTask.make(memory, operation.getTerm()).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(b).
                 present(memory).
                 parent(operation).
-                cause(operation.getTerm()).
                 reason("Executed")
         );
 

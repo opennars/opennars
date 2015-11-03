@@ -8,7 +8,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
@@ -23,32 +22,15 @@ import javax.annotation.Nullable;
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-@Deprecated public class TaskSeed extends DefaultTask<Compound<?>>  {
+public class FluentTask extends DefaultTask<Compound<?>>  {
 
 
 //    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
 //        return make(nar.memory(), t);
 //    }
 
-    public static <C extends Compound> TaskSeed make(Memory memory, C t) {
-        t.normalizeDestructively();
-        Compound u = Task.termOrNull(t);
-        if (u == null)
-            return null;
 
-        TaskSeed x = make(memory);
-
-        x.setTerm(u);
-
-        return x;
-    }
-
-
-    public static <C extends Compound> TaskSeed make(Memory memory) {
-        return new TaskSeed();
-    }
-
-    public TaskSeed() {
+    public FluentTask() {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char) 0, null, 0, 0, 0);
 
@@ -73,7 +55,7 @@ import javax.annotation.Nullable;
      * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
      */
     @Deprecated
-    public TaskSeed truth(final Truth tv) {
+    public FluentTask truth(final Truth tv) {
 
         if (tv == null) {
             if (isJudgmentOrGoal()) throw new RuntimeException("null truth value for judgment/goal");
@@ -98,13 +80,13 @@ import javax.annotation.Nullable;
 //    }
 
     @Override
-    public final TaskSeed budget(float p, float d, float q) {
+    public final FluentTask budget(float p, float d, float q) {
         super.budget(p, d, q);
         return this;
     }
 
     @Override
-    public final TaskSeed budget(@Nullable Budget source) {
+    public final FluentTask budget(@Nullable Budget source) {
         super.budget(source);
         return this;
     }
@@ -136,7 +118,7 @@ import javax.annotation.Nullable;
 //        return this;
 //    }
 
-    public TaskSeed term(Compound t) {
+    public FluentTask term(Compound t) {
         this.term = t;
         return this;
     }
@@ -152,7 +134,7 @@ import javax.annotation.Nullable;
 //        return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
 //    }
 
-    public TaskSeed truth(float freq, float conf) {
+    public FluentTask truth(float freq, float conf) {
         if (this.truth != null) {
             //System.err.println
               throw new RuntimeException(this + " modifying existing truth: " + this.truth);
@@ -165,31 +147,31 @@ import javax.annotation.Nullable;
     /**
      * alias for judgment
      */
-    public TaskSeed belief() {
+    public FluentTask belief() {
         return judgment();
     }
 
-    public TaskSeed judgment() {
+    public FluentTask judgment() {
         setPunctuation(Symbols.JUDGMENT);
         return this;
     }
 
-    public TaskSeed question() {
+    public Task<Compound<?>> question() {
         setPunctuation(Symbols.QUESTION);
         return this;
     }
 
-    public TaskSeed quest() {
+    public Task<Compound<?>> quest() {
         setPunctuation(Symbols.QUEST);
         return this;
     }
 
-    public TaskSeed goal() {
+    public FluentTask goal() {
         setPunctuation(Symbols.GOAL);
         return this;
     }
 
-    public TaskSeed tense(Tense t, Memory memory) {
+    public FluentTask tense(Tense t, Memory memory) {
         this.occurr(Temporal.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
@@ -199,15 +181,15 @@ import javax.annotation.Nullable;
         return tense(Tense.Eternal);
     }*/
 
-    public final TaskSeed present(Memory memory) {
+    public final FluentTask present(Memory memory) {
         return tense(Tense.Present, memory);
     }
 
-    public TaskSeed past(Memory memory) {
+    public Task<Compound<?>> past(Memory memory) {
         return tense(Tense.Past, memory);
     }
 
-    public TaskSeed future(Memory memory) {
+    public Task<Compound<?>> future(Memory memory) {
         return tense(Tense.Future, memory);
     }
 
@@ -217,7 +199,7 @@ import javax.annotation.Nullable;
 //        return this;
 //    }
 
-    public TaskSeed budget(float p, float d) {
+    public FluentTask budget(float p, float d) {
         final float q;
         Truth t = getTruth();
         if (!isQuestOrQuestion()) {
@@ -267,23 +249,19 @@ import javax.annotation.Nullable;
 //    }
 
 
-    public TaskSeed punctuation(final char punctuation) {
+    public FluentTask punctuation(final char punctuation) {
         setPunctuation(punctuation);
         return this;
     }
 
-    public TaskSeed time(long creationTime, long occurrenceTime) {
+    public FluentTask time(long creationTime, long occurrenceTime) {
         setCreationTime(creationTime);
         occurr(occurrenceTime);
         return this;
     }
 
-    public TaskSeed cause(Operation operation) {
-        setCause(operation);
-        return this;
-    }
 
-    public TaskSeed reason(String reason) {
+    public FluentTask reason(String reason) {
         log(reason);
         return this;
     }
@@ -309,7 +287,7 @@ import javax.annotation.Nullable;
 //    }
 
 
-    public TaskSeed parent(final Task parentTask, final Task parentBelief) {
+    public FluentTask parent(final Task parentTask, final Task parentBelief) {
         if (parentTask == null)
             throw new RuntimeException("parent task being set to null");
 
@@ -323,7 +301,7 @@ import javax.annotation.Nullable;
 //        return this;
 //    }
 
-    public TaskSeed occurr(long occurrenceTime) {
+    public FluentTask occurr(long occurrenceTime) {
         this.setOccurrenceTime(occurrenceTime);
         return this;
     }
@@ -344,7 +322,7 @@ import javax.annotation.Nullable;
 //    }
 //
 
-    public TaskSeed budgetCompoundForward(Compound result, Premise p) {
+    public Task<Compound<?>> budgetCompoundForward(Compound result, Premise p) {
         BudgetFunctions.compoundForward(this, getTruth(), result, p);
         return this;
     }
@@ -368,7 +346,7 @@ import javax.annotation.Nullable;
 //        return this;
 //    }
 
-    public TaskSeed parent(Task task) {
+    public FluentTask parent(Task task) {
         parent(task, null);
         return this;
     }
@@ -393,7 +371,7 @@ import javax.annotation.Nullable;
 
 
     @Override
-    @Deprecated public TaskSeed setEternal() {
+    @Deprecated public FluentTask setEternal() {
         super.setEternal();
         return this;
     }

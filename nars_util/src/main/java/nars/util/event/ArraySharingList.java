@@ -12,8 +12,10 @@ import java.util.function.IntFunction;
 /**
  * Thread safe list which produces arrays for fast iteration
  * these arrays are like copy-on-write-array-list except
- * are reusable and null-terminated. so if the size shrinks,
- * it does not need to reallocate or pad the array with nulls.
+ * are reusable and null-terminated (and padded). so if the size shrinks,
+ * it does not need to reallocate.
+ *
+ * null padding is applied to assist garbage collection fully
  *
  * unless the synchronized methods are used,
  * udpates may contain inconsistent data.
@@ -131,13 +133,13 @@ public class ArraySharingList<C> implements Iterable<C> {
         //TODO for safe atomicity while the events are populated, buffer additions to a sub-list,
         //and apply them if a flag is set on the next read
 
-        final FasterList<C> consumers = this.data;
+        final FasterList<C> d = this.data;
 
         C[] a;
-        if (!consumers.isEmpty()) {
+        if (!d.isEmpty()) {
             if ((a = this.array) == null)
-                a = arrayBuilder.apply(consumers.size()+1);  //+1 for padding
-            a = consumers.toNullTerminatedUnpaddedArray(a);
+                a = arrayBuilder.apply(d.size()+1);  //+1 for padding
+            a = d.fillArrayNullPadded(a);
         }
         else {
             a = null;

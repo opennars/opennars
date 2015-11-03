@@ -30,8 +30,8 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
+import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
@@ -109,7 +109,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
     public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return TaskSeed.make(m, content)
+        return DefaultTask.make(m, content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(p, d, q)

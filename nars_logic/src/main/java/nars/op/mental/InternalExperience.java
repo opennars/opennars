@@ -14,7 +14,6 @@ import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
@@ -246,7 +245,7 @@ public class InternalExperience {
             dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
         }
 
-        TaskSeed t;
+        Task<Compound<?>> t;
         nal.nar().input(t = nal.newTask(ret).judgment()
                         .parent(task).occurr(nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)

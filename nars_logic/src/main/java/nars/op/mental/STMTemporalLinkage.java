@@ -52,7 +52,7 @@ public class STMTemporalLinkage {
     public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
-        return newEvent.getCause() != null;
+        return false;
     }
 
 //    public int getStmSize() {
@@ -66,9 +66,9 @@ public class STMTemporalLinkage {
 
         stmSize = nal.memory().shortTermMemoryHistory.get();
 
-        if (!currentTask.isTemporalInductable() && !anticipation) { //todo refine, add directbool in task
-            return false;
-        }
+//        if (!currentTask.isTemporalInductable() && !anticipation) { //todo refine, add directbool in task
+//            return false;
+//        }
 
         if (Temporal.isEternal(currentTask.getOccurrenceTime()) || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
             return false;

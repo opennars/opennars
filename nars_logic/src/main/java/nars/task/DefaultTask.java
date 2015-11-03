@@ -12,7 +12,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;
 import nars.nal.nal7.Interval;
-import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
@@ -33,17 +32,25 @@ import static nars.Global.dereference;
 import static nars.Global.reference;
 
 /**
- * Mutable
+ * Default Task implementation
  */
 @JsonSerialize(using = ToStringSerializer.class)
 public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
 
-    /**
-     * The punctuation also indicates the type of the Sentence:
-     * Judgment, Question, Goal, or Quest.
-     * Represented by characters: '.', '?', '!', or '@'
-     */
+    /** content term of this task */
+    protected T term;
+
+
     private char punctuation;
+
+    public Truth truth;
+
+    private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
+
+    long creationTime = Stamp.TIMELESS;
+    long occurrenceTime = Stamp.ETERNAL;
+    private int duration = Stamp.TIMELESS;
+
     /**
      * Task from which the Task is derived, or null if input
      */
@@ -53,14 +60,8 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
      */
     transient private Reference<Task> parentBelief;
 
-    public Truth truth;
-    protected T term;
-    transient private int hash;
-    private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
-    long creationTime = Stamp.TIMELESS;
-    long occurrenceTime = Stamp.ETERNAL;
-    private long duration = Stamp.TIMELESS;
 
+    transient private int hash;
 
     /**
      * TODO move to SolutionTask subclass
@@ -68,18 +69,10 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
      */
     transient private Reference<Task> bestSolution;
 
-    /**
-     * TODO move to DesiredTask subclass
-     * causal factor if executed; an instance of Operation
-     */
-    private Operation cause;
 
-    private List<String> log = null;
+    private List log = null;
 
-    /**
-     * indicates this Task can be used in Temporal induction
-     */
-    private boolean temporallyInductable = true;
+
 
     public DefaultTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
         this(term, punctuation, truth,
@@ -167,7 +160,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     }
 
     @Override
-    public T getTerm() {
+    public final T getTerm() {
         return term;
     }
 
@@ -203,7 +196,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     }
 
     @Override
-    public final void setDuration(long duration) {
+    public final void setDuration(int duration) {
         /*if (this.duration!=Stamp.TIMELESS)
             throw new RuntimeException(this + " has corrupted duration");*/
         if (duration <= 0)
@@ -213,7 +206,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
 
         term.setDuration((int)duration); //HACK int<->long stuff
 
-        final long d;
+        final int d;
         if (term instanceof Interval) {
             d = ((Interval) term).duration(); //set the task's duration to the term's actual (expanded) duration
         }
@@ -224,15 +217,14 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     }
 
     @Override
-    public Task log(List<String> historyToCopy) {
+    public void log(List historyToCopy) {
         if (!Global.DEBUG_TASK_LOG)
-            return this;
+            return;
 
         if (historyToCopy != null) {
             if (this.log == null) this.log = Global.newArrayList(historyToCopy.size());
             log.addAll(historyToCopy);
         }
-        return this;
     }
 
     @Override
@@ -256,7 +248,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     }
 
     @Override
-    public final long duration() {
+    public final int duration() {
         if (term instanceof Interval)
             return ((Interval)term).duration();
         return duration;
@@ -457,6 +449,23 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
         return this;
     }
 
+    public static <C extends Compound> FluentTask make(Memory memory, C t) {
+        t.normalizeDestructively();
+        Compound u = Task.termOrNull(t);
+        if (u == null)
+            return null;
+
+        FluentTask x = make(memory);
+
+        x.setTerm(u);
+
+        return x;
+    }
+
+    public static <C extends Compound> FluentTask make(Memory memory) {
+        return new FluentTask();
+    }
+
     @Override
     public DefaultTask<T> setEternal() {
         setOccurrenceTime(Stamp.ETERNAL);
@@ -595,26 +604,16 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
         //InternalExperience.experienceFromBelief(memory, this, judg);
     }
 
-    /**
-     * flag to indicate whether this Event Task participates in tempporal induction
-     */
-    @Override
-    public final Task setTemporalInducting(boolean b) {
-        this.temporallyInductable = b;
-        return this;
-    }
 
-    @Override
-    public final boolean isTemporalInductable() {
-        return temporallyInductable;
-    }
 
     /**
-     * add to this task's log history
+     * append an entry to this task's log history
      * useful for debugging but can also be applied to meta-analysis
+     * ex: an entry might be a String describing a change in the story/history
+     * of the Task and the reason for it.
      */
     @Override
-    public void log(final String reason) {
+    public final void log(final Object entry) {
         if (!Global.DEBUG_TASK_LOG)
             return;
 
@@ -622,11 +621,11 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
         if (this.log == null)
             this.log = Global.newArrayList(1);
 
-        this.log.add(reason);
+        this.log.add(entry);
     }
 
     @Override
-    public final List<String> getLog() {
+    public final List getLog() {
         return log;
     }
 
@@ -684,19 +683,6 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
         return appendTo(null, null).toString();
     }
 
-    /**
-     * the causing Operation, or null if not applicable.
-     */
-    @Override
-    public final Operation getCause() {
-        return cause;
-    }
-
-    @Override
-    public final Task setCause(final Operation op) {
-        this.cause = op;
-        return this;
-    }
 
     @Override
     public void discountConfidence() {

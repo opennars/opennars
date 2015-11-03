@@ -7,9 +7,9 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
+import nars.task.FluentTask;
 import nars.task.PreTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
@@ -178,11 +178,11 @@ public class RuleMatch extends FindSubst {
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
-            if (Global.DEBUG) {
-                String leakMsg = "reactor leak: " + derivedTerm;
+            //if (Global.DEBUG) {
+                //String leakMsg = "reactor leak: " + derivedTerm;
                 //throw new RuntimeException(leakMsg);
-                System.err.println(leakMsg);
-            }
+                //System.err.println(leakMsg);
+            //}
             return null;
 
 //
@@ -262,7 +262,7 @@ public class RuleMatch extends FindSubst {
         }
 
 
-        TaskSeed deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
+        FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
 
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given

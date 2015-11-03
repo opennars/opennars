@@ -29,7 +29,7 @@ public class Sequence extends Conjunctive implements Intermval {
      *  duration at the time the Sequence is formed. */
     private int eventDuration = -1;
 
-    transient private long duration = -1;
+    transient private int duration = -1;
 
     /**
      * for subterms: (A, B, C) and intervals (i0, i1, i2, i3)
@@ -74,10 +74,10 @@ public class Sequence extends Conjunctive implements Intermval {
     }
 
     @Override
-    public final long duration() {
-        long duration = this.duration;
+    public final int duration() {
+        int duration = this.duration;
         if (duration < 0) {
-            long l = 0;
+            int l = 0;
             for (final int x : intervals())
                 l += x;
 

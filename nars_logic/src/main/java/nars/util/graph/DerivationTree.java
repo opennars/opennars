@@ -1,7 +1,6 @@
 package nars.util.graph;
 
 import nars.concept.Concept;
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -45,13 +44,13 @@ public class DerivationTree extends DirectedMultigraph<Task, String> {
             addEdge(belief, t, edge("Belief", belief, t));
         }
 
-        Operation cause = t.getCause();
-        if (cause != null) {
-            //TODO?
-            /*Task causeTask = cause.getTask();
-            if (!causeTask.equals(t) && add(causeTask, maxLevels - 1))
-                addEdge(causeTask, t, edge("Cause", causeTask, t));*/
-        }
+//        Operation cause = t.getCause();
+//        if (cause != null) {
+//            //TODO?
+//            /*Task causeTask = cause.getTask();
+//            if (!causeTask.equals(t) && add(causeTask, maxLevels - 1))
+//                addEdge(causeTask, t, edge("Cause", causeTask, t));*/
+//        }
 
 //            if (includeTermLinks) {
 //                for (TermLink t : c.termLinks.values()) {

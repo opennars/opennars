@@ -23,7 +23,7 @@ final public class CyclesInterval extends Atom implements Interval {
 
     final static CyclesInterval zero = new CyclesInterval(0);
 
-    final long cyc;
+    final int cyc;
 
     @Override
     public void rehash() {
@@ -44,12 +44,12 @@ final public class CyclesInterval extends Atom implements Interval {
         throw new RuntimeException("N/A");
     }
 
-    public static CyclesInterval make(long numCycles) {
+    public static CyclesInterval make(int numCycles) {
         if (numCycles == 0) return zero;
         return new CyclesInterval(numCycles);
     }
 
-    protected CyclesInterval(long numCycles) {
+    protected CyclesInterval(int numCycles) {
         super((byte[]) null); //interval(numCycles, bytesPrecision));
 
         if (numCycles < 0)
@@ -72,7 +72,7 @@ final public class CyclesInterval extends Atom implements Interval {
 //    }
 
     @Override
-    public final long duration() {
+    public final int duration() {
         return cyc;
     }
 

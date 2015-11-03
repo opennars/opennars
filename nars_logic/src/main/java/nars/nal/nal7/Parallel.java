@@ -16,7 +16,7 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
 public class Parallel extends Conjunctive implements Interval {
 
     //total duration (cached), the maximum duration of all included temporal terms
-    transient long totalDuration = -1;
+    transient int totalDuration = -1;
 
     //supplied by the memory, used as the default subterm event duration if they do not implement their own Interval.duration()
     private int eventDuration;
@@ -89,16 +89,16 @@ public class Parallel extends Conjunctive implements Interval {
     }
 
     @Override
-    public final long duration() {
-        final long totalDuration = this.totalDuration;
+    public final int duration() {
+        final int totalDuration = this.totalDuration;
         if (totalDuration == -1) {
             return this.totalDuration = calculateTotalDuration();
         }
         return totalDuration;
     }
 
-    long calculateTotalDuration() {
-        long totalDuration = eventDuration;
+    int calculateTotalDuration() {
+        int totalDuration = eventDuration;
 
         //add embedded terms with temporal duration
         for (Term t : this) {

@@ -10,20 +10,20 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 6/8/15.
  */
-public class TaskSeedTest {
+public class FluentTaskTest {
 
     @Test public void testTenseEternality() {
         NAR n = new Default();
 
         String s = "<a --> b>.";
 
-        assertTrue(Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
+        assertTrue(Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
 
-        assertTrue("default is timeless", TaskSeed.make(n.memory, n.term(s)).isTimeless());
+        assertTrue("default is timeless", DefaultTask.make(n.memory, n.term(s)).isTimeless());
 
-        assertTrue("tense=eternal is eternal", Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
+        assertTrue("tense=eternal is eternal", Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
 
-        assertTrue("present is non-eternal", !Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).present(n.memory).getOccurrenceTime()));
+        assertTrue("present is non-eternal", !Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).present(n.memory).getOccurrenceTime()));
 
     }
 
@@ -34,9 +34,9 @@ public class TaskSeedTest {
         String s = "<a --> b>.";
 
         //the final occurr() or tense() is the value applied
-        assertTrue(!Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().occurr(100).getOccurrenceTime()));
-        assertTrue(!Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().present(n.memory).getOccurrenceTime()));
-        assertTrue(Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).occurr(100).setEternal().getOccurrenceTime()));
+        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().occurr(100).getOccurrenceTime()));
+        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().present(n.memory).getOccurrenceTime()));
+        assertTrue(Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).occurr(100).setEternal().getOccurrenceTime()));
     }
 
 

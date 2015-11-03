@@ -3,6 +3,7 @@ package nars.util.data.list;
 import com.gs.collections.impl.list.mutable.FastList;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
@@ -73,30 +74,45 @@ public class FasterList<X> extends FastList<X> {
     }
 
 
-    /** does not pad the remaining values in the array with nulls */
-    X[] toArrayUnpadded(X[] array) {
-        if (array.length < this.size)        {
-            //resize larger
-            array = (X[]) Array.newInstance(array.getClass().getComponentType(), this.size);
-        }
-        return fillArray(array);
-    }
+//    /** does not pad the remaining values in the array with nulls */
+//    X[] toArrayUnpadded(X[] array) {
+//        if (array.length < this.size)        {
+//            //resize larger
+//            array = (X[]) Array.newInstance(array.getClass().getComponentType(), this.size);
+//        }
+//        return fillArray(array);
+//    }
 
-    private final X[] fillArray(X[] array) {
-        System.arraycopy(this.items, 0, array, 0, this.size);
-        return array;
-    }
-
-
-    public final X[] toNullTerminatedUnpaddedArray(X[] array) {
-        final int s = this.size; //actual size
-        if (array.length < (s+1)) {
+    public final X[] fillArrayNullPadded(X[] array) {
+        int s = this.size;
+        int l = array.length;
+        if (array == null || array.length < (s+1)) {
             array = (X[]) Array.newInstance(array.getClass().getComponentType(), s+1);
         }
         System.arraycopy(this.items, 0, array, 0, s);
-        array[s] = null;
+        if (s<l)
+            Arrays.fill(array, s, l, null); //pad remainder
         return array;
     }
+    public final X[] fillArray(X[] array) {
+        int s = this.size;
+        int l = array.length;
+        System.arraycopy(this.items, 0, array, 0, s);
+        if (s<l)
+            Arrays.fill(array, s, l, null); //pad remainder
+        return array;
+    }
+
+
+//    public final X[] toNullTerminatedUnpaddedArray(X[] array) {
+//        final int s = this.size; //actual size
+//        if (array.length < (s+1)) {
+//            array = (X[]) Array.newInstance(array.getClass().getComponentType(), s+1);
+//        }
+//        System.arraycopy(this.items, 0, array, 0, s);
+//        array[s] = null;
+//        return array;
+//    }
 
     public final void forEach(final Consumer c) {
         for (Object j : array()) {

@@ -7,8 +7,9 @@ import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal7.Temporal;
 import nars.process.Level;
+import nars.task.DefaultTask;
+import nars.task.FluentTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
@@ -164,11 +165,11 @@ public interface Premise extends Level {
     /* --------------- new task building --------------- */
 
 
-    default public <T extends Compound> TaskSeed newTask(final T term) {
-        return TaskSeed.make(nar().memory(), term);
+    default public <T extends Compound> FluentTask newTask(final T term) {
+        return DefaultTask.make(nar().memory(), term);
     }
 
-    default public <T extends Compound> TaskSeed newTask(final T term, final char punc) {
+    default public <T extends Compound> Task<Compound<?>> newTask(final T term, final char punc) {
         return newTask(term).punctuation(punc);
     }
 

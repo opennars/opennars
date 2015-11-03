@@ -9,8 +9,8 @@ import nars.concept.Concept;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -104,7 +104,7 @@ public class Abbreviation implements Consumer<Task> {
                 concept.put(Abbreviation.class, atomic);
 
                 Memory m = nar.memory;
-                nar.input(TaskSeed.make(m, Similarity.make(termAbbreviating, atomic))
+                nar.input(DefaultTask.make(m, Similarity.make(termAbbreviating, atomic))
                                 .judgment().truth(1, abbreviationConfidence)
                                 .parent(task).present(m)
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY,

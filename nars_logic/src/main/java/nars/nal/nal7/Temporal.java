@@ -854,7 +854,7 @@ public class Temporal {
     }
 
     /** inner between: time difference of later.start() - earlier.end() */
-    public static long between(Task task, Task belief) {
+    public static int between(Task task, Task belief) {
         long tStart = task.start();
         long bStart = belief.start();
 
@@ -864,7 +864,7 @@ public class Temporal {
         long a = earlier.end();
         long b = later.start();
 
-        return b-a;
+        return (int)(b-a);
     }
 
     /** true if there is a non-zero overlap interval of the tasks */

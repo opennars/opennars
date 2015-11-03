@@ -66,10 +66,10 @@ public class Global {
     //public static final boolean DEBUG_BAG_MASS = false;
     //public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
     public static boolean DEBUG_DERIVATION_STACKTRACES = false; //includes stack trace in task's derivation rule string
-    public static boolean DEBUG_INVALID_SENTENCES = true;
-    public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
+    //public static boolean DEBUG_INVALID_SENTENCES = true;
+    //public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean DEBUG_TASK_LOG = true; //false disables task history completely
-    public static boolean PRINT_DUPLICATE_DERIVATIONS = false;
+    //public static boolean PRINT_DUPLICATE_DERIVATIONS = false;
     public static boolean EXIT_ON_EXCEPTION = true;
 
 

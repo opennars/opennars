@@ -322,6 +322,8 @@ public final class DefaultMatcherContext<V>
                 matcher instanceof ActionMatcher ? "action" : "rule", getPath(),
                 inputBuffer.getPosition(currentIndex));
             e.printStackTrace();
+            if (e.getCause()!=null)
+                e.getCause().printStackTrace();
             throw new GrappaException(msg, e);
         }
     }

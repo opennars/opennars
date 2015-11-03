@@ -4,7 +4,6 @@ import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.TaskAccumulator;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.io.SortedTaskPerception;
@@ -12,6 +11,9 @@ import nars.io.TaskPerception;
 import nars.nal.Deriver;
 import nars.task.Task;
 import nars.term.Term;
+import nars.util.data.list.FasterList;
+
+import java.util.List;
 
 /**
  * Various extensions enabled
@@ -60,8 +62,8 @@ public class Default2 extends Default {
         public DefaultCycle2(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca, int initialCapacity) {
             super(nar, deriver, concepts, ca);
 
-            derivationAccumulator =
-                    new TaskAccumulator(initialCapacity);
+            derivedTasksBuffer = new FasterList();
+
         }
 
 
@@ -70,7 +72,7 @@ public class Default2 extends Default {
          * be normalized or some other filter or aggregation
          * applied collectively.
          */
-        final TaskAccumulator<?> derivationAccumulator;
+        final List<Task> derivedTasksBuffer;
 
         @Override
         protected void fireConcept(Concept c) {
@@ -79,20 +81,21 @@ public class Default2 extends Default {
 
             fireConcept(c, p -> {
 
-                deriver.run(p, derivationAccumulator::put);
 
-                if (!derivationAccumulator.isEmpty()) {
+                deriver.run(p, derivedTasksBuffer::add);
+
+                if (!derivedTasksBuffer.isEmpty()) {
 
 
                     Task.normalize(
-                            derivationAccumulator,
+                            derivedTasksBuffer,
                             p.getMeanPriority());
 
-                    derivationAccumulator.forEach(
+                    derivedTasksBuffer.forEach(
                         t -> nar.input(t)
                     );
 
-                    derivationAccumulator.clear();
+                    derivedTasksBuffer.clear();
                 }
 
             });

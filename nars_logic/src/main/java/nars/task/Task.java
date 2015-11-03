@@ -71,9 +71,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
         if (l!=null)
             sb.append(" log=").append(l);*/
 
-        if (task.getCause() != null)
-            sb.append(" cause=").append(task.getCause());
-
         if (task.getBestSolution() != null) {
             if (!task.getTerm().equals(task.getBestSolution().getTerm())) {
                 sb.append(" solution=");
@@ -190,7 +187,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return (X)x;
     }
 
-    void setDuration(long l);
+    void setDuration(int l);
 
     Task getParentTask();
 
@@ -288,8 +285,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
                 getPriority(), getDurability(), getQuality(),
                 getParentTaskRef(), getParentBeliefRef(), getBestSolutionRef()
         );
-        tt.setTemporalInducting(isTemporalInductable());
-        tt.setCause(getCause());
 
         //tt.setLastForgetTime(getLastForgetTime());
 
@@ -458,9 +453,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return p;
     }
 
-    Operation getCause();
-
-    Task setCause(final Operation op);
 
     default String getExplanation() {
         StringBuilder sb = new StringBuilder();
@@ -530,20 +522,21 @@ public interface Task<T extends Compound> extends Sentence<T>,
     @Override
     boolean delete();
 
-    Task setTemporalInducting(boolean b);
+//    default void logUnrepeated(String reason) {
+//        if (getLog()!=null &&
+//                getLog().get(getLog().size()-1).equals(reason))
+//            return;
+//        log(reason);
+//    }
 
-    boolean isTemporalInductable();
+    /** append a log entry */
+    void log(Object entry);
 
-    default void logUnrepeated(String reason) {
-        if (getLog()!=null &&
-                getLog().get(getLog().size()-1).equals(reason))
-            return;
-        log(reason);
-    }
+    /** append log entries */
+    void log(List entries);
 
-    void log(String reason);
-    Task log(List<String> historyToCopy);
-    List<String> getLog();
+    /** get the recorded log entries */
+    List getLog();
 
 
     //TODO make a Source.{ INPUT, SINGLE, DOUBLE } enum
@@ -560,8 +553,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
      * @return Whether the Task is derived from another task
      */
     default boolean isInput() {
-        if (getCause()!=null) return false;
-        return getParentTask() == null ;
+        return getParentTask() == null;
     }
 
 
@@ -695,7 +687,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
         derived.forEach(t -> t.getBudget().mulPriority(factor));
     }
-    static <E extends Compound> void normalize(final Iterable<Task<E>> derived, final float premisePriority) {
+    static void normalize(final Iterable<Task> derived, final float premisePriority) {
         derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
     }
 

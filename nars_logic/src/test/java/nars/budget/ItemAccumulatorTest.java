@@ -82,7 +82,11 @@ public class ItemAccumulatorTest {
 
 
 
-    @Test public void testDurQuaRankingForEqualPri() {
+    @Test public void testRankDurQuaForEqualPri() {   }
+
+    @Test public void testRankQuaForEqualPriDur() {   }
+
+    @Test public void testRankDurForEqualPriQua() {
 
         final int capacity = 4;
 
@@ -92,7 +96,7 @@ public class ItemAccumulatorTest {
 
 
         String s = ". %1.00;0.90%";
-        ii.put(n.task("$0.05$ <z --> x>" + s));
+        ii.put(n.task("$0.5;0.1;0.5$ <z --> x>" + s));
         ii.put(n.task("$0.1$ <a --> x>" + s));
         ii.put(n.task("$0.1$ <b --> x>" + s));
         ii.put(n.task("$0.2$ <c --> x>" + s));

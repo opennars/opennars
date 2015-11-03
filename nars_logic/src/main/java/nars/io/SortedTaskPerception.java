@@ -36,14 +36,14 @@ public class SortedTaskPerception extends TaskPerception {
     @Override
     final public void send() {
         //ItemAccumulator<> b = this.buffer;
+        final TaskAccumulator<?> buffer = this.buffer;
         if (!buffer.isEmpty()) {
-
-            buffer.print(System.out);
-            System.out.println();
 
             //TODO special case where size <= inputPerCycle, the entire bag can be flushed in one operation
 
             int n = Math.min(size(), inputPerCycle.intValue());
+            final Consumer<Task> receiver = this.receiver;
+
             for (int i = 0; i < n; i++)
                 receiver.accept(buffer.pop());
 

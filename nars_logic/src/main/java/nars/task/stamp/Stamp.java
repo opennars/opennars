@@ -48,7 +48,7 @@ public interface Stamp extends Interval, Cloneable, Serializable {
      * signalling a missing value to set to some default
      * if eventually perceived or derived
      */
-    long TIMELESS = Integer.MIN_VALUE + 1;
+    int TIMELESS = Integer.MIN_VALUE + 1;
 
     /*** zips two evidentialBase arrays into a new one */
     static long[] zip(final long[] a, final long[] b) {

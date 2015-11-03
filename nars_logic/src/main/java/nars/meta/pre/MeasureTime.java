@@ -20,7 +20,7 @@ public class MeasureTime extends AbstractMeasureTime {
     protected boolean testEvents(RuleMatch m, Term a, Term b, Term target) {
         Premise p = m.premise;
 
-        long time = Temporal.between(p.getTask(), p.getBelief());
+        int time = Temporal.between(p.getTask(), p.getBelief());
         if (time < 0) {
             return false;
         }

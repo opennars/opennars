@@ -9,8 +9,8 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
+import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -84,7 +84,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                TaskSeed.make(nar.memory, inh).
+                DefaultTask.make(nar.memory, inh).
                         truth(getResultFrequency(), getResultConfidence()).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
@@ -214,7 +214,7 @@ public abstract class TermFunction<O> extends SyncOperator {
             //this will get the original input operation term, not after it has been inlined.
             Compound inputTerm = operation;
 
-            Task b = TaskSeed.make(memory, inputTerm).judgment().truth((Truth) y).setEternal();
+            Task b = DefaultTask.make(memory, inputTerm).judgment().truth((Truth) y).setEternal();
 
             nar.input(b);
 

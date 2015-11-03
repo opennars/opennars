@@ -39,11 +39,11 @@ public class Commander implements Consumer<NAR> {
 //    float priorityPerCycle = 1,
 //            priorityRemaining = 0; //change left over from last cycle
 
-    public Commander(NAR nar, boolean active, int capacity) {
-        this(nar, new TaskAccumulator(capacity), active);
+    public Commander(NAR nar, int capacity) {
+        this(nar, new TaskAccumulator(capacity));
     }
 
-    public Commander(NAR nar, TaskAccumulator buffer, boolean active) {
+    public Commander(NAR nar, TaskAccumulator buffer) {
         super();
 
         //this.nar = nar;

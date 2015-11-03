@@ -6,8 +6,8 @@ import nars.Op;
 import nars.concept.Concept;
 import nars.nal.nal2.Property;
 import nars.nal.nal3.SetExt;
+import nars.task.FluentTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
@@ -60,7 +60,7 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
             if (!terms.isEmpty()) {
 
                 //generates a similarity group
-                Task x = new TaskSeed().term(
+                Task x = new FluentTask().term(
                     Property.make(
                         SetExt.make(terms),
                         t.getTerm()

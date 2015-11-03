@@ -9,7 +9,7 @@ import nars.term.TermMetadata;
 public interface Interval extends TermMetadata {
 
     /** number of cycles that this sequence spans from start to end (= sum of intermval values) */
-    long duration();
+    int duration();
 
     /** returns a count of how many interval terms are in the array */
     static int intervalCount(Term[] a) {

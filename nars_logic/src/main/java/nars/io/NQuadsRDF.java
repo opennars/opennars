@@ -6,8 +6,8 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
+import nars.task.FluentTask;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -324,7 +324,7 @@ abstract public class NQuadsRDF {
         }
 
         if (belief!=null) {
-            return new TaskSeed().term(belief).
+            return new FluentTask().term(belief).
                     belief().truth(1f,0.9f)
                     .time(nar.time(),
                     Stamp.ETERNAL //TODO Tense parameter
