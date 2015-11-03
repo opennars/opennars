@@ -42,9 +42,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         items.clear();
 
         this.items = items;
-        this.index = new ArrayMapping(
-                map,
-                items);
+        this.index = new ArrayMapping(map, items);
     }
 
 //    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {

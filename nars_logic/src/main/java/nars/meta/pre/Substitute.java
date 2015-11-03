@@ -58,14 +58,14 @@ public class Substitute extends PreCondition {
 
 
         if (!a.equals(b) && substitute(m, a, b)) {
-            m.Outp.put(b, a);
+            m.outp.put(b, a);
         }
         return true;
     }
 
 
     protected boolean substitute(RuleMatch m, Term a, Term b) {
-        //for subclasses to override
+        //for subclasses to override; here it just falls through true
         return true;
     }
 

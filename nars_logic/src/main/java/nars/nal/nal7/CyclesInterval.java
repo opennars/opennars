@@ -93,7 +93,7 @@ final public class CyclesInterval extends Atom implements Interval {
 
     @Override
     public final void append(Appendable output, boolean pretty) throws IOException {
-        output.append('/').append(Long.toString(cyc)).append('/');
+        output.append('/').append(Long.toString(cyc));//.append('/');
     }
 
 

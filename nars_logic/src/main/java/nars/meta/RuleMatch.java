@@ -21,6 +21,7 @@ import nars.util.data.random.XorShift1024StarRandom;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -30,7 +31,7 @@ public class RuleMatch extends FindSubst {
 
     /** thread-specific pool of RuleMatchers
         this pool is local to this deriver */
-    public static final transient ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+    public static final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
         //TODO use the memory's RNG for complete deterministic reproducibility
         return new RuleMatch(new XorShift1024StarRandom(1));
     });
@@ -48,9 +49,20 @@ public class RuleMatch extends FindSubst {
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
 
     /**
-     * used by substitute:
+     * used by substitute to hold the current proposed / candidate
+     * additional substitutions. if the modifier doesn't
+     * succeed, the values it contains will have no effect
+     * before it is cleared.
      */
-    public final Map<Term, Term> Outp = Global.newHashMap();
+    public final Map<Term, Term> outp = Global.newHashMap();
+
+    /** pair of maps available for temporary use by conditions and modifiers
+     *  NOTE: if you use this in a Precondition, make sure to clear() it before it exits
+     *  ie. return it in the condition you took it, empty
+     * */
+    public final Map<Variable, Term> left = Global.newHashMap(0);
+    public final Map<Variable, Term> right = Global.newHashMap(0);
+    public final Set<Term> tmpSet = Global.newHashSet(0);
 
     @Override
     public String toString() {
@@ -85,14 +97,13 @@ public class RuleMatch extends FindSubst {
     /**
      * clear and re-use with a new rule
      */
-    public RuleMatch start(TaskRule rule) {
+    public void start(TaskRule rule) {
 
         super.clear();
 
         occurence_shift = Stamp.TIMELESS;
 
         this.rule = rule;
-        return this;
     }
 
     public Task apply(final PostCondition outcome) {
@@ -109,7 +120,6 @@ public class RuleMatch extends FindSubst {
         final Task belief = premise.getBelief();
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
-        final Truth truth;
 
         /** calculate derived task punctuation */
         char punct = outcome.puncOverride;
@@ -117,6 +127,7 @@ public class RuleMatch extends FindSubst {
             /** use the default policy determined by parent task */
             punct = task.getPunctuation();
         }
+        final Truth truth;
         if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
             truth = getTruth(outcome, punct, T, B);
             if (truth == null) {
@@ -133,7 +144,7 @@ public class RuleMatch extends FindSubst {
          */
         final boolean single = (belief == null);
         if ((!single) && (cyclic(outcome, premise))) {
-            if (Global.DEBUG) {
+            if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
                 removeCyclic(outcome, premise, truth, punct);
             }
             return null;
@@ -145,11 +156,11 @@ public class RuleMatch extends FindSubst {
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
 
-        final Map<Term, Term> Outp = this.Outp;
+        final Map<Term, Term> Outp = this.outp;
 
         for (final PreCondition c : outcome.afterConclusions) {
             if (!c.test(this)) {
-                //Outp.clear();
+                //outp.clear();
                 return null;
             }
         }
@@ -255,7 +266,7 @@ public class RuleMatch extends FindSubst {
         }
 
         if (!premise.validateDerivedBudget(budget)) {
-            if (Global.DEBUG) {
+            if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
                 removeInsufficientBudget(premise, new PreTask(derivedTerm, punct, truth, budget, occurence_shift, premise));
             }
             return null;
@@ -270,18 +281,7 @@ public class RuleMatch extends FindSubst {
             final long now = premise.time();
             final long occ;
 
-            if (occurence_shift > Stamp.TIMELESS) {//!t.isEternal()) {
-
-
-                //verify some conditions which should not produce a temporal task
-//                /*if (Global.DEBUG) */        {
-//
-//                    if ((single && task.isEternal()) ||
-//                            (!single && (task.isEternal() && belief.isEternal())
-//                            )) {
-//                        throw new RuntimeException("derived temporal task from eternal parents: " + task);
-//                    }
-//                }
+            if (occurence_shift > Stamp.TIMELESS) {
 
                 if (!premise.nal(7)) {
                     if (Global.DEBUG) {
@@ -307,7 +307,7 @@ public class RuleMatch extends FindSubst {
             );
 
             if (derived != null) {
-                if (Global.DEBUG) {
+                if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) {
                     derived.log(rule.toString());
                     //t.log(premise + "," + rule);
                 }
@@ -320,7 +320,7 @@ public class RuleMatch extends FindSubst {
     }
 
     /** for debugging */
-    private void removeInsufficientBudget(Premise premise, PreTask task) {
+    private static void removeInsufficientBudget(Premise premise, PreTask task) {
         premise.memory().remove(task, "Insufficient Derivation Budget");
     }
 

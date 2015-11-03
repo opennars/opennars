@@ -1,9 +1,44 @@
 package nars.op.scheme;
 
-/**
- * Created by me on 7/10/15.
- */
-public class TestNALScheme {
+
+import nars.NAR;
+import nars.meter.TestNAR;
+import nars.nal.AbstractNALTester;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
+
+import static org.jgroups.util.Util.assertTrue;
+
+@RunWith(Parameterized.class)
+public class EvalSchemeTest extends AbstractNALTester {
+
+    public EvalSchemeTest(Supplier<NAR> build) {
+        super(build);
+    }
+
+    @Parameterized.Parameters(name= "{0}")
+    public static Iterable configurations() {
+        return AbstractNALTester.nars(8, false);
+    }
+
+
+    @Ignore
+    @Test
+    public void testCAR() {
+
+        TestNAR tester = test();
+        tester.nar.input("scheme((car, (quote, (*, 2, 3))), #x)!");
+
+        assertTrue("test impl unfinished", false);
+        //tester.requires.add(new OutputContainsCondition(tester.nar, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
+
+        tester.run(4);
+
+    }
 
 //    //----
 //    @Test @Ignore

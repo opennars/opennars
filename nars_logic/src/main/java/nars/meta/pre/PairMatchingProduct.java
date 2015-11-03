@@ -26,10 +26,12 @@ public class PairMatchingProduct extends ProductN {
     @Override
     protected void init(final Term... term) {
         super.init(term);
+
         final Term a = term[0];
-        final Term b = term[1];
         volA = a.volume();
         structureA = a.structure();
+
+        final Term b = term[1];
         volB = b.volume();
         structureB = b.structure();
     }
@@ -51,9 +53,9 @@ public class PairMatchingProduct extends ProductN {
         return substitutesMayExistFast(pattern);
     }
 
-    private static boolean substitutesMayExistParanoid(PairMatchingProduct pattern) {
-        return true;
-    }
+//    private static boolean substitutesMayExistParanoid(PairMatchingProduct pattern) {
+//        return true;
+//    }
 
 
     public final boolean substitutesMayExistFast(final PairMatchingProduct pattern) {

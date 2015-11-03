@@ -53,12 +53,17 @@ public class Global {
 
     public static final float CONFIDENCE_PREFILTER = 0.005f; /** some non-zero epsilon */
     public static final float CONFIDENCE_PREFILTER_DEBUG = 0;
-    public static final boolean DEBUG_DERIVATION_GRAPH = false;
+
+
     /** allow everything */
 
     public static int UNIFICATION_POWER = 256;
 
     public static int DEFAULT_NAL_LEVEL = 8;
+
+
+    public static boolean EXIT_ON_EXCEPTION = true;
+
 
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
@@ -70,7 +75,10 @@ public class Global {
     //public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean DEBUG_TASK_LOG = true; //false disables task history completely
     //public static boolean PRINT_DUPLICATE_DERIVATIONS = false;
-    public static boolean EXIT_ON_EXCEPTION = true;
+    //public static final boolean DEBUG_DERIVATION_GRAPH = false;
+    public static final boolean DEBUG_REMOVED_CYCLIC_DERIVATIONS = false;
+    public static final boolean DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS = false;
+    public static boolean DEBUG_LOG_DERIVING_RULE = false;
 
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -194,7 +202,6 @@ public class Global {
      * if this is exceeded it may indicate a recursively
      * malformed term due to a serious inference bug */
     public static short COMPOUND_VOLUME_MAX = 1024;
-
 
 
 //    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {

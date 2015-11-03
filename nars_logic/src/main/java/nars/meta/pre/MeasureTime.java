@@ -16,8 +16,15 @@ public class MeasureTime extends AbstractMeasureTime {
         super(arg1, arg2, arg3);
     }
 
-    @Override
-    protected boolean testEvents(RuleMatch m, Term a, Term b, Term target) {
+    /**
+     * HACK this ignores the parameters 'a' and 'b'
+     * because this rule only appears once we hardcode
+     * what it means.  The third parameter specifies the
+     * pattern variable where interval
+     * term representing the time difference will be
+     * substituted.
+     */
+    @Override protected boolean testEvents(RuleMatch m, Term a, Term b, Term target) {
         Premise p = m.premise;
 
         int time = Temporal.between(p.getTask(), p.getBelief());

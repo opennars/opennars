@@ -16,6 +16,11 @@ final public class NotImplicationOrEquivalence extends PreCondition1 {
 
         if (arg1 == null) return false;
 
+        //TODO use a bitvector to test Op membership in this set
+        //  and then abstract this to a generic Precondition
+        //  that can be used for allowing (+) or denying (-)
+        //  other sets of Ops
+
         final Op o = arg1.op();
         switch (o) {
             case IMPLICATION:

@@ -11,9 +11,9 @@ import nars.term.Term;
  */
 public class IsEvent extends PreCondition2 {
 
-    public IsEvent(Term var1) {
-        this(var1, null);
-    }
+//    public IsEvent(Term var1) {
+//        this(var1, null);
+//    }
 
     public IsEvent(Term var1, Term var2) {
         super(var1, var2);

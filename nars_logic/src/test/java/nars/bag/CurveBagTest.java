@@ -18,7 +18,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
@@ -336,49 +335,50 @@ public class CurveBagTest extends AbstractBagTest {
     @Test public void testMerge() {
         int capacity = 3;
 
-        final AtomicInteger putKey = new AtomicInteger(0);
-        final AtomicInteger removeKey = new AtomicInteger(0);
+        //final AtomicInteger putKey = new AtomicInteger(0);
+        //final AtomicInteger removeKey = new AtomicInteger(0);
 
 
-        CurveBag<CharSequence, NullItem> c = new CurveBag<CharSequence, NullItem>(curve, capacity, rng) {
-
-            protected ArrayMapping<CharSequence, NullItem> newIndex(int capacity) {
-                return new ArrayMapping<CharSequence, NullItem>(
-                        //new HashMap(capacity)
-                        Global.newHashMap(capacity),
-                        items
-                ) {
-                    @Override
-                    public NullItem put(NullItem value) {
-                        return super.put(value);
-                    }
-
-                    @Override
-                    public NullItem putKey(CharSequence key, NullItem value) {
-                        putKey.incrementAndGet();
-                        return super.putKey(key, value);
-                    }
-
-                    @Override
-                    public NullItem remove(CharSequence key) {
-                        removeKey.incrementAndGet();
-                        return super.remove(key);
-                    }
-                };
-            }
-        };
+        CurveBag<CharSequence, NullItem> c = new CurveBag<CharSequence, NullItem>(curve, capacity, rng);
+//
+//
+//            protected ArrayMapping<CharSequence, NullItem> newIndex(int capacity) {
+//                return new ArrayMapping<CharSequence, NullItem>(
+//                        //new HashMap(capacity)
+//                        Global.newHashMap(capacity),
+//                        items
+//                ) {
+//                    @Override
+//                    public NullItem put(NullItem value) {
+//                        return super.put(value);
+//                    }
+//
+//                    @Override
+//                    public NullItem putKey(CharSequence key, NullItem value) {
+//                        putKey.incrementAndGet();
+//                        return super.putKey(key, value);
+//                    }
+//
+//                    @Override
+//                    public NullItem remove(CharSequence key) {
+//                        removeKey.incrementAndGet();
+//                        return super.remove(key);
+//                    }
+//                };
+//            }
+//        };
         c.mergePlus();
 
         NullItem a = new NullItem(0.5f, "a");
 
         c.put(a);
 
-        assertEquals(1, putKey.get()); assertEquals(0, removeKey.get());
+        //assertEquals(1, putKey.get()); assertEquals(0, removeKey.get());
         assertEquals(1, c.size());
 
         c.put(a);
 
-        assertEquals(2, putKey.get()); assertEquals(0, removeKey.get());
+        //assertEquals(2, putKey.get()); assertEquals(0, removeKey.get());
         assertEquals(1, c.size());
 
 
@@ -408,7 +408,7 @@ public class CurveBagTest extends AbstractBagTest {
 
         c.remove(a.name());
 
-        assertEquals(3, putKey.get()); assertEquals(1, removeKey.get());
+        //assertEquals(3, putKey.get()); assertEquals(1, removeKey.get());
         assertEquals(0, c.size());
 
         c.validate();

@@ -136,10 +136,11 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 //        return true;
 //    }
 //
-    /** how many unique pattern variables are present */
-    public int numPatternVariables() {
-        return numPatternVar;
-    }
+
+//    /** how many unique pattern variables are present */
+//    public int numPatternVariables() {
+//        return numPatternVar;
+//    }
 
     @Override
     protected void init(Term... term) {

@@ -21,7 +21,7 @@ final public class TaskNegative extends PreCondition {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getClass().getSimpleName();
     }
 

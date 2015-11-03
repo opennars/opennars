@@ -3,7 +3,7 @@ package nars.nal.nal1;
 import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
+import nars.nal.AbstractNALTester;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
-public class NAL1Test extends AbstractNALTest {
+public class NAL1Test extends AbstractNALTester {
 
 
     public NAL1Test(Supplier<NAR> b) {
@@ -26,7 +26,7 @@ public class NAL1Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
-        return AbstractNALTest.nars(1, false);
+        return AbstractNALTester.nars(1, false);
     }
 //
 //                new Supplier[]{

@@ -40,6 +40,33 @@
 
         <plugins>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19</version>
+                <configuration>
+                    <parallel>methods</parallel>
+                    <threadCount>3</threadCount>
+                    <!--<useUnlimitedThreads>true</useUnlimitedThreads>-->
+                    <reuseForks>true</reuseForks>
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <!--<parallelOptimized>true</parallelOptimized>-->
+                    <useFile>true</useFile>
+                    <disableXmlReport>true</disableXmlReport>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <printSummary>true</printSummary>
+                    <runOrder>balanced</runOrder>
+                    <trimStackTrace>true</trimStackTrace>
+                </configuration>
+            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>chronos-surefire-maven-plugin</artifactId>-->
+                <!--<version>1.1.0</version>-->
+                <!--<configuration>-->
+
+                <!--</configuration>-->
+            <!--</plugin>-->
 
 
             <!--<plugin>-->
@@ -248,6 +275,13 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.googlecode.junit-toolbox</groupId>
+            <artifactId>junit-toolbox</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>opennars</groupId>
@@ -289,6 +323,25 @@
         </dependency>
     </dependencies>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.19</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <linkXRef>true</linkXRef>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <repositories>
         <repository>
             <id>CSLTH</id>
@@ -298,7 +351,7 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>daily</updatePolicy>
             </snapshots>
             <url>http://maven.cs.lth.se/content/repositories/public/</url>
         </repository>

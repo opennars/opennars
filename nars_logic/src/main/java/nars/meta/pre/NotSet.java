@@ -1,8 +1,7 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
+import nars.nal.nal3.SetTensional;
 import nars.term.Term;
 
 /**
@@ -16,7 +15,7 @@ public class NotSet extends PreCondition1 {
 
     @Override
     final public boolean test(final RuleMatch m, final Term a) {
-        return !(a instanceof SetExt || a instanceof SetInt);
+        return !(a instanceof SetTensional);
     }
 
 }

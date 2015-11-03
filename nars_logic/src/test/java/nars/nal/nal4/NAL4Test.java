@@ -3,37 +3,23 @@ package nars.nal.nal4;
 import nars.NAR;
 import nars.meter.RuleTest;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
+import nars.nal.AbstractNALTester;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
-public class NAL4Test extends AbstractNALTest {
+public class NAL4Test extends AbstractNALTester {
 
 
     public NAL4Test(Supplier<NAR> b) { super(b);  }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core4;
-//        return Arrays.asList(new Supplier[][]{
-//                {() -> new Default()},
-//                //{new DefaultDeep()},
-//                //{new NewDefault()},
-//                //{new NewDefault().setInternalExperience(null)},
-//                //{new Default().setInternalExperience(null) },
-//                {() -> new Default().nal(5)},
-//                //{new Classic().setInternalExperience(null) },
-//
-//                //{new Solid(1, 128, 1, 1, 1, 2).level(5)}
-//
-//
-//        });
+    public static Iterable configurations() {
+        return AbstractNALTester.nars(4, false);
     }
 
     @Test

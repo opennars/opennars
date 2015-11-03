@@ -14,6 +14,7 @@ import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.db.InfiniPeer;
 import org.infinispan.Cache;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class InfiniClusterTest {
     NAR a, b;
 
     //public void testInfinispanCluster() throws IOException {
+    @Ignore //this test works it just has a delay for initializing network which we dont need
     @Test
     public void testCluster() throws InterruptedException {
 

@@ -14,6 +14,8 @@ public class BudgetMergeTest {
 
     @Test public void testMax() {
         ItemAccumulator<CharSequence,NullItem> a = new ItemAccumulator(8);
+        a.mergeMax();
+
         NullItem x0 = new NullItem(0.5f, "x");
         NullItem x1 = new NullItem(0.1f, "x");
         NullItem y = new NullItem(0.3f, "y");
@@ -44,6 +46,8 @@ public class BudgetMergeTest {
 
     @Test public void testMean() {
         ItemAccumulator<CharSequence, NullItem> a = new ItemAccumulator(2);
+        a.mergeAverage();
+
         NullItem x0 = new NullItem(0.3f, "x");
         NullItem x1 = new NullItem(0.1f, "x");
 
@@ -60,6 +64,7 @@ public class BudgetMergeTest {
     public void testPlus() throws Exception {
 
         ItemAccumulator<CharSequence, NullItem> a = new ItemAccumulator(3);
+        a.mergePlus();
 
         NullItem x = new NullItem(0.5f, "x");
         NullItem y = new NullItem(0.3f, "y");

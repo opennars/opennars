@@ -48,18 +48,24 @@ public class SubsIfUnifies extends Substitute {
     @Override
     protected boolean substitute(RuleMatch m, Term a, Term b) {
 
-        //TODO re-use these by storing them in 'm' context
-        Map<Variable, Term> Left = Global.newHashMap(0);
-        Map<Variable, Term> Right = Global.newHashMap(0);
+        Map<Variable, Term> left = m.left;
+        Map<Variable, Term> right = m.right;
 
-        FindSubst sub = new FindSubst(type, Left, Right, m.premise.getRandom());
+        FindSubst sub = new FindSubst(type, left, right, m.premise.getRandom());
 
+        final boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
-            m.Outp.putAll(Left);
-            return true;
+            m.outp.putAll(left);
+            result = true;
+        }
+        else {
+            result = false;
         }
 
-        return false;
+        left.clear();
+        right.clear();
+
+        return result;
     }
 
 //    @Override
@@ -70,19 +76,19 @@ public class SubsIfUnifies extends Substitute {
 //        //args[0] now encodes a variable which we want to replace with what M was assigned to
 //        //(relevant for variable elimination rules)
 //
-//        //the rule match context stores the Inp and Outp. not in this class.
+//        //the rule match context stores the Inp and outp. not in this class.
 //        //no preconditions should store any state
 //
 //        if (b == null || c == null) {
 //            return false;
 //        }
 //
-//        Map<Variable, Term> Outp = m.Outp;
+//        Map<Variable, Term> outp = m.outp;
 //
 //
 //
 //
-//        Outp.putAll(Left);
+//        outp.putAll(Left);
 //
 //        return true;
 //

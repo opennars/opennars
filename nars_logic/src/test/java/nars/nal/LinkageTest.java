@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -22,15 +21,15 @@ import static org.junit.Assert.*;
 //don't touch this file - patham9
 
 @RunWith(Parameterized.class)
-public class LinkageTest extends AbstractNALTest {
+public class LinkageTest extends AbstractNALTester {
 
     private int cycles = 250;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core6;
+    public static Iterable configurations() {
+        return AbstractNALTester.nars(6,true);
     }
 
     public void ProperlyLinkedTest(String premise1, String premise2) throws Exception {
@@ -75,7 +74,7 @@ public class LinkageTest extends AbstractNALTest {
     public void ProperlyLinkedIndirectlyTest(String spremise1, String spremise2) throws Exception {
 
 
-        Default nar = new Default();
+        NAR nar = test().nar;
 
         Compound premise1 = nar.term(spremise1);
         assertNotNull(premise1);

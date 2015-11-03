@@ -2,7 +2,7 @@ package nars.nal.nal8;
 
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
+import nars.nal.AbstractNALTester;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -15,14 +15,14 @@ import java.util.function.Supplier;
 import static org.jgroups.util.Util.assertTrue;
 
 @RunWith(Parameterized.class)
-public class NAL8Test extends AbstractNALTest {
+public class NAL8Test extends AbstractNALTester {
     final int cycles = 100;
 
     public NAL8Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTest.nars(8, false);
+        return AbstractNALTester.nars(8, false);
     }
 
     @Test public void testQuest() throws InvalidInputException {

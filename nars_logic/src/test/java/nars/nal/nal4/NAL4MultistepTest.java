@@ -2,7 +2,7 @@ package nars.nal.nal4;
 
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
+import nars.nal.AbstractNALTester;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +11,7 @@ import org.junit.runners.Parameterized;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
-public class NAL4MultistepTest extends AbstractNALTest {
+public class NAL4MultistepTest extends AbstractNALTester {
 
 
     public NAL4MultistepTest(Supplier<NAR> b) {
@@ -20,7 +20,7 @@ public class NAL4MultistepTest extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
-        return AbstractNALTest.nars(4, true);
+        return AbstractNALTester.nars(4, true);
     }
 
     //this test only works because the confidence matches, but the related task has insufficient budget

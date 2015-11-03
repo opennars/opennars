@@ -42,8 +42,8 @@ public class StreamOperatorsTest {
         });
 
 
-        int bursts = 10;
-        int burstSize = 16;
+        int bursts = 5;
+        int burstSize = 8;
 
         for (int i = 0; i < bursts; i++) {
             final long now = System.currentTimeMillis();

@@ -4,10 +4,11 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nar.Default;
 import nars.nar.Default2;
 import nars.nar.SingleStepNAR;
 import nars.nar.Terminal;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 
 import java.util.List;
@@ -19,33 +20,12 @@ import static nars.util.data.LabeledSupplier.supply;
  * Created by me on 2/10/15.
  */
 @Ignore
-abstract public class AbstractNALTest {
+abstract public class AbstractNALTester {
 
-    @Deprecated public static final List<Supplier<NAR>> core1 = Lists.newArrayList(
-            //() -> new Default().nal(1),
-            //() -> new Default2(1000,1,1,3).nal(1),
-            () -> new SingleStepNAR().nal(2)
-    );
-    public static final List<Supplier<NAR>> core2 = Lists.newArrayList(
-            /** for some reason, NAL2 tests require nal(3) level */
-            //() -> new Default().nal(3),
-            () -> new SingleStepNAR().nal(3)
-    );
-//    public static final List<Supplier<NAR>> core3 = Lists.newArrayList(
-//            //() -> new Default().nal(4),
-//            () -> new SingleStepNAR().nal(4)
+
+//    @Deprecated public static final List<Supplier<NAR>> core6 = Lists.newArrayList(
+//            () -> new SingleStepNAR().nal(6)
 //    );
-    @Deprecated public static final List<Supplier<NAR>> core4 = Lists.newArrayList(
-            () -> new Default().nal(4),
-            () -> new SingleStepNAR().nal(4)
-    );
-//    public static final List<Supplier<NAR>> core5 = Lists.newArrayList(
-//            //() -> new Default().nal(5),
-//            () -> new SingleStepNAR().nal(5)
-//    );
-    @Deprecated public static final List<Supplier<NAR>> core6 = Lists.newArrayList(
-            () -> new SingleStepNAR().nal(6)
-    );
 
 //    public static final List<Supplier<NAR>> core =Lists.newArrayList(
 //            () -> new Default().nal(9)
@@ -65,20 +45,21 @@ abstract public class AbstractNALTest {
     //final ThreadLocal<NAR> nars;
     //private final Supplier<NAR> nar;
     private final NAR the;
+    private TestNAR created;
 
-    protected AbstractNALTest(NAR nar) {
+    protected AbstractNALTester(NAR nar) {
         Global.DEBUG = true;
         this.the = nar;
     }
 
-    protected AbstractNALTest(Supplier<NAR> nar) {
+    protected AbstractNALTester(Supplier<NAR> nar) {
         Global.DEBUG = true;
         this.the = nar.get();
     }
 
 
     public final TestNAR test() {
-        return new TestNAR(nar());
+        return created;
     }
 
 
@@ -92,7 +73,23 @@ abstract public class AbstractNALTest {
         );
     }
 
+    @Before
+    public void start() {
+        created = new TestNAR(nar());
+    }
+    @After
+    public void end() {
+        created.run2();
+    }
+
     public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
+
+        //Level adjustments
+        {
+            //HACK bump to level 3 is somehow necessary
+            if (level == 2) level = 3;
+        }
+
 
 
         List<Supplier<NAR>> l = Global.newArrayList();

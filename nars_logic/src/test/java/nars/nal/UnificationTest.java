@@ -6,30 +6,29 @@ import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
 import nars.meter.TestNAR;
+import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /** "don't touch this file" - patham9 */
-@RunWith(Parameterized.class)
-public class UnificationTest extends AbstractNALTest {
+//@RunWith(Parameterized.class)
+public class UnificationTest  {
 
-    public UnificationTest(Supplier<NAR> b) {
-        super(b);
+    private TestNAR t;
+
+    @Before public void start() {
+        t = new TestNAR(new Terminal());
     }
-
-    @Parameterized.Parameters(name = "{0}")
-    public static Iterable configurations() {
-        return terminal();
+    public TestNAR test() {
+        return t;
     }
 
     FindSubst test(Op type, String s1, String s2, boolean shouldSub) {

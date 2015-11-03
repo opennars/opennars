@@ -3,7 +3,7 @@ package nars.nal.nal7;
 import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
+import nars.nal.AbstractNALTester;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * Created by me on 8/19/15.
  */
 @RunWith(Parameterized.class)
-public class NAL7Test extends AbstractNALTest {
+public class NAL7Test extends AbstractNALTester {
 
 
     final int cycles = 64;
@@ -28,7 +28,7 @@ public class NAL7Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTest.nars(7, false);
+        return AbstractNALTester.nars(7, false);
     }
 
 

@@ -1,50 +1,58 @@
 package nars.meta.pre;
 
-import nars.Global;
 import nars.meta.RuleMatch;
 import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.Set;
 
-/**
- * Created by me on 8/15/15.
- */
+
 public class NoCommonSubterm extends PreCondition2 {
     public NoCommonSubterm(Term arg1, Term arg2) {
         super(arg1, arg2);
     }
 
-    public static boolean addSubtermsRecursivelyUntilFirstMatch(Term t, Set<Term> map, Set<Term> Z) {
-        if(Z != null && Z.contains(t)) { //by this we can stop early
+    @Override
+    public final boolean test(RuleMatch m, Term a, Term b) {
+        Set<Term> tmpSet = m.tmpSet;
+
+        final boolean result = !Share_Any_Subterm(a, b, tmpSet );
+        tmpSet.clear(); //return it in the condition you took it, empty
+
+        return result;
+    }
+
+    public static boolean Share_Any_Subterm(final Term a, final Term b, Set<Term> s) {
+        addSubtermsRecursivelyUntilFirstMatch(a, s, null);
+        return !addSubtermsRecursivelyUntilFirstMatch(b, null, s); //we stop early this way (efficiency)
+    }
+
+    public static boolean addSubtermsRecursivelyUntilFirstMatch(Term x, Set<Term> AX, Set<Term> BX) {
+        if (BX != null && BX.contains(x)) { //by this we can stop early
             return false;
         }
 
-        if (map!=null)
-            map.add(t);
+        if (AX != null) {
+            if (AX.add(x)) {
 
-        if(t instanceof Compound) {
-            Compound c = (Compound) t;
-            for(Term d : c.term) {
-                boolean ret = addSubtermsRecursivelyUntilFirstMatch(d, map, Z);
-                if(!ret) { //by this we can stop early
-                    return false;
+                //only on the first time it has been added:
+                if (x instanceof Compound) {
+                    Compound c = (Compound) x;
+                    for (Term d : c.term) {
+                        boolean ret = addSubtermsRecursivelyUntilFirstMatch(d, AX, BX);
+                        if (!ret) { //by this we can stop early
+                            return false;
+                        }
+                    }
                 }
+
             }
         }
+
         return true;
     }
 
-    public static boolean Share_Any_Subterm(final Term a, final Term b) {
-        Set<Term> A = Global.newHashSet(a.volume()*2);
-        //Set<Term> B = Global.newHashSet(a.volume()*2);
-        addSubtermsRecursivelyUntilFirstMatch(a, A, null);
-        return !addSubtermsRecursivelyUntilFirstMatch(b, null, A); //we stop early this way (efficiency)
-    }
 
-    @Override
-    public boolean test(RuleMatch m, Term a, Term b) {
-        return !Share_Any_Subterm(a, b);
-    }
+
 
 }

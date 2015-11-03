@@ -2,7 +2,7 @@ package nars.nal.nal6;
 
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
+import nars.nal.AbstractNALTester;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,11 +10,8 @@ import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
 
-/**
- * Created by me on 8/19/15.
- */
 @RunWith(Parameterized.class)
-public class NAL6Test extends AbstractNALTest {
+public class NAL6Test extends AbstractNALTester {
 
 
     final int cycles = 900;
@@ -25,10 +22,8 @@ public class NAL6Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTest.nars(6, false);
+        return AbstractNALTester.nars(6, false);
     }
-
-
 
     @Test
     public void variable_unification1() throws InvalidInputException {
@@ -222,6 +217,7 @@ public class NAL6Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "(&&, <#1 --> swimmer>, <#1 --> bird>)", 0.80f, 0.81f); //en("Some bird can swim.");
         tester.run();
     }
+
 
 
     @Test

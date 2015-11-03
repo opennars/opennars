@@ -52,7 +52,7 @@ public class Union extends PreCondition3Output {
             throw new RuntimeException("this condition should have been trapped earlier");
             //return false;
 
-        m.Outp.put((Variable)c, res);
+        m.outp.put((Variable)c, res);
 
         return true;
     }
