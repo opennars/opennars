@@ -43,11 +43,12 @@ abstract public class Symbols {
     
     
     /* Tense markers */
-    public static final String TENSE_MARK = ":";
+    public static final String TENSE_SEPARATOR = ":";
+
     public static final String TENSE_PAST = ":\\:";
     public static final String TENSE_PRESENT = ":|:";
     public static final String TENSE_FUTURE = ":/:";
-
+    public static final String TENSE_ETERNAL = ":-:"; //ascii infinity symbol
 
     public static final String TASK_RULE_FWD = "|-";
     
@@ -130,6 +131,8 @@ abstract public class Symbols {
 
     private static final CharObjectHashMap<Op> _charToOperator
             = new CharObjectHashMap(Op.values().length * 2);
+
+
     static {
         //Setup NativeOperator String index hashtable 
         for (final Op r : Op.values()) {

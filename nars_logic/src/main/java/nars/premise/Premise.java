@@ -310,46 +310,22 @@ public interface Premise extends Level {
             throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
         }
 
-
         if (task.isJudgmentOrGoal() && task.getConfidence() < DefaultTruth.DEFAULT_TRUTH_EPSILON) {
             memory.remove(task, "Insufficient confidence");
             return null;
         }
 
-//        if (nal(7)) {
-//            //adjust occurence time
-//            final Task parent = task.getParentTask();
-//            if (task.isTimeless()) {
-//                final long o;
-//                if (parent != null && !parent.isEternal())
-//                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
-//                else
-//                    o = Stamp.ETERNAL; //default ETERNAL
-//
-//                task.setOccurrenceTime(o);
-//            }
-//        } else {
-//            if (task.isTimeless()) {
-//                task.setEternal();
-//            } else if (!task.isEternal()) {
-//                throw new RuntimeException("non-eternal Task derived in non-temporal mode");
-//            }
-//        }
-
-        //taskCreated.setTemporalInducting(false);
-
-
-        Task t = task.normalized();
-
-        if (!FilterDuplicateExistingBelief.isUniqueBelief(this, t)) {
-            memory.remove(t, "Duplicate");
+        if (!task.normalize()) {
             return null;
         }
 
-        if (t!=null) {
-            memory.eventDerived.emit(task);
+        if (!FilterDuplicateExistingBelief.isUniqueBelief(this, task)) {
+            memory.remove(task, "Duplicate");
+            return null;
         }
-        return t;
+
+        memory.eventDerived.emit(task);
+        return task;
     }
 
 

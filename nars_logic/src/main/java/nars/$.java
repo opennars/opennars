@@ -7,7 +7,9 @@ import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.narsese.NarseseParser;
+import nars.task.FluentTask;
 import nars.term.Atom;
+import nars.term.Compound;
 import nars.term.Term;
 
 /**
@@ -17,11 +19,17 @@ public class $ {
 
 
 
-    public static final Term _(final String query) {
 
-        //default behavior: parse as term
-        return NarseseParser.the().term(query); //thread local
+    public static final Term _(final String term) {
+        return NarseseParser.the().term(term);
+        //        try { }
+        //        catch (InvalidInputException e) { }
+    }
 
+    public static final FluentTask _(final String term, char punc) {
+        Compound t = NarseseParser.the().term(term);
+        if (t == null) return null;
+        return new FluentTask(t).punctuation(punc).eternal().normalized();
     }
 
     /**

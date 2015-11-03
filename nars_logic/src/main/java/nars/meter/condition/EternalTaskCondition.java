@@ -57,24 +57,6 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 
     protected TreeMap<Float,Task> similar;
 
-//    public static class StringDistance extends Item<String> {
-//
-//        private final String text;
-//
-//        public StringDistance(String s, String other) {
-//            super();
-//            this.text = s;
-//            int dist = Texts.levenshteinDistance(s, other);
-//            setPriority(1.0f / (1.0f + dist));
-//        }
-//
-//        @Override
-//        public String name() {
-//            return text;
-//        }
-//    }
-//
-//    CurveBag<String,StringDistance> similar2 = new CurveBag(16);
 
 
     @Override

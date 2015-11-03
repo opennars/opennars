@@ -110,33 +110,28 @@ public interface Truth extends MetaTruth<Float> {
 
 
     /**
-     * The hash code of a TruthValue
-     * @return The hash code
+     * The hash code of a TruthValue, perfectly condensed,
+     * into the two 16-bit words of a 32-bit integer.
+     *
+     * Since the same epsilon used in other truth
+     * comparisons and equality tests determines the
+     * resolution here (Truth components do not need the full
+     * resolution of a floating point value, and also do not
+     * need the full resolution of a 16bit number when discretized)
+     * the hash value can be used for equality comparisons
+     * as well as non-naturally ordered / non-lexicographic
+     * but deterministic compareTo() ordering.
      */
     static int hash(final Truth t) {
-        final int discreteness = (int)(1.0f / DefaultTruth.DEFAULT_TRUTH_EPSILON);
 
-        //assuming discreteness is below 2^15:
-        final int freqHash = Util.hash(t.getFrequency(), discreteness);
-        final int confHash = Util.hash(t.getConfidence(), discreteness);
+        //assuming epsilon is large enough such that: 0 <= h < 2^15:
+        final int freqHash = Util.hash(t.getFrequency(), hashDiscreteness);
+        final int confHash = Util.hash(t.getConfidence(), hashDiscreteness);
 
-        final int hash = freqHash | (confHash << 16) ;
-
-        return hash * Util.PRIME2;
-//        return (1 + ) * Util.PRIME2 +
-//                     Util.hash(t.getConfidence(), discreteness);
-
-//        return Float.floatToRawIntBits(t.getFrequency()) +
-//         31 * Float.floatToRawIntBits(t.getConfidence());
+        return (freqHash << 16) | confHash;
     }
 
-    //    @Override
-//    default public Truth clone() {
-//        return new DefaultTruth(getFrequency(), getConfidence(), getAnalytic());
-//    }
-
-
-
+    int hashDiscreteness = (int)(1.0f / DefaultTruth.DEFAULT_TRUTH_EPSILON);
 
     @Override
     default StringBuilder appendString(final StringBuilder sb) {
@@ -232,6 +227,19 @@ public interface Truth extends MetaTruth<Float> {
 
     }
 
+    static int compare(Truth a, Truth b) {
+        if (a == b) return 0;
+
+        //see how Truth hash() is calculated to know why this works
+        return Integer.compare(a.hashCode(), b.hashCode());
+
+//        tc = Float.compare(truth.getFrequency(), otruth.getFrequency());
+//        if (tc!=0) return tc;
+//        tc = Float.compare(truth.getConfidence(), otruth.getConfidence());
+//        if (tc!=0) return tc;
+//
+//        return 0;
+    }
 
 
     enum TruthComponent {

@@ -34,8 +34,8 @@ public class FluentTaskTest {
         String s = "<a --> b>.";
 
         //the final occurr() or tense() is the value applied
-        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().occurr(100).getOccurrenceTime()));
-        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().present(n.memory).getOccurrenceTime()));
+        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).eternal().occurr(100).getOccurrenceTime()));
+        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).eternal().present(n.memory).getOccurrenceTime()));
         assertTrue(Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).occurr(100).setEternal().getOccurrenceTime()));
     }
 

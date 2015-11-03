@@ -18,9 +18,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
         super();
     }
 
-
-
-
     @Override
     public void setConfidence(final float b) {
         final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();
@@ -29,7 +26,7 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Truth.hash(this);
     }
 

@@ -7,7 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Stores items with highest priority at index = 0, lowest = size()-1
+ * Stores items with highest priority at index = 0,
+ * lowest = size()-1
  */
 abstract public class SortedIndex<T> implements Collection<T>, Serializable {
 
@@ -17,6 +18,8 @@ abstract public class SortedIndex<T> implements Collection<T>, Serializable {
     }
 
     abstract public T insert(T i);
+
+    /** numeric access */
     abstract public T get(int i);
     abstract public T remove(int i);
 

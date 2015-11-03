@@ -124,8 +124,7 @@ public class LocalRules {
     /** creates a revision task (but does not input it)
      *  if failed, returns null
      * */
-//    public static <T extends Compound> Task<T> getRevision(final Task<T> newBelief, final Task<T> oldBelief, final boolean feedbackToLinks, final Premise nal) {
-    public static Task getRevision(final Task newBelief, final Task oldBelief, final Premise nal) {
+    public static <C extends Compound> Task<C> getRevision(final Task<C> newBelief, final Task<C> oldBelief, final Premise nal) {
 
         if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
             return null;
@@ -143,18 +142,14 @@ public class LocalRules {
 
 
         //Task<T> revised = nal.input(
-        Task revised = nal.newTask(newBelief.getTerm())
+        return nal.newTask(newBelief.getTerm())
                 .punctuation(newBelief.getPunctuation())
                 .truth(truth)
                 .budget(budget)
                 .parent(newBelief, oldBelief)
                 .reason("Revision")
                 .time( now,  oldBeliefTruth.getTargetTime() )
-                .normalized()
-        ;
-
-
-        return revised;
+                .normalized();
     }
 
 

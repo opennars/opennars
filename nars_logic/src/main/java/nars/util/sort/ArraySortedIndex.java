@@ -18,8 +18,6 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
     final List<E> list;
 
-//    final static private Comparator<Itemized> priorityComparator = (a, b) -> Float.compare(b.getPriority(), a.getPriority());
-
 
     @Override
     public final void forEach(Consumer<? super E> consumer) {
@@ -28,38 +26,34 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
     @Override
     public final boolean equals(final Object obj) {
+        if (this == obj) return true;
         if (!(obj instanceof ArraySortedIndex)) return false;
         ArraySortedIndex o = (ArraySortedIndex) obj;
         return list.equals(o.list) && capacity == o.capacity;
     }
 
-    @Override
-    public final List<E> getList() {
+    @Override public final List<E> getList() {
         return list;
     }
 
-//    public static <E> List<E> bestList(int capacity) {
-//        return //new ArrayList(capacity);
-//
-//                Global.newArrayList(capacity); // : new FastSortedTable();
-//    }
-
-    /*public ArraySortedIndex() {
-        this(0);
-    }*/
-
     public ArraySortedIndex(int capacity) {
         this(Global.newArrayList(capacity), capacity);
-        /*
-                Global.THREADS == 1 ?  :
-                        Collections.synchronizedList(bestList(capacity))
-        );*/
     }
     
     public ArraySortedIndex(List<E> list, int capacity) {
         super();
         this.list = list;
         setCapacity(capacity);
+    }
+
+    /**
+     * any scalar decomposition function of a budget value
+     * can be used
+     *
+     * TODO parameter score function
+     */
+    static float score(Itemized b) {
+        return b.getBudget().summary();
     }
 
     @Override
@@ -69,9 +63,10 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
         while (ii.hasNext()) {
             E c = ii.next();
-            if (c.getPriority() > pp)
+            float sc = score(c);
+            if (sc > pp)
                 return false;
-            pp = c.getPriority();
+            pp = sc;
         }
 
         return true;
@@ -84,31 +79,28 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
             return;
         }
 
-        updateCapacity(capacity);
-    }
-
-    private void updateCapacity(int capacity) {
-        final List<E> list = this.list;
-        if (list!=null) {
-            int n = list.size();
-            //remove elements from end
-            for ( ; n - capacity > 0; n--) {
-                list.remove(n-1);
-            }
-        }
-
         this.capacity = capacity;
+
+        final List<E> l = this.list;
+        //if (l =null) {
+            int n = l.size();
+            //remove elements from end
+            for (; n - capacity > 0; n--) {
+                l.remove(n-1);
+            }
+        //}
+
     }
 
 
     public final int positionOf(final E o) {
         int low = 0;
         int high = size()-1;
-        final float op = o.getPriority();
+        final float op = score(o);
 
         while (low <= high) {
             final int mid = (low + high) >>> 1;
-            final float mp = get(mid).getPriority();
+            final float mp = score(get(mid));
 
             if (mp > op)
                 low = mid + 1;
@@ -121,74 +113,11 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         //return -(low + 1);  // key not found
     }
 
-//    public final int positionOf(final E o) {
-//        final float y = o.getPriority();
-////        if ((y < 0) || (y > 1.0f)) {
-////            System.err.println("Invalid priority value: " + o);
-////            System.exit(1);
-////        }
-//
-//        final int s = size();
-//        if (s == 0) {
-//            return 0;
-//        }
-//
-//
-//        //binary search
-//        int low = 0;
-//        int high = s;
-//
-//        while (low < high) {
-//            int mid = (low + high) / 2;
-//            /*if ((mid == low) && (mid == high))
-//                break;*/
-//
-//            final float x = get(mid).getPriority();
-//
-//            if (x < y) {
-//                low = mid - 1;
-//                if (low < 0) low = 0;
-//            } else if (x == y) {
-//                return mid;
-//            } else /*if (x > y)*/ {
-//                high = mid + 1;
-//                if (high >= s)   high = s-1;
-//            }
-//
-//        }
-//        return low;
-//    }
-
-    public final int validStorePosition(final int i) {
-        final int size = size();
-        if (i >= size) return size-1;
-        if (i < 0) return 0;
-        return i;
-    }
-
-//    public int validInsertionPosition(final int i) {
-//        final int size = size();
-//        if (i > size) return size; //allow i-size for inserting at the end
-//        if (i < 0) return 0;
-//        return i;
-//    }
-    
     @Override
     final public E get(final int i) {
-
-        //final int s = list.size();
-
-        //if (s == 0) return null;
-
-        /*if (i >= s)
-            i = s - 1;
-        if (i < 0)
-            i = 0;*/
-
         return list.get(i);
     }
 
-   
     @Override
     public E insert(final E o) {
 
@@ -198,9 +127,9 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
         int insertPos;
         if (s == 0) {
+            //first element in empty list, insert at beginning
             insertPos = 0;
         } else {
-
             insertPos = positionOf(o);
 
             if (s >= capacity) {
@@ -210,7 +139,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
                     return o;
                 }
 
-                removed = remove(0);
+                removed = remove(size()-1);
                 if (insertPos > 0) insertPos--;
             }
             else {
@@ -221,109 +150,46 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
         list.add(insertPos, o);
 
-
         return removed;
     }
 
-
-
-
-    @Override
-    public final int capacity() {
-        return capacity;
-    }
-
-    public final int available() {
-        return capacity() - size();
-    }
-
-    @Override
-    public String toString() {
-        return list.toString();
-    }
-
-    @Override
-    public final Iterator<E> descendingIterator() {
-        return new ReverseListIterator(list);
-    }
-
-//    /**
-//     * can be handled in subclasses
-//     */
-//    protected void reject(E removeFirst) {
-//    }
-
-    
-    @Override public final E remove(int i) {
-        return list.remove(i);
-    }
-
-    @Override
-    public final int size() {
-        return list.size();
-    }
-
-    @Override
-    public final boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    @Override
-    public final boolean contains(Object o) {
-        return list.contains(o);
-    }
-
-    @Override
-    public final Iterator<E> iterator() {
-        return list.iterator();
-    }
-
-    @Override
-    public Object[] toArray() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    @Override
-    public final void clear() {
-        list.clear();
-    }
-
-    @Override
-    public boolean remove(final Object _o) {
+    //TODO use last known position, stored in the Map
+    //it could be a better predictor of where it was
+    @Override public boolean remove(final Object o) {
 
         final int s = size();
         if (s == 0) return false;
 
-        final E o = (E)_o;
-        final Object on = o.name();
-        
+        //final E o = (E)_o;
+        //final Object on = o.name();
+
         if (s == 1) {
-            if (get(0).name().equals(on)) {
+            if (get(0)==o) {
                 clear();
                 return true;
             }
             return false;
         }
-        
-        
-        //estimated position according to current priority
-        final int p = validStorePosition(positionOf(o));
-        
+
+
+        //estimated position according to current priority,
+        //which if it hasnt changed much has a chance of being
+        //close to the index
+        int p = positionOf((E)o);
+        if (p >= s) p = s-1;
+        if (p < 0)  p = 0;
 
         int i = p, j = p - 1;
         int finished = (j == -1) ? 1 : 0;
         do {
-            
+
+            //TODO tighten this loop, it doesnt need to be duplicated
+
             if (i < s) {
                 if (attemptRemoval(o, /*on, */i))
                     return true;
                 i++;
-                if (i == s)
+                if (i >= s)
                     finished++;
             }
 
@@ -339,7 +205,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
 
         //try exhaustive removal as a final option
-        if (list.remove(_o)) {
+        if (list.remove(o)) {
             return true;
         }
 
@@ -349,12 +215,69 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     private final boolean attemptRemoval(final Object o, /*final Object oName, */final int i) {
-        final E r = list.get( i );
-        if ((o == r) /*|| (r.name().equals(oName))*/) {
-            if (list.remove(i)!=null)
-                return true;
+        final List<E> l = this.list;
+        if (o == l.get( i ) /*|| (r.name().equals(oName))*/) {
+            return l.remove(i)!=null; //shouldnt actually ever return false here
         }
         return false;
+    }
+
+
+    @Override
+    public final int capacity() {
+        return capacity;
+    }
+
+    public final int available() {
+        return capacity - size();
+    }
+
+    @Override
+    public String toString() {
+        return list.toString();
+    }
+
+    @Override
+    public final Iterator<E> descendingIterator() {
+        return new ReverseListIterator(list);
+    }
+
+    @Override public final E remove(int i) {
+        return list.remove(i);
+    }
+
+    @Override
+    public final int size() {
+        return list.size();
+    }
+
+    @Override public final boolean isEmpty() {
+        return list.isEmpty();
+    }
+
+    /** this is a potentially very slow O(N) iteration,
+      * shouldnt be any reason to use this */
+    @Override public final boolean contains(Object o) {
+        return list.contains(o);
+    }
+
+    /** if possible, use the forEach visitor which wont
+     * incur the cost of allocating an iterator */
+    @Override public final Iterator<E> iterator() {
+        return list.iterator();
+    }
+
+    @Override public final void clear() {
+        list.clear();
+    }
+
+    @Override public Object[] toArray() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

@@ -32,8 +32,9 @@ import java.util.Arrays;
 import static nars.nal.nal7.Temporal.ORDER_BACKWARD;
 import static nars.nal.nal7.Temporal.ORDER_FORWARD;
 
-/** TODO divide this into a Stamp and Timed interfaces,
- *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
+/**
+ * TODO divide this into a Stamp and Timed interfaces,
+ * with a subclass of Time additionally responsible for NAL7+ occurenceTime
  */
 
 public interface Stamp extends Interval, Cloneable, Serializable {
@@ -50,7 +51,9 @@ public interface Stamp extends Interval, Cloneable, Serializable {
      */
     int TIMELESS = Integer.MIN_VALUE + 1;
 
-    /*** zips two evidentialBase arrays into a new one */
+    /***
+     * zips two evidentialBase arrays into a new one
+     */
     static long[] zip(final long[] a, final long[] b) {
 
         final int baseLength = Math.min(a.length + b.length, Global.MAXIMUM_EVIDENTAL_BASE_LENGTH);
@@ -60,7 +63,7 @@ public interface Stamp extends Interval, Cloneable, Serializable {
         int firstLength = a.length;
         int secondLength = b.length;
 
-        int i2 = 0, j =0;
+        int i2 = 0, j = 0;
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143
         while (i2 < secondLength && j < baseLength) {
             c[j++] = b[i2++];
@@ -113,7 +116,9 @@ public interface Stamp extends Interval, Cloneable, Serializable {
         return deduplicated;
     }
 
-    /** true if there are any common elements; assumes the arrays are sorted and contain no duplicates */
+    /**
+     * true if there are any common elements; assumes the arrays are sorted and contain no duplicates
+     */
     static boolean overlapping(final long[] a, final long[] b) {
 
         /** TODO there may be additional ways to exit early from this loop */
@@ -122,8 +127,7 @@ public interface Stamp extends Interval, Cloneable, Serializable {
             for (long y : b) {
                 if (x == y) {
                     return true;
-                }
-                else if (y > x) {
+                } else if (y > x) {
                     //any values after y in b will not be equal to x
                     break;
                 }
@@ -140,9 +144,6 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 
         return overlapping(a.getEvidence(), b.getEvidence());
     }
-
-
-
 
 
 //    public static long[] toSetArrayHeap(final long[] x) {
@@ -218,7 +219,7 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 //    }
 
     default float getOriginality() {
-        if (getEvidence()==null)
+        if (getEvidence() == null)
             throw new RuntimeException(this + " has null evidence");
         return 1.0f / (getEvidence().length + 1);
     }
@@ -253,25 +254,33 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 //        this.creationTime = c;
 //        this.hash = 0;
 //    }
-
-
-
-
     default StringBuilder appendOccurrenceTime(final StringBuilder sb) {
-        if (getOccurrenceTime() != ETERNAL) {
-            int estTimeLength = 10; /* # digits */
+        final long oc = getOccurrenceTime();
+        final long ct = getCreationTime();
+
+        if (oc == Stamp.TIMELESS)
+            throw new RuntimeException("invalid occurrence time");
+        if (ct == Stamp.ETERNAL)
+            throw new RuntimeException("invalid creation time");
+
+        //however, timeless creation time means it has not been perceived yet
+
+        if (oc == ETERNAL) {
+            if (ct == Stamp.TIMELESS) {
+                sb.append(":-:");
+            } else {
+                sb.append(':').append(Long.toString(ct)).append(':');
+            }
+        } else {
+            int estTimeLength = 8; /* # digits */
             sb.ensureCapacity(estTimeLength);
 
-            long ct = getCreationTime();
-            if (ct == Stamp.TIMELESS)
-                sb.append('?');
-            else
-                sb.append(Long.toString(ct));
+            sb.append(Long.toString(ct));
 
-            long relOc = (getOccurrenceTime() - ct);
-            if (relOc >= 0)
+            long OCrelativeToCT = (oc - ct);
+            if (OCrelativeToCT >= 0)
                 sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
-            sb.append(relOc);
+            sb.append(OCrelativeToCT);
         }
         return sb;
     }
@@ -327,9 +336,11 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 
     }
 
-    /** deduplicated and sorted version of the evidentialBase.
+    /**
+     * deduplicated and sorted version of the evidentialBase.
      * this can always be calculated deterministically from the evidentialBAse
-     * since it is the deduplicated and sorted form of it. */
+     * since it is the deduplicated and sorted form of it.
+     */
     long[] getEvidence();
 
     Stamp setEvidence(long... evidentialSet);
@@ -408,8 +419,6 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 //        */
 //
 //    }
-
-
     default Stamp setTime(final long creation, final long occurrence) {
         setCreationTime(creation);
         setOccurrenceTime(occurrence);
@@ -591,8 +600,6 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 //        a[ index2 ] = tmp;
 //    }
 //}
-
-
 
 
 //

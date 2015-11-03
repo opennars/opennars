@@ -24,6 +24,11 @@ public class DefaultTruth extends AbstractScalarTruth {
         }
 
         @Override
+        public boolean equals(Object that) {
+            return that == this; //only equal to itself
+        }
+
+        @Override
         public StringBuilder appendString(StringBuilder sb, int decimals) {
             sb.append(toString());
             return sb;

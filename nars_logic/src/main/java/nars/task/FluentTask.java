@@ -36,8 +36,33 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 
         budget(0, Float.NaN, Float.NaN);
 
+        setEternal();
+
         setOccurrenceTime(TIMELESS);
     }
+
+    public FluentTask(Compound term) {
+        this();
+        term(term);
+    }
+
+//    public FluentTask(String termOrTaskString) {
+//        super();
+//
+//        termOrTaskString = termOrTaskString.trim();
+//
+//        int len = termOrTaskString.length();
+//        char lastChar = termOrTaskString.charAt(len -1);
+//        if ((Symbols.isPunctuation(lastChar) || lastChar == Symbols.TRUTH_VALUE_MARK || lastChar == Symbols.TENSE_MARK)) {
+//            //set both term and punc
+//            setTerm($._()term(termOrTaskString.substring(0, len-1)));
+//            setPunctuation(lastChar);
+//        }
+//        else {
+//            //set only term
+//            setTerm(NarseseParser.the().term(termString));
+//        }
+//    }
 
 //    @Deprecated
 //    public TaskSeed(Memory memory, Sentence<T> t) {
@@ -118,7 +143,7 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //        return this;
 //    }
 
-    public FluentTask term(Compound t) {
+    public final FluentTask term(Compound t) {
         this.term = t;
         return this;
     }
@@ -134,12 +159,11 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //        return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
 //    }
 
-    public FluentTask truth(float freq, float conf) {
-        if (this.truth != null) {
-            //System.err.println
-              throw new RuntimeException(this + " modifying existing truth: " + this.truth);
-        }
-        this.truth = new DefaultTruth(freq, conf);
+    public final FluentTask truth(float freq, float conf) {
+        if (truth == null)
+            this.truth = new DefaultTruth(freq, conf);
+        else
+            this.truth.set(freq, conf);
         return this;
     }
 
@@ -369,10 +393,9 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //        return this;
 //    }
 
-
-    @Override
-    @Deprecated public FluentTask setEternal() {
-        super.setEternal();
+    public FluentTask eternal() {
+        setEternal();
         return this;
     }
+
 }

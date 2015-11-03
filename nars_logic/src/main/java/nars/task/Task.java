@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static nars.Global.dereference;
 import static nars.Symbols.GOAL;
 import static nars.Symbols.JUDGMENT;
 
@@ -116,7 +117,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return s;
     }
 
-    public static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+    static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 
         if (p == null)
             throw new RuntimeException("character is null");
@@ -124,15 +125,18 @@ public interface Task<T extends Compound> extends Sentence<T>,
         if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
             t = new DefaultTruth(p);
 
-        if (b != null && ((b.length == 0) || (Float.isNaN(b[0]))))
-            b = null;
+        int blen = b!=null ? b.length : 0;
+        if ((blen > 0) && (Float.isNaN(b[0])))
+            blen = 0;
 
-        //TODO use a switch and combine !=null with above comparison
+        Budget B;
+        switch (blen) {
+            case 0:     B = new Budget(p, t); break;
+            case 1:     B = new Budget(b[0], p, t); break;
+            case 2:     B = new Budget(b[0], b[1], t); break;
+            default:    B = new Budget(b[0], b[1], b[2]); break;
+        }
 
-        Budget B = (b == null) ? new Budget(p, t) :
-                b.length == 1 ? new Budget(b[0], p, t) :
-                        b.length == 2 ? new Budget(b[0], b[1], t) :
-                                new Budget(b[0], b[1], b[2]);
 
         if (!(content instanceof Compound)) {
             return null;
@@ -163,23 +167,15 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     /** returns a valid Task term, or returns null */
-    public static <X extends Compound> X termOrNull(Term t) {
-        //if (invalidSentenceTerm(t))
-            //return null;
-        Term x = t.normalized();
-//        if (Global.DEBUG) {
-//            if (invalidSentenceTerm(x)) {
-//                throw new RuntimeException("invalidity determined after normalization, wtf: " + t + " became " + x);
-//            }
-//        }
+    static <X extends Compound> X termOrNull(Term x) {
 
+        x = x.normalized();
 
         //HACK maybe this should be done elsewhere
         if (x instanceof Sequence) {
             x = ((Sequence)x).cloneRemovingSuffixInterval();
         }
 
-//        X x = (X)t.normalized();
         if (Sentence.invalidSentenceTerm(x)) {
             return null;
         }
@@ -187,42 +183,36 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return (X)x;
     }
 
+    /**
+     * Sets the perceived temporal duration of the Task,
+     * in cycles.  This corresponds to how long the Task
+     * seems to the Memory (ie. Memory.duration()), so it
+     * serves as a default duration when the task's term
+     * does not specify one (as in the case of a
+     * Sequence or Parallel).
+     *
+     */
     void setDuration(int l);
 
-    Task getParentTask();
+
+    /**
+     * Get the parent task of a task.
+     * It is not guaranteed to remain because it is
+     * stored as a Soft or Weak reference so that
+     * task ancestry does not grow uncontrollably;
+     *
+     * instead, we rely on the JVM garbage collector
+     * to serve as an enforcer of AIKR
+     *
+     * @return The task from which the task is derived, or
+     * null if it has been forgotten
+     */
+    default Task getParentTask() {
+        return dereference(getParentTaskRef());
+    }
 
     Reference<Task> getParentTaskRef();
 
-//    /**
-//     * Constructor for an activated task
-//     *
-//     * @param s            The sentence
-//     * @param b            The budget
-//     * @param parentTask   The task from which this new task is derived
-//     * @param parentBelief The belief from which this new task is derived
-//     * @param solution     The belief to be used in future logic
-//     */
-//    public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-//        this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
-//    }
-//
-//    public Task(T term, char punc, Truth truth, AbstractStamper stamp, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-//        this(new Sentence(term, punc, truth, stamp), b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
-//    }
-
-
-//    @Override
-//    public Task clone() {
-//
-//        if (sentence == null)
-//            return this;
-//
-//        return new Task(sentence.clone(), this, parentTask, parentBelief, bestSolution);
-//    }
-
-//    public <X extends Compound> Task<X> clone(final Sentence<X> replacedSentence) {
-//        return new Task(replacedSentence, this, parentTask, parentBelief, bestSolution);
-//    }
 
     Task getParentBelief();
 
@@ -233,18 +223,9 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return clone(t, getTruth());
     }
 
-
-//    default public Task cloneEternal() {
-//        return clone(getTerm(), TruthFunctions.eternalize(getTruth()), Stamp.ETERNAL);
-//    }
-//
     default <X extends Compound> Task<X> clone(X t, Truth newTruth) {
         return clone(t, newTruth, true);
     }
-//
-//    default public Task clone(long newOccurrenceTime) {
-//        return clone(getTerm(), getTruth(), newOccurrenceTime);
-//    }
 
     /** clones this Task with a new Term and truth  */
     default Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {
@@ -254,18 +235,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
     default <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
         return clone(t, newTruth, occ, true);
     }
-
-
-
-//    @Override
-//    public boolean equals(final Object obj) {
-//        if (obj == this) return true;
-//        if (obj instanceof Sentence) {
-//            Task t = (Task) obj;
-//            return super.equals(t);// && equalParents(t);
-//        }
-//        return false;
-//    }
 
     default Task clone(Compound t, Truth newTruth, long occ, boolean cloneEvenIfTruthEqual) {
         if (newTruth instanceof ProjectedTruth) {
@@ -301,29 +270,12 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return clone(getTerm(), newTruth, getOccurrenceTime());
     }
 
-//    public boolean aboveThreshold() {
-//        return budget.aboveThreshold();
-//    }
-/*    public boolean aboveThreshold(float additionalPriority) {
-        return budget.aboveThreshold(additionalPriority);
-    }*/
-
-
-
-
-    /**
-     * Check if a Task is derived by a StructuralRule
-     *
-     * @return Whether the Task is derived by a StructuralRule
-     */
-//    public boolean isStructural() {
-//        return (parentBelief == null) && (parentTask != null);
-//    }
-
 
     Task getBestSolution();
 
     Reference<Task> getBestSolutionRef();
+
+
 
     default StringBuilder toString(@Nullable Memory memory) {
         return appendTo(null, memory);
@@ -359,7 +311,9 @@ public interface Task<T extends Compound> extends Sentence<T>,
             tenseString = getTense(memory.time(), memory.duration());
         }
         else {
-            appendOccurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
+            //TODO dont bother craeting new StringBuilder and calculating the entire length etc.. just append it to a reusable StringReader?
+            appendOccurrenceTime(
+                    (StringBuilder)(tenseString = new StringBuilder()));
         }
 
 
@@ -548,9 +502,8 @@ public interface Task<T extends Compound> extends Sentence<T>,
     boolean isSingle();
 
     /**
-     * Check if a Task is a direct input
-     *
-     * @return Whether the Task is derived from another task
+     * Check if a Task is a direct input,
+     * or if its origin has been forgotten or never known
      */
     default boolean isInput() {
         return getParentTask() == null;
@@ -568,45 +521,22 @@ public interface Task<T extends Compound> extends Sentence<T>,
     boolean isNormalized();
 
     /** updates all implied fields and re-hashes; returns this task */
-    Task normalized();
+    boolean normalize();
 
 
-    @Deprecated default boolean init(final Memory memory) {
+    default boolean init(final Memory memory) {
 
         if (!isCommand()) {
 
-            switch (getPunctuation()) {
-                case Symbols.JUDGMENT:
-                case Symbols.QUESTION:
-                case Symbols.QUEST:
-                case Symbols.GOAL:
-                case Symbols.COMMAND:
-                    break;
-                default:
-                    throw new RuntimeException("Invalid sentence punctuation");
-            }
+            ensureValidPunctuationAndTruth(getPunctuation(), getTruth()!=null);
 
-            if (isJudgmentOrGoal() && (getTruth() == null)) {
-                throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-            }
-
-            if ((getParentTaskRef() != null && getParentTask() == null))
-                throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
-
-
-            if (Global.DEBUG) {
-                if (Sentence.invalidSentenceTerm(getTerm())) {
-                    throw new RuntimeException("Invalid sentence content term: " + getTerm());
-                }
-            }
+            ensureValidParentTaskRef();
 
         }
 
-        if (normalized() != null) {
-            if (isInput())
-                log("Input");
+        if (normalize()) {
 
-            //if a task has an unperceived creationTime,
+            // if a task has an unperceived creationTime,
             // set it to the memory's current time here,
             // and adjust occurenceTime if it's not eternal
 
@@ -619,15 +549,20 @@ public interface Task<T extends Compound> extends Sentence<T>,
                 setTime(now, oc);
             }
 
-            //if (duration() <= 0) {
-                setDuration(
-                    memory.duration() //assume the default perceptual duration?
-                );
-            //}
+            setDuration(
+                memory.duration() //assume the default perceptual duration?
+            );
 
             //finally, assign a unique stamp if none specified (input)
             if (getEvidence().length == 0) {
                 setEvidence(memory.newStampSerial());
+
+                //this actually means it arrived from unknown origin.
+                //we'll clarify what null evidence means later.
+                //if data arrives via a hardware device, can a virtual
+                //task be used as the parent when it generates it?
+                //doesnt everything originate from something else?
+                log("Input");
             }
 
             return true;
@@ -636,7 +571,29 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return false;
     }
 
+    default void ensureValidParentTaskRef() {
+        if ((getParentTaskRef() != null && getParentTask() == null))
+            throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+    }
 
+    static void ensureValidPunctuationAndTruth(char c, boolean hasTruth) {
+        switch (c) {
+            case Symbols.COMMAND:
+                break;
+            case Symbols.JUDGMENT:
+            case Symbols.GOAL:
+                if (!hasTruth)
+                    throw new RuntimeException("Judgment and Goal tasks require non-NULL truth value");
+                break;
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
+                if (hasTruth)
+                    throw new RuntimeException("Question and Quest tasks require NULL truth value");
+                break;
+            default:
+                throw new RuntimeException("Invalid sentence punctuation");
+        }
+    }
 
 
 //    default Task projectTask(final long targetTime, final long currentTime) {
@@ -708,4 +665,10 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
     default long start() { return getOccurrenceTime(); }
     default long end() { return start() + duration(); }
+
+    default <T extends Task> T normalized() {
+        if (!normalize()) return null;
+        return (T)this;
+    }
+
 }

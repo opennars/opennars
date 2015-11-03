@@ -1,5 +1,6 @@
 package nars.budget;
 
+import nars.$;
 import nars.NAR;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class ItemAccumulatorTest {
@@ -62,7 +64,7 @@ public class ItemAccumulatorTest {
         assertEquals(capacity, ii.size());
 
         Task<?> one = ii.pop();
-        assertEquals("$0.30;0.80;0.95$ <d --> x>. %1.00;0.90%", one.toString());
+        assertEquals("$0.30;0.80;0.95$ <d --> x>. :0: %1.00;0.90%", one.toString());
 
         List<Task> two = new ArrayList();
         two.add(ii.pop());
@@ -88,35 +90,35 @@ public class ItemAccumulatorTest {
 
     @Test public void testRankDurForEqualPriQua() {
 
-        final int capacity = 4;
+        final int capacity = 8;
 
-        TaskAccumulator<?> ii = new TaskAccumulator<>(
-                capacity
-        );
+        TaskAccumulator ii = new TaskAccumulator<>(capacity);
 
+        for (int i = 0; i < capacity-1; i++) {
+            float dur = i * 0.05f;
+            ii.put($._("a:" + i, '?').budget(0.5f, dur, 0.5f));
+        }
 
-        String s = ". %1.00;0.90%";
-        ii.put(n.task("$0.5;0.1;0.5$ <z --> x>" + s));
-        ii.put(n.task("$0.1$ <a --> x>" + s));
-        ii.put(n.task("$0.1$ <b --> x>" + s));
-        ii.put(n.task("$0.2$ <c --> x>" + s));
-        ii.put(n.task("$0.3$ <d --> x>" + s));
-        assertEquals(4, ii.size());
+        assertTrue(ii.isSorted());
 
-        //z should be ignored
-        //List<Task> buffer = Global.newArrayList();
+        ii.print(System.out);
 
-
-        assertEquals(capacity, ii.size());
-
-        Task<?> one = ii.pop();
-        assertEquals("$0.30;0.80;0.95$ <d --> x>. %1.00;0.90%", one.toString());
-
-        List<Task> two = new ArrayList();
-        two.add(ii.pop());
-        two.add(ii.pop());
-        assertEquals("[$0.20;0.80;0.95$ <c --> x>. %1.00;0.90%, $0.10;0.80;0.95$ <b --> x>. %1.00;0.90%]", two.toString());
-
-        assertEquals(1, ii.size());
+//        assertEquals(4, ii.size());
+//
+//        //z should be ignored
+//        //List<Task> buffer = Global.newArrayList();
+//
+//
+//        assertEquals(capacity, ii.size());
+//
+//        Task<?> one = ii.pop();
+//        assertEquals("$0.30;0.80;0.95$ <d --> x>. %1.00;0.90%", one.toString());
+//
+//        List<Task> two = new ArrayList();
+//        two.add(ii.pop());
+//        two.add(ii.pop());
+//        assertEquals("[$0.20;0.80;0.95$ <c --> x>. %1.00;0.90%, $0.10;0.80;0.95$ <b --> x>. %1.00;0.90%]", two.toString());
+//
+//        assertEquals(1, ii.size());
     }
 }

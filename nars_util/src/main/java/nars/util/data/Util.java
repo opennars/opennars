@@ -90,12 +90,13 @@ public class Util {
         return PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c;
     }
 
-    public final static int hash(int a, int b, int c, int d) {
-        return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d;
-    }
+//    public final static int hash(int a, int b, int c, int d) {
+//        return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d;
+//    }
 
-    public final static int hash(int a, int b, int c, int d, int e) {
-        return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d) + e;
+    public final static int hash(int a, int b, int c, int d, long e) {
+        long x = PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d) + e;
+        return (int)x;
     }
 
     public final static int hash(Object a, Object b) {
@@ -106,9 +107,9 @@ public class Util {
         return hash(a.hashCode(), b.hashCode(), c.hashCode());
     }
 
-    public final static int hash(Object a, Object b, Object c, Object d) {
-        return hash(a.hashCode(), b.hashCode(), c.hashCode(), d.hashCode());
-    }
+//    public final static int hash(Object a, Object b, Object c, Object d) {
+//        return hash(a.hashCode(), b.hashCode(), c.hashCode(), d.hashCode());
+//    }
 
     public static void assertNotNull(final Object test, final String varName) {
         if (test == null) {
@@ -652,6 +653,28 @@ public class Util {
             }
         }
 
+    }
+
+    /** applies a quick, non-lexicographic ordering compare
+     * by first testing their lengths
+     */
+    public final static int compare(long[] x, long[] y) {
+        if (x == y) return 0;
+
+        int xlen = x.length;
+
+        if (xlen != y.length) {
+            return Integer.compare(xlen, y.length);
+        } else {
+
+            for (int i = 0; i < xlen; i++) {
+                int c = Long.compare(x[i], y[i]);
+                if (c!=0)
+                    return c; //first different chra
+            }
+
+            return 0; //equal
+        }
     }
 
 }

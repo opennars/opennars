@@ -136,10 +136,10 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
 
         final int h = Util.hash(
                 Arrays.hashCode(getEvidence()),
-                (int)getOccurrenceTime(),
                 getTerm().hashCode(),
                 getPunctuation(),
-                (getTruth() != null) ? getTruth().hashCode() : 0
+                (getTruth() != null) ? getTruth().hashCode() : 1,
+                getOccurrenceTime()
         );
 
         if (h == 0) return 1; //reserve 0 for non-hashed
@@ -249,43 +249,39 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
 
     @Override
     public final int duration() {
-        if (term instanceof Interval)
-            return ((Interval)term).duration();
+        final Term t = this.term;
+        if (t instanceof Interval)
+            return ((Interval)t).duration();
         return duration;
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (this == o) return 0;
+    public int compareTo(Object obj) {
+        if (this == obj) return 0;
 
-        Task t = (Task)o;
+        Task o = (Task)obj;
         int tc;
-        tc = term.compareTo(t.getTerm());
+        tc = term.compareTo(o.getTerm());
         if (tc != 0) return tc;
-        tc = Character.compare(punctuation, t.getPunctuation());
+        tc = Character.compare(punctuation, o.getPunctuation());
         if (tc != 0) return tc;
 
         if (truth!=null) {
-            tc = truth.toString().compareTo( t.getTruth().toString());
-            if (tc != 0) return tc;
+
+            Truth otruth = o.getTruth();
+            tc = Truth.compare(truth, otruth);
+            if (tc!=0) return tc;
+
         }
 
-        tc = Long.compare( getOccurrenceTime(), t.getOccurrenceTime() );
+        tc = Long.compare( getOccurrenceTime(), o.getOccurrenceTime() );
         if (tc!=0) return tc;
+
+
 
         long[] e1 = getEvidence();
-        long[] e2 = t.getEvidence();
-        tc = Integer.compare(e1.length,e2.length);
-        if (tc!=0) return tc;
-
-        for (int i = 0; i < e1.length; i++) {
-            tc = Long.compare(e1[i],e2[i]);
-            if (tc!=0) return tc;
-        }
-
-        //TODO merge contents for instance sharing?
-
-        return 0;
+        long[] e2 = o.getEvidence();
+        return Util.compare(e1, e2);
     }
 
     @Override
@@ -312,20 +308,20 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
      * if the task was removed then this returns null
      */
     @Override
-    public final Task normalized() {
+    public final boolean normalize() {
 
         //dont recompute if hash isnt invalid (==0)
         if (isNormalized())
-            return this;
+            return true;
 
         if (isDeleted())
-            return null;
+            return false;
 
         return normalizeThis();
     }
 
     /** actual normalization process */
-    protected Task normalizeThis() {
+    protected boolean normalizeThis() {
 
         final char punc = getPunctuation();
         if (punc == 0)
@@ -338,22 +334,14 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
 
         Compound sentenceTerm = getTerm();
         if (sentenceTerm == null)
-            return null;
+            return false;
 
 
         updateEvidence();
 
 
 
-
-        /*Task t = new DefaultTask(sentenceTerm, punc,
-                (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
-                getBudget(),
-                getParentTask(),
-                getParentBelief(),
-                solutionBelief);*/
-
-
+        /** NaN quality is a signal that a budget's values need initialized */
         if (Float.isNaN(getQuality())) {
             applyDefaultBudget();
         }
@@ -363,7 +351,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
 
         this.hash = rehash();
 
-        return this;
+        return true;
     }
 
     protected boolean applyDefaultBudget() {
@@ -422,26 +410,19 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
             //}
 
         } else if (isSingle()) {
-            //Single premise
             setEvidence(getParentTask().getEvidence());
+        }
 
-            //setCyclic(true); //p.isCyclic());
-        }
-        else {
-            //setCyclic(false);
-        }
 
     }
 
 
     public final void invalidate() {
-        /*if (term!=null)
-            term.invalidate();*/
         hash = 0;
     }
 
     @Override
-    public Sentence setOccurrenceTime(final long o) {
+    public Task setOccurrenceTime(final long o) {
         if (o != occurrenceTime) {
             this.occurrenceTime = o;
             invalidate();
@@ -467,7 +448,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
     }
 
     @Override
-    public DefaultTask<T> setEternal() {
+    public final DefaultTask<T> setEternal() {
         setOccurrenceTime(Stamp.ETERNAL);
         return this;
     }
@@ -662,15 +643,7 @@ public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implem
         return dereference(parentBelief);
     }
 
-    /**
-     * Get the parent task of a task
-     *
-     * @return The task from which the task is derived
-     */
-    @Override
-    final public Task getParentTask() {
-        return dereference(parentTask);
-    }
+
 
     @Override
     final public Sentence<T> name() {

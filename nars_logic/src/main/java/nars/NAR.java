@@ -417,12 +417,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
             return false;
         }
 
-        if (!t.isDeleted()) {
-            m.eventInput.emit(t);
-            return true;
+        if (t.isDeleted()) {
+            return false;
         }
 
-        return false;
+        m.eventInput.emit(t);
+
+        return true;
     }
 
 
