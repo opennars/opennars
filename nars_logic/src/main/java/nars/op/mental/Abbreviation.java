@@ -86,7 +86,7 @@ public class Abbreviation implements Consumer<Task> {
         //is it complex and also important? then give it a name:
         if (canAbbreviate(task)) {
 
-            if ((nar.memory().random.nextFloat() < abbreviationProbability))
+            if ((nar.memory.random.nextFloat() < abbreviationProbability))
                 return;
 
 

@@ -74,7 +74,7 @@ public interface Premise extends Level {
     }
 
     default Memory memory() {
-        return nar().memory();
+        return nar().memory;
     }
 
 
@@ -166,7 +166,7 @@ public interface Premise extends Level {
 
 
     default public <T extends Compound> FluentTask newTask(final T term) {
-        return DefaultTask.make(nar().memory(), term);
+        return DefaultTask.make(nar().memory, term);
     }
 
     default public <T extends Compound> Task<Compound<?>> newTask(final T term, final char punc) {
@@ -300,7 +300,7 @@ public interface Premise extends Level {
      */
     default Task validate(Task task) {
 
-        final Memory memory = nar().memory();
+        final Memory memory = nar().memory;
 
         if (task.getTerm() == null) {
             throw new RuntimeException("task has null term");

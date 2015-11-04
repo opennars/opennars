@@ -48,7 +48,7 @@ public class evaluate extends SyncOperator implements Mental {
         //Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamper(op, nar.memory, Tense.Present));
 
         return Lists.newArrayList( op.getTerm().newSubTask(op,
-                nar.memory(),
+                nar.memory,
                 content, Symbols.QUEST, null,
                 nar.time(),
                 Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1

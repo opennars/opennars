@@ -54,7 +54,7 @@ public class want extends SyncOperator implements Mental {
 
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
 
-        final Memory m = nar.memory();
+        final Memory m = nar.memory;
         return Lists.newArrayList(
                 operation.newSubTask(t, m, (Compound) content, Symbols.GOAL, truth, m.time(), budget)
         );

@@ -185,7 +185,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         Term[] x = operation.args();
 
-        final Memory memory = nar.memory();
+        final Memory memory = nar.memory;
 
         int numInputs = x.length;
         if (x[numInputs - 1].equals(memory.self()))

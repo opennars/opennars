@@ -45,7 +45,7 @@ public class TaskProcess extends NAL implements Serializable {
         super(nar);
 
         this.task = task;
-        this.taskLinkBuilder = new TaskLinkBuilder(nar.memory());
+        this.taskLinkBuilder = new TaskLinkBuilder(nar.memory);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class TaskProcess extends NAL implements Serializable {
 
         //sb.append(getClass().getSimpleName()).append('[');
 
-        getTask().appendTo(sb, nar.memory(), true, false, true, true);
+        getTask().appendTo(sb, nar.memory, true, false, true, true);
 
         //sb.append(']');
 
@@ -126,12 +126,12 @@ public class TaskProcess extends NAL implements Serializable {
         final float factor = 1f / (tl.size());
         Budget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
 
-        if (subBudget.summaryLessThan(nar.memory().termLinkThreshold.floatValue()))
+        if (subBudget.summaryLessThan(nar.memory.termLinkThreshold.floatValue()))
             return false;
 
         final NAR nar = this.nar;
         final int numTemplates = tl.size();
-        final float termLinkThresh = nar.memory().termLinkThreshold.floatValue();
+        final float termLinkThresh = nar.memory.termLinkThreshold.floatValue();
 
         boolean activity = false;
 
@@ -236,7 +236,7 @@ public class TaskProcess extends NAL implements Serializable {
         taskLinkBuilder.setTask(task);
 
         final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1f / numTemplates);
-        if (subBudget.summaryLessThan(nar.memory().taskLinkThreshold.floatValue()))
+        if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
             return false;
 
 
@@ -315,7 +315,7 @@ public class TaskProcess extends NAL implements Serializable {
             task.setTermShared((Compound) c.getTerm());
 
 
-        final LogicMeter logicMeter = nar.memory().logic;
+        final LogicMeter logicMeter = nar.memory.logic;
 
         switch (task.getPunctuation()) {
 
@@ -372,7 +372,7 @@ public class TaskProcess extends NAL implements Serializable {
 //            //return;
 //        }
 
-        final Memory memory = this.nar.memory();
+        final Memory memory = this.nar.memory;
         memory.eventTaskProcess.emit(this);
 
         final Concept c = nar.conceptualize(task, task.getBudget());

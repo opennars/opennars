@@ -172,7 +172,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
 
         n.memory.eventExecute.emit(
-            new ExecutionResult(op, feedback, n.memory())
+            new ExecutionResult(op, feedback, n.memory)
         );
 
 
@@ -209,7 +209,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
         else
             b = Budget.zero;//if operation was cancelled, at least provide some result feedback
 
-        final Memory memory = nar().memory();
+        final Memory memory = nar().memory;
 
         nar().input(DefaultTask.make(memory, operation.getTerm()).
                 judgment().

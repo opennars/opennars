@@ -26,7 +26,7 @@ abstract public class DeriveletContext implements Consumer<NAR> {
         this.nar = nar;
         this.rng = rng;
         this.conceptSupply = conceptSupply;
-        nar.memory().eventFrameStart.on(this);
+        nar.memory.eventFrameStart.on(this);
     }
 
     @Override

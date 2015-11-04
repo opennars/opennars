@@ -56,7 +56,7 @@ public class believe extends SyncOperator implements Mental {
         //TODO clean this up, it's non-standard
         return Lists.newArrayList(op.getTerm().newSubTask(
                 op,
-                nar.memory(),
+                nar.memory,
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),
                 nar.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)));

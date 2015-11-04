@@ -7,11 +7,11 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import nars.NAR;
-import nars.clock.FrameClock;
 import nars.guifx.NARfx;
 import nars.guifx.demo.POJOPane;
 import nars.meter.MemoryBudget;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
@@ -138,9 +138,9 @@ public class SimpleNARBudgetDynamics {
         int cycles = 256;
 
 
-        float pri = 0.2f;
+        float pri = 0.5f;
         float dur = 0.5f;
-        float qua = 0.5f;
+        float qua = 0.25f;
 
 
 
@@ -197,7 +197,7 @@ public class SimpleNARBudgetDynamics {
             x.setLeft(new POJOPane<>(vars));
 
 
-            Default d = new Default(1000, 1, 1, 1, new FrameClock()); //Equalized(1024, 1, 3);
+            Default2 d = new Default2(512, 1, 2, 3); //Equalized(1024, 1, 3);
             //Default d = new NewDefault().setInternalExperience(null);
             //d.memory.conceptForgetDurations.set(8);
             //d.getParam().conceptForgetDurations.set(1);

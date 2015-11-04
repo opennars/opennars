@@ -48,7 +48,7 @@ public class PluginPanel extends VBox {
     protected void update() {
 
         final List<Node> toAdd = Global.newArrayList();
-        nar.memory().getSingletons().forEach((k, v) -> {
+        nar.memory.getSingletons().forEach((k, v) -> {
             toAdd.add(node(k, v));
         });
 

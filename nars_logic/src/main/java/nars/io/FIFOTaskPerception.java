@@ -36,7 +36,7 @@ public class FIFOTaskPerception extends TaskPerception {
 
 
     public FIFOTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
-        super(nar.memory(), filter, receiver);
+        super(nar.memory, filter, receiver);
 
 
     }

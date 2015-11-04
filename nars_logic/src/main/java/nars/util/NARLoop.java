@@ -2,6 +2,7 @@ package nars.util;
 
 import nars.NAR;
 import nars.util.data.Util;
+import net.openhft.affinity.AffinityLock;
 
 import java.util.logging.Logger;
 
@@ -21,6 +22,7 @@ public class NARLoop implements Runnable {
      * sleep mode delay time
      */
     static final long sleepTimeMS = 250;
+    private final boolean cpuCoreReserve;
 
 
     public volatile int cyclesPerFrame = 1;
@@ -47,16 +49,28 @@ public class NARLoop implements Runnable {
 
 
     public NARLoop(NAR n, int initialPeriod) {
+        this(n, initialPeriod, false);
+    }
+
+    /**
+     *
+     * @param n
+     * @param initialPeriod
+     * @param reserveCPUCore whether to acquire a thread affinity lock on a CPU core, which will improve performance if a dedicated core can be assigned
+     */
+    public NARLoop(NAR n, int initialPeriod, boolean reserveCPUCore) {
 
 
         this.nar = n;
+        this.cpuCoreReserve = reserveCPUCore;
 
-        nar.the("loop", this);
+        n.the("loop", this);
 
         setPeriodMS(initialPeriod);
 
         this.thread = new Thread(this);
         thread.start();
+        logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
 
     }
 
@@ -104,40 +118,57 @@ public class NARLoop implements Runnable {
 
     @Override
     final public void run() {
-        logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
-
-        final NAR nar = this.nar;
-
-        try {
-            while (!stopped) {
-
-                final int periodMS = this.periodMS;
-
-                if (periodMS < 0) {
-                    sleep(sleepTimeMS);
-                    continue;
-                }
 
 
-                final long start = System.currentTimeMillis();
-
-                if (!nar.running.get()) {
-                    nar.frame(cyclesPerFrame);
-                } else {
-                    //wait until nar is free
-                }
 
 
-                final long frameTimeMS = System.currentTimeMillis() - start;
-
-
-                throttle(periodMS, frameTimeMS);
-
+        AffinityLock al;
+        if (cpuCoreReserve) {
+            al = AffinityLock.acquireLock();
+            if (al.isAllocated() && al.isBound()) {
+                logger.info(thread + " running exclusively on CPU " +  al.cpuId());
             }
         }
-        catch (Exception e) {
-            nar.memory.eventError.emit(e);
-            stopped = true;
+        else {
+            al = null;
+        }
+
+        try {
+            final NAR nar = this.nar;
+
+            try {
+                while (!stopped) {
+
+                    final int periodMS = this.periodMS;
+
+                    if (periodMS < 0) {
+                        sleep(sleepTimeMS);
+                        continue;
+                    }
+
+
+                    final long start = System.currentTimeMillis();
+
+                    if (!nar.running.get()) {
+                        nar.frame(cyclesPerFrame);
+                    } else {
+                        //wait until nar is free
+                    }
+
+
+                    final long frameTimeMS = System.currentTimeMillis() - start;
+
+
+                    throttle(periodMS, frameTimeMS);
+
+                }
+            } catch (Exception e) {
+                nar.memory.eventError.emit(e);
+                stopped = true;
+            }
+        } finally {
+            if (al!=null)
+                al.release();
         }
 
         logger.info(() -> (this + " stopped") );

@@ -42,14 +42,14 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
     /** maximum of the minimum NAL levels involved in the postconditions of this rule */
     public int minNAL;
-    private int numPatternVar;
+
     private String str;
 
-    public Product getPremises() {
+    public final Product getPremises() {
         return (Product) term(0);
     }
 
-    public ProductN conclusion() {
+    public final ProductN conclusion() {
         return (ProductN) term(1);
     }
 
@@ -58,13 +58,13 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     }
 
 
-    public boolean validTaskPunctuation(final char p) {
+    public final boolean validTaskPunctuation(final char p) {
         if ((p == Symbols.QUESTION) && !allowQuestionTask)
             return false;
         return true;
     }
 
-    protected void ensureValid() {
+    protected final void ensureValid() {
         if (postconditions.length == 0)
             throw new RuntimeException(this + " has no postconditions");
         if (!Variable.hasPatternVariable(getTask()))
@@ -76,7 +76,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     }
 
 
-    public ProductN premise() {
+    public final ProductN premise() {
         return (ProductN) term(0);
     }
 
@@ -105,15 +105,15 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
      * returns Op.NONE if there is no belief term type;
      * if it returns Op.VAR_PATTERN this means that any type can apply
      */
-    public Op getBeliefTermType() {
+    public final Op getBeliefTermType() {
         return getBelief().op();
     }
 
-    protected Term getBelief() {
+    protected final Term getBelief() {
         return getPremises().term(1);
     }
 
-    protected Term getResult() {
+    protected final Term getResult() {
         return conclusion().term(0);
     }
 
@@ -152,7 +152,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
             if (v.op() == Op.VAR_PATTERN)
                 patternVars.add(v);
         });
-        this.numPatternVar = patternVars.size();
+
         this.str = super.toString();
     }
 
@@ -169,7 +169,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     }
 
 
-    static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
+    final static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
 
 
         @Override
@@ -197,7 +197,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     final static UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
 
     @Override
-    public TaskRule normalizeDestructively() {
+    public final TaskRule normalizeDestructively() {
 
 
         this.transform(uppercaseAtomsToPatternVariables);
@@ -207,7 +207,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
         return this;
     }
 
-    public TaskRule normalizeRule() {
+    public final TaskRule normalizeRule() {
 
         TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
 
@@ -229,11 +229,11 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
 
     @Override
-    public TaskRule clone(Term[] replaced) {
+    public final TaskRule clone(Term[] replaced) {
         return new TaskRule((Product) replaced[0], (Product) replaced[1]);
     }
 
-    public TaskRule setup() {
+    public final TaskRule setup() {
 
 
         //1. construct precondition term array
@@ -430,14 +430,14 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
         return this;
     }
 
-    public Term getTaskTermPattern() {
+    public final Term getTaskTermPattern() {
         return ((Product) term(0)).terms()[0];
     }
-    public Term getBeliefTermPattern() {
+    public final Term getBeliefTermPattern() {
         return ((Product) term(0)).terms()[1];
     }
 
-    public void setAllowBackward(boolean allowBackward) {
+    public final void setAllowBackward(boolean allowBackward) {
         this.allowBackward = allowBackward;
     }
 
@@ -462,7 +462,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    public void forEachQuestionReversal(Consumer<TaskRule> w) {
+    public final void forEachQuestionReversal(Consumer<TaskRule> w) {
 
         //String s = w.toString();
         /*if(s.contains("task(\"?") || s.contains("task(\"@")) { //these are backward inference already
@@ -494,7 +494,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
     }
 
-    private TaskRule clone(final Term newT, final Term newB, final Term newR) {
+    private final TaskRule clone(final Term newT, final Term newB, final Term newR) {
 
 
         final ProductN newPremise =
@@ -528,12 +528,12 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     }
 
 
-    public After after(Term arg1, Term arg2) {
+    public final After after(Term arg1, Term arg2) {
         int order = getTaskOrder(arg1, arg2);
         return new After(order == -1);
     }
 
-    public Concurrent concurrent(Term arg1, Term arg2) {
+    public final Concurrent concurrent(Term arg1, Term arg2) {
         //int order = getTaskOrder(arg1, arg2);
         return new Concurrent();
     }

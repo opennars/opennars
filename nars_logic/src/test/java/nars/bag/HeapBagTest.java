@@ -25,7 +25,7 @@ public class HeapBagTest extends AbstractBagTest {
 
     }
 
-    Memory p = new Default().memory();
+    Memory p = new Default().memory;
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 

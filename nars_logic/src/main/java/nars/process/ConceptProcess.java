@@ -108,7 +108,7 @@ abstract public class ConceptProcess extends NAL  {
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
     public static void firePremiseSquare(NAR nar, Consumer<Premise> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
 
-        Memory m = nar.memory();
+        Memory m = nar.memory;
         int dur = m.duration();
 
         final long now = nar.time();

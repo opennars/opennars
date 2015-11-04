@@ -62,7 +62,7 @@ public class BeliefTableTest extends TestCase {
             */
 
         //}
-        d.memory().conceptBeliefsMax.set(maxBeliefs);
+        d.memory.conceptBeliefsMax.set(maxBeliefs);
         return d;
     }
 
@@ -115,7 +115,7 @@ public class BeliefTableTest extends TestCase {
     public void testTruthOscillation() {
 
         NAR n = newNAR(4);
-        n.memory().duration.set(1);
+        n.memory.duration.set(1);
 
         int offCycles = 2;
 
@@ -163,7 +163,7 @@ public class BeliefTableTest extends TestCase {
         NAR n = newNAR(maxBeliefs);
         n.log();
 
-        n.memory().duration.set(1);
+        n.memory.duration.set(1);
 
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");

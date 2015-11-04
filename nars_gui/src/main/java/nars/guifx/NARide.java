@@ -249,12 +249,12 @@ public class NARide extends BorderPane {
     }
 
     public void addIcon(FXIconPaneBuilder n) {
-        nar.memory().the(n);
+        nar.memory.the(n);
         pp.update();
     }
 
     public void addView(Node n) {
-        nar.memory().the(n);
+        nar.memory.the(n);
 
         content.getTabs().add(new TabX(
                 n.getClass().getSimpleName(),

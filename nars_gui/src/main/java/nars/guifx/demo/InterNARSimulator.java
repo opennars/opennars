@@ -12,7 +12,6 @@ import nars.guifx.graph2.layout.HyperOrganicLayout;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.io.UDPNetwork;
 import nars.nar.Default;
-import nars.term.Atom;
 import nars.util.data.Util;
 
 import java.net.SocketException;
@@ -97,7 +96,7 @@ public class InterNARSimulator {
                             return x;
                         })
                     .collect(Collectors.toList()),
-                        (NARide n) -> Atom.the(n.nar.getName()),
+                        (NARide n) -> n.nar.self,
                         (NARide n, TermNode tn) -> {
                             n.setScaleX(0.45);
                             n.setScaleY(0.45);

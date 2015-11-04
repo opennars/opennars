@@ -30,6 +30,7 @@ import nars.util.data.Util;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.util.event.Topic;
+import net.openhft.affinity.AffinityLock;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.io.File;
@@ -44,9 +45,9 @@ import java.util.stream.Stream;
 
 /**
  * Non-Axiomatic Reasoner
- * <p/>
+ * <p>
  * Instances of this represent a reasoner connected to a Memory, and set of Input and Output channels.
- * <p/>
+ * <p>
  * All state is contained within Memory.  A NAR is responsible for managing I/O channels and executing
  * memory operations.  It executesa series sof cycles in two possible modes:
  * * step mode - controlled by an outside system, such as during debugging or testing
@@ -97,16 +98,18 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * The memory of the reasoner
      * TODO dont expose as public
      */
-    public Memory memory;
+    public final Memory memory;
+
     /**
-     * The name of the reasoner
+     * The id/name of the reasoner
+     * TODO
      */
-    public String name;
+    public final Atom self;
+
     /**
      * Flag for running continuously
      */
-    public AtomicBoolean running = new AtomicBoolean();
-
+    public final AtomicBoolean running = new AtomicBoolean();
 
 
     //TODO use this to store all handler registrations, and decide if transient or not
@@ -117,7 +120,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     static final ThreadPoolExecutor asyncs =
             (ThreadPoolExecutor) Executors.newCachedThreadPool();
-                        //Executors.newFixedThreadPool(1);
+    //Executors.newFixedThreadPool(1);
 
     private int concurrency = 1;
 
@@ -125,19 +128,25 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public NAR(final Memory m) {
         super();
 
+        this.memory = m;
 
+        m.the(NAR.class, this);
+        m.the(ConceptBuilder.class, this);
 
-        setMemory(m);
+        if (running())
+            throw new RuntimeException("NAR must be stopped to change memory");
+
+        m.eventError.on(onError);
+
+        self = Global.DEFAULT_SELF; //TODO make this parametreizable
 
 
         /** register some components in the dependency context, Container (which Memory subclasses from) */
         //m.the("memory", m);
         m.the("clock", m.clock);
 
-    }
+        m.start();
 
-    public final Memory memory() {
-        return memory;
     }
 
 
@@ -228,7 +237,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * gets a concept if it exists, or returns null if it does not
      */
     public final Concept concept(final String conceptTerm) throws InvalidInputException {
-        return concept((Term)term(conceptTerm));
+        return concept((Term) term(conceptTerm));
     }
 
 
@@ -252,7 +261,6 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-
 //    public Task believe(float priority, String termString, long when, float freq, float conf) throws InvalidInputException {
 //        return believe(priority, termString, when, freq, conf);
 //    }
@@ -270,6 +278,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         believe(defaultJudgmentPriority, term, time(tense), freq, conf);
         return this;
     }
+
     public NAR believe(String term, Tense tense, float freq, float conf) throws InvalidInputException {
         believe(defaultJudgmentPriority, term(term), time(tense), freq, conf);
         return this;
@@ -392,13 +401,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * exposes the memory to an input, derived, or immediate task.
      * the memory then delegates it to its controller
-     * <p/>
+     * <p>
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
     public final boolean input(final Task<?> t) {
 
-        final Memory m = memory();
+        final Memory m = memory;
 
 //        if (t == null) {
 //            throw new RuntimeException("null input");
@@ -427,7 +436,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    /** register a singleton */
+    /**
+     * register a singleton
+     */
     final public <X> X the(Object key, X value) {
         if (value == null) {
             //TODO remove?
@@ -446,7 +457,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * returns the global concept index
      */
     public final CacheBag<Term, Concept> concepts() {
-        return memory().getConcepts();
+        return memory.getConcepts();
     }
 
     public TaskQueue input(final Collection<Task> t) {
@@ -473,11 +484,11 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-
     //TODO use specific names for these types of functons in this class
-    public void onExec(String operator, Function<Task<Operation>,List<Task>> f)  {
+    public void onExec(String operator, Function<Task<Operation>, List<Task>> f) {
         on(new OperatorReaction(operator) {
-            @Override public List<Task> apply(Task<Operation> t) {
+            @Override
+            public List<Task> apply(Task<Operation> t) {
                 return f.apply(t);
             }
         });
@@ -486,8 +497,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public void on(Class<? extends Reaction<Class, Object[]>>... x) {
 
         for (Class<? extends Reaction<Class, Object[]>> c : x) {
-            Reaction<Class, Object[]> v = memory().the(c);
-            memory().the(c, v); //register singleton
+            Reaction<Class, Object[]> v = memory.the(c);
+            memory.the(c, v); //register singleton
             on(v);
         }
     }
@@ -508,7 +519,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         });
     }
 
-    /** creates a TermFunction operator from a supplied function, which can be a lambda */
+    /**
+     * creates a TermFunction operator from a supplied function, which can be a lambda
+     */
     public TermFunction on(Term operator, Function<Term[], Object> func) {
         TermFunction f = new TermFunction(operator) {
 
@@ -524,7 +537,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     public void onExec(Class<? extends OperatorReaction> c) {
         //for (Class<? extends OperatorReaction> c : x) {
-        OperatorReaction v = memory().the(c);
+        OperatorReaction v = memory.the(c);
         on(v);
         //}
     }
@@ -659,7 +672,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * Exits an iteration loop if running
      */
     public void stop() {
-        running.set( false );
+        running.set(false);
     }
 
 //    /**
@@ -702,8 +715,24 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of
      */
-    public void frame() {
-        frame(1);
+    public final NAR frame() {
+        return frame(1);
+    }
+
+    /**
+     * pins thread to a CPU core to improve performance while
+     * running some frames
+     */
+    public final NAR frameBatch(final int frames) {
+
+        AffinityLock al = AffinityLock.acquireLock();
+        try {
+            frame(frames);
+        } finally {
+            al.release();
+        }
+
+        return this;
     }
 
     /**
@@ -711,7 +740,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return total time in seconds elapsed in realtime
      */
-    public NAR frame(final int frames) {
+    public final NAR frame(final int frames) {
+
 
         if (!running.compareAndSet(false, true)) {
             throw new RuntimeException("already running");
@@ -720,7 +750,6 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         final Memory memory = this.memory;
 
         Topic<NAR> frameStart = memory.eventFrameStart;
-
 
         final int cpf = getCyclesPerFrame();
         for (int f = 0; f < frames; f++) {
@@ -754,7 +783,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         final String[] previous = {null};
 
-        Topic.all(memory(), (k, v) -> {
+        Topic.all(memory, (k, v) -> {
             try {
                 outputEvent(out, previous[0], k, v);
             } catch (IOException e) {
@@ -764,12 +793,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         return this;
     }
+
     public NAR trace(Appendable out) {
-        return trace(out, (k)->true);
+        return trace(out, (k) -> true);
     }
 
     static final Set<String> logEvents = Sets.newHashSet(
-            "eventTaskProcess",  "eventAnswer",
+            "eventTaskProcess", "eventAnswer",
             "eventExecute", "eventRevision", /* eventDerive */ "eventError",
             "eventSpeak"
     );
@@ -778,8 +808,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public NAR log() {
         return log(System.out);
     }
+
     public NAR log(Appendable out) {
-        return trace(out, k->logEvents.contains(k));
+        return trace(out, k -> logEvents.contains(k));
     }
 
     public void outputEvent(Appendable out, String previou, String k, Object v) throws IOException {
@@ -803,7 +834,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         }
 
         if (v instanceof Object[])
-            v = Arrays.toString((Object[])v);
+            v = Arrays.toString((Object[]) v);
 
         out.append(v.toString());
 
@@ -817,17 +848,19 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
 
     //    /** creates a new loop which begins paused */
-    @Deprecated final public NARLoop loop() {
-        return loop((int)1000);
+    @Deprecated
+    final public NARLoop loop() {
+        return loop((int) 1000);
     }
 
     final public NARLoop loop(final float initialFPS) {
         final float millisecPerFrame = 1000f / initialFPS;
-        return loop((int)millisecPerFrame);
+        return loop((int) millisecPerFrame);
     }
 
     /**
      * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
+     *
      * @param initialFramePeriodMS in milliseconds
      */
     final NARLoop loop(int initialFramePeriodMS) {
@@ -837,7 +870,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    /** sets current maximum allowed NAL level (1..8) */
+    /**
+     * sets current maximum allowed NAL level (1..8)
+     */
     public NAR nal(int level) {
         memory.nal(level);
         return this;
@@ -849,7 +884,6 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public int nal() {
         return memory.nal();
     }
-
 
 
     /**
@@ -896,6 +930,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public final boolean execAsync(Runnable t) {
         return execAsync(t, null);
     }
+
     public boolean execAsync(Runnable t, Consumer<RejectedExecutionException> onError) {
         try {
             memory.eventSpeak.emit("execAsync " + t.toString());
@@ -904,18 +939,20 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
             asyncs.execute(t);
 
             return true;
-        }
-        catch (RejectedExecutionException e) {
-            if (onError!=null)
+        } catch (RejectedExecutionException e) {
+            if (onError != null)
                 onError.accept(e);
             return false;
         }
     }
+
     public boolean execAsync(Consumer<NAR> t) {
-        return execAsync( /* Runnable */ () -> { t.accept(NAR.this); } );
+        return execAsync( /* Runnable */ () -> {
+            t.accept(NAR.this);
+        });
     }
 
-    public <X> Future<X> execAsync(Function<NAR,X> t) {
+    public <X> Future<X> execAsync(Function<NAR, X> t) {
         return asyncs.submit( /* (Callable) */() -> {
             return t.apply(NAR.this);
         });
@@ -935,25 +972,19 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return memory.time();
     }
 
-    public boolean running() {
+    public final boolean running() {
         return running.get();
     }
 
-    /**
-     * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the
-     */
-    public Atom atom(final String s) {
-        return Atom.the(s);
-    }
 
     public Iterator<Concept> iterator() {
-        return memory().getConcepts().iterator();
+        return memory.getConcepts().iterator();
     }
 
 
     public void conceptPriorityHistogram(double[] bins) {
         if (bins != null)
-            memory().getConcepts().getPriorityHistogram(bins);
+            memory.getConcepts().getPriorityHistogram(bins);
     }
 
 
@@ -963,43 +994,14 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //    }
 
 
-    public Concept remove(Term key) {
-        return remove(memory().get(key));
+    public final Concept remove(Term key) {
+        return remove(memory.get(key));
     }
 
 
-    public Concept get(final Term key) {
+    public final Concept get(final Term key) {
         return concepts().get(key);
     }
-
-
-    public final void setMemory(Memory memory) {
-
-        memory.the(NAR.class, this);
-        memory.the(ConceptBuilder.class, this);
-
-        if (running())
-            throw new RuntimeException("NAR must be stopped to change memory");
-
-        this.memory = memory;
-
-
-        memory.eventError.on(onError);
-
-        memory.start();
-
-
-
-
-    }
-
-
-    protected boolean active(Term t) {
-        return memory().get(t) != null;
-    }
-
-
-
 
 
     public NAR answer(String question, Consumer<Task> recvSolution) {
@@ -1009,7 +1011,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return answer(qt, recvSolution);
     }
 
-    /** inputs the question and observes answer events for a solution */
+    /**
+     * inputs the question and observes answer events for a solution
+     */
     public NAR answer(Task questionOrQuest, Consumer<Task> c) {
         new AnswerReaction(this, questionOrQuest) {
 
@@ -1120,19 +1124,19 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     /**
      * Get the Concept associated to a Term, or create it.
-     * <p/>
+     * <p>
      * Existing concept: apply tasklink activation (remove from bag, adjust
      * budget, reinsert) New concept: set initial activation, insert Subconcept:
      * extract from cache, apply activation, insert
-     * <p/>
+     * <p>
      * If failed to insert as a result of null bag, returns null
-     * <p/>
+     * <p>
      * A displaced Concept resulting from insert is forgotten (but may be stored
      * in optional subconcept memory
      *
      * @return an existing Concept, or a new one, or null
      */
-    public Concept conceptualize(Termed termed, final Budget budget) {
+    public final Concept conceptualize(Termed termed, final Budget budget) {
         /*if (termed == null)
             return null;*/
 
@@ -1149,18 +1153,17 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         }
 
         final Concept c = doConceptualize(term, budget);
-        if (c!=null)
-            c.setMemory(memory);
-        else {
-            throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
-        }
+//        if (c==null)
+//            throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
+
+        c.setMemory(memory);
         memory.eventConceptActivated.emit(c);
         return c;
     }
 
     abstract protected Concept doConceptualize(Term term, Budget budget);
 
-    private boolean validConceptTerm(Term term) {
+    static boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof CyclesInterval));
     }
 
@@ -1284,7 +1287,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         input((Input) new TaskStream(taskStream));
     }
 
-    /** execute a Task as a TaskProcess (synchronous) */
+    /**
+     * execute a Task as a TaskProcess (synchronous)
+     */
     public TaskProcess exec(Task task) {
 
         final Budget taskBudget = task.getBudget();
@@ -1314,14 +1319,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     }
 
-    /** convenience method shortcut for concept(t.getTerm()) */
+    /**
+     * convenience method shortcut for concept(t.getTerm())
+     */
     public final Concept concept(Termed termed) {
         return concept(termed.getTerm());
     }
 
-    public String getName() {
-        return WEBSITE;
-    }
 
 //    public NAR onAfterFrame(final Runnable r) {
 //        return onEachFrame(() -> {
@@ -1423,7 +1427,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     @Override
     public boolean equals(Object obj) {
         //TODO compare any other stateful values from NAR class in addition to Memory
-        return this==obj;
+        return this == obj;
     }
 
 

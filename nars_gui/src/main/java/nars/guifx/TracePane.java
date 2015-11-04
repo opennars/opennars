@@ -39,7 +39,7 @@ public class TracePane extends LogPane {
 
         this.volume = volume;
         this.nar = nar;
-        Topic.all(nar.memory(), this::output);
+        Topic.all(nar.memory, this::output);
 
 //            for (Object o : enabled)
 //                filter.value(o, 1);

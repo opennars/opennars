@@ -360,7 +360,7 @@ public class Default extends NAR {
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(termLinkBagSize, rng).mergePlus();
 
-        Memory m = memory();
+        Memory m = memory;
 
         if (t instanceof Atom) {
             return new AtomConcept(t, termLinks, taskLinks);
@@ -474,7 +474,7 @@ public class Default extends NAR {
 
             this.deriver = deriver;
 
-            this.conceptForget = nar.memory().conceptForgetDurations;
+            this.conceptForget = nar.memory.conceptForgetDurations;
 
             this.conceptsFiredPerCycle = new MutableInteger(1);
             this.active = concepts;
@@ -502,7 +502,7 @@ public class Default extends NAR {
             //1 concept if (memory.newTasks.isEmpty())*/
             if (conceptsToFire == 0) return;
 
-            final float conceptForgetDurations = nar.memory().conceptForgetDurations.floatValue();
+            final float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
 
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
 
@@ -513,7 +513,7 @@ public class Default extends NAR {
 //            if (n == 0) return;
 
             for (int i = 0; i < conceptsToFire; i++) {
-                Concept c = active.forgetNext(conceptForgetDurations, nar.memory());
+                Concept c = active.forgetNext(conceptForgetDurations, nar.memory);
                 if (c == null) break;
                 fireConcept(c);
             }
