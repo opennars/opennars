@@ -104,7 +104,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-    protected static final int DEFAULT_INITIAL_CAPACITY = 4;
+    protected static final int DEFAULT_INITIAL_CAPACITY = 8;
 
     private static final long serialVersionUID = 1L;
 
@@ -338,11 +338,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         if (t[index] == CHAINED_KEY) {
             Object[] chain = (Object[]) t[index + 1];
             int cl = chain.length;
+            final int ms = this.maxSize;
             for (int i = 0; i < cl; i += 2) {
                 if (chain[i] == null) {
                     chain[i++] = UnifriedMap.toSentinelIfNull(key);
                     chain[i] = value;
-                    if (++this.occupied > this.maxSize) {
+                    if (++this.occupied > ms) {
                         this.rehash(tl);
                     }
                     return null;
@@ -358,7 +359,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             t[index + 1] = newChain;
             newChain[cl] = UnifriedMap.toSentinelIfNull(key);
             newChain[cl + 1] = value;
-            if (++this.occupied > this.maxSize) {
+            if (++this.occupied > ms) {
                 this.rehash(tl);
             }
             return null;
