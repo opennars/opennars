@@ -7,7 +7,7 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
-import nars.util.sort.ArraySortedIndex;
+import nars.util.ArraySortedIndex;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

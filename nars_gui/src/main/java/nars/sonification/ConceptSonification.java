@@ -7,10 +7,10 @@ import nars.audio.SoundProducer;
 import nars.audio.granular.Granulize;
 import nars.audio.sample.SampleLoader;
 import nars.audio.sample.SonarSample;
-import nars.clock.FrameClock;
 import nars.concept.Concept;
-import nars.event.FrameReaction;
 import nars.nar.Default;
+import nars.time.FrameClock;
+import nars.util.event.FrameReaction;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;

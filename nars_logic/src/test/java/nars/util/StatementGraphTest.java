@@ -1,10 +1,10 @@
 package nars.util;
 
 import nars.NAR;
-import nars.clock.FrameClock;
 import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
 import nars.term.Statement;
+import nars.time.FrameClock;
 import nars.util.graph.StatementGraph;
 import org.junit.Test;
 

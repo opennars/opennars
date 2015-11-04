@@ -1,6 +1,6 @@
 package nars.budget;
 
-import nars.meter.bag.NullItem;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;

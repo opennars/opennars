@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.lang.System.arraycopy;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
-import static nars.nal.nal7.Temporal.appendInterval;
+import static nars.nal.nal7.Tense.appendInterval;
 
 /**
  * Sequential Conjunction (&/)
@@ -48,7 +48,6 @@ public class Sequence extends Conjunctive implements Intermval {
             if (intervals.length != 1 + subterms.length)
                 throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
         }
-
 
 
 //        //operate on a clone in case this will be created from a subrange of another array etc */
@@ -105,7 +104,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
     @Override
     public final int getTemporalOrder() {
-        return Temporal.ORDER_FORWARD;
+        return Tense.ORDER_FORWARD;
     }
 
 
@@ -206,14 +205,14 @@ public class Sequence extends Conjunctive implements Intermval {
     public static Term makeSequence(Term term1, Term term2) {
         final Term[] components;
 
-        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
+        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == Tense.ORDER_FORWARD)) {
 
             Compound cterm1 = (Compound) term1;
 
             List<Term> list = Global.newArrayList(cterm1.length());
             cterm1.addTermsTo(list);
 
-            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
+            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
                 // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 ((Compound) term2).addTermsTo(list);
             } else {
@@ -223,7 +222,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
             components = list.toArray(new Term[list.size()]);
 
-        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
+        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
             Compound cterm2 = (Compound) term2;
             components = new Term[term2.length() + 1];
             components[0] = term1;

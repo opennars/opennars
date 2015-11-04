@@ -1,16 +1,17 @@
 package nars.nar;
 
-import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
-import nars.concept.ConceptActivator;
-import nars.io.SortedTaskPerception;
-import nars.io.TaskPerception;
+import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
 import nars.task.Task;
+import nars.task.flow.SortedTaskPerception;
+import nars.task.flow.TaskPerception;
 import nars.term.Term;
+import nars.time.FrameClock;
 import nars.util.data.list.FasterList;
 
 import java.util.List;
@@ -25,8 +26,11 @@ public class Default2 extends Default {
      */
 
 
-    public Default2(int i, int i1, int i2, int i3) {
-        this(new LocalMemory(), i, i1, i2, i3);
+    public Default2(int numConcepts,
+                    int conceptsFirePerCycle,
+                    int tasklinkFirePerConcept,
+                    int termlinkFirePerConcept) {
+        this(new Memory(new FrameClock(), CacheBag.memory(numConcepts)), numConcepts, conceptsFirePerCycle, tasklinkFirePerConcept, termlinkFirePerConcept);
     }
 
     public Default2(Memory mem, int i, int i1, int i2, int i3) {

@@ -39,7 +39,7 @@ public class Parallel extends Conjunctive implements Interval {
 
     @Override
     public final int getTemporalOrder() {
-        return Temporal.ORDER_CONCURRENT;
+        return Tense.ORDER_CONCURRENT;
     }
 
     @Deprecated public static final Term make(final Term[] argList) {

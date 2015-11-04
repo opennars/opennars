@@ -2,10 +2,10 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.NAR;
-import nars.meter.TestNAR;
+import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.narsese.InvalidInputException;
 import nars.task.Task;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -58,7 +58,7 @@ public class NAL1Test extends AbstractNALTester {
 
 
     @Test
-    public void revision() throws InvalidInputException {
+    public void revision() throws Narsese.NarseseException {
 
         final String belief = "<bird --> swimmer>";
 
@@ -71,7 +71,7 @@ public class NAL1Test extends AbstractNALTester {
 
 
     @Test
-    public void deduction() throws InvalidInputException {
+    public void deduction() throws Narsese.NarseseException {
 
         test().believe("<bird --> animal>")
                 /*.en("bird is a type of animal.")
@@ -85,7 +85,7 @@ public class NAL1Test extends AbstractNALTester {
     }
 
     @Test
-    public void abduction() throws InvalidInputException {
+    public void abduction() throws Narsese.NarseseException {
 
         int time = 128;
         test().mustBelieve(time, "<sport --> chess>", 1.0f, 0.42f)
@@ -102,7 +102,7 @@ public class NAL1Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction() throws InvalidInputException {
+    public void induction() throws Narsese.NarseseException {
         test().believe("<swan --> swimmer>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                 //.en("Swan is a type of swimmer.");
                 .believe("<swan --> bird>")
@@ -116,7 +116,7 @@ public class NAL1Test extends AbstractNALTester {
     }
 
     @Test
-    public void exemplification() throws InvalidInputException {
+    public void exemplification() throws Narsese.NarseseException {
 
         test()
             //.debug()
@@ -129,7 +129,7 @@ public class NAL1Test extends AbstractNALTester {
 
 
     @Test
-    public void conversion() throws InvalidInputException {
+    public void conversion() throws Narsese.NarseseException {
 
         long time = /*tester.nal() <= 2 ? 15 :*/ 32;
         TestNAR test = test();
@@ -141,12 +141,12 @@ public class NAL1Test extends AbstractNALTester {
 
 
     @Test
-    public void whQuestionUnifyQueryVar() throws InvalidInputException {
+    public void whQuestionUnifyQueryVar() throws Narsese.NarseseException {
         testQuestionAnswer(16, "<bird --> swimmer>", "<?x --> swimmer>", "<bird --> swimmer>");
     }
 
     @Test
-    public void yesNoQuestion() throws InvalidInputException {
+    public void yesNoQuestion() throws Narsese.NarseseException {
         testQuestionAnswer(16, "<bird --> swimmer>", "<bird --> swimmer>", "<bird --> swimmer>");
     }
 
@@ -179,7 +179,7 @@ public class NAL1Test extends AbstractNALTester {
 
 
     @Test
-    public void backwardInference() throws InvalidInputException {
+    public void backwardInference() throws Narsese.NarseseException {
         long time = /*nar instanceof Solid ? 15 :*/ 32;
 
 

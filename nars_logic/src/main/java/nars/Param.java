@@ -1,8 +1,8 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.nal.Level;
 import nars.nal.nal7.AtomicDuration;
-import nars.process.Level;
 import nars.util.data.MutableInteger;
 import objenome.Container;
 

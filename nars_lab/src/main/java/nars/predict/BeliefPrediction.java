@@ -7,7 +7,7 @@ package nars.predict;
 import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
+import nars.util.event.NARReaction;
 
 import java.util.List;
 

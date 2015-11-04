@@ -5,14 +5,14 @@ import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
-import nars.meter.RuleTest;
-import nars.meter.TestNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.util.graph.TermLinkGraph;
+import nars.util.meter.RuleTest;
+import nars.util.meter.TestNAR;
 import org.junit.Before;
 import org.junit.Test;
 

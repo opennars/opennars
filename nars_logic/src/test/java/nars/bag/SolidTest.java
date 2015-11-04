@@ -1,7 +1,7 @@
 //package nars.bag;
 //
 //import nars.Global;
-//import nars.io.in.LibraryInput;
+//import LibraryInput;
 //import nars.event.AnswerReaction;
 //import nars.meter.TestNAR;
 //import nars.nar.experimental.Solid;

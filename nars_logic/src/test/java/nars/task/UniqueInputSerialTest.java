@@ -2,9 +2,9 @@ package nars.task;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.in.TaskQueue;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.task.flow.TaskQueue;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;

@@ -6,7 +6,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
-import nars.event.FrameReaction;
+import nars.util.event.FrameReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;

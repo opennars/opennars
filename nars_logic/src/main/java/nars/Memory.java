@@ -23,23 +23,25 @@ package nars;
 
 import com.gs.collections.api.tuple.Twin;
 import nars.bag.impl.CacheBag;
-import nars.clock.Clock;
 import nars.concept.Concept;
-import nars.meter.EmotionMeter;
-import nars.meter.LogicMeter;
 import nars.nal.nal8.ExecutionResult;
 import nars.nal.nal8.Operation;
-import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.time.Clock;
+import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
 import nars.util.event.Topic;
+import nars.util.meter.EmotionMeter;
+import nars.util.meter.LogicMeter;
+import org.infinispan.marshall.core.JBossMarshaller;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Random;
@@ -118,6 +120,11 @@ public class Memory extends Param {
      * TODO move this to and make this the repsonsibility of Clock implementations
      * */
     volatile long currentStampSerial = 1;
+
+
+    public Memory(Clock clock, CacheBag<Term, Concept> concepts) {
+        this(clock, new XorShift1024StarRandom(1), concepts);
+    }
 
     /**
      * Create a new memory
@@ -534,6 +541,10 @@ public class Memory extends Param {
         this.concepts.start(this);
     }
 
+    public byte[] toBytes() throws IOException, InterruptedException {
+        //TODO probably will want to do something more careful
+        return new JBossMarshaller().objectToByteBuffer(this);
+    }
 
     //public Iterator<Concept> getConcepts(boolean active, boolean inactive) {
 //        if (active && !inactive)

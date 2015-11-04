@@ -2,6 +2,7 @@ package nars.io;
 
 import nars.NAR;
 import nars.nar.Default;
+import nars.task.in.NQuadsRDF;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;

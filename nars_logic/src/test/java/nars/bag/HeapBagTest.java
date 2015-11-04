@@ -7,9 +7,9 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.HeapBag;
 import nars.budget.Item;
-import nars.meter.bag.NullItem;
 import nars.nar.Default;
 import nars.util.data.Util;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

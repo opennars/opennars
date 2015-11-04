@@ -1,9 +1,9 @@
 package nars.op.data;
 
-import nars.io.Texts;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
+import nars.util.Texts;
 
 /**
  * Uses the levenshtein distance of two term's string represents to

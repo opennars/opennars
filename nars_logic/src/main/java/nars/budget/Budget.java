@@ -24,9 +24,9 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Symbols;
-import nars.io.Texts;
-import nars.task.stamp.Stamp;
+import nars.truth.Stamp;
 import nars.truth.Truth;
+import nars.util.Texts;
 import nars.util.data.Util;
 import org.apache.commons.math3.util.FastMath;
 

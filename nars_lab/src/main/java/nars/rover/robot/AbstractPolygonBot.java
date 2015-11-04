@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.event.FrameReaction;
+import nars.util.event.FrameReaction;
 import nars.nal.nal7.Tense;
 import nars.rl.gng.NeuralGasNet;
 import nars.rover.Material;

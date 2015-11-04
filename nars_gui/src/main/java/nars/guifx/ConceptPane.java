@@ -18,7 +18,6 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.concept.Concept;
-import nars.event.FrameReaction;
 import nars.guifx.graph3.SpaceNet;
 import nars.guifx.graph3.Xform;
 import nars.guifx.util.ColorArray;
@@ -28,6 +27,7 @@ import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.truth.Truth;
+import nars.util.event.FrameReaction;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;

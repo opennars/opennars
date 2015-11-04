@@ -3,7 +3,7 @@
 //
 //import nars.NARSeed;
 //import nars.io.TraceWriter;
-//import nars.io.in.LibraryInput;
+//import LibraryInput;
 //import nars.io.out.TextOutput;
 //import nars.meter.TestNAR;
 //import nars.meter.condition.OutputCondition;
@@ -16,7 +16,7 @@
 //import java.util.List;
 //import java.util.function.Consumer;
 //
-//import static nars.io.in.LibraryInput.getPaths;
+//import static LibraryInput.getPaths;
 //
 ///**
 // * Collects detailed telemetry for a test suite

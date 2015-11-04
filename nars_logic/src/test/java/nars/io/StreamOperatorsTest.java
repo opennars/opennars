@@ -1,5 +1,6 @@
 package nars.io;
 
+import nars.op.io.UDPNetwork;
 import nars.util.data.Util;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.junit.Test;

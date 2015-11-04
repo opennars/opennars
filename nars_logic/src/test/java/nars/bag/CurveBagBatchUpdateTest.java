@@ -5,9 +5,9 @@ import nars.Global;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
-import nars.meter.bag.BagGenerators;
-import nars.meter.bag.NullItem;
 import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.meter.bag.BagGenerators;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -2,20 +2,17 @@ package nars.nar;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
-import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
+import nars.Premise;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
-import nars.clock.Clock;
-import nars.clock.FrameClock;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
-import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
-import nars.io.FIFOTaskPerception;
-import nars.io.TaskPerception;
+import nars.concept.util.ConceptActivator;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -37,11 +34,14 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
+import nars.task.flow.FIFOTaskPerception;
+import nars.task.flow.TaskPerception;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.time.Clock;
+import nars.time.FrameClock;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.Active;
@@ -82,7 +82,7 @@ public class Default extends NAR {
     }
 
     public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
-        this(new LocalMemory(clock), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
+        this(new Memory(clock, CacheBag.memory(activeConcepts)), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {

@@ -1,9 +1,11 @@
 package nars.concept;
 
+import nars.Premise;
 import nars.bag.Bag;
 import nars.bag.NullBag;
+import nars.concept.util.BeliefTable;
+import nars.concept.util.TaskTable;
 import nars.link.*;
-import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
 

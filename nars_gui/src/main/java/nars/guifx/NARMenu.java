@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import nars.NAR;
 import nars.guifx.util.NSlider;
-import nars.io.NQuadsRDF;
+import nars.task.in.NQuadsRDF;
 import nars.util.event.Active;
 
 import java.io.File;

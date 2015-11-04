@@ -22,7 +22,7 @@ package nars.nal.nal5;
 
 import nars.Op;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
 
@@ -40,7 +40,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     protected Implication(final A subject, final B predicate, final int order) {
         super(subject, predicate);
 
-        if (order == Temporal.ORDER_INVALID) {
+        if (order == Tense.ORDER_INVALID) {
             throw new RuntimeException("Invalid temporal order; args=" + subject + ',' + predicate);
         }
 
@@ -72,7 +72,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     public static Term makeImplication(final Term subject, final Term predicate) {
         if (subject.equals(predicate))
             return subject;
-        return make(subject, predicate, Temporal.ORDER_NONE);
+        return make(subject, predicate, Tense.ORDER_NONE);
     }
 
     /**
@@ -82,7 +82,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
      * @return A compound generated or a term it reduced to
      */
     public static Implication make(final Term subject, final Term predicate) {
-        return make(subject, predicate, Temporal.ORDER_NONE);
+        return make(subject, predicate, Tense.ORDER_NONE);
     }
 
 //    public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
@@ -113,7 +113,6 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
             return null;
         }
         
-        //final CharSequence name = makeName(subject, temporalOrder, predicate);         
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
@@ -133,11 +132,11 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     @Override
     public Op op() {
         switch (temporalOrder) {
-            case Temporal.ORDER_FORWARD:
+            case Tense.ORDER_FORWARD:
                 return Op.IMPLICATION_AFTER;
-            case Temporal.ORDER_CONCURRENT:
+            case Tense.ORDER_CONCURRENT:
                 return Op.IMPLICATION_WHEN;
-            case Temporal.ORDER_BACKWARD:
+            case Tense.ORDER_BACKWARD:
                 return Op.IMPLICATION_BEFORE;
         }
         return Op.IMPLICATION;
@@ -149,13 +148,13 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     }
 
     public boolean isForward() {
-        return getTemporalOrder()== Temporal.ORDER_FORWARD;
+        return getTemporalOrder()== Tense.ORDER_FORWARD;
     }
     public boolean isBackward() {
-        return getTemporalOrder()== Temporal.ORDER_BACKWARD;
+        return getTemporalOrder()== Tense.ORDER_BACKWARD;
     }
     public boolean isConcurrent() {
-        return getTemporalOrder()== Temporal.ORDER_CONCURRENT;
+        return getTemporalOrder()== Tense.ORDER_CONCURRENT;
     }
     
 }

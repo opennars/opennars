@@ -2,6 +2,7 @@ package nars.io;
 
 import nars.NAR;
 import nars.concept.Concept;
+import nars.concept.util.ConceptExternalizer;
 import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Assert;

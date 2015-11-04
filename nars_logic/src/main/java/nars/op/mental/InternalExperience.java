@@ -7,11 +7,9 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -147,11 +145,11 @@ public class InternalExperience {
         });
     }
 
-    public static Operation toTerm(final Sentence s, final NAL mem, float conceptCreationExpectation) {
+    public static Operation toTerm(final Sentence s, final Premise mem, float conceptCreationExpectation) {
         return toTerm(s, mem, conceptCreationExpectation, enableWantBelieve);
     }
 
-    public static Operation toTerm(final Sentence s, final NAL nal, float conceptCreationExpectation, boolean enableWantBelieve) {
+    public static Operation toTerm(final Sentence s, final Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
         Operator opTerm;
         switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
@@ -184,7 +182,7 @@ public class InternalExperience {
         }
         arg[k] = nal.self();
 
-        Operation operation = $.opr(opTerm, arg);
+        Operation operation = $.op(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -198,20 +196,20 @@ public class InternalExperience {
     }
 
 
-//    public Task experienceFromBelief(NAL nal, Budget b, Sentence belief) {
+//    public Task experienceFromBelief(Premise nal, Budget b, Sentence belief) {
 //        return experienceFromTask(nal,
 //                new Task(belief.clone(), b, null),
 //                false);
 //    }
 
-//    public Task experienceFromTask(NAL nal, Task task, boolean full) {
+//    public Task experienceFromTask(Premise nal, Task task, boolean full) {
 //        if (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
 //            return experienceFromTaskInternal(nal, task, full);
 //        }
 //        return null;
 //    }
 
-    protected Task experienceFromTaskInternal(NAL nal, Task task, boolean full) {
+    protected Task experienceFromTaskInternal(Premise nal, Task task, boolean full) {
 
         // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
         //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
@@ -266,10 +264,10 @@ public class InternalExperience {
             Operator.the("want")
     };
 
-    private void internalizeImplication(Task task, NAL nal, Implication beliefTerm) {
+    private void internalizeImplication(Task task, Premise nal, Implication beliefTerm) {
         Term taskTerm = task.getTerm();
         Implication imp = beliefTerm;
-        if (imp.getTemporalOrder() == Temporal.ORDER_FORWARD) {
+        if (imp.getTemporalOrder() == Tense.ORDER_FORWARD) {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
             boolean valid = true;
             Term impsub = imp.getSubject();
@@ -291,18 +289,18 @@ public class InternalExperience {
                 long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
 
                 beliefReasonDerive(task,
-                        $.opr(Product.only(imp.getPredicate()), anticipate),
+                        $.op(Product.only(imp.getPredicate()), anticipate),
                         nal, interval);
             }
         }
     }
 
-    private void nonInnate(Sentence belief, Task task, NAL nal, Operator op) {
+    private void nonInnate(Sentence belief, Task task, Premise nal, Operator op) {
         //the operators which dont have a innate belief
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    $.opr(Product.only(belief.getTerm()), op),
+                    $.op(Product.only(belief.getTerm()), op),
                     nal, 0);
     }
 

@@ -3,14 +3,14 @@ package nars.guifx.demo;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import nars.LocalMemory;
+import nars.Memory;
 import nars.NAR;
 import nars.bag.impl.GuavaCacheBag;
-import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
 import nars.guifx.TracePane;
-import nars.io.UDPNetwork;
-import nars.nar.Default;
+import nars.nar.Default2;
+import nars.op.io.UDPNetwork;
+import nars.time.RealtimeMSClock;
 
 import java.net.SocketException;
 
@@ -34,8 +34,8 @@ public class UDPWidget extends BorderPane {
 
     public static void main(String[] args) {
 
-        NAR n = new Default(
-            new LocalMemory(
+        NAR n = new Default2(
+            new Memory(
                 new RealtimeMSClock(),
                 new GuavaCacheBag<>()
         ), 1024, 2, 3, 4);

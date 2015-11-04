@@ -3,7 +3,7 @@ package nars.op.app;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.budget.TaskAccumulator;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.task.Task;
 
 import java.util.Iterator;
@@ -115,7 +115,7 @@ public class Commander implements Consumer<NAR> {
         if (t.getBudget().isDeleted())
             return false;
 
-        if (!Temporal.isEternal(t.getOccurrenceTime())) {
+        if (!Tense.isEternal(t.getOccurrenceTime())) {
             long age = Math.abs( now - t.getOccurrenceTime() );
             if (age > maxTemporalBeliefAge)
                 return false;

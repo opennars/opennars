@@ -2,8 +2,8 @@ package nars.term;
 
 import nars.Global;
 import nars.NAR;
+import nars.Narsese;
 import nars.nar.Default;
-import nars.narsese.InvalidInputException;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class ApplySubstituteTest {
     NAR n = new Default();
 
     @Test
-    public void testApplySubstitute() throws InvalidInputException {
+    public void testApplySubstitute() throws Narsese.NarseseException {
             
         String abS ="<a --> b>";
         Compound ab = n.term(abS);
@@ -41,7 +41,7 @@ public class ApplySubstituteTest {
     }
     
     @Test
-    public void test2() throws InvalidInputException {
+    public void test2() throws Narsese.NarseseException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
         NAR n = new Default();
             

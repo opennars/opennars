@@ -1,9 +1,8 @@
 package nars.nar;
 
-import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
-import nars.narsese.InvalidInputException;
+import nars.Narsese;
 import nars.util.io.JSON;
 import org.infinispan.marshall.core.JBossMarshaller;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class NARTest {
 
     @Test
     public void testEmptyMemoryToJSON() throws IOException, InterruptedException, ClassNotFoundException {
-        LocalMemory m = new LocalMemory();
+        Memory m = new Terminal().memory;
         String j = JSON.omDeep.writeValueAsString(m);
         assertTrue(j.length() > 16);
 
@@ -37,7 +36,7 @@ public class NARTest {
     @Test
     public void testEmptyMemorySerialization() throws IOException, InterruptedException, ClassNotFoundException {
         /** empty memory, and serialize it */
-        LocalMemory m = new LocalMemory();
+        Memory m = new Terminal().memory;
         byte[] bm = m.toBytes();
         assertTrue(bm.length > 64);
 
@@ -47,8 +46,8 @@ public class NARTest {
 
     @Test
     public void testMemoryTransplant() {
-        Memory m = new LocalMemory();
-        Default nar = new Default(m, 1000, 1, 5, 5);
+
+        Default nar = new Default2(1000, 1, 5, 5);
         //DefaultAlann nar = new DefaultAlann(m, 32);
 
         //TextOutput.out(nar);
@@ -66,9 +65,9 @@ public class NARTest {
 
         //a new nar with the same memory is allowed to
         //take control of it after the first stops
-        Default nar2 = new Default(m, 1000, 1, 1, 3);
+        Default nar2 = new Default2(nar.memory, 1000, 1, 1, 3);
 
-        assertTrue(m.time() > 1);
+        assertTrue(nar2.memory.time() > 1);
 
         //it should have existing concepts
         assertEquals(nc, nar2.concepts().size());
@@ -105,7 +104,7 @@ public class NARTest {
 
 
     @Test
-    public void testQuery2() throws InvalidInputException {
+    public void testQuery2() throws Narsese.NarseseException {
         testQueryAnswered(16, 0);
     }
 
@@ -115,7 +114,7 @@ public class NARTest {
 //    }
 
 
-    public void testQueryAnswered(int cyclesBeforeQuestion, int cyclesAfterQuestion) throws InvalidInputException {
+    public void testQueryAnswered(int cyclesBeforeQuestion, int cyclesAfterQuestion) throws Narsese.NarseseException {
 
         final AtomicBoolean b = new AtomicBoolean(false);
 

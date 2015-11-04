@@ -3,7 +3,7 @@
 //import nars.Global;
 //import nars.NARSeed;
 //import nars.analyze.NALysis;
-//import nars.io.in.LibraryInput;
+//import LibraryInput;
 //import nars.meter.TestNAR;
 //import nars.nal.AbstractNALTest;
 //

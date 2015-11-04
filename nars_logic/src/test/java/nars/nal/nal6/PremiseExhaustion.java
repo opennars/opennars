@@ -1,7 +1,7 @@
 package nars.nal.nal6;
 
-import nars.meter.ExhaustPremises;
-import nars.narsese.InvalidInputException;
+import nars.Narsese;
+import nars.util.meter.ExhaustPremises;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class PremiseExhaustion {
     }
 
     @Test
-    public void second_level_variable_unification_ex() throws InvalidInputException {
+    public void second_level_variable_unification_ex() throws Narsese.NarseseException {
 
         ExhaustPremises.tryPremise(
                 "(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.90%",

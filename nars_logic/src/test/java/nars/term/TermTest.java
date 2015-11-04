@@ -18,13 +18,13 @@ package nars.term;
 
 import nars.Global;
 import nars.NAR;
+import nars.Narsese;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
 import nars.nar.Default;
 import nars.nar.Terminal;
-import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import org.junit.Test;
 
@@ -93,7 +93,7 @@ public class TermTest {
     }
 
     @Test
-    public void testConjunctionTreeSet() throws InvalidInputException {
+    public void testConjunctionTreeSet() throws Narsese.NarseseException {
         NAR n = new Default();
 
 
@@ -149,7 +149,7 @@ public class TermTest {
     }
 
     @Test
-    public void testUnconceptualizedTermInstancing() throws InvalidInputException {
+    public void testUnconceptualizedTermInstancing() throws Narsese.NarseseException {
         NAR n = new Default();
 
         String term1String = "<a --> b>";
@@ -168,7 +168,7 @@ public class TermTest {
     }
 
     @Test
-    public void testConceptInstancing() throws InvalidInputException {
+    public void testConceptInstancing() throws Narsese.NarseseException {
         NAR n = new Default();
 
         String statement1 = "<a --> b>.";
@@ -294,7 +294,7 @@ public class TermTest {
             assertEquals(Operation.class, x.getClass());
             assertEquals("wonder(a, b)", x.toString());
 
-        } catch (InvalidInputException ex) {
+        } catch (Narsese.NarseseException ex) {
             ex.printStackTrace();
             assertTrue(false);
         }

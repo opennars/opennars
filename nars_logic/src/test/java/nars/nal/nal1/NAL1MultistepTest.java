@@ -1,15 +1,15 @@
 package nars.nal.nal1;
 
 import nars.NAR;
-import nars.meter.experiment.DeductiveChainTest;
 import nars.nal.AbstractNALTester;
+import nars.util.meter.experiment.DeductiveChainTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
 
-import static nars.meter.experiment.DeductiveChainTest.inh;
+import static nars.util.meter.experiment.DeductiveChainTest.inh;
 
 @RunWith(Parameterized.class)
 public class NAL1MultistepTest extends AbstractNALTester {

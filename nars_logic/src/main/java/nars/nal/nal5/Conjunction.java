@@ -21,7 +21,7 @@
 package nars.nal.nal5;
 
 import nars.Op;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.term.Term;
 
 /**
@@ -76,7 +76,7 @@ public class Conjunction extends Conjunctive {
 
     @Override
     public final int getTemporalOrder() {
-        return Temporal.ORDER_NONE;
+        return Tense.ORDER_NONE;
     }
 
     @Override
@@ -191,7 +191,7 @@ public class Conjunction extends Conjunctive {
     }
 
     static Term make(Term[] argList) {
-        argList = flattenAndSort(argList, Temporal.ORDER_NONE);
+        argList = flattenAndSort(argList, Tense.ORDER_NONE);
 
         //collapse to a singular term if none and parallel
         if (argList.length < 2) return argList[0];

@@ -181,24 +181,6 @@ abstract public class Symbols {
         return stringToOperator.get(s);
     }
 
-
-//    public static Op getOpener(final char c) {
-//        Op o = getOperator(c);
-//        if (o == null) return null;
-//        if (o.opener)
-//            return o;
-//        return null;
-//    }
-//
-//    public static Op getCloser(final char c) {
-//        Op o = getOperator(c);
-//        if (o == null) return null;
-//        if (o.closer)
-//            return o;
-//        return null;
-//    }
-
-    
     /* Stamp, display only */
     public static final char STAMP_OPENER = '{';
     public static final char STAMP_CLOSER = '}';

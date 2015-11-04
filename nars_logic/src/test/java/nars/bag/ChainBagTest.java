@@ -2,8 +2,8 @@ package nars.bag;
 
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
-import nars.meter.bag.NullItem;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

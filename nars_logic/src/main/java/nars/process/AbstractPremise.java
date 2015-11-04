@@ -1,13 +1,18 @@
 package nars.process;
 
 import nars.NAR;
-import nars.premise.Premise;
+import nars.Premise;
 import nars.task.Task;
+
+import java.util.Collection;
 
 /**
  * Base class for premises
  */
 abstract public class AbstractPremise implements Premise {
+
+    /** derivation queue (this might also work as a Set) */
+    protected Collection<Task> derived = null;
 
     public final NAR nar;
 

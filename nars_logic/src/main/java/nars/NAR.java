@@ -6,31 +6,26 @@ import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
-import nars.event.AnswerReaction;
-import nars.event.NARReaction;
-import nars.io.in.*;
-import nars.io.in.TaskQueue;
+import nars.concept.util.ConceptBuilder;
+import nars.nal.Level;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.TermFunction;
-import nars.narsese.InvalidInputException;
-import nars.narsese.NarseseParser;
-import nars.process.Level;
 import nars.process.TaskProcess;
 import nars.task.DefaultTask;
 import nars.task.Task;
+import nars.task.flow.Input;
+import nars.task.flow.TaskQueue;
+import nars.task.flow.TaskStream;
+import nars.task.in.FileInput;
+import nars.task.in.TextInput;
 import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.NARLoop;
 import nars.util.data.Util;
-import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
-import nars.util.event.Topic;
+import nars.util.event.*;
 import net.openhft.affinity.AffinityLock;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
@@ -200,13 +195,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * parses and forms a Task from a string but doesnt input it
      */
     public Task task(String taskText) {
-        return NarseseParser.the().task(taskText, memory);
+        return Narsese.the().task(taskText, memory);
     }
 
 
     public List<Task> tasks(final String parse) {
         List<Task> result = Global.newArrayList(1);
-        NarseseParser.the().tasks(parse, result, memory);
+        Narsese.the().tasks(parse, result, memory);
         return result;
     }
 
@@ -220,8 +215,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return i;
     }
 
-    public final <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
-        T x = NarseseParser.the().term(t);
+    public final <S extends Term, T extends S> T term(final String t) throws Narsese.NarseseException {
+        T x = Narsese.the().term(t);
 
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
@@ -237,27 +232,27 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * gets a concept if it exists, or returns null if it does not
      */
-    public final Concept concept(final String conceptTerm) throws InvalidInputException {
+    public final Concept concept(final String conceptTerm) throws Narsese.NarseseException {
         return concept((Term) term(conceptTerm));
     }
 
 
-    public Task ask(String termString) throws InvalidInputException {
+    public Task ask(String termString) throws Narsese.NarseseException {
         //TODO remove '?' if it is attached at end
-        return ask((Compound) NarseseParser.the().compound(termString));
+        return ask((Compound) Narsese.the().compound(termString));
     }
 
-    public Task ask(Compound c) throws InvalidInputException {
+    public Task ask(Compound c) throws Narsese.NarseseException {
         //TODO remove '?' if it is attached at end
         return ask(c, Symbols.QUESTION);
     }
 
-    public Task quest(String questString) throws InvalidInputException {
+    public Task quest(String questString) throws Narsese.NarseseException {
         return ask(term(questString), Symbols.QUEST);
     }
 
 
-    public Task goal(Compound goalTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+    public Task goal(Compound goalTerm, Tense tense, float freq, float conf) throws Narsese.NarseseException {
         return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, time(tense), freq, conf);
     }
 
@@ -266,39 +261,39 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        return believe(priority, termString, when, freq, conf);
 //    }
 
-    public Task believe(float priority, Compound term, long when, float freq, float conf) throws InvalidInputException {
+    public Task believe(float priority, Compound term, long when, float freq, float conf) throws Narsese.NarseseException {
         return believe(priority, defaultJudgmentDurability, term, when, freq, conf);
     }
 
 
-    public NAR believe(Compound term, float freq, float conf) throws InvalidInputException {
+    public NAR believe(Compound term, float freq, float conf) throws Narsese.NarseseException {
         return believe(term, Tense.Eternal, freq, conf);
     }
 
-    public NAR believe(Compound term, Tense tense, float freq, float conf) throws InvalidInputException {
+    public NAR believe(Compound term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
         believe(defaultJudgmentPriority, term, time(tense), freq, conf);
         return this;
     }
 
-    public NAR believe(String term, Tense tense, float freq, float conf) throws InvalidInputException {
+    public NAR believe(String term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
         believe(defaultJudgmentPriority, term(term), time(tense), freq, conf);
         return this;
     }
 
     public final long time(Tense tense) {
-        return Temporal.getOccurrenceTime(tense, memory);
+        return Tense.getOccurrenceTime(tense, memory);
     }
 
-    public NAR believe(String termString, float freq, float conf) throws InvalidInputException {
+    public NAR believe(String termString, float freq, float conf) throws Narsese.NarseseException {
         return believe((Compound) term(termString), freq, conf);
     }
 
 
-    public NAR believe(String termString) throws InvalidInputException {
+    public NAR believe(String termString) throws Narsese.NarseseException {
         return believe((Compound) term(termString));
     }
 
-    public NAR believe(Compound term) throws InvalidInputException {
+    public NAR believe(Compound term) throws Narsese.NarseseException {
         return believe(term, 1.0f, defaultJudgmentConfidence);
     }
 
@@ -347,18 +342,18 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        return believe(pri, NAR.defaultJudgmentDurability, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
 //    }
 
-    public <C extends Compound> Task<C> believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+    public <C extends Compound> Task<C> believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
         return input(pri, dur, term, Symbols.JUDGMENT, occurrenceTime, freq, conf);
     }
 
     /**
      * TODO add parameter for Tense control. until then, default is Now
      */
-    public <T extends Compound> Task<T> goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws InvalidInputException {
+    public <T extends Compound> Task<T> goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws Narsese.NarseseException {
         return input(pri, dur, goal, Symbols.GOAL, occurrence, freq, conf);
     }
 
-    final public <C extends Compound> Task<C> input(float pri, float dur, C belief, char punc, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+    final public <C extends Compound> Task<C> input(float pri, float dur, C belief, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
 
         final Truth tv;
 
@@ -374,7 +369,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return t;
     }
 
-    public Task ask(Compound term, char questionOrQuest) throws InvalidInputException {
+    public Task ask(Compound term, char questionOrQuest) throws Narsese.NarseseException {
 
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance

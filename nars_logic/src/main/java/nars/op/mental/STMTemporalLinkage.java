@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nal.Deriver;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Compound;
@@ -15,7 +15,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static nars.nal.nal7.Temporal.containsMentalOperator;
 import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
@@ -51,7 +50,7 @@ public class STMTemporalLinkage {
 
     public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
-        if (containsMentalOperator(newEvent)) return true;
+        if (Tense.containsMentalOperator(newEvent)) return true;
         return false;
     }
 
@@ -70,7 +69,7 @@ public class STMTemporalLinkage {
 //            return false;
 //        }
 
-        if (Temporal.isEternal(currentTask.getOccurrenceTime()) || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
+        if (Tense.isEternal(currentTask.getOccurrenceTime()) || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
             return false;
         }
 

@@ -1,7 +1,7 @@
 package nars.task;
 
 import nars.NAR;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.nar.Default;
 import org.junit.Test;
 
@@ -17,13 +17,13 @@ public class FluentTaskTest {
 
         String s = "<a --> b>.";
 
-        assertTrue(Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
+        assertTrue(Tense.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
 
         assertTrue("default is timeless", DefaultTask.make(n.memory, n.term(s)).isTimeless());
 
-        assertTrue("tense=eternal is eternal", Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
+        assertTrue("tense=eternal is eternal", Tense.isEternal(DefaultTask.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
 
-        assertTrue("present is non-eternal", !Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).present(n.memory).getOccurrenceTime()));
+        assertTrue("present is non-eternal", !Tense.isEternal(DefaultTask.make(n.memory, n.term(s)).present(n.memory).getOccurrenceTime()));
 
     }
 
@@ -34,9 +34,9 @@ public class FluentTaskTest {
         String s = "<a --> b>.";
 
         //the final occurr() or tense() is the value applied
-        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).eternal().occurr(100).getOccurrenceTime()));
-        assertTrue(!Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).eternal().present(n.memory).getOccurrenceTime()));
-        assertTrue(Temporal.isEternal(DefaultTask.make(n.memory, n.term(s)).occurr(100).setEternal().getOccurrenceTime()));
+        assertTrue(!Tense.isEternal(DefaultTask.make(n.memory, n.term(s)).eternal().occurr(100).getOccurrenceTime()));
+        assertTrue(!Tense.isEternal(DefaultTask.make(n.memory, n.term(s)).eternal().present(n.memory).getOccurrenceTime()));
+        assertTrue(Tense.isEternal(DefaultTask.make(n.memory, n.term(s)).occurr(100).setEternal().getOccurrenceTime()));
     }
 
 

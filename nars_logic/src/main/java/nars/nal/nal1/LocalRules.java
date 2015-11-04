@@ -23,17 +23,16 @@ package nars.nal.nal1;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.Memory;
 import nars.Op;
+import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal7.Temporal;
-import nars.premise.Premise;
-import nars.process.Unification;
+import nars.nal.nal7.Tense;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.ProjectedTruth;
+import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -78,7 +77,7 @@ public class LocalRules {
         //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
 
         if ((!newBelief.equals(oldBelief)) && newBelief.isRevisible()) {
-            if (Temporal.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
+            if (Tense.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
                 return true;
         }
 
@@ -165,7 +164,7 @@ public class LocalRules {
         if ((solution == null) || (solution.isDeleted()))
             throw new RuntimeException("proposedBelief " + solution + " deleted or null");
 
-        if (!Temporal.matchingOrder(question, solution)) {
+        if (!Tense.matchingOrder(question, solution)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return null;
@@ -190,7 +189,7 @@ public class LocalRules {
 
             Term u[] = new Term[]{ question.getTerm(), solTerm };
 
-            if ( Unification.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
+            if ( Premise.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
 
                 sol = sol.clone((Compound)u[1], originalTruth);
 
@@ -206,7 +205,7 @@ public class LocalRules {
             throw new RuntimeException("Unification invalid: " + solution + " unified and projected to " + sol);
 
         //use sol.getTruth() in case sol was changed since input to this method:
-        float newQ = Temporal.solutionQuality(question, sol, sol.getTruth(), now);
+        float newQ = Tense.solutionQuality(question, sol, sol.getTruth(), now);
 //        if (newQ == 0) {
 //            memory.emotion.happy(0, questionTask, nal);
 //            return null;
@@ -215,7 +214,7 @@ public class LocalRules {
         final Task oldBest = question.getBestSolution();
 
         //get the quality of the old solution if it were applied now (when conditions may differ)
-        final float oldQ = (oldBest != null) ? Temporal.solutionQuality(question, oldBest, now) : 0;
+        final float oldQ = (oldBest != null) ? Tense.solutionQuality(question, oldBest, now) : 0;
 
         if (oldQ >= newQ) {
             //old solution was better:
@@ -231,7 +230,7 @@ public class LocalRules {
 
 
         //TODO solutionEval calculates the same solutionQuality as here, avoid this unnecessary redundancy
-        Budget budget = Temporal.solutionEval(question, sol, nal);
+        Budget budget = Tense.solutionEval(question, sol, nal);
 
         if (!(question.isQuestion() || question.isQuest())) {
             System.err.println("err");

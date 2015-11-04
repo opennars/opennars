@@ -17,7 +17,7 @@ import java.awt.event.KeyListener;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.event.KeyEvent.CHAR_UNDEFINED;
-import static nars.io.Texts.n2;
+import static nars.util.Texts.n2;
 
 /**
  * Direct keyboard input

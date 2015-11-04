@@ -22,7 +22,7 @@ package nars.nal.nal5;
 
 import nars.Op;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
 
@@ -42,8 +42,8 @@ public class Equivalence extends Statement {
     private Equivalence(Term subject, Term predicate, int order) {
         super(subject, predicate);
 
-        if ((order == Temporal.ORDER_BACKWARD) ||
-                (order == Temporal.ORDER_INVALID)) {
+        if ((order == Tense.ORDER_BACKWARD) ||
+                (order == Tense.ORDER_INVALID)) {
             throw new RuntimeException("Invalid temporal order=" + order + "; args=" + subject + " , " + predicate);
         }
 
@@ -79,7 +79,7 @@ public class Equivalence extends Statement {
         return make(subject, predicate, temporalOrder);        
     }
     public static Term makeTerm(Term subject, Term predicate) {
-        return makeTerm(subject, predicate, Temporal.ORDER_NONE);
+        return makeTerm(subject, predicate, Tense.ORDER_NONE);
     }
 
 
@@ -92,7 +92,7 @@ public class Equivalence extends Statement {
      * @return A compound generated or null
      */
     public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
-        return make(subject, predicate, Temporal.ORDER_NONE);
+        return make(subject, predicate, Tense.ORDER_NONE);
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
@@ -109,11 +109,11 @@ public class Equivalence extends Statement {
 
         //swap terms for commutivity, or to reverse a backward order
         final boolean reverse;
-        if (temporalOrder == Temporal.ORDER_BACKWARD) {
-            temporalOrder = Temporal.ORDER_FORWARD;
+        if (temporalOrder == Tense.ORDER_BACKWARD) {
+            temporalOrder = Tense.ORDER_FORWARD;
             reverse = true;
         }
-        else if (temporalOrder != Temporal.ORDER_FORWARD)
+        else if (temporalOrder != Tense.ORDER_FORWARD)
             reverse = subject.compareTo(predicate) > 0;
         else
             reverse = false;
@@ -136,9 +136,9 @@ public class Equivalence extends Statement {
     @Override
     public final Op op() {
         switch (temporalOrder) {
-            case Temporal.ORDER_FORWARD:
+            case Tense.ORDER_FORWARD:
                 return Op.EQUIVALENCE_AFTER;
-            case Temporal.ORDER_CONCURRENT:
+            case Tense.ORDER_CONCURRENT:
                 return Op.EQUIVALENCE_WHEN;
         }
         return Op.EQUIVALENCE;
@@ -151,7 +151,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public final boolean isCommutative() {
-        return (temporalOrder != Temporal.ORDER_FORWARD);
+        return (temporalOrder != Tense.ORDER_FORWARD);
     }
 
     @Override

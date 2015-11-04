@@ -17,11 +17,11 @@ public class TemporalTest {
     @Test
     public void testAfter() {
 
-        assertTrue("after", Temporal.after(1, 4, 1));
+        assertTrue("after", Tense.after(1, 4, 1));
 
-        assertFalse("concurrent (equivalent)", Temporal.after(4, 4, 1));
-        assertFalse("before", Temporal.after(6, 4, 1));
-        assertFalse("concurrent (by duration range)", Temporal.after(3, 4, 3));
+        assertFalse("concurrent (equivalent)", Tense.after(4, 4, 1));
+        assertFalse("before", Tense.after(6, 4, 1));
+        assertFalse("concurrent (by duration range)", Tense.after(3, 4, 3));
 
     }
 

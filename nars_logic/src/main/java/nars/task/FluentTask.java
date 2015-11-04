@@ -3,12 +3,11 @@ package nars.task;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Memory;
+import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
-import nars.premise.Premise;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -196,7 +195,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     }
 
     public FluentTask tense(Tense t, Memory memory) {
-        this.occurr(Temporal.getOccurrenceTime(memory.time(), t, memory));
+        this.occurr(Tense.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
 

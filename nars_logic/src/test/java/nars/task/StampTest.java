@@ -1,12 +1,12 @@
 package nars.task;
 
-import nars.task.stamp.Stamp;
+import nars.truth.Stamp;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
-import static nars.task.stamp.Stamp.toSetArray;
+import static nars.truth.Stamp.toSetArray;
 import static org.junit.Assert.assertFalse;
 
 /**

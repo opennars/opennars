@@ -7,7 +7,7 @@ package nars.op.app.farg;
 
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.CycleReaction;
+import nars.util.event.CycleReaction;
 
 /**
  *

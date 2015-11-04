@@ -1,7 +1,7 @@
 package nars.audio;
 
 import nars.Memory;
-import nars.clock.Clock;
+import nars.time.Clock;
 
 import javax.sound.midi.*;
 import javax.swing.*;

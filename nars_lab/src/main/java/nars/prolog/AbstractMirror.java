@@ -7,7 +7,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.budget.Budget;
-import nars.event.NARReaction;
+import nars.util.event.NARReaction;
 import nars.process.TaskProcess;
 import nars.task.DefaultTask;
 import nars.task.Sentence;

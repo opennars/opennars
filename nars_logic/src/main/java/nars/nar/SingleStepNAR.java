@@ -3,12 +3,12 @@ package nars.nar;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
-import nars.clock.FrameClock;
-import nars.io.FIFOTaskPerception;
-import nars.meta.TaskRule;
-import nars.meter.DerivationGraph;
 import nars.nal.SimpleDeriver;
+import nars.nal.TaskRule;
+import nars.task.flow.FIFOTaskPerception;
+import nars.time.FrameClock;
 import nars.util.db.InfiniPeer;
+import nars.util.meter.DerivationGraph;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

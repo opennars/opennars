@@ -7,11 +7,11 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import nars.NAR;
-import nars.event.FrameReaction;
 import nars.guifx.util.NSlider;
 import nars.nal.nal8.ImmediateOperator;
 import nars.op.io.echo;
 import nars.task.Task;
+import nars.util.event.FrameReaction;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
 
 import java.util.Iterator;

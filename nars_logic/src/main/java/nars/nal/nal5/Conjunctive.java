@@ -3,7 +3,7 @@ package nars.nal.nal5;
 import nars.Global;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
@@ -108,20 +108,20 @@ public abstract class Conjunctive extends Junction<Term> {
      */
     public static Term make(Term[] argList, int temporalOrder) {
         switch (temporalOrder) {
-            case Temporal.ORDER_NONE:
+            case Tense.ORDER_NONE:
                 return Conjunction.make(argList);
-            case Temporal.ORDER_FORWARD:
+            case Tense.ORDER_FORWARD:
                 return Sequence.makeSequence(argList);
-            case Temporal.ORDER_CONCURRENT:
+            case Tense.ORDER_CONCURRENT:
                 return Parallel.makeParallel(argList);
         }
         throw new RuntimeException("invalid: " + Arrays.toString(argList) + " " + temporalOrder);
     }
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
-        if (temporalOrder == Temporal.ORDER_FORWARD) {
+        if (temporalOrder == Tense.ORDER_FORWARD) {
             return Sequence.makeSequence(term1, term2);
-        } else if (temporalOrder == Temporal.ORDER_BACKWARD) {
+        } else if (temporalOrder == Tense.ORDER_BACKWARD) {
             //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
             return Sequence.makeSequence(term2, term1);
             //return null;

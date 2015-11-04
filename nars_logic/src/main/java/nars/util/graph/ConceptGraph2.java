@@ -3,7 +3,7 @@ package nars.util.graph;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.index.ConceptMap;
+import nars.util.data.ConceptMap;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 

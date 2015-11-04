@@ -1,11 +1,10 @@
 package nars.guifx.demo;
 
-import nars.LocalMemory;
 import nars.Memory;
 import nars.bag.impl.MapCacheBag;
-import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
 import nars.nar.Default2;
+import nars.time.RealtimeMSClock;
 import org.infinispan.commons.util.WeakValueHashMap;
 
 /**
@@ -18,15 +17,14 @@ public class NARideRealtimeDefault {
 
         //Global.DEBUG = true;
 
-        Memory mem = new LocalMemory(new RealtimeMSClock(),
+        Memory mem = new Memory(new RealtimeMSClock(),
             new MapCacheBag(
-                    //new HashMap()
-                    new WeakValueHashMap()
+                    new WeakValueHashMap<>()
+                //new GuavaCacheBag<>()
+                /*new InfiniCacheBag(
+                    InfiniPeer.tmp().getCache()
+                )*/
             )
-            //new GuavaCacheBag<>()
-            /*new InfiniCacheBag(
-                InfiniPeer.tmp().getCache()
-            )*/
         );
         Default2 nar = new Default2(mem, 1024, 1, 2, 3);
         nar.setTaskLinkBagSize(32);

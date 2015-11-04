@@ -1,7 +1,7 @@
 //package nars.analyze.experimental;
 //
 //import nars.NAR;
-//import nars.io.in.LibraryInput;
+//import LibraryInput;
 //import nars.nal.NALTest;
 //import nars.nar.Default;
 //

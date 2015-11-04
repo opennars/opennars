@@ -1,8 +1,7 @@
 package nars.truth;
 
-import nars.io.Texts;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
+import nars.util.Texts;
 
 /** chart-like representation of a belief state at each time cycle in a range of time */
 public class TruthWave {

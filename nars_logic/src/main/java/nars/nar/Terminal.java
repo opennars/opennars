@@ -1,14 +1,14 @@
 package nars.nar;
 
-import nars.LocalMemory;
+import nars.Memory;
 import nars.bag.impl.TrieCacheBag;
 import nars.budget.Budget;
-import nars.clock.RealtimeMSClock;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.io.FIFOTaskPerception;
 import nars.task.Task;
+import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
+import nars.time.RealtimeMSClock;
 
 import java.util.function.Predicate;
 
@@ -26,12 +26,10 @@ public class Terminal extends Default {
             task -> task.isCommand();
 
     public Terminal() {
-        super(new LocalMemory(
-                        new RealtimeMSClock(),
-                        new TrieCacheBag()
-                ),
-                0,0,0,0);
-
+        super(new Memory(
+                    new RealtimeMSClock(),
+                    new TrieCacheBag()
+        ), 0,0,0,0);
     }
 
     @Override

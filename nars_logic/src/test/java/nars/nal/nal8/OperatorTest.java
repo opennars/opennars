@@ -42,7 +42,7 @@ public class OperatorTest {
 //    }
 
     @Test public void testOperationIsInheritance() {
-        Operation o = $.opr(Product.make("x"), Operator.the("x"));
+        Operation o = $.op(Product.make("x"), Operator.the("x"));
         assertEquals(Op.INHERITANCE, o.op());
     }
 

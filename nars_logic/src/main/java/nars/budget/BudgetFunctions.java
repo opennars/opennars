@@ -22,11 +22,11 @@ package nars.budget;
 
 import nars.Global;
 import nars.Memory;
+import nars.Premise;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.UtilityFunctions;
-import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;

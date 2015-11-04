@@ -15,7 +15,7 @@ import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
-import nars.util.index.ConceptMatrix;
+import nars.util.data.ConceptMatrix;
 
 import java.util.List;
 import java.util.Map;

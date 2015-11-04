@@ -1,9 +1,9 @@
 package nars.nal.nal5;
 
 import nars.NAR;
-import nars.meter.TestNAR;
+import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.narsese.InvalidInputException;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,7 +22,7 @@ public class NAL5Test extends AbstractNALTester {
 
     final int cycles = 750;
     @Test
-    public void revision() throws InvalidInputException {
+    public void revision() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a type of bird.");
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>",0.00f,0.60f); //.en("If robin can fly then robin may not a type of bird.");
@@ -31,7 +31,7 @@ public class NAL5Test extends AbstractNALTester {
     }
 
     @Test
-    public void deduction() throws InvalidInputException {
+    public void deduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a type of bird.");
@@ -40,7 +40,7 @@ public class NAL5Test extends AbstractNALTester {
     }
 
     @Test
-    public void exemplification() throws InvalidInputException {
+    public void exemplification() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a type of bird.");
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
@@ -50,7 +50,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void induction() throws InvalidInputException {
+    public void induction() throws Narsese.NarseseException {
 
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
@@ -62,7 +62,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void abduction() throws InvalidInputException {
+    public void abduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> [flying]> ==> <robin --> animal>>",0.8f,0.9f); //.en("If robin can fly then robin is probably a type of animal.");
@@ -73,7 +73,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void detachment() throws InvalidInputException {
+    public void detachment() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin can fly.");
         tester.believe("<robin --> bird>"); //.en("Robin is a type of bird.");
@@ -83,7 +83,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void detachment2() throws InvalidInputException {
+    public void detachment2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>",0.70f,0.90f); //.en("Usually if robin is a type of bird then robin is a type of animal.");
         tester.believe("<robin --> animal>"); //.en("Robin is a type of animal.");
@@ -93,7 +93,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void comparison() throws InvalidInputException {
+    public void comparison() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> bird> ==> <robin --> [flying]>>",0.8f,0.9f); //.en("If robin is a type of bird then robin can fly.");
@@ -103,7 +103,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void comparison2() throws InvalidInputException {
+    public void comparison2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>",0.7f,0.9f); //.en("If robin is a type of bird then usually robin is a type of animal.");
         tester.believe("<<robin --> [flying]> ==> <robin --> animal>>"); //.en("If robin can fly then robin is a type of animal.");
@@ -113,7 +113,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void analogy() throws InvalidInputException {
+    public void analogy() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> bird> <=> <robin --> [flying]>>",0.80f,0.9f); //.en("Usually, robin is a type of bird if and only if robin can fly.");
@@ -123,7 +123,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void analogy2() throws InvalidInputException {
+    public void analogy2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<robin --> bird>"); //.en("Robin is a type of bird.");
         tester.believe("<<robin --> bird> <=> <robin --> [flying]>>",0.80f,0.9f); //.en("Usually, robin is a type of bird if and only if robin can fly.");
@@ -133,7 +133,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void resemblance() throws InvalidInputException {
+    public void resemblance() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> animal> <=> <robin --> bird>>"); //.en("Robin is a type of animal if and only if robin is a type of bird.");
         tester.believe("<<robin --> bird> <=> <robin --> [flying]>>",0.9f,0.9f); //.en("Robin is a type of bird if and only if robin can fly.");
@@ -143,7 +143,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conversions_between_Implication_and_Equivalence() throws InvalidInputException {
+    public void conversions_between_Implication_and_Equivalence() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>",0.9f,0.9f); //.en("If robin can fly then robin is a type of bird.");
         tester.believe("<<robin --> bird> ==> <robin --> [flying]>>",0.9f,0.9f); //.en("If robin is a type of bird then robin can fly.");
@@ -153,7 +153,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_composition_two_premises() throws InvalidInputException {
+    public void compound_composition_two_premises() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> bird> ==> <robin --> [flying]>>",0.9f,0.9f); //.en("If robin is a type of bird then robin can fly.");
@@ -164,7 +164,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_composition_two_premises2() throws InvalidInputException {
+    public void compound_composition_two_premises2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> [flying]> ==> <robin --> animal>>",0.9f,0.9f); //.en("If robin can fly then robin is a type of animal.");
@@ -175,7 +175,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_decomposition_two_premises1() throws InvalidInputException {
+    public void compound_decomposition_two_premises1() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>",0.0f,0.9f); //.en("If robin is a type of bird then robin is not a type of flying animal.");
         tester.believe("<<robin --> bird> ==> <robin --> [flying]>>"); //.en("If robin is a type of bird then robin can fly.");
@@ -185,7 +185,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_decomposition_two_premises2() throws InvalidInputException {
+    public void compound_decomposition_two_premises2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<robin --> [flying]>,<robin --> swimmer>)",0.0f,0.9f); //.en("Robin cannot be both a flyer and a swimmer.");
         tester.believe("<robin --> [flying]>"); //.en("Robin can fly.");
@@ -195,7 +195,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_decomposition_two_premises3() throws InvalidInputException {
+    public void compound_decomposition_two_premises3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(||,<robin --> [flying]>,<robin --> swimmer>)"); //.en("Robin can fly or swim.");
         tester.believe("<robin --> swimmer>",0.0f,0.9f); //.en("Robin cannot swim.");
@@ -205,7 +205,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_composition_one_premises() throws InvalidInputException {
+    public void compound_composition_one_premises() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<robin --> [flying]>"); //.en("Robin can fly.");
         tester.ask("(||,<robin --> [flying]>,<robin --> swimmer>)"); //.en("Can robin fly or swim?");
@@ -215,7 +215,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void compound_decomposition_one_premises() throws InvalidInputException {
+    public void compound_decomposition_one_premises() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.mustBelieve(cycles,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
         tester.mustBelieve(cycles,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
@@ -225,7 +225,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void negation() throws InvalidInputException {
+    public void negation() throws Narsese.NarseseException {
 
         TestNAR tester = test();
         tester.believe("(--,<robin --> [flying]>)",0.1f,0.9f); //.en("It is unlikely that robin cannot fly.");
@@ -235,7 +235,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void negation2() throws InvalidInputException {
+    public void negation2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<robin --> [flying]>",0.9f,0.9f); //.en("Robin can fly.");
         tester.ask("(--,<robin --> [flying]>)"); //.en("Can robin fly or not?");
@@ -245,7 +245,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void contraposition() throws InvalidInputException {
+    public void contraposition() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(--,<robin --> bird>) ==> <robin --> [flying]>>", 0.1f, 0.9f); //.en("It is unlikely that if robin is not a type of bird then robin can fly.");
         tester.ask("<(--,<robin --> [flying]>) ==> <robin --> bird>>"); //.en("If robin cannot fly then is robin a type of bird ? ");
@@ -255,7 +255,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_deduction() throws InvalidInputException {
+    public void conditional_deduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [flying]>,<robin --> [withWings]>) ==> <robin --> bird>>"); //.en("If robin can fly and has wings then robin is a bird.");
         tester.believe("<robin --> [flying]>"); //.en("robin can fly.");
@@ -265,7 +265,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_deduction2() throws InvalidInputException {
+    public void conditional_deduction2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [withWings]>) ==> <robin --> bird>>"); //.en("If robin can fly, has wings, and chirps, then robin is a bird");
         tester.believe("<robin --> [flying]>"); //.en("robin can fly.");
@@ -275,7 +275,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_deduction3() throws InvalidInputException {
+    public void conditional_deduction3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> bird>,<robin --> [living]>) ==> <robin --> animal>>"); //.en("If robin is a bird and it's living, then robin is an animal");
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly, then robin is a bird");
@@ -285,7 +285,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_abduction() throws InvalidInputException {
+    public void conditional_abduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a bird.");
         tester.believe("<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>"); //.en("If robin both swims and flys then robin is a bird.");
@@ -295,7 +295,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_abduction2() throws InvalidInputException {
+    public void conditional_abduction2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [withWings]>,<robin --> [chirping]>) ==> <robin --> bird>>"); //.en("If robin is has wings and chirps, then robin is a bird");
         tester.believe("<(&&,<robin --> [flying]>,<robin --> [withWings]>,<robin --> [chirping]>) ==> <robin --> bird>>"); //.en("If robin can fly, has wings, and chirps, then robin is a bird");
@@ -305,7 +305,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_abduction3() throws InvalidInputException {
+    public void conditional_abduction3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [flying]>,<robin --> [withWings]>) ==> <robin --> [living]>>",0.9f,0.9f); //.en("If robin can fly and it has wings, then robin is living.");
         tester.believe("<(&&,<robin --> [flying]>,<robin --> bird>) ==> <robin --> [living]>>."); //.en("If robin can fly and robin is a bird then robin is living.");
@@ -316,7 +316,7 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_induction() throws InvalidInputException {
+    public void conditional_induction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [chirping]>,<robin --> [flying]>) ==> <robin --> bird>>"); //.en("If robin can fly and robin chirps, then robin is a bird");
         tester.believe("<<robin --> [flying]> ==> <robin --> [withBeak]>>",0.9f,0.9f); //.en("If robin can fly then usually robin has a beak.");

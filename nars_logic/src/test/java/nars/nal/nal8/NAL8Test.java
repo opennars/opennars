@@ -1,10 +1,10 @@
 package nars.nal.nal8;
 
 import nars.NAR;
-import nars.meter.TestNAR;
+import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.nal.nal7.Tense;
-import nars.narsese.InvalidInputException;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,7 +25,7 @@ public class NAL8Test extends AbstractNALTester {
         return AbstractNALTester.nars(8, false);
     }
 
-    @Test public void testQuest() throws InvalidInputException {
+    @Test public void testQuest() throws Narsese.NarseseException {
 
         String term = "<a --> b>";
 
@@ -52,7 +52,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void subgoal_1() throws InvalidInputException {
+    public void subgoal_1() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<{t001} --> [opened]>. :|:");
@@ -65,7 +65,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void subgoal_2() throws InvalidInputException {
+    public void subgoal_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
@@ -77,7 +77,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void further_detachment() throws InvalidInputException {
+    public void further_detachment() throws Narsese.NarseseException {
         TestNAR tester = test();
 
 
@@ -90,7 +90,7 @@ public class NAL8Test extends AbstractNALTester {
 
 
     @Test
-    public void further_detachment_2() throws InvalidInputException {
+    public void further_detachment_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(SELF,{t002}) --> reachable>. :|:");
@@ -101,7 +101,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporal_deduction_1() throws InvalidInputException {
+    public void temporal_deduction_1() throws Narsese.NarseseException {
         TestNAR tester = test();
 
 
@@ -113,7 +113,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporal_goal_detachment_1() throws InvalidInputException {
+    public void temporal_goal_detachment_1() throws Narsese.NarseseException {
         TestNAR tester = test();
 
 
@@ -125,7 +125,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporal_abduction_2() throws InvalidInputException {
+    public void temporal_abduction_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,open({t001}))=/><{t001} --> [opened]>>.");
@@ -137,7 +137,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void detaching_condition() throws InvalidInputException {
+    public void detaching_condition() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,open({t001}))=/><{t001} --> [opened]>>.");
@@ -148,7 +148,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void detaching_single_premise() throws InvalidInputException {
+    public void detaching_single_premise() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("(&/,<(*,SELF,{t002}) --> reachable>,pick({t002}))!");
@@ -159,7 +159,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void detaching_single_premise2() throws InvalidInputException {
+    public void detaching_single_premise2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) )!");
@@ -170,7 +170,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void goal_deduction() throws InvalidInputException {
+    public void goal_deduction() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(SELF,{t001}) --> at>!");
@@ -181,7 +181,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void goal_deduction_2() throws InvalidInputException {
+    public void goal_deduction_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("(^goto,{t001}). :\\: ");
@@ -192,7 +192,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void detaching_condition_2() throws InvalidInputException {
+    public void detaching_condition_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t001}) --> at>. :|: ");
@@ -203,7 +203,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void goal_abduction_2() throws InvalidInputException {
+    public void goal_abduction_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t001}) --> at>. :|:");
@@ -214,7 +214,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void belief_deduction_by_condition() throws InvalidInputException {
+    public void belief_deduction_by_condition() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(^open,{t001})=/><{t001} --> [opened]>>. :|: ");
@@ -225,7 +225,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void condition_goal_deduction() throws InvalidInputException {
+    public void condition_goal_deduction() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t002}) --> reachable>! ");
@@ -236,7 +236,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void condition_goal_deduction_2() throws InvalidInputException {
+    public void condition_goal_deduction_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,{t002},{t003}) --> on>. :|:");
@@ -247,7 +247,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void condition_goal_deduction_3() throws InvalidInputException {
+    public void condition_goal_deduction_3() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t003}) --> at>!");
@@ -258,7 +258,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void ded_with_var_temporal() throws InvalidInputException {
+    public void ded_with_var_temporal() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,{t003}) --> ^goto>. :|: ");
@@ -269,7 +269,7 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void ded_with_var_temporal2() throws InvalidInputException {
+    public void ded_with_var_temporal2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,{t003}) --> ^goto>. :|: ");

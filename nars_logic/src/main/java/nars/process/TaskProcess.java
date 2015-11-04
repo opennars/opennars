@@ -12,11 +12,11 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.link.*;
-import nars.meter.LogicMeter;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.util.meter.LogicMeter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -27,7 +27,7 @@ import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
  */
-public class TaskProcess extends NAL implements Serializable {
+public class TaskProcess extends AbstractPremise implements Serializable {
 
     private static final Procedure2<Budget, Budget> DEFAULT_TERMLINK_ACCUMULATION_MERGE = Budget.plus;
 

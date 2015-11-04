@@ -1,7 +1,7 @@
 package nars.term;
 
+import nars.Narsese;
 import nars.nal.nal4.Product;
-import nars.narsese.NarseseParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class VariableTest {
 
-    static final NarseseParser p = NarseseParser.the();
+    static final Narsese p = Narsese.the();
 
     @Test
     public void testPatternVarVolume() {

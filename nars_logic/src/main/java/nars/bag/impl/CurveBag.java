@@ -5,9 +5,9 @@ import nars.Global;
 import nars.bag.BagSelector;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
-import nars.util.sort.ArraySortedIndex;
 
 import java.io.Serializable;
 import java.util.Arrays;

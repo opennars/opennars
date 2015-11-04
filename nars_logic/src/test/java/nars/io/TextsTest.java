@@ -1,12 +1,13 @@
 package nars.io;
 
 import nars.NAR;
+import nars.Narsese;
 import nars.Symbols;
 import nars.nar.Default;
-import nars.narsese.InvalidInputException;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.util.Texts;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;
 import nars.util.data.rope.impl.PrePostCharRope;
@@ -77,7 +78,7 @@ public class TextsTest {
     }
     
     @Test
-    public void testRope() throws InvalidInputException {
+    public void testRope() throws Narsese.NarseseException {
         NAR n = new Default();
 
         String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";

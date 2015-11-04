@@ -1,7 +1,6 @@
 package nars.nal;
 
-import nars.meta.RuleMatch;
-import nars.premise.Premise;
+import nars.Premise;
 import nars.task.Task;
 
 import java.util.function.Consumer;

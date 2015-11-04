@@ -1,6 +1,6 @@
 package nars.nar;
 
-import nars.util.java.NALObjects;
+import nars.java.NALObjects;
 
 /**
  * Shell wraps a Terminal in itself via a NALObject;

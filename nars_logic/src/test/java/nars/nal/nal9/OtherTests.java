@@ -8,7 +8,7 @@
 //
 //import java.util.Collection;
 //
-//import static nars.io.in.LibraryInput.getParams;
+//import static LibraryInput.getParams;
 //
 //
 //public class OtherTests extends ScriptNALTest {

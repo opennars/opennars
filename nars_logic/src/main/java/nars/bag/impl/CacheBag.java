@@ -3,7 +3,10 @@ package nars.bag.impl;
 import com.google.common.collect.Sets;
 import nars.Memory;
 import nars.budget.Itemized;
+import nars.concept.Concept;
+import nars.term.Term;
 import org.apache.commons.math3.util.FastMath;
+import org.infinispan.commons.util.WeakValueHashMap;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -117,4 +120,14 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
 
     @Override
     Iterator<V> iterator();
+
+    static CacheBag<Term, Concept> memory() {
+        return memory(1);
+    }
+
+    static CacheBag<Term, Concept> memory(int capacity) {
+        return new MapCacheBag(
+            new WeakValueHashMap<>(capacity)
+        );
+    }
 }

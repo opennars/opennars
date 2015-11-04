@@ -74,11 +74,8 @@ public class Abbreviation implements Consumer<Task> {
 
     /**
      * To create a judgment with a given statement
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
      * @return Immediate results as Tasks
      */
-
     @Override
     public void accept(Task task) {
 

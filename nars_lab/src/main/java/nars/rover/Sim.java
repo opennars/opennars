@@ -1,7 +1,7 @@
 package nars.rover;
 
 import nars.Global;
-import nars.clock.SimulatedClock;
+import nars.time.SimulatedClock;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglAbstractDraw;

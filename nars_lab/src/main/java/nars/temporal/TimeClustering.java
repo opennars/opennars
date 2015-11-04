@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
 import nars.budget.ItemAccumulator;
-import nars.event.CycleReaction;
+import nars.util.event.CycleReaction;
 import nars.guifx.NARide;
 import nars.guifx.NARfx;
 import nars.nal.nal1.Inheritance;

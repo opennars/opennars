@@ -5,9 +5,9 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.bag.impl.experimental.BubbleBag;
 import nars.budget.Item;
-import nars.meter.bag.BagGenerators;
-import nars.meter.bag.NullItem;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.meter.bag.BagGenerators;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import java.util.Random;

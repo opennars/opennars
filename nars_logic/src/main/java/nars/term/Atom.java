@@ -1,9 +1,9 @@
 package nars.term;
 
 import nars.Global;
+import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
-import nars.narsese.NarseseParser;
 import nars.term.transform.TermVisitor;
 import nars.util.data.Util;
 import nars.util.utf8.Byted;
@@ -57,7 +57,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         for (int i = 0; i < t.length(); i++) {
             char c = t.charAt(i);
 //            if (Character.isWhitespace(c)) return true;
-            if (!NarseseParser.isValidAtomChar(c))
+            if (!Narsese.isValidAtomChar(c))
                 return true;
 //            if ((!Character.isDigit(c)) && (!Character.isAlphabetic(c))) return true;
         }
@@ -455,13 +455,13 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return false;
     }
 
-    @Override
-    public final boolean equalsOrContainsTermRecursively(final Term target) {
-        return equals(target);
-    }
+//    @Override
+//    public final boolean equalsOrContainsTermRecursively(final Term target) {
+//        return equals(target);
+//    }
 
     @Override
-    public boolean containsTermRecursively(Term target) {
+    public final boolean containsTermRecursively(Term target) {
         return false;
     }
 

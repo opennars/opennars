@@ -4,8 +4,8 @@ import nars.Memory;
 import nars.bag.BagTransaction;
 import nars.bag.impl.CurveBag;
 import nars.budget.Itemized;
+import nars.util.ArraySortedIndex;
 import nars.util.data.list.FasterList;
-import nars.util.sort.ArraySortedIndex;
 
 import java.util.Random;
 import java.util.function.Consumer;

@@ -1,8 +1,8 @@
 package nars.nal.nal8;
 
 import nars.Global;
+import nars.Narsese;
 import nars.Op;
-import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Variable;
@@ -19,7 +19,7 @@ abstract public class PatternFunction implements Function<Task<Operation>, List<
     public final Term pattern;
 
     public PatternFunction(String pattern) {
-        this.pattern = NarseseParser.the().termRaw(pattern);
+        this.pattern = Narsese.the().termRaw(pattern);
     }
 
     @Override

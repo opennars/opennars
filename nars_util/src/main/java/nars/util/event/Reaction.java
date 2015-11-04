@@ -4,6 +4,6 @@ package nars.util.event;
 @FunctionalInterface
 public interface Reaction<K,V> {
 
-    public void event(K event, V args);
+    void event(K event, V args);
 
 }

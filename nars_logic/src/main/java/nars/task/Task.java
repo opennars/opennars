@@ -28,13 +28,9 @@ import nars.budget.Itemized;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.truth.DefaultTruth;
-import nars.truth.ProjectedTruth;
-import nars.truth.Truth;
-import nars.truth.Truthed;
+import nars.truth.*;
 import nars.util.data.array.LongArrays;
 
 import java.lang.ref.Reference;

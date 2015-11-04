@@ -3,15 +3,15 @@ package nars.guifx.demo;
 import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
-import nars.clock.RealtimeMSClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARfx;
 import nars.guifx.NARide;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.HyperOrganicLayout;
 import nars.guifx.graph2.source.SpaceGrapher;
-import nars.io.UDPNetwork;
 import nars.nar.Default;
+import nars.op.io.UDPNetwork;
+import nars.time.RealtimeMSClock;
 import nars.util.data.Util;
 
 import java.net.SocketException;

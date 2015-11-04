@@ -10,10 +10,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import nars.NAR;
+import nars.NARLoop;
 import nars.guifx.JFX;
 import nars.guifx.util.NSlider;
-import nars.io.Texts;
-import nars.util.NARLoop;
+import nars.util.Texts;
 
 import static javafx.application.Platform.runLater;
 

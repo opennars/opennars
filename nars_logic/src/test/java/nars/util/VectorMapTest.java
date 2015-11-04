@@ -1,10 +1,10 @@
 package nars.util;
 
 import nars.NAR;
-import nars.event.CycleReaction;
 import nars.nar.Default;
-import nars.util.numeric.UniformVector;
-import nars.util.numeric.VectorMap;
+import nars.util.data.UniformVector;
+import nars.util.data.VectorMap;
+import nars.util.event.CycleReaction;
 import nars.util.signal.Autoencoder;
 import org.junit.Test;
 

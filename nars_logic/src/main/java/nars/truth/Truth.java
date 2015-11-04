@@ -22,12 +22,11 @@ package nars.truth;
 
 import nars.Global;
 import nars.Symbols;
-import nars.io.Texts;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.task.Sentence;
-import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.util.Texts;
 import nars.util.data.Util;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -207,7 +206,7 @@ public interface Truth extends MetaTruth<Float> {
         float freq = getFrequency();
         float conf = getConfidence();
 
-        if (!Temporal.isEternal(s.getOccurrenceTime()) && (targetTime != s.getOccurrenceTime())) {
+        if (!Tense.isEternal(s.getOccurrenceTime()) && (targetTime != s.getOccurrenceTime())) {
             conf = TruthFunctions.eternalizedConfidence(conf);
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = s.getOccurrenceTime();

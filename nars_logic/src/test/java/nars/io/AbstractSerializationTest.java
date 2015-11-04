@@ -1,6 +1,6 @@
 package nars.io;
 
-import nars.narsese.NarseseParser;
+import nars.Narsese;
 import nars.util.io.JSON;
 import org.infinispan.commons.marshall.JavaSerializationMarshaller;
 import org.infinispan.commons.marshall.Marshaller;
@@ -21,7 +21,7 @@ abstract public class AbstractSerializationTest<S,T> {
 
     final S input;
 
-    public static final NarseseParser p = NarseseParser.the();
+    public static final Narsese p = Narsese.the();
 
     abstract public void testEquality(T a, T b);
 

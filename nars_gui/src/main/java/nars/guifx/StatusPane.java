@@ -1,9 +1,9 @@
 package nars.guifx;
 
 import nars.NAR;
-import nars.event.FrameReaction;
 import nars.guifx.demo.PlotBox;
-import nars.meter.MemoryBudget;
+import nars.util.event.FrameReaction;
+import nars.util.meter.MemoryBudget;
 
 /**
  * Created by me on 9/6/15.

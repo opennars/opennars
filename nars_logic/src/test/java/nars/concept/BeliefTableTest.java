@@ -3,11 +3,11 @@ package nars.concept;
 import junit.framework.TestCase;
 import nars.Global;
 import nars.NAR;
-import nars.meter.BeliefAnalysis;
-import nars.meter.MemoryBudget;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.util.meter.BeliefAnalysis;
+import nars.util.meter.MemoryBudget;
 import org.junit.Test;
 
 /**

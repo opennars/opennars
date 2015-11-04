@@ -11,11 +11,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import nars.NAR;
+import nars.Premise;
 import nars.concept.Concept;
 import nars.guifx.treemap.Item;
 import nars.guifx.treemap.TreemapChart;
-import nars.premise.Premise;
-import nars.task.stamp.Stamp;
+import nars.truth.Stamp;
 
 import java.util.Collection;
 import java.util.HashSet;

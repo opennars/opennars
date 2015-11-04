@@ -2,7 +2,7 @@ package nars.util.graph;
 
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.index.ConceptSet;
+import nars.util.data.ConceptSet;
 
 import java.util.ArrayList;
 import java.util.List;

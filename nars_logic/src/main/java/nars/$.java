@@ -1,12 +1,13 @@
 package nars;
 
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
+import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.narsese.NarseseParser;
 import nars.task.FluentTask;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -21,13 +22,13 @@ public class $ {
 
 
     public static final Term _(final String term) {
-        return NarseseParser.the().term(term);
+        return Narsese.the().term(term);
         //        try { }
         //        catch (InvalidInputException e) { }
     }
 
     public static final <C extends Compound> FluentTask _(final String term, char punc) {
-        C t = NarseseParser.the().term(term);
+        C t = Narsese.the().term(term);
         if (t == null) return null;
         return (FluentTask) new FluentTask(t).punctuation(punc).eternal().normalized();
     }
@@ -54,19 +55,19 @@ public class $ {
     }
 
 
-    public static /* TODO <A extends T,B extends T>*/ Similarity same(Term subj, Term pred) {
+    public static /* TODO <A extends T,B extends T>*/ Similarity sim(Term subj, Term pred) {
         return Similarity.make(subj, pred);
     }
 
 
-    public static Operation opr(String operator, String... args) {
-        return opr(Product.make(args),
+    public static Operation op(String operator, String... args) {
+        return op(Product.make(args),
                 Operator.the(operator)
         );
     }
 
-    public static Operation opr(Operator opTerm, Term... arg) {
-        return opr(Product.make(arg), opTerm);
+    public static Operation op(Operator opTerm, Term... arg) {
+        return op(Product.make(arg), opTerm);
     }
 
     /**
@@ -75,7 +76,7 @@ public class $ {
      *
      * @return A compound generated or null
      */
-    public static <A extends Term> Operation<A> opr(Product<A> arg, final Operator oper) {
+    public static <A extends Term> Operation<A> op(Product<A> arg, final Operator oper) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -97,6 +98,15 @@ public class $ {
         }*/
 
         return new Operation(oper, new SetExt1(arg));
+    }
+
+    /** implies */
+    public static Compound imp(Term a, Term b) {
+        return Implication.make(a, b);
+    }
+
+    public static <X extends Term> X not(Term x) {
+        return (X)Negation.make(x);
     }
 
 }

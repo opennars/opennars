@@ -1,12 +1,12 @@
 package nars.task;
 
+import nars.Premise;
 import nars.budget.Budget;
 import nars.nal.nal1.Inheritance;
-import nars.premise.Premise;
-import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Stamp;
 import nars.truth.Truth;
 
 /** dummy task useful for recording the known components of an aborted derivation */

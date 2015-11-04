@@ -6,9 +6,9 @@ import nars.NAR;
 import nars.guifx.NARfx;
 import nars.guifx.StatusPane;
 import nars.guifx.util.NSlider;
-import nars.meter.MemoryBudget;
 import nars.nal.DerivationRules;
 import nars.nar.Default;
+import nars.util.meter.MemoryBudget;
 
 /**
  * Created by me on 10/10/15.

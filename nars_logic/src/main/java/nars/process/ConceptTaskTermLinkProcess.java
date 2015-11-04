@@ -1,6 +1,7 @@
 package nars.process;
 
 import nars.NAR;
+import nars.Premise;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -31,7 +32,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
             Task belief = beliefConcept.getBeliefs().top(task, nar.time());
 
             if (belief!=null)
-                belief = Unification.match(task, belief, this);
+                belief = Premise.match(task, belief, this);
 
             updateBelief(belief);
         }

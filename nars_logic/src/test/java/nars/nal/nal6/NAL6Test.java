@@ -1,9 +1,9 @@
 package nars.nal.nal6;
 
 import nars.NAR;
-import nars.meter.TestNAR;
+import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.narsese.InvalidInputException;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -26,7 +26,7 @@ public class NAL6Test extends AbstractNALTester {
     }
 
     @Test
-    public void variable_unification1() throws InvalidInputException {
+    public void variable_unification1() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> bird> ==> <$x --> flyer>>"); //en("If something is a bird, then it is a flyer.");
         tester.believe("<<$y --> bird> ==> <$y --> flyer>>", 0.00f, 0.70f); //en("If something is a bird, then it is not a flyer.");
@@ -37,7 +37,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_unification2() throws InvalidInputException {
+    public void variable_unification2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> bird> ==> <$x --> animal>>"); //en("If something is a bird, then it is a animal.");
         tester.believe("<<$y --> robin> ==> <$y --> bird>>"); //en("If something is a robin, then it is a bird.");
@@ -48,7 +48,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_unification3() throws InvalidInputException {
+    public void variable_unification3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> swan> ==> <$x --> bird>>", 1.00f, 0.80f); //en("If something is a swan, then it is a bird.");
         tester.believe("<<$y --> swan> ==> <$y --> swimmer>>", 0.80f, 0.9f); //en("If something is a swan, then it is a swimmer.");
@@ -62,7 +62,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_unification4() throws InvalidInputException {
+    public void variable_unification4() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<bird --> $x> ==> <robin --> $x>>"); //en("What can be said about bird can also be said about robin.");
         tester.believe("<<swimmer --> $y> ==> <robin --> $y>>", 0.70f, 0.90f); //en("What can be said about swimmer usually can also be said about robin.");
@@ -76,7 +76,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_unification5() throws InvalidInputException {
+    public void variable_unification5() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>"); //en("If something can fly and chirp, then it is a bird.");
         tester.believe("<<$y --> [withWings]> ==> <$y --> flyer>>"); //en("If something has wings, then it can fly.");
@@ -86,7 +86,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_unification6() throws InvalidInputException {
+    public void variable_unification6() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
         tester.believe("<(&&,<$y --> [chirping]>,<$y --> [withWings]>) ==> <$y --> bird>>"); //en("If something can chirp and has wings, then it is a bird.");
@@ -97,7 +97,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_unification7() throws InvalidInputException {
+    public void variable_unification7() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<($x,worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly and eats worms, then it is a bird.");
         tester.believe("<<$y --> flyer> ==> <$y --> [withWings]>>"); //en("If something can fly, then it has wings.");
@@ -107,7 +107,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination() throws InvalidInputException {
+    public void variable_elimination() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> bird> ==> <$x --> animal>>"); //en("If something is a bird, then it is an animal.");
         tester.believe("<robin --> bird>"); //en("A robin is a bird.");
@@ -117,7 +117,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination2() throws InvalidInputException {
+    public void variable_elimination2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> bird> ==> <$x --> animal>>"); //en("If something is a bird, then it is an animal.");
         tester.believe("<tiger --> animal>"); //en("A tiger is an animal.");
@@ -127,7 +127,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination3() throws InvalidInputException {
+    public void variable_elimination3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> animal> <=> <$x --> bird>>"); //en("Something is a animal if and only if it is a bird.");
         tester.believe("<robin --> bird>"); //en("A robin is a bird.");
@@ -137,7 +137,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination4() throws InvalidInputException {
+    public void variable_elimination4() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<#x --> bird>,<#x --> swimmer>)"); //en("Some bird can swim.");
         tester.believe("<swan --> bird>", 0.90f, 0.9f); //en("Swan is a type of bird.");
@@ -147,7 +147,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination5() throws InvalidInputException {
+    public void variable_elimination5() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<{Tweety} --> [withWings]>"); //en("Tweety has wings.");
         tester.believe("<(&&,<$x --> [chirping]>,<$x --> [withWings]>) ==> <$x --> bird>>"); //en("If something can chirp and has wings, then it is a bird.");
@@ -157,7 +157,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination6() throws InvalidInputException {
+    public void variable_elimination6() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
         tester.believe("<{Tweety} --> flyer>"); //en("Tweety can fly.");
@@ -167,7 +167,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void multiple_variable_elimination() throws InvalidInputException {
+    public void multiple_variable_elimination() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> key>,<$y --> lock>) ==> <$y --> (/,open,$x,_)>>"); //en("Every lock can be opened by every key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
@@ -177,7 +177,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void multiple_variable_elimination2() throws InvalidInputException {
+    public void multiple_variable_elimination2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> lock> ==> (&&,<#y --> key>,<$x --> (/,open,#y,_)>)>"); //en("Every lock can be opened by some key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
@@ -187,7 +187,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void multiple_variable_elimination3() throws InvalidInputException {
+    public void multiple_variable_elimination3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<#x --> lock>,<<$y --> key> ==> <#x --> (/,open,$y,_)>>)"); //en("There is a lock that can be opened by every key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
@@ -197,7 +197,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void multiple_variable_elimination4() throws InvalidInputException {
+    public void multiple_variable_elimination4() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<#x --> (/,open,#y,_)>,<#x --> lock>,<#y --> key>)"); //en("There is a key that can open some lock.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
@@ -207,7 +207,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_introduction() throws InvalidInputException {
+    public void variable_introduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<swan --> bird>"); //en("A swan is a bird.");
         tester.believe("<swan --> swimmer>", 0.80f, 0.9f); //en("A swan is usually a swimmer.");
@@ -221,7 +221,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_introduction2() throws InvalidInputException {
+    public void variable_introduction2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<gull --> swimmer>"); //en("A gull is a swimmer.");
         tester.believe("<swan --> swimmer>", 0.80f, 0.9f); //en("Usually, a swan is a swimmer.");
@@ -234,7 +234,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variables_introduction() throws InvalidInputException {
+    public void variables_introduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<{key1} --> (/,open,_,{lock1})>"); //en("Key-1 opens Lock-1.");
         tester.believe("<{key1} --> key>"); //en("Key-1 is a key.");
@@ -245,7 +245,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void multiple_variables_introduction() throws InvalidInputException {
+    public void multiple_variables_introduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$x --> key> ==> <{lock1} --> (/,open,$x,_)>>"); //en("Lock-1 can be opened by every key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
@@ -256,7 +256,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void multiple_variables_introduction2() throws InvalidInputException {
+    public void multiple_variables_introduction2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<#x --> key>,<{lock1} --> (/,open,#x,_)>)"); //en("Lock-1 can be opened by some key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
@@ -272,7 +272,7 @@ public class NAL6Test extends AbstractNALTester {
     //  This is not worked out yet
 
     @Test
-    public void second_level_variable_unification() throws InvalidInputException {
+    public void second_level_variable_unification() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", 1.00f, 0.90f); //en("there is a lock which is opened by all keys");
         tester.believe("<{key1} --> key>", 1.00f, 0.90f); //en("key1 is a key");
@@ -282,7 +282,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void second_level_variable_unification2() throws InvalidInputException {
+    public void second_level_variable_unification2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>", 1.00f, 0.90f); //en("all locks are opened by some key");
         tester.believe("<{key1} --> key>", 1.00f, 0.90f); //en("key1 is a key");
@@ -291,7 +291,7 @@ public class NAL6Test extends AbstractNALTester {
     }
 
     @Test
-    public void second_level_variable_unification2_clean() throws InvalidInputException {
+    public void second_level_variable_unification2_clean() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<$1 --> x> ==> (&&,<#2 --> y>,<$1 --> (/,open,#2,_)>)>", 1.00f, 0.90f); //en("all xs are opened by some y");
         tester.believe("<{z} --> y>", 1.00f, 0.90f); //en("z is a y");
@@ -300,7 +300,7 @@ public class NAL6Test extends AbstractNALTester {
     }
 
     @Test
-    public void second_variable_introduction_induction() throws InvalidInputException {
+    public void second_variable_introduction_induction() throws Narsese.NarseseException {
 
         TestNAR tester = test();
         tester.believe("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>"); //en("if something opens lock1, it is a key");
@@ -311,7 +311,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void variable_elimination_deduction() throws InvalidInputException {
+    public void variable_elimination_deduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>", 1.00f, 0.90f); //en("there is a lock with the property that when opened by something, this something is a key");
         tester.believe("<lock1 --> lock>", 1.00f, 0.90f); //en("lock1 is a lock");
@@ -321,7 +321,7 @@ public class NAL6Test extends AbstractNALTester {
 
 
     @Test
-    public void abduction_with_variable_elimination() throws InvalidInputException {
+    public void abduction_with_variable_elimination() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", 1.00f, 0.90f); //en("whatever opens lock1 is a key");
         tester.believe("<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>", 1.00f, 0.90f); //en("there is a lock with the property that when opened by something, this something is a key");
@@ -330,7 +330,7 @@ public class NAL6Test extends AbstractNALTester {
     }
 
     @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
-    public void strong_unification() throws InvalidInputException {
+    public void strong_unification() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>", 1.00f, 0.90f);
         tester.believe("<(*,bmw,is,car) --> sentence>", 1.00f, 0.90f);
@@ -339,7 +339,7 @@ public class NAL6Test extends AbstractNALTester {
     }
 
     @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
-    public void strong_elimination() throws InvalidInputException {
+    public void strong_elimination() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(&&,<(*,$a,is,cat) --> test>,<(*,$a,is,$b) --> sentence>) ==> <$a --> $b>>");
         tester.believe("<(*,tim,is,cat) --> test>");

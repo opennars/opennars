@@ -14,7 +14,6 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
 
     public final Map<K, V> map;
 
-
     public CollectorMap(Map<K, V> map) {
         this.map = map;
     }
@@ -29,34 +28,34 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
 
 
 
-    //not used anymore
-    @Deprecated public void merge(final V value) {
-
-
-
-        final K key = value.name();
-        final V valPrev = putKey(key, value);
-
-
-        getMerge().value(value.getBudget(), valPrev.getBudget());
-
-        /*if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
-            return;*/
-
-        //TODO check before and after removal index and if the same just replace
-        {
-            final V valPrev2 = removeItem(valPrev);
-            if (valPrev != valPrev2)
-                throw new RuntimeException("unable to remove item corresponding to key " + key);
-
-
-            final V removed2 = addItem(value);
-            if (removed2 != null)
-                throw new RuntimeException("Only one item should have been valPrev on this insert; both valPrev: " + valPrev + ", " + removed2);
-        }
-
-
-    }
+//    //not used anymore
+//    @Deprecated public void merge(final V value) {
+//
+//
+//
+//        final K key = value.name();
+//        final V valPrev = putKey(key, value);
+//
+//
+//        getMerge().value(value.getBudget(), valPrev.getBudget());
+//
+//        /*if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
+//            return;*/
+//
+//        //TODO check before and after removal index and if the same just replace
+//        {
+//            final V valPrev2 = removeItem(valPrev);
+//            if (valPrev != valPrev2)
+//                throw new RuntimeException("unable to remove item corresponding to key " + key);
+//
+//
+//            final V removed2 = addItem(value);
+//            if (removed2 != null)
+//                throw new RuntimeException("Only one item should have been valPrev on this insert; both valPrev: " + valPrev + ", " + removed2);
+//        }
+//
+//
+//    }
 
 
     public V put(final V value) {
@@ -87,7 +86,6 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
             if ((removed2 != null) && (!removed2.name().equals(key))) {
                 removeKey(removed2.name());
                 removed = removed2;
-                //return removed2;
             }
         }
 
@@ -127,7 +125,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         return map.containsValue(it);
     }
 
-    public void clear() {
+    public final void clear() {
         map.clear();
     }
 

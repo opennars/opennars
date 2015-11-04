@@ -1,8 +1,8 @@
 package nars.task.filter;
 
-import nars.concept.BeliefTable;
+import nars.Premise;
 import nars.concept.Concept;
-import nars.premise.Premise;
+import nars.concept.util.BeliefTable;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.Truth;

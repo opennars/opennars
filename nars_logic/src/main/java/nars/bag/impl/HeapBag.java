@@ -5,10 +5,10 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Item;
+import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
 import nars.util.data.list.CircularArrayList;
 import nars.util.data.sorted.SortedIndex;
-import nars.util.sort.ArraySortedIndex;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.*;

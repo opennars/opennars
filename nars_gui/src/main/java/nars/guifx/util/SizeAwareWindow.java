@@ -11,10 +11,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import nars.clock.FrameClock;
 import nars.guifx.NARfx;
 import nars.guifx.NARide;
 import nars.nar.Default;
+import nars.time.FrameClock;
 import nars.util.data.map.LMap;
 
 import java.util.concurrent.atomic.AtomicBoolean;

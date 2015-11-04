@@ -3,8 +3,8 @@ package nars.term;
 
 import nars.Global;
 import nars.NAR;
-import nars.meter.EventCount;
 import nars.nar.Default;
+import nars.util.meter.EventCount;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

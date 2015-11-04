@@ -1,7 +1,5 @@
 package nars.nal;
 
-import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
 import nars.task.Task;
 
 import java.util.List;

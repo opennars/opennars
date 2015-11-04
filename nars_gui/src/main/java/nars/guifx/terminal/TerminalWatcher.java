@@ -3,7 +3,7 @@ package nars.guifx.terminal;
 import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
-import nars.io.Texts;
+import nars.util.Texts;
 
 import java.io.IOException;
 import java.io.InputStream;

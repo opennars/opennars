@@ -1,10 +1,10 @@
 package nars.bag;
 
 import nars.bag.impl.CurveBag;
-import nars.meter.bag.BagGenerators;
-import nars.meter.bag.NullItem;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.data.sorted.SortedIndex;
+import nars.util.meter.bag.BagGenerators;
+import nars.util.meter.bag.NullItem;
 import org.junit.Assert;
 
 import java.util.Random;

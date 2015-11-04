@@ -1,7 +1,7 @@
 package nars.truth;
 
 import nars.Symbols;
-import nars.io.Texts;
+import nars.util.Texts;
 
 import java.io.Serializable;
 

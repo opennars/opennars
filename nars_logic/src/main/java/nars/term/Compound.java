@@ -650,7 +650,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
                 continue;
             if (x.equals(target)) return true;
             if (x instanceof Compound) {
-                if (((Compound) x).containsTermRecursively(target)) {
+                if (x.containsTermRecursively(target)) {
                     return true;
                 }
             }
@@ -693,19 +693,19 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
 
 
-    /**
-     * Recursively check if a compound contains a term
-     * This method DOES check the equality of this term itself.
-     * Although that is how Term.containsTerm operates
-     *
-     * @param target The term to be searched
-     * @return Whether the target is in the current term
-     */
-    @Override
-    public boolean equalsOrContainsTermRecursively(final Term target) {
-        if (this.equals(target)) return true;
-        return containsTermRecursively(target);
-    }
+//    /**
+//     * Recursively check if a compound contains a term
+//     * This method DOES check the equality of this term itself.
+//     * Although that is how Term.containsTerm operates
+//     *
+//     * @param target The term to be searched
+//     * @return Whether the target is in the current term
+//     */
+//    @Override
+//    public boolean equalsOrContainsTermRecursively(final Term target) {
+//        if (this.equals(target)) return true;
+//        return containsTermRecursively(target);
+//    }
 
     /**
      * Must be Term return type because the type of Term may change with different arguments

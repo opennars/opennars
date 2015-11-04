@@ -2,10 +2,10 @@ package nars.nal.nal7;
 
 import nars.Global;
 import nars.NAR;
-import nars.meter.TestNAR;
+import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.narsese.InvalidInputException;
 import nars.task.Task;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,7 +33,7 @@ public class NAL7Test extends AbstractNALTester {
 
 
     @Test
-    public void temporal_deduction_explification() throws InvalidInputException {
+    public void temporal_deduction_explification() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<($x, room) --> enter> =\\> <($x, door) --> open>>", 0.9f, 0.9f);
         tester.believe("<<($y, door) --> open> =\\> <($y, key) --> hold>>", 0.8f, 0.9f);
@@ -44,7 +44,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporal_induction_comparison() throws InvalidInputException {
+    public void temporal_induction_comparison() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<(*, $x, door) --> open> =/> <(*, $x, room) --> enter>>", 0.9f, 0.9f);
         tester.believe("<<(*, $y, door) --> open> =\\> <(*, $y, key) --> hold>>", 0.8f, 0.9f);
@@ -56,7 +56,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporal_analogy() throws InvalidInputException {
+    public void temporal_analogy() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<(*, $x, door) --> open> =/> <(*, $x, room) --> enter>>",
                 0.95f, 0.9f);
@@ -68,7 +68,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void inference_on_tense() throws InvalidInputException {
+    public void inference_on_tense() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
@@ -79,7 +79,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void inference_on_tense_2() throws InvalidInputException {
+    public void inference_on_tense_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
@@ -90,7 +90,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void inference_on_tense_3() throws InvalidInputException {
+    public void inference_on_tense_3() throws Narsese.NarseseException {
         TestNAR tester = test();
          
 
@@ -105,7 +105,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void inference_on_tense_4() throws InvalidInputException {
+    public void inference_on_tense_4() throws Narsese.NarseseException {
         TestNAR tester = test();
          
 
@@ -119,7 +119,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events() throws InvalidInputException {
+    public void induction_on_events() throws Narsese.NarseseException {
         TestNAR tester = test();
         
 
@@ -134,7 +134,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events2() throws InvalidInputException {
+    public void induction_on_events2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,John,door) --> open>. :|:");
@@ -147,7 +147,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events3() throws InvalidInputException {
+    public void induction_on_events3() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,John,door) --> open>. :|:");
@@ -160,18 +160,18 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events_with_variable_introduction() throws InvalidInputException {
+    public void induction_on_events_with_variable_introduction() throws Narsese.NarseseException {
         induction_on_events_with_variable_introduction(0);
     }
     @Test
-    public void induction_on_events_with_variable_introduction_d1000() throws InvalidInputException {
+    public void induction_on_events_with_variable_introduction_d1000() throws Narsese.NarseseException {
         induction_on_events_with_variable_introduction(1000);
     }
 
     /**
      * @param delay a # of frames to delay at the start in order to test start time independence
      */
-    void induction_on_events_with_variable_introduction(int delay) throws InvalidInputException {
+    void induction_on_events_with_variable_introduction(int delay) throws Narsese.NarseseException {
 
         TestNAR tester = test();
 
@@ -190,7 +190,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events_with_variable_introduction2() throws InvalidInputException {
+    public void induction_on_events_with_variable_introduction2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<John --> (/,open,_,door)>. :|:");
@@ -204,7 +204,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events_with_variable_introduction3() throws InvalidInputException {
+    public void induction_on_events_with_variable_introduction3() throws Narsese.NarseseException {
         TestNAR tester = test();
         
 
@@ -218,7 +218,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void induction_on_events_composition() throws InvalidInputException {
+    public void induction_on_events_composition() throws Narsese.NarseseException {
         TestNAR tester = test();
         
 
@@ -232,7 +232,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void updating_and_revision() throws InvalidInputException {
+    public void updating_and_revision() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,John,key) --> hold>. :|:");
@@ -248,7 +248,7 @@ public class NAL7Test extends AbstractNALTester {
     //NAL7 tests which were accidentally in NAL8 category:
 
     @Test
-    public void variable_introduction_on_events() throws InvalidInputException {
+    public void variable_introduction_on_events() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<{t003} --> (/,at,SELF,_)>. :|:");
@@ -262,7 +262,7 @@ public class NAL7Test extends AbstractNALTester {
 
     //TODO: investigate
     @Test
-    public void variable_elimination_on_temporal_statements() throws InvalidInputException {
+    public void variable_elimination_on_temporal_statements() throws Narsese.NarseseException {
         TestNAR tester = test();
          
 
@@ -275,7 +275,7 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporalOrder() throws InvalidInputException {
+    public void temporalOrder() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<a --> A> =/> <b --> B>>");
         tester.believe("<<b --> B> <|> <c --> C>>", 0.90f, 0.9f);

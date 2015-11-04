@@ -2,7 +2,7 @@ package nars.guifx;
 
 import nars.NAR;
 import nars.guifx.util.CodeInput;
-import nars.io.in.TextInput;
+import nars.task.in.TextInput;
 
 /**
  * Created by me on 8/11/15.

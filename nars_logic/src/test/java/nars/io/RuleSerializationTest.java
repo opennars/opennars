@@ -1,7 +1,7 @@
 package nars.io;
 
-import nars.meta.TaskRule;
 import nars.nal.SimpleDeriver;
+import nars.nal.TaskRule;
 import nars.term.Compound;
 import org.junit.Assert;
 

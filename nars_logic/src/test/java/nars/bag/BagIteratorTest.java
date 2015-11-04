@@ -2,8 +2,8 @@ package nars.bag;
 
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
-import nars.meter.bag.NullItem;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import java.util.Iterator;

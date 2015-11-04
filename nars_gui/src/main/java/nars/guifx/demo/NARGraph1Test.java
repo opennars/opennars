@@ -2,7 +2,6 @@ package nars.guifx.demo;
 
 import nars.Global;
 import nars.NAR;
-import nars.clock.FrameClock;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
@@ -13,6 +12,7 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
 import nars.nar.Default;
+import nars.time.FrameClock;
 
 /**
  * Created by me on 8/15/15.

@@ -1,8 +1,8 @@
 package nars.udp;
 
 import nars.NAR;
-import nars.io.UDPNetwork;
 import nars.nar.Default;
+import nars.op.io.UDPNetwork;
 
 import java.net.SocketException;
 

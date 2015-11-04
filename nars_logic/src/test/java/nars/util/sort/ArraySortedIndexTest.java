@@ -1,6 +1,7 @@
 package nars.util.sort;
 
-import nars.meter.bag.NullItem;
+import nars.util.ArraySortedIndex;
+import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

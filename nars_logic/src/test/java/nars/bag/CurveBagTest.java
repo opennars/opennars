@@ -6,12 +6,12 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
-import nars.meter.bag.NullItem;
 import nars.nar.Default;
+import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.data.sorted.SortedIndex;
-import nars.util.sort.ArraySortedIndex;
+import nars.util.meter.bag.NullItem;
 import org.apache.commons.math3.util.MathArrays;
 import org.junit.Test;
 

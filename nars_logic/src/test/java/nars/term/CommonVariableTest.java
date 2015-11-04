@@ -1,7 +1,7 @@
 package nars.term;
 
 import junit.framework.Assert;
-import nars.narsese.NarseseParser;
+import nars.Narsese;
 import org.junit.Test;
 
 import static org.jgroups.util.Util.assertEquals;
@@ -13,7 +13,7 @@ import static org.jgroups.util.Util.assertTrue;
  */
 public class CommonVariableTest {
 
-    NarseseParser p = NarseseParser.the();
+    Narsese p = Narsese.the();
 
     @Test
     public void commonVariableTest1() {

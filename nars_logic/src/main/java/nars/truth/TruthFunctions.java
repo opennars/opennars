@@ -21,7 +21,6 @@
 package nars.truth;
 
 import nars.nal.UtilityFunctions;
-import nars.task.stamp.Stamp;
 
 import static java.lang.Math.abs;
 

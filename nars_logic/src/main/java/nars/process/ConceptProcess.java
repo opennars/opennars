@@ -6,14 +6,14 @@ package nars.process;
 
 import nars.Memory;
 import nars.NAR;
+import nars.Premise;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.Deriver;
-import nars.premise.Premise;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.Terms;
+import nars.truth.Stamp;
 
 import java.util.function.Consumer;
 
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends NAL  {
+abstract public class ConceptProcess extends AbstractPremise  {
 
 
 

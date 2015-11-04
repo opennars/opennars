@@ -2,7 +2,7 @@ package nars.util.graph;
 
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.index.ConceptMap;
+import nars.util.data.ConceptMap;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.AsUndirectedGraph;

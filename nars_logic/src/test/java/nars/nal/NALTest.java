@@ -4,7 +4,7 @@
 //import nars.Global;
 //import nars.NAR;
 //import nars.NARSeed;
-//import nars.io.in.LibraryInput;
+//import LibraryInput;
 //import nars.nar.Default;
 //import org.junit.Ignore;
 //import org.junit.experimental.ParallelComputer;

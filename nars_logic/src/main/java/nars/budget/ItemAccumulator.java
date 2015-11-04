@@ -1,7 +1,7 @@
 package nars.budget;
 
 import nars.bag.impl.ArrayBag;
-import nars.util.sort.ArraySortedIndex;
+import nars.util.ArraySortedIndex;
 
 import java.io.PrintStream;
 

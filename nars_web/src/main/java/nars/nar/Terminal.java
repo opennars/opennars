@@ -1,9 +1,9 @@
 package nars.nar;
 
-import nars.clock.FrameClock;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.term.Term;
+import nars.time.FrameClock;
 
 /**
  * Terminal only executes commands and does not

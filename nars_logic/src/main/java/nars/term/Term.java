@@ -22,7 +22,7 @@ package nars.term;
 
 
 import nars.Op;
-import nars.nal.nal7.Temporal;
+import nars.nal.nal7.Tense;
 import nars.term.transform.TermVisitor;
 
 import java.io.IOException;
@@ -81,8 +81,8 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     boolean containsTermRecursively(Term target);
 
-    boolean equalsOrContainsTermRecursively(final Term target);
-
+//    boolean equalsOrContainsTermRecursively(final Term target);
+//
 
 
 //    default char[] chars(boolean pretty) {
@@ -103,7 +103,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     boolean hasVar();
 
     default int getTemporalOrder() {
-        return Temporal.ORDER_NONE;
+        return Tense.ORDER_NONE;
     }
 
     //boolean hasVar(final Op type);

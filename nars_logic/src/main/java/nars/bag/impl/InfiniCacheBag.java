@@ -4,8 +4,8 @@ import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.Memory;
 import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
-import nars.io.ConceptExternalizer;
+import nars.concept.util.ConceptBuilder;
+import nars.concept.util.ConceptExternalizer;
 import nars.term.Term;
 import org.infinispan.Cache;
 

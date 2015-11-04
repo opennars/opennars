@@ -7,14 +7,14 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import nars.NAR;
+import nars.Narsese;
 import nars.guifx.NARfx;
 import nars.guifx.demo.POJOPane;
-import nars.meter.MemoryBudget;
 import nars.nar.Default;
 import nars.nar.Default2;
-import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
+import nars.util.meter.MemoryBudget;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class SimpleNARBudgetDynamics {
 
     static final Map<String,Term> terms = new HashMap();
 
-    static NarseseParser np = NarseseParser.the();
+    static Narsese np = Narsese.the();
 
     public static Term term(String s) {
         Term x = terms.get(s);

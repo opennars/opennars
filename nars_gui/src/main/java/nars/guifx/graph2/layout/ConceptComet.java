@@ -4,8 +4,8 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.graph2.TermNode;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.Term;
+import nars.truth.Stamp;
 
 import java.util.Iterator;
 

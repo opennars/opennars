@@ -3,8 +3,8 @@ package nars.concept;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
-import nars.task.stamp.Stamp;
 import nars.term.Term;
+import nars.truth.Stamp;
 
 import java.util.Map;
 

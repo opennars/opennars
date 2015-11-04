@@ -2,7 +2,7 @@
 //
 //import nars.Global;
 //import nars.NAR;
-//import nars.io.in.LibraryInput;
+//import LibraryInput;
 //import nars.nar.Default;
 //import org.junit.Test;
 //

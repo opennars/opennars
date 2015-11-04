@@ -24,17 +24,12 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.truth.ProjectedTruth;
-import nars.truth.Truth;
-import nars.truth.TruthFunctions;
-import nars.truth.Truthed;
+import nars.truth.*;
 import nars.util.data.id.Named;
 
 import javax.annotation.Nullable;
@@ -172,7 +167,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     default Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
-        return setOccurrenceTime(Temporal.getOccurrenceTime(creation, tense, duration));
+        return setOccurrenceTime(Tense.getOccurrenceTime(creation, tense, duration));
     }
 
 
@@ -265,7 +260,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
         long occurrenceTime = getOccurrenceTime();
 
-        if (!Temporal.isEternal(occurrenceTime) && (targetTime != Stamp.ETERNAL)) {
+        if (!Tense.isEternal(occurrenceTime) && (targetTime != Stamp.ETERNAL)) {
             ProjectedTruth eternalTruth  = TruthFunctions.eternalize(currentTruth);
 
             float factor = TruthFunctions.temporalProjection(targetTime, occurrenceTime, currentTime);
@@ -332,7 +327,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
     default int getTemporalOrder() {
         int t = getTerm().getTemporalOrder();
-        if (t == Temporal.ORDER_INVALID)
+        if (t == Tense.ORDER_INVALID)
             throw new RuntimeException(this + " has INVALID temporal order");
         return t;
     }
@@ -453,7 +448,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
     default boolean concurrent(final Sentence s, final int duration) {
-        return Temporal.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
+        return Tense.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
     /** WARNING: calling this should not change the value of equivalentInstance, but just the

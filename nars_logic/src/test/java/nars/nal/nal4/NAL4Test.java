@@ -1,10 +1,10 @@
 package nars.nal.nal4;
 
 import nars.NAR;
-import nars.meter.RuleTest;
-import nars.meter.TestNAR;
+import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.narsese.InvalidInputException;
+import nars.util.meter.RuleTest;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,7 +23,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void structural_transformation() throws InvalidInputException {
+    public void structural_transformation() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(acid,base) --> reaction>",1.0f,0.9f); //en("An acid and a base can have a reaction.");
         tester.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f); //en("Acid can react with base.");
@@ -32,7 +32,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-     public void structural_transformation2() throws InvalidInputException {
+     public void structural_transformation2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<acid --> (/,reaction,_,base)>",1.0f,0.9f); //en("Acid can react with base.");
         tester.mustBelieve(100, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
@@ -40,7 +40,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void structural_transformation3() throws InvalidInputException {
+    public void structural_transformation3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f); //en("A base is something that has a reaction with an acid.");
         tester.mustBelieve(100, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
@@ -48,7 +48,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void structural_transformation4() throws InvalidInputException {
+    public void structural_transformation4() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<neutralization --> (acid,base)>",1.0f,0.9f); //en("Neutralization is a relation between an acid and a base. ");
         tester.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f); //en("Something that can neutralize a base is an acid.");
@@ -57,7 +57,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void structural_transformation5() throws InvalidInputException {
+    public void structural_transformation5() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(100, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Neutralization is a relation between an acid and a base.");
@@ -65,7 +65,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void structural_transformation6() throws InvalidInputException {
+    public void structural_transformation6() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(100, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
@@ -73,7 +73,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void composition_on_both_sides_of_a_statement() throws InvalidInputException {
+    public void composition_on_both_sides_of_a_statement() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
         tester.ask("<(bird,plant) --> ?x>"); //en("What is the relation between a bird and a plant?");
@@ -82,7 +82,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void composition_on_both_sides_of_a_statement_2() throws InvalidInputException {
+    public void composition_on_both_sides_of_a_statement_2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
         tester.ask("<(bird,plant) --> (*,animal,plant)>");
@@ -91,7 +91,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void composition_on_both_sides_of_a_statement2() throws InvalidInputException {
+    public void composition_on_both_sides_of_a_statement2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<neutralization --> reaction>",1.0f,0.9f); //en("Neutralization is a type of reaction.");
         tester.ask("<(\\,neutralization,acid,_) --> ?x>"); //en("What can be neutralized by acid?");
@@ -100,7 +100,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void composition_on_both_sides_of_a_statement2_2() throws InvalidInputException {
+    public void composition_on_both_sides_of_a_statement2_2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<neutralization --> reaction>",1.0f,0.9f); //en("Neutralization is a type of reaction.");
         tester.ask("<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>");
@@ -109,7 +109,7 @@ public class NAL4Test extends AbstractNALTester {
     }
 
     @Test
-    public void composition_on_both_sides_of_a_statement3() throws InvalidInputException {
+    public void composition_on_both_sides_of_a_statement3() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<soda --> base>",1.0f,0.9f); //en("Soda is a type of base.");
         tester.ask("<(/,neutralization,_,base) --> ?x>"); //en("What is something that can neutralize a base?");

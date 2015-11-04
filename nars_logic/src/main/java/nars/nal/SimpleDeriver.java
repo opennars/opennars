@@ -4,10 +4,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.Global;
 import nars.Op;
-import nars.meta.PostCondition;
-import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
-import nars.meta.pre.PairMatchingProduct;
+import nars.nal.meta.PostCondition;
+import nars.nal.meta.TaskBeliefPair;
 import nars.task.Task;
 import nars.term.Term;
 import nars.util.db.TemporaryCache;
@@ -21,7 +19,7 @@ import java.util.function.Consumer;
 public class SimpleDeriver extends Deriver  {
 
     /** maps rule patterns to one or more rules which involve it */
-    public final Multimap<PairMatchingProduct, TaskRule> ruleIndex;
+    public final Multimap<TaskBeliefPair, TaskRule> ruleIndex;
 
 
 
@@ -137,7 +135,7 @@ public class SimpleDeriver extends Deriver  {
     public void forEachRule(RuleMatch match, Consumer<Task> receiver) {
 
 
-        final PairMatchingProduct taskBelief = match.taskBelief;
+        final TaskBeliefPair taskBelief = match.taskBelief;
         final Term taskTerm = taskBelief.term(0);
         final Term beliefTerm = taskBelief.term(1);
 

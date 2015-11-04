@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
-import nars.io.Texts;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
@@ -17,6 +16,7 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.util.Texts;
 
 import java.util.ArrayList;
 import java.util.List;
