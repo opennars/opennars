@@ -84,13 +84,13 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         this.capacity = capacity;
 
         final List<E> l = this.list;
-        //if (l =null) {
+
             int n = l.size();
             //remove elements from end
             for (; n - capacity > 0; n--) {
                 l.remove(n-1);
             }
-        //}
+
 
     }
 

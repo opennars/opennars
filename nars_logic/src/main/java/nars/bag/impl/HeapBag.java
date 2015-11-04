@@ -1,7 +1,6 @@
 package nars.bag.impl;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Budget;
@@ -64,7 +63,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         public HeapMap(int capacity) {
             //super(new CuckooMap(rng, capacity + 1));
-            super(new UnifiedMap(capacity+1));
+            super(Global.newHashMap(capacity+1));
         }
 
         public HeapMap(Map<K, E> map) {

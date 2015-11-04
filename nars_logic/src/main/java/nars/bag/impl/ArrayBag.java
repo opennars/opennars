@@ -2,7 +2,7 @@ package nars.bag.impl;
 
 import com.google.common.collect.Sets;
 import com.gs.collections.api.block.procedure.Procedure2;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
+import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
@@ -33,7 +33,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     public final SortedIndex<V> items;
 
     public ArrayBag(SortedIndex<V> items) {
-        this(items, new UnifiedMap(items.capacity()));
+        this(items, Global.newHashMap(items.capacity()));
     }
 
     public ArrayBag(SortedIndex<V> items, Map<K,V> map) {

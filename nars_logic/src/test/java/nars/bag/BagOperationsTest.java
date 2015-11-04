@@ -26,7 +26,7 @@ public class BagOperationsTest {
 
     final Random rng = new XORShiftRandom();
 
-    public static class NullConcept extends Item<String> {
+    public static class NullConcept extends Item<CharSequence> {
 
         private final String id;
 
@@ -37,7 +37,7 @@ public class BagOperationsTest {
 
 
         @Override
-        public String name() {
+        public CharSequence name() {
             return id;
         }
 
@@ -57,7 +57,7 @@ public class BagOperationsTest {
     }
 
     /** test with a bag of capacity 2 */
-    public static void testBagSequence(Bag<String,Item<String>> b) {
+    public static void testBagSequence(Bag<CharSequence,Item<CharSequence>> b) {
 
         b.mergePlus();
 

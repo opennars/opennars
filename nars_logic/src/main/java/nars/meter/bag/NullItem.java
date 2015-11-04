@@ -11,7 +11,7 @@ public class NullItem extends Item.StringKeyItem {
     final static Random rng = new XorShift1024StarRandom(1);
     static int ID = 1;
 
-    public final String key;
+    public final CharSequence key;
 
     public NullItem() {
         this(rng.nextFloat()); // * (1.0f - DefaultTruth.DEFAULT_TRUTH_EPSILON));
@@ -22,7 +22,7 @@ public class NullItem extends Item.StringKeyItem {
         this(rng.nextFloat() * ( priMax-priMin) + priMin);
     }
 
-    public NullItem(float priority, String key) {
+    public NullItem(float priority, CharSequence key) {
         super(priority, priority, priority);
         this.key = key;
     }

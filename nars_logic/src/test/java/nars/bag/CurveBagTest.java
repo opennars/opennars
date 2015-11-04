@@ -339,7 +339,7 @@ public class CurveBagTest extends AbstractBagTest {
         //final AtomicInteger removeKey = new AtomicInteger(0);
 
 
-        CurveBag<CharSequence, NullItem> c = new CurveBag<CharSequence, NullItem>(curve, capacity, rng);
+        CurveBag<CharSequence, NullItem> c = new CurveBag<>(curve, capacity, rng);
 //
 //
 //            protected ArrayMapping<CharSequence, NullItem> newIndex(int capacity) {

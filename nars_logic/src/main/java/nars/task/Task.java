@@ -666,7 +666,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
     default long start() { return getOccurrenceTime(); }
     default long end() { return start() + duration(); }
 
-    default <T extends Task> T normalized() {
+    default <T extends Task<? extends Compound>> T normalized() {
         if (!normalize()) return null;
         return (T)this;
     }

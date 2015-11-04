@@ -23,7 +23,6 @@ package nars.bag.impl;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Budget;
@@ -112,7 +111,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
     public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
-        this(new UnifiedMap(capacity*2), levels, capacity, thresholdLevel);
+        this(Global.newHashMap(capacity*2), levels, capacity, thresholdLevel);
     }
     /**
      * thresholdLevel = 0 disables "fire level completely" threshold effect

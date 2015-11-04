@@ -1,6 +1,5 @@
 package nars.term.transform;
 
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -38,7 +37,7 @@ public class FindSubst {
     };
     final DequePool<Map<Variable,Term>> mapPool = new DequePool<Map<Variable,Term>>(1) {
         @Override public Map<Variable,Term> create() {
-            return new UnifiedMap<>();
+            return Global.newHashMap();
         }
 
         @Override

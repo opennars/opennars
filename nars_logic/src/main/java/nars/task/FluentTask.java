@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class FluentTask extends DefaultTask<Compound<?>>  {
+public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 
 
 //    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
@@ -41,7 +41,7 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
         setOccurrenceTime(TIMELESS);
     }
 
-    public FluentTask(Compound term) {
+    public FluentTask(C term) {
         this();
         term(term);
     }
@@ -143,7 +143,7 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //        return this;
 //    }
 
-    public final FluentTask term(Compound t) {
+    public final FluentTask term(C t) {
         this.term = t;
         return this;
     }
@@ -180,12 +180,12 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
         return this;
     }
 
-    public Task<Compound<?>> question() {
+    public FluentTask question() {
         setPunctuation(Symbols.QUESTION);
         return this;
     }
 
-    public Task<Compound<?>> quest() {
+    public FluentTask quest() {
         setPunctuation(Symbols.QUEST);
         return this;
     }
@@ -209,11 +209,11 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
         return tense(Tense.Present, memory);
     }
 
-    public Task<Compound<?>> past(Memory memory) {
+    public FluentTask past(Memory memory) {
         return tense(Tense.Past, memory);
     }
 
-    public Task<Compound<?>> future(Memory memory) {
+    public FluentTask future(Memory memory) {
         return tense(Tense.Future, memory);
     }
 
@@ -273,7 +273,7 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //    }
 
 
-    public FluentTask punctuation(final char punctuation) {
+    public FluentTask<C> punctuation(final char punctuation) {
         setPunctuation(punctuation);
         return this;
     }
@@ -346,7 +346,7 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //    }
 //
 
-    public Task<Compound<?>> budgetCompoundForward(Compound result, Premise p) {
+    public FluentTask budgetCompoundForward(Compound result, Premise p) {
         BudgetFunctions.compoundForward(this, getTruth(), result, p);
         return this;
     }
@@ -393,7 +393,7 @@ public class FluentTask extends DefaultTask<Compound<?>>  {
 //        return this;
 //    }
 
-    public FluentTask eternal() {
+    public FluentTask<C> eternal() {
         setEternal();
         return this;
     }

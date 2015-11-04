@@ -35,7 +35,7 @@ import static nars.Global.reference;
  * Default Task implementation
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class DefaultTask<T extends Compound<?>> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
+public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
 
     /** content term of this task */
     protected T term;

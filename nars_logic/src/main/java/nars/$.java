@@ -26,10 +26,10 @@ public class $ {
         //        catch (InvalidInputException e) { }
     }
 
-    public static final FluentTask _(final String term, char punc) {
-        Compound t = NarseseParser.the().term(term);
+    public static final <C extends Compound> FluentTask _(final String term, char punc) {
+        C t = NarseseParser.the().term(term);
         if (t == null) return null;
-        return new FluentTask(t).punctuation(punc).eternal().normalized();
+        return (FluentTask) new FluentTask(t).punctuation(punc).eternal().normalized();
     }
 
     /**

@@ -1,6 +1,5 @@
 package nars.bag.impl.experimental;
 
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Item;
@@ -116,7 +115,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         this.rng = rng;
         this.capacity = capacity;
         //this.index = new CuckooMap(rng, (capacity/2));
-        this.index = new UnifiedMap();
+        this.index = Global.newHashMap(capacity);
 
 
         this.nodePool = nodePool;

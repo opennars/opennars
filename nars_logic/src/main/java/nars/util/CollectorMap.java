@@ -113,17 +113,17 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     }
 
 
-    public V removeKey(final K key) {
+    public final V removeKey(final K key) {
         V e = map.remove(key);
         return e;
     }
 
 
-    public int size() {
+    public final int size() {
         return map.size();
     }
 
-    public boolean containsValue(V it) {
+    public final boolean containsValue(V it) {
         return map.containsValue(it);
     }
 
@@ -151,7 +151,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     /**
      * put key in index, do not add value
      */
-    public V putKey(final K key, final V value) {
+    public final V putKey(final K key, final V value) {
         return map.put(key, value);
     }
 

@@ -4,6 +4,8 @@ import nars.$;
 import nars.NAR;
 import nars.nar.Terminal;
 import nars.task.Task;
+import nars.term.Compound;
+import nars.util.data.MutableDouble;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -83,6 +85,29 @@ public class ItemAccumulatorTest {
     }
 
 
+    @Test public void testForEachOrder() {
+
+        //highest first
+
+        final int capacity = 8;
+
+        TaskAccumulator<? extends Compound> ii = new TaskAccumulator<>(capacity);
+        assertTrue(ii.isSorted());
+
+        for (int i = 0; i < capacity - 1; i++) {
+            ii.put($._("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
+        }
+
+        MutableDouble prev = new MutableDouble(Double.POSITIVE_INFINITY);
+        ii.forEach( (Budgeted t) -> {
+            float p = t.getBudget().getPriority();
+            assertTrue(p <= prev.floatValue()); //decreasing
+            prev.set(p);
+        });
+
+        //this will use an Iterator to determine sorting
+        assertTrue(ii.isSorted());
+    }
 
     @Test public void testRankDurQuaForEqualPri() {   }
 
@@ -103,22 +128,5 @@ public class ItemAccumulatorTest {
 
         ii.print(System.out);
 
-//        assertEquals(4, ii.size());
-//
-//        //z should be ignored
-//        //List<Task> buffer = Global.newArrayList();
-//
-//
-//        assertEquals(capacity, ii.size());
-//
-//        Task<?> one = ii.pop();
-//        assertEquals("$0.30;0.80;0.95$ <d --> x>. %1.00;0.90%", one.toString());
-//
-//        List<Task> two = new ArrayList();
-//        two.add(ii.pop());
-//        two.add(ii.pop());
-//        assertEquals("[$0.20;0.80;0.95$ <c --> x>. %1.00;0.90%, $0.10;0.80;0.95$ <b --> x>. %1.00;0.90%]", two.toString());
-//
-//        assertEquals(1, ii.size());
     }
 }
