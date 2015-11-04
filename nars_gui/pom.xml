@@ -52,11 +52,11 @@
             <artifactId>nars_logic</artifactId>
         </dependency>
 
-        <dependency>
-            <!-- deprecated.. replacewhen possible -->
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--&lt;!&ndash; deprecated.. replacewhen possible &ndash;&gt;-->
+            <!--<groupId>org.apache.logging.log4j</groupId>-->
+            <!--<artifactId>log4j-core</artifactId>-->
+        <!--</dependency>-->
 
         <!--<dependency>-->
             <!--<groupId>org.slf4j</groupId>-->
@@ -92,10 +92,7 @@
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx</artifactId>
         </dependency>
-        <dependency>
-            <groupId>gov.nist.math</groupId>
-            <artifactId>jama</artifactId>
-        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>jung</groupId>-->
             <!--<artifactId>jung</artifactId>-->
@@ -223,6 +220,7 @@
         <repository>
             <id>sonatype-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+
         </repository>
     </repositories>
 

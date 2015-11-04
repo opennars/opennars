@@ -37,7 +37,6 @@ import nars.truth.Truth;
 import nars.truth.Truthed;
 import nars.util.data.array.LongArrays;
 
-import javax.annotation.Nullable;
 import java.lang.ref.Reference;
 import java.util.Collection;
 import java.util.List;
@@ -277,18 +276,18 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
 
 
-    default StringBuilder toString(@Nullable Memory memory) {
+    default StringBuilder toString(/**@Nullable*/ Memory memory) {
         return appendTo(null, memory);
     }
 
     @Override
-    default StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
+    default StringBuilder appendTo(StringBuilder sb, /**@Nullable*/ Memory memory) {
         if (sb == null) sb = new StringBuilder();
         return appendTo(sb, memory, false);
     }
 
     @Override @Deprecated
-    default StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return appendTo(buffer, memory, true, showStamp && notCommand,
                 notCommand, //budget
@@ -297,7 +296,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     @Override
-    default StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
+    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
 
 
         String contentName;

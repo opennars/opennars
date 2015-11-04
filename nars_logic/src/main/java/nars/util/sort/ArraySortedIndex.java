@@ -3,13 +3,14 @@ package nars.util.sort;
 import nars.Global;
 import nars.budget.Itemized;
 import nars.util.data.sorted.SortedIndex;
-import org.apache.commons.collections.iterators.ReverseListIterator;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+
+//import org.apache.commons.collections.iterators.ReverseListIterator;
 
 
 public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> implements Serializable {
@@ -255,7 +256,8 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
     @Override
     public final Iterator<E> descendingIterator() {
-        return new ReverseListIterator(list);
+        //return new ReverseListIterator(list);
+        throw new RuntimeException("unimpl yet");
     }
 
     @Override public final E remove(int i) {

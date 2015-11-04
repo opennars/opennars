@@ -8,7 +8,6 @@ import nars.io.FIFOTaskPerception;
 import nars.meta.TaskRule;
 import nars.meter.DerivationGraph;
 import nars.nal.SimpleDeriver;
-import nars.util.data.FasterHashMap;
 import nars.util.db.InfiniPeer;
 
 import java.io.FileNotFoundException;
@@ -16,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,8 +23,9 @@ public class SingleStepNAR extends Default {
     static DerivationGraph derivations = new DerivationGraph(false, false);
 
     static Multimap<TaskRule, DerivationGraph.PremiseKey> ruleDerivations =
-            Multimaps.newMultimap(new FasterHashMap(1024),
-                    () -> new HashSet());
+            Multimaps.newMultimap(Global.newHashMap(1024),
+                    () -> Global.newHashSet(4));
+
 //    static Multimap<DerivationGraph.PremiseKey, TaskRule> derivationRules =
 //            Multimaps.newMultimap(new FasterHashMap(1024),
 //                    () -> new HashSet());
