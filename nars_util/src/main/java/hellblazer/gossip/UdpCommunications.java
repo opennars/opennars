@@ -550,7 +550,8 @@ public class UdpCommunications implements GossipCommunications {
         buffer.order(ByteOrder.BIG_ENDIAN);
         final DatagramPacket packet = new DatagramPacket(buffer.array(),
                                                          buffer.array().length);
-        log.fine(() -> String.format("listening for packet on %s", localAddress));
+
+        //log.fine(() -> String.format("listening for packet on %s", localAddress));
 
         socket.receive(packet);
         buffer.limit(packet.getLength());

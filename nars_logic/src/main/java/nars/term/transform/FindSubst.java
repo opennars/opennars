@@ -23,9 +23,11 @@ public class FindSubst {
 
     /** X var -> Y term mapping */
     public final Map<Variable, Term> xy;
+    boolean xyChanged = false;
 
     /** Y var -> X term mapping */
     public final Map<Variable, Term> yx;
+    boolean yxChanged = false;
 
     private final Random random;
 
@@ -162,7 +164,7 @@ public class FindSubst {
         } else if ((xOp == yOp) && (x instanceof Compound)) {
             Compound cx = (Compound) x;
             Compound cy = (Compound) y;
-            if (!isPossibleMatch(cx, cy))
+            if (!matchable(cx, cy))
                 power = -power;
             else
                 power = permute(cx, cy, power);
@@ -175,8 +177,8 @@ public class FindSubst {
         return power;
     }
 
-    /** compare variable types to determine if one can match for another */
-    private boolean isPossibleMatch(Op xVarOp, Op yOp) {
+    /** compare variable type to determine if matchable */
+    private final boolean matchable(Op xVarOp/*, Op yOp*/) {
         if (xVarOp == Op.VAR_PATTERN) return true;
 //        if (xVarOp == Op.VAR_QUERY) {
 //            return yOp!=Op.VAR_QUERY; //dep or indep. it will not be the same query variable because equality has already been tested
@@ -196,7 +198,7 @@ public class FindSubst {
         final Op xOp = xVar.op();
         final Op yOp = y.op();
 
-        boolean subsumes = isPossibleMatch(xOp, yOp);
+        boolean subsumes = matchable(xOp/*, yOp*/);
         boolean sameType = (yOp == xOp);
 
         if (subsumes) {
@@ -225,7 +227,7 @@ public class FindSubst {
     }
 
 
-    protected final boolean isPossibleMatch(final Compound X, final Compound Y) {
+    protected final boolean matchable(final Compound X, final Compound Y) {
         /** must have same # subterms */
         if (X.length() != Y.length()) {
             return false;
@@ -280,24 +282,24 @@ public class FindSubst {
     }
 
 
-    /**
-     * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
-     */
-    static protected boolean queryVarMatch(final Op xVar, final Op yVar) {
-
-        final boolean xQuery = (xVar == Op.VAR_QUERY);
-        final boolean yQuery = (yVar == Op.VAR_QUERY);
-
-        return (xQuery ^ yQuery);
-    }
+//    /**
+//     * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+//     */
+//    static protected boolean queryVarMatch(final Op xVar, final Op yVar) {
+//
+//        final boolean xQuery = (xVar == Op.VAR_QUERY);
+//        final boolean yQuery = (yVar == Op.VAR_QUERY);
+//
+//        return (xQuery ^ yQuery);
+//    }
 
     /**
      * elimination
      */
     private final boolean putVarY(final Term x, final Variable yVar) {
-        if (yVar.op()!=type) {
+        /*if (yVar.op()!=type) {
             throw new RuntimeException("tried to set invalid map: " + yVar + "->" + x + " but type=" + type);
-        }
+        }*/
         yxPut(yVar, x);
         if (yVar instanceof CommonVariable) {
             xyPut(yVar, x);
@@ -309,9 +311,9 @@ public class FindSubst {
      * elimination
      */
     private final boolean putVarX(final Variable xVar, final Term y) {
-        if (xVar.op()!=type) {
+        /*if (xVar.op()!=type) {
             throw new RuntimeException("tried to set invalid map: " + xVar + "->" + y + " but type=" + type);
-        }
+        }*/
         xyPut(xVar, y);
         if (xVar instanceof CommonVariable) {
             yxPut(xVar, y);
@@ -328,12 +330,14 @@ public class FindSubst {
     }
 
     private final void yxPut(Variable y, Term x) {
-        yx.put(y, x);
+        yxChanged|= (yx.put(y, x)!=x);
     }
 
     private final void xyPut(Variable x, Term y) {
-        xy.put(x, y);
+        xyChanged|= (xy.put(x, y)!=y);
     }
+
+
 
     /**
      * @param X the compound which is permuted/shuffled
@@ -350,11 +354,16 @@ public class FindSubst {
 
         final int len = xTerms.length;
         perm.restart(len, random);
-        //int permutations = perm.total();
+
+
+        final Map<Variable, Term> xy = this.xy; //local copy on stack
+        final Map<Variable, Term> yx = this.yx; //local copy on stack
 
         //push/save:
-        Map<Variable, Term> savedXY = getMap(xy);
-        Map<Variable, Term> savedYX = getMap(yx);
+        Map<Variable, Term> savedXY = acquireCopy(xy);
+        xyChanged = false;
+        Map<Variable, Term> savedYX = acquireCopy(yx);
+        yxChanged = false;
 
         while (power > 0 && perm.hasNext()) {
 
@@ -371,32 +380,40 @@ public class FindSubst {
                 power = -power; //try again; invert negated power back to a positive value for next attempt
 
                 //pop/restore (TODO only if changed and will attempt again):
-                restore(savedYX, yx);
-                restore(savedXY, xy);
+                if (yxChanged) {
+                    yxChanged = false;
+                    restore(savedYX, yx);
+                }
+
+                if (xyChanged) {
+                    xyChanged = false;
+                    restore(savedXY, xy);
+                }
 
                 //ready to continue on next permutation
 
             } else {
-                returnMap(savedXY, savedYX);
+                releaseCopies(savedXY, savedYX);
                 return power; //success
             }
         }
 
-        returnMap(savedXY, savedYX);
+        releaseCopies(savedXY, savedYX);
         return fail(power); //fail
     }
 
     private final void restore(Map<Variable, Term> savedCopy, Map<Variable, Term> originToRevert) {
-        originToRevert.clear(); yx.putAll(savedCopy);
+        originToRevert.clear();
+        originToRevert.putAll(savedCopy);
     }
 
-    private final Map<Variable, Term> getMap(Map<Variable, Term> init) {
+    private final Map<Variable, Term> acquireCopy(Map<Variable, Term> init) {
         Map<Variable, Term> m = mapPool.get();
         m.putAll(init);
         return m;
     }
 
-    private final void returnMap(Map<Variable, Term> a, Map<Variable, Term> b) {
+    private final void releaseCopies(Map<Variable, Term> a, Map<Variable, Term> b) {
         final DequePool<Map<Variable, Term>> mp = this.mapPool;
         mp.put(a);
         mp.put(b);

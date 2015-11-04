@@ -721,7 +721,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     /**
      * pins thread to a CPU core to improve performance while
-     * running some frames
+     * running some frames.
+     *
+     * there is some overhead in acquiring the lock so it
+     * will not make sense to use this method unless
+     * the expected runtime for the given # of frames
+     * is sufficiently high (ie. dont use this in a loop;
+     * instead put the loop inside an AffinityLock)
      */
     public final NAR frameBatch(final int frames) {
 
