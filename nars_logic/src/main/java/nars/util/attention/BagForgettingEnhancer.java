@@ -35,14 +35,10 @@ public class BagForgettingEnhancer extends Active {
 
                 }),
 
-                memory.eventCycleEnd.on(mm -> {
-
-                    bag.forgetNext(
-                            memory.conceptForgetDurations,
-                            Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
-                            memory);
-
-                })
+                memory.eventCycleEnd.on(mm -> bag.forgetNext(
+                        memory.conceptForgetDurations,
+                        Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
+                        memory))
         );
 
     }

@@ -330,16 +330,19 @@ public final class MathUtils {
 
     /**
      * Computes the Greatest Common Devisor of integers p and q.
-     * 
+     *
      * @param p
      * @param q
      * @return gcd
      */
     public static final int gcd(int p, int q) {
-        if (q == 0) {
-            return p;
+        while (true) {
+            if (q == 0) {
+                return p;
+            }
+            p = q;
+            q = p % q;
         }
-        return gcd(q, p % q);
     }
 
     /**
@@ -548,11 +551,11 @@ public final class MathUtils {
     }
 
     public static final int random(Random rnd, int max) {
-        return (int) (rnd.nextDouble() * max);
+        return rnd.nextInt((int) max);
     }
 
     public static final int random(Random rnd, int min, int max) {
-        return (int) (rnd.nextDouble() * (max - min)) + min;
+        return rnd.nextInt((int) (max - min)) + min;
     }
 
     public static final boolean randomChance(double chance) {

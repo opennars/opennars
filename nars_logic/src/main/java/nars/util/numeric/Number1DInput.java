@@ -160,7 +160,7 @@ public class Number1DInput {
         return id + "\u220D" + iteration;
     }
 
-    final String cert = "1.00"; //default certainty
+    static final String cert = "1.00"; //default certainty
 
     @Deprecated
     public String[] getStatementsFrequencyEncoded(int i, double value) {

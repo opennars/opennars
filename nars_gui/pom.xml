@@ -193,6 +193,12 @@
             <groupId>org.jfxvnc</groupId>
             <artifactId>jfxvnc-ui</artifactId>
             <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.controlsfx</groupId>
+                    <artifactId>controlsfx</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 

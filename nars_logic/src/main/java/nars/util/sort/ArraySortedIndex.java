@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 //import org.apache.commons.collections.iterators.ReverseListIterator;
@@ -31,6 +32,11 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         if (!(obj instanceof ArraySortedIndex)) return false;
         ArraySortedIndex o = (ArraySortedIndex) obj;
         return list.equals(o.list) && capacity == o.capacity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(list.hashCode(), capacity);
     }
 
     @Override public final List<E> getList() {

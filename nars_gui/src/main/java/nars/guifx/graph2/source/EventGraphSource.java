@@ -9,7 +9,7 @@ import nars.task.Task;
 import nars.term.Atom;
 import nars.util.event.Active;
 import nars.util.event.Topic;
-import nars.util.time.Interval;
+import nars.util.time.Between;
 import nars.util.time.IntervalTree;
 
 import java.util.Set;
@@ -75,7 +75,7 @@ public class EventGraphSource implements GraphSource<Task>,
         long oldest = 0;
 
 
-        map.root.getOverlap(new Interval(oldest, now),
+        map.root.getOverlap(new Between(oldest, now),
                 l::addAll
         );
 
@@ -94,7 +94,7 @@ public class EventGraphSource implements GraphSource<Task>,
         //temporal features, extract
         if (o instanceof Task) {
             Task t = (Task)o;
-            Interval<Long> ii = new Interval<>(
+            Between<Long> ii = new Between<>(
                     (long)(t.getCreationTime()-1.0),
                     t.getCreationTime());
 

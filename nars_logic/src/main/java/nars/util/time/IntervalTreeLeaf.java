@@ -5,16 +5,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
-class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTreeNode<K, V>, Entry<Interval<K>, V> {
+class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTreeNode<K, V>, Entry<Between<K>, V> {
 	
-	private final Interval<K> key;
+	private final Between<K> key;
 	private V value;
 	
 	IntervalTreeLeaf(K min, K max, V value) {
-		this(new Interval<>(min, max),value);
+		this(new Between<>(min, max),value);
 	}
 
-	public IntervalTreeLeaf(Interval<K> key, V value) {
+	public IntervalTreeLeaf(Between<K> key, V value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -45,7 +45,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 	
 	@Override
-	public boolean contains(Interval<K> interval) {
+	public boolean contains(Between<K> interval) {
 		return key.contains(interval);
 	}
 
@@ -55,7 +55,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public boolean overlaps(Interval<K> interval) {
+	public boolean overlaps(Between<K> interval) {
 		return key.overlaps(interval);
 	}
 
@@ -75,7 +75,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public IntervalTreeNode<K, V> put(Interval<K> key, V value) {
+	public IntervalTreeNode<K, V> put(Between<K> key, V value) {
 		IntervalTreeNode<K, V> putNode = new IntervalTreeLeaf<>(key, value);
 		if(this.key.getLow().compareTo(key.getLow()) < 0){
 			return new IntervalTreeBranch<>(this, putNode);
@@ -85,7 +85,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	final public V getEqual(final Interval<K> range) {
+	final public V getEqual(final Between<K> range) {
 		if (getLow().equals(range.getLow()) && getHigh().equals(range.getHigh())) {
 			return getValue();
 		}
@@ -94,7 +94,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 
 	@Override
-	public V getContain(Interval<K> range) {
+	public V getContain(Between<K> range) {
 		if (range.contains(key)) {
 			return getValue();
 		}
@@ -103,14 +103,14 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 
 	@Override
-	public final void getOverlap(Interval<K> range, Consumer<V> accumulator) {
+	public final void getOverlap(Between<K> range, Consumer<V> accumulator) {
 		if(range.overlaps(key)){
 			accumulator.accept(getValue());
 		}
 	}
 
 	@Override
-	public final void getOverlap(Interval<K> range,
+	public final void getOverlap(Between<K> range,
 						   Collection<V> accumulator) {
 		if(range.overlaps(key)){
 			accumulator.add(getValue());
@@ -118,7 +118,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public void getContain(Interval<K> range,
+	public void getContain(Between<K> range,
 						   Collection<V> accumulator) {
 		if(key.contains(range)){
 			accumulator.add(getValue());
@@ -145,12 +145,12 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public void entrySet(Set<Entry<Interval<K>, V>> accumulator) {
+	public void entrySet(Set<Entry<Between<K>, V>> accumulator) {
 		accumulator.add(this);
 	}
 
 	@Override
-	public final Interval<K> getKey() {
+	public final Between<K> getKey() {
 		return key;
 	}
 
@@ -167,24 +167,24 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public void keySet(Set<Interval<K>> accumulator) {
+	public void keySet(Set<Between<K>> accumulator) {
 		accumulator.add(key);
 	}
 
 	@Override
-	public boolean containedBy(Interval<K> interval) {
+	public boolean containedBy(Between<K> interval) {
 		return interval.contains(key);
 	}
 
 	@Override
-	public void searchContainedBy(Interval<K> range, Collection<V> accumulator) {
+	public void searchContainedBy(Between<K> range, Collection<V> accumulator) {
 		if(containedBy(range)){
 			accumulator.add(getValue());
 		}
 	}
 
 	@Override
-	public Interval<K> getRange() {
+	public Between<K> getRange() {
 		return key;
 	}
 
@@ -210,7 +210,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 
 	@Override
-	public IntervalTreeNode<K, V> removeOverlapping(Interval<K> range) {
+	public IntervalTreeNode<K, V> removeOverlapping(Between<K> range) {
 		if(key.overlaps(range)){
 			return null;
 		}
@@ -218,7 +218,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public IntervalTreeNode<K, V> removeContaining(Interval<K> range) {
+	public IntervalTreeNode<K, V> removeContaining(Between<K> range) {
 		if(key.contains(range)){
 			return null;
 		}
@@ -226,7 +226,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public IntervalTreeNode<K, V> removeContainedBy(Interval<K> range) {
+	public IntervalTreeNode<K, V> removeContainedBy(Between<K> range) {
 		if(range.contains(key)){
 			return null;
 		}

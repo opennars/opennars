@@ -9,7 +9,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
         IntervalTreeNode<K, V> {
 
     private IntervalTreeNode<K, V> left, right;
-    private Interval<K> key;
+    private Between<K> key;
 
     public IntervalTreeBranch(IntervalTreeNode<K, V> left, IntervalTreeNode<K, V> right) {
         this.left = left;
@@ -20,12 +20,12 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     private void updateKeyRange() {
         if (left != null) {
             if (right == null || left.getHigh().compareTo(right.getHigh()) > 0) {
-                key = new Interval<>(left.getLow(), left.getHigh());
+                key = new Between<>(left.getLow(), left.getHigh());
             } else {
-                key = new Interval<>(left.getLow(), right.getHigh());
+                key = new Between<>(left.getLow(), right.getHigh());
             }
         } else {
-            key = new Interval<>(right.getLow(), right.getHigh());
+            key = new Between<>(right.getLow(), right.getHigh());
         }
     }
 
@@ -58,7 +58,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public boolean contains(Interval<K> interval) {
+    public boolean contains(Between<K> interval) {
         return key.contains(interval);
     }
 
@@ -68,7 +68,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public boolean overlaps(Interval<K> interval) {
+    public boolean overlaps(Between<K> interval) {
         return key.overlaps(interval);
     }
 
@@ -88,7 +88,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public IntervalTreeNode<K, V> put(Interval<K> key, V value) {
+    public IntervalTreeNode<K, V> put(Between<K> key, V value) {
         if (right == null) {
             if (left.getLow().compareTo(key.getLow()) < 0) {
                 right = left;
@@ -112,7 +112,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public void getOverlap(Interval<K> range, Consumer<V> accumulator) {
+    public void getOverlap(Between<K> range, Consumer<V> accumulator) {
         if (left != null && left.overlaps(range)) {
             left.getOverlap(range, accumulator);
         }
@@ -122,7 +122,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public void getOverlap(Interval<K> range, Collection<V> accumulator) {
+    public void getOverlap(Between<K> range, Collection<V> accumulator) {
         if (left != null && left.overlaps(range)) {
             left.getOverlap(range, accumulator);
         }
@@ -132,7 +132,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public V getEqual(Interval<K> range) {
+    public V getEqual(Between<K> range) {
         if (left != null && left.overlaps(range)) {
             return left.getEqual(range);
         }
@@ -143,7 +143,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public V getContain(Interval<K> range) {
+    public V getContain(Between<K> range) {
         if (left != null && left.overlaps(range)) {
             return left.getContain(range);
         }
@@ -154,7 +154,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public void getContain(Interval<K> range, Collection<V> accumulator) {
+    public void getContain(Between<K> range, Collection<V> accumulator) {
         if (left != null && left.contains(range)) {
             left.getContain(range, accumulator);
         }
@@ -204,7 +204,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public void entrySet(Set<Entry<Interval<K>, V>> accumulator) {
+    public void entrySet(Set<Entry<Between<K>, V>> accumulator) {
         if (left != null) {
             left.entrySet(accumulator);
         }
@@ -219,7 +219,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public void keySet(Set<Interval<K>> accumulator) {
+    public void keySet(Set<Between<K>> accumulator) {
         if (left != null) {
             left.keySet(accumulator);
         }
@@ -229,12 +229,12 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public boolean containedBy(Interval<K> interval) {
+    public boolean containedBy(Between<K> interval) {
         return interval.contains(key);
     }
 
     @Override
-    public void searchContainedBy(Interval<K> range, Collection<V> accumulator) {
+    public void searchContainedBy(Between<K> range, Collection<V> accumulator) {
         if (left != null && left.overlaps(range)) {
             left.searchContainedBy(range, accumulator);
         }
@@ -244,7 +244,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public final Interval<K> getRange() {
+    public final Between<K> getRange() {
         return key;
     }
 
@@ -277,7 +277,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
             left = left.removeAll(values);
         }
         if (right != null) {
-            right = left.removeAll(values);
+            right = right.removeAll(values);
         }
         if (left == null && right == null) {
             return null;
@@ -287,7 +287,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public IntervalTreeNode<K, V> removeOverlapping(Interval<K> range) {
+    public IntervalTreeNode<K, V> removeOverlapping(Between<K> range) {
         if (left != null && left.overlaps(range)) {
             left = left.removeOverlapping(range);
         }
@@ -298,7 +298,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public IntervalTreeNode<K, V> removeContaining(Interval<K> range) {
+    public IntervalTreeNode<K, V> removeContaining(Between<K> range) {
         if (left != null && left.contains(range)) {
             left = left.removeContaining(range);
         }
@@ -309,7 +309,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     }
 
     @Override
-    public IntervalTreeNode<K, V> removeContainedBy(Interval<K> range) {
+    public IntervalTreeNode<K, V> removeContainedBy(Between<K> range) {
         if (left != null && left.overlaps(range)) {
             left = left.removeContainedBy(range);
         }

@@ -84,6 +84,7 @@ public class AABB extends BB implements Shape3D {
         setExtent(extent);
     }
 
+    @Override
     public BB copy() {
         return new AABB(this);
     }
@@ -333,6 +334,7 @@ public class AABB extends BB implements Shape3D {
      * 
      * @see toxi.geom.Vec3D#set(float, float, float)
      */
+    @Override
     public Vec3D set(float x, float y, float z) {
         this.x = x;
         this.y = y;
@@ -346,6 +348,7 @@ public class AABB extends BB implements Shape3D {
      * {@link #updateBounds()} immediately
      * 
      */
+    @Override
     public BB set(XYZ v) {
         x = v.x();
         y = v.y();
@@ -429,7 +432,7 @@ public class AABB extends BB implements Shape3D {
      * @see toxi.geom.Vec3D#toString()
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<aabb @").append(super.toString()).append("x")
                 .append(extent);
         return sb.toString();

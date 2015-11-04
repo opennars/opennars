@@ -142,7 +142,13 @@ public class NARLoop implements Runnable {
                     final int periodMS = this.periodMS;
 
                     if (periodMS < 0) {
-                        sleep(sleepTimeMS);
+                        //        try {
+//            Thread.sleep(sleepTime);
+//        } catch (InterruptedException e) {
+//            //e.printStackTrace();
+//        }
+
+                        Util.pause(sleepTimeMS);
                         continue;
                     }
 
@@ -179,7 +185,13 @@ public class NARLoop implements Runnable {
 
         if (remainingTime > 0) {
 
-            sleep(minFramePeriodMS);
+            //        try {
+//            Thread.sleep(sleepTime);
+//        } catch (InterruptedException e) {
+//            //e.printStackTrace();
+//        }
+
+            Util.pause(minFramePeriodMS);
 
         } else if (remainingTime < 0) {
 
@@ -193,16 +205,6 @@ public class NARLoop implements Runnable {
         return minFramePeriodMS;
     }
 
-
-    public void sleep(long sleepTime) {
-//        try {
-//            Thread.sleep(sleepTime);
-//        } catch (InterruptedException e) {
-//            //e.printStackTrace();
-//        }
-
-        Util.pause(sleepTime);
-    }
 
     public final void pause() {
         setPeriodMS(-1);

@@ -118,7 +118,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
 
         final Term instance = term(object);
-        final Term[] argterm = Stream.of(args).map(x -> term(x)).toArray(n -> new Term[n]);
+        final Term[] argterm = Stream.of(args).map(this::term).toArray(Term[]::new);
 
         //String opName =
         final Operator op = Operator.the(
@@ -208,7 +208,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     public <T> T build(String id, Class<? extends T> classs, /* nullable */ T delegate) throws Exception {
 
 
-        ProxyFactory factory = proxyCache.getIfAbsentPut(classs, () -> new ProxyFactory());
+        ProxyFactory factory = proxyCache.getIfAbsentPut(classs, ProxyFactory::new);
         factory.setSuperclass(classs);
 
 

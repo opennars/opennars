@@ -9,7 +9,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	
 	public IntervalTreeNode<K, V> root = null;
 
-	public List<V> searchOverlapping(Interval<K> range){
+	public List<V> searchOverlapping(Between<K> range){
 		List<V> c = Global.newArrayList();
 		if(root != null){
 			root.getOverlap(range, c);
@@ -18,10 +18,10 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 
 	final public V getEqual(K low, K high){
-		return getEqual(new Interval<>(low, high));
+		return getEqual(new Between<>(low, high));
 	}
 
-	public V getEqual(Interval<K> range){
+	public V getEqual(Between<K> range){
 		if(root != null){
 			return root.getEqual(range);
 		}
@@ -29,13 +29,13 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 	
 	public List<V> searchOverlapping(K low, K high){
-		return searchOverlapping(new Interval<>(low, high));
+		return searchOverlapping(new Between<>(low, high));
 	}
 	
 	/**
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
-	public List<V> searchContaining(Interval<K> range){
+	public List<V> searchContaining(Between<K> range){
 		List<V> c = Global.newArrayList();
 		if(root != null){
 			root.getContain(range, c);
@@ -47,13 +47,13 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
 	public List<V> searchContaining(K low, K high){
-		return searchContaining(new Interval<>(low, high));
+		return searchContaining(new Between<>(low, high));
 	}
 	
 	/**
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
-	public List<V> searchContainedBy(Interval<K> range){
+	public List<V> searchContainedBy(Between<K> range){
 		List<V> c = Global.newArrayList();
 		if(root != null){
 			root.searchContainedBy(range, c);
@@ -65,23 +65,23 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
 	public List<V> searchContainedBy(K low, K high){
-		return searchContainedBy(new Interval<>(low, high));
+		return searchContainedBy(new Between<>(low, high));
 	}
 	
-	public void removeOverlapping(Interval<K> range){
+	public void removeOverlapping(Between<K> range){
 		if(root != null){
 			root = root.removeOverlapping(range);
 		}
 	}
 	
 	public void removeOverlapping(K low, K high){
-		removeOverlapping(new Interval<>(low, high));
+		removeOverlapping(new Between<>(low, high));
 	}
 	
 	/**
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
-	public void removeContaining(Interval<K> range){
+	public void removeContaining(Between<K> range){
 		if(root != null){
 			root = root.removeContaining(range);
 		}
@@ -91,13 +91,13 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
 	public void removeContaining(K low, K high){
-		removeContaining(new Interval<>(low, high));
+		removeContaining(new Between<>(low, high));
 	}
 	
 	/**
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
-	public void removeContainedBy(Interval<K> range){
+	public void removeContainedBy(Between<K> range){
 		if(root != null){
 			root = root.removeContainedBy(range);
 		}
@@ -107,14 +107,14 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
 	public void removeContainedBy(K low, K high){
-		removeContainedBy(new Interval<>(low, high));
+		removeContainedBy(new Between<>(low, high));
 	}
 	
 	public boolean isEmpty() {
 		return root == null;
 	}
 
-	public void put(Interval<K> key, V value) {
+	public void put(Between<K> key, V value) {
 		if(root == null){
 			root = new IntervalTreeLeaf<>(key, value);
 		}else{
@@ -123,7 +123,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 	
 	public void put(K low, K high, V value) {
-		put(new Interval<>(low, high),value);
+		put(new Between<>(low, high),value);
 	}
 	
 	
@@ -139,16 +139,16 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 		return c;
 	}
 
-	public Set<Interval<K>> keySet() {
-		Set<Interval<K>> s = Global.newHashSet(1);
+	public Set<Between<K>> keySet() {
+		Set<Between<K>> s = Global.newHashSet(1);
 		if(root != null){
 			root.keySet(s);
 		}
 		return s;
 	}
 
-	public void putAll(Map<Interval<K>, V> m) {
-		for(Entry<Interval<K>, V> intervalVEntry : m.entrySet()){
+	public void putAll(Map<Between<K>, V> m) {
+		for(Entry<Between<K>, V> intervalVEntry : m.entrySet()){
 			put(intervalVEntry.getKey(), intervalVEntry.getValue());
 		}
 	}
@@ -161,8 +161,8 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 		return root != null && root.containsValue(value);
 	}
 
-	public Set<Entry<Interval<K>, V>> entrySet() {
-		Set<Entry<Interval<K>, V>> s = Global.newHashSet(size());
+	public Set<Entry<Between<K>, V>> entrySet() {
+		Set<Entry<Between<K>, V>> s = Global.newHashSet(size());
 		if(root != null){
 			root.entrySet(s);
 		}

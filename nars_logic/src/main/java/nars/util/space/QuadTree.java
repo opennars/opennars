@@ -104,7 +104,7 @@ public class QuadTree<Key extends Comparable<Key>, Value> {
         int M = 400;
         int N = 400;
 
-        QuadTree<Integer, String> st = new QuadTree<Integer, String>();
+        QuadTree<Integer, String> st = new QuadTree<>();
 
         // insert N random points in the unit square
         for (int i = 0; i < N; i++) {
@@ -122,11 +122,9 @@ public class QuadTree<Key extends Comparable<Key>, Value> {
             Integer xmax = xmin + (int) (10 * Math.random());
             Integer ymax = ymin + (int) (20 * Math.random());
 
-            Interval2D<Integer> rect = new Interval2D<Integer>(xmin, xmax, ymin, ymax);
+            Interval2D<Integer> rect = new Interval2D<>(xmin, xmax, ymin, ymax);
             System.out.println(rect + " : ");
-            st.query2D(rect, (n) -> {
-                System.out.println(n);
-            });
+            st.query2D(rect, System.out::println);
         }
     }
 

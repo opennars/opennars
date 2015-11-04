@@ -56,6 +56,7 @@ public class Sphere extends Vec3D implements Shape3D {
         this(s, s.radius);
     }
 
+    @Override
     public boolean containsPoint(final XYZ p) {
         float d = 0;
         float rsquare = radius*radius;

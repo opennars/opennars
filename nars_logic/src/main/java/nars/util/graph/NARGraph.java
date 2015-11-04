@@ -309,12 +309,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
     }
 
     public NARGraph() {
-        super(new EdgeFactory() {
-            @Override
-            public Object createEdge(Object sourceVertex, Object targetVertex) {
-                return null;
-            }
-        });
+        super(new MyEdgeFactory());
     }
 
 
@@ -455,4 +450,10 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         addEdge((V) timeNode, x, edge);
     }
 
+    private static class MyEdgeFactory implements EdgeFactory {
+        @Override
+        public Object createEdge(Object sourceVertex, Object targetVertex) {
+            return null;
+        }
+    }
 }

@@ -13,10 +13,10 @@ public interface IntervalTreeNode<K extends Comparable<? super K>,V> {
 	IntervalTreeNode<K,V> getRight();
 	
 	boolean contains(K point);
-	boolean contains(Interval<K> interval);
-	boolean containedBy(Interval<K> interval);
+	boolean contains(Between<K> interval);
+	boolean containedBy(Between<K> interval);
 	boolean overlaps(K low, K high);
-	boolean overlaps(Interval<K> interval);
+	boolean overlaps(Between<K> interval);
 	
 	boolean containsValue(V value);
 	
@@ -24,28 +24,28 @@ public interface IntervalTreeNode<K extends Comparable<? super K>,V> {
 	K getHigh();
 	V getValue();
 	
-	Interval<K> getRange();
+	Between<K> getRange();
 	
-	IntervalTreeNode<K, V> put(Interval<K> key, V value);
+	IntervalTreeNode<K, V> put(Between<K> key, V value);
 
-	void getOverlap(Interval<K> range, Consumer<V> accumulator);
-	void getOverlap(Interval<K> range, Collection<V> accumulator);
+	void getOverlap(Between<K> range, Consumer<V> accumulator);
+	void getOverlap(Between<K> range, Collection<V> accumulator);
 	/**
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
-	void getContain(Interval<K> range, Collection<V> accumulator);
+	void getContain(Between<K> range, Collection<V> accumulator);
 	/**
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
-	void searchContainedBy(Interval<K> range, Collection<V> accumulator);
+	void searchContainedBy(Between<K> range, Collection<V> accumulator);
 	
-	IntervalTreeNode<K, V> removeOverlapping(Interval<K> range);
-	IntervalTreeNode<K, V> removeContaining(Interval<K> range);
-	IntervalTreeNode<K, V> removeContainedBy(Interval<K> range);
+	IntervalTreeNode<K, V> removeOverlapping(Between<K> range);
+	IntervalTreeNode<K, V> removeContaining(Between<K> range);
+	IntervalTreeNode<K, V> removeContainedBy(Between<K> range);
 	
 	void values(Collection<V> accumulator);
-	void entrySet(Set<Entry<Interval<K>, V>> accumulator);
-	void keySet(Set<Interval<K>> accumulator);
+	void entrySet(Set<Entry<Between<K>, V>> accumulator);
+	void keySet(Set<Between<K>> accumulator);
 	
 	IntervalTreeNode<K, V> remove(V value);
 	IntervalTreeNode<K, V> removeAll(Collection<V> values);
@@ -54,7 +54,7 @@ public interface IntervalTreeNode<K extends Comparable<? super K>,V> {
 	int maxHeight();
 	void averageHeight(Collection<Integer> heights, int currentHeight);
 
-	V getEqual(Interval<K> range);
+	V getEqual(Between<K> range);
 
-	V getContain(Interval<K> range);
+	V getContain(Between<K> range);
 }
