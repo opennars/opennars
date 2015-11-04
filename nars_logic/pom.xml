@@ -29,7 +29,7 @@
             <resource>
                 <directory>${basedir}/src/main/java/</directory>
                 <includes>
-                    <include>**/*.logic</include>
+                    <include>**/*.nal</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

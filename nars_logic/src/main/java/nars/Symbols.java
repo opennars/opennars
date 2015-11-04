@@ -165,17 +165,12 @@ abstract public class Symbols {
 
     protected static final Map<String,Op> stringToOperator
             = Collections.unmodifiableMap(_stringToOperator);
-    protected static final CharObjectHashMap<Op> charToOperator
-            = (_charToOperator);
 
-
-    /** separates prefix from the term in a termlink or tasklink */
-    final public static char TLinkSeparator = ':';
-
-
-    public static Op getOperator(final char c) {
-        return charToOperator.get(c);
-    }
+//    protected static final CharObjectHashMap<Op> charToOperator
+//            = (_charToOperator);
+//    public static Op getOperator(final char c) {
+//        return charToOperator.get(c);
+//    }
     
     public static Op getOperator(final String s) {
         return stringToOperator.get(s);
