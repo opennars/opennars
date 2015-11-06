@@ -35,6 +35,7 @@ public class MatchTaskBelief extends PreCondition {
         );*/
 
         this.id = getClass().getSimpleName() + '[' + pattern.toStringCompact() + ']';
+
     }
 
     //TODO this caching is not thread-safe yet
@@ -43,14 +44,17 @@ public class MatchTaskBelief extends PreCondition {
 
         final TaskBeliefPair tb = m.taskBelief;
 
-        if (!tb.substitutesMayExist(pattern)) {
+        final TaskBeliefPair pattern = this.pattern;
+
+        //if (!tb.substitutesMayExistParanoid(pattern)) {
+        if (!tb.substitutesMayExistFast(pattern)) {
             return false;
         }
 
-        return subst(m, tb);
+        return subst(pattern, m, tb);
     }
 
-    final boolean subst(final RuleMatch m, final TaskBeliefPair t) {
+    final static boolean subst(TaskBeliefPair pattern, final RuleMatch m, final TaskBeliefPair t) {
         //TODO parameterize the power by budget
         return m.next(pattern, t, Global.UNIFICATION_POWER);
     }

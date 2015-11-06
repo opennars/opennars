@@ -287,14 +287,21 @@ public class Memory extends Param {
      */
     public final void remove(final Task task, final String removalReason) {
 
-        task.log(removalReason);
+        final boolean willBeReceived = eventTaskRemoved.size() > 0;
+
+        if (willBeReceived && removalReason!=null)
+            task.log(removalReason);
 
         if (task.delete()) {
 
-            if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
-                task.log(Premise.getStack());
+            if (willBeReceived) {
 
-            eventTaskRemoved.emit(task);
+                if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
+                    task.log(Premise.getStack());
+
+                eventTaskRemoved.emit(task);
+            }
+            /* else: a more destructive cleanup of the discarded task? */
         }
 
     }
@@ -318,7 +325,7 @@ public class Memory extends Param {
      * produces a new stamp serial #, used to uniquely identify inputs
      */
     public final long newStampSerial() {
-        //TODO does this need to be AtomicLong ?
+        //TODO maybe AtomicLong ?
         return currentStampSerial++;
     }
 

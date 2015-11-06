@@ -357,13 +357,13 @@ public class Util {
     public static long ELFHash(final byte[] str, final long seed) {
 
         long hash = seed;
-        long x;
 
         final int len = str.length;
 
         for (int i = 0; i < len; i++) {
             hash = (hash << 4) + str[i];
 
+            long x;
             if ((x = hash & 0xF0000000L) != 0) {
                 hash ^= (x >> 24);
             }

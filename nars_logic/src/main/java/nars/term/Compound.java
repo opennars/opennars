@@ -573,12 +573,13 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
             final Term b = c.term(i);
             final int d = a.compareTo(b);
 
+            /*
             if (Global.DEBUG) {
                 int d2 = b.compareTo(a);
                 if (d2!=-d)
                     throw new RuntimeException("ordering inconsistency: " + a + ", " + b );
             }
-
+            */
 
             if (d != 0) return d;
         }
@@ -630,7 +631,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         if (isNormalized()) {
             return (T) this;
         } else {
-            final Compound result = new VariableNormalization(this, destructive).getResult();
+            final Compound result = VariableNormalization.normalizeFast(this, destructive).getResult();
             if (result == null)
                 return null;
 

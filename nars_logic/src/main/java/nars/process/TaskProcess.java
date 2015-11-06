@@ -371,7 +371,6 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 //        }
 
         final Memory memory = this.nar.memory;
-        memory.eventTaskProcess.emit(this);
 
         final Concept c = nar.conceptualize(task, task.getBudget());
 
@@ -384,9 +383,14 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
         if (processConcept(c)) {
 
+            memory.eventTaskProcess.emit(this);
+
             link(c, task);
 
             return c;
+        }
+        else {
+            memory.remove(task, null /* "Unprocessable" */);
         }
 
         return null;

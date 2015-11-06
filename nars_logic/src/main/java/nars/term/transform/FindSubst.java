@@ -37,22 +37,8 @@ public class FindSubst {
 
     private final Random random;
 
-    final DequePool<ShuffledPermutations> permutationPool = new DequePool<ShuffledPermutations>(1) {
-        @Override public ShuffledPermutations create() {
-            return new ShuffledPermutations();
-        }
-    };
-    final DequePool<Map<Variable,Term>> mapPool = new DequePool<Map<Variable,Term>>(1) {
-        @Override public Map<Variable,Term> create() {
-            return Global.newHashMap();
-        }
-
-        @Override
-        public void put(Map<Variable, Term> i) {
-            i.clear();
-            super.put(i);
-        }
-    };
+    final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
+    final DequePool<Map<Variable,Term>> mapPool = new MapDequePool();
 
 
     public FindSubst(Op type, NAR nar) {
@@ -132,16 +118,10 @@ public class FindSubst {
      * but there is still the possibility of a match.
      */
     private final int matchNotEqual(Term x, Term y, int power) {
+
+
         final Op type = this.type;
-
         final Op xOp = x.op();
-        final Op yOp = y.op();
-
-
-        if (xOp.isVar() && yOp.isVar()) {
-            return nextVarX((Variable) x, y, power);
-        }
-
         if (xOp == type) {
 
             final Term xSubst = xy.get(x);
@@ -153,7 +133,10 @@ public class FindSubst {
                 return nextVarX((Variable) x, y, power);
             }
 
-        } else if (yOp == type) {
+        }
+
+        final Op yOp = y.op();
+        if (yOp == type) {
 
             final Term ySubst = yx.get(y);
 
@@ -165,16 +148,19 @@ public class FindSubst {
                         power : -power;
             }
 
-        } else if ((xOp == yOp) && (x instanceof Compound)) {
-            Compound cx = (Compound) x;
-            Compound cy = (Compound) y;
-
-            return match(cx, cy, power);
         }
-//        else {
-//            if (!termsEqual)
-//                power = -power;
-//        }
+
+        if (xOp.isVar()) {
+            if (yOp.isVar()) {
+                return nextVarX((Variable) x, y, power);
+            }
+        }
+        else {
+            if ((xOp == yOp) && (x instanceof Compound)) {
+                return match((Compound)x, (Compound)y, power);
+            }
+        }
+
 
         return -power;
     }
@@ -238,7 +224,7 @@ public class FindSubst {
     }
 
 
-    protected final boolean matchable(final Compound X, final Compound Y) {
+    protected static boolean matchable(final Compound X, final Compound Y) {
         /** must have same # subterms */
         if (X.length() != Y.length()) {
             return false;
@@ -386,13 +372,13 @@ public class FindSubst {
         Map<Variable, Term> savedYX = acquireCopy(yx);
         yxChanged = false;
 
+        boolean matched = false;
         while (perm.hasNext()) {
 
             perm.next();
 
             //matchAll:
-
-            boolean matched = true;
+            matched = true;
             for (int i = 0; (i < len) && (power > 0); i++) {
                 int s = perm.get(i);
 
@@ -407,36 +393,34 @@ public class FindSubst {
 
             }
 
-            if (!matched && power > 0) {
+            if (matched || power <= 0) break;
 
-                //try again; invert negated power back to a positive value for next attempt
+            //try again; invert negated power back to a positive value for next attempt
 
-                //pop/restore (TODO only if changed and will attempt again):
-                if (yxChanged) {
-                    yxChanged = false;
-                    restore(savedYX, yx);
-                }
-
-                if (xyChanged) {
-                    xyChanged = false;
-                    restore(savedXY, xy);
-                }
-
-                //ready to continue on next permutation
-
-            } else {
-
-                //finished: succeeded (+) or depleted power (-)
-                releaseCopies(savedXY, savedYX);
-                return power;
+            //pop/restore (TODO only if changed and will attempt again):
+            if (yxChanged) {
+                yxChanged = false;
+                restore(savedYX, yx);
             }
+
+            if (xyChanged) {
+                xyChanged = false;
+                restore(savedXY, xy);
+            }
+
+            //ready to continue on next permutation
+
         }
 
         releaseCopies(savedXY, savedYX);
-        return fail(power); //fail
+
+        //finished: succeeded (+) or depleted power (-)
+        if (!matched) power = fail(power);
+
+        return power; //fail
     }
 
-    private final void restore(Map<Variable, Term> savedCopy, Map<Variable, Term> originToRevert) {
+    private static void restore(Map<Variable, Term> savedCopy, Map<Variable, Term> originToRevert) {
         originToRevert.clear();
         originToRevert.putAll(savedCopy);
     }
@@ -452,6 +436,63 @@ public class FindSubst {
         mp.put(a);
         mp.put(b);
     }
+
+
+
+    static final int fail(int powerMagnitude) {
+        return (powerMagnitude > 0) ? -powerMagnitude : powerMagnitude;
+    }
+
+
+    /**
+     * a branch for comparing a particular permutation, called from the main next()
+     */
+    final protected int match(final Term[] xSubterms, final Term[] ySubterms, int power) {
+
+        final int yLen = ySubterms.length;
+
+        //distribute recursion equally among subterms, though should probably be in proportion to their volumes
+        final int subPower = power / yLen;
+        if (subPower < 1) return -power;
+
+        for (int i = 0; i < yLen; i++) {
+            int s = subPower;
+            if ((s = match(xSubterms[i], ySubterms[i], s)) < 0) {
+                return s; //fail
+            }
+            power -= (subPower - Math.max(s, 0));
+        }
+
+        return power; //success
+    }
+
+    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
+        public ShuffledPermutationsDequePool() {
+            super(1);
+        }
+
+        @Override public ShuffledPermutations create() {
+            return new ShuffledPermutations();
+        }
+    }
+
+    private static class MapDequePool extends DequePool<Map<Variable,Term>> {
+        public MapDequePool() {
+            super(1);
+        }
+
+        @Override public Map<Variable,Term> create() {
+            return Global.newHashMap();
+        }
+
+        @Override
+        public void put(Map<Variable, Term> i) {
+            i.clear();
+            super.put(i);
+        }
+    }
+
+}
 
 
 //    private int permute3(final Compound X, final Compound Y, int power) {
@@ -537,36 +578,9 @@ public class FindSubst {
 //        return power;
 //    }
 
-    static final int fail(int powerMagnitude) {
-        return (powerMagnitude > 0) ? -powerMagnitude : powerMagnitude;
-    }
-
-
-    /**
-     * a branch for comparing a particular permutation, called from the main next()
-     */
-    final protected int match(final Term[] xSubterms, final Term[] ySubterms, int power) {
-
-        final int yLen = ySubterms.length;
-
-        //distribute recursion equally among subterms, though should probably be in proportion to their volumes
-        final int subPower = power / yLen;
-        if (subPower < 1) return -power;
-
-        for (int i = 0; i < yLen; i++) {
-            int s = subPower;
-            if ((s = match(xSubterms[i], ySubterms[i], s)) < 0) {
-                return s; //fail
-            }
-            power -= (subPower - Math.max(s, 0));
-        }
-
-        return power; //success
-    }
 
 //    final protected int matchAll2(int power, final Term x0, final Term x1, final Term[] ySubterms) {
 //        if ((power = find(x0, ySubterms[0], power)) < 0)
 //            return power;
 //        return       find(x1, ySubterms[1], power);
 //    }
-}

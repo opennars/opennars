@@ -37,21 +37,22 @@ public class TaskBeliefPair extends ProductN {
     }
 
 
-    public void set(final Term a, final Term b) {
-        this.term[0] = a;
-        this.term[1] = b;
-        init(term);
+    public final void set(final Term a, final Term b) {
+        Term[] t = this.term;
+        t[0] = a;
+        t[1] = b;
+        init(t);
     }
 
     @Override
-    protected int getStructureBase() {
+    protected final int getStructureBase() {
         return 0;
     }
 
-    public final boolean substitutesMayExist(final TaskBeliefPair pattern) {
-        //return substitutesMayExistParanoid(pattern);
-        return substitutesMayExistFast(pattern);
-    }
+//    public final boolean substitutesMayExist(final TaskBeliefPair pattern) {
+//        //return substitutesMayExistParanoid(pattern);
+//        return substitutesMayExistFast(pattern);
+//    }
 
 //    private static boolean substitutesMayExistParanoid(PairMatchingProduct pattern) {
 //        return true;

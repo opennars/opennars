@@ -29,7 +29,7 @@ public class DerivationRules extends FastList<TaskRule> {
     private static final Pattern conjOperatorPattern = Pattern.compile("&&", Pattern.LITERAL);
 
     @Deprecated
-    public static int maxVarArgsToMatch = 3;
+    public static int maxVarArgsToMatch = 5;
 
     static final Narsese parser = Narsese.the();
 

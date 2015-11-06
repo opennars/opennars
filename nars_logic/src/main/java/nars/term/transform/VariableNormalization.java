@@ -65,13 +65,27 @@ public class VariableNormalization implements VariableTransform {
     boolean renamed = false;
     int serial = 0;
 
+
+    public static VariableNormalization normalize(Compound target, boolean destructive) {
+        return new VariableNormalization(target, null, destructive);
+    }
+
+    /** allows using the single variable normalization,
+     * which is safe if the term doesnt contain pattern variables */
+    public static VariableNormalization normalizeFast(Compound target, boolean destructive) {
+        return new VariableNormalization(target, target.vars() == 1 ?
+                singleVariableNormalization : null, destructive);
+    }
+
     public VariableNormalization(Compound target, boolean destructively) {
+        this(target, null, destructively);
+    }
 
-
-        CompoundTransform tx = target.vars() == 1 ?
-                singleVariableNormalization : this;
+    public VariableNormalization(Compound target, CompoundTransform tx, boolean destructively) {
 
         final Compound result1;
+
+        if (tx == null) tx = this;
 
         if (destructively) {
             target.transform(tx);

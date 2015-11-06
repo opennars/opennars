@@ -75,6 +75,15 @@ public class DerivationRuleTest extends TestCase {
 
     }
 
+    @Test public void testNotSingleVariableRule1() {
+        //tests an exceptional case that should now be fixed
+
+        String l = "<((B,P) --> ?X) ,(B --> A), task(\"?\") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)>";
+        TaskRule x = p.term(l);
+        x = x.normalizeRule();
+        assertTrue(!x.toString().contains("%B"));
+    }
+
     @Test
     public void testPatternVarNormalization() {
 

@@ -46,7 +46,7 @@ public class TaskTest {
         assertEquals(count, t.size());
 
         List<Task> l = Lists.newArrayList(t);
-        l.forEach(System.out::println);
+        //l.forEach(System.out::println);
         assertEquals("$0.50;0.80;0.95$ <b --> a>. :-: %0.00;0.00%",
                 l.get(0).toString());
         assertEquals("$0.50;0.80;0.95$ <b --> a>. :-: %0.90;0.90%",

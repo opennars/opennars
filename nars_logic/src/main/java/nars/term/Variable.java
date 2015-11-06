@@ -33,13 +33,13 @@ import java.io.IOException;
  */
 abstract public class Variable extends Atom {
 
-    public Variable(final byte[] n) {
+    protected Variable(final byte[] n) {
         super(n);
     }
 
-    Variable(final String name) {
-        super(Utf8.toUtf8(name));
-    }
+//    Variable(final String name) {
+//        super(Utf8.toUtf8(name));
+//    }
 
     Variable() {
         super();
@@ -106,33 +106,6 @@ abstract public class Variable extends Atom {
         return Utf8.fromUtf8toString(op().ch, bytes());
     }
 
-    //    @Override
-//    final public Op op() {
-//        switch (byt0()) {
-//            case VAR_INDEPENDENT:
-//                return Op.VAR_INDEPENDENT;
-//            case VAR_DEPENDENT:
-//                return Op.VAR_DEPENDENT;
-//            case VAR_QUERY:
-//                return Op.VAR_QUERY;
-//            case VAR_PATTERN:
-//                return Op.VAR_PATTERN;
-//            default:
-//                throw new RuntimeException("Invalid variable type");
-//        }
-//    }
-
-    @Override
-    final public int structure() {
-        final int i = op().ordinal();
-        if (i < 31) {
-            //include only non-pattern variables in structure
-            return 1 << i;
-        }
-        return 0;
-    }
-
-
     /**
      * The syntactic complexity of a variable is 0, because it does not refer to
      * any concept.
@@ -143,55 +116,7 @@ abstract public class Variable extends Atom {
         return 0;
     }
 
-//    /** tests equal name and scope. if either or both are unscoped, the instances are not equal. */
-//    @Override public boolean equals(final Object that) {
-//        if (this == that) return true;
-//        if (!(that instanceof Variable)) return false;
-//
-//        final Variable vthat = ((Variable) that);
-//
-//        /*Op vop = vthat.op;
-//        if (vop != op)
-//            return false; //different type*/
-//
-////        if (!isScoped()) return false;
-////        if (!vthat.isScoped()) return false;
-//
-//        return Byted.equals(this, vthat);
-//    }
-
-//    @Override final public boolean hasVar(final Op type) {
-//        return op() == type;
-//    }
-
-
-//    public boolean isCommon() {
-//        //TODO there is a faster way to make this test rather than forming the String
-//        final byte[] n = bytes();
-//        final int l = n.length;
-//        return n[l - 1] == '$';
-//    }
-
-
-//    public final boolean isScoped() { return scope; }
-
-
-//    public static boolean validVariableType(final char c) {
-//        switch (c) {
-//            case VAR_QUERY: return true;
-//            case VAR_DEPENDENT: return true;
-//            case VAR_INDEPENDENT: return true;
-//            case VAR_PATTERN: return true;
-//        }
-//        return false;
-//    }
-
     @Override public final boolean hasVar() { return true;     }
-
-    @Override public final int vars() {
-        if (op() == Op.VAR_PATTERN) return 0;
-        return 1;
-    }
 
     public final boolean hasVarPattern() { return op() == Op.VAR_PATTERN;    }
 
@@ -206,64 +131,73 @@ abstract public class Variable extends Atom {
     @Override public final int varIndep() {
         return hasVarIndep()  ? 1 : 0;
     }
-
-    //    /** returns the part of the variable name beyond the intial type indicator character */
-//    public String getIdentifier() {
-//        return toString().substring(1);
-//    }
-
     @Override public final boolean hasVarQuery() { return op() == Op.VAR_QUERY;    }
-
-
-//    /** returns the default dependent variable */
-//    public static Variable theDependent() {
-//        return the(Op.VAR_DEPENDENT, 0);
-//    }
-//
-//    /** returns the default independent variable */
-//    public static Variable theIndependent() {
-//        return the(Op.VAR_INDEPENDENT, 0);
-//    }
 
     @Override public final int varQuery() {
         return hasVarQuery() ? 1 : 0;
     }
 
 
-    public static class VarDep extends Variable {
+    public static final class VarDep extends Variable {
 
         public VarDep(byte[] name) {
             super(name);
         }
 
+        @Override public final int structure() {
+            return 1 << Op.VAR_DEPENDENT.ordinal();
+        }
+
         @Override public final Op op() { return Op.VAR_DEPENDENT; }
+
+        @Override public final int vars() { return 1; }
     }
 
-    public static class VarIndep extends Variable {
+    public static final class VarIndep extends Variable {
 
         public VarIndep(byte[] name) {
             super(name);
         }
 
+        @Override public final int structure() {
+            return 1 << Op.VAR_INDEPENDENT.ordinal();
+        }
+
         @Override public final Op op() { return Op.VAR_INDEPENDENT; }
+
+        @Override public final int vars() { return 1; }
     }
 
-    public static class VarQuery extends Variable {
+    public static final class VarQuery extends Variable {
 
         public VarQuery(byte[] name) {
             super(name);
         }
 
+        @Override public final int structure() {
+            return 1 << Op.VAR_QUERY.ordinal();
+        }
+
         @Override public final Op op() { return Op.VAR_QUERY; }
+
+        @Override public final int vars() { return 1; }
     }
 
 
-    public static class VarPattern extends Variable {
+    public static final class VarPattern extends Variable {
 
         public VarPattern(byte[] name) {
             super(name);
         }
 
+        @Override public final int structure() {
+            return 0;
+        }
+
         @Override public final Op op() { return Op.VAR_PATTERN; }
+
+        /** pattern variable hidden in the count 0 */
+        @Override public final int vars() { return 0; }
+
     }
 }

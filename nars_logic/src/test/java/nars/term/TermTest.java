@@ -22,6 +22,7 @@ import nars.Narsese;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
+import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
 import nars.nar.Default;
 import nars.nar.Terminal;
@@ -46,7 +47,7 @@ public class TermTest {
         Global.DEBUG = true;
     }
 
-    NAR n = new Terminal(); //Default();
+    NAR n = new Terminal();
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
@@ -520,6 +521,18 @@ public class TermTest {
 
     }
 
+
+    @Test
+    public void testImageOrdering() {
+
+        Image a = n.term("(/,x, y, _)");
+        Image b = n.term("(/,x, _, y)");
+        assertNotEquals(a, b);
+        assertNotEquals(a.hashCode(), b.hashCode());
+        assertEquals(-1, a.compareTo(b));
+        assertEquals(1, b.compareTo(a));
+    }
+
     @Test
     public void testImageStructuralVector() {
 
@@ -532,7 +545,7 @@ public class TermTest {
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
 
-        NAR n = new Default();
+        NAR n = new Terminal();
         Compound x3 = n.term("<" + i1 + " --> y>");
         Compound x4 = n.term("<" + i1 + " --> y>");
 

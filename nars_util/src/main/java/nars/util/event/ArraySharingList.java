@@ -28,9 +28,9 @@ import java.util.function.IntFunction;
 public class ArraySharingList<C> implements Iterable<C> {
 
     protected final FasterList<C> data = new FasterList();
-    protected final IntFunction<C[]> arrayBuilder;
+    private final IntFunction<C[]> arrayBuilder;
     protected transient C[] array = null;
-    protected transient AtomicBoolean change = new AtomicBoolean(true);
+    private transient final AtomicBoolean change = new AtomicBoolean(true);
 
     public ArraySharingList(IntFunction<C[]> arrayBuilder) {
         super();
@@ -66,7 +66,7 @@ public class ArraySharingList<C> implements Iterable<C> {
 
 
 
-    public void add(int index, C element) {
+    public final void add(int index, C element) {
         data.add(index, element);
         change.set(true);
     }
@@ -100,11 +100,11 @@ public class ArraySharingList<C> implements Iterable<C> {
         return false;
     }
 
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return getCachedNullTerminatedArray()==null;
     }
 
-    public void clear() {
+    public final void clear() {
         if (isEmpty()) return;
         data.clear();
         change.set(true);
@@ -148,11 +148,12 @@ public class ArraySharingList<C> implements Iterable<C> {
         return this.array = a;
     }
 
+    @Override
     public void forEach(Consumer<? super C> with) {
         forEach(with, -1);
     }
 
-    public void forEach(Consumer<? super C> with, int max) {
+    private void forEach(Consumer<? super C> with, int max) {
         C[] a = getCachedNullTerminatedArray();
         if (a == null) return;
         if (max == -1) max = a.length;
@@ -163,8 +164,8 @@ public class ArraySharingList<C> implements Iterable<C> {
         }
     }
 
-    @Override
-    public Iterator<C> iterator() {
+    /** not recommended to use this since it involves instantiating an iterator */
+    @Override public Iterator<C> iterator() {
         C[] a = getCachedNullTerminatedArray();
         if (a == null) return Iterators.emptyIterator();
 
