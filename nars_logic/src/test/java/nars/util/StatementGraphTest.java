@@ -2,9 +2,8 @@ package nars.util;
 
 import nars.NAR;
 import nars.nal.nal1.Inheritance;
-import nars.nar.Default;
+import nars.nar.Default2;
 import nars.term.Statement;
-import nars.time.FrameClock;
 import nars.util.graph.StatementGraph;
 import org.junit.Test;
 
@@ -19,7 +18,7 @@ public class StatementGraphTest {
     @Test
     public void test() {
 
-        NAR n = new Default(100,1,1,1, new FrameClock());
+        NAR n = new Default2(100,1,1,1);
 
         StatementGraph m = new StatementGraph(n) {
             @Override public boolean containsStatement(Statement term) {
@@ -36,11 +35,10 @@ public class StatementGraphTest {
         n.input("<d --> b>. :|:");
         n.frame();
 
-        n.frame(3);
-
         String g = m.graph.toString();
 
+
         assertTrue(g, m.graph.vertexSet().size() > 4 );
-        assertEquals(4, m.graph.edgeSet().size() );
+        assertEquals(g, 4, m.graph.edgeSet().size() );
     }
 }

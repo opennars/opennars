@@ -3,6 +3,7 @@ package nars.io;
 import nars.op.io.UDPNetwork;
 import nars.util.data.Util;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.SocketException;
@@ -12,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 10/7/15.
  */
+@Ignore
 public class StreamOperatorsTest {
 
 

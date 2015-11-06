@@ -35,7 +35,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
 
     public DerivationRules() throws IOException, URISyntaxException {
-        this(Paths.get(Deriver.class.getResource("default.nal").toURI()));
+        this(Paths.get(Deriver.class.getResource("default.meta.nal").toURI()));
     }
 
     public DerivationRules(Path path) throws IOException {

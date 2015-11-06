@@ -16,6 +16,13 @@ import java.util.Map;
 import java.util.Random;
 
 
+/* recurses a pair of compound term tree's subterms
+across a hierarchy of sequential and permutative fanouts
+where valid matches are discovered, backtracked,
+and collected until a total solution is found.
+the magnitude of a running integer depth metric ("power") serves
+as a finite-time AIKR cutoff and its polarity as
+returned indicates success value to the callee.  */
 public class FindSubst {
 
     public final Op type;
@@ -112,14 +119,11 @@ public class FindSubst {
      */
     final int match(final Term x, final Term y, int power) {
 
-        if ((power = power - costFunction(x, y)) < 0)
-            return power; //fail due to insufficient power
 
         final boolean termsEqual = x.equals(y);
         if (termsEqual) {
             return power; //match
         }
-
 
         return matchNotEqual(x, y, power);
     }
@@ -165,8 +169,7 @@ public class FindSubst {
             Compound cx = (Compound) x;
             Compound cy = (Compound) y;
 
-                return match(cx, cy, power);
-
+            return match(cx, cy, power);
         }
 //        else {
 //            if (!termsEqual)
@@ -194,8 +197,9 @@ public class FindSubst {
     }
 
     /** cost subtracted in the re-entry method: next(x, y, power) */
-    static final int costFunction(Term x, Term y) {
-        return Math.min(x.volume(), y.volume());
+    static final int costFunction(final Compound x, final Compound y) {
+        //return Math.min(x.volume(), y.volume());
+        return x.volume() + y.volume();
     }
 
 
@@ -256,7 +260,11 @@ public class FindSubst {
      * X and Y are of the same operator type and length (arity)
      * X's permutations matched against constant Y
      */
-    protected int match(final Compound X, final Compound Y, final int power) {
+    protected int match(final Compound X, final Compound Y, int power) {
+
+
+        if ((power = power - costFunction(X, Y)) < 0)
+            return power; //fail due to insufficient power
 
         if (!matchable(X, Y))
             return -power;

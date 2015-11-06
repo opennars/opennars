@@ -49,7 +49,7 @@ public class DerivationRuleTest extends TestCase {
         {
             TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume()); //same volume as previous block
-            assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> nonvar>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
+            assertEquals("((<%A --> %B>, <%B --> %A>), (<nonvar <-> %A>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
         }
 
         {
