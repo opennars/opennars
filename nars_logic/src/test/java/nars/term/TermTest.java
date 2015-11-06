@@ -596,4 +596,5 @@ public class TermTest {
         assertNotEquals(0, o1);
         assertNotEquals(xa, xb);
     }
+
 }

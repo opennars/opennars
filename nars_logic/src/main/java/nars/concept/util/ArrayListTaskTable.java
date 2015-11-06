@@ -6,23 +6,27 @@ import javolution.util.function.Equality;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.task.Task;
+import nars.truth.Truth;
 import nars.util.event.ArraySharingList;
 
-/** implements a Task table suitable for Questions and Quests using an ArrayList.
- *  we use an ArrayList and not an ArrayDeque (which is seemingly ideal for the
- *  FIFO behavior) because we can iterate entries by numeric index avoiding
- *  allocation of an Iterator.
- *
- *
+import java.util.Arrays;
+
+/**
+ * implements a Task table suitable for Questions and Quests using an ArrayList.
+ * we use an ArrayList and not an ArrayDeque (which is seemingly ideal for the
+ * FIFO behavior) because we can iterate entries by numeric index avoiding
+ * allocation of an Iterator.
  */
 public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTable {
 
     protected int capacity = 0;
 
 
-    /** warning this will create a 0-capacity table,
+    /**
+     * warning this will create a 0-capacity table,
      * rejecting all attempts at inputs.  either use the
-     * other constructor or change capacity after construction. */
+     * other constructor or change capacity after construction.
+     */
     public ArrayListTaskTable() {
         this(0);
     }
@@ -64,7 +68,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof TaskTable)) return false;
-        TaskTable t = (TaskTable)obj;
+        TaskTable t = (TaskTable) obj;
         return getCapacity() == t.getCapacity() &&
                 Iterators.elementsEqual(iterator(), t.iterator());
     }
@@ -85,7 +89,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 
         final Task[] aa = getCachedNullTerminatedArray();
         Task a;
-        for (int i = 0; null!=(a = aa[i++]); ) {
+        for (int i = 0; null != (a = aa[i++]); ) {
             if (e.areEqual(a, t))
                 return a;
         }
@@ -94,12 +98,12 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 
 
     @Override
-    public Task add(Task t, Equality<Task> equality, Procedure2<Budget,Budget> duplicateMerge, Memory m) {
+    public Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
 
         Task existing = getFirstEquivalent(t, equality);
         if (existing != null) {
 
-            if (existing!=t) {
+            if (existing != t) {
                 duplicateMerge.value(existing.getBudget(), t.getBudget());
                 m.remove(t, "PreExisting TaskTable Duplicate");
             }
@@ -125,6 +129,42 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         return t;
     }
 
+
+    public final boolean contains(Task t) {
+        //        //equality:
+//        //  1. term (given because it is looking up in concept)
+//        //  2. truth
+//        //  3. occurrence time
+//        //  4. evidential set
+
+        Task[] a = this.array;
+        if (a == null || a.length == 0) return false;
+
+        Truth taskTruth = t.getTruth();
+        long taskOccurrrence = t.getOccurrenceTime();
+        long[] taskEvidence = t.getEvidence();
+
+        for (final Task x : a) {
+
+            if (x == null) return false;
+
+            if (
+
+                //different truth value
+                (x.getTruth().equals(taskTruth)) &&
+
+                //differnt occurence time
+                (x.getOccurrenceTime() == taskOccurrrence) &&
+
+                //differnt evidence
+                (Arrays.equals(x.getEvidence(), taskEvidence))
+            )
+                return true;
+        }
+
+        return false;
+
+    }
 
 }
 

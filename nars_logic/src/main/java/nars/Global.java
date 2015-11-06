@@ -50,8 +50,8 @@ public class Global {
     //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("I");
 
-    public static final float CONFIDENCE_PREFILTER = 0.005f; /** some non-zero epsilon */
-    public static final float CONFIDENCE_PREFILTER_DEBUG = 0;
+    public static final float CONFIDENCE_PREFILTER = 0.015f; /** some non-zero epsilon */
+    public static final float CONFIDENCE_PREFILTER_DEBUG = 0.015f;
 
 
     /** allow everything */
@@ -90,7 +90,7 @@ public class Global {
 
 
 
-    public static final int METRICS_HISTORY_LENGTH = 256;
+//    public static final int METRICS_HISTORY_LENGTH = 256;
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered (during revision).
@@ -104,7 +104,7 @@ public class Global {
 
 
     /** minimum difference necessary to indicate a significant modification in budget float number components */
-    public static float BUDGET_EPSILON = 0.001f;
+    public static float BUDGET_EPSILON = 0.01f;
 
 
 //    /* ---------- default input values ---------- */

@@ -46,65 +46,65 @@ public interface BeliefTable extends TaskTable {
         }
 
         @Override
-        public void writeValues(ObjectOutput output) throws IOException {
+        public final void writeValues(ObjectOutput output) throws IOException {
             output.writeInt(0);
             output.writeInt(0);
         }
 
         @Override
-        public <T> void readValues(ObjectInput input) throws IOException {
+        public final <T> void readValues(ObjectInput input) throws IOException {
             input.readInt();
             input.readInt();
         }
 
         @Override
-        public int getCapacity() {
+        public final int getCapacity() {
             return 0;
         }
 
         @Override
-        public void setCapacity(int newCapacity) {
+        public final void setCapacity(int newCapacity) {
 
         }
 
         @Override
-        public int size() {
+        public final int size() {
             return 0;
         }
 
         @Override
-        public void clear() {
+        public final void clear() {
 
         }
 
         @Override
-        public boolean isEmpty() {
+        public final boolean isEmpty() {
             return true;
         }
-
-
-
         @Override
-        public Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
+        public final Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
             return null;
         }
 
         @Override
-        public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
+        public final Task add(Task input, Ranker ranking, Concept c, Premise nal) {
             return null;
         }
 
         @Override
-        public boolean tryAdd(Task input, Ranker r, Memory memory) {
+        public final boolean tryAdd(Task input, Ranker r, Memory memory) {
             return false;
         }
 
         @Override
-        public boolean add(Task t) {
+        public final boolean add(Task t) {
             return false;
         }
 
-
+        @Override
+        public final boolean contains(Task t) {
+            return false;
+        }
 
 
         @Override

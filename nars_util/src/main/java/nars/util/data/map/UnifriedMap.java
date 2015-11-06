@@ -349,8 +349,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                     return null;
                 }
                 if (this.nonNullTableObjectEquals(chain[i], key)) {
-                    Object result = chain[i+1];
-                    chain[i+1] = value;
+                    i++;
+                    Object result = chain[i];
+                    chain[i] = value;
                     return result;
                 }
             }
@@ -364,11 +365,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             }
             return null;
         }
-        Object[] newChain = new Object[4];
-        newChain[0] = t[index];
-        newChain[1] = t[index + 1];
-        newChain[2] = UnifriedMap.toSentinelIfNull(key);
-        newChain[3] = value;
+        Object[] newChain = new Object[] {
+            /*newChain[0] = */t[index],
+            /*newChain[1] = */t[index + 1],
+            /*newChain[2] = */UnifriedMap.toSentinelIfNull(key),
+            /*newChain[3] = */value
+        };
         t[index++] = CHAINED_KEY;
         t[index] = newChain;
         if (++this.occupied > this.maxSize) {

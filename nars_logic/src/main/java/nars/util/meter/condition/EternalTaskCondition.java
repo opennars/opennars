@@ -93,37 +93,37 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 //        return 0.01;
 //    }
 
-    //how many multiples of the range it is away from the acceptable time interval
-    public static double rangeError(double value, double min, double max, boolean squash) {
-        double dt;
-        if (value < min)
-            dt = min - value;
-        else if (value > max)
-            dt = value - max;
-        else
-            return 0;
-
-        double result = dt/(max-min);
-
-        if (squash)
-            return Math.tanh(result);
-        else
-            return result;
-    }
+//    //how many multiples of the range it is away from the acceptable time interval
+//    public static double rangeError(double value, double min, double max, boolean squash) {
+//        double dt;
+//        if (value < min)
+//            dt = min - value;
+//        else if (value > max)
+//            dt = value - max;
+//        else
+//            return 0;
+//
+//        double result = dt/(max-min);
+//
+//        if (squash)
+//            return Math.tanh(result);
+//        else
+//            return result;
+//    }
 
 //    //time distance function
 //    public double getTimeDistance(long now) {
 //        return rangeError(now, creationStart, creationEnd, true);
 //    }
 
-    //truth distance function
-    public double getTruthDistance(Truth t) {
-        //manhattan distance:
-        return rangeError(t.getFrequency(), freqMin, freqMax, true) +
-                rangeError(t.getConfidence(), confMin, confMax, true);
-
-        //we could also calculate geometric/cartesian vector distance
-    }
+//    //truth distance function
+//    public double getTruthDistance(Truth t) {
+//        //manhattan distance:
+//        return rangeError(t.getFrequency(), freqMin, freqMax, true) +
+//                rangeError(t.getConfidence(), confMin, confMax, true);
+//
+//        //we could also calculate geometric/cartesian vector distance
+//    }
 
 ////    public void setRelativeOccurrenceTime(Tense t, int duration) {
 ////        setRelativeOccurrenceTime(Stamp.getOccurrenceTime(t, duration), duration);
@@ -222,7 +222,7 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
             float co = task.getConfidence();
 
             if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
-                distance += getTruthDistance(task.getTruth());
+                distance ++;
             }
         }
 

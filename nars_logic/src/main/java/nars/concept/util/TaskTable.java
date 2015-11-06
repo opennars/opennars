@@ -117,4 +117,6 @@ public interface TaskTable extends Iterable<Task> {
 
     boolean add(Task t);
 
+    boolean contains(Task t);
+
 }

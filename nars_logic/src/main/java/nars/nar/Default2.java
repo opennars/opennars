@@ -81,6 +81,7 @@ public class Default2 extends Default {
         @Override
         protected void fireConcept(Concept c) {
 
+            
             //used to estimate the fraction this batch should be scaled but this is not accurate
 
             fireConcept(c, p -> {
