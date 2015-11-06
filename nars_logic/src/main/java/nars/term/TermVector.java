@@ -57,12 +57,12 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
     @Override
-    public T term(int i) {
+    public final T term(int i) {
         return term[i];
     }
 
     @Override
-    public int volume() {
+    public final int volume() {
         return volume;
     }
 
@@ -72,7 +72,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      * @return the complexity value
      */
     @Override
-    public int complexity() {
+    public final int complexity() {
         return complexity;
     }
 
@@ -82,7 +82,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      * @return the size of the component list
      */
     @Override
-    public int length() {
+    public final int length() {
         return term.length;
     }
 

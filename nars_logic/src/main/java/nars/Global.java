@@ -22,7 +22,6 @@ package nars;
 
 
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.task.Task;
 import nars.term.Atom;
 import nars.truth.DefaultTruth;
 import nars.util.data.list.FasterList;
@@ -57,7 +56,7 @@ public class Global {
 
     /** allow everything */
 
-    public static int UNIFICATION_POWER = 300;
+    public static int UNIFICATION_POWER = 256;
 
     public static int DEFAULT_NAL_LEVEL = 8;
 
@@ -147,7 +146,7 @@ public class Global {
      * The rate of confidence decrease in mental operations Doubt and Hesitate
      * set to zero to disable this feature.
      */
-    public static float DISCOUNT_RATE = 0.5f;    
+    public static float DISCOUNT_RATE = 0.5f;
 
 
 
@@ -212,7 +211,7 @@ public class Global {
 //
 
 
-    public final static <K,V> Map<K, V> newHashMap() {
+    public static <K,V> Map<K, V> newHashMap() {
         return newHashMap(0);
     }
 
@@ -264,10 +263,10 @@ public class Global {
 
 
 
-    public static Reference<Task> reference(Task t) {
-        if (t == null) return null;
-        return new SoftReference(t);
-    }
+//    public static Reference<Task> reference(Task t) {
+//        if (t == null) return null;
+//        return new SoftReference(t);
+//    }
 
     public static <C> Reference<C> reference(C s) {
         if (s == null) return null;

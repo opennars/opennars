@@ -17,13 +17,6 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
         return (B) term[1];
     }
 
-
-    @Override
-    final public int length() {
-        return 2;
-    }
-
-   
 //    @Override
 //    public boolean equals(final Object that) {
 //        if (this == that) return true;

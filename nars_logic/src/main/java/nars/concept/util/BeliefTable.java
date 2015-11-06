@@ -186,6 +186,7 @@ public interface BeliefTable extends TaskTable {
         if (size() == 1)
             return top;
 
+        //TODO re-use the Ranker
         return top(new SolutionQualityMatchingOrderRanker(query, now));
     }
 
@@ -210,11 +211,11 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    final class SolutionQualityMatchingOrderRanker implements Ranker {
+    final static class SolutionQualityMatchingOrderRanker implements Ranker {
 
         private final Task query;
         private final long now;
-        final boolean hasQueryVar; //cache hasQueryVar
+        private final boolean hasQueryVar; //cache hasQueryVar
 
         public SolutionQualityMatchingOrderRanker(Task query, long now) {
             this.query = query;

@@ -14,6 +14,7 @@ import nars.concept.Concept;
 import nars.link.*;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.TermMetadata;
 import nars.term.Termed;
 import nars.util.meter.LogicMeter;
 
@@ -264,9 +265,10 @@ public class TaskProcess extends AbstractPremise implements Serializable {
             Concept componentConcept = getTermLinkTemplateTarget(linkTemplate, subBudget);
             if (componentConcept != null) {
 
-                //share merge term instances
-                linkTemplate.setTargetInstance(componentConcept.getTerm());
-
+                //possibly share term instances
+                Term cterm = componentConcept.getTerm();
+                if (!(cterm instanceof TermMetadata))
+                    linkTemplate.setTargetInstance(cterm);
 
                 /** activate the peer task tlink */
                 activateTaskLink(componentConcept, taskLinkBuilder);

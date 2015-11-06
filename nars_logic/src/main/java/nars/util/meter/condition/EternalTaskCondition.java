@@ -13,6 +13,7 @@ import nars.util.Texts;
 
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
@@ -53,10 +54,10 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
     public List<Task> valid;
 
 
-    transient int maxSimilars = 7;
+    transient int maxSimilars = 3;
 
     protected TreeMap<Float,Task> similar;
-
+    transient private HashSet<Task> similarset;
 
 
     @Override
@@ -238,50 +239,76 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
             }*/
         }
         else {
-
-            //TODO add the levenshtein distance of other task components
-
-            final int opDifference = task.getTerm()==getTerm() ? 0 : 1;
-
-            final float termDifference =
-                    Texts.levenshteinDistancePercent(
-                        task.getTerm().toString().split("\\{")[0], //HACK to avoi comparing stamps
-                        getTerm().toString().split("\\{")[0]);
-
-            final float freqDiff = Math.min(
-                    Math.abs(task.getFrequency() - freqMin),
-                    Math.abs(task.getFrequency() - freqMax));
-            final float confDiff = Math.min(
-                    Math.abs(task.getConfidence() - confMin),
-                    Math.abs(task.getConfidence() - confMax));
-
-            final float difference =
-                    (opDifference * getTerm().volume()) +
-                    3 * termDifference +
-                    2 * freqDiff +
-                    1 * confDiff;
-
-            /*if (termDifference > 0)*/ {
-                ensureSimilar();
-
-                //TODO more efficient way than this
-                if (!similar.values().contains(task))
-                    similar.put(difference, task);
-
-                if (similar.size() > maxSimilars) {
-                    similar.remove(similar.lastEntry().getKey());
-                }
-            }
-
+            recordSimilar(task);
         }
         return match;
+    }
+
+    public void recordSimilar(Task task) {
+        final TreeMap<Float, Task> similar = this.similar;
+
+        if (similarset!=null && similarset.contains(task))
+            return;
+
+
+        //TODO add the levenshtein distance of other task components
+        final float worstDiff;
+        if (similar!=null && similar.size() >= maxSimilars)
+            worstDiff = similar.lastKey();
+        else
+            worstDiff = Float.POSITIVE_INFINITY;
+
+        float difference = 0;
+        difference +=
+                task.getTerm()==getTerm() ? 0 : (getTerm().volume());
+        if (difference > worstDiff)
+            return;
+
+        final float freqDiff = Math.min(
+                Math.abs(task.getFrequency() - freqMin),
+                Math.abs(task.getFrequency() - freqMax));
+        difference += 2 * freqDiff;
+        if (difference > worstDiff)
+            return;
+
+        final float confDiff = Math.min(
+                Math.abs(task.getConfidence() - confMin),
+                Math.abs(task.getConfidence() - confMax));
+        difference += 1 * confDiff;
+        if (difference > worstDiff)
+            return;
+
+        final float termDifference =
+                Texts.levenshteinDistancePercent(
+                    task.getTerm().toString(),
+                    getTerm().toString());
+        difference += 3 * termDifference;
+        if (difference > worstDiff)
+            return;
+
+        {
+            ensureSimilar();
+
+            //TODO more efficient way than this
+
+            this.similar.put(difference, task);
+            this.similarset.add(task);
+
+
+//            if (similar.size() > maxSimilars) {
+//                similar.remove(similar.lastEntry().getKey());
+//            }
+        }
     }
 
     private void ensureExact() {
         if (valid == null) valid = Global.newArrayList(1);
     }
     private void ensureSimilar() {
-        if (similar == null) similar = new TreeMap();
+        if (similar == null) {
+            similar = new TreeMap();
+            similarset = new HashSet<Task>();
+        }
     }
 
 

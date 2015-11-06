@@ -255,9 +255,7 @@ public interface Concept extends Termed, Itemized<Term> {
 //    }
 
 
-
-
-    default Iterator<? extends Termed> adjacentTermables(boolean termLinks, boolean taskLinks) {
+    default Iterator<? extends Termed> getTermedAdjacents(boolean termLinks, boolean taskLinks) {
         if (termLinks && taskLinks) {
             return concat(
                     this.getTermLinks().iterator(), this.getTaskLinks().iterator()

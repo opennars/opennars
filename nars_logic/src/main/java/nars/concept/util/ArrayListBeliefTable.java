@@ -133,10 +133,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         //TODO make sure input.isDeleted() can not happen
-        if (!input.isDeleted() && revisible(input, top)) {
+        if ( added &&
+                !input.isDeleted() && revisible(input, top) ) {
 
+            Task revised = getRevision(input, top, nal, now);
 
-            Task revised = getRevision(input, top, nal);
             if (revised != null && !input.equals(revised)) {
 
                 boolean addedRevision = tryAdd(revised, ranking, memory);
@@ -144,7 +145,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                     tableChanged = true;
                 }
 
-                nal.memory().eventRevision.emit(revised);
+                memory.eventRevision.emit(revised);
                 //nal.memory().logic.BELIEF_REVISION.hit();
 
                 top = revised;
@@ -152,11 +153,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         }
 
+        nal.updateBelief(top);
+
         if (tableChanged) {
             onChanged(c, memory);
         }
 
-        nal.updateBelief(top);
         return top;
     }
 

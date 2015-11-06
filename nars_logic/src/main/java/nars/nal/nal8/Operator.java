@@ -21,7 +21,7 @@ public class Operator<T extends Term> extends Compound1<T> {
     }
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.OPERATOR;
     }
 
@@ -38,12 +38,12 @@ public class Operator<T extends Term> extends Compound1<T> {
     }
 
     @Override
-    public byte[] bytes() {
+    public final byte[] bytes() {
         return Compound.newCompound1Key(op(), the());
     }
 
     @Override
-    public void append(Appendable p, boolean pretty) throws IOException {
+    public final void append(Appendable p, boolean pretty) throws IOException {
         p.append(op().ch);
         the().append(p, pretty);
     }
@@ -52,18 +52,12 @@ public class Operator<T extends Term> extends Compound1<T> {
 
 
     @Override
-    protected void init(Term... term) {
+    protected final void init(Term... term) {
         super.init(term);
-        structureHash = operatorOrdinal;
+        this.structureHash = operatorOrdinal;
+        this.volume = 1;
+        this.complexity = 1;
     }
-
-    @Override
-    final public int complexity() {
-        return 1;
-    }
-
-    @Override
-    final public int volume() {  return 1;    }
 
     public static Operator the(final String name) {
         return the(Atom.the(name));

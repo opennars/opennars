@@ -17,13 +17,13 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     /**
      * term of the concept or "host" where this template exists, ie. the host
      */
-    public Term concept;
+    public final Term concept;
 
     //cached names for prefix arrays
     //protected byte[] outgoing;
     //protected byte[] incoming;
-    public int hashIn;
-    public int hashOut;
+    public final int hashIn;
+    public final int hashOut;
 
 
     /**

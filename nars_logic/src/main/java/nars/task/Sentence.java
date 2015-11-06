@@ -322,7 +322,8 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     default boolean isRevisible() {
-        return !((getTerm() instanceof Conjunction) && getTerm().hasVarDep());
+        Term t = getTerm();
+        return !(t instanceof Conjunction && t.hasVarDep());
     }
 
     default int getTemporalOrder() {

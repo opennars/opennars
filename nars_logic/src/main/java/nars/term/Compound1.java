@@ -30,11 +30,6 @@ abstract public class Compound1<T extends Term> extends Compound<T> {
 //    }
 
 
-    @Override final public int length() {
-        return 1;
-    }
-
-
 //    protected void updateHash() {
 //        int h = getTemporalOrder();
 //        h = h * 31 + the().hashCode();

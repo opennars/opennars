@@ -46,6 +46,7 @@ import static nars.Symbols.*;
 
 /**
  * a compound term
+ * TODO make this an interface extending Subterms
  */
 public abstract class Compound<T extends Term> extends TermVector<T> implements Term, IPair {
 
@@ -295,12 +296,13 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     @Override
     public final void rehash() {
-        //this may not be necessary
-        for (final Term t : term) {
+        Term[] subterms = this.term;
+
+        for (final Term t : subterms) {
             t.rehash();
         }
 
-        init(term);
+        init(subterms);
     }
 
     @Override

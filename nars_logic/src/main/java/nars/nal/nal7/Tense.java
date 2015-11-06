@@ -108,9 +108,14 @@ public enum Tense  {
             throw new RuntimeException("problem or solution is null");
         }*/
 
-        Truth truth = solution.getTruth();
-        if (problem.getOccurrenceTime()!=solution.getOccurrenceTime()) {
-            truth = solution.projection(problem.getOccurrenceTime(), time);
+        Truth truth;
+        long poc = problem.getOccurrenceTime();
+        if (poc != solution.getOccurrenceTime()) {
+            //TODO avoid creating new Truth instances
+            truth = solution.projection(poc, time);
+        }
+        else {
+            truth = solution.getTruth();
         }
 
         //if (problem.hasQueryVar()) {

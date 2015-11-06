@@ -231,6 +231,13 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
      * to recompute any transient fields (hashes, etc..)  */
     void rehash();
 
+    default String structureString() {
+        return String.format("%16s",
+                Integer.toBinaryString(structure()))
+                    .replace(" ", "0");
+    }
+
+
 
 //    default public boolean hasAll(final Op... op) {
 //        //TODO

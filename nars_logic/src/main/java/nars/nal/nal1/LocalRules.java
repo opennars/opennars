@@ -123,15 +123,12 @@ public class LocalRules {
     /** creates a revision task (but does not input it)
      *  if failed, returns null
      * */
-    public static <C extends Compound> Task<C> getRevision(final Task<C> newBelief, final Task<C> oldBelief, final Premise nal) {
+    public static <C extends Compound> Task<C> getRevision(final Task<C> newBelief, final Task<C> oldBelief, final Premise nal, long now) {
 
         if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
-
-        long now = nal.time();
-
 
         ProjectedTruth oldBeliefTruth = oldBelief.projection(now, newBelief.getOccurrenceTime());
 
