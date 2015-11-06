@@ -112,92 +112,91 @@ abstract public class Variable extends Atom {
      *
      * @return The complexity of the term, an integer
      */
-    @Override public final int complexity() {
-        return 0;
-    }
+    @Override public final int complexity() {       return 0;   }
 
     @Override public final boolean hasVar() { return true;     }
-
-    public final boolean hasVarPattern() { return op() == Op.VAR_PATTERN;    }
-
-    @Override public final boolean hasVarDep() { return op() == Op.VAR_DEPENDENT;    }
-
-    @Override public final int varDep() {
-        return hasVarDep() ? 1 : 0;
-    }
-    
-    @Override public final boolean hasVarIndep() { return op() == Op.VAR_INDEPENDENT;    }
-    
-    @Override public final int varIndep() {
-        return hasVarIndep()  ? 1 : 0;
-    }
-    @Override public final boolean hasVarQuery() { return op() == Op.VAR_QUERY;    }
-
-    @Override public final int varQuery() {
-        return hasVarQuery() ? 1 : 0;
-    }
 
 
     public static final class VarDep extends Variable {
 
-        public VarDep(byte[] name) {
-            super(name);
-        }
+        public VarDep(byte[] name)  { super(name);        }
 
-        @Override public final int structure() {
-            return 1 << Op.VAR_DEPENDENT.ordinal();
-        }
+        @Override public final int structure() { return 1 << Op.VAR_DEPENDENT.ordinal();        }
 
         @Override public final Op op() { return Op.VAR_DEPENDENT; }
 
         @Override public final int vars() { return 1; }
+
+        @Override public final boolean hasVarDep() { return true;  }
+        @Override public final int varDep() {  return 1;        }
+
+        @Override public final boolean hasVarIndep() { return false;  }
+        @Override public final int varIndep() { return 0;}
+
+        @Override public final boolean hasVarQuery() { return false;  }
+        @Override public final int varQuery() { return 0; }
+
     }
 
     public static final class VarIndep extends Variable {
 
-        public VarIndep(byte[] name) {
-            super(name);
-        }
+        public VarIndep(byte[] name) { super(name);         }
 
-        @Override public final int structure() {
-            return 1 << Op.VAR_INDEPENDENT.ordinal();
-        }
+        @Override public final int structure() {  return 1 << Op.VAR_INDEPENDENT.ordinal();        }
 
         @Override public final Op op() { return Op.VAR_INDEPENDENT; }
 
         @Override public final int vars() { return 1; }
+
+        @Override public final boolean hasVarDep() { return false;  }
+        @Override public final int varDep() {  return 0;        }
+
+        @Override public final boolean hasVarIndep() { return true;  }
+        @Override public final int varIndep() { return 1;}
+
+        @Override public final boolean hasVarQuery() { return false;  }
+        @Override public final int varQuery() { return 0; }
     }
 
     public static final class VarQuery extends Variable {
 
-        public VarQuery(byte[] name) {
-            super(name);
-        }
+        public VarQuery(byte[] name) {  super(name);         }
 
-        @Override public final int structure() {
-            return 1 << Op.VAR_QUERY.ordinal();
-        }
+        @Override public final int structure() {  return 1 << Op.VAR_QUERY.ordinal();        }
 
         @Override public final Op op() { return Op.VAR_QUERY; }
 
         @Override public final int vars() { return 1; }
+
+        @Override public final boolean hasVarDep() { return false;  }
+        @Override public final int varDep() {  return 0;        }
+
+        @Override public final boolean hasVarIndep() { return false;  }
+        @Override public final int varIndep() { return 0;}
+
+        @Override public final boolean hasVarQuery() { return true;  }
+        @Override public final int varQuery() { return 1; }
     }
 
 
     public static final class VarPattern extends Variable {
 
-        public VarPattern(byte[] name) {
-            super(name);
-        }
+        public VarPattern(byte[] name) {  super(name);         }
 
-        @Override public final int structure() {
-            return 0;
-        }
+        @Override public final int structure() { return 0;        }
 
         @Override public final Op op() { return Op.VAR_PATTERN; }
 
         /** pattern variable hidden in the count 0 */
         @Override public final int vars() { return 0; }
 
+        @Override public final boolean hasVarDep() { return false;  }
+        @Override public final int varDep() {  return 0;        }
+
+        @Override public final boolean hasVarIndep() { return false;  }
+        @Override public final int varIndep() { return 0;}
+
+        @Override public final boolean hasVarQuery() { return false;  }
+        @Override public final int varQuery() { return 0; }
     }
 }

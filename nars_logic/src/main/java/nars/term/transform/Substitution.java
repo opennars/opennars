@@ -83,18 +83,21 @@ public class Substitution implements Function<Compound,Term> {
 
         int subsApplicable = numSubs;
 
+        int numDep = this.numDep;
         if (numDep > 0 && !superterm.hasVarDep()) {
             subsApplicable -= numDep;
             if (subsApplicable <= 0)
                 return true;
         }
 
+        int numIndep = this.numIndep;
         if (numIndep > 0 && !superterm.hasVarIndep()) {
             subsApplicable -= numIndep;
             if (subsApplicable <= 0)
                 return true;
         }
 
+        int numQuery = this.numQuery;
         if (numQuery > 0 && !superterm.hasVarQuery()) {
             subsApplicable -= numQuery;
             if (subsApplicable <= 0)
