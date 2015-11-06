@@ -13,7 +13,6 @@ import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.link.*;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.meter.LogicMeter;
@@ -29,7 +28,7 @@ import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
  */
 public class TaskProcess extends AbstractPremise implements Serializable {
 
-    private static final Procedure2<Budget, Budget> DEFAULT_TERMLINK_ACCUMULATION_MERGE = Budget.plus;
+    private static final Procedure2<Budget, Budget> PENDING_TERMLINK_BUDGET_MERGE = Budget.plus;
 
     public final Task task;
 
@@ -94,7 +93,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      * when a task is processed, a tasklink
      * can be created at the concept of its term
      */
-    public boolean link(Concept c, Task t) {
+    public final boolean link(Concept c, Task t) {
 
         if (linkTask(c, t))
             return linkTemplates(c, t.getBudget(), true);  // recursively insert TermLink
@@ -139,14 +138,14 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
             final TermLinkTemplate t = tl.get(i);
 
-            if ((t.getTarget().equals(getTerm()))) {
+            /*if ((t.getTarget().equals(getTerm()))) {
                 //self
                 continue;
-            }
+            }*/
 
 
             //only apply this loop to non-transform termlink templates
-            DEFAULT_TERMLINK_ACCUMULATION_MERGE.value(t, subBudget);
+            PENDING_TERMLINK_BUDGET_MERGE.value(t, subBudget);
 
             if (updateTLinks) {
                 if (t.summaryGreaterOrEqual(termLinkThresh)) {
@@ -167,13 +166,15 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
         TermLinkBuilder termLinkBuilder = concept.getTermLinkBuilder();
         Concept otherConcept = getTermLinkTemplateTarget(t);
-        if (otherConcept == concept)
-            return false;
+
 
         termLinkBuilder.set(t, false, concept.getMemory());
 
         //activate this termlink to peer
         concept.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+
+        if (otherConcept == concept)
+            return false;
 
         //activate peer termlink to this
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
@@ -220,7 +221,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      *
      * @param task The task to be linked
      */
-    protected boolean linkTask(final Concept c, final Task task) {
+    protected final boolean linkTask(final Concept c, final Task task) {
 
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
         final TaskLinkBuilder taskLinkBuilder = getTaskLinkBuilder();
@@ -235,18 +236,17 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
         taskLinkBuilder.setTask(task);
 
-        final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1f / numTemplates);
-        if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
-            return false;
-
 
         //ACTIVATE TASK LINKS
         //   options: entire budget, or the sub-budget that downtsream receives
-        taskLinkBuilder.setBudget(
-                task.getBudget() //full budget
-                //subBudget //fractional budget
-        );
+        taskLinkBuilder.setBudget( task.getBudget() );
         activateTaskLink(c, taskLinkBuilder);
+
+
+
+        final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1f / numTemplates);
+        if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
+            return false;
 
 
         taskLinkBuilder.setBudget(subBudget);
@@ -280,7 +280,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
         return true;
     }
 
-    private TaskLinkBuilder getTaskLinkBuilder() {
+    private final TaskLinkBuilder getTaskLinkBuilder() {
         return taskLinkBuilder;
     }
 
@@ -305,15 +305,11 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      *
      * @return whether it was processed
      */
-    protected boolean processConcept(final Concept c) {
+    protected final boolean processConcept(final Concept c) {
 
         final Task task = getTask();
 
-        //share the same Term instance for fast comparison and reduced memory usage (via GC)
-        Term cterm = c.getTerm();
-        if (cterm.equals(task.getTerm()))
-            task.setTermShared((Compound) c.getTerm());
-
+        task.onConcept(c);
 
         final LogicMeter logicMeter = nar.memory.logic;
 

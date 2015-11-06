@@ -17,9 +17,41 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
 
     public ItemAccumulator(int capacity) {
         super(new ArraySortedIndex<>(capacity));
-        mergePlus();
+        mergeAverage();
     }
 
+
+
+    @Override
+    public final V peekNext() {
+        return items.getFirst();
+    }
+    @Override
+    public final V peekNext(boolean remove) {
+        return removeHighest();
+    }
+
+    public final boolean contains(V t) {
+        return index.containsKey(t.name());
+    }
+
+
+    public void print(PrintStream out) {
+        items.print(out);
+    }
+
+
+//    static final class HighestFirstComparator implements Comparator<Budgeted>, Serializable {
+//        @Override public final int compare(final Budgeted a, final Budgeted b) {
+//            return Float.compare(b.getPriority(), a.getPriority());
+//        }
+//    }
+//
+//    static final class LowestFirstComparator implements Comparator<Budgeted>, Serializable {
+//        @Override public final int compare(final Budgeted a, final Budgeted b) {
+//            return Float.compare(a.getPriority(), b.getPriority());
+//        }
+//    }
 
 //    //@Override
 //    final public Itemized<K> apply(final Itemized<K> t, Itemized<K> accumulated) {
@@ -186,34 +218,4 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
 //        }
 //    }
 
-    @Override
-    public final V peekNext() {
-        return items.getFirst();
-    }
-    @Override
-    public final V peekNext(boolean remove) {
-        return removeHighest();
-    }
-
-    public final boolean contains(V t) {
-        return index.containsKey(t.name());
-    }
-
-
-    public void print(PrintStream out) {
-        items.print(out);
-    }
-
-
-//    static final class HighestFirstComparator implements Comparator<Budgeted>, Serializable {
-//        @Override public final int compare(final Budgeted a, final Budgeted b) {
-//            return Float.compare(b.getPriority(), a.getPriority());
-//        }
-//    }
-//
-//    static final class LowestFirstComparator implements Comparator<Budgeted>, Serializable {
-//        @Override public final int compare(final Budgeted a, final Budgeted b) {
-//            return Float.compare(a.getPriority(), b.getPriority());
-//        }
-//    }
 }

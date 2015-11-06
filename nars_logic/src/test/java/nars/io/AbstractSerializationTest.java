@@ -82,7 +82,7 @@ abstract public class AbstractSerializationTest<S,T> {
         System.out.print("\n" + m + ": " + y + " (" + y.getClass() + ") to " + len + " bytes");
     }
 
-    @Ignore /* not working yet */ @Test
+    @Ignore /* not working yet */ /*@Test*/
     public void assertEqualJSONMarshaller()  {
         final Class<? extends Object>[] classs = new Class[1];
 

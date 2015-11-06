@@ -23,6 +23,7 @@ public class ItemAccumulatorTest {
         TaskAccumulator ii = new TaskAccumulator<>(
                 2 //capacity = 2 but this test will only grow to size 1 if successful
         );
+        ii.mergePlus();
         assertEquals(0, ii.size());
 
         Task t = n.task("$0.1$ <a --> b>. %1.00;0.90%");
@@ -34,7 +35,7 @@ public class ItemAccumulatorTest {
         ii.put(t);
         assertEquals(1, ii.size());
 
-        //plus:
+        //mergePlus:
         assertEquals(0.1f+0.1f, ii.peekNext().getPriority(), 0.001f);
 
     }

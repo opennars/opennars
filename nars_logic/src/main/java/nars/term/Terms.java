@@ -48,43 +48,53 @@ public class Terms {
 //
 
     public static boolean equalSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
+
         if (a == null || b == null) {
             return false;
         }
+
+        //if one is not a compound, then return their equality
         if (!((a instanceof Compound) && (b instanceof Compound))) {
             return a.equals(b);
         }
-        if (a instanceof Inheritance && b instanceof Inheritance) {
-            return equalSubjectPredicateInRespectToImageAndProduct(a, b);
+
+        boolean equalOps = a.op() == b.op();
+
+        if (equalOps) {
+            if (a instanceof Inheritance) {
+                return equalSubjectPredicateInRespectToImageAndProduct(a, b);
+            } else if (a instanceof Similarity) {
+                return equalSubjectPredicateInRespectToImageAndProduct(a, b)
+                        || equalSubjectPredicateInRespectToImageAndProduct(b, a);
+            }
         }
-        if (a instanceof Similarity && b instanceof Similarity) {
-            return equalSubjectPredicateInRespectToImageAndProduct(a, b) || equalSubjectPredicateInRespectToImageAndProduct(b, a);
-        }
+
         Term[] A = ((Compound) a).term;
         Term[] B = ((Compound) b).term;
         if (A.length != B.length)
             return false;
 
+        //match all subterms
         for (int i = 0; i < A.length; i++) {
-            Term x = A[i];
-            Term y = B[i];
-            if (!x.equals(y)) {
-                if (x instanceof Inheritance && y instanceof Inheritance) {
-                    if (!equalSubjectPredicateInRespectToImageAndProduct(x, y)) {
-                        return false;
-                    } else {
-                        continue;
-                    }
-                }
-                if (x instanceof Similarity && y instanceof Similarity) {
-                    if (!equalSubjectPredicateInRespectToImageAndProduct(x, y) && !equalSubjectPredicateInRespectToImageAndProduct(y, x)) {
-                        return false;
-                    } else {
-                        continue;
-                    }
-                }
+            if (!equalSubTermsInRespectToImageAndProduct(A[i], B[i]))
                 return false;
-            }
+
+//            Term x = A[i];
+//            Term y = B[i];
+//            boolean eqOps = x.op() == y.op();
+//            if (!x.equals(y) && eqOps) {
+//                if (x instanceof Inheritance) {
+//                    if (!equalSubjectPredicateInRespectToImageAndProduct(x, y)) {
+//                        return false;
+//                    }
+//                }
+//                else if (x instanceof Similarity) {
+//                    if (!equalSubjectPredicateInRespectToImageAndProduct(x, y) && !equalSubjectPredicateInRespectToImageAndProduct(y, x)) {
+//                        return false;
+//                    }
+//                }
+//                return false;
+//            }
         }
         return true;
     }

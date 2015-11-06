@@ -63,7 +63,7 @@ public class STMTemporalLinkage {
 
         final Task currentTask = nal.getTask();
 
-        stmSize = nal.memory().shortTermMemoryHistory.get();
+        stmSize = nal.memory().shortTermMemoryHistory.intValue();
 
 //        if (!currentTask.isTemporalInductable() && !anticipation) { //todo refine, add directbool in task
 //            return false;

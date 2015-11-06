@@ -1,6 +1,5 @@
 package nars.nar;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -153,7 +152,7 @@ public class Default extends NAR {
     protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
         //HACK:
-        final MutableInteger[] tmpConceptsFiredPerCycle = new MutableInteger[1];
+        //final MutableInteger[] tmpConceptsFiredPerCycle = new MutableInteger[1];
 
         DefaultCycle c = initCore(
                 activeConcepts,
@@ -166,7 +165,7 @@ public class Default extends NAR {
         c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
         c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
 
-        tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
+        //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
         c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         c.capacity.set(activeConcepts);
@@ -191,9 +190,9 @@ public class Default extends NAR {
         m.conceptGoalsMax.set(7);
         m.conceptQuestionsMax.set(5);
 
-        m.conceptForgetDurations.set(2.0);
-        m.taskLinkForgetDurations.set(2.0);
-        m.termLinkForgetDurations.set(3.0);
+        m.conceptForgetDurations.setValue(2.0);
+        m.taskLinkForgetDurations.setValue(2.0);
+        m.termLinkForgetDurations.setValue(3.0);
 
 
         m.derivationThreshold.set(0);
@@ -457,7 +456,7 @@ public class Default extends NAR {
 
         public final ConceptActivator conceptActivator;
 
-        public final AtomicDouble conceptForget;
+        public final MutableFloat conceptForget;
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this

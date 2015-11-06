@@ -1,6 +1,5 @@
 package nars.guifx.util;
 
-import dejv.commons.jfx.geometry.ObservableDimension2D;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
@@ -241,7 +240,7 @@ public class ZoomFX extends AnchorPane {
 
 
     private void setupBindings() {
-        final ObservableDimension2D viewportPhysicalSize = new ObservableDimension2D();
+        //final ObservableDimension2D viewportPhysicalSize = new ObservableDimension2D();
         //final ObservableBounds contentLogicalBounds = new ObservableBounds();
 
         setOnScroll((event) -> {
@@ -249,10 +248,10 @@ public class ZoomFX extends AnchorPane {
             zoomFactor.set(zoomFactor.get() * mult);
         });
 
-        layoutBoundsProperty().addListener((sender, oldValue, newValue) -> {
-            viewportPhysicalSize.setWidth(newValue.getWidth());
-            viewportPhysicalSize.setHeight(newValue.getHeight());
-        });
+//        layoutBoundsProperty().addListener((sender, oldValue, newValue) -> {
+//            viewportPhysicalSize.setWidth(newValue.getWidth());
+//            viewportPhysicalSize.setHeight(newValue.getHeight());
+//        });
 
 //        content.boundsInLocalProperty().addListener((sender, oldValue, newValue) -> {
 //            contentLogicalBounds.setMinX(newValue.getMinX());

@@ -272,7 +272,7 @@ public class Memory extends Param {
 
     /** current temporal perception duration of the reasoner */
     public final int duration() {
-        return this.duration.get();
+        return this.duration.intValue();
     }
 
 

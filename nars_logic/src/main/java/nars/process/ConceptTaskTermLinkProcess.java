@@ -56,7 +56,6 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     @Override
     public final void derive(final Deriver p, Consumer<Task> t) {
-        nar.memory.eventConceptProcess.emit(this);
         p.run(this, t);
     }
 

@@ -28,9 +28,9 @@ public class NARTimeGraph1Test {
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.8f;
 
 
-        n.memory.conceptForgetDurations.set(6);
-        n.memory.termLinkForgetDurations.set(2);
-        n.memory.taskLinkForgetDurations.set(2);
+        n.memory.conceptForgetDurations.setValue(6);
+        n.memory.termLinkForgetDurations.setValue(2);
+        n.memory.taskLinkForgetDurations.setValue(2);
 
         //n.input(new File("/tmp/h.nal"));
         n.input("<hydochloric --> acid>.");

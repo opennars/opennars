@@ -25,6 +25,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.concept.Concept;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -212,6 +213,11 @@ public interface Task<T extends Compound> extends Sentence<T>,
     Task getParentBelief();
 
     Reference<Task> getParentBeliefRef();
+
+
+
+    /** called when a Concept processes this Task */
+    void onConcept(final Concept/*<T>*/ equivalentInstance);
 
     /** clones this Task with a new Term */
     default <X extends Compound> Task<X> clone(final X t) {

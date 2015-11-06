@@ -11,6 +11,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;
+import nars.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.term.Compound;
 import nars.term.Term;
@@ -148,7 +149,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public void setTermShared(final T equivalentInstance) {
+    public final void onConcept(final Concept c) {
 
         //intermval generally contains unique information that should not be replaced
         if (this.term instanceof TermMetadata)
@@ -156,7 +157,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         //if debug, check that they are equal..
 
-        this.term = equivalentInstance;
+        this.term = (T) c.getTerm(); //HACK the cast
     }
 
     @Override

@@ -2,17 +2,16 @@ package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.nal.Level;
-import nars.nal.nal7.AtomicDuration;
 import nars.util.data.MutableInteger;
 import objenome.Container;
+import org.apache.commons.lang3.mutable.MutableFloat;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * NAR Parameters which can be changed during runtime.
  */
-public abstract class Param extends Container implements Serializable, Level {
+public abstract class Param extends Container implements Level {
 
 
     public final MutableInteger cyclesPerFrame = new MutableInteger(1);
@@ -30,14 +29,14 @@ public abstract class Param extends Container implements Serializable, Level {
        Past/future tense usage convention;
        How far away "past" and "future" is from "now", in cycles.         
        The range of "now" is [-DURATION/2, +DURATION/2];      */
-    public final AtomicDuration duration = new AtomicDuration();
+    public final MutableInteger duration = new MutableInteger();
 
-    public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
+    public final MutableInteger shortTermMemoryHistory = new MutableInteger();
 
 
 
     /** converts durations to cycles */
-    public final float durationToCycles(AtomicDouble durations) {
+    public final float durationToCycles(MutableFloat durations) {
         return durationToCycles(durations.floatValue());
     }
 
@@ -55,14 +54,14 @@ public abstract class Param extends Container implements Serializable, Level {
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.
      */
-    @Deprecated public final AtomicDouble conceptForgetDurations = new AtomicDouble();
+    @Deprecated public final MutableFloat conceptForgetDurations = new MutableFloat();
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
     //TODO use separate termlink forget rates whether the termlink was actually selected for firing or not.
-    @Deprecated public final AtomicDouble termLinkForgetDurations = new AtomicDouble();
+    @Deprecated public final MutableFloat termLinkForgetDurations = new MutableFloat();
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    @Deprecated public final AtomicDouble taskLinkForgetDurations = new AtomicDouble();
+    @Deprecated public final MutableFloat taskLinkForgetDurations = new MutableFloat();
     
 
      /*

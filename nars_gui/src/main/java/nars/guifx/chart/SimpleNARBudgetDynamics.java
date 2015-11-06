@@ -135,12 +135,12 @@ public class SimpleNARBudgetDynamics {
     public static void main(String[] args) {
 
 
-        int cycles = 256;
+        int cycles = 1256;
 
 
         float pri = 0.5f;
         float dur = 0.5f;
-        float qua = 0.25f;
+        float qua = 0.5f;
 
 
 
@@ -197,13 +197,14 @@ public class SimpleNARBudgetDynamics {
             x.setLeft(new POJOPane<>(vars));
 
 
-            Default2 d = new Default2(512, 1, 2, 3); //Equalized(1024, 1, 3);
+            Default2 d = new Default2(512, 1, 1, 1); //Equalized(1024, 1, 3);
             //Default d = new NewDefault().setInternalExperience(null);
             //d.memory.conceptForgetDurations.set(8);
             //d.getParam().conceptForgetDurations.set(1);
             //d.getParam().termLinkForgetDurations.set(1);
             //d.getParam().taskLinkForgetDurations.set(1);
             //d.getParam().duration.set(10);
+            d.trace();
 
             update.accept(d, execution);
 

@@ -76,7 +76,7 @@ public class Trie<S, T> implements Map<S, T>
     */
    public Trie( TrieSequencer<S> sequencer, T defaultValue )
    {
-      this.root = new TrieNode<S, T>( null, defaultValue, null, 0, 0, new PerfectHashMap<TrieNode<S, T>>() );
+      this.root = new TrieNode<>(null, defaultValue, null, 0, 0, new PerfectHashMap<TrieNode<S, T>>());
       this.sequences = new SequenceSet( root );
       this.values = new ValueCollection( root );
       this.entries = new EntrySet( root );

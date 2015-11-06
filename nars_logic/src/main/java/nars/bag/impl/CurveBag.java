@@ -194,33 +194,32 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int bstart, int len, int maxAttempts) {
 
 
-        final int s = size();
+        final int siz = size();
+        len = Math.min(siz, len);
 
         final List<V> a = items.getList();
 
-        int istart, iend;
+        int istart = 0;
 
-        if (len == s) {
-            //optimization: if len==s then just add all elements, so dont sample
-            istart = 0;
-            iend = s;
-        } else {
-            int r = len / 2;
+        if (len != siz) {
+            //asking for some of the items
+            int r = Math.max(1, len / 2);
             int center = sample();
-            istart = center - r;
-            iend = center + r;
+            istart = center + r; //scan downwards from here (increasing pri order)
+
             if (r % 2 == 1) istart--; //if odd, give extra room to the start (higher priority)
 
             //TODO test and if possible use more fair policy that accounts for clipping
-            if (iend > s) {
-                iend = s;
-                istart -= s - len;
-            } else if (istart < 0) {
-                istart = 0;
-                iend = len;
+            if (istart-r < 0) {
+                istart += -(istart-r); //start further below
             }
-
-
+            if (istart >= siz)
+                istart = siz-1;
+        }
+        else {
+            //optimization: asking for all of the items (len==siz)
+            //   just add all elements, so dont sample
+            istart = siz-1;
         }
 
 
@@ -229,9 +228,11 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         Budget b = new Budget(); //TODO avoid creating this
 
 
-        int bend = bstart + len;
+        //int bend = bstart + len;
         int next = bstart;
-        for (int i = istart; (i < iend) && (next < bend); i++) {
+
+        //scan increasing priority, stopping at the top or if buffer filled
+        for (int i = istart; (i >= 0) && (next < len); i--) {
             V v = a.get(i);
 
             if (v == null) break; //HACK wtf?
@@ -246,19 +247,18 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         }
 
         //pad with nulls. helpful for garbage collection incase they contain old values (the array is meant to be re-used)
-        if (next != bend)
-            Arrays.fill(batch, next, bend, null);
+        if (next != len)
+            Arrays.fill(batch, bstart+next, bstart+len, null);
 
         //update after they have been selected because this will modify their order in the curvebag
-        for (int i = bstart; i < next; i++) {
-            V v = batch[i];
-            updateItem(tx, v, b);
-        }
+        for (int i = bstart; i < bstart+next; i++)
+            updateItem(tx, batch[i], b);
+
 
         if (toRemove != null)
             toRemove.forEach(this::remove);
 
-        return next - bstart; //# of items actually filled in the array
+        return next; //# of items actually filled in the array
     }
 
     /**

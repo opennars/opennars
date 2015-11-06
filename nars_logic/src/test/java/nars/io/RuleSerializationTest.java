@@ -35,7 +35,6 @@ public class RuleSerializationTest extends AbstractSerializationTest<Collection<
     }
 
     @Override
-
     public void testEquality(Collection<TaskRule> aa, Collection<TaskRule> bb)  {
 
         assertTrue(aa!=bb);

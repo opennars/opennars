@@ -7,6 +7,7 @@ import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.nar.SingleStepNAR;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
 import org.jgrapht.alg.ConnectivityInspector;
@@ -23,6 +24,25 @@ import static org.junit.Assert.assertTrue;
 
 public class TermLinkTest {
 
+    @Test public void testTermLinkActivationOnConceptualization() {
+        //when a concept is conceptualized, it should have all its templates activated into its TermLink bag
+        final String t = "<a --> b>";
+
+        NAR n = new SingleStepNAR();
+        n.believe(t);
+        n.frame(1);
+
+        Concept c =  n.concept(t);
+        assertNotNull(c);
+
+        int numTemplates = c.getTermLinkTemplates().size();
+        assertTrue(numTemplates > 1);
+
+        assertEquals( numTemplates, c.getTermLinks().size());
+
+
+    }
+
     @Test
     public void termlinkBidirectionality() {
 
@@ -36,7 +56,7 @@ public class TermLinkTest {
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
         assertEquals(
-                "[[y, <x --> y>, x], [(y,<x-->y>), (x,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
+                "[[x, <x --> y>, y], [(x,<x-->y>), (y,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
                 g.toString());
     }
 
@@ -70,13 +90,13 @@ public class TermLinkTest {
         Bag<TermLinkKey, TermLink> cj3 = getTermLinks("<d ==> e>", true);
         assertEquals(2, cj3.size());
         List<TermLinkTemplate> tj3 = getTermLinkTemplates("<d ==> e>");
-        assertEquals(3, tj3.size());
+        assertEquals(2, tj3.size());
 
 
         List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(c,d) ==> e>");
-        assertEquals(5, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
+        assertEquals(4, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
         Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(c,d) ==> e>", true);
-        cj2.printAll();
+        //cj2.printAll();
         assertTrue(3 <= cj2.size());
         //assertEquals("2 of the links are transform and will not appear in the bag", 2, cj2.size());
 
@@ -205,7 +225,7 @@ public class TermLinkTest {
 //        }
 
 
-        assertEquals(6, getTermLinkTemplates(d).size());
+        assertEquals(5, getTermLinkTemplates(d).size());
 
 
         NAR n = new Default();

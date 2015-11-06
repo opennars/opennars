@@ -38,7 +38,7 @@ public class AtomConcept extends AbstractConcept  {
      * Task links for indirect processing
      */
     @Override
-    public Bag<Task, TaskLink> getTaskLinks() {
+    public final Bag<Task, TaskLink> getTaskLinks() {
         return taskLinks;
     }
 
@@ -46,7 +46,7 @@ public class AtomConcept extends AbstractConcept  {
      * Term links between the term and its components and compounds; beliefs
      */
     @Override
-    public Bag<TermLinkKey, TermLink> getTermLinks() {
+    public final Bag<TermLinkKey, TermLink> getTermLinks() {
         return termLinks;
     }
 
@@ -54,7 +54,6 @@ public class AtomConcept extends AbstractConcept  {
     public TermLinkBuilder getTermLinkBuilder() {
         return null;
     }
-
 
     @Override
     public BeliefTable getBeliefs() {

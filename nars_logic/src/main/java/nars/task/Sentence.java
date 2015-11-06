@@ -451,10 +451,6 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         return Tense.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
-    /** WARNING: calling this should not change the value of equivalentInstance, but just the
-     * particular instance that it references
-     */
-    void setTermShared(final T equivalentInstance);
 
     @Override
     T getTerm();

@@ -133,7 +133,7 @@ abstract public class ConceptProcess extends AbstractPremise  {
     public static void firePremises(NAR nar, Consumer<Premise> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
         for (final TaskLink taskLink : tasks) {
             if (taskLink == null) break;
-            for (final TermLink termLink : terms) {
+            for (TermLink termLink : terms) {
                 if (termLink == null) break;
 
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))

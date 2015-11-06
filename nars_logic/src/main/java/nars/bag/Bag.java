@@ -8,6 +8,7 @@ import nars.bag.tx.BagActivator;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.io.*;
@@ -432,7 +433,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
     }
 
-    final public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {
+    final public void forgetNext(MutableFloat forgetDurations, final float accuracy, final Memory m) {
         float forgetCycles = m.durationToCycles(forgetDurations);
         forgetNext(forgetCycles, accuracy, m);
     }

@@ -48,7 +48,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             Set<Term> components = Global.newHashSet(host.complexity());
             prepareComponentLinks((Compound)host, components);
 
-            components.forEach(t -> addTemplate(new TermLinkTemplate(host, t)));
+            components.forEach(t -> template.add(
+                    new TermLinkTemplate(host, t))
+            );
 
         }
         else {
@@ -66,8 +68,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
      */
     void prepareComponentLinks(final Compound t, Set<Term> components) {
 
-        /** add self link for structural transform: */
-        components.add(t);
+        ///** add self link for structural transform: */
+        //components.add(t);
 
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
@@ -160,10 +162,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return template;
     }
 
-
-    public void addTemplate(TermLinkTemplate tl) {
-        template.add(tl);
-    }
 
 
     @Override

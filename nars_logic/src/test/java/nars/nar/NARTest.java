@@ -1,13 +1,9 @@
 package nars.nar;
 
-import nars.Memory;
 import nars.NAR;
 import nars.Narsese;
-import nars.util.io.JSON;
-import org.infinispan.marshall.core.JBossMarshaller;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,28 +17,28 @@ import static org.junit.Assert.assertTrue;
 public class NARTest {
 
 
-    @Test
-    public void testEmptyMemoryToJSON() throws IOException, InterruptedException, ClassNotFoundException {
-        Memory m = new Terminal().memory;
-        String j = JSON.omDeep.writeValueAsString(m);
-        assertTrue(j.length() > 16);
-
-        String pretty = JSON.omDeep.writerWithDefaultPrettyPrinter().writeValueAsString(m);
-        System.out.println(pretty);
-
-        assertTrue(pretty.length() > j.length() );
-    }
-
-    @Test
-    public void testEmptyMemorySerialization() throws IOException, InterruptedException, ClassNotFoundException {
-        /** empty memory, and serialize it */
-        Memory m = new Terminal().memory;
-        byte[] bm = m.toBytes();
-        assertTrue(bm.length > 64);
-
-        assertEquals(m, new JBossMarshaller().objectFromByteBuffer(bm) );
-
-    }
+//    @Test
+//    public void testEmptyMemoryToJSON() throws IOException, InterruptedException, ClassNotFoundException {
+//        Memory m = new Terminal().memory;
+//        String j = JSON.omDeep.writeValueAsString(m);
+//        assertTrue(j.length() > 16);
+//
+//        String pretty = JSON.omDeep.writerWithDefaultPrettyPrinter().writeValueAsString(m);
+//        System.out.println(pretty);
+//
+//        assertTrue(pretty.length() > j.length() );
+//    }
+//
+//    @Test
+//    public void testEmptyMemorySerialization() throws IOException, InterruptedException, ClassNotFoundException {
+//        /** empty memory, and serialize it */
+//        Memory m = new Default2(1024,1,1,1).memory;
+//        byte[] bm = m.toBytes();
+//        assertTrue(bm.length > 64);
+//
+//        assertEquals(m, new JBossMarshaller().objectFromByteBuffer(bm) );
+//
+//    }
 
     @Test
     public void testMemoryTransplant() {

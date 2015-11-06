@@ -1,6 +1,7 @@
 package nars.nal;
 
 import nars.Premise;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 
 import java.util.function.Consumer;
@@ -29,11 +30,11 @@ abstract public class Deriver  {
      *  the process once it begins.
      */
     public final void run(Premise premise, Consumer<Task> t) {
-        run(premise, RuleMatch.matchers.get(), t);
-    }
+        premise.memory().eventConceptProcess.emit((ConceptProcess)premise);
 
-    public final void run(Premise premise, RuleMatch m, Consumer<Task> t) {
+        RuleMatch m = RuleMatch.matchers.get();
         m.start(premise);
+
         forEachRule(m, t);
     }
 

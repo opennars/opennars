@@ -47,7 +47,7 @@ public class Default2 extends Default {
     @Override
     protected DefaultCycle2 initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
 
-        final int inputCapacity = activeConcepts/10; //HACK heuristic
+        final int inputCapacity = activeConcepts/8; //HACK heuristic
 
         return new DefaultCycle2(this, deriver,
                 conceptBag, activator,
