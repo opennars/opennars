@@ -36,15 +36,15 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
             return Op.NONE;
         }
 
-        @Override
-        public int hashCode() {
-            return 0;
-        }
     };
 
     protected byte[] data;
 
     transient int hash;
+
+    Atom() {
+
+    }
 
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
@@ -97,19 +97,18 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return Utf8.fromUtf8toString(bytes());
     }
 
-//    public final char[] chars(final boolean pretty) {
-//        return chars();
-//    }
-    public final char[] chars() {
-        return Utf8.fromUtf8ToChars(bytes());
-    }
-
     @Override
-    public boolean equals(final Object x) {
+    public final boolean equals(final Object x) {
         if (this == x) return true;
         if (!(x instanceof Atom)) return false;
         Atom ax = (Atom)x;
         return (ax.op() == op()) && Byted.equals(this, ax);
+    }
+    @Override
+    public final int hashCode() {
+        if (hash == 0)
+            rehash();
+        return hash;
     }
 
 
@@ -117,24 +116,16 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
      * @param that The Term to be compared with the current Term
      */
     @Override
-    public int compareTo(final Object that) {
+    public final int compareTo(final Object that) {
         if (that==this) return 0;
 
-        // group variables by earlier sorting order than non-variables
-        if (that instanceof Variable)
-            return 1;
+        Term t = (Term)that;
+        int d = op().compareTo(t.op());
+        if (d!=0) return d;
 
-        if (that instanceof Atom) {
-            return Byted.compare(this, (Atom)that);
-        }
-        else {
-            return -1;
-        }
-
-    }
-
-    public Atom() {
-        this(NullName);
+        //if the op is the same, it will be a subclass of atom
+        //which should have an ordering determined by its byte[]
+        return Byted.compare(this, (Atom)that);
     }
 
 
@@ -174,12 +165,6 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return the(name);
     }
 
-    @Override
-    public int hashCode() {
-        if (hash == 0)
-            rehash();
-        return hash;
-    }
 
     public final static Term the(Term x) {
         return x;
@@ -401,26 +386,25 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return 1;
     }
 
-
     @Override
     public final int length() {
         throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
         //return 0;
     }
 
-    @Override public int volume() { return 1; }
+    @Override public final int volume() { return 1; }
 
     final public boolean impossibleSubTermVolume(final int otherTermVolume) {
         return true;
     }
 
     public void rehash() {
-        this.hash = Util.ELFHashNonZero(data, 1);
+        int newHash = Util.ELFHashNonZero(data, op().ordinal());
+        if (newHash  == 0) newHash  = 1;
+        this.hash = newHash;
     }
 
-
-    @Override
-    final public byte[] bytes() {
+    @Override final public byte[] bytes() {
         return data;
     }
 
@@ -428,9 +412,9 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 //        return data[n];
 //    }
 
-    final byte byt0() {
-        return data[0];
-    }
+//    final byte byt0() {
+//        return data[0];
+//    }
 
     @Override
     public void setBytes(final byte[] id) {
@@ -497,14 +481,16 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public final void writeExternal(ObjectOutput out) throws IOException {
         byte[] name = bytes();
+        //out.writeByte((byte)op().ordinal());
         out.writeShort(name.length);
         out.write(bytes());
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
         int nameLen = in.readShort();
         byte[] name = new byte[nameLen];
 

@@ -22,38 +22,47 @@ public interface Topic<V> extends Named<String> {
         return all(obj, f, (key)->true);
     }
 
+    static void each(final Object obj, Consumer<Field /* fieldName*/> f) {
+        /** TODO cache the fields because reflection may be slow */
+        for (Field field : obj.getClass().getFields()) {
+            Class returnType = field.getType();
+            if (returnType.equals(Topic.class)) {
+                f.accept(field);
+            }
+
+            //System.out.println(obj + "  " + f + " " + returnType);
+        }
+
+    }
+
+
     /** registers to all public Topic fields in an object */
     static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f, Predicate<String> includeKey) {
 
         Active s = new Active();
 
-        /** TODO cache the fields because reflection may be slow */
-        for (Field field : obj.getClass().getFields()) {
-            Class returnType = field.getType();
-            if (returnType.equals(Topic.class)) {
-                final String fieldName = field.getName();
+        each(obj, (field) -> {
+            final String fieldName = field.getName();
+            if (!includeKey.test(fieldName))
+                return;
 
-                if (!includeKey.test(fieldName))
-                    continue;
+            try {
+                Topic t = ((Topic) field.get(obj));
 
-                try {
-                    Topic t = ((Topic) field.get(obj));
+                // could send start message: f.accept(f.getName(),  );
 
-                    // could send start message: f.accept(f.getName(),  );
-
-                    s.add(
+                s.add(
                         t.on((nextValue) -> f.accept(
-                                  fieldName /* could also be the Topic itself */,
-                                  nextValue
+                                fieldName /* could also be the Topic itself */,
+                                nextValue
                         )));
 
-                } catch (IllegalAccessException e) {
-                    f.accept( fieldName, e);
-                }
+            } catch (IllegalAccessException e) {
+                f.accept( fieldName, e);
             }
 
-            //System.out.println(obj + "  " + f + " " + returnType);
-        }
+        });
+
 
         return s;
     }

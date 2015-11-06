@@ -21,8 +21,10 @@ public class EventCount {
         Map<Object, HitMeter> eventMeters
                 = this.eventMeters = Global.newHashMap();
 
-        Topic.all(n.memory, (event,value) ->
-            eventMeters.put(event, new HitMeter(event)));
+        Topic.each(n.memory, (field) -> {
+            String nn = field.getName();
+            eventMeters.put(nn, new HitMeter(nn));
+        });
 
         this.sub = Topic.all(n.memory, (event,value) ->
             eventMeters.get(event).hit());
@@ -36,7 +38,8 @@ public class EventCount {
     }
 
 
-    public long numTaskProcesses() { return eventMeters.get("eventTaskProcess").count(); }
+    public long numTaskProcesses() {
+        return eventMeters.get("eventTaskProcess").count(); }
     public long numOutputs() { return eventMeters.get("eventDerived").count(); }
     public long numInputs() { return eventMeters.get("eventInput").count(); }
     public long numExecutions() { return eventMeters.get("eventExecute").count(); }

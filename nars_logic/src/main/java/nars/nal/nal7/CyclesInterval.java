@@ -19,8 +19,6 @@ import java.io.IOException;
  */
 final public class CyclesInterval extends Atom implements Interval {
 
-    //final static int bytesPrecision = 4;
-
     final static CyclesInterval zero = new CyclesInterval(0);
 
     final int cyc;
@@ -28,20 +26,6 @@ final public class CyclesInterval extends Atom implements Interval {
     @Override
     public void rehash() {
         //nothing
-    }
-
-    @Override
-    public final int hashCode() {
-        throw new RuntimeException("N/A");
-    }
-
-    @Override
-    public final int complexity() {
-        throw new RuntimeException("N/A");
-    }
-    @Override
-    public final int volume() {
-        throw new RuntimeException("N/A");
     }
 
     public static CyclesInterval make(int numCycles) {

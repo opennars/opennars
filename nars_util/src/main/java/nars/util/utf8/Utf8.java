@@ -96,6 +96,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
     public static final String fromUtf8toString(final byte[] bytes) {
         return fromUtf8toString(bytes, bytes.length);
     }
+    public static final String fromUtf8toString(char prefix, final byte[] bytes) {
+        return fromUtf8toString(prefix, bytes, bytes.length);
+    }
 
     final static char[] emptyChars = new char[0];
 
@@ -169,6 +172,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
     public static final String fromUtf8toString(final byte[] bytes, final int length) {
         return sbbd.get().newString(bytes, 0, length);
+    }
+    public static final String fromUtf8toString(char prefix, final byte[] bytes, final int length) {
+        return sbbd.get().newString(prefix, bytes, 0, length);
     }
 
     public static char[] fromUtf8ToChars(final byte[] bytes, final int length) {

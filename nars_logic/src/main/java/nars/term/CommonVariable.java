@@ -5,23 +5,33 @@ import org.infinispan.commons.equivalence.ByteArrayEquivalence;
 
 import java.util.EnumMap;
 
-/**
- * Created by me on 9/9/15.
- */
-public class CommonVariable extends Variable {
+
+public class CommonVariable extends Variable  {
+
+    private final Op type;
+
+    CommonVariable(Op type, byte[] n) {
+        super();
+        this.type = type;
+        setBytes(n);
+    }
+
+    @Override
+    public final Op op() {
+        return type;
+    }
 
     public static CommonVariable make(Variable v1, Variable v2) {
 
 
-
-        if (v1 instanceof CommonVariable) {
-            return (CommonVariable)v1; //combine into common common variable
-            //System.out.println(v1 + " " + v2);
-        }
-        if (v2 instanceof CommonVariable) {
-            return (CommonVariable)v2; //combine into common common variable
-            //System.out.println(v1 + " " + v2);
-        }
+//        if (v1 instanceof CommonVariable) {
+//            return (CommonVariable)v1; //combine into common common variable
+//            //System.out.println(v1 + " " + v2);
+//        }
+//        if (v2 instanceof CommonVariable) {
+//            return (CommonVariable)v2; //combine into common common variable
+//            //System.out.println(v1 + " " + v2);
+//        }
 
         final Op type = v1.op();
         if (v2.op()!=type)
@@ -39,31 +49,26 @@ public class CommonVariable extends Variable {
             //same length
             switch (len1) {
                 case 1:
-                    //vars would be at least 2 bytes
-                    throw new RuntimeException("should not happen");
-                    //return Byte.compare(a[0], b[0]);
-
-
-                case 2:
                     //optimized case: very common, since vars are normalized to digit %1,%2,...%3 often
 
 
-                    int diff = a[1] - b[1];
+                    int diff = a[0] - b[0];
 
                     if (diff==0) {
                         throw new RuntimeException("variables equal");
                     }
                     else if (diff > 0) {
-                        return CommonVariable.make(type, a[1], b[1]);
+                        return make(type, a[0], b[0]);
                     }
                     else {
-                        return CommonVariable.make(type, b[1], a[1]);
+                        return make(type, b[0], a[0]);
                     }
 
                 default:
                     cmp = ByteArrayEquivalence.INSTANCE.compare(a, b);
             }
         }
+
 
 
         //lexical ordering: swap
@@ -80,14 +85,16 @@ public class CommonVariable extends Variable {
         }
 
 
-        int len = len1 + len2;
-        byte[] c = new byte[len];
-        System.arraycopy(a, 0, c, 0, len1);
-        System.arraycopy(b, 0, c, len1, len2);
 
-        return new CommonVariable(c);
+        byte[] c = new byte[len1 + len2 + 1];
+        System.arraycopy(a, 0, c, 0, len1);
+        System.arraycopy(b, 0, c, len1+1, len2);
+        c[len1] = (byte)type.ch;
+
+        return new CommonVariable(type, c);
     }
 
+    //TODO use a 2d array not an enum map, just flatten the 4 op types to 0,1,2,3
     /** variables x 10 (digits) x (1..10) (digits) cache;
      *  triangular matrix because the pairs is sorted */
     static final EnumMap<Op,CommonVariable[][]> common = new EnumMap(Op.class);
@@ -119,13 +126,13 @@ public class CommonVariable extends Variable {
     }
 
     static CommonVariable make2(Op type, byte a, byte b) {
-        byte[] n = new byte[] { (byte)type.ch, a, (byte)type.ch, b };
-        return new CommonVariable(n);
+        byte[] n = new byte[] { a, (byte)type.ch, b };
+        return new CommonVariable(type, n);
     }
 
-    CommonVariable(byte[] b) {
-        super(b);
-    }
+//    CommonVariable(Op op, byte[] b) {
+//        super(op, b);
+//    }
 
 
 }

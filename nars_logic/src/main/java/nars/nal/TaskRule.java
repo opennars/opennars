@@ -193,7 +193,7 @@ public class TaskRule extends ProductN implements Level {
                     ((Inheritance) containingCompound).getPredicate()))
                 return v;
 
-            return Variable.make(Op.VAR_PATTERN, v.bytes());
+            return Variable.the(Op.VAR_PATTERN, v.bytes());
         }
     }
 

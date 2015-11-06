@@ -22,142 +22,55 @@ package nars.term;
 
 
 import nars.Op;
-import nars.util.utf8.Byted;
+import nars.Symbols;
+import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
-import static nars.Symbols.*;
+import java.io.IOException;
 
 /**
  * A variable term, which does not correspond to a concept
  */
-public class Variable extends Atom {
-
-    private static final int MAX_CACHED_VARNAME_INDEXES = 16;
-    private static final byte[][][] varCache = new byte[4][MAX_CACHED_VARNAME_INDEXES][];
-
-    public Variable() {
-        super();
-    }
+abstract public class Variable extends Atom {
 
     public Variable(final byte[] n) {
         super(n);
     }
 
-    /**
-     * Constructor, from a given variable name
-     *
-     * @param name A String read from input. the first byte (character) determines this variable type
-     */
-    public Variable(final String name) {
-        this(Utf8.toUtf8(name));
+    Variable(final String name) {
+        super(Utf8.toUtf8(name));
     }
 
-    public static Variable make(Op varType, byte[] baseName) {
-        return make(varType.ch, baseName);
+    Variable() {
+        super();
     }
 
-    public static Variable make(char varType, String baseName) {
-        return make(varType, Utf8.toUtf8(baseName));
+    public static Variable the(Op varType, byte[] baseName) {
+        return the(varType.ch, baseName);
     }
 
-
-
-//    /** clones the variable with its scope removed/reset */
-//    public Variable cloneUnscoped() {
-//        return clone(false);
-//    }
-
-    public static Variable make(char ch, byte[] baseName) {
-        int bl = baseName.length;
-        final byte[] name = new byte[bl + 1];
-        name[0] = (byte)ch;
-        System.arraycopy(baseName, 0, name, 1, bl);
-
-        return new Variable(name);
+    public static Variable the(char varType, String baseName) {
+        return the(varType, Utf8.toUtf8(baseName));
     }
 
-    public static byte[] name(final Op type, final int index) {
-        if (index >= MAX_CACHED_VARNAME_INDEXES)
-            return newName(type, index);
-
-
-        final int indexNum;
-        switch (type) {
-            case VAR_INDEPENDENT: indexNum = 0; break;
-            case VAR_DEPENDENT: indexNum = 1; break;
-            case VAR_QUERY: indexNum = 2;  break;
-            case VAR_PATTERN: indexNum = 3; break;
+    public static Variable the(char ch, byte[] name) {
+         switch (ch) {
+            case Symbols.VAR_DEPENDENT:
+                return new VarDep(name);
+            case Symbols.VAR_INDEPENDENT:
+                return new VarIndep(name);
+            case Symbols.VAR_QUERY:
+                return new VarQuery(name);
+            case Symbols.VAR_PATTERN:
+                return new VarPattern(name);
             default:
-                throw new RuntimeException("Invalid variable type");
+                throw new RuntimeException("invalid variable type: " + ch);
         }
-
-        byte[][] vc = varCache[indexNum];
-        final byte[] c = vc[index];
-        if (c == null) {
-            return (vc[index] = newName(type, index));
-        }
-
-        return c;
-    }
-
-    //    public boolean equalsTerm(Object that) {
-//        //TODO factor these comparisons into 2 nested if's
-//        Variable v = (Variable)that;
-//
-//        if ((v.scope == v) && (scope == this))
-//            //both are unscoped, so compare by name only
-//            return name().equals(v.name());
-//        else if ((v.scope!=v) && (scope==this))
-//            return false;
-//        else if ((v.scope==v) && (scope!=this))
-//            return false;
-//        else {
-//            if (!name().equals(v.name()))
-//                return false;
-//
-//            if (scope == v.scope) return true;
-//
-//            if (scope.hashCode()!=v.scope.hashCode())
-//                return false;
-//
-//            //WARNING infinnite loop can happen if the two scopes start equaling echother
-//            //we need a special equals comparison which ignores variable scope when recursively
-//            //called from this
-//            //until then, we'll use the name for comparison because it wont
-//            //invoke infinite recursion
-//
-//            return scope.equals(v.scope);
-//        }
-//    }
-
-    protected static byte[] newName(final Op type, final int index) {
-
-        if (index < 36) {
-            byte x = Utf8.base36(index);
-            return new byte[] { (byte)type.ch, x};
-        }
-        else if (index < (36*36)){
-            byte x1 = Utf8.base36(index%36);
-            byte x2 = Utf8.base36(index/36);
-            return new byte[] { (byte)type.ch, x2, x1};
-        }
-        else {
-            throw new RuntimeException("variable index out of range for this method");
-        }
-
-
-
-//        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
-//        StringBuilder cb  = new StringBuilder(1 + digits).append(type);
-//        do {
-//            cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
-//        } while (index != 0);
-//        return cb.toString();
 
     }
 
     public static Variable the(Op type, int counter) {
-        return new Variable(name(type, counter));
+        return the(type, Util.intAsByteArray(counter));
     }
 
     //TODO replace this with a generic counting method of how many subterms there are present
@@ -183,29 +96,31 @@ public class Variable extends Atom {
     }
 
     @Override
-    public int compareTo(Object that) {
-        if (this == that) return 0;
-        if (that instanceof Variable) {
-            return Byted.compare(this, (Variable)that);
-        }
-        return -1; /** variables have earlier sorting order than non-variables */
+    public final void append(Appendable w, boolean pretty) throws IOException {
+        w.append(op().ch);
+        super.append(w, pretty);
     }
 
     @Override
-    final public Op op() {
-        switch (byt0()) {
-            case VAR_INDEPENDENT:
-                return Op.VAR_INDEPENDENT;
-            case VAR_DEPENDENT:
-                return Op.VAR_DEPENDENT;
-            case VAR_QUERY:
-                return Op.VAR_QUERY;
-            case VAR_PATTERN:
-                return Op.VAR_PATTERN;
-            default:
-                throw new RuntimeException("Invalid variable type");
-        }
+    public final String toString() {
+        return Utf8.fromUtf8toString(op().ch, bytes());
     }
+
+    //    @Override
+//    final public Op op() {
+//        switch (byt0()) {
+//            case VAR_INDEPENDENT:
+//                return Op.VAR_INDEPENDENT;
+//            case VAR_DEPENDENT:
+//                return Op.VAR_DEPENDENT;
+//            case VAR_QUERY:
+//                return Op.VAR_QUERY;
+//            case VAR_PATTERN:
+//                return Op.VAR_PATTERN;
+//            default:
+//                throw new RuntimeException("Invalid variable type");
+//        }
+//    }
 
     @Override
     final public int structure() {
@@ -228,22 +143,22 @@ public class Variable extends Atom {
         return 0;
     }
 
-    /** tests equal name and scope. if either or both are unscoped, the instances are not equal. */
-    @Override public boolean equals(final Object that) {
-        if (this == that) return true;
-        if (!(that instanceof Variable)) return false;
-
-        final Variable vthat = ((Variable) that);
-
-        /*Op vop = vthat.op;
-        if (vop != op)
-            return false; //different type*/
-
-//        if (!isScoped()) return false;
-//        if (!vthat.isScoped()) return false;
-
-        return Byted.equals(this, vthat);
-    }
+//    /** tests equal name and scope. if either or both are unscoped, the instances are not equal. */
+//    @Override public boolean equals(final Object that) {
+//        if (this == that) return true;
+//        if (!(that instanceof Variable)) return false;
+//
+//        final Variable vthat = ((Variable) that);
+//
+//        /*Op vop = vthat.op;
+//        if (vop != op)
+//            return false; //different type*/
+//
+////        if (!isScoped()) return false;
+////        if (!vthat.isScoped()) return false;
+//
+//        return Byted.equals(this, vthat);
+//    }
 
 //    @Override final public boolean hasVar(final Op type) {
 //        return op() == type;
@@ -315,4 +230,40 @@ public class Variable extends Atom {
     }
 
 
+    public static class VarDep extends Variable {
+
+        public VarDep(byte[] name) {
+            super(name);
+        }
+
+        @Override public final Op op() { return Op.VAR_DEPENDENT; }
+    }
+
+    public static class VarIndep extends Variable {
+
+        public VarIndep(byte[] name) {
+            super(name);
+        }
+
+        @Override public final Op op() { return Op.VAR_INDEPENDENT; }
+    }
+
+    public static class VarQuery extends Variable {
+
+        public VarQuery(byte[] name) {
+            super(name);
+        }
+
+        @Override public final Op op() { return Op.VAR_QUERY; }
+    }
+
+
+    public static class VarPattern extends Variable {
+
+        public VarPattern(byte[] name) {
+            super(name);
+        }
+
+        @Override public final Op op() { return Op.VAR_PATTERN; }
+    }
 }

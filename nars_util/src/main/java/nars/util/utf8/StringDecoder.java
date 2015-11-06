@@ -1,5 +1,7 @@
 package nars.util.utf8;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -127,6 +129,20 @@ final class StringDecoder {
 
         // Copy out the string
         return new String(b.array(), 0, b.position());
+    }
+    public String newString(char prefix, byte[] source, int offset, int length) {
+        decodeIt(source, offset, length);
+
+        CharBuffer b = this.outBuffer;
+
+        //TODO avoid instantiating new array by preallocating target buffer with prefix at index 0 to set
+        char[] suffix = ArrayUtils.subarray(b.array(), 0, b.position());
+        char[] n = new char[suffix.length+1];
+        n[0] = prefix;
+        System.arraycopy(suffix, 0, n, 1, suffix.length);
+
+        // Copy out the string
+        return new String(n);
     }
 
     public void decodeIt(byte[] source, int offset, int length) {

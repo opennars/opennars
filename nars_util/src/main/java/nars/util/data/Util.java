@@ -17,6 +17,7 @@ package nars.util.data;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import javolution.context.ConcurrentContext;
+import nars.util.utf8.Utf8;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -356,7 +357,7 @@ public class Util {
     public static long ELFHash(final byte[] str, final long seed) {
 
         long hash = seed;
-        long x = 0;
+        long x;
 
         final int len = str.length;
 
@@ -677,4 +678,29 @@ public class Util {
         }
     }
 
+    public static byte[] intAsByteArray(final int index) {
+
+        if (index < 36) {
+            byte x = Utf8.base36(index);
+            return new byte[] {  x};
+        }
+        else if (index < (36*36)){
+            byte x1 = Utf8.base36(index%36);
+            byte x2 = Utf8.base36(index/36);
+            return new byte[] { x2, x1};
+        }
+        else {
+            throw new RuntimeException("variable index out of range for this method");
+        }
+
+
+
+//        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
+//        StringBuilder cb  = new StringBuilder(1 + digits).append(type);
+//        do {
+//            cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
+//        } while (index != 0);
+//        return cb.toString();
+
+    }
 }

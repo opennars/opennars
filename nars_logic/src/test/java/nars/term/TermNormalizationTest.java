@@ -1,11 +1,10 @@
 package nars.term;
 
 import nars.NAR;
-import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.task.Task;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -16,17 +15,16 @@ public class TermNormalizationTest {
 
     public void test(String term, int[] v1Index, int[] v2Index) {
         //test for re-use of variable instances during normalization
-        NAR n = new Default();
+        NAR n = new Terminal();
         Task t = n.inputTask(term + ".");
         Compound ct = t.getTerm();
 
         Term varA = ct.subterm(v1Index);
-        assertEquals(Variable.class, varA.getClass());
-        assertNotNull(varA);
+        assertTrue(varA instanceof Variable);
+
 
         Term varB = ct.subterm(v2Index);
-        assertEquals(Variable.class, varB.getClass());
-        assertNotNull(varB);
+        assertTrue(varB instanceof Variable);
 
         assertEquals(varA, varB);
         assertTrue("successfully re-used the variable instance", varA==varB);

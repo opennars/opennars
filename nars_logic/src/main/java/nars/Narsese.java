@@ -649,7 +649,7 @@ public class Narsese extends BaseParser<Object>  {
         return sequence(
                 anyOf(variables),
                 push(match().charAt(0)), Atom(), swap(),
-                    push(Variable.make((char)pop(), (String) pop())
+                    push(Variable.the((char)pop(), (String) pop())
                 )
 
         );

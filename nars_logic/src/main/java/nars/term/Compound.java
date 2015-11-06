@@ -550,13 +550,15 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     @Override
     public int compareTo(final Object o) {
         if (this == o) return 0;
-        if (!(o instanceof Compound))
-            return 1;
 
-        int diff;
+        Term t = (Term)o;
+        int diff = op().compareTo(t.op());
+        if (diff!=0) return diff;
+
         if ((diff = Integer.compare(o.hashCode(), hashCode())) != 0)
             return diff;
 
+        //TODO avoid the secondary cast
         final Compound c = (Compound) o;
 
         final int s = this.length();
@@ -587,11 +589,9 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     @Override
     public final void recurseTerms(final TermVisitor v, final Term parent) {
         v.visit(this, parent);
-        //if (this instanceof Compound) {
-        for (final Term t : ((Compound) this).term) {
+        for (final Term t : term) {
             t.recurseTerms(v, this);
         }
-        //}
     }
 
     /**
