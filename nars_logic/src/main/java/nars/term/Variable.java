@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * A variable term, which does not correspond to a concept
  */
-abstract public class Variable extends Atom {
+abstract public class Variable extends Atomic {
 
     protected Variable(final byte[] n) {
         super(n);
@@ -115,7 +115,6 @@ abstract public class Variable extends Atom {
     @Override public final int complexity() {       return 0;   }
 
     @Override public final boolean hasVar() { return true;     }
-
 
     public static final class VarDep extends Variable {
 

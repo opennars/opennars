@@ -1,7 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.term.Atom;
+import nars.term.Atomic;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ import java.io.IOException;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-final public class CyclesInterval extends Atom implements Interval {
+final public class CyclesInterval extends Atomic implements Interval {
 
     final static CyclesInterval zero = new CyclesInterval(0);
 
@@ -26,6 +26,21 @@ final public class CyclesInterval extends Atom implements Interval {
     @Override
     public void rehash() {
         //nothing
+    }
+
+    @Override
+    public int varIndep() {
+        return 0;
+    }
+
+    @Override
+    public int varDep() {
+        return 0;
+    }
+
+    @Override
+    public int varQuery() {
+        return 0;
     }
 
     public static CyclesInterval make(int numCycles) {
@@ -96,6 +111,36 @@ final public class CyclesInterval extends Atom implements Interval {
     @Override
     public String toString() {
         return toStringBuilder(false).toString();
+    }
+
+    @Override
+    public boolean hasVar() {
+        return false;
+    }
+
+    @Override
+    public int vars() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasVarIndep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarDep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarQuery() {
+        return false;
+    }
+
+    @Override
+    public int complexity() {
+        return 0;
     }
 
 //    /** filter any zero CyclesIntervals from the list and return a new one */

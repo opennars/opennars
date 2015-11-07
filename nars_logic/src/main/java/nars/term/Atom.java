@@ -4,31 +4,67 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
-import nars.term.transform.TermVisitor;
 import nars.util.data.Util;
-import nars.util.utf8.Byted;
-import nars.util.utf8.Utf8;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Map;
 import java.util.function.Function;
 
-
-//@JsonDeserialize(using= FromStringDeserializer)
-public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable{
+public class Atom extends Atomic  {
 
     private static final Map<String,Atom> atoms = Global.newHashMap();
     private static final Function<String, Atom> AtomInterner = Atom::new;
 
     final static byte[] NullName = new byte[0];
 
-    public static final Term Null = new Atom(NullName) {
+    public static final Term Null = new Atomic(NullName) {
         @Override
         public String toString() {
             return "NULL";
+        }
+
+        @Override
+        public boolean hasVar() {
+            return false;
+        }
+
+        @Override
+        public int vars() {
+            return 0;
+        }
+
+        @Override
+        public boolean hasVarIndep() {
+            return false;
+        }
+
+        @Override
+        public boolean hasVarDep() {
+            return false;
+        }
+
+        @Override
+        public boolean hasVarQuery() {
+            return false;
+        }
+
+        @Override
+        public int complexity() {
+            return 0;
+        }
+
+        @Override
+        public int varIndep() {
+            return 0;
+        }
+
+        @Override
+        public int varDep() {
+            return 0;
+        }
+
+        @Override
+        public int varQuery() {
+            return 0;
         }
 
         @Override
@@ -36,20 +72,47 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
             return Op.NONE;
         }
 
+        @Override
+        public int structure() {
+            return 0;
+        }
+
     };
 
-    protected byte[] data;
 
-    transient int hash;
+    @Override
+    public final Op op() {
+        return Op.ATOM;
+    }
 
-    Atom() {
-
+    @Override
+    public final int structure() {
+        return 1 << Op.ATOM.ordinal();
     }
 
 
+    //    /**
+//     * Default constructor that build an internal Term
+//     */
+//    @Deprecated protected Atom() {
+//    }
+
+    /**
+     * Constructor with a given name
+     *
+     * @param id A String as the name of the Term
+     */
+    protected Atom(final String id) {
+        super(id);
+    }
+
+    protected Atom(final byte[] id) {
+        super(id);
+    }
+
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Atom quote(String t) {
-        return the('"' + t + '"');
+        return Atom.the('"' + t + '"');
     }
 
     /** determines if the string is invalid as an unquoted term according to the characters present */
@@ -62,95 +125,6 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 //            if ((!Character.isDigit(c)) && (!Character.isAlphabetic(c))) return true;
         }
         return false;
-    }
-
-    @Override
-    public Op op() {
-        return Op.ATOM;
-    }
-
-    final static int atomOrdinal = (1 << Op.ATOM.ordinal());
-
-
-    @Override
-    public int structure() {
-        //atomic terms should not need to store data in the upper 32 bits, like Image and other compound terms may need
-        return atomOrdinal;
-    }
-
-    @Override
-    public void append(final Appendable w, final boolean pretty) throws IOException {
-        Utf8.fromUtf8ToAppendable(bytes(), w);
-    }
-
-
-    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    public StringBuilder toStringBuilder(final boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
-        return sb;
-    }
-
-
-    @Override
-    public String toString() {
-        return Utf8.fromUtf8toString(bytes());
-    }
-
-    @Override
-    public final boolean equals(final Object x) {
-        if (this == x) return true;
-        if (!(x instanceof Atom)) return false;
-        Atom ax = (Atom)x;
-        return (ax.op() == op()) && Byted.equals(this, ax);
-    }
-    @Override
-    public final int hashCode() {
-        if (hash == 0)
-            rehash();
-        return hash;
-    }
-
-
-    /**
-     * @param that The Term to be compared with the current Term
-     */
-    @Override
-    public final int compareTo(final Object that) {
-        if (that==this) return 0;
-
-        Term t = (Term)that;
-        int d = op().compareTo(t.op());
-        if (d!=0) return d;
-
-        //if the op is the same, it will be a subclass of atom
-        //which should have an ordering determined by its byte[]
-        return Byted.compare(this, (Atom)that);
-    }
-
-
-//    /**
-//     * Default constructor that build an internal Term
-//     */
-//    @Deprecated protected Atom() {
-//    }
-
-    /**
-     * Constructor with a given name
-     *
-     * @param id A String as the name of the Term
-     */
-    protected Atom(final String id) {
-        this(Utf8.toUtf8(id));
-    }
-
-    protected Atom(final byte[] id) {
-        setBytes(id);
-    }
-
-    @Override
-    public final int getByteLen() {
-        return bytes().length;
     }
 
     /** interns the atomic term given a name, storing it in the static symbol table */
@@ -242,113 +216,19 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     final static Atom[] digits = new Atom[10];
 
 
-
-
-    /**
-     * Atoms are singular, so it is useless to clone them
-     */
-    @Override
-    public final Term clone() {
-        return this;
-    }
-
-    @Override
-    public final Term cloneDeep() {
-        return this;
-    }
-
-//    @Override
-//    public boolean hasVar(Op type) {
-//        return false;
-//    }
-
-//    /**
-//     * Equal terms have identical name, though not necessarily the same
-//     * reference.
-//     *
-//     * @return Whether the two Terms are equal
-//     * @param that The Term to be compared with the current Term
-//     */
-//    @Override
-//    public boolean equals(final Object that) {
-//        if (this == that) return true;
-//        if (!(that instanceof Atom)) return false;
-//        final Atom t = (Atom)that;
-//        return equalID(t);
-//
-////        if (equalsType(t) && equalsName(t)) {
-////            t.name = name; //share
-////            return true;
-////        }
-////        return false;
-//    }
-
-
-
-
-    /**
-     * Alias for 'isNormalized'
-     * @return A Term is constant by default
-     */
-
-
-
-
-    @Override
-    public final void recurseTerms(final TermVisitor v, final Term parent) {
-        v.visit(this, parent);
-    }
-
-//    public final void recurseSubtermsContainingVariables(final TermVisitor v) {
-//        recurseSubtermsContainingVariables(v, null);
-//    }
-
-//    /**
-//     * Recursively check if a compound contains a term
-//     *
-//     * @param target The term to be searched
-//     * @return Whether the two have the same content
-//     */
-//    @Override public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
-//        //TODO move to Variable subclass and leave this empty here
-//        if (hasVar())
-//            v.visit(this, parent);
-//    }
-
-
-    @Override
-    public final String toString(boolean pretty) {
-        return toString();
-    }
-
     /**
      * Whether this compound term contains any variable term
      *
      * @return Whether the name contains a variable
      */
-    @Override public boolean hasVar() {
-        return false;
-    }
-    @Override public int vars() {
-        return 0;
-    }
+    @Override public final boolean hasVar() { return false;    }
+    @Override public final int vars() { return 0;    }
 
-    @Override public boolean hasVarIndep() {
-        return false;
-    }
+    @Override public final boolean hasVarIndep() { return false;    }
+    @Override public final boolean hasVarDep() { return false;    }
+    @Override public final boolean hasVarQuery() { return false;    }
 
-
-
-    @Override public boolean hasVarDep() {
-        return false;
-    }
-
-
-    @Override public boolean hasVarQuery() {
-        return false;
-    }
-
-    public String toStringUnquoted() {
+    public final String toStringUnquoted() {
         return toUnquoted(toString());
     }
 
@@ -382,121 +262,28 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     @Override
-    public int complexity() {
+    public final int complexity() {
         return 1;
     }
 
     @Override
-    public final int length() {
-        throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
-        //return 0;
-    }
-
-    @Override public final int volume() { return 1; }
-
-    final public boolean impossibleSubTermVolume(final int otherTermVolume) {
-        return true;
-    }
-
-    public void rehash() {
-        int newHash = Util.ELFHashNonZero(data, op().ordinal());
-        if (newHash  == 0) newHash  = 1;
-        this.hash = newHash;
-    }
-
-    @Override final public byte[] bytes() {
-        return data;
-    }
-
-//    final public byte byt(int n) {
-//        return data[n];
-//    }
-
-//    final byte byt0() {
-//        return data[0];
-//    }
-
-    @Override
-    public void setBytes(final byte[] id) {
-        if (id!=this.data) {
-            this.data = id;
-            rehash();
-        }
-    }
-
-    @Override public final boolean impossibleToMatch(int possibleSubtermStructure) {
-        /*
-        for atomic terms, there will be only one
-        bit set in this (for the operator). if it does not equal
-        the parameter, then the structure can not match.
-        */
-        return possibleSubtermStructure != 0 &&
-            structure()!=possibleSubtermStructure;
-    }
-
-    @Override
-    public final boolean containsTerm(Term target) {
-        return false;
-    }
-
-//    @Override
-//    public final boolean equalsOrContainsTermRecursively(final Term target) {
-//        return equals(target);
-//    }
-
-    @Override
-    public final boolean containsTermRecursively(Term target) {
-        return false;
-    }
-
-    @Override
-    public int varIndep() {
+    public final int varIndep() {
         return 0;
     }
 
     @Override
-    public int varDep() {
+    public final int varDep() {
         return 0;
     }
 
     @Override
-    public int varQuery() {
+    public final int varQuery() {
         return 0;
-    }
-
-
-    @Override
-    public final boolean isNormalized() {
-        return true;
-    }
-
-    @Override
-    public final Atom normalized() {
-        return this;
     }
 
 
     public static Negation notThe(String untrue) {
         return (Negation) Negation.make(Atom.the(untrue));
-    }
-
-    @Override
-    public final void writeExternal(ObjectOutput out) throws IOException {
-        byte[] name = bytes();
-        //out.writeByte((byte)op().ordinal());
-        out.writeShort(name.length);
-        out.write(bytes());
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-        int nameLen = in.readShort();
-        byte[] name = new byte[nameLen];
-
-        in.read(name);
-
-        setBytes(name);
     }
 
 
@@ -518,3 +305,61 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 ////
 //    }
 }
+
+
+//    @Override
+//    public boolean hasVar(Op type) {
+//        return false;
+//    }
+
+//    /**
+//     * Equal terms have identical name, though not necessarily the same
+//     * reference.
+//     *
+//     * @return Whether the two Terms are equal
+//     * @param that The Term to be compared with the current Term
+//     */
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that) return true;
+//        if (!(that instanceof Atom)) return false;
+//        final Atom t = (Atom)that;
+//        return equalID(t);
+//
+////        if (equalsType(t) && equalsName(t)) {
+////            t.name = name; //share
+////            return true;
+////        }
+////        return false;
+//    }
+
+
+//    public final void recurseSubtermsContainingVariables(final TermVisitor v) {
+//        recurseSubtermsContainingVariables(v, null);
+//    }
+
+//    /**
+//     * Recursively check if a compound contains a term
+//     *
+//     * @param target The term to be searched
+//     * @return Whether the two have the same content
+//     */
+//    @Override public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+//        //TODO move to Variable subclass and leave this empty here
+//        if (hasVar())
+//            v.visit(this, parent);
+//    }
+
+//    final public byte byt(int n) {
+//        return data[n];
+//    }
+
+//    final byte byt0() {
+//        return data[0];
+//    }
+
+//    @Override
+//    public final boolean equalsOrContainsTermRecursively(final Term target) {
+//        return equals(target);
+//   }
+
