@@ -112,11 +112,11 @@ public class Atom extends Atomic  {
      *
      * @param id A String as the name of the Term
      */
-    protected Atom(final String id) {
+    public Atom(final String id) {
         super(id);
     }
 
-    protected Atom(final byte[] id) {
+    public Atom(final byte[] id) {
         super(id);
     }
 

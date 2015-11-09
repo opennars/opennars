@@ -70,8 +70,38 @@ abstract public class Variable extends Atomic {
 
     }
 
+
+    final static int MAX_VARIABLE_CACHED_PER_TYPE = 16;
+
+    /** numerically-indexed variable instance cache; prevents duplicates and speeds comparisons */
+    final static Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
+
     public static Variable the(Op type, int counter) {
+        if (counter < MAX_VARIABLE_CACHED_PER_TYPE) {
+            final Variable[] vct = varCache[typeIndex(type)];
+            Variable existing = vct[counter];
+            if (existing!=null)
+                return existing;
+            else {
+                return vct[counter] = _the(type, counter);
+            }
+        }
+
+        return _the(type, counter);
+    }
+
+    static Variable _the(Op type, int counter) {
         return the(type, Util.intAsByteArray(counter));
+    }
+
+    public static int typeIndex(Op o) {
+        switch (o) {
+            case VAR_PATTERN: return 0;
+            case VAR_DEPENDENT: return 1;
+            case VAR_INDEPENDENT: return 2;
+            case VAR_QUERY: return 3;
+        }
+        throw new RuntimeException(o + " not a variable");
     }
 
     //TODO replace this with a generic counting method of how many subterms there are present
