@@ -358,12 +358,18 @@
                                             ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
-    (S --> M), (P --> M), not_equal(S,P), after((S --> M),(P --> M)) |- ((P --> $X) =/> (S --> $X)), (Truth:Abduction),
-                                                                        ((S --> $X) =\> (P --> $X)), (Truth:Induction),
-                                                                        ((P --> $X) </> (S --> $X)), (Truth:Comparison),
-                                                                        (&/,(P --> #Y),(S --> #Y)), (Truth:Intersection)
 
-    (S --> M), (P --> M), not_equal(S,P), concurrent((S --> M),(P --> M)) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
+    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
+                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
+                                                                                                       (&/,S,I,P), (Truth:Intersection)
+
+    (S --> M), (P --> M), not_equal(S,P), measure_time(Task,Belief,I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
+                                                                                 ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
+                                                                                 ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
+                                                                                 (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
+
+    (S --> M), (P --> M), not_equal(S,P), concurrent(Task,Belief) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
                                                                              ((S --> $X) =|> (P --> $X)), (Truth:Induction),
                                                                              ((P --> $X) <|> (S --> $X)), (Truth:Comparison),
                                                                              (&|,(P --> #Y),(S --> #Y)), (Truth:Intersection)
@@ -455,12 +461,13 @@
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+//for now its fine if we only support Task,Belief,I, when we are finished with NAL7 with never needing Belief,Task, then we may remove these two extra params and call it time_between_task_and_belief instead
+    P, S, measure_time(Task,Belief,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                        ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                        (&/,S,I,P), (Truth:Intersection)
 
-    P, S, concurrent(P,S), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
+    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
                                                                                                    (P =|> S), (Truth:Induction),
                                                                                                    (S <|> P), (Truth:Comparison),
                                                                                                    (&|,S,P), (Truth:Intersection)
