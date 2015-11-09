@@ -38,7 +38,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
 
 
     protected Implication(final A subject, final B predicate, final int order) {
-        super(subject, predicate);
+        super();
 
         if (order == Tense.ORDER_INVALID) {
             throw new RuntimeException("Invalid temporal order; args=" + subject + ',' + predicate);
@@ -46,12 +46,15 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
 
         temporalOrder = order;
 
-        init(term);
+        init(subject, predicate);
     }
 
 
-    
-    
+    @Override public final boolean isCommutative() {
+        return false;
+    }
+
+
     /**
      * Clone an object
      * @return A new object

@@ -27,11 +27,6 @@ final public class CyclesInterval extends Atomic implements Interval {
     final int cyc;
 
     @Override
-    public void rehash() {
-        //nothing
-    }
-
-    @Override
     public int varIndep() {
         return 0;
     }
@@ -52,7 +47,7 @@ final public class CyclesInterval extends Atomic implements Interval {
     }
 
     protected CyclesInterval(int numCycles) {
-        super((byte[]) null); //interval(numCycles, bytesPrecision));
+        super(null); //interval(numCycles, bytesPrecision));
 
         if (numCycles < 0)
             throw new RuntimeException("cycles must be >= 0");

@@ -45,6 +45,8 @@ public class ImageExt extends Image {
     }
 
 
+
+
     /**
      * Clone an object
      * @return A new object, to be casted into an ImageExt

@@ -40,7 +40,7 @@ public class Equivalence extends Statement {
      *
      */
     private Equivalence(Term subject, Term predicate, int order) {
-        super(subject, predicate);
+        super();
 
         if ((order == Tense.ORDER_BACKWARD) ||
                 (order == Tense.ORDER_INVALID)) {
@@ -48,10 +48,8 @@ public class Equivalence extends Statement {
         }
 
         temporalOrder = order;
-
-
         
-        init(term);
+        init(subject, predicate);
     }
 
     /**

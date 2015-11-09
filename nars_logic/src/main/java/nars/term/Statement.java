@@ -26,7 +26,6 @@ import nars.nal.nal4.Image;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import static nars.Symbols.STATEMENT_CLOSER;
 import static nars.Symbols.STATEMENT_OPENER;
@@ -37,56 +36,9 @@ import static nars.Symbols.STATEMENT_OPENER;
  */
 public abstract class Statement<A extends Term, B extends Term> extends Compound2<A, B> {
 
-    /**
-     * Constructor with partial values, called by make
-     * Subclass constructors should call init after any initialization
-     *
-     */
-    protected Statement(final A subj, final B pred) {
-        super(subj, pred);
-    }
-    /*protected Statement(final Term... args) {
-        super(args);
-    }*/
 
-    /*protected Statement(final Term... twoTermsPlease) {
-        this(twoTermsPlease[0], twoTermsPlease[1]);
-    }*/
-    @Deprecated
     protected Statement() {
-        this(null, null);
-    }
-
-
-    @Override
-    protected final void init(Term... t) {
-//        if (Global.DEBUG) {
-//            if (t.length != 2)
-//                throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
-//            if (t[0] == null)
-//                throw new RuntimeException("Null subject: " + this);
-//            if (t[1] == null)
-//                throw new RuntimeException("Null predicate: " + this);
-//        }
-
-        if (isCommutative()) {
-            if (t[0].compareTo(t[1]) > 0) {
-//                /*if (Global.DEBUG)
-//                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));*/
-//
-//                //swap the terms here:
-//                Term x = t[0];
-//                t[0] = t[1];
-//                t[1] = x;
-//
-//                if (Global.DEBUG) {
-//                    if (t[0].compareTo(t[1]) > 0)
-                        throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
-                }
-//            }
-        }
-
-        super.init(t);
+        super();
     }
 
 

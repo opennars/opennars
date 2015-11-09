@@ -10,9 +10,9 @@ import java.io.IOException;
 public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt<T> {
 
     public SetExt1(T the) {
-        super(the);
+        super();
 
-        init(term);
+        init(the);
     }
 
     @Override
@@ -21,12 +21,12 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt<T
     }
 
     @Override
-    public Term clone() {
+    public final Term clone() {
         return new SetExt1(the());
     }
 
     @Override
-    public Term clone(Term[] replaced) {
+    public final Term clone(Term[] replaced) {
         return SetExt.make(replaced);
     }
 

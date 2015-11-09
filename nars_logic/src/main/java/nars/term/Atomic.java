@@ -73,8 +73,9 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     public final int hashCode() {
         final int h = this.hash;
         if (h == 0) {
-            rehash();
-            return this.hash;
+            throw new RuntimeException("should have hashed");
+//            rehash();
+//            return this.hash;
         }
         return h;
     }
@@ -149,10 +150,8 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         return true;
     }
 
-    public void rehash() {
-        int newHash = Util.ELFHashNonZero(data, op().ordinal());
-        if (newHash  == 0) newHash  = 1;
-        this.hash = newHash;
+    public final void rehash() {
+        /** do nothing */
     }
 
     @Override final public byte[] bytes() {
@@ -160,10 +159,12 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     }
 
     @Override
-    public void setBytes(final byte[] id) {
+    public final void setBytes(final byte[] id) {
         if (id!=this.data) {
             this.data = id;
-            rehash();
+            int newHash = Util.ELFHashNonZero(id, op().ordinal());
+            if (newHash  == 0) newHash  = 1;
+            this.hash = newHash;
         }
     }
 

@@ -437,7 +437,7 @@ public class Terms {
 //                throw new RuntimeException("Element null in: " + Arrays.toString(t));
 //    }
     
-    public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
+    public static void verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {
         if (arg.length == 0) {
             throw new RuntimeException("Needs >0 components");
         }
@@ -453,7 +453,6 @@ public class Terms {
             if (!t.equals(arg[j++]))
                 throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
         }        
-        return s;
     }
 
 //    /**

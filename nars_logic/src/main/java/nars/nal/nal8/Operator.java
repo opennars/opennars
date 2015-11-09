@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Operator<T extends Term> extends Compound1<T> {
 
     public Operator(T the) {
-        super(the);
+        super();
 
         init(the);
     }
@@ -25,8 +25,12 @@ public class Operator<T extends Term> extends Compound1<T> {
         return Op.OPERATOR;
     }
 
+    @Override public final boolean isCommutative() {
+        return false;
+    }
+
     @Override
-    public Term clone() {
+    public final Term clone() {
         return new Operator(getTerm());
     }
 
@@ -52,7 +56,7 @@ public class Operator<T extends Term> extends Compound1<T> {
 
 
     @Override
-    protected final void init(Term... term) {
+    protected final void init(T... term) {
         super.init(term);
         this.structureHash = operatorOrdinal;
         this.volume = 1;

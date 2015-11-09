@@ -38,7 +38,7 @@ public class Sequence extends Conjunctive implements Intermval {
      *
      */
     private Sequence(Term[] subterms, int[] intervals) {
-        super(subterms);
+        super();
 
         if (intervals == null) {
             //TODO leave as null, avoiding allocating this array if all zeros
@@ -63,6 +63,9 @@ public class Sequence extends Conjunctive implements Intermval {
 
     }
 
+    @Override public final boolean isCommutative() {
+        return false;
+    }
 
     @Override
     public final void setDuration(int duration) {

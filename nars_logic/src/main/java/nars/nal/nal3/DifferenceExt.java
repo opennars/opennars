@@ -38,7 +38,7 @@ public class DifferenceExt extends Difference {
      * @param arg The component list of the term
      */
     private DifferenceExt(Term[] arg) {
-        super(arg);
+        super();
 
         init(arg);
     }

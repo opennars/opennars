@@ -17,9 +17,13 @@ public class ProductN<T extends Term> extends Compound<T> implements Product<T> 
      * @param arg The component list of the term
      */
     public ProductN(final T... arg) {
-        super(arg);
+        super();
 
         init(arg);
+    }
+
+    @Override public final boolean isCommutative() {
+        return false;
     }
 
     @Override

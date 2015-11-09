@@ -5,8 +5,8 @@ abstract public class Compound1<T extends Term> extends Compound<T> {
 
 
 
-    public Compound1(final T the) {
-        super(the);
+    public Compound1() {
+        super();
     }
 
     public final T the() {

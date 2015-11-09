@@ -39,9 +39,13 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
      * @param arg The component list of the term
      */
     protected Inheritance(final A a, final B b) {
-        super(a, b);
+        super();
 
-        init(term);
+        init(a, b);
+    }
+
+    @Override public final boolean isCommutative() {
+        return false;
     }
 
 

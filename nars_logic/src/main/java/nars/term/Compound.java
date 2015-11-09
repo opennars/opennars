@@ -20,7 +20,6 @@
  */
 package nars.term;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal3.SetExt;
@@ -59,15 +58,26 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
      */
-    public Compound(@JsonProperty("term") final T... components) {
-        super(components);
+    protected Compound() {
+        super();
     }
 
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
      */
 
-    protected void init(final Term... term) {
+    protected void init(final T... term) {
+
+//        if (this.term!=null) {
+//            if (this.term.equals(term))
+//                System.err.println("?");
+//        }
+
+        if (Global.DEBUG && isCommutative()) {
+            Terms.verifySortedAndUnique(term,true);
+        }
+
+        this.term = term;
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1, vol = 1;
@@ -291,7 +301,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     @Override
     public final void rehash() {
-        Term[] subterms = this.term;
+        T[] subterms = this.term;
 
         for (final Term t : subterms) {
             t.rehash();
@@ -487,8 +497,9 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     final public int hashCode() {
         int ch = this.contentHash;
         if (ch == 0) {
-            rehash();
-            ch = this.contentHash;
+            throw new RuntimeException("should have hashed");
+//            rehash();
+//            ch = this.contentHash;
         }
         return ch;
     }
@@ -621,7 +632,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      * Normalizes if contain variables which need to be finalized for use in a Sentence
      * May return null if the resulting compound term is invalid
      */
-    protected <T extends Term> T normalized(final boolean destructive) {
+    protected final <T extends Term> T normalized(final boolean destructive) {
 
         if (normalized) {
             return (T) this;
@@ -813,9 +824,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      *
      * @return The default value is false
      */
-    public boolean isCommutative() {
-        return false;
-    }
+    abstract public boolean isCommutative();
 
 //    /**
 //     * Gives a set of all (unique) contained term, recursively
@@ -866,6 +875,9 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         boolean changed = false;
 
         I thiss = null;
+
+        Term[] term = this.term;
+
         for (int i = 0; i < len; i++) {
             Term t = term[i];
 

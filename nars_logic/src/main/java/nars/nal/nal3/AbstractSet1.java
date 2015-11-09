@@ -8,8 +8,8 @@ import nars.term.Term;
  */
 abstract public class AbstractSet1<T extends Term> extends Compound1<T> implements SetTensional<T> {
 
-    public AbstractSet1(T the) {
-        super(the);
+    protected AbstractSet1() {
+        super();
     }
 
     @Override

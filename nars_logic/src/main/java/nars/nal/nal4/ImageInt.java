@@ -45,7 +45,7 @@ public class ImageInt extends Image {
         super(arg, index);
     }
 
-    
+
     /**
      * Clone an object
      * @return A new object, to be casted into an ImageInt

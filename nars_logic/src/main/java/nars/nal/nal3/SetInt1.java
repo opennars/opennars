@@ -10,9 +10,9 @@ import java.io.IOException;
 public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt<T> {
 
     public SetInt1(T the) {
-        super(the);
+        super();
 
-        init(term);
+        init(the);
     }
 
     @Override

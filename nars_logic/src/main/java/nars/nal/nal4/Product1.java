@@ -12,10 +12,15 @@ import java.io.IOException;
 public class Product1<T extends Term> extends Compound1<T>  implements Product<T> {
 
     public Product1(T the) {
-        super(the);
+        super();
 
-        init(term);
+        init(the);
     }
+
+    @Override public final boolean isCommutative() {
+        return false;
+    }
+
 
     @Override
     public final Op op() {

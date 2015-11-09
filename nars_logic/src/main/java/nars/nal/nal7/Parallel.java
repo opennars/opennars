@@ -22,8 +22,9 @@ public class Parallel extends Conjunctive implements Interval {
     private int eventDuration;
 
 
-    private Parallel(Term[] arg) {
-        super(arg = Terms.toSortedSetArray(arg));
+    protected Parallel(Term[] arg) {
+        super();
+        arg = Terms.toSortedSetArray(arg);
         init(arg);
     }
 

@@ -5,8 +5,8 @@ package nars.term;
  */
 abstract public class Compound2<A extends Term, B extends Term> extends Compound {
 
-    protected Compound2(A a, B b) {
-        super(a, b);
+    protected Compound2() {
+        super();
     }
 
     public A a() {

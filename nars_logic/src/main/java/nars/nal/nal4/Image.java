@@ -23,7 +23,7 @@ abstract public class Image extends Compound {
     public final short relationIndex;
 
     protected Image(Term[] components, int relationIndex) {
-        super(components);
+        super();
 
         this.relationIndex = (short) relationIndex;
 
@@ -39,6 +39,9 @@ abstract public class Image extends Compound {
         return relationIndex+1;
     }
 
+    @Override public final boolean isCommutative() {
+        return false;
+    }
 
     //TODO replace with a special Term type
     static boolean isPlaceHolder(final Term t) {

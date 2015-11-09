@@ -45,7 +45,7 @@ public class Conjunction extends Conjunctive {
             order == Temporal.ORDER_NONE ?
                     flatten(arg, order) : arg
         );*/
-        super(arg);
+        super();
 
 //        if ((order == Temporal.ORDER_BACKWARD) ||
 //                (order == Temporal.ORDER_INVALID)) {
@@ -70,7 +70,7 @@ public class Conjunction extends Conjunctive {
 //        }
 
 
-        init(this.term);
+        init(arg);
 
     }
 

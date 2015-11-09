@@ -40,10 +40,8 @@ public class Disjunction extends Junction {
      * @param arg The component list of the term
      */
     private Disjunction(final Term[] arg) {
-        super(arg);
-        
-        if (Global.DEBUG) { Terms.verifySortedAndUnique(arg, false);         }
-        
+        super();
+
         init(arg);
     }
 

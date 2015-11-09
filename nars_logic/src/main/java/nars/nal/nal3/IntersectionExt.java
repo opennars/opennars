@@ -20,7 +20,6 @@
  */
 package nars.nal.nal3;
 
-import nars.Global;
 import nars.Op;
 import nars.term.Term;
 import nars.term.Terms;
@@ -36,12 +35,9 @@ public class IntersectionExt extends Intersect {
      * @param arg The component list of the term
      */
     private IntersectionExt(Term[] arg) {
-        super(arg);
-        
-        if (Global.DEBUG) { Terms.verifySortedAndUnique(arg, false); }
-        
+        super();
+
         init(arg);
-        
     }
 
 

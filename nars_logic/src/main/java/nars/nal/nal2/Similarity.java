@@ -35,8 +35,8 @@ public class Similarity extends Statement {
      * @param arg The component list of the term
      */
     protected Similarity(final Term subj, final Term pred) {
-        super(subj, pred);
-        init(term);
+        super();
+        init(subj, pred);
     }
     
 

@@ -19,20 +19,20 @@ import java.util.List;
 public abstract class Conjunctive extends Junction<Term> {
 
 
-    Conjunctive() {
+    protected Conjunctive() {
         super();
     }
 
-    public Conjunctive(Term[] arg) {
-        super(arg);
-
-//        if (Global.DEBUG) {
-//            if (isCommutative()) {
-//                if (!Arrays.equals(Terms.toSortedSetArray(this.term), this.term))
-//                    throw new RuntimeException("should have been sorted prior to construction");
-//            }
-//        }
-    }
+//    public Conjunctive(Term[] arg) {
+//        super();
+//
+////        if (Global.DEBUG) {
+////            if (isCommutative()) {
+////                if (!Arrays.equals(Terms.toSortedSetArray(this.term), this.term))
+////                    throw new RuntimeException("should have been sorted prior to construction");
+////            }
+////        }
+//    }
 
     /**
      * returns null if not conjunction with same order

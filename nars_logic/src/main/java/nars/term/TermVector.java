@@ -1,6 +1,5 @@
 package nars.term;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterators;
 import nars.term.transform.CompoundTransform;
 
@@ -23,7 +22,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     /**
      * list of (direct) term
      */
-    public final T[] term;
+    public T[] term;
 
 
     /**
@@ -45,10 +44,8 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
 //        this(null);
 //    }
 
-    public TermVector(@JsonProperty("term") final T... components) {
+    public TermVector() {
         super();
-        this.complexity = -1;
-        this.term = components;
     }
 
     @Override
@@ -83,6 +80,8 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      */
     @Override
     public final int length() {
+        if (term == null)
+            throw new RuntimeException("null");
         return term.length;
     }
 

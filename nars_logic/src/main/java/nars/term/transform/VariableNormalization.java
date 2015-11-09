@@ -103,7 +103,7 @@ public class VariableNormalization implements VariableTransform {
 
 
     @Override
-    public Variable apply(final Compound ct, final Variable v, int depth) {
+    public final Variable apply(final Compound ct, final Variable v, int depth) {
         //            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
 //                vname = vname.toString() + v.getScope().name();
 

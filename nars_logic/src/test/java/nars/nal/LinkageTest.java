@@ -13,8 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
@@ -89,7 +87,7 @@ public class LinkageTest extends AbstractNALTester {
         nar.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
         nar.frame(cycles); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
 
-        List<String> fails = new ArrayList();
+        //List<String> fails = new ArrayList();
 
         Concept ret = nar.concept(premise1);
         boolean passed = false;

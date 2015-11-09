@@ -38,7 +38,7 @@ public class DifferenceInt extends Difference {
      * @param arg The component list of the term
      */
     private DifferenceInt(final Term[] arg) {
-        super(arg);
+        super();
 
         init(arg);
     }

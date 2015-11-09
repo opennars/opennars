@@ -37,11 +37,14 @@ public class Negation extends Compound1 {
     /** avoid using this externally, because double-negatives can be unwrapped to the 
      * original term using Negation.make */
     protected Negation(final Term t) {
-        super(t);
+        super();
         
-        init(term);
+        init(t);
     }
 
+    @Override public final boolean isCommutative() {
+        return false;
+    }
 
 
     /**

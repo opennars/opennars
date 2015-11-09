@@ -8,8 +8,8 @@ import nars.term.Term;
  */
 abstract public class Difference extends Compound {
 
-    Difference(Term[] arg) {
-        super(arg);
+    Difference() {
+        super();
     }
 
     public static void ensureValidDifferenceSubterms(Term[] arg) {
@@ -17,4 +17,9 @@ abstract public class Difference extends Compound {
             throw new RuntimeException("invalid differene subterms");
         }
     }
+
+    @Override public final boolean isCommutative() {
+        return false;
+    }
+
 }
