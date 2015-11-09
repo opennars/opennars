@@ -458,9 +458,9 @@
 //non-temporal rules shouldnt be used if there is a temporal one which can decide the temporal aspects
 
     P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
-                                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
-                                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
-                                                                                                                       (&/,S,I,P), (Truth:Intersection)
+                                                                                                   (P =\> (&/,S,I)), (Truth:Abduction),
+                                                                                                   ((&/,S,I) </> P), (Truth:Comparison),
+                                                                                                   (&/,S,I,P), (Truth:Intersection)
 
     P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
                                                                                                            (P =|> S), (Truth:Induction),
