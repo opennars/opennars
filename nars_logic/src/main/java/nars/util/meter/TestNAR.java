@@ -8,7 +8,6 @@ import nars.task.Task;
 import nars.truth.Stamp;
 import nars.util.event.CycleReaction;
 import nars.util.event.Topic;
-import nars.util.graph.TermLinkGraph;
 import nars.util.meter.condition.EternalTaskCondition;
 import nars.util.meter.condition.TemporalTaskCondition;
 import nars.util.meter.event.HitMeter;
@@ -18,7 +17,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
 
-import static org.jgroups.util.Util.assertTrue;
 
 
 /**
@@ -98,12 +96,12 @@ public class TestNAR  {
         return this;
     }
 
-    /** asserts that (a snapshot of) the termlink graph is fully connected */
-    public TestNAR assertTermLinkGraphConnectivity() {
-        TermLinkGraph g = new TermLinkGraph(nar);
-        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
-        return this;
-    }
+//    /** asserts that (a snapshot of) the termlink graph is fully connected */
+//    public TestNAR assertTermLinkGraphConnectivity() {
+//        TermLinkGraph g = new TermLinkGraph(nar);
+//        assert("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
+//        return this;
+//    }
 
     /** returns a new TestNAR continuing with the current nar */
     public TestNAR next() {
@@ -496,7 +494,7 @@ public class TestNAR  {
             if (collectTrace)
                 System.err.println(trace.getBuffer());
 
-            assertTrue(false);
+            assert(false);
         }
 
         //System.out.println(s);

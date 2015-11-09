@@ -11,7 +11,6 @@ import nars.nal.nal8.Operation;
 import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 import nars.truth.DefaultTruth;
@@ -212,9 +211,8 @@ public abstract class TermFunction<O> extends SyncOperator {
         }
         if (y instanceof Truth) {
             //this will get the original input operation term, not after it has been inlined.
-            Compound inputTerm = operation;
 
-            Task b = DefaultTask.make(inputTerm).judgment().truth((Truth) y).setEternal();
+            Task b = DefaultTask.make(operation).judgment().truth((Truth) y).setEternal();
 
             nar.input(b);
 

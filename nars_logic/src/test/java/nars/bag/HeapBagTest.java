@@ -33,11 +33,14 @@ public class HeapBagTest extends AbstractBagTest {
         for (int capacity : new int[] { 4, 7, 13, 16, 100 } ) {
             testRemovalDistribution(capacity);
         }
-        
+
+        int[] d2 = testBag(80);
+
         //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
         //int[] d2 = testCurveBag(f1);
         //int[] d3 = testCurveBag(new RedBlackSortedIndex<>());        
         int[] d1 = testBag(40);
+
 
         
         //use the final distribution to compare that each implementation generates exact same results
@@ -52,8 +55,9 @@ public class HeapBagTest extends AbstractBagTest {
 
         testHeapBag(items);
         testCapacityLimit(new HeapBag(rng, 4, curve));
-        
-        
+
+
+        testAveragePriority(32);
         testAveragePriority(4);
         testAveragePriority(8);
         
@@ -183,6 +187,8 @@ public class HeapBagTest extends AbstractBagTest {
         d.put(new NullItem(.50f));
 
         assertEquals(0.4, d.getPriorityMean(), priorityEpsilon);
+
+        c.printAll();
         assertEquals(0.4, c.getPriorityMean(), priorityEpsilon);
 
     }

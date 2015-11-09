@@ -298,9 +298,8 @@ public class Sequence extends Conjunctive implements Intermval {
 
     @Override
     public int getByteLen() {
-        int add;
 
-        add = intervals.length * 4; //32 bit int
+        int add = intervals.length * 4;
         add += 4; //eventDuration int
         return super.getByteLen() + add;
     }

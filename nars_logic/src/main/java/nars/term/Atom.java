@@ -107,6 +107,10 @@ public class Atom extends Atomic  {
 //    @Deprecated protected Atom() {
 //    }
 
+    public Atom() {
+        super();
+    }
+
     /**
      * Constructor with a given name
      *

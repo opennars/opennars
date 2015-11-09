@@ -156,6 +156,8 @@ abstract public class Variable extends Atomic {
 
     public static final class VarDep extends Variable {
 
+        public VarDep()  { super(); }
+
         public VarDep(byte[] name)  { super(name);        }
 
         @Override public final int structure() { return 1 << Op.VAR_DEPENDENT.ordinal();        }
@@ -176,6 +178,8 @@ abstract public class Variable extends Atomic {
     }
 
     public static final class VarIndep extends Variable {
+
+        public VarIndep()  { super(); }
 
         public VarIndep(byte[] name) { super(name);         }
 
@@ -198,6 +202,8 @@ abstract public class Variable extends Atomic {
 
     public static final class VarQuery extends Variable {
 
+        public VarQuery()  { super(); }
+
         public VarQuery(byte[] name) {  super(name);         }
 
         @Override public final int structure() {  return 1 << Op.VAR_QUERY.ordinal();        }
@@ -219,6 +225,8 @@ abstract public class Variable extends Atomic {
 
 
     public static final class VarPattern extends Variable {
+
+        public VarPattern()  { super(); }
 
         public VarPattern(byte[] name) {  super(name);         }
 

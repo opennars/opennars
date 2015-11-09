@@ -37,10 +37,8 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
-import static com.google.common.math.IntMath.factorial;
 import static nars.Symbols.*;
 
 /**
@@ -68,18 +66,18 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     protected void init(final T... term) {
 
-        if (this.term!=null) {
-//            if (this.term == term)
-//                return;
-//            if (Arrays.equals(term, this.term)) {
-//
-////                System.out.println(Arrays.toString(this.term));
-////                System.out.println("\t" + Arrays.toString(term));
-////                System.err.println("?");
-//
-//                //return;
-//            }
-        }
+//        if (this.term!=null) {
+////            if (this.term == term)
+////                return;
+////            if (Arrays.equals(term, this.term)) {
+////
+//////                System.out.println(Arrays.toString(this.term));
+//////                System.out.println("\t" + Arrays.toString(term));
+//////                System.err.println("?");
+////
+////                //return;
+////            }
+//        }
 
         if (Global.DEBUG && isCommutative()) {
             Terms.verifySortedAndUnique(term,true);
@@ -94,7 +92,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         int subt = getStructureBase();
 
 
-        int contentHash = (Util.PRIME2 * subt) + structure2();
+        int contentHash = (Util.PRIME3 * subt) + structure2();
 
 
         int p = 0;
@@ -107,7 +105,10 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
                 throw new RuntimeException("null subterm");*/
 
             //first to trigger subterm update if necessary
-            contentHash = (Util.PRIME1 * contentHash) + (t.hashCode() + p);
+            contentHash =
+                    (contentHash << 4)
+                    //(Util.PRIME2 * contentHash)
+                    + (t.rehashCode() + p);
 
             compl += t.complexity();
             vol += t.volume();
@@ -147,7 +148,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         final int opOrdinal = op().ordinal();
         if (opOrdinal < 31)
             return 1 << opOrdinal;
-        return 0;
+        throw new RuntimeException("invalid op ordinal"); //should nt happen
     }
 
     public static final void appendSeparator(final Appendable p, final boolean pretty) throws IOException {
@@ -197,20 +198,20 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
             x.setDuration(duration);
     }
 
-    public final int numVars(final Op type) {
-
-        switch (type) {
-            case VAR_DEPENDENT:
-                return varDep();
-            case VAR_INDEPENDENT:
-                return varIndep();
-            case VAR_QUERY:
-                return varQuery();
-            case VAR_PATTERN:
-                return Variable.numPatternVariables(this);
-        }
-        throw new RuntimeException("Invalid variable type: " + type);
-    }
+//    public final int numVars(final Op type) {
+//
+//        switch (type) {
+//            case VAR_DEPENDENT:
+//                return varDep();
+//            case VAR_INDEPENDENT:
+//                return varIndep();
+//            case VAR_QUERY:
+//                return varQuery();
+//            case VAR_PATTERN:
+//                return Variable.numPatternVariables(this);
+//        }
+//        throw new RuntimeException("Invalid variable type: " + type);
+//    }
 
     /** gets the set of unique recursively contained terms of a specific type
      * TODO generalize to a provided lambda predicate selector
@@ -231,25 +232,25 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return applySubstitute(subs);
     }
 
-    /**
-     * from: http://stackoverflow.com/a/19333201
-     */
-    public static <T> void shuffle(final T[] array, final Random random) {
-        int count = array.length;
-
-        //probabality for no shuffle at all:
-        if (random.nextInt(factorial(count)) == 0) return;
-
-        for (int i = count; i > 1; i--) {
-            final int a = i - 1;
-            final int b = random.nextInt(i);
-            if (b!=a) {
-                final T t = array[b];
-                array[b] = array[a];
-                array[a] = t;
-            }
-        }
-    }
+//    /**
+//     * from: http://stackoverflow.com/a/19333201
+//     */
+//    public static <T> void shuffle(final T[] array, final Random random) {
+//        int count = array.length;
+//
+//        //probabality for no shuffle at all:
+//        if (random.nextInt(factorial(count)) == 0) return;
+//
+//        for (int i = count; i > 1; i--) {
+//            final int a = i - 1;
+//            final int b = random.nextInt(i);
+//            if (b!=a) {
+//                final T t = array[b];
+//                array[b] = array[a];
+//                array[a] = t;
+//            }
+//        }
+//    }
 
     public static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
         if (x instanceof Compound) {
@@ -274,23 +275,23 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 //        return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
 //    }
 
-    public static Term[] resultOfCloneTermsExcept(boolean requireModification, Term[] l, int remain) {
-        final boolean removed = (remain != l.length);
-
-
-        if (!removed) {
-            //no removals
-            if (requireModification)
-                return null;
-            return l;
-        } else {
-            //trim the array
-            return Arrays.copyOf(l, remain);
-        }
-    }
+//    public static Term[] resultOfCloneTermsExcept(boolean requireModification, Term[] l, int remain) {
+//        final boolean removed = (remain != l.length);
+//
+//
+//        if (!removed) {
+//            //no removals
+//            if (requireModification)
+//                return null;
+//            return l;
+//        } else {
+//            //trim the array
+//            return Arrays.copyOf(l, remain);
+//        }
+//    }
 
     @Override
-    public boolean impossibleSubTermVolume(final int otherTermVolume) {
+    public final boolean impossibleSubTermVolume(final int otherTermVolume) {
         return otherTermVolume >
                 volume()
                         - 1 /* for the compound itself */
@@ -299,7 +300,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     }
 
     @Override
-    public boolean impossibleToMatch(final int possibleSubtermStructure) {
+    public final boolean impossibleToMatch(final int possibleSubtermStructure) {
         final int existingStructure = structureHash;
 
         //if the OR produces a different result compared to subterms,
@@ -309,13 +310,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     @Override
     public final void rehash() {
-        T[] subterms = this.term;
-
-//        for (final Term t : subterms) {
-//            t.rehash();
-//        }
-
-        init(subterms);
+        init(this.term);
     }
 
     @Override
@@ -512,6 +507,15 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return ch;
     }
 
+    @Override final public int rehashCode() {
+        int ch = this.contentHash;
+        if (ch == 0) {
+            rehash();
+            return this.contentHash;
+        }
+        return ch;
+    }
+
 //    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
 //        if (hasVar()) {
 //            v.visit(this, parent);
@@ -521,6 +525,73 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 //            }
 //            //}
 //        }
+//    }
+
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that)
+//            return true;
+//
+//        if (!(that instanceof Compound)) return false;
+//        Compound c = (Compound) that;
+//        if (contentHash != c.contentHash ||
+//                structureHash != c.structureHash ||
+//                volume != c.volume)
+//            return false;
+//
+//        final int s = this.length();
+//        Term[] x = this.term;
+//        Term[] y = c.term;
+//        if (x != y) {
+//            boolean canShare =
+//                    (structureHash &
+//                    ((1 << Op.SEQUENCE.ordinal()) | (1 << Op.PARALLEL.ordinal()))) == 0;
+//
+//            for (int i = 0; i < s; i++) {
+//                Term a = x[i];
+//                Term b = y[i];
+//                if (!a.equals(b))
+//                    return false;
+//            }
+//            if (canShare) {
+//                this.term = (T[]) c.term;
+//            }
+//            else {
+//                this.term = this.term;
+//            }
+//        }
+//
+//        if (structure2() != c.structure2() ||
+//                op() != c.op())
+//            return false;
+//
+//        return true;
+//    }
+
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that)
+//            return true;
+//        if (!(that instanceof Compound)) return false;
+//
+//        Compound c = (Compound) that;
+//        if (contentHash != c.contentHash ||
+//                structureHash != c.structureHash
+//                || volume() != c.volume()
+//                )
+//            return false;
+//
+//        final int s = this.length();
+//        Term[] x = this.term;
+//        Term[] y = c.term;
+//        for (int i = 0; i < s; i++) {
+//            Term a = x[i];
+//            Term b = y[i];
+//            if (!a.equals(b))
+//                return false;
+//        }
+//
+//        return true;
 //    }
 
     @Override
@@ -543,7 +614,6 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
         return true;
     }
-
 
     /* UNTESTED
     public Compound clone(VariableTransform t) {

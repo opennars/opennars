@@ -137,7 +137,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         final int h = Util.hash(
                 Arrays.hashCode(getEvidence()),
-                getTerm().hashCode(),
+                getTerm().rehashCode(),
                 getPunctuation(),
                 (getTruth() != null) ? getTruth().hashCode() : 1,
                 getOccurrenceTime()

@@ -6,6 +6,7 @@ import nars.concept.util.ConceptExternalizer;
 import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -16,13 +17,11 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by me on 9/7/15.
- */
+
+@Ignore
 @RunWith(Parameterized.class)
 public class ConceptSerializationTest  {
 
-    final NAR nar = new Default();
     private final String input;
 
     public ConceptSerializationTest(String input) {

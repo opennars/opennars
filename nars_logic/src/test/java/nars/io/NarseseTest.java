@@ -287,7 +287,7 @@ public class NarseseTest {
     protected Variable testVar(char prefix) {
         Term x = term(prefix + "x");
         assertNotNull(x);
-        assertEquals(Variable.class, x.getClass());
+        assertTrue(x instanceof Variable);
         Variable i = (Variable) x;
         assertEquals(prefix + "x", i.toString());
         return i;

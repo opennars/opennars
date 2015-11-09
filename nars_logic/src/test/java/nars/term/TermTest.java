@@ -610,4 +610,14 @@ public class TermTest {
         assertNotEquals(xa, xb);
     }
 
+    @Test public void testHash1() {
+        testUniqueHash("%1","%2");
+        testUniqueHash("$1","A");
+    }
+
+    public void testUniqueHash(String a, String b) {
+        int h1 = n.term(a).hashCode();
+        int h2 = n.term(b).hashCode();
+        assertNotEquals(h1, h2);
+    }
 }

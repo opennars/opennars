@@ -77,11 +77,11 @@ public class LinkageTest extends AbstractNALTester {
 
         Compound premise1 = nar.term(spremise1);
         assertNotNull(premise1);
-        assertEquals(spremise1, premise1.toString());
+        assertEquals(nar.term(spremise1), premise1);
 
         Compound premise2 = nar.term(spremise2);
         assertNotNull(premise2);
-        assertEquals(spremise2, premise2.toString());
+        assertEquals(nar.term(spremise2), premise2);
 
         nar.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
         nar.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");

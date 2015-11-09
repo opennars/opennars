@@ -162,9 +162,9 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     public final void setBytes(final byte[] id) {
         if (id!=this.data) {
             this.data = id;
-            int newHash = Util.ELFHashNonZero(id, op().ordinal());
-            if (newHash  == 0) newHash  = 1;
-            this.hash = newHash;
+            this.hash = Util.ELFHashNonZero(id,
+                    Util.PRIME3 * (1 + op().ordinal())
+            );
         }
     }
 

@@ -348,8 +348,8 @@ public class Util {
         return hash;
     }
 
-    public static int ELFHashNonZero(final byte[] str, final long seed) {
-        int i = (int) ELFHash(str, seed);
+    public static int ELFHashNonZero(final byte[] str, final int seed) {
+        int i  = (int) ELFHash(str, seed);
         if (i == 0) i = 1;
         return i;
     }
@@ -372,6 +372,7 @@ public class Util {
 
         return hash;
     }
+
 
 
     public static long BKDRHash(String str) {

@@ -160,6 +160,9 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     int getByteLen();
 
 
+    /** like hashCode except it permits the Term to recompute the hash (to be used in certain controlled situations, otherwise use hashCode() since it's is simpler  */
+    default int rehashCode() { return hashCode(); }
+
 //    default public byte[] bytes() {
 //        return name().bytes();
 //    }

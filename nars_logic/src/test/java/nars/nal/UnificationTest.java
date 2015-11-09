@@ -238,7 +238,7 @@ public class UnificationTest  {
                 true);
 
         //additional test that verifies correct common variable substitution result
-        assertEquals("{$1={t002}, #2=#1#2}", sub.xy.toString());
+        assertEquals("{#2=#1#2, $1={t002}}", sub.xy.toString());
         assertEquals("{#1=#1#2}", sub.yx.toString());
     }
     @Test public void pattern_trySubs_Indep_Var_2_product()  {
