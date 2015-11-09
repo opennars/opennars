@@ -37,7 +37,7 @@ public class After extends PreCondition {
 
         int pdur = premise.duration();
 
-        if (!taskBeforeBelief) {
+        if (taskBeforeBelief) {
             return task.startsAfter(belief, pdur);
         }
         else {
