@@ -68,10 +68,18 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     protected void init(final T... term) {
 
-//        if (this.term!=null) {
-//            if (this.term.equals(term))
-//                System.err.println("?");
-//        }
+        if (this.term!=null) {
+//            if (this.term == term)
+//                return;
+//            if (Arrays.equals(term, this.term)) {
+//
+////                System.out.println(Arrays.toString(this.term));
+////                System.out.println("\t" + Arrays.toString(term));
+////                System.err.println("?");
+//
+//                //return;
+//            }
+        }
 
         if (Global.DEBUG && isCommutative()) {
             Terms.verifySortedAndUnique(term,true);
@@ -303,9 +311,9 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     public final void rehash() {
         T[] subterms = this.term;
 
-        for (final Term t : subterms) {
-            t.rehash();
-        }
+//        for (final Term t : subterms) {
+//            t.rehash();
+//        }
 
         init(subterms);
     }
@@ -848,12 +856,12 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     }
 
 
-    public <T extends Compound> boolean transform(CompoundTransform trans) {
+    public final <T extends Compound> boolean transform(CompoundTransform trans) {
         return transform(trans, 0);
     }
 
     @Override
-    public boolean levelValid(final int nal) {
+    public final boolean levelValid(final int nal) {
         if (!op().levelValid(nal))
             return false;
 
@@ -869,28 +877,28 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      * transforms destructively, may need to use on a new clone
      * @return if changed
      */
-    protected <I extends Compound> boolean transform(CompoundTransform<I, T> trans, int depth) {
-        final int len = length();
+    protected <I extends Compound> boolean transform(CompoundTransform<Compound<T>, T> trans, int depth) {
 
         boolean changed = false;
 
-        I thiss = null;
+        Compound<T> thiss = null;
 
-        Term[] term = this.term;
+        T[] term = this.term;
+        final int len = term.length;
 
         for (int i = 0; i < len; i++) {
-            Term t = term[i];
+            T t = term[i];
 
             if (trans.test(t)) {
-                if (thiss == null) thiss = (I) this;
-                T s = trans.apply(thiss, (T) t, depth + 1);
+                if (thiss == null) thiss = this;
+                T s = trans.apply(thiss, t, depth + 1);
                 if (!s.equals(t)) {
                     term[i] = s;
                     changed = true;
                 }
             } else if (t instanceof Compound) {
                 //recurse
-                changed |= ((Compound) t).transform(trans);
+                changed |= ((Compound) t).transform(trans, depth + 1);
             }
 
         }

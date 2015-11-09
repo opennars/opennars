@@ -184,13 +184,11 @@ public class RuleMatch extends FindSubst {
             if (rederivedTerm == null)
                 return null;
 
-            //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
-            derivedTerm = rederivedTerm.normalized();
+            derivedTerm = rederivedTerm;
         }
-        else {
-            //necessary?
-            derivedTerm = derivedTerm.normalized();
-        }
+
+//the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
+        derivedTerm = derivedTerm.normalized();
 
         if (!(derivedTerm instanceof Compound))
             return null;
@@ -303,7 +301,7 @@ public class RuleMatch extends FindSubst {
                 occ = task.getOccurrenceTime() + occurence_shift;
             }
             else {
-                occ = task.getOccurrenceTime();
+                occ = task.getOccurrenceTime(); //inherit premise task's
             }
 
 

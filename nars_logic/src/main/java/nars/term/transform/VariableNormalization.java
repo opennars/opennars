@@ -18,7 +18,7 @@ import java.util.Map;
  * information - the particular labels the input has attached.
  *
  */
-public class VariableNormalization implements VariableTransform {
+public class VariableNormalization extends VariableTransform {
 
 //    final static Comparator<Map.Entry<Variable, Variable>> comp = new Comparator<Map.Entry<Variable, Variable>>() {
 //        @Override
@@ -56,8 +56,15 @@ public class VariableNormalization implements VariableTransform {
 
 
     /** for use with compounds that have exactly one variable */
-    public static final VariableTransform singleVariableNormalization =
-            (containing, current, depth) -> Variable.the(current.op(), 1);
+    public static final VariableTransform singleVariableNormalization = new VariableTransform() {
+
+        @Override
+        public final Variable apply(Compound containing, Variable current, int depth) {
+            //      (containing, current, depth) ->
+            return Variable.the(current.op(), 1);
+        }
+    };
+
 
     Map<Variable, Variable> rename;
 
@@ -88,7 +95,7 @@ public class VariableNormalization implements VariableTransform {
         if (tx == null) tx = this;
 
         if (destructively) {
-            target.transform(tx);
+            renamed = (target.transform(tx));
             result1 = target;
         }
         else {

@@ -7,15 +7,15 @@ import nars.term.Variable;
 /**
  * Created by me on 6/1/15.
  */
-public interface VariableTransform extends CompoundTransform<Compound, Variable> {
+abstract public class VariableTransform implements CompoundTransform<Compound, Variable> {
 
     @Override
-    default boolean test(Term possiblyAVariable) {
+    public final boolean test(Term possiblyAVariable) {
         return (possiblyAVariable instanceof Variable);
     }
 
     @Override
-    default boolean testSuperTerm(Compound t) {
+    public boolean testSuperTerm(Compound t) {
         //prevent executing on any superterms that contain no variables, because this would have no effect
         return t.hasVar();
     }

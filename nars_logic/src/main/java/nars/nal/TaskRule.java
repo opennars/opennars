@@ -16,9 +16,7 @@ import nars.term.*;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -154,11 +152,11 @@ public class TaskRule extends ProductN implements Level {
         super.init(term);
 
 
-        final Set<Term> patternVars = new HashSet();
-        recurseTerms((v,p) -> {
-            if (v.op() == Op.VAR_PATTERN)
-                patternVars.add(v);
-        });
+//        final Set<Term> patternVars = new HashSet();
+//        recurseTerms((v,p) -> {
+//            if (v.op() == Op.VAR_PATTERN)
+//                patternVars.add(v);
+//        });
 
         this.str = super.toString();
     }
@@ -205,7 +203,6 @@ public class TaskRule extends ProductN implements Level {
 
     @Override
     public final TaskRule normalizeDestructively() {
-
 
         this.transform(uppercaseAtomsToPatternVariables);
 

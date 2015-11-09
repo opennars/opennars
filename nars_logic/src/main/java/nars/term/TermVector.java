@@ -221,7 +221,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         return y;
     }
 
-    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I, T> trans, final int level) {
+    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
         final Term[] y = new Term[length()];
         int i = 0;
         for (Term x : this.term) {
