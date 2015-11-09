@@ -58,7 +58,7 @@ public class Substitute extends PreCondition {
 
 
         if (!a.equals(b) && substitute(m, a, b)) {
-            m.outp.put(b, a);
+            m.outp.put(a, b);
         }
         return true;
     }

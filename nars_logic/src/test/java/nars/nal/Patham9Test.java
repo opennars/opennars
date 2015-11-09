@@ -189,3 +189,43 @@
 //
 //
 //}
+
+
+package nars.nal;
+
+import nars.NAR;
+import nars.Narsese;
+import nars.nal.AbstractNALTester;
+import nars.util.meter.TestNAR;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
+
+@RunWith(Parameterized.class)
+public class Patham9Test extends AbstractNALTester {
+
+
+    final int cycles = 800;
+
+    public Patham9Test(Supplier<NAR> b) {
+        super(b);
+    }
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Iterable configurations() {
+        return AbstractNALTester.nars(6, false);
+    }
+
+
+    @Test
+    public void second_level_variable_unification() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", 1.00f, 0.90f); //en("there is a lock which is opened by all keys");
+        tester.believe("<{key1} --> key>", 1.00f, 0.90f); //en("key1 is a key");
+        tester.mustBelieve(cycles, "(&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>)", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+        tester.run();
+    }
+
+}

@@ -424,7 +424,11 @@ public class RuleMatch extends FindSubst {
 //            //return null;
 //        }
 
-        return t.substituted(xy);
+        Term ret = t.substituted(xy);
+        if(ret != null) {
+            ret = ret.substituted(yx);
+        }
+        return ret;
     }
 
 
