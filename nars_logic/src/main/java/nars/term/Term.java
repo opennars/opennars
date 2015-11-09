@@ -195,26 +195,28 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return toString();
     }
 
-    /** returns the effective term as substituted by the set of subs */
-    default Term substituted(final Map<Variable, Term> subs) {
+    Term substituted(final Map<Variable, Term> subs);
 
-        //TODO hypothesis: if # of variables of the specified type
-        //exceeds entries in subs, then match is probably
-        //impossible
-
-        if (this instanceof Compound) {
-            return ((Compound) this).applySubstitute(subs);
-        }
-        else if (op()==Op.VAR_PATTERN) { //this instanceof Variable) {
-            /*if (this.op()!=Op.VAR_PATTERN) {
-                throw new RuntimeException("variable is not pattern");
-            }*/
-            return subs.get(this);
-        }
-
-        return this;
-    }
-
+//    /** returns the effective term as substituted by the set of subs */
+//    default Term substituted(final Map<Variable, Term> subs) {
+//
+//        //TODO hypothesis: if # of variables of the specified type
+//        //exceeds entries in subs, then match is probably
+//        //impossible
+//
+//        if (this instanceof Compound) {
+//            return ((Compound) this).applySubstitute(subs);
+//        }
+//        else if (op()==Op.VAR_PATTERN) { //this instanceof Variable) {
+//            /*if (this.op()!=Op.VAR_PATTERN) {
+//                throw new RuntimeException("variable is not pattern");
+//            }*/
+//            return subs.get(this);
+//        }
+//
+//        return this;
+//    }
+//
 
 
 

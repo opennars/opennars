@@ -84,7 +84,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                DefaultTask.make(nar.memory, inh).
+                DefaultTask.make(inh).
                         truth(getResultFrequency(), getResultConfidence()).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
@@ -214,7 +214,7 @@ public abstract class TermFunction<O> extends SyncOperator {
             //this will get the original input operation term, not after it has been inlined.
             Compound inputTerm = operation;
 
-            Task b = DefaultTask.make(memory, inputTerm).judgment().truth((Truth) y).setEternal();
+            Task b = DefaultTask.make(inputTerm).judgment().truth((Truth) y).setEternal();
 
             nar.input(b);
 

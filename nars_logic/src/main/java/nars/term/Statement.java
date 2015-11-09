@@ -20,7 +20,6 @@
  */
 package nars.term;
 
-import nars.Global;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.nal4.Image;
@@ -60,7 +59,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
 
     @Override
-    protected void init(Term... t) {
+    protected final void init(Term... t) {
 //        if (Global.DEBUG) {
 //            if (t.length != 2)
 //                throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
@@ -72,19 +71,19 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         if (isCommutative()) {
             if (t[0].compareTo(t[1]) > 0) {
-                /*if (Global.DEBUG)
-                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));*/
-
-                //swap the terms here:
-                Term x = t[0];
-                t[0] = t[1];
-                t[1] = x;
-
-                if (Global.DEBUG) {
-                    if (t[0].compareTo(t[1]) > 0)
+//                /*if (Global.DEBUG)
+//                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));*/
+//
+//                //swap the terms here:
+//                Term x = t[0];
+//                t[0] = t[1];
+//                t[1] = x;
+//
+//                if (Global.DEBUG) {
+//                    if (t[0].compareTo(t[1]) > 0)
                         throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
                 }
-            }
+//            }
         }
 
         super.init(t);

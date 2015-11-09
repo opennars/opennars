@@ -51,6 +51,10 @@ import static nars.Symbols.*;
 public abstract class Compound<T extends Term> extends TermVector<T> implements Term, IPair {
 
 
+    /** true iff definitely normalized, false to cause it to update on next normalization.
+     *  used to prevent repeated normalizations */
+    protected transient boolean normalized = false;
+
     /**
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
@@ -111,6 +115,8 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
         this.complexity = (short) compl;
         this.volume = (short) vol;
+        this.normalized = !hasVar();
+
     }
 
     private static final void ensureFeasibleVolume(int vol) {
@@ -201,22 +207,11 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return t;
     }
 
-//    @Override
-//    public final boolean hasVar(final Op type) {
-//
-//        switch (type) {
-//            case VAR_DEPENDENT:
-//                return hasVarDep();
-//            case VAR_INDEPENDENT:
-//                return hasVarIndep();
-//            case VAR_QUERY:
-//                return hasVarQuery();
-//            case VAR_PATTERN:
-//                //return Variable.hasPatternVariable(this);
-//                throw new RuntimeException("determining this would require exhaustive check because " + this + " does not cache # of pattern variables");
-//        }
-//        throw new RuntimeException("Invalid variable type: " + type);
-//    }
+
+    @Override
+    public final Term substituted(Map<Variable, Term> subs) {
+        return applySubstitute(subs);
+    }
 
     /**
      * from: http://stackoverflow.com/a/19333201
@@ -628,12 +623,14 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      */
     protected <T extends Term> T normalized(final boolean destructive) {
 
-        if (isNormalized()) {
+        if (normalized) {
             return (T) this;
         } else {
             final Compound result = VariableNormalization.normalizeFast(this, destructive).getResult();
             if (result == null)
                 return null;
+
+            result.normalized = true;
 
             return (T) result;
         }
@@ -886,7 +883,12 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
         }
 
+
         if (changed) {
+            if (isCommutative()) {
+                Arrays.sort(term);
+            }
+
             rehash();
         }
 
@@ -1016,7 +1018,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      *
      * @param subs
      */
-    public Term applySubstitute(final Map<Term, Term> subs) {
+    public Term applySubstitute(final Map<? extends Term, Term> subs) {
 
         //TODO calculate superterm capacity limits vs. subs min/max
 
@@ -1041,7 +1043,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
     @Override
     public final boolean isNormalized() {
-        return !hasVar();
+        return normalized;
     }
 
 

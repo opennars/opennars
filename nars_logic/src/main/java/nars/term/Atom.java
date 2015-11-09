@@ -23,6 +23,11 @@ public class Atom extends Atomic  {
         }
 
         @Override
+        public Term substituted(Map<Variable, Term> subs) {
+            return null;
+        }
+
+        @Override
         public boolean hasVar() {
             return false;
         }
@@ -90,6 +95,11 @@ public class Atom extends Atomic  {
         return 1 << Op.ATOM.ordinal();
     }
 
+
+    @Override
+    public final Term substituted(Map<Variable, Term> subs) {
+        return this;
+    }
 
     //    /**
 //     * Default constructor that build an internal Term

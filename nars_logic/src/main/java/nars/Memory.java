@@ -30,7 +30,6 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.time.Clock;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -245,11 +244,11 @@ public class Memory extends Param {
      * by the provided Term
      */
     public final Concept concept(Term t) {
-        if (!t.isNormalized()) {
-            t = ((Compound) t).normalized();
-            if (t == null) return null;
-        }
-        return concepts.get(t);
+        //if (!t.isNormalized()) {
+        final Term u = t.normalized();
+        if (u == null) return null;
+        //}
+        return concepts.get(u);
     }
 
 

@@ -281,6 +281,7 @@ public class NAL6Test extends AbstractNALTester {
     }
 
 
+
     @Test
     public void second_level_variable_unification2() throws Narsese.NarseseException {
         TestNAR tester = test();

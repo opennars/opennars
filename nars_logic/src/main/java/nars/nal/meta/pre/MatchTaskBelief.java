@@ -4,7 +4,6 @@ import nars.Global;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.term.Term;
 
 
 public class MatchTaskBelief extends PreCondition {
@@ -16,10 +15,10 @@ public class MatchTaskBelief extends PreCondition {
     public MatchTaskBelief(TaskBeliefPair pattern) {
 
         this.pattern = pattern;
-        Term beliefPattern = pattern.term(1);
+        //Term beliefPattern = pattern.term(1);
 
         //if (Global.DEBUG) {
-            if (beliefPattern.structure() == 0) {
+//            if (beliefPattern.structure() == 0) {
 
                 // if nothing else in the rule involves this term
                 // which will be a singular VAR_PATTERN variable
@@ -27,7 +26,7 @@ public class MatchTaskBelief extends PreCondition {
 //                if (beliefPattern.op() != Op.VAR_PATTERN)
 //                    throw new RuntimeException("not what was expected");
 
-            }
+//            }
         //}
 
         /*System.out.println( Long.toBinaryString(
@@ -38,8 +37,39 @@ public class MatchTaskBelief extends PreCondition {
 
     }
 
-    //TODO this caching is not thread-safe yet
-    @Override
+//    @Override public final boolean test(final RuleMatch m) {
+//
+//        boolean sameAsPrevPattern =
+//                (m.prevRule!=null) && (m.prevRule.pattern.equals(m.rule.pattern);
+//
+//        if (!m.prevXY.isEmpty()) {
+//            //re-use previous rule's result
+//            m.xy.putAll(m.prevXY);
+//            m.yx.putAll(m.prevYX);
+//            return true;
+//        }
+//        else {
+//            boolean b = _test(m);
+//            if (b) {
+//
+//            }
+//            else {
+//                //put a placeholder to signal that this does not succeed
+//            }
+//
+//        }
+//
+//
+//        if
+//                this.prevXY.putAll(xy);
+//                this.prevYX.putAll(yx);
+//            }
+//            else {
+//                this.prevXY.clear(); this.prevYX.clear();
+//            }
+//        }
+//    }
+
     public final boolean test(final RuleMatch m) {
 
         final TaskBeliefPair tb = m.taskBelief;
@@ -51,12 +81,8 @@ public class MatchTaskBelief extends PreCondition {
             return false;
         }
 
-        return subst(pattern, m, tb);
-    }
-
-    final static boolean subst(TaskBeliefPair pattern, final RuleMatch m, final TaskBeliefPair t) {
         //TODO parameterize the power by budget
-        return m.next(pattern, t, Global.UNIFICATION_POWER);
+        return m.next(pattern, tb, Global.UNIFICATION_POWER);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class TermNormalizationTest {
         assertTrue(varB instanceof Variable);
 
         assertEquals(varA, varB);
-        assertTrue("successfully re-used the variable instance", varA==varB);
+        assertTrue("successfull re-use of variable instance", varA==varB);
     }
 
     @Test

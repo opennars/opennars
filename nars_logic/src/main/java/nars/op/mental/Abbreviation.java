@@ -101,7 +101,7 @@ public class Abbreviation implements Consumer<Task> {
                 concept.put(Abbreviation.class, atomic);
 
                 Memory m = nar.memory;
-                nar.input(DefaultTask.make(m, Similarity.make(termAbbreviating, atomic))
+                nar.input(DefaultTask.make(Similarity.make(termAbbreviating, atomic))
                                 .judgment().truth(1, abbreviationConfidence)
                                 .parent(task).present(m)
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY,

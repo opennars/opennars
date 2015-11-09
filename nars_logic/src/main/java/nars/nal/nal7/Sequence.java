@@ -63,6 +63,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
     }
 
+
     @Override
     public final void setDuration(int duration) {
         super.setDuration(duration);

@@ -253,7 +253,7 @@ public interface Premise extends Level {
 
 
     default public <T extends Compound> FluentTask newTask(final T term) {
-        return DefaultTask.make(nar().memory, term);
+        return DefaultTask.make(term);
     }
 
     default public <T extends Compound> Task<Compound<?>> newTask(final T term, final char punc) {

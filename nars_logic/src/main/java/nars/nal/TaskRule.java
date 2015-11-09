@@ -3,7 +3,6 @@ package nars.nal;
 import com.google.common.collect.Sets;
 import nars.Global;
 import nars.Op;
-import nars.Symbols;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
@@ -32,10 +31,15 @@ public class TaskRule extends ProductN implements Level {
 
 
     public boolean allowQuestionTask=false;
+
+    /** conditions which can be tested before term matching */
+    public PreCondition[] prepreconditions;
+
+    /** conditions which are tested after term matching, including term matching itself */
     public PreCondition[] preconditions;
-    //private final Term[] preconditions; //the terms to match
 
     public PostCondition[] postconditions;
+
     public TaskBeliefPair pattern;
 
     //it has certain pre-conditions, all given as predicates after the two input premises
@@ -61,11 +65,11 @@ public class TaskRule extends ProductN implements Level {
     }
 
 
-    public final boolean validTaskPunctuation(final char p) {
-        if ((p == Symbols.QUESTION) && !allowQuestionTask)
-            return false;
-        return true;
-    }
+//    public final boolean validTaskPunctuation(final char p) {
+//        if ((p == Symbols.QUESTION) && !allowQuestionTask)
+//            return false;
+//        return true;
+//    }
 
     protected final void ensureValid() {
         if (postconditions.length == 0)
@@ -245,8 +249,9 @@ public class TaskRule extends ProductN implements Level {
         Term[] precon = ((Product) term(0)).terms();
         Term[] postcons = ((Product) term(1)).terms();
 
-        //extract preconditions
-        List<PreCondition> early = Global.newArrayList(precon.length);
+
+        List<PreCondition> prePreConditionsList = Global.newArrayList(precon.length);
+        List<PreCondition> preConditionsList = Global.newArrayList(precon.length);
 
 
         List<PreCondition> afterConcs = Global.newArrayList(0);
@@ -267,10 +272,10 @@ public class TaskRule extends ProductN implements Level {
         this.pattern = new TaskBeliefPair(taskTermPattern, beliefTermPattern);
 
         final MatchTaskBelief matcher = new MatchTaskBelief(pattern);
-        early.add(matcher);
+        preConditionsList.add(matcher);
 
 
-        //additional modifiers: either early or beforeConcs, classify them here
+        //additional modifiers: either preConditionsList or beforeConcs, classify them here
         for (int i = 2; i < precon.length; i++) {
 //            if (!(precon[i] instanceof Inheritance)) {
 //                System.err.println("unknown precondition type: " + precon[i] + " in rule: " + this);
@@ -282,7 +287,7 @@ public class TaskRule extends ProductN implements Level {
 
             final String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
 
-            PreCondition next = null;
+            PreCondition next = null, preNext = null;
 
             final Term[] args;
             final Term arg1, arg2;
@@ -312,7 +317,7 @@ public class TaskRule extends ProductN implements Level {
                     next = new NotSet(arg1);
                     break;
                 case "event":
-                    next = new IsEvent(arg1, arg2);
+                    preNext = new IsEvent(arg1, arg2);
                     break;
                 case "no_common_subterm":
                     next = new NoCommonSubterm(arg1, arg2);
@@ -320,11 +325,11 @@ public class TaskRule extends ProductN implements Level {
 
 
                 case "after":
-                    if ((next = after(arg1, arg2)) == null)
+                    if ((preNext = after(arg1, arg2)) == null)
                         return null; //this rule is not valid, probably from a rearrangement of terms which invalidates the pattern -> task relationship this needs to test
                     break;
                 case "concurrent":
-                    if ((next = concurrent(arg1, arg2)) == null)
+                    if ((preNext = concurrent(arg1, arg2)) == null)
                         return null; //this rule is not valid, probably from a rearrangement of terms which invalidates the pattern -> task relationship this needs to test
                     break;
 
@@ -369,16 +374,17 @@ public class TaskRule extends ProductN implements Level {
                 case "task":
                     switch (arg1.toString()) {
                         case "negative":
-                            next = new TaskNegative();
+                            preNext = new TaskNegative();
                             break;
                         case "\"?\"":
-                            next = TaskPunctuation.TaskQuestion;
+                            preNext = TaskPunctuation.TaskQuestion;
+                            allowQuestionTask = true;
                             break;
                         case "\".\"":
-                            next = TaskPunctuation.TaskJudgment;
+                            preNext = TaskPunctuation.TaskJudgment;
                             break;
                         case "\"!\"":
-                            next = TaskPunctuation.TaskGoal;
+                            preNext = TaskPunctuation.TaskGoal;
                             break;
                         default:
                             throw new RuntimeException("Unknown task punctuation type: " + predicate.getSubject());
@@ -390,12 +396,18 @@ public class TaskRule extends ProductN implements Level {
 
             }
 
+            if (preNext!=null)
+                prePreConditionsList.add(preNext);
             if (next != null)
-                early.add(next);
+                preConditionsList.add(next);
         }
 
-        //store as arrays
-        this.preconditions = early.toArray(new PreCondition[early.size()]);
+        if (!allowQuestionTask)
+            prePreConditionsList.add(TaskPunctuation.TaskNotQuestion);
+
+        //store to arrays
+        this.prepreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
+        this.preconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
 
 
         List<PostCondition> postConditionsList = Global.newArrayList(postcons.length);

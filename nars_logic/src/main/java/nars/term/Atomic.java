@@ -68,6 +68,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         return (ax.op() == op()) && Byted.equals(this, (Atomic)ax);
     }
 
+
     @Override
     public final int hashCode() {
         final int h = this.hash;
@@ -98,6 +99,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     public final int getByteLen() {
         return bytes().length;
     }
+
 
     /**
      * Atoms are singular, so it is useless to clone them

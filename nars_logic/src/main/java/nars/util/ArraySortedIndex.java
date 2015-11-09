@@ -60,7 +60,13 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
      * TODO parameter score function
      */
     static float score(Itemized b) {
-        return b.getBudget().summary();
+        //MODE 1:
+        //return b.getBudget().summary();
+
+        //MODE 2:
+        //this ensures that priority is the most significant ordering factor, even if zero
+        return (1+b.getPriority())*
+                (b.getDurability()*b.getQuality());
     }
 
     @Override

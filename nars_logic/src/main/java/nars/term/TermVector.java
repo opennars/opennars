@@ -207,7 +207,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         return varTotal;
     }
 
-    public boolean hasVar() {
+    public final boolean hasVar() {
         return varTotal > 0;
     }
 

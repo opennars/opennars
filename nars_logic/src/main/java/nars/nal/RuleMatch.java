@@ -66,6 +66,10 @@ public class RuleMatch extends FindSubst {
     public final Map<Variable, Term> left = Global.newHashMap(0);
     public final Map<Variable, Term> right = Global.newHashMap(0);
     public final Set<Term> tmpSet = Global.newHashSet(0);
+    public TaskRule prevRule;
+
+    public final Map<Variable, Term> prevXY = Global.newHashMap(0);
+    public final Map<Variable, Term> prevYX = Global.newHashMap(0);
 
     @Override
     public String toString() {
@@ -82,8 +86,11 @@ public class RuleMatch extends FindSubst {
     /**
      * set the next premise
      */
-    public void start(Premise p) {
+    public final void start(Premise p) {
         this.premise = p;
+        this.prevRule = null;
+        this.prevXY.clear(); this.prevYX.clear();
+
         taskBelief.set(
                 p.getTask().getTerm(),
                 p.getTermLink().getTerm()
@@ -97,27 +104,27 @@ public class RuleMatch extends FindSubst {
 //        map2.put(b, a);
 //    }
 
-    /**
-     * clear and re-use with a new rule
-     */
-    public void start(TaskRule rule) {
 
-        super.clear();
+    /**
+     * clear and re-use with a next rule
+     */
+    public final void start(TaskRule nextRule) {
+
+        this.prevRule = this.rule;
+
+        clear();
 
         occurence_shift = Stamp.TIMELESS;
 
-        this.rule = rule;
+        this.rule = nextRule;
     }
 
-    public Task apply(final PostCondition outcome) {
+    public final Task apply(final PostCondition outcome) {
 
         Premise premise = this.premise;
 
         final Task task = premise.getTask();
 
-        if (!rule.validTaskPunctuation(task.getPunctuation())) {
-            return null;
-        }
 
         /** calculate derived task truth value */
         final Task belief = premise.getBelief();
@@ -431,6 +438,11 @@ public class RuleMatch extends FindSubst {
     public PostCondition[] run(TaskRule rule) {
 
         start(rule);
+
+        for (final PreCondition p : rule.prepreconditions) {
+            if (!p.test(this))
+                return null;
+        }
 
         for (final PreCondition p : rule.preconditions) {
             if (!p.test(this))

@@ -2,8 +2,11 @@ package nars.nal.nal7;
 
 import nars.Op;
 import nars.term.Atomic;
+import nars.term.Term;
+import nars.term.Variable;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Interval represented directly as a measure of cycles encoded as an integer in some # of bits
@@ -106,6 +109,11 @@ final public class CyclesInterval extends Atomic implements Interval {
             e.printStackTrace();
         }
         return sb;
+    }
+
+    @Override
+    public Term substituted(Map<Variable, Term> subs) {
+        return this;
     }
 
     @Override

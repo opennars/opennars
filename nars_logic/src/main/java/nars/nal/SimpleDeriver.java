@@ -186,19 +186,28 @@ public class SimpleDeriver extends Deriver  {
 
 
     final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {
-        rules.forEach(r -> {
-            if (r.minNAL > level) return;
+
+        final int nr = rules.size();
+        for (int i = 0; i < nr; i++) {
+
+            TaskRule r = rules.get(i);
+            if (r.minNAL > level) continue;
 
             PostCondition[] pc = m.run(r);
-            if (pc == null) return;
+            if (pc == null) {
+                //System.out.println("Pre exit: " + r + " on " + m.premise);
+                continue;
+            }
 
             for (PostCondition p : pc) {
-                if (p.minNAL > level) return;
+                if (p.minNAL > level) continue;
                 Task x = m.apply(p);
-                if (x!=null)
+                if (x != null)
                     t.accept(x);
+                /*else
+                    System.out.println("Post exit: " + r + " on " + m.premise);*/
             }
-        });
+        }
     }
 
 

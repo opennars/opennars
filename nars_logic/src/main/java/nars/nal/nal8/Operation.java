@@ -109,7 +109,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
     public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return DefaultTask.make(m, content)
+        return DefaultTask.make(content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(p, d, q)
@@ -177,7 +177,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
 
     public Concept getConcept(Memory m) {
         if (m == null) return null;
-        return m.concept(getTerm());
+        return m.concept(this);//getTerm());
     }
 
     public Truth getConceptDesire(Memory m) {

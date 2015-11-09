@@ -4,8 +4,10 @@ import nars.Op;
 import org.infinispan.commons.equivalence.ByteArrayEquivalence;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 
+/** type should not be PATTERN_VAR */
 public class CommonVariable extends Variable  {
 
     private final Op type;
@@ -24,6 +26,11 @@ public class CommonVariable extends Variable  {
     @Override
     public final int structure() {
         return 1 << op().ordinal();
+    }
+
+    @Override
+    public final Term substituted(Map<Variable, Term> subs) {
+        return this;
     }
 
     @Override

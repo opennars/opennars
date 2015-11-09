@@ -13,7 +13,7 @@ import static java.util.Arrays.copyOf;
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
 public class Substitution implements Function<Compound,Term> {
 
-    final Map<Term, Term> subs;
+    final Map<? extends Term, Term> subs;
 
     final int numSubs;
 
@@ -25,7 +25,7 @@ public class Substitution implements Function<Compound,Term> {
         this(UnifiedMap.newWithKeysValues(termFrom, termTo));
     }
 
-    public Substitution(final Map<Term, Term> subs) {
+    public Substitution(final Map<? extends Term, Term> subs) {
 
         this.subs = subs;
 
@@ -37,7 +37,7 @@ public class Substitution implements Function<Compound,Term> {
         int numDep = 0, numIndep = 0, numQuery = 0;
 
 
-        for (final Map.Entry<Term,Term> e : subs.entrySet()) {
+        for (final Map.Entry<? extends Term,Term> e : subs.entrySet()) {
 
             final Term m = e.getKey();
 

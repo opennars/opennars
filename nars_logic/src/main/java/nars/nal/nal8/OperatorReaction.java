@@ -211,7 +211,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
         final Memory memory = nar().memory;
 
-        nar().input(DefaultTask.make(memory, operation.getTerm()).
+        nar().input(DefaultTask.make(operation.getTerm()).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(b).

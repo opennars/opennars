@@ -17,7 +17,18 @@ public class TaskPunctuation extends PreCondition {
 
     public static final TaskPunctuation TaskJudgment = new TaskPunctuation('.');
 
-    public static final TaskPunctuation TaskQuestion = new TaskPunctuation('?');
+    public static final TaskPunctuation TaskQuestion = new TaskPunctuation('?') {
+        @Override protected final boolean test(char taskPunc) {
+            return taskPunc == Symbols.QUESTION || taskPunc == Symbols.QUEST;
+        }
+    };
+
+    public static final TaskPunctuation TaskNotQuestion = new TaskPunctuation('Z') {
+        @Override protected final boolean test(char taskPunc) {
+            return taskPunc != Symbols.QUESTION && taskPunc != Symbols.QUEST;
+        }
+    };
+
     public static final Term TaskQuestionTerm = $.op("task", "\"?\"");
 
     public static final TaskPunctuation TaskGoal = new TaskPunctuation('!');
@@ -35,20 +46,12 @@ public class TaskPunctuation extends PreCondition {
 
     @Override
     public final boolean test(final RuleMatch r) {
-        if(punc == Symbols.QUESTION)
-            r.rule.allowQuestionTask = true;
-
         final char taskPunc = r.premise.getTask().getPunctuation();
+        return test(taskPunc);
+    }
 
-        //Quests and questions handled similarly
-        switch (taskPunc) {
-            case Symbols.QUEST:
-                //in rule file it is specified as task("?") but it's for both
-                return taskPunc == Symbols.QUESTION;
-            default:
-                return taskPunc == punc;
-        }
-
+    protected boolean test(char taskPunc) {
+        return taskPunc == punc;
     }
 
 }

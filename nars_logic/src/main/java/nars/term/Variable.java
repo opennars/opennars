@@ -27,6 +27,7 @@ import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * A variable term, which does not correspond to a concept
@@ -135,6 +136,8 @@ abstract public class Variable extends Atomic {
         @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
 
+
+        @Override public final Term substituted(Map<Variable, Term> subs) { return this;        }
     }
 
     public static final class VarIndep extends Variable {
@@ -155,6 +158,8 @@ abstract public class Variable extends Atomic {
 
         @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
+
+        @Override public final Term substituted(Map<Variable, Term> subs) { return this;        }
     }
 
     public static final class VarQuery extends Variable {
@@ -175,6 +180,8 @@ abstract public class Variable extends Atomic {
 
         @Override public final boolean hasVarQuery() { return true;  }
         @Override public final int varQuery() { return 1; }
+
+        @Override public final Term substituted(Map<Variable, Term> subs) { return this;        }
     }
 
 
@@ -197,5 +204,10 @@ abstract public class Variable extends Atomic {
 
         @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
+
+        @Override
+        public final Term substituted(Map<Variable, Term> subs) {
+            return subs.get(this);
+        }
     }
 }

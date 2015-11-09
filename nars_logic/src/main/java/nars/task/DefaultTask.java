@@ -431,20 +431,20 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-    public static <C extends Compound> FluentTask make(Memory memory, C t) {
+    public static <C extends Compound> FluentTask make(C t) {
         t.normalizeDestructively();
         Compound u = Task.termOrNull(t);
         if (u == null)
             return null;
 
-        FluentTask x = make(memory);
+        FluentTask x = make();
 
         x.setTerm(u);
 
         return x;
     }
 
-    public static <C extends Compound> FluentTask make(Memory memory) {
+    public static FluentTask make() {
         return new FluentTask();
     }
 

@@ -60,27 +60,27 @@ public class TaskBeliefPair extends ProductN {
 
 
     public final boolean substitutesMayExistFast(final TaskBeliefPair pattern) {
-        //the pattern structure will include a Product
-        if (impossibleToMatch(pattern.structure())) {
-//            System.out.println(
-//                "impossible? " +
-//                        Integer.toBinaryString(structure()) + " " + this +
-//                        Integer.toBinaryString(pattern.structure()) + " " + pattern
-//            );
-
-            return false;
-        }
+//        //the pattern structure will include a Product
+//        if (impossibleToMatch(pattern.structure())) {
+////            System.out.println(
+////                "impossible? " +
+////                        Integer.toBinaryString(structure()) + " " + this +
+////                        Integer.toBinaryString(pattern.structure()) + " " + pattern
+////            );
+//
+//            return false;
+//        }
 
 //        if (volume() < pattern.volume())
 //            return false;
+
+        //compare the task and belief individually to filter out more:
 
         if (volA < pattern.volA)
             return false;
 
         if (volB < pattern.volB)
             return false;
-
-        //compare the task and belief individually to filter out more:
 
         final Term c = term[0];
         if (c.impossibleToMatch(pattern.structureA)) return false;
