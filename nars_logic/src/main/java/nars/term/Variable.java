@@ -137,6 +137,13 @@ abstract public class Variable extends Atomic {
         return Utf8.fromUtf8toString(op().ch, bytes());
     }
 
+    @Override public final Term substituted(Map<Variable, Term> subs) {
+        Term x = subs.get(this);
+        if (x == null)
+            x = this;
+        return x;
+    }
+
     /**
      * The syntactic complexity of a variable is 0, because it does not refer to
      * any concept.
@@ -166,8 +173,6 @@ abstract public class Variable extends Atomic {
         @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
 
-
-        @Override public final Term substituted(Map<Variable, Term> subs) { return this;        }
     }
 
     public static final class VarIndep extends Variable {
@@ -189,7 +194,6 @@ abstract public class Variable extends Atomic {
         @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
 
-        @Override public final Term substituted(Map<Variable, Term> subs) { return this;        }
     }
 
     public static final class VarQuery extends Variable {
@@ -211,7 +215,6 @@ abstract public class Variable extends Atomic {
         @Override public final boolean hasVarQuery() { return true;  }
         @Override public final int varQuery() { return 1; }
 
-        @Override public final Term substituted(Map<Variable, Term> subs) { return this;        }
     }
 
 
@@ -235,9 +238,5 @@ abstract public class Variable extends Atomic {
         @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
 
-        @Override
-        public final Term substituted(Map<Variable, Term> subs) {
-            return subs.get(this);
-        }
     }
 }
