@@ -358,12 +358,6 @@
                                             ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
-
-    P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
-                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
-                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
-                                                                                                       (&/,S,I,P), (Truth:Intersection)
-
     (S --> M), (P --> M), not_equal(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
                                                                                  ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
                                                                                  ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
@@ -460,11 +454,13 @@
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
+//TODO fix  after(Task,Belief), so that I can add it to the following. Also we need isEternal(Task,Belief) because
+//non-temporal rules shouldnt be used if there is a temporal one which can decide the temporal aspects
 
     P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
-                                                                                                   (P =\> (&/,S,I)), (Truth:Abduction),
-                                                                                                   ((&/,S,I) </> P), (Truth:Comparison),
-                                                                                                   (&/,S,I,P), (Truth:Intersection)
+                                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
+                                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
+                                                                                                                       (&/,S,I,P), (Truth:Intersection)
 
     P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
                                                                                                            (P =|> S), (Truth:Induction),
