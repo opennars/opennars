@@ -12,8 +12,8 @@ import nars.term.Variable;
  */
 public class MeasureTime extends AbstractMeasureTime {
 
-    public MeasureTime(Term arg1, Term arg2, Term arg3) {
-        super(arg1, arg2, arg3);
+    public MeasureTime(Term arg1) {
+        super(arg1);
     }
 
     /**
@@ -24,7 +24,7 @@ public class MeasureTime extends AbstractMeasureTime {
      * term representing the time difference will be
      * substituted.
      */
-    @Override protected boolean testEvents(RuleMatch m, Term a, Term b, Term target) {
+    @Override protected boolean testEvents(RuleMatch m, Term target) {
         Premise p = m.premise;
 
         int time = Tense.between(p.getTask(), p.getBelief());

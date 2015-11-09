@@ -359,12 +359,12 @@
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
 
-    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+    P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                        ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                        (&/,S,I,P), (Truth:Intersection)
 
-    (S --> M), (P --> M), not_equal(S,P), measure_time(Task,Belief,I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
+    (S --> M), (P --> M), not_equal(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
                                                                                  ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
                                                                                  ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
                                                                                  (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
@@ -461,8 +461,7 @@
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-//for now its fine if we only support Task,Belief,I, when we are finished with NAL7 with never needing Belief,Task, then we may remove these two extra params and call it time_between_task_and_belief instead
-    P, S, measure_time(Task,Belief,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+    P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                        ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                        (&/,S,I,P), (Truth:Intersection)

@@ -338,10 +338,10 @@ public class TaskRule extends ProductN implements Level {
                     next = ShiftOccurrence.make(arg1, arg2, false);
                     break;
                 case "measure_time":
-                    if (args.length==3)
-                        next = new MeasureTime(arg1, arg2, args[2]);
+                    if (args.length==1)
+                        next = new MeasureTime(arg1);
                     else
-                        throw new RuntimeException("measure_time requires 3 components");
+                        throw new RuntimeException("measure_time requires 1 component");
                     break;
 
                 case "substitute":
