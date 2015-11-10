@@ -179,9 +179,9 @@ public interface BeliefTable extends TaskTable {
         final Task top = top();
         if (top == null) return null;
 
-        if (!Tense.matchingOrder(query, top.getTerm())) {
-            return null;
-        }
+//        if (!Tense.matchingOrder(query, top.getTerm())) {
+//            return null;
+//        }
 
         if (size() == 1)
             return top;

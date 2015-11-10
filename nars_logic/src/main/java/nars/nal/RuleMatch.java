@@ -6,8 +6,6 @@ import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
@@ -133,14 +131,6 @@ public class RuleMatch extends FindSubst {
 
         Task belief = premise.getBelief();
 
-        //patham9 hack: TODO examine and remove
-        if(belief==null && premise.getTermLink()!=null) {
-            Concept v = (Concept) premise.concept(premise.getTermLink().getTerm());
-            if(v.getBeliefs().size()>0) {
-                belief = v.getBeliefs().top();
-            }
-        }
-        //end patham9 hack
 
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
