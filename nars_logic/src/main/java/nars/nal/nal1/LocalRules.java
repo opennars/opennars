@@ -130,7 +130,7 @@ public class LocalRules {
 
         Truth newBeliefTruth = newBelief.getTruth();
 
-        ProjectedTruth oldBeliefTruth = oldBelief.projection(now, newBelief.getOccurrenceTime());
+        ProjectedTruth oldBeliefTruth = oldBelief.projection(newBelief.getOccurrenceTime(), newBelief.getOccurrenceTime());
 
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
 
