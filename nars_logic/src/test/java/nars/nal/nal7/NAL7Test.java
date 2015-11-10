@@ -3,7 +3,10 @@ package nars.nal.nal7;
 import nars.Global;
 import nars.NAR;
 import nars.Narsese;
+import nars.concept.DefaultConcept;
 import nars.nal.AbstractNALTester;
+import nars.nar.Default;
+import nars.nar.SingleStepNAR;
 import nars.task.Task;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
@@ -77,6 +80,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, Tense.Future); //":\:"
         tester.run();
     }
+
 
     @Test
     public void inference_on_tense_2() throws Narsese.NarseseException {
@@ -246,7 +250,7 @@ public class NAL7Test extends AbstractNALTester {
 
     //i think we should for now do both, I will add a second testcase
     @Test
-    public void updating_and_revision_by_projection() throws Narsese.NarseseException {
+    public void updating_and_revision() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,John,key) --> hold>. :|:");
@@ -260,14 +264,8 @@ public class NAL7Test extends AbstractNALTester {
     }
 
     @Test
-    public void updating_and_revision_by_eternalization() throws Narsese.NarseseException {
+    public void wut() throws Narsese.NarseseException {
         TestNAR tester = test();
-
-        tester.input("<(*,John,key) --> hold>. :|:");
-        tester.inputAt(10, "<(*,John,key) --> hold>. :|: %0%");
-
-        tester.mustBelieve(cycles, "<(*,John,key) --> hold>", //
-                0.5f, 0.91f, Tense.Eternal); //TODO: making sure that leaving Tense.Eternal out here should also result in Tense.Eternal
 
         tester.run();
     }
