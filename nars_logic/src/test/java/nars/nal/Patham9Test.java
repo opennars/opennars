@@ -195,7 +195,10 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Narsese;
+import nars.concept.DefaultConcept;
+import nars.concept.util.BeliefTable;
 import nars.nal.AbstractNALTester;
+import nars.nar.SingleStepNAR;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -230,14 +233,33 @@ public class Patham9Test extends AbstractNALTester {
     }
 */
 
-    @Test
+  @Test
     public void temporalOrder() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.input("<<m --> M> =/> <p --> P>>.");
         tester.inputAt(10,"<<s --> S> <|> <m --> M>>. %0.9;0.9%");
-        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.43f);
+        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.73f);
         tester.run();
+
+
 
         //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
     }
+
+   /* @Test
+    public void temporalOrder() throws Narsese.NarseseException {
+        SingleStepNAR tester = new SingleStepNAR();
+        tester.input("<<m --> M> =/> <p --> P>>.");
+        tester.input("<<s --> S> <|> <m --> M>>. %0.9;0.9%");
+
+        tester.frame(100);
+
+        DefaultConcept c1 = (DefaultConcept) tester.concept("<<s --> S> <|> <m --> M>>");
+
+        BeliefTable tbl = c1.getBeliefs();
+
+
+
+        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
+    }*/
 }

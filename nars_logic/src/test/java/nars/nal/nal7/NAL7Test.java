@@ -294,7 +294,7 @@ public class NAL7Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.input("<<m --> M> =/> <p --> P>>.");
         tester.inputAt(10, "<<s --> S> <|> <m --> M>>. %0.9;0.9%");
-        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.43f);
+        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.73f);
         tester.run();
 
         //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
