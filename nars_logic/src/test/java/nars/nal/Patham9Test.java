@@ -239,9 +239,9 @@ public class Patham9Test extends AbstractNALTester {
         TestNAR tester = test();
 
         tester.input("<(*,John,door) --> open>. :|:");
-        tester.inputAt(11, "<(*,John,room) --> enter>. :|:");
+        tester.inputAt(6, "<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/, <(John, door) --> open>, /6) =/> <(John, room) --> enter>>",
+        tester.mustBelieve(cycles, "<<(John, door) --> open> =|> <(John, room) --> enter>>",
                 1.00f, 0.45f,
                 11);
         tester.run();
