@@ -233,17 +233,20 @@ public class Patham9Test extends AbstractNALTester {
     }
 */
 
-  @Test
-    public void temporalOrder() throws Narsese.NarseseException {
+
+    @Test
+    public void induction_on_events() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.input("<<m --> M> =/> <p --> P>>.");
-        tester.inputAt(10,"<<s --> S> <|> <m --> M>>. %0.9;0.9%");
-        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.73f);
+
+
+
+        tester.input("<(John,door) --> open>. :|:");
+        tester.inputAt(10, "<(John,room) --> enter>. :|:");
+
+        tester.mustBelieve(cycles, "<<(John, room) --> enter> =\\> (&/, <(John, door) --> open>, /5)>",
+                1.00f, 0.45f,
+                10);
         tester.run();
-
-
-
-        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
     }
 
    /* @Test
