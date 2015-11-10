@@ -161,20 +161,8 @@ public class NAL7Test extends AbstractNALTester {
 
     @Test
     public void induction_on_events_with_variable_introduction() throws Narsese.NarseseException {
-        induction_on_events_with_variable_introduction(0);
-    }
-    @Test
-    public void induction_on_events_with_variable_introduction_d1000() throws Narsese.NarseseException {
-        induction_on_events_with_variable_introduction(1000);
-    }
-
-    /**
-     * @param delay a # of frames to delay at the start in order to test start time independence
-     */
-    void induction_on_events_with_variable_introduction(int delay) throws Narsese.NarseseException {
-
         TestNAR tester = test();
-
+        int delay = 0;
         tester.nar.frame(delay);
 
         tester.input("<John --> (/,open,_,door)>. :|:");
@@ -182,9 +170,26 @@ public class NAL7Test extends AbstractNALTester {
 
         tester.mustBelieve(cycles,
                 //"<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
-                "<<$1 --> (/,open,_,door)> </> <$1 --> (/,enter,_,room)>>",
+                " <(&/, <$1 --> (/, open, _, door)>, /5) </> <$1 --> (/, enter, _, room)>>",
                 1.00f, 0.45f,
-                10 + delay
+                0
+        );
+        tester.run();
+    }
+    @Test
+    public void induction_on_events_with_variable_introduction_d1000() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        int delay = 1000;
+        tester.nar.frame(delay);
+
+        tester.input("<John --> (/,open,_,door)>. :|:");
+        tester.inputAt(delay + 10, "<John --> (/,enter,_,room)>. :|:");
+
+        tester.mustBelieve(cycles,
+                //"<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
+                " <(&/, <$1 --> (/, open, _, door)>, /5) </> <$1 --> (/, enter, _, room)>>",
+                1.00f, 0.45f,
+                0
         );
         tester.run();
     }
@@ -210,9 +215,9 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<John --> (/,open,_,door)>. :|:");
         tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
 
-        tester.mustBelieve(cycles, "<<$1 --> (/,enter,_,room)> =\\> (&/,<$1 --> (/,open,_,door)>)>",
+        tester.mustBelieve(cycles, "<<$1 --> (/, enter, _, room)> =\\> (&/, <$1 --> (/, open, _, door)>, /5)>",
                 1.00f, 0.45f,
-                10);
+                0);
         tester.run();
     }
 
