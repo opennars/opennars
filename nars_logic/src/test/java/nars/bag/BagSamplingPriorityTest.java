@@ -7,6 +7,7 @@ import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
 import nars.util.Texts;
+import nars.util.data.Util;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.meter.bag.NullItem;
 import org.apache.commons.math3.stat.Frequency;
@@ -50,7 +51,7 @@ public class BagSamplingPriorityTest {
 
         public int discretize(final float p) {
             //return (int)Math.floor(p * (bins-1));
-            return CacheBag.bin(p, bins);
+            return Util.bin(p, bins);
         }
         public double undiscretize(int bin) {
             return CacheBag.unbinCenter(bin, bins);

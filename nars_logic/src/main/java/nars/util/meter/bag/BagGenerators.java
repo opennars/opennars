@@ -1,7 +1,7 @@
 package nars.util.meter.bag;
 
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
+import nars.util.data.Util;
 import nars.util.data.random.XORShiftRandom;
 
 import java.util.Random;
@@ -129,7 +129,7 @@ public class BagGenerators {
     protected static int removal(int nRemoved, float p, int[] count) {
 
         int l = count.length;
-        int level = CacheBag.bin(p, l);
+        int level = Util.bin(p, l);
         if (level >= l) level= l - 1;
         count[level]++;
         nRemoved++;

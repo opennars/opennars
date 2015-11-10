@@ -18,6 +18,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import javolution.context.ConcurrentContext;
 import nars.util.utf8.Utf8;
+import org.apache.commons.math3.util.FastMath;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -703,5 +704,14 @@ public class Util {
 //        } while (index != 0);
 //        return cb.toString();
 
+    }
+
+    public static int bin(final float x, final int bins) {
+        return (int) FastMath.floor((x + (0.5f / bins)) * bins);
+    }
+
+    /** bins a priority value to an integer */
+    public static int decimalize(float v) {
+        return bin(v,10);
     }
 }

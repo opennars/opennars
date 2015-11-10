@@ -6,10 +6,12 @@ import nars.Op;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Variable;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
 
 import java.util.List;
@@ -22,6 +24,35 @@ import static org.jgroups.util.Util.assertEquals;
 
 public class OperatorTest {
 
+    @Test public void testMustExecuteSuccess() {
+
+
+        NAR n = new Default2(100, 1, 1, 1);
+        TestNAR t = new TestNAR(n);
+        t.mustExecute(0, 1, "operator");
+
+        n.input("operator()!");
+        t.run();
+
+    }
+
+    @Test public void testMustExecuteFailure() {
+
+        try {
+            NAR n = new Default2(100, 1, 1, 1);
+            TestNAR t = new TestNAR(n);
+            t.mustExecute(0, 1, "operator");
+
+            n.input("xoperator()!");
+
+            t.run();
+            assertTrue(false);
+        }
+        catch (AssertionError e) {
+            //failure should occurr
+            assertTrue(true);
+        }
+    }
 
 
 //

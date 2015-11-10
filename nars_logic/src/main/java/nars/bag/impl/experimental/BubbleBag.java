@@ -4,8 +4,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.budget.Item;
+import nars.util.data.Util;
 import nars.util.data.list.CircularArrayList;
 import nars.util.data.map.CuckooMap;
 import org.apache.commons.math3.stat.Frequency;
@@ -330,7 +330,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
         float p = e.getPriority();
         outPriority.addValue(p);
-        removal.addValue(CacheBag.decimalize(p));
+        removal.addValue(Util.decimalize(p));
         return e;
     }
 

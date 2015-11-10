@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.term.Term;
-import org.apache.commons.math3.util.FastMath;
+import nars.util.data.Util;
 import org.infinispan.commons.util.WeakValueHashMap;
 
 import java.io.Serializable;
@@ -40,7 +40,7 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
     }
 
     /**  by value set */
-    public static <K,V extends Itemized<K>> boolean equals(CacheBag<K,V> a, CacheBag<K,V> b) {
+    static <K,V extends Itemized<K>> boolean equals(CacheBag<K, V> a, CacheBag<K, V> b) {
         if (a.size()!=b.size()) return false;
         HashSet<V> aa = Sets.newHashSet(a);
         HashSet<V> bb = Sets.newHashSet(b);
@@ -89,7 +89,7 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
         int bins = x.length;
         forEach(e -> {
             final float p = e.getPriority();
-            final int b = bin(p, bins - 1);
+            final int b = Util.bin(p, bins - 1);
             x[b]++;
         });
         double total = 0;
@@ -101,15 +101,6 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
                 x[i] /= total;
         }
         return x;
-    }
-
-    static int bin(final float x, final int bins) {
-        return (int) FastMath.floor((x + (0.5f / bins)) * bins);
-    }
-
-    /** bins a priority value to an integer */
-    static int decimalize(float v) {
-        return bin(v,10);
     }
 
 
