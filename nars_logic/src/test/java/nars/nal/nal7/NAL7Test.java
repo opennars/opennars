@@ -257,8 +257,8 @@ public class NAL7Test extends AbstractNALTester {
         tester.inputAt(10, "<(*,John,key) --> hold>. :|: %0%");
 
         tester.mustBelieve(cycles, "<(*,John,key) --> hold>", //TODO: Check truth value
-                0.09f, 0.91f,
-                0);
+                0.5f, 0.95f,
+                10);
 
         tester.run();
     }

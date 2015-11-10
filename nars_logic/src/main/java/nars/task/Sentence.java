@@ -265,7 +265,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
             return new ProjectedTruth(currentTruth, targetTime);                 //target and itself is eternal so return the truth of itself
         }
         else
-        if(targetTime != Stamp.ETERNAL && !Tense.isEternal(occurrenceTime)) {
+        if(targetTime != Stamp.ETERNAL && Tense.isEternal(occurrenceTime)) {
             return new ProjectedTruth(currentTruth, targetTime);                 //target is not eternal but itself is,
         }                                                                        //note: we don't need to project since itself holds for every moment.
         else
