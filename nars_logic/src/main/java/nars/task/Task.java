@@ -656,7 +656,10 @@ public interface Task<T extends Compound> extends Sentence<T>,
 //        Before, After
 //    }
     default boolean startsAfter(Task other, int perceptualDuration) {
-        return start() - other.end() > perceptualDuration;
+        long start = start();
+        long other_end = other.end();
+        boolean ret = start - other_end > 0;
+        return ret;
     }
 
     default long start() { return getOccurrenceTime(); }

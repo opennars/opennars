@@ -74,10 +74,10 @@ public class NAL7Test extends AbstractNALTester {
     public void inference_on_tense() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
+        tester.input("<(&/,<($x, key) --> hold>,/50) =/> <($x, room) --> enter>>.");
         tester.input("<(John, key) --> hold>. :|:");
 
-        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, Tense.Future); //":\:"
+        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, -50); //":\:"
         tester.run();
     }
 
@@ -86,10 +86,10 @@ public class NAL7Test extends AbstractNALTester {
     public void inference_on_tense_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
+        tester.input("<(&/,<($x, key) --> hold>,/60) =/> <($x, room) --> enter>>.");
         tester.input("<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, -5); //":\:"
+        tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, -60); //":\:"
         tester.run();
     }
 
@@ -129,11 +129,11 @@ public class NAL7Test extends AbstractNALTester {
 
 
         tester.input("<(John,door) --> open>. :|:");
-        tester.inputAt(10, "<(John,room) --> enter>. :|:");
+        tester.inputAt(11, "<(John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<<(John, room) --> enter> =\\> (&/, <(John, door) --> open>, /5)>",
+        tester.mustBelieve(cycles, "<<(John, room) --> enter> =\\> (&/, <(John, door) --> open>, /6)>",
                 1.00f, 0.45f,
-                10);
+                11);
         tester.run();
     }
 
@@ -142,11 +142,11 @@ public class NAL7Test extends AbstractNALTester {
         TestNAR tester = test();
 
         tester.input("<(*,John,door) --> open>. :|:");
-        tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
+        tester.inputAt(11, "<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/, <(John, door) --> open>, /5) =/> <(John, room) --> enter>>",
+        tester.mustBelieve(cycles, "<(&/, <(John, door) --> open>, /6) =/> <(John, room) --> enter>>",
                 1.00f, 0.45f,
-                10);
+                11);
         tester.run();
     }
 
@@ -155,11 +155,11 @@ public class NAL7Test extends AbstractNALTester {
         TestNAR tester = test();
 
         tester.input("<(*,John,door) --> open>. :|:");
-        tester.inputAt(10, "<(*,John,room) --> enter>. :|:");
+        tester.inputAt(11, "<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, " <(&/, <(John, door) --> open>, /5) </> <(John, room) --> enter>>",
+        tester.mustBelieve(cycles, " <(&/, <(John, door) --> open>, /6) </> <(John, room) --> enter>>",
                 1.00f, 0.45f,
-                10);
+                11);
         tester.run();
     }
 
