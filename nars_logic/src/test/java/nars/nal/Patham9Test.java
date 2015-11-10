@@ -217,20 +217,27 @@ public class Patham9Test extends AbstractNALTester {
     public static Iterable configurations() {
         return AbstractNALTester.nars(7, false);
     }
+/*
+    @Test
+    public void temporalOrder() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<<m --> M> =/> <p --> P>>");
+        tester.believe("<<s --> S> <|> <m --> M>>", 0.90f, 0.9f);
+        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.43f);
+        tester.run();
 
+        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
+    }
+*/
 
     @Test
-    public void induction_on_events_with_variable_introduction2() throws Narsese.NarseseException {
+    public void temporalOrder() throws Narsese.NarseseException {
         TestNAR tester = test();
-
-        tester.input("<John --> (/,open,_,door)>. :|:");
-        tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
-
-        tester.mustBelieve(cycles,
-                "<<$1 --> (/,open,_,door)> =/> <$1 --> (/,enter,_,room)>>",
-                1.00f, 0.45f,
-                10);
+        tester.input("<<m --> M> =/> <p --> P>>.");
+        tester.inputAt(10,"<<s --> S> <|> <m --> M>>. %0.9;0.9%");
+        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.43f);
         tester.run();
-    }
 
+        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
+    }
 }

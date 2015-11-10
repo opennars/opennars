@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public class NAL7Test extends AbstractNALTester {
 
 
-    final int cycles = 164;
+    final int cycles = 464;
 
     public NAL7Test(Supplier<NAR> b) {
         super(b);
@@ -292,9 +292,11 @@ public class NAL7Test extends AbstractNALTester {
     @Test
     public void temporalOrder() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.believe("<<a --> A> =/> <b --> B>>");
-        tester.believe("<<b --> B> <|> <c --> C>>", 0.90f, 0.9f);
-        tester.mustBelieve(200, "<<a --> A> =/> <b --> B>>", 0.90f, 0.43f);
+        tester.input("<<m --> M> =/> <p --> P>>.");
+        tester.inputAt(10, "<<s --> S> <|> <m --> M>>. %0.9;0.9%");
+        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.43f);
         tester.run();
+
+        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
     }
 }
