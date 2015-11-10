@@ -89,7 +89,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<(&/,<($x, key) --> hold>,/5) =/> <($x, room) --> enter>>.");
         tester.input("<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, Tense.Past); //":\:"
+        tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, -5); //":\:"
         tester.run();
     }
 
@@ -103,7 +103,7 @@ public class NAL7Test extends AbstractNALTester {
 
         tester.mustBelieve(cycles, "<(*,John,room) --> enter>",
                 1.00f, 0.81f,
-                Tense.Future); //":/:"
+                5); //":/:"
 
         tester.run();
     }
@@ -118,7 +118,7 @@ public class NAL7Test extends AbstractNALTester {
 
         tester.mustBelieve(cycles, "<(*,John,key) --> hold>",
                 1.00f, 0.45f,
-                Tense.Past ); //:\\:
+                -5 ); //:\\:
         tester.run();
     }
 
