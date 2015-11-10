@@ -458,7 +458,7 @@
 //TODO fix  after(Task,Belief), so that I can add it to the following. Also we need isEternal(Task,Belief) because
 //non-temporal rules shouldnt be used if there is a temporal one which can decide the temporal aspects
 
-    P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+    P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                                                    (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                    ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                    (&/,S,I,P), (Truth:Intersection)

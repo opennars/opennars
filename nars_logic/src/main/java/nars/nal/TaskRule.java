@@ -541,8 +541,7 @@ public class TaskRule extends ProductN implements Level {
 
 
     public final After after(Term arg1, Term arg2) {
-        int order = getTaskOrder(arg1, arg2);
-        return new After(order == -1);
+        return new After();
     }
 
     public final Concurrent concurrent(Term arg1, Term arg2) {
