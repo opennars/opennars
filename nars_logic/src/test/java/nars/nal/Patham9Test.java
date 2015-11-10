@@ -215,16 +215,21 @@ public class Patham9Test extends AbstractNALTester {
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTester.nars(6, false);
+        return AbstractNALTester.nars(7, false);
     }
 
 
     @Test
-    public void second_level_variable_unification() throws Narsese.NarseseException {
+    public void induction_on_events_with_variable_introduction2() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.believe("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", 1.00f, 0.90f); //en("there is a lock which is opened by all keys");
-        tester.believe("<{key1} --> key>", 1.00f, 0.90f); //en("key1 is a key");
-        tester.mustBelieve(cycles, "(&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>)", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+
+        tester.input("<John --> (/,open,_,door)>. :|:");
+        tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");
+
+        tester.mustBelieve(cycles,
+                "<<$1 --> (/,open,_,door)> =/> <$1 --> (/,enter,_,room)>>",
+                1.00f, 0.45f,
+                10);
         tester.run();
     }
 

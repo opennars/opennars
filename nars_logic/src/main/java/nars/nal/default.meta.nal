@@ -359,24 +359,24 @@
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
     (S --> M), (P --> M), not_equal(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
-                                                                                 ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
-                                                                                 ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
-                                                                                 (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
+                                                             ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
+                                                             ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
+                                                             (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
 
     (S --> M), (P --> M), not_equal(S,P), concurrent(Task,Belief) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
-                                                                             ((S --> $X) =|> (P --> $X)), (Truth:Induction),
-                                                                             ((P --> $X) <|> (S --> $X)), (Truth:Comparison),
-                                                                             (&|,(P --> #Y),(S --> #Y)), (Truth:Intersection)
+                                                                     ((S --> $X) =|> (P --> $X)), (Truth:Induction),
+                                                                     ((P --> $X) <|> (S --> $X)), (Truth:Comparison),
+                                                                     (&|,(P --> #Y),(S --> #Y)), (Truth:Intersection)
 
     (M --> S), (M --> P), not_equal(S,P) |- (($X --> S) ==> ($X --> P)), (Truth:Induction),
                                             (($X --> P) ==> ($X --> S)), (Truth:Abduction),
                                             (($X --> S) <=> ($X --> P)), (Truth:Comparison),
                                             (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
 
-    (M --> S), (M --> P), not_equal(S,P), after((M --> P),(M --> S)) |- (($X --> S) =/> ($X --> P)), (Truth:Induction),
-                                                                        (($X --> P) =\> ($X --> S)), (Truth:Abduction),
-                                                                        (($X --> S) </> ($X --> P)), (Truth:Comparison),
-                                                                        (&/,(#Y --> S),(#Y --> P)), (Truth:Intersection)
+    (M --> S), (M --> P), not_equal(S,P), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
+                                                             (($X --> P) =\> (&/,($X --> S),I)), (Truth:Abduction),
+                                                             ((&/,($X --> S),I) </> ($X --> P)), (Truth:Comparison),
+                                                             (&/,(#Y --> S), I ,(#Y --> P)), (Truth:Intersection)
 
     (M --> S), (M --> P), not_equal(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction),
                                                                              (($X --> P) =|> ($X --> S)), (Truth:Abduction),
