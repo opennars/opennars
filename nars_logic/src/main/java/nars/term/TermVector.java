@@ -79,9 +79,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      * @return the size of the component list
      */
     @Override
-    public final int length() {
-        if (term == null)
-            throw new RuntimeException("null");
+    public int length() {
         return term.length;
     }
 

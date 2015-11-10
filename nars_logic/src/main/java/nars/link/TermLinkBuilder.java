@@ -74,7 +74,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
 
-        for (int i = 0; i < t.term.length; i++) {
+
+        for (int i = 0; i < t.length(); i++) {
             Term ti = t.term[i].normalized();
             if (!growComponent(ti)) {
                 continue;
@@ -99,7 +100,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                 boolean t1Grow = growLevel1(ti);
 
-                for (int j = 0; j < cti.term.length; j++) {
+                for (int j = 0; j < cti.length(); j++) {
                     Term tj = cti.term[j].normalized();
 
                     if (!(tj instanceof Variable)) {
@@ -112,8 +113,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         Term ctj = tj;
 
                         if(ctj instanceof Compound) {
-                            for (int k = 0; k < ((Compound) ctj).term.length; k++) {
-                                final Term tk = ((Compound) ctj).term[k].normalized();
+                            Compound cctj = (Compound) ctj;
+                            for (int k = 0; k < cctj.length(); k++) {
+                                final Term tk = cctj.term[k].normalized();
 
                                 if (!(tk instanceof Variable)) {
                                     components.add(tk);
@@ -128,6 +130,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
         }
     }
+
 
     /** determines whether to grow a 1st-level termlink to a subterm */
     protected static boolean growComponent(Term t) {

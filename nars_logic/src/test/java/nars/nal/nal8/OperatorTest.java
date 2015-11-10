@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 import static org.jgroups.util.Util.assertEquals;
 
 public class OperatorTest {
@@ -113,9 +113,15 @@ public class OperatorTest {
         n.trace();
         n.input("exe(a,b,c)!");
 
-        n.frame(2);
+        n.frame(1);
 
         assertTrue(executed.get());
+
+        assertNotNull("should have conceptualized or linked to ^exe",
+                n.concept("^exe"));
+        assertNull("^exe should not conceptualize or link to atom exe",
+                n.concept("exe"));
+
 
     }
 
