@@ -479,9 +479,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return memory.event.on(o, c);
     }
 
+    public void onExec(String operator, Function<Task<Operation>, List<Task>> f) {
+        onExec(Atom.the(operator), f);
+    }
 
     //TODO use specific names for these types of functons in this class
-    public void onExec(String operator, Function<Task<Operation>, List<Task>> f) {
+    public void onExec(Atom operator, Function<Task<Operation>, List<Task>> f) {
         on(new OperatorReaction(operator) {
             @Override
             public List<Task> apply(Task<Operation> t) {

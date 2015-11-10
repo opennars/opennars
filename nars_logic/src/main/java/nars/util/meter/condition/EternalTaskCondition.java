@@ -12,7 +12,6 @@ import nars.truth.Truth;
 import nars.util.Texts;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
@@ -20,7 +19,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class EternalTaskCondition extends DefaultTask implements Serializable, Predicate<Task>, Consumer<Task> {
+public class EternalTaskCondition extends DefaultTask implements NARCondition, Predicate<Task>, Consumer<Task> {
+
+    protected final NAR nar;
+    boolean succeeded = false;
+    long successTime = Stamp.TIMELESS;
 
     //@Expose
 
@@ -40,7 +43,6 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
     float temporalityCost = 0.75f;*/
 
 
-    private final NAR nar;
     //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     //@Expose
@@ -353,10 +355,6 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 //        return succeeded  +": "  + JSONOutput.stringFromFields(this);
 //    }
 
-    boolean succeeded = false;
-
-    long successTime = Stamp.TIMELESS;
-
     @Override
     public final void accept(Task task) {
         if (!succeeded && test(task)) {
@@ -365,8 +363,24 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
         }
     }
 
+    @Override
     public final long getSuccessTime() {
         return successTime;
+    }
+
+    @Override
+    public long getFinalCycle() {
+        return creationEnd;
+    }
+
+    @Override
+    public void report() {
+        if (valid != null) {
+            valid.forEach(t -> {
+                System.out.println(t.getExplanation()
+                );
+            });
+        }
     }
 
     /** calculates the "cost" of an execution according to certain evaluated condtions
@@ -404,10 +418,12 @@ public class EternalTaskCondition extends DefaultTask implements Serializable, P
 
     }
 
+    @Override
     public final boolean isTrue() {
         return succeeded;
     }
 
+    @Override
     public String toConditionString() {
         return  "  freq in(" + freqMin + "," + freqMax +
                 "), conf in(" + confMin + "," + confMax +

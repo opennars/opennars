@@ -5,10 +5,13 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.Atom;
 import nars.truth.Stamp;
 import nars.util.event.CycleReaction;
 import nars.util.event.Topic;
 import nars.util.meter.condition.EternalTaskCondition;
+import nars.util.meter.condition.ExecutionCondition;
+import nars.util.meter.condition.NARCondition;
 import nars.util.meter.condition.TemporalTaskCondition;
 import nars.util.meter.event.HitMeter;
 
@@ -35,7 +38,7 @@ public class TestNAR  {
 
 
     /** "must" requirement conditions specification */
-    public final List<EternalTaskCondition> requires = new ArrayList();
+    public final List<NARCondition> requires = new ArrayList();
     //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
     final transient private boolean exitOnAllSuccess = true;
@@ -75,18 +78,18 @@ public class TestNAR  {
 
     }
 
-    /** returns the "cost", which can be considered the inverse of a "score".
-     * it is proportional to the effort (ex: # of cycles) expended by
-     * this reasoner in attempts to satisfy success conditions.
-     * If the conditions are not successful, the result will be INFINITE,
-     * though this can be normalized to a finite value in comparing multiple tests
-     * by replacing the INFINITE result with a maximum # of cycles limit,
-     * which will be smaller in cases where the success conditions are
-     * completed prior to the limit.
-     * */
-    public double getCost() {
-        return EternalTaskCondition.cost(requires);
-    }
+//    /** returns the "cost", which can be considered the inverse of a "score".
+//     * it is proportional to the effort (ex: # of cycles) expended by
+//     * this reasoner in attempts to satisfy success conditions.
+//     * If the conditions are not successful, the result will be INFINITE,
+//     * though this can be normalized to a finite value in comparing multiple tests
+//     * by replacing the INFINITE result with a maximum # of cycles limit,
+//     * which will be smaller in cases where the success conditions are
+//     * completed prior to the limit.
+//     * */
+//    public double getCost() {
+//        return EternalTaskCondition.cost(requires);
+//    }
 
 
 
@@ -144,8 +147,7 @@ public class TestNAR  {
 
                 int nr = requires.size();
                 for (int i = 0; i < nr; i++) {
-                    final EternalTaskCondition oc = requires.get(i);
-                    if (!oc.isTrue()) {
+                    if (!requires.get(i).isTrue()) {
                         finished = false;
                         break;
                     }
@@ -332,9 +334,20 @@ public class TestNAR  {
     public TestNAR mustDesire(long withinCycles, String goalTerm, float freq, float conf) {
         return mustOutput(withinCycles, goalTerm, '!', freq, conf);
     }
+
     public TestNAR mustDesire(long withinCycles, String goalTerm, float freq, float conf, long occ) {
         long t = nar.time();
         return mustOutput(t, t + withinCycles, goalTerm, '!', freq, freq, conf, conf, occ);
+    }
+
+
+    public TestNAR mustExecute(long start, long end, String term) {
+        return mustExecute(start, end, term, 0, 1f);
+    }
+
+    public TestNAR mustExecute(long start, long end, String term, float minExpect, float maxExpect) {
+        requires.add(new ExecutionCondition(nar, start, end, Atom.the(term), minExpect, maxExpect));
+        return this;
     }
 
     public TestNAR ask(String termString) throws Narsese.NarseseException {
@@ -370,7 +383,7 @@ public class TestNAR  {
         public final HitMeter[] eventMeters;
         protected Serializable error = null;
         protected Task[] inputs;
-        protected List<EternalTaskCondition> cond = Global.newArrayList(1);
+        protected List<NARCondition> cond = Global.newArrayList(1);
         transient final int stackElements = 4;
 
         public Report(TestNAR n) {
@@ -387,12 +400,12 @@ public class TestNAR  {
             }
         }
 
-        public void add(EternalTaskCondition o) {
+        public void add(NARCondition o) {
             cond.add(o);
         }
 
         public boolean isSuccess() {
-            for (EternalTaskCondition t : cond)
+            for (NARCondition t : cond)
                 if (!t.isTrue())
                     return false;
             return true;
@@ -420,15 +433,17 @@ public class TestNAR  {
         //return run(true);
         return this;
     }
+
     public TestNAR run2() {
         return run(true);
     }
 
     public TestNAR run(boolean testAndPrintReport /* for use with JUnit */) {
         long finalCycle = 0;
-        for (EternalTaskCondition oc : requires) {
-            if (oc.creationEnd > finalCycle)
-                finalCycle = oc.creationEnd +1;
+        for (NARCondition oc : requires) {
+            long oce = oc.getFinalCycle();
+            if (oce > finalCycle)
+                finalCycle = oce + 1;
         }
 
         if (collectTrace)
@@ -476,11 +491,7 @@ public class TestNAR  {
         //explain all validated conditions
         if (requires!=null) {
             requires.forEach(c -> {
-                if (c.valid != null)
-                    c.valid.forEach(t -> {
-                        System.out.println(t.getExplanation()
-                    );
-                });
+                c.report();
             });
         }
 

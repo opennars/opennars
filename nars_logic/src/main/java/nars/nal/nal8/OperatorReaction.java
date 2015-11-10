@@ -66,7 +66,11 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
     }
 
     public OperatorReaction(String operatorName) {
-        this.operatorTerm = Atom.the(operatorName);
+        this(Atom.the(operatorName));
+    }
+
+    public OperatorReaction(Atom operatorTerm) {
+        this.operatorTerm = operatorTerm;
     }
 
     public boolean setEnabled(NAR n, boolean enabled) {
