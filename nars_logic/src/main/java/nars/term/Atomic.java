@@ -188,6 +188,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         return false;
     }
 
+
     @Override
     public abstract int varIndep();
 

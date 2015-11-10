@@ -56,7 +56,7 @@ public class TermLinkTest {
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
         assertEquals(
-                "[[<x --> y>, y, x], [(<x-->y>,y), (<x-->y>,x), (x,<x-->y>), (y,<x-->y>)]]",
+                "[[x, <x --> y>, y], [(x,<x-->y>), (y,<x-->y>), (<x-->y>,x), (<x-->y>,y)]]",
                 g.toString());
     }
 
@@ -64,7 +64,7 @@ public class TermLinkTest {
     public void testConjunctionTermLinks() {
 
         Bag<TermLinkKey, TermLink> cj0 = getTermLinks("(&&,a,b)", false);
-        assertEquals("[b, a]", cj0.keySet().toString());
+        assertEquals("[a, b]", cj0.keySet().toString());
 
         assertEquals(2, cj0.size());
 

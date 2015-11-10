@@ -501,8 +501,8 @@ public class NarseseTest {
     public void testOperatorTerm() {
         Operator o = term("^op");
         assertNotNull(o);
-        assertEquals("op", o.the().toString());
-        assertEquals(Atom.class, o.the().getClass());
+        assertEquals("op", o.identifier().toString());
+        assertEquals(Atom.class, o.identifier().getClass());
     }
 
     @Test

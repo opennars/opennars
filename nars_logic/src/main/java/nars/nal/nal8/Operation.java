@@ -89,7 +89,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
      * gets the term wrapped by the Operator predicate
      */
     public final Term getOperatorTerm() {
-        return getOperator().the();
+        return getOperator().identifier();
     }
     public final Operator getOperator() {
         return getPredicate();
