@@ -77,14 +77,14 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
         Task pt = task.getParentTask();
         Task pb = task.getParentBelief();
-        if (pb != null) {
-            if (pt != null && pb.equals(pt)) {
-
-            } else {
-                sb.append(" parentBelief=");
-                task.getParentBelief().appendTo(sb);
-            }
-        }
+//        if (pb != null) {
+//            if (pt != null && pb.equals(pt)) {
+//
+//            } else {
+//                sb.append(" parentBelief=");
+//                task.getParentBelief().appendTo(sb);
+//            }
+//        }
         sb.append('\n');
 
         if (pt != null) {
