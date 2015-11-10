@@ -181,14 +181,15 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * inputs a task, only if the parsed text is valid; returns null if invalid
      */
     public Task inputTask(final String taskText) {
-        try {
+        //try {
             Task t = task(taskText);
             t.setCreationTime(time());
-            input(t);
-            return t;
-        } catch (Exception e) {
+            if (input(t))
+                return t;
             return null;
-        }
+        /*} catch (Exception e) {
+            return null;
+        }*/
     }
 
     /**

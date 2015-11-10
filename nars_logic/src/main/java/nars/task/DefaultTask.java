@@ -13,6 +13,7 @@ import nars.budget.BudgetFunctions;
 import nars.budget.Item;
 import nars.concept.Concept;
 import nars.nal.nal7.Interval;
+import nars.nal.nal7.Sequence;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermMetadata;
@@ -333,10 +334,20 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
 
 
-        Compound sentenceTerm = getTerm();
-        if (sentenceTerm == null)
+        Compound t = getTerm();
+        if (t == null)
             return false;
 
+
+        if (t instanceof Sequence)  {
+            long[] offset = new long[1];
+            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
+            if ((st == null) || (Sentence.invalidSentenceTerm(st)))
+                return false; //it reduced to an invalid sentence term so return null
+            this.term = (T)st;
+            if (!isEternal())
+                occurrenceTime -= offset[0];
+        }
 
         updateEvidence();
 

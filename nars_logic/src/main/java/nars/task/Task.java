@@ -26,7 +26,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.term.Compound;
@@ -167,10 +166,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
         x = x.normalized();
 
-        //HACK maybe this should be done elsewhere
-        if (x instanceof Sequence) {
-            x = ((Sequence)x).cloneRemovingSuffixInterval();
-        }
 
         if (Sentence.invalidSentenceTerm(x)) {
             return null;

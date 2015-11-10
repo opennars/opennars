@@ -4,9 +4,11 @@ import nars.NAR;
 import nars.Op;
 import nars.nar.Default;
 import nars.nar.Terminal;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Stamp;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -19,6 +21,21 @@ public class SequenceParallelTest {
 
     static final Terminal t = new Terminal(); //DURATION=5 by default
     static final int DURATION = t.memory.duration();
+
+    @Test public void testSequenceTaskNormalization() {
+        Terminal t = new Terminal();
+
+        Task x = t.inputTask("(&/, <a-->b>, /10). :|:");
+        assertEquals(t.term("<a-->b>"), x.getTerm());
+        assertEquals(-10, x.getOccurrenceTime());
+
+        Task y = t.inputTask("(&/, <a-->b>, /10).");
+        assertEquals(t.term("<a-->b>"), y.getTerm());
+        assertEquals(Stamp.ETERNAL, y.getOccurrenceTime());
+
+        Task z = t.inputTask("(&/, a, /10). :|:");
+        assertNull(z);
+    }
 
     @Test public void testSequenceReduction1() {
         assertEqualTerms("(&/, x, /0)", "x" );
@@ -252,11 +269,11 @@ public class SequenceParallelTest {
     @Test public void testTrailingSequenceIntervalRemovedIfTaskTerm() {
         //trailing suffix removed as the top-level term
         assertEquals("$0.50;0.80;0.95$ <a --> b>. :0: %1.00;0.90%",
-              t.task("(&/, <a --> b>, /1).").toString());
+              t.inputTask("(&/, <a --> b>, /1).").toString());
     }
     @Test public void testInvalidSequenceAsTask() {
         //the suffix will remove, x will fall through, and not be valid task term
-        assertNull(t.task("(&/, x, /1)."));
+        assertNull(t.inputTask("(&/, x, /1)."));
     }
 
 

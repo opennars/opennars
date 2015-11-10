@@ -144,7 +144,7 @@ public class NarseseExtendedTest {
         Narsese p = Narsese.the();
         Term a = p.term("{ a:x, b:{x,y} }");
         assertNotNull(a);
-        assertEquals("{<{x, y} --> b>, <x --> a>}", a.toString());
+        assertEquals(p.term("{<{x, y} --> b>, <x --> a>}"), a);
 
     }
 

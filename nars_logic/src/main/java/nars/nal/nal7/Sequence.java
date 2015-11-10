@@ -336,13 +336,14 @@ public class Sequence extends Conjunctive implements Intermval {
 
 
 
-    public Term cloneRemovingSuffixInterval() {
+    public Term cloneRemovingSuffixInterval(long[] offsetAdjustment) {
         final int s = length();
         int[] ii = intervals();
 
         if (ii[s]!=0) {
             //dont disturb the original copy
             ii = Arrays.copyOf(intervals(), s + 1);
+            offsetAdjustment[0] = ii[s];
             ii[s] = 0;
         }
 
