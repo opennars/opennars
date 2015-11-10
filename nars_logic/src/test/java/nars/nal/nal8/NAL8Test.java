@@ -220,7 +220,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(^open,{t001})=/><{t001} --> [opened]>>. :|: ");
         tester.inputAt(10, "(^open,{t001}). :|:");
 
-        tester.mustBelieve(cycles, "<{t001} --> [opened]>", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<{t001} --> [opened]>", 1.0f, 0.81f, 15); // :|:
         tester.run();
     }
 
