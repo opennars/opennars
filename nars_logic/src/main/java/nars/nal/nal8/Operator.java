@@ -25,10 +25,6 @@ public class Operator<T extends Term> extends Compound1<T> {
         return Op.OPERATOR;
     }
 
-    @Override
-    public final int length() {
-        return 0; //hide the subterm
-    }
 
     @Override public final boolean isCommutative() {
         return false;
