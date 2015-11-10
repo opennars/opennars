@@ -130,12 +130,13 @@ public class LocalRules {
 
         Truth newBeliefTruth = newBelief.getTruth();
 
-        ProjectedTruth oldBeliefTruth = oldBelief.projection(newBelief.getOccurrenceTime(), oldBelief.getOccurrenceTime());
+        ProjectedTruth oldBeliefTruth = oldBelief.projection(newBelief.getOccurrenceTime(), nal.time());
 
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
 
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
+        long target_time = oldBeliefTruth.getTargetTime();
 
         //Task<T> revised = nal.input(
         return nal.newTask(newBelief.getTerm())
@@ -144,7 +145,7 @@ public class LocalRules {
                 .budget(budget)
                 .parent(newBelief, oldBelief)
                 .reason("Revision")
-                .time( now,  oldBeliefTruth.getTargetTime() )
+                .time( now,  target_time )
                 .normalized();
     }
 
