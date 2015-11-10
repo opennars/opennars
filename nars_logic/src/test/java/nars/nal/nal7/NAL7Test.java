@@ -239,16 +239,6 @@ public class NAL7Test extends AbstractNALTester {
         tester.run();
     }
 
-    //TODO Debug through to make sure this is doing the right thing, it looks correct, since the projection of the old
-    //event to the new occurence time will have it having less influence on the revision than the new event of frequency 0
-    //so the result should be more near frequency 0 than near frequency 1, which it is
-    //however if the old event is projected, than the resuling belief should have the new occurence time.
-    //where does the occurence time go?
-
-    //another way to come to the result is at first eternalizing both tasks, and then doing revision.
-    //the result here should be a belief of confidence >0.9, and with frequency 0.5
-
-    //i think we should for now do both, I will add a second testcase
     @Test
     public void updating_and_revision() throws Narsese.NarseseException {
         TestNAR tester = test();
