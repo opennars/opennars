@@ -189,7 +189,7 @@ public class NAL7Test extends AbstractNALTester {
                 //"<(&/,<$1 --> (/,open,_,door)>) </> <$1 --> (/,enter,_,room)>>",
                 " <(&/, <$1 --> (/, open, _, door)>, /5) </> <$1 --> (/, enter, _, room)>>",
                 1.00f, 0.45f,
-                0
+                delay
         );
         tester.run();
     }
