@@ -133,7 +133,23 @@ public class Sequence extends Conjunctive implements Intermval {
 //            return null;
 //        }
 
-        return makeSequence(t);
+
+        //HACK this reconstructs a dummy sequence of terms to send through makeSequence,
+        // avoiding a cyclical normalization process necessary in order to avoid reduction
+        //TODO do this without constructing such an array but just copying the int[] interval array to the result
+
+        List<Term> c = Global.newArrayList(t.length);
+        int j = 0;
+        for (Term x : t) {
+            c.add(x);
+            int d = intervals[j++];
+            if (d > 0)
+                c.add(CyclesInterval.make(d));
+        }
+        if (intervals[j]>0)
+            c.add(CyclesInterval.make(intervals[j])); //final suffix interval
+
+        return makeSequence(c.toArray(new Term[c.size()]));
     }
 
     @Override
@@ -147,6 +163,9 @@ public class Sequence extends Conjunctive implements Intermval {
     }
 
 
+    public static Term makeSequence(final Term[] a) {
+        return makeSequence(a, true);
+    }
 
     /**
      * the input Terms here is "unnormalized" meaning it may contain
@@ -159,13 +178,13 @@ public class Sequence extends Conjunctive implements Intermval {
      * @param a
      * @return
      */
-    public static Term makeSequence(final Term[] a) {
+    public static Term makeSequence(final Term[] a, boolean allowReduction) {
 
         //count how many intervals so we know how to resize the final arrays
         final int intervalsPresent = Interval.intervalCount(a);
 
         if (intervalsPresent == 0) {
-            if (a.length == 1) return a[0]; //TODO combine this with singleton condition at end of this method
+            if (allowReduction && (a.length == 1)) return a[0]; //TODO combine this with singleton condition at end of this method
             return new Sequence(a, null);
         }
 

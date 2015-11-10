@@ -206,7 +206,6 @@ public class NAL7Test extends AbstractNALTester {
     @Test
     public void induction_on_events_with_variable_introduction3() throws Narsese.NarseseException {
         TestNAR tester = test();
-        
 
         tester.input("<John --> (/,open,_,door)>. :|:");
         tester.inputAt(10, "<John --> (/,enter,_,room)>. :|:");

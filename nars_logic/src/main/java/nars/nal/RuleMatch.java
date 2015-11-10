@@ -187,7 +187,7 @@ public class RuleMatch extends FindSubst {
             derivedTerm = rederivedTerm;
         }
 
-//the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
+        //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
         derivedTerm = derivedTerm.normalized();
 
         if (!(derivedTerm instanceof Compound))

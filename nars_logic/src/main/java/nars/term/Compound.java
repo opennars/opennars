@@ -105,10 +105,9 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
                 throw new RuntimeException("null subterm");*/
 
             //first to trigger subterm update if necessary
-            contentHash =
-                    (contentHash << 4)
-                    //(Util.PRIME2 * contentHash)
-                    + (t.rehashCode() + p);
+            contentHash = (contentHash << 4)
+                            //(Util.PRIME2 * contentHash)
+                            + (t.rehashCode() + p);
 
             compl += t.complexity();
             vol += t.volume();
