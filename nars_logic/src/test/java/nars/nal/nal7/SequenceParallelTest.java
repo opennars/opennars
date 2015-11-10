@@ -308,4 +308,14 @@ public class SequenceParallelTest {
 
     }
 
+    @Test public void testDoesntLoseInfo() {
+        NAR nar = new Default();
+        Term t = nar.term("<(&/, <$1 --> (/, open, _, door)>, /5) =/> <$1 --> (/, enter, _, room)>>");
+        Term t2 = t.normalized();
+        String s1 = t.toString();
+        String s2 = t2.toString();
+        assert s1.contains("/5");
+        assertEquals(s1,s2);
+    }
+
 }
