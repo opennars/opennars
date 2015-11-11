@@ -8,8 +8,6 @@ import nars.term.Variable;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.util.Arrays.copyOf;
-
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
 public class Substitution implements Function<Compound,Term> {
 
@@ -121,17 +119,16 @@ public class Substitution implements Function<Compound,Term> {
         if (impossible(c))
             return c;
 
-        final Term[] before = c.term;
 
         /** subterms */
-        Term[] sub = before;
+        Term[] sub = null;
 
-        final int len = before.length;
+        final int len = c.length();
 
 
         for (int i = 0; i < len; i++) {
             //t holds the
-            final Term t = sub[i];
+            final Term t = c.term(i);
 
 
             // s holds a replacement substitution for t (i-th subterm of c)
@@ -159,7 +156,7 @@ public class Substitution implements Function<Compound,Term> {
             if (s!=null) {
 
                 //ensure using a modified result Term[]
-                if (sub == before) sub = copyOf(before, len);
+                if (sub == null) sub = c.newSubtermArray();
 
                 //replace the value at the current index
                 sub[i] = s; //s.clone();
@@ -167,11 +164,10 @@ public class Substitution implements Function<Compound,Term> {
             }
         }
 
-        if (sub == before) {
+        if (sub == null) {
             //a new Term[] was not created, meaning nothing changed. return the input term
             return c;
         }
-
 
         return c.clone(sub);
     }

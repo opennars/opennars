@@ -39,7 +39,9 @@ public class NoCommonSubterm extends PreCondition2 {
                 //only on the first time it has been added:
                 if (x instanceof Compound) {
                     Compound c = (Compound) x;
-                    for (Term d : c.term) {
+                    int l = c.length();
+                    for (int i = 0; i < l; i++) {
+                        Term d = c.term(i);
                         boolean ret = addSubtermsRecursivelyUntilFirstMatch(d, AX, BX);
                         if (!ret) { //by this we can stop early
                             return false;

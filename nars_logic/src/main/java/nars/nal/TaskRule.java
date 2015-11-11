@@ -272,15 +272,6 @@ public class TaskRule extends ProductN implements Level {
         preConditionsList.add(matcher);
 
 
-        if (getResult().has(Op.SEQUENCE) || getResult().has(Op.PARALLEL)
-            //TODO what about temporal impl/equiv also
-                ) {
-            //if the result to be formed is a Sequence or Parallel
-            //then the input must be events/non-eternal
-            prePreConditionsList.add(IsEvent.the);
-        }
-
-
         //additional modifiers: either preConditionsList or beforeConcs, classify them here
         for (int i = 2; i < precon.length; i++) {
 //            if (!(precon[i] instanceof Inheritance)) {

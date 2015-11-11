@@ -200,7 +200,7 @@ public class NarseseTest {
         assertEquals(Op.CONJUNCTION, c.op());
         assertEquals(2, c.length());
         assertEquals(5, c.complexity());
-        assertEquals(Op.INHERITANCE, c.term[1].op());
+        assertEquals(Op.INHERITANCE, c.term(1).op());
     }
 
 
@@ -311,17 +311,17 @@ public class NarseseTest {
         Compound xInt = term("[x]");
         assertEquals(Op.SET_INT_OPENER, xInt.op());
         assertEquals(1, xInt.length());
-        assertEquals("x", xInt.term[0].toString());
+        assertEquals("x", xInt.term(0).toString());
 
         Compound xExt = term("{x}");
         assertEquals(Op.SET_EXT_OPENER, xExt.op());
         assertEquals(1, xExt.length());
-        assertEquals("x", xExt.term[0].toString());
+        assertEquals("x", xExt.term(0).toString());
 
         Compound abInt = term("[a,b]");
         assertEquals(2, abInt.length());
-        assertEquals("a", abInt.term[0].toString());
-        assertEquals("b", abInt.term[1].toString());
+        assertEquals("a", abInt.term(0).toString());
+        assertEquals("b", abInt.term(1).toString());
 
         assertEquals(abInt, term("[ a,b]"));
         assertEquals(abInt, term("[a,b ]"));

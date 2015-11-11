@@ -1,7 +1,7 @@
 package nars.nal.nal4;
 
 import nars.Op;
-import nars.term.Compound;
+import nars.term.DefaultCompound;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by me on 5/20/15.
  */
-public class ProductN<T extends Term> extends Compound<T> implements Product<T> {
+public class ProductN<T extends Term> extends DefaultCompound<T> implements Product<T> {
 
 
     /**

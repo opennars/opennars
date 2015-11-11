@@ -26,7 +26,7 @@ public class Concurrent extends PreCondition {
     public final boolean test(RuleMatch m) {
         final Premise premise = m.premise;
 
-        if (!premise.isTaskAndBeliefEvent())
+        if (!premise.isTaskAndBeliefEvent()) //TODO check in preCond
             return false;
 
         final Task task = premise.getTask();

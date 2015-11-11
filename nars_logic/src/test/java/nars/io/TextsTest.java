@@ -1,20 +1,10 @@
 package nars.io;
 
-import nars.NAR;
-import nars.Narsese;
-import nars.Symbols;
-import nars.nar.Default;
-import nars.term.Compound;
-import nars.term.Statement;
-import nars.term.Term;
 import nars.util.Texts;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;
-import nars.util.data.rope.impl.PrePostCharRope;
 import org.junit.Test;
 
-import static java.lang.String.valueOf;
-import static nars.Symbols.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,59 +28,59 @@ public class TextsTest {
     }
 
     
-    public static CharSequence toString(Term term) {
-        if (term instanceof Statement) {
-            Statement s = (Statement)term;
-            /*
-            Rope r = cat(
-                valueOf(STATEMENT_OPENER.ch),
-                toString(s.getSubject()),
-                valueOf(' '),
-                s.operate().toString(),
-                valueOf(' '),
-                toString(s.getPredicate()),
-                valueOf(STATEMENT_CLOSER.ch));
-            */
-            
-            return new PrePostCharRope(STATEMENT_OPENER, STATEMENT_CLOSER, Rope.cat(
-                toString(s.getSubject()),
-                valueOf(' '),
-                s.op().toString(),
-                valueOf(' '),
-                toString(s.getPredicate())
-            ));
-        }
-        else if (term instanceof Compound) {
-            Compound ct = (Compound)term;
-            
-            Rope[] tt = new Rope[ct.term.length];
-            int i = 0;
-            for (final Term t : ct.term) {
-                tt[i++] = Rope.cat(String.valueOf(Symbols.ARGUMENT_SEPARATOR), toString(t));
-            }
-            
-            Rope ttt = Rope.cat(tt);
-            return Rope.cat(String.valueOf(COMPOUND_TERM_OPENER), ct.op().toString(), ttt, String.valueOf(COMPOUND_TERM_CLOSER));
-
-        }
-        else
-            return term.toString();
-    }
-    
-    @Test
-    public void testRope() throws Narsese.NarseseException {
-        NAR n = new Default();
-
-        String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-        Term term1 = n.term(term1String);
-
-        Rope tr = (Rope)toString(term1);
-        
-        //visualize(tr, System.out);
-        
-        //Sentence s = new Sentence(term1, '.', new DefaultTruth(1,1), new Stamper(n.memory, Tense.Eternal));
-        
-    }
+//    public static CharSequence toString(Term term) {
+//        if (term instanceof Statement) {
+//            Statement s = (Statement)term;
+//            /*
+//            Rope r = cat(
+//                valueOf(STATEMENT_OPENER.ch),
+//                toString(s.getSubject()),
+//                valueOf(' '),
+//                s.operate().toString(),
+//                valueOf(' '),
+//                toString(s.getPredicate()),
+//                valueOf(STATEMENT_CLOSER.ch));
+//            */
+//
+//            return new PrePostCharRope(STATEMENT_OPENER, STATEMENT_CLOSER, Rope.cat(
+//                toString(s.getSubject()),
+//                valueOf(' '),
+//                s.op().toString(),
+//                valueOf(' '),
+//                toString(s.getPredicate())
+//            ));
+//        }
+//        else if (term instanceof Compound) {
+//            Compound ct = (Compound)term;
+//
+//            Rope[] tt = new Rope[ct.length()];
+//            int i = 0;
+//            for (final Term t : ct.term) {
+//                tt[i++] = Rope.cat(String.valueOf(Symbols.ARGUMENT_SEPARATOR), toString(t));
+//            }
+//
+//            Rope ttt = Rope.cat(tt);
+//            return Rope.cat(String.valueOf(COMPOUND_TERM_OPENER), ct.op().toString(), ttt, String.valueOf(COMPOUND_TERM_CLOSER));
+//
+//        }
+//        else
+//            return term.toString();
+//    }
+//
+//    @Test
+//    public void testRope() throws Narsese.NarseseException {
+//        NAR n = new Default();
+//
+//        String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
+//        Term term1 = n.term(term1String);
+//
+//        Rope tr = (Rope)toString(term1);
+//
+//        //visualize(tr, System.out);
+//
+//        //Sentence s = new Sentence(term1, '.', new DefaultTruth(1,1), new Stamper(n.memory, Tense.Eternal));
+//
+//    }
     
     @Test
     public void testRopeStringEqual() {

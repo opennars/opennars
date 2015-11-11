@@ -3,6 +3,7 @@ package nars.nal.nal4;
 import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
 import nars.Symbols;
 import nars.term.Compound;
+import nars.term.DefaultCompound;
 import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
@@ -15,7 +16,7 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image extends Compound {
+abstract public class Image extends DefaultCompound {
 
     /**
      * The index of relation in the component list
@@ -30,14 +31,38 @@ abstract public class Image extends Compound {
         init(components);
     }
 
-    /**
-     * apply the relation index as the additional structure code to differnetiate
-     * images with different relations
-     */
     @Override
-    public final int structure2() {
-        return relationIndex+1;
+    protected int getHashSeed() {
+        return super.getHashSeed() ^ relationIndex;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (super.equals(o)) {
+            return ((Image)o).relationIndex == relationIndex;
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == this) return 0;
+        int d = super.compareTo(o);
+        if (d == 0) {
+            return Integer.compare(((Image)o).relationIndex, relationIndex);
+        }
+        return d;
+    }
+
+    //    /**
+//     * apply the relation index as the additional structure code to differnetiate
+//     * images with different relations
+//     */
+//    @Override
+//    public final int structure2() {
+//        return relationIndex+1;
+//    }
 
     @Override public final boolean isCommutative() {
         return false;
@@ -186,22 +211,23 @@ abstract public class Image extends Compound {
      * @param argList The list of term
      */
     public static Term make(Term[] argList, ObjectIntToObjectFunction<Term[], Term> build) {
-        if (argList.length < 2) {
+        int alen = argList.length;
+        if (alen < 2) {
             return argList[0];
         }
 
         //Term relation = argList[0];
 
-        Term[] argument = new Term[argList.length-1];
+        Term[] argument = new Term[alen -1];
         int index = 0, n = 0;
-        for (int j = 0; j < argList.length; j++) {
+        for (int j = 0; j < alen; j++) {
             if (isPlaceHolder(argList[j])) {
                 index = j;
             } else {
                 argument[n++] =  argList[j];
             }
         }
-        if (n!=argument.length)
+        if (n!=alen - 1)
             throw new RuntimeException("image must contain 1 relation");
 
         return build.valueOf(argument, index);

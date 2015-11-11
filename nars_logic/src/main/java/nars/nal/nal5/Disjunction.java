@@ -22,7 +22,6 @@ package nars.nal.nal5;
 
 import nars.Global;
 import nars.Op;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
 
@@ -70,12 +69,12 @@ public class Disjunction extends Junction {
     public static Term make(Term term1, Term term2) {
 
         if (term1 instanceof Disjunction) {
-            Compound ct1 = ((Compound) term1);
+            Disjunction ct1 = ((Disjunction) term1);
             List<Term> l = Global.newArrayList(ct1.length());
-            Collections.addAll(l, ((Compound)term1).term);
+            Collections.addAll(l, ct1.term);
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                Collections.addAll(l, ((Compound)term2).term);
+                Collections.addAll(l, ((Disjunction)term2).term);
             }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -83,7 +82,7 @@ public class Disjunction extends Junction {
             }
             return make(l);
         } else if (term2 instanceof Disjunction) {
-            Compound ct2 = ((Compound) term2);
+            Disjunction ct2 = ((Disjunction) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             List<Term> l = Global.newArrayList(ct2.length());
             Collections.addAll(l, ct2.term);

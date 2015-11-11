@@ -27,8 +27,8 @@ public class After extends PreCondition {
     public boolean test(RuleMatch m) {
         final Premise premise = m.premise;
 
-//        if (!premise.isTaskAndBeliefEvent()) //checked in preCond
-//            return false;
+        if (!premise.isTaskAndBeliefEvent()) //TODO check in preCond
+            return false;
 
         final Task task = premise.getTask();
         final Task belief = premise.getBelief();

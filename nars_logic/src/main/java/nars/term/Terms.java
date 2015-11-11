@@ -69,14 +69,15 @@ public class Terms {
             }
         }
 
-        Term[] A = ((Compound) a).term;
-        Term[] B = ((Compound) b).term;
-        if (A.length != B.length)
+        Compound A = ((Compound) a);
+        Compound B = ((Compound) b);
+        int aLen = A.length();
+        if (aLen != B.length())
             return false;
 
         //match all subterms
-        for (int i = 0; i < A.length; i++) {
-            if (!equalSubTermsInRespectToImageAndProduct(A[i], B[i]))
+        for (int i = 0; i < aLen; i++) {
+            if (!equalSubTermsInRespectToImageAndProduct(A.term(i), B.term(i)))
                 return false;
 
 //            Term x = A[i];
@@ -305,8 +306,6 @@ public class Terms {
         if (ta==null)
             return false;
 
-        Term[] sat = ((Compound)sa).term;
-        Term[] sbt = ((Compound)sb).term;
 
         //original code did not check relation index equality
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/language/CompoundTerm.java
@@ -318,7 +317,7 @@ public class Terms {
             }
         }
 
-        return containsAll(sat, ta, sbt, tb);
+        return containsAll((Compound)sa, ta, (Compound)sb, tb);
 
         /*
         for(Term sA : componentsA) {
@@ -340,18 +339,21 @@ public class Terms {
         */
     }
 
-    private static boolean containsAll(Term[] sat, Term ta, Term[] sbt, Term tb) {
+    private static boolean containsAll(Compound sat, Term ta, Compound sbt, Term tb) {
         //temporary set for fast containment check
-        Set<Term> componentsA = Global.newHashSet(sat.length + 1);
+        Set<Term> componentsA = Global.newHashSet(sat.length() + 1);
         componentsA.add(ta);
-        Collections.addAll(componentsA, sat);
+        sat.addAllTo(componentsA);
 
         //test A contains B
         if (!componentsA.contains(tb))
             return false;
-        for (Term bComponent : sbt)
+        int l = sbt.length();
+        for (int i = 0; i < l; i++) {
+            Term bComponent = sbt.term(i);
             if (!componentsA.contains(bComponent))
                 return false;
+        }
 
         return true;
     }
@@ -831,7 +833,7 @@ public class Terms {
      *
      * @return a potentially incomplete map representation of this compound
      */
-    public static Map<Term,Term> toKeyValueMap(Subterms<?> t) {
+    public static Map<Term,Term> toKeyValueMap(Compound<?> t) {
 
         Map<Term,Term> result = Global.newHashMap();
 

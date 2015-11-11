@@ -47,12 +47,11 @@ public class reflect extends TermFunction {
     public static Term sop(Statement s, Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
     }
-    public static Term sop(String operatorName, Term... t) {
-        Term[] m = new Term[t.length];
-        int i = 0;
-        for (Term x : t)
-            m[i++] = getMetaTerm(x);
-        
+    public static Term sop(String operatorName, Compound c) {
+        Term[] m = new Term[c.length()];
+        for (int i = 0; i < c.length(); i++)
+            m[i] = getMetaTerm(c.term(i));
+
         return Inheritance.make(Product.make(m), Atom.quote(operatorName));
     }
     
@@ -64,7 +63,7 @@ public class reflect extends TermFunction {
         switch (t.op()) {
             case INHERITANCE: return sop((Inheritance)t, "inheritance");
             case SIMILARITY:  return sop((Similarity)t, "similarity");
-            default: return sop(t.op().toString(), t.term);
+            default: return sop(t.op().toString(), t);
         }
         
     }

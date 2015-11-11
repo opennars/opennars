@@ -219,12 +219,12 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         return y;
     }
 
-    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
+    public <T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
         final Term[] y = new Term[length()];
         int i = 0;
         for (Term x : this.term) {
             if (trans.test(x)) {
-                x = trans.apply((I) this, (T) x, level);
+                x = trans.apply( (Compound<T>)this, (T) x, level);
             } else if (x instanceof Compound) {
                 //recurse
                 Compound cx = (Compound) x;

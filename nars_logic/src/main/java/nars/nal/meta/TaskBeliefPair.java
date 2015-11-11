@@ -45,7 +45,7 @@ public class TaskBeliefPair extends ProductN {
     }
 
     @Override
-    protected final int getStructureBase() {
+    protected final int getHashSeed() {
         return 0;
     }
 

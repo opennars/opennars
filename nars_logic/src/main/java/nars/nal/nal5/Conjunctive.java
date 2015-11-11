@@ -10,7 +10,6 @@ import nars.term.Terms;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -131,10 +130,10 @@ public abstract class Conjunctive extends Junction<Term> {
             if (term1 instanceof Conjunction) {
                 Compound ct1 = ((Compound) term1);
                 final List<Term> set = Global.newArrayList(ct1.length() + 1);
-                Collections.addAll(set, ct1.term);
+                ct1.addAllTo(set);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                    Collections.addAll(set, ((Compound) term2).term);
+                    ((Compound)term2).addAllTo(set);
                 } else {
                     // (&,(&,P,Q),R) = (&,P,Q,R)
                     set.add(term2);
@@ -143,7 +142,7 @@ public abstract class Conjunctive extends Junction<Term> {
             } else if (term2 instanceof Conjunction) {
                 Compound ct2 = ((Compound) term2);
                 final List<Term> set = Global.newArrayList(ct2.length() + 1);
-                Collections.addAll(set, ct2.term);
+                ct2.addAllTo(set);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
                 return make(set, temporalOrder);
             } else {

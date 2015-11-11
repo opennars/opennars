@@ -260,12 +260,12 @@ public class FindSubst {
 
         if ((xLen > 1) && (!X.isCommutative())) {
             //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-            return match(X.term, Y.term, power);
+            return matchSubs(X, Y, power);
         }
         else {
             switch (xLen) {
                 case 0: return power-1;
-                case 1: return match(X.term[0], Y.term[0], power);
+                case 1: return match(X.term(0), Y.term(0), power);
 
                 //case 2:  return permute2(X, Y, power);
                 //case 3:  return permute3(Y, X, power);
@@ -353,10 +353,8 @@ public class FindSubst {
      *  which requires allocating a temporary array for shuffling */
     int permute(final ShuffledPermutations perm, final Compound X, final Compound Y, int power) {
 
-        final Term[] xTerms = X.term;
-        final Term[] yTerms = Y.term;
 
-        final int len = xTerms.length;
+        final int len = X.length();
 
         int subPower = power / len;
         if (subPower < 1) return -power;
@@ -382,7 +380,7 @@ public class FindSubst {
             for (int i = 0; (i < len) && (power > 0); i++) {
                 int s = perm.get(i);
 
-                int sp = match(xTerms[s], yTerms[i], subPower);
+                int sp = match(X.term(s), Y.term(i), subPower);
 
                 power -= subPower - Math.abs(sp);
 
@@ -447,9 +445,9 @@ public class FindSubst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected int match(final Term[] xSubterms, final Term[] ySubterms, int power) {
+    final protected int matchSubs(final Compound xSubterms, final Compound ySubterms, int power) {
 
-        final int yLen = ySubterms.length;
+        final int yLen = ySubterms.length();
 
         //distribute recursion equally among subterms, though should probably be in proportion to their volumes
         final int subPower = power / yLen;
@@ -457,7 +455,7 @@ public class FindSubst {
 
         for (int i = 0; i < yLen; i++) {
             int s = subPower;
-            if ((s = match(xSubterms[i], ySubterms[i], s)) < 0) {
+            if ((s = match(xSubterms.term(i), ySubterms.term(i), s)) < 0) {
                 return s; //fail
             }
             power -= (subPower - Math.max(s, 0));

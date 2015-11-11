@@ -233,11 +233,11 @@ public class Sequence extends Conjunctive implements Intermval {
             Compound cterm1 = (Compound) term1;
 
             List<Term> list = Global.newArrayList(cterm1.length());
-            cterm1.addTermsTo(list);
+            cterm1.addAllTo(list);
 
             if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
                 // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
-                ((Compound) term2).addTermsTo(list);
+                ((Compound) term2).addAllTo(list);
             } else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
                 list.add(term2);
@@ -246,7 +246,7 @@ public class Sequence extends Conjunctive implements Intermval {
             components = list.toArray(new Term[list.size()]);
 
         } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
-            Compound cterm2 = (Compound) term2;
+            Conjunction cterm2 = (Conjunction) term2;
             components = new Term[term2.length() + 1];
             components[0] = term1;
             arraycopy(cterm2.term, 0, components, 1, cterm2.length());
@@ -268,7 +268,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
         appendOperator(p);
 
-        appendSeparator(p, pretty);
+        Compound.appendSeparator(p, pretty);
 
         int nterms = term.length;
 
@@ -287,7 +287,7 @@ public class Sequence extends Conjunctive implements Intermval {
             if (c != 0) {
 
                 if (i == nterms)
-                    appendSeparator(p, pretty);
+                    Compound.appendSeparator(p, pretty);
 
                 //insert Interval virtual term
                 appendInterval(p, c);
@@ -295,7 +295,7 @@ public class Sequence extends Conjunctive implements Intermval {
                 if (i == nterms)
                     break;
                 else
-                    appendSeparator(p, pretty);
+                    Compound.appendSeparator(p, pretty);
 
             }
 
@@ -304,7 +304,7 @@ public class Sequence extends Conjunctive implements Intermval {
             }
 
             if (i < nterms-1) {
-                appendSeparator(p, pretty);
+                Compound.appendSeparator(p, pretty);
             }
 
         }

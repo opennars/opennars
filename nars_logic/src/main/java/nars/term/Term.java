@@ -168,9 +168,9 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 //    }
 
 
-    /** self+subterm types bitvector */
-    @Override
-    int structure();
+//    /** self+subterm types bitvector */
+//    @Override
+//    int structure();
 
 
     void append(Appendable w, boolean pretty) throws IOException;

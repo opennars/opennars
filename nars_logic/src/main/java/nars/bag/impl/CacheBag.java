@@ -8,12 +8,11 @@ import nars.term.Term;
 import nars.util.data.Util;
 import org.infinispan.commons.util.WeakValueHashMap;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 
 
-public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Serializable {
+public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
     
 
     void clear();

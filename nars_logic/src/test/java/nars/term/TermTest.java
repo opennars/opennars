@@ -164,7 +164,7 @@ public class TermTest {
         Compound cterm2 = ((Compound) term2);
 
         //test subterms
-        assertTrue(cterm1.term[0].equals(cterm2.term[0])); //'a'
+        assertTrue(cterm1.term(0).equals(cterm2.term(0))); //'a'
 
     }
 
@@ -266,7 +266,7 @@ public class TermTest {
 
 
 //        try {
-            Compound forced = n.term("<a --> b>");
+            DefaultCompound forced = n.term("<a --> b>");
             assertNotNull(forced);
 
             forced.term[0] = subj;
@@ -311,7 +311,7 @@ public class TermTest {
         Term d = DifferenceInt.make(a, b);
         assertEquals(d.toString(), d.getClass(), SetIntN.class);
         assertEquals(d.toString(), 2, d.length());
-        assertEquals("[a, c]", d.toString());
+        assertEquals("[a,c]", d.toString());
     }
 
     @Test
@@ -323,7 +323,7 @@ public class TermTest {
         Term d = DifferenceExt.make(a, b);
         assertEquals(d.toString(), d.getClass(), SetExtN.class);
         assertEquals(d.toString(), 2, d.length());
-        assertEquals("{a, c}", d.toString());
+        assertEquals("{a,c}", d.toString());
 
     }
 
@@ -493,8 +493,9 @@ public class TermTest {
         assertEquals((varDep + varIndep + varQuery) != 0, t.hasVar());
     }
 
-    public Compound testStructure(String term, String bits) {
-        Compound a = n.term(term);
+    public <C extends Compound> C testStructure(String term, String bits) {
+        C a = n.term(term);
+        assertEquals(term, a.toString(true));
         assertEquals(bits, toBinaryString(a.structure()));
         return a;
     }
@@ -507,7 +508,7 @@ public class TermTest {
         Term a3 = n.term("c");
 
         Compound a = testStructure("<<a --> b> </> c>", "100000000000000000001000001");
-        Compound b = testStructure("<<$a --> #b> </> ?c>", "100000000000000000001001110");
+        Compound b = testStructure("<<$1 --> #2> </> ?3>", "100000000000000000001001110");
 
         assertTrue( a.impossibleToMatch(b) );
         assertFalse( a.impossibleToMatch(a3));
@@ -523,25 +524,53 @@ public class TermTest {
 
 
     @Test
-    public void testImageOrdering() {
+    public void testImageOrdering1() {
+        testImageOrdering('/');
+    }
+    @Test
+    public void testImageOrdering2() {
+        testImageOrdering('\\');
+    }
 
-        Image a = n.term("(/,x, y, _)");
-        Image b = n.term("(/,x, _, y)");
+    void testImageOrdering(char v) {
+
+        Image a = n.term("(" + v + ",x, y, _)");
+        Image b = n.term("(" + v + ",x, _, y)");
+        Image c = n.term("(" + v + ",_, x, y)");
+        assertNotEquals(a.relationIndex, b.relationIndex);
+        assertNotEquals(b.relationIndex, c.relationIndex);
+
         assertNotEquals(a, b);
+        assertNotEquals(b, c);
+        assertNotEquals(a, c);
+
         assertNotEquals(a.hashCode(), b.hashCode());
+        assertNotEquals(b.hashCode(), c.hashCode());
+        assertNotEquals(a.hashCode(), c.hashCode());
+
         assertEquals(-1, a.compareTo(b));
-        assertEquals(1, b.compareTo(a));
+        assertEquals(+1, b.compareTo(a));
+
+        assertEquals(-1, a.compareTo(c));
+        assertEquals(+1, c.compareTo(a));
+
+        assertEquals(-1, b.compareTo(c));
+        assertEquals(+1, c.compareTo(b));
+
+
     }
 
     @Test
     public void testImageStructuralVector() {
 
-        String i1 = "(/,x, y, _)";
-        String i2 = "(/,x, _, y)";
-        Compound a = testStructure(i1,  "10000000000001");
-        Compound b = testStructure(i2,  "10000000000001");
-        assertNotEquals("additional structure code in upper bits",
-                a.structure2(), b.structure2());
+        String i1 = "(/, x, y, _)";
+        String i2 = "(/, x, _, y)";
+        Image a = testStructure(i1,  "10000000000001");
+        Image b = testStructure(i2,  "10000000000001");
+
+        /*assertNotEquals("additional structure code in upper bits",
+                a.structure2(), b.structure2());*/
+        assertNotEquals(a.relationIndex, b.relationIndex);
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
 

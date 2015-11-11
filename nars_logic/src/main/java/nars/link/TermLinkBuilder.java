@@ -76,13 +76,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
         for (int i = 0; i < t.length(); i++) {
-            Term ti = t.term[i].normalized();
+            Term ti = t.term(i).normalized();
             if (!growComponent(ti)) {
                 continue;
             }
 
             if (ti == null) {
-                throw new RuntimeException("prepareComponentLinks: " + t.term[i] + " normalized to null in superterm " + t);
+                throw new RuntimeException("prepareComponentLinks: " + t.term(i) + " normalized to null in superterm " + t);
                 //System.err.println("prepareComponentLinks: " + t + " normalized to null");// in superterm " + t);
                 //continue;
             }
@@ -101,7 +101,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 boolean t1Grow = growLevel1(ti);
 
                 for (int j = 0; j < cti.length(); j++) {
-                    Term tj = cti.term[j].normalized();
+                    Term tj = cti.term(j).normalized();
 
                     if (!(tj instanceof Variable)) {
                         if (t1Grow) {
@@ -115,7 +115,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         if(ctj instanceof Compound) {
                             Compound cctj = (Compound) ctj;
                             for (int k = 0; k < cctj.length(); k++) {
-                                final Term tk = cctj.term[k].normalized();
+                                final Term tk = cctj.term(k).normalized();
 
                                 if (!(tk instanceof Variable)) {
                                     components.add(tk);

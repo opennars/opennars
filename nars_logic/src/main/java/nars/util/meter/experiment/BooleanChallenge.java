@@ -160,7 +160,7 @@ public class BooleanChallenge  {
                 int result = eq[0];
 
                 if ((subj instanceof SetExt) && (((SetExt) subj).length() == 1))
-                    subj = ((Compound) subj).term[0];
+                    subj = ((Compound) subj).term(0);
 
                 if (subj instanceof Product) {
                     Product p = (Product) subj;
