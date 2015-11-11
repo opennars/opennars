@@ -92,6 +92,18 @@ public class NAL7Test extends AbstractNALTester {
 
 
     @Test
+    public void inference_on_tense_nonvar() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(&/,<(John, key) --> hold>,/50) =/> <(John, room) --> enter>>.");
+        tester.input("<(John, key) --> hold>. :|:");
+
+        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, -50); //":\:"
+        tester.run();
+    }
+
+
+    @Test
     public void inference_on_tense_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
