@@ -12,26 +12,27 @@ import nars.task.Task;
  */
 public class After extends PreCondition {
 
-    public After() {
+    public static final After the = new After();
+
+    protected After() {
         super();
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return "After";//getClass().getSimpleName();
     }
 
     @Override
     public boolean test(RuleMatch m) {
         final Premise premise = m.premise;
 
-        if (!premise.isTaskAndBeliefEvent())
-            return false;
+//        if (!premise.isTaskAndBeliefEvent()) //checked in preCond
+//            return false;
 
         final Task task = premise.getTask();
         final Task belief = premise.getBelief();
 
-        int pdur = premise.duration();
-        return task.startsAfter(belief, pdur);
+        return task.startsAfter(belief/*, premise.duration()*/);
     }
 }

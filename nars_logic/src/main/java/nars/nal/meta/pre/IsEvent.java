@@ -1,45 +1,29 @@
 package nars.nal.meta.pre;
 
-import nars.Premise;
 import nars.nal.RuleMatch;
-import nars.nal.nal7.Tense;
-import nars.task.Task;
-import nars.term.Term;
+import nars.nal.meta.PreCondition;
 
 /**
  * Created by me on 8/15/15.
  */
-public class IsEvent extends PreCondition2 {
+public class IsEvent extends PreCondition {
 
-//    public IsEvent(Term var1) {
-//        this(var1, null);
-//    }
+    public static final PreCondition the = new IsEvent();
 
-    public IsEvent(Term var1, Term var2) {
-        super(var1, var2);
+    protected IsEvent() {
+        super();
     }
 
+    @Override public final String toString() {
+        return "IsEvent";
+    }
 
     @Override
-    public boolean test(final RuleMatch m, Term a, Term b) {
-        Premise premise = m.premise;
-
-        Task task = premise.getTask();
-
-        if (!isTemporal(a, task)) {
-            return false;
-        }
-
-        if (b != null) {
-            Task belief = premise.getBelief();
-            return isTemporal(b, belief);
-        }
-
-        //require both task and belief to be events
-        return false;
+    public final boolean test(final RuleMatch m) {
+        return m.premise.isTaskAndBeliefEvent();
     }
 
-    public static boolean isTemporal(Term a, Task task) {
-        return a.equals(task.getTerm()) && !Tense.isEternal(task.getOccurrenceTime());
-    }
+//    public static boolean isTemporal(Term a, Task task) {
+//        return a.equals(task.getTerm()) && !Tense.isEternal(task.getOccurrenceTime());
+//    }
 }

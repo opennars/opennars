@@ -3,6 +3,7 @@ package nars.nal.nal7;
 import nars.NAR;
 import nars.Op;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Atom;
@@ -333,6 +334,26 @@ public class SequenceParallelTest {
         String s2 = t2.toString();
         assert s1.contains("/5");
         assertEquals(s1,s2);
+    }
+
+    @Test public void testDoesntDeriveTemporalsFromEternal1() {
+        //the eternal inputs here should not derive anything temporal
+
+        NAR nar = new Default2(200,4,3,2);
+        nar.log();
+        nar.believe("<<{(#1, #2)} --> [commutatorArgument2]> ==> <{#1} --> [LinearOperator]>>.");
+        nar.believe("<(commutesWith, \"commutes with\") --> label>.");
+
+        //detect any &/ and &| derivations which are incorrect
+        nar.memory.eventDerived.on(t -> {
+            String ts = t.toString();
+            if (    (ts.contains("&/")) ||
+                    (ts.contains("&|")) )
+                assertFalse(true);
+        });
+
+        nar.frame(96);
+
     }
 
 }

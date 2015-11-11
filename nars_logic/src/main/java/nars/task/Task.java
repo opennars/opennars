@@ -640,6 +640,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
         derived.forEach(t -> t.getBudget().mulPriority(factor));
     }
+
     static void normalize(final Iterable<Task> derived, final float premisePriority) {
         derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
     }
@@ -655,7 +656,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
 //    public static enum Temporally {
 //        Before, After
 //    }
-    default boolean startsAfter(Task other, int perceptualDuration) {
+    default boolean startsAfter(Task other/*, int perceptualDuration*/) {
         long start = start();
         long other_end = other.end();
         boolean ret = start - other_end > 0;

@@ -272,6 +272,15 @@ public class TaskRule extends ProductN implements Level {
         preConditionsList.add(matcher);
 
 
+        if (getResult().has(Op.SEQUENCE) || getResult().has(Op.PARALLEL)
+            //TODO what about temporal impl/equiv also
+                ) {
+            //if the result to be formed is a Sequence or Parallel
+            //then the input must be events/non-eternal
+            prePreConditionsList.add(IsEvent.the);
+        }
+
+
         //additional modifiers: either preConditionsList or beforeConcs, classify them here
         for (int i = 2; i < precon.length; i++) {
 //            if (!(precon[i] instanceof Inheritance)) {
@@ -313,21 +322,22 @@ public class TaskRule extends ProductN implements Level {
                 case "not_set":
                     next = new NotSet(arg1);
                     break;
+
                 case "event":
-                    preNext = new IsEvent(arg1, arg2);
+                    preNext = IsEvent.the;
                     break;
+
                 case "no_common_subterm":
                     next = new NoCommonSubterm(arg1, arg2);
                     break;
 
 
                 case "after":
-                    if ((preNext = after(arg1, arg2)) == null)
-                        return null; //this rule is not valid, probably from a rearrangement of terms which invalidates the pattern -> task relationship this needs to test
+                    preNext = After.the;
                     break;
+
                 case "concurrent":
-                    if ((preNext = concurrent(arg1, arg2)) == null)
-                        return null; //this rule is not valid, probably from a rearrangement of terms which invalidates the pattern -> task relationship this needs to test
+                    preNext = Concurrent.the;
                     break;
 
                 //TODO apply similar pattern to these as after and concurrent
@@ -337,9 +347,12 @@ public class TaskRule extends ProductN implements Level {
                 case "shift_occurrence_backward":
                     next = ShiftOccurrence.make(arg1, arg2, false);
                     break;
+
                 case "measure_time":
-                    if (args.length==1)
+                    if (args.length==1) {
                         next = new MeasureTime(arg1);
+                        preNext = IsEvent.the;
+                    }
                     else
                         throw new RuntimeException("measure_time requires 1 component");
                     break;
@@ -393,11 +406,15 @@ public class TaskRule extends ProductN implements Level {
 
             }
 
-            if (preNext!=null)
-                prePreConditionsList.add(preNext);
+
+            if (preNext!=null) {
+                if (!prePreConditionsList.contains(preNext)) //unique
+                    prePreConditionsList.add(preNext);
+            }
             if (next != null)
                 preConditionsList.add(next);
         }
+
 
         if (!allowQuestionTask)
             prePreConditionsList.add(TaskPunctuation.TaskNotQuestion);
@@ -539,15 +556,6 @@ public class TaskRule extends ProductN implements Level {
 
     }
 
-
-    public final After after(Term arg1, Term arg2) {
-        return new After();
-    }
-
-    public final Concurrent concurrent(Term arg1, Term arg2) {
-        //int order = getTaskOrder(arg1, arg2);
-        return new Concurrent();
-    }
 
     final public int nal() { return minNAL; }
 }
