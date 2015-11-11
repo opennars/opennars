@@ -36,13 +36,22 @@ public class NAL7Test extends AbstractNALTester {
 
 
     @Test
-    public void temporal_deduction_explification() throws Narsese.NarseseException {
+    public void temporal_explification() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<<($x, room) --> enter> =\\> <($x, door) --> open>>", 0.9f, 0.9f);
+        tester.believe("<<($y, door) --> open> =\\> <($y, key) --> hold>>", 0.8f, 0.9f);
+
+        tester.mustBelieve(cycles, "<<(*,$1,key) --> hold> =/> <(*,$1,room) --> enter>>", 1.00f, 0.37f);
+        tester.run();
+    }
+
+    @Test
+    public void temporal_deduction() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<($x, room) --> enter> =\\> <($x, door) --> open>>", 0.9f, 0.9f);
         tester.believe("<<($y, door) --> open> =\\> <($y, key) --> hold>>", 0.8f, 0.9f);
 
         tester.mustBelieve(cycles, "<<(*,$1,room) --> enter> =\\> <(*,$1,key) --> hold>>", 0.72f, 0.58f);
-        tester.mustBelieve(cycles, "<<(*,$1,key) --> hold> =/> <(*,$1,room) --> enter>>", 1.00f, 0.37f);
         tester.run();
     }
 
@@ -89,7 +98,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<(&/,<($x, key) --> hold>,/60) =/> <($x, room) --> enter>>.");
         tester.input("<(*,John,room) --> enter>. :|:");
 
-        tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, -60); //":\:"
+        tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, -65); //":\:"
         tester.run();
     }
 
@@ -249,13 +258,6 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<(*,John,key) --> hold>", //TODO: Check truth value
                 0.5f, 0.95f,
                 10);
-
-        tester.run();
-    }
-
-    @Test
-    public void wut() throws Narsese.NarseseException {
-        TestNAR tester = test();
 
         tester.run();
     }

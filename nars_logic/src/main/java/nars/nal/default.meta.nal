@@ -232,7 +232,7 @@
 
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification, Derive:AllowBackward)
     (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification, Derive:AllowBackward)
-    (P =\> M), (M =\> S), not_equal(S,P) |- (S =/> P), (Truth:Exemplification, Derive:AllowBackward),
+    (P =\> M), (M =\> S), not_equal(S,P) |- (S =/> P), (Truth:Exemplification, Derive:AllowBackward)
     (P =|> M), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Exemplification, Derive:AllowBackward)
 
 //// implication to equivalence ////////////////////////////////////////////////////////////////////////////////////
