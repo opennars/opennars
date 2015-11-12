@@ -263,6 +263,31 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return sb;
     }
 
+    default <T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
+        final int n = size();
+
+        final Term[] y = new Term[n];
+
+        for (int i = 0; i < n; i++) {
+            Term x = this.term(i);
+            if (trans.test(x)) {
+                x = trans.apply( (Compound<T>)this, (T) x, level);
+            } else if (x instanceof Compound) {
+                //recurse
+                Compound cx = (Compound) x;
+                if (trans.testSuperTerm(cx)) {
+                    Term[] cls = cx.cloneTermsTransforming(trans, level + 1);
+                    if (cls == null) return null;
+                    x = cx.clone(cls);
+                }
+            }
+            if (x == null)
+                return null;
+            y[i] = x;
+        }
+        return y;
+    }
+
 
     /**
      * extracts a subterm provided by the address tuple
@@ -325,7 +350,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return (X) this;
     }
 
-    <T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level);
+
 
 
     default boolean transform(CompoundTransform trans) {

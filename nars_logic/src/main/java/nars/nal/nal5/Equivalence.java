@@ -25,6 +25,8 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.TermSet;
+import nars.term.TermVector;
 
 import java.util.Arrays;
 
@@ -33,14 +35,16 @@ import java.util.Arrays;
  */
 public class Equivalence extends Statement {
 
-    private final int temporalOrder;
+    @Deprecated private final int temporalOrder; //TODO use subclasses
 
     /**
      * Constructor with partial values, called by make
      *
      */
     private Equivalence(Term subject, Term predicate, int order) {
-        super();
+        super( (order!=Tense.ORDER_FORWARD) ?
+            new TermSet() : new TermVector()
+        );
 
         if ((order == Tense.ORDER_BACKWARD) ||
                 (order == Tense.ORDER_INVALID)) {

@@ -3,18 +3,18 @@ package nars.term;
 /**
  * an optimized compound implementation for use when only 1 subterm
  */
-abstract public class Compound2<A extends Term, B extends Term> extends DefaultCompound {
+abstract public class Compound2<A extends Term, B extends Term> extends DefaultCompound2 {
 
     protected Compound2() {
         super();
     }
 
     public A a() {
-        return (A) term[0];
+        return (A) term(0);
     }
 
     public B b() {
-        return (B) term[1];
+        return (B) term(1);
     }
 
 //    @Override

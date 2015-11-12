@@ -16,7 +16,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 public abstract class DefaultCompound2<T extends Term> implements Compound<T>, Subterms<T> {
 
-    final TermVector<T> terms;
+    protected final TermVector<T> terms;
 
     /**
      * true iff definitely normalized, false to cause it to update on next normalization.
@@ -30,9 +30,13 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
      */
     protected DefaultCompound2() {
         super();
-        terms = isCommutative() ?
+        this.terms = isCommutative() ?
                 new TermSet() :
                 new TermVector();
+    }
+
+    protected DefaultCompound2(TermVector subterms) {
+        this.terms = subterms;
     }
 
     @Override
@@ -48,7 +52,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
         int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
-        return subterms().compareTo(((Compound)o).subterms());
+        return subterms().compareTo( ((Compound)o).subterms() );
     }
 
 
@@ -84,7 +88,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
 
 
     @Override
-    public final TermContainer subterms() {
+    public final TermVector<T> subterms() {
         return terms;
     }
 
@@ -93,6 +97,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
         if (this == that)
             return true;
         if (!(that instanceof Compound)) return false;
+
 
         Compound c = (Compound)that;
         return (c.op() == op() && c.subterms().equals(subterms()));
@@ -117,16 +122,11 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
     }
 
 
-    /** any additional properties of this term which could be used to influence the contentHash as a means of short circuiting equality */
-    protected int getHashSeed() {
-        return 0;
-    }
-
     /**
      * recursively set duration to interval subterms
      */
     @Override
-    public final void setDuration(int duration) {
+    public void setDuration(int duration) {
         int n = size();
         for (int i = 0; i < n; i++)
             term(i).setDuration(duration);
@@ -138,7 +138,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return subterms().hashCode() ^ structure();
 //        if (ch == 0) {
 //            throw new RuntimeException("should have hashed");
@@ -181,13 +181,10 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
 
 
 
-    public Term[] cloneTermsDeep() {
-        return terms.cloneTermsDeep();
-    }
-
-    public static int newContentHash(int subt, int hashSeed) {
-        return TermVector.newContentHash(subt, hashSeed);
-    }
+//    public Term[] cloneTermsDeep() {
+//        return terms.cloneTermsDeep();
+//    }
+//
 
     public boolean isEmpty() {
         return terms.isEmpty();
@@ -229,10 +226,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
 
 
 
-    @Override
-    public final <T1 extends Term> Term[] cloneTermsTransforming(CompoundTransform<Compound<T1>, T1> trans, int level) {
-        return terms.cloneTermsTransforming(trans, level);
-    }
 
     @Override
     public final T term(int i) {

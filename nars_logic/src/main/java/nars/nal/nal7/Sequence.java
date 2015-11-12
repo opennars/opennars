@@ -114,7 +114,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
     @Override
     public Sequence clone() {
-        return new Sequence(term, intervals);
+        return new Sequence(terms(), intervals);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class Sequence extends Conjunctive implements Intermval {
             Conjunction cterm2 = (Conjunction) term2;
             components = new Term[term2.size() + 1];
             components[0] = term1;
-            arraycopy(cterm2.term, 0, components, 1, cterm2.size());
+            arraycopy(cterm2.terms(), 0, components, 1, cterm2.size());
         } else {
             components = new Term[]{term1, term2};
         }
@@ -270,7 +270,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
         Compound.appendSeparator(p, pretty);
 
-        int nterms = term.length;
+        int nterms = size();
 
         int[] ii = intervals();
 
@@ -278,7 +278,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
 
             if (ii.length <= i) {
-                System.err.println("Sequence has incorrect number of Intermvals " + Arrays.toString(intervals()) + " does not match terms " + Arrays.toString(term));
+                System.err.println("Sequence has incorrect number of Intermvals " + Arrays.toString(intervals()) + " does not match terms ");// + Arrays.toString(term));
                 break;
             }
 
@@ -300,7 +300,7 @@ public class Sequence extends Conjunctive implements Intermval {
             }
 
             if (i < nterms) {
-                term[i].append(p, pretty);
+                term(i).append(p, pretty);
             }
 
             if (i < nterms-1) {
@@ -347,7 +347,7 @@ public class Sequence extends Conjunctive implements Intermval {
             ii[s] = 0;
         }
 
-        Term[] t = term;
+        Term[] t = terms();
         return makeSequence(t, ii);
     }
 

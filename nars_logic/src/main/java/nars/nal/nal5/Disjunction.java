@@ -25,7 +25,6 @@ import nars.Op;
 import nars.term.Term;
 import nars.term.Terms;
 
-import java.util.Collections;
 import java.util.List;
 
 /** 
@@ -35,7 +34,6 @@ public class Disjunction extends Junction {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     private Disjunction(final Term[] arg) {
@@ -51,7 +49,7 @@ public class Disjunction extends Junction {
      */
     @Override
     public Disjunction clone() {
-        return new Disjunction(term);
+        return new Disjunction(terms.term);
     }
 
     @Override
@@ -71,10 +69,10 @@ public class Disjunction extends Junction {
         if (term1 instanceof Disjunction) {
             Disjunction ct1 = ((Disjunction) term1);
             List<Term> l = Global.newArrayList(ct1.size());
-            Collections.addAll(l, ct1.term);
+            ct1.addAllTo(l);
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                Collections.addAll(l, ((Disjunction)term2).term);
+                ((Disjunction)term2).addAllTo(l);
             }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -85,7 +83,7 @@ public class Disjunction extends Junction {
             Disjunction ct2 = ((Disjunction) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             List<Term> l = Global.newArrayList(ct2.size());
-            Collections.addAll(l, ct2.term);
+            ct2.addAllTo(l);
             l.add(term1);
             return make(l);
         } else {

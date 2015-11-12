@@ -54,7 +54,7 @@ public class Negation extends Compound1 {
      */
     @Override
     public Negation clone() {
-        return new Negation(term[0]);
+        return new Negation(the());
     }
 
     @Override

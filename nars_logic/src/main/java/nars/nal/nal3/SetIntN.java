@@ -35,7 +35,6 @@ public class SetIntN extends AbstractSetN implements SetInt {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term - args must be unique and sorted
      */
     protected SetIntN(final Term... arg) {
@@ -48,6 +47,11 @@ public class SetIntN extends AbstractSetN implements SetInt {
         return Op.SET_INT;
     }
 
+    @Override
+    public final Term[] terms() {
+        return terms.term;
+    }
+
 
     /**
      * Clone a SetInt
@@ -55,7 +59,7 @@ public class SetIntN extends AbstractSetN implements SetInt {
      */
     @Override
     public Compound clone() {
-        return SetInt.make(term);
+        return SetInt.make(terms());
     }
 
     @Override public Compound clone(Term[] replaced) {

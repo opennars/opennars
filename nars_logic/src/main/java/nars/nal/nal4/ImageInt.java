@@ -37,7 +37,6 @@ public class ImageInt extends Image {
 
     /**
      * constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
@@ -52,7 +51,7 @@ public class ImageInt extends Image {
      */
     @Override
     public ImageInt clone() {
-        return new ImageInt(term, relationIndex);
+        return new ImageInt(terms.term, relationIndex);
     }
 
     @Override

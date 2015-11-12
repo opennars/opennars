@@ -32,25 +32,26 @@ import java.io.IOException;
  */
 public class SetExtN extends AbstractSetN implements SetExt {
 
-
-
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term - args must be unique and sorted
      */
     protected SetExtN(final Term... arg) {
         super(arg);
     }
 
+    @Override
+    public final Term[] terms() {
+        return terms.term;
+    }
 
     /**
      * Clone a SetExt
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public SetExtN clone() {
-        return new SetExtN(term);
+    public final SetExtN clone() {
+        return new SetExtN(terms());
     }
     
     @Override public Compound clone(Term[] replaced) {

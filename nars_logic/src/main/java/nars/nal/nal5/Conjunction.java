@@ -91,7 +91,7 @@ public class Conjunction extends Conjunctive {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(term);
+        return new Conjunction(terms());
     }
 
 
@@ -187,7 +187,7 @@ public class Conjunction extends Conjunctive {
 
     @Override
     public Term _car() {
-        return term[0];
+        return term(0);
     }
 
     static Term make(Term[] argList) {

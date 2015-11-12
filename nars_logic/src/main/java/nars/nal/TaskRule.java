@@ -519,33 +519,33 @@ public class TaskRule extends ProductN implements Level {
 
         final ProductN newPremise =
                 (ProductN) Product.make(premise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
-        newPremise.term[0] = newT;
-        newPremise.term[1] = newB;
+        newPremise.terms()[0] = newT;
+        newPremise.terms()[1] = newB;
 
         final Product newConclusion = Product.make(conclusion().cloneTermsReplacing(0, newR));
 
         return new TaskRule(newPremise, newConclusion);
     }
 
-    /**
-     * -1 or +1 depending on how arg1 and arg2 match either Task/Belief of the premise
-     * @return +1 if first arg=task, second arg = belief, -1 if opposite,
-     * throws exception if incomplete match
-     */
-    public final int getTaskOrder(Term arg1, Term arg2) {
-
-        Product p = getPremises();
-        Term taskPattern = p.term(0);
-        Term beliefPattern = p.term(1);
-        if (arg2.equals(taskPattern) && arg1.equals(beliefPattern)) {
-            return -1;
-        } else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
-            return 1;
-        } else {
-            throw new RuntimeException("after(X,Y) needs to match both taks and belief patterns, in one of 2 orderings");
-        }
-
-    }
+//    /**
+//     * -1 or +1 depending on how arg1 and arg2 match either Task/Belief of the premise
+//     * @return +1 if first arg=task, second arg = belief, -1 if opposite,
+//     * throws exception if incomplete match
+//     */
+//    public final int getTaskOrder(Term arg1, Term arg2) {
+//
+//        Product p = getPremises();
+//        Term taskPattern = p.term(0);
+//        Term beliefPattern = p.term(1);
+//        if (arg2.equals(taskPattern) && arg1.equals(beliefPattern)) {
+//            return -1;
+//        } else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
+//            return 1;
+//        } else {
+//            throw new RuntimeException("after(X,Y) needs to match both taks and belief patterns, in one of 2 orderings");
+//        }
+//
+//    }
 
 
     final public int nal() { return minNAL; }

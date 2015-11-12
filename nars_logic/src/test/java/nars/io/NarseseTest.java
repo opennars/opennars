@@ -185,8 +185,8 @@ public class NarseseTest {
         Intersect t = term("(x & y)");
         assertEquals(Op.INTERSECTION_EXT, t.op());
         assertEquals(2, t.size());
-        assertEquals("x", t.term[0].toString());
-        assertEquals("y", t.term[1].toString());
+        assertEquals("x", t.term(0).toString());
+        assertEquals("y", t.term(1).toString());
 
         IntersectionInt a = term("(x | y)");
         assertEquals(Op.INTERSECTION_INT, a.op());

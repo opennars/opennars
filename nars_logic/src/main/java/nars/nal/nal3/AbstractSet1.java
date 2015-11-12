@@ -19,7 +19,7 @@ abstract public class AbstractSet1<T extends Term> extends Compound1<T> implemen
 
     @Override
     public final Term[] terms() {
-        return this.term;
+        return this.terms.term;
     }
 
     @Override

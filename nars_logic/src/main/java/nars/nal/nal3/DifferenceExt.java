@@ -50,7 +50,7 @@ public class DifferenceExt extends Difference {
      */
     @Override
     public DifferenceExt clone() {
-        return new DifferenceExt(term);
+        return new DifferenceExt(terms.term);
     }
 
     @Override public Term clone(Term[] replaced) {

@@ -67,7 +67,7 @@ public abstract class Conjunctive extends Junction<Term> {
             Conjunctive c = isConjunction(a, order);
             if (c != null) {
                 //arraycopy?
-                for (Term t : c.term) {
+                for (Term t : c.terms()) {
                     ret[k++] = t;
                 }
             } else {
@@ -150,5 +150,9 @@ public abstract class Conjunctive extends Junction<Term> {
             }
 
         }
+    }
+
+    public final Term[] terms() {
+        return terms.term;
     }
 }

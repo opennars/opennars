@@ -1,7 +1,6 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
-import nars.term.transform.CompoundTransform;
 import nars.util.data.Util;
 
 import java.io.Serializable;
@@ -237,26 +236,6 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return y;
     }
 
-    public <T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
-        final Term[] y = new Term[size()];
-        int i = 0;
-        for (Term x : this.term) {
-            if (trans.test(x)) {
-                x = trans.apply( (Compound<T>)this, (T) x, level);
-            } else if (x instanceof Compound) {
-                //recurse
-                Compound cx = (Compound) x;
-                if (trans.testSuperTerm(cx)) {
-                    Term[] cls = cx.cloneTermsTransforming(trans, level + 1);
-                    if (cls == null) return null;
-                    x = cx.clone(cls);
-                }
-            }
-            if (x == null) return null;
-            y[i++] = x;
-        }
-        return y;
-    }
 
 
     public final boolean isEmpty() {
@@ -314,13 +293,12 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
 
-    public void init(T[] term) {
-        this.term = term;
+    /** returns hashcode */
+    public int init(T[] term) {
 
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1, vol = 1;
-
 
         int subt = 0;
         int contentHash = 1;
@@ -342,9 +320,6 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
         Compound.ensureFeasibleVolume(vol);
 
-        if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
-        this.contentHash = contentHash;
-
         this.hasVarDeps = (byte) deps;
         this.hasVarIndeps = (byte) indeps;
         this.hasVarQueries = (byte) queries;
@@ -354,7 +329,11 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         this.complexity = (short) compl;
         this.volume = (short) vol;
 
+        this.term = term;
 
+        if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
+        this.contentHash = contentHash;
+        return contentHash;
     }
 
     public final void addAllTo(Collection<Term> set) {
@@ -366,8 +345,13 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
     @Override
-    public int hashCode() {
-        return contentHash;
+    public final int hashCode() {
+        final int h = contentHash;
+        if (h == 0) {
+            //if hash is zero, it means it needs calculated
+            return init(term);
+        }
+        return h;
     }
 
     @Override

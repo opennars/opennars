@@ -42,6 +42,9 @@ public abstract class Statement<A extends Term, B extends Term>
     protected Statement() {
         super();
     }
+    protected Statement(TermVector v) {
+        super(v);
+    }
 
 
 //    /**

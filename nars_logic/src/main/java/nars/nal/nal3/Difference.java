@@ -1,12 +1,12 @@
 package nars.nal.nal3;
 
-import nars.term.DefaultCompound;
+import nars.term.DefaultCompound2;
 import nars.term.Term;
 
 /**
  * Common parent class for DifferenceInt and DifferenceExt
  */
-abstract public class Difference extends DefaultCompound {
+abstract public class Difference extends DefaultCompound2 {
 
     Difference() {
         super();

@@ -36,7 +36,6 @@ public class ImageExt extends Image {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
@@ -53,11 +52,11 @@ public class ImageExt extends Image {
      */
     @Override
     public ImageExt clone() {
-        return new ImageExt(term, relationIndex);
+        return new ImageExt(terms.term, relationIndex);
     }
     @Override
     public Term clone(Term[] replaced) {
-        if (replaced.length != term.length)
+        if (replaced.length != size())
             return null;
             //throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
         

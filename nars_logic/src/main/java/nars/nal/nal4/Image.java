@@ -3,7 +3,7 @@ package nars.nal.nal4;
 import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
 import nars.Symbols;
 import nars.term.Compound;
-import nars.term.DefaultCompound;
+import nars.term.DefaultCompound2;
 import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
@@ -16,7 +16,7 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image extends DefaultCompound {
+abstract public class Image extends DefaultCompound2 {
 
     /**
      * The index of relation in the component list
@@ -31,9 +31,10 @@ abstract public class Image extends DefaultCompound {
         init(components);
     }
 
+
     @Override
-    protected int getHashSeed() {
-        return super.getHashSeed() ^ relationIndex;
+    public int hashCode() {
+        return super.hashCode() ^ relationIndex;
     }
 
     @Override

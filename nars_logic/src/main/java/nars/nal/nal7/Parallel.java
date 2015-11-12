@@ -49,7 +49,7 @@ public class Parallel extends Conjunctive implements Interval {
 
     @Override
     public Term clone() {
-        return new Parallel(term);
+        return new Parallel(terms());
     }
 
     @Override

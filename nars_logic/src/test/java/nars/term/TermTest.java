@@ -266,11 +266,11 @@ public class TermTest {
 
 
 //        try {
-            DefaultCompound forced = n.term("<a --> b>");
+            DefaultCompound2 forced = n.term("<a --> b>");
             assertNotNull(forced);
 
-            forced.term[0] = subj;
-            forced.term[1] = pred;
+            forced.subterms().term[0] = subj;
+            forced.subterms().term[1] = pred;
             forced.rehash();
 
             assertEquals(t, forced.toStringCompact());
@@ -507,7 +507,9 @@ public class TermTest {
 
         Term a3 = n.term("c");
 
-        Compound a = testStructure("<<a --> b> </> c>", "100000000000000000001000001");
+        Compound a = testStructure( "<<a --> b> </> c>",  "100000000000000000001000001");
+        Compound a1 = testStructure("<c <|> <a --> b>>", "1000000000000000000001000001");
+        Compound a2 = testStructure("<c <=> <a --> b>>",   "10000000000000000001000001");
         Compound b = testStructure("<<$1 --> #2> </> ?3>", "100000000000000000001001110");
 
         assertTrue( a.impossibleToMatch(b) );

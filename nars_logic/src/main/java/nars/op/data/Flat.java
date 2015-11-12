@@ -5,7 +5,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
-import nars.term.DefaultCompound;
+import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ abstract public class Flat extends TermFunction {
     public static List<Term> collect(Term[] x, List<Term> l) {
         for (Term a : x) {
             if ((a instanceof Product) || (a instanceof SetTensional) || (a instanceof Conjunction)) {
-                collect( ((DefaultCompound)a).term, l);
+                ((Compound)a).addAllTo(l);
             }
             else
                 l.add(a);

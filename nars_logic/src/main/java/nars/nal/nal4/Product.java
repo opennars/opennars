@@ -116,7 +116,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
 
     T term(int i);
 
-    T[] terms();
+    @Deprecated  T[] terms();
 
 
     default Object first() {

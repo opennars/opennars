@@ -34,7 +34,6 @@ public class DifferenceInt extends Difference {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     private DifferenceInt(final Term[] arg) {
@@ -50,7 +49,7 @@ public class DifferenceInt extends Difference {
      */
     @Override
     public DifferenceInt clone() {
-        return new DifferenceInt(term);
+        return new DifferenceInt(terms.term);
     }
     
     @Override public Term clone(Term[] replaced) {
@@ -61,7 +60,6 @@ public class DifferenceInt extends Difference {
      * Try to make a new DifferenceExt
      * @return the Term generated from the arguments
      * @param arg The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(Term[] arg) {
         ensureValidDifferenceSubterms(arg);
@@ -81,7 +79,6 @@ public class DifferenceInt extends Difference {
      * Try to make a new compound from two term. Called by the logic rules.
      * @param t1 The first component
      * @param t2 The second component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t1, final Term t2) {
