@@ -96,16 +96,20 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
         Compound c = (Compound)that;
 
-        //return (c.op() == op() && c.subterms().equals(subterms()));
+        return (c.op() == op() && c.subterms().equals(subterms()));
+/*
 
         TermContainer csubs = c.subterms();
         TermVector<T> osubs = this.terms;
         if (osubs.equals(csubs)) {
+            //TODO dont share if contains Sequence/Parallel because these could not actual be 'equal'
+
             if (osubs.getClass() == csubs.getClass())
                 this.terms = (TermVector<T>) csubs; //share instance iff equal class
             return (op() == c.op());
         }
         return false;
+        */
     }
 
 
