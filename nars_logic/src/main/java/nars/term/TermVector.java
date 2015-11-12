@@ -1,7 +1,6 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
-import nars.util.data.Util;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,6 +20,7 @@ import static java.util.Arrays.copyOf;
 public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
     /**
      * list of (direct) term
+     * TODO make not public
      */
     public T[] term;
 
@@ -33,8 +33,9 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     protected transient int varTotal;
     protected transient int volume;
     protected transient int complexity;
+
     /**
-     * Whether contains a variable
+     * # variables contained, of each type
      */
     transient protected byte hasVarQueries;
     transient protected byte hasVarIndeps;
@@ -63,18 +64,18 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return volume;
     }
 
-
-
-
-
-
     @Override
-    public final boolean impossibleSubTermVolume(final int otherTermVolume) {
-        return otherTermVolume >
-                volume()
-                        - 1 /* for the compound itself */
-                        - (size() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
-                ;
+    public final boolean impossibleSubTermVolume(int otherTermVolume) {
+//        return otherTermVolume >
+//                volume()
+//                        - 1 /* for the compound itself */
+//                        - (size() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
+
+        /*
+        otherTermVolume > volume - 1 - (size - 1)
+                        > volume - size
+         */
+        return otherTermVolume > volume() - size();
     }
 
 
@@ -102,7 +103,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
      * (shallow) Clone the component list
      */
     public final T[] cloneTerms() {
-        return copyOf(term, term.length);
+        return copyOf(term, size());
     }
 
 //    /**
@@ -266,7 +267,8 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
     @Override
     public final void forEach(final Consumer<? super T> action) {
-        for (final T t : this.term)
+        final T[] tt = this.term;
+        for (final T t : tt)
             action.accept(t);
     }
 
@@ -283,10 +285,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return Terms.contains(term, t);
     }
 
-    static int newContentHash(int subt, int hashSeed) {
-        //int contentHash =  (Util.PRIME3 * subt) + getHashSeed();
-        return (Util.PRIME3 * subt) + hashSeed;
-    }
+
     static int nextContentHash(int hash, int subtermHash) {
         return (hash << 4) +  subtermHash;
         //(Util.PRIME2 * contentHash)
@@ -308,7 +307,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
             if (t == this)
                 throw new RuntimeException("term can not contain itself");
 
-            contentHash = nextContentHash(contentHash, t.rehashCode());
+            contentHash = nextContentHash(contentHash, t.hashCode());
 
             compl += t.complexity();
             vol += t.volume();
@@ -340,9 +339,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         Collections.addAll(set, term);
     }
 
-    public Term[] newArray() {
-        return copyOf(term, term.length);
-    }
+
 
     @Override
     public final int hashCode() {

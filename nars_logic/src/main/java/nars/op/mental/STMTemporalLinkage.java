@@ -27,8 +27,12 @@ public class STMTemporalLinkage {
     int stmSize;
     //public static STMTemporalLinkage I=null;
 
+    final private static String id = STMTemporalLinkage.class.getSimpleName();
 
-
+    @Override
+    public final String toString() {
+        return id;
+    }
 
     public STMTemporalLinkage(NAR nar, Deriver deriver) {
 

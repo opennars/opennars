@@ -4,6 +4,7 @@ import nars.Op;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.transform.Substitution;
 import nars.term.transform.TermVisitor;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
@@ -50,19 +51,6 @@ public class Operator<T extends Term> implements Term {
     @Override
     public boolean impossibleSubTermVolume(int otherTermVolume) {
         return true;
-    }
-
-    @Override
-    public boolean impossibleToMatch(int possibleSubtermStructure) {
-        //copied from Atomic.java:
-
-        /*
-        for atomic terms, there will be only one
-        bit set in this (for the operator). if it does not equal
-        the parameter, then the structure can not match.
-        */
-        return possibleSubtermStructure != 0 &&
-                structure()!=possibleSubtermStructure;
     }
 
     @Override
@@ -164,6 +152,10 @@ public class Operator<T extends Term> implements Term {
 
     @Override
     public Term substituted(Map<Term, Term> subs) {
+        return this;
+    }
+    @Override
+    public final Term substituted(Substitution s) {
         return this;
     }
 

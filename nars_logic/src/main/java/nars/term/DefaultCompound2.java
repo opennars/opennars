@@ -73,11 +73,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
         terms.addAllTo(set);
     }
 
-    @Override
-    public final Term[] newSubtermArray() {
-        return terms.newArray();
-    }
-
 
     //    /**
 //     * (shallow) Clone the component list
@@ -110,16 +105,16 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
     }
 
 
-    @Override
-    @Deprecated public final int rehashCode() {
-//        int ch = subterms().hashCode();
-//        if (ch == 0) {
-//            rehash();
-//            return subterms().hashCode();
-//        }
-//        return ch;
-        return hashCode();
-    }
+//    @Override
+//    @Deprecated public final int rehashCode() {
+////        int ch = subterms().hashCode();
+////        if (ch == 0) {
+////            rehash();
+////            return subterms().hashCode();
+////        }
+////        return ch;
+//        return hashCode();
+//    }
 
 
     /**
@@ -175,7 +170,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
     }
 
 
-    public Term[] cloneTermsReplacing(int index, Term replaced) {
+    public final Term[] cloneTermsReplacing(int index, Term replaced) {
         return terms.cloneTermsReplacing(index, replaced);
     }
 
@@ -186,18 +181,14 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
 //    }
 //
 
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return terms.isEmpty();
     }
 
-    public boolean contains(Object o) {
+    public final boolean contains(Object o) {
         return terms.contains(o);
     }
 
-
-    public final Term[] newArray() {
-        return terms.newArray();
-    }
 
     @Override
     public final void forEach(Consumer<? super T> action, int start, int stop) {
@@ -216,16 +207,13 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
 
     @Override
     public final  T[] cloneTerms() {
-        return (T[]) newArray();
+        return terms.cloneTerms();
     }
 
     @Override
     public final int structure() {
         return terms.structure() | (1 << op().ordinal());
     }
-
-
-
 
     @Override
     public final T term(int i) {

@@ -59,8 +59,12 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     @Override
     public final boolean equals(final Object x) {
         if (this == x) return true;
-        Term ax = (Term)x;
-        return (ax.op() == op()) && Byted.equals(this, (Atomic)ax);
+
+        if (x instanceof Atomic) {
+            Atomic ax = (Atomic)x;
+            return Byted.equals(this, ax) && (op() == ax.op());
+        }
+        return false;
     }
 
 
@@ -69,8 +73,6 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         final int h = this.hash;
         if (h == 0) {
             throw new RuntimeException("should have hashed");
-//            rehash();
-//            return this.hash;
         }
         return h;
     }
@@ -91,11 +93,9 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         return Byted.compare(this, (Atomic)that);
     }
 
-    @Override
-    public final int getByteLen() {
+    @Override public final int getByteLen() {
         return bytes().length;
     }
-
 
     /**
      * Atoms are singular, so it is useless to clone them
@@ -130,8 +130,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
 
     @Override public abstract boolean hasVarQuery();
 
-    @Override
-    public abstract int complexity();
+    @Override public abstract int complexity();
 
     @Override
     public final int size() {
@@ -163,15 +162,6 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         }
     }
 
-    @Override public final boolean impossibleToMatch(int possibleSubtermStructure) {
-        /*
-        for atomic terms, there will be only one
-        bit set in this (for the operator). if it does not equal
-        the parameter, then the structure can not match.
-        */
-        return possibleSubtermStructure != 0 &&
-            structure()!=possibleSubtermStructure;
-    }
 
     /** atomic terms contain nothing */
     @Override public final boolean containsTerm(Term target) {
@@ -192,7 +182,6 @@ public abstract class Atomic implements Term, Byted, Externalizable {
 
     @Override
     public abstract int varQuery();
-
 
     @Override
     public final Atomic normalized() {

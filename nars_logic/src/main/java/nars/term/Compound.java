@@ -153,14 +153,17 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
 
         //TODO calculate superterm capacity limits vs. subs min/max
 
-        if ((subs == null) || (subs.isEmpty())) {
+        if (subs.isEmpty()) {
             return this;
         }
 
-        return new Substitution(subs).apply(this);
+        //return new Substitution(subs).apply(this);
+        return substituted(new Substitution(subs));
     }
 
-
+    default Term substituted(Substitution s) {
+        return s.apply(this);
+    }
 
 
 
@@ -451,10 +454,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
     }
 
     void addAllTo(Collection<Term> set);
-
-    /** creates a new array containing the subterms */
-    Term[] newSubtermArray();
-
 
 
 //    public int countOccurrences(final Term t) {

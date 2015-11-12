@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.Global;
 import nars.Narsese;
-import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -227,7 +227,7 @@ public class DerivationRules extends FastList<TaskRule> {
     static Set<TaskRule> parseRules(final Collection<String> rawRules) {
 
 
-        final Set<String> expanded = new ConcurrentHashSet(); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
+        final Set<String> expanded = new HashSet(); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
 
         rawRules/*.parallelStream()*/.forEach(rule -> {

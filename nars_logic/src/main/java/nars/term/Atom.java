@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
+import nars.term.transform.Substitution;
 import nars.util.data.Util;
 
 import java.util.Map;
@@ -53,6 +54,11 @@ public class Atom extends Atomic  {
         }
 
         @Override
+        public final Term substituted(Substitution s) {
+            return null;
+        }
+
+        @Override
         public int complexity() {
             return 0;
         }
@@ -98,6 +104,11 @@ public class Atom extends Atomic  {
 
     @Override
     public final Term substituted(Map<Term, Term> subs) {
+        return this;
+    }
+
+    @Override
+    public final Term substituted(Substitution s) {
         return this;
     }
 

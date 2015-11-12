@@ -17,6 +17,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Substitution;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -175,7 +176,6 @@ public class RuleMatch extends FindSubst {
 
         for (final PreCondition c : outcome.afterConclusions) {
             if (!c.test(this)) {
-                //outp.clear();
                 return null;
             }
         }
@@ -418,6 +418,9 @@ public class RuleMatch extends FindSubst {
 //        return r;
 //    }
 
+    /** reusable instance */
+    final Substitution substituter = new Substitution(null);
+
     /**
      * provides the cached result if it exists, otherwise computes it and adds to cache
      */
@@ -429,15 +432,14 @@ public class RuleMatch extends FindSubst {
 //            //return null;
 //        }
 
-        Term ret = t.substituted(xy);
+        final Substitution s = substituter;
+
+        Term ret = t.substituted(s, xy);
         if(ret != null) {
-            ret = ret.substituted(yx);
+            ret = ret.substituted(s, yx);
         }
         return ret;
     }
-
-
-
 
 
     /** return null if no postconditions match (equivalent to an empty array)

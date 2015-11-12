@@ -3,7 +3,6 @@ package nars.term.transform;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -11,11 +10,11 @@ import java.util.function.Function;
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
 public class Substitution implements Function<Compound,Term> {
 
-    final Map<? extends Term, Term> subs;
+    public Map<? extends Term, Term> subs;
 
-    final int numSubs;
+    int numSubs;
 
-    final int numDep, numIndep, numQuery;
+    int numDep, numIndep, numQuery;
 
 
     /** creates a substitution of one variable; more efficient than supplying a Map */
@@ -23,58 +22,56 @@ public class Substitution implements Function<Compound,Term> {
         this(UnifiedMap.newWithKeysValues(termFrom, termTo));
     }
 
+    public Substitution() {
+        reset();
+    }
+
     public Substitution(final Map<? extends Term, Term> subs) {
+        reset(subs);
+    }
 
+    /** reset but keep the same map */
+    public Substitution reset() {
+        this.numSubs = -1;
+        return this;
+    }
+
+    public Substitution reset(final Map<? extends Term, Term> subs) {
         this.subs = subs;
+        return reset();
+    }
 
+    /** call if the map has changed (ex: during re-use) */
+    public void prepare() {
         final int numSubs = this.numSubs = subs.size();
-        if (numSubs == 0) {
-            throw new RuntimeException("Empty substitution");
-        }
 
         int numDep = 0, numIndep = 0, numQuery = 0;
 
+        if (numSubs > 0) {
+            for (final Map.Entry<? extends Term, Term> e : subs.entrySet()) {
 
-        for (final Map.Entry<? extends Term,Term> e : subs.entrySet()) {
+                final Term m = e.getKey();
 
-            final Term m = e.getKey();
-
-            if (m instanceof Variable) {
-                switch (m.op()) {
-                    case VAR_DEPENDENT: numDep++; break;
-                    case VAR_INDEPENDENT: numIndep++; break;
-                    case VAR_QUERY: numQuery++; break;
-                }
+                //if (m instanceof Variable) {
+                    switch (m.op()) {
+                        case VAR_DEPENDENT:
+                            numDep++;
+                            break;
+                        case VAR_INDEPENDENT:
+                            numIndep++;
+                            break;
+                        case VAR_QUERY:
+                            numQuery++;
+                            break;
+                    }
+                //}
             }
-
-//        /* collapse a substitution map to each key's ultimate destination
-//         *  in the case of values that are equal to other keys */
-//            if (numSubs >= 2) {
-//                final Term o = e.getValue(); //what the original mapping of this entry's key
-//
-//                Term k = o, prev = o;
-//                int hops = 1;
-//                while ((k = subs.getOrDefault(k, k)) != prev) {
-//                    prev = k;
-//                    if (hops++ == numSubs) {
-//                        //cycle detected
-//                        throw new RuntimeException("Cyclical substitution map: " + subs);
-//                    }
-//                }
-//                if (!k.equals(o)) {
-//                    //replace with the actual final mapping
-//                    e.setValue(k);
-//                }
-//            }
-
         }
 
         this.numDep = numDep;
         this.numIndep = numIndep;
         this.numQuery = numQuery;
-
     }
-
 
     /** if eliminates all conditions with regard to a specific compound */
     public final boolean impossible(final Term superterm) {
@@ -114,11 +111,17 @@ public class Substitution implements Function<Compound,Term> {
         return subs.get(t);
     }
 
-    @Override
-    public Term apply(final Compound c) {
+    @Override public Term apply(final Compound c) {
+        if (numSubs < 0)
+            prepare();
+
+        return _apply(c);
+    }
+
+    public Term _apply(final Compound c) {
+
         if (impossible(c))
             return c;
-
 
         /** subterms */
         Term[] sub = null;
@@ -129,7 +132,6 @@ public class Substitution implements Function<Compound,Term> {
         for (int i = 0; i < len; i++) {
             //t holds the
             final Term t = c.term(i);
-
 
             // s holds a replacement substitution for t (i-th subterm of c)
             Term s;
@@ -145,7 +147,13 @@ public class Substitution implements Function<Compound,Term> {
 
             //attempt 2: if substitution still not found, recurse if subterm is compound term
             if (s == null && (t instanceof Compound)) { //additional constraint here?
-                s = apply((Compound)t);
+                s = _apply((Compound)t);
+
+                if (s == null) {
+                    //null means the clone at the end of this method failed,
+                    //so the resulting substituted term would be invalid
+                    return null;
+                }
 
                 //if the same thing was provided, ignore
                 if (t.equals(s))
@@ -156,7 +164,7 @@ public class Substitution implements Function<Compound,Term> {
             if (s!=null) {
 
                 //ensure using a modified result Term[]
-                if (sub == null) sub = c.newSubtermArray();
+                if (sub == null) sub = c.cloneTerms();
 
                 //replace the value at the current index
                 sub[i] = s; //s.clone();
@@ -183,3 +191,24 @@ public class Substitution implements Function<Compound,Term> {
                 '}';
     }
 }
+
+
+//        /* collapse a substitution map to each key's ultimate destination
+//         *  in the case of values that are equal to other keys */
+//            if (numSubs >= 2) {
+//                final Term o = e.getValue(); //what the original mapping of this entry's key
+//
+//                Term k = o, prev = o;
+//                int hops = 1;
+//                while ((k = subs.getOrDefault(k, k)) != prev) {
+//                    prev = k;
+//                    if (hops++ == numSubs) {
+//                        //cycle detected
+//                        throw new RuntimeException("Cyclical substitution map: " + subs);
+//                    }
+//                }
+//                if (!k.equals(o)) {
+//                    //replace with the actual final mapping
+//                    e.setValue(k);
+//                }
+//            }

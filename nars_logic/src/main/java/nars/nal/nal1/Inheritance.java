@@ -64,7 +64,8 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
      * @return A compound generated or null
      */
     public static Inheritance make(final Term subject, final Term predicate) {
-                
+
+
         if (invalidStatement(subject, predicate)) {
             return null;
         }

@@ -42,13 +42,9 @@ public class Similarity extends Statement {
      * Try to make a new compound from two term. Called by the logic rules.
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Term make(final Term subject, final Term predicate) {
-
-        if (subject.equals(predicate))
-            return subject;
 
         if (invalidStatement(subject, predicate)) {
             return null;
@@ -56,11 +52,11 @@ public class Similarity extends Statement {
 
         int compare = subject.compareTo(predicate);
         if (compare > 0)
-                return new Similarity(predicate, subject);
+            return new Similarity(predicate, subject);
         else if (compare < 0)
-                return new Similarity(subject, predicate);
+            return new Similarity(subject, predicate);
         else {
-                throw new RuntimeException("subject and predicate are equal according to compareTo: " + subject + " , " + predicate);
+            throw new RuntimeException("subject and predicate are equal according to compareTo: " + subject + " , " + predicate);
         }
 
     }

@@ -88,9 +88,6 @@ public class Equivalence extends Statement {
             return null;
         }
 
-        if (subject.equals(predicate))
-            return subject;
-
         if (invalidStatement(subject, predicate)) {
             return null;
         }

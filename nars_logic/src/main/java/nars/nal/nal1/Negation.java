@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * A negation of a statement.
  */
-public class Negation extends Compound1 {
+public final class Negation extends Compound1 {
 
 
 

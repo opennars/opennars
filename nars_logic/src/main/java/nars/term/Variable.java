@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
+import nars.term.transform.Substitution;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
@@ -139,6 +140,14 @@ abstract public class Variable extends Atomic {
 
     @Override public final Term substituted(Map<Term, Term> subs) {
         Term x = subs.get(this);
+        if (x == null)
+            x = this;
+        return x;
+    }
+    
+    @Override
+    public final Term substituted(Substitution s) {
+        Term x = s.subs.get(this);
         if (x == null)
             x = this;
         return x;
