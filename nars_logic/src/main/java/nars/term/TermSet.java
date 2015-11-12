@@ -1,14 +1,12 @@
 package nars.term;
 
 
-import nars.Op;
-
 public class TermSet extends TermVector {
 
     @Override
-    public void init(Term[] term, @Deprecated int hashSeed, @Deprecated Op containerOp) {
+    public void init(Term[] term) {
         super.init(
-            Terms.toSortedSetArray(term),
-            hashSeed, containerOp);
+            Terms.toSortedSetArray(term)
+            );
     }
 }

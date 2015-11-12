@@ -24,7 +24,7 @@ public class TaskBeliefPair extends ProductN {
     }
 
     @Override
-    protected void init(final Term... term) {
+    public void init(final Term... term) {
         super.init(term);
 
         final Term a = term[0];

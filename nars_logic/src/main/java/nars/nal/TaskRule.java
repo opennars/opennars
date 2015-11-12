@@ -148,7 +148,7 @@ public class TaskRule extends ProductN implements Level {
 //    }
 
     @Override
-    protected void init(Term... term) {
+    public void init(Term... term) {
         super.init(term);
 
 

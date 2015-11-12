@@ -1,7 +1,6 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
-import nars.Op;
 import nars.term.transform.CompoundTransform;
 import nars.util.data.Util;
 
@@ -68,14 +67,6 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
 
 
-    @Override
-    public boolean impossibleToMatch(final int possibleSubtermStructure) {
-        final int existingStructure = structureHash;
-
-        //if the OR produces a different result compared to subterms,
-        // it means there is some component of the other term which is not found
-        return ((possibleSubtermStructure | existingStructure) != existingStructure);
-    }
 
 
     @Override
@@ -184,9 +175,11 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
      * forced deep clone of terms - should not be necessary
      */
     public final Term[] cloneTermsDeep() {
-        Term[] l = new Term[size()];
-        for (int i = 0; i < l.length; i++)
-            l[i] = term[i].cloneDeep();
+        int s = size();
+        Term[] l = new Term[s];
+        final Term[] t = this.term;
+        for (int i = 0; i < s; i++)
+            l[i] = t[i].cloneDeep();
         return l;
     }
 
@@ -321,7 +314,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
 
-    public void init(T[] term, @Deprecated int hashSeed, @Deprecated Op containerOp) {
+    public void init(T[] term) {
         this.term = term;
 
 
@@ -329,9 +322,8 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         int compl = 1, vol = 1;
 
 
-        int subt = 1 << containerOp.ordinal();
-
-        int contentHash = newContentHash(subt, hashSeed);
+        int subt = 0;
+        int contentHash = 1;
 
         for (final Term t : term) {
 

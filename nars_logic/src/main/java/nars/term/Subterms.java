@@ -16,6 +16,17 @@ import java.util.function.Consumer;
 
     boolean containsTerm(Term t);
 
+    int varDep();
+
+    int varIndep();
+
+    int varQuery();
+
+    int vars();
+
+    boolean hasVar();
+
+
     void forEach(Consumer<? super T> action, int start, int stop);
 
     default void forEach(final Consumer<? super T> action) {

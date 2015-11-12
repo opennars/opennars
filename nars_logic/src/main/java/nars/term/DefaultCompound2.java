@@ -7,12 +7,14 @@ import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Consumer;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
+public abstract class DefaultCompound2<T extends Term> implements Compound<T>, Subterms<T> {
 
     final TermVector<T> terms;
 
@@ -55,7 +57,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
      */
     protected void init(final T... term) {
 
-        this.terms.init(term, getHashSeed(), op());
+        this.terms.init(term);
 
         this.normalized = !hasVar();
 
@@ -104,13 +106,14 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final int rehashCode() {
-        int ch = subterms().hashCode();
-        if (ch == 0) {
-            rehash();
-            return subterms().hashCode();
-        }
-        return ch;
+    @Deprecated public final int rehashCode() {
+//        int ch = subterms().hashCode();
+//        if (ch == 0) {
+//            rehash();
+//            return subterms().hashCode();
+//        }
+//        return ch;
+        return hashCode();
     }
 
 
@@ -136,17 +139,130 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     @Override
     public final int hashCode() {
-        int ch = subterms().hashCode();
-        if (ch == 0) {
-            throw new RuntimeException("should have hashed");
-//            rehash();
-//            ch = this.contentHash;
-        }
-        return ch;
+        return subterms().hashCode() ^ structure();
+//        if (ch == 0) {
+//            throw new RuntimeException("should have hashed");
+////            rehash();
+////            ch = this.contentHash;
+//        }
+//        return ch;
+    }
+
+
+    @Override
+    public final int varDep() {
+        return terms.varDep();
+    }
+
+    @Override
+    public final int varIndep() {
+        return terms.varIndep();
+    }
+
+    @Override
+    public final int varQuery() {
+        return terms.varQuery();
+    }
+
+    @Override
+    public final int vars() {
+        return terms.vars();
+    }
+
+    @Override
+    public final boolean hasVar() {
+        return terms.hasVar();
+    }
+
+
+    public Term[] cloneTermsReplacing(int index, Term replaced) {
+        return terms.cloneTermsReplacing(index, replaced);
     }
 
 
 
+    public Term[] cloneTermsDeep() {
+        return terms.cloneTermsDeep();
+    }
+
+    public static int newContentHash(int subt, int hashSeed) {
+        return TermVector.newContentHash(subt, hashSeed);
+    }
+
+    public boolean isEmpty() {
+        return terms.isEmpty();
+    }
+
+    public boolean contains(Object o) {
+        return terms.contains(o);
+    }
+
+
+    public final Term[] newArray() {
+        return terms.newArray();
+    }
+
+    @Override
+    public final void forEach(Consumer<? super T> action, int start, int stop) {
+        terms.forEach(action, start, stop);
+    }
+
+    @Override
+    public final void forEach(Consumer<? super T> c) {
+        terms.forEach(c);
+    }
+
+    @Override
+    public final Iterator<T> iterator() {
+        return terms.iterator();
+    }
+
+    @Override
+    public final  T[] cloneTerms() {
+        return (T[]) newArray();
+    }
+
+    @Override
+    public final int structure() {
+        return terms.structure() | (1 << op().ordinal());
+    }
+
+
+
+    @Override
+    public final <T1 extends Term> Term[] cloneTermsTransforming(CompoundTransform<Compound<T1>, T1> trans, int level) {
+        return terms.cloneTermsTransforming(trans, level);
+    }
+
+    @Override
+    public final T term(int i) {
+        return terms.term(i);
+    }
+
+    @Override
+    public final boolean containsTerm(Term target) {
+        return terms.containsTerm(target);
+    }
+
+    @Override
+    public final int size() {
+        return terms.size();
+    }
+
+    @Override
+    public final int complexity() {
+        return terms.complexity();
+    }
+
+    @Override
+    public final int volume() {
+        return terms.volume();
+    }
+
+    @Override
+    public final boolean impossibleSubTermVolume(int otherTermVolume) {
+        return terms.impossibleSubTermVolume(otherTermVolume);
+    }
 
     /**
      * searches for a subterm

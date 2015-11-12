@@ -34,7 +34,9 @@ import static nars.Symbols.STATEMENT_OPENER;
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-public abstract class Statement<A extends Term, B extends Term> extends Compound2<A, B> {
+public abstract class Statement<A extends Term, B extends Term>
+    extends DefaultCompound2 {
+        //extends Compound2<A, B> {
 
 
     protected Statement() {
@@ -303,7 +305,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return The first component
      */
     public A getSubject() {
-        return (A) term[0];
+        return (A) term(0);
     }
 
     /**
@@ -312,7 +314,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return The second component
      */
     public B getPredicate() {
-        return (B) term[1];
+        return (B) term(1);
     }
 
     @Override

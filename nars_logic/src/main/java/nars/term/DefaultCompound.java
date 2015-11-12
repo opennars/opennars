@@ -79,7 +79,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
      */
-    protected void init(final T... term) {
+    public void init(final T... term) {
 
 //        if (this.term!=null) {
 ////            if (this.term == term)
@@ -98,7 +98,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
             Terms.verifySortedAndUnique(term, true);
         }
 
-        init(term, getHashSeed(), op());
+        super.init(term);
 
         this.normalized = !hasVar();
 
@@ -130,7 +130,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
 
 
     @Override
-    public <T extends Term> T normalized() {
+    public final <T extends Term> T normalized() {
         return normalized(false);
     }
 

@@ -160,14 +160,10 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return new Substitution(subs).apply(this);
     }
 
-    @Override
-    default boolean impossibleToMatch(final int possibleSubtermStructure) {
-        final int existingStructure = structure();
 
-        //if the OR produces a different result compared to subterms,
-        // it means there is some component of the other term which is not found
-        return ((possibleSubtermStructure | existingStructure) != existingStructure);
-    }
+
+
+
 
 //    /**
 //     * from: http://stackoverflow.com/a/19333201
