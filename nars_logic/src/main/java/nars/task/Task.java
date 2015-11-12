@@ -140,7 +140,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         //avoid cloning by transforming this new compound directly
         Term ccontent = ((Compound)content).normalizeDestructively();
         if (ccontent!=null)
-            ccontent = termOrNull(ccontent);
+            ccontent = taskable(ccontent);
 
         if (ccontent==null) return null;
 
@@ -162,10 +162,9 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     /** returns a valid Task term, or returns null */
-    static <X extends Compound> X termOrNull(Term x) {
+    static <X extends Compound> X taskable(Term x) {
 
         x = x.normalized();
-
 
         if (Sentence.invalidSentenceTerm(x)) {
             return null;

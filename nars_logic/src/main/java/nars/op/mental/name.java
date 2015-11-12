@@ -26,6 +26,7 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -48,7 +49,8 @@ public class name extends SyncOperator implements Mental {
         Operation operation = t.getTerm();
         Term compound = operation.arg(0);
         Term atomic = operation.arg(1);
-        Similarity content = Similarity.make(compound, atomic);
+        Compound content = Task.taskable( Similarity.make(compound, atomic) );
+        if (content == null) return null;
 
         final Truth truth;
         final Memory memory = nar.memory;

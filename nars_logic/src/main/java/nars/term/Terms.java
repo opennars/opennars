@@ -764,7 +764,8 @@ public class Terms {
                 if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
 
             case SIMILARITY:
-                if (ensureTermLength(2, a)) return Similarity.makeTerm(a[0], a[1]); break;
+                if (ensureTermLength(2, a)) return Similarity.make(a[0], a[1]);
+                break;
 
             case IMPLICATION:
                 if (ensureTermLength(2, a)) return Implication.makeImplication(a[0], a[1]); break;

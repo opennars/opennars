@@ -46,23 +46,13 @@ public class Negation extends Compound1 {
         return false;
     }
 
-
-    /**
-     * Clone an object
-     *
-     * @return A new object
-     */
-    @Override
-    public Negation clone() {
-        return new Negation(the());
+    public final Term clone() {
+        return Negation.make(the());
     }
 
     @Override
     public Term clone(final Term[] replaced) {
-        if (replaced.length!=1)
-            return null;
-
-        return make(replaced[0]);
+        return Negation.make(replaced);
     }
 
     /**
@@ -89,7 +79,8 @@ public class Negation extends Compound1 {
      */
     public static Term make(final Term[] argument) {
         if (argument.length != 1)
-            return null;        
+            throw new RuntimeException("negation requires 1 arg");
+
         return make(argument[0]);
     }
 
@@ -113,12 +104,12 @@ public class Negation extends Compound1 {
 
 
     @Override
-    public byte[] bytes() {
+    public final byte[] bytes() {
         return Compound.newCompound1Key(Op.NEGATION, the());
     }
 
     @Override
-    public void append(Appendable p, boolean pretty) throws IOException {
+    public final void append(Appendable p, boolean pretty) throws IOException {
         Compound.writeCompound1(op(), the(), p, pretty);
     }
 

@@ -444,7 +444,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     public static <C extends Compound> FluentTask make(C t) {
         t.normalizeDestructively();
-        Compound u = Task.termOrNull(t);
+        Compound u = Task.taskable(t);
         if (u == null)
             return null;
 

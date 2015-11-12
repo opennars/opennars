@@ -47,7 +47,7 @@ public class believe extends SyncOperator implements Mental {
 
         //TODO convert to TaskSeed
 
-        Compound content = Task.termOrNull(op.getTerm().arg(0));
+        Compound content = Task.taskable(op.getTerm().arg(0));
         if (content == null)
             return null;
 

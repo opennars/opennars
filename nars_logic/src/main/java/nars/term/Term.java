@@ -33,29 +33,20 @@ import java.util.Map;
 public interface Term extends TermContainer, Cloneable, Comparable, Termed, Serializable {
 
 
-    @Override
-    default Term getTerm() {
+    @Override default Term getTerm() {
         return this;
     }
 
     Op op();
 
-
     /** volume = total number of terms = complexity + # total variables */
-    @Override
-    int volume();
+    @Override int volume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
-    @Override
-    int complexity();
-
+    @Override int complexity();
 
 
     void recurseTerms(final TermVisitor v, Term parent);
-
-//    void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
-
-
 
     default void recurseTerms(final TermVisitor v) {
         recurseTerms(v, null);
@@ -66,9 +57,6 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
     <T extends Term> T normalized();
-    /*{
-        return (T) this;
-    }*/
 
     /** careful: this will modify the term and should not be used unless the instance is new and unreferenced. */
     default <T extends Term> T normalizeDestructively() {
@@ -79,15 +67,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     boolean containsTermRecursively(Term target);
 
-//    boolean equalsOrContainsTermRecursively(final Term target);
-//
 
-
-//    default char[] chars(boolean pretty) {
-//        return name().chars(pretty);
-//    }
-
-    /** shallow clone, using the same subterm references */
     Term clone();
 
     /** deep clone, creating clones of all subterms recursively */
@@ -95,8 +75,6 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     /**
      * Whether this compound term contains any variable term
-     *
-     * @return Whether the name contains a variable
      */
     boolean hasVar();
 

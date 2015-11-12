@@ -133,7 +133,7 @@ public class NALObjectsTest  {
         Map map = new HashMap();
         map.put("k1", "v1");
         map.put("k2", "v2");
-        testTermizer(map, "{<{\"v2\"} --> \"k2\">, <{\"v1\"} --> \"k1\">}");
+        testTermizer(map, "{<{\"v2\"}-->\"k2\">,<{\"v1\"}-->\"k1\">}");
 
     }
 
@@ -141,7 +141,7 @@ public class NALObjectsTest  {
         DefaultTermizer t = new DefaultTermizer();
         Term term = t.term(o);
         assertNotNull(term);
-        assertEquals(termtoString, term.toString());
+        assertEquals(termtoString, term.toString(false));
     }
 
     static void testTermizer(Object o) {

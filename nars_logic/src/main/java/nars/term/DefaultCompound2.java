@@ -278,21 +278,20 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
         return false;
     }
 
+    abstract public Term clone();
+
     @Override
-    public Compound cloneDeep() {
+    public final Compound cloneDeep() {
         Term c = clone(terms.cloneTermsDeep());
         if (c == null) return null;
 
-//        if (c.operator() != operator()) {
-//            throw new RuntimeException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
-//        }
-
+        if (c.op() != op()) {
+            throw new RuntimeException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
+        }
 
         return ((Compound) c);
     }
 
-    @Override
-    abstract public Term clone();
 
     /**
      * Normalizes if contain variables which need to be finalized for use in a Sentence

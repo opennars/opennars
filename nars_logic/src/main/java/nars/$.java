@@ -55,7 +55,7 @@ public class $ {
     }
 
 
-    public static /* TODO <A extends T,B extends T>*/ Similarity sim(Term subj, Term pred) {
+    public static /* TODO <A extends T,B extends T>*/ Term sim(Term subj, Term pred) {
         return Similarity.make(subj, pred);
     }
 

@@ -69,17 +69,8 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
 
-    /**
-     * Clone an object
-     *
-     * @return A new object, to be casted into a SetExt
-     */
-    @Override
-    public Operation<A> clone() {
-        return clone(arg());
-    }
 
-    public Operation clone(Product args) {
+    public final Operation clone(Product args) {
         Operation x = new Operation(getPredicate(), args);
         return x;
     }
@@ -171,22 +162,22 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
      * avoid using this because it may involve creation of unnecessary array
      * if Product1.terms() is called
      */
-    public A[] args() {
+    public final A[] args() {
         return arg().terms();
     }
 
-    public Concept getConcept(Memory m) {
+    public final Concept getConcept(Memory m) {
         if (m == null) return null;
         return m.concept(this);//getTerm());
     }
 
-    public Truth getConceptDesire(Memory m) {
+    public final Truth getConceptDesire(Memory m) {
         Concept c = getConcept(m);
         if (c == null) return null;
         return c.getDesire();
     }
 
-    public float getConceptExpectation(Memory m) {
+    public final float getConceptExpectation(Memory m) {
         Truth tv = getConceptDesire(m);
         if (tv == null) return 0;
         return tv.getExpectation();
@@ -219,7 +210,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
 //    }
 
 
-    public int numArgs() {
+    public final int numArgs() {
         return arg().size();
     }
 
@@ -235,7 +226,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
 
 
     @Override
-    public byte[] bytes() {
+    public final byte[] bytes() {
 
         byte[] op = getOperatorTerm().bytes();
         //Term[] arg = argArray();
@@ -275,7 +266,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
     @Override
-    public void append(Appendable p, boolean pretty) throws IOException {
+    public final void append(Appendable p, boolean pretty) throws IOException {
 
         Term predTerm = getOperatorTerm();
 
@@ -332,7 +323,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
 
-    public String argString() {
+    public final String argString() {
         return Arrays.toString(args());
     }
 

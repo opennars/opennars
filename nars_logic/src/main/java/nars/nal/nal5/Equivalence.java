@@ -28,8 +28,6 @@ import nars.term.Term;
 import nars.term.TermSet;
 import nars.term.TermVector;
 
-import java.util.Arrays;
-
 /**
  * A Statement about an Equivalence relation.
  */
@@ -56,23 +54,7 @@ public class Equivalence extends Statement {
         init(subject, predicate);
     }
 
-    /**
-     * Clone an object
-     *
-     * @return A new object
-     */
-    @Override
-    public Equivalence clone() {
-        return new Equivalence(getSubject(), getPredicate(), temporalOrder);
-    }
-    
-    @Override public Equivalence clone(final Term[] t) {        
-        if (t.length!=2)
-            throw new RuntimeException("Equivalence requires 2 components: " + Arrays.toString(t));
-        
-        return make(t[0], t[1], temporalOrder);
-    }
-    
+
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */
     public static Term makeTerm(final Term subject, final Term predicate, int temporalOrder) {
@@ -80,6 +62,7 @@ public class Equivalence extends Statement {
             return subject;                
         return make(subject, predicate, temporalOrder);        
     }
+
     public static Term makeTerm(Term subject, Term predicate) {
         return makeTerm(subject, predicate, Tense.ORDER_NONE);
     }
@@ -93,17 +76,20 @@ public class Equivalence extends Statement {
      * @param predicate The second component
      * @return A compound generated or null
      */
-    public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
+    public static Term make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
         return make(subject, predicate, Tense.ORDER_NONE);
     }
 
-    public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
+    public static Term make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
 
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
                 (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
             return null;
         }
+
+        if (subject.equals(predicate))
+            return subject;
 
         if (invalidStatement(subject, predicate)) {
             return null;

@@ -16,7 +16,9 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.task.Task;
 import nars.term.Atom;
+import nars.term.Compound;
 import nars.term.Term;
 
 import java.lang.reflect.Method;
@@ -91,7 +93,10 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     @Override
     protected void onInstanceChange(Term oterm, Term prevOterm) {
-        nar.believe(Similarity.make(oterm, prevOterm));
+        Compound c = Task.taskable( Similarity.make(oterm, prevOterm));
+        if (c!=null)
+            nar.believe(c);
+
     }
 
     AtomicBoolean lock = new AtomicBoolean(false);

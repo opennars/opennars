@@ -31,38 +31,13 @@ public class Similarity extends Statement {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
-     * @param arg The component list of the term
      */
     protected Similarity(final Term subj, final Term pred) {
         super();
         init(subj, pred);
     }
-    
 
-    /**
-     * Clone an object
-     * @return A new object, to be casted into a Similarity
-     */
-    @Override
-    public Similarity clone() {
-        return new Similarity(getSubject(), getPredicate());
-    }
-    
-    @Override public Similarity clone(Term[] replaced) {
-        if (replaced.length!=2)
-            return null;
-        return make(replaced[0], replaced[1]);
-    }
 
-    /** alternate version of make that allows equivalent subject and predicate
-     * to be reduced to the common term.      */
-    public static Term makeTerm(final Term subject, final Term predicate) {
-        if (subject.equals(predicate))
-            return subject;                
-        return make(subject, predicate);        
-    }    
-    
     /**
      * Try to make a new compound from two term. Called by the logic rules.
      * @param subject The first component
@@ -70,7 +45,10 @@ public class Similarity extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Similarity make(final Term subject, final Term predicate) {
+    public static Term make(final Term subject, final Term predicate) {
+
+        if (subject.equals(predicate))
+            return subject;
 
         if (invalidStatement(subject, predicate)) {
             return null;

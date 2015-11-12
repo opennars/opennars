@@ -20,7 +20,6 @@
  */
 package nars.term;
 
-import nars.Op;
 import nars.Symbols;
 import nars.nal.nal4.Image;
 import nars.util.utf8.ByteBuf;
@@ -46,6 +45,16 @@ public abstract class Statement<A extends Term, B extends Term>
         super(v);
     }
 
+    @Override public final Term clone() {
+        return Terms.term(op(), getSubject(), getPredicate());
+    }
+
+    @Override public final Term clone(Term[] replaced) {
+        if (replaced.length!=2)
+            throw new RuntimeException("cloning " + op() + " requires 2 subterms");
+            //return null;
+        return Terms.term(op(), replaced[0], replaced[1]);
+    }
 
 //    /**
 //     * Make a Statement from String, called by StringParser
@@ -151,30 +160,30 @@ public abstract class Statement<A extends Term, B extends Term>
 //        return sb.toString();
 //    }
 
-    @Deprecated
-    final protected static CharSequence makeStatementName(final Term subject, final Op relation, final Term predicate) {
-        throw new RuntimeException("Not necessary, utf8 keys should be used instead");
-//        final CharSequence subjectName = subject.toString();
-//        final CharSequence predicateName = predicate.toString();
-//        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
-//
-//        StringBuilder cb = new StringBuilder(length);
-//
-//        cb.append(STATEMENT_OPENER.ch);
-//
-//        //Texts.append(cb, subjectName);
-//        cb.append(subjectName);
-//
-//        cb.append(' ').append(relation).append(' ');
-//        //cb.append(relation);
-//
-//        //Texts.append(cb, predicateName);
-//        cb.append(predicateName);
-//
-//        cb.append(STATEMENT_CLOSER.ch);
-//
-//        return cb.toString();
-    }
+//    @Deprecated
+//    final protected static CharSequence makeStatementName(final Term subject, final Op relation, final Term predicate) {
+//        throw new RuntimeException("Not necessary, utf8 keys should be used instead");
+////        final CharSequence subjectName = subject.toString();
+////        final CharSequence predicateName = predicate.toString();
+////        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
+////
+////        StringBuilder cb = new StringBuilder(length);
+////
+////        cb.append(STATEMENT_OPENER.ch);
+////
+////        //Texts.append(cb, subjectName);
+////        cb.append(subjectName);
+////
+////        cb.append(' ').append(relation).append(' ');
+////        //cb.append(relation);
+////
+////        //Texts.append(cb, predicateName);
+////        cb.append(predicateName);
+////
+////        cb.append(STATEMENT_CLOSER.ch);
+////
+////        return cb.toString();
+//    }
 
 
     @Override
@@ -320,8 +329,7 @@ public abstract class Statement<A extends Term, B extends Term>
         return (B) term(1);
     }
 
-    @Override
-    public abstract Statement clone();
+
 
 //    public Term getSubject(boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
 //        return Compound.unwrap(getSubject(), unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);

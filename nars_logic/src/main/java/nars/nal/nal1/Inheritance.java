@@ -36,7 +36,6 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
 
     /**
      * Constructor with partial values, called by make
-     * @param arg The component list of the term
      */
     protected Inheritance(final A a, final B b) {
         super();
@@ -49,21 +48,6 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
     }
 
 
-    /**
-     * Clone an object
-     * @return A new object, to be casted into a SetExt
-     */
-    @Override public Inheritance clone() {
-        return make(getSubject(), getPredicate());
-    }
-
-    @Override public Inheritance clone(final Term[] t) {
-        if (t.length!=2)
-            return null;
-            //throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
-                
-        return make(t[0], t[1]);
-    }
 
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */

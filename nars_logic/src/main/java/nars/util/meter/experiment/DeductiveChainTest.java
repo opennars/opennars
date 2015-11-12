@@ -7,6 +7,7 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nar.Default;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Statement;
 import nars.util.meter.TestNAR;
@@ -27,11 +28,11 @@ public class DeductiveChainTest extends TestNAR {
     final static public IndexedStatementBuilder inh = (int x, int y) ->
         Inheritance.make(a(x), a(y));
     final static public IndexedStatementBuilder sim = (int x, int y) ->
-        Similarity.make(a(x), a(y));
+        Task.taskable( Similarity.make(a(x), a(y)) );
     final static public IndexedStatementBuilder impl = (int x, int y) ->
         Implication.make(a(x), a(y));
     final static public IndexedStatementBuilder equiv = (int x, int y) ->
-        Equivalence.make(a(x), a(y));
+            Task.taskable( Equivalence.make(a(x), a(y)) );
 
     public DeductiveChainTest(NAR n, int length, int timeLimit, IndexedStatementBuilder b) {
         super(n);

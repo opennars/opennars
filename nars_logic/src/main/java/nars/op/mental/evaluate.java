@@ -41,7 +41,7 @@ public class evaluate extends SyncOperator implements Mental {
     public List<Task> apply(Task<Operation> op) {
 
 
-        Compound content = Task.termOrNull(op.getTerm().arg(0));
+        Compound content = Task.taskable(op.getTerm().arg(0));
         if (content == null)
             return null;
 

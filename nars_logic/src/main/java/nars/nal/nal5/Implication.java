@@ -26,15 +26,13 @@ import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
 
-import java.util.Arrays;
-
 /**
  * A Statement about an Inheritance copula.
  */
 public class Implication<A extends Term, B extends Term> extends Statement<A,B> {
 
-    //TODO use enum like Conjunction
-    protected final int temporalOrder;
+    //TODO use subclasses like Conjunction
+    @Deprecated protected final int temporalOrder;
 
 
     protected Implication(final A subject, final B predicate, final int order) {
@@ -53,24 +51,6 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     @Override public final boolean isCommutative() {
         return false;
     }
-
-
-    /**
-     * Clone an object
-     * @return A new object
-     */
-    @Override
-    public Implication clone() {
-        return new Implication(getSubject(), getPredicate(), getTemporalOrder());
-    }
-    
-    @Override public Implication clone(final Term[] t) {
-        if (t.length!=2)
-            throw new RuntimeException("Implication requires 2 components: " + Arrays.toString(t));
-        
-        return make(t[0], t[1], temporalOrder);
-    }
-
 
     public static Term makeImplication(final Term subject, final Term predicate) {
         if (subject.equals(predicate))
