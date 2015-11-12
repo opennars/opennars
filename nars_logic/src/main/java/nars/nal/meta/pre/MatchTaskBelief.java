@@ -37,6 +37,29 @@ public class MatchTaskBelief extends PreCondition {
 
     }
 
+
+    public final boolean test(final RuleMatch m) {
+
+        final TaskBeliefPair tb = m.taskBelief;
+
+        final TaskBeliefPair pattern = this.pattern;
+
+        //if (!tb.substitutesMayExistParanoid(pattern)) {
+        if (!tb.substitutesMayExistFast(pattern)) {
+            return false;
+        }
+
+        //TODO parameterize the power by budget
+        return m.next(pattern, tb, Global.UNIFICATION_POWER);
+    }
+
+    @Override
+    final public String toString() {
+        return id;
+    }
+
+
+}
 //    @Override public final boolean test(final RuleMatch m) {
 //
 //        boolean sameAsPrevPattern =
@@ -69,26 +92,3 @@ public class MatchTaskBelief extends PreCondition {
 //            }
 //        }
 //    }
-
-    public final boolean test(final RuleMatch m) {
-
-        final TaskBeliefPair tb = m.taskBelief;
-
-        final TaskBeliefPair pattern = this.pattern;
-
-        //if (!tb.substitutesMayExistParanoid(pattern)) {
-        if (!tb.substitutesMayExistFast(pattern)) {
-            return false;
-        }
-
-        //TODO parameterize the power by budget
-        return m.next(pattern, tb, Global.UNIFICATION_POWER);
-    }
-
-    @Override
-    final public String toString() {
-        return id;
-    }
-
-
-}

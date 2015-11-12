@@ -182,7 +182,7 @@ public class Operator<T extends Term> implements Term {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public final int compareTo(Object o) {
         if (this == o) return 0;
 
         Term t = (Term)o;
@@ -193,7 +193,7 @@ public class Operator<T extends Term> implements Term {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (this == obj) return true;
         Term t = (Term)obj;
         return t.op() == Op.OPERATOR &&
@@ -205,7 +205,12 @@ public class Operator<T extends Term> implements Term {
         return term.hashCode() ^ Util.PRIME2; //TODO determine if this is good
     }
 
-    public Term identifier() {
+    public final Term identifier() {
         return term;
+    }
+
+    @Override
+    public final boolean equalsAll(Term[] cls) {
+        return false;
     }
 }

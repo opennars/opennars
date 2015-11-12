@@ -363,6 +363,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
                 volume != c.volume)
             return false;
 
+
         final int s = this.size();
         for (int i = 0; i < s; i++) {
             Term a = term(i);
@@ -372,6 +373,22 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
         return true;
     }
+
+    @Override
+    final public boolean equalsAll(Term[] uu) {
+        final Term[] tt = this.term;
+        if (tt == uu) return true;
+
+        final int s = tt.length;
+
+        if (s != uu.length) return false;
+        for (int i = 0; i < s; i++) {
+            if (!tt[i].equals(uu[i]))
+                return false;
+        }
+        return true;
+    }
+
 
     @Override
     public int compareTo(Object o) {

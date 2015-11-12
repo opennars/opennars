@@ -224,6 +224,11 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
                     .replace(" ", "0");
     }
 
+    static boolean impossibleToMatch(int existingStructure, int possibleSubtermStructure) {
+        //if the OR produces a different result compared to subterms,
+        // it means there is some component of the other term which is not found
+        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+    }
 
 
 //    default public boolean hasAll(final Op... op) {

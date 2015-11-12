@@ -14,9 +14,9 @@ import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-public abstract class DefaultCompound2<T extends Term> implements Compound<T>, Subterms<T> {
+public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
-    protected final TermVector<T> terms;
+    protected TermVector<T> terms;
 
     /**
      * true iff definitely normalized, false to cause it to update on next normalization.
@@ -95,7 +95,17 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
 
 
         Compound c = (Compound)that;
-        return (c.op() == op() && c.subterms().equals(subterms()));
+
+        //return (c.op() == op() && c.subterms().equals(subterms()));
+
+        TermContainer csubs = c.subterms();
+        TermVector<T> osubs = this.terms;
+        if (osubs.equals(csubs)) {
+            if (osubs.getClass() == csubs.getClass())
+                this.terms = (TermVector<T>) csubs; //share instance iff equal class
+            return (op() == c.op());
+        }
+        return false;
     }
 
 
@@ -189,11 +199,16 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T>, S
         return terms.contains(o);
     }
 
-
     @Override
-    public final void forEach(Consumer<? super T> action, int start, int stop) {
-        terms.forEach(action, start, stop);
+    public final boolean equalsAll(Term[] cls) {
+        return terms.equalsAll(cls);
     }
+
+    //
+//    @Override
+//    public final void forEach(Consumer<? super T> action, int start, int stop) {
+//        terms.forEach(action, start, stop);
+//    }
 
     @Override
     public final void forEach(Consumer<? super T> c) {

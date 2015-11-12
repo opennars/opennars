@@ -266,29 +266,44 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return sb;
     }
 
-    default <T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
+    /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
+    default <T extends Term> int cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, Term[] target, final int level) {
         final int n = size();
 
-        final Term[] y = new Term[n];
+        int modifications = 0;
 
         for (int i = 0; i < n; i++) {
             Term x = this.term(i);
+
             if (trans.test(x)) {
-                x = trans.apply( (Compound<T>)this, (T) x, level);
+
+                Term y = trans.apply( (Compound<T>)this, (T) x, level);
+                if (y == null) return -1;
+
+                if (!x.equals(y)) {
+                    modifications++;
+                    x = y;
+                }
+
             } else if (x instanceof Compound) {
                 //recurse
                 Compound cx = (Compound) x;
                 if (trans.testSuperTerm(cx)) {
-                    Term[] cls = cx.cloneTermsTransforming(trans, level + 1);
-                    if (cls == null) return null;
-                    x = cx.clone(cls);
+
+                    Term[] yy = new Term[cx.size()];
+                    int submods = cx.cloneTermsTransforming(trans, yy, level + 1);
+
+                    if (submods == -1) return -1;
+                    if (submods > 0) {
+                        x = cx.clone(yy);
+                        modifications++;
+                    }
                 }
             }
-            if (x == null)
-                return null;
-            y[i] = x;
+            target[i] = x;
         }
-        return y;
+
+        return modifications;
     }
 
 
@@ -346,11 +361,20 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
 
     default <X extends Compound> X cloneTransforming(final CompoundTransform t) {
         if (t.testSuperTerm(this)) {
-            Term[] cls = cloneTermsTransforming(t, 0);
-            if (cls == null) return null;
-            return (X) clone(cls);
+
+            Term[] cls = new Term[size()];
+
+            int mods = cloneTermsTransforming(t, cls, 0);
+
+            if (mods == -1) {
+                return null;
+            }
+            else if (mods > 0) {
+                return (X) clone(cls);
+            }
+            //else if mods==0, fall through:
         }
-        return (X) this;
+        return (X) this; //nothing changed
     }
 
 

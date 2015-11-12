@@ -249,7 +249,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return possibleResult;
     }
 
-    protected int init(int initialCapacity) {
+    protected final int init(int initialCapacity) {
         int capacity = 1;
         while (capacity < initialCapacity) {
             capacity <<= 1;
@@ -258,18 +258,22 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return this.allocate(capacity);
     }
 
-    protected int allocate(int capacity) {
+    protected final int allocate(int capacity) {
         this.allocateTable(capacity << 1); // the table size is twice the capacity to handle both keys and values
         this.computeMaxSize(capacity);
 
         return capacity;
     }
 
-    protected void allocateTable(int sizeToAllocate) {
-        this.table = new Object[sizeToAllocate];
+    protected final Object[] allocateTable(int sizeToAllocate) {
+        //if (this.table==null || this.table.length!=sizeToAllocate)
+            return this.table = new Object[sizeToAllocate];
+        /*else {
+            Arrays.fill(table, null);
+        }*/
     }
 
-    protected void computeMaxSize(int capacity) {
+    protected final void computeMaxSize(int capacity) {
         // need at least one free slot for open addressing
         this.maxSize = Math.min(capacity - 1, (int) (capacity * this.loadFactor));
     }
@@ -316,16 +320,16 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         Object[] t = this.table;
         Object cur = t[index];
         if (cur == null) {
-            t[index] = UnifriedMap.toSentinelIfNull(key);
-            t[index + 1] = value;
+            t[index++] = UnifriedMap.toSentinelIfNull(key);
+            t[index] = value;
             if (++this.occupied > this.maxSize) {
                 this.rehash(t.length);
             }
             return null;
         }
         if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
-            Object result = t[index+1];
-            t[index+1] = value;
+            Object result = t[++index];
+            t[index] = value;
             return result;
         }
         return this.chainedPut(key, index, value);
@@ -1008,9 +1012,16 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return this.occupied == 0;
     }
 
-    public void putAll(Map<? extends K, ? extends V> map) {
+    public final void putAll(Map<? extends K, ? extends V> map) {
         if (map instanceof UnifriedMap<?, ?>) {
-            this.copyMap((UnifriedMap<K, V>) map);
+
+            UnifriedMap<K, V> umap = (UnifriedMap<K, V>) map;
+
+            if (isEmpty())
+                this.copyMapToEmpty(umap);
+            else
+                this.copyMap(umap);
+
         } else if (map instanceof UnsortedMapIterable) {
             MapIterable<K, V> mapIterable = (MapIterable<K, V>) map;
             mapIterable.forEachKeyValue(new Procedure2<K, V>() {
@@ -1038,29 +1049,46 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         throw new IllegalStateException("Entry set was null and size was non-zero");
     }
 
-    protected void copyMap(UnifriedMap<K, V> unifiedMap) {
+    /** if this table is empty, completely overwrite it with the values from another map */
+    protected final void copyMapToEmpty(UnifriedMap<K, V> unifiedMap) {
+
+        Object[] st = unifiedMap.table; //src
+        int nextLen = st.length;
+
+        Object[] tt = this.table; //target (this)
+        if (tt.length!= nextLen)
+            tt = allocateTable(nextLen);
+
+        if ((this.occupied = unifiedMap.occupied) > 0)
+            System.arraycopy(st, 0, tt, 0, nextLen);
+        //else it should remain all null
+
+    }
+
+    protected final void copyMap(UnifriedMap<K, V> unifiedMap) {
         final Object[] ut = unifiedMap.table;
 
         int l = ut.length;
 
-        for (int i = 0; i < l; i += 2) {
-            Object cur = ut[i];
+        for (int i = 0; i < l; ) {
+            Object cur = ut[i++];
+            Object uu = ut[i++];
             if (cur == CHAINED_KEY) {
-                this.copyChain((Object[]) ut[i + 1]);
+                this.copyChain((Object[]) uu);
             } else if (cur != null) {
-                this.putFast(this.nonSentinel(cur), ut[i + 1]);
+                this.putFast(this.nonSentinel(cur), uu);
             }
         }
     }
 
     private void copyChain(Object[] chain) {
         int cl = chain.length;
-        for (int j = 0; j < cl; j += 2) {
-            Object cur = chain[j];
+        for (int j = 0; j < cl; ) {
+            Object cur = chain[j++];
             if (cur == null) {
                 break;
             }
-            this.putFast(this.nonSentinel(cur), chain[j + 1]);
+            this.putFast(this.nonSentinel(cur), chain[j++]);
         }
     }
 
@@ -1071,11 +1099,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         if (cur != null) {
             Object val = t[index + 1];
             if (cur == CHAINED_KEY) {
-                return this.removeFromChain((Object[]) val, (K) key, index);
+                return this.removeFromChain((Object[]) val, key, index);
             }
-            if (this.nonNullTableObjectEquals(cur, (K) key)) {
+            if (this.nonNullTableObjectEquals(cur, key)) {
+                t[index++] = null;
                 t[index] = null;
-                t[index + 1] = null;
                 this.occupied--;
                 return (V) val;
             }
@@ -1083,7 +1111,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return null;
     }
 
-    private V removeFromChain(Object[] chain, K key, int index) {
+    private V removeFromChain(Object[] chain, Object key, int index) {
         int cl = chain.length;
         for (int i = 0; i < cl; i += 2) {
             Object k = chain[i];
@@ -2531,7 +2559,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
 
-    private final Object nonSentinel(Object key) {
+    private final static Object nonSentinel(Object key) {
         return key == NULL_KEY ? null : key;
     }
 

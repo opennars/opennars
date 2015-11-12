@@ -105,9 +105,7 @@ public class FindSubst {
      */
     final int match(final Term x, final Term y, int power) {
 
-
-        final boolean termsEqual = x.equals(y);
-        if (termsEqual) {
+        if (x.equals(y)) {
             return power; //match
         }
 
@@ -278,6 +276,7 @@ public class FindSubst {
         DequePool<ShuffledPermutations> pp = this.permutationPool;
 
         final ShuffledPermutations perm = pp.get();
+
         final int result = permute(perm, x, y, power);
 
         pp.put(perm);
@@ -454,8 +453,8 @@ public class FindSubst {
         if (subPower < 1) return -power;
 
         for (int i = 0; i < yLen; i++) {
-            int s = subPower;
-            if ((s = match(xSubterms.term(i), ySubterms.term(i), s)) < 0) {
+            int s;
+            if ((s = match(xSubterms.term(i), ySubterms.term(i), subPower)) < 0) {
                 return s; //fail
             }
             power -= (subPower - Math.max(s, 0));

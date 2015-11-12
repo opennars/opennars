@@ -17,11 +17,10 @@ public interface TermContainer extends Comparable {
 
 
     default boolean impossibleToMatch(final int possibleSubtermStructure) {
-        final int existingStructure = structure();
-
-        //if the OR produces a different result compared to subterms,
-        // it means there is some component of the other term which is not found
-        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+        return Term.impossibleToMatch(
+                structure(),
+                possibleSubtermStructure
+        );
     }
 
     /** if it's larger than this term it can not be equal to this.
@@ -49,5 +48,5 @@ public interface TermContainer extends Comparable {
         return impossibleToMatch(c.structure());
     }
 
-
+    boolean equalsAll(Term[] cls);
 }

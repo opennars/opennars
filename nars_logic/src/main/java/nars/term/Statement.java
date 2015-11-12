@@ -52,7 +52,7 @@ public abstract class Statement<A extends Term, B extends Term>
     @Override public final Term clone(Term[] replaced) {
         if (replaced.length!=2)
             throw new RuntimeException("cloning " + op() + " requires 2 subterms");
-            //return null;
+
         return Terms.term(op(), replaced[0], replaced[1]);
     }
 

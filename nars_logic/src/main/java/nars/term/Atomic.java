@@ -62,7 +62,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
 
         if (x instanceof Atomic) {
             Atomic ax = (Atomic)x;
-            return Byted.equals(this, ax) && (op() == ax.op());
+            return (op() == ax.op()) && Byted.equals(this, ax);
         }
         return false;
     }
@@ -205,5 +205,10 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         in.read(name);
 
         setBytes(name);
+    }
+
+    @Override
+    public final boolean equalsAll(Term[] cls) {
+        return false;
     }
 }

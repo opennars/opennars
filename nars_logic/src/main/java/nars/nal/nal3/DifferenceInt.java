@@ -34,12 +34,11 @@ public class DifferenceInt extends Difference {
 
     /**
      * Constructor with partial values, called by make
-     * @param arg The component list of the term
      */
-    private DifferenceInt(final Term[] arg) {
+    private DifferenceInt(final Term a, final Term b) {
         super();
 
-        init(arg);
+        init(a, b);
     }
 
 
@@ -48,11 +47,11 @@ public class DifferenceInt extends Difference {
      * @return A new object, to be casted into a DifferenceInt
      */
     @Override
-    public DifferenceInt clone() {
-        return new DifferenceInt(terms.term);
+    public final DifferenceInt clone() {
+        return new DifferenceInt(term(0), term(1));
     }
     
-    @Override public Term clone(Term[] replaced) {
+    @Override public final Term clone(Term[] replaced) {
         return make(replaced);
     }
 
@@ -64,25 +63,25 @@ public class DifferenceInt extends Difference {
     public static Term make(Term[] arg) {
         ensureValidDifferenceSubterms(arg);
 
-        if ((arg[0] instanceof SetInt) && (arg[1] instanceof SetInt)) {
-            //TODO maybe a faster way to calculate:
-            Set<Term> set = Global.newHashSet(arg[0].volume());
-            ((Compound<?>) arg[0]).forEach(set::add);
-            ((Compound<?>) arg[1]).forEach(set::remove);
-            return SetInt.make(set);
-        }
-
-        return new DifferenceInt(arg);
+        return make(arg[0], arg[1]);
     }
 
     /**
      * Try to make a new compound from two term. Called by the logic rules.
-     * @param t1 The first component
-     * @param t2 The second component
+     * @param a The first component
+     * @param b The second component
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term t1, final Term t2) {
-        return make(new Term[] { t1, t2 });
+    public static Term make(final Term a, final Term b) {
+        if ((a instanceof SetInt) && (b instanceof SetInt)) {
+            //TODO maybe a faster way to calculate:
+            Set<Term> set = Global.newHashSet(a.volume());
+            ((Compound<?>) a).forEach(set::add);
+            ((Compound<?>) b).forEach(set::remove);
+            return SetInt.make(set);
+        }
+
+        return new DifferenceInt(a, b);
     }
 
     /**
