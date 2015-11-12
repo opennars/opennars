@@ -61,8 +61,8 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         recurseTerms(v, null);
     }
 
-    /** number of subterms. if atomic, length=1 */
-    int length();
+    /** number of subterms. if atomic, size=1 */
+    int size();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
     <T extends Term> T normalized();

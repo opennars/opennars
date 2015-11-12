@@ -134,7 +134,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     public abstract int complexity();
 
     @Override
-    public final int length() {
+    public final int size() {
         throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
         //return 0;
     }

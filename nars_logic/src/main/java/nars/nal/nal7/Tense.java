@@ -72,7 +72,7 @@ public enum Tense  {
         }
         if ((recurse) && (t instanceof Compound)) {
             Compound ct = (Compound)t;
-            int l = ct.length();
+            int l = ct.size();
             for (int i = 0; i < l; i++) {
                 Term s = ct.term(i);
                 if (containsMentalOperator(s, true)) return true;

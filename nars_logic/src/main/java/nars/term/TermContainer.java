@@ -5,11 +5,12 @@ import nars.Op;
 /**
  * Methods common to both Term and Subterms
  */
-public interface TermContainer {
+public interface TermContainer extends Comparable {
 
     int structure();
     int volume();
     int complexity();
+    int size();
 
     //TODO rename: impossibleToContain
     boolean impossibleSubTermVolume(final int otherTermVolume);
@@ -40,5 +41,6 @@ public interface TermContainer {
     default boolean impossibleToMatch(final Term c) {
         return impossibleToMatch(c.structure());
     }
+
 
 }

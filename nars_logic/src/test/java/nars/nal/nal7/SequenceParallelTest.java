@@ -166,7 +166,7 @@ public class SequenceParallelTest {
         String ts = "(&&, (&/, x, /3), (&/, x, /1))";
         Compound c = t.term(ts);
 
-        assertEquals(1, c.length());
+        assertEquals(1, c.size());
         assertEquals(Sequence.class, c.getClass());
         assertEquals(DURATION + 3 /*?*/, ((Sequence)c).duration()); //interpolated duration
     }
@@ -221,7 +221,7 @@ public class SequenceParallelTest {
 
         Parallel x = t.term(seq);
 
-        assertEquals(2, x.length());
+        assertEquals(2, x.size());
     }
 
     @Test public void testConstruction() {
@@ -231,12 +231,12 @@ public class SequenceParallelTest {
         Sequence s = nar.term(seq);
         assertNotNull(s);
         assertNotNull(s.intervals());
-        assertEquals("only non-interval terms are allowed as subterms", 2, s.length());
+        assertEquals("only non-interval terms are allowed as subterms", 2, s.size());
 
         String ss = s.toString();
 
 
-        assertEquals(s.length() + 1, s.intervals().length);
+        assertEquals(s.size() + 1, s.intervals().length);
         assertEquals("[1, 2, 0]", Arrays.toString(s.intervals()));
         assertEquals(1 + DURATION + 2 + DURATION, s.duration());
 

@@ -160,6 +160,15 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return new Substitution(subs).apply(this);
     }
 
+    @Override
+    default boolean impossibleToMatch(final int possibleSubtermStructure) {
+        final int existingStructure = structure();
+
+        //if the OR produces a different result compared to subterms,
+        // it means there is some component of the other term which is not found
+        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+    }
+
 //    /**
 //     * from: http://stackoverflow.com/a/19333201
 //     */
@@ -183,7 +192,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
     static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
         if (x instanceof Compound) {
             Compound c = (Compound) x;
-            if (c.length() == 1) {
+            if (c.size() == 1) {
                 if ((unwrapLen1SetInt && (c instanceof SetInt)) ||
                         (unwrapLen1SetExt && (c instanceof SetExt)) ||
                         (unwrapLen1Product && (c instanceof Product))
@@ -196,14 +205,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return x;
     }
 
-    @Override
-    default boolean impossibleSubTermVolume(final int otherTermVolume) {
-        return otherTermVolume >
-                volume()
-                        - 1 /* for the compound itself */
-                        - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
-                ;
-    }
 
     @Override
     default void append(final Appendable p, final boolean pretty) throws IOException {
@@ -224,7 +225,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
     }
 
     default void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
-        int nterms = length();
+        int nterms = size();
         for (int i = 0; i < nterms; i++) {
              if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
                 p.append(ARGUMENT_SEPARATOR);
@@ -341,7 +342,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
             return false;
 
         //TODO use structural hash
-        int n = length();
+        int n = size();
         for (int i = 0; i < n; i++) {
             Term sub = term(i);
             if (!sub.levelValid(nal))
@@ -365,6 +366,8 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return null;
     }
 
+
+    TermContainer subterms();
 
 //    public Term[] cloneTermsReplacing(final Term from, final Term to) {
 //        Term[] y = new Term[length()];
@@ -399,7 +402,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
      */
     @Override
     default Object _cdr() {
-        final int len = length();
+        final int len = size();
         if (len == 1) throw new RuntimeException("Pair fault");
         if (len == 2) return term(1);
         if (len == 3) return new Pair(term(1), term(2));

@@ -1,9 +1,13 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
+import nars.Op;
 import nars.term.transform.CompoundTransform;
+import nars.util.data.Util;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
@@ -16,7 +20,7 @@ import static java.util.Arrays.copyOf;
  * TODO make this class immutable and term field private
  * provide a MutableTermVector that holds any write/change methods
  */
-abstract public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
+public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
     /**
      * list of (direct) term
      */
@@ -38,7 +42,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     transient protected byte hasVarIndeps;
     transient protected byte hasVarDeps;
 
-//    public TermVector() {
+    //    public TermVector() {
 //        this(null);
 //    }
 
@@ -61,6 +65,29 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         return volume;
     }
 
+
+
+
+    @Override
+    public boolean impossibleToMatch(final int possibleSubtermStructure) {
+        final int existingStructure = structureHash;
+
+        //if the OR produces a different result compared to subterms,
+        // it means there is some component of the other term which is not found
+        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+    }
+
+
+    @Override
+    public final boolean impossibleSubTermVolume(final int otherTermVolume) {
+        return otherTermVolume >
+                volume()
+                        - 1 /* for the compound itself */
+                        - (size() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
+                ;
+    }
+
+
     /**
      * report the term's syntactic complexity
      *
@@ -77,7 +104,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      * @return the size of the component list
      */
     @Override
-    public final int length() {
+    public final int size() {
         return term.length;
     }
 
@@ -157,7 +184,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
      * forced deep clone of terms - should not be necessary
      */
     public final Term[] cloneTermsDeep() {
-        Term[] l = new Term[length()];
+        Term[] l = new Term[size()];
         for (int i = 0; i < l.length; i++)
             l[i] = term[i].cloneDeep();
         return l;
@@ -218,7 +245,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
     public <T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, final int level) {
-        final Term[] y = new Term[length()];
+        final Term[] y = new Term[size()];
         int i = 0;
         for (Term x : this.term) {
             if (trans.test(x)) {
@@ -240,7 +267,7 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
 
 
     public final boolean isEmpty() {
-        return length() != 0;
+        return size() != 0;
     }
 
     /**
@@ -284,4 +311,129 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
         return Terms.contains(term, t);
     }
 
+    static int newContentHash(int subt, int hashSeed) {
+        //int contentHash =  (Util.PRIME3 * subt) + getHashSeed();
+        return (Util.PRIME3 * subt) + hashSeed;
+    }
+    static int nextContentHash(int hash, int subtermHash) {
+        return (hash << 4) +  subtermHash;
+        //(Util.PRIME2 * contentHash)
+    }
+
+
+    public void init(T[] term, @Deprecated int hashSeed, @Deprecated Op containerOp) {
+        this.term = term;
+
+
+        int deps = 0, indeps = 0, queries = 0;
+        int compl = 1, vol = 1;
+
+
+        int subt = 1 << containerOp.ordinal();
+
+        int contentHash = newContentHash(subt, hashSeed);
+
+        for (final Term t : term) {
+
+            if (t == this)
+                throw new RuntimeException("term can not contain itself");
+
+            contentHash = nextContentHash(contentHash, t.rehashCode());
+
+            compl += t.complexity();
+            vol += t.volume();
+            deps += t.varDep();
+            indeps += t.varIndep();
+            queries += t.varQuery();
+            subt |= t.structure();
+        }
+
+        Compound.ensureFeasibleVolume(vol);
+
+        if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
+        this.contentHash = contentHash;
+
+        this.hasVarDeps = (byte) deps;
+        this.hasVarIndeps = (byte) indeps;
+        this.hasVarQueries = (byte) queries;
+        this.varTotal = (short) (deps + indeps + queries);
+        this.structureHash = subt;
+
+        this.complexity = (short) compl;
+        this.volume = (short) vol;
+
+
+    }
+
+    public final void addAllTo(Collection<Term> set) {
+        Collections.addAll(set, term);
+    }
+
+    public Term[] newArray() {
+        return copyOf(term, term.length);
+    }
+
+    @Override
+    public int hashCode() {
+        return contentHash;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+
+        if (this == that) return true;
+        if (!(that instanceof TermVector)) return false;
+
+        TermVector c = (TermVector) that;
+        if (contentHash != c.contentHash ||
+                structureHash != c.structureHash ||
+                volume != c.volume)
+            return false;
+
+        final int s = this.size();
+        for (int i = 0; i < s; i++) {
+            Term a = term(i);
+            Term b = c.term(i);
+            if (!a.equals(b)) return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+
+        int diff;
+        if ((diff = Integer.compare(o.hashCode(), hashCode())) != 0)
+            return diff;
+
+
+        //TODO dont assume it's a TermVector
+        final TermVector c = (TermVector) o;
+
+        final int s = this.size();
+        if ((diff = Integer.compare(s, c.size())) != 0)
+            return diff;
+
+        if ((diff = Integer.compare(structure(), c.structure())) != 0)
+            return diff;
+
+        for (int i = 0; i < s; i++) {
+            final Term a = term(i);
+            final Term b = c.term(i);
+            final int d = a.compareTo(b);
+
+        /*
+        if (Global.DEBUG) {
+            int d2 = b.compareTo(a);
+            if (d2!=-d)
+                throw new RuntimeException("ordering inconsistency: " + a + ", " + b );
+        }
+        */
+
+            if (d != 0) return d;
+        }
+
+        return 0;
+    }
 }

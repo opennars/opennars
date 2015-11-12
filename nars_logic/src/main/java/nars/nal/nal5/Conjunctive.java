@@ -84,7 +84,7 @@ public abstract class Conjunctive extends Junction<Term> {
             Term a = args[i];
             Conjunctive c = isConjunction(a, order);
             if (c != null)
-                sz += c.length();
+                sz += c.size();
             else
                 sz += 1;
         }
@@ -129,7 +129,7 @@ public abstract class Conjunctive extends Junction<Term> {
         } else {
             if (term1 instanceof Conjunction) {
                 Compound ct1 = ((Compound) term1);
-                final List<Term> set = Global.newArrayList(ct1.length() + 1);
+                final List<Term> set = Global.newArrayList(ct1.size() + 1);
                 ct1.addAllTo(set);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
@@ -141,7 +141,7 @@ public abstract class Conjunctive extends Junction<Term> {
                 return make(set, temporalOrder);
             } else if (term2 instanceof Conjunction) {
                 Compound ct2 = ((Compound) term2);
-                final List<Term> set = Global.newArrayList(ct2.length() + 1);
+                final List<Term> set = Global.newArrayList(ct2.size() + 1);
                 ct2.addAllTo(set);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
                 return make(set, temporalOrder);

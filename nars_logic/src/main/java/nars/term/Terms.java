@@ -71,8 +71,8 @@ public class Terms {
 
         Compound A = ((Compound) a);
         Compound B = ((Compound) b);
-        int aLen = A.length();
-        if (aLen != B.length())
+        int aLen = A.size();
+        if (aLen != B.size())
             return false;
 
         //match all subterms
@@ -341,14 +341,14 @@ public class Terms {
 
     private static boolean containsAll(Compound sat, Term ta, Compound sbt, Term tb) {
         //temporary set for fast containment check
-        Set<Term> componentsA = Global.newHashSet(sat.length() + 1);
+        Set<Term> componentsA = Global.newHashSet(sat.size() + 1);
         componentsA.add(ta);
         sat.addAllTo(componentsA);
 
         //test A contains B
         if (!componentsA.contains(tb))
             return false;
-        int l = sbt.length();
+        int l = sbt.size();
         for (int i = 0; i < l; i++) {
             Term bComponent = sbt.term(i);
             if (!componentsA.contains(bComponent))
@@ -838,13 +838,13 @@ public class Terms {
         Map<Term,Term> result = Global.newHashMap();
 
         t.forEach( a -> {
-            if (a.length() == 2) {
+            if (a.size() == 2) {
                 if ((a.op() == Op.PRODUCT) || (a.op() == Op.INHERITANCE)) {
                     Compound ii = (Compound)a;
                     result.put(ii.term(0), ii.term(1));
                 }
             }
-            else if (a.length() == 1) {
+            else if (a.size() == 1) {
                 result.put(a, null);
             }
         });

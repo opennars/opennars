@@ -310,7 +310,7 @@ public class TermTest {
         Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
         Term d = DifferenceInt.make(a, b);
         assertEquals(d.toString(), d.getClass(), SetIntN.class);
-        assertEquals(d.toString(), 2, d.length());
+        assertEquals(d.toString(), 2, d.size());
         assertEquals("[a,c]", d.toString());
     }
 
@@ -322,7 +322,7 @@ public class TermTest {
         Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
         Term d = DifferenceExt.make(a, b);
         assertEquals(d.toString(), d.getClass(), SetExtN.class);
-        assertEquals(d.toString(), 2, d.length());
+        assertEquals(d.toString(), 2, d.size());
         assertEquals("{a,c}", d.toString());
 
     }

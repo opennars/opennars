@@ -48,8 +48,8 @@ public class reflect extends TermFunction {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
     }
     public static Term sop(String operatorName, Compound c) {
-        Term[] m = new Term[c.length()];
-        for (int i = 0; i < c.length(); i++)
+        Term[] m = new Term[c.size()];
+        for (int i = 0; i < c.size(); i++)
             m[i] = getMetaTerm(c.term(i));
 
         return Inheritance.make(Product.make(m), Atom.quote(operatorName));

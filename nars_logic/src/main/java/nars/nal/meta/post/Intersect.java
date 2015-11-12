@@ -37,9 +37,9 @@ public class Intersect extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        Set<Term> aa = Global.newHashSet(A.length());
+        Set<Term> aa = Global.newHashSet(A.size());
         Collections.addAll(aa, A.terms());
-        Set<Term> bb = Global.newHashSet(B.length());
+        Set<Term> bb = Global.newHashSet(B.size());
         Collections.addAll(bb, B.terms());
 
         MutableSet<Term> terms = Sets.intersect(bb,aa);

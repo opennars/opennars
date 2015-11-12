@@ -57,7 +57,7 @@ public class ImageInt extends Image {
 
     @Override
     public Term clone(Term[] replaced) {
-        if (replaced.length != length())
+        if (replaced.length != size())
             return null;
         //throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
 
@@ -74,7 +74,7 @@ public class ImageInt extends Image {
     public static Term make(final Product product, final Term relation, final short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
-            if ((product.length() == 2) && (p2.length() == 2)) {
+            if ((product.size() == 2) && (p2.size() == 2)) {
                 if ((index == 0) && product.term(1).equals(p2.term(1))) {// (\,_,(*,a,b),b) is reduced to a
                     return p2.term(0);
                 }

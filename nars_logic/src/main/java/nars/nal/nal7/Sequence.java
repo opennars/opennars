@@ -232,7 +232,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
             Compound cterm1 = (Compound) term1;
 
-            List<Term> list = Global.newArrayList(cterm1.length());
+            List<Term> list = Global.newArrayList(cterm1.size());
             cterm1.addAllTo(list);
 
             if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
@@ -247,9 +247,9 @@ public class Sequence extends Conjunctive implements Intermval {
 
         } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
             Conjunction cterm2 = (Conjunction) term2;
-            components = new Term[term2.length() + 1];
+            components = new Term[term2.size() + 1];
             components[0] = term1;
-            arraycopy(cterm2.term, 0, components, 1, cterm2.length());
+            arraycopy(cterm2.term, 0, components, 1, cterm2.size());
         } else {
             components = new Term[]{term1, term2};
         }
@@ -337,7 +337,7 @@ public class Sequence extends Conjunctive implements Intermval {
 
 
     public Term cloneRemovingSuffixInterval(long[] offsetAdjustment) {
-        final int s = length();
+        final int s = size();
         int[] ii = intervals();
 
         if (ii[s]!=0) {

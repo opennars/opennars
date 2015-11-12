@@ -159,7 +159,7 @@ public class BooleanChallenge  {
                 int[] eq = n(pred, 1);
                 int result = eq[0];
 
-                if ((subj instanceof SetExt) && (((SetExt) subj).length() == 1))
+                if ((subj instanceof SetExt) && (((SetExt) subj).size() == 1))
                     subj = ((Compound) subj).term(0);
 
                 if (subj instanceof Product) {

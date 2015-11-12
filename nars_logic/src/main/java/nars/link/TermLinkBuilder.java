@@ -75,7 +75,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         boolean tImplication = (t instanceof Implication);
 
 
-        for (int i = 0; i < t.length(); i++) {
+        for (int i = 0; i < t.size(); i++) {
             Term ti = t.term(i).normalized();
             if (!growComponent(ti)) {
                 continue;
@@ -100,7 +100,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                 boolean t1Grow = growLevel1(ti);
 
-                for (int j = 0; j < cti.length(); j++) {
+                for (int j = 0; j < cti.size(); j++) {
                     Term tj = cti.term(j).normalized();
 
                     if (!(tj instanceof Variable)) {
@@ -114,7 +114,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                         if(ctj instanceof Compound) {
                             Compound cctj = (Compound) ctj;
-                            for (int k = 0; k < cctj.length(); k++) {
+                            for (int k = 0; k < cctj.size(); k++) {
                                 final Term tk = cctj.term(k).normalized();
 
                                 if (!(tk instanceof Variable)) {

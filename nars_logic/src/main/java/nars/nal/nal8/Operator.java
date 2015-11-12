@@ -41,7 +41,7 @@ public class Operator<T extends Term> implements Term {
         return 1;
     }
 
-    @Override public final int length() {
+    @Override public final int size() {
         //copied from Atomic.java
         throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
     }

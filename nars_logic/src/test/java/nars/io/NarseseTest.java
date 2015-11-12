@@ -129,7 +129,7 @@ public class NarseseTest {
     }
 
     protected void testProductABC(Product p) throws Narsese.NarseseException {
-        assertEquals(p.toString() + " should have 3 sub-terms", 3, p.length());
+        assertEquals(p.toString() + " should have 3 sub-terms", 3, p.size());
         assertEquals("a", p.term(0).toString());
         assertEquals("b", p.term(1).toString());
         assertEquals("c", p.term(2).toString());
@@ -184,21 +184,21 @@ public class NarseseTest {
     public void testInfix2() throws Narsese.NarseseException {
         Intersect t = term("(x & y)");
         assertEquals(Op.INTERSECTION_EXT, t.op());
-        assertEquals(2, t.length());
+        assertEquals(2, t.size());
         assertEquals("x", t.term[0].toString());
         assertEquals("y", t.term[1].toString());
 
         IntersectionInt a = term("(x | y)");
         assertEquals(Op.INTERSECTION_INT, a.op());
-        assertEquals(2, a.length());
+        assertEquals(2, a.size());
 
         Product b = term("(x * y)");
         assertEquals(Op.PRODUCT, b.op());
-        assertEquals(2, b.length());
+        assertEquals(2, b.size());
 
         Compound c = term("(<a -->b> && y)");
         assertEquals(Op.CONJUNCTION, c.op());
-        assertEquals(2, c.length());
+        assertEquals(2, c.size());
         assertEquals(5, c.complexity());
         assertEquals(Op.INHERITANCE, c.term(1).op());
     }
@@ -226,7 +226,7 @@ public class NarseseTest {
 
 
     protected void testBelieveAB(Operation t) {
-        assertEquals(2, t.arg().length());
+        assertEquals(2, t.arg().size());
         assertEquals("believe", t.getOperatorTerm().toString());
         assertEquals("a", t.arg(0).toString());
         assertEquals("b", t.arg(1).toString());
@@ -310,16 +310,16 @@ public class NarseseTest {
     public void testSet() {
         Compound xInt = term("[x]");
         assertEquals(Op.SET_INT_OPENER, xInt.op());
-        assertEquals(1, xInt.length());
+        assertEquals(1, xInt.size());
         assertEquals("x", xInt.term(0).toString());
 
         Compound xExt = term("{x}");
         assertEquals(Op.SET_EXT_OPENER, xExt.op());
-        assertEquals(1, xExt.length());
+        assertEquals(1, xExt.size());
         assertEquals("x", xExt.term(0).toString());
 
         Compound abInt = term("[a,b]");
-        assertEquals(2, abInt.length());
+        assertEquals(2, abInt.size());
         assertEquals("a", abInt.term(0).toString());
         assertEquals("b", abInt.term(1).toString());
 
@@ -385,7 +385,7 @@ public class NarseseTest {
         Compound t = term("(/,open,$1,_)");
         assertEquals("(/,open,$1,_)", t.toString(false));
         assertEquals("(/, open, $1, _)", t.toString());
-        assertEquals("index psuedo-term should not count toward its size", 2, t.length());
+        assertEquals("index psuedo-term should not count toward its size", 2, t.size());
     }
 
     @Test
@@ -509,7 +509,7 @@ public class NarseseTest {
     public void testOperatorWithNoParams() {
         Operation t = term("op()");
         assertNotNull(t);
-        assertEquals(0, t.arg().length());
+        assertEquals(0, t.arg().size());
     }
 
 }

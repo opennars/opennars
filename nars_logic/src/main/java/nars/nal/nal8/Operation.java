@@ -220,7 +220,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
 
 
     public int numArgs() {
-        return arg().length();
+        return arg().size();
     }
 
     public static boolean isA(Term x, Term someOperatorTerm) {
@@ -342,7 +342,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     public static Inheritance result(Term op, Product x, Term y) {
         return Inheritance.make(
                 SetExt.make(y),
-                makeImageExt(x, op, (short) (x.length() - 1) /* position of the variable */)
+                makeImageExt(x, op, (short) (x.size() - 1) /* position of the variable */)
         );
     }
     /**
@@ -353,10 +353,10 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
      * @return A compound generated or a term it reduced to
      */
     static Term makeImageExt(Product product, Term relation, short index) {
-        int pl = product.length();
+        int pl = product.size();
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
-            if ((pl == 2) && (p2.length() == 2)) {
+            if ((pl == 2) && (p2.size() == 2)) {
                 if ((index == 0) && product.term(1).equals(p2.term(1))) { // (/,_,(*,a,b),b) is reduced to a
                     return p2.term(0);
                 }

@@ -226,7 +226,7 @@ public class FindSubst {
 
     protected static boolean matchable(final Compound X, final Compound Y) {
         /** must have same # subterms */
-        if (X.length() != Y.length()) {
+        if (X.size() != Y.size()) {
             return false;
         }
 
@@ -255,7 +255,7 @@ public class FindSubst {
         if (!matchable(X, Y))
             return -power;
 
-        final int xLen = X.length();
+        final int xLen = X.size();
 
 
         if ((xLen > 1) && (!X.isCommutative())) {
@@ -354,7 +354,7 @@ public class FindSubst {
     int permute(final ShuffledPermutations perm, final Compound X, final Compound Y, int power) {
 
 
-        final int len = X.length();
+        final int len = X.size();
 
         int subPower = power / len;
         if (subPower < 1) return -power;
@@ -447,7 +447,7 @@ public class FindSubst {
      */
     final protected int matchSubs(final Compound xSubterms, final Compound ySubterms, int power) {
 
-        final int yLen = ySubterms.length();
+        final int yLen = ySubterms.size();
 
         //distribute recursion equally among subterms, though should probably be in proportion to their volumes
         final int subPower = power / yLen;

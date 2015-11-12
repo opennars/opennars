@@ -123,7 +123,7 @@ public class Substitution implements Function<Compound,Term> {
         /** subterms */
         Term[] sub = null;
 
-        final int len = c.length();
+        final int len = c.size();
 
 
         for (int i = 0; i < len; i++) {

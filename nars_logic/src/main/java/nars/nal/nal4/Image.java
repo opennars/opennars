@@ -124,7 +124,7 @@ abstract public class Image extends DefaultCompound {
     @Override
     public byte[] bytes() {
 
-        final int len = this.length();
+        final int len = this.size();
 
         //calculate total size
         int bytes = 2 + 2 + 2;
@@ -160,7 +160,7 @@ abstract public class Image extends DefaultCompound {
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
 
-        final int len = this.length();
+        final int len = this.size();
 
         p.append(COMPOUND_TERM_OPENER);
         p.append(this.op().str);

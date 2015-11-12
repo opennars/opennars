@@ -1,18 +1,20 @@
 package nars.term;
 
-import nars.Global;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.TermVisitor;
 import nars.term.transform.VariableNormalization;
 import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-public abstract class DefaultCompound<T extends Term> extends TermVector<T> implements Compound<T> {
+public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
+
+    final TermVector<T> terms;
 
     /**
      * true iff definitely normalized, false to cause it to update on next normalization.
@@ -24,8 +26,11 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
      */
-    protected DefaultCompound() {
+    protected DefaultCompound2() {
         super();
+        terms = isCommutative() ?
+                new TermSet() :
+                new TermVector();
     }
 
     @Override
@@ -41,39 +46,8 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
         int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
-        if ((diff = Integer.compare(o.hashCode(), hashCode())) != 0)
-            return diff;
-
-        //TODO avoid the secondary cast
-        //HACK
-        final Compound c = (Compound) o;
-
-        final int s = this.size();
-        if ((diff = Integer.compare(s, c.size())) != 0)
-            return diff;
-
-        if ((diff = Integer.compare(structure(), c.structure())) != 0)
-            return diff;
-
-        for (int i = 0; i < s; i++) {
-            final Term a = term(i);
-            final Term b = c.term(i);
-            final int d = a.compareTo(b);
-
-        /*
-        if (Global.DEBUG) {
-            int d2 = b.compareTo(a);
-            if (d2!=-d)
-                throw new RuntimeException("ordering inconsistency: " + a + ", " + b );
-        }
-        */
-
-            if (d != 0) return d;
-        }
-
-        return 0;
+        return subterms().compareTo(((Compound)o).subterms());
     }
-
 
 
     /**
@@ -81,24 +55,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
      */
     protected void init(final T... term) {
 
-//        if (this.term!=null) {
-////            if (this.term == term)
-////                return;
-////            if (Arrays.equals(term, this.term)) {
-////
-//////                System.out.println(Arrays.toString(this.term));
-//////                System.out.println("\t" + Arrays.toString(term));
-//////                System.err.println("?");
-////
-////                //return;
-////            }
-//        }
-
-        if (Global.DEBUG && isCommutative()) {
-            Terms.verifySortedAndUnique(term, true);
-        }
-
-        init(term, getHashSeed(), op());
+        this.terms.init(term, getHashSeed(), op());
 
         this.normalized = !hasVar();
 
@@ -106,17 +63,28 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
 
 
     @Override
-    public final TermContainer subterms() {
-        return this;
+    public final void addAllTo(Collection<Term> set) {
+        terms.addAllTo(set);
     }
+
+    @Override
+    public final Term[] newSubtermArray() {
+        return terms.newArray();
+    }
+
 
     //    /**
 //     * (shallow) Clone the component list
 //     */
     public final Term[] cloneTerms(final Term... additional) {
-        return Compound.cloneTermsAppend(term, additional);
+        return Compound.cloneTermsAppend(terms.term, additional);
     }
 
+
+    @Override
+    public final TermContainer subterms() {
+        return terms;
+    }
 
     @Override
     public boolean equals(final Object that) {
@@ -125,7 +93,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
         if (!(that instanceof Compound)) return false;
 
         Compound c = (Compound)that;
-        return (op() == c.op() && super.equals(c.subterms()));
+        return (c.op() == op() && c.subterms().equals(subterms()));
     }
 
 
@@ -137,10 +105,10 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
 
     @Override
     public final int rehashCode() {
-        int ch = this.contentHash;
+        int ch = subterms().hashCode();
         if (ch == 0) {
             rehash();
-            return this.contentHash;
+            return subterms().hashCode();
         }
         return ch;
     }
@@ -155,19 +123,20 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
      * recursively set duration to interval subterms
      */
     @Override
-    public void setDuration(int duration) {
-        for (final Term x : this.term)
-            x.setDuration(duration);
+    public final void setDuration(int duration) {
+        int n = size();
+        for (int i = 0; i < n; i++)
+            term(i).setDuration(duration);
     }
 
     @Override
     public final void rehash() {
-        init(this.term);
+        init(this.terms.term);
     }
 
     @Override
     public final int hashCode() {
-        int ch = this.contentHash;
+        int ch = subterms().hashCode();
         if (ch == 0) {
             throw new RuntimeException("should have hashed");
 //            rehash();
@@ -175,6 +144,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
         }
         return ch;
     }
+
 
 
 
@@ -186,7 +156,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
     public boolean containsTermRecursively(final Term target) {
         if (impossibleSubterm(target)) return false;
 
-        for (final Term x : term) {
+        for (final Term x : terms.term) {
             if (impossibleSubTermOrEquality(target))
                 continue;
             if (x.equals(target)) return true;
@@ -200,13 +170,8 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
     }
 
     @Override
-    public final Term[] newSubtermArray() {
-        return newArray();
-    }
-
-    @Override
     public Compound cloneDeep() {
-        Term c = clone(cloneTermsDeep());
+        Term c = clone(terms.cloneTermsDeep());
         if (c == null) return null;
 
 //        if (c.operator() != operator()) {
@@ -234,7 +199,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
                 return null;
 
             //HACK
-            ((DefaultCompound) result).normalized = true;
+            ((DefaultCompound2) result).normalized = true;
 
             return (T) result;
         }
@@ -253,7 +218,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
 
         Compound<T> thiss = null;
 
-        T[] term = this.term;
+        T[] term = this.terms.term;
         final int len = term.length;
 
         for (int i = 0; i < len; i++) {
@@ -290,8 +255,9 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
     public int getByteLen() {
         int len = /* opener byte */1;
 
-        for (final Term t : term) {
-            len += t.getByteLen() + 1 /* separator or closer if end*/;
+        final int n = size();
+        for (int i = 0; i < n; i++) {
+            len += term(i).getByteLen() + 1 /* separator or closer if end*/;
         }
 
         return len;
@@ -301,7 +267,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
     @Override
     public byte[] bytes() {
 
-        final int numArgs = term.length;
+        final int numArgs = size();
 
         ByteBuf b = ByteBuf.create(getByteLen());
 
@@ -316,10 +282,8 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
 
     protected void appendBytes(int numArgs, ByteBuf b) {
 
-        final Term[] term = this.term;
-
         for (int i = 0; i < numArgs; i++) {
-            Term t = term[i];
+            Term t = term(i);
 
             if (i != 0) {
                 b.add(ARGUMENT_SEPARATORbyte);
@@ -334,8 +298,10 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
     @Override
     public final void recurseTerms(final TermVisitor v, final Term parent) {
         v.visit(this, parent);
-        for (final Term t : term) {
-            t.recurseTerms(v, this);
+
+        final int n = size();
+        for (int i = 0; i < n; i++) {
+            term(i).recurseTerms(v, this);
         }
     }
 
