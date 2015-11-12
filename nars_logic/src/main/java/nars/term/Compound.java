@@ -49,18 +49,15 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
     /** gets subterm at index i */
     T term(int i);
 
-    /**
-     * Abstract method to get the operate of the compound
-     */
-    @Override
-    Op op();
 
-
+    boolean equals(Object o);
 
     int hashCode();
 
     /**
-     * Check if the order of the term matters
+     * Commutivity in NARS means that a Compound term's
+     * subterms will be unique and arranged in order (compareTo)
+     *
      * <p>
      * commutative CompoundTerms: Sets, Intersections Commutative Statements:
      * Similarity, Equivalence (except the one with a temporal order)
@@ -146,10 +143,21 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return t;
     }
 
+    /**
+     * Recursively apply a substitute to the current CompoundTerm
+     * May return null if the term can not be created
+     *
+     * @param subs
+     */
+    @Override default Term substituted(Map<Term, Term> subs) {
 
-    @Override
-    default Term substituted(Map<Variable, Term> subs) {
-        return applySubstitute(subs);
+        //TODO calculate superterm capacity limits vs. subs min/max
+
+        if ((subs == null) || (subs.isEmpty())) {
+            return this;
+        }
+
+        return new Substitution(subs).apply(this);
     }
 
 //    /**
@@ -196,9 +204,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
                         - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
                 ;
     }
-
-
-
 
     @Override
     default void append(final Appendable p, final boolean pretty) throws IOException {
@@ -347,22 +352,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
 
     boolean transform(CompoundTransform<Compound<T>, T> trans, int depth);
 
-    /**
-     * Recursively apply a substitute to the current CompoundTerm
-     * May return null if the term can not be created
-     *
-     * @param subs
-     */
-    default Term applySubstitute(final Map<? extends Term, Term> subs) {
-
-        //TODO calculate superterm capacity limits vs. subs min/max
-
-        if ((subs == null) || (subs.isEmpty())) {
-            return this;
-        }
-
-        return new Substitution(subs).apply(this);
-    }
 
 
     /**
@@ -370,14 +359,11 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
      * otherwise it is null
      */
     default Compound applySubstituteToCompound(Map<Term, Term> substitute) {
-        Term t = applySubstitute(substitute);
+        Term t = substituted(substitute);
         if (t instanceof Compound)
             return ((Compound) t);
         return null;
     }
-
-    @Override
-    boolean isNormalized();
 
 
 //    public Term[] cloneTermsReplacing(final Term from, final Term to) {

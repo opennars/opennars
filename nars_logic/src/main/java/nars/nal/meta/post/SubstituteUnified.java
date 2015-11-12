@@ -48,8 +48,8 @@ public class SubstituteUnified extends Substitute {
     @Override
     protected boolean substitute(RuleMatch m, Term a, Term b) {
 
-        Map<Variable, Term> left = m.left;
-        Map<Variable, Term> right = m.right;
+        Map<Term, Term> left = m.left;
+        Map<Term, Term> right = m.right;
 
         FindSubst sub = new FindSubst(type, left, right, m.premise.getRandom());
 

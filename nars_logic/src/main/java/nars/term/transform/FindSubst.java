@@ -28,17 +28,17 @@ public class FindSubst {
     public final Op type;
 
     /** X var -> Y term mapping */
-    public final Map<Variable, Term> xy;
+    public final Map<Term, Term> xy;
     boolean xyChanged = false;
 
     /** Y var -> X term mapping */
-    public final Map<Variable, Term> yx;
+    public final Map<Term, Term> yx;
     boolean yxChanged = false;
 
     private final Random random;
 
     final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
-    final DequePool<Map<Variable,Term>> mapPool = new MapDequePool();
+    final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
 
 
     public FindSubst(Op type, NAR nar) {
@@ -53,11 +53,11 @@ public class FindSubst {
         this(type, newDefaultMap(), newDefaultMap(), random);
     }
 
-    private static final Map<Variable,Term> newDefaultMap() {
+    private static final Map<Term,Term> newDefaultMap() {
         return Global.newHashMap(0);
     }
 
-    public FindSubst(Op type, Map<Variable, Term> xy, Map<Variable, Term> yx, Random random) {
+    public FindSubst(Op type, Map<Term, Term> xy, Map<Term, Term> yx, Random random) {
         this.type = type;
         this.xy = xy;
         this.yx = yx;
@@ -361,13 +361,13 @@ public class FindSubst {
 
         perm.restart(len, random);
 
-        final Map<Variable, Term> xy = this.xy; //local copy on stack
-        final Map<Variable, Term> yx = this.yx; //local copy on stack
+        final Map<Term, Term> xy = this.xy; //local copy on stack
+        final Map<Term, Term> yx = this.yx; //local copy on stack
 
         //push/save:
-        Map<Variable, Term> savedXY = acquireCopy(xy);
+        Map<Term, Term> savedXY = acquireCopy(xy);
         xyChanged = false;
-        Map<Variable, Term> savedYX = acquireCopy(yx);
+        Map<Term, Term> savedYX = acquireCopy(yx);
         yxChanged = false;
 
         boolean matched = false;
@@ -418,19 +418,19 @@ public class FindSubst {
         return power; //fail
     }
 
-    private static void restore(Map<Variable, Term> savedCopy, Map<Variable, Term> originToRevert) {
+    private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
         originToRevert.clear();
         originToRevert.putAll(savedCopy);
     }
 
-    private final Map<Variable, Term> acquireCopy(Map<Variable, Term> init) {
-        Map<Variable, Term> m = mapPool.get();
+    private final Map<Term, Term> acquireCopy(Map<Term, Term> init) {
+        Map<Term, Term> m = mapPool.get();
         m.putAll(init);
         return m;
     }
 
-    private final void releaseCopies(Map<Variable, Term> a, Map<Variable, Term> b) {
-        final DequePool<Map<Variable, Term>> mp = this.mapPool;
+    private final void releaseCopies(Map<Term, Term> a, Map<Term, Term> b) {
+        final DequePool<Map<Term, Term>> mp = this.mapPool;
         mp.put(a);
         mp.put(b);
     }
@@ -469,22 +469,22 @@ public class FindSubst {
             super(1);
         }
 
-        @Override public ShuffledPermutations create() {
+        @Override public final ShuffledPermutations create() {
             return new ShuffledPermutations();
         }
     }
 
-    private static class MapDequePool extends DequePool<Map<Variable,Term>> {
+    private static class MapDequePool extends DequePool<Map<Term,Term>> {
         public MapDequePool() {
             super(1);
         }
 
-        @Override public Map<Variable,Term> create() {
+        @Override public final Map<Term,Term> create() {
             return Global.newHashMap();
         }
 
         @Override
-        public void put(Map<Variable, Term> i) {
+        public final void put(Map<Term, Term> i) {
             i.clear();
             super.put(i);
         }

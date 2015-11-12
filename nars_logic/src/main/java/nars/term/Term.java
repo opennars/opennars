@@ -64,8 +64,6 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     /** number of subterms. if atomic, length=1 */
     int length();
 
-    boolean isNormalized();
-
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
     <T extends Term> T normalized();
     /*{
@@ -198,7 +196,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return toString();
     }
 
-    Term substituted(final Map<Variable, Term> subs);
+    Term substituted(final Map<Term, Term> subs);
 
 //    /** returns the effective term as substituted by the set of subs */
 //    default Term substituted(final Map<Variable, Term> subs) {

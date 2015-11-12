@@ -4,8 +4,6 @@ import com.google.common.collect.Iterators;
 import nars.term.transform.CompoundTransform;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
@@ -209,9 +207,9 @@ abstract public class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
 
-    final public void addTermsTo(final Collection<Term> c) {
-        Collections.addAll(c, term);
-    }
+//    final public void addTermsTo(final Collection<Term> c) {
+//        Collections.addAll(c, term);
+//    }
 
     public Term[] cloneTermsReplacing(int index, final Term replaced) {
         Term[] y = cloneTerms();

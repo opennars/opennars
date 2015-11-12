@@ -5,7 +5,6 @@ import nars.Narsese;
 import nars.Op;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift1024StarRandom;
 
@@ -36,5 +35,5 @@ abstract public class PatternFunction implements Function<Task<Operation>, List<
         return null;
     }
 
-    abstract public List<Task> run(Task<Operation> operationTask, Map<Variable, Term> map1);
+    abstract public List<Task> run(Task<Operation> operationTask, Map<Term, Term> map1);
 }

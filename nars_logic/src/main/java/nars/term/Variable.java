@@ -137,7 +137,7 @@ abstract public class Variable extends Atomic {
         return Utf8.fromUtf8toString(op().ch, bytes());
     }
 
-    @Override public final Term substituted(Map<Variable, Term> subs) {
+    @Override public final Term substituted(Map<Term, Term> subs) {
         Term x = subs.get(this);
         if (x == null)
             x = this;

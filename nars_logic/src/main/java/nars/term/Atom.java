@@ -23,11 +23,6 @@ public class Atom extends Atomic  {
         }
 
         @Override
-        public Term substituted(Map<Variable, Term> subs) {
-            return null;
-        }
-
-        @Override
         public boolean hasVar() {
             return false;
         }
@@ -50,6 +45,11 @@ public class Atom extends Atomic  {
         @Override
         public boolean hasVarQuery() {
             return false;
+        }
+
+        @Override
+        public Term substituted(Map<Term, Term> subs) {
+            return null;
         }
 
         @Override
@@ -97,7 +97,7 @@ public class Atom extends Atomic  {
 
 
     @Override
-    public final Term substituted(Map<Variable, Term> subs) {
+    public final Term substituted(Map<Term, Term> subs) {
         return this;
     }
 

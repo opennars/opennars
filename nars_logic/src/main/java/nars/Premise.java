@@ -12,7 +12,6 @@ import nars.task.Task;
 import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
@@ -103,13 +102,13 @@ public interface Premise extends Level {
      * appliesSubstitute and renameVariables, resulting in a cloned object,
      * will not change this instance
      */
-    static Term applySubstituteAndRenameVariables(final Compound t, final Map<Variable, Term> subs) {
+    static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term, Term> subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;
         }
 
-        return t.applySubstitute(subs);
+        return t.substituted(subs);
     }
 
     Concept getConcept();

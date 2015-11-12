@@ -181,7 +181,7 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
         DefaultCompound c = (DefaultCompound) that;
         if (contentHash != c.contentHash ||
                 structureHash != c.structureHash ||
-                volume() != c.volume())
+                volume != c.volume)
             return false;
 
         final int s = this.length();
@@ -192,11 +192,6 @@ public abstract class DefaultCompound<T extends Term> extends TermVector<T> impl
         }
 
         return true;
-    }
-
-    @Override
-    public final boolean isNormalized() {
-        return normalized;
     }
 
 

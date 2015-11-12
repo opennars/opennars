@@ -52,11 +52,6 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     }
 
     @Override
-    public final boolean isNormalized() {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return Utf8.fromUtf8toString(bytes());
     }

@@ -10,7 +10,6 @@ import nars.nar.Default2;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 
@@ -150,7 +149,7 @@ public class OperatorTest {
 
         PatternFunction f = new PatternFunction("(%A,%B)") {
             @Override
-            public List<Task> run(Task<Operation> operationTask, Map<Variable, Term> map1) {
+            public List<Task> run(Task<Operation> operationTask, Map<Term, Term> map1) {
                 System.out.println(this.pattern + " " + operationTask + "\n\t" + map1);
                 count.getAndIncrement();
                 return null;

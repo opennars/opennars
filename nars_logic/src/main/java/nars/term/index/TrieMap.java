@@ -23,8 +23,8 @@ public class TrieMap {
     
     // Simple container for a string-value pair.
     private static class Leaf {
-        public String mStr;
-        public Object mVal;
+        public final String mStr;
+        public final Object mVal;
         public Leaf(String str, Object val) {
             mStr = str;
             mVal = val;

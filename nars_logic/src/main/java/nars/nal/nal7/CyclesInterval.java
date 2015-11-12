@@ -3,7 +3,6 @@ package nars.nal.nal7;
 import nars.Op;
 import nars.term.Atomic;
 import nars.term.Term;
-import nars.term.Variable;
 
 import java.io.IOException;
 import java.util.Map;
@@ -107,7 +106,7 @@ final public class CyclesInterval extends Atomic implements Interval {
     }
 
     @Override
-    public Term substituted(Map<Variable, Term> subs) {
+    public Term substituted(Map<Term, Term> subs) {
         return this;
     }
 

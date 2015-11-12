@@ -63,13 +63,13 @@ public class RuleMatch extends FindSubst {
      *  NOTE: if you use this in a Precondition, make sure to clear() it before it exits
      *  ie. return it in the condition you took it, empty
      * */
-    public final Map<Variable, Term> left = Global.newHashMap(0);
-    public final Map<Variable, Term> right = Global.newHashMap(0);
+    public final Map<Term, Term> left = Global.newHashMap(0);
+    public final Map<Term, Term> right = Global.newHashMap(0);
     public final Set<Term> tmpSet = Global.newHashSet(0);
     public TaskRule prevRule;
 
-    public final Map<Variable, Term> prevXY = Global.newHashMap(0);
-    public final Map<Variable, Term> prevYX = Global.newHashMap(0);
+    public final Map<Term, Term> prevXY = Global.newHashMap(0);
+    public final Map<Term, Term> prevYX = Global.newHashMap(0);
 
     @Override
     public String toString() {
@@ -182,7 +182,7 @@ public class RuleMatch extends FindSubst {
 
 
         if (!Outp.isEmpty()) {
-            Term rederivedTerm = ((Compound)derivedTerm).applySubstitute(Outp);
+            Term rederivedTerm = ((Compound)derivedTerm).substituted(Outp);
             Outp.clear();
 
             //its possible that the substitution produces an invalid term, ex: an invalid statement

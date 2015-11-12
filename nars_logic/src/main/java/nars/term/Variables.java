@@ -1,9 +1,5 @@
 package nars.term;
 
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Similarity;
-import nars.nal.nal5.Junction;
-
 /**
  * Static utility class for static methods related to Variables
  * TODO rename all *substitute* methods to *unify*
@@ -74,29 +70,29 @@ public class Variables {
 //        return Texts.containsChar(n, Symbols.VAR_INDEPENDENT);
 //    }    
 
-    /**
-     * test the invalidity of a term which may be using independent variables
-     */
-    public static boolean indepVarUsedInvalid(Term T) {
-
-
-        //if its a conjunction/disjunction, this is invalid: (&&,<$1 --> test>,<$1 --> test2>), while this isnt: (&&,<$1 --> test ==> <$1 --> test2>,others)
-        //this means we have to go through the conjunction, and check if the component is a indepVarUsedInvalid instance, if yes, return true
-        //
-        if (T instanceof Junction) {
-            for (Term t : ((Junction<?>)T)) {
-                if (indepVarUsedInvalid(t)) {
-                    return true;
-                }
-            }
-        }
-
-        if (!(T instanceof Inheritance) && !(T instanceof Similarity)) {
-            return false;
-        }
-
-        return T.hasVarIndep();
-    }
+//    /**
+//     * test the invalidity of a term which may be using independent variables
+//     */
+//    public static boolean indepVarUsedInvalid(Term T) {
+//
+//
+//        //if its a conjunction/disjunction, this is invalid: (&&,<$1 --> test>,<$1 --> test2>), while this isnt: (&&,<$1 --> test ==> <$1 --> test2>,others)
+//        //this means we have to go through the conjunction, and check if the component is a indepVarUsedInvalid instance, if yes, return true
+//        //
+//        if (T instanceof Junction) {
+//            for (Term t : ((Junction<?>)T)) {
+//                if (indepVarUsedInvalid(t)) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        if (!(T instanceof Inheritance) && !(T instanceof Similarity)) {
+//            return false;
+//        }
+//
+//        return T.hasVarIndep();
+//    }
 
 
 
