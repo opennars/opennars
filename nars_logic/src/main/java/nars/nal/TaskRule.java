@@ -54,7 +54,7 @@ public class TaskRule extends ProductN implements Level {
         return (Product) term(0);
     }
 
-    public final ProductN conclusion() {
+    public final ProductN getConclusion() {
         return (ProductN) term(1);
     }
 
@@ -71,13 +71,33 @@ public class TaskRule extends ProductN implements Level {
 
     protected final void ensureValid() {
         rehash();
+
+
+
+        if (getConclusionTerm().containsTemporal()) {
+            if ((!getTaskTermPattern().containsTemporal())
+                    &&
+                    (!getBeliefTermPattern().containsTemporal())) {
+                //if conclusion is temporal term but the premise has none:
+
+                String s = toString();
+                if ((!s.contains("after")) && (!s.contains("concurrent") && (!s.contains("measure")))) {
+                    //System.err.println
+                  throw new RuntimeException
+                            ("Possibly invalid temporal rule from atemporal premise: " + this);
+
+                }
+            }
+        }
+
+
         if (postconditions.length == 0)
             throw new RuntimeException(this + " has no postconditions");
         if (!Variable.hasPatternVariable(getTask()))
             throw new RuntimeException("rule's task term pattern has no pattern variable");
         if (!Variable.hasPatternVariable(getBelief()))
             throw new RuntimeException("rule's task belief pattern has no pattern variable");
-        if (!Variable.hasPatternVariable(getResult()))
+        if (!Variable.hasPatternVariable(getConclusionTerm()))
             throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
     }
 
@@ -119,8 +139,8 @@ public class TaskRule extends ProductN implements Level {
         return getPremises().term(1);
     }
 
-    protected final Term getResult() {
-        return conclusion().term(0);
+    protected final Term getConclusionTerm() {
+        return getConclusion().term(0);
     }
 
 
@@ -300,6 +320,7 @@ public class TaskRule extends ProductN implements Level {
             //}
 
             switch (predicateNameStr) {
+
                 case "not_equal":
                     next = new NotEqual(arg1, arg2);
                     break;
@@ -312,15 +333,23 @@ public class TaskRule extends ProductN implements Level {
                 case "not_set":
                     next = new NotSet(arg1);
                     break;
-
-                case "event":
-                    preNext = IsEvent.the;
+                case "not_implication_or_equivalence":
+                    next = new NotImplicationOrEquivalence(arg1);
                     break;
-
                 case "no_common_subterm":
                     next = new NoCommonSubterm(arg1, arg2);
                     break;
 
+
+
+
+                case "event":
+                    preNext = Temporality.both;
+                    break;
+
+                case "temporal":
+                    preNext = Temporality.either;
+                    break;
 
                 case "after":
                     preNext = After.the;
@@ -330,7 +359,6 @@ public class TaskRule extends ProductN implements Level {
                     preNext = Concurrent.the;
                     break;
 
-                //TODO apply similar pattern to these as after and concurrent
                 case "shift_occurrence_forward":
                     next = ShiftOccurrence.make(arg1, arg2, true);
                     break;
@@ -339,13 +367,14 @@ public class TaskRule extends ProductN implements Level {
                     break;
 
                 case "measure_time":
-                    if (args.length==1) {
-                        next = new MeasureTime(arg1);
-                        preNext = IsEvent.the;
-                    }
-                    else
+                    if (args.length!=1)
                         throw new RuntimeException("measure_time requires 1 component");
+
+                    preNext = Temporality.both;
+                    next = new MeasureTime(arg1);
                     break;
+
+
 
                 case "substitute":
                     afterConcs.add(new Substitute(arg1, (Variable)arg2));
@@ -365,10 +394,6 @@ public class TaskRule extends ProductN implements Level {
 
                 case "difference":
                     afterConcs.add(new Differ(arg1, arg2, args[2]));
-                    break;
-
-                case "not_implication_or_equivalence":
-                    next = new NotImplicationOrEquivalence(arg1);
                     break;
 
                 case "task":
@@ -499,7 +524,7 @@ public class TaskRule extends ProductN implements Level {
 
         Term T = this.getTask();
         Term B = this.getBelief();
-        Term C = this.getResult();
+        Term C = this.getConclusionTerm();
 
         //      C, B, [pre], task_is_question() |- T, [post]
         TaskRule clone1 = clone(C, B, T);
@@ -521,7 +546,7 @@ public class TaskRule extends ProductN implements Level {
         newPremise.terms()[0] = newT;
         newPremise.terms()[1] = newB;
 
-        final Product newConclusion = Product.make(conclusion().cloneTermsReplacing(0, newR));
+        final Product newConclusion = Product.make(getConclusion().cloneTermsReplacing(0, newR));
 
         return new TaskRule(newPremise, newConclusion);
     }

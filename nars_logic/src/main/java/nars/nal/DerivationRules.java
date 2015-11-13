@@ -168,7 +168,8 @@ public class DerivationRules extends FastList<TaskRule> {
                             unchanged;
 
 
-            //rules.add(ruleString);
+            rules.add(ruleString);
+
 
             for (String equ : equs) {
 
@@ -182,8 +183,29 @@ public class DerivationRules extends FastList<TaskRule> {
 
                         String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
 
+//                        String[] premiseConc = p3.split("\\|\\-");
+//
+//                        boolean premiseTemporal = Narsese.the().term("(" + premiseConc[0] + ")").containsTemporal();
+//
+//                        String conc = premiseConc[1].substring(0, premiseConc[1].length()-1);
+//
+//                        boolean conclusionTemporal =
+//                                ((Product)Narsese.the().term("(" + conc + ")" )).term(0).containsTemporal();
+//
+//                        boolean valid = true;
+//                        if (conclusionTemporal) {
+//
+//                            //premise and conclusion have opposite temporality
+//                            //so this is invalid
+//
+//                            //p3 = p3.replace(" |-", ", temporal |-");
+//                            System.out.println(premiseTemporal + " " + premiseConc[0]);
+//                            valid = false;
+//                        }
+//                        if (valid)
+
                         //System.out.println(ruleString + " " + p3);
-                        rules.add(p3);
+                            rules.add(p3);
                     }
                 }
             }
@@ -194,7 +216,6 @@ public class DerivationRules extends FastList<TaskRule> {
 
 
     }
-
 
 //    /**
 //     * //TODO do this on the parsed rule, because string contents could be unpredictable:

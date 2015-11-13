@@ -339,7 +339,11 @@ public class SequenceParallelTest {
     @Test public void testDoesntDeriveTemporalsFromEternal1() {
         //the eternal inputs here should not derive anything temporal
 
+        /*
+        ((<%1 ==> %2>, %3, not_implication_or_equivalence(%3)), (<(&|, %1, %3) ==> %2>, (<Induction --> Truth>, <ForAllSame --> Order>)))
+         */
         NAR nar = new Default2(200,4,3,2);
+        nar.nal(7);
         nar.log();
         nar.believe("<<{(#1, #2)} --> [commutatorArgument2]> ==> <{#1} --> [LinearOperator]>>.");
         nar.believe("<(commutesWith, \"commutes with\") --> label>.");

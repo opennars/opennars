@@ -230,6 +230,14 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
 
+    default boolean containsTemporal() {
+        //TODO construct bit vector for one comparison
+        return has(Op.PARALLEL) || has(Op.SEQUENCE) ||
+                has(Op.EQUIVALENCE_AFTER) || has(Op.EQUIVALENCE_WHEN) ||
+                has(Op.IMPLICATION_AFTER) || has(Op.IMPLICATION_WHEN) || has(Op.IMPLICATION_BEFORE);
+    }
+
+
 
 //    default public boolean hasAll(final Op... op) {
 //        //TODO

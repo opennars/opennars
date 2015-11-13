@@ -296,14 +296,6 @@ public class RuleMatch extends FindSubst {
             final long occ;
 
             if (occurence_shift > Stamp.TIMELESS) {
-
-                if (!premise.nal(7)) {
-                    if (Global.DEBUG) {
-                        throw new RuntimeException("temporal change with lower than NAL7");
-                    }
-                    return null;
-                }
-
                 occ = task.getOccurrenceTime() + occurence_shift;
             }
             else {
@@ -311,13 +303,16 @@ public class RuleMatch extends FindSubst {
             }
 
 
+            if (occ != Stamp.ETERNAL && premise.isEternal() && !premise.nal(7)) {
+                throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
+            }
 
             final Task derived = premise.validate(deriving
                     .punctuation(punct)
                     .truth(truth)
                     .budget(budget)
                     .time(now, occ)
-                    .parent(task, single ? null : belief)
+                    .parent(task, belief /* null if single */)
             );
 
             if (derived != null) {
@@ -335,7 +330,7 @@ public class RuleMatch extends FindSubst {
 
     /** for debugging */
     private static void removeInsufficientBudget(Premise premise, PreTask task) {
-        premise.memory().remove(task, "Insufficient Derivation Budget");
+        premise.memory().remove(task, "Insufficient Derived Budget");
     }
 
     /** for debugging */

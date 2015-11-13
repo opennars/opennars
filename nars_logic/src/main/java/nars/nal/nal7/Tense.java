@@ -30,6 +30,7 @@ public enum Tense  {
 
     public static final Tense Unknown = null;
 
+    /** none=eternal*/
     public static final int ORDER_NONE = 2;
     /** forward = sequential */
     public static final int ORDER_FORWARD = 1;

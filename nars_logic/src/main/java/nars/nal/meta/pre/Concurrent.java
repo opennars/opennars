@@ -19,14 +19,14 @@ public class Concurrent extends PreCondition {
 
     @Override
     public final String toString() {
-        return getClass().getSimpleName();
+        return "concurrent"; //getClass().getSimpleName();
     }
 
     @Override
     public final boolean test(RuleMatch m) {
         final Premise premise = m.premise;
 
-        if (!premise.isTaskAndBeliefEvent()) //TODO check in preCond
+        if (!premise.isEvent())
             return false;
 
         final Task task = premise.getTask();

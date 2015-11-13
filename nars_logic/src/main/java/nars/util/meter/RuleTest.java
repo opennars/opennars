@@ -22,7 +22,7 @@ public class RuleTest extends TestNAR {
         belief = belief.replace("%", "p"); //TODO do proper term replacement
         char beliefPunc = '.';
 
-        String conc = r.conclusion().term(0).toString();
+        String conc = r.getConclusion().term(0).toString();
         conc = conc.replace("%", "p");
         char concPunc = '.';
 

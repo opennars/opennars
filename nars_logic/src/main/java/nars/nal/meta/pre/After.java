@@ -20,14 +20,14 @@ public class After extends PreCondition {
 
     @Override
     public String toString() {
-        return "After";//getClass().getSimpleName();
+        return "after";
     }
 
     @Override
-    public boolean test(RuleMatch m) {
+    public final boolean test(RuleMatch m) {
         final Premise premise = m.premise;
 
-        if (!premise.isTaskAndBeliefEvent()) //TODO check in preCond
+        if (!premise.isEvent())
             return false;
 
         final Task task = premise.getTask();

@@ -27,9 +27,6 @@ public class MeasureTime extends AbstractMeasureTime {
     @Override protected boolean testEvents(RuleMatch m, Term target) {
         Premise p = m.premise;
 
-//        if (!p.isTaskAndBeliefEvent()) //this will be a precondition
-//            return false;
-
         int time = Tense.between(p.getTask(), p.getBelief());
         if (time < 0) {
             return false;

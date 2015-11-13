@@ -509,7 +509,7 @@ public interface Premise extends Level {
 
 
     /** true if both task and (non-null) belief are temporal events */
-    default boolean isTaskAndBeliefEvent() {
+    default boolean isEvent() {
         /* TODO This part is used commonly, extract into its own precondition */
         Task b = getBelief();
         if (b == null) return false;
@@ -518,13 +518,25 @@ public interface Premise extends Level {
                 (!Tense.isEternal(b.getOccurrenceTime())));
     }
 
-    /** true if neither task nor belief are temporal */
+    /** true if both task and belief (if not null) are eternal */
     default boolean isEternal() {
         Task b = getBelief();
         if ((b != null) && (!b.isEternal()))
             return false;
         Task t = getTask();
         return t.isEternal();
+    }
+
+    /** true if either task or belief is non-eternal */
+    default boolean isTemporal() {
+        Task t = getTask();
+        if (!t.isEternal()) return true;
+
+        Task b = getBelief();
+        if ((b != null) && (!b.isEternal()))
+            return true;
+
+        return false;
     }
 
 
