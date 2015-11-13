@@ -10,7 +10,11 @@ import nars.truth.TruthFunctions;
 import java.util.Map;
 
 /**
- * Created by me on 8/1/15.
+ * http://aleph.sagemath.org/?q=qwssnn
+ <patham9> only strong rules are allowing overlap
+ <patham9> except union and revision
+ <patham9> if you look at the graph you see why
+ <patham9> its both rules which allow the conclusion to be stronger than the premises
  */
 public enum BeliefFunction implements TruthFunction {
 
@@ -78,7 +82,7 @@ public enum BeliefFunction implements TruthFunction {
             return TruthFunctions.contraposition(T);
         }
     },
-    Resemblance() {
+    Resemblance(true) {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
             return TruthFunctions.resemblance(T,B);
@@ -90,13 +94,13 @@ public enum BeliefFunction implements TruthFunction {
             return TruthFunctions.union(T,B);
         }
     },
-    Intersection() {
+    Intersection(true) {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
             return TruthFunctions.intersection(T,B);
         }
     },
-    Difference() {
+    Difference(true) {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
             return TruthFunctions.difference(T,B);

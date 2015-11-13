@@ -199,7 +199,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         final List<V> a = items.getList();
 
-        int istart = 0;
+        int istart;
 
         if (len != siz) {
             //asking for some of the items

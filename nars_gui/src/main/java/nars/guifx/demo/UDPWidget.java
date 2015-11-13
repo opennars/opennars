@@ -5,7 +5,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import nars.Memory;
 import nars.NAR;
-import nars.bag.impl.GuavaCacheBag;
+import nars.bag.impl.MapCacheBag;
 import nars.guifx.NARide;
 import nars.guifx.TracePane;
 import nars.nar.Default2;
@@ -13,6 +13,7 @@ import nars.op.io.UDPNetwork;
 import nars.time.RealtimeMSClock;
 
 import java.net.SocketException;
+import java.util.HashMap;
 
 import static javafx.application.Platform.runLater;
 
@@ -37,7 +38,7 @@ public class UDPWidget extends BorderPane {
         NAR n = new Default2(
             new Memory(
                 new RealtimeMSClock(),
-                new GuavaCacheBag<>()
+                new MapCacheBag(new HashMap())
         ), 1024, 2, 3, 4);
 
         NARide.show(n.loop(), (i)->{

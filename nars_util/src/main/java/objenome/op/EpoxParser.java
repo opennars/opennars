@@ -48,7 +48,7 @@ import java.util.Map;
 public class EpoxParser {
 
     // The language that the parser recognises
-    private Map<String, Node> nodes;
+    public final Map<String, Node> nodes;
 
     /**
      * Constructs an <code>EpoxParser</code> with no nodes declared

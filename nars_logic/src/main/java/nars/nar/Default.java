@@ -87,12 +87,14 @@ public class Default extends NAR {
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(memory);
 
-        initDefaults(memory);
+        rng = new XorShift1024StarRandom(1);
 
+        initDefaults(memory);
 
         the("input", input = initInput());
 
-        the("core", core = initCore(activeConcepts,
+        the("core", core = initCore(
+                activeConcepts,
                 conceptsFirePerCycle,
                 termLinksPerCycle, taskLinksPerCycle
         ));
@@ -103,7 +105,6 @@ public class Default extends NAR {
             });
         }
 
-        //n.on(new RuntimeNARSettings());
     }
 
     public void initTime() {
@@ -118,7 +119,7 @@ public class Default extends NAR {
         }
     }
 
-    protected  void initNAL9() {
+    protected void initNAL9() {
         //NAL8 plugins
 
         for (OperatorReaction o : defaultOperators)
@@ -151,14 +152,12 @@ public class Default extends NAR {
 
     protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
-        //HACK:
-        //final MutableInteger[] tmpConceptsFiredPerCycle = new MutableInteger[1];
-
         DefaultCycle c = initCore(
-                activeConcepts,
-                newDeriver(),
-                newConceptBag(activeConcepts),
-                new ConceptActivator(this, this));
+            activeConcepts,
+            newDeriver(),
+            newConceptBag(activeConcepts),
+            new ConceptActivator(this, this)
+        );
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
@@ -224,7 +223,7 @@ public class Default extends NAR {
     };
 
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
-    public final Random rng = new XorShift1024StarRandom(1);
+    public final Random rng;
 
     public final OperatorReaction[] defaultOperators = new OperatorReaction[]{
 
@@ -354,12 +353,10 @@ public class Default extends NAR {
     public Concept apply(final Term t) {
 
         Bag<Task, TaskLink> taskLinks =
-                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
+                new CurveBag<>(taskLinkBagSize, rng).mergeAverage();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(termLinkBagSize, rng).mergePlus();
-
-        Memory m = memory;
+                new CurveBag<>(termLinkBagSize, rng).mergeAverage();
 
         if (t instanceof Atom) {
             return new AtomConcept(t, termLinks, taskLinks);
@@ -435,13 +432,6 @@ public class Default extends NAR {
 //        };
 
 
-        /**
-         * samples an active concept
-         */
-        public Concept next() {
-            return active.peekNext();
-        }
-
 
         /**
          * concepts active in this cycle
@@ -457,6 +447,13 @@ public class Default extends NAR {
         public final ConceptActivator conceptActivator;
 
         public final MutableFloat conceptForget;
+
+
+        /** temporary re-usable array for batch firing */
+        private TermLink[] firingTermLinks = null;
+
+        /** temporary re-usable array for batch firing */
+        private TaskLink[] firingTaskLinks = null;
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this
@@ -488,6 +485,15 @@ public class Default extends NAR {
                 })
             );
         }
+
+
+        /**
+         * samples an active concept
+         */
+        public Concept next() {
+            return active.peekNext();
+        }
+
 
         public void reset() {
 
@@ -525,11 +531,6 @@ public class Default extends NAR {
             });
         }
 
-        /** temporary re-usable array for batch firing */
-        private TermLink[] firingTermLinks = null;
-
-        /** temporary re-usable array for batch firing */
-        private TaskLink[] firingTaskLinks = null;
 
         protected final void fireConcept(Concept concept, Consumer<Premise> withResult) {
 
@@ -557,17 +558,13 @@ public class Default extends NAR {
         }
 
 
-        public final long time() {
-            return nar.time();
-        }
-
         public final Concept activate(final Term term, final Budget b) {
             final Bag<Term, Concept> active = this.active;
             active.setCapacity(capacity.intValue());
 
             final ConceptActivator ca = this.conceptActivator;
             ca.setActivationFactor( activationFactor.floatValue() );
-            return ca.update(term, b, time(), 1f, active);
+            return ca.update(term, b, nar.time(), 1f, active);
         }
 
         public final Bag<Term,Concept> concepts() {

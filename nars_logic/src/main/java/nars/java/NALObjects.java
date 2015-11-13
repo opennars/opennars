@@ -197,7 +197,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         }
 
         @Override
-        public Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
+        public final Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
 
             Object result = method.invoke(obj, objects);
 

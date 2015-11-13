@@ -27,6 +27,7 @@ public class NARideRealtimeDefault {
             )
         );
         Default2 nar = new Default2(mem, 1024, 1, 2, 3);
+        nar.nal(9);
         nar.setTaskLinkBagSize(32);
         nar.setTermLinkBagSize(128);
 

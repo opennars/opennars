@@ -99,4 +99,25 @@ public class BudgetMergeTest {
         assertEquals(z, a.pop());
 
     }
+    
+//    @Test public void testDurabilityLeak() {
+//        /*
+//        PARENT     $0.80;0.08;0.08$ <<(a, c) --> $1> ==> <(b, c) --> $1>>. :202: %1.00;0.45%
+//            PARENT       $0.50;0.80;0.95$ <(a, c) --> d>. :57: %1.00;0.90%
+//            BELIEF       $0.50;0.80;0.95$ <(b, c) --> d>. :39: %1.00;0.90%
+//        */
+//
+//        NAR n = new Default2(100, 1, 1, 2);
+//        n.input("$0.50;0.80;0.95$ <(a, c) --> d>. %1.00;0.90%");
+//        n.input("$0.50;0.80;0.95$ <(b, c) --> d>. %1.00;0.90%");
+//        n.memory.eventDerived.on(t -> {
+//            System.out.println(t.getExplanation());
+//            //float dur = t.getBudget().getDurability();
+//        });
+//
+//        n.frame(16);
+//        //n.memory.concepts.forEach(c -> System.out.println(c));
+//
+//
+//    }
 }

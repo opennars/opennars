@@ -47,22 +47,28 @@ public class RuleSerializationTest extends AbstractSerializationTest<Collection<
 
         while (xa.hasNext()) {
             TaskRule a = (TaskRule) xa.next();
+
             TaskRule b = (TaskRule) xb.next();
 
             assertTrue(a!=b);
 
-            if (!a.equals(b)) {
-                System.out.println(a +  "\t\t" + b);
-
-                /*try {
-                    System.out.println(JSON.omDeep.writeValueAsString(a));
-                    System.out.println(JSON.omDeep.writeValueAsString(b));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }*/
-            }
+//            if (!a.equals(b)) {
+//                System.out.println(a +  "\t\t" + b + "\n\n");
+//
+//
+//                /*try {
+//                    System.out.println(JSON.omDeep.writeValueAsString(a));
+//                    System.out.println(JSON.omDeep.writeValueAsString(b));
+//                } catch (JsonProcessingException e) {
+//                    e.printStackTrace();
+//                }*/
+//            }
 
             Assert.assertEquals(a.toString(), b.toString());
+
+            if (!((Compound)a.getTerm()).term(0).equals(
+                    ((Compound)b.getTerm()).term(0) ))
+                System.err.println("what");
 
             Assert.assertEquals(
                     ((Compound)a.getTerm()).term(0),

@@ -19,7 +19,7 @@ import java.util.function.Function;
 abstract public class Numeric1 extends MathNode implements UnivariateFunction, Function<Double,Number> {
     
     protected Numeric1() {
-        super(null);
+        super();
     }
     
     protected Numeric1(Node child) {

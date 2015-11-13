@@ -10,7 +10,6 @@ import nars.NAR;
 import nars.Narsese;
 import nars.guifx.NARfx;
 import nars.guifx.demo.POJOPane;
-import nars.nar.Default;
 import nars.nar.Default2;
 import nars.task.Task;
 import nars.term.Term;
@@ -129,7 +128,9 @@ public class SimpleNARBudgetDynamics {
 
     public final static class Variables {
         public final StringProperty input = new SimpleStringProperty("");
-        public final ObjectProperty nar = new SimpleObjectProperty(new Default());
+        public final ObjectProperty<NAR> nar = new SimpleObjectProperty(
+                new Default2(1000, 1, 2, 2)
+        );
     }
 
     public static void main(String[] args) {
@@ -197,7 +198,8 @@ public class SimpleNARBudgetDynamics {
             x.setLeft(new POJOPane<>(vars));
 
 
-            Default2 d = new Default2(512, 1, 1, 1); //Equalized(1024, 1, 3);
+
+            NAR d = vars.nar.get(); //new Default2(512, 1, 1, 1); //Equalized(1024, 1, 3);
             //Default d = new NewDefault().setInternalExperience(null);
             //d.memory.conceptForgetDurations.set(8);
             //d.getParam().conceptForgetDurations.set(1);

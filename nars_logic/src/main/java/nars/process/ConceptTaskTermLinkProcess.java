@@ -72,9 +72,12 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(getClass().getSimpleName())
-                .append('[').append(getTask()).append(',')
-                .append(getTermLink()).append(',').append(getBelief())
+        return new StringBuilder().append(
+                getClass().getSimpleName())
+                .append('[').append(getConcept()).append(',')
+                            .append(getTaskLink()).append(',')
+                            .append(getTermLink()).append(',')
+                            .append(getBelief())
                 .append(']')
                 .toString();
     }

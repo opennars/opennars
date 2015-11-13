@@ -70,6 +70,7 @@ public class TaskRule extends ProductN implements Level {
 //    }
 
     protected final void ensureValid() {
+        rehash();
         if (postconditions.length == 0)
             throw new RuntimeException(this + " has no postconditions");
         if (!Variable.hasPatternVariable(getTask()))
@@ -225,8 +226,6 @@ public class TaskRule extends ProductN implements Level {
         if (tr == null) {
             return null;
         }
-
-        tr.rehash();
 
         return tr.setup();
     }

@@ -6,7 +6,6 @@ import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.term.Term;
 import nars.util.data.Util;
-import org.infinispan.commons.util.WeakValueHashMap;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -116,8 +115,8 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
     }
 
     static CacheBag<Term, Concept> memory(int capacity) {
-        return new MapCacheBag(
-            new WeakValueHashMap<>(capacity)
-        );
+        return //new MapCacheBag(
+            //new WeakValueHashMap<>(capacity) );
+                GuavaCacheBag.make(capacity * 256);
     }
 }

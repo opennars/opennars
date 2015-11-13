@@ -18,24 +18,34 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K,
     //public final Observed<V> removed = new Observed();
 
 
-    public GuavaCacheBag() {
-        super();
-
-        data = CacheBuilder.newBuilder()
-
-            //.maximumSize(capacity)
-
-                .softValues()
+    public static <K,V extends Itemized<K>> GuavaCacheBag<K,V> make(int maxSize) {
+        return new GuavaCacheBag(CacheBuilder.newBuilder()
+                .maximumSize(maxSize));
+    }
 
 
+    public static <K,V extends Itemized<K>> GuavaCacheBag<K,V> makeSoftValues() {
+        return new GuavaCacheBag(CacheBuilder.newBuilder()
 
-            //.expireAfterWrite(10, TimeUnit.MINUTES)
+                //.maximumSize(capacity)
+
+                .softValues());
+
+
+
+                //.expireAfterWrite(10, TimeUnit.MINUTES)
                /*.weakKeys()
                .weakValues()
                .weigher(null)*/
 
-                .removalListener(this)
-        .build();
+
+    }
+
+    public GuavaCacheBag(CacheBuilder<K, V> data) {
+        super();
+
+        data.removalListener(this);
+        this.data = data.build();
 
     }
 

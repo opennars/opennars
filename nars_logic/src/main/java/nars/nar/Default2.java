@@ -30,7 +30,8 @@ public class Default2 extends Default {
                     int conceptsFirePerCycle,
                     int tasklinkFirePerConcept,
                     int termlinkFirePerConcept) {
-        this(new Memory(new FrameClock(), CacheBag.memory(numConcepts)), numConcepts, conceptsFirePerCycle, tasklinkFirePerConcept, termlinkFirePerConcept);
+        this(new Memory(new FrameClock(),
+                CacheBag.memory(numConcepts)), numConcepts, conceptsFirePerCycle, tasklinkFirePerConcept, termlinkFirePerConcept);
     }
 
     public Default2(Memory mem, int i, int i1, int i2, int i3) {
@@ -122,5 +123,21 @@ public class Default2 extends Default {
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
+    }
+
+    @Override
+    protected void initNAL9() {
+        super.initNAL9();
+
+//        new EpoxParser(true).nodes.forEach((k,v)->{
+//            on(Atom.the(k), (Term[] t) -> {
+//                Node n = v.clone(); //TODO dont use Epox's prototype pattern if possible
+//                for (int i = 0; i < t.length; i++) {
+//                    Term p = t[i];
+//                    n.setChild(i, new Literal(Float.parseFloat(p.toString())));
+//                }
+//                return Atom.the(n.evaluate());
+//            });
+//        });
     }
 }

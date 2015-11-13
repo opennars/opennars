@@ -274,6 +274,7 @@ public class RuleMatch extends FindSubst {
         final Budget budget;
         if (truth != null) {
             budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
+            //budget = BudgetFunctions.forward(truth, premise);
         } else {
             budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
         }
