@@ -405,13 +405,19 @@ public class Default extends NAR {
         return SimpleDeriver.standardDeriver;
     }
 
+    public NAR forEachConcept(Consumer<Concept> recip) {
+        this.core.active.forEach(recip);
+        return this;
+    }
+
 
     /**
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static class DefaultCycle extends Active implements Serializable {
+    public static class DefaultCycle implements Serializable {
 
+        final Active handlers = new Active();
 
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
@@ -475,8 +481,7 @@ public class Default extends NAR {
             this.conceptsFiredPerCycle = new MutableInteger(1);
             this.active = concepts;
 
-
-            add(
+            handlers.add(
                 nar.memory.eventCycleEnd.on((m) -> {
                     fireConcepts(conceptsFiredPerCycle.intValue());
                 }),

@@ -75,7 +75,7 @@ public class InfiniCacheBag extends AbstractCacheBag<Term, Concept> {
         });
     }
 
-    @Override
+
     public Iterator<Concept> iterator() {
         return Iterators.transform(cache.values().iterator(),
                 (v) -> {

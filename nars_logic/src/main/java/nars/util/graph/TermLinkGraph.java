@@ -1,6 +1,5 @@
 package nars.util.graph;
 
-import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
@@ -24,14 +23,10 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
         super(String.class);
     }
 
-    public TermLinkGraph(Memory m) {
-        this();
-        add(m.getConcepts(), true);
-    }
 
     public TermLinkGraph(NAR n) {
         this();
-        add(n.concepts(), true);
+        add(n, true);
     }
 
     public TermLinkGraph(Concept... c) {
@@ -137,12 +132,9 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
                 + ',' + target.toStringCompact() + ')';
     }
 
-    public TermLinkGraph add(Iterable<Concept> concepts, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
+    public TermLinkGraph add(NAR n, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
 
-        for (final Concept c : concepts) {
-            add(c, includeTermLinks);
-
-        }
+        n.forEachConcept(c -> add(c, includeTermLinks));
 
         return this;
     }

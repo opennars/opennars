@@ -714,4 +714,9 @@ public class Util {
     public static int decimalize(float v) {
         return bin(v,10);
     }
+
+    /** finds the mean value of a given bin */
+    public static float unbinCenter(final int b, final int bins) {
+        return ((float)b)/bins;
+    }
 }

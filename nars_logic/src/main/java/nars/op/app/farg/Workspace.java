@@ -6,7 +6,6 @@
 package nars.op.app.farg;
 
 import nars.NAR;
-import nars.concept.Concept;
 import nars.util.event.CycleReaction;
 
 /**
@@ -50,13 +49,13 @@ public class Workspace extends CycleReaction {
     
     public double calc_temperature() {
         n_concepts=0;
-        double s = 0.0f;
-        for(Concept node : nar.memory.getConcepts()) {
+        final double[] s = {0.0f};
+        nar.forEachConcept(node -> {
             if(!node.getGoals().isEmpty()) {
-                s+=node.getPriority()* node.getGoals().top().getTruth().getExpectation();
+                s[0] +=node.getPriority()* node.getGoals().top().getTruth().getExpectation();
             }
             n_concepts++;
-        }
-        return s/((double) n_concepts);
+        });
+        return s[0] /((double) n_concepts);
     }
 }

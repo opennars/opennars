@@ -77,12 +77,8 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
     }
 
     public MemoryBudget(NAR n) {
-        this(n.memory);
-    }
-
-    public MemoryBudget(Memory m) {
         this();
-        update(m);
+        update(n);
     }
 
     public static Signals onConcept(NARMetrics nm, Term termConcept) {
@@ -119,7 +115,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
 
     public static Signals on(String prefix, NARMetrics m) {
-        Signals s = on(prefix, b -> b.update(m.nar.memory));
+        Signals s = on(prefix, b -> b.update(m.nar));
         m.metrics.add(s);
         return s;
     }
@@ -155,7 +151,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
     final Mean termLinkStdDev = new Mean();
     final Mean taskLinkStdDev = new Mean();
 
-    public /*synchronized*/ void update(Memory m) {
+    public /*synchronized*/ void update(NAR n) {
 
         prisum.clear();
         termLinkStdDev.clear();
@@ -166,7 +162,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
         StandardDeviation s = new StandardDeviation();
 
-        m.getConcepts().forEach(c -> {
+        n.forEachConcept(c -> {
             if (c == null) return; //HACK ?
 
             double p = c.getPriority();

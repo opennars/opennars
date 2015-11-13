@@ -23,8 +23,6 @@ public class ActivationTest {
         n.frame(15);
 
 
-        for (Concept concept : n.memory.concepts) {
-            System.out.println(concept);
-        }
+        n.forEachConcept(System.out::println);
     }
 }

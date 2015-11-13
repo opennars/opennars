@@ -42,7 +42,6 @@ public class MapCacheBag<K, V extends Itemized<K>, M extends Map<K,V>> extends A
         return data.size();
     }
 
-    @Override
     public Iterator<V> iterator() {
         return data.values().iterator();
     }
@@ -50,7 +49,6 @@ public class MapCacheBag<K, V extends Itemized<K>, M extends Map<K,V>> extends A
     /** provides a direct method to forEach,
      * in case the map implements a better
      * alternative to iterator()'s default */
-    @Override
     public void forEach(Consumer<? super V> consumer) {
         data.forEach((k,v) -> consumer.accept(v));
     }

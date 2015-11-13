@@ -1,17 +1,12 @@
 package nars.bag.impl;
 
-import com.google.common.collect.Sets;
 import nars.Memory;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.term.Term;
-import nars.util.data.Util;
-
-import java.util.HashSet;
-import java.util.Iterator;
 
 
-public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
+public interface CacheBag<K, V extends Itemized<K>>  {
     
 
     void clear();
@@ -37,15 +32,9 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
 
     }
 
-    /**  by value set */
-    static <K,V extends Itemized<K>> boolean equals(CacheBag<K, V> a, CacheBag<K, V> b) {
-        if (a.size()!=b.size()) return false;
-        HashSet<V> aa = Sets.newHashSet(a);
-        HashSet<V> bb = Sets.newHashSet(b);
 
-        //TODO test for budget equality, which must be done separately
-        return aa.equals(bb);
-    }
+
+
 
 //
 //    /** performs an exhaustive element comparison of two bags */
@@ -79,36 +68,8 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
 //    }
 //
 
-    default double[] getPriorityHistogram(int bins) {
-        return getPriorityHistogram(new double[bins]);
-    }
-
-    default double[] getPriorityHistogram(final double[] x) {
-        int bins = x.length;
-        forEach(e -> {
-            final float p = e.getPriority();
-            final int b = Util.bin(p, bins - 1);
-            x[b]++;
-        });
-        double total = 0;
-        for (double e : x) {
-            total += e;
-        }
-        if (total > 0) {
-            for (int i = 0; i < bins; i++)
-                x[i] /= total;
-        }
-        return x;
-    }
 
 
-    /** finds the mean value of a given bin */
-    static float unbinCenter(final int b, final int bins) {
-        return ((float)b)/bins;
-    }
-
-    @Override
-    Iterator<V> iterator();
 
     static CacheBag<Term, Concept> memory() {
         return memory(1);

@@ -128,7 +128,7 @@ public class ConstraintTest {
         abstract public void addConstraintsFor(Concept c);
 
         void related(Term t) {
-            nar.concepts().forEach( c-> {
+            nar.forEachConcept( c-> {
                 if (c.getTerm().containsTermRecursively(t)) {
                     addConstraintsFor(c);
                 }

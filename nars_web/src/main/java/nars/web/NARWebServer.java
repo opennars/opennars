@@ -240,7 +240,7 @@ public class NARWebServer extends PathHandler {
         );
 
 
-        nar.memory.concepts.forEach(c -> System.out.println(c));
+        //nar.forEachConcept(c -> System.out.println(c));
 
         int httpPort;
 

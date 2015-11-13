@@ -983,15 +983,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public Iterator<Concept> iterator() {
-        return memory.getConcepts().iterator();
-    }
 
-
-    public void conceptPriorityHistogram(double[] bins) {
-        if (bins != null)
-            memory.getConcepts().getPriorityHistogram(bins);
-    }
 
 
 //    public Concept put(Concept concept) {
@@ -1077,10 +1069,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-    public NAR forEachConcept(Consumer<Concept> recip) {
-        this.memory.concepts.forEach(recip);
-        return this;
-    }
+    abstract public NAR forEachConcept(Consumer<Concept> recip);
 
 //    public NAR forEachConceptActive(Consumer<Concept> recip) {
 //        nar.memory.getCycleProcess().forEachConcept(recip);

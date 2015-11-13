@@ -45,7 +45,7 @@ public class StatusPane extends PlotBox {
 
         new FrameReaction(nar) {
             @Override public void onFrame() {
-                m.update(nar.memory);
+                m.update(nar);
                 update();
             }
         };

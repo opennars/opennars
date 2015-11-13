@@ -69,7 +69,7 @@ public class BudgetControlGame {
             n.input("a:b. b:c. c:d. d:e.");
             n.loop(8.5f);
             n.onEachFrame(x -> {
-                m = new MemoryBudget(x.memory);
+                m = new MemoryBudget(x);
                 plots.update();
                 System.out.println(m);
             });

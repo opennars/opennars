@@ -163,9 +163,8 @@ public class InfiniClusterTest {
 
     private static Set<Task> getAllTasks(NAR n) {
         HashSet<Task> s = new HashSet<Task>();
-        n.memory.concepts.forEach(c -> {
-            if (c != null)//temporar
-                Iterators.addAll(s, c.iterateTasks(true, true, true, true));
+        n.forEachConcept(c -> {
+            Iterators.addAll(s, c.iterateTasks(true, true, true, true));
         });
         return s;
     }

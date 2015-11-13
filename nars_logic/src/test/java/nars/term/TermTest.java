@@ -170,7 +170,7 @@ public class TermTest {
 
     @Test
     public void testConceptInstancing() throws Narsese.NarseseException {
-        NAR n = new Default();
+        Default n = new Default();
 
         String statement1 = "<a --> b>.";
 
@@ -197,7 +197,7 @@ public class TermTest {
         Concept ca = n.concept(a2);
         assertTrue(ca != null);
 
-        assertEquals(true, n.concepts().iterator().hasNext());
+        assertEquals(true, n.core.active.size() > 0);
 
     }
 

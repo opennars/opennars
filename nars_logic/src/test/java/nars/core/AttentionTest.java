@@ -31,7 +31,7 @@ public class AttentionTest {
         //n.runWhileInputting(100);
         n.frame(16);
         
-        int c = Iterables.size(n.concepts());
+        int c = n.core.active.size();
         assertTrue(c > 16);
 
         //n.trace(System.out);

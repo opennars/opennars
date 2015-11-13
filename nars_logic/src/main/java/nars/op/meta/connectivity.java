@@ -19,7 +19,7 @@ public class connectivity extends SyncOperator {
     @Override
     public List<Task> apply(Task<Operation> o) {
 
-        TermLinkGraph g = new TermLinkGraph(nar.memory);
+        TermLinkGraph g = new TermLinkGraph(nar);
 
 
         ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);

@@ -1,9 +1,8 @@
 package nars.process;
 
 import nars.Global;
-import nars.Memory;
+import nars.NAR;
 import nars.Op;
-import nars.concept.Concept;
 import nars.nal.nal2.Property;
 import nars.nal.nal3.SetExt;
 import nars.task.FluentTask;
@@ -22,12 +21,12 @@ import java.util.function.Consumer;
  */
 public class QueryVariableExhaustiveResults implements Consumer<Task> {
 
-    private final Memory memory;
+    private final NAR nar;
     private final On active;
 
-    public QueryVariableExhaustiveResults(Memory m) {
-        this.memory = m;
-        active = m.eventInput.on(this);
+    public QueryVariableExhaustiveResults(NAR n) {
+        this.nar = n;
+        active = n.memory.eventInput.on(this);
     }
 
     public void off() {
@@ -44,7 +43,7 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
 
 
             //TODO AIKR finite limit
-            forEachMatch(memory.concepts, t.getTerm(), (Task bestBelief) -> {
+            forEachMatch(nar, t.getTerm(), (Task bestBelief) -> {
                 if (bestBelief!=null) {
                     //tasks.add(bestBelief);
                     terms.add(bestBelief.getTerm());
@@ -60,24 +59,25 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
             if (!terms.isEmpty()) {
 
                 //generates a similarity group
+                long now = nar.time();
                 Task x = new FluentTask().term(
                     Property.make(
                         SetExt.make(terms),
                         t.getTerm()
                     )
-                ).belief().truth(1f, 0.9f).budget(t.getBudget()).present(memory)
-                        .time(memory.time(), memory.time());
+                ).belief().truth(1f, 0.9f).budget(t.getBudget()).present(nar.memory)
+                        .time(now, now);
 
                 //System.out.println(x);
 
-                memory.eventInput.emit(x);
+                nar.memory.eventInput.emit(x);
             }
         }
     }
 
-    public void forEachMatch(Iterable<Concept> m, Compound queryTerm, Consumer<Task> withBelief) {
-        FindSubst f = new FindSubst(Op.VAR_QUERY, memory.random);
-        m.forEach(c -> {
+    public static void forEachMatch(NAR n, Compound queryTerm, Consumer<Task> withBelief) {
+        FindSubst f = new FindSubst(Op.VAR_QUERY, n.memory.random);
+        n.forEachConcept(c -> {
             if (!c.hasBeliefs())
                 return;
 

@@ -104,7 +104,7 @@ public class ThermostatTest  {
             n.frame(1000);
         }
 
-        n.concepts().iterator().forEachRemaining(c -> System.out.println(c));
+        n.forEachConcept(System.out::println);
 
         tc.log = true;
         nobj.setGoalInvoke(true);

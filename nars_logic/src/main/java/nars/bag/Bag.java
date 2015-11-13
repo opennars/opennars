@@ -1,5 +1,6 @@
 package nars.bag;
 
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
@@ -8,10 +9,12 @@ import nars.bag.tx.BagActivator;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.util.data.Util;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -24,7 +27,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements Consumer<V>, Supplier<V>, Externalizable {
+public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements Consumer<V>, Supplier<V>, Iterable<V>, Externalizable {
 
 
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
@@ -156,7 +159,22 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         if (exist == null) return false;
         return exist.equals(it);
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Bag)
+            return Bag.equals(this, ((Bag)obj));
+        return false;
+    }
 
+    /**  by value set */
+    public static <K,V extends Itemized<K>> boolean equals(Bag<K, V> a, Bag<K, V> b) {
+        if (a.size()!=b.size()) return false;
+        HashSet<V> aa = Sets.newHashSet(a);
+        HashSet<V> bb = Sets.newHashSet(b);
+
+        //TODO test for budget equality, which must be done separately
+        return aa.equals(bb);
+    }
 
     //    /**
 //     * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
@@ -668,5 +686,26 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         });
     }
 
+    public double[] getPriorityHistogram(int bins) {
+        return getPriorityHistogram(new double[bins]);
+    }
+
+    public double[] getPriorityHistogram(final double[] x) {
+        int bins = x.length;
+        forEach(e -> {
+            final float p = e.getPriority();
+            final int b = Util.bin(p, bins - 1);
+            x[b]++;
+        });
+        double total = 0;
+        for (double e : x) {
+            total += e;
+        }
+        if (total > 0) {
+            for (int i = 0; i < bins; i++)
+                x[i] /= total;
+        }
+        return x;
+    }
 
 }

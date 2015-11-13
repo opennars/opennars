@@ -319,24 +319,24 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         graphize.setMinPriority(filter.getMinPriority());
 
         //TODO support AbstractBag
-        for (Concept c : n.concepts()) {
+        n.forEachConcept(c -> {
 
             //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
             float p = c.getPriority();
 
             if (!filter.includePriority(p)) {
-                continue;
+                return;
             }
 
             //graphize.preLevel(this, p);
             if (!filter.includeConcept(c)) {
-                continue;
+                return;
             }
 
             graphize.on(this, c);
 
             //graphize.postLevel(this, level);
-        }
+        });
 
         graphize.finish();
         return this;

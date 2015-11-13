@@ -58,7 +58,7 @@ public class SimpleNARBudgetDynamics {
             .meter( (metrics, nar) -> {
 
                 mb.clear();
-                mb.update(nar.memory);
+                mb.update(nar);
 
                 System.out.println(nar.time());
 
@@ -181,8 +181,7 @@ public class SimpleNARBudgetDynamics {
 
             n.frame(cycles);
 
-            //n.nar.memory.concepts.forEach(System.out::println);
-            n.memory.concepts.forEach(c -> c.print(System.out));
+            n.forEachConcept(System.out::println);
 
         };
 

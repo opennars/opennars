@@ -42,9 +42,7 @@ import org.infinispan.marshall.core.JBossMarshaller;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Random;
-import java.util.Set;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -410,34 +408,34 @@ public class Memory extends Param {
 //    }
 
 
-    @Override
-    public final boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Memory)) return false;
-        return Memory.equals(this, (Memory) obj);
-    }
+//    @Override
+//    public final boolean equals(Object obj) {
+//        if (this == obj) return true;
+//        if (!(obj instanceof Memory)) return false;
+//        return Memory.equals(this, (Memory) obj);
+//    }
 
-    public static boolean equals(final Memory a, final Memory b) {
-
-        //TODO
-        //for now, just accept that they include the same set of terms
-
-        Set<Term> aTerm = new LinkedHashSet();
-        Set<Term> bTerm = new LinkedHashSet();
-        a.concepts.forEach(ac -> aTerm.add(ac.getTerm()));
-        b.concepts.forEach(bc -> bTerm.add(bc.getTerm()));
-        if (!aTerm.equals(bTerm)) {
-            /*System.out.println(aTerm.size() + " " + aTerm);
-            System.out.println(bTerm.size() + " " + bTerm);*/
-            return false;
-        }
-
-
-        /*if (!a.concepts.equals(b.concepts)) {
-
-        }*/
-        return true;
-    }
+//    public static boolean equals(final Memory a, final Memory b) {
+//
+//        //TODO
+//        //for now, just accept that they include the same set of terms
+//
+//        Set<Term> aTerm = new LinkedHashSet();
+//        Set<Term> bTerm = new LinkedHashSet();
+//        a.concepts.forEach(ac -> aTerm.add(ac.getTerm()));
+//        b.concepts.forEach(bc -> bTerm.add(bc.getTerm()));
+//        if (!aTerm.equals(bTerm)) {
+//            /*System.out.println(aTerm.size() + " " + aTerm);
+//            System.out.println(bTerm.size() + " " + bTerm);*/
+//            return false;
+//        }
+//
+//
+//        /*if (!a.concepts.equals(b.concepts)) {
+//
+//        }*/
+//        return true;
+//    }
 
     public final long time() {
         return getClock().time();
