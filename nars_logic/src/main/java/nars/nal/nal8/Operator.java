@@ -4,9 +4,9 @@ import nars.Op;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compile.TermIndex;
 import nars.term.transform.Substitution;
 import nars.term.transform.TermVisitor;
-import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
@@ -126,8 +126,13 @@ public class Operator<T extends Term> implements Term {
     }
 
     @Override
-    public int structure() {
+    public final int structure() {
         return (1 << Op.OPERATOR.ordinal());
+    }
+
+    @Override
+    public final Term normalized(TermIndex termIndex) {
+        return normalized();
     }
 
     @Override
@@ -202,15 +207,11 @@ public class Operator<T extends Term> implements Term {
 
     @Override
     public final int hashCode() {
-        return term.hashCode() ^ Util.PRIME2; //TODO determine if this is good
+        return Atom.hash(term.bytes(), Op.OPERATOR.ordinal()); //cache?
     }
 
     public final Term identifier() {
         return term;
     }
 
-    @Override
-    public final boolean equalsAll(Term[] cls) {
-        return false;
-    }
 }

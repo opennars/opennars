@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.nal.nal7.Tense;
+import nars.term.compile.TermIndex;
 import nars.term.transform.Substitution;
 import nars.term.transform.TermVisitor;
 
@@ -237,6 +238,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
                 has(Op.IMPLICATION_AFTER) || has(Op.IMPLICATION_WHEN) || has(Op.IMPLICATION_BEFORE);
     }
 
+    Term normalized(TermIndex termIndex);
 
 
 //    default public boolean hasAll(final Op... op) {

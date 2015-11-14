@@ -1,5 +1,6 @@
 package nars.term;
 
+import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.TermVisitor;
 import nars.term.transform.VariableNormalization;
@@ -94,7 +95,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
             return true;
         if (!(that instanceof Compound)) return false;
 
-
         Compound c = (Compound)that;
 
         return (c.op() == op() && c.subterms().equals(subterms()));
@@ -119,8 +119,12 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         return normalized(false);
     }
 
+    @Override
+    public final Term normalized(TermIndex termIndex) {
+        return cloneTransforming(termIndex.getCompoundTransformer());
+    }
 
-//    @Override
+    //    @Override
 //    @Deprecated public final int rehashCode() {
 ////        int ch = subterms().hashCode();
 ////        if (ch == 0) {
@@ -149,7 +153,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     @Override
     public int hashCode() {
-        return subterms().hashCode() ^ structure();
+        return subterms().hashCode() * 31 + op().ordinal();
 //        if (ch == 0) {
 //            throw new RuntimeException("should have hashed");
 ////            rehash();
@@ -204,10 +208,10 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         return terms.contains(o);
     }
 
-    @Override
-    public final boolean equalsAll(Term[] cls) {
-        return terms.equalsAll(cls);
-    }
+//    @Override
+//    public final boolean equalsAll(Term[] cls) {
+//        return terms.equalsAll(cls);
+//    }
 
     //
 //    @Override

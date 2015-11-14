@@ -655,9 +655,13 @@ public class TermTest {
     }
 
     @Test public void testHash1() {
+        testUniqueHash("<A --> B>","<A <-> B>");
+        testUniqueHash("<A --> B>","<A ==> B>");
+        testUniqueHash("A","B");
         testUniqueHash("%1","%2");
         testUniqueHash("%A","A");
         testUniqueHash("$1","A");
+        testUniqueHash("$1","#1");
     }
 
     public void testUniqueHash(String a, String b) {

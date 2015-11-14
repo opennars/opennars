@@ -29,8 +29,9 @@ import nars.nal.nal8.Operation;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Term;
+import nars.term.*;
+import nars.term.compile.TermIndex;
+import nars.term.transform.CompoundTransform;
 import nars.time.Clock;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
@@ -42,7 +43,10 @@ import org.infinispan.marshall.core.JBossMarshaller;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -106,6 +110,42 @@ public class Memory extends Param {
 
 
     public final Clock clock;
+
+    public final TermIndex terms = new TermIndex() {
+
+        final Map<Term,Term> terms = new HashMap(); //TODO try weakref identity hash map etc
+
+        @Override public final Termed get(Term t) {
+
+            if (t instanceof TermMetadata)
+                return t.normalized(); //term instance will remain unique because it has attached metadata
+
+            return terms.computeIfAbsent(t, n -> n.normalized(this));
+        }
+
+        final CompoundTransform<Compound,Term> ct = new CompoundTransform<Compound,Term>() {
+
+            @Override
+            public final boolean test(Term term) {
+                return true;
+            }
+
+            @Override
+            public final Term apply(Compound c, Term subterm, int depth) {
+                return get(subterm).getTerm();
+            }
+        };
+
+        @Override
+        public final CompoundTransform getCompoundTransformer() {
+            return ct;
+        }
+
+        @Override
+        public void forEachTerm(Consumer<Termed> c) {
+            terms.forEach((k,v)->c.accept(v));
+        }
+    };
 
     public final CacheBag<Term, Concept> concepts;
 

@@ -519,59 +519,16 @@ public interface Task<T extends Compound> extends Sentence<T>,
     boolean normalize();
 
 
-    default boolean init(final Memory memory) {
+    boolean init(final Memory memory);
 
-        if (!isCommand()) {
 
-            ensureValidPunctuationAndTruth(getPunctuation(), getTruth()!=null);
-
-            ensureValidParentTaskRef();
-
-        }
-
-        if (normalize()) {
-
-            // if a task has an unperceived creationTime,
-            // set it to the memory's current time here,
-            // and adjust occurenceTime if it's not eternal
-
-            if (getCreationTime() <= Stamp.TIMELESS) {
-                final long now = memory.time();
-                long oc = getOccurrenceTime();
-                if (oc != Stamp.ETERNAL)
-                    oc += now;
-
-                setTime(now, oc);
-            }
-
-            setDuration(
-                memory.duration() //assume the default perceptual duration?
-            );
-
-            //finally, assign a unique stamp if none specified (input)
-            if (getEvidence().length == 0) {
-                setEvidence(memory.newStampSerial());
-
-                //this actually means it arrived from unknown origin.
-                //we'll clarify what null evidence means later.
-                //if data arrives via a hardware device, can a virtual
-                //task be used as the parent when it generates it?
-                //doesnt everything originate from something else?
-                log("Input");
-            }
-
-            return true;
-        }
-
-        return false;
-    }
 
     default void ensureValidParentTaskRef() {
         if ((getParentTaskRef() != null && getParentTask() == null))
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
     }
 
-    static void ensureValidPunctuationAndTruth(char c, boolean hasTruth) {
+    public static void ensureValidPunctuationAndTruth(char c, boolean hasTruth) {
         switch (c) {
             case Symbols.COMMAND:
                 break;

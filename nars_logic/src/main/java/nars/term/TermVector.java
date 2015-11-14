@@ -1,6 +1,7 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
+import nars.util.data.Util;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -287,7 +288,8 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
 
     static int nextContentHash(int hash, int subtermHash) {
-        return (hash << 4) +  subtermHash;
+        return Util.PRIME2 * hash + subtermHash;
+        //return (hash << 4) +  subtermHash;
         //(Util.PRIME2 * contentHash)
     }
 
@@ -339,14 +341,13 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         Collections.addAll(set, term);
     }
 
-
-
     @Override
     public final int hashCode() {
         final int h = contentHash;
         if (h == 0) {
             //if hash is zero, it means it needs calculated
-            return init(term);
+            //return init(term);
+            throw new RuntimeException("unhashed");
         }
         return h;
     }
@@ -358,13 +359,15 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         if (!(that instanceof TermVector)) return false;
 
         TermVector c = (TermVector) that;
-        if (contentHash != c.contentHash ||
+        if (hashCode() != c.hashCode()||
                 structureHash != c.structureHash ||
                 volume != c.volume)
             return false;
 
-
         final int s = this.size();
+        if (s!=c.size())
+            return false;
+
         for (int i = 0; i < s; i++) {
             Term a = term(i);
             Term b = c.term(i);
@@ -374,27 +377,14 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return true;
     }
 
-    @Override
-    final public boolean equalsAll(Term[] uu) {
-        final Term[] tt = this.term;
-        if (tt == uu) return true;
 
-        final int s = tt.length;
-
-        if (s != uu.length) return false;
-        for (int i = 0; i < s; i++) {
-            if (!tt[i].equals(uu[i]))
-                return false;
-        }
-        return true;
-    }
 
 
     @Override
     public final int compareTo(Object o) {
 
         int diff;
-        if ((diff = Integer.compare(o.hashCode(), hashCode())) != 0)
+        if ((diff = Integer.compare(hashCode(), o.hashCode())) != 0)
             return diff;
 
         //TODO dont assume it's a TermVector

@@ -1,6 +1,7 @@
 package nars.term;
 
 import nars.Op;
+import nars.term.compile.TermIndex;
 import nars.term.transform.TermVisitor;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
@@ -152,6 +153,12 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
     }
 
     @Override
+    public Term normalized(TermIndex termIndex) {
+        //if this is called, this atom will be the unique reference for any subsequent equivalent atomic terms which are normalized
+        return this;
+    }
+
+    @Override
     public final void writeExternal(ObjectOutput out) throws IOException {
         byte[] name = bytes();
         //out.writeByte((byte)op().ordinal());
@@ -170,8 +177,4 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
         setBytes(name);
     }
 
-    @Override
-    public final boolean equalsAll(Term[] cls) {
-        return false;
-    }
 }

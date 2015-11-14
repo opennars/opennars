@@ -48,5 +48,4 @@ public interface TermContainer extends Comparable {
         return impossibleToMatch(c.structure());
     }
 
-    boolean equalsAll(Term[] cls);
 }

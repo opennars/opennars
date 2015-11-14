@@ -4,6 +4,7 @@ import nars.term.AbstractAtomic;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.transform.CompoundTransform;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -69,6 +70,11 @@ public class CompiledTermIndex extends ByteBuddy implements TermIndex {
     @Override
     public final void forEachTerm(Consumer<Termed> c) {
         terms.forEach((k, v) -> c.accept(v));
+    }
+
+    @Override
+    public CompoundTransform getCompoundTransformer() {
+        return null;
     }
 
     public static void main(String[] args) {
