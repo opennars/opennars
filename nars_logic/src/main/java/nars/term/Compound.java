@@ -360,6 +360,10 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
 
 
     default <X extends Compound> X cloneTransforming(final CompoundTransform t) {
+        return cloneTransforming(t, true);
+    }
+
+    default <X extends Compound> X cloneTransforming(final CompoundTransform t, boolean requireEqualityForNewInstance) {
         if (t.testSuperTerm(this)) {
 
             Term[] cls = new Term[size()];
@@ -369,7 +373,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
             if (mods == -1) {
                 return null;
             }
-            else if (mods > 0) {
+            else if (!requireEqualityForNewInstance || (mods > 0)) {
                 return (X) clone(cls);
             }
             //else if mods==0, fall through:

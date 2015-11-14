@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static org.jgroups.util.Util.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by me on 8/15/15.

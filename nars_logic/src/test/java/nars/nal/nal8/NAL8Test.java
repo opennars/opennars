@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-import static org.jgroups.util.Util.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTester {

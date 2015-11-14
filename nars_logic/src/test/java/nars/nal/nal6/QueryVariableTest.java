@@ -16,8 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static org.jgroups.util.Util.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 @RunWith(Parameterized.class)
 public class QueryVariableTest extends AbstractNALTester {

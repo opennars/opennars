@@ -138,7 +138,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         }
 
         //avoid cloning by transforming this new compound directly
-        Term ccontent = ((Compound)content).normalizeDestructively();
+        Term ccontent = content.normalizeDestructively();
         if (ccontent!=null)
             ccontent = taskable(ccontent);
 
@@ -528,7 +528,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
     }
 
-    public static void ensureValidPunctuationAndTruth(char c, boolean hasTruth) {
+    static void ensureValidPunctuationAndTruth(char c, boolean hasTruth) {
         switch (c) {
             case Symbols.COMMAND:
                 break;

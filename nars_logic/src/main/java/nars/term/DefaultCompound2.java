@@ -24,6 +24,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
      * used to prevent repeated normalizations
      */
     protected transient boolean normalized = false;
+    private transient int hash;
 
     /**
      * subclasses should be sure to call init() in their constructors; it is not done here
@@ -66,7 +67,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         this.terms.init(term);
 
         this.normalized = !hasVar();
-
+        this.hash = subterms().hashCode() * 31 + op().ordinal();
     }
 
 
@@ -97,7 +98,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
         Compound c = (Compound)that;
 
-        return (c.op() == op() && c.subterms().equals(subterms()));
+        return c.subterms().equals(subterms()) && (c.op() == op());
 /*
 
         TermContainer csubs = c.subterms();
@@ -120,7 +121,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final Term normalized(TermIndex termIndex) {
+    public Term normalized(TermIndex termIndex) {
         return cloneTransforming(termIndex.getCompoundTransformer());
     }
 
@@ -153,7 +154,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     @Override
     public int hashCode() {
-        return subterms().hashCode() * 31 + op().ordinal();
+        return hash;
 //        if (ch == 0) {
 //            throw new RuntimeException("should have hashed");
 ////            rehash();
