@@ -383,9 +383,7 @@ public class LinkageTest extends AbstractNALTester {
         tester.believe(nonsense); //.en("If robin is a type of bird then robin can fly.");
         tester.frame(10);
         Concept c = tester.concept(nonsense);
-        if(c==null) {
-            throw new Exception("Normalization went wrong");
-        }
+        assertNotNull(c);
     }
 
 }

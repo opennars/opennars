@@ -2,7 +2,6 @@ package nars.term;
 
 import nars.Op;
 import nars.term.transform.TermVisitor;
-import nars.util.data.Util;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
@@ -12,32 +11,24 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
- * Base class for terms which contain no subterms
+ * Created by me on 11/13/15.
  */
-public abstract class Atomic implements Term, Byted, Externalizable {
+public abstract class AbstractAtomic implements Term, Byted, Externalizable {
 
-    protected byte[] data;
-
-    transient int hash;
-
-    Atomic(String id) {
-        this(Utf8.toUtf8(id));
-    }
-
-    protected Atomic(byte[] id) {
-        setBytes(id);
-    }
-
-    Atomic() {
+    public AbstractAtomic() {
 
     }
-
 
     @Override
     public abstract Op op();
 
     @Override
     public abstract int structure();
+
+
+    public final void rehash() {
+        /** do nothing */
+    }
 
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
@@ -60,21 +51,11 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     public final boolean equals(final Object x) {
         if (this == x) return true;
 
-        if (x instanceof Atomic) {
-            Atomic ax = (Atomic)x;
+        if (x instanceof AbstractAtomic) {
+            AbstractAtomic ax = (AbstractAtomic)x;
             return (op() == ax.op()) && Byted.equals(this, ax);
         }
         return false;
-    }
-
-
-    @Override
-    public final int hashCode() {
-        final int h = this.hash;
-        if (h == 0) {
-            throw new RuntimeException("should have hashed");
-        }
-        return h;
     }
 
     /**
@@ -85,12 +66,12 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         if (that==this) return 0;
 
         Term t = (Term)that;
-        int d = op().compareTo(t.op());
+        int d = Integer.compare(op().ordinal(), t.op().ordinal());
         if (d!=0) return d;
 
         //if the op is the same, it will be a subclass of atom
         //which should have an ordering determined by its byte[]
-        return Byted.compare(this, (Atomic)that);
+        return Byted.compare(this, (AbstractAtomic)that);
     }
 
     @Override public final int getByteLen() {
@@ -144,24 +125,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         return true;
     }
 
-    public final void rehash() {
-        /** do nothing */
-    }
-
-    @Override final public byte[] bytes() {
-        return data;
-    }
-
-    @Override
-    public final void setBytes(final byte[] id) {
-        if (id!=this.data) {
-            this.data = id;
-            this.hash = Util.ELFHashNonZero(id,
-                    Util.PRIME3 * (1 + op().ordinal())
-            );
-        }
-    }
-
+    @Override public abstract byte[] bytes();
 
     /** atomic terms contain nothing */
     @Override public final boolean containsTerm(Term target) {
@@ -173,7 +137,6 @@ public abstract class Atomic implements Term, Byted, Externalizable {
         return false;
     }
 
-
     @Override
     public abstract int varIndep();
 
@@ -184,7 +147,7 @@ public abstract class Atomic implements Term, Byted, Externalizable {
     public abstract int varQuery();
 
     @Override
-    public final Atomic normalized() {
+    public final AbstractAtomic normalized() {
         return this;
     }
 

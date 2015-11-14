@@ -1,6 +1,11 @@
 package nars.nal.meta;
 
-import nars.term.Atom;
+import nars.Op;
+import nars.term.MutableAtomic;
+import nars.term.Term;
+import nars.term.transform.Substitution;
+
+import java.util.Map;
 
 /**
  * Meta-term of the form:
@@ -9,7 +14,7 @@ import nars.term.Atom;
  *
  * ex: A_1..n
  */
-public class Ellipsis extends Atom {
+public class Ellipsis extends MutableAtomic {
 
     public final String prefix;
     public final int from;
@@ -22,6 +27,71 @@ public class Ellipsis extends Atom {
         this.prefix = prefix;
         this.from = from;
         this.to = to;
+    }
+
+    @Override
+    public final Op op() {
+        return Op.ATOM;
+    }
+
+    @Override
+    public int structure() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasVar() {
+        return false;
+    }
+
+    @Override
+    public int vars() {
+        return 0;
+    }
+
+    @Override
+    public boolean hasVarIndep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarDep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarQuery() {
+        return false;
+    }
+
+    @Override
+    public Term substituted(Map<Term, Term> subs) {
+        return null;
+    }
+
+    @Override
+    public Term substituted(Substitution s) {
+        return null;
+    }
+
+    @Override
+    public int complexity() {
+        return 0;
+    }
+
+    @Override
+    public int varIndep() {
+        return 0;
+    }
+
+    @Override
+    public int varDep() {
+        return 0;
+    }
+
+    @Override
+    public int varQuery() {
+        return 0;
     }
 
     //    public static RangeTerm rangeTerm(String s) {

@@ -12,9 +12,8 @@ public class CommonVariable extends Variable  {
     private final Op type;
 
     CommonVariable(Op type, byte[] n) {
-        super();
+        super(n, type.ordinal());
         this.type = type;
-        setBytes(n);
     }
 
     @Override

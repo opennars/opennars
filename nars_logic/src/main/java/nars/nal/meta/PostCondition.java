@@ -105,7 +105,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                 throw new RuntimeException("Unknown postcondition format (predicate must be atom): " + m);
             }
 
-            final Atom type = i.getPredicate();
+            final Term type = i.getPredicate();
             final Term which = i.getSubject();
 
 

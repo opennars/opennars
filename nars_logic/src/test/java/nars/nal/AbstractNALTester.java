@@ -23,25 +23,6 @@ import static nars.util.data.LabeledSupplier.supply;
 abstract public class AbstractNALTester {
 
 
-//    @Deprecated public static final List<Supplier<NAR>> core6 = Lists.newArrayList(
-//            () -> new SingleStepNAR().nal(6)
-//    );
-
-//    public static final List<Supplier<NAR>> core =Lists.newArrayList(
-//            () -> new Default().nal(9)
-//    );
-//    @Deprecated public static final List<Supplier<NAR>> singleStep = core6; /*Lists.newArrayList(
-//            () -> new SingleStepNAR().nal(9)
-//    );*/
-
-  /*  public static final List<Supplier<NAR>> fullDeclarativeTest =Lists.newArrayList(
-            //() -> new Default().nal(1),
-            //() -> new Default().nal(2),
-            () -> new Default().nal(6),
-            () -> new SingleStepNAR().nal(6)
-            //() -> new DefaultAlann(48)
-    );*/
-
     //final ThreadLocal<NAR> nars;
     //private final Supplier<NAR> nar;
     private final NAR the;
@@ -100,7 +81,7 @@ abstract public class AbstractNALTester {
                 () -> new Default(new LocalMemory(), 512,1,2,3).nal(finalLevel) ) );*/
 
         l.add( supply("Default2[NAL<=" + level + "]",
-                () -> new Default2(512,1,2,4).nal(finalLevel) ) );
+                () -> new Default2(512,2,2,3).nal(finalLevel) ) );
 
         if (!requireMultistep) {
             l.add( supply("SingleStep[NAL<=" + level + "]",

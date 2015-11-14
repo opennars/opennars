@@ -33,19 +33,17 @@ import java.util.Map;
 /**
  * A variable term, which does not correspond to a concept
  */
-abstract public class Variable extends Atomic {
+abstract public class Variable extends ImmutableAtom {
 
-    protected Variable(final byte[] n) {
-        super(n);
+    protected Variable(final byte[] n, int ordinal) {
+        super(n, Atom.hash(n,ordinal));
     }
 
 //    Variable(final String name) {
 //        super(Utf8.toUtf8(name));
 //    }
 
-    Variable() {
-        super();
-    }
+
 
     public static Variable the(Op varType, byte[] baseName) {
         return the(varType.ch, baseName);
@@ -127,6 +125,9 @@ abstract public class Variable extends Atomic {
         return has[0];
     }
 
+
+
+
     @Override
     public final void append(Appendable w, boolean pretty) throws IOException {
         w.append(op().ch);
@@ -165,9 +166,7 @@ abstract public class Variable extends Atomic {
 
     public static final class VarDep extends Variable {
 
-        public VarDep()  { super(); }
-
-        public VarDep(byte[] name)  { super(name);        }
+        public VarDep(byte[] name)  { super(name, Op.VAR_DEPENDENT.ordinal());        }
 
         @Override public final int structure() { return 1 << Op.VAR_DEPENDENT.ordinal();        }
 
@@ -188,9 +187,9 @@ abstract public class Variable extends Atomic {
 
     public static final class VarIndep extends Variable {
 
-        public VarIndep()  { super(); }
 
-        public VarIndep(byte[] name) { super(name);         }
+
+        public VarIndep(byte[] name) { super(name, Op.VAR_INDEPENDENT.ordinal());         }
 
         @Override public final int structure() {  return 1 << Op.VAR_INDEPENDENT.ordinal();        }
 
@@ -211,9 +210,9 @@ abstract public class Variable extends Atomic {
 
     public static final class VarQuery extends Variable {
 
-        public VarQuery()  { super(); }
 
-        public VarQuery(byte[] name) {  super(name);         }
+
+        public VarQuery(byte[] name) {  super(name, Op.VAR_QUERY.ordinal());         }
 
         @Override public final int structure() {  return 1 << Op.VAR_QUERY.ordinal();        }
 
@@ -235,9 +234,8 @@ abstract public class Variable extends Atomic {
 
     public static final class VarPattern extends Variable {
 
-        public VarPattern()  { super(); }
 
-        public VarPattern(byte[] name) {  super(name);         }
+        public VarPattern(byte[] name) {  super(name, Op.VAR_PATTERN.ordinal());         }
 
         @Override public final int structure() { return 0;        }
 

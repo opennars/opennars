@@ -156,6 +156,11 @@
             <version>0.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>0.7</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>io.advantageous.boon</groupId>-->
             <!--<artifactId>boon-json</artifactId>-->
@@ -186,13 +191,13 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-embedded</artifactId>
-            <version>8.1.0.Alpha2</version>
+            <version>8.1.0.Beta1</version>
         </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-tree</artifactId>
-            <version>8.1.0.Alpha2</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.infinispan</groupId>-->
+            <!--<artifactId>infinispan-tree</artifactId>-->
+            <!--<version>8.1.0.Beta1</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <repositories>

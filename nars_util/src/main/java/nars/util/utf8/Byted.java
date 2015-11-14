@@ -11,23 +11,35 @@ public interface Byted {
      * instance equality between A and B will most likely already performed prior to calling this, so it is not done in this method
      */
     static boolean equals(final Byted A, final Byted B) {
+
+        if (A.hashCode() != B.hashCode())
+            return false;
+
         final byte[] a = A.bytes();
         final byte[] b = B.bytes();
 
         if (a == b)
             return true;
 
-        if (A.hashCode() != B.hashCode())
+        final int aLen = a.length;
+        if (b.length != aLen)
             return false;
 
-        return isEqualContentAndMergeIfTrue(a,B,b);
+        for (int i = 0; i < aLen; i++) {
+            if (a[i] != b[i]) {
+                //if this happens, it could indicate a BAD HASHING strategy
+                return false;
+            }
+        }
+
+        return true;
     }
 
     static int compare(final Byted A, final Byted B) {
-        /*int i = Integer.compare(A.hashCode(), B.hashCode());
-        if (i != 0)
-            return i;*/
+        //if (A==B) return 0;
 
+        int d = Integer.compare(A.hashCode(), B.hashCode());
+        if (d!=0) return d;
 
 
         final byte[] a = A.bytes();
@@ -36,44 +48,27 @@ public interface Byted {
         if (a == b)
             return 0;
 
+        int alen = a.length;
+        int e = Integer.compare(alen, b.length);
+        if (e!=0) return e;
 
-        int minLength = Math.min(a.length, b.length);
-
-        for(int i = 0; i < minLength; ++i) {
-            int compareResult = a[i] - b[i];
+        for(int i = 0; i < alen; ++i) {
+            int compareResult = Integer.compare(a[i], b[i]);
             if(compareResult != 0) {
                 return compareResult;
             }
         }
 
-        final int r = a.length - b.length;
-        if (r == 0) {
+
+        /*
             //determined to be equal, share instances
             B.setBytes(a);
-        }
+        }*/
 
-        return r;
+        return 0;
     }
 
-    /** separate method so that the base equals() method can be more easily inlined */
-    static boolean isEqualContentAndMergeIfTrue(final byte[] a, final Byted B, final byte[] b) {
 
-        final int aLen = a.length;
-        if (b.length != aLen)
-            return false;
-
-        //backwards
-        for (int i = aLen - 1; i >= 0; i--)
-            if (a[i] != b[i]) {
-                //if this happens, it could indicate a BAD HASHING strategy
-                return false;
-            }
-
-        //merge the two instances
-        B.setBytes(a);
-
-        return true;
-    }
 
     public byte[] bytes();
 

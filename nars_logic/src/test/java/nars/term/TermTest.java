@@ -362,16 +362,29 @@ public class TermTest {
     }
 
     protected void testTermEquality(String s) {
+
         Term a = n.term(s);
-        a.hashCode();
         Term b = n.term(s);
         assertTrue(a!=b);
+
+        assertEquals(0, a.compareTo(b));
+        assertEquals(0, b.compareTo(a));
+
+        assertEquals(a.hashCode(), b.hashCode());
         assertEquals(a.toString(), b.toString());
+
         assertEquals(a, b);
+
         assertEquals(a.normalized().toString(), b.toString());
+        assertEquals(a.normalized().hashCode(), b.hashCode());
         assertEquals(a.normalized(), b);
 
     }
+
+    @Test public void termEqualityOfVariables1() { testTermEquality("#1"); }
+    @Test public void termEqualityOfVariables2() { testTermEquality("$1"); }
+    @Test public void termEqualityOfVariables3() { testTermEquality("?1"); }
+    @Test public void termEqualityOfVariables4() { testTermEquality("%1"); }
 
 
     @Test public void termEqualityWithVariables1() {
@@ -395,7 +408,7 @@ public class TermTest {
         Term a = n.term(s);
         Term b = n.term(s);
         assertTrue(a!=b);
-        assertTrue(a.equals(b));
+        assertEquals(a, b);
         b.equals(a.normalized());
 
         assertEquals("re-normalizing doesn't affect: " + a.normalized(), b,
@@ -643,6 +656,7 @@ public class TermTest {
 
     @Test public void testHash1() {
         testUniqueHash("%1","%2");
+        testUniqueHash("%A","A");
         testUniqueHash("$1","A");
     }
 

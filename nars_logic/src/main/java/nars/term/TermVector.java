@@ -391,22 +391,22 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
 
     @Override
-    public int compareTo(Object o) {
+    public final int compareTo(Object o) {
 
         int diff;
         if ((diff = Integer.compare(o.hashCode(), hashCode())) != 0)
             return diff;
 
-
         //TODO dont assume it's a TermVector
         final TermVector c = (TermVector) o;
+        if ((diff = Integer.compare(structure(), c.structure())) != 0)
+            return diff;
+
 
         final int s = this.size();
         if ((diff = Integer.compare(s, c.size())) != 0)
             return diff;
 
-        if ((diff = Integer.compare(structure(), c.structure())) != 0)
-            return diff;
 
         for (int i = 0; i < s; i++) {
             final Term a = term(i);

@@ -6,7 +6,6 @@ import nars.term.Atom;
 public class SymbolExpression extends Atom implements Expression {
 
 
-    //public final String value;
 
     public SymbolExpression(String value) {
         super(value);
@@ -21,4 +20,5 @@ public class SymbolExpression extends Atom implements Expression {
     public String print() {
         return toString();
     }
+
 }

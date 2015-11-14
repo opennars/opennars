@@ -1,7 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.term.Atomic;
+import nars.term.MutableAtomic;
 import nars.term.Term;
 import nars.term.transform.Substitution;
 
@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-final public class CyclesInterval extends Atomic implements Interval {
+final public class CyclesInterval extends MutableAtomic implements Interval {
 
     final static CyclesInterval zero = new CyclesInterval(0);
 
@@ -47,7 +47,7 @@ final public class CyclesInterval extends Atomic implements Interval {
     }
 
     protected CyclesInterval(int numCycles) {
-        super(null); //interval(numCycles, bytesPrecision));
+        super(); //interval(numCycles, bytesPrecision));
 
         if (numCycles < 0)
             throw new RuntimeException("cycles must be >= 0");

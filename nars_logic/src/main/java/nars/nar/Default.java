@@ -179,7 +179,7 @@ public class Default extends NAR {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(16);
+        setTaskLinkBagSize(12);
         setTermLinkBagSize(16);
 
 

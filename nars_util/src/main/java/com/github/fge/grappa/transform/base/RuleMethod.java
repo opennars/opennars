@@ -27,6 +27,7 @@ import com.github.fge.grappa.support.Var;
 import com.github.fge.grappa.transform.ParserAnnotation;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import nars.util.data.list.FasterList;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -37,7 +38,10 @@ import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.github.fge.grappa.misc.AsmUtils.*;
 import static com.github.fge.grappa.transform.ParserAnnotation.*;
@@ -52,8 +56,8 @@ public class RuleMethod
 
 
     private final List<InstructionGroup> groups
-        = new ArrayList<>();
-    private final List<LabelNode> usedLabels = new ArrayList<>();
+        = new FasterList<>();
+    private final List<LabelNode> usedLabels = new FasterList<>();
     private final Set<ParserAnnotation> annotations
         = EnumSet.noneOf(ParserAnnotation.class);
 
@@ -69,7 +73,7 @@ public class RuleMethod
     private InstructionGraphNode returnInstructionNode;
     private List<InstructionGraphNode> graphNodes;
     private final List<LocalVariableNode> localVarVariables
-        = Lists.newArrayList();
+        = new FasterList();
     private boolean bodyRewritten;
     private boolean skipGeneration;
 

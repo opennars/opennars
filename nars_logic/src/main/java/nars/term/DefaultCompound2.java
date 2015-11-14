@@ -49,7 +49,8 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         if (this == o) return 0;
 
         Term t = (Term) o;
-        int diff = op().compareTo(t.op());
+        int diff = Integer.compare(op().ordinal(), t.op().ordinal());
+        //int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
         return subterms().compareTo( ((Compound)o).subterms() );

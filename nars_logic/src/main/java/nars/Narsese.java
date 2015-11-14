@@ -576,7 +576,7 @@ public class Narsese extends BaseParser<Object>  {
 //        return newParser((Memory)null);
 //    }
 
-    final static Atom imageIndexTerm = Atom.theCached(String.valueOf(IMAGE_PLACE_HOLDER));
+    final static Atom imageIndexTerm = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
 
     Rule ImageIndex() {
         return sequence('_', push(imageIndexTerm));
