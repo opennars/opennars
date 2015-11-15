@@ -1,5 +1,6 @@
 package nars.nal;
 
+import nars.Memory;
 import nars.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -39,4 +40,9 @@ abstract public class Deriver  {
     }
 
 
+    public synchronized void load(Memory memory) {
+        for (int i = 0; i < rules.size(); i++) {
+            rules.get(i).normalized(memory.terms);
+        }
+    }
 }

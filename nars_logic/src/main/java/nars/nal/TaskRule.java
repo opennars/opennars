@@ -13,6 +13,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
 import nars.term.*;
+import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
@@ -50,8 +51,8 @@ public class TaskRule extends ProductN implements Level {
 
     private String str;
 
-    public final Product getPremises() {
-        return (Product) term(0);
+    public final ProductN getPremise() {
+        return (ProductN) term(0);
     }
 
     public final ProductN getConclusion() {
@@ -71,8 +72,6 @@ public class TaskRule extends ProductN implements Level {
 
     protected final void ensureValid() {
         rehash();
-
-
 
         if (getConclusionTerm().containsTemporal()) {
             if ((!getTaskTermPattern().containsTemporal())
@@ -101,12 +100,20 @@ public class TaskRule extends ProductN implements Level {
             throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
     }
 
+    @Override
+    public Term normalized(TermIndex termIndex) {
+        //task and belief pattern term
+        for (int i = 0; i < 2; i++)
+            getPremise().terms()[i] = (Term) termIndex.get(getPremise().terms()[i]);
 
-    public final ProductN premise() {
-        return (ProductN) term(0);
+        //conclusion pattern term
+        getConclusion().terms()[0] = (Term) termIndex.get(getConclusion().terms()[0]);
+
+        return this;
     }
 
-//    public Product result() {
+
+    //    public Product result() {
 //        return (Product) term(1);
 //    }
 
@@ -123,7 +130,7 @@ public class TaskRule extends ProductN implements Level {
     }
 
     protected final Term getTask() {
-        return getPremises().term(0);
+        return getPremise().term(0);
     }
 
 
@@ -136,7 +143,7 @@ public class TaskRule extends ProductN implements Level {
     }
 
     protected final Term getBelief() {
-        return getPremises().term(1);
+        return getPremise().term(1);
     }
 
     protected final Term getConclusionTerm() {
@@ -542,7 +549,7 @@ public class TaskRule extends ProductN implements Level {
 
 
         final ProductN newPremise =
-                (ProductN) Product.make(premise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
+                (ProductN) Product.make(getPremise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
         newPremise.terms()[0] = newT;
         newPremise.terms()[1] = newB;
 

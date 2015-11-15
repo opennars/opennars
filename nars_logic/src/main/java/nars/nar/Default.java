@@ -87,6 +87,8 @@ public class Default extends NAR {
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(memory);
 
+        getDeriver().load(memory);
+
         rng = new XorShift1024StarRandom(1);
 
         initDefaults(memory);
@@ -154,7 +156,7 @@ public class Default extends NAR {
 
         DefaultCycle c = initCore(
             activeConcepts,
-            newDeriver(),
+            getDeriver(),
             newConceptBag(activeConcepts),
             new ConceptActivator(this, this)
         );
@@ -401,7 +403,7 @@ public class Default extends NAR {
         return getClass().getSimpleName() + '[' + nal() + ']';
     }
 
-    protected SimpleDeriver newDeriver() {
+    protected Deriver getDeriver() {
         return SimpleDeriver.standardDeriver;
     }
 

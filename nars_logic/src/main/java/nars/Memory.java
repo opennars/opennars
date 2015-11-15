@@ -39,9 +39,7 @@ import nars.util.event.EventEmitter;
 import nars.util.event.Topic;
 import nars.util.meter.EmotionMeter;
 import nars.util.meter.LogicMeter;
-import org.infinispan.marshall.core.JBossMarshaller;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,7 +111,7 @@ public class Memory extends Param {
 
     public final TermIndex terms = new TermIndex() {
 
-        final Map<Term,Term> terms = new HashMap(); //TODO try weakref identity hash map etc
+        final Map<Term,Term> terms = new HashMap(4096); //TODO try weakref identity hash map etc
 
         @Override public final Termed get(Term t) {
 
@@ -583,12 +581,13 @@ public class Memory extends Param {
 
     public void start() {
         this.concepts.start(this);
+
     }
 
-    public byte[] toBytes() throws IOException, InterruptedException {
-        //TODO probably will want to do something more careful
-        return new JBossMarshaller().objectToByteBuffer(this);
-    }
+//    public byte[] toBytes() throws IOException, InterruptedException {
+//        //TODO probably will want to do something more careful
+//        return new JBossMarshaller().objectToByteBuffer(this);
+//    }
 
     //public Iterator<Concept> getConcepts(boolean active, boolean inactive) {
 //        if (active && !inactive)
