@@ -81,7 +81,7 @@ public class RuleSerializationTest extends AbstractSerializationTest<Collection<
             Assert.assertEquals(a + " equals hash " + b,
                     a.hashCode(), b.hashCode());
 
-            Assert.assertArrayEquals(a.preconditions, b.preconditions);
+            Assert.assertArrayEquals(a.postPreconditions, b.postPreconditions);
             //postconditions will eventually be backed by proper terms, until then, it is enough for preconditions to match
             //assertArrayEquals(a.postconditions, b.postconditions);
             Assert.assertEquals(a.postconditions.length, b.postconditions.length);

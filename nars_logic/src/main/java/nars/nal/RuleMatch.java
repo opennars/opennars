@@ -451,12 +451,14 @@ public class RuleMatch extends FindSubst {
 
         start(rule);
 
-        for (final PreCondition p : rule.prepreconditions) {
+        //stage 1 (early)
+        for (final PreCondition p : rule.prePreconditions) {
             if (!p.test(this))
                 return null;
         }
 
-        for (final PreCondition p : rule.preconditions) {
+        //stage 2 (task/belief term match + late)
+        for (final PreCondition p : rule.postPreconditions) {
             if (!p.test(this))
                 return null;
         }

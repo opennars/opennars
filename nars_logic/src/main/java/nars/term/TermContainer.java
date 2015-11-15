@@ -12,6 +12,9 @@ public interface TermContainer extends Comparable {
     int complexity();
     int size();
 
+    /** nth subterm */
+    Term term(int n);
+
     //TODO rename: impossibleToContain
     boolean impossibleSubTermVolume(final int otherTermVolume);
 

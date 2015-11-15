@@ -5,10 +5,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.Op;
 import nars.nal.nal4.Image;
-import nars.term.CommonVariable;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.util.data.DequePool;
 import nars.util.math.ShuffledPermutations;
 
@@ -269,7 +266,7 @@ public class FindSubst {
         else { /*if (xLen >= 1) {*/
             if (!X.isCommutative()) {
                 //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                return matchSequence(X, Y, power);
+                return matchSequence(X.subterms(), Y.subterms(), power);
             }
             else {
                 //commutative, try permutations
@@ -364,14 +361,15 @@ public class FindSubst {
         final int minAttempts = len; //heuristic assumption
 
         int permPower = power / minAttempts; //power allocate to each permutation
-        int subPower = permPower / len; //power allocated to each permutation's subterm
 
+        final int subPower = permPower / len; //power allocated to each permutation's subterm
         if (subPower < 1) return fail(power);
 
         perm.restart(len, random);
 
         final Map<Term, Term> xy = this.xy; //local copy on stack
         final Map<Term, Term> yx = this.yx; //local copy on stack
+
 
         //push/save:
         Map<Term, Term> savedXY = acquireCopy(xy);
@@ -381,39 +379,23 @@ public class FindSubst {
 
         boolean matched = false;
 
+        ShuffleTermVector xv = new ShuffleTermVector(X, perm);
 
         while (perm.hasNext()) {
 
             perm.next();
 
-            //int powerStart = power;
+            int sp = matchSequence(xv, Y, permPower);
+            int cost = permPower - Math.abs(sp);
+            power -= cost;
 
-            //matchAll:
-            matched = true;
-            for (int i = 0; (i < len) && (power > 0); i++) {
-                int s = perm.get(i);
-
-                int sp = match(X.term(s), Y.term(i), subPower);
-
-                int cost = subPower - Math.abs(sp);
-
-                power -= cost;
-
-                if ((sp < 0) || (power < 0)) {
-                    matched = false;
-                    break; //fail
-                }
-
-            }
-
-            //int costs = powerStart - power;
-
+            matched = sp >= 0;
 
             if (matched || power <= 0) break;
 
             //try again; invert negated power back to a positive value for next attempt
 
-            //pop/restore (TODO only if changed and will attempt again):
+            //pop/restore
             if (yxChanged) {
                 yxChanged = false;
                 restore(savedYX, yx);
@@ -431,9 +413,10 @@ public class FindSubst {
         releaseCopies(savedXY, savedYX);
 
         //finished: succeeded (+) or depleted power (-)
-        if (!matched) power = fail(power);
+        if (!matched)
+            power = fail(power);
 
-        return power; //fail
+        return power;
     }
 
     private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
@@ -464,7 +447,7 @@ public class FindSubst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected int matchSequence(final Compound X, final Compound Y, int power) {
+    final protected int matchSequence(final TermContainer X, final TermContainer Y, int power) {
 
         final int yLen = Y.size();
 
@@ -528,6 +511,30 @@ public class FindSubst {
         }
     }
 
+    private static class ShuffleTermVector extends TermVector {
+        private ShuffledPermutations perm;
+        private Compound compound;
+
+        public ShuffleTermVector(Compound x, ShuffledPermutations perm) {
+            reset(x, perm);
+        }
+
+
+        public void reset(Compound c, ShuffledPermutations s) {
+            this.compound = c;
+            this.perm = s;
+        }
+
+        @Override
+        public final int size() {
+            return compound.size();
+        }
+
+        @Override
+        public final Term term(int i) {
+            return compound.term( perm.get(i) );
+        }
+    }
 }
 
 

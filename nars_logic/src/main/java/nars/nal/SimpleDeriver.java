@@ -194,18 +194,15 @@ public class SimpleDeriver extends Deriver  {
             if (r.minNAL > level) continue;
 
             PostCondition[] pc = m.run(r);
-            if (pc == null) {
-                //System.out.println("Pre exit: " + r + " on " + m.premise);
-                continue;
-            }
-
-            for (PostCondition p : pc) {
-                if (p.minNAL > level) continue;
-                Task x = m.apply(p);
-                if (x != null)
-                    t.accept(x);
-                /*else
-                    System.out.println("Post exit: " + r + " on " + m.premise);*/
+            if (pc != null) {
+                for (PostCondition p : pc) {
+                    if (p.minNAL > level) continue;
+                    Task x = m.apply(p);
+                    if (x != null)
+                        t.accept(x);
+                    /*else
+                        System.out.println("Post exit: " + r + " on " + m.premise);*/
+                }
             }
         }
     }

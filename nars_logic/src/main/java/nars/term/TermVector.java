@@ -56,7 +56,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
     @Override
-    public final T term(int i) {
+    public T term(int i) {
         return term[i];
     }
 
@@ -96,7 +96,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
      * @return the size of the component list
      */
     @Override
-    public final int size() {
+    public int size() {
         return term.length;
     }
 

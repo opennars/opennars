@@ -36,6 +36,11 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
     }
 
     @Override
+    public Term term(int n) {
+        return null;
+    }
+
+    @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
         Utf8.fromUtf8ToAppendable(bytes(), w);
     }

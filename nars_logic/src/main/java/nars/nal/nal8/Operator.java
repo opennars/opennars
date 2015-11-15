@@ -52,7 +52,12 @@ public class Operator<T extends Term> implements Term {
 
     @Override
     public boolean isCommutative() {
-        return true;
+        return false;
+    }
+
+    @Override
+    public Term term(int n) {
+        return null;
     }
 
     @Override

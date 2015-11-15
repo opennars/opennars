@@ -42,7 +42,7 @@ public class RuleDerivationGraphTest {
         Set<PreCondition> preconds = new HashSet();
         int totalPrecond = 0;
         for (TaskRule t : R) {
-            for (PreCondition p : t.preconditions) {
+            for (PreCondition p : t.postPreconditions) {
                 totalPrecond++;
                 preconds.add(p);
             }

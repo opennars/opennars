@@ -32,10 +32,10 @@ public class TaskRule extends ProductN implements Level {
     public boolean allowQuestionTask=false;
 
     /** conditions which can be tested before term matching */
-    public PreCondition[] prepreconditions;
+    public PreCondition[] prePreconditions;
 
     /** conditions which are tested after term matching, including term matching itself */
-    public PreCondition[] preconditions;
+    public PreCondition[] postPreconditions;
 
     public PostCondition[] postconditions;
 
@@ -442,8 +442,8 @@ public class TaskRule extends ProductN implements Level {
             prePreConditionsList.add(TaskPunctuation.TaskNotQuestion);
 
         //store to arrays
-        this.prepreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
-        this.preconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
+        this.prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
+        this.postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
 
 
         List<PostCondition> postConditionsList = Global.newArrayList(postcons.length);
