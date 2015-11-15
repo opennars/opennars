@@ -71,6 +71,7 @@ public class RuleMatch extends FindSubst {
 
     public final Map<Term, Term> prevXY = Global.newHashMap(0);
     public final Map<Term, Term> prevYX = Global.newHashMap(0);
+    public int unificationPower;
 
     @Override
     public String toString() {
@@ -91,6 +92,12 @@ public class RuleMatch extends FindSubst {
         this.premise = p;
         this.prevRule = null;
         this.prevXY.clear(); this.prevYX.clear();
+
+
+        //scale unification power according to premise's mean priority linearly between min and max
+        this.unificationPower =
+                (int)((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
+                    + Global.UNIFICATION_POWERmin);
 
         taskBelief.set(
                 p.getTask().getTerm(),

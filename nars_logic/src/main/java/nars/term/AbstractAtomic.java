@@ -31,6 +31,10 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
         /** do nothing */
     }
 
+    @Override public final boolean isCommutative() {
+        return false;
+    }
+
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
         Utf8.fromUtf8ToAppendable(bytes(), w);

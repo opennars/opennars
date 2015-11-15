@@ -90,7 +90,10 @@ public class FindSubst {
     public final boolean next(final Term x, final Term y, int power) {
         int endPower = match(x, y, power);
 
-        //System.out.println(x + " " + y + " " + endPower);
+        /*
+        System.out.println((power - Math.abs(endPower)) + " " +
+                (endPower >= 0) + " " + x + " " + y + " " + power + " .. " + endPower);
+        */
 
         return endPower >= 0; //non-negative power value indicates success
     }
@@ -105,6 +108,11 @@ public class FindSubst {
      */
     final int match(final Term x, final Term y, int power) {
 
+        if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
+            return power; //fail due to insufficient power
+
+        //System.out.println("  m: " + x + " " + y + " " + power);
+
         if (x.equals(y)) {
             return power; //match
         }
@@ -116,9 +124,6 @@ public class FindSubst {
      * but there is still the possibility of a match.
      */
     private final int matchNotEqual(Term x, Term y, int power) {
-
-        if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
-            return power; //fail due to insufficient power
 
 
         final Op type = this.type;
@@ -160,7 +165,7 @@ public class FindSubst {
         }
         else {
             if ((xOp == yOp) && (x instanceof Compound)) {
-                return match((Compound)x, (Compound)y, power);
+                return matchCompound((Compound)x, (Compound)y, power);
             }
         }
 
@@ -250,14 +255,12 @@ public class FindSubst {
      * X and Y are of the same operator type and length (arity)
      * X's permutations matched against constant Y
      */
-    protected int match(final Compound X, final Compound Y, int power) {
+    protected int matchCompound(final Compound X, final Compound Y, int power) {
 
         if (!matchable(X, Y))
             return fail(power);
 
         final int xLen = X.size();
-
-        power--;
 
         if (xLen == 0)
             return power;
@@ -266,16 +269,16 @@ public class FindSubst {
         else { /*if (xLen >= 1) {*/
             if (!X.isCommutative()) {
                 //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                return matchSubs(X, Y, power);
+                return matchSequence(X, Y, power);
             }
             else {
                 //commutative, try permutations
-                return permute(X, Y, power);
+                return matchPermute(X, Y, power);
             }
         }
     }
 
-    private final int permute(Compound x, Compound y, int power) {
+    private final int matchPermute(Compound x, Compound y, int power) {
         DequePool<ShuffledPermutations> pp = this.permutationPool;
 
         final ShuffledPermutations perm = pp.get();
@@ -358,7 +361,11 @@ public class FindSubst {
 
         final int len = X.size();
 
-        int subPower = power / len;
+        final int minAttempts = len; //heuristic assumption
+
+        int permPower = power / minAttempts; //power allocate to each permutation
+        int subPower = permPower / len; //power allocated to each permutation's subterm
+
         if (subPower < 1) return fail(power);
 
         perm.restart(len, random);
@@ -373,9 +380,13 @@ public class FindSubst {
         yxChanged = false;
 
         boolean matched = false;
+
+
         while (perm.hasNext()) {
 
             perm.next();
+
+            //int powerStart = power;
 
             //matchAll:
             matched = true;
@@ -384,7 +395,9 @@ public class FindSubst {
 
                 int sp = match(X.term(s), Y.term(i), subPower);
 
-                power -= subPower - Math.abs(sp);
+                int cost = subPower - Math.abs(sp);
+
+                power -= cost;
 
                 if ((sp < 0) || (power < 0)) {
                     matched = false;
@@ -392,6 +405,9 @@ public class FindSubst {
                 }
 
             }
+
+            //int costs = powerStart - power;
+
 
             if (matched || power <= 0) break;
 
@@ -448,20 +464,39 @@ public class FindSubst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected int matchSubs(final Compound xSubterms, final Compound ySubterms, int power) {
+    final protected int matchSequence(final Compound X, final Compound Y, int power) {
 
-        final int yLen = ySubterms.size();
+        final int yLen = Y.size();
 
         //distribute recursion equally among subterms, though should probably be in proportion to their volumes
         final int subPower = power / yLen;
         if (subPower < 1) return fail(power);
 
-        for (int i = 0; i < yLen; i++) {
-            int s;
-            if ((s = match(xSubterms.term(i), ySubterms.term(i), subPower)) < 0) {
-                return s; //fail
+
+        boolean phase = false;
+
+        int processed = 0;
+
+        //process non-commutative subterms in phase 1, then phase 2
+        for (int j = 0; j < 2; j++) {
+
+            for (int i = 0; i < yLen; i++) {
+
+                Term xSub = X.term(i);
+
+                if (xSub.isCommutative() == phase) {
+                    int s;
+                    s = match(xSub, Y.term(i), subPower);
+                    power -= (subPower - Math.abs(s));
+                    if (s < 0) {
+                        return fail(power);
+                    }
+                    processed++;
+                }
             }
-            power -= (subPower - s);
+
+            if (processed == yLen) break; //exit early if all have been processed
+            phase = !phase;
         }
 
         return power; //success

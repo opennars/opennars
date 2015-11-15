@@ -66,7 +66,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
      *
      * @return The default value is false
      */
-    boolean isCommutative();
 
     T[] cloneTerms();
 

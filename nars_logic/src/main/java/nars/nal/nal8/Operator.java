@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * Wraps a term to represent an operator that can be used as the predicate
  * of an Operation
+ * TODO inherit AbstractAtomic
  */
 public class Operator<T extends Term> implements Term {
 
@@ -49,6 +50,10 @@ public class Operator<T extends Term> implements Term {
         throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
     }
 
+    @Override
+    public boolean isCommutative() {
+        return true;
+    }
 
     @Override
     public boolean impossibleSubTermVolume(int otherTermVolume) {

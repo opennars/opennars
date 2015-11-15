@@ -448,6 +448,36 @@ public class UnificationTest  {
                 .run();
     }
 
+    @Test public void patternSimilarity1()  {
+        test(Op.VAR_PATTERN,
+                "<%1 <-> %2>",
+                "<a <-> b>",
+                true);
+    }
+    @Test public void patternNAL2Sample()  {
+        test(Op.VAR_PATTERN,
+                "(<%1 --> %2>, <%2 --> %1>)",
+                "(<bird --> {?1}>, <bird --> swimmer>)",
+                false);
+    }
+    @Test public void patternNAL2SampleSim()  {
+        test(Op.VAR_PATTERN,
+                "(<%1 <-> %2>, <%2 <-> %1>)",
+                "(<bird <-> {?1}>, <bird <-> swimmer>)",
+                false);
+    }
+    @Test public void patternLongSeq()  {
+        test(Op.VAR_PATTERN,
+                "(a,b,c,d,e,f,g,h,j)",
+                "(x,b,c,d,e,f,g,h,j)",
+                false);
+    }
+    @Test public void patternLongSeq2()  {
+        test(Op.VAR_PATTERN,
+                "(a,b,c,d,e,f,g,h,j)",
+                "(a,b,c,d,e,f,g,h,x)",
+                false);
+    }
 
 
 
