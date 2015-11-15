@@ -538,3 +538,5 @@
 //NAL7 specific:
     (&/,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
     (&/,A_1..n), A_1, task("!") |- A_1, (Truth:StructuralDeduction, Punctuation:Goal)
+    (&|,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
+    (&|,A_1..n), A_1, task("!") |- A_1, (Truth:StructuralDeduction, Punctuation:Goal)
