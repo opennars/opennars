@@ -44,8 +44,12 @@ public class SortedTaskPerception extends TaskPerception {
             int n = Math.min(size(), inputPerCycle.intValue());
             final Consumer<Task> receiver = this.receiver;
 
-            for (int i = 0; i < n; i++)
-                receiver.accept(buffer.pop());
+            for (int i = 0; i < n; i++) {
+                Task<?> b = buffer.pop();
+                if (b!=null)
+                    receiver.accept(b);
+                //else why?
+            }
 
         }
     }

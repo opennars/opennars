@@ -38,7 +38,7 @@ abstract public class Image extends DefaultCompound2 {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (o == this) return true;
         if (super.equals(o)) {
             return ((Image)o).relationIndex == relationIndex;
@@ -47,7 +47,7 @@ abstract public class Image extends DefaultCompound2 {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public final int compareTo(Object o) {
         if (o == this) return 0;
         int d = super.compareTo(o);
         if (d == 0) {

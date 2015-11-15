@@ -343,13 +343,14 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
     @Override
     public final int hashCode() {
-        final int h = contentHash;
-        if (h == 0) {
-            //if hash is zero, it means it needs calculated
-            //return init(term);
-            throw new RuntimeException("unhashed");
-        }
-        return h;
+        return contentHash;
+//        final int h = contentHash;
+//        if (h == 0) {
+//            //if hash is zero, it means it needs calculated
+//            //return init(term);
+//            throw new RuntimeException("unhashed");
+//        }
+//        return h;
     }
 
     @Override

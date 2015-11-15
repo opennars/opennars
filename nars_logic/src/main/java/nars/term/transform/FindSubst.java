@@ -117,6 +117,9 @@ public class FindSubst {
      */
     private final int matchNotEqual(Term x, Term y, int power) {
 
+        if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
+            return power; //fail due to insufficient power
+
 
         final Op type = this.type;
         final Op xOp = x.op();
@@ -128,7 +131,8 @@ public class FindSubst {
                 return match(xSubst, y, power);
             }
             else {
-                return nextVarX((Variable) x, y, power);
+                nextVarX((Variable) x, y);
+                return power;
             }
 
         }
@@ -142,15 +146,16 @@ public class FindSubst {
                 return match(x, ySubst, power);
             }
             else {
-                return putVarY(x, (Variable) y) ?
-                        power : -power;
+                putVarY(x, (Variable) y);
+                return power;
             }
 
         }
 
         if (xOp.isVar()) {
             if (yOp.isVar()) {
-                return nextVarX((Variable) x, y, power);
+                nextVarX((Variable) x, y);
+                return power;
             }
         }
         else {
@@ -160,7 +165,7 @@ public class FindSubst {
         }
 
 
-        return -power;
+        return fail(power);
     }
 
     private static void printComparison(int power, Compound cx, Compound cy) {
@@ -189,22 +194,22 @@ public class FindSubst {
 
 
 
-    final int nextVarX(final Variable xVar, final Term y, int power) {
+    final void nextVarX(final Variable xVar, final Term y) {
         final Op xOp = xVar.op();
 
-        boolean m = false;
+        //boolean m = false;
 
         if (matchable(xOp/*, yOp*/)) {
-            m = putVarX(xVar, y);
+            putVarX(xVar, y);
         }
         else {
             final Op yOp = y.op();
             if (yOp == xOp) {
-                m = putCommon(xVar, (Variable) y);
+                 putCommon(xVar, (Variable) y);
             }
         }
 
-        return m ? power : -power;
+        //return power; //m ? power : fail(power);
 
 //
 //            if(type == Op.VAR_PATTERN && xOp == Op.VAR_PATTERN) {
@@ -247,28 +252,23 @@ public class FindSubst {
      */
     protected int match(final Compound X, final Compound Y, int power) {
 
-
-        if ((power = power - costFunction(X, Y)) < 0)
-            return power; //fail due to insufficient power
-
         if (!matchable(X, Y))
-            return -power;
+            return fail(power);
 
         final int xLen = X.size();
 
-
-        if ((xLen > 1) && (!X.isCommutative())) {
-            //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-            return matchSubs(X, Y, power);
-        }
-        else {
-            switch (xLen) {
-                case 0: return power-1;
-                case 1: return match(X.term(0), Y.term(0), power);
-
-                //case 2:  return permute2(X, Y, power);
-                //case 3:  return permute3(Y, X, power);
-                default: return permute(X, Y, power);
+        if (xLen == 0)
+            return power-1;
+        else if (xLen == 1)
+            return match(X.term(0), Y.term(0), power);
+        else { /*if (xLen >= 1) {*/
+            if (!X.isCommutative()) {
+                //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+                return matchSubs(X, Y, power);
+            }
+            else {
+                //commutative, try permutations
+                return permute(X, Y, power);
             }
         }
     }
@@ -300,7 +300,7 @@ public class FindSubst {
     /**
      * elimination
      */
-    private final boolean putVarY(final Term x, final Variable yVar) {
+    private final void putVarY(final Term x, final Variable yVar) {
         /*if (yVar.op()!=type) {
             throw new RuntimeException("tried to set invalid map: " + yVar + "->" + x + " but type=" + type);
         }*/
@@ -308,13 +308,13 @@ public class FindSubst {
         if (yVar instanceof CommonVariable) {
             xyPut(yVar, x);
         }
-        return true;
+        //return true;
     }
 
     /**
      * elimination
      */
-    private final boolean putVarX(final Variable xVar, final Term y) {
+    private final void putVarX(final Variable xVar, final Term y) {
         /*if (xVar.op()!=type) {
             throw new RuntimeException("tried to set invalid map: " + xVar + "->" + y + " but type=" + type);
         }*/
@@ -322,15 +322,15 @@ public class FindSubst {
         if (xVar instanceof CommonVariable) {
             yxPut(xVar, y);
         }
-        return true;
+        //return true;
     }
 
 
-    protected final boolean putCommon(final Variable x, final Variable y) {
+    protected final void putCommon(final Variable x, final Variable y) {
         final Variable commonVar = CommonVariable.make(x, y);
         xyPut(x, commonVar);
         yxPut(y, commonVar);
-        return true;
+        //return true;
     }
 
     private final void yxPut(Variable y, Term x) {
@@ -357,7 +357,7 @@ public class FindSubst {
         final int len = X.size();
 
         int subPower = power / len;
-        if (subPower < 1) return -power;
+        if (subPower < 1) return fail(power);
 
         perm.restart(len, random);
 
@@ -438,7 +438,8 @@ public class FindSubst {
 
 
     static final int fail(int powerMagnitude) {
-        return (powerMagnitude > 0) ? -powerMagnitude : powerMagnitude;
+        return (powerMagnitude > 0) ?
+                -powerMagnitude : Math.min(-1, powerMagnitude);
     }
 
 
@@ -451,14 +452,14 @@ public class FindSubst {
 
         //distribute recursion equally among subterms, though should probably be in proportion to their volumes
         final int subPower = power / yLen;
-        if (subPower < 1) return -power;
+        if (subPower < 1) return fail(power);
 
         for (int i = 0; i < yLen; i++) {
             int s;
             if ((s = match(xSubterms.term(i), ySubterms.term(i), subPower)) < 0) {
                 return s; //fail
             }
-            power -= (subPower - Math.max(s, 0));
+            power -= (subPower - s);
         }
 
         return power; //success
