@@ -183,11 +183,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /** includes: evidentialset, occurrencetime, truth, term, punctuation */
     private final int rehash() {
 
-        final int h = Util.hash(
+        final int h = Objects.hash(
                 Arrays.hashCode(getEvidence()),
-                getTerm().hashCode(),
+                getTerm(),
                 getPunctuation(),
-                (getTruth() != null) ? getTruth().hashCode() : 1,
+                getTruth(),
                 getOccurrenceTime()
         );
 

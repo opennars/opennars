@@ -20,11 +20,13 @@ public class Operator<T extends Term> implements Term {
 
 
     private final T term;
+    private final int hash;
 
     public Operator(T the) {
         super();
 
         this.term = the;
+        this.hash = Atom.hash(term.bytes(), Op.OPERATOR.ordinal());
     }
 
     @Override
@@ -201,13 +203,12 @@ public class Operator<T extends Term> implements Term {
     public final boolean equals(Object obj) {
         if (this == obj) return true;
         Term t = (Term)obj;
-        return t.op() == Op.OPERATOR &&
-                term.equals(((Operator)t).term);
+        return (t.op() == Op.OPERATOR) && term.equals(((Operator)t).term);
     }
 
     @Override
     public final int hashCode() {
-        return Atom.hash(term.bytes(), Op.OPERATOR.ordinal()); //cache?
+        return hash;
     }
 
     public final Term identifier() {

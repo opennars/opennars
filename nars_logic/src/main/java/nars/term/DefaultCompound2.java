@@ -4,6 +4,7 @@ import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.TermVisitor;
 import nars.term.transform.VariableNormalization;
+import nars.util.data.Util;
 import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
      * used to prevent repeated normalizations
      */
     protected transient boolean normalized = false;
-    private transient int hash;
+    protected transient int hash;
 
     /**
      * subclasses should be sure to call init() in their constructors; it is not done here
@@ -67,7 +68,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         this.terms.init(term);
 
         this.normalized = !hasVar();
-        this.hash = subterms().hashCode() * 31 + op().ordinal();
+        this.hash = Util.hashCombine( subterms().hashCode(), op().ordinal() );
     }
 
 
@@ -153,7 +154,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return hash;
 //        if (ch == 0) {
 //            throw new RuntimeException("should have hashed");

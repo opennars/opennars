@@ -185,12 +185,12 @@ public class FindSubst {
         return (xVarOp == type);
     }
 
-    /** cost subtracted in the re-entry method: next(x, y, power) */
-    static final int costFunction(final Compound x, final Compound y) {
-        return 1;
-        //return Math.min(x.volume(), y.volume());
-        //return x.volume() + y.volume();
-    }
+//    /** cost subtracted in the re-entry method: next(x, y, power) */
+//    static final int costFunction(final Compound x, final Compound y) {
+//        return 1;
+//        //return Math.min(x.volume(), y.volume());
+//        //return x.volume() + y.volume();
+//    }
 
 
 
@@ -257,8 +257,10 @@ public class FindSubst {
 
         final int xLen = X.size();
 
+        power--;
+
         if (xLen == 0)
-            return power-1;
+            return power;
         else if (xLen == 1)
             return match(X.term(0), Y.term(0), power);
         else { /*if (xLen >= 1) {*/

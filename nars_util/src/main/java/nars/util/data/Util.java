@@ -96,10 +96,10 @@ public class Util {
 //        return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d;
 //    }
 
-    public final static int hash(int a, int b, int c, int d, long e) {
-        long x = PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d) + e;
-        return (int)x;
-    }
+//    public final static int hash(int a, int b, int c, int d, long e) {
+//        long x = PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d) + e;
+//        return (int)x;
+//    }
 
     public final static int hash(Object a, Object b) {
         return hash(a.hashCode(), b.hashCode());
@@ -348,6 +348,16 @@ public class Util {
 
         return hash;
     }
+
+
+    /** from clojure.Util */
+    public static int hashCombine(int seed, int hash) {
+        return seed ^ ( hash + 0x9e3779b9 + (seed << 6) + (seed >> 2) );
+
+        //return seed * 31 + hash;
+    }
+
+
 
     public static int ELFHashNonZero(final byte[] str, final int seed) {
         int i  = (int) ELFHash(str, seed);

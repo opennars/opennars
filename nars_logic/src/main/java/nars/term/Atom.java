@@ -92,9 +92,8 @@ public class Atom extends ImmutableAtom  {
 
     public static int hash(byte[] id, int ordinal) {
         return Util.ELFHashNonZero(id, Util.PRIME1 * (1+ordinal));
+        //return Util.WildPlasserHashNonZero(id, (1+ordinal));
     }
-
-
 
     public Atom(byte[] n) {
         super(n, Atom.hash(n, Op.ATOM.ordinal() ));

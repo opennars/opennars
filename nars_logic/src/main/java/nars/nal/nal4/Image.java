@@ -5,6 +5,7 @@ import nars.Symbols;
 import nars.term.Compound;
 import nars.term.DefaultCompound2;
 import nars.term.Term;
+import nars.util.data.Util;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -31,11 +32,12 @@ abstract public class Image extends DefaultCompound2 {
         init(components);
     }
 
-
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ relationIndex;
+    protected void init(Term[] term) {
+        super.init(term);
+        this.hash = Util.hashCombine( hash, relationIndex );
     }
+
 
     @Override
     public final boolean equals(Object o) {
