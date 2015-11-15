@@ -172,7 +172,7 @@ public class FindSubst {
 
     /** compare variable type to determine if matchable */
     private final boolean matchable(Op xVarOp/*, Op yOp*/) {
-        if (xVarOp == Op.VAR_PATTERN) return true;
+        //if (xVarOp == Op.VAR_PATTERN) return true;
 //        if (xVarOp == Op.VAR_QUERY) {
 //            return yOp!=Op.VAR_QUERY; //dep or indep. it will not be the same query variable because equality has already been tested
 //        }
@@ -182,8 +182,9 @@ public class FindSubst {
 
     /** cost subtracted in the re-entry method: next(x, y, power) */
     static final int costFunction(final Compound x, final Compound y) {
+        return 1;
         //return Math.min(x.volume(), y.volume());
-        return x.volume() + y.volume();
+        //return x.volume() + y.volume();
     }
 
 

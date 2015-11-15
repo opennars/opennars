@@ -54,7 +54,7 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
 
         if (x instanceof AbstractAtomic) {
             AbstractAtomic ax = (AbstractAtomic)x;
-            return (op() == ax.op()) && Byted.equals(this, ax);
+            return Byted.equals(this, ax) && (op() == ax.op());
         }
         return false;
     }

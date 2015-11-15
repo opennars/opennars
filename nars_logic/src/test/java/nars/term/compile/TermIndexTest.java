@@ -16,10 +16,6 @@ import static org.junit.Assert.assertTrue;
 
 public class TermIndexTest {
 
-
-
-
-
     @Test public void testTermSharing1() {
         final NAR t = new Terminal();
 
@@ -28,7 +24,7 @@ public class TermIndexTest {
         Task t1 = t.inputTask(term);
         Task t2 = t.inputTask(term);
 
-        t.memory.terms.forEachTerm(System.out::println);
+        //t.memory.terms.forEachTerm(System.out::println);
 
         assertEquals(t1.getTerm(), t2.getTerm());
         assertTrue(t1.getTerm() == t2.getTerm());
@@ -42,7 +38,9 @@ public class TermIndexTest {
         Set<Term> t = new TreeSet();
         d.memory.terms.forEachTerm(x -> t.add(x.getTerm()));
 
-        t.forEach(System.out::println);
+        assertTrue(t.size() > 1000); //approximate
+
+        //t.forEach(System.out::println);
 
     }
 }

@@ -14,29 +14,29 @@ import java.util.Comparator;
  * according to the comparator, will be in the list in the order that they were
  * added to this list. Add only objects that the comparator can compare.</p>
  */
-public class SortedList<E> extends FasterList<E> {
+public class SortedList<E extends Comparable> extends FasterList<E> {
 
-    private Comparator<E> comparator = defaultComparator;
+    //private static final Comparator comparator = defaultComparator;
 
-    final static Comparator defaultComparator = new Comparator() {
+    final static Comparator<Comparable> defaultComparator = new Comparator<Comparable>() {
         @Override
-        public final int compare(Object x, Object y) {
-            return ((Comparable) x).compareTo(y);
+        public final int compare(Comparable x, Comparable y) {
+            return x.compareTo(y);
         }
     };
 
     private boolean allowDuplicate = false;
 
-    /**
-     * <p>
-     * Constructs a new sorted list. The objects in the list will be sorted
-     * according to the specified comparator.</p>
-     *
-     * @param c a comparator
-     */
-    public SortedList(Comparator<E> c) {
-        this.comparator = c;
-    }
+//    /**
+//     * <p>
+//     * Constructs a new sorted list. The objects in the list will be sorted
+//     * according to the specified comparator.</p>
+//     *
+//     * @param c a comparator
+//     */
+//    public SortedList(Comparator<E> c) {
+//        this.comparator = c;
+//    }
 
     public SortedList() {
     }
@@ -85,7 +85,7 @@ public class SortedList<E> extends FasterList<E> {
 
         final boolean allowDuplicate = this.allowDuplicate;
 
-        final Comparator<E> cmpr = this.comparator;
+        final Comparator cmpr = defaultComparator;
 
         while (low <= high) {
             int mid = (low + high) / 2;

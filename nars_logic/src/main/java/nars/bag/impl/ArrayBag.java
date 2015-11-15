@@ -203,26 +203,29 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
 
         final V overflow = index.putKey(i.name(), i);
 
+
         if (overflow!=null) {
 
             index.removeItem(overflow);
 
-            /*if (index.removeItem(overflow) == null)
-                throw new RuntimeException("put fault");*/
+            if (!overflow.isDeleted()) {
 
-            merge(i.getBudget(), overflow.getBudget());
+                /*if (index.removeItem(overflow) == null)
+                    throw new RuntimeException("put fault");*/
 
-            index.addItem(i);
+                merge(i.getBudget(), overflow.getBudget());
 
-            /*if (!i.name().equals(overflow.name())) {
-                throw new RuntimeException("wtf: notEqual " + i.name() + " and " + overflow.name() );
-            }*/
+                index.addItem(i);
 
-            /* absorbed */
-            return null;
+                /*if (!i.name().equals(overflow.name())) {
+                    throw new RuntimeException("wtf: notEqual " + i.name() + " and " + overflow.name() );
+                }*/
+
+                /* absorbed */
+                return null;
+            }
         }
 
-        else {
 
             V displaced = null;
 
@@ -243,7 +246,6 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
             index.addItem(i);
 
             return displaced;
-        }
     }
 
     /** TODO make this work for the original condition: (size() >= capacity)
