@@ -348,6 +348,9 @@
 
     //the first rule does not have Order:ForAllSame because it would be invalid, see: https://groups.google.com/forum/#!topic/open-nars/r5UJo64Qhrk
     ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
+    ((&&,A_1..n) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
+    ((&&,A_1..n) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
+    ((&&,A_1..n) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
     ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
     ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
