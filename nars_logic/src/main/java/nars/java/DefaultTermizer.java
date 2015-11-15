@@ -1,12 +1,15 @@
 package nars.java;
 
+import nars.$;
 import nars.Global;
 import nars.nal.nal2.Instance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.term.Variable;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,6 +145,14 @@ public class DefaultTermizer implements Termizer {
             if (components.isEmpty()) return EMPTY;
             return SetExt.make(components);
         }
+        else if (o instanceof Method) {
+            //translate the method to an operation term
+            Method m = (Method)o;
+            return $.op(
+                NALObjects.getMethodOperator(m),
+                getMethodArgVariables(m)
+            );
+        }
 
         return termInstanceInClassInPackage(o);
 
@@ -167,6 +178,33 @@ public class DefaultTermizer implements Termizer {
 //        }
 
 
+    }
+
+    static final Variable instanceVar = $.varDep("obj");
+
+    /** (#arg1, #arg2, ...), #returnVar */
+    private Term[] getMethodArgVariables(Method m) {
+
+        //TODO handle static methods which will not receive first variable instance
+
+        String varPrefix = m.getName() + "_";
+        int n = m.getParameterCount();
+        Product args = $.pro(getArgVariables(varPrefix, n));
+        if (m.getReturnType() == void.class)
+            return new Term[] { instanceVar, args };
+        return new Term[]{
+            instanceVar,
+            args,
+            $.varDep(varPrefix + "_return") //return var
+        };
+    }
+
+    private Term[] getArgVariables(String prefix, int numParams) {
+        Term[] x = new Term[numParams];
+        for (int i = 0; i < numParams; i++) {
+            x[i] = $.varDep(prefix + i);
+        }
+        return x;
     }
 
     public static Term termClass(Class c) {

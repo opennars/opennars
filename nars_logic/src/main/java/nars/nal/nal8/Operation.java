@@ -94,6 +94,9 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
         return arg().term(i);
     }
 
+    public static Inheritance make(final Term subject, final Term predicate) {
+        throw new RuntimeException("not what is intended");
+    }
 
     public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return newSubTask(parent, m, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());

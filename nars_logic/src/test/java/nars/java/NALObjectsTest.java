@@ -1,16 +1,20 @@
 package nars.java;
 
 import com.google.common.collect.Lists;
+import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.term.Term;
 import nars.util.meter.EventCount;
 import org.junit.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -38,6 +42,16 @@ public class NALObjectsTest  {
 
         public float multiply(float a, float b) {
             return a * b;
+        }
+
+        public List<Method> getClassMethods() {
+            Method[] m = getClass().getMethods();
+            List<Method> l = Global.newArrayList();
+            for (Method x : m)
+                if (NALObjects.isMethodVisible(x))
+                    if (!x.getName().equals("getClassMethods"))
+                        l.add(x);
+            return l;
         }
     }
 
@@ -201,5 +215,26 @@ public class NALObjectsTest  {
 
     }
 
+    @Test
+    public void testLearnMethods() throws Exception {
+
+
+        NAR n = new Default2(512,8,4,2);
+
+        n.log();
+
+        //EventCount count = new EventCount(n);
+
+        TestClass tc = new NALObjects(n).build("obj", TestClass.class);
+
+
+        tc.getClassMethods();
+
+
+        n.frame(32);
+
+
+
+    }
 
 }

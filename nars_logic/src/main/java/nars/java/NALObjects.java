@@ -61,6 +61,8 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         add("wait");
         add("finalize");
         add("stream");
+        add("getHandler");
+        add("setHandler");
     }};
     private AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
@@ -126,9 +128,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         final Term[] argterm = Stream.of(args).map(this::term).toArray(Term[]::new);
 
         //String opName =
-        final Operator op = Operator.the(
-                overridden.getDeclaringClass().getSimpleName() + "_" + overridden.getName()
-        );
+        final Operator op = getMethodOperator(overridden);
 
         Term[] instancePlusArgs = new Term[argterm.length+2];
         instancePlusArgs[0] = instance;
@@ -161,6 +161,19 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         lock.set(false);
 
         return result;
+    }
+
+    public static Operator getMethodOperator(Method overridden) {
+        //dereference class to origin, not using a wrapped class
+        Class c = overridden.getDeclaringClass();
+
+        //HACK
+        if (c.getName().contains("_$$_")) ////javassist wrapper class
+            c = c.getSuperclass();
+
+        return Operator.the(
+                c.getSimpleName() + "_" + overridden.getName()
+        );
     }
 
 //    //TODO use a generic Consumer<Task> for recipient/recipients of these
@@ -216,8 +229,6 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         ProxyFactory factory = proxyCache.getIfAbsentPut(classs, ProxyFactory::new);
         factory.setSuperclass(classs);
 
-
-
         Class clazz = factory.createClass();
 
         T instance = (T) clazz.newInstance();
@@ -238,7 +249,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         //add operators for public methods
 
         for (Method m :  instance.getClass().getMethods()) {
-            if (!methodExclusions.contains(m.toString()) && Modifier.isPublic(m.getModifiers())) {
+            if (isMethodVisible(m) && Modifier.isPublic(m.getModifiers())) {
                 MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
                     MethodOperator mo = new MethodOperator(goalInvoke, this, m);
                     nar.on(mo);
@@ -249,6 +260,14 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
 
         return instance;
+    }
+
+    public static boolean isMethodVisible(Method m) {
+        String n = m.getName();
+        if (n.contains("_d"))
+            return false; //javassist wrapper method
+
+        return !methodExclusions.contains(n);
     }
 
     public void setGoalInvoke(boolean b) {

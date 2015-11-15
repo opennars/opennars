@@ -12,6 +12,8 @@ import nars.task.FluentTask;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
+import nars.util.utf8.Utf8;
 
 /**
  * core utility class
@@ -109,4 +111,24 @@ public class $ {
         return (X)Negation.make(x);
     }
 
+    public static Product pro(Term[] t) {
+        return Product.make(t);
+    }
+
+    public static Variable var(Op type, int i) {
+        return Variable.the(type, i);
+    }
+
+    public static Variable var(Op type, String s) {
+        return Variable.the(type.ch, Utf8.toUtf8(s));
+    }
+
+
+    public static Variable varDep(int i) {
+        return var(Op.VAR_DEPENDENT, i);
+    }
+
+    public static Variable varDep(String s) {
+        return var(Op.VAR_DEPENDENT, s);
+    }
 }
