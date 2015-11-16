@@ -21,6 +21,7 @@
 
 package nars.nal.nal4;
 
+import nars.$;
 import nars.Op;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -107,7 +108,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     }
 
     static Product make(final String... argAtoms) {
-        return Product.make( Atom.the(argAtoms) );
+        return $.pro(argAtoms);
     }
 
 //    Term[] cloneTermsReplacing(final Term from, final Term to);

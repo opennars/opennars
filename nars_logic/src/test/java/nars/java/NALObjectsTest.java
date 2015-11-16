@@ -55,6 +55,75 @@ public class NALObjectsTest  {
         }
     }
 
+    /** test that the methods of invoking an instance method are indistinguishable
+     * whether it occurred from outside, or from a NAR goal
+     */
+    @Test public void testMethodOperators() throws Exception {
+
+        NAR n = new Default();
+
+        String instance = "obj";
+
+        n.log();
+
+
+        NALObjects no = new NALObjects(n);
+        TestClass nc = no.build(instance, TestClass.class);
+
+
+        StringWriter ns;
+        n.trace(new PrintWriter(ns = new StringWriter()));
+
+
+        nc.multiply(2,3);
+
+        n.frame(16);
+
+//        assertNotNull( n.memory.concept(
+//                no.termClassInPackage(TestClass.class))
+//        );
+
+
+        n.input("TestClass_multiply(" + instance + ", (2, 3), #x)!");
+
+
+        //WHAT TO EXPECT
+        /*
+
+        CLASS IS IN WHICH PACKAGE
+          eventTaskProcess: $0.50;0.80;0.95$
+                 <{((nars, java), TestClass)} --> package>. %1.00;0.90% Input
+
+        OBJECT INSTANCE OF WHICH CLASS
+          eventTaskProcess: $0.50;0.80;0.95$
+                <{obj} --> ((nars, java), TestClass)>. %1.00;0.90% Input
+
+        METHOD INVOKED (either by reasoner explicitly, or by external source)
+          eventTaskProcess: $0.60;0.90;0.95$
+                TestClass_multiply(obj, (2, 3), #1)! :\: %1.00;0.90% Input
+
+        METHOD RETURNED VALUE
+          eventTaskProcess: $0.50;0.80;0.95$
+                <{6} --> (/, ^TestClass_multiply, obj, (2, 3), _)>. :\: %1.00;0.90% Input
+
+        TODO: method metadata, including parameter typing information
+        */
+
+
+
+        //System.out.println(ns.getBuffer().toString());
+        //System.out.println();
+        //System.out.println(ms.getBuffer().toString());
+
+        //TODO use TestNAR and test for right tense
+
+        String expect = "<{6} --> (/, ^TestClass_multiply, " + instance + ", (2, 3), _)>.";
+        String bs = ns.getBuffer().toString();
+        assertTrue(bs.contains(expect));
+
+    }
+
+
     @Test
     public void testDynamicProxyObjects() throws Exception {
 
@@ -79,48 +148,6 @@ public class NALObjectsTest  {
 
     }
 
-    /** test that the methods of invoking an instance method are indistinguishable
-     * whether it occurred from outside, or from a NAR goal
-     */
-    @Test public void testMethodOperators() throws Exception {
-
-        NAR n = new Default();
-
-        String instance = "obj";
-        NALObjects no = new NALObjects(n);
-        TestClass nc = no.build(instance, TestClass.class);
-
-
-        StringWriter ns;
-        n.trace(new PrintWriter(ns = new StringWriter()));
-
-        //n.stdout();
-
-        nc.multiply(2,3);
-
-        n.frame(16);
-
-//        assertNotNull( n.memory.concept(
-//                no.termClassInPackage(TestClass.class))
-//        );
-
-
-        n.input("TestClass_multiply(" + instance + ", (2, 3), #x)!");
-
-
-
-
-        //System.out.println(ns.getBuffer().toString());
-        //System.out.println();
-        //System.out.println(ms.getBuffer().toString());
-
-        //TODO use TestNAR and test for right tense
-
-        String expect = "<{6} --> (/, ^TestClass_multiply, " + instance + ", (2, 3), _)>.";
-        String bs = ns.getBuffer().toString();
-        assertTrue(bs.contains(expect));
-
-    }
 
     @Test public void testTermizerPrimitives() {
 

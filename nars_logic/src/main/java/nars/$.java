@@ -2,7 +2,9 @@ package nars;
 
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
+import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
@@ -39,6 +41,14 @@ public class $ {
      * Op.ATOM from String
      */
     public static Atom the(String id) { return Atom.the(id); }
+
+    public static Atom[] the(String... id) {
+        final int l = id.length;
+        final Atom[] x = new Atom[l];
+        for (int i = 0; i < l; i++)
+            x[i] = Atom.the(id[i]);
+        return x;
+    }
 
     /**
      * Op.ATOM from int
@@ -113,6 +123,9 @@ public class $ {
     public static Product pro(Term[] t) {
         return Product.make(t);
     }
+    public static Product pro(String[] t) {
+        return Product.make( $.the(t) );
+    }
 
     public static Variable var(Op type, int i) {
         return Variable.the(type, i);
@@ -129,5 +142,10 @@ public class $ {
 
     public static Variable varDep(String s) {
         return var(Op.VAR_DEPENDENT, s);
+    }
+
+    public static <P extends Term, S extends Term> Inheritance<SetExt<S>, P>
+        inst(S subj, P pred) {
+            return Instance.make(subj, pred);
     }
 }

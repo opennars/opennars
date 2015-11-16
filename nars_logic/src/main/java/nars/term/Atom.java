@@ -235,13 +235,6 @@ public class Atom extends ImmutableAtom  {
         return x;
     }
 
-    public static Term[] the(final String... s) {
-        final int l = s.length;
-        final Term[] x = new Term[l];
-        for (int i = 0; i < l; i++)
-            x[i] = Atom.the(s[i]);
-        return x;
-    }
     /*
     // similar to String.intern()
     public final static Atom the(final String name) {

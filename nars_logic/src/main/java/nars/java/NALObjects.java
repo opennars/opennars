@@ -11,6 +11,7 @@ import nars.NAR;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -63,12 +64,20 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         add("getHandler");
         add("setHandler");
     }};
-    private AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
+    private final AtomicBoolean goalInvoke = new AtomicBoolean(true);
+
+    /** for externally-puppeted method invocation goals */
     private float invocationGoalFreq = 1f;
     private float invocationGoalConf = 0.9f;
+
+    /** for method invocation result beliefs  */
     private float invocationResultFreq = 1f;
     private float invocationResultConf = 0.9f;
+
+    /** for meta-data beliefs about (classes, objects, packages, etc..) */
+    private float metadataBeliefFreq = 1f;
+    private float metadataBeliefConf = 0.9f;
 
 
     public NALObjects(NAR n) {
@@ -82,30 +91,35 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     @Override
     protected Term termClassInPackage(Term classs, Term packagge) {
-        Inheritance t = Instance.make(classs, packagge);
-        nar.believe(t);
+        Inheritance<SetExt<Term>, Term> t = $.inst(classs, packagge);
+        nar.believe(t, metadataBeliefFreq, metadataBeliefConf);
         return t;
     }
 
 
-
     @Override
-    protected void onInstanceOfClass(Object instance, Term oterm, Term clas) {
+    protected void onInstanceOfClass(Object o, Term oterm, Term clas) {
         /** only point to type if non-numeric? */
         //if (!Primitives.isWrapperType(instance.getClass()))
 
         //nar.believe(Instance.make(oterm, clas));
     }
 
+    protected void onInstanceOfClass(Term identifier, Term clas) {
+        nar.believe(Instance.make(identifier, clas),
+            metadataBeliefFreq, metadataBeliefConf);
+    }
+
     @Override
     protected void onInstanceChange(Term oterm, Term prevOterm) {
         Compound c = Task.taskable( Similarity.make(oterm, prevOterm));
         if (c!=null)
-            nar.believe(c);
+            nar.believe(c,
+                metadataBeliefFreq, metadataBeliefConf);
 
     }
 
-    AtomicBoolean lock = new AtomicBoolean(false);
+    final AtomicBoolean lock = new AtomicBoolean(false);
 
     /** when a proxy wrapped instance method is called, this can
      *  parametrically intercept arguments and return value
@@ -172,12 +186,13 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         x[0] = term(instance);
         x[1] = $.pro(terms(args));
         if (!isVoid) {
-            x[2] = $.varDep("returnVal");
+            x[2] = $.varDep("returnValue");
         }
         return $.pro(x);
     }
 
     private Term[] terms(Object[] args) {
+        //TODO use direct array creation, not Stream
         return Stream.of(args).map(this::term).toArray(Term[]::new);
     }
 
@@ -190,7 +205,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             c = c.getSuperclass();
 
         return Operator.the(
-                c.getSimpleName() + "_" + overridden.getName()
+            c.getSimpleName() + "_" + overridden.getName()
         );
     }
 
@@ -219,7 +234,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     }
 
 
-    class DelegateHandler<X> implements MethodHandler {
+    final class DelegateHandler<X> implements MethodHandler {
 
         private final X obj;
 
@@ -227,11 +242,9 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             this.obj = n;
         }
 
-        @Override
-        public final Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
-
+        @Override public final Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
+            final X obj = this.obj;
             Object result = method.invoke(obj, objects);
-
             return invoked(obj, method, objects, result);
         }
     }
@@ -251,17 +264,15 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         T instance = (T) clazz.newInstance();
 
-        instances.put(Atom.the(id), instance);
-        objects.put(instance, Atom.the(id));
+        Atom identifier = Atom.the(id);
+        instances.put(identifier, instance);
+        objects.put(instance, identifier);
 
         ((ProxyObject) instance).setHandler(
                 delegate == null ?
                 this :
                 new DelegateHandler<>(delegate)
         );
-
-
-
 
 
         //add operators for public methods
@@ -276,6 +287,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             }
         }
 
+        onInstanceOfClass(identifier, term(classs));
 
         return instance;
     }

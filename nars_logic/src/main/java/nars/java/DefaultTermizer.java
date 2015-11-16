@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 public class DefaultTermizer implements Termizer {
 
 
+    public static final Atom PACKAGE = Atom.the("package");
+    public static final Atom PRIMITIVE = Atom.the("primitive");
+    public static final Variable INSTANCE_VAR = $.varDep("instance");
+
     final Map<Package, Term> packages = new HashMap();
     final Map<Class, Term> classes = new HashMap();
 
@@ -26,6 +30,20 @@ public class DefaultTermizer implements Termizer {
     final IdentityHashMap<Term, Object> instances = new IdentityHashMap();
     final IdentityHashMap<Object, Term> objects = new IdentityHashMap();
 
+    static final Set<Class> classInPackageExclusions = new HashSet() {{
+        add(Class.class);
+        add(Object.class);
+
+        //since autoboxing can be managed, the distinction between boxed and unboxed values should not be seen by reasoner
+        add(Float.class);
+        add(Double.class);
+        add(Boolean.class);
+        add(Long.class);
+        add(Integer.class);
+        add(Short.class);
+        add(Byte.class);
+        add(Class.class);
+    }};
 
     @Override
     public Object object(final Term t) {
@@ -79,16 +97,20 @@ public class DefaultTermizer implements Termizer {
 
                 Term cterm = termClassInPackage(oc);
 
-                Term pkg = packages.get(p);
-                if (pkg == null) {
-                    pkg = termPackage(p);
-                    packages.put(p, pkg);
-                    termClassInPackage(cterm, Atom.the("package"));
+                if (reportClassInPackage(oc)) { //TODO use a method for other class exclusions
+                    Term pkg = packages.get(p);
+                    if (pkg == null) {
+                        pkg = termPackage(p);
+                        packages.put(p, pkg);
+                        termClassInPackage(cterm, PACKAGE);
+                    }
+
+                    //TODO add recursive superclass ancestry?
                 }
 
                 return cterm;
             }
-            return Atom.the("primitive");
+            return PRIMITIVE;
         }
 
         if (o instanceof int[]) {
@@ -180,7 +202,14 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-    static final Variable instanceVar = $.varDep("obj");
+    private boolean reportClassInPackage(Class oc) {
+        if (classInPackageExclusions.contains(oc)) return false;
+
+        if (oc.isPrimitive()) return false;
+
+        return true;
+    }
+
 
     /** (#arg1, #arg2, ...), #returnVar */
     private Term[] getMethodArgVariables(Method m) {
@@ -190,13 +219,19 @@ public class DefaultTermizer implements Termizer {
         String varPrefix = m.getName() + "_";
         int n = m.getParameterCount();
         Product args = $.pro(getArgVariables(varPrefix, n));
-        if (m.getReturnType() == void.class)
-            return new Term[] { instanceVar, args };
-        return new Term[]{
-            instanceVar,
-            args,
-            $.varDep(varPrefix + "_return") //return var
-        };
+
+        if (m.getReturnType() == void.class) {
+            return new Term[]{
+                INSTANCE_VAR,
+                args
+            };
+        } else {
+            return new Term[]{
+                INSTANCE_VAR,
+                args,
+                $.varDep(varPrefix + "_return") //return var
+            };
+        }
     }
 
     private Term[] getArgVariables(String prefix, int numParams) {
@@ -213,15 +248,18 @@ public class DefaultTermizer implements Termizer {
 
     public static Term termClassInPackage(Class c) {
         return Product.make(
-            termClass(c),
-            termPackage(c.getPackage())
+            termPackage(c.getPackage()),
+            termClass(c)
         );
     }
 
     public static Term termPackage(Package p) {
-        return Atom.the(p.getName());
-    }
+        //TODO cache?
+        String[] path = p.getName().split("\\.");
+        return $.pro(path);
 
+        //return Atom.the(p.getName());
+    }
 
     public static Term termInstanceInClassInPackage(Object o) {
         //return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());

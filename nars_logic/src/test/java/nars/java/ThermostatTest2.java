@@ -23,7 +23,7 @@ public class ThermostatTest2 {
     static int maxStep = 2;
     static public int tolerance = 1;
 
-    public static class ctl {
+    public static class Model {
         public int target;
         public int current;
 
@@ -47,7 +47,7 @@ public class ThermostatTest2 {
 
     static final Random rng = new XORShiftRandom(1);
 
-    public static void teach(NAR n, ctl t, int maxRange) {
+    public static void teach(NAR n, Model t, int maxRange) {
 
         int minDelay = 10;
         int delayVariation = 10;
@@ -77,7 +77,7 @@ public class ThermostatTest2 {
 
     }
 
-    private static void reset(ctl t, int maxRange) {
+    private static void reset(Model t, int maxRange) {
         do {
             t.current = rng.nextInt(maxRange);
             t.target = rng.nextInt(maxRange);
@@ -85,7 +85,7 @@ public class ThermostatTest2 {
 
         if (t.log) System.out.println("reset: " + t.current + " " + t.target);
     }
-    private static void adjust(ctl t, int scale) {
+    private static void adjust(Model t, int scale) {
 
         t.target += (rng.nextBoolean() ? +1 : -1) * (1+rng.nextInt(scale));
         t.target = Math.max(0, Math.min(t.target, range));
@@ -107,7 +107,7 @@ public class ThermostatTest2 {
 
         NALObjects nobj = new NALObjects(n);
         String id = "T";
-        ctl tc = nobj.build(id, ctl.class);
+        Model tc = nobj.build(id, Model.class);
 
         nobj.setGoalInvoke(false);
 
@@ -173,7 +173,7 @@ public class ThermostatTest2 {
 
         for (int i = 0; i < 1; i++) {
 
-            n.input("$1.0;0.9;0.95$ <true --> (/, ^ctl_valid, t, _)>!");
+            n.input("$1.0;0.9;0.95$ <true --> (/, ^Model_valid, t, _)>!");
 
             tc.valid();
 
