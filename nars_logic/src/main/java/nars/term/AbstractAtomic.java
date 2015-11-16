@@ -162,7 +162,7 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
     }
 
     @Override
-    public Term normalized(TermIndex termIndex) {
+    public final Term normalized(TermIndex termIndex) {
         //if this is called, this atom will be the unique reference for any subsequent equivalent atomic terms which are normalized
         return this;
     }

@@ -151,14 +151,14 @@ public class ThermostatTest2 {
 
         //n.log();
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 25600; i++) {
             n.input("$1.0;0.9;0.95$ <true --> (/, ^Thermostat_valid, t, _)>!");
 
             reset(tc, range);
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(1000);
+            n.frame(10000);
             System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
         }
 

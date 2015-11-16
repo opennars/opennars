@@ -152,7 +152,7 @@ public class Substitution implements Function<Compound,Term> {
                 if (s == null) {
                     //null means the clone at the end of this method failed,
                     //so the resulting substituted term would be invalid
-                    return null;
+                    return c;
                 }
 
                 //if the same thing was provided, ignore

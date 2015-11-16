@@ -102,6 +102,7 @@ public class Sequence extends Conjunctive implements Intermval {
         return duration;
     }
 
+
     @Deprecated public static final Term make(final Term[] argList) {
         throw new RuntimeException("Use Sequence.makeSequence");
     }

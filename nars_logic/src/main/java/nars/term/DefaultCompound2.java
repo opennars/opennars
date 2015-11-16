@@ -18,7 +18,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
-    protected TermVector<T> terms;
+    protected final TermVector<T> terms;
 
     /**
      * true iff definitely normalized, false to cause it to update on next normalization.
@@ -123,7 +123,9 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     @Override
     public Term normalized(TermIndex termIndex) {
-        return cloneTransforming(termIndex.getCompoundTransformer());
+        //return cloneTransforming(termIndex.getCompoundTransformer());
+        transform(termIndex.getCompoundTransformer());
+        return this;
     }
 
     //    @Override
@@ -338,8 +340,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
         boolean changed = false;
 
-        Compound<T> thiss = null;
-
         T[] term = this.terms.term;
         final int len = term.length;
 
@@ -347,10 +347,8 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
             T t = term[i];
 
             if (trans.test(t)) {
-                if (thiss == null) thiss = this;
-                T s = trans.apply(thiss, t, depth + 1);
+                T s = term[i] = trans.apply(this, t, depth + 1);
                 if (!s.equals(t)) {
-                    term[i] = s;
                     changed = true;
                 }
             } else if (t instanceof Compound) {
