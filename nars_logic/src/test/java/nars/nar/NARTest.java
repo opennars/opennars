@@ -135,6 +135,17 @@ public class NARTest {
         assertTrue(b.get());
 
     }
+
+    @Test public void testBeforeNextFrameOnlyOnce() {
+        AtomicInteger b = new AtomicInteger(0);
+        NAR n = new Terminal();
+
+        n.beforeNextFrame(() -> b.incrementAndGet());
+        n.frame(4);
+        assertEquals(1, b.get());
+
+    }
+
 //
 //    @Test public void testFork() throws Exception {
 //        NAR a = new Default();

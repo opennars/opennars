@@ -156,7 +156,7 @@ public class SequenceParallelTest {
     @Test public void testParallelWithoutSlashZero() {
 
         assertEquals(
-                    "$0.50;0.80;0.95$ (&|, <John --> (/, hold, _, key)>, <hold --> (/, _, John, key)>). :0: %1.00;0.90%",
+                    "$0.50;0.80;0.95$ (&|, <hold --> (/, _, John, key)>, <John --> (/, hold, _, key)>). :0: %1.00;0.90%",
         t.inputTask("(&|, <John --> (/, hold, _, key)>, <hold --> (/, _, John, key)>, /0).").toString());
     }
 

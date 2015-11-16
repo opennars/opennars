@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nal.Deriver;
-import nars.nal.nal7.Tense;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Compound;
@@ -15,16 +14,14 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
-
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
  */
 public class STMTemporalLinkage {
 
     public final Deque<Task> stm;
-    private final Deriver deriver;
-    int stmSize;
+    //private final Deriver deriver;
+    //int stmSize;
     //public static STMTemporalLinkage I=null;
 
     final private static String id = STMTemporalLinkage.class.getSimpleName();
@@ -36,8 +33,8 @@ public class STMTemporalLinkage {
 
     public STMTemporalLinkage(NAR nar, Deriver deriver) {
 
-        this.deriver = deriver;
-        this.stmSize = 1;
+        //this.deriver = deriver;
+        //this.stmSize = 1;
         stm = Global.THREADS == 1 ? new ArrayDeque() : new ConcurrentLinkedDeque<>();
         //I=this; //hm there needs to be a way to query plugins from the NAR/NAL object like in 1.6.x, TODO find out
 
@@ -67,13 +64,14 @@ public class STMTemporalLinkage {
 
         final Task currentTask = nal.getTask();
 
-        stmSize = nal.memory().shortTermMemoryHistory.intValue();
+        int stmSize = nal.memory().shortTermMemoryHistory.intValue();
+
 
 //        if (!currentTask.isTemporalInductable() && !anticipation) { //todo refine, add directbool in task
 //            return false;
 //        }
 
-        if (Tense.isEternal(currentTask.getOccurrenceTime()) || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
+        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
             return false;
         }
 
@@ -83,9 +81,8 @@ public class STMTemporalLinkage {
         //final long now = nal.memory.time();
 
 
-        Iterator<Task> ss = stm.iterator();
 
-        int numToRemoveFromBeginning = stm.size() - stmSize;
+        int numToRemoveFromBeginning = Math.max(0, stm.size() - stmSize);
 
         /** current task's... */
         final Compound term = currentTask.getTerm();
@@ -93,41 +90,34 @@ public class STMTemporalLinkage {
         if (concept == null)
             return false;
 
+        Iterator<Task> ss = stm.iterator();
+
         while (ss.hasNext()) {
 
-            Task stmLast = ss.next();
+            Task previousTask = ss.next();
 
 
-            if (!equalSubTermsInRespectToImageAndProduct(term, stmLast.getTerm())) {
+            /*if (!equalSubTermsInRespectToImageAndProduct(term, t.getTerm())) {
                 continue;
-            }
+            }*/
 
 
             if (numToRemoveFromBeginning > 0) {
                 ss.remove();
+                numToRemoveFromBeginning--;
             }
-        }
-
-
-        //iterate on a copy because temporalInduction seems like it sometimes calls itself recursively and this will cause a concurrent modification exception otherwise
-        Task[] stmCopy = stm.toArray(new Task[stm.size()]);
-
-        //RuleMatch m = matchers.get();
-
-        for (Task previousTask : stmCopy) {
-
-
-            //help me out seh, why doesnt this work? ^^
-            //nal.nar.concept(currentTask.getTerm()).link(previousTask);
-            //nal.nar.concept(previousTask.getTerm()).link(currentTask);
-            //nal.setCurrentTask(currentTask);
-
-            if (!previousTask.isDeleted()) {
-                Concept previousConcept = nal.nar.concept(previousTask.getTerm());
-                if (previousConcept!=null) {
-                    nal.link(previousConcept, currentTask);
-                    nal.link(concept, previousTask);
+            else {
+                boolean remaining = false;
+                if (!previousTask.isDeleted()) {
+                    Concept previousConcept = nal.nar.concept(previousTask.getTerm());
+                    if (previousConcept != null) {
+                        nal.link(previousConcept, currentTask);
+                        nal.link(concept, previousTask);
+                        remaining = true;
+                    }
                 }
+                if (!remaining)
+                    ss.remove();
             }
 
 
@@ -164,9 +154,9 @@ public class STMTemporalLinkage {
         ////if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
         //stmLast = currentTask;
         ////}
-        while (stm.size() > stmSize) {
-            stm.removeFirst();
-        }
+//        while (stm.size() > stmSize) {
+//            stm.removeFirst();
+//        }
         stm.add(currentTask);
 
         return true;

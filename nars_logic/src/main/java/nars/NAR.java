@@ -919,6 +919,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         if (originalSize == 0) return;
 
         Util.run(nextTasks, originalSize, concurrency);
+        nextTasks.clear();
     }
 
     /**
