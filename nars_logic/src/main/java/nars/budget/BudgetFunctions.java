@@ -79,11 +79,10 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         boolean feedbackToLinks = (p instanceof ConceptProcess);
         if (feedbackToLinks) {
-            Premise fc = p;
-            TaskLink tLink = ((ConceptProcess)fc).getTaskLink();
+            TaskLink tLink = ((ConceptProcess) p).getTaskLink();
             tLink.andPriority(1f - difT);
             tLink.andDurability(1f - difT);
-            TermLink bLink = fc.getTermLink();
+            TermLink bLink = p.getTermLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.andPriority(1f - difB);
             bLink.andDurability(1f - difB);

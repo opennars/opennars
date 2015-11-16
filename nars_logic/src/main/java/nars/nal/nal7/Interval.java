@@ -25,7 +25,7 @@ public interface Interval extends TermMetadata {
 
 
     static Term firstNonIntervalIn(Term[] a) {
-        int c = 0;
+
         for (Term x : a) {
             if (!(x instanceof CyclesInterval)) {
                 //long d = ((CyclesInterval)x).duration();

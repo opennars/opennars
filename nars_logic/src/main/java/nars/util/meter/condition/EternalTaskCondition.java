@@ -180,12 +180,8 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
 
     boolean creationTimeMatches(Task t) {
         long now = nar.time();
-        if ( ((creationStart !=-1) && (now < creationStart)) ||
-                ((creationEnd !=-1) && (now > creationEnd)))  {
-            //distance += 1; //getTimeDistance(now);
-            return false;
-        }
-        return true;
+        return !(((creationStart != -1) && (now < creationStart)) ||
+                ((creationEnd != -1) && (now > creationEnd)));
     }
 
     protected boolean occurrenceTimeMatches(Task t) {

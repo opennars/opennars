@@ -738,7 +738,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return this;
     }
 
-    public final Budget budget(@Nullable final Budgeted source) {
+    public final Budget budget(final Budgeted source) {
         return budget(source.getBudget());
     }
 

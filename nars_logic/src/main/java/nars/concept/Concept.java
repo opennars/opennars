@@ -187,8 +187,7 @@ public interface Concept extends Termed, Itemized<Term> {
         if (!hasGoals()) {
             return null;
         }
-        Truth topValue = getGoals().top().getTruth();
-        return topValue;
+        return getGoals().top().getTruth();
     }
 
     /** satisfaction/success metric:
@@ -361,17 +360,16 @@ public interface Concept extends Termed, Itemized<Term> {
     };
 
     default Iterator<Task> iterateTasks(boolean onbeliefs, boolean ongoals, boolean onquestions, boolean onquests) {
-        Iterator<Task> b1, b2, b3, b4;
 
         TaskTable beliefs = onbeliefs ? getBeliefs() : null;
         TaskTable goals =   ongoals ? getGoals() : null ;
         TaskTable questions = onquestions ?  getQuestions() : null;
         TaskTable quests = onquests ? getQuests() : null;
 
-        b1 = beliefs!=null ? beliefs.iterator() : Iterators.emptyIterator();
-        b2 = goals!=null ? goals.iterator() : Iterators.emptyIterator();
-        b3 = questions!=null ? questions.iterator() : Iterators.emptyIterator();
-        b4 = quests!=null ? quests.iterator() : Iterators.emptyIterator();
+        Iterator<Task> b1 = beliefs != null ? beliefs.iterator() : Iterators.emptyIterator();
+        Iterator<Task> b2 = goals != null ? goals.iterator() : Iterators.emptyIterator();
+        Iterator<Task> b3 = questions != null ? questions.iterator() : Iterators.emptyIterator();
+        Iterator<Task> b4 = quests != null ? quests.iterator() : Iterators.emptyIterator();
         return Iterators.concat(b1, b2, b3, b4);
 
     }

@@ -66,7 +66,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
      * @param t The CompoundTerm for which to build links
      * @param components set of components being accumulated, to avoid duplicates
      */
-    void prepareComponentLinks(final Compound t, Set<Term> components) {
+    static void prepareComponentLinks(final Compound t, Set<Term> components) {
 
         ///** add self link for structural transform: */
         //components.add(t);
@@ -110,10 +110,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                     }
 
                     if (growLevel2(tj)) {
-                        Term ctj = tj;
 
-                        if(ctj instanceof Compound) {
-                            Compound cctj = (Compound) ctj;
+                        if(tj instanceof Compound) {
+                            Compound cctj = (Compound) tj;
                             for (int k = 0; k < cctj.size(); k++) {
                                 final Term tk = cctj.term(k).normalized();
 

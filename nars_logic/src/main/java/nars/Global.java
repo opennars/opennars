@@ -56,8 +56,8 @@ public class Global {
 
     /** allow everything */
 
-    public static int UNIFICATION_POWERmin = 256;
-    public static int UNIFICATION_POWER = 768;
+    public static int UNIFICATION_POWERmin = 128;
+    public static int UNIFICATION_POWER = 256;
 
     public static int DEFAULT_NAL_LEVEL = 8;
 
@@ -226,6 +226,10 @@ public class Global {
         //return new LinkedHashMap(capacity);
     }
 
+    /** copy */
+    public static <X,Y> Map<X, Y> newHashMap(Map<X, Y> xy) {
+        return new UnifriedMap(xy);
+    }
 
     public static <X> List<X> newArrayList() {
         return new FasterList<>(); //GS

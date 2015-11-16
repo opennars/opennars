@@ -43,8 +43,6 @@ public class TaskLink extends Item<Task> implements TLink<Task> {
     public TaskLink(Task t) {
         super(t.getBudget());
 
-        if (t == null)
-            throw new RuntimeException(this + " null task");
         if (t.isDeleted())
             throw new RuntimeException(this + " deleted task");
 

@@ -916,7 +916,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
     /** returns number of tasks created */
-    public int tasks(String input, Collection<Task> c, Memory m) {
+    public static int tasks(String input, Collection<Task> c, Memory m) {
         final int i[] = new int[1];
         tasks(input, t -> {
             c.add(t);
@@ -930,7 +930,7 @@ public class Narsese extends BaseParser<Object>  {
      * which can be re-used because a Memory can generate them
      * ondemand
      */
-    public void tasks(String input, Consumer<Task> c, final Memory m) {
+    public static void tasks(String input, Consumer<Task> c, final Memory m) {
         tasksRaw(input, o -> {
             c.accept(decodeTask(input, m, o));
         });

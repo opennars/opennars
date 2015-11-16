@@ -34,8 +34,8 @@ public class FindSubst {
 
     private final Random random;
 
-    private final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
-    private final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
+//    private final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
+//    private final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
 
 
     public FindSubst(Op type, NAR nar) {
@@ -281,16 +281,76 @@ public class FindSubst {
         }
     }
 
+    /**
+     * @param x the compound which is permuted/shuffled
+     * @param y what is being compared against
+     *
+     */
     private final int matchPermute(Compound x, Compound y, int power) {
-        DequePool<ShuffledPermutations> pp = this.permutationPool;
+        //DequePool<ShuffledPermutations> pp = this.permutationPool;
 
-        final ShuffledPermutations perm = pp.get();
 
-        final int result = permute(perm, x, y, power);
 
-        pp.put(perm);
+        final int len = x.size();
 
-        return result;
+        final int minAttempts = len; //heuristic assumption
+
+        int permPower = power / minAttempts; //power allocate to each permutation
+
+        final int subPower = permPower / len; //power allocated to each permutation's subterm
+        if (subPower < 1) return fail(power);
+
+        final ShuffleTermVector perm = new ShuffleTermVector(random, x);
+
+        final Map<Term, Term> xy = this.xy; //local copy on stack
+        final Map<Term, Term> yx = this.yx; //local copy on stack
+
+
+        //push/save:
+        final Map<Term, Term> savedXY = Global.newHashMap(xy);
+        xyChanged = false;
+        final Map<Term, Term> savedYX = Global.newHashMap(yx);
+        yxChanged = false;
+
+        boolean matched = false;
+
+
+        while (perm.hasNext()) {
+
+            perm.next();
+
+            int sp = matchSequence(perm, y, permPower);
+            int cost = permPower - Math.abs(sp);
+            power -= cost;
+
+            matched = sp >= 0;
+
+            if (matched || power <= 0) break;
+
+            //try again; invert negated power back to a positive value for next attempt
+
+            //pop/restore
+            if (yxChanged) {
+                yxChanged = false;
+                restore(savedYX, yx);
+            }
+
+            if (xyChanged) {
+                xyChanged = false;
+                restore(savedXY, xy);
+            }
+
+            //ready to continue on next permutation
+
+        }
+
+
+        //finished: succeeded (+) or depleted power (-)
+        if (!matched)
+            power = fail(power);
+
+        return power;
+
     }
 
 
@@ -351,96 +411,23 @@ public class FindSubst {
 
 
 
-    /**
-     * @param X the compound which is permuted/shuffled
-     * @param Y what is being compared against
-     *
-     * use with compounds with >= 2 subterms
-     *
-     * unoptimized N-ary permute,
-     *  which requires allocating a temporary array for shuffling */
-    private int permute(final ShuffledPermutations perm, final Compound X, final Compound Y, int power) {
-
-
-        final int len = X.size();
-
-        final int minAttempts = len; //heuristic assumption
-
-        int permPower = power / minAttempts; //power allocate to each permutation
-
-        final int subPower = permPower / len; //power allocated to each permutation's subterm
-        if (subPower < 1) return fail(power);
-
-        perm.restart(len, random);
-
-        final Map<Term, Term> xy = this.xy; //local copy on stack
-        final Map<Term, Term> yx = this.yx; //local copy on stack
-
-
-        //push/save:
-        Map<Term, Term> savedXY = acquireCopy(xy);
-        xyChanged = false;
-        Map<Term, Term> savedYX = acquireCopy(yx);
-        yxChanged = false;
-
-        boolean matched = false;
-
-        ShuffleTermVector xv = new ShuffleTermVector(X, perm);
-
-        while (perm.hasNext()) {
-
-            perm.next();
-
-            int sp = matchSequence(xv, Y, permPower);
-            int cost = permPower - Math.abs(sp);
-            power -= cost;
-
-            matched = sp >= 0;
-
-            if (matched || power <= 0) break;
-
-            //try again; invert negated power back to a positive value for next attempt
-
-            //pop/restore
-            if (yxChanged) {
-                yxChanged = false;
-                restore(savedYX, yx);
-            }
-
-            if (xyChanged) {
-                xyChanged = false;
-                restore(savedXY, xy);
-            }
-
-            //ready to continue on next permutation
-
-        }
-
-        releaseCopies(savedXY, savedYX);
-
-        //finished: succeeded (+) or depleted power (-)
-        if (!matched)
-            power = fail(power);
-
-        return power;
-    }
 
     private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
         originToRevert.clear();
         originToRevert.putAll(savedCopy);
     }
 
-    private final Map<Term, Term> acquireCopy(Map<Term, Term> init) {
-        Map<Term, Term> m = mapPool.get();
-        m.putAll(init);
-        return m;
-    }
-
-    private final void releaseCopies(Map<Term, Term> a, Map<Term, Term> b) {
-        final DequePool<Map<Term, Term>> mp = this.mapPool;
-        mp.put(a);
-        mp.put(b);
-    }
+//    private final Map<Term, Term> acquireCopy(Map<Term, Term> init) {
+//        Map<Term, Term> m = mapPool.get();
+//        m.putAll(init);
+//        return m;
+//    }
+//
+//    private final void releaseCopies(Map<Term, Term> a, Map<Term, Term> b) {
+//        final DequePool<Map<Term, Term>> mp = this.mapPool;
+//        mp.put(a);
+//        mp.put(b);
+//    }
 
 
 
@@ -516,18 +503,30 @@ public class FindSubst {
         }
     }
 
-    private static class ShuffleTermVector extends TermVector {
-        private ShuffledPermutations perm;
-        private Compound compound;
+    private static final class ShuffleTermVector extends ShuffledPermutations implements TermContainer {
 
-        public ShuffleTermVector(Compound x, ShuffledPermutations perm) {
-            reset(x, perm);
+        private final Compound compound;
+
+        public ShuffleTermVector(Random rng, Compound x) {
+            super();
+            restart(x.size(), rng);
+            this.compound = x;
         }
 
 
-        public void reset(Compound c, ShuffledPermutations s) {
-            this.compound = c;
-            this.perm = s;
+        @Override
+        public int structure() {
+            return 0;
+        }
+
+        @Override
+        public int volume() {
+            return 0;
+        }
+
+        @Override
+        public int complexity() {
+            return 0;
         }
 
         @Override
@@ -537,7 +536,17 @@ public class FindSubst {
 
         @Override
         public final Term term(int i) {
-            return compound.term( perm.get(i) );
+            return compound.term( get(i) );
+        }
+
+        @Override
+        public boolean impossibleSubTermVolume(int otherTermVolume) {
+            return false;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return 0;
         }
     }
 }

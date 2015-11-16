@@ -56,7 +56,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
     @Override
-    public T term(int i) {
+    public final T term(int i) {
         return term[i];
     }
 

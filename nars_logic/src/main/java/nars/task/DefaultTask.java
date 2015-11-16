@@ -253,7 +253,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         final Term term = this.term;
 
-        term.setDuration((int)duration); //HACK int<->long stuff
+        term.setDuration(duration); //HACK int<->long stuff
 
         final int d;
         if (term instanceof Interval) {
@@ -309,8 +309,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         if (this == obj) return 0;
 
         Task o = (Task)obj;
-        int tc;
-        tc = term.compareTo(o.getTerm());
+        int tc = term.compareTo(o.getTerm());
         if (tc != 0) return tc;
         tc = Character.compare(punctuation, o.getPunctuation());
         if (tc != 0) return tc;

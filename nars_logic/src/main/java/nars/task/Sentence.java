@@ -138,10 +138,8 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
             if (st.subjectOrPredicateIsIndependentVar())
                 return true;
 
-            if (Statement.invalidStatement(st))
-                return true;
+            return Statement.invalidStatement(st);
 
-            return false;
         }
         else {
             return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)

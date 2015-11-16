@@ -109,47 +109,7 @@ public class Memory extends Param {
 
     public final Clock clock;
 
-    public final TermIndex terms = new TermIndex() {
-
-        final Map<Term,Term> terms = new HashMap(4096); //TODO try weakref identity hash map etc
-
-        @Override public final Termed get(Term t) {
-
-            if (t instanceof TermMetadata) {
-                return t.normalized(this); //term instance will remain unique because it has attached metadata
-            }
-
-            return terms.compute(t, (k,vExist) -> {
-                if (vExist == null) return k.normalized(this);
-                else
-                    return vExist;
-            });
-            //return terms.computeIfAbsent(t, n -> n.normalized(this));
-        }
-
-        final CompoundTransform<Compound,Term> ct = new CompoundTransform<Compound,Term>() {
-
-            @Override
-            public final boolean test(Term term) {
-                return true;
-            }
-
-            @Override
-            public final Term apply(Compound c, Term subterm, int depth) {
-                return get(subterm).getTerm();
-            }
-        };
-
-        @Override
-        public final CompoundTransform getCompoundTransformer() {
-            return ct;
-        }
-
-        @Override
-        public void forEachTerm(Consumer<Termed> c) {
-            terms.forEach((k,v)->c.accept(v));
-        }
-    };
+    public final TermIndex terms = new MyTermIndex();
 
     public final CacheBag<Term, Concept> concepts;
 
@@ -160,7 +120,7 @@ public class Memory extends Param {
     /** for creating new stamps
      * TODO move this to and make this the repsonsibility of Clock implementations
      * */
-    volatile long currentStampSerial = 1;
+    long currentStampSerial = 1;
 
 
     public Memory(Clock clock, CacheBag<Term, Concept> concepts) {
@@ -588,6 +548,48 @@ public class Memory extends Param {
     public void start() {
         this.concepts.start(this);
 
+    }
+
+    private static class MyTermIndex implements TermIndex {
+
+        final Map<Term,Term> terms = new HashMap(4096); //TODO try weakref identity hash map etc
+
+        @Override public final Termed get(Term t) {
+
+            if (t instanceof TermMetadata) {
+                return t.normalized(this); //term instance will remain unique because it has attached metadata
+            }
+
+            return terms.compute(t, (k,vExist) -> {
+                if (vExist == null) return k.normalized(this);
+                else
+                    return vExist;
+            });
+            //return terms.computeIfAbsent(t, n -> n.normalized(this));
+        }
+
+        final CompoundTransform<Compound,Term> ct = new CompoundTransform<Compound,Term>() {
+
+            @Override
+            public final boolean test(Term term) {
+                return true;
+            }
+
+            @Override
+            public final Term apply(Compound c, Term subterm, int depth) {
+                return get(subterm).getTerm();
+            }
+        };
+
+        @Override
+        public final CompoundTransform getCompoundTransformer() {
+            return ct;
+        }
+
+        @Override
+        public void forEachTerm(Consumer<Termed> c) {
+            terms.forEach((k,v)->c.accept(v));
+        }
     }
 
 //    public byte[] toBytes() throws IOException, InterruptedException {

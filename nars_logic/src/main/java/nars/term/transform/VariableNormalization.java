@@ -90,10 +90,9 @@ public class VariableNormalization extends VariableTransform {
 
     public VariableNormalization(Compound target, CompoundTransform tx, boolean destructively) {
 
-        final Compound result1;
-
         if (tx == null) tx = this;
 
+        final Compound result1;
         if (destructively) {
             renamed = (target.transform(tx));
             result1 = target;

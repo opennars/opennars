@@ -382,7 +382,7 @@ public class DefaultConcept extends AtomConcept {
         //getMemory().execute(q);
 
 
-        boolean tableAffected = false;
+        //boolean tableAffected = false;
 
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();
@@ -391,7 +391,7 @@ public class DefaultConcept extends AtomConcept {
             if (match == q) {
                 //final int presize = getQuestions().size() + getQuests().size();
                 //onTableUpdated(q.getPunctuation(), presize);
-                tableAffected = true;
+                //tableAffected = true;
             }
             else {
                 q = match; //try solution with the original question
@@ -410,7 +410,7 @@ public class DefaultConcept extends AtomConcept {
         }
 
         if (sol!=null) {
-            Task solUpdated = LocalRules.trySolution(q, sol, nal);
+            /*Task solUpdated = */LocalRules.trySolution(q, sol, nal);
         }
 
         return true;

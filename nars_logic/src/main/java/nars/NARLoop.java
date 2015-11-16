@@ -90,8 +90,7 @@ public class NARLoop implements Runnable {
             if (periodMS == 0) {
                 targetPri = fullThrottlePri;
             } else {
-                final int normalPri = Thread.NORM_PRIORITY;
-                targetPri = normalPri;
+                targetPri = Thread.NORM_PRIORITY;
             }
 
             if (targetPri != pri)
@@ -179,7 +178,7 @@ public class NARLoop implements Runnable {
         logger.info(() -> (this + " stopped") );
     }
 
-    protected long throttle(long minFramePeriodMS, long frameTimeMS) {
+    protected static long throttle(long minFramePeriodMS, long frameTimeMS) {
         double remainingTime = (minFramePeriodMS - frameTimeMS) / 1.0E3;
 
         if (remainingTime > 0) {

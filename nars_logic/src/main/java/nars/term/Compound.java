@@ -314,7 +314,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         Term ptr = this;
         for (final int i : address) {
             if (ptr instanceof Compound) {
-                ptr = ((Compound) ptr).term(i);
+                ptr = ptr.term(i);
             }
         }
         return (X) ptr;

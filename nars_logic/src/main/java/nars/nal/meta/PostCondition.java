@@ -101,7 +101,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
             final Inheritance<Term,Atom> i = (Inheritance) m;
 
-            if (!(i.getPredicate() instanceof Atom)) {
+            if (!(i.getPredicate() != null)) {
                 throw new RuntimeException("Unknown postcondition format (predicate must be atom): " + m);
             }
 

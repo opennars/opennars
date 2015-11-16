@@ -150,7 +150,7 @@ public enum Tense  {
      * necessary
      */
     public static Budget solutionEval(final Task task, final Sentence solution, final Premise p) {
-        boolean feedbackToLinks = false;
+        //boolean feedbackToLinks = false;
         /*if (task == null) {
             task = nal.getCurrentTask();
             feedbackToLinks = true;

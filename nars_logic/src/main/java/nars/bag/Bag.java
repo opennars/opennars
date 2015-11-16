@@ -277,9 +277,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     }
 
     boolean updateItemBudget(BagSelector<K, V> selector, Budget sourceBudget, V item, Budget nextBudget /* temporary, re-usable instance */) {
-        final Budget currentBudget = sourceBudget;
 
-        nextBudget.budget(currentBudget);
+        nextBudget.budget(sourceBudget);
 
         //HACK for ConceptActivator / TLink activation inconsistency
         if ((nextBudget.isZero() && (selector instanceof BagActivator)))
@@ -287,7 +286,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         selector.updateItem(item, nextBudget);
 
-        if ((nextBudget == null) || (nextBudget.isDeleted()) || (nextBudget.equalsByPrecision(currentBudget)))
+        if ((nextBudget.isDeleted()) || (nextBudget.equalsByPrecision(sourceBudget)))
             return false;
         else {
             //it has changed
@@ -297,7 +296,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
             remove(item.name());
 
             //apply changed budget after removed and before re-insert
-            currentBudget.budget(nextBudget);
+            sourceBudget.budget(nextBudget);
         }
         return true;
     }
