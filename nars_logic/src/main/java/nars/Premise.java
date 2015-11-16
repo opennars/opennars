@@ -9,6 +9,7 @@ import nars.nal.nal7.Tense;
 import nars.task.DefaultTask;
 import nars.task.FluentTask;
 import nars.task.Task;
+import nars.task.Tasked;
 import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.term.Compound;
 import nars.term.Term;
@@ -24,7 +25,7 @@ import java.util.Random;
 /**
  * Defines the conditions used in an instance of a derivation
  */
-public interface Premise extends Level {
+public interface Premise extends Level, Tasked {
 
     /**
      * The task and belief have the same content

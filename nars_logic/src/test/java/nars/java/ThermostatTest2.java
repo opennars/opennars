@@ -4,7 +4,10 @@ import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.task.Task;
+import nars.task.Tasked;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.meter.TaskRemovalReasons;
 
 import java.util.Random;
 
@@ -98,11 +101,13 @@ public class ThermostatTest2 {
         Global.EXIT_ON_EXCEPTION = true;
 
         Default n = new Default2(1024, 1, 2, 2);
+        n.memory.duration.set(1);
 
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
         NALObjects nobj = new NALObjects(n);
-        ctl tc = nobj.build("t", ctl.class);
+        String id = "T";
+        ctl tc = nobj.build(id, ctl.class);
 
         nobj.setGoalInvoke(false);
 
@@ -129,13 +134,12 @@ public class ThermostatTest2 {
 //            }
         }
 
-        for (int i = 0; i < 2; i++) {
-            teach(n, tc, range);
-            //n.memory.getControl().iterator().forEachRemaining(c -> System.out.println(c));
-            n.frame(200);
-        }
-
-        n.forEachConcept(System.out::println);
+//        for (int i = 0; i < 2; i++) {
+//            teach(n, tc, range);
+//            //n.memory.getControl().iterator().forEachRemaining(c -> System.out.println(c));
+//            n.frame(200);
+//        }
+        //n.forEachConcept(System.out::println);
 
         tc.log = true;
         nobj.setGoalInvoke(true);
@@ -143,26 +147,46 @@ public class ThermostatTest2 {
 
 
 
-        //TextOutput.out(n);
+        n.log(System.out, v -> {
+
+            Task t = Tasked.the(v);
+            if (t == null) return false;
+
+            //if (t.isJudgmentOrGoal()) return true;
+
+            //return t.getPriority() > 0.25;
+            return t.getQuality() > 0.05;
+
+        });
+
+        TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
 
         /*n.input("Thermostat_valid(t, #1)! :|: %0.50;0.99%");
         n.input("Thermostat_up(t, #1)! :|: %0.50;0.99%");
         n.input("Thermostat_down(t, #1)! :|: %0.50;0.99%");*/
-
         //n.log();
 
-        for (int i = 0; i < 25600; i++) {
-            n.input("$1.0;0.9;0.95$ <true --> (/, ^Thermostat_valid, t, _)>!");
+        //teach actions/sensors
+        tc.valid(); n.frame();
+        tc.go(1, true); n.frame();
+        tc.go(1, false); n.frame();
+
+        for (int i = 0; i < 1; i++) {
+
+            n.input("$1.0;0.9;0.95$ <true --> (/, ^ctl_valid, t, _)>!");
+
+            tc.valid();
 
             reset(tc, range);
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(10000);
+            n.frame(1000);
             System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
         }
 
 
+        System.out.println(taskStats);
 
     }
 }

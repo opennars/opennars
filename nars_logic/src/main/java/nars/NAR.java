@@ -781,15 +781,22 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
+    public NAR trace(Appendable out, Predicate<String> includeKey) {
+        return trace(out, includeKey, null);
+    }
+
     /* Print all statically known events (discovered via reflection)
     *  for this reasoner to a stream
     * */
-    public NAR trace(Appendable out, Predicate<String> includeKey) {
+    public NAR trace(Appendable out, Predicate<String> includeKey, Predicate includeValue) {
 
 
         final String[] previous = {null};
 
         Topic.all(memory, (k, v) -> {
+            if ((includeValue!=null) && (!includeValue.test(v)))
+                return;
+
             try {
                 outputEvent(out, previous[0], k, v);
             } catch (IOException e) {
@@ -816,7 +823,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public NAR log(Appendable out) {
-        return trace(out, k -> logEvents.contains(k));
+        return log(out, null);
+    }
+    public NAR log(Appendable out, Predicate includeValue) {
+        return trace(out, k -> logEvents.contains(k), includeValue);
     }
 
     public void outputEvent(Appendable out, String previou, String k, Object v) throws IOException {
@@ -1052,6 +1062,14 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     public NAR inputAt(long time, Task... tt) {
         return at(t -> t == time, () -> input(tt));
+    }
+
+    public NAR forEachConceptTask(Consumer<Task> recip) {
+        return forEachConceptTask(true, true, true, true, recip);
+    }
+
+    public NAR forEachConceptTask(boolean includeConceptBeliefs, boolean includeConceptQuestions, boolean includeConceptGoals, boolean includeConceptQuests, Consumer<Task> recip) {
+        return forEachConceptTask(includeConceptBeliefs, includeConceptQuestions, includeConceptGoals, includeConceptQuests, false, 0, recip);
     }
 
     public NAR forEachConceptTask(boolean includeConceptBeliefs, boolean includeConceptQuestions, boolean includeConceptGoals, boolean includeConceptQuests,

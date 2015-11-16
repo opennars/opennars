@@ -883,7 +883,7 @@ public class Narsese extends BaseParser<Object>  {
             /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
-            Operation o = $.op(  Product.make(vectorterms, 1, vectorterms.size()), new Operator(vectorterms.get(0)) );
+            Operation o = $.op(new Operator(vectorterms.get(0)), Product.make(vectorterms, 1, vectorterms.size()));
             return o;
         }
         else {

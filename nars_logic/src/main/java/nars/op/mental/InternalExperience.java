@@ -289,7 +289,7 @@ public class InternalExperience {
                 long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
 
                 beliefReasonDerive(task,
-                        $.op(Product.only(imp.getPredicate()), anticipate),
+                        $.op(anticipate, Product.only(imp.getPredicate())),
                         nal, interval);
             }
         }
@@ -300,7 +300,7 @@ public class InternalExperience {
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    $.op(Product.only(belief.getTerm()), op),
+                    $.op(op, Product.only(belief.getTerm())),
                     nal, 0);
     }
 

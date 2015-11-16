@@ -626,4 +626,15 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return (T)this;
     }
 
+    default long getLifespan(Memory memory) {
+        final long createdAt = getCreationTime();
+
+        if (createdAt >= Stamp.TIMELESS) {
+            return memory.time() - createdAt;
+        }
+        else {
+            return -1;
+        }
+
+    }
 }

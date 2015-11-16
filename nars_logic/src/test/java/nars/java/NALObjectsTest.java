@@ -105,7 +105,7 @@ public class NALObjectsTest  {
 //        );
 
 
-        n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
+        n.input("TestClass_multiply(" + instance + ", (2, 3), #x)!");
 
 
 
@@ -114,7 +114,9 @@ public class NALObjectsTest  {
         //System.out.println();
         //System.out.println(ms.getBuffer().toString());
 
-        String expect = "<{6} --> (/, ^TestClass_multiply, obj, 2, 3, _)>.";
+        //TODO use TestNAR and test for right tense
+
+        String expect = "<{6} --> (/, ^TestClass_multiply, " + instance + ", (2, 3), _)>.";
         String bs = ns.getBuffer().toString();
         assertTrue(bs.contains(expect));
 
@@ -147,7 +149,7 @@ public class NALObjectsTest  {
         Map map = new HashMap();
         map.put("k1", "v1");
         map.put("k2", "v2");
-        testTermizer(map, "{<{\"v2\"}-->\"k2\">,<{\"v1\"}-->\"k1\">}");
+        testTermizer(map, "{<{\"v1\"}-->\"k1\">,<{\"v2\"}-->\"k2\">}");
 
     }
 

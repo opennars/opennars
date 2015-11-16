@@ -6,8 +6,6 @@ import nars.NAR;
 import nars.Op;
 import nars.nal.nal4.Image;
 import nars.term.*;
-import nars.util.data.DequePool;
-import nars.util.math.ShuffledPermutations;
 
 import java.util.Map;
 import java.util.Random;
@@ -34,10 +32,6 @@ public class FindSubst {
 
     private final Random random;
 
-//    private final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
-//    private final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
-
-
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
     }
@@ -61,7 +55,7 @@ public class FindSubst {
         this.random = random;
     }
 
-    public void clear() {
+    public final void clear() {
         xy.clear();
         yx.clear();
     }
@@ -71,7 +65,7 @@ public class FindSubst {
         return type + ":" + xy + ',' + yx;
     }
 
-    private void print(String prefix, Term a, Term b) {
+    private final void print(String prefix, Term a, Term b) {
         System.out.print(prefix);
         if (a != null)
             System.out.println(" " + a + " ||| " + b);
@@ -103,7 +97,7 @@ public class FindSubst {
      **
      * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
      */
-    private int match(final Term x, final Term y, int power) {
+    private final int match(final Term x, final Term y, int power) {
 
         //if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
           //  return power; //fail due to insufficient power
@@ -183,31 +177,11 @@ public class FindSubst {
         System.out.println();
     }
 
-    /** compare variable type to determine if matchable */
-    private final boolean matchable(Op xVarOp/*, Op yOp*/) {
-        //if (xVarOp == Op.VAR_PATTERN) return true;
-//        if (xVarOp == Op.VAR_QUERY) {
-//            return yOp!=Op.VAR_QUERY; //dep or indep. it will not be the same query variable because equality has already been tested
-//        }
 
-        return (xVarOp == type);
-    }
-
-//    /** cost subtracted in the re-entry method: next(x, y, power) */
-//    static final int costFunction(final Compound x, final Compound y) {
-//        return 1;
-//        //return Math.min(x.volume(), y.volume());
-//        //return x.volume() + y.volume();
-//    }
-
-
-
-    private void nextVarX(final Variable xVar, final Term y) {
+    private final void nextVarX(final Variable xVar, final Term y) {
         final Op xOp = xVar.op();
 
-        //boolean m = false;
-
-        if (matchable(xOp/*, yOp*/)) {
+        if (xOp == type) {
             putVarX(xVar, y);
         }
         else {
@@ -217,29 +191,15 @@ public class FindSubst {
             }
         }
 
-        //return power; //m ? power : fail(power);
-
-//
-//            if(type == Op.VAR_PATTERN && xOp == Op.VAR_PATTERN) {
-//                return putVarX(xVar, yVar);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
-//            }
-//
-//            //variables can and need sometimes to change name in order to unify
-//            if(xOp == yOp) {  //and if its same op, its indeed variable renaming
-//                return putCommon(xVar, yVar);
-//            }
-//
-//        } else {
-//            yVar = null;
-//        }
-
     }
 
 
-    private static boolean matchable(final Compound X, final Compound Y) {
+    /** returns the size of both compounds if matching and valid, or -1 if invalid match */
+    private static int matchable(final Compound X, final Compound Y) {
         /** must have same # subterms */
-        if (X.size() != Y.size()) {
-            return false;
+        int xsize = X.size();
+        if (xsize != Y.size()) {
+            return -1;
         }
 
         //TODO see if there is a volume or structural constraint that can terminate early here
@@ -248,36 +208,33 @@ public class FindSubst {
         //TODO simplify comparison with Image base class
         if (X instanceof Image) {
             if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                return false;
+                return -1;
         }
 
-        return true;
+        return xsize;
     }
 
     /**
      * X and Y are of the same operator type and length (arity)
      * X's permutations matched against constant Y
      */
-    private int matchCompound(final Compound X, final Compound Y, int power) {
+    private final int matchCompound(final Compound X, final Compound Y, int power) {
 
-        if (!matchable(X, Y))
-            return fail(power);
-
-        final int xLen = X.size();
-
-        if (xLen == 0)
-            return power;
-        else if (xLen == 1)
-            return match(X.term(0), Y.term(0), power);
-        else { /*if (xLen >= 1) {*/
-            if (!X.isCommutative()) {
-                //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                return matchSequence(X.subterms(), Y.subterms(), power);
-            }
-            else {
-                //commutative, try permutations
-                return matchPermute(X, Y, power);
-            }
+        switch (matchable(X, Y)) {
+            case -1:
+                return fail(power);
+            case 0:
+                return power;
+            case 1:
+                return match(X.term(0), Y.term(0), power);
+            default:  /*if (xLen >= 1) {*/
+                if (X.isCommutative()) {
+                    //commutative, try permutations
+                    return matchPermute(X, Y, power);
+                } else {
+                    //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+                    return matchSequence(X.subterms(), Y.subterms(), power);
+                }
         }
     }
 
@@ -288,8 +245,6 @@ public class FindSubst {
      */
     private final int matchPermute(Compound x, Compound y, int power) {
         //DequePool<ShuffledPermutations> pp = this.permutationPool;
-
-
 
         final int len = x.size();
 
@@ -308,20 +263,17 @@ public class FindSubst {
 
         //push/save:
         final Map<Term, Term> savedXY = Global.newHashMap(xy);
-        xyChanged = false;
         final Map<Term, Term> savedYX = Global.newHashMap(yx);
-        yxChanged = false;
+        xyChanged = yxChanged = false;
 
         boolean matched = false;
-
 
         while (perm.hasNext()) {
 
             perm.next();
 
             int sp = matchSequence(perm, y, permPower);
-            int cost = permPower - Math.abs(sp);
-            power -= cost;
+            power -= permPower - Math.abs(sp); //subtract cost
 
             matched = sp >= 0;
 
@@ -354,43 +306,24 @@ public class FindSubst {
     }
 
 
-//    /**
-//     * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
-//     */
-//    static protected boolean queryVarMatch(final Op xVar, final Op yVar) {
-//
-//        final boolean xQuery = (xVar == Op.VAR_QUERY);
-//        final boolean yQuery = (yVar == Op.VAR_QUERY);
-//
-//        return (xQuery ^ yQuery);
-//    }
-
     /**
      * elimination
      */
-    private final void putVarY(final Term x, final Variable yVar) {
-        /*if (yVar.op()!=type) {
-            throw new RuntimeException("tried to set invalid map: " + yVar + "->" + x + " but type=" + type);
-        }*/
-        yxPut(yVar, x);
-        if (yVar instanceof CommonVariable) {
-            xyPut(yVar, x);
+    private final void putVarY(final Term x, final Variable y) {
+        yxPut(y, x);
+        if (y instanceof CommonVariable) {
+            xyPut(y, x);
         }
-        //return true;
     }
 
     /**
      * elimination
      */
-    private final void putVarX(final Variable xVar, final Term y) {
-        /*if (xVar.op()!=type) {
-            throw new RuntimeException("tried to set invalid map: " + xVar + "->" + y + " but type=" + type);
-        }*/
-        xyPut(xVar, y);
-        if (xVar instanceof CommonVariable) {
-            yxPut(xVar, y);
+    private final void putVarX(final Variable x, final Term y) {
+        xyPut(x, y);
+        if (x instanceof CommonVariable) {
+            yxPut(x, y);
         }
-        //return true;
     }
 
 
@@ -410,25 +343,10 @@ public class FindSubst {
     }
 
 
-
-
     private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
         originToRevert.clear();
         originToRevert.putAll(savedCopy);
     }
-
-//    private final Map<Term, Term> acquireCopy(Map<Term, Term> init) {
-//        Map<Term, Term> m = mapPool.get();
-//        m.putAll(init);
-//        return m;
-//    }
-//
-//    private final void releaseCopies(Map<Term, Term> a, Map<Term, Term> b) {
-//        final DequePool<Map<Term, Term>> mp = this.mapPool;
-//        mp.put(a);
-//        mp.put(b);
-//    }
-
 
 
     private static int fail(int powerMagnitude) {
@@ -477,78 +395,32 @@ public class FindSubst {
         return power; //success
     }
 
-    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
-        public ShuffledPermutationsDequePool() {
-            super(1);
-        }
+//    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
+//        public ShuffledPermutationsDequePool() {
+//            super(1);
+//        }
+//
+//        @Override public final ShuffledPermutations create() {
+//            return new ShuffledPermutations();
+//        }
+//    }
+//
+//    private static class MapDequePool extends DequePool<Map<Term,Term>> {
+//        public MapDequePool() {
+//            super(1);
+//        }
+//
+//        @Override public final Map<Term,Term> create() {
+//            return Global.newHashMap();
+//        }
+//
+//        @Override
+//        public final void put(Map<Term, Term> i) {
+//            i.clear();
+//            super.put(i);
+//        }
+//    }
 
-        @Override public final ShuffledPermutations create() {
-            return new ShuffledPermutations();
-        }
-    }
-
-    private static class MapDequePool extends DequePool<Map<Term,Term>> {
-        public MapDequePool() {
-            super(1);
-        }
-
-        @Override public final Map<Term,Term> create() {
-            return Global.newHashMap();
-        }
-
-        @Override
-        public final void put(Map<Term, Term> i) {
-            i.clear();
-            super.put(i);
-        }
-    }
-
-    private static final class ShuffleTermVector extends ShuffledPermutations implements TermContainer {
-
-        private final Compound compound;
-
-        public ShuffleTermVector(Random rng, Compound x) {
-            super();
-            restart(x.size(), rng);
-            this.compound = x;
-        }
-
-
-        @Override
-        public int structure() {
-            return 0;
-        }
-
-        @Override
-        public int volume() {
-            return 0;
-        }
-
-        @Override
-        public int complexity() {
-            return 0;
-        }
-
-        @Override
-        public final int size() {
-            return compound.size();
-        }
-
-        @Override
-        public final Term term(int i) {
-            return compound.term( get(i) );
-        }
-
-        @Override
-        public boolean impossibleSubTermVolume(int otherTermVolume) {
-            return false;
-        }
-
-        @Override
-        public int compareTo(Object o) {
-            return 0;
-        }
-    }
 }
 
 

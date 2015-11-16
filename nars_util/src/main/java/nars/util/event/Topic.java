@@ -43,7 +43,7 @@ public interface Topic<V> extends Named<String> {
 
         each(obj, (field) -> {
             final String fieldName = field.getName();
-            if (!includeKey.test(fieldName))
+            if (includeKey!=null && !includeKey.test(fieldName))
                 return;
 
             try {

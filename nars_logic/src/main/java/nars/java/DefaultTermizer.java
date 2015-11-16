@@ -83,7 +83,7 @@ public class DefaultTermizer implements Termizer {
                 if (pkg == null) {
                     pkg = termPackage(p);
                     packages.put(p, pkg);
-                    termClassInPackage(cterm, pkg);
+                    termClassInPackage(cterm, Atom.the("package"));
                 }
 
                 return cterm;

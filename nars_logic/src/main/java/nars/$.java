@@ -63,13 +63,12 @@ public class $ {
 
 
     public static Operation op(String operator, String... args) {
-        return op(Product.make(args),
-                Operator.the(operator)
+        return op(Operator.the(operator), Product.make(args)
         );
     }
 
     public static Operation op(Operator opTerm, Term... arg) {
-        return op(Product.make(arg), opTerm);
+        return op(opTerm, Product.make(arg));
     }
 
     /**
@@ -78,7 +77,7 @@ public class $ {
      *
      * @return A compound generated or null
      */
-    public static <A extends Term> Operation<A> op(Product<A> arg, final Operator oper) {
+    public static <A extends Term> Operation<A> op(final Operator oper, Product<A> arg) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );

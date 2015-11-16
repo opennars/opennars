@@ -8,7 +8,6 @@ import javassist.util.proxy.ProxyObject;
 import nars.$;
 import nars.Global;
 import nars.NAR;
-import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
@@ -66,6 +65,11 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     }};
     private AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
+    private float invocationGoalFreq = 1f;
+    private float invocationGoalConf = 0.9f;
+    private float invocationResultFreq = 1f;
+    private float invocationResultConf = 0.9f;
+
 
     public NALObjects(NAR n) {
         this.nar = n;
@@ -115,32 +119,27 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         return invoked(object, overridden, args, result);
     }
 
-    public Object invoked(Object object, Method overridden, Object[] args, Object result) {
-        if (methodExclusions.contains(overridden.getName()))
+
+    public Object invoked(Object object, Method method, Object[] args, Object result) {
+
+        //synchronized?
+
+        if (methodExclusions.contains(method.getName()))
             return result;
 
         if (!lock.compareAndSet(false,true)) {
             return result;
         }
 
+        final Operator op = getMethodOperator(method);
 
-        final Term instance = term(object);
-        final Term[] argterm = Stream.of(args).map(this::term).toArray(Term[]::new);
 
-        //String opName =
-        final Operator op = getMethodOperator(overridden);
-
-        Term[] instancePlusArgs = new Term[argterm.length+2];
-        instancePlusArgs[0] = instance;
-        System.arraycopy(argterm, 0, instancePlusArgs, 1, argterm.length);
-        instancePlusArgs[instancePlusArgs.length-1] = Atom.the(Symbols.VAR_DEPENDENT + "1");
-
+        Product invocationArgs = getMethodInvocationTerms(method, object, args);
 
         nar.goal(
-                $.op(Product.make(instancePlusArgs), op),
+                $.op(op, invocationArgs),
                 Tense.Present,
-                1f, 0.9f);
-
+                invocationGoalFreq, invocationGoalConf);
 
         Term effect;
         if (result!=null) {
@@ -153,14 +152,33 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         //TODO use task of callee as Parent task, if self-invoked
         nar.believe(
-                Operation.result(op, Product.make(instancePlusArgs), effect),
+                Operation.result(op, invocationArgs, effect),
                 Tense.Present,
-                1f, 0.9f);
+                invocationResultFreq, invocationResultConf);
 
 
         lock.set(false);
 
         return result;
+    }
+
+    private final Product getMethodInvocationTerms(Method method, Object instance, Object[] args) {
+
+        //TODO handle static methods
+
+        boolean isVoid = method.getReturnType() == void.class;
+
+        Term[] x = new Term[isVoid ? 2 : 3];
+        x[0] = term(instance);
+        x[1] = $.pro(terms(args));
+        if (!isVoid) {
+            x[2] = $.varDep("returnVal");
+        }
+        return $.pro(x);
+    }
+
+    private Term[] terms(Object[] args) {
+        return Stream.of(args).map(this::term).toArray(Term[]::new);
     }
 
     public static Operator getMethodOperator(Method overridden) {

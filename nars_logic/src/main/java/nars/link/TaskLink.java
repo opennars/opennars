@@ -22,6 +22,7 @@ package nars.link;
 
 import nars.budget.Item;
 import nars.task.Task;
+import nars.task.Tasked;
 import nars.term.Term;
 
 /**
@@ -32,7 +33,7 @@ import nars.term.Term;
  * <p>
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink<Task> {
+public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
 
     /**
      * The Task linked
