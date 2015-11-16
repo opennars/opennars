@@ -196,13 +196,13 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         //final E o = (E)_o;
         //final Object on = o.name();
 
-        if (s == 1) {
-            if (get(0)==o) {
-                clear();
-                return true;
-            }
-            return false;
-        }
+//        if (s == 1) {
+//            if (get(0)==o) {
+//                clear();
+//                return true;
+//            }
+//            return false;
+//        }
 
 
         //estimated position according to current priority,
@@ -212,39 +212,48 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         if (p >= s) p = s-1;
         if (p < 0)  p = 0;
 
-        int i = p, j = p - 1;
-        int finished = (j == -1) ? 1 : 0;
+        if (attemptRemoval(o, p))
+            return true;
+
+        int r = 0;
+        int maxDist = Math.max(s - p, p);
+
+        boolean phase = false;
+
+        //scan in an expanding radius around the point
         do {
 
-            //TODO tighten this loop, it doesnt need to be duplicated
+            phase = !phase;
 
-            if (i < s) {
-                if (attemptRemoval(o, /*on, */i))
-                    return true;
-                i++;
-                if (i >= s)
-                    finished++;
+            if (phase)
+                r++;
+
+            final int u;
+            if (phase) {
+                u = p + r;
+                if (u >= s) continue;
+            }
+            else {
+                u = p - r;
+                if (u < 0) continue;
             }
 
-            if (j >= 0) {
-                if (attemptRemoval(o, /*on, */j))
-                    return true;
-                j--;
-                if (j < 0)
-                    finished++;
-            }
+            if (attemptRemoval(o, u))
+                return true;
 
-        } while ( finished<2 );
+        } while ( r <= maxDist );
 
 
-        //try exhaustive removal as a final option
-        if (list.remove(o)) {
-            return true;
-        }
 
-        //String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
-        //throw new RuntimeException(err);
-        return false;
+
+//        //try exhaustive removal as a final option
+//        if (list.remove(o)) {
+//            return true;
+//        }
+
+        String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
+        throw new RuntimeException(err);
+        //return false;
     }
 
     private final boolean attemptRemoval(final Object o, /*final Object oName, */final int i) {

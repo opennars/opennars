@@ -54,7 +54,7 @@ public class STMTemporalLinkage {
 
     public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
-        if (Tense.containsMentalOperator(newEvent)) return true;
+        //if (Tense.containsMentalOperator(newEvent)) return true;
         return false;
     }
 
