@@ -31,6 +31,7 @@ import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.task.DefaultTask;
+import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -94,7 +95,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
         return arg().term(i);
     }
 
-    public static Inheritance make(final Term subject, final Term predicate) {
+    @Deprecated public static Inheritance make(final Term subject, final Term predicate) {
         throw new RuntimeException("not what is intended");
     }
 
@@ -367,5 +368,12 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
         System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
         return new ImageExt(argument, index+1);
+    }
+
+    /** applies certain data to a feedback task relating to its causing operation's task */
+    public static Task asFeedback(FluentTask feedback, Task<Operation> goal, float priMult, float durMult) {
+        return feedback.budget(goal.getBudget()).
+                budgetScaled(priMult, durMult).
+                parent(goal);
     }
 }

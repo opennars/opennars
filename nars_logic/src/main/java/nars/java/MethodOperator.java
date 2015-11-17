@@ -1,9 +1,12 @@
 package nars.java;
 
 import com.github.drapostolos.typeparser.TypeParser;
+import nars.$;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 
@@ -11,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -24,24 +28,46 @@ public class MethodOperator extends TermFunction {
     private final Method method;
     private final Parameter[] params;
 
-    private final Termizer termizer;
     private final static Object[] empty = new Object[0];
     private final AtomicBoolean enable;
+    private final NALObjects context;
     boolean feedback = true;
 
     public static final Atom ERROR = Atom.the("ERR");
+    private Task currentTask = null;
 
-    public MethodOperator(AtomicBoolean enable, Termizer termizer, Method m) {
-        super(m.toGenericString());
+    public MethodOperator(AtomicBoolean enable, Method m, NALObjects context) {
+        super(getParentMethodName(m));
 
-
+        this.context = context;
         this.method = m;
         this.params = method.getParameters();
-
-        this.termizer = termizer;
         this.enable = enable;
     }
 
+    private static Term getParentMethodName(Method m) {
+        Class<?> sc = m.getDeclaringClass();
+        Class<?> scc = sc.getSuperclass();
+        if (scc !=null)
+            sc = scc;
+
+        String superClass = sc.getSimpleName();
+        String methodName = m.getName();
+        return $.the(superClass + "_" + methodName);
+    }
+
+
+    @Override
+    public synchronized List<Task> apply(Task opTask) {
+
+        this.currentTask = opTask; //HACK
+
+        List result = super.apply(opTask);
+
+        this.currentTask = null;
+
+        return result;
+    }
 
     @Override
     public Object function(Operation o) {
@@ -55,11 +81,11 @@ public class MethodOperator extends TermFunction {
         int pc = method.getParameterCount();
         final int requires, paramOffset;
         if (Modifier.isStatic(method.getModifiers())) {
-            requires = pc;
+            requires = 2;
             paramOffset = 0;
         }
         else {
-            requires = pc + 1;
+            requires = 2 + 1;
             paramOffset = 1;
         }
 
@@ -70,7 +96,7 @@ public class MethodOperator extends TermFunction {
         if (paramOffset == 0)
             instance = null;
         else {
-            instance = termizer.object(x[0]);
+            instance = context.object(x[0]);
         }
 
         final Object[] args;
@@ -81,9 +107,17 @@ public class MethodOperator extends TermFunction {
             args = new Object[pc];
 
 
+            Term xv = x[paramOffset];
+            if (!(xv instanceof Product))
+                throw new RuntimeException("method parameters must be a product but is " + xv);
 
-            for (int i = 0; i < args.length; i++) {
-                Object a = termizer.object(x[i + paramOffset]);
+            Product pxv = (Product)xv;
+            if (pxv.size()!=pc) {
+                throw new RuntimeException("invalid # method parameters; requires " + pc + " but " + pxv.size() + " given");
+            }
+
+            for (int i = 0; i < pc; i++) {
+                Object a = context.object(pxv.term(i));
                 Class<?> pt = params[i].getType();
                 if (!pt.isAssignableFrom(a.getClass())) {
                     a = parser.parseType(a.toString(), pt);
@@ -97,9 +131,12 @@ public class MethodOperator extends TermFunction {
 
             //Object result = Invoker.invoke(instance, method.getName(), args); /** from Boon library */
 
-            Object result = method.invoke(instance, args);
+
+            Object result = context.invokeVolition(currentTask, method, instance, args);
+
             if (feedback)
-                return termizer.term(result);
+                return context.term(result);
+
         } catch (IllegalArgumentException e) {
 
             System.err.println(e + ": " + Arrays.toString(args) + " for " + method);
@@ -111,9 +148,9 @@ public class MethodOperator extends TermFunction {
             return ERROR;
 
         } catch (Exception e) {
-            System.err.println(method + " <- " + instance + " (" + instance.getClass() + " =?= " + method.getDeclaringClass() + "\n\t<<< " + Arrays.toString(args));
+            //System.err.println(method + " <- " + instance + " (" + instance.getClass() + " =?= " + method.getDeclaringClass() + "\n\t<<< " + Arrays.toString(args));
             nar.memory.eventError.emit(e);
-            return termizer.term(e);
+            return context.term(e);
         }
 
         return null;

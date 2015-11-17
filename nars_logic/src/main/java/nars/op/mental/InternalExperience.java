@@ -248,7 +248,7 @@ public class InternalExperience {
                         .parent(task).occurr(nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
-                        .reason("Remembered Action (Internal Experience)"));
+                        .because("Remembered Action (Internal Experience)"));
         return t;
     }
 

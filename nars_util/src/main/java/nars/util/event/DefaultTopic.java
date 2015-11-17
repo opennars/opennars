@@ -45,6 +45,8 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
         this(Integer.toString(nextTopicID(), 36));
     }
 
+
+
     DefaultTopic(String id) {
         super(i -> new Consumer[i]);
         this.id = id;

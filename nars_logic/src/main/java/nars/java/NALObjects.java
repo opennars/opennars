@@ -16,6 +16,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 
@@ -121,22 +123,25 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     final AtomicBoolean lock = new AtomicBoolean(false);
 
+    /** non-null if the method is being invoked by NARS,
+     * in which case it will reference the task that invoked
+     * feedback will be handled by the responsible MethodOperator's execution */
+    final AtomicReference<Task> volition = new AtomicReference();
+
+
     /** when a proxy wrapped instance method is called, this can
      *  parametrically intercept arguments and return value
      *  and input them to the NAL in narsese.
      */
     @Override
     public Object invoke(Object object, Method overridden, Method forwarder, Object[] args) throws Throwable {
-
         Object result = forwarder.invoke(object, args);
-
-        return invoked(object, overridden, args, result);
+        return invoked( object, overridden, args, result);
     }
 
 
-    public Object invoked(Object object, Method method, Object[] args, Object result) {
-
-        //synchronized?
+    //TODO run in separate execution context to avoid synchronized
+    public synchronized Object invoked(Object object, Method method, Object[] args, Object result) {
 
         if (methodExclusions.contains(method.getName()))
             return result;
@@ -150,10 +155,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         Product invocationArgs = getMethodInvocationTerms(method, object, args);
 
-        nar.goal(
-                $.oper(op, invocationArgs),
-                Tense.Present,
-                invocationGoalFreq, invocationGoalConf);
+
 
         Term effect;
         if (result!=null) {
@@ -164,11 +166,31 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         }
 
 
-        //TODO use task of callee as Parent task, if self-invoked
-        nar.believe(
-                Operation.result(op, invocationArgs, effect),
-                Tense.Present,
-                invocationResultFreq, invocationResultConf);
+
+        Task volitionTask = volition.get();
+
+        if (volitionTask == null) {
+            //System.out.println("PUPPET");
+
+            /** pretend as if it were a goal of its own volition, although it was invoked externally */
+            Task g = nar.goal(
+                    $.oper(op, invocationArgs),
+                    Tense.Present,
+                    invocationGoalFreq, invocationGoalConf);
+
+            nar.input(
+                new FluentTask(Operation.result(op, invocationArgs, effect)).
+                        belief().
+                        truth(invocationResultFreq, invocationResultConf).
+                        present(nar.memory).parent(g).
+                        budget(g.getBudget()).
+                        because("External Invocation")
+                    );
+        }
+        else {
+            //feedback will be returned via operation execution
+            //System.out.println("VOLITION " + volitionTask);
+        }
 
 
         lock.set(false);
@@ -233,6 +255,23 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     }
 
+    public synchronized Object invokeVolition(Task currentTask, Method method, Object instance, Object[] args) {
+
+        Object result = null;
+
+        volition.set(currentTask);
+
+        try {
+            result = method.invoke(instance, args);
+        } catch (Exception e) {
+            result = e;
+        }
+
+        volition.set(null);
+
+        return result;
+    }
+
 
     final class DelegateHandler<X> implements MethodHandler {
 
@@ -245,7 +284,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         @Override public final Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
             final X obj = this.obj;
             Object result = method.invoke(obj, objects);
-            return invoked(obj, method, objects, result);
+            return invoked( obj, method, objects, result);
         }
     }
 
@@ -280,8 +319,8 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         for (Method m :  instance.getClass().getMethods()) {
             if (isMethodVisible(m) && Modifier.isPublic(m.getModifiers())) {
                 MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
-                    MethodOperator mo = new MethodOperator(goalInvoke, this, m);
-                    nar.onExec(mo);
+                    MethodOperator mo = new MethodOperator(goalInvoke, m, this);
+                    nar.on(mo);
                     return mo;
                 });
             }

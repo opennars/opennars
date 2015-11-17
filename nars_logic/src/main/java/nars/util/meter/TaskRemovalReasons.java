@@ -24,7 +24,7 @@ public class TaskRemovalReasons {
             processed++;
         });
         removals = n.memory.eventTaskRemoved.on(t -> {
-            freq.addValue(t.getLogLast());
+            freq.addValue(t.getLogLast().toString());
             final long age = t.getLifespan(nar.memory);
             lifespanOfRemovals.addValue(age);
         });

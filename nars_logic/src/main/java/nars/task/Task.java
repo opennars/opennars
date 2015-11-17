@@ -328,7 +328,9 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
         String finalLog;
         if (showLog) {
-            finalLog = getLogLast();
+            Object ll = getLogLast();
+
+            finalLog = (ll!=null ? ll.toString() : null);
             if (finalLog!=null)
                 stringLength += finalLog.length()+1;
             else
@@ -368,7 +370,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return buffer;
     }
 
-    default String getLogLast() {
+    default Object getLogLast() {
         final List<String> log = getLog();
         if (log ==null || log.isEmpty()) return null;
         return log.get(log.size()-1);

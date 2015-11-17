@@ -1,7 +1,6 @@
 package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
-import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
@@ -17,7 +16,6 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +25,9 @@ import java.util.List;
  * with the result of the function substituted in the variable's place.
  */
 public abstract class TermFunction<O> extends SyncOperator {
+
+    private float feedbackPriorityMultiplier = 1f;
+    private float feedbackDurabilityMultiplier = 1f;
 
     protected TermFunction() {
         super();
@@ -59,8 +60,9 @@ public abstract class TermFunction<O> extends SyncOperator {
     abstract public O function(Operation x);
 
 
-    protected ArrayList<Task> result(Operation operation, Term y, Term[] x0, Term lastTerm) {
+    protected List<Task> result(final Task<Operation> opTask, Term y, Term[] x0, Term lastTerm) {
 
+        Operation operation = opTask.getTerm();
 
         //Variable var=new Variable("$1");
         //  Term actual_part = Similarity.make(var, y);
@@ -83,11 +85,10 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                DefaultTask.make(inh).
+                Operation.asFeedback(DefaultTask.make(inh).
                         truth(getResultFrequency(), getResultConfidence()).
-                        budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
-                        tense(getResultTense(), nar.memory)
+                        tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
             );
 
             /*float equal = equals(lastTerm, y);
@@ -228,7 +229,7 @@ public abstract class TermFunction<O> extends SyncOperator {
             return Lists.newArrayList((Task)y);
         }
         else if (y instanceof Term) {
-            return result(operation, (Term) y, x, lastTerm);
+            return result(opTask, (Term) y, x, lastTerm);
         }
 
 
@@ -252,7 +253,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         Term t = Atom.the(ys, true);
 
         if (t != null)
-            return result(operation, t, x, lastTerm);
+            return result(opTask, t, x, lastTerm);
 
         throw new RuntimeException(this + " return value invalid: " + y);
     }

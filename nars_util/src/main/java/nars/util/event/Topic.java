@@ -86,6 +86,8 @@ public interface Topic<V> extends Named<String> {
 
     int size();
 
+    boolean isEmpty();
+
 
 //
 //    @Override

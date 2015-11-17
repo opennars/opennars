@@ -485,7 +485,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     //TODO use specific names for these types of functons in this class
-    public void onExec(Atom operator, Function<Task<Operation>, List<Task>> f) {
+    public void onExec(Term operator, Function<Task<Operation>, List<Task>> f) {
         on(new OperatorReaction(operator) {
             @Override
             public List<Task> apply(Task<Operation> t) {

@@ -133,6 +133,11 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
             executed(op, feedback);
         } catch (Exception e) {
             nar().memory.eventError.emit(e);
+
+            //TODO hack this should be handled by the error handler
+            if (Global.DEBUG) {
+                e.printStackTrace();
+            }
             return false;
         }
 
@@ -175,9 +180,11 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
         //Display a message in the output stream to indicate the reportExecution of an operation
 
 
-        n.memory.eventExecute.emit(
-            new ExecutionResult(op, feedback, n.memory)
-        );
+        if (!n.memory.eventExecute.isEmpty()) {
+            n.memory.eventExecute.emit(
+                    new ExecutionResult(op, feedback)
+            );
+        }
 
 
         if (!op.isCommand()) {
@@ -188,12 +195,15 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
         //should we allow immediate tasks to create feedback?
         if (feedback != null) {
 
-            final Operation t = op.getTerm();
+            //final Operation t = op.getTerm();
 
             for (final Task f : feedback) {
-                if (t == null) continue;
+                //if (t == null) continue;
 
-                f.log(t /*"Feedback"*/);
+                f.log("Feedback");
+
+                //TODO avoid using a string like this
+                //f.log("Feedback: " + t /*"Feedback"*/);
 
                 n.input(f);
             }
@@ -221,7 +231,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
                 budget(b).
                 present(memory).
                 parent(operation).
-                reason("Executed")
+                because("Executed")
         );
 
         memory.logic.TASK_EXECUTED.hit();

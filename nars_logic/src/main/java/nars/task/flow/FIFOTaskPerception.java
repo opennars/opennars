@@ -5,6 +5,7 @@ import nars.task.Task;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -27,6 +28,10 @@ import java.util.function.Predicate;
  */
 public class FIFOTaskPerception extends TaskPerception {
 
+    /**
+     * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
+     */
+    public final AtomicInteger inputsPerCycleMax = new AtomicInteger(1);
 
     /* ?? public interface Storage { void put(Task t); }*/
 

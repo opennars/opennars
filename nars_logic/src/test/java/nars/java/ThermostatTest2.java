@@ -2,7 +2,6 @@ package nars.java;
 
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default;
 import nars.nar.Default2;
 import nars.task.Task;
 import nars.task.Tasked;
@@ -40,6 +39,7 @@ public class ThermostatTest2 {
         public int go(int speed, boolean upOrDown) {
             if (log) System.out.println("  go @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target);
             current += speed * (upOrDown ? +1 : -1);
+            current = Math.min(Math.max(0, current), range);
             return (int)Math.signum(target-current);
         }
 
@@ -100,8 +100,9 @@ public class ThermostatTest2 {
         Global.DEBUG = false;
         Global.EXIT_ON_EXCEPTION = true;
 
-        Default n = new Default2(1024, 1, 2, 2);
-        n.memory.duration.set(1);
+        Default2 n = new Default2(1024, 1, 1, 2);
+        n.memory.duration.set(2);
+        n.getInput().inputPerCycle.set(4);
 
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
@@ -109,7 +110,7 @@ public class ThermostatTest2 {
         String id = "T";
         Model tc = nobj.build(id, Model.class);
 
-        nobj.setGoalInvoke(false);
+        //nobj.setGoalInvoke(false);
 
 
         //TextOutput.out(n);
@@ -142,22 +143,30 @@ public class ThermostatTest2 {
         //n.forEachConcept(System.out::println);
 
         tc.log = true;
-        nobj.setGoalInvoke(true);
+        ///nobj.setGoalInvoke(true);
 
 
+
+
+        //n.log();
+        //n.trace();
 
 
         n.log(System.out, v -> {
 
+
             Task t = Tasked.the(v);
-            if (t == null) return false;
+            if (t == null)
+                return false;
 
             //if (t.isJudgmentOrGoal()) return true;
 
-            //return t.getPriority() > 0.25;
-            return t.getQuality() > 0.05;
+            return !(t.isJudgment() && t.getPriority() < 0.1);
+            //return t.getQuality() > 0.05;
+            //return true;
 
         });
+
 
         TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
 
@@ -167,26 +176,30 @@ public class ThermostatTest2 {
         //n.log();
 
         //teach actions/sensors
-        tc.valid(); n.frame();
-        tc.go(1, true); n.frame();
-        tc.go(1, false); n.frame();
+        tc.valid(); n.frame(100);
+        tc.go(1, true); n.frame(100);
+        tc.go(1, false); n.frame(100);
 
-        for (int i = 0; i < 1; i++) {
 
-            n.input("$1.0;0.9;0.95$ <true --> (/, ^Model_valid, t, _)>!");
+        for (int i = 0; i < 10; i++) {
 
-            tc.valid();
+            //$0.8;0.5;0.95$
+            n.input("$0.9;0.9;0.9$ <true --> (/, ^Model_valid, t, _)>!");
+            //n.input("<#x --> (/, ^Model_valid, T, #y, _)>?");
+
+            //tc.valid();
 
             reset(tc, range);
 
-
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(1000);
-            System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
+            n.frame(10000);
+            //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
         }
 
 
         System.out.println(taskStats);
+
+        //n.forEachConcept(c -> c.print(System.out));
 
     }
 }

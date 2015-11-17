@@ -13,7 +13,7 @@ public class SortedTaskPerception extends TaskPerception {
 
     final TaskAccumulator<?> buffer;
 
-    final MutableInteger inputPerCycle = new MutableInteger();
+    public final MutableInteger inputPerCycle = new MutableInteger();
 
     public SortedTaskPerception(NAR nar,
                                 Predicate<Task> filter,

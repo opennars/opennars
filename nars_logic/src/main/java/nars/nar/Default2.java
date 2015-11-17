@@ -9,7 +9,6 @@ import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
 import nars.task.Task;
 import nars.task.flow.SortedTaskPerception;
-import nars.task.flow.TaskPerception;
 import nars.term.Term;
 import nars.time.FrameClock;
 import nars.util.data.list.FasterList;
@@ -111,7 +110,7 @@ public class Default2 extends Default {
 
 
     @Override
-    public TaskPerception initInput() {
+    public SortedTaskPerception initInput() {
         int perceptionCapacity = 64;
 
         SortedTaskPerception input = new SortedTaskPerception(
@@ -123,6 +122,10 @@ public class Default2 extends Default {
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
+    }
+
+    public SortedTaskPerception getInput() {
+        return (SortedTaskPerception) input;
     }
 
     @Override

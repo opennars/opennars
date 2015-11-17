@@ -115,21 +115,20 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
         return this;
     }
 
-//    /**
-//     * uses default budget generation and multiplies it by gain factors
-//     */
-//    public TaskSeed budgetScaled(float priorityFactor, float durFactor) {
-//
-//        //TODO maybe lift this to Budget class
-//        if (!applyDefaultBudget()) {
-//            throw new RuntimeException("budgetScaled unable to determine original budget values");
-//        }
-//
-//
-//        this.priority *= priorityFactor;
-//        this.durability *= durFactor;
-//        return this;
-//    }
+    /**
+     * uses default budget generation and multiplies it by gain factors
+     */
+    public FluentTask budgetScaled(float priorityFactor, float durFactor) {
+
+        //TODO maybe lift this to Budget class
+        if (!applyDefaultBudget()) {
+            throw new RuntimeException("budgetScaled unable to determine original budget values");
+        }
+
+        mulPriority(priorityFactor);
+        mulDurability(durFactor);
+        return this;
+    }
 
 //    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
 //        if (this.truth == null)
@@ -284,7 +283,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     }
 
 
-    public FluentTask reason(String reason) {
+    public FluentTask because(String reason) {
         log(reason);
         return this;
     }
@@ -396,5 +395,6 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
         setEternal();
         return this;
     }
+
 
 }

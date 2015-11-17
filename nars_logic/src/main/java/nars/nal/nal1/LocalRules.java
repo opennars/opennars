@@ -144,7 +144,7 @@ public class LocalRules {
                 .truth(truth)
                 .budget(budget)
                 .parent(newBelief, oldBelief)
-                .reason("Revision")
+                .because("Revision")
                 .time( now,  target_time )
                 .normalized();
     }

@@ -1,23 +1,21 @@
 package nars.nal.nal8;
 
-import nars.Memory;
 import nars.task.Task;
+import nars.task.Tasked;
 
 import java.io.Serializable;
 
 /**
- * Created by me on 5/16/15.
+ * Holds an operation task and any generated feedback
  */
-public class ExecutionResult implements Serializable {
+public class ExecutionResult implements Serializable, Tasked {
 
     public final Task<Operation> operation;
     public final Object feedback;
-    transient private final Memory memory;
 
-    public ExecutionResult(Task<Operation> op, Object feedback, Memory memory) {
+    public ExecutionResult(Task<Operation> op, Object feedback) {
         this.operation = op;
         this.feedback = feedback;
-        this.memory = memory;
     }
 
     public Task getTask() {
@@ -40,7 +38,7 @@ public class ExecutionResult implements Serializable {
             //Term operator = operation.getOperator();
             StringBuilder sb = new StringBuilder();
 
-            t.appendTo(sb, memory);
+            t.appendTo(sb, null);
 
 //                Budget b = getTask();
 //                if (b!=null)
@@ -57,8 +55,12 @@ public class ExecutionResult implements Serializable {
 
             //sb.append(')');
 
+            sb.append(" >EXE> ");
+
             if (feedback != null)
-                sb.append("  ").append(feedback);
+                sb.append(feedback);
+            else
+                sb.append("void");
 
             return sb.toString();
         }

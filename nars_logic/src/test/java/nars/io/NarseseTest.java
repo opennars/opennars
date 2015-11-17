@@ -483,6 +483,11 @@ public class NarseseTest {
     }
 
 
+    @Test public void testEmptyProduct() {
+        Term o = term("<#x --> (/, ^Model_valid, T, (), _)>?");
+        assertNotNull(o);
+    }
+
     @Test
     public void testLineComment2() {
         String a = "<a --> b>.\n'comment1234\n<b-->c>.";
