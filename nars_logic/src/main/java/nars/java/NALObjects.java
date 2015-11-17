@@ -134,6 +134,18 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 //        return invoked( object, overridden, args, result);
 //    }
 
+    public static class InvocationResult {
+        public final Term value;
+
+        public InvocationResult(Term value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "Puppet";
+        }
+    }
 
     //TODO run in separate execution context to avoid synchronized
     public synchronized Object invoked(Object object, Method method, Object[] args, Object result) {
@@ -160,7 +172,8 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             effect = VOID;
         }
 
-
+        //TODO re-use static copy for 'VOID' instances
+        InvocationResult ir = new InvocationResult(effect);
 
         Task volitionTask = volition.get();
 
@@ -171,7 +184,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             nar.input( $.goal( $.oper(op, invocationArgs),
                     invocationGoalFreq, invocationGoalConf).
                     present(nar.memory).
-                    because("Puppet")
+                    because(ir)
             );
 
 //            nar.input(
@@ -244,7 +257,16 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 //    }
 //
 
-    /** the id will be the atom term label for existing instance */
+    public <T> T wrap(String id, Class<? extends T> instance) throws Exception {
+        T t = instance.newInstance();
+        return wrap(id, t);
+    }
+
+    /** the id will be the atom term label for an instance.
+     *  the instance should not be used because a new instance
+     *  will be created and its fields will be those
+     *  which are manipulated, not the original prototype.
+     * */
     public <T> T wrap(String id, T instance) throws Exception {
 
         return wrap(id, (Class<? extends T>)instance.getClass(), instance);
@@ -284,9 +306,9 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 //        }
 //    }
 
-    @Override public final Object invoke(Object obj, Method method, Method method1, Object[] objects) throws Throwable {
-        Object result = method1.invoke(obj, objects);
-        return invoked( obj, method, objects, result);
+    @Override public final Object invoke(Object obj, Method wrapped, Method wrapper, Object[] args) throws Throwable {
+        Object result = wrapper.invoke(obj, args);
+        return invoked( obj, wrapped, args, result);
     }
 
 //    public <T> T build(String id, Class<? extends T> classs) throws Exception {
@@ -309,7 +331,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
         //instances.put(identifier, wrappedInstance);
 
         objects.put(wrappedInstance, identifier);
-        instances.put(identifier, instance);
+        instances.put(identifier, wrappedInstance);
 
 //        ((ProxyObject) wrappedInstance).setHandler(
 ////                delegate == null ?

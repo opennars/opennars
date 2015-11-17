@@ -43,6 +43,7 @@ public class NALObjectsTest  {
         }
 
         public float multiply(float a, float b) {
+            count++;
             return a * b;
         }
 
@@ -63,11 +64,11 @@ public class NALObjectsTest  {
     }
 
 
-    @Test public void testInvocationExternalExistingInstance() throws Exception {
+    @Test public void testInvocationExternal() throws Exception {
         testMethodInvocationAndFeedback(true);
     }
 
-    @Test public void testInvocationInternalExistingInstance() throws Exception {
+    @Test public void testInvocationInternal() throws Exception {
         testMethodInvocationAndFeedback(false);
     }
 
@@ -85,22 +86,24 @@ public class NALObjectsTest  {
         StringWriter ns = new StringWriter();
         n.log(new PrintWriter(ns));
 
-        n.log();
+        //n.log();
 
         String instance = "obj";
 
         NALObjects no = new NALObjects(n);
-        final TestClass nc;
 
-        nc = no.wrap(instance, new TestClass());
+        final TestClass wrapper;
+        final TestClass wrapped = new TestClass();
+
+        wrapper = no.wrap(instance, wrapped);
 
 
-        assertNotEquals(TestClass.class, nc.getClass());
-        assertEquals(TestClass.class, nc.getClass().getSuperclass());
+        assertNotEquals(TestClass.class, wrapper.getClass());
+        assertEquals(TestClass.class, wrapper.getClass().getSuperclass());
 
         if (external) {
             //INVOKE EXTERNALLY
-            nc.multiply(2, 3);
+            wrapper.multiply(2, 3);
         }
         else {
             //INVOKE VOLITIONALLY
@@ -113,6 +116,8 @@ public class NALObjectsTest  {
         n.frame(8);
 
 
+        assertEquals(0, wrapped.count); //unaffected
+        assertEquals(1, wrapper.count); //wrapper fields affected
 
         //WHAT TO EXPECT
         /*
@@ -146,6 +151,7 @@ public class NALObjectsTest  {
 
         String bs = ns.getBuffer().toString();
 
+        System.out.println(bs);
 
         String invocationGoal = "TestClass_multiply(obj, (2, 3), #1)! :|: %1.00;0.90%";
         assertEquals(1, countMatches(bs, invocationGoal));
@@ -158,10 +164,11 @@ public class NALObjectsTest  {
         }
 
         String execution = "Execute: $0.60;0.90;0.95$ TestClass_multiply(obj, (2, 3), #1)! 0+0 %1.00;0.90%";
-        String feedback = "<{6} --> (/, ^TestClass_multiply, obj, (2, 3), _)>. :|: %1.00;0.99% Feedback";
+        String feedback = "TaskProcess: $0.50;0.80;0.95$ <{6} --> (/, ^TestClass_multiply, obj, (2, 3), _)>.";
 
         assertEquals(1, countMatches(bs, execution));
         assertEquals(1, countMatches(bs, feedback));
+        assertEquals(1, countMatches(bs, "Feedback"));
 
     }
 

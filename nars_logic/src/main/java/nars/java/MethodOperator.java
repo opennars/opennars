@@ -129,7 +129,15 @@ public class MethodOperator extends TermFunction {
             //Object result = Invoker.invoke(instance, method.getName(), args); /** from Boon library */
 
 
-            Object result = context.invokeVolition(currentTask, method, instance, args);
+            final Object result;
+            Object ll = currentTask.getLogLast();
+            if (ll instanceof NALObjects.InvocationResult) {
+                //it was already invoked and here is the value:
+                result = ((NALObjects.InvocationResult) ll).value;
+            }
+            else {
+                result = context.invokeVolition(currentTask, method, instance, args);
+            }
 
             if (feedback)
                 return context.term(result);

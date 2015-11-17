@@ -283,7 +283,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     }
 
 
-    public FluentTask because(String reason) {
+    public FluentTask because(Object reason) {
         log(reason);
         return this;
     }
