@@ -416,7 +416,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         }
 
         if (t.isCommand()) {
-            int n = m.execute(t);
+            int n = execute(t);
             if (n == 0) {
                 m.remove(t, "Unknown Command");
             }
@@ -430,6 +430,33 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         m.eventInput.emit(t);
 
         return true;
+    }
+
+
+    /**
+     * Entry point for all potentially executable tasks.
+     * Enters a task and determine if there is a decision to execute.
+     *
+     * @return number of invoked handlers
+     */
+    public final int execute(final Task goal) {
+        Term term = goal.getTerm();
+
+        if (term instanceof Operation) {
+            final Operation o = (Operation) term;
+
+            //enqueue
+            beforeNextFrame(()-> {
+                memory.exe.emit(o.getOperatorTerm(), goal);
+            });
+
+            return 1;
+        }
+        /*else {
+            System.err.println("Unexecutable: " + goal);
+        }*/
+
+        return 0;
     }
 
 

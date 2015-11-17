@@ -3,6 +3,8 @@ package nars.java;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default2;
+import nars.task.Task;
+import nars.task.Tasked;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.meter.TaskRemovalReasons;
 
@@ -35,7 +37,7 @@ public class ThermostatTest2 {
         public boolean below() { return target > current+tolerance; }
 
         public int go(int speed, boolean upOrDown) {
-            if (log) System.out.println("  go @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target);
+            if (log) System.out.println("\n\tgo @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target + "\n");
             current += speed * (upOrDown ? +1 : -1);
             current = Math.min(Math.max(0, current), range);
             return (int)Math.signum(target-current);
@@ -146,24 +148,24 @@ public class ThermostatTest2 {
 
 
 
-        n.log();
+        //n.log();
 
         //n.trace();
 
-//        n.log(System.out, v -> {
-//
-//
-//            Task t = Tasked.the(v);
-//            if (t == null)
-//                return false;
-//
-//            //if (t.isJudgmentOrGoal()) return true;
-//
-//            return !(t.isJudgment() && t.getPriority() < 0.1);
-//            //return t.getQuality() > 0.05;
-//            //return true;
-//
-//        });
+        n.log(System.out, v -> {
+
+
+            Task t = Tasked.the(v);
+            if (t == null)
+                return false;
+
+            //if (t.isJudgmentOrGoal()) return true;
+
+            return !(t.isJudgment() && t.getPriority() < 0.1);
+            //return t.getQuality() > 0.05;
+            //return true;
+
+        });
 
 
         TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
@@ -179,19 +181,31 @@ public class ThermostatTest2 {
         tc.go(1, false); n.frame(100);
 
 
-        for (int i = 0; i < 10; i++) {
+
+
+        //begin invalid
+        tc.current = 0;
+        tc.target = range/2;
+
+        for (int i = 0; i < 1; i++) {
+
 
             //$0.8;0.5;0.95$
-            n.input("$0.9;0.9;0.9$ <true --> (/, ^Model_valid, t, _)>!");
+            n.input("<{true} --> (/, ^Model_valid, T, (), _)>!");
+            //n.input("Model_go(T, (1, true), #1)!");
+            //n.input("Model_go(T, (1, false), #1)!");
+
             //n.input("<#x --> (/, ^Model_valid, T, #y, _)>?");
 
             //tc.valid();
 
-            reset(tc, range);
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(10000);
+            n.frame(1200);
             //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
+
+            reset(tc, range);
+
         }
 
 

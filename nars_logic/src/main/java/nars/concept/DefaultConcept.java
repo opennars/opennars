@@ -261,7 +261,7 @@ public class DefaultConcept extends AtomConcept {
             if (delta!=0)
                 memory.emotion.happy(delta);
 
-            nal.memory().execute(goal);
+            nal.nar().execute(goal);
 
             return true;
 

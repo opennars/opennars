@@ -188,7 +188,9 @@ public class DefaultTermizer implements Termizer {
     private boolean reportClassInPackage(Class oc) {
         if (classInPackageExclusions.contains(oc)) return false;
 
+        if (Term.class.isAssignableFrom(oc)) return false;
         if (oc.isPrimitive()) return false;
+
 
         return true;
     }

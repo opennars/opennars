@@ -97,6 +97,7 @@ public class NALObjectsTest  {
 
         wrapper = no.wrap(instance, wrapped);
 
+        assertEquals(5, n.memory.exe.size());
 
         assertNotEquals(TestClass.class, wrapper.getClass());
         assertEquals(TestClass.class, wrapper.getClass().getSuperclass());

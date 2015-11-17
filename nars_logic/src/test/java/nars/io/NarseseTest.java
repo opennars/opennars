@@ -9,7 +9,7 @@ import nars.nal.nal4.ImageInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.op.io.echo;
 import nars.task.Task;
 import nars.term.Atom;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 
 public class NarseseTest {
 
-    final static NAR n = new Default();
+    final static NAR n = new Terminal();
     final static Narsese p = Narsese.the();
 
     static <T extends Term> T term(String s) throws Narsese.NarseseException {
@@ -484,6 +484,10 @@ public class NarseseTest {
 
 
     @Test public void testEmptyProduct() {
+        Product e = term("()");
+        assertNotNull(e);
+        assertEquals(0, e.size());
+
         Term o = term("<#x --> (/, ^Model_valid, T, (), _)>?");
         assertNotNull(o);
     }

@@ -13,6 +13,8 @@ import java.util.function.Function;
 abstract public class EventEmitter<K,V>  {
 
 
+    public abstract int size();
+
     public interface EventRegistration {
         public void off();
     }
@@ -175,8 +177,14 @@ abstract public class EventEmitter<K,V>  {
 //            }
 //        }
 
+
         @Override
-        public String toString() {
+        public final int size() {
+            return reactions.size();
+        }
+
+        @Override
+        public final String toString() {
             return reactions.toString();
         }
 

@@ -416,7 +416,11 @@ public class Narsese extends BaseParser<Object>  {
                                         //default to product if no operator specified in ( )
                                         MultiArgTerm(Op.PRODUCT, COMPOUND_TERM_CLOSER, false, false, false, false),
 
-                                        MultiArgTerm(null, COMPOUND_TERM_CLOSER, false, true, true, false)
+                                        MultiArgTerm(null, COMPOUND_TERM_CLOSER, false, true, true, false),
+
+                                        sequence(
+                                            s(), COMPOUND_TERM_CLOSER, push(Product.empty)
+                                        )
                                 )
                         ),
 

@@ -190,26 +190,6 @@ public class Memory extends Param {
         this.self = t;
     }
 
-    /**
-     * Entry point for all potentially executable tasks.
-     * Enters a task and determine if there is a decision to execute.
-     *
-     * @return number of invoked handlers
-     */
-    public final int execute(final Task goal) {
-        Term term = goal.getTerm();
-
-        if (term instanceof Operation) {
-            final Operation o = (Operation) term;
-            return exe.emit(o.getOperatorTerm(), goal);
-        }
-        /*else {
-            System.err.println("Unexecutable: " + goal);
-        }*/
-
-        return 0;
-    }
-
 
 //    public void delete() {
 //        clear();
