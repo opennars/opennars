@@ -28,7 +28,7 @@ public class DefaultTermizer implements Termizer {
 
 
     final IdentityHashMap<Term, Object> instances = new IdentityHashMap();
-    final IdentityHashMap<Object, Term> objects = new IdentityHashMap();
+    final HashMap<Object, Term> objects = new HashMap();
 
     static final Set<Class> classInPackageExclusions = new HashSet() {{
         add(Class.class);
@@ -45,28 +45,11 @@ public class DefaultTermizer implements Termizer {
         add(Class.class);
     }};
 
-    @Override
-    public Object object(final Term t) {
+    /** dereference a term to an object (but do not un-termize) */
+    @Override public Object object(final Term t) {
         if (t == NULL) return null;
 
         Object x = instances.get(t);
-//        if (x == null) {
-//            //compute it
-//            if (t instanceof Atom) {
-//                String s = t.toStringCompact();
-//                try {
-//                    return Integer.parseInt(s);
-//                } catch (Exception e) {
-//                }
-//
-//                x = s;
-//            } else {
-//                //TODO handle Products as lists/array, etc
-//                x = null;
-//            }
-//
-//            objects.put(x, t);
-//        }
         if (x == null)
             return t; /** return the term intance itself */
         return x;

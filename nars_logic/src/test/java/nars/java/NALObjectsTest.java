@@ -7,6 +7,7 @@ import nars.nar.Default;
 import nars.nar.Default2;
 import nars.term.Term;
 import nars.util.meter.EventCount;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.junit.Assert.*;
 
 
@@ -44,6 +46,11 @@ public class NALObjectsTest  {
             return a * b;
         }
 
+        @Override
+        public String toString() {
+            return "TestClass[" + count + "]";
+        }
+
         public List<Method> getClassMethods() {
             Method[] m = getClass().getMethods();
             List<Method> l = Global.newArrayList();
@@ -55,36 +62,56 @@ public class NALObjectsTest  {
         }
     }
 
+
+    @Test public void testInvocationExternalExistingInstance() throws Exception {
+        testMethodInvocationAndFeedback(true);
+    }
+
+    @Test public void testInvocationInternalExistingInstance() throws Exception {
+        testMethodInvocationAndFeedback(false);
+    }
+
+
     /** test that the methods of invoking an instance method are indistinguishable
      * whether it occurred from outside, or from a NAR goal
+     *
+     * only one invocation and one feedback should occurr
+     * regardless of the method and preconditions
      */
-    @Test public void testMethodOperators() throws Exception {
+    public void testMethodInvocationAndFeedback(boolean external) throws Exception {
 
-        NAR n = new Default();
+        NAR n = new Default2(128, 1, 1, 1);
 
-        String instance = "obj";
+        StringWriter ns = new StringWriter();
+        n.log(new PrintWriter(ns));
 
         n.log();
 
+        String instance = "obj";
 
         NALObjects no = new NALObjects(n);
-        TestClass nc = no.build(instance, TestClass.class);
+        final TestClass nc;
+
+        nc = no.wrap(instance, new TestClass());
 
 
-        StringWriter ns;
-        n.trace(new PrintWriter(ns = new StringWriter()));
+        assertNotEquals(TestClass.class, nc.getClass());
+        assertEquals(TestClass.class, nc.getClass().getSuperclass());
+
+        if (external) {
+            //INVOKE EXTERNALLY
+            nc.multiply(2, 3);
+        }
+        else {
+            //INVOKE VOLITIONALLY
+            n.input("TestClass_multiply(" + instance + ", (2, 3), #x)! :|:");
+
+        }
 
 
-        nc.multiply(2,3);
 
-        n.frame(16);
+        n.frame(8);
 
-//        assertNotNull( n.memory.concept(
-//                no.termClassInPackage(TestClass.class))
-//        );
-
-
-        n.input("TestClass_multiply(" + instance + ", (2, 3), #x)!");
 
 
         //WHAT TO EXPECT
@@ -110,16 +137,31 @@ public class NALObjectsTest  {
         */
 
 
-
         //System.out.println(ns.getBuffer().toString());
         //System.out.println();
         //System.out.println(ms.getBuffer().toString());
 
         //TODO use TestNAR and test for right tense
 
-        String expect = "<{6} --> (/, ^TestClass_multiply, " + instance + ", (2, 3), _)>.";
+
         String bs = ns.getBuffer().toString();
-        assertTrue(bs.contains(expect));
+
+
+        String invocationGoal = "TestClass_multiply(obj, (2, 3), #1)! :|: %1.00;0.90%";
+        assertEquals(1, countMatches(bs, invocationGoal));
+
+        if (external) {
+            assertEquals(1, countMatches(bs, invocationGoal + " Puppet"));
+        }
+        else {
+            assertEquals(1, countMatches(bs, invocationGoal + " Input"));
+        }
+
+        String execution = "Execute: $0.60;0.90;0.95$ TestClass_multiply(obj, (2, 3), #1)! 0+0 %1.00;0.90%";
+        String feedback = "<{6} --> (/, ^TestClass_multiply, obj, (2, 3), _)>. :|: %1.00;0.99% Feedback";
+
+        assertEquals(1, countMatches(bs, execution));
+        assertEquals(1, countMatches(bs, feedback));
 
     }
 
@@ -132,7 +174,7 @@ public class NALObjectsTest  {
 
         EventCount count = new EventCount(n);
 
-        TestClass tc = new NALObjects(n).build("myJavaObject", TestClass.class);
+        TestClass tc = new NALObjects(n).wrap("myJavaObject", new TestClass());
 
         tc.noParamMethodReturningVoid();
         assertEquals(6.0, tc.multiply(2, 3), 0.001);
@@ -204,11 +246,13 @@ public class NALObjectsTest  {
 
     }
 
-    @Test public void testWrappedArrayList() throws Exception {
+    //TODO
+    @Ignore
+    @Test public void testOverloadedMethods() throws Exception {
         NAR n = new Default();
 
         NALObjects no = new NALObjects(n);
-        ArrayList nc = no.build("ourList", ArrayList.class);
+        ArrayList nc = no.wrap("ourList", new ArrayList());
 
 
         //n.stdout();
@@ -254,7 +298,7 @@ public class NALObjectsTest  {
 
         //EventCount count = new EventCount(n);
 
-        TestClass tc = new NALObjects(n).build("obj", TestClass.class);
+        TestClass tc = new NALObjects(n).wrap("obj", new TestClass());
 
 
         tc.getClassMethods();

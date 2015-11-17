@@ -165,7 +165,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
                 //if data arrives via a hardware device, can a virtual
                 //task be used as the parent when it generates it?
                 //doesnt everything originate from something else?
-                log("Input");
+                if (log == null)
+                    log("Input");
             }
 
             setTerm((T) memory.terms.get( term ).getTerm());

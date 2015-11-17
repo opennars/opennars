@@ -3,8 +3,6 @@ package nars.java;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default2;
-import nars.task.Task;
-import nars.task.Tasked;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.meter.TaskRemovalReasons;
 
@@ -108,7 +106,7 @@ public class ThermostatTest2 {
 
         NALObjects nobj = new NALObjects(n);
         String id = "T";
-        Model tc = nobj.build(id, Model.class);
+        Model tc = nobj.wrap(id, new Model());
 
         //nobj.setGoalInvoke(false);
 
@@ -148,24 +146,24 @@ public class ThermostatTest2 {
 
 
 
-        //n.log();
+        n.log();
+
         //n.trace();
 
-
-        n.log(System.out, v -> {
-
-
-            Task t = Tasked.the(v);
-            if (t == null)
-                return false;
-
-            //if (t.isJudgmentOrGoal()) return true;
-
-            return !(t.isJudgment() && t.getPriority() < 0.1);
-            //return t.getQuality() > 0.05;
-            //return true;
-
-        });
+//        n.log(System.out, v -> {
+//
+//
+//            Task t = Tasked.the(v);
+//            if (t == null)
+//                return false;
+//
+//            //if (t.isJudgmentOrGoal()) return true;
+//
+//            return !(t.isJudgment() && t.getPriority() < 0.1);
+//            //return t.getQuality() > 0.05;
+//            //return true;
+//
+//        });
 
 
         TaskRemovalReasons taskStats = new TaskRemovalReasons(n);

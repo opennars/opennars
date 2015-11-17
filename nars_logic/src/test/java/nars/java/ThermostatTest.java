@@ -71,7 +71,7 @@ public class ThermostatTest  {
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
         NALObjects nobj = new NALObjects(n);
-        Thermostat tc = nobj.build("t", Thermostat.class);
+        Thermostat tc = nobj.wrap("t", new Thermostat());
 
         nobj.setGoalInvoke(false);
 

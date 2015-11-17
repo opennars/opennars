@@ -13,10 +13,7 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -41,9 +38,7 @@ import java.util.stream.Stream;
  * TODO option to include stack traces in conjunction with invocation
  *
  */
-public class NALObjects extends DefaultTermizer implements MethodHandler, Termizer {
-
-
+public class NALObjects extends DefaultTermizer implements Termizer, MethodHandler {
 
     private final NAR nar;
     final MutableMap<Class, ProxyFactory> proxyCache = new UnifiedMap().asSynchronized();
@@ -88,7 +83,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     public static <N extends NAR> N wrap(N n) throws Exception {
         final NALObjects nalObjects = new NALObjects(n);
-        return nalObjects.build("this", n);
+        return nalObjects.wrap("this", n);
     }
 
     @Override
@@ -129,15 +124,15 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     final AtomicReference<Task> volition = new AtomicReference();
 
 
-    /** when a proxy wrapped instance method is called, this can
-     *  parametrically intercept arguments and return value
-     *  and input them to the NAL in narsese.
-     */
-    @Override
-    public Object invoke(Object object, Method overridden, Method forwarder, Object[] args) throws Throwable {
-        Object result = forwarder.invoke(object, args);
-        return invoked( object, overridden, args, result);
-    }
+//    /** when a proxy wrapped instance method is called, this can
+//     *  parametrically intercept arguments and return value
+//     *  and input them to the NAL in narsese.
+//     */
+//    @Override
+//    public Object invoke(Object object, Method overridden, Method forwarder, Object[] args) throws Throwable {
+//        Object result = forwarder.invoke(object, args);
+//        return invoked( object, overridden, args, result);
+//    }
 
 
     //TODO run in separate execution context to avoid synchronized
@@ -170,22 +165,23 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         Task volitionTask = volition.get();
 
         if (volitionTask == null) {
-            //System.out.println("PUPPET");
 
-            /** pretend as if it were a goal of its own volition, although it was invoked externally */
-            Task g = nar.goal(
-                    $.oper(op, invocationArgs),
-                    Tense.Present,
-                    invocationGoalFreq, invocationGoalConf);
+            /** pretend as if it were a goal of its own volition, although it was invoked externally
+             *  Master of puppets, I'm pulling your strings */
+            nar.input( $.goal( $.oper(op, invocationArgs),
+                    invocationGoalFreq, invocationGoalConf).
+                    present(nar.memory).
+                    because("Puppet")
+            );
 
-            nar.input(
-                new FluentTask(Operation.result(op, invocationArgs, effect)).
-                        belief().
-                        truth(invocationResultFreq, invocationResultConf).
-                        present(nar.memory).parent(g).
-                        budget(g.getBudget()).
-                        because("External Invocation")
-                    );
+//            nar.input(
+//                new FluentTask(Operation.result(op, invocationArgs, effect)).
+//                        belief().
+//                        truth(invocationResultFreq, invocationResultConf).
+//                        present(nar.memory).parent(g).
+//                        budget(g.getBudget()).
+//                        because("External Invocation")
+//                    );
         }
         else {
             //feedback will be returned via operation execution
@@ -249,9 +245,9 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 //
 
     /** the id will be the atom term label for existing instance */
-    public <T> T build(String id, T instance) throws Exception {
+    public <T> T wrap(String id, T instance) throws Exception {
 
-        return build(id, (Class<? extends T>)instance.getClass(), instance);
+        return wrap(id, (Class<? extends T>)instance.getClass(), instance);
 
     }
 
@@ -273,27 +269,32 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     }
 
 
-    final class DelegateHandler<X> implements MethodHandler {
+//    final class DelegateHandler<X> implements MethodHandler {
+//
+//        private final X obj;
+//
+//        public DelegateHandler(X n) {
+//            this.obj = n;
+//        }
+//
+//        @Override public final Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
+//            final X obj = this.obj;
+//            Object result = method.invoke(obj, objects);
+//            return invoked( obj, method, objects, result);
+//        }
+//    }
 
-        private final X obj;
-
-        public DelegateHandler(X n) {
-            this.obj = n;
-        }
-
-        @Override public final Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
-            final X obj = this.obj;
-            Object result = method.invoke(obj, objects);
-            return invoked( obj, method, objects, result);
-        }
+    @Override public final Object invoke(Object obj, Method method, Method method1, Object[] objects) throws Throwable {
+        Object result = method1.invoke(obj, objects);
+        return invoked( obj, method, objects, result);
     }
 
-    public <T> T build(String id, Class<? extends T> classs) throws Exception {
-        return build(id, classs, null);
-    }
+//    public <T> T build(String id, Class<? extends T> classs) throws Exception {
+//        return build(id, classs, null);
+//    }
 
     /** the id will be the atom term label for the created instance */
-    public <T> T build(String id, Class<? extends T> classs, /* nullable */ T delegate) throws Exception {
+    public <T> T wrap(String id, Class<? extends T> classs, /* nullable */ T instance) throws Exception {
 
 
         ProxyFactory factory = proxyCache.getIfAbsentPut(classs, ProxyFactory::new);
@@ -301,25 +302,29 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         Class clazz = factory.createClass();
 
-        T instance = (T) clazz.newInstance();
+        T wrappedInstance = (T) clazz.newInstance();
+
 
         Atom identifier = Atom.the(id);
-        instances.put(identifier, instance);
-        objects.put(instance, identifier);
+        //instances.put(identifier, wrappedInstance);
 
-        ((ProxyObject) instance).setHandler(
-                delegate == null ?
-                this :
-                new DelegateHandler<>(delegate)
-        );
+        objects.put(wrappedInstance, identifier);
+        instances.put(identifier, instance);
+
+//        ((ProxyObject) wrappedInstance).setHandler(
+////                delegate == null ?
+////                this :
+//                new DelegateHandler<>(delegate)
+//        );
+        ((ProxyObject) wrappedInstance).setHandler(this);
 
 
         //add operators for public methods
 
         for (Method m :  instance.getClass().getMethods()) {
             if (isMethodVisible(m) && Modifier.isPublic(m.getModifiers())) {
-                MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
-                    MethodOperator mo = new MethodOperator(goalInvoke, m, this);
+                methodOps.computeIfAbsent(m, M -> {
+                    MethodOperator mo = new MethodOperator(goalInvoke, M, this);
                     nar.on(mo);
                     return mo;
                 });
@@ -328,13 +333,16 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         onInstanceOfClass(identifier, term(classs));
 
-        return instance;
+        return wrappedInstance;
     }
 
     public static boolean isMethodVisible(Method m) {
         String n = m.getName();
         if (n.contains("_d"))
             return false; //javassist wrapper method
+
+        if (m.getDeclaringClass() == Object.class)
+            return false;
 
         return !methodExclusions.contains(n);
     }

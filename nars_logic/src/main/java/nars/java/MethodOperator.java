@@ -47,9 +47,6 @@ public class MethodOperator extends TermFunction {
 
     private static Term getParentMethodName(Method m) {
         Class<?> sc = m.getDeclaringClass();
-        Class<?> scc = sc.getSuperclass();
-        if (scc !=null)
-            sc = scc;
 
         String superClass = sc.getSimpleName();
         String methodName = m.getName();
@@ -81,11 +78,11 @@ public class MethodOperator extends TermFunction {
         int pc = method.getParameterCount();
         final int requires, paramOffset;
         if (Modifier.isStatic(method.getModifiers())) {
-            requires = 2;
+            requires = 1;
             paramOffset = 0;
         }
         else {
-            requires = 2 + 1;
+            requires = 1 + 1;
             paramOffset = 1;
         }
 

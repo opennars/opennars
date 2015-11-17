@@ -153,4 +153,12 @@ public class $ {
     public static Term term(final Op op, final Term... args) {
         return Terms.term(op, args);
     }
+
+    public static FluentTask belief(Compound term, float freq, float conf) {
+        return new FluentTask(term).belief().truth(freq, conf);
+    }
+
+    public static FluentTask goal(Compound term, float freq, float conf) {
+        return new FluentTask(term).goal().truth(freq, conf);
+    }
 }
