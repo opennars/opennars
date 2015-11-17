@@ -187,11 +187,15 @@ public class ThermostatTest2 {
         tc.current = 0;
         tc.target = range/2;
 
+        tc.valid();
+
         for (int i = 0; i < 1; i++) {
 
 
             //$0.8;0.5;0.95$
             n.input("<{true} --> (/, ^Model_valid, T, (), _)>!");
+            n.input("<{(--,true)} --> (/, ^Model_valid, T, (), _)>!");
+
             //n.input("Model_go(T, (1, true), #1)!");
             //n.input("Model_go(T, (1, false), #1)!");
 
@@ -201,7 +205,7 @@ public class ThermostatTest2 {
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(1200);
+            n.frame(10000);
             //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
 
             reset(tc, range);

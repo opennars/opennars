@@ -79,7 +79,7 @@ public class NAL1Test extends AbstractNALTester {
                 .de("bird ist eine art des animal.");*/
                 .believe("<robin --> bird>")
                         //.en("robin is a type of bird.");
-                .mustBelieve(123, "<robin --> animal>", 0.81f)
+                .mustBelieve(2, "<robin --> animal>", 0.81f)
                         //.en("robin is a type of animal.");
                 .run();
     }
@@ -87,7 +87,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void abduction() throws Narsese.NarseseException {
 
-        int time = 128;
+        int time = 4;
         test().mustBelieve(time, "<sport --> chess>", 1.0f, 0.42f)
               /*  .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
@@ -103,14 +103,15 @@ public class NAL1Test extends AbstractNALTester {
 
     @Test
     public void induction() throws Narsese.NarseseException {
+        int withinCycles = 4;
         test().believe("<swan --> swimmer>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                 //.en("Swan is a type of swimmer.");
                 .believe("<swan --> bird>")
                         //.en("Swan is a type of bird.");
 
-                .mustBelieve(123, "<bird --> swimmer>", 0.90f, 0.45f)
+                .mustBelieve(withinCycles, "<bird --> swimmer>", 0.90f, 0.45f)
                         //.en("I guess bird is a type of swimmer.");
-                .mustBelieve(123, "<swimmer --> bird>", 1f, 0.42f)
+                .mustBelieve(withinCycles, "<swimmer --> bird>", 1f, 0.42f)
                         //.en("I guess swimmer is a type of bird.");
                 .run();
     }
@@ -122,7 +123,7 @@ public class NAL1Test extends AbstractNALTester {
             //.debug()
             .believe("<robin --> bird>")
             .believe("<bird --> animal>")
-            .mustOutput(125, "<animal --> robin>. %1.00;0.4475%")
+            .mustOutput(4, "<animal --> robin>. %1.00;0.4475%")
                     //.en("I guess animal is a type of robin.");
             .run();
     }
@@ -131,7 +132,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void conversion() throws Narsese.NarseseException {
 
-        long time = /*tester.nal() <= 2 ? 15 :*/ 32;
+        long time = 4;
         TestNAR test = test();
         test.believe("<bird --> swimmer>")
             .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");
@@ -180,7 +181,7 @@ public class NAL1Test extends AbstractNALTester {
 
     @Test
     public void backwardInference() throws Narsese.NarseseException {
-        long time = /*nar instanceof Solid ? 15 :*/ 32;
+        long time = /*nar instanceof Solid ? 15 :*/ 4;
 
 
         test().mustOutput(time, "<?1 --> bird>?") //.en("What is a type of bird?");

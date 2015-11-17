@@ -391,9 +391,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     }
 
-    protected boolean process(Task t) {
-        return true;
-    }
+
 
     /**
      * exposes the memory to an input, derived, or immediate task.
@@ -1331,7 +1329,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * execute a Task as a TaskProcess (synchronous)
      */
-    public TaskProcess exec(Task task) {
+    public TaskProcess process(Task task) {
 
         final Budget taskBudget = task.getBudget();
 

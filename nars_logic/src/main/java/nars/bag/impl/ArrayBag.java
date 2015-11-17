@@ -139,7 +139,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    public void setCapacity(int capacity) {
+    public final void setCapacity(int capacity) {
         items.setCapacity(capacity);
     }
 
@@ -321,7 +321,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    public void forEach(final Consumer<? super V> action) {
+    public final void forEach(final Consumer<? super V> action) {
 
         items.forEach(action);
 //
@@ -357,7 +357,22 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         return items.getLast().getPriority();
     }
 
+    public final void popAll(Consumer<? super V> receiver) {
+        forEach(receiver);
+        clear();
+    }
 
+    public void pop(Consumer<? super V> receiver, int n) {
+        if (n == size()) {
+            //special case where size <= inputPerCycle, the entire bag can be flushed in one operation
+            popAll(receiver);
+        }
+        else {
+            for (int i = 0; i < n; i++) {
+                receiver.accept(pop());
+            }
+        }
+    }
 
 
     public class ArrayMapping<K, V extends Itemized<K>> extends CollectorMap<K, V> {

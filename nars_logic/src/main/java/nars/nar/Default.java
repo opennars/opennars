@@ -147,7 +147,7 @@ public class Default extends NAR {
     public TaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
-            task -> exec(task)
+            task -> process(task)
         );
         return input;
     }

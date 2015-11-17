@@ -4,12 +4,14 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.util.meter.TestNAR;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
 
+@Ignore
 @RunWith(Parameterized.class)
 public class NAL4MultistepTest extends AbstractNALTester {
 
@@ -52,7 +54,7 @@ public class NAL4MultistepTest extends AbstractNALTester {
         tester.believe("<{tom} --> cat>",1.0f,0.9f); //en("tom is a cat");
         tester.believe("<(*,{tom},{sky}) --> likes>",1.0f,0.9f); //en("tom likes the sky");
         test().ask("<(*,cat,[blue]) --> likes>"); //cats like blue?
-        tester.mustBelieve(2500, "<(*,cat,[blue]) --> likes>", 1.0f, 0.42f); //en("A base is something that has a reaction with an acid.");
+        tester.mustBelieve(1000, "<(*,cat,[blue]) --> likes>", 1.0f, 0.42f); //en("A base is something that has a reaction with an acid.");
         tester.run();
     }
 

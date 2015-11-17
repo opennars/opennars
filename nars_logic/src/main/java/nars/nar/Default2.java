@@ -116,7 +116,7 @@ public class Default2 extends Default {
         SortedTaskPerception input = new SortedTaskPerception(
                 this,
                 task -> true /* allow everything */,
-                task -> exec(task),
+                task -> process(task),
                 perceptionCapacity,
                 1
         );

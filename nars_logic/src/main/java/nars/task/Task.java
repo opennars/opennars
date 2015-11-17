@@ -51,7 +51,7 @@ import static nars.Symbols.JUDGMENT;
  * TODO decide if the Sentence fields need to be Reference<> also
  */
 public interface Task<T extends Compound> extends Sentence<T>,
-        Itemized<Sentence<T>>, Truthed, Comparable {
+        Itemized<Sentence<T>>, Truthed, Comparable, Tasked {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -111,6 +111,8 @@ public interface Task<T extends Compound> extends Sentence<T>,
             s.add(t);
         return s;
     }
+
+    @Override default Task getTask() { return this; }
 
     static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 

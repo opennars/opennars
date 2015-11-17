@@ -89,7 +89,7 @@ public class SingleStepNAR extends Default {
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
                 task -> task.isInput() /* allow only input tasks*/,
-                task -> exec(task)
+                task -> process(task)
         );
         return input;
     }

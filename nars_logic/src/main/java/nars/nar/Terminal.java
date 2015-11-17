@@ -64,7 +64,7 @@ public class Terminal extends Default {
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
                 taskFilter,
-                task -> exec(task)
+                task -> process(task)
         );
         return input;
     }

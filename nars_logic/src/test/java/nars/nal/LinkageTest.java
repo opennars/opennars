@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTester {
 
-    private int cycles = 250;
+    private int cycles = 55;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
@@ -35,7 +35,7 @@ public class LinkageTest extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe(premise1); //.en("If robin is a type of bird then robin can fly.");
         tester.believe(premise2); //.en("Robin is a type of bird.");
-        tester.run(10);
+        tester.run(5);
 
         Concept ret = tester.nar.concept(premise1);
         boolean passed = false;

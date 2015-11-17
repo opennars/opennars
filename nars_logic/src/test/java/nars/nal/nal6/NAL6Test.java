@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTester {
 
 
-    final int cycles = 1600;
+    final int cycles = 100;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
@@ -90,8 +90,8 @@ public class NAL6Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
         tester.believe("<(&&,<$y --> [chirping]>,<$y --> [withWings]>) ==> <$y --> bird>>"); //en("If something can chirp and has wings, then it is a bird.");
-        tester.mustBelieve(cycles, "<(&&,<$1 --> flyer>,<($1,worms) --> food>) ==> <$1 --> [withWings]>>", 1.00f, 0.45f); //en("If something can fly and eats worms, then I guess it has wings.");
-        tester.mustBelieve(cycles, "<<$1 --> [withWings]> ==> (&&,<$1 --> flyer>,<($1,worms) --> food>)>", 1.00f, 0.45f); //en("I guess if something has wings, then it can fly and eats worms.");
+        tester.mustBelieve(cycles*6, "<(&&,<$1 --> flyer>,<($1,worms) --> food>) ==> <$1 --> [withWings]>>", 1.00f, 0.45f); //en("If something can fly and eats worms, then I guess it has wings.");
+        tester.mustBelieve(cycles*6, "<<$1 --> [withWings]> ==> (&&,<$1 --> flyer>,<($1,worms) --> food>)>", 1.00f, 0.45f); //en("I guess if something has wings, then it can fly and eats worms.");
         tester.run();
     }
 
@@ -161,7 +161,7 @@ public class NAL6Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
         tester.believe("<{Tweety} --> flyer>"); //en("Tweety can fly.");
-        tester.mustBelieve(cycles, "<(&&,<{Tweety} --> [chirping]>,<({Tweety},worms) --> food>) ==> <{Tweety} --> bird>>", 1.00f, 0.81f); //en("If Tweety can chirp and eats worms, then it is a bird.");
+        tester.mustBelieve(cycles*8, "<(&&,<{Tweety} --> [chirping]>,<({Tweety},worms) --> food>) ==> <{Tweety} --> bird>>", 1.00f, 0.81f); //en("If Tweety can chirp and eats worms, then it is a bird.");
         tester.run();
     }
 
@@ -171,7 +171,7 @@ public class NAL6Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(&&,<$x --> key>,<$y --> lock>) ==> <$y --> (/,open,$x,_)>>"); //en("Every lock can be opened by every key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
-        tester.mustBelieve(cycles, "<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>", 1.00f, 0.81f); //en("Lock-1 can be opened by every key.");
+        tester.mustBelieve(cycles*8, "<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>", 1.00f, 0.81f); //en("Lock-1 can be opened by every key.");
         tester.run();
     }
 
@@ -335,7 +335,7 @@ public class NAL6Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>", 1.00f, 0.90f);
         tester.believe("<(*,bmw,is,car) --> sentence>", 1.00f, 0.90f);
-        tester.mustBelieve(2000, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+        tester.mustBelieve(cycles, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
     }
 
@@ -344,7 +344,7 @@ public class NAL6Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(&&,<(*,$a,is,cat) --> test>,<(*,$a,is,$b) --> sentence>) ==> <$a --> $b>>");
         tester.believe("<(*,tim,is,cat) --> test>");
-        tester.mustBelieve(2000, "<<(*,tim,is,$b) --> sentence> ==> <tim --> $b>>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+        tester.mustBelieve(cycles*8, "<<(*,tim,is,$b) --> sentence> ==> <tim --> $b>>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
         tester.run();
     }
 
