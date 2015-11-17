@@ -119,7 +119,7 @@ public class OperatorTest {
             }
         });
 
-        n.trace();
+        //n.trace();
         n.input("exe(a,b,c)!");
 
         n.frame(1);

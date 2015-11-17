@@ -492,62 +492,41 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         TaskQueue tq = new TaskQueue(t);
         input((Input) tq);
         return tq;
-//
-//        for (Task x : t)
-//            input(x);
-//        return t;
     }
 
-    /**
-     * attach event handler to one or more event (classes)
-     */
-    public EventEmitter.Registrations on(Reaction<Class, Object[]> o, Class... c) {
-        return memory.event.on(o, c);
+
+    public final TermFunction onExecTerm(String operator, Function<Term[], Object> func) {
+        return onExecTerm(Atom.the(operator), func);
+    }
+
+    public final void onExec(String operator, Consumer<Term[]> func) {
+        onExec(Atom.the(operator), func);
+    }
+
+    public final void onExec(Term operator, Consumer<Term[]> func) {
+        //wrap the procedure in a function, suboptimal but ok
+        onExecTask(operator, (Task<Operation> tt) -> {
+            func.accept(tt.getTerm().args());
+            return null;
+        });
     }
 
     public void onExec(String operator, Function<Task<Operation>, List<Task>> f) {
-        onExec(Atom.the(operator), f);
+        onExecTask(Atom.the(operator), f);
     }
-
     //TODO use specific names for these types of functons in this class
-    public void onExec(Term operator, Function<Task<Operation>, List<Task>> f) {
-        on(new OperatorReaction(operator) {
+    public void onExecTask(Term operator, Function<Task<Operation>, List<Task>> f) {
+        onExec(new OperatorReaction(operator) {
             @Override
             public List<Task> apply(Task<Operation> t) {
                 return f.apply(t);
             }
         });
     }
-
-    public void on(Class<? extends Reaction<Class, Object[]>>... x) {
-
-        for (Class<? extends Reaction<Class, Object[]>> c : x) {
-            Reaction<Class, Object[]> v = memory.the(c);
-            memory.the(c, v); //register singleton
-            on(v);
-        }
-    }
-
-    public final TermFunction onExecTerm(String operator, Function<Term[], Object> func) {
-        return on(Atom.the(operator), func);
-    }
-
-    public final TermFunction on(String operator, Consumer<Term[]> func) {
-        return on(Atom.the(operator), func);
-    }
-
-    public final TermFunction on(Term operator, Consumer<Term[]> func) {
-        //wrap the procedure in a function, suboptimal but ok
-        return on(operator, (tt) -> {
-            func.accept(tt);
-            return null;
-        });
-    }
-
     /**
      * creates a TermFunction operator from a supplied function, which can be a lambda
      */
-    public TermFunction on(Term operator, Function<Term[], Object> func) {
+    public TermFunction onExecTerm(Term operator, Function<Term[], Object> func) {
         TermFunction f = new TermFunction(operator) {
 
             @Override
@@ -555,7 +534,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
                 return func.apply(x.args());
             }
         };
-        on(f);
+        onExec(f);
         return f;
     }
 
@@ -563,11 +542,11 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public void onExec(Class<? extends OperatorReaction> c) {
         //for (Class<? extends OperatorReaction> c : x) {
         OperatorReaction v = memory.the(c);
-        on(v);
+        onExec(v);
         //}
     }
 
-    public final EventEmitter.Registrations onExec(Reaction<Term, Task<Operation>> o, Term... c) {
+    public final EventEmitter.Registrations onExec(Reaction<Term, Task<Operation>> o, Term c) {
         return memory.exe.on(o, c);
     }
 
@@ -604,7 +583,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        return Collections.unmodifiableList(plugins);
 //    }
 
-    public EventEmitter.Registrations on(OperatorReaction o) {
+    public EventEmitter.Registrations onExec(OperatorReaction o) {
         EventEmitter.Registrations reg = onExec(o, o.getOperatorTerm());
         o.setEnabled(this, true);
         return reg;
@@ -1259,7 +1238,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-    public NAR on(Runnable receiver, Class... signal) {
+    public NAR on(Runnable receiver, Class[] signal) {
         NARReaction r = new RunnableStreamNARReaction(receiver, signal);
         return this;
     }

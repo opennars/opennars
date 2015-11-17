@@ -79,7 +79,7 @@ public class js extends TermFunction implements Mental {
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode);
-            nar.on(d);
+            nar.onExec(d);
 
             //op.stop();
 
@@ -166,7 +166,7 @@ public class js extends TermFunction implements Mental {
         //this is a plugin which attches additional plugins. kind of messy, this will change
         boolean x = super.setEnabled(n, enabled);
         if (enabled) {
-            n.on(new jsop());
+            n.onExec(new jsop());
             //n.on(new jsbelief());
         }
         return x;

@@ -347,7 +347,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             if (isMethodVisible(m) && Modifier.isPublic(m.getModifiers())) {
                 methodOps.computeIfAbsent(m, M -> {
                     MethodOperator mo = new MethodOperator(goalInvoke, M, this);
-                    nar.on(mo);
+                    nar.onExec(mo);
                     return mo;
                 });
             }

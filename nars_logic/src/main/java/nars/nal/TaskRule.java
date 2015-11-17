@@ -9,7 +9,6 @@ import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.post.*;
 import nars.nal.meta.pre.*;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
 import nars.term.*;
@@ -317,7 +316,7 @@ public class TaskRule extends ProductN implements Level {
 
             //if (predicate.getSubject() instanceof SetExt) {
                 //decode precondition predicate arguments
-            args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
+            args = ((Product)(predicate.getSubject())).terms();
             arg1 = args[0];
             arg2 = (args.length > 1) ? args[1] : null;
             /*} else {
