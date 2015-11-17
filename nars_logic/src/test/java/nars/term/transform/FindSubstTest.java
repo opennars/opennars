@@ -13,8 +13,8 @@ import static org.junit.Assert.assertEquals;
 
     @Test
     public void testFindSubst1() {
-        testFindSubst($._("<a-->b>"), $._("<?C-->b>"), true);
-        testFindSubst($._("(--,a)"), $._("<?C-->b>"), false);
+        testFindSubst($.$("<a-->b>"), $.$("<?C-->b>"), true);
+        testFindSubst($.$("(--,a)"), $.$("<?C-->b>"), false);
     }
 
 

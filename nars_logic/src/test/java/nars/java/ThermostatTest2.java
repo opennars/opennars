@@ -37,9 +37,9 @@ public class ThermostatTest2 {
         public boolean above() { return target < current-tolerance; }
         public boolean below() { return target > current+tolerance; }
 
-        public int go(int speed, boolean up) {
-            if (log) System.out.println("  go @ " + current + " (" + speed +  "," + up + ") TO " + target);
-            current += speed * (up ? +1 : -1);
+        public int go(int speed, boolean upOrDown) {
+            if (log) System.out.println("  go @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target);
+            current += speed * (upOrDown ? +1 : -1);
             return (int)Math.signum(target-current);
         }
 

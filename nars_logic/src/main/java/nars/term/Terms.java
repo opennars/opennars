@@ -439,23 +439,23 @@ public class Terms {
 //                throw new RuntimeException("Element null in: " + Arrays.toString(t));
 //    }
     
-    public static void verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {
-        if (arg.length == 0) {
-            throw new RuntimeException("Needs >0 components");
-        }
-        if (!allowSingleton && (arg.length == 1)) {
-            throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
-        }
-        Term[] s = Terms.toSortedSetArray(arg);
-        if (arg.length!=s.length) {
-            throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
-        }
-        int j = 0;
-        for (Term t : s) {
-            if (!t.equals(arg[j++]))
-                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
-        }        
-    }
+//    public static void verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {
+//        if (arg.length == 0) {
+//            throw new RuntimeException("Needs >0 components");
+//        }
+//        if (!allowSingleton && (arg.length == 1)) {
+//            throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
+//        }
+//        Term[] s = Terms.toSortedSetArray(arg);
+//        if (arg.length!=s.length) {
+//            throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
+//        }
+//        int j = 0;
+//        for (Term t : s) {
+//            if (!t.equals(arg[j++]))
+//                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
+//        }
+//    }
 
 //    /**
 //     * comparison that will match constant terms, allowing variables to match regardless
@@ -567,9 +567,12 @@ public class Terms {
 //        return toSortedSetArray(a, b);
 //    }
 
-    public static Term[] toSortedSetArray(final Term... arg) {
+    public static  Term[] toSortedSetArray(final Term... arg) {
         switch (arg.length) {
-            case 0: return EmptyTermArray;
+
+            case 0:
+                throw new RuntimeException("empty"); //return EmptyTermArray;
+
             case 1: return arg; //new Term[] { arg[0] };
             case 2:
                 final Term a = arg[0];
@@ -588,25 +591,12 @@ public class Terms {
                 else if (c > 0) return new Term[] { b, a };
                 else /*if (c == 0)*/ return new Term[] { a }; //equal
 
+            //TODO fast sorted array for arg.length == 3
+
+            default:
+                //terms > 2:
+                return new SortedList<>(arg).toArray(TermArrayBuilder);
         }
-
-        //TODO fast sorted array for arg.length == 3
-
-        //terms > 2:
-        return new SortedList<>(arg).toArray(TermArrayBuilder);
-
-
-
-        /*
-        TreeSet<Term> s = toSortedSet(arg);
-        //toArray didnt seem to work, but it might. in the meantime:
-        Term[] n = new Term[s.size()];
-        int j = 0;
-        for (Term x : s) {
-            n[j++] = x;
-        }
-        return n;
-        */
     }
 
     public static <T extends Term> T[] toSortedSetArray(final Collection<T> c) {

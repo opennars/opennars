@@ -13,7 +13,7 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
 /**
  * Parallel Conjunction (&|)
  */
-public class Parallel extends Conjunctive implements Interval {
+public class Parallel extends Conjunctive<Term> implements Interval {
 
     //total duration (cached), the maximum duration of all included temporal terms
     transient int totalDuration = -1;
@@ -24,8 +24,7 @@ public class Parallel extends Conjunctive implements Interval {
 
     protected Parallel(Term[] arg) {
         super();
-        arg = Terms.toSortedSetArray(arg);
-        init(arg);
+        init(Terms.toSortedSetArray(arg));
     }
 
     @Override

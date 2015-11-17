@@ -29,7 +29,7 @@ public class TaskPunctuation extends PreCondition {
         }
     };
 
-    public static final Term TaskQuestionTerm = $.op("task", "\"?\"");
+    public static final Term TaskQuestionTerm = $.oper("task", "\"?\"");
 
     public static final TaskPunctuation TaskGoal = new TaskPunctuation('!');
 

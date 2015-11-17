@@ -64,7 +64,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
      * @param predicate The second component
      * @return A compound generated or a term it reduced to
      */
-    public static Implication make(final Term subject, final Term predicate) {
+    public static <A extends Term> Implication<A,A> make(final A subject, final A predicate) {
         return make(subject, predicate, Tense.ORDER_NONE);
     }
 

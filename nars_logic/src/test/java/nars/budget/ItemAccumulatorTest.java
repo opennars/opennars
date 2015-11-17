@@ -96,7 +96,7 @@ public class ItemAccumulatorTest {
         assertTrue(ii.isSorted());
 
         for (int i = 0; i < capacity - 1; i++) {
-            ii.put($._("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
+            ii.put($.$("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
         }
 
         MutableDouble prev = new MutableDouble(Double.POSITIVE_INFINITY);
@@ -122,7 +122,7 @@ public class ItemAccumulatorTest {
 
         for (int i = 0; i < capacity-1; i++) {
             float dur = i * 0.05f;
-            ii.put($._("a:" + i, '?').budget(0.5f, dur, 0.5f));
+            ii.put($.$("a:" + i, '?').budget(0.5f, dur, 0.5f));
         }
 
         assertTrue(ii.isSorted());

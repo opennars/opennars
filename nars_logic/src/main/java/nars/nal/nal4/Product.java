@@ -107,7 +107,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return new ProductN<>(arg);
     }
 
-    static Product make(final String... argAtoms) {
+    static Product<Atom> make(final String... argAtoms) {
         return $.pro(argAtoms);
     }
 

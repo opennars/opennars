@@ -1,8 +1,8 @@
 package nars.nal.meta.pre;
 
+import nars.$;
 import nars.Premise;
 import nars.nal.RuleMatch;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.term.Term;
 
@@ -23,7 +23,7 @@ public class MeasureTime extends AbstractMeasureTime {
      * term representing the time difference will be
      * substituted.
      */
-    @Override protected boolean testEvents(RuleMatch m, Term target) {
+    @Override protected final boolean testEvents(RuleMatch m, Term target) {
         Premise p = m.premise;
 
         int time = Tense.between(p.getTask(), p.getBelief());
@@ -31,8 +31,7 @@ public class MeasureTime extends AbstractMeasureTime {
             return false;
         }
 
-        CyclesInterval interval = CyclesInterval.make(time);
-        m.xy.put(target, interval );
+        m.xy.put(target, $.cycles(time));
 
         return true;
     }

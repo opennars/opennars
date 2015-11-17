@@ -288,17 +288,17 @@ abstract public class NQuadsRDF {
             // PROPERTY domain CLASS
             //<PROPERTY($subj, $obj) ==> <$subj {-- CLASS>>.
 
-            Term a = $._("<{(#subj,#obj)} --> [" + subject + "]>");
-            Term b = $._("<{#subj} --> [" +  object + "]>");
-            belief = $.imp(a,b);
+            Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
+            Term b = $.$("<{#subj} --> [" +  object + "]>");
+            belief = $.impl(a,b);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
             //<PROPERTY($subj, $obj) ==> <$obj {-- CLASS>>.
 
-            Term a = $._("<{(#subj,#obj)} --> [" + subject + "]>");
-            Term b = $._("<{#obj} --> [" +  object + "]>");
-            belief = $.imp(a,b);
+            Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
+            Term b = $.$("<{#obj} --> [" +  object + "]>");
+            belief = $.impl(a,b);
 
 //            belief = nar.term(
 //                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"

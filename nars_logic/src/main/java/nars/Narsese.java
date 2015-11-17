@@ -18,7 +18,6 @@ import nars.nal.meta.Ellipsis;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
@@ -634,7 +633,7 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule Interval() {
         return sequence(INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),
-                push(CyclesInterval.make(Texts.i((String) pop())))
+                push($.cycles(Texts.i((String) pop())))
         ));
     }
 
@@ -883,7 +882,7 @@ public class Narsese extends BaseParser<Object>  {
             /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
-            Operation o = $.op(new Operator(vectorterms.get(0)), Product.make(vectorterms, 1, vectorterms.size()));
+            Operation o = $.oper(new Operator(vectorterms.get(0)), Product.make(vectorterms, 1, vectorterms.size()));
             return o;
         }
         else {

@@ -74,7 +74,7 @@ public class OperatorTest {
 //    }
 
     @Test public void testOperationIsInheritance() {
-        Operation o = $.op(Operator.the("x"), Product.make("x"));
+        Operation o = $.oper(Operator.the("x"), Product.make("x"));
         assertEquals(Op.INHERITANCE, o.op());
     }
 
@@ -103,7 +103,7 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         NAR n = new Default();
-        n.on(new SyncOperator("exe") {
+        n.onExec(new SyncOperator("exe") {
             @Override
             public List<Task> apply(Task<Operation> operation) {
                 executed.set(true);
@@ -131,7 +131,7 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         NAR n = new Default();
-        n.on(new SyncOperator((Term)n.term("<a --> b>")) {
+        n.onExec(new SyncOperator((Term)n.term("<a --> b>")) {
             public List<Task> apply(Task<Operation> operation) {
                 executed.set(true);
                 return null;

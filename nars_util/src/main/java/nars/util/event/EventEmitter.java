@@ -221,6 +221,8 @@ abstract public class EventEmitter<K,V>  {
             return i;
         }
 
+
+
         @Override
         public EventRegistration on(K channel, Reaction<K,V> o) {
             DefaultEventRegistration d = new DefaultEventRegistration(channel, o);

@@ -151,7 +151,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         Product invocationArgs = getMethodInvocationTerms(method, object, args);
 
         nar.goal(
-                $.op(op, invocationArgs),
+                $.oper(op, invocationArgs),
                 Tense.Present,
                 invocationGoalFreq, invocationGoalConf);
 
@@ -281,7 +281,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             if (isMethodVisible(m) && Modifier.isPublic(m.getModifiers())) {
                 MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
                     MethodOperator mo = new MethodOperator(goalInvoke, this, m);
-                    nar.on(mo);
+                    nar.onExec(mo);
                     return mo;
                 });
             }

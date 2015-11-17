@@ -23,7 +23,7 @@ public class CommandTest {
     public void testEcho() {
         NAR n = new Default();
         final AtomicBoolean invoked = new AtomicBoolean();
-        n.on(new NullOperator("c") {
+        n.onExec(new NullOperator("c") {
 
             @Override
             public List<Task> apply(Task<Operation> o) {

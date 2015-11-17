@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by me on 10/20/15.
  */
-public abstract class Conjunctive extends Junction<Term> {
+public abstract class Conjunctive<X extends Term> extends Junction<X> {
 
 
     protected Conjunctive() {

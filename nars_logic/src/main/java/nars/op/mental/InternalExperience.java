@@ -182,7 +182,7 @@ public class InternalExperience {
         }
         arg[k] = nal.self();
 
-        Operation operation = $.op(opTerm, arg);
+        Operation operation = $.oper(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -289,7 +289,7 @@ public class InternalExperience {
                 long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
 
                 beliefReasonDerive(task,
-                        $.op(anticipate, Product.only(imp.getPredicate())),
+                        $.oper(anticipate, Product.only(imp.getPredicate())),
                         nal, interval);
             }
         }
@@ -300,7 +300,7 @@ public class InternalExperience {
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    $.op(op, Product.only(belief.getTerm())),
+                    $.oper(op, Product.only(belief.getTerm())),
                     nal, 0);
     }
 

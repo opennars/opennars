@@ -1,5 +1,6 @@
 package nars.nal.nal7;
 
+import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal5.Conjunction;
@@ -19,7 +20,7 @@ import static nars.nal.nal7.Tense.appendInterval;
 /**
  * Sequential Conjunction (&/)
  */
-public class Sequence extends Conjunctive implements Intermval {
+public class Sequence extends Conjunctive<Term> implements Intermval {
 
     protected final int[] intervals;
 
@@ -145,10 +146,10 @@ public class Sequence extends Conjunctive implements Intermval {
             c.add(x);
             int d = intervals[j++];
             if (d > 0)
-                c.add(CyclesInterval.make(d));
+                c.add($.cycles(d));
         }
         if (intervals[j]>0)
-            c.add(CyclesInterval.make(intervals[j])); //final suffix interval
+            c.add($.cycles(intervals[j])); //final suffix interval
 
         return makeSequence(c.toArray(new Term[c.size()]));
     }

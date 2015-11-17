@@ -29,7 +29,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
 //        return newOperation(Product.make(args));
 //    }
     public Operation newOperation(Product args) {
-        return $.op(op, args);
+        return $.oper(op, args);
     }
 
     /** create a new task that wraps this operation */

@@ -125,7 +125,7 @@ public class Default extends NAR {
         //NAL8 plugins
 
         for (OperatorReaction o : defaultOperators)
-            on(o);
+            onExec(o);
                 /*for (OperatorReaction o : exampleOperators)
                     on(o);*/
 

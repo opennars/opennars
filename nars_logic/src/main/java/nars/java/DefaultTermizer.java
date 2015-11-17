@@ -170,7 +170,7 @@ public class DefaultTermizer implements Termizer {
         else if (o instanceof Method) {
             //translate the method to an operation term
             Method m = (Method)o;
-            return $.op(
+            return $.oper(
                 NALObjects.getMethodOperator(m),
                 getMethodArgVariables(m)
             );
