@@ -212,7 +212,7 @@ public enum Op implements Serializable {
     }
 
 
-    public final static int bitStructure(final Op... o) {
+    public final static int or(final Op... o) {
         int bits = 0;
         for (Op n : o) {
             bits |= (1 << n.ordinal());

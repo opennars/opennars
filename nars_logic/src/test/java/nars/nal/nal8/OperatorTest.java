@@ -78,6 +78,14 @@ public class OperatorTest {
         assertEquals(Op.INHERITANCE, o.op());
     }
 
+    @Test public void testInhIsOperation() {
+        Operation o = $.$("<(a,b,c)-->^x>");
+        assertTrue(o.getSubject() instanceof Product);
+        assertTrue(o.getPredicate() instanceof Operator);
+        assertEquals("x(a, b, c)", o.toString(true));
+        assertEquals(Op.INHERITANCE, o.op());
+    }
+
     @Test public void testTermReactionRegistration() {
 
         AtomicBoolean executed = new AtomicBoolean(false);

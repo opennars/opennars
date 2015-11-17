@@ -1,12 +1,8 @@
 package nars.nal.nal7;
 
-import nars.Global;
 import nars.NAR;
 import nars.Narsese;
-import nars.concept.DefaultConcept;
 import nars.nal.AbstractNALTester;
-import nars.nar.Default;
-import nars.nar.SingleStepNAR;
 import nars.task.Task;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
@@ -26,7 +22,6 @@ public class NAL7Test extends AbstractNALTester {
 
     public NAL7Test(Supplier<NAR> b) {
         super(b);
-        Global.DEBUG = true;
     }
 
     @Parameterized.Parameters(name = "{0}")

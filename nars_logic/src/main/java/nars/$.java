@@ -5,7 +5,6 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
@@ -24,8 +23,8 @@ import nars.util.utf8.Utf8;
 public class $ {
 
 
-    public static final Term $(final String term) {
-        return Narsese.the().term(term);
+    public static final <T extends Term> T $(final String term) {
+        return (T)Narsese.the().term(term);
         //        try { }
         //        catch (InvalidInputException e) { }
     }
@@ -62,7 +61,7 @@ public class $ {
     }
 
     public static <A extends Term, B extends Term> Inheritance<A, B> inh(String subj, String pred) {
-        return Inheritance.make($(subj), $(pred));
+        return Inheritance.make((Term)$(subj), (Term)$(pred));
     }
 
 
@@ -80,7 +79,7 @@ public class $ {
     }
 
     public static <A extends Term> Operation<A> oper(final Operator oper, Product<A> arg) {
-        return new Operation(oper, new SetExt1(arg));
+        return new Operation(oper, arg);
     }
 
 

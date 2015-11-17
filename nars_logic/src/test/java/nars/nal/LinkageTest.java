@@ -335,9 +335,9 @@ public class LinkageTest extends AbstractNALTester {
         tester.run(10);
         Concept ret = tester.nar.concept(s);
 
-        if(ret == null) {
-            tester.nar.forEachConcept(System.out::println);
-        }
+//        if(ret == null) {
+//            tester.nar.forEachConcept(System.out::println);
+//        }
 
         assertNotNull("Failed to create a concept for "+s, ret);
 

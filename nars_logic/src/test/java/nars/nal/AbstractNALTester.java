@@ -24,18 +24,19 @@ abstract public class AbstractNALTester {
 
 
     //final ThreadLocal<NAR> nars;
-    //private final Supplier<NAR> nar;
-    private final NAR the;
+    private final Supplier<NAR> nar;
+    //private final NAR the;
     private TestNAR created;
 
     protected AbstractNALTester(NAR nar) {
         Global.DEBUG = true;
-        this.the = nar;
+        this.nar = () -> nar;
     }
 
     protected AbstractNALTester(Supplier<NAR> nar) {
         Global.DEBUG = true;
-        this.the = nar.get();
+        //this.the = nar.get();
+        this.nar = nar;
     }
 
 
@@ -45,7 +46,8 @@ abstract public class AbstractNALTester {
 
 
     public final NAR nar() {
-        return the;
+        //return the
+        return nar.get();
     }
 
     public static Iterable<Supplier<NAR>> terminal() {

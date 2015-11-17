@@ -34,10 +34,7 @@ import java.util.TreeSet;
 import static java.lang.Long.toBinaryString;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author me
@@ -601,25 +598,6 @@ public class TermTest {
 
     }
 
-    @Test public void testOperationArguments() {
-        NAR n = new Default();
-
-        assertNotNull( Operation.getArgumentProduct(n.term("{(a)}")) );
-        assertNotNull( Operation.getArgumentProduct(n.term("{(a,b)}")) );
-
-        try {
-            Operation.getArgumentProduct(n.term("(a,b)"));
-            assertTrue(false); //should throw exception
-        }
-        catch (Exception e) {  }
-
-        try {
-            assertNull( Operation.getArgumentProduct(n.term("({a})")) );
-            assertTrue(false); //should throw exception
-        }
-        catch (Exception e) {  }
-
-    }
 
     @Test public void testSubTermStructure() {
 

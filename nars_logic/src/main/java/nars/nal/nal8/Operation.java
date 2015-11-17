@@ -21,13 +21,10 @@
 package nars.nal.nal8;
 
 import nars.Memory;
-import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.task.DefaultTask;
@@ -49,24 +46,19 @@ import static nars.Symbols.COMPOUND_TERM_OPENER;
  *
  * TODO generalize it so that Prduct<A> is moved to the generic part, allowing non-products
  * to form Operations
+ *
+ * @param A argument term type
  */
-public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, Operator> {
+public class Operation<A extends Term> extends Inheritance<Product<A>, Operator> {
 
 
 
-    public Operation(String operatorName, Object... args) {
-        this(Operator.the(operatorName), Product.termizedProduct(args));
+    public Operation(String operatorName, A... args) {
+        this(Operator.the(operatorName), Product.make(args));
     }
 
-    public Operation(Operator operator, SetExt1<Product<A>> args) {
+    public Operation(Operator operator, Product<A> args) {
         super(args, operator);
-    }
-
-    /**
-     * Constructor with partial values, called by make
-     */
-    public Operation(Operator operator, Product<A> argProduct) {
-        this(operator, new SetExt1<>(argProduct));
     }
 
 
@@ -88,7 +80,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
     public final Product<A> arg() {
-        return getSubject().the();
+        return getSubject();
     }
 
     public final A arg(int i) {
@@ -306,25 +298,6 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
     }
 
 
-    final static int ProductInSetExtPattern =
-            Op.bitStructure(
-                    Op.SET_EXT,
-                    Op.PRODUCT);
-
-    public static Product getArgumentProduct(Compound c) {
-        /*if (!c.impossibleStructure(ProductInSetExtPattern)) {
-            if (c instanceof SetExt) {*/
-                SetExt1 sc = ((SetExt1) c);
-                //if (sc.length() == 1) {
-                    final Term scp = sc.the(); //term(0);
-                    //if (scp instanceof Product) {
-                        return (Product) scp;
-                    //}
-                //}
-            /*}
-        }*/
-        //return null;
-    }
 
 
     public final String argString() {
@@ -336,7 +309,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
      */
     public static Inheritance result(Term op, Product x, Term y) {
         return Inheritance.make(
-                SetExt.make(y),
+                y,//SetExt.make(y),
                 makeImageExt(x, op, (short) (x.size() - 1) /* position of the variable */)
         );
     }

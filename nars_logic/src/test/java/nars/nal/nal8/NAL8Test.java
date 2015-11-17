@@ -217,8 +217,8 @@ public class NAL8Test extends AbstractNALTester {
     public void belief_deduction_by_condition() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(^open,{t001})=/><{t001} --> [opened]>>. :|: ");
-        tester.inputAt(10, "(^open,{t001}). :|:");
+        tester.input("<open({t001})=/><{t001} --> [opened]>>. :|: ");
+        tester.inputAt(10, "open({t001}). :|:");
 
         tester.mustBelieve(cycles, "<{t001} --> [opened]>", 1.0f, 0.81f, 15); // :|:
         tester.run();
@@ -261,8 +261,8 @@ public class NAL8Test extends AbstractNALTester {
     public void ded_with_var_temporal() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,{t003}) --> ^goto>. :|: ");
-        tester.inputAt(10, "<<(*,$1) --> ^goto> =/> <(*,SELF,$1) --> at>>. ");
+        tester.input("<({t003}) --> ^goto>. :|: ");
+        tester.inputAt(10, "<<($1) --> ^goto> =/> <(SELF,$1) --> at>>. ");
 
         tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f, 10); // :|:
         tester.run();
@@ -272,8 +272,8 @@ public class NAL8Test extends AbstractNALTester {
     public void ded_with_var_temporal2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,{t003}) --> ^goto>. :|: ");
-        tester.inputAt(10, "<<(*,$1) --> ^goto> =/> <(*,SELF,$1) --> at>>. ");
+        tester.input("<({t003}) --> ^goto>. :|: ");
+        tester.inputAt(10, "<<($1) --> ^goto> =/> <(SELF,$1) --> at>>. ");
 
         tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f,10); // :|:
         tester.run();

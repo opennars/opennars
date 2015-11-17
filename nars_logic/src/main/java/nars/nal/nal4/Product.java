@@ -125,26 +125,5 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     }
 
 
-    /** apply Atom.quoteI */
-    static Product termizedProduct(final Object... args) {
-        if (args.length == 0) return Product.empty;
-        Term[] x = termized(args);
-        return Product.make(x);
-    }
 
-    static Term[] termized(Object... args) {
-        Term[] x = new Term[args.length];
-        for (int i = 0; i < args.length; i++) {
-            final Term y;
-            final Term xx = x[i];
-            if (!(args[i] instanceof Term)) {
-                y = Atom.quote(args[i].toString());
-            }
-            else {
-                y = xx;
-            }
-            x[i] = y;
-        }
-        return x;
-    }
 }

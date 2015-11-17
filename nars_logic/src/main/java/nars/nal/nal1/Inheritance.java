@@ -21,7 +21,6 @@
 package nars.nal.nal1;
 
 import nars.Op;
-import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -71,8 +70,8 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
         }
 
         if (predicate instanceof Operator) {
-            if ((subject instanceof SetExt1) && ((((SetExt1)subject).the()) instanceof Product))
-                return new Operation((Operator)predicate, (SetExt1)subject);
+            if (subject instanceof Product)
+                return new Operation((Operator)predicate, (Product)subject);
         }
 
         return new Inheritance(subject, predicate);

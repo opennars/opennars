@@ -1,12 +1,13 @@
 package nars.nal.nal8;
 
 
-import nars.$;
 import nars.Symbols;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.DefaultTask;
 import nars.task.Task;
+import nars.term.Atom;
+import nars.term.Term;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,18 +24,36 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     }
 
     public Operation newOperation(Object...args) {
-        return newOperation(Product.termizedProduct(args));
+        return newOperation(termizedProduct(args));
     }
-//    public Operation newOperation(Term...args) {
-//        return newOperation(Product.make(args));
-//    }
-    public Operation newOperation(Product args) {
-        return $.oper(op, args);
+
+    /** apply Atom.quoteI */
+    static Product termizedProduct(final Object... args) {
+        if (args.length == 0) return Product.empty;
+        Term[] x = termized(args);
+        return Product.make(x);
+    }
+
+    static Term[] termized(Object... args) {
+        Term[] x = new Term[args.length];
+        for (int i = 0; i < args.length; i++) {
+            final Term y;
+            final Term xx = x[i];
+            if (!(args[i] instanceof Term)) {
+                y = Atom.quote(args[i].toString());
+            }
+            else {
+                y = xx;
+            }
+            x[i] = y;
+        }
+        return x;
     }
 
     /** create a new task that wraps this operation */
     public Task<Operation> newTask(Operation o) {
-        return new DefaultTask(newOperation(o.args()), Symbols.COMMAND,
+        return new DefaultTask(newOperation(o.args()),
+                Symbols.COMMAND,
                 null, 0, 0, 0).normalized();
     }
 
@@ -49,7 +68,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     }
 
     public static Operation operation(Class<? extends ImmediateOperator> opClass, Object... args) {
-        return new Operation( opClass.getSimpleName(), args);
+        return new Operation( opClass.getSimpleName(), termizedProduct(args));
     }
 
 

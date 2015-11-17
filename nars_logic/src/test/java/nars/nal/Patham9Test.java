@@ -195,10 +195,6 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Narsese;
-import nars.concept.DefaultConcept;
-import nars.concept.util.BeliefTable;
-import nars.nal.AbstractNALTester;
-import nars.nar.SingleStepNAR;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -210,7 +206,7 @@ import java.util.function.Supplier;
 public class Patham9Test extends AbstractNALTester {
 
 
-    final int cycles = 800;
+    final int cycles = 100;
 
     public Patham9Test(Supplier<NAR> b) {
         super(b);
