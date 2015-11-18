@@ -517,7 +517,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public final int hashCode() {
         int hash = this.hash;
         if (hash == 0) {
-            //throw new RuntimeException(this + " not normalized");
             return this.hash = rehash();
         }
         return hash;

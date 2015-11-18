@@ -20,6 +20,7 @@
  */
 package nars.nal.nal8;
 
+import nars.$;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -32,6 +33,7 @@ import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.truth.Truth;
 import nars.util.utf8.ByteBuf;
 
@@ -305,12 +307,20 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
     }
 
     /**
-     * creates a result term in the conventional format
+     * creates a result term in the conventional format.
+     * the final term in the product (x) needs to be a variable,
+     * which will be replaced with the result term (y)
+     *
      */
-    public static Inheritance result(Term op, Product x, Term y) {
-        return Inheritance.make(
-                y,//SetExt.make(y),
-                makeImageExt(x, op, (short) (x.size() - 1) /* position of the variable */)
+    public static Inheritance result(Operation op, Term y) {
+        Product x =  op.arg();
+        Term t = x.last();
+        if (!(t instanceof Variable))
+            return null;
+
+        return $.inh(
+            y,//SetExt.make(y),
+            makeImageExt(x, op.getOperator(), (short) (x.size() - 1) /* position of the variable */)
         );
     }
     /**

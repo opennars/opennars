@@ -445,7 +445,9 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
             //enqueue
             beforeNextFrame(()-> {
-                memory.exe.emit(o.getOperatorTerm(), goal);
+                if (!goal.isDeleted()) //it may be deleted by the time this runs
+                    memory.exe.emit(o.getOperatorTerm(), goal);
+                //else ... --> why?
             });
 
             return 1;
@@ -511,7 +513,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         });
     }
 
-    public void onExec(String operator, Function<Task<Operation>, List<Task>> f) {
+    public void onExecTask(String operator, Function<Task<Operation>, List<Task>> f) {
         onExecTask(Atom.the(operator), f);
     }
     //TODO use specific names for these types of functons in this class
@@ -539,10 +541,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public void onExec(Class<? extends OperatorReaction> c) {
+    public EventEmitter.Registrations onExec(Class<? extends OperatorReaction> c) {
         //for (Class<? extends OperatorReaction> c : x) {
         OperatorReaction v = memory.the(c);
-        onExec(v);
+        return onExec(v);
         //}
     }
 

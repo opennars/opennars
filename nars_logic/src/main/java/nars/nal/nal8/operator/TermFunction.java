@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.task.DefaultTask;
@@ -77,10 +76,13 @@ public abstract class TermFunction<O> extends SyncOperator {
         //      <2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%
         //transform to image for perception variable introduction rule (is more efficient representation
 
-        Product a =  operation.arg();
+
         //final int numArgs = x0.length;
 
-        Inheritance inh = Operation.result(operation.getOperator(), a, y);
+        Inheritance inh = Operation.result(operation, y);
+        if (inh == null) {
+            return null;
+        }
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 

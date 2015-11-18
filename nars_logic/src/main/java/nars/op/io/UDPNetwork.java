@@ -104,7 +104,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
             return null;
         });
 
-        nar.onExec("peer", (Task<Operation> t) -> {
+        nar.onExecTask("peer", (Task<Operation> t) -> {
             Term[] args = t.getTerm().args();
             if (args.length < 1) return null;
             Term stream = args[0];

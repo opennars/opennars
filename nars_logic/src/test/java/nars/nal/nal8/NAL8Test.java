@@ -1,9 +1,13 @@
 package nars.nal.nal8;
 
+import nars.$;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.operator.TermFunction;
+import nars.nar.SingleStepNAR;
+import nars.term.Term;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,17 +16,34 @@ import org.junit.runners.Parameterized;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTester {
+
     final int cycles = 200;
+    int exeCount = 0;
+    private TermFunction exeFunc;
 
     public NAL8Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
         return AbstractNALTester.nars(8, false);
+    }
+
+    @Override
+    public NAR nar() {
+        NAR n = super.nar();
+
+        final Term v = $.the("a");
+        exeFunc = n.onExecTerm("exe", (Term[] t) -> {
+            exeCount++;
+            return v;
+        });
+
+        return n;
     }
 
     @Test public void testQuest() throws Narsese.NarseseException {
@@ -279,7 +300,41 @@ public class NAL8Test extends AbstractNALTester {
         tester.run();
     }
 
+    @Test public void desiredFeedbackReversedIntoGoalEternal()  {
+        TestNAR tester = test();
+        tester.input("<y --> (/,^exe,x,_)>!");
+        tester.mustDesire(2, "exe(x, y)", 1.0f, 0.9f);
+    }
+    @Test public void desiredFeedbackReversedIntoGoalNow()  {
+        TestNAR tester = test();
+        tester.input("<y --> (/,^exe,x,_)>! :|:");
+        tester.mustDesire(2, "exe(x, y)", 1.0f, 0.9f, 0);
+    }
 
+    @Test public void testExecutionResult()  {
+        TestNAR tester = test();
+
+
+        tester.nar.log();
+        tester.input("<#y --> (/,^exe,x,_)>! :|:");
+        tester.mustDesire(2, "exe(x, #y)", 1.0f, 0.9f, 0);
+
+        if (!(tester.nar instanceof SingleStepNAR)) {
+
+            tester.mustBelieve(26, "exe(x, a).", 1.0f, 0.99f, 6);
+            //        tester.mustBelieve(26, "<a --> (/, ^exe, x, _)>",
+            //                exeFunc.getResultFrequency(),
+            //                exeFunc.getResultConfidence(),
+            //                exeFunc.getResultFrequency(),
+            //                exeFunc.getResultConfidence(),
+            //                6);
+            tester.nar.onEachFrame(n -> {
+                if (n.time() > 8)
+                    assertEquals(1, exeCount);
+            });
+        }
+
+    }
 
 //    protected void testGoalExecute(String condition, String action) {
 //

@@ -120,10 +120,17 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     @Deprecated  T[] terms();
 
 
+    /** returns the first subterm, or null if there are 0 */
     default Object first() {
+        if (size() == 0) return null;
         return term(0);
     }
 
-
+    /** returns the last subterm, or null if there are 0 */
+    default Term last() {
+        int s = size();
+        if (s == 0) return null;
+        return term(s-1);
+    }
 
 }
