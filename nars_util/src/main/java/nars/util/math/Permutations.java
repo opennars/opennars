@@ -47,6 +47,13 @@ public class Permutations  {
     public final boolean hasNext() {
         return count < num-1;
     }
+    public final boolean hasNextThenNext() {
+        if (hasNext()) {
+            next();
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Computes next permutations. Same array instance is returned every time!

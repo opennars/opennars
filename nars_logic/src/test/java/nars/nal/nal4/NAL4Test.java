@@ -92,6 +92,37 @@ public class NAL4Test extends AbstractNALTester {
         tester.run();
     }
 
+//    @Test public void composition_on_both_sides_of_a_statement_long0()  {
+//        composition_on_both_sides_of_a_statement_long(0);
+//    }
+//
+//    /** stresses product/image matching rules with a long product */
+//    @Test public void composition_on_both_sides_of_a_statement_long1()  {
+//        composition_on_both_sides_of_a_statement_long(1);
+//    }
+//    /** stresses product/image matching rules with a long product */
+//    @Test public void composition_on_both_sides_of_a_statement_long2()  {
+//        composition_on_both_sides_of_a_statement_long(2);
+//    }
+//    /** stresses product/image matching rules with a long product */
+//    @Test public void composition_on_both_sides_of_a_statement_long3()  {
+//        composition_on_both_sides_of_a_statement_long(3);
+//    }
+
+    /** stresses product/image matching rules with a long product */
+    public void composition_on_both_sides_of_a_statement_long(int n)  {
+        String additional = "";
+        for (int i = 0; i < n; i++)
+            additional += ("x" + i) + ",";
+
+        TestNAR tester = test();
+        tester.nar.trace();
+        tester.believe("<neutralization --> reaction>",1.0f,0.9f);
+        tester.ask("<(\\,neutralization," + additional + " acid,_) --> ?x>");
+        tester.mustBelieve(CYCLES*10, "<(\\,neutralization," + additional + " acid,_) --> (\\,reaction," + additional + " acid,_)>", 1.0f, 0.81f);
+        tester.run();
+    }
+
     @Test
     public void composition_on_both_sides_of_a_statement2() throws Narsese.NarseseException {
         TestNAR tester = test();
