@@ -38,7 +38,7 @@ public class TermIndexTest {
         Set<Term> t = new TreeSet();
         d.memory.terms.forEachTerm(x -> t.add(x.getTerm()));
 
-        assertTrue(t.size() > 1000); //approximate
+        assertTrue(t.size() > 100); //approximate
 
         //t.forEach(System.out::println);
 

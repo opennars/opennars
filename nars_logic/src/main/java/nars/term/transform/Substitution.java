@@ -1,6 +1,7 @@
 package nars.term.transform;
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
+import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -12,10 +13,8 @@ public class Substitution implements Function<Compound,Term> {
 
     public Map<? extends Term, Term> subs;
 
-    int numSubs;
 
-    int numDep, numIndep, numQuery;
-
+    int appliesTo;
 
     /** creates a substitution of one variable; more efficient than supplying a Map */
     public Substitution(Term termFrom, Term termTo) {
@@ -32,7 +31,7 @@ public class Substitution implements Function<Compound,Term> {
 
     /** reset but keep the same map */
     public Substitution reset() {
-        this.numSubs = -1;
+        this.appliesTo = -1;
         return this;
     }
 
@@ -43,66 +42,19 @@ public class Substitution implements Function<Compound,Term> {
 
     /** call if the map has changed (ex: during re-use) */
     public void prepare() {
-        final int numSubs = this.numSubs = subs.size();
-
-        int numDep = 0, numIndep = 0, numQuery = 0;
-
-        if (numSubs > 0) {
-            for (final Map.Entry<? extends Term, Term> e : subs.entrySet()) {
-
-                final Term m = e.getKey();
-
-                //if (m instanceof Variable) {
-                    switch (m.op()) {
-                        case VAR_DEPENDENT:
-                            numDep++;
-                            break;
-                        case VAR_INDEPENDENT:
-                            numIndep++;
-                            break;
-                        case VAR_QUERY:
-                            numQuery++;
-                            break;
-                    }
-                //}
-            }
+        int appliesTo = 0;
+        for (final Map.Entry<? extends Term, Term> e : subs.entrySet()) {
+            Op op = e.getKey().op();
+            if (op!=Op.VAR_PATTERN)
+                appliesTo |= op.bit();
         }
-
-        this.numDep = numDep;
-        this.numIndep = numIndep;
-        this.numQuery = numQuery;
+        this.appliesTo = appliesTo;
     }
 
     /** if eliminates all conditions with regard to a specific compound */
-    public final boolean impossible(final Term superterm) {
-
-        int subsApplicable = numSubs;
-
-        int numDep = this.numDep;
-        if (numDep > 0 && !superterm.hasVarDep()) {
-            subsApplicable -= numDep;
-            if (subsApplicable <= 0)
-                return true;
-        }
-
-        int numIndep = this.numIndep;
-        if (numIndep > 0 && !superterm.hasVarIndep()) {
-            subsApplicable -= numIndep;
-            if (subsApplicable <= 0)
-                return true;
-        }
-
-        int numQuery = this.numQuery;
-        if (numQuery > 0 && !superterm.hasVarQuery()) {
-            subsApplicable -= numQuery;
-            if (subsApplicable <= 0)
-                return true;
-        }
-
-
-        //there exist variables that can match, and the term can theoretically equal or contain it
-        return false;
-
+    public final boolean isApplicable(final Term t) {
+        //there exist variable types that can match, and the term can theoretically equal or contain it
+        return t.hasAny(appliesTo);
     }
 
 
@@ -112,16 +64,20 @@ public class Substitution implements Function<Compound,Term> {
     }
 
     @Override public Term apply(final Compound c) {
-        if (numSubs < 0)
+        //TODO optimization exclusion conditions, currently broke
+        /*if (appliesTo < 0) {
             prepare();
+            if (!isApplicable(c))
+                return c;
+        }*/
 
         return _apply(c);
     }
 
     public Term _apply(final Compound c) {
 
-        if (impossible(c))
-            return c;
+        /*if (!isApplicable(c))
+            return c;*/
 
         /** subterms */
         Term[] sub = null;
@@ -184,10 +140,6 @@ public class Substitution implements Function<Compound,Term> {
     public String toString() {
         return "Substitution{" +
                 "subs=" + subs +
-                ", numSubs=" + numSubs +
-                ", numDep=" + numDep +
-                ", numIndep=" + numIndep +
-                ", numQuery=" + numQuery +
                 '}';
     }
 }

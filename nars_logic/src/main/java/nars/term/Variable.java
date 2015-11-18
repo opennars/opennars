@@ -168,7 +168,7 @@ abstract public class Variable extends ImmutableAtom {
 
         public VarDep(byte[] name)  { super(name, Op.VAR_DEPENDENT.ordinal());        }
 
-        @Override public final int structure() { return 1 << Op.VAR_DEPENDENT.ordinal();        }
+        @Override public final int structure() { return Op.VAR_DEPENDENT.bit();        }
 
         @Override public final Op op() { return Op.VAR_DEPENDENT; }
 
@@ -191,7 +191,7 @@ abstract public class Variable extends ImmutableAtom {
 
         public VarIndep(byte[] name) { super(name, Op.VAR_INDEPENDENT.ordinal());         }
 
-        @Override public final int structure() {  return 1 << Op.VAR_INDEPENDENT.ordinal();        }
+        @Override public final int structure() {  return Op.VAR_INDEPENDENT.bit();        }
 
         @Override public final Op op() { return Op.VAR_INDEPENDENT; }
 
@@ -214,7 +214,7 @@ abstract public class Variable extends ImmutableAtom {
 
         public VarQuery(byte[] name) {  super(name, Op.VAR_QUERY.ordinal());         }
 
-        @Override public final int structure() {  return 1 << Op.VAR_QUERY.ordinal();        }
+        @Override public final int structure() {  return Op.VAR_QUERY.bit();        }
 
         @Override public final Op op() { return Op.VAR_QUERY; }
 
@@ -237,7 +237,7 @@ abstract public class Variable extends ImmutableAtom {
 
         public VarPattern(byte[] name) {  super(name, Op.VAR_PATTERN.ordinal());         }
 
-        @Override public final int structure() { return 0;        }
+        @Override public final int structure() { return 0; } //Op.VAR_PATTERN.bit();        }
 
         @Override public final Op op() { return Op.VAR_PATTERN; }
 

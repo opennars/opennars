@@ -215,9 +215,17 @@ public enum Op implements Serializable {
     public final static int or(final Op... o) {
         int bits = 0;
         for (Op n : o) {
-            bits |= (1 << n.ordinal());
+            bits |= n.bit();
         }
         return bits;
+    }
+
+    public final int bit() {
+        return (1 << ordinal());
+    }
+
+    public final static int or(int bits, final Op o) {
+        return bits | o.bit();
     }
 
     public final boolean levelValid(final int nal) {

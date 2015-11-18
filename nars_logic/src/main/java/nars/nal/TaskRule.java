@@ -282,7 +282,7 @@ public class TaskRule extends ProductN implements Level {
         Term taskTermPattern = getTaskTermPattern();
         Term beliefTermPattern = getBeliefTermPattern();
 
-        if (beliefTermPattern.has(Op.ATOM)) {
+        if (beliefTermPattern.hasAny(Op.ATOM)) {
             throw new RuntimeException("belief term must be a pattern");
         }
 

@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class NAL4Test extends AbstractNALTester {
 
 
-    public static final int CYCLES = 30;
+    public static final int CYCLES = 50;
 
     public NAL4Test(Supplier<NAR> b) { super(b);  }
 

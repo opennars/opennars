@@ -234,12 +234,14 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     default boolean containsTemporal() {
         //TODO construct bit vector for one comparison
-        return has(Op.PARALLEL) || has(Op.SEQUENCE) ||
-                has(Op.EQUIVALENCE_AFTER) || has(Op.EQUIVALENCE_WHEN) ||
-                has(Op.IMPLICATION_AFTER) || has(Op.IMPLICATION_WHEN) || has(Op.IMPLICATION_BEFORE);
+        return hasAny(Op.PARALLEL) || hasAny(Op.SEQUENCE) ||
+                hasAny(Op.EQUIVALENCE_AFTER) || hasAny(Op.EQUIVALENCE_WHEN) ||
+                hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
     }
 
     Term normalized(TermIndex termIndex);
+
+
 
 
 //    default public boolean hasAll(final Op... op) {

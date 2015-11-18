@@ -126,32 +126,12 @@ public class FindSubst {
         final Op type = this.type;
         final Op xOp = x.op();
         if (xOp == type) {
-
-            final Term xSubst = xy.get(x);
-
-            if (xSubst != null) {
-                return match(xSubst, y, power);
-            }
-            else {
-                nextVarX((Variable) x, y);
-                return power;
-            }
-
+            return matchXvar(x, y, power);
         }
 
         final Op yOp = y.op();
         if (yOp == type) {
-
-            final Term ySubst = yx.get(y);
-
-            if (ySubst != null) {
-                return match(x, ySubst, power);
-            }
-            else {
-                putVarY(x, (Variable) y);
-                return power;
-            }
-
+            return matchYvar(x, y, power);
         }
 
         if (xOp.isVar()) {
@@ -168,6 +148,30 @@ public class FindSubst {
 
 
         return fail(power);
+    }
+
+    private int matchYvar(Term x, Term y, int power) {
+        final Term ySubst = yx.get(y);
+
+        if (ySubst != null) {
+            return match(x, ySubst, power);
+        }
+        else {
+            putVarY(x, (Variable) y);
+            return power;
+        }
+    }
+
+    private int matchXvar(Term x, Term y, int power) {
+        final Term xSubst = xy.get(x);
+
+        if (xSubst != null) {
+            return match(xSubst, y, power);
+        }
+        else {
+            nextVarX((Variable) x, y);
+            return power;
+        }
     }
 
     private static void printComparison(int power, Compound cx, Compound cy) {
@@ -277,7 +281,8 @@ public class FindSubst {
 
             matched = sp >= 0;
 
-            if (matched || power <= 0) break;
+            if (matched /*|| power <= 0*/)
+                break;
 
             //try again; invert negated power back to a positive value for next attempt
 
@@ -372,7 +377,7 @@ public class FindSubst {
         int processed = 0;
 
         //process non-commutative subterms in phase 1, then phase 2
-        for (int j = 0; j < 2; j++) {
+        do {
 
             for (int i = 0; i < yLen; i++) {
 
@@ -388,9 +393,9 @@ public class FindSubst {
                 }
             }
 
-            if (processed == yLen) break; //exit early if all have been processed
             phase = !phase;
-        }
+
+        } while(processed < yLen);
 
         return power; //success
     }

@@ -10,8 +10,8 @@ public interface TermMetadata {
 
     int metadataStruture = Op.or(Op.PARALLEL, Op.SEQUENCE);
 
-    static boolean has(Compound term) {
-        return term.has(metadataStruture);
+    static boolean hasAny(Compound term) {
+        return term.hasAny(metadataStruture);
     }
 
 }
