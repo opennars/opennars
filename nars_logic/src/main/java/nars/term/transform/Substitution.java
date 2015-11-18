@@ -74,7 +74,7 @@ public class Substitution implements Function<Compound,Term> {
         return _apply(c);
     }
 
-    public Term _apply(final Compound c) {
+    public final Term _apply(final Compound c) {
 
         /*if (!isApplicable(c))
             return c;*/
