@@ -237,22 +237,32 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return concept((Term) term(conceptTerm));
     }
 
-
+    /** ask question */
     public Task ask(String termString) throws Narsese.NarseseException {
         //TODO remove '?' if it is attached at end
         return ask((Compound) Narsese.the().compound(termString));
     }
 
-    public Task ask(Compound c) throws Narsese.NarseseException {
+    /** ask question */
+    public Task ask(Compound c)  {
         //TODO remove '?' if it is attached at end
         return ask(c, Symbols.QUESTION);
     }
 
-    public Task quest(String questString) throws Narsese.NarseseException {
-        return ask(term(questString), Symbols.QUEST);
+    /** ask quest */
+    public Task should(String questString) throws Narsese.NarseseException {
+        Term c = term(questString);
+        if (c instanceof Compound)
+            return should((Compound) c);
+        return null;
     }
 
+    /** ask quest */
+    public Task should(Compound quest)  {
+        return ask(quest, Symbols.QUEST);
+    }
 
+    /** desire goal */
     public Task goal(Compound goalTerm, Tense tense, float freq, float conf) throws Narsese.NarseseException {
         return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, time(tense), freq, conf);
     }

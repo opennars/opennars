@@ -3,6 +3,7 @@ package nars.nal.nal7;
 import nars.Op;
 import nars.nal.nal5.Conjunctive;
 import nars.term.Term;
+import nars.term.TermMetadata;
 import nars.term.Terms;
 import nars.util.utf8.ByteBuf;
 
@@ -13,7 +14,7 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
 /**
  * Parallel Conjunction (&|)
  */
-public class Parallel extends Conjunctive<Term> implements Interval {
+public class Parallel extends Conjunctive<Term> implements Interval, TermMetadata {
 
     //total duration (cached), the maximum duration of all included temporal terms
     transient int totalDuration = -1;
@@ -92,12 +93,20 @@ public class Parallel extends Conjunctive<Term> implements Interval {
     public final int duration() {
         final int totalDuration = this.totalDuration;
         if (totalDuration == -1) {
-            return this.totalDuration = calculateTotalDuration();
+            return this.totalDuration = calculateTotalDuration(this.eventDuration);
         }
         return totalDuration;
     }
 
-    int calculateTotalDuration() {
+    @Override public final int duration(int eventDuration) {
+        if (totalDuration < 0 || eventDuration!=this.eventDuration) {
+            return calculateTotalDuration(eventDuration);
+        }
+        return totalDuration;
+    }
+
+
+    int calculateTotalDuration(int eventDuration) {
         int totalDuration = eventDuration;
 
         //add embedded terms with temporal duration

@@ -36,7 +36,11 @@ public interface TermContainer extends Comparable {
 
     /** tests if contains a term in the structural hash */
     default boolean has(final Op op) {
-        return (structure() & (1<<op.ordinal())) > 0;
+        return has((1<<op.ordinal()));
+    }
+
+    default boolean has(final int structuralVector) {
+        return (structure() & structuralVector) > 0;
     }
 
     default boolean impossibleSubterm(final Term target) {

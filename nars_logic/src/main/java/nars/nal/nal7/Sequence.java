@@ -64,6 +64,53 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
     }
 
+    @Override
+    public int compareTo(Object that) {
+        final int i = super.compareTo(that);
+        /*if (i == 0) {
+            if (!equals2((Sequence)that)) {
+                System.err.println("equality compared but not actually equal");
+            }
+        }*/
+        return i;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        final boolean e = super.equals(that);
+//        if (e) {
+//            /**
+//             * allowed for:
+//             *      Conceptualize, Concept Activation, Concept lookup
+//             *
+//             * should disallow for:
+//             *      task tables
+//             *
+//             * to be decided:
+//             *      substitution maps
+//             *      term index
+//             *
+//             */
+//            if (!equals2((Sequence)that)) {
+//                System.err.println("equality compared but not actually equal");
+//            }
+//
+//            return true;
+//        }
+        return e;
+    }
+
+    /** compares 2nd-order "metadata" components: intervals, duration
+     */
+    public final boolean equals2(Sequence that) {
+        if (this == that) return true;
+        return Arrays.equals(intervals, that.intervals)
+                &&
+                //compare durations in the same eventDuration
+                duration(eventDuration) == that.duration(eventDuration);
+
+    }
+
     @Override public final boolean isCommutative() {
         return false;
     }
@@ -71,36 +118,46 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     @Override
     public final void setDuration(int duration) {
         super.setDuration(duration);
-        if (this.eventDuration!=duration) {
+        //if (this.eventDuration!=duration) {
             this.eventDuration = duration;
             this.duration = -1; //force recalculate
-        }
+        //}
     }
 
     @Override
     public final int duration() {
         int duration = this.duration;
         if (duration < 0) {
-            int l = 0;
-            for (final int x : intervals())
-                l += x;
-
-            final int defaultEventDuration = this.eventDuration;
-
-            //add embedded terms with temporal duration
-            for (Term t : this) {
-                if (t instanceof Interval) {
-                    l += ((Interval)t).duration();
-                }
-                else {
-                    l += defaultEventDuration;
-                }
-            }
-
-
-            return this.duration = l;
+            return this.duration = duration(this.eventDuration);
         }
         return duration;
+    }
+
+    @Override
+    public final int duration(int eventDuration) {
+        if (this.duration >= 0 && this.eventDuration==eventDuration)
+            return this.duration; //return the cached value because it will be the same as recalculating
+
+        int l = 0;
+        for (final int x : intervals())
+            l += x;
+
+        //if eventDuration is not set, then
+        final int defaultEventDuration = Math.max(0, eventDuration);
+
+        //add embedded terms with temporal duration
+        for (Term t : this) {
+            if (t instanceof Intermval) {
+                l += ((Intermval)t).duration(eventDuration);
+            }
+            else if (t instanceof Interval) {
+                l += ((Interval)t).duration();
+            }
+            else {
+                l += defaultEventDuration;
+            }
+        }
+        return l;
     }
 
 

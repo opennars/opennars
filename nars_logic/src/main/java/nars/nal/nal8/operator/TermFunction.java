@@ -174,10 +174,10 @@ public abstract class TermFunction<O> extends SyncOperator {
 //
 //    }
 
-    @Override
-    protected void noticeExecuted(Task<Operation> operation) {
-        //no notice
-    }
+//    @Override
+//    protected void noticeExecuted(Task<Operation> operation) {
+//        //no notice
+//    }
 
     @Override
     public List<Task> apply(final Task<Operation> opTask) {

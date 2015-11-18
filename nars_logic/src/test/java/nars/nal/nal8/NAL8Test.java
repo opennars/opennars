@@ -56,7 +56,7 @@ public class NAL8Test extends AbstractNALTester {
 
         nar.goal(nar.term(term), Tense.Eternal, 1.0f, 0.9f);
 
-        nar.quest(term);
+        nar.should(term);
 
         AtomicBoolean valid = new AtomicBoolean(false);
 

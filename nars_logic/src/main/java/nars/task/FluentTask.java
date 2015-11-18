@@ -204,16 +204,19 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     }*/
 
     public final FluentTask present(Memory memory) {
-        return tense(Tense.Present, memory);
+        //return tense(Tense.Present, memory);
+        long now = memory.time();
+        return time(now, now);
     }
 
-    public FluentTask past(Memory memory) {
-        return tense(Tense.Past, memory);
-    }
-
-    public FluentTask future(Memory memory) {
-        return tense(Tense.Future, memory);
-    }
+    //WARNING not tested:
+//    public FluentTask past(Memory memory) {
+//        return tense(Tense.Past, memory);
+//    }
+//
+//    public FluentTask future(Memory memory) {
+//        return tense(Tense.Future, memory);
+//    }
 
 
 //    public TaskSeed<T> stamp(Stamper s) {

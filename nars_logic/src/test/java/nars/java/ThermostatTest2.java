@@ -1,12 +1,21 @@
 package nars.java;
 
+import com.gs.collections.api.tuple.Twin;
+import nars.$;
 import nars.Global;
-import nars.concept.Concept;
+import nars.nal.nal5.Implication;
+import nars.nal.nal8.ExecutionResult;
 import nars.nar.Default2;
+import nars.task.Task;
+import nars.task.Tasked;
+import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.meter.TaskRemovalReasons;
 
 import java.util.Random;
+import java.util.function.Function;
+
+import static nars.$.$;
 
 /**
  * Created by me on 8/20/15.
@@ -14,7 +23,7 @@ import java.util.Random;
 public class ThermostatTest2 {
 
     /** number of steps in total range */
-    static int range = 16;
+    static int range = 10;
 
     /** # steps it can move per invocation (+/-) */
     static int maxStep = 2;
@@ -38,9 +47,13 @@ public class ThermostatTest2 {
 //        public boolean above() { return target < current-tolerance; }
 //        public boolean below() { return target > current+tolerance; }
 
-        public int go(int speed, boolean upOrDown) {
+        public int go(/*int speed,*/ boolean upOrDown) {
+            final int speed = 1;
+
             if (log) System.out.println("\n\tgo @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target + "\n");
+
             current += speed * (upOrDown ? +1 : -1);
+
             current = Math.min(Math.max(0, current), range);
             return (int)Math.signum(target-current);
         }
@@ -73,9 +86,12 @@ public class ThermostatTest2 {
         Global.DEBUG = false;
         Global.EXIT_ON_EXCEPTION = true;
 
-        Default2 n = new Default2(1024, 1, 1, 2);
-        n.memory.duration.set(5);
+        final int dur = 1;
+
+        Default2 n = new Default2(1024, 1, 2, 3);
+        n.memory.duration.set(dur);
         n.getInput().inputPerCycle.set(4);
+
 
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
@@ -126,20 +142,24 @@ public class ThermostatTest2 {
 
         //n.trace();
 
-//        n.log(System.out, v -> {
-//
-//
-//            Task t = Tasked.the(v);
-//            if (t == null)
-//                return false;
-//
-//            //if (t.isJudgmentOrGoal()) return true;
-//
-//            return !(t.isJudgment() && t.getPriority() < 0.1);
-//            //return t.getQuality() > 0.05;
-//            //return true;
-//
-//        });
+        n.log(System.out, v -> {
+
+            if (v instanceof Twin) return true; //Q&A
+
+            Task t = Tasked.the(v);
+            if (t == null)
+                return false;
+
+            if (v instanceof ExecutionResult)
+                return false;
+
+            //if (t.isJudgmentOrGoal()) return true;
+
+            return t.getBudget().summary() > 0.25;
+            //return t.getQuality() > 0.05;
+            //return true;
+
+        });
 
 
         TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
@@ -147,12 +167,13 @@ public class ThermostatTest2 {
         /*n.input("Thermostat_valid(t, #1)! :|: %0.50;0.99%");
         n.input("Thermostat_up(t, #1)! :|: %0.50;0.99%");
         n.input("Thermostat_down(t, #1)! :|: %0.50;0.99%");*/
+
         //n.log();
 
         //teach actions/sensors
-        tc.valid(); n.frame(100);
-        tc.go(1, true); n.frame(100);
-        tc.go(1, false); n.frame(100);
+        tc.valid(); n.frame(dur*4);
+        tc.go(true); n.frame(dur*4); tc.valid(); n.frame(dur*4);
+        tc.go(false); n.frame(dur*4); tc.valid(); n.frame(dur*4);
 
 
 
@@ -161,32 +182,45 @@ public class ThermostatTest2 {
         tc.current = range/4;
         tc.target = range/2+range/4;
 
-        tc.valid();
 
 
         String isValid = "<true --> (/, ^Model_valid, T, (), _)>";
         String notValid = "<(--,true) --> (/, ^Model_valid, T, (), _)>";
 
 
-
-
-
         String up = "Model_go(T, (1, true), #x)";
         String down = "Model_go(T, (1, (--,true)), #x)";
 
-        for (int i = 0; i < 100; i++) {
+        Function<Term,Implication> isValidThen = (t) -> {
+            return $.implForward($(isValid), t);
+        };
+        Function<Term,Implication> notValidThen = (t) -> {
+            return $.implForward($(notValid), t);
+        };
+
+
+//                n.input(up + "@ :|:");
+//                n.input(down + "@ :|:");
+
+        n.input(isValid + "!");
+        n.should(isValidThen.apply($(up)));
+        n.should(isValidThen.apply($(down)));
+        n.should(notValidThen.apply($(up)));
+        n.should(notValidThen.apply($(down)));
+
+
+//                n.input(notValid + "! %0%");
+
+        for (int i = 0; i < 10; i++) {
 
             {
-                tc.log = false;
-                n.input(up + "@ :|:");
-                n.input(down + "@ :|:");
-                n.input(isValid + "!");
-                n.input(notValid + "! %0%");
+                //tc.log = false;
+
+
                 tc.valid();
 
-                n.frame(50);
-
-                tc.log = true;
+                //n.frame(50);
+                //tc.log = true;
             }
 
             //$0.8;0.5;0.95$
@@ -202,16 +236,16 @@ public class ThermostatTest2 {
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(1500);
+            n.frame(100);
             //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
 
             reset(tc, range);
 
-            Concept upConcept = n.concept(up);
-            if (upConcept!=null) {
-                //isValidConcept.print(System.out);
-                System.err.println(upConcept + ": " + upConcept.getDesireExpectation() + " " + upConcept.getSuccess());
-            }
+//            Concept upConcept = n.concept(up);
+//            if (upConcept!=null) {
+//                //isValidConcept.print(System.out);
+//                System.err.println(upConcept + ": " + upConcept.getDesireExpectation() + " " + upConcept.getSuccess());
+//            }
         }
 
 

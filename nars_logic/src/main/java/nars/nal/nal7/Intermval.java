@@ -1,10 +1,14 @@
 package nars.nal.nal7;
 
+import nars.term.TermMetadata;
+
 /**
  * Stores a sequence of "inner intervals" that quantify the
  * timing of Sequence subterms
  */
-interface Intermval extends Interval {
+interface Intermval extends Interval, TermMetadata {
+
+
 
     /** a conj sequence will return a long[NUM_TERMS+1]
      * index i means the interval preceding term i
