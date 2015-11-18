@@ -1,5 +1,6 @@
 package nars.java;
 
+import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import nars.$;
 import nars.Global;
 import nars.nal.nal2.Instance;
@@ -27,8 +28,10 @@ public class DefaultTermizer implements Termizer {
     final Map<Class, Term> classes = new HashMap();
 
 
-    final IdentityHashMap<Term, Object> instances = new IdentityHashMap();
-    final HashMap<Object, Term> objects = new HashMap();
+    final HashBiMap<Term,Object> instances = new HashBiMap();
+
+    /*final HashMap<Term, Object> instances = new HashMap();
+    final HashMap<Object, Term> objects = new HashMap();*/
 
     static final Set<Class> classInPackageExclusions = new HashSet() {{
         add(Class.class);
@@ -45,13 +48,25 @@ public class DefaultTermizer implements Termizer {
         add(Class.class);
     }};
 
+    public DefaultTermizer() {
+        map(NULL, null);
+        map(TRUE, true);
+        map(FALSE, false);
+    }
+
+    public void map(Term x, Object y) {
+        instances.put(x, y);
+    }
+
     /** dereference a term to an object (but do not un-termize) */
     @Override public Object object(final Term t) {
+
         if (t == NULL) return null;
 
         Object x = instances.get(t);
         if (x == null)
             return t; /** return the term intance itself */
+
         return x;
     }
 
@@ -60,6 +75,7 @@ public class DefaultTermizer implements Termizer {
 
         if (o == null)
             return NULL;
+
 
         if (o instanceof Term) return (Term)o;
 
@@ -138,6 +154,7 @@ public class DefaultTermizer implements Termizer {
             Map mapo = (Map) o;
             Set<Term> components = Global.newHashSet(mapo.size());
             mapo.forEach((k, v) -> {
+
                 Term tv = obj2term(v);
                 Term tk = obj2term(k);
 
@@ -269,19 +286,8 @@ public class DefaultTermizer implements Termizer {
 //
         Runnable[] post = new Runnable[1];
 
-        Term result = objects.computeIfAbsent(o, O -> {
 
-            Term oterm = obj2term(o);
-
-            Term clas = classes.computeIfAbsent(o.getClass(), this::obj2term);
-
-            final Term finalClas = clas;
-            post[0] = () ->  onInstanceOfClass(o, oterm, finalClas);
-
-            instances.put(oterm, o); //reverse
-
-            return oterm;
-        });
+        Term result = obj2termCached(o, post);
 
         if (result!=null)
             if (post[0]!=null)
@@ -312,6 +318,27 @@ public class DefaultTermizer implements Termizer {
         //return oterm;
     }
 
+    public Term obj2termCached(Object o, Runnable[] post) {
+
+        if (o == null) return NULL;
+        if (o instanceof Term)
+            return ((Term)o);
+
+        return instances.inverse().computeIfAbsent(o, O -> {
+
+            Term oterm = obj2term(O);
+
+            Term clas = classes.computeIfAbsent(O.getClass(), this::obj2term);
+
+            final Term finalClas = clas;
+            post[0] = () ->  onInstanceOfClass(O, oterm, finalClas);
+
+            //instances.put(oterm, o); //reverse
+
+            return oterm;
+        });
+    }
+
 
     protected void onInstanceChange(Term oterm, Term prevOterm) {
 
@@ -321,7 +348,5 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-    public int numInstances() {
-        return objects.size();
-    }
+
 }

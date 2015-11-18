@@ -18,6 +18,7 @@ import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Stamp;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -68,13 +69,14 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     private float invocationGoalFreq = 1f;
     private float invocationGoalConf = 0.9f;
 
-    /** for method invocation result beliefs  */
-    private float invocationResultFreq = 1f;
-    private float invocationResultConf = 0.9f;
+//    /** for method invocation result beliefs  */
+//    private float invocationResultFreq = 1f;
+//    private float invocationResultConf = 0.9f;
 
     /** for meta-data beliefs about (classes, objects, packages, etc..) */
     private float metadataBeliefFreq = 1f;
-    private float metadataBeliefConf = 0.9f;
+    private float metadataBeliefConf = 0.99f;
+    private float metadataPriority = 0.1f;
 
 
     public NALObjects(NAR n) {
@@ -89,7 +91,9 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     @Override
     protected Term termClassInPackage(Term classs, Term packagge) {
         Inheritance<SetExt<Term>, Term> t = $.inst(classs, packagge);
-        nar.believe(t, metadataBeliefFreq, metadataBeliefConf);
+        nar.believe(metadataPriority, t,
+                Stamp.ETERNAL,
+                metadataBeliefFreq, metadataBeliefConf);
         return t;
     }
 
@@ -103,7 +107,8 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     }
 
     protected void onInstanceOfClass(Term identifier, Term clas) {
-        nar.believe(Instance.make(identifier, clas),
+        nar.believe(metadataPriority, Instance.make(identifier, clas),
+            Stamp.ETERNAL,
             metadataBeliefFreq, metadataBeliefConf);
     }
 
@@ -111,7 +116,8 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     protected void onInstanceChange(Term oterm, Term prevOterm) {
         Compound c = Task.taskable( Similarity.make(oterm, prevOterm));
         if (c!=null)
-            nar.believe(c,
+            nar.believe(metadataPriority, c,
+                Stamp.ETERNAL,
                 metadataBeliefFreq, metadataBeliefConf);
 
     }
@@ -258,6 +264,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 //
 
     public <T> T wrap(String id, Class<? extends T> instance) throws Exception {
+        //TODO avoid creating 't' because it will not be used. create the proxy class directly from the class
         T t = instance.newInstance();
         return wrap(id, t);
     }
@@ -330,8 +337,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
         Atom identifier = Atom.the(id);
         //instances.put(identifier, wrappedInstance);
 
-        objects.put(wrappedInstance, identifier);
-        instances.put(identifier, wrappedInstance);
+        map(identifier, wrappedInstance);
 
 //        ((ProxyObject) wrappedInstance).setHandler(
 ////                delegate == null ?

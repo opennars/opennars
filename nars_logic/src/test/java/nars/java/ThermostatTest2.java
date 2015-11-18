@@ -1,10 +1,8 @@
 package nars.java;
 
 import nars.Global;
-import nars.NAR;
+import nars.concept.Concept;
 import nars.nar.Default2;
-import nars.task.Task;
-import nars.task.Tasked;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.meter.TaskRemovalReasons;
 
@@ -30,11 +28,15 @@ public class ThermostatTest2 {
 
 
         public boolean valid() {
-            return Math.abs(current-target) <= tolerance;
+            boolean b = Math.abs(current-target) <= tolerance;
+
+            if (log) System.out.println("\n\tvalid? " + b + " @ " + current + " TO " + target + "\n");
+
+            return b;
         }
 
-        public boolean above() { return target < current-tolerance; }
-        public boolean below() { return target > current+tolerance; }
+//        public boolean above() { return target < current-tolerance; }
+//        public boolean below() { return target > current+tolerance; }
 
         public int go(int speed, boolean upOrDown) {
             if (log) System.out.println("\n\tgo @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target + "\n");
@@ -47,35 +49,6 @@ public class ThermostatTest2 {
 
     static final Random rng = new XORShiftRandom(1);
 
-    public static void teach(NAR n, Model t, int maxRange) {
-
-        int minDelay = 10;
-        int delayVariation = 10;
-
-        reset(t, maxRange);
-
-        for (int i= 1; i <= maxStep; i++) {
-
-
-            for (int j = 0; j < 10; j++) {
-
-                if (j%2 == 0)
-                    adjust(t, 5);
-
-                //n.frame((int)(minDelay + delayVariation * rng.nextFloat()));
-
-                if (t.above()) t.go(i, false);
-
-                //n.frame((int)(minDelay + delayVariation * rng.nextFloat()));
-
-                if (t.below()) t.go(i, true);
-
-                n.frame((int)(minDelay + delayVariation * rng.nextFloat()));
-            }
-            n.frame(100);
-        }
-
-    }
 
     private static void reset(Model t, int maxRange) {
         do {
@@ -101,14 +74,15 @@ public class ThermostatTest2 {
         Global.EXIT_ON_EXCEPTION = true;
 
         Default2 n = new Default2(1024, 1, 1, 2);
-        n.memory.duration.set(2);
+        n.memory.duration.set(5);
         n.getInput().inputPerCycle.set(4);
 
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
         NALObjects nobj = new NALObjects(n);
+
         String id = "T";
-        Model tc = nobj.wrap(id, new Model());
+        Model tc = nobj.wrap(id, Model.class);
 
         //nobj.setGoalInvoke(false);
 
@@ -152,20 +126,20 @@ public class ThermostatTest2 {
 
         //n.trace();
 
-        n.log(System.out, v -> {
-
-
-            Task t = Tasked.the(v);
-            if (t == null)
-                return false;
-
-            //if (t.isJudgmentOrGoal()) return true;
-
-            return !(t.isJudgment() && t.getPriority() < 0.1);
-            //return t.getQuality() > 0.05;
-            //return true;
-
-        });
+//        n.log(System.out, v -> {
+//
+//
+//            Task t = Tasked.the(v);
+//            if (t == null)
+//                return false;
+//
+//            //if (t.isJudgmentOrGoal()) return true;
+//
+//            return !(t.isJudgment() && t.getPriority() < 0.1);
+//            //return t.getQuality() > 0.05;
+//            //return true;
+//
+//        });
 
 
         TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
@@ -184,17 +158,40 @@ public class ThermostatTest2 {
 
 
         //begin invalid
-        tc.current = 0;
-        tc.target = range/2;
+        tc.current = range/4;
+        tc.target = range/2+range/4;
 
         tc.valid();
 
-        for (int i = 0; i < 1; i++) {
 
+        String isValid = "<true --> (/, ^Model_valid, T, (), _)>";
+        String notValid = "<(--,true) --> (/, ^Model_valid, T, (), _)>";
+
+
+
+
+
+        String up = "Model_go(T, (1, true), #x)";
+        String down = "Model_go(T, (1, (--,true)), #x)";
+
+        for (int i = 0; i < 100; i++) {
+
+            {
+                tc.log = false;
+                n.input(up + "@ :|:");
+                n.input(down + "@ :|:");
+                n.input(isValid + "!");
+                n.input(notValid + "! %0%");
+                tc.valid();
+
+                n.frame(50);
+
+                tc.log = true;
+            }
 
             //$0.8;0.5;0.95$
-            n.input("<{true} --> (/, ^Model_valid, T, (), _)>!");
-            n.input("<{(--,true)} --> (/, ^Model_valid, T, (), _)>!");
+            //n.input("<true --> (/, ^Model_valid, T, (), _)>!");
+            //n.input("<(--,true) --> (/, ^Model_valid, T, (), _)>!");
 
             //n.input("Model_go(T, (1, true), #1)!");
             //n.input("Model_go(T, (1, false), #1)!");
@@ -205,17 +202,30 @@ public class ThermostatTest2 {
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(10000);
+            n.frame(1500);
             //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
 
             reset(tc, range);
 
+            Concept upConcept = n.concept(up);
+            if (upConcept!=null) {
+                //isValidConcept.print(System.out);
+                System.err.println(upConcept + ": " + upConcept.getDesireExpectation() + " " + upConcept.getSuccess());
+            }
         }
 
 
+        //System.out.println(taskStats);
+
+
+        n.forEachConcept(c -> {
+            if (c.getTerm().volume() < 9)
+                if (/*c.hasBeliefs() ||*/ c.hasGoals())
+                    c.print(System.out);
+        });
+
+        System.out.println(n.concepts().size() + " total concepts cached");
+
         System.out.println(taskStats);
-
-        //n.forEachConcept(c -> c.print(System.out));
-
     }
 }

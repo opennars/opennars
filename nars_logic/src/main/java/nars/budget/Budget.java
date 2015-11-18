@@ -283,10 +283,13 @@ public class Budget implements Cloneable, Prioritized, Serializable {
                 (currentPriority / currentNextPrioritySum);
         /* next proportion */ final float np = 1f - cp;
 
+
+        float D = getDurability();
+        float Q = getQuality();
         return budget(
                 nextPriority,
-                (cp * getDurability()) + (np * otherDurability),
-                (cp * getQuality()) + (np * otherQuality)
+                Math.max(D, (cp * D) + (np * otherDurability)),
+                Math.max(Q, (cp * Q) + (np * otherQuality))
         );
     }
 

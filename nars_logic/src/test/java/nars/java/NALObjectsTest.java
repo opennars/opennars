@@ -165,7 +165,7 @@ public class NALObjectsTest  {
         }
 
         String execution = "Execute: $0.60;0.90;0.95$ TestClass_multiply(obj, (2, 3), #1)! 0+0 %1.00;0.90%";
-        String feedback = "TaskProcess: $0.50;0.80;0.95$ <{6} --> (/, ^TestClass_multiply, obj, (2, 3), _)>.";
+        String feedback = "TaskProcess: $0.50;0.80;0.95$ <6 --> (/, ^TestClass_multiply, obj, (2, 3), _)>.";
 
         assertEquals(1, countMatches(bs, execution));
         assertEquals(1, countMatches(bs, feedback));
@@ -245,11 +245,11 @@ public class NALObjectsTest  {
 
         //System.out.println(t.objects);
 
-        if (o!=null)
+        //if (o!=null)
             assertEquals(p, o);
-        else
+        /*else
             assertNull(p==null ? "('null' value)" : p.getClass().toString(),
-                       p);
+                       p);*/
 
 
     }

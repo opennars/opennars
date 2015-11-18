@@ -285,22 +285,20 @@ public interface Concept extends Termed, Itemized<Term> {
             out.print(" Beliefs:");
             if (getBeliefs().isEmpty()) out.println(" none");
             else out.println();
-            for (Task s : getBeliefs()) {
+            getBeliefs().forEach(s -> {
                 out.print(indent);
                 out.println(s);
-                //out.println((int) (getBeliefs().rank(s, now) * 100.0) + "%: " + s);
-            }
+            });
         }
 
         if (showgoals) {
             out.print(" Goals:");
             if (getGoals().isEmpty()) out.println(" none");
             else out.println();
-            for (Task s : getGoals()) {
+            getGoals().forEach(s -> {
                 out.print(indent);
                 out.println(s);
-                //out.println((int) (getGoals().rank(s, now) * 100.0) + "%: " + s);
-            }
+            });
         }
 
         if (showtermlinks) {

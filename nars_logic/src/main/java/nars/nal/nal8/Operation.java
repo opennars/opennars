@@ -319,7 +319,7 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
             return null;
 
         return $.inh(
-            y,//SetExt.make(y),
+            y, //SetExt.make(y),
             makeImageExt(x, op.getOperator(), (short) (x.size() - 1) /* position of the variable */)
         );
     }

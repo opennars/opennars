@@ -189,7 +189,7 @@ public class RuleMatch extends FindSubst {
 
 
         if (!Outp.isEmpty()) {
-            Term rederivedTerm = ((Compound)derivedTerm).substituted(Outp);
+            Term rederivedTerm = derivedTerm.substituted(Outp);
             Outp.clear();
 
             //its possible that the substitution produces an invalid term, ex: an invalid statement
