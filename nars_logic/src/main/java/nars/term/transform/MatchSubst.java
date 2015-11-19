@@ -293,7 +293,9 @@ public class MatchSubst {
             final Term xSubst = f.resolve(var);
 
             if (xSubst != null) {
-                ff.term = xSubst;
+                if (!ff.term.equals(xSubst)) {
+                    ff.match = false;
+                }
             }
             else {
                 ff.putVarX(var, ff.term);

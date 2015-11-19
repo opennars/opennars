@@ -7,6 +7,7 @@ import nars.Op;
 import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.term.transform.MatchSubst;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -43,7 +44,7 @@ public class UnificationTest2 extends UnificationTest {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        if (t2.hasAny(type)) {
+        if ((type==Op.VAR_PATTERN&&Variable.hasPatternVariable(t2)) || t2.hasAny(type)) {
             //this only tests assymetric matching
             return null;
         }

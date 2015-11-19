@@ -34,7 +34,9 @@ public interface TermContainer extends Comparable {
     }
 
 
-    /** tests if contains a term in the structural hash */
+    /** tests if contains a term in the structural hash
+     *  WARNING currently this does not detect presence of pattern variables
+     * */
     default boolean hasAny(final Op op) {
         return hasAny((1<<op.ordinal()));
     }
