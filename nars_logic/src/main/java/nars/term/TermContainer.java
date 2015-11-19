@@ -19,7 +19,8 @@ public interface TermContainer extends Comparable {
     boolean impossibleSubTermVolume(final int otherTermVolume);
 
 
-    default boolean impossibleToMatch(final int possibleSubtermStructure) {
+    /** TODO use hasAll or hasAny and test them */
+    @Deprecated default boolean impossibleToMatch(final int possibleSubtermStructure) {
         return Term.impossibleToMatch(
                 structure(),
                 possibleSubtermStructure
