@@ -127,7 +127,7 @@ public class MatchSubst {
      *  if insufficient power, terminate
      *  if permute, push restore state
      */
-    final static class Push implements PatternOp {
+    final static class Push extends Breakable {
         public final int divisor;
 
         public Push(int divisor) {
@@ -136,9 +136,12 @@ public class MatchSubst {
 
         @Override
         public int run(State f) {
-            if (!f.frame.match) return 0; //terminate
+            if (!f.frame.match) {
+                return -failTo;
+            }
+            else
+                f.pushIn(); //proceed
 
-            f.pushIn();
             return 1;
         }
 
@@ -349,12 +352,16 @@ public class MatchSubst {
 
                 boolean permute = c.isCommutative();
 
-                code.add(new Push(s));
+                List<Breakable> breakToEndBeforePop = Global.newArrayList(s);
+                List<Breakable> breakToEndAfterPop = Global.newArrayList(s); //avoids pop
+
+                Push push = new Push(s);
+                breakToEndAfterPop.add(push);
+                code.add(push);
 
                 int savePoint = code.size(); //+1?
 
                 //TODO 2-phase match
-                List<Breakable> breakables = Global.newArrayList(s);
 
                 int i = 0;
                 for (Term x : c) {
@@ -373,7 +380,7 @@ public class MatchSubst {
                     else {
                         b = new IfFailPermute(savePoint);
                     }
-                    breakables.add(b);
+                    breakToEndBeforePop.add(b);
                     code.add(b);
 
                     i++;
@@ -383,7 +390,8 @@ public class MatchSubst {
                 int endCompound = code.size();
                 code.add(Pop);
 
-                breakables.forEach(b -> b.failTo = endCompound);
+                breakToEndBeforePop.forEach(b -> b.failTo = endCompound);
+                breakToEndAfterPop.forEach(b -> b.failTo = endCompound+1);
 
                 return;
             }
@@ -524,9 +532,10 @@ public class MatchSubst {
 
         /** pops and returns the parent term */
         public final Frame popOut() {
-            //if (stack.isEmpty()) return null;
-            Frame inner = this.frame;
+
             Frame outer = stack.pop();
+
+            Frame inner = this.frame;
 
 //            //frame.perm = outer.perm;
 //            frame.parent = (Compound) outer.term;
@@ -549,20 +558,24 @@ public class MatchSubst {
 
         /** returns true if there exist further permutations */
         public final boolean restoreAndPermuteNext() {
-            Frame previous = stack.getFirst(); //previously pushed outer to restore to
 
             final Frame f = this.frame;
 
-            if (f.xyChanged) {
-                f.xy.clear();
-                f.xy.putAll(previous.xy);
-                f.xyChanged = false;
-            }
-            if (f.yxChanged) {
-                f.yx.clear();
-                f.yx.putAll(previous.yx);
-                f.yxChanged = false;
-            }
+            //if (!stack.isEmpty()) {
+                Frame previous = stack.getFirst(); //previously pushed outer to restore to
+
+
+                if (f.xyChanged) {
+                    f.xy.clear();
+                    f.xy.putAll(previous.xy);
+                    f.xyChanged = false;
+                }
+                if (f.yxChanged) {
+                    f.yx.clear();
+                    f.yx.putAll(previous.yx);
+                    f.yxChanged = false;
+                }
+            //}
 
             return f.match = f.perm.hasNextThenNext();
         }
