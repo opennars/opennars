@@ -3,10 +3,8 @@ package nars.term.transform;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal4.Image;
-import nars.term.CommonVariable;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
+import nars.util.data.random.XorShift1024StarRandom;
 
 import java.io.Serializable;
 import java.util.*;
@@ -50,17 +48,35 @@ public class MatchSubst {
 
         /** if match not successful, does not cause the execution to
          * terminate but instead sets the frame's match flag */
-        abstract public boolean match(State f);
+        abstract public boolean match(Term f);
 
         @Override
         public int run(State f) {
-            f.match = match(f);
+            f.match = match(f.frame.term);
             return 1;
         }
 
         @Override
         public String toString() {
             return "MatchOp{}";
+        }
+    }
+
+    public static final class MatchAtom extends MatchOp {
+        public final AbstractAtomic a;
+
+        public MatchAtom(AbstractAtomic a) {
+            this.a = a;
+        }
+
+        @Override
+        public boolean match(Term t) {
+            return a.equals(t);
+        }
+
+        @Override
+        public String toString() {
+            return "MatchAtom{" +  a +  '}';
         }
     }
 
@@ -74,8 +90,8 @@ public class MatchSubst {
         }
 
         @Override
-        public boolean match(State f) {
-            return (f.term.op() == type && f.term.size() == size);
+        public boolean match(Term t) {
+            return (t.op() == type && t.size() == size);
         }
 
         @Override
@@ -92,8 +108,8 @@ public class MatchSubst {
         public MatchImageIndex(int index) {
             this.index = index;
         }
-        @Override public boolean match(State f) {
-            return ((Image)f.term).relationIndex == index;
+        @Override public boolean match(Term t) {
+            return ((Image)t).relationIndex == index;
         }
 
         @Override
@@ -108,26 +124,30 @@ public class MatchSubst {
      *  if insufficient power, terminate
      *  if permute, push restore state
      */
-    final static class DescendPush implements PatternOp {
+    final static class Push implements PatternOp {
         public final int divisor;
         public final boolean permute;
 
-        public DescendPush(int divisor, boolean permute) {
+        public Push(int divisor, boolean permute) {
             this.divisor = divisor;
             this.permute = permute;
         }
 
         @Override
         public int run(State f) {
-            f.parent = ((Compound)f.term);
-            if (permute)
-                f.save();
+            Term t = f.frame.term;
+            if (!(t instanceof Compound)) {
+                f.match = false; //requires compound to descend into
+            }
+            else {
+                f.pushIn(permute);
+            }
             return 1;
         }
 
         @Override
         public String toString() {
-            return "DescendPush{" +
+            return "Push{" +
                     "divisor=" + divisor +
                     ", permute=" + permute +
                     '}';
@@ -144,7 +164,8 @@ public class MatchSubst {
 
         @Override
         public final int run(State f) {
-            f.term = f.parent.term(index);
+            Frame ff = f.frame;
+            ff.term = ff.parent.term(index);
             return 1;
         }
 
@@ -165,7 +186,8 @@ public class MatchSubst {
 
         @Override
         public final int run(State f) {
-            f.term = f.parent.term(f.frame.perm.get(index));
+            Frame ff = f.frame;
+            ff.term = ff.term.term(ff.perm.get(index));
             return 1;
         }
 
@@ -178,15 +200,15 @@ public class MatchSubst {
     }
 
     /** subsequence success, restore power minus what was consumed - prepare for pop */
-    final static PatternOp SubSuccess = new PatternOp() {
-        @Override public final int run(State f) {
-            f.term = f.parent; //up
+    final static PatternOp Pop = new PatternOp() {
+        @Override public final int run(State s) {
+            s.popOut(); //up
             return 1;
         }
 
         @Override
         public String toString() {
-            return "SubSuccess{}";
+            return "Pop{}";
         }
     };
 
@@ -250,22 +272,21 @@ public class MatchSubst {
         }
         @Override public int run(State f) {
 
-            Term xSubst = f.resolve(var);
+            final Frame ff = f.frame;
+            final Term xSubst = f.resolve(var);
+
             if (xSubst != null) {
-                f.term = xSubst;
+                ff.term = xSubst;
             }
             else {
-                //final Op xOp = var.op();
-                f.frame.putVarX(var, f.term);
+                ff.putVarX(var, ff.term);
             }
             return 1;
         }
 
         @Override
         public String toString() {
-            return "SubstItVar{" +
-                    "var=" + var +
-                    '}';
+            return "SubstItVar{" +  var + '}';
         }
     }
 
@@ -277,22 +298,21 @@ public class MatchSubst {
 
     /** represents the "program" that the matcher will execute */
     public static class TermPattern {
-        final Op type;
+
         final PatternOp[] code;
 
         public TermPattern(Op type, Term pattern) {
-            this.type = type;
 
             List<PatternOp> code = Global.newArrayList();
 
             //compile the code
-            compile(pattern, code);
+            compile(type, pattern, code);
             code.add(EndAfterIfMatchSuccess);
 
             this.code = code.toArray(new PatternOp[code.size()]);
         }
 
-        private void compile(Term t, List<PatternOp> code) {
+        private void compile(Op type, Term t, List<PatternOp> code) {
             if (t instanceof Variable) {
                 Variable v = (Variable)t;
                 if (t.op() == type) {
@@ -311,7 +331,7 @@ public class MatchSubst {
                 boolean permute = c.isCommutative();
 
                 int savePoint = code.size();
-                code.add(new DescendPush(s, permute));
+                code.add(new Push(s, permute));
 
                 //TODO 2-phase match
                 int i = 0;
@@ -321,7 +341,7 @@ public class MatchSubst {
                     else
                         code.add(new SelectPermutedSubTerm(i));
 
-                    compile(x, code);
+                    compile(type, x, code);
 
                     if (!permute)
                         code.add(IfFailEnd);
@@ -330,8 +350,11 @@ public class MatchSubst {
 
                     i++;
                 }
-                code.add(SubSuccess);
+                code.add(Pop);
                 return;
+            }
+            else if (t instanceof AbstractAtomic) {
+                code.add(new MatchAtom((AbstractAtomic)t));
             }
 
             //code.add(new MatchIt(v));
@@ -339,9 +362,7 @@ public class MatchSubst {
 
         @Override
         public String toString() {
-            return "TermPattern{" + type +
-                    ", code=" + Arrays.toString(code) +
-                    '}';
+            return "TermPattern{" + Arrays.toString(code) + '}';
         }
     }
 
@@ -353,6 +374,10 @@ public class MatchSubst {
 
         /** X var -> Y term mapping */
         public final Map<Term, Term> xy;
+
+        public Term term; //mutable
+
+        public final Random rng;
         private boolean xyChanged = false;
 
         /** Y var -> X term mapping */
@@ -360,17 +385,40 @@ public class MatchSubst {
         private boolean yxChanged = false;
 
         ShuffleTermVector perm;
+        public Compound parent;
 
-        public Frame() {
+        Frame(Random rng) {
+            this.rng = rng;
+
+            term = null;
             perm = null;
             xy = Global.newHashMap();
             yx = Global.newHashMap();
         }
 
-        public Frame(Frame frame) {
-            perm = frame.perm;
+        public Frame(Random rng, Term nonCompound) {
+            this(rng);
+            this.parent = null;
+            this.term = nonCompound;
+        }
+
+        public Frame(Random rng, Compound parent) {
+            this(rng);
+
+            this.parent = parent;
+        }
+
+        public Frame(Frame frame, boolean permute) {
+            this.parent = (Compound)frame.term;
+            this.rng = frame.rng;
             xy = Global.newHashMap(frame.xy);
             yx = Global.newHashMap(frame.yx);
+            if (permute) {
+                perm = new ShuffleTermVector(frame.rng, term);
+            }
+            else {
+                perm = null;
+            }
         }
 
 
@@ -399,7 +447,7 @@ public class MatchSubst {
 
         @Override
         public String toString() {
-            return "{" + xy + ", " + yx + '}';
+            return "{" + term + " in " + parent + ": " + xy + ", " + yx + '}';
         }
     }
 
@@ -411,41 +459,49 @@ public class MatchSubst {
         final Deque<Frame> stack = new ArrayDeque();
 
         /** current frame */
-        Frame frame = new Frame();
-
-        /** current term */
-        public Term term;
-
-        /** current parent compound (for returning from subterm) */
-        public Compound parent;
+        public Frame frame;
 
         final public Consumer<State> onSuccess;
 
-        public State(Term term, Consumer<State> onSuccess) {
-            this.term = term;
+        public State(Random rng, Term term, Consumer<State> onSuccess) {
+            this.frame = new Frame(rng, term);
             this.onSuccess = onSuccess;
         }
 
         @Override
         public String toString() {
-            return "State{" +
-                    "match=" + match +
+            return "State{" + stack.size() + ", " +
+                    match +
                     ", frame=" + frame +
                     '}';
         }
 
-        public void save() {
-            stack.push(new Frame(frame));
+        public void pushIn(boolean permute) {
+            Frame innerFrame = new Frame(frame, permute);
+            stack.push(frame);
+            this.frame = innerFrame;
+            System.out.println("\nPUSH  " + frame.term + " IN " + frame.parent + "\n");        }
+
+        /** pops and returns the parent term */
+        public final Frame popOut() {
+            if (stack.isEmpty()) return null;
+            Frame popped = stack.pop();
+
+            frame.parent = (Compound) popped.parent;
+            System.out.println("\nPOP  " + frame.term + " IN " + frame.parent + "\n");
+
+            return popped;
         }
 
         /** returns true if there exist further permutations */
-        public boolean restoreAndPermuteNext() {
-            Frame popped = stack.pop(); //previously pushed frame to restore to
-            if (popped.xyChanged)
-                frame.xy.clear(); frame.xy.putAll(popped.xy);
-            if (popped.yxChanged)
-                frame.yx.clear(); frame.yx.putAll(popped.yx);
-            return ((frame.perm = popped.perm).hasNextThenNext());
+        public final boolean restoreAndPermuteNext() {
+            //Frame inner = this.frame;
+            Frame outer = popOut(); //previously pushed outer to restore to
+//            if (inner.xyChanged)
+//                outer.xy.clear(); outer.xy.putAll(inner.xy);
+//            if (inner.yxChanged)
+//                outer.yx.clear(); outer.yx.putAll(inner.yx);
+            return outer.perm.hasNextThenNext();
         }
 
         public final Term resolve(Term xVar) {
@@ -454,25 +510,20 @@ public class MatchSubst {
 
     }
 
-    public static final State next(Op type, final Term pattern, final Term y, int power) {
+    public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onSuccess) {
         TermPattern p = new TermPattern(type, pattern);
         System.out.println(pattern + "\n" + p);
 
-        State[] success = new State[1];
-        next(p, y, power, (f) -> {
-            success[0] = f;
-        });
-        return success[0];
+        next(rng, p, y, power, onSuccess);
     }
 
     /** find substitutions, returning the success state.
      * this method should be used only from the outside.
      * all internal purposes should use the find() method
      * in order to manage decrease in power correctly */
-    public static final boolean next(final TermPattern x, final Term y, int power, Consumer<State> success) {
+    public static final boolean next(Random rng, final TermPattern x, final Term y, int power, Consumer<State> success) {
 
-
-        State s = new State(y, success);
+        State s = new State(rng, y, success);
 
         final PatternOp code[] = x.code;
         int ip = 0; //instruction pointer
@@ -485,6 +536,8 @@ public class MatchSubst {
             final int result = o.run(s);
 
             System.out.println(ip + "\t" + o + " -> " + result);
+//            System.out.println("\t\t" + s);
+//            System.out.println("\n");
 
             switch (result) {
                 case 0: ip = -1; break; //failure
@@ -497,8 +550,14 @@ public class MatchSubst {
     }
 
     public static void main(String[] args) {
-        State result = MatchSubst.next(Op.VAR_PATTERN, $("<%x --> y>"), $("<a --> y>"), 100);
-        System.out.println(result);
+        MatchSubst.next(new XorShift1024StarRandom(1),
+            Op.VAR_PATTERN,
+            $("<%x --> y>"), $("<a --> y>"),
+            100,
+            (s) -> {
+                System.out.println(s);
+            }
+        );
     }
 
 }
