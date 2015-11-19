@@ -3,7 +3,10 @@ package nars.term.transform;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal4.Image;
-import nars.term.*;
+import nars.term.CommonVariable;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variable;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.io.Serializable;
@@ -23,25 +26,16 @@ returned indicates success value to the callee.  */
 public class MatchSubst {
 
 
-    private static final Map<Term,Term> newDefaultMap() {
-        return Global.newHashMap(0);
-    }
-
-    public MatchSubst(Random random) {
-        this.random = random;
-    }
 
     /** pattern opcodes */
     interface PatternOp extends Serializable {
+
         /** return -1 to continue but specify an IP (invert the value),
          *  +1 to continue to next
          *  0 to fail
          */
         int run(State f);
 
-//        default int run(State f) {
-//            return 1;
-//        }
     }
 
     public abstract static class MatchOp implements PatternOp {
@@ -53,7 +47,7 @@ public class MatchSubst {
         @Override
         public int run(State f) {
 
-            /* DEBUG */ if (!f.frame.match) throw new RuntimeException("should have terminated already");
+            ///* DEBUG */ if (!f.frame.match) throw new RuntimeException("should have terminated already");
 
             f.frame.match = match(f.frame.term);
             return 1;
@@ -65,10 +59,10 @@ public class MatchSubst {
         }
     }
 
-    public static final class MatchAtom extends MatchOp {
-        public final AbstractAtomic a;
+    public static final class MatchTerm extends MatchOp {
+        public final Term a;
 
-        public MatchAtom(AbstractAtomic a) {
+        public MatchTerm(Term a) {
             this.a = a;
         }
 
@@ -79,32 +73,62 @@ public class MatchSubst {
 
         @Override
         public String toString() {
-            return "MatchAtom{" +  a +  '}';
+            return "Term{" +  a +  '}';
+        }
+    }
+    public static final class TermSizeEquals extends MatchOp {
+        public final int size;
+
+        public TermSizeEquals(int size) {
+            this.size = size;
+        }
+
+        @Override
+        public boolean match(Term t) {
+            return t.size() == size;
+        }
+
+        @Override
+        public String toString() {
+            return "TermSizeEq{" + size + '}';
+        }
+    }
+    public static final class TermVolumeMin extends MatchOp {
+        public final int volume;
+
+        public TermVolumeMin(int volume) {
+            this.volume = volume;
+        }
+
+        @Override
+        public boolean match(Term t) {
+            return t.size() >= volume;
+        }
+
+        @Override
+        public String toString() {
+            return "TermVolumeMin{" + volume + '}';
         }
     }
 
-    public static final class MatchCompound extends MatchOp {
-        public final int size;
+    public static final class TermOpEquals extends MatchOp {
         public final Op type;
 
-        public MatchCompound(Op type, int size) {
-            this.size = size;
+        public TermOpEquals(Op type) {
             this.type = type;
         }
 
         @Override
         public boolean match(Term t) {
-            return (t.op() == type && t.size() == size);
+            return t.op() == type;
         }
 
         @Override
         public String toString() {
-            return "MatchCompound{" +
-                    "size=" + size +
-                    ", type=" + type +
-                    '}';
+            return "TermOpEq{" + type + '}';
         }
     }
+
     public static final class MatchImageIndex extends MatchOp {
         public final int index;
 
@@ -117,9 +141,7 @@ public class MatchSubst {
 
         @Override
         public String toString() {
-            return "MatchImageIndex{" +
-                    "index=" + index +
-                    '}';
+            return "MatchImageIndex{" + index + '}';
         }
     }
 
@@ -130,7 +152,8 @@ public class MatchSubst {
     final static class Push extends Breakable {
         public final int divisor;
 
-        public Push(int divisor) {
+        public Push(int divisor, Collection<Breakable> linkToBreak) {
+            super(linkToBreak);
             this.divisor = divisor;
         }
 
@@ -163,16 +186,13 @@ public class MatchSubst {
 
         @Override
         public final int run(State f) {
-            Frame ff = f.frame;
-            ff.term = ff.parent.term(index);
+            f.frame.selectSubTerm(index);
             return 1;
         }
 
         @Override
         public String toString() {
-            return "SelectSubTerm{" +
-                    "index=" + index +
-                    '}';
+            return "SelectSubTerm{" + index + '}';
         }
     }
     /** select subterm i */
@@ -185,19 +205,13 @@ public class MatchSubst {
 
         @Override
         public final int run(State f) {
-            Frame ff = f.frame;
-
-            /* DEBUG */ if (!ff.parent.isCommutative()) throw new RuntimeException("only commutative");
-
-            ff.term = ff.parent.term(ff.perm.get(index));
+            f.frame.selectPermutedSubTerm(index);
             return 1;
         }
 
         @Override
         public String toString() {
-            return "SelectPermutedSubTerm{" +
-                    "index=" + index +
-                    '}';
+            return "SelectPermutedSubTerm{"  + index + '}';
         }
     }
 
@@ -235,13 +249,16 @@ public class MatchSubst {
         /** target where to break to */
         public int failTo; //TODO make final
 
+        public Breakable(Collection<Breakable> linkToBreak) {
+            linkToBreak.add(this);
+        }
     }
 
     /** if failed to match, terminate */
     final static class IfFailBreak extends Breakable {
 
-        public IfFailBreak() {
-
+        public IfFailBreak(Collection<Breakable> linkToBreak) {
+            super(linkToBreak);
         }
 
         @Override public int run(State f) {
@@ -255,12 +272,13 @@ public class MatchSubst {
     };
 
     /** if failure, restore last save and permute. if no further permutations, terminate */
-    final static class IfFailPermute extends Breakable {
+    final static class IfFailPermuteOrBreak extends Breakable {
 
         public final int returnTo; //program instruction pointer to return to repeat permute
 
 
-        public IfFailPermute(int returnTo) {
+        public IfFailPermuteOrBreak(int returnTo, Collection<Breakable> linkToBreak) {
+            super(linkToBreak);
             this.returnTo = returnTo;
         }
         @Override public int run(State f) {
@@ -335,69 +353,76 @@ public class MatchSubst {
         }
 
         private void compile(Op type, Term t, List<PatternOp> code) {
-            if (t instanceof Variable) {
-                Variable v = (Variable)t;
-                if (t.op() == type) {
-                    code.add(new SaveAs(v));
-                    return;
-                }
-            } else if (t instanceof Compound) {
+            if (t.op() == type) {
+                code.add(new SaveAs((Variable)t));
+                return;
+            }
+
+            boolean constant = false;
+
+            if ((type == Op.VAR_PATTERN && (!Variable.hasPatternVariable(t)))) {
+                constant = true;
+            }
+            if ((type != Op.VAR_PATTERN && !t.hasAny(type))) {
+                constant = true;
+            }
+
+            if (!constant && (t instanceof Compound)) {
                 Compound<?> c = (Compound)t;
 
+
+
                 int s = c.size();
-                code.add(new MatchCompound(c.op(), s)); //TODO varargs with greaterEqualSize etc
+
+                code.add(new TermOpEquals(c.op())); //TODO varargs with greaterEqualSize etc
+                code.add(new TermSizeEquals(c.size()));
+                //code.add(new TermVolumeMin(c.volume()));
+
                 if (c instanceof Image) {
                     code.add(new MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc
                 }
 
-                boolean permute = c.isCommutative();
+                boolean permute = c.isCommutative() && (s > 1);
 
                 List<Breakable> breakToEndBeforePop = Global.newArrayList(s);
                 List<Breakable> breakToEndAfterPop = Global.newArrayList(s); //avoids pop
 
-                Push push = new Push(s);
-                breakToEndAfterPop.add(push);
-                code.add(push);
+                code.add(new Push(s, breakToEndAfterPop));
 
-                int savePoint = code.size(); //+1?
+                int matchSubtermsStart = code.size();
 
                 //TODO 2-phase match
 
-                int i = 0;
-                for (Term x : c) {
-                    if (!permute)
-                        code.add(new SelectSubTerm(i));
-                    else
-                        code.add(new SelectPermutedSubTerm(i));
+
+
+                for (int i = 0; i < s; i++) {
+                    Term x = c.term(i);
+
+                    code.add( permute ?
+                            new SelectPermutedSubTerm(i) :
+                            new SelectSubTerm(i));
 
                     compile(type, x, code);
 
-
-                    final Breakable b;
-                    if (!permute) {
-                        b = new IfFailBreak();
-                    }
-                    else {
-                        b = new IfFailPermute(savePoint);
-                    }
-                    breakToEndBeforePop.add(b);
-                    code.add(b);
-
-                    i++;
+                    code.add( permute?
+                        new IfFailPermuteOrBreak(matchSubtermsStart, breakToEndBeforePop) :
+                        new IfFailBreak(breakToEndBeforePop)
+                    );
                 }
 
-                //exit: //TODO save this codepoint and replace in the above that reference
                 int endCompound = code.size();
+
                 code.add(Pop);
 
                 breakToEndBeforePop.forEach(b -> b.failTo = endCompound);
                 breakToEndAfterPop.forEach(b -> b.failTo = endCompound+1);
-
                 return;
             }
-            else if (t instanceof AbstractAtomic) {
-                code.add(new MatchAtom((AbstractAtomic)t));
-            }
+
+            code.add(new MatchTerm(t));
+
+
+            //throw new RuntimeException("unknown compile behavior for term: " + t);
 
             //code.add(new MatchIt(v));
         }
@@ -408,8 +433,6 @@ public class MatchSubst {
         }
     }
 
-
-    private final Random random;
 
 
     public static class Frame {
@@ -460,7 +483,7 @@ public class MatchSubst {
 
         final private void init(Compound parent) {
             this.parent = parent;
-            if (parent!=null && parent.isCommutative()) {
+            if (parent!=null && parent.isCommutative() && parent.size() > 1) {
                 perm = new ShuffleTermVector(rng, parent);
             }
         }
@@ -496,6 +519,18 @@ public class MatchSubst {
         @Override
         public String toString() {
             return "{" + term + " in " + parent + ": " + match + ", " + xy + ", " + yx + '}';
+        }
+
+        public final Term selectSubTerm(int index) {
+            return term = parent.term(index);
+        }
+
+        public final Term selectPermutedSubTerm(int index) {
+
+            /* DEBUG */ if (!parent.isCommutative())
+                throw new RuntimeException("only commutative but parent=" + parent);
+            term = parent.term(perm.get(index));
+            return term;
         }
     }
 
@@ -605,7 +640,6 @@ public class MatchSubst {
         int ip = s.frame.ip; //instruction pointer
 
         do {
-
 
             PatternOp o = code[ip];
 

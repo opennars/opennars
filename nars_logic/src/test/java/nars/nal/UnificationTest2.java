@@ -32,7 +32,16 @@ public class UnificationTest2 extends UnificationTest {
         return t;
     }
 
-    @Override FindSubst test(Op type, String s1, String s2, boolean shouldSub) {
+    @Override
+    FindSubst test(Op type, String s1, String s2, boolean shouldSub) {
+
+        for (int i = 0; i < 5; i++) {
+            test(i, type, s1, s2, shouldSub);
+        }
+        return null;
+    }
+
+    FindSubst test(int seed, Op type, String s1, String s2, boolean shouldSub) {
 
         Global.DEBUG = true;
         TestNAR test = test();
@@ -55,7 +64,7 @@ public class UnificationTest2 extends UnificationTest {
 
         final boolean[] foundAny = {false};
 
-        final XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
+        final XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
 
         MatchSubst.next(rng, type, t1, t2, power, sub-> {
 

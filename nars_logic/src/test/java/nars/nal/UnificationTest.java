@@ -336,6 +336,24 @@ public class UnificationTest  {
                 "{<(z,x) --> on>, c:{a,b}}",
                 true);
     }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_c1()  {
+        test(Op.VAR_PATTERN,
+                "{<(z,%1) --> on>, c:{a,b}}",
+                "{<(z,x) --> on>, c:{a,b}}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_c2()  {
+        test(Op.VAR_PATTERN,
+                "{<(%1, z) --> on>, c:{a,b,c}}",
+                "{<(x, z) --> on>, c:{a,b,c}}",
+                true);
+    }
+    @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_s()  {
+        test(Op.VAR_PATTERN,
+                "{<{%1,x} --> on>, c:{a,b}}",
+                "{<{z,x} --> on>, c:{a,b}}",
+                true);
+    }
 
 
     @Test public void pattern_trySubs_Pattern_Var_2_setComplex1()  {

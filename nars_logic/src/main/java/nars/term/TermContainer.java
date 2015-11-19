@@ -38,6 +38,8 @@ public interface TermContainer extends Comparable {
      *  WARNING currently this does not detect presence of pattern variables
      * */
     default boolean hasAny(final Op op) {
+//        if (op == Op.VAR_PATTERN)
+//            return Variable.hasPatternVariable(this);
         return hasAny((1<<op.ordinal()));
     }
 
@@ -49,7 +51,7 @@ public interface TermContainer extends Comparable {
 
     default boolean hasAny(final int structuralVector) {
         final int s = structure();
-        return (s | structuralVector) == s;
+        return (s & structuralVector) != 0;
     }
 
     default boolean impossibleSubterm(final Term target) {
