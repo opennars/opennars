@@ -52,6 +52,9 @@ public class MatchSubst {
 
         @Override
         public int run(State f) {
+
+            /* DEBUG */ if (!f.frame.match) throw new RuntimeException("should have terminated already");
+
             f.frame.match = match(f.frame.term);
             return 1;
         }
@@ -126,22 +129,16 @@ public class MatchSubst {
      */
     final static class Push implements PatternOp {
         public final int divisor;
-        public final boolean permute;
 
-        public Push(int divisor, boolean permute) {
+        public Push(int divisor) {
             this.divisor = divisor;
-            this.permute = permute;
         }
 
         @Override
         public int run(State f) {
-            Term t = f.frame.term;
-            if (!(t instanceof Compound)) {
-                f.frame.match = false; //requires compound to descend into
-            }
-            else {
-                f.pushIn(permute);
-            }
+            if (!f.frame.match) return 0; //terminate
+
+            f.pushIn();
             return 1;
         }
 
@@ -149,7 +146,6 @@ public class MatchSubst {
         public String toString() {
             return "Push{" +
                     "divisor=" + divisor +
-                    ", permute=" + permute +
                     '}';
         }
     }
@@ -187,9 +183,9 @@ public class MatchSubst {
         @Override
         public final int run(State f) {
             Frame ff = f.frame;
-            if (ff.perm == null) {
-                ff.perm = new ShuffleTermVector(ff.rng, ff.parent);
-            }
+
+            /* DEBUG */ if (!ff.parent.isCommutative()) throw new RuntimeException("only commutative");
+
             ff.term = ff.parent.term(ff.perm.get(index));
             return 1;
         }
@@ -205,6 +201,7 @@ public class MatchSubst {
     /** subsequence success, restore power minus what was consumed - prepare for pop */
     final static PatternOp Pop = new PatternOp() {
         @Override public final int run(State s) {
+
             return s.popOut()!=null ? 1 : 0;
         }
 
@@ -215,7 +212,7 @@ public class MatchSubst {
     };
 
     /** subsequence success, restore power minus what was consumed - prepare for pop */
-    final static PatternOp EndAfterIfMatchSuccess = new PatternOp() {
+    final static PatternOp EndAfterSuccessSupply = new PatternOp() {
         @Override public final int run(State f) {
             if (f.frame.match) {
                 f.onSuccess.accept(f);
@@ -230,35 +227,49 @@ public class MatchSubst {
         }
     };
 
+    abstract public static class Breakable implements PatternOp {
+
+        /** target where to break to */
+        public int failTo; //TODO make final
+
+    }
+
     /** if failed to match, terminate */
-    final static PatternOp IfFailPop = new PatternOp() {
+    final static class IfFailBreak extends Breakable {
+
+        public IfFailBreak() {
+
+        }
+
         @Override public int run(State f) {
             if (f.frame.match) return 1;
-            return f.popOut()!=null ? (f.frame.match ? 1 : 0) : 0;
+            return -failTo;
         }
-        @Override
-        public String toString() {
-            return "IfFailPop{}";
+
+        @Override public String toString() {
+            return "IfFailBreak{}";
         }
     };
 
     /** if failure, restore last save and permute. if no further permutations, terminate */
-    final static class IfFailRestoreAndMutate implements PatternOp {
-        public final int returnTo; //program instruction pointer to return to
+    final static class IfFailPermute extends Breakable {
 
-        public IfFailRestoreAndMutate(int returnTo) {
+        public final int returnTo; //program instruction pointer to return to repeat permute
+
+
+        public IfFailPermute(int returnTo) {
             this.returnTo = returnTo;
         }
         @Override public int run(State f) {
             if (!f.frame.match) {
 
                 if (!f.restoreAndPermuteNext()) {
-                    return 0;
+                    return -failTo;
+                }
+                else {
+                    return -returnTo;
                 }
 
-                f.frame.match = true;
-
-                return -returnTo;
             }
 
             return 1;
@@ -266,16 +277,14 @@ public class MatchSubst {
 
         @Override
         public String toString() {
-            return "IfFailRestoreAndMutate{" +
-                    "returnTo=" + returnTo +
-                    '}';
+            return "IfFailPermute{}";
         }
     }
 
-    final static class SubstItVar implements PatternOp {
+    final static class SaveAs implements PatternOp {
         public final Variable var;
 
-        public SubstItVar(Variable v) {
+        public SaveAs(Variable v) {
             this.var = v;
         }
         @Override public int run(State f) {
@@ -294,7 +303,7 @@ public class MatchSubst {
 
         @Override
         public String toString() {
-            return "SubstItVar{" +  var + '}';
+            return "SaveAs{" +  var + '}';
         }
     }
 
@@ -315,7 +324,7 @@ public class MatchSubst {
 
             //compile the code
             compile(type, pattern, code);
-            code.add(EndAfterIfMatchSuccess);
+            code.add(EndAfterSuccessSupply);
 
             this.code = code.toArray(new PatternOp[code.size()]);
         }
@@ -324,7 +333,7 @@ public class MatchSubst {
             if (t instanceof Variable) {
                 Variable v = (Variable)t;
                 if (t.op() == type) {
-                    code.add(new SubstItVar(v));
+                    code.add(new SaveAs(v));
                     return;
                 }
             } else if (t instanceof Compound) {
@@ -338,10 +347,13 @@ public class MatchSubst {
 
                 boolean permute = c.isCommutative();
 
+                code.add(new Push(s));
+
                 int savePoint = code.size(); //+1?
-                code.add(new Push(s, permute));
 
                 //TODO 2-phase match
+                List<Breakable> breakables = Global.newArrayList(s);
+
                 int i = 0;
                 for (Term x : c) {
                     if (!permute)
@@ -351,14 +363,26 @@ public class MatchSubst {
 
                     compile(type, x, code);
 
-                    if (!permute)
-                        code.add(IfFailPop);
-                    else
-                        code.add(new IfFailRestoreAndMutate(savePoint));
+
+                    final Breakable b;
+                    if (!permute) {
+                        b = new IfFailBreak();
+                    }
+                    else {
+                        b = new IfFailPermute(savePoint);
+                    }
+                    breakables.add(b);
+                    code.add(b);
 
                     i++;
                 }
+
+                //exit: //TODO save this codepoint and replace in the above that reference
+                int endCompound = code.size();
                 code.add(Pop);
+
+                breakables.forEach(b -> b.failTo = endCompound);
+
                 return;
             }
             else if (t instanceof AbstractAtomic) {
@@ -397,6 +421,7 @@ public class MatchSubst {
 
         ShuffleTermVector perm;
         public Compound parent;
+        public int ip;
 
         Frame(Random rng) {
             this.rng = rng;
@@ -407,28 +432,31 @@ public class MatchSubst {
             yx = Global.newHashMap();
         }
 
-        public Frame(Random rng, Term nonCompound) {
+        public Frame(Random rng, Term root) {
             this(rng);
             this.parent = null;
-            this.term = nonCompound;
+            this.term = root;
         }
 
-        public Frame(Random rng, Compound parent) {
-            this(rng);
+        Frame(Random rng, Compound parent, Map<Term, Term> xyToClone, Map<Term, Term> yxToClone, int ip) {
+            this.rng = rng;
+            this.xy = Global.newHashMap(xyToClone);
+            this.yx = Global.newHashMap(yxToClone);
+            this.ip = ip;
 
+            init(parent);
+
+        }
+
+        final private void init(Compound parent) {
             this.parent = parent;
+            if (parent!=null && parent.isCommutative()) {
+                perm = new ShuffleTermVector(rng, parent);
+            }
         }
 
-        public Frame(Frame frame, boolean permute) {
-            this.parent = (Compound)frame.term;
-            this.rng = frame.rng;
-            xy = Global.newHashMap(frame.xy);
-            yx = Global.newHashMap(frame.yx);
-            if (permute) {
-                perm = new ShuffleTermVector(frame.rng, parent);
-            } else {
-                perm = null;
-            }
+        public Frame(Frame frame) {
+            this(frame.rng, (Compound)frame.term, frame.xy, frame.yx, frame.ip);
         }
 
 
@@ -482,38 +510,59 @@ public class MatchSubst {
             return "State[" + stack.size() + "]" + frame;
         }
 
-        public final void pushIn(boolean permute) {
-            Frame innerFrame = new Frame(frame, permute);
-            stack.push(frame);
-            this.frame = innerFrame;
+        public final void pushIn() {
 
-            System.out.println("\nPUSH  " + frame.term + " IN " + frame.parent + "\n");
+            Frame outer = this.frame;
+            stack.push(outer);
+            this.frame = new Frame(outer);
+
+            System.out.println("PUSH  ->" + outer.term + " IN " + outer.parent);
+            System.out.println("PUSH  <-" + frame.term + " IN " + frame.parent + "\n");
         }
 
         /** pops and returns the parent term */
         public final Frame popOut() {
             //if (stack.isEmpty()) return null;
-            Frame popped = stack.pop();
+            Frame inner = this.frame;
+            Frame outer = stack.pop();
 
-            //frame.perm = popped.perm;
-            frame.parent = (Compound) popped.parent;
-            System.out.println("\nPOP  " + frame.term + " IN " + frame.parent + "\n");
+//            //frame.perm = outer.perm;
+//            frame.parent = (Compound) outer.term;
+            if (!inner.match)
+                outer.match = false; //propagate failure upwards
+            else {
+                outer.xy.clear();
+                outer.xy.putAll(inner.xy);
+                outer.yx.clear();
+                outer.yx.putAll(inner.yx);
+            }
 
-            return popped;
+            System.out.println("POP  <- " + inner.term + " IN " + inner.parent);
+            System.out.println("POP  -> " + outer.term + " IN " + outer.parent + "\n");
+
+            outer.ip = inner.ip;
+
+            return this.frame = outer;
         }
 
         /** returns true if there exist further permutations */
         public final boolean restoreAndPermuteNext() {
-            //Frame inner = this.frame;
-            Frame previous = stack.getFirst();//popOut(); //previously pushed outer to restore to
+            Frame previous = stack.getFirst(); //previously pushed outer to restore to
 
-            //frame.perm = previous.perm;
+            final Frame f = this.frame;
 
-//            if (inner.xyChanged)
-//                outer.xy.clear(); outer.xy.putAll(inner.xy);
-//            if (inner.yxChanged)
-//                outer.yx.clear(); outer.yx.putAll(inner.yx);
-            return frame.perm.hasNextThenNext();
+            if (f.xyChanged) {
+                f.xy.clear();
+                f.xy.putAll(previous.xy);
+                f.xyChanged = false;
+            }
+            if (f.yxChanged) {
+                f.yx.clear();
+                f.yx.putAll(previous.yx);
+                f.yxChanged = false;
+            }
+
+            return f.match = f.perm.hasNextThenNext();
         }
 
         public final Term resolve(Term xVar) {
@@ -538,25 +587,36 @@ public class MatchSubst {
         State s = new State(rng, y, success);
 
         final PatternOp code[] = x.code;
-        int ip = 0; //instruction pointer
+        int ip = s.frame.ip; //instruction pointer
 
         do {
+
+
             PatternOp o = code[ip];
 
 
+            System.out.println(ip + "\t" + o);
 
             final int result = o.run(s);
 
-            System.out.println(ip + "\t" + o + " -> " + result);
+            ip = s.frame.ip; //read ip
+
             System.out.println("\t\t" + s);
-            System.out.println("\n");
 
             switch (result) {
                 case 0: ip = -1; break; //failure
                 case 1: ip++;  break;
-                default:
-                    ip = -result;  break;
+                default: {
+                    if (result < 0)
+                        ip = -result;
+                    else
+                        throw new RuntimeException("?");
+                    break;
+                }
             }
+
+            s.frame.ip = ip; //store ip
+
         } while (ip >= 0);
 
         return s.frame.match;
