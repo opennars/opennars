@@ -49,7 +49,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     /** minimum NAL level necessary to involve this postcondition */
     public final int minNAL;
 
-    public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
+    public static final Set<Atom> reservedMetaInfoCategories = new HashSet(9);
 
     static {
         reservedMetaInfoCategories.add(Atom.the("Truth"));
@@ -60,6 +60,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         reservedMetaInfoCategories.add(Atom.the("Info"));
         reservedMetaInfoCategories.add(Atom.the("Event"));
         reservedMetaInfoCategories.add(Atom.the("Punctuation"));
+        reservedMetaInfoCategories.add(Atom.the("SequenceIntervals"));
     }
 
     final static Atom
@@ -153,6 +154,10 @@ public class PostCondition implements Serializable, Level //since there can be m
 
                 case "Order":
                     //ignore, because this only affects at TaskRule construction
+                    break;
+
+                case "SequenceIntervals":
+
                     break;
 
                 default:

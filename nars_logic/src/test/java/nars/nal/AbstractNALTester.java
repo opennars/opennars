@@ -82,14 +82,14 @@ abstract public class AbstractNALTester {
         /*l.add( supply("Default[NAL<=" + level + "]",
                 () -> new Default(new LocalMemory(), 512,1,2,3).nal(finalLevel) ) );*/
 
-        l.add( supply("Default2[NAL<=" + level + "]",
+        /*l.add( supply("Default2[NAL<=" + level + "]",
             () -> {
                 Default2 d = new Default2(512,2,2,3);
                 d.nal(finalLevel);
                 d.getInput().inputPerCycle.set(6);
                 return d;
             }
-        ) );
+        ) );*/ //im not interested in multistep for now
 
         if (!requireMultistep) {
             l.add( supply("SingleStep[NAL<=" + level + "]",

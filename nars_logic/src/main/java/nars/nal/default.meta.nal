@@ -346,7 +346,7 @@
 
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
 
-    //the first rule does not have Order:ForAllSame because it would be invalid, see: https://groups.google.com/forum/#!topic/open-nars/r5UJo64Qhrk
+//the first rule does not have Order:ForAllSame because it would be invalid, see: https://groups.google.com/forum/#!topic/open-nars/r5UJo64Qhrk
     ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
     ((&&,A_1..n) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
     ((&&,A_1..n) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
