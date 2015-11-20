@@ -243,7 +243,7 @@ public class Patham9Test extends AbstractNALTester {
         tester.run();
     }*/
 
-    @Test
+   /* @Test
     public void induction_on_events_composition() throws Narsese.NarseseException {
         TestNAR tester = test();
 
@@ -254,6 +254,17 @@ public class Patham9Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<(&/,<(*,John,key) --> hold>,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>",
                 1.00f, 0.45f,
                 10);
+        tester.run();
+    }*/
+
+    @Test
+    public void inference_on_tense_nonvar() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(&/,<(John, key) --> hold>,/50) =/> <(John, room) --> enter>>.");
+        tester.input("<(John, key) --> hold>. :|:");
+
+        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, 55); //":\:"
         tester.run();
     }
 

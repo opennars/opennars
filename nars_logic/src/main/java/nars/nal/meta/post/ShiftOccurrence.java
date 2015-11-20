@@ -4,6 +4,8 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition1;
+import nars.nal.nal5.Implication;
+import nars.nal.nal7.Sequence;
 import nars.term.Atom;
 import nars.term.Term;
 
@@ -57,6 +59,20 @@ public class ShiftOccurrence extends PreCondition1 {
             //continue with derivation but dont apply shift
             return true;
         }
+
+        int shift = 0;
+        Term ret = m.premise.getTermLink().getTerm();
+        if(ret instanceof Implication) {
+            if(((Implication) ret).getSubject() instanceof Sequence) {
+                Sequence seq = (Sequence)((Implication) ret).getSubject();
+
+                if(seq.intervals().length>0 && positive) { //on backward its already handled by shifting (&/,a,/i) backward on i and changing it to a
+                    int interval = seq.intervals()[seq.intervals().length - 1];
+                    m.occurence_shift = positive ? interval : -interval;
+                }
+            }
+        }
+
 
         return super.test(m);
     }
