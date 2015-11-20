@@ -356,7 +356,7 @@
     ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
-//Introduce variables by common subject or predicate
+//Introduce variables by common subject or predicate 
 
     (S --> M), (P --> M), not_equal(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction),
                                             ((S --> $X) ==> (P --> $X)), (Truth:Induction),
