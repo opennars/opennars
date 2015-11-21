@@ -320,4 +320,13 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "(&/, <y --> Y>, /3, <z --> Z>).", 1.00f, 0.42f, 60);
         tester.run();
     }
+
+    @Test
+    public void intervalPreserve_and_shift_occurence_corner_case() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.input("<s --> S>.");
+        tester.inputAt(10, "(&/,<s --> S>,/50,<z --> Z>). :|:");
+        tester.mustBelieve(cycles, "<z --> Z>.", 1.00f, 0.42f, 60);
+        tester.run();
+    }
 }

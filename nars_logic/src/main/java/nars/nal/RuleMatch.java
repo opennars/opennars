@@ -264,26 +264,30 @@ public class RuleMatch extends FindSubst {
 
             //ok now we can finally copy the intervals.
 
-            int a = copy.terms().length;
-            int b =  paste.terms().length;
-            boolean sameLength = a == b;
-            boolean OneLess = a-1 == b;
+            if(copy!=null && paste!=null) {
+                int a = copy.terms().length;
+                int b = paste.terms().length;
+                boolean sameLength = a == b;
+                boolean OneLess = a - 1 == b;
 
-            if(!sameLength && !OneLess) {
-                System.out.println("the case where the resulting sequence has less elements should not happen and needs to be analyzed!!");
-            }
+                if (!sameLength && !OneLess) {
+                    System.out.println("the case where the resulting sequence has less elements should not happen and needs to be analyzed!!");
+                }
 
-            if(OneLess) {
-                occurence_shift = copy.intervals()[1]; //we shift according to first interval
-                for(int i=2;i<copy.intervals().length;i++) { //and copy the rest into the conclusion
-                    paste.intervals()[i-1] = copy.intervals()[i];
+                if (OneLess) {
+                    occurence_shift = copy.intervals()[1]; //we shift according to first interval
+                    for (int i = 2; i < copy.intervals().length; i++) { //and copy the rest into the conclusion
+                        paste.intervals()[i - 1] = copy.intervals()[i];
+                    }
+                } else if (sameLength) {
+                    for (int i = 0; i < copy.intervals().length; i++) {
+                        paste.intervals()[i] = copy.intervals()[i];
+                    }
                 }
             }
             else
-            if(sameLength) {
-                for(int i=0;i<copy.intervals().length;i++) {
-                    paste.intervals()[i] = copy.intervals()[i];
-                }
+            if(copy!=null && paste==null) { //ok we reduced to a single element, so its a one less case
+                occurence_shift = copy.intervals()[1];
             }
         }
 
