@@ -27,7 +27,8 @@ public class TaskRule extends ProductN implements Level {
 
     //match first rule pattern with task
 
-
+    public boolean sequenceIntervalsFromTask = false;
+    public boolean sequenceIntervalsFromBelief = false;
     public boolean allowQuestionTask=false;
 
     /** conditions which can be tested before term matching */

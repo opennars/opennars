@@ -68,7 +68,9 @@ public class PostCondition implements Serializable, Level //since there can be m
         conversion = Atom.the("Conversion"),
         contraposition = Atom.the("Contraposition"),
         identity = Atom.the("Identity"),
-        allowBackward = Atom.the("AllowBackward");
+        allowBackward = Atom.the("AllowBackward"),
+        fromTask = Atom.the("FromTask"),
+        fromBelief = Atom.the("FromBelief");
 
     /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
      *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
@@ -157,7 +159,13 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "SequenceIntervals":
-
+                    if(which.equals(fromBelief)) {
+                        rule.sequenceIntervalsFromBelief = true;
+                    }
+                    else
+                    if(which.equals(fromTask)) {
+                        rule.sequenceIntervalsFromTask = true;
+                    }
                     break;
 
                 default:

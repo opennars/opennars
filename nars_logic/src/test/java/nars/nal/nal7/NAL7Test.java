@@ -313,14 +313,11 @@ public class NAL7Test extends AbstractNALTester {
     S, (&&,S,A_1..n) |- (&&,A_1..n)   <- shift conclusion by the time of the first delay, and only use the rest
      */                                // of the interval also in the conclusion (interval2..n)
     @Test
-    public void intervalPreserve_derivation() throws Narsese.NarseseException {
+    public void intervalPreserve_and_shift_occurence() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.input("<s --> S>.");
         tester.inputAt(10, "(&/,<s --> S>,/50,<y --> Y>,/3,<z --> Z>). :|:");
-        tester.mustBelieve(cycles, "(&/,<y --> Y>,<z --> Z>).", 0.90f, 0.73f, 50);
+        tester.mustBelieve(cycles, "(&/, <y --> Y>, /3, <z --> Z>).", 1.00f, 0.42f, 60);
         tester.run();
-
-        //TODO also check if the interval /3 is the first and only interval in the conclusion!
-
     }
 }

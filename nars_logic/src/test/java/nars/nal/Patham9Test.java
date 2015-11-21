@@ -229,6 +229,15 @@ public class Patham9Test extends AbstractNALTester {
     }
 */
 
+    @Test
+    public void intervalPreserve_derivation() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.input("<s --> S>.");
+        tester.inputAt(10, "(&/,<s --> S>,/50,<y --> Y>,/3,<z --> Z>). :|:");
+        tester.mustBelieve(cycles, "(&/, <y --> Y>, /3, <z --> Z>).", 1.00f, 0.42f, 60);
+        tester.run();
+    }
+
 
    /* @Test
     public void induction_on_events2() throws Narsese.NarseseException {
