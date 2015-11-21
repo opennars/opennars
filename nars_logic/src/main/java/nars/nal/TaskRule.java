@@ -387,7 +387,7 @@ public class TaskRule extends ProductN implements Level {
                     break;
 
                 case "substitute_if_unifies":
-                    afterConcs.add(new SubstituteUnified(arg1, arg2, (Variable)args[2]));
+                    afterConcs.add(new SubstituteIfUnified(arg1, arg2, (Variable)args[2]));
                     break;
 
                 case "intersection":

@@ -257,14 +257,15 @@ public class Patham9Test extends AbstractNALTester {
         tester.run();
     }*/
 
+
     @Test
-    public void inference_on_tense_nonvar() throws Narsese.NarseseException {
+    public void inference_on_tense() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(&/,<(John, key) --> hold>,/50) =/> <(John, room) --> enter>>.");
-        tester.input("<(John, key) --> hold>. :|:");
+        tester.input("<(&/,<($x, key) --> hold>,/1) =/> <($x, room) --> enter>>.");
+        tester.input("<(John, key) --> hold>.");
 
-        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, 55); //":\:"
+        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, -50); //":\:"
         tester.run();
     }
 

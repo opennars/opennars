@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by me on 8/15/15.
  */
-public class SubstituteUnified extends Substitute {
+public class SubstituteIfUnified extends Substitute {
 
     final static Atom INDEP_VAR = Atom.the("$", true);
     final static Atom QUERY_VAR = Atom.the("?", true);
@@ -27,7 +27,7 @@ public class SubstituteUnified extends Substitute {
      * @param x original term
      * @param y replacement term
      */
-    public SubstituteUnified(Term varType, Term x, Variable y) {
+    public SubstituteIfUnified(Term varType, Term x, Variable y) {
         super(x, y);
 
         if (varType.equals(QUERY_VAR))  {

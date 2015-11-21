@@ -57,9 +57,14 @@ public class Substitute extends PreCondition {
         //(relevant for variable elimination rules)
 
 
-        if (!a.equals(b) && substitute(m, a, b)) {
+        boolean subs = substitute(m, a, b);
+        if (!a.equals(b) && subs) {
             m.outp.put(a, b);
         }
+        if(!subs && this instanceof SubstituteIfUnified) {
+            return false;
+        }
+
         return true;
     }
 
