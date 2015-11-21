@@ -330,9 +330,7 @@ public class TaskRule extends ProductN implements Level {
                 case "not_equal":
                     next = new NotEqual(arg1, arg2);
                     break;
-                case "equal":
-                    next = new Equal(arg1, arg2);
-                    break;
+
                 case "set_ext":
                     next = new ExtSet(arg1);
                     break;
@@ -390,7 +388,7 @@ public class TaskRule extends ProductN implements Level {
                     break;
 
                 case "substitute_if_unifies":
-                    afterConcs.add(new SubstituteIfUnified(arg1, arg2, (Variable)args[2]));
+                    afterConcs.add(new SubstituteIfUnified(arg1, arg2, args[2]));
                     break;
 
                 case "intersection":

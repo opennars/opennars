@@ -9,7 +9,7 @@ import nars.term.Variable;
 public class Substitute extends PreCondition {
 
     public final Term x;
-    public final Variable y;
+    public final Term y;
     private String str = null;
 
     /**
@@ -17,7 +17,7 @@ public class Substitute extends PreCondition {
      * @param x  original term
      * @param y  replacement term
      */
-    public Substitute(Term x, Variable y) {
+    public Substitute(Term x, Term y) {
         this.x = x;
         this.y = y;
 

@@ -27,7 +27,7 @@ public class SubstituteIfUnified extends Substitute {
      * @param x original term
      * @param y replacement term
      */
-    public SubstituteIfUnified(Term varType, Term x, Variable y) {
+    public SubstituteIfUnified(Term varType, Term x, Term y) {
         super(x, y);
 
         if (varType.equals(QUERY_VAR))  {

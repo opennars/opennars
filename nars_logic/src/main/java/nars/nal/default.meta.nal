@@ -446,8 +446,8 @@
 ////NAL7 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
-    C, <CI ==> B>, equal((&/,C,/1), CI), shift_occurrence_forward(CI,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    B, <CI ==> B>, equal((&/,C,/1), CI), shift_occurrence_backward(CI,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    X, (XI ==> B), substitute_if_unifies("$",XI,(&/,X,/1)), shift_occurrence_forward(XI,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    X, (BI ==> Y), substitute_if_unifies("$",Y,X), shift_occurrence_backward(BI,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
