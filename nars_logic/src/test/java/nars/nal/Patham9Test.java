@@ -258,16 +258,7 @@ public class Patham9Test extends AbstractNALTester {
     }*/
 
 
-    @Test
-    public void inference_on_tense() throws Narsese.NarseseException {
-        TestNAR tester = test();
 
-        tester.input("<(&/,<($x, key) --> hold>,/50) =/> <($x, room) --> enter>>.");
-        tester.input("<(John, key) --> hold>. :|:");
-
-        tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, 55); //":\:"
-        tester.run();
-    }
 
    /* @Test
     public void temporalOrder() throws Narsese.NarseseException {
@@ -283,6 +274,6 @@ public class Patham9Test extends AbstractNALTester {
 
 
 
-        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
-    }*/
-}
+//(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
+}*/
+        }

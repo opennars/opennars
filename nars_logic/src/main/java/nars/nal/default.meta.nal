@@ -301,6 +301,9 @@
     (M =\> P), (M =\> S), not_equal(S,P) |- (M =\> (P &| S)), (Truth:Intersection),
                                             (M =\> (P || S)), (Truth:Union)
 
+    (D =/> R), (D =\> K), not_equal(R,K) |- (K =/> R), (Truth:Abduction),
+                                            (R =\> K), (Truth:Induction),
+                                            (K </> R), (Truth:Comparison)
 //// implication-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
 
@@ -341,7 +344,7 @@
 //// multi-conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Inference about the pre/postconditions
 
-    ((&&,M,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromTask)
+    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
 
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
