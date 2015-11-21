@@ -443,20 +443,11 @@
     (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Induction)
     (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#X) |- ((&&,(#X --> L),(#X --> S),A_1..n) ==> R), (Truth:Intersection)
 
-////NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
+////NAL7 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
-    C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
-    C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
-
-    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
-    Y, ((&&,X,I) ==> B), shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    Y, ((&&,C,I) ==> X), shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
-
-    Y,((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
-    Y, ((&&,X,I) ==> B), shift_occurrence_forward(I,"==>"), substitute_if_unifies("$",X,Y)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    Y, ((&&,C,I) ==> X), shift_occurrence_backward(I,"==>"), substitute_if_unifies("$",X,Y) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    C, <CI ==> B>, equal((&/,C,/1), CI), shift_occurrence_forward(CI,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    B, <CI ==> B>, equal((&/,C,/1), CI), shift_occurrence_backward(CI,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
@@ -464,9 +455,9 @@
 //non-temporal rules shouldnt be used if there is a temporal one which can decide the temporal aspects
 
     P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
-                                                                                                   (P =\> (&/,S,I)), (Truth:Abduction),
-                                                                                                   ((&/,S,I) </> P), (Truth:Comparison),
-                                                                                                   (&/,S,I,P), (Truth:Intersection)
+                                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
+                                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
+                                                                                                                       (&/,S,I,P), (Truth:Intersection)
 
     P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
                                                                                                            (P =|> S), (Truth:Induction),

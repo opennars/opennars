@@ -330,6 +330,9 @@ public class TaskRule extends ProductN implements Level {
                 case "not_equal":
                     next = new NotEqual(arg1, arg2);
                     break;
+                case "equal":
+                    next = new Equal(arg1, arg2);
+                    break;
                 case "set_ext":
                     next = new ExtSet(arg1);
                     break;
