@@ -11,6 +11,7 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
+import nars.op.mental.Anticipate;
 import nars.task.FluentTask;
 import nars.task.PreTask;
 import nars.task.Task;
@@ -437,7 +438,9 @@ public class RuleMatch extends FindSubst {
             );
 
             if (derived != null) {
-                
+                if(premise.nal(7) && rule.anticipate) {
+                    premise.memory().the(Anticipate.class).anticipate(derived);
+                }
                 if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) {
                     derived.log(rule.toString());
                     //t.log(premise + "," + rule);

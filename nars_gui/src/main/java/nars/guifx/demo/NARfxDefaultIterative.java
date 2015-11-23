@@ -14,7 +14,7 @@ public class NARfxDefaultIterative {
 
         Global.DEBUG = false;
 
-        NARide.show(new SingleStepNAR().loop(), (i) -> {
+        NARide.show(new Default2(1000, 1, 1, 3).loop(), (i) -> {
             /*try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

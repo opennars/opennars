@@ -118,7 +118,7 @@ public class Anticipate {
             Collection<TaskTime> res = anticipations.get(c.getTerm());
             ArrayList<TaskTime> ToRemove = new ArrayList<TaskTime>();
             for(TaskTime tt : res) {
-                if(tt.inTime(c.getOccurrenceTime())) {
+                if(tt.inTime(c.getOccurrenceTime()) && !c.equals(tt.task)) {
                     ToRemove.add(tt);
                     happeneds++;
                 }
