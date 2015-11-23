@@ -409,7 +409,7 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,A, A_1..n), B, substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame, SequenceIntervals:FromTask)
+    (&&,A, A_1..n), B, substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromTask)
 
 //conditional abduction by dependent variable
 
