@@ -333,8 +333,7 @@
 
 //// conjunction decompose
 
-    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
-    (&|,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
+    (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:Strong, Order:ForAllSame)
     (&/,B,A_1..n), B, task("!") |- (&/,A_1..n), (Desire:Strong, SequenceIntervals:FromTask)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
@@ -528,12 +527,3 @@
 //compound composition one premise
 
     (||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-
-//////FINISHING NAL7/8:
-//back to temporal forward inference, the missing part, TODO: Sort into relevant rule categories.
-
-//NAL7 specific:
-    (&/,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
-    (&/,A_1..n), A_1, task("!") |- A_1, (Desire:StructuralDeduction, Punctuation:Goal)
-    (&|,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
-    (&|,A_1..n), A_1, task("!") |- A_1, (Desire:StructuralDeduction, Punctuation:Goal)
