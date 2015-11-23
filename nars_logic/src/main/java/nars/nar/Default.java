@@ -129,7 +129,7 @@ public class Default extends NAR {
                 /*for (OperatorReaction o : exampleOperators)
                     on(o);*/
 
-        //n.on(Anticipate.class);      // expect an event
+        n.on(Anticipate.class);      // expect an event
 
         new FullInternalExperience(this);
         new Abbreviation(this);
