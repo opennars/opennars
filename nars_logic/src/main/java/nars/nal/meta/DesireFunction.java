@@ -48,10 +48,9 @@ public enum DesireFunction implements TruthFunction {
             return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     },
-    StructuralDeduction() {
+    StructuralStrong() {
         @Override public Truth get(final Truth T, final Truth B) {
-            //if (B == null) return null;
-            return TruthFunctions.deduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
+            return TruthFunctions.desireStrong(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     }
     ;

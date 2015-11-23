@@ -206,7 +206,7 @@ import java.util.function.Supplier;
 public class Patham9Test extends AbstractNALTester {
 
 
-    final int cycles = 1000;
+    final int cycles = 2000;
 
     public Patham9Test(Supplier<NAR> b) {
         super(b);
@@ -252,13 +252,13 @@ public class Patham9Test extends AbstractNALTester {
     }*/
 
     @Test
-    public void further_detachment_2() throws Narsese.NarseseException {
+    public void detaching_single_premise2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(SELF,{t002}) --> reachable>. :|:");
-        tester.inputAt(10, "<(&/,<(SELF,{t002}) --> reachable>,pick({t002}))=/><(SELF,{t002}) --> hold>>.");
+        tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) )!");
 
-        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF, {t002}) --> hold>>", 1.0f, 0.81f, 22); // :|:
+
+        tester.mustDesire(cycles, "<(SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
 

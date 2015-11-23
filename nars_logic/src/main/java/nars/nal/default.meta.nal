@@ -333,7 +333,7 @@
 
 //// conjunction decompose
 
-    (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:Strong, Order:ForAllSame)
+    (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong, Order:ForAllSame)
     (&/,B,A_1..n), B, task("!") |- (&/,A_1..n), (Desire:Strong, SequenceIntervals:FromTask)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
