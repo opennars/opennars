@@ -298,7 +298,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<({t003}) --> ^goto>. :|: ");
         tester.inputAt(10, "<<($1) --> ^goto> =/> <(SELF,$1) --> at>>. ");
 
-        tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<(SELF, {t003}) --> at>", 1.0f, 0.81f, 5); // :|:
         tester.run();
     }
 
