@@ -70,7 +70,8 @@ public class PostCondition implements Serializable, Level //since there can be m
         identity = Atom.the("Identity"),
         allowBackward = Atom.the("AllowBackward"),
         fromTask = Atom.the("FromTask"),
-        fromBelief = Atom.the("FromBelief");
+        fromBelief = Atom.the("FromBelief"),
+        anticipate = Atom.the("Anticipate");
 
     /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
      *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
@@ -155,6 +156,13 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "Order":
+                    //ignore, because this only affects at TaskRule construction
+                    break;
+
+                case "Event":
+                    if(which.equals(anticipate)) {
+                        rule.anticipate = true;
+                    }
                     //ignore, because this only affects at TaskRule construction
                     break;
 

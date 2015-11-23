@@ -423,7 +423,7 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    B, (A ==> C), substitute_if_unifies("$",A,B), shift_occurrence_forward(A,"==>")  |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (A ==> C), substitute_if_unifies("$",A,B), shift_occurrence_forward(A,"==>")  |- C, (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
     B, (C ==> A), substitute_if_unifies("$",A,B), shift_occurrence_backward(A,"==>") |- C, (Truth:Abduction, Order:ForAllSame)
 
     B, (A <=> C), substitute_if_unifies("$",A,B), shift_occurrence_backward(C,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
@@ -450,7 +450,7 @@
 ////NAL7 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
-    X, (XI ==> B), substitute_if_unifies("$",XI,(&/,X,/1)), shift_occurrence_forward(XI,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    X, (XI ==> B), substitute_if_unifies("$",XI,(&/,X,/1)), shift_occurrence_forward(XI,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
     X, (BI ==> Y), substitute_if_unifies("$",Y,X), shift_occurrence_backward(BI,"==>") |- BI, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
