@@ -36,9 +36,9 @@ public class FilterDuplicateExistingBelief { //implements DerivationFilter {
 
         switch (t.getPunctuation()) {
             case Symbols.JUDGMENT:
-                return c.getBeliefs().contains(t);
+                return !c.getBeliefs().contains(t);
             case Symbols.GOAL:
-                return c.getGoals().contains(t);
+                return !c.getGoals().contains(t);
             default:
                 return false;
         }

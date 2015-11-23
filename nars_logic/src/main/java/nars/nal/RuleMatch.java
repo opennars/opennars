@@ -175,8 +175,10 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
-
         Term derivedTerm;
+
+        if (null == (derivedTerm = resolve(outcome.term)))
+            return null;
 
         Term taskpart = rule.terms()[0].term(0);
         Term beliefpart = rule.terms()[0].term(1);
@@ -216,9 +218,6 @@ public class RuleMatch extends FindSubst {
                 }
             }
         }
-
-        if (null == (derivedTerm = resolve(outcome.term)))
-            return null;
 
         if(mode != Nothing) {
 

@@ -146,14 +146,14 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void temporal_abduction_2() throws Narsese.NarseseException {
+    public void temporal_deduction_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(&/, <(SELF,{t002}) --> hold>, <(SELF,{t001}) --> at>, open({t001})) =/> <{t001} --> [opened]>>.");
         tester.inputAt(10, "<(SELF,{t002}) --> hold>. :|: ");
 
         //mustBelieve?
-        tester.mustDesire(cycles, "<(&/, <(SELF,{t001}) --> at>, open({t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
+        tester.mustDesire(cycles, "<(&/, <(SELF,{t001}) --> at>, open({t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.81f, 16); // :|:
         tester.run();
     }
 

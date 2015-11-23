@@ -214,7 +214,7 @@ public class Patham9Test extends AbstractNALTester {
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTester.nars(7, false);
+        return AbstractNALTester.nars(8, false);
     }
 /*
     @Test
@@ -230,11 +230,13 @@ public class Patham9Test extends AbstractNALTester {
 */
 
     @Test
-    public void intervalPreserve_and_shift_occurence2() throws Narsese.NarseseException {
+    public void detaching_single_premise2() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.input("<s --> S>.");
-        tester.inputAt(10, "(&/,<s --> S>,/50,<z --> Z>). :|:");
-        tester.mustBelieve(cycles, "<z --> Z>.", 1.00f, 0.42f, 60);
+
+        tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) ).");
+
+
+        tester.mustDesire(cycles, "<(SELF,{t001}) --> at>", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
