@@ -210,7 +210,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(SELF,{t001}) --> at>!");
         tester.inputAt(10, "<goto($1)=/><(SELF,$1) --> at>>.");
 
-        tester.mustDesire(cycles, "goto({t001})", 1.0f, 0.81f, 10); // :|:
+        tester.mustDesire(cycles, "goto({t001})", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
@@ -221,7 +221,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("(^goto,{t001}). :\\: ");
         tester.inputAt(10, "<(^goto,$1)=/><(*,SELF,$1) --> at>>. ");
 
-        tester.mustBelieve(cycles, "<(*,SELF,{t001}) --> at>", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<(*,SELF,{t001}) --> at>", 1.0f, 0.81f, 0); // :|:
         tester.run();
     }
 
