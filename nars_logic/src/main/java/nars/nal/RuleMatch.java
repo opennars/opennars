@@ -437,6 +437,7 @@ public class RuleMatch extends FindSubst {
             );
 
             if (derived != null) {
+                
                 if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) {
                     derived.log(rule.toString());
                     //t.log(premise + "," + rule);
