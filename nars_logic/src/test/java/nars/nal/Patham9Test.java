@@ -252,13 +252,13 @@ public class Patham9Test extends AbstractNALTester {
     }*/
 
     @Test
-    public void goal_abduction_2() throws Narsese.NarseseException {
+    public void condition_goal_deduction_3() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,SELF,{t001}) --> at>. :|:");
-        tester.inputAt(10, "(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
+        tester.input("<(*,SELF,{t003}) --> at>! :|:");
+        tester.inputAt(10, "<(&/,goto($1),/1) =/> <(*,SELF,$1) --> at>>.");
 
-        tester.mustDesire(cycles, "(^open,{t001})", 1.0f, 0.81f); // :|:
+        tester.mustDesire(cycles, "goto({t003})", 1.0f, 0.81f, -6); // :|:
         tester.run();
     }
 
