@@ -86,15 +86,15 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void subgoal_1() throws Narsese.NarseseException {
+    public void subgoal_1_abd() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<{t001} --> [opened]>. :|:");
         tester.inputAt(10, "<(&/, <(SELF,{t002}) --> hold>, <(SELF,{t001}) --> at>, <({t001}) --> ^open>) =/> <{t001} --> [opened]>>.");
 
-        tester.mustDesire(cycles, "(&/, <(SELF,{t002}) --> hold>, <(SELF,{t001}) --> at>, <({t001}) --> ^open>)",
-                1.0f, 0.81f,
-                10); // :|:
+        tester.mustBelieve(cycles, "(&/, <(SELF, {t002}) --> hold>, <(SELF, {t001}) --> at>, open({t001}))",
+                1.0f, 0.45f,
+                -5); // :|:
         tester.run();
     }
 
@@ -105,8 +105,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("(&/,<(SELF,{t002}) --> hold>, <(SELF,{t001}) --> at>, open({t001}))!");
 
         tester.mustDesire(cycles, "<(SELF,{t002}) --> hold>",
-                1.0f, 0.81f,
-                0); // :|:
+                1.0f, 0.81f); // :|:
         tester.run();
     }
 
@@ -142,7 +141,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("pick({t002}). :\\: ");
         tester.inputAt(10, "<pick({t002}) =/> <(SELF,{t002}) --> hold>>. :\\: ");
 
-        tester.mustBelieve(cycles, "<(SELF,{t002}) --> hold>", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<(SELF,{t002}) --> hold>", 1.0f, 0.81f, 0); // :|:
         tester.run();
     }
 
@@ -177,7 +176,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(&/, <(SELF,{t002}) --> hold>, <(SELF, {t001}) --> at>, open({t001})) =/> <{t001} --> [opened]>>.");
         tester.inputAt(10, "<(SELF,{t002}) --> hold>. :|:");
 
-        tester.mustBelieve(cycles, "<(&/, <(SELF,{t001}) --> at>, open({t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.43f, 10); // :|:
+        tester.mustBelieve(cycles, "<(&/, <(SELF,{t001}) --> at>, open({t001})) =/> <{t001} --> [opened]>>", 1.0f, 0.81f, 10); // :|:
         tester.run();
     }
 
@@ -320,7 +319,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(*,SELF,{t003}) --> at>. :|:");
         tester.inputAt(10, "<(&/,goto($1),/1) =/> <(*,SELF,$1) --> at>>.");
 
-        tester.mustDesire(cycles, "goto({t003})", 1.0f, 0.81f, -6); // :|:
+        tester.mustBelieve(cycles, "goto({t003})", 1.0f, 0.45f, -6); // :|:
         tester.run();
     }
 
