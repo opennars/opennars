@@ -237,13 +237,13 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
-    public void goal_abduction_2() throws Narsese.NarseseException {
+    public void goal_ded_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t001}) --> at>. :|:");
         tester.inputAt(10, "(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))!");
 
-        tester.mustDesire(cycles, "(^open,{t001})", 1.0f, 0.43f); // :|:
+        tester.mustDesire(cycles, "(^open,{t001})", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
