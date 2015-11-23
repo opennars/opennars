@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTester {
 
-    final int cycles = 200;
+    final int cycles = 500;
     int exeCount = 0;
     private TermFunction exeFunc;
 
@@ -105,7 +105,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(SELF,{t002}) --> reachable>. :|:");
         tester.inputAt(10, "(&/, <(SELF,{t002}) --> reachable>, pick({t002}))!");
 
-        tester.mustDesire(cycles, "pick({t002})", 1.0f, 0.42f, 10); // :|:
+        tester.mustDesire(cycles, "pick({t002})", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
@@ -117,7 +117,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(SELF,{t002}) --> reachable>. :|:");
         tester.inputAt(10, "<(&/,<(SELF,{t002}) --> reachable>,pick({t002}))=/><(SELF,{t002}) --> hold>>.");
 
-        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF,{t002}) --> hold>>", 1.0f, 0.81f, 10); // :|:
+        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF, {t002}) --> hold>>", 1.0f, 0.81f, 22); // :|:
         tester.run();
     }
 
@@ -175,7 +175,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("(&/,<(*,SELF,{t002}) --> reachable>,pick({t002}))!");
 
 
-        tester.mustDesire(cycles, "<(*,SELF,{t002}) --> reachable>", 1.0f, 0.81f, 10); // :|:
+        tester.mustDesire(cycles, "<(*,SELF,{t002}) --> reachable>", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
@@ -296,7 +296,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<({t003}) --> ^goto>. :|: ");
         tester.inputAt(10, "<<($1) --> ^goto> =/> <(SELF,$1) --> at>>. ");
 
-        tester.mustBelieve(cycles, "<SELF --> (/,at,_,{t003})>", 1.0f, 0.81f,10); // :|:
+        tester.mustBelieve(cycles, "<(SELF, {t003}) --> at>", 1.0f, 0.81f,27); // :|:
         tester.run();
     }
 

@@ -206,7 +206,7 @@ import java.util.function.Supplier;
 public class Patham9Test extends AbstractNALTester {
 
 
-    final int cycles = 100;
+    final int cycles = 1000;
 
     public Patham9Test(Supplier<NAR> b) {
         super(b);
@@ -229,17 +229,38 @@ public class Patham9Test extends AbstractNALTester {
     }
 */
 
-    @Test
-    public void detaching_single_premise2() throws Narsese.NarseseException {
+  /*  @Test
+     public void detaching_single_premise2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) ).");
+        tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) )!");
 
 
-        tester.mustDesire(cycles, "<(SELF,{t001}) --> at>", 1.0f, 0.81f); // :|:
+        tester.mustDesire(cycles, "<(SELF, {t001}) --> at>", 1.0f, 0.81f); // :|:
+        tester.run();
+    }*/
+
+   /* @Test
+    public void further_detachment_2() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(SELF,{t002}) --> reachable>. :|:");
+        tester.inputAt(10, "<(&/,<(SELF,{t002}) --> reachable>,pick({t002}))=/><(SELF,{t002}) --> hold>>.");
+
+        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF, {t002}) --> hold>>", 1.0f, 0.81f, 15); // :|:
+        tester.run();
+    }*/
+
+    @Test
+    public void further_detachment_2() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(SELF,{t002}) --> reachable>. :|:");
+        tester.inputAt(10, "<(&/,<(SELF,{t002}) --> reachable>,pick({t002}))=/><(SELF,{t002}) --> hold>>.");
+
+        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF, {t002}) --> hold>>", 1.0f, 0.81f, 22); // :|:
         tester.run();
     }
-
 
    /* @Test
     public void induction_on_events2() throws Narsese.NarseseException {

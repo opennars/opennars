@@ -334,6 +334,8 @@
 //// conjunction decompose
 
     (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
+    (&|,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
+    (&/,B,A_1..n), B, task("!") |- (&/,A_1..n), (Desire:Strong, SequenceIntervals:FromTask)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
@@ -532,6 +534,6 @@
 
 //NAL7 specific:
     (&/,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
-    (&/,A_1..n), A_1, task("!") |- A_1, (Truth:StructuralDeduction, Punctuation:Goal)
+    (&/,A_1..n), A_1, task("!") |- A_1, (Desire:StructuralDeduction, Punctuation:Goal)
     (&|,A_1..n), A_1, task(".") |- A_1, (Truth:StructuralDeduction, Punctuation:Judgment)
-    (&|,A_1..n), A_1, task("!") |- A_1, (Truth:StructuralDeduction, Punctuation:Goal)
+    (&|,A_1..n), A_1, task("!") |- A_1, (Desire:StructuralDeduction, Punctuation:Goal)
