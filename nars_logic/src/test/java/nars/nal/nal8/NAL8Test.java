@@ -303,6 +303,17 @@ public class NAL8Test extends AbstractNALTester {
     }
 
     @Test
+    public void condition_goal_deduction_3__() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t003}) --> at>! :|:");
+        tester.inputAt(10, "<goto($1) =/> <(*,SELF,$1) --> at>>.");
+
+        tester.mustDesire(cycles, "goto({t003})", 1.0f, 0.81f, -5); // :|:
+        tester.run();
+    }
+
+    @Test
     public void conditional_abduction_test() throws Narsese.NarseseException { //maybe to nal7 lets see how we will split these in the future
         TestNAR tester = test();
 
