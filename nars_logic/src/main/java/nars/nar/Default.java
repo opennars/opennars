@@ -116,8 +116,10 @@ public class Default extends NAR {
             memory.the(new STMTemporalLinkage(this, core.deriver));
             memory.the(new Anticipate(this));
 
-            for (OperatorReaction o : exampleOperators)
-                onExec(o);
+            if(nal() >=8) {
+                for (OperatorReaction o : exampleOperators)
+                    onExec(o);
+            }
 
             if (nal() > 8) {
                 initNAL9();
