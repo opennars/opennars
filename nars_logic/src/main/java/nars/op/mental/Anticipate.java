@@ -27,15 +27,18 @@ import com.google.common.collect.Multimap;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
+import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import objenome.solver.evolve.grammar.Symbol;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -73,11 +76,7 @@ public class Anticipate {
     public double DEFAULT_CONFIRMATION_EXPECTATION = 0.6;
     public void anticipate(Compound term, long occurrenceTime, Task t) {
 
-        if (term instanceof Conjunction && term.getTemporalOrder() != Tense.ORDER_NONE) {
-            return;
-        }
-
-        if(t.getTruth().getExpectation()< DEFAULT_CONFIRMATION_EXPECTATION) {
+        if(t.getTruth().getExpectation() < DEFAULT_CONFIRMATION_EXPECTATION || t.getPunctuation() != Symbols.JUDGMENT) {
             return;
         }
 
@@ -89,7 +88,7 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipating " + term + " in " + (occurrenceTime - now));
 
-        TaskTime tt = new TaskTime(t, memory.duration());
+        TaskTime tt = new TaskTime(t, t.getCreationTime());
         anticipations.put(term, tt);
         updateNextRequiredTime(tt, now);
     }
@@ -104,17 +103,14 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        Task derived=nal.derive(nal.newTask(prediction)
-                .judgment()
-                .truth(expiredTruth)
-                .parent(tt.task)
-                .occurr(expectedOccurrenceTime)
-                .budget(tt.getBudget())
-                .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
-        );
-        /*if(derived!=null) {
-            stm.inductionOnSucceedingEvents(derived, tp, true); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
-        }*/
+        final Task derived = new FluentTask<>(prediction)
+                        .punctuation(Symbols.JUDGMENT)
+                        .truth(expiredTruth)
+                        .budget(tt.getBudget())
+                        .time(memory.time(), expectedOccurrenceTime)
+                        .parent(tt.task, null);
+
+        nar.input(derived);
     }
 
     /** called each cycle to update calculations of anticipations */
@@ -123,8 +119,6 @@ public class Anticipate {
         long now = nar.memory.time();
 
         if (anticipations.isEmpty()) return;
-
-        int dur = memory.duration();
 
         int news = newTaskTerms.size(), dids = 0, didnts =0, expireds = 0;
 
@@ -139,28 +133,21 @@ public class Anticipate {
 
                 TaskTime tt = tti.next();
 
-                long tOccurrs = tt.occurrTime;
-
-                if (now > tOccurrs - dur/2) {
+                if (now > tt.expiredate) {
                     tti.remove();
                     expireds++;
                     continue;
                 }
 
                 if (!tt.didNotAlreadyOccurr(now)) {
-                    //it happened, temporal induction will do the rest
+                    //it happened, general control will do the rest
                     tti.remove();
                     dids++;
                 }
             }
-
         }
 
         newTaskTerms.clear();
-
-        if ((nextUpdateTime == -1) || (nextUpdateTime > now)) return;
-
-        nextUpdateTime = -1;
 
         //2. derive from remaining anticipations
 
@@ -171,7 +158,7 @@ public class Anticipate {
             Compound term = t.getKey();
             TaskTime tt = t.getValue();
 
-            if (tt.didNotAlreadyOccurr(now)) {
+            if (now > tt.expiredate) {
                 deriveDidntHappen(term, tt);
 
                 it.remove();
@@ -184,7 +171,7 @@ public class Anticipate {
         }
 
         if (debug)
-            System.err.println(now + ": Anticipations: pending=" + anticipations.size() + " newTasks=" + news + ", dids=" + dids + " , didnts=" + didnts + ", expired=" + expireds + ", nextUpdate=" + nextUpdateTime);
+            System.err.println(now + ": Anticipations: pending=" + anticipations.size() + " newTasks=" + news + ", dids=" + dids + " , didnts=" + didnts + ", expired=" + expireds);
     }
 
     private void updateNextRequiredTime(final TaskTime tt, final long now) {
@@ -194,41 +181,9 @@ public class Anticipate {
         }
     }
 
-//    @Override
-//    public void onEnabled(NAR n) {
-//            newTaskTerms.clear();
-//            anticipations.clear();
-//    }
-//
-//    @Override
-//    public void onDisabled(NAR n) {
-//
-//    }
-
-    @Override
-    public void event(Class event, Object[] args) {
-
-        if (event == Events.TaskDeriveFuture.class) {
-
-            Task newEvent = (Task) args[0];
-            this.nal = (NAL)args[1];
-            anticipate(newEvent);
-
-        } else if (event == Events.InduceSucceedingEvent.class) {
-
-            Task newEvent = (Task) args[0];
-            this.nal = (NAL)args[1];
-            if (newEvent.getTruth() != null)
-                newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
-
-        }
-
-    }
-
-    private void anticipate(Task t) {
+    public void anticipate(Task t) {
         anticipate(t.getTerm(), t.getOccurrenceTime(), t);
     }
-
 
     /** Prediction point vector / centroid of a group of Tasks
      *      time a prediction is made (creationTime), and
@@ -239,35 +194,20 @@ public class Anticipate {
         final public Task task;
 
         /** cached locally, same value as in task */
-        final public long creationTime; //2014 and this is still the best way to define a data structure that simple
         final public long occurrTime;
+        public long creationTime;
 
         /** cached locally, same value as in task */
         final public long expiredate;
         private final int hash;
 
-        public TaskTime(Task task, long dura) {
+        public TaskTime(Task task, long creationTime) {
             super();
             this.task = task;
             this.creationTime = task.getCreationTime();
             this.occurrTime = task.getOccurrenceTime();
             this.hash = (int)(31 * creationTime + occurrTime);
-
-            //lets say a and <(&/,a,+4) =/> b> leaded to prediction of b with specific occurence time
-            //this indicates that this interval can be reconstructed by looking by when the prediction
-            //happened and for what time it predicted, Only when the happening would already lead to <(&/,a,+5) =/> b>
-            //we are allowed to apply CWA already, i think this is the perfect time to do this
-            //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
-            //also this way it is not applied to early, it seems to be the perfect time to me,
-            //making hopeExpirationWindow parameter entirely osbolete
-            int m = Interval.magnitude(getOccurrenceTime() - getCreationTime(), dura);
-
-            //ok we know the magnitude now, let's now construct a interval with magnitude one higher
-            //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
-            //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-
-            //TODO scale tolerance logarithmitcally up
-            expiredate = getCreationTime() + Interval.cycles(m + 1, dura);
+            expiredate = getOccurrenceTime()+task.duration();
         }
 
         public float getPriority() { return task.getPriority(); }
@@ -288,10 +228,6 @@ public class Anticipate {
             if (obj == this) return true;
             TaskTime t = (TaskTime)obj;
             return creationTime == t.creationTime  &&  occurrTime == t.occurrTime;
-        }
-
-        public boolean didNotAlreadyOccurr(long now) {
-            return now >= expiredate;
         }
 
         public Budget getBudget() {
