@@ -154,7 +154,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<(SELF,{t002}) --> hold>.");
         tester.inputAt(10, "(&/, <(SELF,{t002}) --> hold>, <(SELF,{t001}) --> at>, open({t001}) )!");
 
-        tester.mustDesire(cycles, "(&/,<(SELF,{t001}) --> at>,open({t001}))", 1.0f, 0.43f); // :|:
+        tester.mustDesire(cycles, "(&/,<(SELF,{t001}) --> at>,open({t001}))", 1.0f, 0.81f); // :|:
         tester.run();
     }
 
