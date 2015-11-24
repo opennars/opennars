@@ -14,7 +14,7 @@ import nars.guifx.util.NSlider;
 public class IOPane extends BorderPane implements FXIconPaneBuilder {
 
 
-    NSlider vs = new NSlider("Volume", 100, 45, NSlider.BarSlider, 0.5);
+    NSlider vs = new NSlider("Volume", 100, 45, NSlider.BarSlider, 0.0);
     DoubleProperty volume = vs.value[0];
 
     private final NAR nar;

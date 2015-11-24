@@ -195,6 +195,9 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Narsese;
+import nars.nar.Default;
+import nars.task.Task;
+import nars.term.Term;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -253,13 +256,9 @@ public class Patham9Test extends AbstractNALTester {
 
     @Test
     public void condition_goal_deduction_2() throws Narsese.NarseseException {
-        TestNAR tester = test();
-
-        tester.input("<(*,{t002},{t003}) --> on>. :|:");
-        tester.inputAt(10, "(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>)!");
-
-        tester.mustDesire(cycles, "<(*,SELF,{t003}) --> at>", 1.0f, 0.81f); // :|:
-        tester.run();
+        NAR nar = new Default();
+        Task t = nar.inputTask("<(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.");
+        int res = t.getTerm().complexity();
     }
 
 

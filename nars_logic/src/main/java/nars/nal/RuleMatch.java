@@ -408,6 +408,10 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
+        Compound wu = (Compound) derivedTerm;
+        if(wu.complexity()>17) {
+            return null;
+        }
 
         FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
