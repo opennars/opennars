@@ -44,7 +44,7 @@ import java.util.*;
  */
 public class Anticipate {
 
-    public double DEFAULT_CONFIRMATION_EXPECTATION = 0.5;
+    public double DEFAULT_CONFIRMATION_EXPECTATION = 0.51;
     public static double TOLERANCE_DIV=5.0;
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
@@ -122,7 +122,7 @@ public class Anticipate {
             Collection<TaskTime> res = anticipations.get(c.getTerm());
             ArrayList<TaskTime> ToRemove = new ArrayList<TaskTime>();
             for(TaskTime tt : res) {
-                if(tt.inTime(c.getOccurrenceTime()) && !c.equals(tt.task)) {
+                if(tt.inTime(c.getOccurrenceTime()) && !c.equals(tt.task) && tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
                     ToRemove.add(tt);
                     happeneds++;
                     System.out.println(tt.task.getTerm().toString());
