@@ -44,7 +44,7 @@ import java.util.*;
  */
 public class Anticipate {
 
-    public double DEFAULT_CONFIRMATION_EXPECTATION = 0.6;
+    public double DEFAULT_CONFIRMATION_EXPECTATION = 0.5;
     public static double TOLERANCE_DIV=5.0;
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
