@@ -95,6 +95,7 @@ public class Anticipate {
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
+        System.out.println(prediction.toString());
         long expectedOccurrenceTime = tt.occurrTime;
 
         //it did not happen, so the time of when it did not
@@ -114,6 +115,9 @@ public class Anticipate {
     }
 
     protected void mayHaveHappenedAsExpected(Task c) {
+        if(!c.isInput()) {
+            return; //it's not a input task, the system is not allowed to convince itself about the state of affairs ^^
+        }
         if(!c.isEternal()) {
             Collection<TaskTime> res = anticipations.get(c.getTerm());
             ArrayList<TaskTime> ToRemove = new ArrayList<TaskTime>();
@@ -121,6 +125,7 @@ public class Anticipate {
                 if(tt.inTime(c.getOccurrenceTime()) && !c.equals(tt.task)) {
                     ToRemove.add(tt);
                     happeneds++;
+                    System.out.println(tt.task.getTerm().toString());
                 }
             }
             for(TaskTime tt : ToRemove) {
