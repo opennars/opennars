@@ -1322,6 +1322,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      */
     public TaskProcess process(Task task) {
 
+        if(task==null) {
+            return null;
+        }
+
         final Budget taskBudget = task.getBudget();
 
 //        if (inputPriorityFactor != 1f) {

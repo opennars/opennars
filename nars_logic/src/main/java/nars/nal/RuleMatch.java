@@ -21,15 +21,14 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Substitution;
+import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 import nars.util.data.random.XorShift1024StarRandom;
 import objenome.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -131,7 +130,7 @@ public class RuleMatch extends FindSubst {
         this.rule = nextRule;
     }
 
-    public final Task apply(final PostCondition outcome) {
+    public final ArrayList<Task> apply(final PostCondition outcome) {
 
         Premise premise = this.premise;
 
@@ -465,7 +464,29 @@ public class RuleMatch extends FindSubst {
                     //t.log(premise + "," + rule);
                 }
 
-                return derived;
+                ArrayList<Task> ret = new ArrayList<Task>();
+                ret.add(derived);
+
+                if(truth != null && rule.immediate_eternalize && !derived.isEternal()) {
+                    Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(),truth.getConfidence()));
+                    FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
+                    Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
+
+                    final Task derivedEternal = premise.validate(deriving2
+                                    .punctuation(punct)
+                                    .truth(et)
+                                    .budget(budget)
+                                    .time(now, Stamp.ETERNAL)
+                                    .parent(task, belief // null if single
+                                      )
+                    );
+
+                    if(derivedEternal != null) {
+                        ret.add(derivedEternal);
+                    }
+                }
+
+                return ret;
             }
         }
 

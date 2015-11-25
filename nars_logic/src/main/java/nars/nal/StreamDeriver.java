@@ -3,6 +3,7 @@ package nars.nal;
 import nars.task.Task;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /** uses Java8 Stream API to apply rules to derivations
@@ -22,11 +23,11 @@ public class StreamDeriver extends SimpleDeriver {
                 //filter( /* filter the entire rule */ pcFilter).
                         map(r -> m.run(r)).
                         flatMap(p ->
-                                (p != null) ? Stream.of(p) : Stream.empty()
+                                        (p != null) ? Stream.of(p) : Stream.empty()
                         ).
                 //filter( /* filter each rule postcondition */ pcFilter).
                         map(p -> m.apply(p)).
-                        filter(t -> t != null);
+                        filter(t -> t != null).flatMap(l -> l.stream()).filter(s -> s!=null);
     }
 
 

@@ -259,7 +259,7 @@ public class Patham9Test extends AbstractNALTester {
     @Test
     public void condition_goal_deduction_2() throws Narsese.NarseseException {
         NAR nar = new Default();
-        DefaultTruth test = new DefaultTruth(1.0f,0.45f);
+        DefaultTruth test = new DefaultTruth(1.0f,0.31f);
         float ret = test.getExpectation();
         DefaultTruth test2 = TruthFunctions.deduction(test, 0.9f);
         float ret2 = test2.getExpectation();

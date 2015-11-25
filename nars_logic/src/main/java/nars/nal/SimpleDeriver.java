@@ -11,6 +11,7 @@ import nars.term.Term;
 import nars.util.db.TemporaryCache;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -197,9 +198,13 @@ public class SimpleDeriver extends Deriver  {
             if (pc != null) {
                 for (PostCondition p : pc) {
                     if (p.minNAL > level) continue;
-                    Task x = m.apply(p);
-                    if (x != null)
-                        t.accept(x);
+                    ArrayList<Task> Lx = m.apply(p);
+                    if(Lx!=null) {
+                        for (Task x : Lx) {
+                            if (x != null)
+                                t.accept(x);
+                        }
+                    }
                     /*else
                         System.out.println("Post exit: " + r + " on " + m.premise);*/
                 }

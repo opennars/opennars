@@ -61,6 +61,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         reservedMetaInfoCategories.add(Atom.the("Event"));
         reservedMetaInfoCategories.add(Atom.the("Punctuation"));
         reservedMetaInfoCategories.add(Atom.the("SequenceIntervals"));
+        reservedMetaInfoCategories.add(Atom.the("Eternalize"));
     }
 
     final static Atom
@@ -71,7 +72,8 @@ public class PostCondition implements Serializable, Level //since there can be m
         allowBackward = Atom.the("AllowBackward"),
         fromTask = Atom.the("FromTask"),
         fromBelief = Atom.the("FromBelief"),
-        anticipate = Atom.the("Anticipate");
+        anticipate = Atom.the("Anticipate"),
+        immediate = Atom.the("Immediate");
 
     /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
      *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
@@ -162,6 +164,13 @@ public class PostCondition implements Serializable, Level //since there can be m
                 case "Event":
                     if(which.equals(anticipate)) {
                         rule.anticipate = true;
+                    }
+                    //ignore, because this only affects at TaskRule construction
+                    break;
+
+                case "Eternalize":
+                    if(which.equals(immediate)) {
+                        rule.immediate_eternalize = true;
                     }
                     //ignore, because this only affects at TaskRule construction
                     break;
