@@ -196,6 +196,7 @@ package nars.nal;
 import nars.NAR;
 import nars.Narsese;
 import nars.nar.Default;
+import nars.nar.Default2;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
@@ -256,6 +257,24 @@ public class Patham9Test extends AbstractNALTester {
         tester.run();
     }*/
 
+
+    @Test
+    public void further_detachment_2() throws Narsese.NarseseException {
+        NAR nar =new Default2(1000, 1, 1, 3);
+
+        nar.input("<a --> A>. :|:");
+        nar.frame(4);
+        nar.input("<b --> B>. :|:");
+        nar.frame(30);
+        nar.input("<a --> A>. :|:");
+        nar.frame(4);
+        nar.input("<b --> B>. :|:");
+        nar.frame(30);
+        nar.input("<a --> A>. :|:");
+        nar.frame(4000);
+    }
+
+    /*
     @Test
     public void condition_goal_deduction_2() throws Narsese.NarseseException {
         NAR nar = new Default();
@@ -263,9 +282,9 @@ public class Patham9Test extends AbstractNALTester {
         float ret = test.getExpectation();
         DefaultTruth test2 = TruthFunctions.deduction(test, 0.9f);
         float ret2 = test2.getExpectation();
-        /*Task t = nar.inputTask("<(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.");
-        int res = t.getTerm().complexity();*/
-    }
+        //Task t = nar.inputTask("<(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.");
+        //int res = t.getTerm().complexity();
+    }*/
 
 
     /*
