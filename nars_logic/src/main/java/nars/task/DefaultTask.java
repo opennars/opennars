@@ -249,7 +249,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public final void setDuration(int duration) {
         /*if (this.duration!=Stamp.TIMELESS)
             throw new RuntimeException(this + " has corrupted duration");*/
-        if (duration <= 0)
+        if (duration < 0)
             throw new RuntimeException(this + " negative duration");
 
         final Term term = this.term;

@@ -136,6 +136,10 @@ public class RuleMatch extends FindSubst {
 
         final Task task = premise.getTask();
 
+        if(!task.isEternal() && task.getOccurrenceTime()<premise.time()-25) {
+            task.setDuration(1);
+            return null;
+        }
 
         /** calculate derived task truth value */
 

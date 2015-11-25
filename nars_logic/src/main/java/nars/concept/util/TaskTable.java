@@ -11,13 +11,23 @@ import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Iterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * holds a set of ranked question/quests tasks
  * top ranking items are stored in the lower indexes so they will be first iterated
  */
 public interface TaskTable extends Iterable<Task> {
+
+    public default void retain(Predicate<Task> p) {
+        Iterator<Task> ii = iterator();
+        while (ii.hasNext()) {
+            if (!p.test(ii.next()))
+                ii.remove();
+        }
+    }
 
     int getCapacity();
 

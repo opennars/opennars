@@ -40,11 +40,17 @@ import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.google.common.collect.Iterators.concat;
 
 public interface Concept extends Termed, Itemized<Term> {
 
+    default void retainTasks(Predicate<Task> p) {
+         getBeliefs().retain(p);
+         getGoals().retain(p);
+         getTaskLinks().retain(tl -> p.test(tl.getTask()));
+     }
 
 
     Bag<Task, TaskLink> getTaskLinks();

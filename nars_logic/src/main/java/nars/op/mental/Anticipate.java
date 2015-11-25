@@ -28,8 +28,10 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
+import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.concept.Concept;
 import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
@@ -139,6 +141,11 @@ public class Anticipate {
     int happeneds = 0, didnts = 0;
 
     protected void updateAnticipations() {
+
+        /* doesnt work
+        nar.forEachConcept(c -> {
+           c.retainTasks(h -> !h.isEternal() && h.getOccurrenceTime()<nar.time()-100);
+        }); */
 
         long now = nar.memory.time();
 
