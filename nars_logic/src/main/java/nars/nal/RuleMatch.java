@@ -24,6 +24,7 @@ import nars.term.transform.Substitution;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
+import objenome.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -408,8 +409,22 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
+        //if the complexity is higher than a specific limit, return
+        //currently 17 is chosen, as having beliefs of the form <(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.
+        //as the most complex one the system has to handle for now
         Compound wu = (Compound) derivedTerm;
         if(wu.complexity()>17) {
+            return null;
+        }
+
+        //for now we don't let the system compose &/ and &| terms together,
+        //also this was chosen taken the above term under consideration
+        if(wu.toString().replace("&|","").replace("&/","").length() < wu.toString().length()-2) { //more than one &x got removed so there were more than one
+            return null;
+        }
+
+        //also this one:
+        if(wu.toString().replace("(-,","").replace("(~,","").length() < wu.toString().length()-3) { //more than one &x got removed so there were more than one
             return null;
         }
 

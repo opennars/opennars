@@ -90,12 +90,13 @@ public class Anticipate {
             System.err.println("Anticipating " + t.getTerm() + " in " + (t.getOccurrenceTime() - now));
 
         TaskTime tt = new TaskTime(t, t.getCreationTime());
+        System.out.println("anticipating: "+tt.task.getTerm().toString());
         anticipations.put(t.getTerm(), tt);
     }
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
-        System.out.println(prediction.toString());
+        System.out.println("did not happen: "+prediction.toString());
         long expectedOccurrenceTime = tt.occurrTime;
 
         //it did not happen, so the time of when it did not
@@ -125,7 +126,7 @@ public class Anticipate {
                 if(tt.inTime(c.getOccurrenceTime()) && !c.equals(tt.task) && tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
                     ToRemove.add(tt);
                     happeneds++;
-                    System.out.println(tt.task.getTerm().toString());
+                    System.out.println("happened as expected: "+tt.task.getTerm().toString());
                 }
             }
             for(TaskTime tt : ToRemove) {

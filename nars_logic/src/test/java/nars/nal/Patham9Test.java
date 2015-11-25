@@ -198,6 +198,8 @@ import nars.Narsese;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
+import nars.truth.TruthFunctions;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -257,8 +259,12 @@ public class Patham9Test extends AbstractNALTester {
     @Test
     public void condition_goal_deduction_2() throws Narsese.NarseseException {
         NAR nar = new Default();
-        Task t = nar.inputTask("<(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.");
-        int res = t.getTerm().complexity();
+        DefaultTruth test = new DefaultTruth(1.0f,0.45f);
+        float ret = test.getExpectation();
+        DefaultTruth test2 = TruthFunctions.deduction(test, 0.9f);
+        float ret2 = test2.getExpectation();
+        /*Task t = nar.inputTask("<(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.");
+        int res = t.getTerm().complexity();*/
     }
 
 
