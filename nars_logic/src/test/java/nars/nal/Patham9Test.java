@@ -222,43 +222,9 @@ public class Patham9Test extends AbstractNALTester {
     public static Iterable configurations() {
         return AbstractNALTester.nars(8, false);
     }
-/*
-    @Test
-    public void temporalOrder() throws Narsese.NarseseException {
-        TestNAR tester = test();
-        tester.believe("<<m --> M> =/> <p --> P>>");
-        tester.believe("<<s --> S> <|> <m --> M>>", 0.90f, 0.9f);
-        tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.43f);
-        tester.run();
-
-        //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
-    }
-*/
-
-  /*  @Test
-     public void detaching_single_premise2() throws Narsese.NarseseException {
-        TestNAR tester = test();
-
-        tester.input("(&/, <(SELF,{t001}) --> at>, open({t001}) )!");
 
 
-        tester.mustDesire(cycles, "<(SELF, {t001}) --> at>", 1.0f, 0.81f); // :|:
-        tester.run();
-    }*/
-
-   /* @Test
-    public void further_detachment_2() throws Narsese.NarseseException {
-        TestNAR tester = test();
-
-        tester.input("<(SELF,{t002}) --> reachable>. :|:");
-        tester.inputAt(10, "<(&/,<(SELF,{t002}) --> reachable>,pick({t002}))=/><(SELF,{t002}) --> hold>>.");
-
-        tester.mustBelieve(cycles, "<pick({t002}) =/> <(SELF, {t002}) --> hold>>", 1.0f, 0.81f, 15); // :|:
-        tester.run();
-    }*/
-
-
-    @Test
+  /* @Test
     public void further_detachment_2() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
@@ -272,79 +238,26 @@ public class Patham9Test extends AbstractNALTester {
         nar.frame(30);
         nar.input("<a --> A>. :|:");
         nar.frame(4000);
+    }*/
+
+    @Test
+    public void noisetest() throws Narsese.NarseseException {
+        NAR nar =new Default2(1000, 1, 1, 3);
+
+        nar.input("<a --> A>. :|:");
+        nar.frame(2);
+        nar.input("<x --> X>. :|:");
+        nar.frame(2);
+        nar.input("<c --> C>. :|:");
+        nar.frame(30);
+        nar.input("<a --> A>. :|:");
+        nar.frame(2);
+        nar.input("<m --> M>. :|:");
+        nar.frame(2);
+        nar.input("<c --> C>. :|:");
+        nar.frame(30);
+        nar.input("<a --> A>. :|:");
+        nar.frame(4000);
     }
 
-    /*
-    @Test
-    public void condition_goal_deduction_2() throws Narsese.NarseseException {
-        NAR nar = new Default();
-        DefaultTruth test = new DefaultTruth(1.0f,0.31f);
-        float ret = test.getExpectation();
-        DefaultTruth test2 = TruthFunctions.deduction(test, 0.9f);
-        float ret2 = test2.getExpectation();
-        //Task t = nar.inputTask("<(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.");
-        //int res = t.getTerm().complexity();
-    }*/
-
-
-    /*
-    @Test
-    public void subgoal_1() throws Narsese.NarseseException {
-        TestNAR tester = test();
-
-        tester.input("<{t001} --> [opened]>. :|:");
-        tester.inputAt(10, "<(&/, <(SELF,{t002}) --> hold>, <(SELF,{t001}) --> at>, <({t001}) --> ^open>) =/> <{t001} --> [opened]>>!");
-
-        tester.mustDesire(cycles, "(&/, <(SELF, {t002}) --> hold>, <(SELF, {t001}) --> at>, open({t001}))",
-                1.0f, 0.45f,
-                -5); // :|:
-        tester.run();
-    }*/
-
-   /* @Test
-    public void induction_on_events2() throws Narsese.NarseseException {
-        TestNAR tester = test();
-
-        tester.input("<(*,John,door) --> open>. :|:");
-        tester.inputAt(6, "<(*,John,room) --> enter>. :|:");
-
-        tester.mustBelieve(cycles, "<<(John, door) --> open> =|> <(John, room) --> enter>>",
-                1.00f, 0.45f,
-                11);
-        tester.run();
-    }*/
-
-   /* @Test
-    public void induction_on_events_composition() throws Narsese.NarseseException {
-        TestNAR tester = test();
-
-
-        tester.input("<(*,John,key) --> hold>. :|:");
-        tester.inputAt(10, "<<(*,John,door) --> open> =/> <(*,John,room) --> enter>>. :|:");
-
-        tester.mustBelieve(cycles, "<(&/,<(*,John,key) --> hold>,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>",
-                1.00f, 0.45f,
-                10);
-        tester.run();
-    }*/
-
-
-
-
-   /* @Test
-    public void temporalOrder() throws Narsese.NarseseException {
-        SingleStepNAR tester = new SingleStepNAR();
-        tester.input("<<m --> M> =/> <p --> P>>.");
-        tester.input("<<s --> S> <|> <m --> M>>. %0.9;0.9%");
-
-        tester.frame(100);
-
-        DefaultConcept c1 = (DefaultConcept) tester.concept("<<s --> S> <|> <m --> M>>");
-
-        BeliefTable tbl = c1.getBeliefs();
-
-
-
-//(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
-}*/
-        }
+}

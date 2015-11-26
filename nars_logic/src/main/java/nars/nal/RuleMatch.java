@@ -479,7 +479,7 @@ public class RuleMatch extends FindSubst {
                     final Task derivedEternal = premise.validate(deriving2
                                     .punctuation(punct)
                                     .truth(et)
-                                    .budget(budget)
+                                    .budget(budget.clone()) //we use the stronger budget (budget) for now on purpose
                                     .time(now, Stamp.ETERNAL)
                                     .parent(task, belief // null if single
                                       )
