@@ -241,11 +241,9 @@ public class Patham9Test extends AbstractNALTester {
         nar.input("<b --> B>. :|:");
         nar.frame(30);
         nar.input("<a --> A>. :|:");
-        nar.frame(30);
-        nar.input("<b --> B>. :|:");
         nar.frame(4000);
 
-        String a ="anticipating: <a --> A>\nhappened as expected: <a --> A>\nanticipating: <a --> A>\ndid not happen: <a --> A>\n";
+        String a ="anticipating: <b --> B>\ndid not happen: <b --> B>\n";
         String b = Anticipate.teststring;
         if(!a.equals(b)) {
             throw new Narsese.NarseseException("testcase failed");
@@ -275,6 +273,18 @@ public class Patham9Test extends AbstractNALTester {
         nar.input("<a --> A>. :|:");
         nar.frame(2);
         nar.input("<m --> M>. :|:");
+        nar.frame(2);
+        nar.input("<c --> C>. :|:");
+        nar.frame(30);
+        nar.input("<a --> A>. :|:");
+        nar.frame(2);
+        nar.input("<k --> K>. :|:");
+        nar.frame(2);
+        nar.input("<c --> C>. :|:");
+        nar.frame(30);
+        nar.input("<a --> A>. :|:");
+        nar.frame(2);
+        nar.input("<h --> H>. :|:");
         nar.frame(2);
         nar.input("<c --> C>. :|:");
         nar.frame(30);

@@ -209,7 +209,7 @@ public class Default extends NAR {
 
         m.executionExpectationThreshold.set(0.5);
 
-        m.shortTermMemoryHistory.set(2);
+        m.shortTermMemoryHistory.set(10);
     }
 
 

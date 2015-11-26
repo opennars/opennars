@@ -164,7 +164,7 @@ public class Anticipate {
     public static String teststring = "";
     protected void updateAnticipations() {
 
-        nar.forEachConcept(c -> {
+        /*nar.forEachConcept(c -> {
            Bag<Task, TaskLink> ret = c.getTaskLinks();
            ret.forEach(tl -> {
                if(tl.getTask().getOccurrenceTime() < memory.time() - kickout_tolerance) {
@@ -179,7 +179,7 @@ public class Anticipate {
             c.getGoals().forEach(g -> {
                 kill(g.getTask());
             });
-        });
+        });*/
         /* doesnt work
         nar.forEachConcept(c -> {
            c.retainTasks(h -> !h.isEternal() && h.getOccurrenceTime()<nar.time()-100);
