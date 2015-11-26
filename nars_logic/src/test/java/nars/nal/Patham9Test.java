@@ -198,6 +198,7 @@ import nars.Narsese;
 import nars.concept.Concept;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.op.mental.Anticipate;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
@@ -224,11 +225,13 @@ public class Patham9Test extends AbstractNALTester {
         return AbstractNALTester.nars(8, false);
     }
 
-/*
+
     @Test
     public void noise_simple() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
+        Anticipate.teststring = "";
+        Anticipate.testing = true;
         nar.input("<a --> A>. :|:");
         nar.frame(30);
         nar.input("<b --> B>. :|:");
@@ -242,23 +245,27 @@ public class Patham9Test extends AbstractNALTester {
         nar.input("<b --> B>. :|:");
         nar.frame(4000);
 
+        String a ="anticipating: <a --> A>\nhappened as expected: <a --> A>\nanticipating: <a --> A>\ndid not happen: <a --> A>\n";
+        String b = Anticipate.teststring;
+        if(!a.equals(b)) {
+            throw new Narsese.NarseseException("testcase failed");
+        }
+
         //Concept c = nar.concept("<(&/, <b --> B>, /25) =/> <a --> A>>");
-        nar.forEachConcept(h -> {
+       /* nar.forEachConcept(h -> {
             if(!h.getBeliefs().isEmpty()) {
                 System.out.println(h.toString()+" "+h.getBeliefs().topTruth().toString());
             }
-        });
-
-
-
-
-    }*/
+        });*/
+    }
 
 
     @Test
     public void noisetest() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
+        Anticipate.teststring = "";
+        Anticipate.testing = true;
         nar.input("<a --> A>. :|:");
         nar.frame(2);
         nar.input("<x --> X>. :|:");
@@ -273,6 +280,12 @@ public class Patham9Test extends AbstractNALTester {
         nar.frame(30);
         nar.input("<a --> A>. :|:");
         nar.frame(4000);
+
+        String a ="anticipating: <c --> C>\ndid not happen: <c --> C>\n";
+        String b = Anticipate.teststring;
+        if(!a.equals(b)) {
+            throw new Narsese.NarseseException("testcase failed");
+        }
     }
 
 }
