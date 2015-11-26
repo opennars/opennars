@@ -195,6 +195,7 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Narsese;
+import nars.concept.Concept;
 import nars.nar.Default;
 import nars.nar.Default2;
 import nars.task.Task;
@@ -223,9 +224,9 @@ public class Patham9Test extends AbstractNALTester {
         return AbstractNALTester.nars(8, false);
     }
 
-
+/*
     @Test
-    public void further_detachment_2() throws Narsese.NarseseException {
+    public void noise_simple() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
         nar.input("<a --> A>. :|:");
@@ -240,10 +241,21 @@ public class Patham9Test extends AbstractNALTester {
         nar.frame(30);
         nar.input("<b --> B>. :|:");
         nar.frame(4000);
-    }
+
+        //Concept c = nar.concept("<(&/, <b --> B>, /25) =/> <a --> A>>");
+        nar.forEachConcept(h -> {
+            if(!h.getBeliefs().isEmpty()) {
+                System.out.println(h.toString()+" "+h.getBeliefs().topTruth().toString());
+            }
+        });
 
 
-   /* @Test
+
+
+    }*/
+
+
+    @Test
     public void noisetest() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
@@ -260,9 +272,7 @@ public class Patham9Test extends AbstractNALTester {
         nar.input("<c --> C>. :|:");
         nar.frame(30);
         nar.input("<a --> A>. :|:");
-        nar.frame(2);
-        nar.input("<c --> C>. :|:");
         nar.frame(4000);
-    }*/
+    }
 
 }

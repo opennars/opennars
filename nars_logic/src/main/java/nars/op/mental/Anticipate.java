@@ -112,7 +112,7 @@ public class Anticipate {
         final Task derived = new FluentTask<>(prediction)
                         .punctuation(Symbols.JUDGMENT)
                         .truth(expiredTruth)
-                .budget(tt.getBudget())
+                .budget(expiredBudget)
                 .time(memory.time(), expectedOccurrenceTime)
                 .parent(tt.task, null);
 
