@@ -407,29 +407,8 @@ public class RuleMatch extends FindSubst {
             return null;
         }
 
-        //if the complexity is higher than a specific limit, return
-        //currently 17 is chosen, as having beliefs of the form <(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.
-        //as the most complex one the system has to handle for now
-        Compound wu = (Compound) derivedTerm;
-       /* if(wu.complexity()>17) {
-            return null;
-        }*/
-
-        //for now we don't let the system compose &/ and &| terms together,
-        //also this was chosen taken the above term under consideration
-        if(wu.toString().replace("&|","").replace("&/","").length() < wu.toString().length()-2) { //more than one &x got removed so there were more than one
-            return null;
-        }
-
-        //also this one:
-      //  if(wu.toString().replace("(-,","").replace("(~,","").length() < wu.toString().length()-3) { //more than one &x got removed so there were more than one
-       //     return null;
-      //  }
-
         FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
-
-            //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
             final long now = premise.time();
             final long occ;
@@ -460,7 +439,6 @@ public class RuleMatch extends FindSubst {
                 }                    //thus these anticipations would fail, leading the system thinking that this did not happen altough it was
                 if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) { //just not able to measure it, closed world assumption gone wild.
                     derived.log(rule.toString());
-                    //t.log(premise + "," + rule);
                 }
 
                 ArrayList<Task> ret = new ArrayList<Task>();
@@ -474,7 +452,7 @@ public class RuleMatch extends FindSubst {
                     final Task derivedEternal = premise.validate(deriving2
                                     .punctuation(punct)
                                     .truth(et)
-                                    .budget(budget.clone()) //we use the stronger budget (budget) for now on purpose
+                                    .budget(budget2)
                                     .time(now, Stamp.ETERNAL)
                                     .parent(task, belief // null if single
                                       )

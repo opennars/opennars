@@ -265,35 +265,35 @@ public class Patham9Test extends AbstractNALTester {
         Anticipate.teststring = "";
         Anticipate.testing = true;
         nar.input("<a --> A>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<x --> X>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<c --> C>. :|:");
-        nar.frame(30);
+        nar.frame(300);
         nar.input("<a --> A>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<m --> M>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<c --> C>. :|:");
-        nar.frame(30);
+        nar.frame(300);
         nar.input("<a --> A>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<k --> K>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<c --> C>. :|:");
-        nar.frame(30);
+        nar.frame(300);
         nar.input("<a --> A>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<h --> H>. :|:");
-        nar.frame(2);
+        nar.frame(20);
         nar.input("<c --> C>. :|:");
-        nar.frame(30);
+        nar.frame(300);
         nar.input("<a --> A>. :|:");
         nar.frame(4000);
 
         String a ="anticipating: <c --> C>\ndid not happen: <c --> C>\n";
         String b = Anticipate.teststring;
-        if(!a.equals(b)) {
+        if(!b.contains(a)) {
             throw new Narsese.NarseseException("testcase failed");
         }
     }

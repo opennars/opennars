@@ -34,6 +34,9 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.link.TaskLink;
+import nars.nal.nal5.Conjunction;
+import nars.nal.nal7.Parallel;
+import nars.nal.nal7.Sequence;
 import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
@@ -82,6 +85,10 @@ public class Anticipate {
     public void anticipate(Task t) {
 
         if(t.getTruth().getExpectation() < DEFAULT_CONFIRMATION_EXPECTATION || t.getPunctuation() != Symbols.JUDGMENT) {
+            return;
+        }
+
+        if(t.getTerm() instanceof Conjunction || t.getTerm() instanceof Parallel || t.getTerm() instanceof Sequence) { //not observable, TODO probably revise
             return;
         }
 
@@ -151,14 +158,6 @@ public class Anticipate {
 
     /** called each cycle to update calculations of anticipations */
     int happeneds = 0, didnts = 0;
-    int kickout_tolerance=25;
-
-    public void kill(Task t) {
-        if(t.getOccurrenceTime() < memory.time() - kickout_tolerance) {
-            t.getBudget().setDurability(0);
-            t.getBudget().setPriority(0);
-        }
-    }
 
     public static boolean testing = false;
     public static String teststring = "";

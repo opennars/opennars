@@ -351,6 +351,9 @@ public class TaskRule extends ProductN implements Level {
                 case "not_set":
                     next = new NotSet(arg1);
                     break;
+                case "not_conjunction":
+                    next = new NotConjunction(arg1);
+                    break;
                 case "not_implication_or_equivalence":
                     next = new NotImplicationOrEquivalence(arg1);
                     break;
