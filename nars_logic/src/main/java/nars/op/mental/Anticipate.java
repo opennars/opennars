@@ -28,10 +28,12 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
+import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
+import nars.link.TaskLink;
 import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
@@ -139,9 +141,33 @@ public class Anticipate {
 
     /** called each cycle to update calculations of anticipations */
     int happeneds = 0, didnts = 0;
+    int kickout_tolerance=25;
+
+    public void kill(Task t) {
+        if(t.getOccurrenceTime() < memory.time() - kickout_tolerance) {
+            t.getBudget().setDurability(0);
+            t.getBudget().setPriority(0);
+        }
+    }
 
     protected void updateAnticipations() {
 
+        nar.forEachConcept(c -> {
+           Bag<Task, TaskLink> ret = c.getTaskLinks();
+           ret.forEach(tl -> {
+               if(tl.getTask().getOccurrenceTime() < memory.time() - kickout_tolerance) {
+                   kill(tl.getTask());
+                   tl.setPriority(0);
+                   tl.setDurability(0);
+               }
+           });
+            c.getBeliefs().forEach(b -> {
+                kill(b.getTask());
+            });
+            c.getGoals().forEach(g -> {
+                kill(g.getTask());
+            });
+        });
         /* doesnt work
         nar.forEachConcept(c -> {
            c.retainTasks(h -> !h.isEternal() && h.getOccurrenceTime()<nar.time()-100);

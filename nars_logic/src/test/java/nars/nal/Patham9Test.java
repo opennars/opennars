@@ -224,23 +224,26 @@ public class Patham9Test extends AbstractNALTester {
     }
 
 
-  /* @Test
+    @Test
     public void further_detachment_2() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
         nar.input("<a --> A>. :|:");
-        nar.frame(4);
+        nar.frame(30);
         nar.input("<b --> B>. :|:");
         nar.frame(30);
         nar.input("<a --> A>. :|:");
-        nar.frame(4);
+        nar.frame(30);
         nar.input("<b --> B>. :|:");
         nar.frame(30);
         nar.input("<a --> A>. :|:");
+        nar.frame(30);
+        nar.input("<b --> B>. :|:");
         nar.frame(4000);
-    }*/
+    }
 
-    @Test
+
+   /* @Test
     public void noisetest() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
 
@@ -257,7 +260,9 @@ public class Patham9Test extends AbstractNALTester {
         nar.input("<c --> C>. :|:");
         nar.frame(30);
         nar.input("<a --> A>. :|:");
+        nar.frame(2);
+        nar.input("<c --> C>. :|:");
         nar.frame(4000);
-    }
+    }*/
 
 }
