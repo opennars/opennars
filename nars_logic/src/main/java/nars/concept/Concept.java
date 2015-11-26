@@ -46,13 +46,6 @@ import static com.google.common.collect.Iterators.concat;
 
 public interface Concept extends Termed, Itemized<Term> {
 
-    default void retainTasks(Predicate<Task> p) {
-         getBeliefs().retain(p);
-         getGoals().retain(p);
-         getTaskLinks().retain(tl -> p.test(tl.getTask()));
-     }
-
-
     Bag<Task, TaskLink> getTaskLinks();
     Bag<TermLinkKey, TermLink> getTermLinks();
 

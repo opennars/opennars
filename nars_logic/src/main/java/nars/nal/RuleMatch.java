@@ -411,9 +411,9 @@ public class RuleMatch extends FindSubst {
         //currently 17 is chosen, as having beliefs of the form <(&/,<{a} --> [A]>,pick({beer})) =/> <{c} --> [C]>>.
         //as the most complex one the system has to handle for now
         Compound wu = (Compound) derivedTerm;
-        if(wu.complexity()>17) {
+       /* if(wu.complexity()>17) {
             return null;
-        }
+        }*/
 
         //for now we don't let the system compose &/ and &| terms together,
         //also this was chosen taken the above term under consideration
@@ -422,9 +422,9 @@ public class RuleMatch extends FindSubst {
         }
 
         //also this one:
-        if(wu.toString().replace("(-,","").replace("(~,","").length() < wu.toString().length()-3) { //more than one &x got removed so there were more than one
-            return null;
-        }
+      //  if(wu.toString().replace("(-,","").replace("(~,","").length() < wu.toString().length()-3) { //more than one &x got removed so there were more than one
+       //     return null;
+      //  }
 
         FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {

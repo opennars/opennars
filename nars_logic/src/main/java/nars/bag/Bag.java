@@ -30,14 +30,6 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements Consumer<V>, Supplier<V>, Iterable<V>, Externalizable {
 
-    public void retain(Predicate<V> p) {
-     Iterator<V> ii = iterator();
-       while (ii.hasNext()) {
-            if (!p.test(ii.next()))
-               ii.remove();
-       }
-   }
-
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
     protected Procedure2<Budget, Budget> mergeFunction;

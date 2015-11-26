@@ -330,6 +330,14 @@ public class TaskRule extends ProductN implements Level {
 
             switch (predicateNameStr) {
 
+                case "equal":
+                    next = new Equal(arg1, arg2);
+                    break;
+
+                case "input_premises":
+                    next = new InputPremises(arg1, arg2);
+                    break;
+
                 case "not_equal":
                     next = new NotEqual(arg1, arg2);
                     break;

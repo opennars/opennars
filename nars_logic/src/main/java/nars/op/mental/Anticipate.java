@@ -164,27 +164,6 @@ public class Anticipate {
     public static String teststring = "";
     protected void updateAnticipations() {
 
-        /*nar.forEachConcept(c -> {
-           Bag<Task, TaskLink> ret = c.getTaskLinks();
-           ret.forEach(tl -> {
-               if(tl.getTask().getOccurrenceTime() < memory.time() - kickout_tolerance) {
-                   kill(tl.getTask());
-                   tl.setPriority(0);
-                   tl.setDurability(0);
-               }
-           });
-            c.getBeliefs().forEach(b -> {
-                kill(b.getTask());
-            });
-            c.getGoals().forEach(g -> {
-                kill(g.getTask());
-            });
-        });*/
-        /* doesnt work
-        nar.forEachConcept(c -> {
-           c.retainTasks(h -> !h.isEternal() && h.getOccurrenceTime()<nar.time()-100);
-        }); */
-
         long now = nar.memory.time();
 
         if (anticipations.isEmpty()) return;

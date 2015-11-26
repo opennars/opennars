@@ -21,14 +21,6 @@ import java.util.function.Predicate;
  */
 public interface TaskTable extends Iterable<Task> {
 
-    public default void retain(Predicate<Task> p) {
-        Iterator<Task> ii = iterator();
-        while (ii.hasNext()) {
-            if (!p.test(ii.next()))
-                ii.remove();
-        }
-    }
-
     int getCapacity();
 
     void setCapacity(int newCapacity);
