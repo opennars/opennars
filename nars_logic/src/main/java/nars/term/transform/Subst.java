@@ -9,6 +9,7 @@ public interface Subst {
     void clear();
 
     boolean next(Term x, Term y, int power);
+    boolean next(FindSubst.TermPattern x, Term y, int power);
 
     void putXY(Term x, Term y);
 

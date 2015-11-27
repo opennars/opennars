@@ -20,7 +20,7 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-public class MatchSubst implements Subst {
+@Deprecated class MatchSubst implements Subst {
 
 
     private final Op type;
@@ -287,6 +287,11 @@ public class MatchSubst implements Subst {
             return "Pop{}";
         }
     };
+
+    @Override
+    public boolean next(FindSubst.TermPattern x, Term y, int power) {
+        throw new RuntimeException("unimpl");
+    }
 
     /** subsequence success, restore power minus what was consumed - prepare for pop */
     final static PatternOp End = new PatternOp() {

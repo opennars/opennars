@@ -73,10 +73,7 @@ public class RuleMatch  {
     public final Map<Term, Term> left = Global.newHashMap(0);
     public final Map<Term, Term> right = Global.newHashMap(0);
     public final Set<Term> tmpSet = Global.newHashSet(0);
-    public TaskRule prevRule;
 
-    public final Map<Term, Term> prevXY = Global.newHashMap(0);
-    public final Map<Term, Term> prevYX = Global.newHashMap(0);
     public int unificationPower;
 
     @Override
@@ -102,9 +99,6 @@ public class RuleMatch  {
      */
     public final void start(Premise p) {
         this.premise = p;
-        this.prevRule = null;
-        this.prevXY.clear(); this.prevYX.clear();
-
 
         //scale unification power according to premise's mean priority linearly between min and max
         this.unificationPower =
@@ -129,8 +123,6 @@ public class RuleMatch  {
      * clear and re-use with a next rule
      */
     public final void start(TaskRule nextRule) {
-
-        this.prevRule = this.rule;
 
         subst.clear();
 
@@ -614,6 +606,9 @@ public class RuleMatch  {
     }
 
     public boolean next(Term x, Term y, int unificationPower) {
+        return subst.next(x, y, unificationPower);
+    }
+    public boolean next(FindSubst.TermPattern x, Term y, int unificationPower) {
         return subst.next(x, y, unificationPower);
     }
 

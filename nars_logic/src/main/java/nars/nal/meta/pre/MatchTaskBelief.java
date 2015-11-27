@@ -1,19 +1,25 @@
 package nars.nal.meta.pre;
 
+import nars.Op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
+import nars.term.transform.FindSubst;
 
 
 public class MatchTaskBelief extends PreCondition {
 
     public final TaskBeliefPair pattern;
 
+    final FindSubst.TermPattern compiled;
+
     final String id;
 
     public MatchTaskBelief(TaskBeliefPair pattern) {
 
         this.pattern = pattern;
+        this.compiled = new FindSubst.TermPattern(Op.VAR_PATTERN, pattern);
+
         //Term beliefPattern = pattern.term(1);
 
         //if (Global.DEBUG) {
@@ -41,15 +47,15 @@ public class MatchTaskBelief extends PreCondition {
 
         final TaskBeliefPair tb = m.taskBelief;
 
-        final TaskBeliefPair pattern = this.pattern;
-
-        //if (!tb.substitutesMayExistParanoid(pattern)) {
-        if (!tb.substitutesMayExistFast(pattern)) {
-            return false;
-        }
+//        //if (!tb.substitutesMayExistParanoid(pattern)) {
+//        if (!tb.substitutesMayExistFast(pattern)) {
+//            return false;
+//        }
+//        return m.next(pattern, tb, m.unificationPower);
 
         //TODO parameterize the power by budget
-        return m.next(pattern, tb, m.unificationPower);
+        return m.next(compiled, tb, m.unificationPower);
+
     }
 
     @Override
