@@ -7,13 +7,10 @@ import nars.term.CommonVariable;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.util.data.random.XorShift1024StarRandom;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
-
-import static nars.$.$;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -23,9 +20,53 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-public class MatchSubst {
+public class MatchSubst implements Subst {
 
 
+    private final Op type;
+    private final Random rng;
+
+    public MatchSubst(Op type, Random rng) {
+        this.type = type;
+        this.rng = rng;
+    }
+
+    @Override
+    public void clear() {
+        //frame.clear();
+    }
+
+    @Override
+    @Deprecated public boolean next(Term x, Term y, int power) {
+        boolean foundAny[] = new boolean[1];
+
+        next(x, y, power, sub-> {
+
+            foundAny[0] = sub.frame.match;
+
+        });
+        return foundAny[0];
+    }
+
+    @Override
+    public void putXY(Term x, Term y) {
+        frame.xy.put(x, y);
+    }
+
+    @Override
+    public Term resolve(Term t, Substitution s) {
+        return frame.resolve(t, s);
+    }
+
+    @Override
+    public Map<Term, Term> xy() {
+        return frame.xy;
+    }
+
+    @Override
+    public Map<Term, Term> yx() {
+        return frame.yx;
+    }
 
     /** pattern opcodes */
     interface PatternOp extends Serializable {
@@ -326,15 +367,27 @@ public class MatchSubst {
         }
         @Override public int run(Frame f) {
 
-            final Term xSubst = f.resolve(var);
+            Term t = f.term;
+            final Term xSubst = f.xy.get(var);
+            //final Term xSubst = f.resolve(var, new Substitution());
 
             if (xSubst != null) {
-                if (!f.term.equals(xSubst)) {
-                    f.match = false;
+                if (!t.equals(xSubst)) {
+
+//                    if (xSubst.op().isVar()) {
+//                    }
+                    if (t.op().isVar()) {
+                        //common variable etc
+                        //f.putVarX(var, xSubst);
+                        f.putVarX(xSubst, t);
+                    }
+                    else {
+                        f.match = false;
+                    }
                 }
             }
             else {
-                f.putVarX(var, f.term);
+                f.putVarX(var, t);
             }
             return 1;
         }
@@ -556,8 +609,8 @@ public class MatchSubst {
             Frame inner = this.pending = new Frame(outer);
             this.pending.prev = outer;
 
-            System.out.println("PUSH  ->" + outer.term + " IN " + outer.parent);
-            System.out.println("PUSH  <-" + inner.term + " IN " + inner.parent + "\n");
+            //System.out.println("PUSH  ->" + outer.term + " IN " + outer.parent);
+            //System.out.println("PUSH  <-" + inner.term + " IN " + inner.parent + "\n");
         }
 
         /** pops and returns the parent term */
@@ -578,8 +631,8 @@ public class MatchSubst {
                 outer.yx.putAll(inner.yx);
             }
 
-            System.out.println("POP  <- " + inner.term + " IN " + inner.parent);
-            System.out.println("POP  -> " + outer.term + " IN " + outer.parent + "\n");
+            //System.out.println("POP  <- " + inner.term + " IN " + inner.parent);
+            //System.out.println("POP  -> " + outer.term + " IN " + outer.parent + "\n");
 
             outer.ip = inner.ip;
 
@@ -610,73 +663,89 @@ public class MatchSubst {
             return f.match = f.perm.hasNextThenNext();
         }
 
-        public final Term resolve(Term xVar) {
-            return xy.get(xVar);
-        }
+//        public void clear() {
+//            xy.clear();
+//            yx.clear();
+//            prev = pending = null;
+//            xyChanged = yxChanged = false;
+//            match = true;
+//            term = null;
+//        }
 
+        public Term resolve(Term t, Substitution s) {
+            Term ret = t.substituted(s, xy);
+            if(ret != null) {
+                ret = ret.substituted(s, yx);
+            }
+            return ret;
+        }
     }
 
-    public static class State /* extends Frame? */ {
+    //public static class State /* extends Frame? */ {
 
         /** match state */
-
-        final Deque<Frame> stack = new ArrayDeque();
+        //final Deque<Frame> stack = new ArrayDeque();
 
         /** current frame */
         public Frame frame;
 
-        final public Consumer<State> onSuccess;
+        //final public Consumer<MatchSubst> onSuccess;
 
-        public State(Random rng, Term term, Consumer<State> onSuccess) {
-            this.frame = new Frame(rng, term);
-            this.onSuccess = onSuccess;
-        }
+//        public MatchSubst(Random rng, Term term) {
+//            this.frame = new Frame(rng, term);
+//            //this.onSuccess = onSuccess;
+//        }
 
-        @Override
+        /*@Override
         public String toString() {
             return "State" + frame;
-        }
+        }*/
 
-    }
+    //}
 
-    public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onSuccess) {
+    @Override
+    public String toString() { return "State" + frame; }
+
+    public final void next(final Term pattern, final Term y, int power, Consumer<MatchSubst> onSuccess) {
         TermPattern p = new TermPattern(type, pattern);
-        System.out.println(pattern + "\n" + p);
+        //System.out.println(pattern + "\n" + p);
 
-        next(rng, p, y, power, onSuccess);
+        frame = new Frame(rng, y);
+        next(p, y, power, onSuccess);
     }
 
     /** find substitutions, returning the success state.
      * this method should be used only from the outside.
      * all internal purposes should use the find() method
      * in order to manage decrease in power correctly */
-    public static final boolean next(Random rng, final TermPattern x, final Term y, int power, Consumer<State> success) {
+    final boolean next(final TermPattern x, final Term y, int power, Consumer<MatchSubst> success) {
 
-        State s = new State(rng, y, success);
+        //State s = new State(rng, y, success);
+
 
         final PatternOp code[] = x.code;
-        int ip = s.frame.ip; //instruction pointer
+        int ip = frame.ip; //instruction pointer
 
         do {
 
             PatternOp o = code[ip];
 
-            System.out.println(ip + "\t" + o);
+            //System.out.println(ip + "\t" + o);
 
-            final Frame current = s.frame;
+            final Frame current = frame;
 
             final int result = o.run(current);
 
             //update frame if push or pop sets pending
             final Frame pending = current.pending;
             if (pending !=null) {
-                s.frame = current.pending;
+                frame = current.pending;
                 current.pending = null;
             }
 
-            ip = s.frame.ip; //read ip
+            ip = frame.ip; //read ip
 
-            System.out.println("\t\t" + s);
+            /*System.out.println("\t\t" + frame);*/
 
             switch (result) {
                 case 0: ip = -1; break; //failure
@@ -690,26 +759,26 @@ public class MatchSubst {
                 }
             }
 
-            s.frame.ip = ip; //store ip
+            frame.ip = ip; //store ip
 
         } while (ip >= 0);
 
-        if (s.frame.match) {
-            success.accept(s);
+        if (frame.match) {
+            success.accept(this);
         }
 
-        return s.frame.match;
+        return frame.match;
     }
 
-    public static void main(String[] args) {
-        MatchSubst.next(new XorShift1024StarRandom(1),
-            Op.VAR_PATTERN,
-            $("<%x --> y>"), $("<a --> y>"),
-            100,
-            (s) -> {
-                System.out.println(s);
-            }
-        );
-    }
+//    public static void main(String[] args) {
+//        MatchSubst.next(new XorShift1024StarRandom(1),
+//            Op.VAR_PATTERN,
+//            $("<%x --> y>"), $("<a --> y>"),
+//            100,
+//            (s) -> {
+//                System.out.println(s);
+//            }
+//        );
+//    }
 
 }

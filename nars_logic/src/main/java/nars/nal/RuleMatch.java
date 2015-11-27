@@ -20,13 +20,13 @@ import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Variable;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 import nars.term.transform.Substitution;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 import nars.util.data.random.XorShift1024StarRandom;
-import objenome.util.StringUtils;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * rule matching context, re-recyclable as thread local
  */
-public class RuleMatch extends FindSubst {
+public class RuleMatch  {
 
     /** thread-specific pool of RuleMatchers
         this pool is local to this deriver */
@@ -42,6 +42,9 @@ public class RuleMatch extends FindSubst {
         //TODO use the memory's RNG for complete deterministic reproducibility
         return new RuleMatch(new XorShift1024StarRandom(1));
     });
+
+    public final Subst subst;
+
     /**
      * if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset
      */
@@ -81,11 +84,17 @@ public class RuleMatch extends FindSubst {
         return taskBelief.toString() + ":<" + super.toString() + ">:";
     }
 
-    public RuleMatch(Random random) {
-        super(Op.VAR_PATTERN,
+    public RuleMatch(Random r) {
+        //this(new MatchSubst(Op.VAR_PATTERN, r));
+
+        this(new FindSubst(Op.VAR_PATTERN,
                 Global.newHashMap(0),
                 Global.newHashMap(0),
-                random);
+                r));
+    }
+
+    public RuleMatch(Subst subst) {
+        this.subst = subst;
     }
 
     /**
@@ -123,7 +132,7 @@ public class RuleMatch extends FindSubst {
 
         this.prevRule = this.rule;
 
-        clear();
+        subst.clear();
 
         occurence_shift = Stamp.TIMELESS;
 
@@ -570,14 +579,9 @@ public class RuleMatch extends FindSubst {
 //            //return null;
 //        }
 
-        final Substitution s = substituter;
-
-        Term ret = t.substituted(s, xy);
-        if(ret != null) {
-            ret = ret.substituted(s, yx);
-        }
-        return ret;
+        return subst.resolve(t, substituter);
     }
+
 
 
     /** return null if no postconditions match (equivalent to an empty array)
@@ -607,6 +611,10 @@ public class RuleMatch extends FindSubst {
             oc = 0;
         oc += cyclesDelta;
         this.occurence_shift = oc;
+    }
+
+    public boolean next(Term x, Term y, int unificationPower) {
+        return subst.next(x, y, unificationPower);
     }
 
 //    public void run(TaskRule rule, Stream.Builder<Task> stream) {

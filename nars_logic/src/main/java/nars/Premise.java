@@ -72,7 +72,8 @@ public interface Premise extends Level, Tasked {
         Term aa = a;
 
         if (a instanceof Compound) {
-            aa = applySubstituteAndRenameVariables(((Compound) a), f.xy);
+            aa = applySubstituteAndRenameVariables(((Compound) a), f.xy());
+
             if (aa == null) return false;
 
             final Op aaop = aa.op();
@@ -85,7 +86,8 @@ public interface Premise extends Level, Tasked {
         Term bb = b;
 
         if (b instanceof Compound) {
-            bb = applySubstituteAndRenameVariables(((Compound) b), f.yx);
+            bb = applySubstituteAndRenameVariables(((Compound) b), f.yx());
+
             if (bb == null) return false;
 
             final Op bbop = bb.op();

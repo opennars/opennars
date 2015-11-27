@@ -18,19 +18,20 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-public class FindSubst {
+public class FindSubst implements Subst {
 
     private final Op type;
 
     /** X var -> Y term mapping */
-    public final Map<Term, Term> xy;
+    private final Map<Term, Term> xy;
     private boolean xyChanged = false;
 
     /** Y var -> X term mapping */
-    public final Map<Term, Term> yx;
+    private final Map<Term, Term> yx;
     private boolean yxChanged = false;
 
     private final Random random;
+    private int power;
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -55,6 +56,7 @@ public class FindSubst {
         this.random = random;
     }
 
+    @Override
     public final void clear() {
         xy.clear();
         yx.clear();
@@ -78,15 +80,16 @@ public class FindSubst {
      * this method should be used only from the outside.
      * all internal purposes should use the find() method
      * in order to manage decrease in power correctly */
+    @Override
     public final boolean next(final Term x, final Term y, int power) {
-        int endPower = match(x, y, power);
+        this.power = power;
+
+        return match(x, y);
 
         /*
         System.out.println((power - Math.abs(endPower)) + " " +
                 (endPower >= 0) + " " + x + " " + y + " " + power + " .. " + endPower);
         */
-
-        return endPower >= 0; //non-negative power value indicates success
     }
 
     /**
@@ -97,12 +100,13 @@ public class FindSubst {
      **
      * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
      */
-    private final int match(final Term x, final Term y, int power) {
+    private final boolean match(final Term x, final Term y) {
 
         //if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
           //  return power; //fail due to insufficient power
 
         //System.out.println("  m: " + x + " " + y + " " + power);
+
 
         if (x.equals(y)) {
             /*if (x!=y)
@@ -110,67 +114,63 @@ public class FindSubst {
             else
                 System.err.println("    SHARED: " + x);*/
 
-            return power; //match
+            return true; //match
         }
 
-        return matchNotEqual(x, y, power);
-    }
+        if ((--power) < 0)
+            return false;
 
-    /** at this point, x and y have been determined not equal
-     * but there is still the possibility of a match.
-     */
-    private final int matchNotEqual(Term x, Term y, int power) {
 
-        power--;
-
-        final Op type = this.type;
+        final Op type1 = this.type;
         final Op xOp = x.op();
-        if (xOp == type) {
-            return matchXvar(x, y, power);
+        if (xOp == type1) {
+            return matchXvar(x, y);
         }
 
         final Op yOp = y.op();
-        if (yOp == type) {
-            return matchYvar(x, y, power);
+        if (yOp == type1) {
+            return matchYvar(x, y);
         }
 
         if (xOp.isVar()) {
             if (yOp.isVar()) {
                 nextVarX((Variable) x, y);
-                return power;
+                return true;
             }
         }
         else {
             if ((xOp == yOp) && (x instanceof Compound)) {
-                return matchCompound((Compound)x, (Compound)y, power);
+                return matchCompound((Compound) x, (Compound) y);
             }
         }
 
-
-        return fail(power);
+        return false;
     }
 
-    private int matchYvar(Term x, Term y, int power) {
+    private boolean matchYvar(Term x, Term y) {
         final Term ySubst = yx.get(y);
 
         if (ySubst != null) {
-            return match(x, ySubst, power);
+            return match(x, ySubst);
         }
         else {
-            putVarY(x, (Variable) y);
-            return power;
+            yxPut((Variable) y, x);
+            if (y instanceof CommonVariable) {
+                xyPut((Variable) y, x);
+            }
+            return true;
         }
     }
 
-    private int matchXvar(Term x, Term y, int power) {
+    private boolean matchXvar(Term x, Term y) {
         final Term xSubst = xy.get(x);
 
         if (xSubst != null) {
-            return match(xSubst, y, power);
+            return match(xSubst, y);
         }
         else {
             nextVarX((Variable) x, y);
-            return power;
+            return true;
         }
     }
 
@@ -222,22 +222,22 @@ public class FindSubst {
      * X and Y are of the same operator type and length (arity)
      * X's permutations matched against constant Y
      */
-    private final int matchCompound(final Compound X, final Compound Y, int power) {
+    private final boolean matchCompound(final Compound X, final Compound Y) {
 
         switch (matchable(X, Y)) {
             case -1:
-                return fail(power);
+                return false;
             case 0:
-                return power;
+                return true;  //match
             case 1:
-                return match(X.term(0), Y.term(0), power);
+                return match(X.term(0), Y.term(0));
             default:  /*if (xLen >= 1) {*/
                 if (X.isCommutative()) {
                     //commutative, try permutations
-                    return matchPermute(X, Y, power);
+                    return matchPermute(X, Y);
                 } else {
                     //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                    return matchSequence(X.subterms(), Y.subterms(), power);
+                    return matchSequence(X.subterms(), Y.subterms());
                 }
         }
     }
@@ -247,17 +247,13 @@ public class FindSubst {
      * @param y what is being compared against
      *
      */
-    private final int matchPermute(Compound x, Compound y, int power) {
+    private final boolean matchPermute(Compound x, Compound y) {
         //DequePool<ShuffledPermutations> pp = this.permutationPool;
 
-        final int len = x.size();
+        //final int len = x.size();
 
-        final int minAttempts = len; //heuristic assumption
+        //final int minAttempts = len; //heuristic assumption
 
-        int permPower = power / minAttempts; //power allocate to each permutation
-
-        final int subPower = permPower / len; //power allocated to each permutation's subterm
-        if (subPower < 1) return fail(power);
 
         final ShuffleTermVector perm = new ShuffleTermVector(random, x);
 
@@ -276,13 +272,15 @@ public class FindSubst {
 
             perm.next();
 
-            int sp = matchSequence(perm, y, permPower);
-            power -= permPower - Math.abs(sp); //subtract cost
+            matched = matchSequence(perm, y);
 
-            matched = sp >= 0;
+            if (power < 0) {
+                return false;
+            }
 
             if (matched /*|| power <= 0*/)
                 break;
+
 
             //try again; invert negated power back to a positive value for next attempt
 
@@ -302,24 +300,11 @@ public class FindSubst {
         }
 
 
-        //finished: succeeded (+) or depleted power (-)
-        if (!matched)
-            power = fail(power);
-
-        return power;
+        //finished
+        return matched;
 
     }
 
-
-    /**
-     * elimination
-     */
-    private final void putVarY(final Term x, final Variable y) {
-        yxPut(y, x);
-        if (y instanceof CommonVariable) {
-            xyPut(y, x);
-        }
-    }
 
     /**
      * elimination
@@ -354,23 +339,12 @@ public class FindSubst {
     }
 
 
-    private static int fail(int powerMagnitude) {
-        return (powerMagnitude > 0) ?
-                -powerMagnitude : Math.min(-1, powerMagnitude);
-    }
-
-
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    private int matchSequence(final TermContainer X, final TermContainer Y, int power) {
+    private boolean matchSequence(final TermContainer X, final TermContainer Y) {
 
         final int yLen = Y.size();
-
-        //distribute recursion equally among subterms, though should probably be in proportion to their volumes
-        final int subPower = power / yLen;
-        if (subPower < 1) return fail(power);
-
 
         boolean phase = false;
 
@@ -384,11 +358,8 @@ public class FindSubst {
                 Term xSub = X.term(i);
 
                 if (xSub.isCommutative() == phase) {
-                    int s = match(xSub, Y.term(i), subPower);
-                    power -= (subPower - Math.abs(s));
-                    if (s < 0) {
-                        return fail(power);
-                    }
+                    if (!match(xSub, Y.term(i)))
+                        return false;
                     processed++;
                 }
             }
@@ -397,10 +368,31 @@ public class FindSubst {
 
         } while(processed < yLen);
 
-        return power; //success
+        //success
+        return true;
     }
 
-//    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
+    @Override
+    public final void putXY(Term x, Term y) {
+        xy.put(x, y);
+    }
+
+    @Override
+    public final Term resolve(Term t, Substitution s) {
+        //TODO make a half resolve that only does xy?
+
+        Term ret = t.substituted(s, xy);
+        if(ret != null) {
+            ret = ret.substituted(s, yx);
+        }
+        return ret;
+
+    }
+
+    @Override public final Map<Term, Term> xy() { return xy; }
+    @Override public final Map<Term, Term> yx() { return yx; }
+
+    //    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
 //        public ShuffledPermutationsDequePool() {
 //            super(1);
 //        }

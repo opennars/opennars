@@ -5,8 +5,8 @@ import nars.Op;
 import nars.nal.RuleMatch;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 
 import java.util.Map;
 
@@ -51,7 +51,7 @@ public class SubstituteIfUnified extends Substitute {
         Map<Term, Term> left = m.left;
         Map<Term, Term> right = m.right;
 
-        FindSubst sub = new FindSubst(type, left, right, m.premise.getRandom());
+        Subst sub = new FindSubst(type, left, right, m.premise.getRandom());
 
         final boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {

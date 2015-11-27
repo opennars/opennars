@@ -18,9 +18,9 @@ import static org.junit.Assert.assertEquals;
     }
 
 
-    public FindSubst testFindSubst(Term a, Term b, boolean returnsTrue) {
+    public Subst testFindSubst(Term a, Term b, boolean returnsTrue) {
 
-        FindSubst f = new FindSubst(Op.VAR_QUERY, new XORShiftRandom());
+        Subst f = new FindSubst(Op.VAR_QUERY, new XORShiftRandom());
 
         boolean r = f.next(b, a, 1024);
 

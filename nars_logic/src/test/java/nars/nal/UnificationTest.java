@@ -10,6 +10,7 @@ import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 import nars.util.graph.TermLinkGraph;
 import nars.util.meter.RuleTest;
 import nars.util.meter.TestNAR;
@@ -47,15 +48,15 @@ public class UnificationTest  {
 
         //a somewhat strict lower bound
         int power = 1 + t1.volume() * t2.volume();
-        power*=power;
+        //power*=power;
 
         FindSubst sub = new FindSubst(type, nar);
         boolean subbed = sub.next(t1, t2, power);
 
         System.out.println();
         System.out.println(t1 + " " + t2 + " " + subbed);
-        System.out.println(sub.xy);
-        System.out.println(sub.yx);
+        System.out.println(sub.xy());
+        System.out.println(sub.yx());
 
         assertEquals(shouldSub, subbed);
 
@@ -68,8 +69,8 @@ public class UnificationTest  {
             int n1 = Sets.difference(t1u, t2u).size();
             int n2 = Sets.difference(t2u, t1u).size();
 
-            assertTrue( (n2) <= (sub.yx.size()));
-            assertTrue( (n1) <= (sub.xy.size()));
+            assertTrue( (n2) <= (sub.yx().size()));
+            assertTrue( (n1) <= (sub.xy().size()));
         }
 
         return sub;
@@ -92,7 +93,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        FindSubst wu = new FindSubst(Op.VAR_INDEPENDENT, tester.nar.memory.random);
+        Subst wu = new FindSubst(Op.VAR_INDEPENDENT, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -116,7 +117,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
+        Subst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -140,7 +141,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
+        Subst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -173,7 +174,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        FindSubst wu = new FindSubst(Op.VAR_DEPENDENT, tester.nar.memory.random);
+        Subst wu = new FindSubst(Op.VAR_DEPENDENT, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (!unifies)
             assertTrue("Unification is nonsensical", false);
@@ -193,7 +194,7 @@ public class UnificationTest  {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar.memory.random);
+        Subst sub = new FindSubst(Op.VAR_PATTERN, nar.memory.random);
         if (!sub.next(t1, t2, 99999)) {
             assertTrue("Unification is nonsensical", false);
         }
@@ -212,7 +213,7 @@ public class UnificationTest  {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar);
+        Subst sub = new FindSubst(Op.VAR_PATTERN, nar);
         if (!sub.next(t1, t2, 99999)) {
             assertTrue("Unification with pattern variable failed", false);
         }
@@ -238,8 +239,8 @@ public class UnificationTest  {
                 true);
 
         //additional test that verifies correct common variable substitution result
-        assertEquals("{$1={t002}, #2=#1#2}", sub.xy.toString());
-        assertEquals("{#1=#1#2}", sub.yx.toString());
+        assertEquals("{$1={t002}, #2=#1#2}", sub.xy().toString());
+        assertEquals("{#1=#1#2}", sub.yx().toString());
     }
     @Test public void pattern_trySubs_Indep_Var_2_product()  {
         test(Op.VAR_INDEPENDENT,
