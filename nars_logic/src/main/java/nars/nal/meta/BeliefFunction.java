@@ -160,6 +160,12 @@ public enum BeliefFunction implements TruthFunction {
             return TruthFunctions.decomposeNegativePositivePositive(T,B);
         }
     },
+    DecomposePositivePositivePositive() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
+            return TruthFunctions.decomposeNegativePositivePositive(TruthFunctions.negation(T), B);
+        }
+    },
     DecomposePositiveNegativeNegative() {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
