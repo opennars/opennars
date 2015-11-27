@@ -217,9 +217,9 @@ public class NAL5Test extends AbstractNALTester {
     @Test
     public void compound_decomposition_one_premises() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.mustBelieve(cycles,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
-        tester.mustBelieve(cycles,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
         tester.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)",0.9f,0.9f); //.en("Robin can fly and swim.");
+        tester.mustBelieve(cycles*2,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
+        tester.mustBelieve(cycles*2,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
         tester.run();
     }
 

@@ -8,10 +8,8 @@ import nars.nal.nal4.Image;
 import nars.term.*;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.function.ToIntFunction;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -228,16 +226,76 @@ public class FindSubst extends Frame implements Subst {
         }
     }
 
+    /** push in to children */
+    public static final PatternOp Subterms = new PatternOp() {
+        @Override public boolean run(Frame ff) {
+            ff.parent = (Compound)ff.y;
+            return true;
+        }
+    };
+
+    /** pop out to parent */
+    public static final PatternOp Superterm = new PatternOp() {
+        @Override public boolean run(Frame ff) {
+            ff.y = ff.parent;
+            ff.parent = null;
+            return true;
+        }
+    };
+
+    public static final class MatchSubterm implements PatternOp {
+        public final int index;
+        private final Term x;
+
+        public MatchSubterm(Term x, int index) {
+            this.index = index;
+            this.x = x;
+        }
+
+        @Override
+        public boolean run(Frame ff) {
+            Term y = ff.y = ff.parent.term(index);
+            return ff.match(x, y);
+        }
+
+
+        @Override
+        public String toString() {
+            return "MatchSubterm{" + x + "," + index + '}';
+        }
+    }
+
+    /** match 0th subterm (fast) */
+    public static final class MatchTheSubterm implements PatternOp {
+
+        private final Term x;
+
+        public MatchTheSubterm(Term x) {
+            this.x = x;
+        }
+
+        @Override
+        public boolean run(Frame ff) {
+            return ff.match(x, ff.y.term(0) );
+        }
+
+        @Override
+        public String toString() {
+            return "MatchTheSubterm{" + x + '}';
+        }
+    }
 
     /** represents the "program" that the matcher will execute */
     public static class TermPattern {
 
         final PatternOp[] code;
         public final Term term;
+        private Op type = null;
 
         public TermPattern(Op type, Term pattern) {
 
             this.term = pattern;
+            this.type = type;
 
             List<PatternOp> code = Global.newArrayList();
 
@@ -265,7 +323,7 @@ public class FindSubst extends Frame implements Subst {
 
             if (!constant && (t instanceof Compound)) {
                 Compound<?> c = (Compound)t;
-                //int s = c.size();
+                int s = c.size();
 
                 code.add(new TermStructure(type, c.structure()));
                 code.add(new TermVolumeMin(c.volume()-1));
@@ -276,41 +334,29 @@ public class FindSubst extends Frame implements Subst {
                     code.add(new MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc
                 }
 
-                //boolean permute = c.isCommutative() && (s > 1);
+                boolean permute = c.isCommutative() && (s > 1);
 
-//                List<Breakable> breakToEndBeforePop = Global.newArrayList(s);
-//                List<Breakable> breakToEndAfterPop = Global.newArrayList(s); //avoids pop
+                switch (s) {
+                    case 0:
+                        //nothing to match
+                        break;
 
-//                code.add(new Push(s, breakToEndAfterPop));
+                    case 1:
+                        code.add(new MatchTheSubterm(c.term(0)));
+                        break;
 
-                //int matchSubtermsStart = code.size();
+                    default:
 
-                //TODO 2-phase match
+                        if (permute) {
+                            code.add(new MatchCompound(c));
+                        }
+                        else {
+                            compileNonCommutative(code, c);
+                        }
 
-                //code.add(new MatchTerm(c));
-                code.add(new MatchCompound(c));
+                    break;
+                }
 
-//                for (int i = 0; i < s; i++) {
-//                    Term x = c.term(i);
-//
-//                    code.add( permute ?
-//                            new SelectPermutedSubTerm(i) :
-//                            new SelectSubTerm(i));
-//
-//                    compile(type, x, code);
-//
-//                    code.add( permute?
-//                            new IfFailPermuteOrBreak(matchSubtermsStart, breakToEndBeforePop) :
-//                            new IfFailBreak(breakToEndBeforePop)
-//                    );
-//                }
-
-//                int endCompound = code.size();
-
-//                code.add(Pop);
-
-//                breakToEndBeforePop.forEach(b -> b.failTo = endCompound);
-//                breakToEndAfterPop.forEach(b -> b.failTo = endCompound+1);
             }
             else {
 
@@ -324,6 +370,75 @@ public class FindSubst extends Frame implements Subst {
             //throw new RuntimeException("unknown compile behavior for term: " + t);
 
             //code.add(new MatchIt(v));
+        }
+
+
+        /** heuristic for ordering comparison of subterms; lower is first */
+        private ToIntFunction<Term> subtermPrioritizer = (t) -> {
+
+            if (t.op() == type) {
+                return 0;
+            }
+            else if (!t.isCommutative()) {
+                return 1+(1*t.size());
+            }
+            else {
+                return 1+(2*t.size());
+            }
+        };
+
+        final static class SubtermPosition implements Comparable<SubtermPosition> {
+
+            public final int score;
+            public final Term term; //the subterm
+            public final int position; //where it is located
+
+            public SubtermPosition(Term term, int pos, ToIntFunction<Term> scorer) {
+                this.term = term;
+                this.position = pos;
+                this.score = scorer.applyAsInt(term);
+            }
+
+            @Override
+            public int compareTo(SubtermPosition o) {
+                if (this == o) return 0;
+                int p = Integer.compare(o.score, score); //lower first
+                if (p!=0) return p;
+                return Integer.compare(position, o.position);
+            }
+
+            @Override
+            public String toString() {
+                return term + " x " + score + " (" + position + ')';
+            }
+        }
+
+        private void compileNonCommutative(List<PatternOp> code, Compound<?> c) {
+
+            final int s = c.size();
+            TreeSet<SubtermPosition> ss = new TreeSet();
+
+            for (int i = 0; i < s; i++) {
+                Term x = c.term(i);
+                ss.add(new SubtermPosition(x, i, subtermPrioritizer));
+            }
+
+            code.add( Subterms );
+
+            ss.forEach(sp -> { //iterate sorted
+                Term x = sp.term;
+                int i = sp.position;
+
+                compile2(x, code, i);
+                //compile(type, x, code);
+            });
+
+            code.add( Superterm );
+        }
+
+        private void compile2(Term x, List<PatternOp> code, int i) {
+            //TODO this is a halfway there
+            code.add( new MatchSubterm(x, i) );
         }
 
         @Override

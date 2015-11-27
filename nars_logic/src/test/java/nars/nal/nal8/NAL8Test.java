@@ -348,25 +348,25 @@ public class NAL8Test extends AbstractNALTester {
     @Test public void desiredFeedbackReversedIntoGoalEternal()  {
         TestNAR tester = test();
         tester.input("<y --> (/,^exe,x,_)>!");
-        tester.mustDesire(2, "exe(x, y)", 1.0f, 0.9f);
+        tester.mustDesire(5, "exe(x, y)", 1.0f, 0.9f);
     }
     @Test public void desiredFeedbackReversedIntoGoalNow()  {
         TestNAR tester = test();
         tester.input("<y --> (/,^exe,x,_)>! :|:");
-        tester.mustDesire(2, "exe(x, y)", 1.0f, 0.9f, 0);
+        tester.mustDesire(5, "exe(x, y)", 1.0f, 0.9f, 0);
     }
 
     @Test public void testExecutionResult()  {
         TestNAR tester = test();
 
 
-        tester.nar.log();
+        //tester.nar.log();
         tester.input("<#y --> (/,^exe,x,_)>! :|:");
-        tester.mustDesire(2, "exe(x, #y)", 1.0f, 0.9f, 0);
+        tester.mustDesire(4, "exe(x, #y)", 1.0f, 0.9f, 0);
 
         if (!(tester.nar instanceof SingleStepNAR)) {
 
-            tester.mustBelieve(26, "exe(x, a).", 1.0f, 0.99f, 6);
+            tester.mustBelieve(36, "exe(x, a).", 1.0f, 0.99f, 10);
             //        tester.mustBelieve(26, "<a --> (/, ^exe, x, _)>",
             //                exeFunc.getResultFrequency(),
             //                exeFunc.getResultConfidence(),

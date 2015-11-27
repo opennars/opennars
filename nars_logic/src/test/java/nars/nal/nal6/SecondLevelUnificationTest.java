@@ -15,7 +15,7 @@ public class SecondLevelUnificationTest {
     public void test1() throws Narsese.NarseseException {
         NAR n = new Default2(2512, 1, 2, 3);
 
-        n.log();
+        //n.log();
         n.memory.eventTaskRemoved.on(t -> {
            //System.err.println("rm: " + t + " " + t.getLogLast());
         });
@@ -29,7 +29,7 @@ public class SecondLevelUnificationTest {
     public void test2() throws Narsese.NarseseException {
         NAR n = new Default2(2512, 1, 2, 3);
 
-        n.log();
+        //n.log();
         n.memory.eventTaskRemoved.on(t -> {
             //System.err.println("rm: " + t + " " + t.getLogLast());
         });
