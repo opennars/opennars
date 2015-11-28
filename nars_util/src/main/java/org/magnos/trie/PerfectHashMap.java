@@ -36,7 +36,7 @@ public class PerfectHashMap<T>
 
    private int min;
    private int size;
-   private T[] values;
+   protected T[] values;
 
    /**
     * Instantiates an Empty PerfectHashMap.

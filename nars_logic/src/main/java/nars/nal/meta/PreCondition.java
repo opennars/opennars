@@ -3,6 +3,7 @@ package nars.nal.meta;
 import nars.nal.RuleMatch;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -13,7 +14,7 @@ import java.util.function.Predicate;
  * WARNING: no preconditions should store any state so that their instances may be used by
  * different contexts (ex: NAR's)
  */
-abstract public class PreCondition implements Predicate<RuleMatch>, Serializable {
+abstract public class PreCondition implements Predicate<RuleMatch>, Comparable<PreCondition>, Serializable {
 
     abstract public String toString();
 
@@ -27,4 +28,12 @@ abstract public class PreCondition implements Predicate<RuleMatch>, Serializable
         return toString().equals(obj.toString());
     }
 
+    public void addConditions(List<PreCondition> l) {
+        l.add(this);
+    }
+
+    @Override
+    public final int compareTo(PreCondition p) {
+        return toString().compareTo(p.toString());
+    }
 }

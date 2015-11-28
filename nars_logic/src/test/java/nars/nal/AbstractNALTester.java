@@ -65,7 +65,14 @@ abstract public class AbstractNALTester {
         created.run2();
     }
 
-    public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
+    @Deprecated public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
+        if (requireMultistep)
+            return nars(level, false, true);
+        else
+            return nars(level, true, true);
+    }
+
+    public static Iterable<Supplier<NAR>> nars(int level, boolean single, boolean multi) {
 
         //Level adjustments
         {
@@ -73,25 +80,22 @@ abstract public class AbstractNALTester {
             if (level == 2) level = 3;
         }
 
-
-
-        List<Supplier<NAR>> l = Global.newArrayList();
+        List<Supplier<NAR>> l = Global.newArrayList(2);
 
         final int finalLevel = level;
 
-        /*l.add( supply("Default[NAL<=" + level + "]",
-                () -> new Default(new LocalMemory(), 512,1,2,3).nal(finalLevel) ) );*/
+        if (multi) {
+            l.add(supply("Default2[NAL<=" + level + "]",
+                    () -> {
+                        Default2 d = new Default2(512, 1, 2, 2);
+                        d.nal(finalLevel);
+                        d.getInput().inputPerCycle.set(3);
+                        return d;
+                    }
+            ));
+        }
 
-        l.add( supply("Default2[NAL<=" + level + "]",
-            () -> {
-                Default2 d = new Default2(512,1,2,2);
-                d.nal(finalLevel);
-                d.getInput().inputPerCycle.set(3);
-                return d;
-            }
-        ) );
-
-        if (!requireMultistep) {
+        if (single) {
             l.add( supply("SingleStep[NAL<=" + level + "]",
                     () -> new SingleStepNAR().nal(finalLevel) ) );
         }

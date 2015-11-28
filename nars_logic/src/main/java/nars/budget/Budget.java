@@ -745,7 +745,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return budget(source.getBudget());
     }
 
-    /** if source is null, it deletes the budget */
+    /** copies a budget into this; if source is null, it deletes the budget */
     public Budget budget(@Nullable final Budget source) {
         if (source == null) {
             zero();

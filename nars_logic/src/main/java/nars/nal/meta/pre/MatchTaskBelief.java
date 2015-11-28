@@ -6,6 +6,8 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.term.transform.FindSubst;
 
+import java.util.List;
+
 
 public class MatchTaskBelief extends PreCondition {
 
@@ -42,6 +44,12 @@ public class MatchTaskBelief extends PreCondition {
 
     }
 
+    public void addConditions(List<PreCondition> l) {
+        //l.add(this);
+        for (FindSubst.PatternOp o : compiled.code) {
+            l.add(o);
+        }
+    }
 
     public final boolean test(final RuleMatch m) {
 

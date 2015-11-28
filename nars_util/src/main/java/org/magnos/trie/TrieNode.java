@@ -17,6 +17,8 @@
 package org.magnos.trie;
 
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 /**
@@ -154,6 +156,33 @@ public class TrieNode<S, T> implements Entry<S, T>
       else
       {
          children.put( hash, child );
+      }
+   }
+
+   public void forEach(Consumer<TrieNode<S,T>> childConsumer) {
+      if (children == null) return;
+
+      Object[] vv = children.values;
+      if ((vv == null) || (vv.length == 0)) return;
+
+      for (Object x : vv) {
+         if (x == null) continue;
+         TrieNode<S,T> xx = (TrieNode<S,T>)x;
+         childConsumer.accept(xx);
+         //xx.forEach(childConsumer);
+      }
+   }
+
+   public void forEach(BiConsumer<TrieNode<S,T>, TrieNode<S,T>> parentChildConsumer) {
+      if (children == null) return;
+      Object[] vv = children.values;
+      if ((vv == null) || (vv.length == 0)) return;
+
+      for (Object x /*TrieNode<S,T> x*/ : vv) {
+         if (x == null) continue;
+         TrieNode<S,T> xx = (TrieNode<S,T>)x;
+         parentChildConsumer.accept(this, xx);
+         xx.forEach(parentChildConsumer);
       }
    }
 

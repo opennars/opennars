@@ -195,40 +195,35 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Narsese;
-import nars.concept.Concept;
-import nars.nar.Default;
 import nars.nar.Default2;
 import nars.op.mental.Anticipate;
-import nars.task.Task;
-import nars.term.Term;
-import nars.truth.DefaultTruth;
-import nars.truth.TruthFunctions;
-import nars.util.meter.TestNAR;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.util.function.Supplier;
-
-@RunWith(Parameterized.class)
-public class Patham9Test extends AbstractNALTester {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
-    final int cycles = 2000;
+public class Patham9Test {
 
-    public Patham9Test(Supplier<NAR> b) {
-        super(b);
-    }
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Iterable configurations() {
-        return AbstractNALTester.nars(8, false);
-    }
+    //final int cycles = 2000;
+
+//    public Patham9Test(Supplier<NAR> b) {
+//        super(b);
+//    }
+//
+//    @Parameterized.Parameters(name = "{0}")
+//    public static Iterable configurations() {
+//        return AbstractNALTester.nars(8, false, true);
+//    }
+
+
 
 
     @Test
     public void noise_simple() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
+        //NAR nar = nar();
 
         Anticipate.teststring = "";
         Anticipate.testing = true;
@@ -245,9 +240,7 @@ public class Patham9Test extends AbstractNALTester {
 
         String a ="anticipating: <b --> B>\ndid not happen: <b --> B>\n";
         String b = Anticipate.teststring;
-        if(!a.equals(b)) {
-            throw new Narsese.NarseseException("testcase failed");
-        }
+        assertEquals(a, b);
 
         //Concept c = nar.concept("<(&/, <b --> B>, /25) =/> <a --> A>>");
        /* nar.forEachConcept(h -> {
@@ -261,6 +254,7 @@ public class Patham9Test extends AbstractNALTester {
     @Test
     public void noisetest() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
+        //NAR nar = nar();
 
         Anticipate.teststring = "";
         Anticipate.testing = true;
@@ -293,9 +287,7 @@ public class Patham9Test extends AbstractNALTester {
 
         String a ="anticipating: <c --> C>\ndid not happen: <c --> C>\n";
         String b = Anticipate.teststring;
-        if(!b.contains(a)) {
-            throw new Narsese.NarseseException("testcase failed");
-        }
+        assertTrue(b.contains(a));
     }
 
 }

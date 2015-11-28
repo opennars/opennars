@@ -77,6 +77,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 
     /**
      * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
+     * this will set the truth instance directly. so avoid using shared terms unless it's really meant
      */
     @Deprecated
     public FluentTask truth(final Truth tv) {

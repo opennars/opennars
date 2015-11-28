@@ -16,6 +16,7 @@ public class ShiftOccurrence extends PreCondition1 {
 
     final public boolean positive;
     final public int direction;
+    private final String id;
 
     public static ShiftOccurrence make(Term arg1, Term operator, boolean positive) {
 
@@ -39,6 +40,10 @@ public class ShiftOccurrence extends PreCondition1 {
 */
         this.positive = positive;
         this.direction = direction;
+        this.id = getClass().getSimpleName() + "[" + arg1 + "," +
+                (positive ? "Pos" : "Neg") +
+                "," + direction +
+                ']';
 
 //        //if(operator.getTemporalOrder()== Temporal.ORDER_FORWARD) {
 //        //as long as this TemporalOrder()  check deosnt work we use string comparison:
@@ -60,7 +65,7 @@ public class ShiftOccurrence extends PreCondition1 {
             return true;
         }
 
-        int shift = 0;
+
         Term ret = m.premise.getTermLink().getTerm();
         if(ret instanceof Implication) {
             if(((Implication) ret).getSubject() instanceof Sequence) {
@@ -132,9 +137,6 @@ public class ShiftOccurrence extends PreCondition1 {
 
     @Override
     public String toString() {
-        return super.toString() + '[' +
-            (positive ? "Pos" : "Neg") +
-            "," + direction +
-        ']';
+        return id;
     }
 }

@@ -4,10 +4,11 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Op;
+import nars.nal.RuleMatch;
+import nars.nal.meta.PreCondition;
 import nars.nal.nal4.Image;
 import nars.term.*;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.ToIntFunction;
 
@@ -61,11 +62,17 @@ public class FindSubst extends Frame implements Subst {
     }
 
 
-    public interface PatternOp extends Serializable {
-        boolean run(Frame ff);
+    public abstract static class PatternOp extends PreCondition {
+        abstract boolean run(Frame ff);
+
+        @Override
+        public boolean test(RuleMatch ruleMatch) {
+            //TODO
+            return true;
+        }
     }
 
-    public abstract static class MatchOp implements PatternOp {
+    public abstract static class MatchOp extends PatternOp {
 
         /** if match not successful, does not cause the execution to
          * terminate but instead sets the frame's match flag */
@@ -190,7 +197,7 @@ public class FindSubst extends Frame implements Subst {
 //        }
 //    }
 
-    public static class MatchTerm implements PatternOp {
+    public static class MatchTerm extends PatternOp {
         public final Term x;
 
         public MatchTerm(Term c) {
@@ -208,7 +215,7 @@ public class FindSubst extends Frame implements Subst {
         }
     }
 
-    public final static class MatchCompound implements PatternOp {
+    public final static class MatchCompound extends PatternOp {
         public final Compound x;
 
         public MatchCompound(Compound c) {
@@ -228,6 +235,9 @@ public class FindSubst extends Frame implements Subst {
 
     /** push in to children */
     public static final PatternOp Subterms = new PatternOp() {
+
+        @Override public String toString() {  return "Subterms";        }
+
         @Override public boolean run(Frame ff) {
             ff.parent = (Compound)ff.y;
             return true;
@@ -236,6 +246,9 @@ public class FindSubst extends Frame implements Subst {
 
     /** pop out to parent */
     public static final PatternOp Superterm = new PatternOp() {
+
+        @Override public String toString() {  return "Superterm"; }
+
         @Override public boolean run(Frame ff) {
             ff.y = ff.parent;
             ff.parent = null;
@@ -243,7 +256,7 @@ public class FindSubst extends Frame implements Subst {
         }
     };
 
-    public static final class MatchSubterm implements PatternOp {
+    public static final class MatchSubterm extends PatternOp {
         public final int index;
         private final Term x;
 
@@ -266,7 +279,7 @@ public class FindSubst extends Frame implements Subst {
     }
 
     /** match 0th subterm (fast) */
-    public static final class MatchTheSubterm implements PatternOp {
+    public static final class MatchTheSubterm extends PatternOp {
 
         private final Term x;
 
@@ -288,7 +301,7 @@ public class FindSubst extends Frame implements Subst {
     /** represents the "program" that the matcher will execute */
     public static class TermPattern {
 
-        final PatternOp[] code;
+        public final PatternOp[] code;
         public final Term term;
         private Op type = null;
 
@@ -325,10 +338,13 @@ public class FindSubst extends Frame implements Subst {
                 Compound<?> c = (Compound)t;
                 int s = c.size();
 
-                code.add(new TermStructure(type, c.structure()));
+                //code.add(new TermOpEquals(c.op())); //interference with (task,belief) pair term
+
                 code.add(new TermVolumeMin(c.volume()-1));
-                code.add(new TermOpEquals(c.op())); //TODO varargs with greaterEqualSize etc
+                //TODO varargs with greaterEqualSize etc
                 code.add(new TermSizeEquals(c.size()));
+
+                code.add(new TermStructure(type, c.structure()));
 
                 if (c instanceof Image) {
                     code.add(new MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc

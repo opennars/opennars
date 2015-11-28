@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import nars.Symbols;
 import nars.nal.Level;
+import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.term.Atom;
@@ -14,18 +15,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static nars.$.the;
+
 /**
  * Describes a derivation postcondition
  * Immutable
  */
-public class PostCondition implements Serializable, Level //since there can be multiple tasks derived per rule
+public class PostCondition extends PreCondition implements Serializable, Level //since there can be multiple tasks derived per rule
 {
 
     public static final float HALF = 0.5f;
 
-    public PostCondition(Term term, Term[] modifiers, PreCondition[] afterConclusions, BeliefFunction truth, DesireFunction desire) {
+    public PostCondition(Term term, PreCondition[] afterConclusions, BeliefFunction truth, DesireFunction desire) {
         this.term = term;
-        this.modifiers = modifiers;
+        //this.modifiers = modifiers;
         this.afterConclusions = afterConclusions;
         this.truth = truth;
         this.desire = desire;
@@ -33,7 +36,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     }
 
     public final Term term;
-    public final Term[] modifiers;
+    //public final Term[] modifiers;
 
     /** steps to apply before initially forming the derived task's term */
     //public final PreCondition[] beforeConclusions;
@@ -43,37 +46,36 @@ public class PostCondition implements Serializable, Level //since there can be m
 
     public final BeliefFunction truth;
     public final DesireFunction desire;
-    public boolean negate = false;
+    //public boolean negate = false;
 
 
     /** minimum NAL level necessary to involve this postcondition */
     public final int minNAL;
 
-    public static final Set<Atom> reservedMetaInfoCategories = new HashSet(9);
+    public static final Set<Atom> reservedMetaInfoCategories = new HashSet<Atom>() {{
+        add(the("Truth"));
+        add(the("Stamp"));
+        add(the("Desire"));
+        add(the("Order"));
+        add(the("Derive"));
+        add(the("Info"));
+        add(the("Event"));
+        add(the("Punctuation"));
+        add(the("SequenceIntervals"));
+        add(the("Eternalize"));
+    }};
 
-    static {
-        reservedMetaInfoCategories.add(Atom.the("Truth"));
-        reservedMetaInfoCategories.add(Atom.the("Stamp"));
-        reservedMetaInfoCategories.add(Atom.the("Desire"));
-        reservedMetaInfoCategories.add(Atom.the("Order"));
-        reservedMetaInfoCategories.add(Atom.the("Derive"));
-        reservedMetaInfoCategories.add(Atom.the("Info"));
-        reservedMetaInfoCategories.add(Atom.the("Event"));
-        reservedMetaInfoCategories.add(Atom.the("Punctuation"));
-        reservedMetaInfoCategories.add(Atom.the("SequenceIntervals"));
-        reservedMetaInfoCategories.add(Atom.the("Eternalize"));
-    }
 
     final static Atom
-        negation = Atom.the("Negation"),
-        conversion = Atom.the("Conversion"),
-        contraposition = Atom.the("Contraposition"),
-        identity = Atom.the("Identity"),
-        allowBackward = Atom.the("AllowBackward"),
-        fromTask = Atom.the("FromTask"),
-        fromBelief = Atom.the("FromBelief"),
-        anticipate = Atom.the("Anticipate"),
-        immediate = Atom.the("Immediate");
+        negation = the("Negation"),
+        conversion = the("Conversion"),
+        contraposition = the("Contraposition"),
+        identity = the("Identity"),
+        allowBackward = the("AllowBackward"),
+        fromTask = the("FromTask"),
+        fromBelief = the("FromBelief"),
+        anticipate = the("Anticipate"),
+        immediate = the("Immediate");
 
     /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
      *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
@@ -97,7 +99,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         BeliefFunction judgmentTruth = null;
         DesireFunction goalTruth = null;
 
-        boolean negate = false;
+        //boolean negate = false;
         char puncOverride = 0;
 
         for (final Term m : modifiers) {
@@ -115,7 +117,7 @@ public class PostCondition implements Serializable, Level //since there can be m
             final Term which = i.getSubject();
 
 
-            negate = which.equals(negation);
+            //negate = type.equals(negation);
 
 
             switch (type.toString()) {
@@ -194,8 +196,8 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
 
-        PostCondition pc = new PostCondition(term, modifiers, afterConclusions, judgmentTruth, goalTruth);
-        pc.negate = negate;
+        PostCondition pc = new PostCondition(term, afterConclusions, judgmentTruth, goalTruth);
+        //pc.negate = negate;
         pc.puncOverride = puncOverride;
         if (pc.valid(rule)) {
             return pc;
@@ -246,10 +248,15 @@ public class PostCondition implements Serializable, Level //since there can be m
         return "PostCondition{" +
                 "term=" + term +
                 ", afterConc=" + Arrays.toString(afterConclusions) +
-                ", modifiers=" + Arrays.toString(modifiers) +
+                //", modifiers=" + Arrays.toString(modifiers) +
                 ", truth=" + truth +
                 ", desire=" + desire +
-                ", negation=" + negate +
                 '}';
     }
+
+    @Override
+    @Deprecated public boolean test(RuleMatch ruleMatch) {
+        return true;
+    }
+
 }

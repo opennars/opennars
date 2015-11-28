@@ -28,12 +28,8 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
@@ -43,7 +39,9 @@ import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  something expected did not happen
@@ -51,8 +49,8 @@ import java.util.*;
  */
 public class Anticipate {
 
-    public double DEFAULT_CONFIRMATION_EXPECTATION = 0.51;
-    public static double TOLERANCE_DIV=5.0;
+    public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
+    public static float TOLERANCE_DIV=5.0f;
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -62,23 +60,15 @@ public class Anticipate {
     private final NAR nar;
     private Memory memory;
     private final boolean debug = false;
-    private long nextUpdateTime = -1;
+    //private long nextUpdateTime = -1;
 
     public Anticipate(NAR nar) {
         this.nar = nar;
         this.memory = nar.memory;
 
-        nar.memory.eventCycleEnd.on(c -> {
-           updateAnticipations();
-        });
-
-        nar.memory.eventInput.on(c -> {
-            mayHaveHappenedAsExpected(c);
-        });
-
-        nar.memory.eventDerived.on(c -> {
-            mayHaveHappenedAsExpected(c);
-        });
+        nar.memory.eventCycleEnd.on(c -> updateAnticipations());
+        nar.memory.eventInput.on(this::mayHaveHappenedAsExpected);
+        nar.memory.eventDerived.on(this::mayHaveHappenedAsExpected);
     }
 
 
@@ -88,32 +78,35 @@ public class Anticipate {
             return;
         }
 
-        if(t.getTerm() instanceof Conjunction || t.getTerm() instanceof Parallel || t.getTerm() instanceof Sequence) { //not observable, TODO probably revise
+        Compound tt = t.getTerm();
+        if(tt instanceof Conjunction || tt instanceof Parallel || tt instanceof Sequence) { //not observable, TODO probably revise
             return;
         }
 
         long now = memory.time();
 
-        if (memory.time() > t.getOccurrenceTime()) //its about the past..
+        if (now > t.getOccurrenceTime()) //its about the past..
             return;
 
         if (debug)
-            System.err.println("Anticipating " + t.getTerm() + " in " + (t.getOccurrenceTime() - now));
+            System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
-        TaskTime tt = new TaskTime(t, t.getCreationTime());
-        String s = "anticipating: "+tt.task.getTerm().toString();
-        System.out.println(s);
-        if(testing)
+        TaskTime taskTime = new TaskTime(t, t.getCreationTime());
+        if(testing) {
+            String s = "anticipating: "+taskTime.task.getTerm().toString();
+            System.out.println(s);
             teststring += s + "\n";
-        anticipations.put(t.getTerm(), tt);
+        }
+        anticipations.put(tt, taskTime);
     }
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
-        String s = "did not happen: " + prediction.toString();
-        System.out.println(s);
-        if(testing)
+        if(testing) {
+            String s = "did not happen: " + prediction.toString();
+            System.out.println(s);
             teststring += s + "\n";
+        }
 
         long expectedOccurrenceTime = tt.occurrTime;
 
@@ -124,36 +117,48 @@ public class Anticipate {
             System.err.println("Anticipation Negated " + tt.task);
 
         final Task derived = new FluentTask<>(prediction)
-                        .punctuation(Symbols.JUDGMENT)
-                        .truth(expiredTruth)
+                .belief()
+                .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
                 .budget(expiredBudget)
                 .time(memory.time(), expectedOccurrenceTime)
-                .parent(tt.task, null);
+                .parent(tt.task, null)
+                .because("Anticipation Negated")
+                ;
 
         nar.input(derived);
     }
 
+    List<TaskTime> toRemove = Global.newArrayList();
+
+
     protected void mayHaveHappenedAsExpected(Task c) {
-        if(!c.isInput()) {
+
+        if(!c.isInput() || c.isEternal()) {
             return; //it's not a input task, the system is not allowed to convince itself about the state of affairs ^^
         }
-        if(!c.isEternal()) {
-            Collection<TaskTime> res = anticipations.get(c.getTerm());
-            ArrayList<TaskTime> ToRemove = new ArrayList<TaskTime>();
-            for(TaskTime tt : res) {
-                if(tt.inTime(c.getOccurrenceTime()) && !c.equals(tt.task) && tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
-                    ToRemove.add(tt);
-                    happeneds++;
+
+        toRemove.clear();
+
+        long cOccurr = c.getOccurrenceTime();
+
+        for(TaskTime tt : anticipations.get(c.getTerm())) {
+
+            if(tt.inTime(cOccurr) && !c.equals(tt.task) &&
+                    tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
+
+                toRemove.add(tt);
+
+                happeneds++;
+                if(testing) {
                     String s = "happened as expected: "+tt.task.getTerm().toString();
                     System.out.println(s);
-                    if(testing)
-                        teststring += s + "\n";
+                    teststring += s + "\n";
                 }
             }
-            for(TaskTime tt : ToRemove) {
-                anticipations.get(c.getTerm()).remove(tt);
-            }
+
         }
+
+        toRemove.forEach(tt -> anticipations.remove(c.getTerm(),tt));
     }
 
     /** called each cycle to update calculations of anticipations */
@@ -189,7 +194,7 @@ public class Anticipate {
     /** Prediction point vector / centroid of a group of Tasks
      *      time a prediction is made (creationTime), and
      *      tme it is expected (ocurrenceTime) */
-    public static class TaskTime {
+    public static final class TaskTime {
 
         /** all data is from task */
         final public Task task;
@@ -200,7 +205,7 @@ public class Anticipate {
 
         /** cached locally, same value as in task */
         private final int hash;
-        public double tolerance = 0;
+        public float tolerance = 0;
 
         public TaskTime(Task task, long creationTime) {
             super();

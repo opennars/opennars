@@ -814,10 +814,10 @@ public class Trie<S, T> implements Map<S, T>
       }
    }
 
-   private class NodeSet extends AbstractSet<TrieNode<S, T>>
+   public class NodeSet extends AbstractSet<TrieNode<S, T>>
    {
 
-      private final TrieNode<S, T> root;
+      public final TrieNode<S, T> root;
 
       public NodeSet( TrieNode<S, T> root )
       {

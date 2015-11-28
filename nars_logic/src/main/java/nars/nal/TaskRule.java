@@ -17,6 +17,8 @@ import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 /**
@@ -121,6 +123,19 @@ public class TaskRule extends ProductN implements Level {
 
 
 
+    public List<PreCondition> getConditions() {
+        int n = prePreconditions.length + postPreconditions.length;
+        List<PreCondition> l = Global.newArrayList(n);
+        for (PreCondition p : prePreconditions)
+            p.addConditions(l);
+        for (PreCondition p : postPreconditions)
+            p.addConditions(l);
+        for (PostCondition p : postconditions){
+            p.addConditions(l);
+        }
+
+        return l;
+    }
 
 
     /**
@@ -189,6 +204,7 @@ public class TaskRule extends ProductN implements Level {
 //        });
 
         this.str = super.toString();
+
     }
 
     @Override
@@ -460,7 +476,7 @@ public class TaskRule extends ProductN implements Level {
         this.postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
 
 
-        List<PostCondition> postConditionsList = Global.newArrayList(postcons.length);
+        Set<PostCondition> postConditions = new TreeSet();
 
         for (int i = 0; i < postcons.length; ) {
             Term t = postcons[i++];
@@ -468,17 +484,22 @@ public class TaskRule extends ProductN implements Level {
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
 
 
+            Term[] modifiers = ((Product) postcons[i++]).terms();
+
+            PreCondition[] afterConclusions = afterConcs.toArray(new PreCondition[afterConcs.size()]);
+
             PostCondition pc = PostCondition.make(this, t,
-                    afterConcs.toArray(new PreCondition[afterConcs.size()]),
-                    ((Product) postcons[i++]).terms());
+                    afterConclusions,
+                    Terms.toSortedSetArray(modifiers));
+
             if (pc!=null)
-                postConditionsList.add( pc );
+                postConditions.add( pc );
         }
 
-        if (Sets.newHashSet(postConditionsList).size()!=postConditionsList.size())
-            throw new RuntimeException("postcondition duplicates:\n\t" + postConditionsList);
+        if (Sets.newHashSet(postConditions).size()!=postConditions.size())
+            throw new RuntimeException("postcondition duplicates:\n\t" + postConditions);
 
-        this.postconditions = postConditionsList.toArray( new PostCondition[postConditionsList.size() ] );
+        this.postconditions = postConditions.toArray( new PostCondition[postConditions.size() ] );
 
 
         //TODO add modifiers to affect minNAL (ex: anything temporal set to 7)
