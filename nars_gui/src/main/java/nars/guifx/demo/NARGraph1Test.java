@@ -20,7 +20,7 @@ import nars.time.FrameClock;
 public class NARGraph1Test {
 
     static {
-        DerivationRules.maxVarArgsToMatch = 3;
+        DerivationRules.maxVarArgsToMatch = 2;
     }
 
     public static SpaceGrapher newGraph(NAR n) {

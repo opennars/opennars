@@ -125,7 +125,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
                     @Override
                     public void accept(SpaceGrapher g) {
-                        g.setVertices(nodes);
+                        g.setVertices(nodes.toArray(new TermNode[nodes.size()]));
                     }
                 },
                 new VisModel<K, TermNode<K>>() {
@@ -166,13 +166,16 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
     public final TermEdge getEdge(K a, K b, BiFunction<TermNode,TermNode,TermEdge> builder) {
         TermNode<K> A = getTermNode(a);
+        TermEdge newEdge = null;
         if (A != null) {
-            return A.getEdge(b);
+            newEdge = A.getEdge(b);
         }
 
+        if (newEdge == null) {
+            newEdge = builder.apply(A, getTermNode(b));
+            addEdge(a, b, newEdge);
+        }
 
-        TermEdge newEdge = builder.apply(A, getTermNode(b));
-        addEdge(a, b, newEdge);
         return newEdge;
     }
 
@@ -281,16 +284,16 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     };
 
     /** commit what is to be displayed */
-    public final void setVertices(final Set<? extends V> active) {
+    public final void setVertices(TermNode[] active) { //final Set<? extends V> active) {
 
         ready.set(false);
 
         Runnable next;
 
-        if (active.isEmpty()) {
+        if (active.length == 0) {
             next = clear;
         } else {
-            final TermNode[] toDisplay = active.toArray(displayed);
+            final TermNode[] toDisplay = active; //active.toArray(displayed);
             if (toDisplay == null) {
                 throw new RuntimeException("null toDisplay");
             }

@@ -80,7 +80,7 @@ public class EventGraphSource implements GraphSource<Task>,
         );
 
 
-        g.setVertices(l);
+        g.setVertices(l.toArray(new TermNode[l.size()]));
 
         l.clear();
 

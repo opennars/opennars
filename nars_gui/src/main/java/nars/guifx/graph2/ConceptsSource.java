@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
@@ -89,6 +88,7 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
         regs = null;
     }
 
+
     public final void update(SpaceGrapher g) {
 
 
@@ -96,19 +96,11 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
              refresh.compareAndSet(true, false)) {
 
             int maxNodes = g.maxNodes.get();
+            final Set<TermNode> active = new LinkedHashSet<>(maxNodes); //Global.newHashSet(maxNodes);
 
-            Set<TermNode> active = new LinkedHashSet<>(maxNodes); //Global.newHashSet(maxNodes);
 
             //synchronized (refresh)
             {
-
-                Consumer<Concept> each = c -> {
-                    TermNode tn = g.getOrCreateTermNode(c.getTerm());
-                    if (tn != null) {
-                        active.add(tn);
-                        refresh(g, tn, c);
-                    }
-                };
 
                 Bag<Term, Concept> x = ((Default) nar).core.concepts();
 
@@ -122,6 +114,7 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
 
                 Iterator<Concept> cc = x.iterator();
                 int n = 0;
+
                 while (cc.hasNext() && n++ < maxNodes) {
                     Concept c = cc.next();
                     float p = c.getPriority();
@@ -129,12 +122,18 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
                     if ((p < minPri) || (p > maxPri)) continue;
                     if ((filter != null) && (!c.getTerm().toString().contains(filter))) continue;
 
-                    each.accept(c);
+
+                    TermNode tn = g.getOrCreateTermNode(c.getTerm());
+                    if (tn != null) {
+                        active.add(tn);
+                        refresh(g, tn, c);
+                    }
+
                 }
 
 
                 if (!Objects.equals(prevActive, active)) {
-                    g.setVertices(active);
+                    g.setVertices(active.toArray(new TermNode[active.size()]));
                 } else {
                     prevActive = active;
                 }
