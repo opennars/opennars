@@ -262,7 +262,7 @@ public class DefaultConcept extends AtomConcept {
             if (delta!=0) //less desire of a goal, more happiness
                memory.emotion.happy(delta);
 
-            if(Math.abs(delta)>Global.EXECUTION_SATISFACTION_TRESHOLD) {
+            if(Math.abs(delta)>=Global.EXECUTION_SATISFACTION_TRESHOLD) {
                 if (strongest.getTruth().getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
                     nal.nar().execute(goal);
                 }
