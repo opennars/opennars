@@ -145,7 +145,7 @@ public class MethodOperator extends TermFunction {
         } catch (IllegalArgumentException e) {
 
             System.err.println(e + ": " + Arrays.toString(args) + " for " + method);
-            e.printStackTrace();
+            //e.printStackTrace();
 
             //create a task to never desire this
             nar.goal(o, Tense.Present, 0.0f, 0.9f);

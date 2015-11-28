@@ -34,7 +34,8 @@ public final class MakeTasks extends PreCondition {
 
     @Override
     public String toString() {
-        return "MakeTasks[" + rule + "]";
+        return "MakeTasks";
+        //return "MakeTasks[" + rule + "]";
     }
 
     @Override

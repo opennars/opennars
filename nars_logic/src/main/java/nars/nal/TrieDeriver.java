@@ -33,26 +33,19 @@ public class TrieDeriver extends RuleTrie {
     private final void forEachRule(RuleBranch r, RuleMatch match) {
 
         for (PreCondition x : r.precondition) {
-
-            if (!x.test(match)) {
+            if (!x.test(match))
                 return;
-            }
-
         }
 
-        RuleBranch[] children = r.children;
+        RuleMatch subMatch = getSubMatch();
 
-        //if (children != null) {
-            RuleMatch subMatch = getSubMatch();
+        for (RuleBranch s : r.children) {
+            match.copyTo(subMatch);
+            forEachRule(s, subMatch);
+        }
 
-            for (RuleBranch s : children) {
-                match.copyTo(subMatch);
-                forEachRule(s, subMatch);
-            }
+        returnSubMatch(subMatch);
 
-            returnSubMatch(subMatch);
-
-        //}
     }
 
     Random globalRNG; //HACK refsthe same RNG which should be used everywhere

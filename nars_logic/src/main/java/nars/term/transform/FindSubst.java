@@ -90,6 +90,9 @@ public class FindSubst extends Subst {
         abstract public boolean match(Term f);
 
         @Override public final boolean run(Frame ff) {
+//            if (ff.power < 0) {
+//                return false;
+//            }
             return match(ff.y);
         }
 
@@ -368,7 +371,7 @@ public class FindSubst extends Subst {
     /** represents the "program" that the matcher will execute */
     public static class TermPattern {
 
-        public final PatternOp[] code;
+        public final PreCondition[] code;
         public final Term term;
         private Op type = null;
 
@@ -377,16 +380,17 @@ public class FindSubst extends Subst {
             this.term = pattern;
             this.type = type;
 
-            List<PatternOp> code = Global.newArrayList();
+            List<PreCondition> code = Global.newArrayList();
 
             //compile the code
             compile(pattern, code);
             //code.add(End);
+            code.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
 
-            this.code = code.toArray(new PatternOp[code.size()]);
+            this.code = code.toArray(new PreCondition[code.size()]);
         }
 
-        private void compile(Term t, List<PatternOp> code) {
+        private void compile(Term t, List<PreCondition> code) {
 
 
             boolean constant = false;
@@ -422,7 +426,7 @@ public class FindSubst extends Subst {
             //code.add(new MatchIt(v));
         }
 
-        private void compileCompound(Compound t, List<PatternOp> code) {
+        private void compileCompound(Compound t, List<PreCondition> code) {
             Compound<?> c = t;
             int s = c.size();
 
@@ -482,7 +486,7 @@ public class FindSubst extends Subst {
             }
         };
 
-        private void compileNonCommutative(List<PatternOp> code, Compound<?> c) {
+        private void compileNonCommutative(List<PreCondition> code, Compound<?> c) {
 
             final int s = c.size();
             TreeSet<SubtermPosition> ss = new TreeSet();
@@ -505,7 +509,7 @@ public class FindSubst extends Subst {
             code.add( Superterm );
         }
 
-        private void compile2(Term x, List<PatternOp> code, int i) {
+        private void compile2(Term x, List<PreCondition> code, int i) {
             //TODO this is a halfway there.
             //in order for this to work, parent terms need to be stored in a stack or something to return to, otherwise they get a nulll and it crashes:
 
@@ -574,16 +578,17 @@ public class FindSubst extends Subst {
 
     /** find substitutions using a pre-compiled term pattern */
     @Override
-    public final boolean next(final TermPattern x, final Term y, int startPower) {
+    @Deprecated public final boolean next(final TermPattern x, final Term y, int startPower) {
 
 //        return next(x.term, y, startPower);
 
         this.power = startPower;
 
-        PatternOp[] code = x.code;
+        PreCondition[] code = x.code;
         this.y = y;
-        for (PatternOp o : code) {
-            if (!o.run(this))
+        for (PreCondition o : code) {
+            if (!(o instanceof PatternOp)) continue;
+            if (!((PatternOp)o).run(this))
                 return false;
         }
         return true;

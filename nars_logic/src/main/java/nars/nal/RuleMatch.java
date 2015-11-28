@@ -241,16 +241,18 @@ public class RuleMatch {
         target.taskBelief = taskBelief;
 
         //if (stage == MatchStage.Pattern) {
+        //if (stage != MatchStage.Pre) {
             subst.copyTo(target.subst);
+        //}
         /*}
         else {
             //target.subst = subst; //it wont change outside Pattern stage
         }*/
 
-        //if (stage == MatchStage.Post) {
+        if (stage != MatchStage.Pre) {
             post.copyTo(target.post);
             sub2.copyTo(target.sub2);
-        /*}
+        }/*
         else {
             m.post = post; //it wont change outside Post stage
             m.sub2 = sub2;

@@ -146,7 +146,6 @@ public class TaskRule extends ProductN implements Level {
             p.addConditions(l);
 
         ///--------------
-        l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
 
         l.add(new GetTruth(post.truth, post.desire, post.puncOverride));
         l.add(new Resolve(post.term, this ));

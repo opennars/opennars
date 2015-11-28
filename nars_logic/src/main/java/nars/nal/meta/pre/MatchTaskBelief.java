@@ -46,7 +46,7 @@ import java.util.List;
 
     public void addConditions(List<PreCondition> l) {
         //l.add(this);
-        for (FindSubst.PatternOp o : compiled.code) {
+        for (PreCondition o : compiled.code) {
             l.add(o);
         }
     }
