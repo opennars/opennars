@@ -3,9 +3,8 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Param;
-import nars.io.in.LibraryInput;
-import nars.io.out.TextOutput;
-import nars.nar.Default;
+
+import nars.nar.Default2;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -49,7 +48,7 @@ public class TestQController {
             super(n, period);
                         
             
-            Param p = nar.param;
+            Param p = nar.memory;
             
             add(new NControlSensor(p.conceptForgetDurations, 3));
             //add(new NControlSensor(p.beliefCyclesToForget, 2));
@@ -92,18 +91,18 @@ public class TestQController {
 
         @Override
         protected void act(int action) {
-            Param p = nar.param;
+            Param p = nar.memory;
             
             
             switch (action) {
                 case 0: 
-                    p.conceptForgetDurations.set(3);
+                    p.conceptForgetDurations.setValue(3);
                     break;
                 case 1: 
-                    p.conceptForgetDurations.set(5);
+                    p.conceptForgetDurations.setValue(5);
                     break;
                 case 2:
-                    p.conceptForgetDurations.set(7);
+                    p.conceptForgetDurations.setValue(7);
                     break;
             }
             
@@ -136,14 +135,14 @@ public class TestQController {
 
     }
 
-    public static void input(String example, NAR... n) {
-        for (NAR x : n)
-            x.input(getExample(example));
-    }
+//    public static void input(String example, NAR... n) {
+//        for (NAR x : n)
+//            x.input(getExample(example));
+//    }
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new NAR(new Default().setActiveConcepts(512))
+        return new Default2(512, 1, 1, 3)
         //return build(g, g.param);
         ;
     }
@@ -186,12 +185,12 @@ public class TestQController {
 
             if (time % resetPeriod == 0) {
                 System.out.println("RESET");
-                n.reset();        TextOutput.out(n);
+                n.reset();        //TextOutput.out(n);
 
                 m.reset();
                 r.reset();
                 
-                input("nal/original/Example-MultiStep-edited.nal", n, m, r);
+                //input("nal/original/Example-MultiStep-edited.nal", n, m, r);
                 //input("nal/test/nars_multistep_1.nal", n, m, r);
                 //input("nal/test/nars_multistep_2.nal", n, m, r);                
             }
@@ -212,7 +211,7 @@ public class TestQController {
             m.frame(1);
             r.frame(1);
             
-            avgCycleToForget += (n.param).conceptForgetDurations.get() / displayCycles;
+            avgCycleToForget += (n.memory).conceptForgetDurations.getValue() / displayCycles;
             mm += qm.reward();
             nn += qn.reward();
             rr += qr.reward();
@@ -262,9 +261,9 @@ public class TestQController {
     
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
     
-    /** duplicated from NALTest.java  -- TODO use a comon copy of this method */
-    public static String getExample(String path) {
-        return LibraryInput.getExample(path);
-    }
+//    /** duplicated from NALTest.java  -- TODO use a comon copy of this method */
+//    public static String getExample(String path) {
+//        return LibraryInput.getExample(path);
+//    }
     
 }

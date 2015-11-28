@@ -7,7 +7,7 @@ package jurls.core;
 
 import jurls.core.approximation.ParameterizedFunction;
 import jurls.core.utils.Utils;
-import nars.io.Texts;
+import nars.util.Texts;
 
 /**
  *

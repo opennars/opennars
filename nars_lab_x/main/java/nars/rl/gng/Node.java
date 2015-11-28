@@ -1,7 +1,6 @@
 package nars.rl.gng;
 
-import nars.util.data.id.Named;
-import org.apache.commons.math3.linear.ArrayRealVector;
+
 
 /**
  * Created by Scadgek on 11/3/2014.

@@ -64,7 +64,7 @@ public class MartialArts implements RLEnvironment {
 
         try {
             world.background = ImageIO.read(getClass().getResource(
-                    "/jurls/reinforcementlearning/domains/martialarts/images/"
+                    "/nars_lab_x/main/java/jurls/reinforcementlearning/domains/martialarts/images/"
                     + "backgroundimg1.png"
             ));
         } catch (IOException ex) {
@@ -125,7 +125,7 @@ public class MartialArts implements RLEnvironment {
             for (int j = 0; j < 5; ++j) {
                 try {
                     BufferedImage im = ImageIO.read(getClass().getResource(
-                            "/jurls/reinforcementlearning/domains/martialarts/images/"
+                            "/nars_lab_x/main/java/jurls/reinforcementlearning/domains/martialarts/images/"
                             + prefix + String.format("%04d", i) + ".png"
                     ));
                     ims.add(im);
@@ -143,7 +143,7 @@ public class MartialArts implements RLEnvironment {
                 ArrayList<BufferedImage> ims = new ArrayList<>();
                 for (int j = 0; j < 10; ++j) {
                     BufferedImage im = ImageIO.read(getClass().getResource(
-                            "/jurls/reinforcementlearning/domains/martialarts/images/"
+                            "/nars_lab_x/main/java/jurls/reinforcementlearning/domains/martialarts/images/"
                             + prefix + String.format("%04d", i) + ".png"
                     ));
                     ims.add(im);

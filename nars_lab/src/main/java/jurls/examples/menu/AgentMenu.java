@@ -10,7 +10,6 @@ import jurls.core.approximation.ApproxParameters;
 import jurls.core.approximation.ParameterizedFunctionGenerator;
 import jurls.core.brain.Brain;
 import jurls.core.reinforcementlearning.*;
-import nars.rl.hai.HsomQBrain;
 
 import javax.swing.*;
 
@@ -74,7 +73,7 @@ public class AgentMenu extends RLMenu {
     ) {
 
         if (haiq.isSelected()) {
-            return new HsomQBrain(s0.length, numActions);
+            //return new HsomQBrain(s0.length, numActions);
         }
 
         UpdateProcedure up = null;

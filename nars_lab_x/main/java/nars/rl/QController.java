@@ -20,7 +20,7 @@ public abstract class QController extends AbstractController {
     //even when not active, vectorize inputs because it may affect sensor readings that determine reward, which we may want to evaluate
     public QController(NAR nar, int updatePeriod) {
         super(nar, updatePeriod);
-        
+
     }
 
     public <C extends ControlSensor> C add(C s) {
@@ -81,10 +81,10 @@ public abstract class QController extends AbstractController {
     public void setActive(boolean b) {
         this.active = b;
     }
-    
+
 
     public int getNumActions() {
         return actions;
     }
-    
+
 }

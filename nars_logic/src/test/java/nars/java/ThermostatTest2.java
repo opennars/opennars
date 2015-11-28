@@ -17,11 +17,9 @@ import java.util.Random;
 public class ThermostatTest2 {
 
     /** number of steps in total range */
-    static int range = 10;
+    static int range = 4;
 
     /** # steps it can move per invocation (+/-) */
-    static int maxStep = 2;
-    static public int tolerance = 1;
 
     public static class Model {
         public int target;
@@ -44,7 +42,7 @@ public class ThermostatTest2 {
         public int go(/*int speed,*/ boolean upOrDown) {
             final int speed = 1;
 
-            if (log) System.out.println("\n\tgo @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target + " (" + (Math.abs(target-current)) + " dist)\n");
+            if (log) System.out.println("\tgo @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target + " (" + (Math.abs(target-current)) + " dist)\n");
 
             current += speed * (upOrDown ? +1 : -1);
 
@@ -136,7 +134,7 @@ public class ThermostatTest2 {
 
         //n.trace();
 
-        boolean log = false;
+        boolean log = true;
         if (log) {
             n.log(System.out, v -> {
 
@@ -237,7 +235,7 @@ public class ThermostatTest2 {
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(10000*dur);
+            n.frame(1000*dur);
             //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
 
 

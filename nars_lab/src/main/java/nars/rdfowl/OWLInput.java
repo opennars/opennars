@@ -5,7 +5,6 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nar.Default;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -524,14 +523,14 @@ public class OWLInput  {
         return englishNameBuilder.toString();
     }
 
-    public static void main(String[] args) throws Exception {
-        NAR n = new Default(4096,128,8).nal(6);
-
-        //new TextOutput(n, System.out);
-
-        //new NARSwing(n);
-        new OWLInput(n, "/home/me/Downloads/dbpedia.owl");
-
-        n.frame(5000);
-    }
+//    public static void main(String[] args) throws Exception {
+//        NAR n = new Default(4096,128,8).nal(6);
+//
+//        //new TextOutput(n, System.out);
+//
+//        //new NARSwing(n);
+//        new OWLInput(n, "/home/me/Downloads/dbpedia.owl");
+//
+//        n.frame(5000);
+//    }
 }
