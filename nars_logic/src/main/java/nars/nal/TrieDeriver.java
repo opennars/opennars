@@ -17,26 +17,42 @@ public class TrieDeriver extends RuleTrie {
     }
 
     @Override public final void forEachRule(RuleMatch match) {
-        match.start();
-        for (RuleBranch r : root)
+        System.out.println("\nstart: " + match);
+        //match.start();
+        for (RuleBranch r : root) {
             forEachRule(r, match);
+        }
     }
 
     private final static void forEachRule(RuleBranch r, RuleMatch match) {
 
         for (PreCondition x : r.precondition) {
-            if (!x.test(match))
+
+            if (!x.test(match)) {
+                System.out.println(x + " -\n");
                 return;
+            }
+            System.out.println(x + " +");
+            if (match.subst.xy().size() > 0) {
+                System.out.println("  " + match.subst.xy());
+            }
         }
 
-        if (r.children == null) {
+        RuleBranch[] children = r.children;
+
+        if (children == null) {
+            System.out.println("  APPLY " + match.subst);
             match.apply();
         }
         else {
-            for (RuleBranch s : r.children) {
-                RuleMatch subMatch = match.clone();
-                forEachRule(s, subMatch);
-            }
+                System.out.println("--> \\FORK: " + match.subst);
+                for (RuleBranch s : children) {
+                    RuleMatch subMatch = match.clone();
+                    System.out.println("---->: " + subMatch.subst);
+                    forEachRule(s, subMatch);
+                }
+                System.out.println("<-- /FORK");
+
         }
     }
 

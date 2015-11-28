@@ -44,6 +44,11 @@ public class FindSubst extends Frame implements Subst {
     }
 
     @Override
+    public Frame frame() {
+        return this;
+    }
+
+    @Override
     public final Subst clone() {
         FindSubst x = new FindSubst(type,
                 Global.newHashMap(xy),
@@ -78,9 +83,8 @@ public class FindSubst extends Frame implements Subst {
         abstract boolean run(Frame ff);
 
         @Override
-        public boolean test(RuleMatch ruleMatch) {
-            //TODO
-            return true;
+        public final boolean test(RuleMatch ruleMatch) {
+            return run(ruleMatch.subst.frame());
         }
     }
 

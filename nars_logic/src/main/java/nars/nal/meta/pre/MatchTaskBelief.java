@@ -9,7 +9,7 @@ import nars.term.transform.FindSubst;
 import java.util.List;
 
 
-public class MatchTaskBelief extends PreCondition {
+@Deprecated public class MatchTaskBelief extends PreCondition {
 
     public final TaskBeliefPair pattern;
 
@@ -62,7 +62,7 @@ public class MatchTaskBelief extends PreCondition {
 //        return m.next(pattern, tb, m.unificationPower);
 
         //TODO parameterize the power by budget
-        return m.next(compiled, tb, m.unificationPower);
+        return m.next(compiled, tb, m.subst.frame().power);
 
     }
 

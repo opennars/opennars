@@ -17,7 +17,7 @@ abstract public class Frame {
     protected final Op type;
 
     /** current y-term being matched against */
-    protected Term y;
+    public Term y;
 
     protected Compound parent; //parent, if in subterms
 
@@ -33,7 +33,7 @@ abstract public class Frame {
     protected final Map<Term, Term> yx;
     protected boolean yxChanged = false;
 
-    protected int power;
+    public int power;
 
     public Frame(final Random random, final Op type, Map<Term, Term> xy, Map<Term, Term> yx) {
         this.random = random;

@@ -7,6 +7,8 @@ import java.util.Map;
 
 public interface Subst {
 
+    @Deprecated Frame frame();
+
     /** reset to a starting, empty state */
     void clear();
 

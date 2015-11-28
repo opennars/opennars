@@ -71,8 +71,6 @@ public class RuleMatch  {
     public final Map<Term, Term> right = Global.newHashMap(0);
     public final Set<Term> tmpSet = Global.newHashSet(0);
 
-    public int unificationPower;
-
     public TaskRule rule;
     protected Consumer<Task> receiver;
     public Premise premise;
@@ -105,11 +103,13 @@ public class RuleMatch  {
      * set the next premise
      */
     public final void start(Premise p, Consumer<Task> receiver) {
+        start();
+
         this.premise = p;
         this.receiver = receiver;
 
         //scale unification power according to premise's mean priority linearly between min and max
-        this.unificationPower =
+        int unificationPower =
                 (int)((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
                     + Global.UNIFICATION_POWERmin);
 
@@ -117,6 +117,8 @@ public class RuleMatch  {
                 p.getTask().getTerm(),
                 p.getTermLink().getTerm()
         );
+        this.subst.frame().y = taskBelief;
+        this.subst.frame().power = unificationPower;
     }
 
 
@@ -149,6 +151,8 @@ public class RuleMatch  {
         subst.clear();
         occurence_shift = Stamp.TIMELESS;
         truth = null;
+        punct = 0;
+        derivedTerm = null;
     }
 
     /**
