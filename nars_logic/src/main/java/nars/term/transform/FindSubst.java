@@ -6,6 +6,7 @@ import nars.NAR;
 import nars.Op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
+import nars.nal.meta.TaskBeliefPair;
 import nars.nal.nal4.Image;
 import nars.term.*;
 
@@ -165,7 +166,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Structure{" + bits + '}';
+            return "Structure{" + Integer.toString(bits,2) + '}';
         }
     }
 
@@ -186,6 +187,27 @@ public class FindSubst extends Subst {
             return "TermOpEq{" + type + '}';
         }
     }
+
+    public static final class SubOpEquals extends MatchOp {
+        public final Op type;
+        private final int subterm;
+
+        public SubOpEquals(int subterm, Op type) {
+            this.subterm = subterm;
+            this.type = type;
+        }
+
+        @Override
+        public boolean match(Term t) {
+            return t.term(subterm).op() == type;
+        }
+
+        @Override
+        public String toString() {
+            return "SubOpEq{" + subterm + "," + type + '}';
+        }
+    }
+
 
     public static final class MatchImageIndex extends MatchOp {
         public final int index;
@@ -374,6 +396,44 @@ public class FindSubst extends Subst {
         public final PreCondition[] code;
         public final Term term;
         private Op type = null;
+
+        public TermPattern(Op type, TaskBeliefPair pattern) {
+
+            this.term = pattern;
+            this.type = type;
+
+            List<PreCondition> code = Global.newArrayList();
+
+
+
+            //compile the code
+            compile(pattern, code);
+
+
+            if (code.get(0).toString().equals("TermOpEq{*}")) {
+                code.remove(0);
+            }
+            if (code.get(0).toString().equals("TermSizeEq{2}")) {
+                code.remove(0);
+            }
+
+            Op tt = pattern.term(0).op();
+            if (tt != Op.VAR_PATTERN) {
+                SubOpEquals taskType = new SubOpEquals(0, tt);
+                code.add(0, taskType);
+            }
+
+            Op bt = pattern.term(1).op();
+            if (bt != Op.VAR_PATTERN) {
+                SubOpEquals beliefType = new SubOpEquals(1, bt);
+                code.add(1, beliefType);
+            }
+
+            //code.add(End);
+            code.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
+
+            this.code = code.toArray(new PreCondition[code.size()]);
+        }
 
         public TermPattern(Op type, Term pattern) {
 

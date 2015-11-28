@@ -122,7 +122,7 @@ public class Anticipate {
                 .budget(expiredBudget)
                 .time(memory.time(), expectedOccurrenceTime)
                 .parent(tt.task, null)
-                .because("Anticipation Negated")
+                .because("Absent Anticipated Event")
                 ;
 
         nar.input(derived);
