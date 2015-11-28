@@ -29,6 +29,7 @@ import nars.truth.TruthFunctions;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 
 /**
@@ -48,12 +49,8 @@ public class RuleMatch  {
     /**
      * if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset
      */
-    public long occurence_shift;
 
 
-    public TaskRule rule;
-
-    public Premise premise;
 
 
     final public TaskBeliefPair taskBelief = new TaskBeliefPair();
@@ -76,6 +73,16 @@ public class RuleMatch  {
 
     public int unificationPower;
 
+    public TaskRule rule;
+    protected Consumer<Task> receiver;
+    public Premise premise;
+
+
+    public Truth truth;
+    public Term derivedTerm;
+    public long occurence_shift;
+    public char punct;
+
     @Override
     public String toString() {
         return taskBelief.toString() + ":<" + super.toString() + ">:";
@@ -97,8 +104,9 @@ public class RuleMatch  {
     /**
      * set the next premise
      */
-    public final void start(Premise p) {
+    public final void start(Premise p, Consumer<Task> receiver) {
         this.premise = p;
+        this.receiver = receiver;
 
         //scale unification power according to premise's mean priority linearly between min and max
         this.unificationPower =
@@ -119,19 +127,141 @@ public class RuleMatch  {
 //    }
 
 
+    /** copy constructor */
+    RuleMatch(Subst subst, Premise premise, Consumer<Task> receiver) {
+        this.subst = subst;
+        this.premise = premise;
+        this.receiver = receiver;
+    }
+
+    public RuleMatch clone( /* .. */) {
+        RuleMatch m = new RuleMatch(subst.clone(), premise, receiver);
+        m.occurence_shift = occurence_shift;
+        m.truth = truth;
+        m.derivedTerm = derivedTerm;
+        m.punct = punct;
+        return m;
+    }
+
+
+    /** call at beginning to reset */
+    public final void start() {
+        subst.clear();
+        occurence_shift = Stamp.TIMELESS;
+        truth = null;
+    }
+
     /**
      * clear and re-use with a next rule
      */
-    public final void start(TaskRule nextRule) {
-
-        subst.clear();
-
-        occurence_shift = Stamp.TIMELESS;
-
+    @Deprecated public final void start(TaskRule nextRule) {
+        start();
         this.rule = nextRule;
     }
 
-    public final ArrayList<Task> apply(final PostCondition outcome) {
+
+    /** finally attempt to produce and input tasks */
+    public final void apply() {
+
+        //test for reactor leak
+        // TODO prevent this from happening
+        if (Variable.hasPatternVariable(derivedTerm)) {
+            return;
+        }
+
+        //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
+        Term derivedTerm = this.derivedTerm.normalized();
+
+        if (!(derivedTerm instanceof Compound))
+            return;
+
+        final Budget budget;
+        if (truth != null) {
+            budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
+            //budget = BudgetFunctions.forward(truth, premise);
+        } else {
+            budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
+        }
+
+        if (!premise.validateDerivedBudget(budget)) {
+            if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
+                removeInsufficientBudget(premise, new PreTask(derivedTerm, punct, truth, budget, occurence_shift, premise));
+            }
+            return;
+        }
+
+        final Task task = premise.getTask();
+
+        /** calculate derived task truth value */
+
+        final Task belief = premise.getBelief();
+
+
+        final char punct = this.punct;
+
+        FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
+        if (deriving != null) {
+
+            final long now = premise.time();
+            final long occ;
+
+            if (occurence_shift > Stamp.TIMELESS) {
+                occ = task.getOccurrenceTime() + occurence_shift;
+            }
+            else {
+                occ = task.getOccurrenceTime(); //inherit premise task's
+            }
+
+
+            if (occ != Stamp.ETERNAL && premise.isEternal() && !premise.nal(7)) {
+                throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
+            }
+
+            final Task derived = premise.validate(deriving
+                    .punctuation(punct)
+                    .truth(truth)
+                    .budget(budget)
+                    .time(now, occ)
+                    .parent(task, belief /* null if single */)
+            );
+
+            if (derived != null) {
+                if(premise.nal(7) && rule.anticipate && task.isInput()) { //the prediction needs to be based on a observation
+                    premise.memory().the(Anticipate.class).anticipate(derived); //else the system can anticipate things it can not measure
+                }                    //thus these anticipations would fail, leading the system thinking that this did not happen altough it was
+                if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) { //just not able to measure it, closed world assumption gone wild.
+                    derived.log(rule.toString());
+                }
+
+                //ArrayList<Task> ret = new ArrayList<Task>();
+                receiver.accept(derived);
+
+                if(truth != null && rule.immediate_eternalize && !derived.isEternal()) {
+                    Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(),truth.getConfidence()));
+                    FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
+                    Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
+
+                    final Task derivedEternal = premise.validate(deriving2
+                            .punctuation(punct)
+                            .truth(et)
+                            .budget(budget2)
+                            .time(now, Stamp.ETERNAL)
+                            .parent(task, belief // null if single
+                            )
+                    );
+
+                    if(derivedEternal != null) {
+                        receiver.accept(derivedEternal);
+                    }
+                }
+
+            }
+        }
+
+
+    }
+
+    @Deprecated public final ArrayList<Task> apply(final PostCondition outcome) {
 
         Premise premise = this.premise;
 
@@ -313,6 +443,8 @@ public class RuleMatch  {
 
             derivedTerm = rederivedTerm;
         }
+
+
 
         //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
         derivedTerm = derivedTerm.normalized();
@@ -511,7 +643,7 @@ public class RuleMatch  {
         return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
     }
 
-    static TruthFunction getTruthFunction(char punc, PostCondition outcome) {
+    @Deprecated static TruthFunction getTruthFunction(char punc, PostCondition outcome) {
 
         switch (punc) {
 
@@ -536,12 +668,17 @@ public class RuleMatch  {
 
     }
 
+
+
     static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
         return !((truth == null) || (truth.getConfidence() < minConf));
     }
 
-    protected static boolean cyclic(PostCondition outcome, Premise premise) {
+    @Deprecated protected static boolean cyclic(PostCondition outcome, Premise premise) {
         return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
+    }
+    public static boolean cyclic(TruthFunction f, Premise premise) {
+        return (f != null && !f.allowOverlap()) && premise.isCyclic();
     }
 
 
@@ -575,27 +712,6 @@ public class RuleMatch  {
     }
 
 
-
-    /** return null if no postconditions match (equivalent to an empty array)
-     *  or an array of matching PostConditions to apply */
-    public PostCondition[] run(TaskRule rule) {
-
-        start(rule);
-
-        //stage 1 (early)
-        for (final PreCondition p : rule.prePreconditions) {
-            if (!p.test(this))
-                return null;
-        }
-
-        //stage 2 (task/belief term match + late)
-        for (final PreCondition p : rule.postPreconditions) {
-            if (!p.test(this))
-                return null;
-        }
-
-        return rule.postconditions;
-    }
 
     public final void occurrenceAdd(final long cyclesDelta) {
         long oc = this.occurence_shift;

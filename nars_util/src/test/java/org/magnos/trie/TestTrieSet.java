@@ -174,7 +174,7 @@ public class TestTrieSet
       set.add( "kitten" );
       set.add( "purr" );
       
-      set.retainAll( Arrays.asList( "meow", "kitten", "NOPE" ) );
+      set = set.retainsAll( Arrays.asList( "meow", "kitten", "NOPE" ) );
 
       assertEquals( 2, set.size() );
       assertFalse( set.contains( "purr" ) );

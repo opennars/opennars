@@ -3,6 +3,7 @@ package nars.nar;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
+import nars.nal.Deriver;
 import nars.nal.SimpleDeriver;
 import nars.nal.TaskRule;
 import nars.task.flow.FIFOTaskPerception;
@@ -131,7 +132,7 @@ public class SingleStepNAR extends Default {
 
                     TreeSet<TaskRule> used = new TreeSet();
                     TreeSet<TaskRule> unused = new TreeSet();
-                    for (TaskRule t : SimpleDeriver.standard) {
+                    for (TaskRule t : Deriver.standard) {
                         Collection<DerivationGraph.PremiseKey> x = ruleDerivations.get(t);
                         if (x == null || x.isEmpty()) {
                             unused.add(t);

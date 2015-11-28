@@ -13,4 +13,6 @@ public interface TruthFunction {
      * @return
      */
     Truth get(Truth T, Truth B);
+
+    boolean allowOverlap();
 }

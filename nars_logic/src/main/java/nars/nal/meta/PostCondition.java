@@ -1,19 +1,20 @@
 package nars.nal.meta;
 
+import nars.Premise;
 import nars.Symbols;
 import nars.nal.Level;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.nal1.Inheritance;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.truth.Truth;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static nars.$.the;
 
@@ -21,7 +22,7 @@ import static nars.$.the;
  * Describes a derivation postcondition
  * Immutable
  */
-public class PostCondition extends PreCondition implements Serializable, Level //since there can be multiple tasks derived per rule
+public class PostCondition implements Serializable, Level //since there can be multiple tasks derived per rule
 {
 
     public static final float HALF = 0.5f;
@@ -41,7 +42,9 @@ public class PostCondition extends PreCondition implements Serializable, Level /
     /** steps to apply before initially forming the derived task's term */
     //public final PreCondition[] beforeConclusions;
 
-    /** steps to apply after forming the goal. after each of these steps, the term will be re-resolved */
+    /**
+     * steps to apply after forming the goal. after each of these steps, the term will be re-resolved
+     */
     public final PreCondition[] afterConclusions;
 
     public final BeliefFunction truth;
@@ -49,7 +52,9 @@ public class PostCondition extends PreCondition implements Serializable, Level /
     //public boolean negate = false;
 
 
-    /** minimum NAL level necessary to involve this postcondition */
+    /**
+     * minimum NAL level necessary to involve this postcondition
+     */
     public final int minNAL;
 
     public static final Set<Atom> reservedMetaInfoCategories = new HashSet<Atom>() {{
@@ -67,24 +72,25 @@ public class PostCondition extends PreCondition implements Serializable, Level /
 
 
     final static Atom
-        negation = the("Negation"),
-        conversion = the("Conversion"),
-        contraposition = the("Contraposition"),
-        identity = the("Identity"),
-        allowBackward = the("AllowBackward"),
-        fromTask = the("FromTask"),
-        fromBelief = the("FromBelief"),
-        anticipate = the("Anticipate"),
-        immediate = the("Immediate");
+            negation = the("Negation"),
+            conversion = the("Conversion"),
+            contraposition = the("Contraposition"),
+            identity = the("Identity"),
+            allowBackward = the("AllowBackward"),
+            fromTask = the("FromTask"),
+            fromBelief = the("FromBelief"),
+            anticipate = the("Anticipate"),
+            immediate = the("Immediate");
 
-    /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
-     *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
-    transient public char puncOverride = (char)0;
+    /**
+     * if puncOverride == 0 (unspecified), then the default punctuation rule determines the
+     * derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value
+     */
+    transient public char puncOverride = (char) 0;
 
 
     /**
-     *
-     * @param rule rule which contains and is constructing this postcondition
+     * @param rule             rule which contains and is constructing this postcondition
      * @param term
      * @param afterConclusions
      * @param modifiers
@@ -93,7 +99,6 @@ public class PostCondition extends PreCondition implements Serializable, Level /
     public static PostCondition make(TaskRule rule, Term term,
                                      PreCondition[] afterConclusions,
                                      Term... modifiers) throws RuntimeException {
-
 
 
         BeliefFunction judgmentTruth = null;
@@ -107,7 +112,7 @@ public class PostCondition extends PreCondition implements Serializable, Level /
                 throw new RuntimeException("Unknown postcondition format: " + m);
             }
 
-            final Inheritance<Term,Atom> i = (Inheritance) m;
+            final Inheritance<Term, Atom> i = (Inheritance) m;
 
             if (!(i.getPredicate() != null)) {
                 throw new RuntimeException("Unknown postcondition format (predicate must be atom): " + m);
@@ -124,10 +129,18 @@ public class PostCondition extends PreCondition implements Serializable, Level /
 
                 case "Punctuation":
                     switch (which.toString()) {
-                        case "Question": puncOverride = Symbols.QUESTION; break;
-                        case "Goal": puncOverride = Symbols.GOAL; break;
-                        case "Judgment": puncOverride = Symbols.JUDGMENT; break;
-                        case "Quest": puncOverride = Symbols.QUEST; break;
+                        case "Question":
+                            puncOverride = Symbols.QUESTION;
+                            break;
+                        case "Goal":
+                            puncOverride = Symbols.GOAL;
+                            break;
+                        case "Judgment":
+                            puncOverride = Symbols.JUDGMENT;
+                            break;
+                        case "Quest":
+                            puncOverride = Symbols.QUEST;
+                            break;
                         default:
                             throw new RuntimeException("unknown punctuation: " + which);
                     }
@@ -164,25 +177,23 @@ public class PostCondition extends PreCondition implements Serializable, Level /
                     break;
 
                 case "Event":
-                    if(which.equals(anticipate)) {
+                    if (which.equals(anticipate)) {
                         rule.anticipate = true;
                     }
                     //ignore, because this only affects at TaskRule construction
                     break;
 
                 case "Eternalize":
-                    if(which.equals(immediate)) {
+                    if (which.equals(immediate)) {
                         rule.immediate_eternalize = true;
                     }
                     //ignore, because this only affects at TaskRule construction
                     break;
 
                 case "SequenceIntervals":
-                    if(which.equals(fromBelief)) {
+                    if (which.equals(fromBelief)) {
                         rule.sequenceIntervalsFromBelief = true;
-                    }
-                    else
-                    if(which.equals(fromTask)) {
+                    } else if (which.equals(fromTask)) {
                         rule.sequenceIntervalsFromTask = true;
                     }
                     break;
@@ -195,14 +206,12 @@ public class PostCondition extends PreCondition implements Serializable, Level /
         }
 
 
-
         PostCondition pc = new PostCondition(term, afterConclusions, judgmentTruth, goalTruth);
         //pc.negate = negate;
         pc.puncOverride = puncOverride;
         if (pc.valid(rule)) {
             return pc;
         }
-
 
 
         return null;
@@ -220,14 +229,15 @@ public class PostCondition extends PreCondition implements Serializable, Level /
 
         if (!modifiesPunctuation() && term instanceof Compound) {
             if (rule.getTaskTermPattern().equals(term) ||
-                (rule.getBeliefTermPattern().equals(term)))
+                    (rule.getBeliefTermPattern().equals(term)))
                 return false;
         }
 
         //assign the lowest non-zero, because non-zero will try them all anyway
         /*if (rule.minNAL == 0)
             rule.minNAL = minNAL;
-        else*/ if (minNAL!=0)
+        else*/
+        if (minNAL != 0)
             rule.minNAL = Math.min(rule.minNAL, minNAL);
 
         return true;
@@ -254,9 +264,151 @@ public class PostCondition extends PreCondition implements Serializable, Level /
                 '}';
     }
 
-    @Override
-    @Deprecated public boolean test(RuleMatch ruleMatch) {
-        return true;
+    public static class GetTruth extends PreCondition {
+        public final BeliefFunction belief;
+        public final DesireFunction desire;
+        public final char puncOverride;
+
+        public GetTruth(BeliefFunction belief, DesireFunction desire, char puncOverride) {
+            this.belief = belief;
+            this.desire = desire;
+            this.puncOverride = puncOverride;
+        }
+
+        @Override
+        public String toString() {
+            if (puncOverride == 0)
+                return getClass().getSimpleName() + "[" + belief + "," + desire + "]";
+            else
+                return getClass().getSimpleName() + "[" + belief + "," + desire + "," + puncOverride + "]";
+        }
+
+        TruthFunction getTruth(char punc) {
+
+            switch (punc) {
+
+                case Symbols.JUDGMENT:
+                    return belief;
+
+                case Symbols.GOAL:
+                    return desire;
+
+                /*case Symbols.QUEST:
+                case Symbols.QUESTION:
+                */
+
+                default:
+                    return null;
+            }
+
+        }
+
+        @Override
+        public boolean test(RuleMatch match) {
+
+            Premise premise = match.premise;
+
+            final Task task = premise.getTask();
+
+            /** calculate derived task truth value */
+
+
+            Task belief = premise.getBelief();
+
+
+            final Truth T = task.getTruth();
+            final Truth B = belief == null ? null : belief.getTruth();
+
+
+            /** calculate derived task punctuation */
+            char punct = puncOverride;
+            if (punct == 0) {
+                /** use the default policy determined by parent task */
+                punct = task.getPunctuation();
+            }
+
+
+            final Truth truth;
+            TruthFunction tf;
+
+            if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
+                tf = getTruth(punct);
+                if (tf == null)
+                    return false;
+
+                truth = tf.get(T, B);
+
+                if (truth == null) {
+                    //no truth value function was applicable but it was necessary, abort
+                    return false;
+                }
+            } else {
+                //question or quest, no truth is involved
+                truth = null;
+                tf = null;
+            }
+
+            /** eliminate cyclic double-premise results
+             *  TODO move this earlier to precondition check, or change to altogether new policy
+             */
+            final boolean single = (belief == null);
+            if ((!single) && (match.cyclic(tf, premise))) {
+//                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
+//                    match.removeCyclic(outcome, premise, truth, punct);
+//                }
+                return false;
+            }
+
+            match.truth = truth;
+            match.punct = punct;
+
+            return true;
+        }
+    }
+
+    /**
+     * first resolution of the conclusion's pattern term
+     */
+    public static class Resolve extends PreCondition {
+
+        public final Term term;
+
+        public Resolve(Term term) {
+            this.term = term;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "[" + term + "]";
+        }
+
+        @Override
+        public boolean test(RuleMatch match) {
+
+
+            Term derivedTerm;
+
+            if(null==(derivedTerm=match.resolve(term)))
+                return false;
+
+            match.derivedTerm = derivedTerm;
+
+            return true;
+        }
+
+
+    }
+
+
+
+    public void addConditions(List<PreCondition> l) {
+
+        l.add(new GetTruth(truth, desire, puncOverride));
+        l.add(new Resolve(term));
+
+        Collections.addAll(l, afterConclusions);
+
+        //super.addConditions(l);
     }
 
 }

@@ -17,8 +17,6 @@ import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 
 /**
@@ -30,6 +28,8 @@ public class TaskRule extends ProductN implements Level {
     //match first rule pattern with task
 
     public boolean immediate_eternalize = false;
+
+
     public boolean anticipate = false;
     public boolean sequenceIntervalsFromTask = false;
     public boolean sequenceIntervalsFromBelief = false;
@@ -123,16 +123,20 @@ public class TaskRule extends ProductN implements Level {
 
 
 
-    public List<PreCondition> getConditions() {
+    /** add the sequence of involved conditions to a list, for one given postcondition (ex: called for each this.postconditions)  */
+    public List<PreCondition> getConditions(PostCondition post) {
+
         int n = prePreconditions.length + postPreconditions.length;
+
         List<PreCondition> l = Global.newArrayList(n);
+
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
+
         for (PreCondition p : postPreconditions)
             p.addConditions(l);
-        for (PostCondition p : postconditions){
-            p.addConditions(l);
-        }
+
+        post.addConditions(l);
 
         return l;
     }
@@ -206,6 +210,17 @@ public class TaskRule extends ProductN implements Level {
         this.str = super.toString();
 
     }
+
+//    public String getFlagsString() {
+//        return "TaskRule{" +
+//                "  immediate_eternalize=" + immediate_eternalize +
+//                ", anticipate=" + anticipate +
+//                ", sequenceIntervalsFromTask=" + sequenceIntervalsFromTask +
+//                ", sequenceIntervalsFromBelief=" + sequenceIntervalsFromBelief +
+//                ", allowQuestionTask=" + allowQuestionTask +
+//                ", allowBackward=" + allowBackward +
+//                '}';
+//    }
 
     @Override
     public final String toString() {
@@ -476,7 +491,7 @@ public class TaskRule extends ProductN implements Level {
         this.postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
 
 
-        Set<PostCondition> postConditions = new TreeSet();
+        List<PostCondition> postConditions = Global.newArrayList();
 
         for (int i = 0; i < postcons.length; ) {
             Term t = postcons[i++];

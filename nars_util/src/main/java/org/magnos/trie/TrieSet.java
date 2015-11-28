@@ -31,8 +31,7 @@ import java.util.Set;
  * @param <E>
  *        The element type.
  */
-public class TrieSet<E> implements Set<E>
-{
+public final class TrieSet<E> implements Set<E> {
 
    /**
     * The flag used in the underlying Trie of a TrieSet to indicate the given
@@ -46,7 +45,7 @@ public class TrieSet<E> implements Set<E>
     */
    public static final Object FLAG_NONE = null;
 
-   protected Trie<E, Object> trie;
+   protected final Trie<E, Object> trie;
 
    /**
     * Instantiates a TrieSet given a trie. 
@@ -94,6 +93,12 @@ public class TrieSet<E> implements Set<E>
       }
 
       return changed;
+   }
+
+   @Override
+   public boolean retainAll(Collection<?> collection) {
+      throw new RuntimeException("use retainsAll");
+      //return false;
    }
 
    @Override
@@ -153,10 +158,7 @@ public class TrieSet<E> implements Set<E>
       return changed;
    }
 
-   @SuppressWarnings ("unchecked" )
-   @Override
-   public boolean retainAll( Collection<?> collection )
-   {
+   public TrieSet<E> retainsAll( Collection<?> collection ) {
       final int previousSize = trie.size();
       final Trie<E, Object> newTrie = trie.newEmptyClone();
 
@@ -167,11 +169,32 @@ public class TrieSet<E> implements Set<E>
             newTrie.put( (E)element, FLAG );
          }
       }
+      if (previousSize!=newTrie.size())
+         return new TrieSet(newTrie); //trie = newTrie;
 
-      trie = newTrie;
-
-      return previousSize != trie.size();
+      return this;
+      //return previousSize != trie.size();
    }
+
+//   @SuppressWarnings ("unchecked" )
+//   @Override
+//   public boolean retainAll( Collection<?> collection )
+//   {
+//      final int previousSize = trie.size();
+//      final Trie<E, Object> newTrie = trie.newEmptyClone();
+//
+//      for (Object element : collection)
+//      {
+//         if (trie.containsKey( element ))
+//         {
+//            newTrie.put( (E)element, FLAG );
+//         }
+//      }
+//
+//      trie = newTrie;
+//
+//      return previousSize != trie.size();
+//   }
 
    @Override
    public int size()
@@ -190,5 +213,6 @@ public class TrieSet<E> implements Set<E>
    {
       return trie.keySet().toArray( arr );
    }
+
 
 }

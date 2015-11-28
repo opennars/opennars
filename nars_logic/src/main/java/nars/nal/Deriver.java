@@ -4,6 +4,8 @@ import nars.Memory;
 import nars.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
+import nars.util.db.TemporaryCache;
+import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.util.function.Consumer;
 
@@ -16,14 +18,59 @@ import java.util.function.Consumer;
  */
 abstract public class Deriver  {
 
+    public static final Deriver standardDeriver;
+    /**
+     * default set of rules, statically available
+     */
+    public static DerivationRules standard;
     public final DerivationRules rules;
 
+
+    static {
+        loadRules();
+        //standardDeriver = new SimpleDeriver(SimpleDeriver.standard);
+        standardDeriver = new TrieDeriver(Deriver.standard);
+    }
 
     public Deriver(DerivationRules rules) {
         this.rules = rules;
     }
 
-    abstract protected void forEachRule(final RuleMatch match, Consumer<Task> receiver);
+    //not ready yet
+    static void loadCachedRules() {
+        final String key = "derivation_rules:standard";
+        Deriver.standard = TemporaryCache.computeIfAbsent(
+                key, new GenericJBossMarshaller(),
+                () -> {
+                    try {
+//                        standard = new DerivationRules();
+
+                        return new DerivationRules();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                        return null;
+                    }
+                }
+//                //TODO compare hash/checksum of the input file
+//                //to what is stored in cached file
+//                (x) -> {
+//                    //this disables entirely and just creates a new one each time:
+//                    return  ...
+//                }
+        );
+    }
+
+    static void loadRules() {
+        try {
+            Deriver.standard = new DerivationRules();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    abstract protected void forEachRule(final RuleMatch match);
+
 
     /** runs a ConceptProcess (premise) and supplies
      *  a consumer with all resulting derived tasks.
@@ -34,9 +81,9 @@ abstract public class Deriver  {
         premise.memory().eventConceptProcess.emit((ConceptProcess)premise);
 
         RuleMatch m = RuleMatch.matchers.get();
-        m.start(premise);
+        m.start(premise, t);
 
-        forEachRule(m, t);
+        forEachRule(m);
     }
 
 

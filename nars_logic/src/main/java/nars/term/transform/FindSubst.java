@@ -22,7 +22,6 @@ as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
 public class FindSubst extends Frame implements Subst {
 
-    private final Random random;
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -41,16 +40,29 @@ public class FindSubst extends Frame implements Subst {
     }
 
     public FindSubst(Op type, Map<Term, Term> xy, Map<Term, Term> yx, Random random) {
-        super(type, xy, yx);
-        this.random = random;
+        super(random, type, xy, yx);
     }
 
-
+    @Override
+    public final Subst clone() {
+        FindSubst x = new FindSubst(type,
+                Global.newHashMap(xy),
+                Global.newHashMap(yx),
+                random);
+        x.parent = parent;
+        x.xyChanged = xyChanged; //necessary?
+        x.yxChanged = yxChanged; //necessary?
+        x.y = y;
+        x.power = power;
+        return x;
+    }
 
     @Override
     public String toString() {
         return type + ":" + xy + ',' + yx;
     }
+
+
 
     private final void print(String prefix, Term a, Term b) {
         System.out.print(prefix);

@@ -1,6 +1,6 @@
 package nars.io;
 
-import nars.nal.SimpleDeriver;
+import nars.nal.Deriver;
 import nars.nal.TaskRule;
 import nars.term.Compound;
 import org.junit.Assert;
@@ -17,7 +17,7 @@ public class RuleSerializationTest extends AbstractSerializationTest<Collection<
 
 
     public RuleSerializationTest() {
-        super(SimpleDeriver.standard);
+        super(Deriver.standard);
     }
 
 

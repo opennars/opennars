@@ -69,7 +69,7 @@ public class TrieNode<S, T> implements Entry<S, T>
    protected TrieNode<S, T> parent;
    protected T value;
    protected S sequence;
-   protected int start;
+   protected final int start;
    protected int end;
    protected PerfectHashMap<TrieNode<S, T>> children = null;
    protected int size;
@@ -121,7 +121,7 @@ public class TrieNode<S, T> implements Entry<S, T>
     */
    protected TrieNode<S, T> split( int index, T newValue, TrieSequencer<S> sequencer )
    {
-      TrieNode<S, T> c = new TrieNode<S, T>( this, value, sequence, index + start, end, children );
+      TrieNode<S, T> c = new TrieNode<>(this, value, sequence, index + start, end, children);
       c.registerAsParent();
 
       setValue( null );
@@ -151,7 +151,7 @@ public class TrieNode<S, T> implements Entry<S, T>
 
       if (children == null)
       {
-         children = new PerfectHashMap<TrieNode<S, T>>( hash, child );
+         children = new PerfectHashMap<>(hash, child);
       }
       else
       {

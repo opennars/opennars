@@ -42,7 +42,7 @@ public class Trie<S, T> implements Map<S, T>
    /**
     * An empty collection/set to return.
     */
-   private static final EmptyContainer<?> EMPTY_CONTAINER = new EmptyContainer<Object>();
+   private static final EmptyContainer<?> EMPTY_CONTAINER = new EmptyContainer<>();
 
    public final TrieNode<S, T> root;
    private final TrieSequencer<S> sequencer;
@@ -76,7 +76,7 @@ public class Trie<S, T> implements Map<S, T>
     */
    public Trie( TrieSequencer<S> sequencer, T defaultValue )
    {
-      this.root = new TrieNode<>(null, defaultValue, null, 0, 0, new PerfectHashMap<TrieNode<S, T>>());
+      this.root = new TrieNode<>(null, defaultValue, null, 0, 0, new PerfectHashMap<>());
       this.sequences = new SequenceSet( root );
       this.values = new ValueCollection( root );
       this.entries = new EntrySet( root );
@@ -106,7 +106,7 @@ public class Trie<S, T> implements Map<S, T>
     */
    public Trie<S, T> newEmptyClone()
    {
-      Trie<S, T> t = new Trie<S, T>( sequencer, root.value );
+      Trie<S, T> t = new Trie<>(sequencer, root.value);
       t.defaultMatch = defaultMatch;
       return t;
    }
@@ -122,7 +122,8 @@ public class Trie<S, T> implements Map<S, T>
     *         The previous value in the Trie with the same sequence if one
     *         existed, otherwise null.
     */
-   public T put( S query, T value )
+   @Override
+   public T put(S query, T value )
    {
       final int queryLength = sequencer.lengthOf( query );
 
@@ -141,7 +142,7 @@ public class Trie<S, T> implements Map<S, T>
          return putReturnNull( root, value, query, queryOffset, queryLength );
       }
 
-      while (node != null)
+      do
       {
          final S nodeSequence = node.sequence;
          final int nodeLength = node.end - node.start;
@@ -191,7 +192,7 @@ public class Trie<S, T> implements Map<S, T>
 
          // full match, query or node remaining
          node = next;
-      }
+      } while (node != null);
 
       return null;
    }
@@ -214,7 +215,7 @@ public class Trie<S, T> implements Map<S, T>
     */
    private T putReturnNull( TrieNode<S, T> node, T value, S query, int queryOffset, int queryLength )
    {
-      node.add( new TrieNode<S, T>( node, value, query, queryOffset, queryLength, null ), sequencer );
+      node.add(new TrieNode<>(node, value, query, queryOffset, queryLength, null), sequencer );
 
       return null;
    }
@@ -248,7 +249,8 @@ public class Trie<S, T> implements Map<S, T>
     *         null.
     * @see #get(Object, TrieMatch)
     */
-   public T get( Object sequence )
+   @Override
+   public T get(Object sequence )
    {
       return get( (S)sequence, defaultMatch );
    }
@@ -308,7 +310,8 @@ public class Trie<S, T> implements Map<S, T>
     * @return The value of the removed sequence, or null if no sequence was
     *         removed.
     */
-   public T remove( Object sequence )
+   @Override
+   public T remove(Object sequence )
    {
       return removeAfter( root, (S)sequence );
    }
@@ -346,6 +349,7 @@ public class Trie<S, T> implements Map<S, T>
     * 
     * @return The number of sequences-value pairs in this Trie.
     */
+   @Override
    public int size()
    {
       return root.getSize();
@@ -357,6 +361,7 @@ public class Trie<S, T> implements Map<S, T>
     * @return 0 if the Trie doesn't have any sequences-value pairs, otherwise
     *         false.
     */
+   @Override
    public boolean isEmpty()
    {
       return (root.getSize() == 0);
@@ -769,7 +774,7 @@ public class Trie<S, T> implements Map<S, T>
       }
    }
 
-   private class EntrySet extends AbstractSet<Entry<S, T>>
+   public class EntrySet extends AbstractSet<Entry<S, T>>
    {
 
       private final TrieNode<S, T> root;
@@ -979,6 +984,7 @@ public class Trie<S, T> implements Map<S, T>
          return false;
       }
 
+      @Override
       public boolean hasNext()
       {
          return (current != null);
@@ -991,6 +997,7 @@ public class Trie<S, T> implements Map<S, T>
          return previous;
       }
 
+      @Override
       public void remove()
       {
          previous.remove( sequencer );
@@ -1004,13 +1011,13 @@ public class Trie<S, T> implements Map<S, T>
          }
 
          TrieNode<S, T> node = previous;
-         boolean foundValue = false;
 
          if (node.children == null)
          {
             node = node.parent;
          }
 
+         boolean foundValue = false;
          while (!foundValue)
          {
             final PerfectHashMap<TrieNode<S, T>> children = node.children;

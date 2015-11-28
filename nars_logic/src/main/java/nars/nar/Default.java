@@ -16,7 +16,6 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.Deriver;
-import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.op.data.Flat;
@@ -406,7 +405,7 @@ public class Default extends NAR {
     }
 
     protected Deriver getDeriver() {
-        return SimpleDeriver.standardDeriver;
+        return Deriver.standardDeriver;
     }
 
     public NAR forEachConcept(Consumer<Concept> recip) {

@@ -5,11 +5,10 @@ import com.google.common.collect.MultimapBuilder;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.PostCondition;
+import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.task.Task;
 import nars.term.Term;
-import nars.util.db.TemporaryCache;
-import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -23,56 +22,11 @@ public class SimpleDeriver extends Deriver  {
     public final Multimap<TaskBeliefPair, TaskRule> ruleIndex;
 
 
-
-    //not ready yet
-    static void loadCachedRules() {
-        final String key = "derivation_rules:standard";
-        SimpleDeriver.standard = TemporaryCache.computeIfAbsent(
-                key, new GenericJBossMarshaller(),
-                () -> {
-                    try {
-//                        standard = new DerivationRules();
-
-                        return new DerivationRules();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.exit(1);
-                        return null;
-                    }
-                }
-//                //TODO compare hash/checksum of the input file
-//                //to what is stored in cached file
-//                (x) -> {
-//                    //this disables entirely and just creates a new one each time:
-//                    return  ...
-//                }
-        );
-    }
-
-    static void loadRules() {
-        try {
-            SimpleDeriver.standard = new DerivationRules();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static final SimpleDeriver standardDeriver;
-
-    static {
-        loadRules();
-        standardDeriver = new SimpleDeriver(SimpleDeriver.standard);
-    }
-
-    /**
-     * default set of rules, statically available
-     */
-    public static DerivationRules standard;
     protected final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
     protected final EnumMap<Op, List<TaskRule>> beliefTypeMap;
 
     public SimpleDeriver() {
-        this(SimpleDeriver.standard);
+        this(Deriver.standard);
     }
 
     public SimpleDeriver(DerivationRules rules) {
@@ -133,7 +87,7 @@ public class SimpleDeriver extends Deriver  {
     }
 
     @Override
-    public void forEachRule(RuleMatch match, Consumer<Task> receiver) {
+    public void forEachRule(RuleMatch match) {
 
 
         final TaskBeliefPair taskBelief = match.taskBelief;
@@ -151,26 +105,26 @@ public class SimpleDeriver extends Deriver  {
             // <T>,<B>
             List<TaskRule> taskSpecificBeliefSpecific = taskSpecific.get(beliefTerm.op());
             if (taskSpecificBeliefSpecific != null)
-                run(match, taskSpecificBeliefSpecific, n, receiver);
+                run(match, taskSpecificBeliefSpecific, n);
 
 
             // <T>,%
             List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
             if (taskSpecificBeliefAny != null)
-                run(match, taskSpecificBeliefAny, n, receiver);
+                run(match, taskSpecificBeliefAny, n);
         }
 
 
         // %,<B>
         List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
         if (beliefSpecific!=null)
-            run(match, beliefSpecific, n, receiver);
+            run(match, beliefSpecific, n);
 
 
         // %,%
         List<TaskRule> any = beliefTypeMap.get(Op.VAR_PATTERN);
         if (any!=null)
-            run(match, any, n, receiver);
+            run(match, any, n);
 
     }
 
@@ -186,7 +140,9 @@ public class SimpleDeriver extends Deriver  {
     }
 
 
-    final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {
+    final static void run(RuleMatch m, List<TaskRule> rules, int level) {
+
+        Consumer<Task> t = m.receiver;
 
         final int nr = rules.size();
         for (int i = 0; i < nr; i++) {
@@ -194,7 +150,7 @@ public class SimpleDeriver extends Deriver  {
             TaskRule r = rules.get(i);
             if (r.minNAL > level) continue;
 
-            PostCondition[] pc = m.run(r);
+            PostCondition[] pc = run(r, m);
             if (pc != null) {
                 for (PostCondition p : pc) {
                     if (p.minNAL > level) continue;
@@ -212,5 +168,25 @@ public class SimpleDeriver extends Deriver  {
         }
     }
 
+    /** return null if no postconditions match (equivalent to an empty array)
+     *  or an array of matching PostConditions to apply */
+    public static PostCondition[] run(TaskRule rule, RuleMatch m) {
+
+        m.start(rule);
+
+        //stage 1 (early)
+        for (final PreCondition p : rule.prePreconditions) {
+            if (!p.test(m))
+                return null;
+        }
+
+        //stage 2 (task/belief term match + late)
+        for (final PreCondition p : rule.postPreconditions) {
+            if (!p.test(m))
+                return null;
+        }
+
+        return rule.postconditions;
+    }
 
 }

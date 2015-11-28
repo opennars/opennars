@@ -237,4 +237,9 @@ public enum BeliefFunction implements TruthFunction {
     BeliefFunction(boolean allowOverlap) {
         this.allowOverlap = allowOverlap;
     }
+
+    @Override
+    public boolean allowOverlap() {
+        return allowOverlap;
+    }
 }

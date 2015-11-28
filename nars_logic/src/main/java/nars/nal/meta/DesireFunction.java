@@ -64,6 +64,11 @@ public enum DesireFunction implements TruthFunction {
             atomToTruthModifier.put(Atom.the(tm.toString()), tm);
     }
 
+    @Override
+    public boolean allowOverlap() {
+        return false;
+    }
+
     public static DesireFunction get(Term a) {
         return atomToTruthModifier.get(a);
     }

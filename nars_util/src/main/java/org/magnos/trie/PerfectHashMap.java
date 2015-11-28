@@ -37,6 +37,7 @@ public class PerfectHashMap<T>
    private int min;
    private int size;
    protected T[] values;
+   private static final Object[] empty = new Object[0];
 
    /**
     * Instantiates an Empty PerfectHashMap.
@@ -184,7 +185,7 @@ public class PerfectHashMap<T>
    public void clear()
    {
       min = 0;
-      values = (T[])new Object[0];
+      values = (T[])empty;//new Object[0];
       size = 0;
    }
 
