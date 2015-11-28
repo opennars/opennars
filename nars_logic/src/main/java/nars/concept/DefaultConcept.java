@@ -18,6 +18,7 @@ import nars.link.TermLinkKey;
 import nars.nal.nal1.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
+import nars.Global;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -214,7 +215,7 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
-        final Task strongest = getBeliefs().add( belief, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
+        final Task strongest = getBeliefs().add( belief, new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nal.time()), this, nal);
 
         if (strongest == null || strongest.isDeleted()) {
             return false;
@@ -231,7 +232,7 @@ public class DefaultConcept extends AtomConcept {
         /** update happiness meter on solution  TODO revise */
         float successAfter = getSuccess();
         float delta = successAfter - successBefore;
-        if (delta!=0)
+        if (delta!=0) //more satisfaction of a goal due to belief, more happiness
             memory.emotion.happy(delta);
 
         return true;
@@ -250,7 +251,7 @@ public class DefaultConcept extends AtomConcept {
         final Task goal = nal.getTask();
         final float successBefore = getSuccess();
 
-        final Task strongest = getGoals().add( goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
+        final Task strongest = getGoals().add( goal, new BeliefTable.SolutionQualityMatchingOrderRanker(goal, nal.time()), this, nal);
 
         if (strongest==null) {
             return false;
@@ -258,10 +259,12 @@ public class DefaultConcept extends AtomConcept {
         else {
             float successAfter = getSuccess();
             float delta = successAfter - successBefore;
-            if (delta!=0)
-                memory.emotion.happy(delta);
+            if (delta!=0) //less desire of a goal, more happiness
+               memory.emotion.happy(delta);
 
-            nal.nar().execute(goal);
+            if(strongest.getTruth().getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
+                nal.nar().execute(goal);
+            }
 
             return true;
 

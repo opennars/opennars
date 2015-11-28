@@ -32,11 +32,15 @@ public interface BeliefTable extends TaskTable {
 
     Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
 
+    /* when does projecting to now not play a role? I guess there is no case,
+    //wo we use just one ranker anymore, the normal solution ranker which takes
+    //occurence time, originality and confidence into account,
+    //and in case of question var, the truth expectation and complexity instead of confidence
     Ranker BeliefConfidenceOrOriginality = (belief, bestToBeat) -> {
         final float confidence = belief.getTruth().getConfidence();
         final float originality = belief.getOriginality();
         return or(confidence, originality);
-    };
+    };*/
 
     final static BeliefTable EMPTY = new BeliefTable() {
 
@@ -230,7 +234,7 @@ public interface BeliefTable extends TaskTable {
             if (t.equals(q)) return Float.NaN; //dont compare to self
 
             //TODO use bestToBeat to avoid extra work
-            return Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar);
+            return or(t.getOriginality(),Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar));
         }
     }
 

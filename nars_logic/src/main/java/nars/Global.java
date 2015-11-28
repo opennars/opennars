@@ -44,6 +44,7 @@ import java.util.Set;
 public class Global {
 
 
+    public static final float EXECUTION_DESIRE_EXPECTATION_THRESHOLD = 0.6f;
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.01f;
 
