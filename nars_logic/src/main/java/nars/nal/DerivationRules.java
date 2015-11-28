@@ -277,37 +277,12 @@ public class DerivationRules extends FastList<TaskRule> {
                 final TaskRule rUnnorm = parser.taskRule(s);
 
                 final TaskRule rNorm = rUnnorm.normalizeRule();
-                if (rNorm == null)
-                    throw new RuntimeException("invalid rule, detected after normalization: " + s);
+                AcceptRule(ur, s, rNorm);
 
-                boolean added = ur.add(rNorm);
-                if (added) {
-
-                    /*System.out.println(s);
-                    System.out.println("  " + rNorm);
-                    System.out.println("    " +
-                                    Integer.toBinaryString(
-                            ((MatchTaskBeliefPattern)rNorm.preconditions[0])
-                                    .pattern.structure()
-                                    )
-                    );*/
-                    //add reverse questions
-                    rNorm.forEachQuestionReversal(q -> {
-
-                        q = q.normalizeRule();
-
-                        //normalize may be returned null if the rearranging produced an invalid result
-                        //so do not add null
-
-                        if (q != null && ur.add(q)) {
-                            //System.out.println("  " + q);
-                        }
-                    });
+                if(rNorm!=null) {
+                    final TaskRule rNorm2 = rNorm.forwardPermutation();
+                    AcceptRule(ur, s, rNorm2);
                 }
-
-                /*String s2 = rUnnorm.toString();
-                if (!s2.equals(s1))
-                    System.err.println("rUnnorm modified");*/
 
             } catch (Exception ex) {
                 System.err.println("invalid TaskRule:  " + s + " (" + ex + ')');
@@ -316,6 +291,23 @@ public class DerivationRules extends FastList<TaskRule> {
         });
 
         return ur;
+    }
+
+    private static void AcceptRule(Set<TaskRule> ur, String s, TaskRule rNorm) {
+        if (rNorm == null)
+            throw new RuntimeException("invalid rule, detected after normalization: " + s);
+
+        boolean added = ur.add(rNorm);
+        if (added) {
+            //add reverse questions
+            rNorm.forEachQuestionReversal(q -> {
+                q = q.normalizeRule();
+                //normalize may be returned null if the rearranging produced an invalid result, so do not add null
+                if (q != null && ur.add(q)) {
+                    //System.out.println("  " + q);
+                }
+            });
+        }
     }
 
 

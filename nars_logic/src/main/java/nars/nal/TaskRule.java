@@ -603,22 +603,44 @@ public class TaskRule extends ProductN implements Level {
         Term C = this.getConclusionTerm();
 
         //      C, B, [pre], task_is_question() |- T, [post]
-        TaskRule clone1 = clone(C, B, T);
+        TaskRule clone1 = clone(C, B, T, true);
         clone1.allowQuestionTask = true;
         w.accept(clone1);
 
         //      C, T, [pre], task_is_question() |- B, [post]
-        TaskRule clone2 = clone(C, T, B);
+        TaskRule clone2 = clone(C, T, B, true);
         clone1.allowQuestionTask = true;
         w.accept(clone2);
 
     }
 
-    private final TaskRule clone(final Term newT, final Term newB, final Term newR) {
+    /**
+     * for each calculable "question reverse" rule,
+     * supply to the consumer
+     */
+    public final TaskRule forwardPermutation() {
 
+        // T, B, [pre] |- C, [post] ||--
 
-        final ProductN newPremise =
-                (ProductN) Product.make(getPremise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
+        Term T = this.getTask();
+        Term B = this.getBelief();
+        Term C = this.getConclusionTerm();
+
+        //      B, T, [pre], task_is_question() |- T, [post]
+
+        TaskRule clone1 = clone(B, T, C, false);
+        return clone1.normalizeRule();
+    }
+
+    private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {
+
+        ProductN newPremise = null;
+        if(question) {
+            newPremise = (ProductN) Product.make(getPremise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
+        } else {
+            newPremise = (ProductN) Product.make(getPremise().cloneTerms());
+        }
+
         newPremise.terms()[0] = newT;
         newPremise.terms()[1] = newB;
 

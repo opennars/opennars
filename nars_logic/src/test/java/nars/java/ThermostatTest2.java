@@ -103,7 +103,7 @@ public class ThermostatTest2 {
 
 
         //n.trace(System.out);
-         //n.log();
+        //n.log();
 
         {
 

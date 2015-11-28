@@ -271,18 +271,6 @@ public class Patham9Test {
         nar.input("<c --> C>. :|:");
         nar.frame(300);
         nar.input("<a --> A>. :|:");
-        nar.frame(20);
-        nar.input("<k --> K>. :|:");
-        nar.frame(20);
-        nar.input("<c --> C>. :|:");
-        nar.frame(300);
-        nar.input("<a --> A>. :|:");
-        nar.frame(20);
-        nar.input("<h --> H>. :|:");
-        nar.frame(20);
-        nar.input("<c --> C>. :|:");
-        nar.frame(300);
-        nar.input("<a --> A>. :|:");
         nar.frame(4000);
 
         String a ="anticipating: <c --> C>\ndid not happen: <c --> C>\n";
