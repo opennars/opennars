@@ -1,34 +1,34 @@
 package nars.term.transform;
 
+import nars.Op;
 import nars.term.Term;
 
 import java.util.Map;
+import java.util.Random;
 
 
-public interface Subst {
+public abstract class Subst extends Frame {
 
-    @Deprecated Frame frame();
-
-    /** reset to a starting, empty state */
-    void clear();
+    public Subst(Random random, Op type, Map<Term, Term> xy, Map<Term, Term> yx) {
+        super(random, type, xy, yx);
+    }
 
     /** standard matching */
-    boolean next(Term x, Term y, int power);
+    public abstract boolean next(Term x, Term y, int power);
 
     /** compiled matching */
-    boolean next(FindSubst.TermPattern x, Term y, int power);
+    public abstract boolean next(FindSubst.TermPattern x, Term y, int power);
 
-    void putXY(Term x, Term y);
+    public abstract void putXY(Term x, Term y);
 
-    default Term resolve(Term t) {
+    final public Term resolve(Term t) {
         return resolve(t, new Substitution());
     }
 
-    Term resolve(Term t, Substitution s);
+    public abstract Term resolve(Term t, Substitution s);
 
     //TODO hide these maps and allow access to their data through specific methods, because these need not be implemented as Map's
-    @Deprecated Map<Term,Term> xy();
-    @Deprecated Map<Term,Term> yx();
+    abstract @Deprecated Map<Term,Term> xy();
+    abstract @Deprecated Map<Term,Term> yx();
 
-    Subst clone();
 }

@@ -62,7 +62,7 @@ import java.util.List;
 //        return m.next(pattern, tb, m.unificationPower);
 
         //TODO parameterize the power by budget
-        return m.next(compiled, tb, m.subst.frame().power);
+        return m.next(compiled, tb, m.subst.power);
 
     }
 

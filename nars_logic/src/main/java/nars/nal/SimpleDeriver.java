@@ -7,10 +7,8 @@ import nars.Op;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.task.Task;
 import nars.term.Term;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -142,30 +140,30 @@ public class SimpleDeriver extends Deriver  {
 
     final static void run(RuleMatch m, List<TaskRule> rules, int level) {
 
-        Consumer<Task> t = m.receiver;
-
-        final int nr = rules.size();
-        for (int i = 0; i < nr; i++) {
-
-            TaskRule r = rules.get(i);
-            if (r.minNAL > level) continue;
-
-            PostCondition[] pc = run(r, m);
-            if (pc != null) {
-                for (PostCondition p : pc) {
-                    if (p.minNAL > level) continue;
-                    ArrayList<Task> Lx = m.apply(p);
-                    if(Lx!=null) {
-                        for (Task x : Lx) {
-                            if (x != null)
-                                t.accept(x);
-                        }
-                    }
-                    /*else
-                        System.out.println("Post exit: " + r + " on " + m.premise);*/
-                }
-            }
-        }
+//        Consumer<Task> t = m.receiver;
+//
+//        final int nr = rules.size();
+//        for (int i = 0; i < nr; i++) {
+//
+//            TaskRule r = rules.get(i);
+//            if (r.minNAL > level) continue;
+//
+//            PostCondition[] pc = run(r, m);
+//            if (pc != null) {
+//                for (PostCondition p : pc) {
+//                    if (p.minNAL > level) continue;
+//                    ArrayList<Task> Lx = m.apply(p);
+//                    if(Lx!=null) {
+//                        for (Task x : Lx) {
+//                            if (x != null)
+//                                t.accept(x);
+//                        }
+//                    }
+//                    /*else
+//                        System.out.println("Post exit: " + r + " on " + m.premise);*/
+//                }
+//            }
+//        }
     }
 
     /** return null if no postconditions match (equivalent to an empty array)

@@ -1,5 +1,6 @@
 package nars.nal.meta.pre;
 
+import nars.Global;
 import nars.nal.RuleMatch;
 import nars.term.Compound;
 import nars.term.Term;
@@ -15,10 +16,9 @@ public class NoCommonSubterm extends PreCondition2 {
 
     @Override
     public final boolean test(RuleMatch m, Term a, Term b) {
-        Set<Term> tmpSet = m.tmpSet;
+        Set<Term> tmpSet = Global.newHashSet(0);
 
         final boolean result = !sharedSubterms(a, b, tmpSet );
-        tmpSet.clear(); //return it in the condition you took it, empty
 
         return result;
     }

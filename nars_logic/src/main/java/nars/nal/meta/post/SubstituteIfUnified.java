@@ -48,14 +48,14 @@ public class SubstituteIfUnified extends Substitute {
     @Override
     protected boolean substitute(RuleMatch m, Term a, Term b) {
 
-        Map<Term, Term> left = m.left;
-        Map<Term, Term> right = m.right;
+        Map<Term, Term> left = m.sub2.left;
+        Map<Term, Term> right = m.sub2.right;
 
         Subst sub = new FindSubst(type, left, right, m.premise.getRandom());
 
         final boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
-            m.outp.putAll(left);
+            m.sub2.outp.putAll(left);
             result = true;
         }
         else {

@@ -20,8 +20,7 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-public class FindSubst extends Frame implements Subst {
-
+public class FindSubst extends Subst {
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -43,10 +42,6 @@ public class FindSubst extends Frame implements Subst {
         super(random, type, xy, yx);
     }
 
-    @Override
-    public Frame frame() {
-        return this;
-    }
 
     @Override
     public final Subst clone() {
@@ -84,7 +79,7 @@ public class FindSubst extends Frame implements Subst {
 
         @Override
         public final boolean test(RuleMatch ruleMatch) {
-            return run(ruleMatch.subst.frame());
+            return run(ruleMatch.subst);
         }
     }
 

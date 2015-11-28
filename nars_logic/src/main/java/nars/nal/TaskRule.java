@@ -138,6 +138,8 @@ public class TaskRule extends ProductN implements Level {
 
         post.addConditions(l);
 
+        l.add(new RuleMatch.MakeTasks(this));
+
         return l;
     }
 

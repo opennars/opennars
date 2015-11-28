@@ -42,32 +42,41 @@ abstract public class Frame {
         this.xy = xy;
     }
 
-    /** copy constructor */
-    Frame(final Random random, Op type, Map<Term, Term> xy, Map<Term, Term> yx, Term y, Compound parent, boolean xyChanged, boolean yxChanged, int power) {
-        this.random = random;
-        this.type = type;
-        this.xy = xy;
-        this.yx = yx;
-        this.y = y;
-        this.parent = parent;
-        this.xyChanged = xyChanged;
-        this.yxChanged = yxChanged;
-        this.power = power;
-    }
-
 
     abstract boolean match(final Term X, final Term Y);
     abstract boolean matchCompound(final Compound X, final Compound Y);
 
 
-    public final void clear() {
+    public void clear() {
         xy.clear();
         yx.clear();
         y = null;
         parent = null;
         xyChanged = yxChanged = false;
-
-
     }
 
+    public void save(Frame m) {
+        m.xy.clear(); m.xy.putAll(xy);
+        m.yx.clear(); m.yx.putAll(yx);
+        m.y = y;
+        m.parent = parent;
+        m.xyChanged = xyChanged;
+        m.yxChanged = yxChanged;
+        m.power = power;
+    }
+
+    @Override
+    public String toString() {
+        return "Frame{" +
+                "random=" + random +
+                ", type=" + type +
+                ", y=" + y +
+                ", parent=" + parent +
+                ", xy=" + xy +
+                ", xyChanged=" + xyChanged +
+                ", yx=" + yx +
+                ", yxChanged=" + yxChanged +
+                ", power=" + power +
+                '}';
+    }
 }

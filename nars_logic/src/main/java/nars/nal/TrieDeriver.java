@@ -3,9 +3,10 @@ package nars.nal;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.RuleTrie;
 
-/** separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations */
+/**
+ * separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations
+ */
 public class TrieDeriver extends RuleTrie {
-
 
 
     public TrieDeriver() {
@@ -16,8 +17,10 @@ public class TrieDeriver extends RuleTrie {
         super(rules);
     }
 
-    @Override public final void forEachRule(RuleMatch match) {
-        System.out.println("\nstart: " + match);
+    @Override
+    public final void forEachRule(RuleMatch match) {
+        //System.out.println("\nstart: " + match);
+
         //match.start();
         for (RuleBranch r : root) {
             forEachRule(r, match);
@@ -29,31 +32,22 @@ public class TrieDeriver extends RuleTrie {
         for (PreCondition x : r.precondition) {
 
             if (!x.test(match)) {
-                System.out.println(x + " -\n");
                 return;
             }
-            System.out.println(x + " +");
-            if (match.subst.xy().size() > 0) {
-                System.out.println("  " + match.subst.xy());
-            }
+
         }
 
         RuleBranch[] children = r.children;
 
-        if (children == null) {
-            System.out.println("  APPLY " + match.subst);
-            match.apply();
-        }
-        else {
-                System.out.println("--> \\FORK: " + match.subst);
-                for (RuleBranch s : children) {
-                    RuleMatch subMatch = match.clone();
-                    System.out.println("---->: " + subMatch.subst);
-                    forEachRule(s, subMatch);
-                }
-                System.out.println("<-- /FORK");
+        //if (children != null) {
+            RuleMatch subMatch = new RuleMatch(match.subst.random);
 
-        }
+            for (RuleBranch s : children) {
+                match.save(subMatch);
+                forEachRule(s, subMatch);
+            }
+
+        //}
     }
 
 

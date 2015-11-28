@@ -73,7 +73,7 @@ public class ShiftOccurrence extends PreCondition1 {
 
                 if(seq.intervals().length>0 && positive) { //on backward its already handled by shifting (&/,a,/i) backward on i and changing it to a
                     int interval = seq.intervals()[seq.intervals().length - 1];
-                    m.occurence_shift = positive ? interval : -interval;
+                    m.post.occurence_shift = positive ? interval : -interval;
                 }
             }
         }

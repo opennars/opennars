@@ -27,7 +27,7 @@ public class MeasureTime extends AbstractMeasureTime {
         Premise p = m.premise;
 
         int time = Tense.between(p.getTask(), p.getBelief());
-        if (time < 0) {
+        if (time < 0) { //should this be <= 0  ??
             return false;
         }
 

@@ -359,8 +359,9 @@ public class PostCondition implements Serializable, Level //since there can be m
                 return false;
             }
 
-            match.truth = truth;
-            match.punct = punct;
+            RuleMatch.PostMods post = match.post;
+            post.truth = truth;
+            post.punct = punct;
 
             return true;
         }
@@ -385,13 +386,12 @@ public class PostCondition implements Serializable, Level //since there can be m
         @Override
         public boolean test(RuleMatch match) {
 
-
             Term derivedTerm;
 
             if(null==(derivedTerm=match.resolve(term)))
                 return false;
 
-            match.derivedTerm = derivedTerm;
+            match.post.derivedTerm = derivedTerm;
 
             return true;
         }

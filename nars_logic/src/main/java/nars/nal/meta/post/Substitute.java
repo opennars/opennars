@@ -3,7 +3,6 @@ package nars.nal.meta.post;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.term.Term;
-import nars.term.Variable;
 
 
 public class Substitute extends PreCondition {
@@ -59,7 +58,7 @@ public class Substitute extends PreCondition {
 
         boolean subs = substitute(m, a, b);
         if (!a.equals(b) && subs) {
-            m.outp.put(a, b);
+            m.sub2.outp.put(a, b);
         }
         if(!subs && this instanceof SubstituteIfUnified) {
             return false;
