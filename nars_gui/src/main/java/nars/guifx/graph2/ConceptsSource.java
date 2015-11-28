@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
@@ -45,7 +46,7 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
         });
     }
 
-    final AtomicBoolean refresh = new AtomicBoolean();
+    final AtomicBoolean refresh = new AtomicBoolean(true);
 
     @Override
     public void start(SpaceGrapher g) {
@@ -91,7 +92,8 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
     public final void update(SpaceGrapher g) {
 
 
-        if (refresh.compareAndSet(true, false)) {
+        if ( g.ready.get() &&
+             refresh.compareAndSet(true, false)) {
 
             int maxNodes = g.maxNodes.get();
 
@@ -120,7 +122,7 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
 
                 Iterator<Concept> cc = x.iterator();
                 int n = 0;
-                while (cc.hasNext() && n < maxNodes) {
+                while (cc.hasNext() && n++ < maxNodes) {
                     Concept c = cc.next();
                     float p = c.getPriority();
 
@@ -210,20 +212,23 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
                         + s.term.equals(t.term) + " " + t.term.equals(s.term) + ", hash=" + s.term.hashCode() + "," + t.term.hashCode() );*/
 
-        if (!(i < 0)) {
+        if (!(i < 0)) { //swap
             TermNode x = s;
             s = t;
             t = x;
         }
 
-        TermEdge e = g.getConceptEdgeOrdered(s, t);
-        if (e == null) {
-            e = new TermEdge(s, t);
-        }
-        s.putEdge(t.term, e);
-
-        return e;
+        return g.getConceptEdgeOrdered(s, t, defaultEdgeBuilder);
+//        if (e == null) {
+//            e = new TermEdge(s, t);
+//        }
+//        s.putEdge(t.term, e);
+//        return e;
     }
+
+    static final BiFunction<TermNode,TermNode,TermEdge> defaultEdgeBuilder = (a,b) ->
+        new TermEdge(a, b);
+
 
     @Override
     public void accept(SpaceGrapher<T, TermNode<T>> tTermNodeSpaceGrapher) {

@@ -249,10 +249,10 @@ public class RuleMatch {
             //target.subst = subst; //it wont change outside Pattern stage
         }*/
 
-        if (stage != MatchStage.Pre) {
+        //if (stage != MatchStage.Pre) {
             post.copyTo(target.post);
             sub2.copyTo(target.sub2);
-        }/*
+        /*}
         else {
             m.post = post; //it wont change outside Post stage
             m.sub2 = sub2;

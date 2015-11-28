@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -154,17 +156,24 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
     /**
      * assumes that 's' and 't' are already ordered
+     * @param s
+     * @param t
+     * @param edgeBuilder
      */
-    public final TermEdge getConceptEdgeOrdered(V s, V t) {
-        return getEdge(s.term, t.term);
+    public final TermEdge getConceptEdgeOrdered(TermNode<K> s, TermNode<K> t, BiFunction<TermNode, TermNode, TermEdge> edgeBuilder) {
+        return getEdge(s.term, t.term, edgeBuilder);
     }
 
-    public final TermEdge getEdge(K a, K b) {
-        TermNode<K> n = getTermNode(a);
-        if (n != null) {
-            return n.edge.get(b);
+    public final TermEdge getEdge(K a, K b, BiFunction<TermNode,TermNode,TermEdge> builder) {
+        TermNode<K> A = getTermNode(a);
+        if (A != null) {
+            return A.getEdge(b);
         }
-        return null;
+
+
+        TermEdge newEdge = builder.apply(A, getTermNode(b));
+        addEdge(a, b, newEdge);
+        return newEdge;
     }
 
     public final boolean addEdge(K a, K b, TermEdge e) {
@@ -262,14 +271,19 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 //    }
 
 
+    public final AtomicBoolean ready = new AtomicBoolean(true);
+
     protected final Runnable clear = () -> {
         this.displayed = TermNode.empty;
         getVertices().clear();
         edgeRenderer.get().reset(this);
+        ready.set(true);
     };
 
     /** commit what is to be displayed */
     public final void setVertices(final Set<? extends V> active) {
+
+        ready.set(false);
 
         Runnable next;
 
@@ -290,6 +304,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
                             active
                             //toDisplay
                     );
+                    ready.set(true);
                     //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
                 });
             }

@@ -11,60 +11,7 @@ import java.util.function.Consumer;
 public interface GraphSource<K extends Comparable> extends Consumer<SpaceGrapher<K,TermNode<K>>> {
 
 
-    //DoubleSummaryReusableStatistics conPri = new DoubleSummaryReusableStatistics();
 
-
-
-//    public void accept(SpaceGrapher graph) {
-//
-////        final NAR nar = graph.nar;
-////
-////        //final long now = nar.time();
-////
-////        //conPri.clear();
-////
-////        if (graph.refresh.compareAndSet(true, false)) {
-////            //active.clear();
-////
-////
-////            ((Default)nar).core.concepts().forEach(maxNodes.get(), c -> {
-////
-////
-////
-////                final Term source = c.getTerm();
-////                if (active.add(source)) {
-////                    TermNode sn = graph.getTermNode(source);
-////                    if (sn!=null)
-////                        refresh(graph, sn, c);
-////                }
-////            });
-////        } else {
-//////            active.forEach(sn -> {
-//////                refresh(graph, sn, sn.c);
-//////            });
-////        }
-////
-////
-////        //after accumulating conPri statistics, normalize each node's scale:
-//////        active.forEach(sn -> {
-//////            sn.priNorm = conPri.normalize(sn.c.getPriority());
-//////        });
-////
-////
-////
-//////        final TermNode[] x;
-//////        if (!termToAdd.isEmpty()) {
-//////            x = termToAdd.values().toArray(new TermNode[termToAdd.size()]);
-//////            termToAdd.clear();
-//////        } else x = null;
-////
-//////        runLater(() -> graph.commit(active));
-//
-//    }
-//
-//    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
-//
-//    }
 
     default void start(SpaceGrapher<K,? extends TermNode<K>> spaceGrapher) {
 
@@ -151,5 +98,58 @@ public interface GraphSource<K extends Comparable> extends Consumer<SpaceGrapher
 //    }
 //
 
+    //DoubleSummaryReusableStatistics conPri = new DoubleSummaryReusableStatistics();
 
+
+
+//    public void accept(SpaceGrapher graph) {
+//
+////        final NAR nar = graph.nar;
+////
+////        //final long now = nar.time();
+////
+////        //conPri.clear();
+////
+////        if (graph.refresh.compareAndSet(true, false)) {
+////            //active.clear();
+////
+////
+////            ((Default)nar).core.concepts().forEach(maxNodes.get(), c -> {
+////
+////
+////
+////                final Term source = c.getTerm();
+////                if (active.add(source)) {
+////                    TermNode sn = graph.getTermNode(source);
+////                    if (sn!=null)
+////                        refresh(graph, sn, c);
+////                }
+////            });
+////        } else {
+//////            active.forEach(sn -> {
+//////                refresh(graph, sn, sn.c);
+//////            });
+////        }
+////
+////
+////        //after accumulating conPri statistics, normalize each node's scale:
+//////        active.forEach(sn -> {
+//////            sn.priNorm = conPri.normalize(sn.c.getPriority());
+//////        });
+////
+////
+////
+//////        final TermNode[] x;
+//////        if (!termToAdd.isEmpty()) {
+//////            x = termToAdd.values().toArray(new TermNode[termToAdd.size()]);
+//////            termToAdd.clear();
+//////        } else x = null;
+////
+//////        runLater(() -> graph.commit(active));
+//
+//    }
+//
+//    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
+//
+//    }
 }

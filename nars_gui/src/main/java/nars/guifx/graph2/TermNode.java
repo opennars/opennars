@@ -235,4 +235,8 @@ public class TermNode<K extends Comparable> extends Group {
                 (term.getTerm().op().ordinal() % colors.cc.length) / ((double) Op.values().length),
                 v);
     }
+
+    public TermEdge getEdge(K b) {
+        return edge.get(b);
+    }
 }
