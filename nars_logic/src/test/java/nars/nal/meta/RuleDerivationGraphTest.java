@@ -2,7 +2,6 @@ package nars.nal.meta;
 
 import com.google.common.collect.Sets;
 import nars.nal.Deriver;
-import nars.nal.SimpleDeriver;
 import nars.nal.TaskRule;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
@@ -19,9 +18,9 @@ public class RuleDerivationGraphTest {
 
     @Test
     public void testRuleStatistics() {
-        SimpleDeriver d = new SimpleDeriver(Deriver.standard);
+        //SimpleDeriver d = new SimpleDeriver(Deriver.standard);
 
-        List<TaskRule> R = d.rules;
+        List<TaskRule> R = Deriver.standard;
         int registeredRules = R.size();
 
 

@@ -7,7 +7,8 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkTemplate;
-import nars.nal.SimpleDeriver;
+import nars.nal.Deriver;
+import nars.nal.TrieDeriver;
 import nars.nar.Default;
 import nars.nar.SingleStepNAR;
 import nars.process.ConceptProcess;
@@ -142,7 +143,7 @@ public class ExhaustPremises extends TestNAR {
 
     private void premiseMatrixAnalysis(NAR c, Task task, Task belief) {
 
-        SimpleDeriver sd = new SimpleDeriver();
+        Deriver sd = TrieDeriver.standardDeriver;
 
         // iterate all premises:  task, {termlinks of task}, belief
         c.concept(task).getTermLinks().forEach(tl -> {

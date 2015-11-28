@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
 import nars.nal.Deriver;
-import nars.nal.SimpleDeriver;
 import nars.nal.TaskRule;
 import nars.task.flow.FIFOTaskPerception;
 import nars.time.FrameClock;
@@ -43,7 +42,7 @@ public class SingleStepNAR extends Default {
 //    }
 
     @Override
-    protected SimpleDeriver getDeriver() {
+    protected Deriver getDeriver() {
 //        if (Global.DEBUG_DERIVATION_GRAPH) {
 //
 //
@@ -69,7 +68,8 @@ public class SingleStepNAR extends Default {
 //            };
 //        }
 //        else {
-            return new SimpleDeriver();
+            //return new SimpleDeriver();
+        return Deriver.standardDeriver;
         //}
     }
 

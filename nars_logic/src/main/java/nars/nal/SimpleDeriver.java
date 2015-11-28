@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /** separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations */
-public class SimpleDeriver extends Deriver  {
+@Deprecated class SimpleDeriver extends Deriver  {
 
     /** maps rule patterns to one or more rules which involve it */
     public final Multimap<TaskBeliefPair, TaskRule> ruleIndex;

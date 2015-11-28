@@ -5,25 +5,17 @@ import nars.Op;
 import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.nal.meta.PostCondition;
-import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TruthFunction;
-import nars.op.mental.Anticipate;
-import nars.task.FluentTask;
 import nars.task.PreTask;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.transform.Substitution;
-import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.Arrays;
@@ -50,7 +42,7 @@ public class RuleMatch {
     /**
      * Global Context
      */
-    protected Consumer<Task> receiver;
+    public Consumer<Task> receiver;
 
 
     @Deprecated
@@ -222,8 +214,6 @@ public class RuleMatch {
         m.receiver = receiver;
         m.taskBelief = taskBelief;
 
-        //m.subst = subst;
-
         subst.save(m.subst);
         post.save(m.post);
         sub2.save(m.sub2);
@@ -254,135 +244,6 @@ public class RuleMatch {
         start();
         this.rule = nextRule;
     }
-
-
-    /**
-     * finally attempt to produce and input tasks
-     */
-    public static final class MakeTasks extends PreCondition {
-
-        @Deprecated final TaskRule rule;
-
-        public MakeTasks(TaskRule taskRule) {
-            this.rule = taskRule;
-        }
-
-        @Override
-        public String toString() {
-            return "MakeTasks[" + rule + "]";
-        }
-
-        @Override
-        public boolean test(RuleMatch m) {
-
-            final PostMods post = m.post;
-            final Premise premise = m.premise;
-
-            Term derivedTerm = post.derivedTerm;
-
-            //test for reactor leak
-            // TODO prevent this from happening
-            if (Variable.hasPatternVariable(derivedTerm)) {
-                return false;
-            }
-
-            //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
-            derivedTerm = derivedTerm.normalized();
-
-            if (!(derivedTerm instanceof Compound))
-                return false;
-
-            final Truth truth = post.truth;
-            final Budget budget;
-            if (truth != null) {
-                budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
-                //budget = BudgetFunctions.forward(truth, premise);
-            } else {
-                budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
-            }
-
-            if (!premise.validateDerivedBudget(budget)) {
-                if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
-                    removeInsufficientBudget(premise, new PreTask(derivedTerm, post.punct, truth, budget, post.occurence_shift, premise));
-                }
-                return false;
-            }
-
-            final Task task = premise.getTask();
-
-            /** calculate derived task truth value */
-
-            final Task belief = premise.getBelief();
-
-
-            final char punct = post.punct;
-
-            FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
-            if (deriving != null) {
-
-                final long now = premise.time();
-                final long occ;
-
-                final long occurence_shift = post.occurence_shift;
-                if (occurence_shift > Stamp.TIMELESS) {
-                    occ = task.getOccurrenceTime() + occurence_shift;
-                } else {
-                    occ = task.getOccurrenceTime(); //inherit premise task's
-                }
-
-
-                if (occ != Stamp.ETERNAL && premise.isEternal() && !premise.nal(7)) {
-                    throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
-                }
-
-                final Task derived = premise.validate(deriving
-                        .punctuation(punct)
-                        .truth(truth)
-                        .budget(budget)
-                        .time(now, occ)
-                        .parent(task, belief /* null if single */)
-                );
-
-
-                if (derived != null) {
-                    if (premise.nal(7) && rule.anticipate && task.isInput()) { //the prediction needs to be based on a observation
-                        premise.memory().the(Anticipate.class).anticipate(derived); //else the system can anticipate things it can not measure
-                    }                    //thus these anticipations would fail, leading the system thinking that this did not happen altough it was
-                    if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) { //just not able to measure it, closed world assumption gone wild.
-                        derived.log(rule.toString());
-                    }
-
-                    final Consumer<Task> receiver = m.receiver;
-
-                    //ArrayList<Task> ret = new ArrayList<Task>();
-                    receiver.accept(derived);
-
-                    if (truth != null && rule.immediate_eternalize && !derived.isEternal()) {
-                        Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
-                        FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
-                        Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
-
-                        final Task derivedEternal = premise.validate(deriving2
-                                .punctuation(punct)
-                                .truth(et)
-                                .budget(budget2)
-                                .time(now, Stamp.ETERNAL)
-                                .parent(task, belief // null if single
-                                )
-                        );
-
-                        if (derivedEternal != null) {
-                            receiver.accept(derivedEternal);
-                        }
-                    }
-
-                }
-            }
-
-            return false; //finished
-        }
-    }
-
 
 
 //    @Deprecated
@@ -708,7 +569,7 @@ public class RuleMatch {
     /**
      * for debugging
      */
-    private static void removeInsufficientBudget(Premise premise, PreTask task) {
+    public static void removeInsufficientBudget(Premise premise, PreTask task) {
         premise.memory().remove(task, "Insufficient Derived Budget");
     }
 

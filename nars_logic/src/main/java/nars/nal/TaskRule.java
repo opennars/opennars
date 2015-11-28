@@ -6,6 +6,10 @@ import nars.Op;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
+import nars.nal.meta.op.AfterAfterConclusions;
+import nars.nal.meta.op.GetTruth;
+import nars.nal.meta.op.MakeTasks;
+import nars.nal.meta.op.Resolve;
 import nars.nal.meta.post.*;
 import nars.nal.meta.pre.*;
 import nars.nal.nal1.Inheritance;
@@ -16,6 +20,7 @@ import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -136,9 +141,17 @@ public class TaskRule extends ProductN implements Level {
         for (PreCondition p : postPreconditions)
             p.addConditions(l);
 
-        post.addConditions(l);
 
-        l.add(new RuleMatch.MakeTasks(this));
+        l.add(new GetTruth(post.truth, post.desire, post.puncOverride));
+        l.add(new Resolve(post.term, this ));
+
+        if (post.afterConclusions.length > 0) {
+            Collections.addAll(l, post.afterConclusions);
+            l.add(AfterAfterConclusions.the);
+        }
+
+
+        l.add(new MakeTasks(this));
 
         return l;
     }
