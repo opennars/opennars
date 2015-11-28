@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
@@ -546,9 +545,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         Iterator<V> ii = iterator();
         int n = 0;
-        while (ii.hasNext() && n < max) {
+        while (ii.hasNext() && n++ < max) {
             action.accept(ii.next());
-            n++;
         }
 
     }

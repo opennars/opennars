@@ -22,7 +22,8 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 //            Color.BLUE,
 //            Color.GREEN
 //    );
-    ColorMatrix colors = DefaultVis.colors; /*new ColorMatrix(24,24,
+    static final ColorMatrix colors = DefaultVis.colors; /*new ColorMatrix(24,24,
+
         (pri,termTaskBalance) -> {
             return Color.hsb(30 + 120.0 * termTaskBalance, 0.75, 0.35 + 0.5 * pri);
         }
@@ -38,7 +39,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 //    public double maxPri = 1;
 //    public double minPri = 0;
 
-    double minWidth = 2;
+    double minWidth = 3;
     double maxWidth = 10;
 
     @Override
@@ -78,10 +79,11 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
     public void drawHalf(TermEdge i, TermNode t, double x1, double y1, double x2, double y2) {
 
 
+        double cp = t.priNorm;
         double te = i.termLinkFrom(t); //t.termLinkStat.getAverage();
         double ta = i.taskLinkFrom(t); //t.taskLinkStat.getAverage();
 
-        double p = 0.5 * (te + ta);
+        double p = 0.5 * (te + ta) * cp;
 
         //double np = normalize(p);
 
@@ -90,10 +92,12 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         //gfx.setStroke(colors.get(np));
         //gfx.setStroke(colors.get(np, te/(te+ta)));
 
+        final GraphicsContext gfx = this.gfx;
+
         //HACK specific to Term instances
         if (t.term instanceof Termed) {
             gfx.setStroke(
-                    TermNode.getTermColor((Termed)t.term, colors, p)
+                TermNode.getTermColor((Termed)t.term, colors, p)
             );
         }
 

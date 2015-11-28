@@ -47,6 +47,7 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
         nodeScale.addListener((e) -> {
             nodeScaleCache = nodeScale.get();
         });
+        nodeScaleCache = nodeScale.get();
 
 
         hoverPanel.setFill(Color.ORANGE);
@@ -85,7 +86,7 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
 //            d.setFill(Color.hsb(v*360,1,1));
 //            d.fillRect(0,0,10,10);
 
-        t.scale(minSize + (maxSize - minSize) * t.priNorm);
+        t.scale( nodeScaleCache * (minSize + (maxSize - minSize) * t.priNorm) );
     }
 
     final static Font mono = NARfx.mono(8);
@@ -93,8 +94,8 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
     public static final ColorMatrix colors = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
             (op, activation) -> {
                 return Color.hsb(op * 360.0,
-                        0.5 + 0.4 * activation,
-                        0.3 + activation * 0.65);
+                        0.35 + 0.64 * activation,
+                        0.25 + activation * 0.74);
             });
 
 

@@ -2,14 +2,16 @@ package nars.guifx.graph2;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import nars.Global;
 import nars.Op;
 import nars.concept.Concept;
 import nars.guifx.util.ColorMatrix;
 import nars.term.Termed;
-import nars.util.DoubleSummaryReusableStatistics;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class TermNode<K extends Comparable> extends Group {
@@ -31,9 +33,10 @@ public class TermNode<K extends Comparable> extends Group {
 
     public Concept c = null;
 
+    /*
     DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();
     DoubleSummaryReusableStatistics taskLinkStat = new DoubleSummaryReusableStatistics();
-
+    */
 
     /**
      * cached from last set
@@ -191,13 +194,15 @@ public class TermNode<K extends Comparable> extends Group {
 
         //return edges = edge.values().toArray(new TermEdge[s]);
 
+        final TermEdge[] edges = this.edges;
+
         TermEdge[] e;
         if (edges == null || edges.length != s)
             e = new TermEdge[s];
         else
             e = edges; //re-use existing array
 
-        return edges = edge.values().toArray(e);
+        return this.edges = edge.values().toArray(e);
     }
 
 //    /**
@@ -238,5 +243,26 @@ public class TermNode<K extends Comparable> extends Group {
 
     public TermEdge getEdge(K b) {
         return edge.get(b);
+    }
+
+    public Set<K> getEdgeSet() {
+        if (edges == null || edges.length == 0) return Collections.emptySet();
+
+        Set<K> ss = Global.newHashSet(edges.length);
+        for (TermEdge<TermNode<K>> ee : edges)
+            ss.add(ee.bSrc.term);
+        return ss;
+        //edge.keySet());
+    }
+
+    public void removeEdges(Set<K> toRemove) {
+        if (!toRemove.isEmpty()) {
+
+            toRemove.forEach(edge::remove);
+            edges = null;
+        }
+
+        if (edges == null)
+            updateEdges();
     }
 }

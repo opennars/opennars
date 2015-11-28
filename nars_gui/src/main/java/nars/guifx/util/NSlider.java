@@ -19,6 +19,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import nars.guifx.NARfx;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+
 import static javafx.application.Platform.runLater;
 
 /**
@@ -36,7 +39,6 @@ public class NSlider extends NControl {
     public NSlider(double w, double h, double... initialVector) {
         this(w, h, BarSlider, initialVector);
     }
-
 
     public NSlider(String label, double w, double h, double... initialVector) {
         this(label, w, h, BarSlider, initialVector);
@@ -180,13 +182,13 @@ public class NSlider extends NControl {
     private double normalized[];
 
 
-    public void normalized(double... n) {
+    public void denormalized(double... n) {
         double mn = min.get();
         double mx = max.get();
 
         for (int i = 0; i < n.length; i++) {
             double nn = n[i];
-            double v = p(nn) * (mx - mn) + mn;
+            double v = (nn) * (mx - mn) + mn;
             if (v < mn) v = mn; //clip to bounds
             if (v > mx) v = mx;
             value(i, v);
@@ -380,16 +382,35 @@ public class NSlider extends NControl {
             FlowPane p = new FlowPane(16, 16);
 
             p.getChildren().setAll(
-                    new NSlider("Bar", 256, 96, NSlider.BarSlider, 0.5),
-                    new NSlider("Notch", 128, 45, NSlider.NotchSlider, 0.25),
-                    new NSlider("Notch--", 64, 25, NSlider.NotchSlider, 0.75),
-                    new NSlider("Knob", 256, 256, NSlider.CircleKnob, 0.5)
+                new NSlider("Bar", 256, 96, NSlider.BarSlider, 0.5),
+                new NSlider("Notch", 128, 45, NSlider.NotchSlider, 0.25),
+                new NSlider("Notch--", 64, 25, NSlider.NotchSlider, 0.75),
+                new NSlider("Knob", 256, 256, NSlider.CircleKnob, 0.5),
+                new NSlider("Ranged", 256, 256, NSlider.BarSlider, 75)
+                    .range(0, 100).on(0, c -> {
+                        System.out.println(Arrays.toString(c.normalized()));
+                    })
             );
 
 
             b.setScene(new Scene(p, 800, 800));
             b.show();
         });
+    }
+
+    private NSlider range(double min, double max) {
+        this.min.set(min);
+        this.max.set(max);
+        return this;
+    }
+    private NSlider on(int dimension, Consumer<NSlider> callback) {
+
+        //TODO save listener so it can be de-registered
+        this.value[0].addListener(c -> {
+           callback.accept(NSlider.this);
+        });
+
+        return this;
     }
 
     public static class LeftRightDrag implements Control, EventHandler<MouseEvent> {
@@ -423,7 +444,7 @@ public class NSlider extends NControl {
 
             canvas.setCursor(Cursor.MOVE);
 
-            n.normalized(e.getX() / canvas.getWidth());
+            n.denormalized(e.getX() / canvas.getWidth());
 
             //System.out.println(dx + " " + dy + " " + value.get());
 

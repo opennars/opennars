@@ -9,7 +9,6 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
 import nars.nar.Default;
 import nars.term.Term;
-import nars.util.DoubleSummaryReusableStatistics;
 import nars.util.event.Active;
 
 import java.util.Iterator;
@@ -74,10 +73,11 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
     }
 
 
-    @Override public void refresh() {
-        runLater( () -> {
+    @Override
+    public void refresh() {
+        runLater(() -> {
             refresh.set(true);
-            if (prevActive!=null)
+            if (prevActive != null)
                 prevActive.clear();
         });
     }
@@ -92,8 +92,8 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
     public final void update(SpaceGrapher g) {
 
 
-        if ( g.ready.get() &&
-             refresh.compareAndSet(true, false)) {
+        if (g.ready.get() &&
+                refresh.compareAndSet(true, false)) {
 
             int maxNodes = g.maxNodes.get();
             final Set<TermNode> active = new LinkedHashSet<>(maxNodes); //Global.newHashSet(maxNodes);
@@ -144,7 +144,7 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
     }
 
 
-    public void refresh(SpaceGrapher<Term,TermNode<Term>> g, TermNode<Term> tn, Concept cc/*, long now*/) {
+    public void refresh(SpaceGrapher<Term, TermNode<Term>> g, TermNode<Term> tn, Concept cc/*, long now*/) {
 
         //final Term source = c.getTerm();
 
@@ -152,22 +152,29 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
         //conPri.accept(cc.getPriority());
         tn.priNorm = cc.getPriority();
 
-        final Term t = tn.term;
-        final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
-        final DoubleSummaryReusableStatistics te = tn.termLinkStat;
+        //final Term t = tn.term;
+        //final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
+        //final DoubleSummaryReusableStatistics te = tn.termLinkStat;
 
-        tn.termLinkStat.clear();
-        cc.getTermLinks().forEach(l ->
-                updateConceptEdges(g, tn, l, te)
-        );
+        final int maxNodeLinks = 24;
 
+        Set<Term> missing = tn.getEdgeSet();
 
-        tn.taskLinkStat.clear();
-        cc.getTaskLinks().forEach(l -> {
-            if (!l.getTerm().equals(t)) {
-                updateConceptEdges(g, tn, l, ta);
-            }
+//        tn.termLinkStat.clear();
+        cc.getTermLinks().forEach(maxNodeLinks / 2, l -> {
+            updateConceptEdges(g, tn, l);
+            missing.remove(l.getTerm());
         });
+
+
+//        tn.taskLinkStat.clear();
+        cc.getTaskLinks().forEach(maxNodeLinks / 2, l -> {
+            //if (!l.getTerm().equals(t)) {
+            updateConceptEdges(g, tn, l);
+            missing.remove(l.getTerm());
+        });
+
+        tn.removeEdges(missing);
 
 //        System.out.println("refresh " + Thread.currentThread() + " " + termLinkMean.getResult() + " #" + termLinkMean.getN() );
 
@@ -187,7 +194,21 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
 
     }
 
-    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
+//    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
+//
+//
+//        Term t = link.getTerm();
+//        TermNode target = g.getTermNode(t);
+//        if ((target == null) || (s.equals(target))) return;
+//
+//        TermEdge ee = getConceptEdge(g, s, target);
+//        if (ee != null) {
+//            ee.linkFrom(s, link);
+//            accumulator.accept(link.getPriority());
+//        }
+//    }
+
+    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link) {
 
 
         Term t = link.getTerm();
@@ -197,12 +218,11 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
         TermEdge ee = getConceptEdge(g, s, target);
         if (ee != null) {
             ee.linkFrom(s, link);
-            accumulator.accept(link.getPriority());
         }
     }
 
     public static <K extends Comparable> TermEdge<TermNode<K>>
-        getConceptEdge(SpaceGrapher<K,TermNode<K>> g, TermNode<K> s, TermNode<K> t) {
+    getConceptEdge(SpaceGrapher<K, TermNode<K>> g, TermNode<K> s, TermNode<K> t) {
 
         //re-order
         final int i = s.term.compareTo(t.term);
@@ -225,8 +245,8 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
 //        return e;
     }
 
-    static final BiFunction<TermNode,TermNode,TermEdge> defaultEdgeBuilder = (a,b) ->
-        new TermEdge(a, b);
+    static final BiFunction<TermNode, TermNode, TermEdge> defaultEdgeBuilder = (a, b) ->
+            new TermEdge(a, b);
 
 
     @Override

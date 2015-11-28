@@ -14,7 +14,7 @@ public class TermEdge<N extends TermNode> /*implements ChangeListener*/ {
     public final N aSrc, //source
                     bSrc; //target
 
-    public double len = 0.0;
+    //public double len = 0.0;
     public boolean visible = false;
 
     //TODO use a Half inner class for this
