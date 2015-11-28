@@ -312,7 +312,7 @@ public class Global {
     
     public static float ANTICIPATION_CONFIDENCE=0.95f;
     
-    public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
+    public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
 
 
 
