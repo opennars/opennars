@@ -86,7 +86,7 @@ public class ThermostatTest2 {
         Global.DEBUG = false;
         Global.EXIT_ON_EXCEPTION = true;
 
-        final int dur = 1;
+        final int dur = 3;
 
         Default2 n = new Default2(1024, 1, 2, 3);
         n.memory.duration.set(dur);
@@ -155,7 +155,7 @@ public class ThermostatTest2 {
 
             //if (t.isJudgmentOrGoal()) return true;
 
-            return t.getBudget().summary() > 0.25;
+            return t.getBudget().summary() > 0.05;
             //return t.getQuality() > 0.05;
             //return true;
 
@@ -203,21 +203,21 @@ public class ThermostatTest2 {
 //                n.input(down + "@ :|:");
 
         n.input(isValid + "!");
-        n.should(isValidThen.apply($(up)));
-        n.should(isValidThen.apply($(down)));
-        n.should(notValidThen.apply($(up)));
-        n.should(notValidThen.apply($(down)));
+//        n.should(isValidThen.apply($(up)));
+//        n.should(isValidThen.apply($(down)));
+//        n.should(notValidThen.apply($(up)));
+//        n.should(notValidThen.apply($(down)));
 
 
 //                n.input(notValid + "! %0%");
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
 
             {
                 //tc.log = false;
 
 
-                tc.valid();
+                //tc.valid();
 
                 //n.frame(50);
                 //tc.log = true;
@@ -236,7 +236,7 @@ public class ThermostatTest2 {
 
 
             //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
-            n.frame(100);
+            n.frame(100*dur);
             //System.out.println(tc.valid() + " " + tc.current + " ... " + tc.target  );
 
             reset(tc, range);
@@ -252,11 +252,11 @@ public class ThermostatTest2 {
         //System.out.println(taskStats);
 
 
-        n.forEachConcept(c -> {
-            if (c.getTerm().volume() < 9)
-                if (/*c.hasBeliefs() ||*/ c.hasGoals())
-                    c.print(System.out);
-        });
+//        n.forEachConcept(c -> {
+//            if (c.getTerm().volume() < 9)
+//                if (/*c.hasBeliefs() ||*/ c.hasGoals())
+//                    c.print(System.out);
+//        });
 
         System.out.println(n.concepts().size() + " total concepts cached");
 

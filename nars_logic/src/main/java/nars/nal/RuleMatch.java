@@ -57,7 +57,7 @@ public class RuleMatch {
         Pre, Pattern, Post
     }
 
-    MatchStage stage;
+    MatchStage stage = MatchStage.Pre;
 
 
     @Deprecated
@@ -83,7 +83,7 @@ public class RuleMatch {
             punct = 0;
         }
 
-        public void save(PostMods m) {
+        public void copyTo(PostMods m) {
             m.occurence_shift = occurence_shift;
             m.truth = truth;
             m.derivedTerm = derivedTerm;
@@ -131,7 +131,7 @@ public class RuleMatch {
             outp.clear(); // necessary?
         }
 
-        public void save(SecondarySubs m) {
+        public void copyTo(SecondarySubs m) {
             m.clear();
             m.left.putAll(left);
             m.right.putAll(right);
@@ -234,22 +234,22 @@ public class RuleMatch {
         }
     }
 
-    public void save( RuleMatch m ) {
+    public void copyTo(RuleMatch target ) {
 
-        m.premise = premise;
-        m.receiver = receiver;
-        m.taskBelief = taskBelief;
+        target.premise = premise;
+        target.receiver = receiver;
+        target.taskBelief = taskBelief;
 
         //if (stage == MatchStage.Pattern) {
-            subst.save(m.subst);
+            subst.copyTo(target.subst);
         /*}
         else {
-            m.subst = subst; //it wont change outside Pattern stage
+            //target.subst = subst; //it wont change outside Pattern stage
         }*/
 
         //if (stage == MatchStage.Post) {
-            post.save(m.post);
-            sub2.save(m.sub2);
+            post.copyTo(target.post);
+            sub2.copyTo(target.sub2);
         /*}
         else {
             m.post = post; //it wont change outside Post stage

@@ -226,7 +226,25 @@ public class FindSubst extends Subst {
         }
     }
 
-    public final static class MatchCompound extends PatternOp {
+    public static class MatchXVar extends PatternOp {
+        public final Variable x;
+
+        public MatchXVar(Variable c) {
+            this.x = c;
+        }
+
+        @Override
+        public boolean run(Frame ff) {
+            return ff.matchXvar(x, ff.y);
+        }
+
+        @Override
+        public String toString() {
+            return "MatchXVar{" +  x +  '}';
+        }
+    }
+
+    @Deprecated public final static class MatchCompound extends PatternOp {
         public final Compound x;
 
         public MatchCompound(Compound c) {
@@ -241,6 +259,24 @@ public class FindSubst extends Subst {
         @Override
         public String toString() {
             return "MatchCompound{" +  x +  '}';
+        }
+    }
+
+    public final static class MatchPermute extends PatternOp {
+        public final Compound x;
+
+        public MatchPermute(Compound c) {
+            this.x = c;
+        }
+
+        @Override
+        public boolean run(Frame ff) {
+            return ff.matchPermute(x, ((Compound)ff.y));
+        }
+
+        @Override
+        public String toString() {
+            return "MatchPermute{" +  x +  '}';
         }
     }
 
@@ -266,6 +302,26 @@ public class FindSubst extends Subst {
             return true;
         }
     };
+
+    public static final class SelectSubterm extends PatternOp {
+        public final int index;
+
+        public SelectSubterm(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public boolean run(Frame ff) {
+            ff.y = ff.parent.term(index);
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "SelectSubterm{" + index + '}';
+        }
+    }
+
 
     public static final class MatchSubterm extends PatternOp {
         public final int index;
@@ -324,17 +380,14 @@ public class FindSubst extends Subst {
             List<PatternOp> code = Global.newArrayList();
 
             //compile the code
-            compile(type, pattern, code);
+            compile(pattern, code);
             //code.add(End);
 
             this.code = code.toArray(new PatternOp[code.size()]);
         }
 
-        private void compile(Op type, Term t, List<PatternOp> code) {
-//            if (t.op() == type) {
-//                code.add(new SaveAs((Variable)t));
-//                return;
-//            }
+        private void compile(Term t, List<PatternOp> code) {
+
 
             boolean constant = false;
 
@@ -346,57 +399,68 @@ public class FindSubst extends Subst {
             }
 
             if (!constant && (t instanceof Compound)) {
-                Compound<?> c = (Compound)t;
-                int s = c.size();
-
-                //code.add(new TermOpEquals(c.op())); //interference with (task,belief) pair term
-
-                code.add(new TermVolumeMin(c.volume()-1));
-                //TODO varargs with greaterEqualSize etc
-                code.add(new TermSizeEquals(c.size()));
-
-                code.add(new TermStructure(type, c.structure()));
-
-                if (c instanceof Image) {
-                    code.add(new MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc
-                }
-
-                boolean permute = c.isCommutative() && (s > 1);
-
-                switch (s) {
-                    case 0:
-                        //nothing to match
-                        break;
-
-                    case 1:
-                        code.add(new MatchTheSubterm(c.term(0)));
-                        break;
-
-                    default:
-
-                        if (permute) {
-                            code.add(new MatchCompound(c));
-                        }
-                        else {
-                            compileNonCommutative(code, c);
-                        }
-
-                    break;
-                }
-
+                compileCompound((Compound) t, code);
             }
             else {
 
                 if (constant)
                     code.add(new TermEquals(t));
-                else
-                    code.add(new MatchTerm(t));
+                else {
+                    if (t.op() == type) {
+                        code.add(new MatchXVar((Variable)t));
+                    }
+                    else {
+                        //something else
+                        code.add(new MatchTerm(t));
+                    }
+                }
             }
 
 
             //throw new RuntimeException("unknown compile behavior for term: " + t);
 
             //code.add(new MatchIt(v));
+        }
+
+        private void compileCompound(Compound t, List<PatternOp> code) {
+            Compound<?> c = t;
+            int s = c.size();
+
+            code.add(new TermOpEquals(c.op())); //interference with (task,belief) pair term
+
+            //TODO varargs with greaterEqualSize etc
+            code.add(new TermSizeEquals(c.size()));
+
+            boolean permute = c.isCommutative() && (s > 1);
+
+            switch (s) {
+                case 0:
+                    //nothing to match
+                    break;
+
+                case 1:
+                    code.add(new MatchTheSubterm(c.term(0)));
+                    break;
+
+                default:
+
+                    if (c instanceof Image) {
+                        code.add(new MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc
+                    }
+
+                    code.add(new TermVolumeMin(c.volume()-1));
+
+                    code.add(new TermStructure(type, c.structure()));
+
+                    if (permute) {
+                        code.add(new MatchPermute(c));
+                    }
+                    else {
+                        compileNonCommutative(code, c);
+                    }
+
+                break;
+            }
         }
 
 
@@ -406,13 +470,61 @@ public class FindSubst extends Subst {
             if (t.op() == type) {
                 return 0;
             }
-            else if (!t.isCommutative()) {
-                return 1+(1*t.size());
+            else if (t instanceof Compound) {
+                if (!t.isCommutative()) {
+                    return 1 + (1 * t.volume());
+                } else {
+                    return 1 + (2 * t.volume());
+                }
             }
             else {
-                return 1+(2*t.size());
+                return 1; //atomic
             }
         };
+
+        private void compileNonCommutative(List<PatternOp> code, Compound<?> c) {
+
+            final int s = c.size();
+            TreeSet<SubtermPosition> ss = new TreeSet();
+
+            for (int i = 0; i < s; i++) {
+                Term x = c.term(i);
+                ss.add(new SubtermPosition(x, i, subtermPrioritizer));
+            }
+
+            code.add( Subterms );
+
+            ss.forEach(sp -> { //iterate sorted
+                Term x = sp.term;
+                int i = sp.position;
+
+                compile2(x, code, i);
+                //compile(type, x, code);
+            });
+
+            code.add( Superterm );
+        }
+
+        private void compile2(Term x, List<PatternOp> code, int i) {
+            //TODO this is a halfway there.
+            //in order for this to work, parent terms need to be stored in a stack or something to return to, otherwise they get a nulll and it crashes:
+
+//            code.add(new SelectSubterm(i));
+//            compile(x, code);
+//
+             if (x instanceof Compound) {
+//                //compileCompound((Compound)x, code);
+//            /*}
+//            else {
+                 code.add(new MatchSubterm(x, i));
+             }
+             else {
+                 //HACK this should be able to handle atomic subterms without a stack
+                 code.add(new SelectSubterm(i));
+                 compile(x, code);
+             }
+
+        }
 
         final static class SubtermPosition implements Comparable<SubtermPosition> {
 
@@ -440,33 +552,6 @@ public class FindSubst extends Subst {
             }
         }
 
-        private void compileNonCommutative(List<PatternOp> code, Compound<?> c) {
-
-            final int s = c.size();
-            TreeSet<SubtermPosition> ss = new TreeSet();
-
-            for (int i = 0; i < s; i++) {
-                Term x = c.term(i);
-                ss.add(new SubtermPosition(x, i, subtermPrioritizer));
-            }
-
-            code.add( Subterms );
-
-            ss.forEach(sp -> { //iterate sorted
-                Term x = sp.term;
-                int i = sp.position;
-
-                compile2(x, code, i);
-                //compile(type, x, code);
-            });
-
-            code.add( Superterm );
-        }
-
-        private void compile2(Term x, List<PatternOp> code, int i) {
-            //TODO this is a halfway there
-            code.add( new MatchSubterm(x, i) );
-        }
 
         @Override
         public String toString() {
@@ -537,7 +622,7 @@ public class FindSubst extends Subst {
         final Op type1 = this.type;
         final Op xOp = x.op();
         if (xOp == type1) {
-            return matchXvar(x, y);
+            return matchXvar((Variable)x, y);
         }
 
         final Op yOp = y.op();
@@ -575,14 +660,14 @@ public class FindSubst extends Subst {
         }
     }
 
-    private boolean matchXvar(Term x, Term y) {
+    public boolean matchXvar(Variable x, Term y) {
         final Term xSubst = xy.get(x);
 
         if (xSubst != null) {
             return match(xSubst, y);
         }
         else {
-            nextVarX((Variable) x, y);
+            nextVarX(x, y);
             return true;
         }
     }
@@ -612,7 +697,7 @@ public class FindSubst extends Subst {
 
 
     /** returns the size of both compounds if matching and valid, or -1 if invalid match */
-    private static int matchable(final Compound X, final Compound Y) {
+    @Deprecated private static int matchable(final Compound X, final Compound Y) {
         /** must have same # subterms */
         int xsize = X.size();
         if (xsize != Y.size()) {
@@ -660,7 +745,7 @@ public class FindSubst extends Subst {
      * @param y what is being compared against
      *
      */
-    private final boolean matchPermute(Compound x, Compound y) {
+    public final boolean matchPermute(Compound x, Compound y) {
         //DequePool<ShuffledPermutations> pp = this.permutationPool;
 
         //final int len = x.size();

@@ -3,6 +3,7 @@ package nars.term.transform;
 import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 
 import java.util.Map;
 import java.util.Random;
@@ -45,6 +46,10 @@ abstract public class Frame {
 
     abstract boolean match(final Term X, final Term Y);
     abstract boolean matchCompound(final Compound X, final Compound Y);
+    abstract boolean matchPermute(Compound X, Compound Y);
+
+    /** matches when x is of target variable type */
+    abstract boolean matchXvar(Variable x, Term y);
 
 
     public void clear() {
@@ -55,15 +60,16 @@ abstract public class Frame {
         xyChanged = yxChanged = false;
     }
 
-    public void save(Frame m) {
+    public void copyTo(Frame m) {
         m.xy.clear(); m.xy.putAll(xy);
         m.yx.clear(); m.yx.putAll(yx);
         m.y = y;
         m.parent = parent;
-        m.xyChanged = xyChanged;
-        m.yxChanged = yxChanged;
+        m.xyChanged = false; //xyChanged;
+        m.yxChanged = false; //yxChanged;
         m.power = power;
     }
+
 
     @Override
     public String toString() {
@@ -79,4 +85,5 @@ abstract public class Frame {
                 ", power=" + power +
                 '}';
     }
+
 }

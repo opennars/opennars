@@ -20,7 +20,7 @@ public final class AfterAfterConclusions extends PreCondition {
 
     @Override
     public String toString() {
-        return null;
+        return getClass().getSimpleName();
     }
 
     @Override
