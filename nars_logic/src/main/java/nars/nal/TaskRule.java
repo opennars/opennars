@@ -133,14 +133,20 @@ public class TaskRule extends ProductN implements Level {
 
         int n = prePreconditions.length + postPreconditions.length;
 
-        List<PreCondition> l = Global.newArrayList(n);
+        List<PreCondition> l = Global.newArrayList(n*2);
 
+        ///--------------
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
+
+        ///--------------
+        l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Pattern));
 
         for (PreCondition p : postPreconditions)
             p.addConditions(l);
 
+        ///--------------
+        l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
 
         l.add(new GetTruth(post.truth, post.desire, post.puncOverride));
         l.add(new Resolve(post.term, this ));
@@ -149,7 +155,6 @@ public class TaskRule extends ProductN implements Level {
             Collections.addAll(l, post.afterConclusions);
             l.add(AfterAfterConclusions.the);
         }
-
 
         l.add(new MakeTasks(this));
 

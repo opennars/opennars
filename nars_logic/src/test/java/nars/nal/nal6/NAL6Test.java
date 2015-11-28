@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTester {
 
 
-    final int cycles = 250;
+    final int cycles = 350;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
@@ -22,7 +22,7 @@ public class NAL6Test extends AbstractNALTester {
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTester.nars(6, false);
+        return AbstractNALTester.nars(6, true, true);
     }
 
     @Test

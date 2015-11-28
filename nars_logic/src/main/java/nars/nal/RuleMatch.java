@@ -6,6 +6,7 @@ import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.meta.PostCondition;
+import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
@@ -52,6 +53,11 @@ public class RuleMatch {
      * Premise Context
      */
     public Premise premise;
+    public enum MatchStage {
+        Pre, Pattern, Post
+    }
+
+    MatchStage stage;
 
 
     @Deprecated
@@ -62,7 +68,7 @@ public class RuleMatch {
     /**
      * stage S: primary pattern substutitions
      */
-    public final Subst subst;
+    public Subst subst;
 
     public static final class PostMods {
         public Truth truth;
@@ -208,18 +214,51 @@ public class RuleMatch {
 //    }
 
 
+
+    public static final class Stage extends PreCondition {
+        public final MatchStage s;
+
+        public Stage(MatchStage nextStage) {
+            this.s = nextStage;
+        }
+
+        @Override
+        public boolean test(RuleMatch ruleMatch) {
+            ruleMatch.stage = s;
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "Stage{" + s + "}";
+        }
+    }
+
     public void save( RuleMatch m ) {
 
         m.premise = premise;
         m.receiver = receiver;
         m.taskBelief = taskBelief;
 
-        subst.save(m.subst);
-        post.save(m.post);
-        sub2.save(m.sub2);
+        //if (stage == MatchStage.Pattern) {
+            subst.save(m.subst);
+        /*}
+        else {
+            m.subst = subst; //it wont change outside Pattern stage
+        }*/
+
+        //if (stage == MatchStage.Post) {
+            post.save(m.post);
+            sub2.save(m.sub2);
+        /*}
+        else {
+            m.post = post; //it wont change outside Post stage
+            m.sub2 = sub2;
+        }*/
+
 
 //        if (Global.DEBUG) {
-              //FOR EXTREME EQUALITY TESTING
+//            //  FOR EXTREME EQUALITY TESTING
 //            if (!m.toString().equals(toString()))
 //                throw new RuntimeException("invalid copy");
 //        }
@@ -234,6 +273,7 @@ public class RuleMatch {
         subst.clear();
         sub2.clear();
         post.clear();
+        stage = MatchStage.Pre;
     }
 
     /**
