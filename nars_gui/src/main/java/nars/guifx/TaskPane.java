@@ -23,7 +23,7 @@ public class TaskPane extends BorderPane {
         TextArea ta = new TextArea(c.getExplanation());
         ta.setEditable(false);
 
-        setTop(scrolled(ta, true, false));
+        setCenter(scrolled(ta, true, false));
 
         Button reinforceButton = new Button("Reinforce");
         reinforceButton.setAccessibleText("Re-input task");
@@ -31,11 +31,11 @@ public class TaskPane extends BorderPane {
             nar.input(new DefaultTask(c));
         });
 
-        Button conceptButton = new Button("Goto Concept:" + c.getTerm().toStringCompact());
+        Button conceptButton = new Button("Concept" + c.getTerm().toStringCompact());
         conceptButton.setOnMouseClicked(e -> {
             Concept concept = nar.concept(c.getTerm());
             if (concept!=null) {
-                    NARfx.newWindow(concept);
+                NARfx.newWindow(concept);
 //                ConceptPane cp = new ConceptPane(nar, concept);
 //                cp.setPrefSize(getWidth(), 300);
 //                setCenter(cp);
@@ -45,19 +45,19 @@ public class TaskPane extends BorderPane {
 //                layout();
             }
         });
-        conceptButton.setAccessibleText("Goto Concept");
+        conceptButton.setAccessibleText("Concept");
 
         FlowPane ctl = new FlowPane(
-                conceptButton
+            conceptButton
         );
         setBottom(ctl);
 
-        if (c.isQuestOrQuestion()) {
-            setCenter(new QuestionPane(c));
-        }
-        else {
-            //??
-        }
+//        if (c.isQuestOrQuestion()) {
+//            setCenter(new QuestionPane(c));
+//        }
+//        else {
+//            //??
+//        }
     }
 
     private class QuestionPane extends BorderPane {

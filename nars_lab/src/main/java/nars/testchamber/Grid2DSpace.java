@@ -11,6 +11,8 @@ import processing.core.PVector;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.*;
@@ -29,7 +31,7 @@ public class Grid2DSpace extends PApplet {
     int mouseScroll = 0;
     public final Hauto cells;
     public List<GridObject> objects = new ArrayList();
-    ProcessingJs processingjs = new ProcessingJs();
+    //ProcessingJs processingjs = new ProcessingJs();
     //Hnav 2D navigation system
     Hnav hnav = new Hnav();
     //Object
@@ -48,8 +50,8 @@ public class Grid2DSpace extends PApplet {
     public Button conceptsView;
     public Button memoryView;
     public Button fetchMemory;
-    float sx = 800;
-    float sy = 800;
+//    int sx = 800;
+//    int sy = 800;
     long lasttime = -1;
     double realtime;
     public ParticleSystem particles;
@@ -57,11 +59,11 @@ public class Grid2DSpace extends PApplet {
     
     public Grid2DSpace(Hauto cells, NAR nar) {
         super();
+
         this.cells = cells;
         world_used=true;
         this.nar=nar;
-        init();
-        
+
         
     }
 
@@ -78,7 +80,8 @@ public class Grid2DSpace extends PApplet {
             @Override
             protected void close() {
                 stop();
-                destroy();
+                //destroy();
+
                 getContentPane().removeAll();
                 
                 if (exitOnClose)
@@ -108,20 +111,48 @@ public class Grid2DSpace extends PApplet {
         
         
         content.add(menu, BorderLayout.NORTH);
-        content.add(this, BorderLayout.CENTER);
+
+
+        setSize(width, height);
+
+        initSurface();
+        startSurface();
+        //showSurface();
+
+        getSurface().setResizable(true);
+
+        //System.out.println(getSurface().getClass() + " " + getSurface());
+        Component canvas = (Component) (this.getSurface().getNative());
+        content.add(canvas, BorderLayout.CENTER);
         
         
         
         j.setSize(width, height);//initial size of the window
         j.setVisible(true);
-        
+
+        j.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                frameResized(j.getWidth(), j.getHeight());
+            }
+        });
+        canvas.addMouseWheelListener(new MouseWheelListener() {
+                    @Override public void mouseWheelMoved(MouseWheelEvent evt) {
+                        mouseScroll = -evt.getWheelRotation();
+                        mouseScrolled();
+                        drawn = false;
+                    }
+                });
+
         return j;
     }
 
-
     @Override
-    protected void resizeRenderer(int newWidth, int newHeight) {
-        super.resizeRenderer(newWidth, newHeight); //To change body of generated methods, choose Tools | Templates.
+    public void frameResized(int w, int h) {
+        super.frameResized(w, h); //To change body of generated methods, choose Tools | Templates.
+        setSize(w, h);
+        getSurface().setSize(w, h);
+        //System.out.println("resize: " + w + " " + h);
         drawn = false;
     }
 
@@ -253,10 +284,13 @@ public class Grid2DSpace extends PApplet {
 
     @Override
     public void setup() {
-        if (FrameRate == 0)
+        if (FrameRate == 0) {
             noLoop();
-        else
+        }
+        else {
+            loop();
             frameRate(FrameRate);
+        }
         
         particles = new ParticleSystem(this);
     }
@@ -364,19 +398,6 @@ public class Grid2DSpace extends PApplet {
         
     }
 
-
-    class ProcessingJs {
-
-        ProcessingJs() {
-            addMouseWheelListener(new MouseWheelListener() {
-                @Override
-                public void mouseWheelMoved(MouseWheelEvent evt) {
-                    mouseScroll = -evt.getWheelRotation();
-                    mouseScrolled();
-                }
-            });
-        }
-    }
 
     class Hnav {
 

@@ -1,9 +1,7 @@
 package nars.testchamber;
 
-import nars.Events;
-import nars.Global;
 import nars.NAR;
-import nars.NARSeed;
+import nars.testchamber.Action.Forward;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
@@ -12,66 +10,16 @@ import nars.testchamber.operator.Activate;
 import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
 import nars.testchamber.operator.Pick;
-import nars.nar.Default;
-import nars.util.event.Reaction;
 import processing.core.PVector;
 
 import java.util.List;
 
 import static nars.testchamber.Hauto.*;
 
-public class TestChamber {
+public class TestChamber2 extends TestChamber {
 
-    public static boolean staticInformation=false;
-    //TIMING
-    static int narUpdatePeriod = 10; /*milliseconds */
-    public static boolean ComplexFeedback = true;
-    int gridUpdatePeriod = 2;
-    int automataPeriod = 2;
-    int agentPeriod = 2;
-    static long guiUpdateTime = 25; /* milliseconds */
-        
-    //OPTIONS
-    public static boolean curiousity=false;
-
-    
-    public static void main(String[] args) {
-        Default nar = new Default();
-        
-        //set NAR architecture parameters:
-        //builder...
-        Global.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
-
-        //set NAR runtime parmeters:  
-//
-//        for(NAR.OperatorRegistration pluginstate : nar.getPlugins()) {
-//            if(pluginstate.IOperator instanceof InternalExperience || pluginstate.IOperator instanceof FullInternalExperience) {
-//                pluginstate.off();
-//            }
-//        }
-//
-
-        //(nar.param).duration.set(10);
-        (nar.param).outputVolume.set(0);
-        new NARSwing(nar);
-
-        new TestChamber(nar);
-                
-        nar.loop(narUpdatePeriod);
-        
-    }
-
-    
-    
-    static Grid2DSpace space;
-    
-    public PVector lasttarget = new PVector(5, 25); //not work
-    public static boolean executed_going=false;
-    static String goal = "";
-    static String opname="";
-    public static LocalGridObject inventorybag=null;  
-    public static int keyn=-1;
-
+    public PVector lasttarget = new PVector(25, 25); //not work
+    boolean invalid=false;
     
     public static String getobj(int x,int y) {
         for(GridObject gridi : space.objects) {
@@ -91,7 +39,7 @@ public class TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    if(opname.equals("goto"))
+                    if(opname.equals("go-to"))
                         space.target = new PVector(i, j);
                 }
             }
@@ -100,30 +48,16 @@ public class TestChamber {
             for(GridObject gridi : space.objects) {
                 if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                     LocalGridObject gridu=(LocalGridObject) gridi;
-                    if(opname.equals("goto"))
+                    if(opname.equals("go-to"))
                         space.target = new PVector(gridu.x, gridu.y);
                 }
             }
         //}
     }
-    boolean invalid=false;
-    public static boolean active=true;
-    public static boolean executed=false;
-    public static boolean needpizza=false;
-    public static int hungry=250;
-    public List<PVector> path=null;
+    
 
-    public TestChamber() {
-        super();        
-    }
-    
-    public TestChamber(NAR nar) {
-        this(nar, true);
-    }
-    
-    public TestChamber(NAR nar, boolean showWindow) {
+    public TestChamber2(NAR nar) {
         super();
-
         int w = 50;
         int h = 50;
         int water_threshold = 30;
@@ -143,60 +77,19 @@ public class TestChamber {
         });
         
         Maze.buildMaze(cells, 3, 3, 23, 23);
-        
         space = new Grid2DSpace(cells, nar);
         space.FrameRate = 0;
-        space.automataPeriod = automataPeriod/gridUpdatePeriod;
-        space.agentPeriod = agentPeriod/gridUpdatePeriod;
-        TestChamber into=this;
-        nar.memory.event.on(Events.FrameEnd.class, new Reaction<Class, Object[]>() {
-            private long lastDrawn = 0;
-            
-            @Override
-            public void event(Class event, Object... arguments) {           
-                if (nar.time() % gridUpdatePeriod == 0) {
-                    space.update(into);
-                    
-                    long now = System.nanoTime();
-                    if (now - lastDrawn > guiUpdateTime*1e6) {
-                        space.redraw();                    
-                        lastDrawn = now;
-                    }
-                }
-            }
-        });
-
-        if (showWindow)
-            space.newWindow(1000, 800, true);
+        space.agentPeriod = 20;
+        space.automataPeriod = 5;
+        
+        space.newWindow(1000, 800, true);
+        
+        
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         GridAgent a = new GridAgent(17, 17, nar) {
 
             @Override
             public void update(Effect nextEffect) {
-                if(active) {
-                    //nar.stop();
-                    executed=false;
-                    if(path==null || path.size()<=0 && !executed_going) {
-                        for (int i = 0; i < 5; i++) { //make thinking in testchamber bit faster
-                            //nar.step(1);
-                            if (executed) {
-                                break;
-                            }
-                        }
-                    }
-                    if(needpizza) {
-                        hungry--;
-                        if(hungry<0) {
-                            hungry=250;
-                            nar.input("(&&,<#1 --> pizza>,<#1 --> [at]>)!"); //also works but better:
-                            /*for (GridObject obj : space.objects) {
-                                if (obj instanceof Pizza) {
-                                    nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
-                                }
-                            }*/
-                        }
-                    }
-                }
 // int a = 0;
 // if (Math.random() < 0.4) {
 // int randDir = (int)(Math.random()*4);
@@ -214,56 +107,52 @@ public class TestChamber {
                  forward(1);
                  }*/
                 lasttarget = space.target;
-                space.current = new PVector(x, y);
+                PVector current = new PVector(x, y);
                // System.out.println(nextEffect);
                 if (nextEffect == null) {
-                    path = Grid2DSpace.Shortest_Path(space, this, space.current, space.target);
+                    List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, space.target);
                     actions.clear();
                    // System.out.println(path);
-                    if(path==null) {
-                        executed_going=false;
-                    }
                     if (path != null) {
                         if(inventorybag!=null) {
-                            inventorybag.x=(int)space.current.x;
-                            inventorybag.y=(int)space.current.y;
-                            inventorybag.cx=(int)space.current.x;
-                            inventorybag.cy=(int)space.current.y;
+                            inventorybag.x=(int)current.x;
+                            inventorybag.y=(int)current.y;
+                            inventorybag.cx=(int)current.x;
+                            inventorybag.cy=(int)current.y;
                         }
                         if(inventorybag==null || !(inventorybag instanceof Key)) {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
-                            active=true;
-                            executed_going=false;
+                            //nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
-                            if (!"".equals(goal) && space.current.equals(space.target)) {
+                            if (!"".equals(goal) && current.equals(space.target)) {
                                 //--nar.step(6);
                                 GridObject obi=null;
                                 if(!"".equals(opname)) {
                                     for(GridObject gridi : space.objects) {
                                         if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal) &&
-                                          ((LocalGridObject)gridi).x==(int)space.current.x &&
-                                               ((LocalGridObject)gridi).y==(int)space.current.y ) {
+                                          ((LocalGridObject)gridi).x==(int)current.x &&
+                                               ((LocalGridObject)gridi).y==(int)current.y ) {
                                             obi=gridi;
                                             break;
                                         }
                                     }
                                 }
-                                if(obi!=null || cells.readCells[(int)space.current.x][(int)space.current.y].name.equals(goal)) { //only possible for existing ones
+                                if(obi!=null || cells.readCells[(int)current.x][(int)current.y].name.equals(goal)) { //only possible for existing ones
                                     if("pick".equals(opname)) {
                                         if(inventorybag!=null && inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
                                             LocalGridObject ob= inventorybag;
-                                            ob.x=(int)space.current.x;
-                                            ob.y=(int)space.current.y;
+                                            ob.x=(int)current.x;
+                                            ob.y=(int)current.y;
                                             space.objects.add(ob);
                                         }
                                         inventorybag=(LocalGridObject)obi;
                                         if(obi!=null) {
                                             space.objects.remove(obi);
-                                            if(inventorybag.doorname.startsWith("{key")) {
-                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("key", "").replace("}", "").replace("{", ""));
+                                            if(inventorybag.doorname.startsWith("key")) {
+                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("key", ""));
                                                 for(int i=0;i<cells.h;i++) {
                                                     for(int j=0;j<cells.w;j++) {
                                                         if(Hauto.doornumber(cells.readCells[i][j])==keyn) {
@@ -274,7 +163,7 @@ public class TestChamber {
                                                 }
                                             }
                                         }
-                                        //nar.addInput("<"+goal+" --> hold>. :|:");
+                                        nar.input("(*,hold," + goal + "). :|:");
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
@@ -286,7 +175,7 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.OFFSWITCH;
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
-                                                        //nar.addInput("<"+goal+" --> off>. :|:");
+                                                        nar.input("(off," + goal + "). :|:");
                                                     }
                                                 }
                                             }
@@ -303,47 +192,19 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.SWITCH;
                                                         cells.readCells[i][j].charge=1.0f;
                                                         cells.writeCells[i][j].charge=1.0f;
-                                                        //nar.addInput("<"+goal+" --> on>. :|:");
+                                                        nar.input("(*,on," + goal + "). :|:");
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    if("goto".equals(opname)) {
-                                        executed_going=false;
-                                        nar.input("<" + goal + " --> [at]>. :|:");
-                                        if (goal.startsWith("{pizza")) {
-                                            GridObject ToRemove = null;
-                                            for (GridObject obj : space.objects) { //remove pizza
-                                                if (obj instanceof LocalGridObject) {
-                                                    LocalGridObject obo = (LocalGridObject) obj;
-                                                    if (obo.doorname.equals(goal)) {
-                                                        ToRemove = obj;
-                                                    }
-                                                }
-                                            }
-                                            if (ToRemove != null) {
-                                                space.objects.remove(ToRemove);
-                                            }
-                                            hungry=500;
-                                            //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
-                                            nar.input("<" + goal + " --> [at]>. :|:");
-                                        }
-                                        active=true;
+                                    if("go-to".equals(opname)) {
+                                        nar.input("(*,at," + goal + "). :|:");
                                     }
                                 }
                             }
                             opname="";
-                            nar.enable(true);
-                            /*if(!executed && !executed_going)
-                                nar.step(1);*/
                         } else {
-                            //nar.step(10);
-                            //nar.memory.setEnabled(false); 
-                            
-                            executed_going=true;
-                            active=false;
-                            //nar.step(1);
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
@@ -374,18 +235,60 @@ public class TestChamber {
                     }
                 }
             }
-        };
-        Goto wu = new Goto(this, "goto");
-        nar.on(wu);
-        Pick wa = new Pick(this, "pick");
-        nar.on(wa);
-        Activate waa = new Activate(this, "activate");
-        nar.on(waa);
-        Deactivate waaa = new Deactivate(this, "deactivate");
-        nar.on(waaa);
-        space.add(a);
+            
+            
+            @Override
+            public void perceive(Effect e) {                
+                super.perceive(e);
+                
+                
+                String action = e.action.getClass().getSimpleName().toString();
+                String actionParam = e.action.toParamString();                
+                String success = String.valueOf(e.success);
+                if (actionParam == null) actionParam = "";
+                if (actionParam.length() != 0) actionParam = "(*," + actionParam + ")";
+                
+                nar.input("$0.60$ (*,effect," + action + "," + actionParam + "," + success + "). :|:");
+                
+                final int SightPeriod = 32;
+                if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {
+                    String seeing = "(*,";
 
+                    seeing += this.cellOn().material + ",";
+                    seeing += this.cellAbsolute(0).material + ",";
+                    seeing += this.cellAbsolute(90).material + ",";
+                    seeing += this.cellAbsolute(180).material + ",";
+                    seeing += this.cellAbsolute(270).material + ")";
+
+
+                    nar.input("$0.50$ (*,see," + seeing + "). :|:");
+                }
+                
+            }
+        };
+
+
+        nar.onExec(new Goto(this, "goto"));
+        nar.onExec(new Pick(this, "pick"));
+        nar.onExec(new Activate(this, "activate"));
+        nar.onExec(new Deactivate(this, "deactivate"));
+        space.add(a);
+        
+        
+        
+        //space.add(new QLAgent(10,20, new ContinuousBagNARBuilder(true).build()));
+       // space.add(new Key(20, 20));
+//space.add(new RayVision(a, 45, 10, 8));
     }
 
-
+//    public static void main(String[] arg) {
+//        NAR nar = new Default();
+//
+//
+//        new TestChamber2(nar);
+//
+//        //new NARSwing(nar);
+//
+//        nar.start(200);
+//    }
 }

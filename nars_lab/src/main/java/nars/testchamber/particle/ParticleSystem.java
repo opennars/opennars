@@ -27,9 +27,7 @@ public class ParticleSystem  {
     private final Hauto cells;
 
     public ParticleSystem(Grid2DSpace p) {
-        int w = p.getWidth();
-        int h = p.getHeight();
-        
+
 
         gravitonAL.add(new Graviton());
 

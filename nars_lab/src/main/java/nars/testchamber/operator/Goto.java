@@ -20,11 +20,11 @@
  */
 package nars.testchamber.operator;
 
-import nars.testchamber.TestChamber;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
+import nars.testchamber.TestChamber;
 
 import java.util.List;
 
@@ -32,26 +32,23 @@ import java.util.List;
  *  A class used as a template for Operator definition.
  * TODO: memory.registerOperator(new Goto("^goto"));
  */
-public class Deactivate extends SynchOperator {
+public class Goto extends SyncOperator {
 
     TestChamber chamb;
-    public Deactivate(TestChamber chamb, String name) {
+    public Goto(TestChamber chamb, String name) {
         super(name);
         this.chamb=chamb;
     }
 
-    @Override
-    public List<Task> apply(Operation operation) {
-        //Operation content = (Operation) task.getContent();
-        //Operator op = content.getOperator();
-
-
+    @Override public List<Task> apply(Task<Operation> task) {
+        Operation operation = task.getTerm();
 
         TestChamber.executed=true;
+        TestChamber.executed_going=true;
         System.out.println("Executed: " + this);
-        for (Term t : operation.arg()) {
+        for (Term t : operation.args()) {
             System.out.println(" --- " + t);
-            TestChamber.operateObj(t.toString(), "deactivate");
+            TestChamber.operateObj(t.toString(), "go-to");
             break;
         }
         
