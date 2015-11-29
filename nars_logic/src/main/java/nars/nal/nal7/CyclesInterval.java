@@ -1,6 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Op;
+import nars.term.Atom;
 import nars.term.MutableAtomic;
 import nars.term.Term;
 import nars.term.transform.Substitution;
@@ -53,10 +54,17 @@ final public class CyclesInterval extends MutableAtomic implements Interval {
             throw new RuntimeException("cycles must be >= 0");
 
         this.cyc = numCycles;
+        this.hash = Atom.hash(numCycles, Op.INTERVAL.ordinal());
     }
 
+    public boolean equals(Object o) {
+        if (o instanceof CyclesInterval) {
+            return cyc == ((CyclesInterval)o).cyc;
+        }
+        return false;
+    }
 
-//    public static CyclesInterval intervalLog(long mag) {
+    //    public static CyclesInterval intervalLog(long mag) {
 //        long time = Math.round( LogInterval.time(mag, 5 /* memory.duration()*/) );
 //        return new CyclesInterval(time, 0);
 //    }

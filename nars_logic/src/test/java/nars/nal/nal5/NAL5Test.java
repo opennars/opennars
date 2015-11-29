@@ -17,12 +17,12 @@ public class NAL5Test extends AbstractNALTester {
 
     @Parameterized.Parameters(name= "{0}")
     public static Iterable configurations() {
-        return AbstractNALTester.nars(5, false);
+        return AbstractNALTester.nars(5, true, true);
     }
 
-    final int cycles = 100;
-    @Test
-    public void revision() throws Narsese.NarseseException {
+    final int cycles = 50;
+
+    @Test public void revision() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a type of bird.");
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>",0.00f,0.60f); //.en("If robin can fly then robin may not a type of bird.");
@@ -218,8 +218,8 @@ public class NAL5Test extends AbstractNALTester {
     public void compound_decomposition_one_premises() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)",0.9f,0.9f); //.en("Robin can fly and swim.");
-        tester.mustBelieve(cycles*3,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
-        tester.mustBelieve(cycles*3,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
+        tester.mustBelieve(cycles*5,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
+        tester.mustBelieve(cycles*5,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
         tester.run();
     }
 

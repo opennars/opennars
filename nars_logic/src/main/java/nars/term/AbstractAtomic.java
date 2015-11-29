@@ -58,7 +58,7 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
     }
 
     @Override
-    public final boolean equals(final Object x) {
+    public boolean equals(final Object x) {
         if (this == x) return true;
 
         if (x instanceof AbstractAtomic) {

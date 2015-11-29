@@ -9,7 +9,7 @@ public abstract class MutableAtomic extends AbstractAtomic {
 
     protected byte[] data;
 
-    transient int hash;
+    protected transient int hash;
 
     protected MutableAtomic(String id) {
         this(Utf8.toUtf8(id));
@@ -28,7 +28,7 @@ public abstract class MutableAtomic extends AbstractAtomic {
     public int hashCode() {
         final int h = this.hash;
         if (h == 0) {
-            throw new RuntimeException("should have hashed");
+            throw new RuntimeException("should have hashed: " + this);
         }
         return h;
     }

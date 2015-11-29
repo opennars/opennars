@@ -2,15 +2,17 @@ package nars.nal.meta;
 
 import junit.framework.TestCase;
 import nars.$;
+import nars.Global;
 import nars.Narsese;
 import nars.Op;
-import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
-import nars.term.Term;
-import nars.term.Terms;
+import nars.nal.nal4.Product;
+import nars.term.*;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
+
+import java.util.Set;
 
 /**
  * Created by me on 7/7/15.
@@ -160,16 +162,109 @@ public class DerivationRuleTest extends TestCase {
 
     }
 
-    @Test public void testEllipsisMatch() {
-        RuleMatch m = new RuleMatch(new XorShift1024StarRandom(1));
-        FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(2));
-        Term p = $.$("(|, %1, %2..not(%1))");
-        Term y = $.$("(|, x, y, z)");
-        boolean r = f.match(p, y);
-        System.out.println(f);
-        System.out.println(r);
+    public interface EllipsisTest {
+        Compound getPattern();
+        Compound getResult();
+        Compound getMatchable(int arity);
+
+        default void test(int arity) {
+            Set<Term> selectedFixed = Global.newHashSet(arity);
+
+            Compound y = getMatchable(arity);
+            Compound r = getResult();
+
+            int repeats = 3; //large enough to ensure all combinations are produced
+
+            Compound p = getPattern();
+
+            for (int seed = 1; seed < arity * repeats /* enough chances to select all combinations */; seed++) {
+
+                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(seed));
+
+                boolean matched = f.next(p, y, 16);
+                //System.out.println(f);
+                assertTrue(matched);
+                assertEquals(2, f.xy().size());
+
+                Term varArgs = f.xy().get($.$("%2..not(%1)"));
+                Term fixedTerm = f.xy().get($.$("%1"));
 
 
+                assertEquals(Op.PRODUCT, varArgs.op());
+                assertEquals(arity-1, varArgs.size());
+
+                Set<Term> varArgTerms = Terms.toSortedSet(((Product) varArgs).terms());
+                assertEquals(arity-1, varArgTerms.size());
+
+                assertEquals(Atom.class, fixedTerm.getClass());
+                assertFalse(varArgTerms.contains(fixedTerm));
+
+                selectedFixed.add(fixedTerm);
+
+                //2. test substitution
+                Term s = r.substituted(f.xy());
+                System.out.println(s);
+                assertFalse(Variable.hasPatternVariable(s));
+            }
+
+            /** should have iterated all */
+            assertEquals(arity, selectedFixed.size());
+
+        }
+
+        default void test(int arityMin, int arityMax) {
+            for (int arity = arityMin; arity <= arityMax; arity++) {
+                test(arity);
+            }
+        }
+    }
+
+    public static class Commutive1EllipsisTest implements EllipsisTest {
+        private final String prefix, suffix;
+        private final Compound p;
+
+        public Commutive1EllipsisTest(String prefix, String suffix) {
+            this.prefix = prefix;
+            this.suffix = suffix;
+            this.p = $.$(prefix + "%1, %2..not(%1)" + suffix);
+        }
+
+        @Override
+        public Compound getPattern() {
+            return p;
+        }
+
+        @Override
+        public Compound getResult() {
+            return $.$("<" + prefix + "%2..not(%1), .." + suffix + " --> %1>");
+        }
+
+        @Override
+        public Compound getMatchable(int arity) {
+            return $.$(prefix + termSequence(arity) + suffix);
+        }
+
+    }
+
+    @Test public void testEllipsisMatchCommutive1() {
+
+
+        new Commutive1EllipsisTest("(|,", ")").test(2, 5);
+        new Commutive1EllipsisTest("{", "}").test(2, 5);
+        new Commutive1EllipsisTest("[", "]").test(2, 5);
+        new Commutive1EllipsisTest("(&&,", ")").test(3, 5);
+
+
+    }
+
+    static String termSequence(int arity) {
+        StringBuilder sb = new StringBuilder(arity * 3);
+        for (int i = 0; i < arity; i++) {
+            sb.append( (char)('a' + i) );
+            if (i < arity-1)
+                sb.append(',');
+        }
+        return sb.toString();
     }
 
 }

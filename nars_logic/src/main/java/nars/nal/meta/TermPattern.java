@@ -136,7 +136,7 @@ public class TermPattern {
                     code.add(new FindSubst.MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc
                 }
 
-                code.add(new FindSubst.TermVolumeMin(c.volume()-1));
+                //code.add(new FindSubst.TermVolumeMin(c.volume()-1));
 
                 code.add(new FindSubst.TermStructure(type, c.structure()));
 

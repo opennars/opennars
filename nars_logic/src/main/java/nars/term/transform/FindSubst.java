@@ -438,6 +438,8 @@ public class FindSubst extends Subst {
 
         //System.out.println("  m: " + x + " " + y + " " + power);
 
+        if ((--power) < 0)
+            return false;
 
         if (x.equals(y)) {
             /*if (x!=y)
@@ -448,8 +450,7 @@ public class FindSubst extends Subst {
             return true; //match
         }
 
-        if ((--power) < 0)
-            return false;
+
 
 
         final Op type1 = this.type;
@@ -529,12 +530,28 @@ public class FindSubst extends Subst {
     }
 
 
-    /** returns the size of both compounds if matching and valid, or -1 if invalid match */
-    @Deprecated private static int matchable(final Compound X, final Compound Y) {
-        /** must have same # subterms */
+
+
+    /**
+     * X and Y are of the same operator type and length (arity)
+     * X's permutations matched against constant Y
+     */
+    public final boolean matchCompound(final Compound X, final Compound Y) {
+
         int xsize = X.size();
-        if (xsize != Y.size()) {
-            return -1;
+        int numNonVarArgs;
+
+        boolean hasVarArgs = Ellipsis.hasEllipsis(X);
+        if (!hasVarArgs) {
+            /** must have same # subterms */
+            if (xsize != Y.size()) {
+                return false;
+            }
+            numNonVarArgs = xsize;
+        } else {
+            numNonVarArgs = xsize - Ellipsis.countEllipsisSubterms(X);
+            if (Y.size() <= numNonVarArgs) //<= means it will not allow the ellipsis to match nothing. this can be made a per-ellipsis parameter to decide
+                return false;
         }
 
         //TODO see if there is a volume or structural constraint that can terminate early here
@@ -543,30 +560,17 @@ public class FindSubst extends Subst {
         //TODO simplify comparison with Image base class
         if (X instanceof Image) {
             if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                return -1;
+                return false;
         }
 
-        return xsize;
-    }
+        switch (xsize) {
 
-    /**
-     * X and Y are of the same operator type and length (arity)
-     * X's permutations matched against constant Y
-     */
-    public final boolean matchCompound(final Compound X, final Compound Y) {
-
-        switch (matchable(X, Y)) {
-            case -1:
-                return false;
             case 0:
                 return true;  //match
             case 1:
                 return match(X.term(0), Y.term(0));
             default:  /*if (xLen >= 1) {*/
 
-
-
-                boolean hasVarArgs = Ellipsis.hasEllipsis(X);
                 if (!hasVarArgs) {
                     if (X.isCommutative()) {
                         return matchPermute(X, Y); //commutative, try permutations
@@ -576,11 +580,30 @@ public class FindSubst extends Subst {
                 }
                 else {
                     if (X.isCommutative()) {
-                        return matchPermuteEllipsis(X, Y); //commutative, try permutations
+
+                        if ((numNonVarArgs == 1) && (xsize == 2)) {
+                            Variable v = null;
+                            Ellipsis e = null;
+                            for (int i = 0; i < xsize; i++) {
+                                Term xi = X.term(i);
+                                if (xi instanceof Ellipsis)
+                                    e = (Ellipsis)xi;
+                                else
+                                    v = (Variable)xi;
+                            }
+
+                            return matchEllipsisCombinations1(
+                                v, e,
+                                Y
+                            );
+                        }
+
                     } else {
-                        throw new RuntimeException("unimpl yet");
+
                         //return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
                     }
+
+                    throw new RuntimeException("unimpl yet");
                 }
         }
     }
@@ -609,23 +632,18 @@ public class FindSubst extends Subst {
         final Map<Term, Term> savedYX = Global.newHashMap(yx);
         xyChanged = yxChanged = false;
 
-        boolean matched = false;
-
         while (perm.hasNext()) {
 
             perm.next();
 
-            matched = matchSequence(perm, y);
+            boolean matched = matchSequence(perm, y);
 
             if (power < 0) {
                 return false;
             }
 
             if (matched /*|| power <= 0*/)
-                break;
-
-
-            //try again; invert negated power back to a positive value for next attempt
+                return true;
 
             //pop/restore
             if (yxChanged) {
@@ -644,19 +662,15 @@ public class FindSubst extends Subst {
 
 
         //finished
-        return matched;
+        return false;
 
     }
 
     /**
-     * @param x the compound which is permuted/shuffled
-     * @param y what is being compared against
+     * X will contain one ellipsis and one non-ellipsis Varaible term
      *
      */
-    public final boolean matchPermuteEllipsis(Compound x, Compound y) {
-
-
-        final ShuffleTermVector perm = new ShuffleTermVector(random, x);
+    public final boolean matchEllipsisCombinations1(Variable Xvar, Ellipsis Xellipsis, Compound Y) {
 
         final Map<Term, Term> xy = this.xy; //local copy on stack
         final Map<Term, Term> yx = this.yx; //local copy on stack
@@ -667,33 +681,32 @@ public class FindSubst extends Subst {
         final Map<Term, Term> savedYX = Global.newHashMap(yx);
         xyChanged = yxChanged = false;
 
-        boolean matched = false;
 
-        while (perm.hasNext()) {
+        final int ysize = Y.size();
+        int shuffle = random.nextInt(ysize); //randomize starting offset
 
-            perm.next();
+        for (int i = 0; i < ysize; i++) {
 
-            matched = matchSequence(perm, y);
+            Term y = Y.term( (shuffle++) % ysize );
+
+            boolean matched = matchXvar(Xvar, y);
+
+            if (matched /*|| power <= 0*/) {
+                //assign remaining variables to ellipsis
+                putXY(Xellipsis, Xellipsis.match(xy, Y));
+                return true;
+            }
 
             if (power < 0) {
                 return false;
             }
 
-            if (matched /*|| power <= 0*/)
-                break;
-
-
-            //try again; invert negated power back to a positive value for next attempt
-
             //pop/restore
             if (yxChanged) {
-                yxChanged = false;
-                restore(savedYX, yx);
+                yxChanged = false; restore(savedYX, yx);
             }
-
             if (xyChanged) {
-                xyChanged = false;
-                restore(savedXY, xy);
+                xyChanged = false; restore(savedXY, xy);
             }
 
             //ready to continue on next permutation
@@ -702,7 +715,7 @@ public class FindSubst extends Subst {
 
 
         //finished
-        return matched;
+        return false;
 
     }
 

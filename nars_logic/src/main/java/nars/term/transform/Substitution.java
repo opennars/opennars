@@ -1,7 +1,8 @@
 package nars.term.transform;
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
-import nars.Op;
+import nars.nal.meta.Ellipsis;
+import nars.nal.nal4.Product;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -40,16 +41,16 @@ public class Substitution implements Function<Compound,Term> {
         return reset();
     }
 
-    /** call if the map has changed (ex: during re-use) */
-    public void prepare() {
-        int appliesTo = 0;
-        for (final Map.Entry<? extends Term, Term> e : subs.entrySet()) {
-            Op op = e.getKey().op();
-            if (op!=Op.VAR_PATTERN)
-                appliesTo |= op.bit();
-        }
-        this.appliesTo = appliesTo;
-    }
+//    /** call if the map has changed (ex: during re-use) */
+//    public void prepare() {
+//        int appliesTo = 0;
+//        for (final Map.Entry<? extends Term, Term> e : subs.entrySet()) {
+//            Op op = e.getKey().op();
+//            if (op!=Op.VAR_PATTERN)
+//                appliesTo |= op.bit();
+//        }
+//        this.appliesTo = appliesTo;
+//    }
 
     /** if eliminates all conditions with regard to a specific compound */
     public final boolean isApplicable(final Term t) {
@@ -63,7 +64,7 @@ public class Substitution implements Function<Compound,Term> {
         return subs.get(t);
     }
 
-    @Override public Term apply(final Compound c) {
+    @Override public final Term apply(final Compound c) {
         //TODO optimization exclusion conditions, currently broke
         /*if (appliesTo < 0) {
             prepare();
@@ -79,61 +80,93 @@ public class Substitution implements Function<Compound,Term> {
         /*if (!isApplicable(c))
             return c;*/
 
-        /** subterms */
-        Term[] sub = null;
+
+
 
         final int len = c.size();
+        final int targetLen = getResultSize(c);
+        if (len == -1) return c;
 
+        /** result */
+        final Term[] sub = new Term[targetLen];
+        boolean changed = targetLen!=len;
 
+        int j = 0;
         for (int i = 0; i < len; i++) {
             //t holds the
             final Term t = c.term(i);
 
-            // s holds a replacement substitution for t (i-th subterm of c)
-            Term s;
+            if (t instanceof Ellipsis) {
 
-            //attempt 1: apply known substitution
-            if ((s = get(t))!=null) {
+                changed = true;
 
-                //prevents infinite recursion
-                if (s.containsTerm(t))
-                    s = null;
+                Term[] expansion = ((Product)get(t)).terms();
 
-            }
+                final int es = expansion.length;
 
-            //attempt 2: if substitution still not found, recurse if subterm is compound term
-            if (s == null && (t instanceof Compound)) { //additional constraint here?
-                s = _apply((Compound)t);
+                for (int e = 0; e < es; ) {
+                    sub[j++] = expansion[e++];
+                }
+            } else if (t == Ellipsis.Expand) {
+                continue; //skip
+            } else {
+                // s holds a replacement substitution for t (i-th subterm of c)
+                Term s;
 
-                if (s == null) {
-                    //null means the clone at the end of this method failed,
-                    //so the resulting substituted term would be invalid
-                    return c;
+                //attempt 1: apply known substitution
+                if ((s = get(t)) != null) {
+
+                    //prevents infinite recursion
+                    if (s.containsTerm(t))
+                        s = null;
                 }
 
-                //if the same thing was provided, ignore
-                if (t.equals(s))
-                    s = null;
-            }
+                //attempt 2: if substitution still not found, recurse if subterm is compound term
+                if (s == null && (t instanceof Compound)) { //additional constraint here?
+                    s = _apply((Compound) t);
 
-            //if substitute found
-            if (s!=null) {
+                    if (s == null) {
+                        //null means the clone at the end of this method failed,
+                        //so the resulting substituted term would be invalid
+                        return c;
+                    }
 
-                //ensure using a modified result Term[]
-                if (sub == null) sub = c.cloneTerms();
+                }
 
-                //replace the value at the current index
-                sub[i] = s; //s.clone();
+                //if substitute found
+                if (s != null) {
+                    //replace the value at the current index
+                    changed |= !(t.equals(s));
+                }
+                else {
+                    s = t;
+                }
 
+                sub[j++] = s;
             }
         }
 
-        if (sub == null) {
+        if (!changed) {
             //a new Term[] was not created, meaning nothing changed. return the input term
             return c;
         }
 
         return c.clone(sub);
+    }
+
+    private int getResultSize(Compound c) {
+        int s = c.size();
+        int n = s;
+        for (int i = 0; i < s; i++) {
+            Term t = c.term(i);
+            if (t == Ellipsis.Expand) n--; //skip expansion placeholder terms
+            if (t instanceof Ellipsis) {
+                Term expanded = subs.get(t);
+                if (expanded == null) return -1; //missing ellipsis match
+                n += expanded.size() - 1; //-1 for the existing term already accounted for
+            }
+        }
+        return n;
     }
 
     @Override
