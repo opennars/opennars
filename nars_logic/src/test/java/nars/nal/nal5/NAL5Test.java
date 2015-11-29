@@ -20,7 +20,7 @@ public class NAL5Test extends AbstractNALTester {
         return AbstractNALTester.nars(5, true, true);
     }
 
-    final int cycles = 50;
+    final int cycles = 100;
 
     @Test public void revision() throws Narsese.NarseseException {
         TestNAR tester = test();

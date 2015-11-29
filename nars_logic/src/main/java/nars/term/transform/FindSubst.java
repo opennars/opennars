@@ -539,8 +539,8 @@ public class FindSubst extends Subst {
     public final boolean matchCompound(final Compound X, final Compound Y) {
 
         int xsize = X.size();
-        int numNonVarArgs;
 
+        final int numNonVarArgs;
         boolean hasVarArgs = Ellipsis.hasEllipsis(X);
         if (!hasVarArgs) {
             /** must have same # subterms */
@@ -549,8 +549,7 @@ public class FindSubst extends Subst {
             }
             numNonVarArgs = xsize;
         } else {
-            numNonVarArgs = xsize - Ellipsis.countEllipsisSubterms(X);
-            if (Y.size() <= numNonVarArgs) //<= means it will not allow the ellipsis to match nothing. this can be made a per-ellipsis parameter to decide
+            if ((numNonVarArgs = Ellipsis.countNumNonEllipsis(X, Y)) < 0)
                 return false;
         }
 

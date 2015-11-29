@@ -109,6 +109,21 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return Product.make(others);
     }
 
+    /**
+     * @param x a compound which contains one or more ellipsis terms
+     * @param y a compound which is being matched against x
+     *
+     * returns # of non-ellipsis arguments expected in match;
+     * if Y has too few terms for X's expression, returns -1 */
+    public static int countNumNonEllipsis(Compound x, Compound y) {
+        //TODO depending on the expression, determine the sufficient # of terms Y must contain
+        final int xsize = x.size();
+        int numNonVarArgs = xsize - Ellipsis.countEllipsisSubterms(x);
+        if (y.size() <= numNonVarArgs) //<= means it will not allow the ellipsis to match nothing. this can be made a per-ellipsis parameter to decide
+            return -1;
+        return numNonVarArgs;
+    }
+
 
     //    public static RangeTerm rangeTerm(String s) {
 //        int uscore = s.indexOf("_");
