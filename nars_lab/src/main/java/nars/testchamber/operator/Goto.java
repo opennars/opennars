@@ -48,7 +48,7 @@ public class Goto extends SyncOperator {
         System.out.println("Executed: " + this);
         for (Term t : operation.args()) {
             System.out.println(" --- " + t);
-            TestChamber.operateObj(t.toString(), "go-to");
+            TestChamber.operateObj(t.toString(), "goto");
             break;
         }
         
