@@ -4,7 +4,7 @@ import nars.Op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.term.transform.FindSubst;
+import nars.nal.meta.TermPattern;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,14 +14,14 @@ import java.util.List;
 
     //public final TaskBeliefPair pattern;
 
-    final FindSubst.TermPattern compiled;
+    final TermPattern compiled;
 
     final String id;
 
     public MatchTaskBelief(TaskBeliefPair pattern) {
 
         //this.pattern = pattern;
-        this.compiled = new FindSubst.TermPattern(Op.VAR_PATTERN, pattern);
+        this.compiled = new TermPattern(Op.VAR_PATTERN, pattern);
 
         //Term beliefPattern = pattern.term(1);
 

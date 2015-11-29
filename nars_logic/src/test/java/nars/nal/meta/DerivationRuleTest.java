@@ -1,9 +1,15 @@
 package nars.nal.meta;
 
 import junit.framework.TestCase;
+import nars.$;
 import nars.Narsese;
+import nars.Op;
+import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
+import nars.term.Term;
 import nars.term.Terms;
+import nars.term.transform.FindSubst;
+import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
 
 /**
@@ -120,7 +126,7 @@ public class DerivationRuleTest extends TestCase {
         assertNotNull(t);
         assertEquals(Ellipsis.class, t.getClass());
         assertEquals(s, t.toString());
-        assertEquals("%prefix", t.var.toString());
+        assertEquals("%prefix", t.name.toString());
         assertEquals("expression", t.expression.toString());
 
 //        //multichar prefix
@@ -130,11 +136,40 @@ public class DerivationRuleTest extends TestCase {
 //        assertEquals('x', abc0x.to);
     }
 
+    @Test public void testEllipsisExpression() {
+        //TODO
+    }
+
     @Test public void testVarArg1() {
         String rule = "(%S --> %M), ((|, %S, %A..not(%S) ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
         TaskRule x = p.term("<" + rule + ">");
+        System.out.println(x);
         x = x.normalizeRule();
         System.out.println(x);
+
+//        //test with the automatically added '%' prefixes for capital letters:
+//        String rule2 = "<(S --> M), ((|, S, A..not(S) ) --> M) |- ((|, A, ..) --> M), (Truth:DecomposePositiveNegativeNegative)>";
+//        assertEquals( x, ((TaskRule)p.term(rule2)).normalizeRule() );
+
+        assertEquals(
+                "((<%1 --> %2>, <(|, %1, %3..not(%1)) --> %2>), (<(|, .., %3..not(%1)) --> %2>, (<DecomposePositiveNegativeNegative --> Truth>)))",
+                x.toString());
+
+        /*TrieDeriver d = new TrieDeriver(new DerivationRules(x));
+        d.printSummary();*/
+
+    }
+
+    @Test public void testEllipsisMatch() {
+        RuleMatch m = new RuleMatch(new XorShift1024StarRandom(1));
+        FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(2));
+        Term p = $.$("(|, %1, %2..not(%1))");
+        Term y = $.$("(|, x, y, z)");
+        boolean r = f.match(p, y);
+        System.out.println(f);
+        System.out.println(r);
+
+
     }
 
 }

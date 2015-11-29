@@ -1,13 +1,10 @@
 package nars.nal.meta;
 
-import nars.Op;
 import nars.term.Atom;
-import nars.term.MutableAtomic;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.term.transform.Substitution;
-
-import java.util.Map;
+import nars.util.utf8.Utf8;
 
 /**
  * Meta-term of the form:
@@ -20,18 +17,31 @@ import java.util.Map;
  *   B..not(first)
  *   B..not(first,last)
  */
-public class Ellipsis extends MutableAtomic {
+public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 
+
+    /** a placeholder that indicates an expansion of one or more terms that will be provided by an Ellipsis match.
+     *  necessary for terms which require > 1 argument but an expression that will expand one ellipsis variable will not construct a valid prototype of it
+     *  ex:
+     *    (|, %A, ..)
+     *
+     *  */
     public final static Atom Expand = Atom.the("..");
 
-    public final Variable var;
+
+    public final Variable name;
     public final Term expression;
 
-    public Ellipsis(Variable var, Term expression) {
-        super(var + ".." + expression);
-        this.var = var;
+    public Ellipsis(Variable name, Term expression) {
+        super(
+            Utf8.toUtf8(name.toString().substring(1) /* exclude variable type char */
+                    + ".." + expression.toString())
+        );
+
+        this.name = name;
         this.expression = expression;
     }
+
 
 
     @Override
@@ -39,72 +49,13 @@ public class Ellipsis extends MutableAtomic {
         return 0;
     }
 
-    @Override
-    public final Op op() {
-        return Op.ATOM;
-    }
-
-    @Override
-    public int structure() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasVar() {
+    public static boolean hasEllipsis(Compound x) {
+        int xs = x.size();
+        for (int i = 0; i < xs; i++)
+            if (x.term(i) instanceof Ellipsis) return true;
         return false;
     }
 
-    @Override
-    public int vars() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasVarIndep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarDep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarQuery() {
-        return false;
-    }
-
-    @Override
-    public Term substituted(Map<Term, Term> subs) {
-        return null;
-    }
-
-    @Override
-    public Term substituted(Substitution s) {
-        return null;
-    }
-
-    @Override
-    public int complexity() {
-        return 0;
-    }
-
-
-
-    @Override
-    public int varIndep() {
-        return 0;
-    }
-
-    @Override
-    public int varDep() {
-        return 0;
-    }
-
-    @Override
-    public int varQuery() {
-        return 0;
-    }
 
     //    public static RangeTerm rangeTerm(String s) {
 //        int uscore = s.indexOf("_");

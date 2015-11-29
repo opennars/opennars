@@ -4,6 +4,7 @@ import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
+import nars.nal.meta.TermPattern;
 import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
@@ -68,7 +69,7 @@ public class UnificationTest2 extends UnificationTest {
 
         final XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
 
-        FindSubst.TermPattern tp = new FindSubst.TermPattern(type, t1);
+        TermPattern tp = new TermPattern(type, t1);
 
         System.out.println(tp);
 

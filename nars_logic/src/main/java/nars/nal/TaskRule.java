@@ -3,6 +3,7 @@ package nars.nal;
 import com.google.common.collect.Sets;
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
@@ -292,20 +293,9 @@ public class TaskRule extends ProductN implements Level {
     }
 
     public final TaskRule normalizeRule() {
-
-        TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
-
-            @Override
-            public final boolean testSuperTerm(Compound t) {
-                //descend all, because VAR_PATTERN is not yet always considered a variable
-                return true;
-            }
-        }.getResult();
-
-        if (tr == null) {
+        TaskRule tr = (TaskRule) new TaskRuleVariableNormalization().getResult();
+        if (tr == null)
             return null;
-        }
-
         return tr.setup();
     }
 
@@ -671,6 +661,48 @@ public class TaskRule extends ProductN implements Level {
 
 
     final public int nal() { return minNAL; }
+
+    private class TaskRuleVariableNormalization extends VariableNormalization {
+
+        //List<Ellipsis> ellipses = Global.newArrayList();
+
+        public TaskRuleVariableNormalization() {
+            super(TaskRule.this, false);
+
+//            ellipses.forEach(e -> {
+//                e.expressoin
+//
+//            });
+        }
+
+        @Override protected Variable resolve(Variable v) {
+            if (v instanceof Ellipsis) {
+                return ((Ellipsis) v).name;
+            }
+            return v;
+        }
+
+        @Override protected Variable newVariable(final Variable v, final int i) {
+            if (v instanceof Ellipsis) {
+                Ellipsis e = (Ellipsis)v;
+
+                Term ee = e.expression;
+                if (ee instanceof Compound)
+                    ee = ((Compound)ee).cloneTransforming(this);
+
+                return new Ellipsis( Variable.the(v.op(), i), ee );
+            }
+            else {
+                return Variable.the(v.op(), i);
+            }
+        }
+
+        @Override
+        public final boolean testSuperTerm(Compound t) {
+            //descend all, because VAR_PATTERN is not yet always considered a variable
+            return true;
+        }
+    }
 }
 
 
