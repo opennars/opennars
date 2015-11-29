@@ -6,12 +6,13 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.term.transform.FindSubst;
 
+import java.util.Collections;
 import java.util.List;
 
 
 @Deprecated public class MatchTaskBelief extends PreCondition {
 
-    public final TaskBeliefPair pattern;
+    //public final TaskBeliefPair pattern;
 
     final FindSubst.TermPattern compiled;
 
@@ -19,7 +20,7 @@ import java.util.List;
 
     public MatchTaskBelief(TaskBeliefPair pattern) {
 
-        this.pattern = pattern;
+        //this.pattern = pattern;
         this.compiled = new FindSubst.TermPattern(Op.VAR_PATTERN, pattern);
 
         //Term beliefPattern = pattern.term(1);
@@ -44,13 +45,12 @@ import java.util.List;
 
     }
 
+    @Override
     public void addConditions(List<PreCondition> l) {
-        //l.add(this);
-        for (PreCondition o : compiled.code) {
-            l.add(o);
-        }
+        Collections.addAll(l, compiled.code);
     }
 
+    @Override
     public final boolean test(final RuleMatch m) {
 
         final TaskBeliefPair tb = m.taskBelief;

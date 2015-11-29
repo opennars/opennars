@@ -40,9 +40,9 @@ public class ShiftOccurrence extends PreCondition1 {
 */
         this.positive = positive;
         this.direction = direction;
-        this.id = getClass().getSimpleName() + "[" + arg1 + "," +
+        this.id = getClass().getSimpleName() + '[' + arg1 + ',' +
                 (positive ? "Pos" : "Neg") +
-                "," + direction +
+                ',' + direction +
                 ']';
 
 //        //if(operator.getTemporalOrder()== Temporal.ORDER_FORWARD) {
@@ -113,8 +113,7 @@ public class ShiftOccurrence extends PreCondition1 {
 
     static final ObjectIntHashMap<String> relationDirection = new ObjectIntHashMap<>(16);
     static {
-        Procedure2<String,Integer> r = (k, v) ->
-                relationDirection.put(k, v);
+        Procedure2<String,Integer> r = relationDirection::put;
 
         r.value("=/>", +1);
         r.value("=\\>", -1);

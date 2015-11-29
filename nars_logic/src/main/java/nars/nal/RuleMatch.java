@@ -197,11 +197,7 @@ public class RuleMatch {
                 (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
                         + Global.UNIFICATION_POWERmin);
 
-        taskBelief = new TaskBeliefPair();
-        taskBelief.set(
-                p.getTask().getTerm(),
-                p.getTermLink().getTerm()
-        );
+        taskBelief = new TaskBeliefPair(p.getTask().getTerm(), p.getTermLink().getTerm());
         this.subst.y = taskBelief;
         this.subst.power = unificationPower;
     }

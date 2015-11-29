@@ -6,10 +6,12 @@ import nars.Global;
 import nars.NAR;
 import nars.Video;
 import nars.guifx.NARide;
+import nars.java.NALObjects;
 import nars.nar.Default2;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
+import nars.util.data.Util;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -530,8 +532,26 @@ public class NARio extends Run implements RLEnvironment {
             NARio nario = new NARio(nar);
 
             nar.onEachFrame(n -> {
-                nario.cycle((long)(1000f/fps));
+                nario.cycle(1.0/fps);
             });
+
+
+            NALObjects objs = new NALObjects(nar);
+            try {
+                //Mario mario = nario.mario = objs.wrap("nario", nario.mario);
+
+                new Thread(()-> {
+
+                    for (int r = 0; r < 50; r++) {
+                        nario.takeAction((int)(Math.random() * 12));
+                        Util.pause(500);
+                    }
+
+                }).start();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         //nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);

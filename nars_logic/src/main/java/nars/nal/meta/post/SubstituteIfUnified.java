@@ -41,8 +41,9 @@ public class SubstituteIfUnified extends Substitute {
         }
     }
 
+    @Override
     protected String id() {
-        return getClass().getSimpleName() + "[" + type + "," + x + "," + y + "]";
+        return getClass().getSimpleName() + '[' + type + ',' + x + ',' + y + ']';
     }
 
     @Override

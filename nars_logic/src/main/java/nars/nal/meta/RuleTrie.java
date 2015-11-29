@@ -146,7 +146,7 @@ public class RuleTrie extends Deriver {
     }
 
 
-    private RuleBranch[] compile(TrieNode<List<PreCondition>, TaskRule> node) {
+    private static RuleBranch[] compile(TrieNode<List<PreCondition>, TaskRule> node) {
 
         List<RuleBranch> bb = Global.newArrayList(node.getChildCount());
 

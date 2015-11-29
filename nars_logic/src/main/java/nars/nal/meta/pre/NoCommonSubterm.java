@@ -18,9 +18,7 @@ public class NoCommonSubterm extends PreCondition2 {
     public final boolean test(RuleMatch m, Term a, Term b) {
         Set<Term> tmpSet = Global.newHashSet(0);
 
-        final boolean result = !sharedSubterms(a, b, tmpSet );
-
-        return result;
+        return !sharedSubterms(a, b, tmpSet );
     }
 
     static boolean sharedSubterms(final Term a, final Term b, Set<Term> s) {

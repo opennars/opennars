@@ -70,10 +70,10 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
     final static Atom
-            negation = the("Negation"),
+            /*negation = the("Negation"),
             conversion = the("Conversion"),
             contraposition = the("Contraposition"),
-            identity = the("Identity"),
+            identity = the("Identity"),*/
             allowBackward = the("AllowBackward"),
             fromTask = the("FromTask"),
             fromBelief = the("FromBelief"),
@@ -112,7 +112,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
             final Inheritance<Term, Atom> i = (Inheritance) m;
 
-            if (!(i.getPredicate() != null)) {
+            if (i.getPredicate() == null) {
                 throw new RuntimeException("Unknown postcondition format (predicate must be atom): " + m);
             }
 

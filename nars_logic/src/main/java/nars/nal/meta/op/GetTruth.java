@@ -18,18 +18,22 @@ public class GetTruth extends PreCondition {
     public final DesireFunction desire;
     public final char puncOverride;
 
+    transient private final String id;
+
     public GetTruth(BeliefFunction belief, DesireFunction desire, char puncOverride) {
         this.belief = belief;
         this.desire = desire;
         this.puncOverride = puncOverride;
+
+        this.id = (puncOverride == 0) ?
+                (getClass().getSimpleName() + "[" + belief + "," + desire + "]")  :
+                (getClass().getSimpleName() + "[" + belief + "," + desire + "," + puncOverride + "]");
+
     }
 
     @Override
     public String toString() {
-        if (puncOverride == 0)
-            return getClass().getSimpleName() + "[" + belief + "," + desire + "]";
-        else
-            return getClass().getSimpleName() + "[" + belief + "," + desire + "," + puncOverride + "]";
+        return id;
     }
 
     TruthFunction getTruth(char punc) {
@@ -101,7 +105,7 @@ public class GetTruth extends PreCondition {
          *  TODO move this earlier to precondition check, or change to altogether new policy
          */
         final boolean single = (belief == null);
-        if ((!single) && (match.cyclic(tf, premise))) {
+        if ((!single) && (RuleMatch.cyclic(tf, premise))) {
 //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
 //                    match.removeCyclic(outcome, premise, truth, punct);
 //                }

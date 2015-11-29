@@ -82,8 +82,8 @@ public final class MakeTasks extends PreCondition {
 
 
         final char punct = post.punct;
-        if (punct == 0)
-            throw new RuntimeException("invalid punctuation");
+        /*if (punct == 0)
+            throw new RuntimeException("invalid punctuation");*/
 
         FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {

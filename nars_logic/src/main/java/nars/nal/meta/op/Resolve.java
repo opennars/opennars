@@ -22,7 +22,7 @@ public final class Resolve extends PreCondition {
     public Resolve(Term term, TaskRule rule) {
         this.term = term;
         this.rule = rule;
-        this.id = getClass().getSimpleName() + "[" + term + "]";
+        this.id = getClass().getSimpleName() + '[' + term + ']';
     }
 
     @Override
@@ -63,7 +63,6 @@ public final class Resolve extends PreCondition {
     }
 
     public void processSequence(RuleMatch match, Term derivedTerm, Term toInvestigate) {
-        int Nothing = 0;
         int TermIsSequence = 1;
         int TermSubjectIsSequence = 2;
         int TermPredicateIsSequence = 3;
@@ -88,9 +87,9 @@ public final class Resolve extends PreCondition {
             }
         }
 
+        int Nothing = 0;
         if (mode != Nothing) {
 
-            Sequence copy = null; //where to copy the interval data from
             Sequence paste = null; //where to paste it to
 
             //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE1
@@ -113,6 +112,7 @@ public final class Resolve extends PreCondition {
             }
 
             //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE2
+            Sequence copy = null; //where to copy the interval data from
             if (mode == TermIsSequence && lookat instanceof Sequence) {
                 copy = (Sequence) lookat;
             } else if (mode == TermSubjectIsSequence && lookat instanceof Statement && ((Statement) lookat).getSubject() instanceof Sequence) {
@@ -145,13 +145,9 @@ public final class Resolve extends PreCondition {
 
                     if (OneLess) {
                         match.post.occurence_shift = copyIntervals[1]; //we shift according to first interval
-                        for (int i = 2; i < copyIntervals.length; i++) { //and copy the rest into the conclusion
-                            pasteIntervals[i - 1] = copyIntervals[i];
-                        }
+                        System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
                     } else if (sameLength) {
-                        for (int i = 0; i < copyIntervals.length; i++) {
-                            pasteIntervals[i] = copyIntervals[i];
-                        }
+                        System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
                     }
                 } else /* if (paste == null)  */ {
                     //ok we reduced to a single element, so its a one less case

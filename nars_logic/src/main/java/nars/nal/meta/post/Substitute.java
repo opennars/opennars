@@ -60,11 +60,8 @@ public class Substitute extends PreCondition {
         if (!a.equals(b) && subs) {
             m.sub2.outp.put(a, b);
         }
-        if(!subs && this instanceof SubstituteIfUnified) {
-            return false;
-        }
+        return !(!subs && this instanceof SubstituteIfUnified);
 
-        return true;
     }
 
 
