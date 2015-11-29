@@ -5,10 +5,7 @@ import nars.Op;
 import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.meta.PostCondition;
-import nars.nal.meta.PreCondition;
-import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.TruthFunction;
+import nars.nal.meta.*;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -174,7 +171,8 @@ public class RuleMatch {
                 ", sub2=" + sub2 +
                 '}';
 
-    }public RuleMatch(Random r) {
+    }
+    public RuleMatch(Random r) {
         this.subst = new FindSubst(Op.VAR_PATTERN,
                 Global.newHashMap(0),
                 Global.newHashMap(0),
@@ -734,7 +732,7 @@ public class RuleMatch {
         return subst.next(x, y, unificationPower);
     }
 
-    public boolean next(FindSubst.TermPattern x, Term y, int unificationPower) {
+    public boolean next(TermPattern x, Term y, int unificationPower) {
         return subst.next(x, y, unificationPower);
     }
 

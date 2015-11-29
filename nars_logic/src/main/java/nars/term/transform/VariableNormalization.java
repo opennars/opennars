@@ -1,7 +1,6 @@
 package nars.term.transform;
 
 import nars.Global;
-import nars.Op;
 import nars.term.Compound;
 import nars.term.Variable;
 import nars.util.utf8.Byted;
@@ -66,7 +65,7 @@ public class VariableNormalization extends VariableTransform {
     };
 
 
-    Map<Variable, Variable> rename;
+    final Map<Variable, Variable> rename = Global.newHashMap(0);
 
     final Compound result;
     boolean renamed = false;
@@ -103,8 +102,6 @@ public class VariableNormalization extends VariableTransform {
 
         this.result = result1;
 
-        if (rename != null)
-            rename.clear(); //assists GC
     }
 
 
@@ -116,7 +113,7 @@ public class VariableNormalization extends VariableTransform {
 
         Map<Variable, Variable> rename = this.rename;
 
-        if (rename == null) this.rename = rename = Global.newHashMap(0); //lazy allocate
+        //if (rename == null) this.rename = rename = Global.newHashMap(0); //lazy allocate
 
 //        Variable vv = rename.get(vname);
 //        if (vv == null) {
@@ -141,9 +138,9 @@ public class VariableNormalization extends VariableTransform {
 
 
         final Map<Variable,Variable> finalRename = rename;
-        Variable vv = rename.computeIfAbsent(v, _vname -> {
+        Variable vv = rename.computeIfAbsent(resolve(v), _vname -> {
             //type + id
-            Variable rvv = newVariable(v.op(), finalRename.size() + 1);
+            Variable rvv = newVariable(v, finalRename.size() + 1);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= !Byted.equals(rvv, v);
             return rvv;
@@ -154,8 +151,13 @@ public class VariableNormalization extends VariableTransform {
         return vv;
     }
 
-    final static protected Variable newVariable(final Op type, final int i) {
-        return Variable.the(type, i);
+    /** allows subclasses to provide a different name of a variable */
+    protected Variable resolve(Variable v) {
+        return v;
+    }
+
+    protected Variable newVariable(final Variable v, final int i) {
+        return Variable.the(v.op(), i);
     }
 
     public final Compound getResult() {

@@ -1,6 +1,7 @@
 package nars.term.transform;
 
 import nars.Op;
+import nars.nal.meta.TermPattern;
 import nars.term.Term;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ public abstract class Subst extends Frame {
     public abstract boolean next(Term x, Term y, int power);
 
     /** compiled matching */
-    public abstract boolean next(FindSubst.TermPattern x, Term y, int power);
+    public abstract boolean next(TermPattern x, Term y, int power);
 
     public abstract void putXY(Term x, Term y);
 

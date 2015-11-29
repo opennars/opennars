@@ -5,13 +5,14 @@ import nars.Memory;
 import nars.NAR;
 import nars.Op;
 import nars.nal.RuleMatch;
+import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
-import nars.nal.meta.TaskBeliefPair;
+import nars.nal.meta.TermPattern;
 import nars.nal.nal4.Image;
 import nars.term.*;
 
-import java.util.*;
-import java.util.function.ToIntFunction;
+import java.util.Map;
+import java.util.Random;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -390,239 +391,6 @@ public class FindSubst extends Subst {
         }
     }
 
-    /** represents the "program" that the matcher will execute */
-    public static class TermPattern {
-
-        public final PreCondition[] code;
-        public final Term term;
-        private Op type = null;
-
-        public TermPattern(Op type, TaskBeliefPair pattern) {
-
-            this.term = pattern;
-            this.type = type;
-
-            List<PreCondition> code = Global.newArrayList();
-
-
-
-            //compile the code
-            compile(pattern, code);
-
-
-            if (code.get(0).toString().equals("TermOpEq{*}")) {
-                code.remove(0);
-            }
-            if (code.get(0).toString().equals("TermSizeEq{2}")) {
-                code.remove(0);
-            }
-
-            Op tt = pattern.term(0).op();
-            if (tt != Op.VAR_PATTERN) {
-                SubOpEquals taskType = new SubOpEquals(0, tt);
-                code.add(0, taskType);
-            }
-
-            Op bt = pattern.term(1).op();
-            if (bt != Op.VAR_PATTERN) {
-                SubOpEquals beliefType = new SubOpEquals(1, bt);
-                code.add(1, beliefType);
-            }
-
-            //code.add(End);
-            code.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
-
-            this.code = code.toArray(new PreCondition[code.size()]);
-        }
-
-        public TermPattern(Op type, Term pattern) {
-
-            this.term = pattern;
-            this.type = type;
-
-            List<PreCondition> code = Global.newArrayList();
-
-            //compile the code
-            compile(pattern, code);
-            //code.add(End);
-            code.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
-
-            this.code = code.toArray(new PreCondition[code.size()]);
-        }
-
-        private void compile(Term t, List<PreCondition> code) {
-
-
-            boolean constant = false;
-
-            if ((type == Op.VAR_PATTERN && (!Variable.hasPatternVariable(t)))) {
-                constant = true;
-            }
-            if ((type != Op.VAR_PATTERN && !t.hasAny(type))) {
-                constant = true;
-            }
-
-            if (!constant && (t instanceof Compound)) {
-                compileCompound((Compound) t, code);
-            }
-            else {
-
-                if (constant)
-                    code.add(new TermEquals(t));
-                else {
-                    if (t.op() == type) {
-                        code.add(new MatchXVar((Variable)t));
-                    }
-                    else {
-                        //something else
-                        code.add(new MatchTerm(t));
-                    }
-                }
-            }
-
-
-            //throw new RuntimeException("unknown compile behavior for term: " + t);
-
-            //code.add(new MatchIt(v));
-        }
-
-        private void compileCompound(Compound t, List<PreCondition> code) {
-            Compound<?> c = t;
-            int s = c.size();
-
-            code.add(new TermOpEquals(c.op())); //interference with (task,belief) pair term
-
-            //TODO varargs with greaterEqualSize etc
-            code.add(new TermSizeEquals(c.size()));
-
-            boolean permute = c.isCommutative() && (s > 1);
-
-            switch (s) {
-                case 0:
-                    //nothing to match
-                    break;
-
-                case 1:
-                    code.add(new MatchTheSubterm(c.term(0)));
-                    break;
-
-                default:
-
-                    if (c instanceof Image) {
-                        code.add(new MatchImageIndex(((Image)c).relationIndex)); //TODO varargs with greaterEqualSize etc
-                    }
-
-                    code.add(new TermVolumeMin(c.volume()-1));
-
-                    code.add(new TermStructure(type, c.structure()));
-
-                    if (permute) {
-                        code.add(new MatchPermute(c));
-                    }
-                    else {
-                        compileNonCommutative(code, c);
-                    }
-
-                break;
-            }
-        }
-
-
-        /** heuristic for ordering comparison of subterms; lower is first */
-        private ToIntFunction<Term> subtermPrioritizer = (t) -> {
-
-            if (t.op() == type) {
-                return 0;
-            }
-            else if (t instanceof Compound) {
-                if (!t.isCommutative()) {
-                    return 1 + (1 * t.volume());
-                } else {
-                    return 1 + (2 * t.volume());
-                }
-            }
-            else {
-                return 1; //atomic
-            }
-        };
-
-        private void compileNonCommutative(List<PreCondition> code, Compound<?> c) {
-
-            final int s = c.size();
-            TreeSet<SubtermPosition> ss = new TreeSet();
-
-            for (int i = 0; i < s; i++) {
-                Term x = c.term(i);
-                ss.add(new SubtermPosition(x, i, subtermPrioritizer));
-            }
-
-            code.add( Subterms );
-
-            ss.forEach(sp -> { //iterate sorted
-                Term x = sp.term;
-                int i = sp.position;
-
-                compile2(x, code, i);
-                //compile(type, x, code);
-            });
-
-            code.add( Superterm );
-        }
-
-        private void compile2(Term x, List<PreCondition> code, int i) {
-            //TODO this is a halfway there.
-            //in order for this to work, parent terms need to be stored in a stack or something to return to, otherwise they get a nulll and it crashes:
-
-//            code.add(new SelectSubterm(i));
-//            compile(x, code);
-//
-             if (x instanceof Compound) {
-//                //compileCompound((Compound)x, code);
-//            /*}
-//            else {
-                 code.add(new MatchSubterm(x, i));
-             }
-             else {
-                 //HACK this should be able to handle atomic subterms without a stack
-                 code.add(new SelectSubterm(i));
-                 compile(x, code);
-             }
-
-        }
-
-        final static class SubtermPosition implements Comparable<SubtermPosition> {
-
-            public final int score;
-            public final Term term; //the subterm
-            public final int position; //where it is located
-
-            public SubtermPosition(Term term, int pos, ToIntFunction<Term> scorer) {
-                this.term = term;
-                this.position = pos;
-                this.score = scorer.applyAsInt(term);
-            }
-
-            @Override
-            public int compareTo(SubtermPosition o) {
-                if (this == o) return 0;
-                int p = Integer.compare(o.score, score); //lower first
-                if (p!=0) return p;
-                return Integer.compare(position, o.position);
-            }
-
-            @Override
-            public String toString() {
-                return term + " x " + score + " (" + position + ')';
-            }
-        }
-
-
-        @Override
-        public String toString() {
-            return "TermPattern{" + Arrays.toString(code) + '}';
-        }
-    }
-
 
     /** find substitutions, returning the success state. */
     @Override
@@ -795,12 +563,24 @@ public class FindSubst extends Subst {
             case 1:
                 return match(X.term(0), Y.term(0));
             default:  /*if (xLen >= 1) {*/
-                if (X.isCommutative()) {
-                    //commutative, try permutations
-                    return matchPermute(X, Y);
-                } else {
-                    //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                    return matchSequence(X.subterms(), Y.subterms());
+
+
+
+                boolean hasVarArgs = Ellipsis.hasEllipsis(X);
+                if (!hasVarArgs) {
+                    if (X.isCommutative()) {
+                        return matchPermute(X, Y); //commutative, try permutations
+                    } else {
+                        return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+                    }
+                }
+                else {
+                    if (X.isCommutative()) {
+                        return matchPermuteEllipsis(X, Y); //commutative, try permutations
+                    } else {
+                        throw new RuntimeException("unimpl yet");
+                        //return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+                    }
                 }
         }
     }
@@ -816,6 +596,64 @@ public class FindSubst extends Subst {
         //final int len = x.size();
 
         //final int minAttempts = len; //heuristic assumption
+
+
+        final ShuffleTermVector perm = new ShuffleTermVector(random, x);
+
+        final Map<Term, Term> xy = this.xy; //local copy on stack
+        final Map<Term, Term> yx = this.yx; //local copy on stack
+
+
+        //push/save:
+        final Map<Term, Term> savedXY = Global.newHashMap(xy);
+        final Map<Term, Term> savedYX = Global.newHashMap(yx);
+        xyChanged = yxChanged = false;
+
+        boolean matched = false;
+
+        while (perm.hasNext()) {
+
+            perm.next();
+
+            matched = matchSequence(perm, y);
+
+            if (power < 0) {
+                return false;
+            }
+
+            if (matched /*|| power <= 0*/)
+                break;
+
+
+            //try again; invert negated power back to a positive value for next attempt
+
+            //pop/restore
+            if (yxChanged) {
+                yxChanged = false;
+                restore(savedYX, yx);
+            }
+
+            if (xyChanged) {
+                xyChanged = false;
+                restore(savedXY, xy);
+            }
+
+            //ready to continue on next permutation
+
+        }
+
+
+        //finished
+        return matched;
+
+    }
+
+    /**
+     * @param x the compound which is permuted/shuffled
+     * @param y what is being compared against
+     *
+     */
+    public final boolean matchPermuteEllipsis(Compound x, Compound y) {
 
 
         final ShuffleTermVector perm = new ShuffleTermVector(random, x);

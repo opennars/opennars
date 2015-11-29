@@ -232,7 +232,7 @@ abstract public class Variable extends ImmutableAtom {
     }
 
 
-    public static final class VarPattern extends Variable {
+    public static class VarPattern extends Variable {
 
 
         public VarPattern(byte[] name) {  super(name, Op.VAR_PATTERN.ordinal());         }

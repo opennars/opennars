@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.Global;
 import nars.Narsese;
@@ -10,10 +11,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,9 +44,16 @@ public class DerivationRules extends FastList<TaskRule> {
         this(Lists.newArrayList(ruleStrings));
     }
 
-    public DerivationRules(final Iterable<String> ruleStrings) {
+    public DerivationRules(final Collection<String> ruleStrings) {
 
         this(parseRules(loadRuleStrings(ruleStrings)));
+    }
+
+    public DerivationRules(TaskRule... r) {
+        this( Sets.newHashSet(r) );
+    }
+    public DerivationRules(TaskRule r) {
+        this(Collections.singleton(r) );
     }
 
     public DerivationRules(Set<TaskRule> r) {
