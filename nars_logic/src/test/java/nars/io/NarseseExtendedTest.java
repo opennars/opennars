@@ -120,23 +120,27 @@ public class NarseseExtendedTest {
 
     @Test
     public void testNamespaceTerms2() {
-
-
         eqTerm("a:b", "<b --> a>");
         eqTerm("a : b", "<b --> a>");
+    }
 
+    @Test public void testNamespaceTermsNonAtomicSubject() {
+        eqTerm("c:{a,b}", "<{a,b} --> c>");
+    }
+    @Test public void testNamespaceTermsNonAtomicPredicate() {
+        eqTerm("<a-->b>:c", "<c --> <a --> b>>");
+        eqTerm("{a,b}:c", "<c --> {a,b}>");
+        eqTerm("(a,b):c", "<c --> (a, b)>");
+    }
+
+    @Test public void testNamespaceTermsChain() {
 
         eqTerm("d:{a,b}:c", "<<c --> {a,b}> --> d>");
 
-        //this one is important that we fix. i think the presence of the -- operator gets confused with negation and the > with end of statement
-        eqTerm("{a,b}:c", "<c --> {a,b}>");
-
-        eqTerm("(a,b):c", "<c --> (a,b)>");
-
 
         eqTerm("c:{a,b}", "<{a,b} --> c>");
-        eqTerm("a:b:c",   "<<a --> b> --> c>");
-        eqTerm("a :b :c",   "<<a --> b> --> c>");
+        eqTerm("a:b:c",   "<<c --> b> --> a>");
+        eqTerm("a :b :c",   "<<c --> b> --> a>");
     }
 
     @Test

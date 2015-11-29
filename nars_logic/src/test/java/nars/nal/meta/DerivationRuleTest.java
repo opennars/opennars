@@ -113,22 +113,28 @@ public class DerivationRuleTest extends TestCase {
         Terms.printRecursive(y);
     }
 
-    @Test public void testRangeTerm() {
+    @Test public void testEllipsis() {
         Narsese p = Narsese.the();
-        Ellipsis t = p.term("A_1..n");
+        String s = "%prefix..expression";
+        Ellipsis t = p.term(s);
         assertNotNull(t);
         assertEquals(Ellipsis.class, t.getClass());
-        assertEquals("A_1..n", t.toString());
-        assertEquals("A", t.prefix);
-        assertEquals(1, t.from);
-        assertEquals('n', t.to);
+        assertEquals(s, t.toString());
+        assertEquals("%prefix", t.var.toString());
+        assertEquals("expression", t.expression.toString());
 
-        //multichar prefix
-        final Ellipsis abc0x = p.term("Abc_0..x");
-        assertEquals("Abc", abc0x.prefix);
-        assertEquals(0, abc0x.from);
-        assertEquals('x', abc0x.to);
+//        //multichar prefix
+//        final Ellipsis abc0x = p.term("Abc:0..x");
+//        assertEquals("Abc", abc0x.prefix);
+//        assertEquals(0, abc0x.from);
+//        assertEquals('x', abc0x.to);
     }
 
+    @Test public void testVarArg1() {
+        String rule = "(%S --> %M), ((|, %S, %A..not(%S) ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
+        TaskRule x = p.term("<" + rule + ">");
+        x = x.normalizeRule();
+        System.out.println(x);
+    }
 
 }

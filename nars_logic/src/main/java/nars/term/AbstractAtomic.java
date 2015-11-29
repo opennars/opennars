@@ -128,7 +128,7 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
         return 0;
     }
 
-    @Override public final int volume() { return 1; }
+    @Override public int volume() { return 1; }
 
     public final boolean impossibleSubTermVolume(final int otherTermVolume) {
         return true;

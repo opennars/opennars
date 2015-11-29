@@ -322,8 +322,17 @@ public class DerivationRules extends FastList<TaskRule> {
         for (int i = 0; i < maxVarArgs; i++) {
             if (p.contains("A_i")) {
                 for (int j = 0; j <= i; j++) {
-                    if (p.contains("B_1..m")) {
-                        String str2 = "B_1";
+                    if (!p.contains("B_1..m")) {
+                        String A_i = "A_" + String.valueOf(j + 1);
+                        String strrep = str;
+                        if (p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
+                            strrep = str.replace(A_i, "_");
+                        }
+                        String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("A_i", A_i);
+                        addAndPermuteTenses(expanded, parsable_unrolled);
+                    } else {
+                        throw new RuntimeException("this does not happen");
+                        /*String str2 = "B_1";
                         for (int k = 0; k < maxVarArgs; k++) {
                             String A_i = "A_" + String.valueOf(j + 1);
                             String strrep = str;
@@ -333,15 +342,7 @@ public class DerivationRules extends FastList<TaskRule> {
                             String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..m", str2).replace("A_i", A_i);
                             addAndPermuteTenses(expanded, parsable_unrolled);
                             str2 += ", B_" + (k + 2);
-                        }
-                    } else {
-                        String A_i = "A_" + String.valueOf(j + 1);
-                        String strrep = str;
-                        if (p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
-                            strrep = str.replace(A_i, "_");
-                        }
-                        String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("A_i", A_i);
-                        addAndPermuteTenses(expanded, parsable_unrolled);
+                        }*/
                     }
                 }
             } else {

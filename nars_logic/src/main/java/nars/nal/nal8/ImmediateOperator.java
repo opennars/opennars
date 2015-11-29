@@ -68,7 +68,10 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     }
 
     public static Operation operation(Class<? extends ImmediateOperator> opClass, Object... args) {
-        return new Operation( opClass.getSimpleName(), termizedProduct(args));
+        return operation( opClass, termizedProduct(args));
+    }
+    public static Operation operation(Class<? extends ImmediateOperator> opClass, Product args) {
+        return new Operation( opClass.getSimpleName(), args);
     }
 
 

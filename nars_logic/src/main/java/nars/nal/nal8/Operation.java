@@ -55,8 +55,12 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
 
 
 
-    public Operation(String operatorName, A... args) {
+    public Operation(String operatorName, A[] args) {
         this(Operator.the(operatorName), Product.make(args));
+    }
+
+    public Operation(String operatorName, Product<A> args) {
+        this(Operator.the(operatorName), args);
     }
 
     public Operation(Operator operator, Product<A> args) {

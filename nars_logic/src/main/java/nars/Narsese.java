@@ -15,7 +15,6 @@ import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
 import nars.nal.TaskRule;
 import nars.nal.meta.Ellipsis;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
@@ -70,14 +69,13 @@ public class Narsese extends BaseParser<Object>  {
     public Rule Input() {
         return sequence(
             zeroOrMore( //1 or more?
-                    sequence(
+                    //sequence(
                             firstOf(
                                     LineComment(),
-                                    //PauseInput(),
                                     Task()
                             ),
                             s()
-                    )
+                    //)
             ), eof() ) ;
     }
 
@@ -112,7 +110,7 @@ public class Narsese extends BaseParser<Object>  {
         List<Term> r = Global.newArrayList(1);
         List<Term> l = Global.newArrayList(1);
 
-        Object popped = null;
+        Object popped;
         while ( (popped = pop()) != TaskRule.class) { //lets go back till to the start now
             r.add((Term)popped);
         }
@@ -148,13 +146,13 @@ public class Narsese extends BaseParser<Object>  {
     public Rule LineComment() {
         return sequence(
                 s(),
-                firstOf(
+                //firstOf(
                         "//",
-                        "'",
-                        sequence("***", zeroOrMore('*')), //temporary
-                        "OUT:"
-                ),
-                sNonNewLine(),
+                        //"'",
+                        //sequence("***", zeroOrMore('*')), //temporary
+                        //"OUT:"
+                //),
+                //sNonNewLine(),
                 LineCommentEchoed(),
                 firstOf("\n",eof() /* may not have newline at end of file */)
         );
@@ -166,7 +164,7 @@ public class Narsese extends BaseParser<Object>  {
 
                 zeroOrMore(noneOf("\n")),
 
-                push( ImmediateOperator.command(echo.class, match()) ) );
+                push( ImmediateOperator.command(echo.class, match().toString()) ) );
     }
 
 //    public Rule PauseInput() {
@@ -175,6 +173,13 @@ public class Narsese extends BaseParser<Object>  {
 //                "\n" );
 //    }
 
+
+//    public Rule TermEOF() {
+//        return sequence( s(), Term(), s(), eof() );
+//    }
+//    public Rule TaskEOF() {
+//        return sequence( s(), Task(), s(), eof() );
+//    }
 
     public Rule Task() {
 
@@ -190,7 +195,7 @@ public class Narsese extends BaseParser<Object>  {
                 optional( Budget(budget) ),
 
 
-                Term(true),
+                Term(true,false),
                 term.set((Term) pop()),
 
                 SentencePunctuation(punc),
@@ -330,9 +335,6 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    Rule NonOperationTerm() {
-        return Term(false);
-    }
 
     public Rule Term() {
         return Term(true);
@@ -343,8 +345,11 @@ public class Narsese extends BaseParser<Object>  {
 //    }
 
 
-    @Cached
-    Rule Term(boolean includeOperation) {
+    @Deprecated Rule Term(boolean includeOperation) {
+        return Term(includeOperation, includeOperation);
+    }
+
+    @Cached Rule Term(boolean includeOperation, boolean includeRules) {
         /*
                  <term> ::= <word>                             // an atomic constant term
                         | <variable>                         // an atomic variable term
@@ -362,29 +367,40 @@ public class Narsese extends BaseParser<Object>  {
 
                         Operator(),
 
-                        //IntervalLog(),
+
                         Interval(),
 
-                        RangeTerm(),
-                        TaskRule(),
+                        EmptyProduct(),
 
-                        sequence(
-                                includeOperation,
-                                NonOperationTerm(),
-                                EmptyOperationParens()
+                        sequence(includeRules,
+                            Ellipsis()
+                        ),
+                        sequence(includeRules,
+                            EllipsisExpand()
+                        ),
+                        sequence(includeRules,
+                            TaskRule()
+                        ),
+
+                        sequence(includeOperation,
+                                ColonReverseInheritance()
+                        ),
+
+                        sequence(includeOperation,
+                            Term(false,false),
+                            EmptyOperationParens()
                         ),
 
                         //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
-                        sequence(
-                                includeOperation,
-                                NonOperationTerm(),
-                                COMPOUND_TERM_OPENER,
-                                MultiArgTerm(Op.OPERATOR, COMPOUND_TERM_CLOSER, false, false, false, true)
+                        sequence(includeOperation,
+                            Term(false,false),
+                            COMPOUND_TERM_OPENER,
+                            MultiArgTerm(Op.OPERATOR, COMPOUND_TERM_CLOSER, false, false, false, true)
                         ),
 
 
                         sequence( STATEMENT_OPENER,
-                                MultiArgTerm(null, STATEMENT_CLOSER, false, true, true, false)
+                            MultiArgTerm(null, STATEMENT_CLOSER, false, true, true, false)
                         ),
 
                         Variable(),
@@ -416,11 +432,7 @@ public class Narsese extends BaseParser<Object>  {
                                         //default to product if no operator specified in ( )
                                         MultiArgTerm(Op.PRODUCT, COMPOUND_TERM_CLOSER, false, false, false, false),
 
-                                        MultiArgTerm(null, COMPOUND_TERM_CLOSER, false, true, true, false),
-
-                                        sequence(
-                                            s(), COMPOUND_TERM_CLOSER, push(Product.empty)
-                                        )
+                                        MultiArgTerm(null, COMPOUND_TERM_CLOSER, false, true, true, false)
                                 )
                         ),
 
@@ -437,7 +449,8 @@ public class Narsese extends BaseParser<Object>  {
 
 
 
-                        ColonReverseInheritance(),
+
+
                         //BacktickReverseInstance(),
 
                         Atom(),
@@ -451,9 +464,15 @@ public class Narsese extends BaseParser<Object>  {
         );
     }
 
+    Rule EmptyProduct() {
+        return sequence(
+            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Product.empty)
+        );
+    }
+
 
     Rule Operator() {
-        return sequence(OPERATOR.ch, NonOperationTerm(),
+        return sequence(OPERATOR.ch, Term(false,false),
                 push(new Operator((Term)pop())));
     }
 
@@ -463,7 +482,6 @@ public class Narsese extends BaseParser<Object>  {
      * an atomic term, returns a String because the result may be used as a Variable name
      */
     Rule Atom() {
-
 
         return sequence(
                 new ValidAtomCharMatcher(),
@@ -554,8 +572,8 @@ public class Narsese extends BaseParser<Object>  {
      */
     Rule ColonReverseInheritance() {
         return sequence(
-                Atom(), s(), ':', s(), Term(true),
-                push(Inheritance.make((Term)(pop()), Atom.the(pop())))
+            Term(false,true), s(), ':', s(), Term(),
+            push($.inh( (Term)pop(), (Term)pop() ) )
         );
     }
 
@@ -601,14 +619,18 @@ public class Narsese extends BaseParser<Object>  {
         return string("\"\"\"");
     }
 
-    Rule RangeTerm() {
+    Rule Ellipsis() {
         return sequence(
-                AnyAlphas(),
-                "_",
-                IntegerNonNegative(),
-                "..", alpha(), push( matchedChar() ),
-                swap(3),
-                push( new Ellipsis( pop().toString(), (Integer)pop(), (Character) pop() ) )
+                Variable() /*Term(false)*/, "..", Term(true,false),
+                swap(),
+                push( new Ellipsis( (Variable)pop(), (Term)pop() ) )
+        );
+    }
+
+    Rule EllipsisExpand() {
+        return sequence(
+                "..",
+                push( Ellipsis.Expand )
         );
     }
 
@@ -617,12 +639,12 @@ public class Narsese extends BaseParser<Object>  {
         return oneOrMore(noneOf("\""));
     }
 
-    Rule AnyAlphas() {
-        //TODO handle \" escape
-        return sequence( alpha(), push(matchedChar()), zeroOrMore( alphanumeric() ), push(match()),
-                swap(),
-                push( pop().toString() + pop().toString()));
-    }
+//    Rule AnyAlphas() {
+//        //TODO handle \" escape
+//        return sequence( alpha(), push(matchedChar()), zeroOrMore( alphanumeric() ), push(match()),
+//                swap(),
+//                push( pop().toString() + pop().toString()));
+//    }
 
     Rule alphanumeric() { return firstOf(alpha(), digit()); }
 
@@ -778,7 +800,7 @@ public class Narsese extends BaseParser<Object>  {
 
                 OperationPrefixTerm(),
 
-                s(), COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER,
+                /*s(),*/ COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER,
 
                 push(popTerm(Op.OPERATOR, false))
         );

@@ -1,32 +1,42 @@
 package nars.nal.meta;
 
 import nars.Op;
+import nars.term.Atom;
 import nars.term.MutableAtomic;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.Substitution;
 
 import java.util.Map;
 
 /**
  * Meta-term of the form:
- *      prefix_from..to
- * for representing a range of terms
+ *      variable..exppression
+ * for selecting a range of subterms
  *
- * ex: A_1..n
+ * ex:
+ *   A..not(X)
+ *   B..not(X,Y)
+ *   B..not(first)
+ *   B..not(first,last)
  */
 public class Ellipsis extends MutableAtomic {
 
-    public final String prefix;
-    public final int from;
-    public final char to;
+    public final static Atom Expand = Atom.the("..");
+
+    public final Variable var;
+    public final Term expression;
+
+    public Ellipsis(Variable var, Term expression) {
+        super(var + ".." + expression);
+        this.var = var;
+        this.expression = expression;
+    }
 
 
-
-    public Ellipsis(String prefix, int from, char to) {
-        super(prefix + '_' + from + ".." + to);
-        this.prefix = prefix;
-        this.from = from;
-        this.to = to;
+    @Override
+    public int volume() {
+        return 0;
     }
 
     @Override
@@ -78,6 +88,8 @@ public class Ellipsis extends MutableAtomic {
     public int complexity() {
         return 0;
     }
+
+
 
     @Override
     public int varIndep() {
