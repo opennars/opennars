@@ -26,6 +26,7 @@ import nars.Op;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.TermContainer;
 
 import java.util.Collection;
 import java.util.List;
@@ -133,4 +134,10 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return term(s-1);
     }
 
+
+    /** create a Product from terms contained in a TermContainer
+     *  (ex: the subterms of a compound) */
+    public static Product make(TermContainer c) {
+        return Product.make( c.toArray() );
+    }
 }

@@ -1,15 +1,13 @@
 package nars.nal.meta;
 
+import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 import nars.util.utf8.Utf8;
-
-import java.util.Map;
 
 /**
  * Meta-term of the form:
@@ -33,6 +31,16 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
      *  */
     public final static Atom Expand = Atom.the("..");
 
+    /** 1 or more */
+    public static Term PLUS = Atom.the("+");
+
+    /** 0 or more */
+    public static Term ASTERISK = Atom.the("*");
+
+    /** everything except, ex: not(%2) */
+    public static final Atom NOT = $.the("not");
+
+
 
     public final Variable name;
     public final Term expression;
@@ -43,7 +51,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
                     + ".." + expression.toString())
         );
 
-        this.name = name;
+        this.name= name;
         this.expression = expression;
     }
 
@@ -77,51 +85,82 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return n;
     }
 
-    public static final Atom NOT = $.the("not");
 
-    public Term match(Map<Term, Term> mapped, Compound y) {
-        Operation o = (Operation)expression;
 
-        //only NOT implemented currently
-        if (!o.getOperatorTerm().equals(NOT)) {
-            throw new RuntimeException("ellipsis operation " + expression + " not implemented" );
+    public Product match(ShortSet ySubsExcluded, Compound y) {
+        Term ex = this.expression;
+        if (ex == PLUS) {
+            return matchRemainingOneOrMore(ySubsExcluded, y);
         }
 
-        return matchNot(o.args(), mapped, y);
+        throw new RuntimeException("unimplemented expression: " + ex);
+
+//        else if (ex instanceof Operation) {
+//
+//            Operation o = (Operation) ex;
+//
+//            //only NOT implemented currently
+//            if (!o.getOperatorTerm().equals(NOT)) {
+//                throw new RuntimeException("ellipsis operation " + expression + " not implemented");
+//            }
+//
+//            return matchNot(o.args(), mapped, y);
+//        }
     }
 
-    private static Term matchNot(Term[] oa, Map<Term, Term> mapped, Compound Y) {
-
-        if (oa.length!=1) {
-            throw new RuntimeException("only 1-arg not() implemented");
-        }
-
-        Term exclude = oa[0];
+    private static Product matchRemainingOneOrMore(ShortSet ySubsExcluded, Compound Y) {
 
         final int ysize = Y.size();
-        Term[] others = new Term[ysize-1];
+        Term[] others = new Term[ysize-ySubsExcluded.size()];
         int k = 0;
         for (int j = 0; j < ysize; j++) {
-            Term yt = Y.term(j);
-            if (!mapped.get(exclude).equals(yt))
+            if (!ySubsExcluded.contains((short) j)) {
+                Term yt = Y.term(j);
                 others[k++] = yt;
+            }
         }
         return Product.make(others);
     }
 
+//    private static Term matchNot(Term[] oa, Map<Term, Term> mapped, Compound Y) {
+//
+//        if (oa.length!=1) {
+//            throw new RuntimeException("only 1-arg not() implemented");
+//        }
+//
+//        Term exclude = oa[0];
+//
+//        final int ysize = Y.size();
+//        Term[] others = new Term[ysize-1];
+//        int k = 0;
+//        for (int j = 0; j < ysize; j++) {
+//            Term yt = Y.term(j);
+//            if (!mapped.get(exclude).equals(yt))
+//                others[k++] = yt;
+//        }
+//        return Product.make(others);
+//    }
+
     /**
-     * @param x a compound which contains one or more ellipsis terms
-     * @param y a compound which is being matched against x
-     *
-     * returns # of non-ellipsis arguments expected in match;
-     * if Y has too few terms for X's expression, returns -1 */
-    public static int countNumNonEllipsis(Compound x, Compound y) {
+     * @param x a compound which contains one or more ellipsis terms */
+    public static int countNumNonEllipsis(Compound x) {
         //TODO depending on the expression, determine the sufficient # of terms Y must contain
         final int xsize = x.size();
         int numNonVarArgs = xsize - Ellipsis.countEllipsisSubterms(x);
-        if (y.size() <= numNonVarArgs) //<= means it will not allow the ellipsis to match nothing. this can be made a per-ellipsis parameter to decide
-            return -1;
         return numNonVarArgs;
+    }
+
+    public boolean valid(int numNonVarArgs, int ysize) {
+
+        int collectable = ysize - numNonVarArgs;
+        Term exp = this.expression;
+
+        if (exp == PLUS)
+            return collectable > 0;
+        else if (exp == ASTERISK)
+            return collectable >= 0;
+
+        return false;
     }
 
 

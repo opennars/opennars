@@ -67,4 +67,12 @@ public interface TermContainer extends Comparable {
         return impossibleToMatch(c.structure());
     }
 
+    default Term[] toArray() {
+        Term[] x = new Term[size()];
+        for (int i = 0; i < size(); i++) {
+            x[i] = term(i);
+        }
+        return x;
+    }
+
 }

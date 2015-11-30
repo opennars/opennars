@@ -1,7 +1,6 @@
 package nars.nal.meta;
 
 import junit.framework.TestCase;
-import nars.$;
 import nars.Global;
 import nars.Narsese;
 import nars.Op;
@@ -13,6 +12,8 @@ import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
 
 import java.util.Set;
+
+import static nars.$.$;
 
 /**
  * Created by me on 7/7/15.
@@ -145,9 +146,9 @@ public class DerivationRuleTest extends TestCase {
     @Test public void testVarArg1() {
         String rule = "(%S --> %M), ((|, %S, %A..not(%S) ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
         TaskRule x = p.term("<" + rule + ">");
-        System.out.println(x);
+        //System.out.println(x);
         x = x.normalizeRule();
-        System.out.println(x);
+        //System.out.println(x);
 
 //        //test with the automatically added '%' prefixes for capital letters:
 //        String rule2 = "<(S --> M), ((|, S, A..not(S) ) --> M) |- ((|, A, ..) --> M), (Truth:DecomposePositiveNegativeNegative)>";
@@ -165,96 +166,192 @@ public class DerivationRuleTest extends TestCase {
     public interface EllipsisTest {
         Compound getPattern();
         Compound getResult();
+        String getEllipsis();
         Compound getMatchable(int arity);
 
-        default void test(int arity) {
+        default Set<Term> test(int arity, int repeats) {
             Set<Term> selectedFixed = Global.newHashSet(arity);
 
             Compound y = getMatchable(arity);
             Compound r = getResult();
 
-            int repeats = 3; //large enough to ensure all combinations are produced
+            Compound x = getPattern();
 
-            Compound p = getPattern();
+            final Term ellipsisTerm = $(getEllipsis());
 
-            for (int seed = 1; seed < arity * repeats /* enough chances to select all combinations */; seed++) {
+            for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
-                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(seed));
+                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(1+seed));
 
-                boolean matched = f.next(p, y, 16);
-                //System.out.println(f);
+                boolean matched = f.next(x, y, 16);
+                //System.out.println(x + "\t" + y + "\t" +f);
                 assertTrue(matched);
-                assertEquals(2, f.xy().size());
 
-                Term varArgs = f.xy().get($.$("%2..not(%1)"));
-                Term fixedTerm = f.xy().get($.$("%1"));
+                Term varArgs = f.xy().get(ellipsisTerm);
 
-
-                assertEquals(Op.PRODUCT, varArgs.op());
-                assertEquals(arity-1, varArgs.size());
+                assertEquals(f.xy() + " says " + varArgs.toString() + " product", Op.PRODUCT, varArgs.op());
+                assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
                 Set<Term> varArgTerms = Terms.toSortedSet(((Product) varArgs).terms());
-                assertEquals(arity-1, varArgTerms.size());
+                assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 
-                assertEquals(Atom.class, fixedTerm.getClass());
-                assertFalse(varArgTerms.contains(fixedTerm));
-
-                selectedFixed.add(fixedTerm);
+                testFurther(selectedFixed, f, varArgTerms);
 
                 //2. test substitution
                 Term s = r.substituted(f.xy());
                 System.out.println(s);
+
+                selectedFixed.add(s);
+
+
                 assertFalse(Variable.hasPatternVariable(s));
             }
 
-            /** should have iterated all */
-            assertEquals(arity, selectedFixed.size());
+
+            return selectedFixed;
 
         }
 
-        default void test(int arityMin, int arityMax) {
+        int getExpectedUniqueTerms(int arity);
+
+        default void testFurther(Set<Term> selectedFixed, FindSubst f, Set<Term> varArgTerms) {
+
+        }
+
+        default void test(int arityMin, int arityMax, int repeats) {
             for (int arity = arityMin; arity <= arityMax; arity++) {
-                test(arity);
+                test(arity, repeats);
             }
         }
     }
 
-    public static class Commutive1EllipsisTest implements EllipsisTest {
-        private final String prefix, suffix;
-        private final Compound p;
+    abstract public static class CommutiveEllipsisTest implements EllipsisTest {
+        protected final String prefix;
+        protected final String suffix;
+        protected final Compound p;
+        private final String ellipsis;
 
-        public Commutive1EllipsisTest(String prefix, String suffix) {
+        public CommutiveEllipsisTest(String ellipsisTerm, String prefix, String suffix) {
             this.prefix = prefix;
             this.suffix = suffix;
-            this.p = $.$(prefix + "%1, %2..not(%1)" + suffix);
+            this.ellipsis = ellipsisTerm;
+            this.p = getPattern(prefix, suffix);
         }
+
+        protected abstract Compound getPattern(String prefix, String suffix);
+
+
+        @Override public String getEllipsis() { return ellipsis; }
 
         @Override
         public Compound getPattern() {
             return p;
         }
 
-        @Override
-        public Compound getResult() {
-            return $.$("<" + prefix + "%2..not(%1), .." + suffix + " --> %1>");
-        }
 
         @Override
         public Compound getMatchable(int arity) {
-            return $.$(prefix + termSequence(arity) + suffix);
+            return $(prefix + DerivationRuleTest.termSequence(arity) + suffix);
+        }
+    }
+
+    public static class CommutiveEllipsisTest1 extends CommutiveEllipsisTest {
+
+        final static Term fixedTerm = $("%1");
+
+        public CommutiveEllipsisTest1(String ellipsisTerm, String[] openClose) {
+            super(ellipsisTerm, openClose[0], openClose[1]);
+        }
+
+        @Override
+        public Set<Term> test(int arity, int repeats) {
+            Set<Term> selectedFixed = super.test(arity, repeats);
+
+            /** should have iterated all */
+            assertEquals(arity, selectedFixed.size());
+            return selectedFixed;
+        }
+
+        @Override
+        public int getExpectedUniqueTerms(int arity) {
+            return arity-1;
+        }
+
+        @Override public void testFurther(Set<Term> selectedFixed, FindSubst f, Set<Term> varArgTerms) {
+            assertEquals(2, f.xy().size());
+            Term fixedTermValue = f.xy().get(fixedTerm);
+            assertEquals(Atom.class, fixedTermValue.getClass());
+            assertFalse(varArgTerms.contains(fixedTermValue));
+        }
+
+
+        public Compound getPattern(String prefix, String suffix) {
+            return $(prefix + "%1, " + getEllipsis() + suffix);
+        }
+
+        @Override
+        public Compound getResult() {
+            return $("<" + prefix + getEllipsis() + ", .." + suffix + " --> %1>");
         }
 
     }
 
+    /** for testing zero-or-more matcher */
+    public static class CommutiveEllipsisTest2 extends CommutiveEllipsisTest {
+
+        public CommutiveEllipsisTest2(String ellipsisTerm, String[] openClose) {
+            super(ellipsisTerm, openClose[0], openClose[1]);
+        }
+
+        @Override
+        public Set<Term> test(int arity, int repeats) {
+            Set<Term> s = super.test(arity, repeats);
+            Term the = s.iterator().next();
+            assertTrue( the.toString().substring(1).startsWith("Z"));
+            return s;
+        }
+
+        public Compound getPattern(String prefix, String suffix) {
+            return $(prefix + getEllipsis() + suffix);
+        }
+
+
+
+        @Override
+        public Compound getResult() {
+            return $(prefix + "Z, " + getEllipsis() + ", .." + suffix);
+        }
+
+        @Override
+        public int getExpectedUniqueTerms(int arity) {
+            return arity;
+        }
+    }
+
+
+    public static String[] p(String a, String b) { return new String[] { a, b}; };
+
+
     @Test public void testEllipsisMatchCommutive1() {
-
-
-        new Commutive1EllipsisTest("(|,", ")").test(2, 5);
-        new Commutive1EllipsisTest("{", "}").test(2, 5);
-        new Commutive1EllipsisTest("[", "]").test(2, 5);
-        new Commutive1EllipsisTest("(&&,", ")").test(3, 5);
-
-
+        for (String e : new String[]{"%2..+"}) {
+            for (String[] s : new String[][]{p("(|,", ")"), p("{", "}"), p("[", "]"), p("(&&,", ")")}) {
+                new CommutiveEllipsisTest1(e, s).test(2, 5, 4);
+            }
+        }
+    }
+    @Test public void testEllipsisMatchCommutive2() {
+        for (String e : new String[] { "%1..+" }) {
+            for (String[] s : new String[][] { p("{", "}"), p("[", "]"), p("(", ")") }) {
+                new CommutiveEllipsisTest2(e, s).test(1, 5, 0);
+            }
+        }
+    }
+    @Test public void testEllipsisMatchCommutive2_empty() {
+        for (String e : new String[] { "%1..*" }) {
+            for (String[] s : new String[][] { p("(", ")") }) {
+                new CommutiveEllipsisTest2(e, s).test(0, 2, 0);
+            }
+        }
     }
 
     static String termSequence(int arity) {

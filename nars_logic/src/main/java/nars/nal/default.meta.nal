@@ -138,12 +138,8 @@
 //// inheritance-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //if (S --> M) is the case, and ((|,S,A_1..n) --> M) is not the case, then ((|,A_1..n) --> M) is not the case, hence Truth:DecomposePositiveNegativeNegative
 
-//  (S --> M), ((|,S,A_1..n) --> M)    |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
-    (S --> M), ((|,S,A..not(S)) --> M) |- ((|,A,..) --> M),   (Truth:DecomposePositiveNegativeNegative)
-
-//  (S --> M), ((&,S,A_1..n) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
-    (S --> M), ((&,S,A..not(S)) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
-
+    (S --> M), ((|,S,A_1..n) --> M) |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
+    (S --> M), ((&,S,A_1..n) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
     (S --> M), ((S ~ P) --> M) |- (P --> M), (Truth:DecomposePositiveNegativePositive)
     (S --> M), ((P ~ S) --> M) |- (P --> M), (Truth:DecomposeNegativeNegativeNegative)
 

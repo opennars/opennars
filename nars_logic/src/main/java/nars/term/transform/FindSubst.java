@@ -1,5 +1,6 @@
 package nars.term.transform;
 
+import com.gs.collections.impl.factory.primitive.ShortSets;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -9,6 +10,7 @@ import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.nal4.Image;
+import nars.nal.nal4.Product;
 import nars.term.*;
 
 import java.util.Map;
@@ -36,7 +38,7 @@ public class FindSubst extends Subst {
         this(type, newDefaultMap(), newDefaultMap(), random);
     }
 
-    private static final Map<Term,Term> newDefaultMap() {
+    private static final Map<Term, Term> newDefaultMap() {
         return Global.newHashMap(0);
     }
 
@@ -65,7 +67,6 @@ public class FindSubst extends Subst {
     }
 
 
-
     private final void print(String prefix, Term a, Term b) {
         System.out.print(prefix);
         if (a != null)
@@ -87,11 +88,14 @@ public class FindSubst extends Subst {
 
     public abstract static class MatchOp extends PatternOp {
 
-        /** if match not successful, does not cause the execution to
-         * terminate but instead sets the frame's match flag */
+        /**
+         * if match not successful, does not cause the execution to
+         * terminate but instead sets the frame's match flag
+         */
         abstract public boolean match(Term f);
 
-        @Override public final boolean run(Frame ff) {
+        @Override
+        public final boolean run(Frame ff) {
 //            if (ff.power < 0) {
 //                return false;
 //            }
@@ -114,9 +118,10 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Term{" +  a +  '}';
+            return "Term{" + a + '}';
         }
     }
+
     public static final class TermSizeEquals extends MatchOp {
         public final int size;
 
@@ -134,6 +139,7 @@ public class FindSubst extends Subst {
             return "TermSizeEq{" + size + '}';
         }
     }
+
     public static final class TermVolumeMin extends MatchOp {
         public final int volume;
 
@@ -167,7 +173,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Structure{" + Integer.toString(bits,2) + '}';
+            return "Structure{" + Integer.toString(bits, 2) + '}';
         }
     }
 
@@ -216,8 +222,10 @@ public class FindSubst extends Subst {
         public MatchImageIndex(int index) {
             this.index = index;
         }
-        @Override public boolean match(Term t) {
-            return ((Image)t).relationIndex == index;
+
+        @Override
+        public boolean match(Term t) {
+            return ((Image) t).relationIndex == index;
         }
 
         @Override
@@ -248,7 +256,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "MatchTerm{" +  x +  '}';
+            return "MatchTerm{" + x + '}';
         }
     }
 
@@ -266,11 +274,12 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "MatchXVar{" +  x +  '}';
+            return "MatchXVar{" + x + '}';
         }
     }
 
-    @Deprecated public final static class MatchCompound extends PatternOp {
+    @Deprecated
+    public final static class MatchCompound extends PatternOp {
         public final Compound x;
 
         public MatchCompound(Compound c) {
@@ -279,12 +288,12 @@ public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            return ff.matchCompound(x, ((Compound)ff.y));
+            return ff.matchCompound(x, ((Compound) ff.y));
         }
 
         @Override
         public String toString() {
-            return "MatchCompound{" +  x +  '}';
+            return "MatchCompound{" + x + '}';
         }
     }
 
@@ -297,32 +306,44 @@ public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            return ff.matchPermute(x, ((Compound)ff.y));
+            return ff.matchPermute(x, ((Compound) ff.y));
         }
 
         @Override
         public String toString() {
-            return "MatchPermute{" +  x +  '}';
+            return "MatchPermute{" + x + '}';
         }
     }
 
-    /** push in to children */
+    /**
+     * push in to children
+     */
     public static final PatternOp Subterms = new PatternOp() {
 
-        @Override public String toString() {  return "Subterms";        }
+        @Override
+        public String toString() {
+            return "Subterms";
+        }
 
-        @Override public boolean run(Frame ff) {
-            ff.parent = (Compound)ff.y;
+        @Override
+        public boolean run(Frame ff) {
+            ff.parent = (Compound) ff.y;
             return true;
         }
     };
 
-    /** pop out to parent */
+    /**
+     * pop out to parent
+     */
     public static final PatternOp Superterm = new PatternOp() {
 
-        @Override public String toString() {  return "Superterm"; }
+        @Override
+        public String toString() {
+            return "Superterm";
+        }
 
-        @Override public boolean run(Frame ff) {
+        @Override
+        public boolean run(Frame ff) {
             ff.y = ff.parent;
             ff.parent = null;
             return true;
@@ -371,7 +392,9 @@ public class FindSubst extends Subst {
         }
     }
 
-    /** match 0th subterm (fast) */
+    /**
+     * match 0th subterm (fast)
+     */
     public static final class MatchTheSubterm extends PatternOp {
 
         private final Term x;
@@ -382,7 +405,7 @@ public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            return ff.match(x, ff.y.term(0) );
+            return ff.match(x, ff.y.term(0));
         }
 
         @Override
@@ -392,7 +415,9 @@ public class FindSubst extends Subst {
     }
 
 
-    /** find substitutions, returning the success state. */
+    /**
+     * find substitutions, returning the success state.
+     */
     @Override
     public final boolean next(final Term x, final Term y, int startPower) {
         this.power = startPower;
@@ -404,9 +429,12 @@ public class FindSubst extends Subst {
         return b;
     }
 
-    /** find substitutions using a pre-compiled term pattern */
+    /**
+     * find substitutions using a pre-compiled term pattern
+     */
     @Override
-    @Deprecated public final boolean next(final TermPattern x, final Term y, int startPower) {
+    @Deprecated
+    public final boolean next(final TermPattern x, final Term y, int startPower) {
 
 //        return next(x.term, y, startPower);
 
@@ -416,7 +444,7 @@ public class FindSubst extends Subst {
         this.y = y;
         for (PreCondition o : code) {
             if (!(o instanceof PatternOp)) continue;
-            if (!((PatternOp)o).run(this))
+            if (!((PatternOp) o).run(this))
                 return false;
         }
         return true;
@@ -425,21 +453,19 @@ public class FindSubst extends Subst {
 
     /**
      * recurses into the next sublevel of the term
-     * @return
-     *      if success: a POSITIVE next power value, after having subtracted the cost (>0)
-     *      if fail: the NEGATED next power value (<=0)
-     **
+     *
+     * @return if success: a POSITIVE next power value, after having subtracted the cost (>0)
+     * if fail: the NEGATED next power value (<=0)
+     * *
      * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
      */
     public final boolean match(final Term x, final Term y) {
 
         //if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
-          //  return power; //fail due to insufficient power
+        //  return power; //fail due to insufficient power
 
         //System.out.println("  m: " + x + " " + y + " " + power);
 
-        if ((--power) < 0)
-            return false;
 
         if (x.equals(y)) {
             /*if (x!=y)
@@ -450,13 +476,15 @@ public class FindSubst extends Subst {
             return true; //match
         }
 
-
-
+        if ((--power) < 0)
+            return false;
 
         final Op type1 = this.type;
         final Op xOp = x.op();
-        if (xOp == type1) {
-            return matchXvar((Variable)x, y);
+        boolean xEllipsis = (x instanceof Ellipsis); //HACK
+
+        if ((xOp == type1) && (!xEllipsis)) {
+            return matchXvar((Variable) x, y);
         }
 
         final Op yOp = y.op();
@@ -464,13 +492,12 @@ public class FindSubst extends Subst {
             return matchYvar(x, y);
         }
 
-        if (xOp.isVar()) {
+        if ((xOp.isVar()) && (!xEllipsis)) {
             if (yOp.isVar()) {
                 nextVarX((Variable) x, y);
                 return true;
             }
-        }
-        else {
+        } else {
             if ((xOp == yOp) && (x instanceof Compound)) {
                 return matchCompound((Compound) x, (Compound) y);
             }
@@ -484,8 +511,7 @@ public class FindSubst extends Subst {
 
         if (ySubst != null) {
             return match(x, ySubst);
-        }
-        else {
+        } else {
             yxPut((Variable) y, x);
             if (y instanceof CommonVariable) {
                 xyPut((Variable) y, x);
@@ -499,8 +525,7 @@ public class FindSubst extends Subst {
 
         if (xSubst != null) {
             return match(xSubst, y);
-        }
-        else {
+        } else {
             nextVarX(x, y);
             return true;
         }
@@ -519,17 +544,14 @@ public class FindSubst extends Subst {
 
         if (xOp == type) {
             putVarX(xVar, y);
-        }
-        else {
+        } else {
             final Op yOp = y.op();
             if (yOp == xOp) {
-                 putCommon(xVar, (Variable) y);
+                putCommon(xVar, (Variable) y);
             }
         }
 
     }
-
-
 
 
     /**
@@ -541,16 +563,15 @@ public class FindSubst extends Subst {
         int xsize = X.size();
 
         final int numNonVarArgs;
-        boolean hasVarArgs = Ellipsis.hasEllipsis(X);
-        if (!hasVarArgs) {
+        boolean hasEllipsis = Ellipsis.hasEllipsis(X);
+        if (!hasEllipsis) {
             /** must have same # subterms */
             if (xsize != Y.size()) {
                 return false;
             }
             numNonVarArgs = xsize;
         } else {
-            if ((numNonVarArgs = Ellipsis.countNumNonEllipsis(X, Y)) < 0)
-                return false;
+            numNonVarArgs = Ellipsis.countNumNonEllipsis(X);
         }
 
         //TODO see if there is a volume or structural constraint that can terminate early here
@@ -562,55 +583,71 @@ public class FindSubst extends Subst {
                 return false;
         }
 
-        switch (xsize) {
+        if (xsize == 0) return true;
 
-            case 0:
-                return true;  //match
-            case 1:
+
+        if (!hasEllipsis) {
+            if (xsize == 1)
                 return match(X.term(0), Y.term(0));
-            default:  /*if (xLen >= 1) {*/
+            else if (X.isCommutative()) {
+                return matchPermute(X, Y); //commutative, try permutations
+            } else {
+                return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+            }
+        } else {
 
-                if (!hasVarArgs) {
-                    if (X.isCommutative()) {
-                        return matchPermute(X, Y); //commutative, try permutations
-                    } else {
-                        return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                    }
+            Ellipsis e = null;
+            for (int i = 0; i < xsize; i++) {
+                Term xi = X.term(i);
+                if (xi instanceof Ellipsis) {
+                    if (e!=null)
+                        throw new RuntimeException("only one elipsis per term currently implemented");
+                    e = (Ellipsis) xi;
                 }
-                else {
-                    if (X.isCommutative()) {
+            }
 
-                        if ((numNonVarArgs == 1) && (xsize == 2)) {
-                            Variable v = null;
-                            Ellipsis e = null;
-                            for (int i = 0; i < xsize; i++) {
-                                Term xi = X.term(i);
-                                if (xi instanceof Ellipsis)
-                                    e = (Ellipsis)xi;
-                                else
-                                    v = (Variable)xi;
-                            }
 
-                            return matchEllipsisCombinations1(
-                                v, e,
-                                Y
-                            );
-                        }
+            final int ysize = Y.size();
 
-                    } else {
+            if (!e.valid(numNonVarArgs, ysize)) {
+                return false;
+            }
 
-                        //return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+            if (numNonVarArgs == 0) {
+                //all are to be matched
+                return matchEllipsisAll((Ellipsis) (X.term(0)), Y);
+            }
+
+            if (X.isCommutative()) {
+
+                if ((numNonVarArgs == 1) && (xsize == 2)) {
+
+                    Variable v = null;
+                    for (int i = 0; i < xsize; i++) {
+                        Term xi = X.term(i);
+                        if (!(xi instanceof Ellipsis))
+                            v = (Variable) xi;
                     }
 
-                    throw new RuntimeException("unimpl yet");
+                    return matchEllipsisCombinations1(
+                            v, e,
+                            Y
+                    );
+
                 }
+
+            } else {
+
+                //return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+            }
+
+            throw new RuntimeException("unimpl yet");
         }
     }
 
     /**
      * @param x the compound which is permuted/shuffled
      * @param y what is being compared against
-     *
      */
     public final boolean matchPermute(Compound x, Compound y) {
         //DequePool<ShuffledPermutations> pp = this.permutationPool;
@@ -665,9 +702,16 @@ public class FindSubst extends Subst {
 
     }
 
+    public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
+        putXY(Xellipsis, Product.make(Y.subterms()));
+        return true;
+    }
+
+
     /**
      * X will contain one ellipsis and one non-ellipsis Varaible term
      *
+     * @param Xvar the non-ellipsis variable
      */
     public final boolean matchEllipsisCombinations1(Variable Xvar, Ellipsis Xellipsis, Compound Y) {
 
@@ -686,13 +730,14 @@ public class FindSubst extends Subst {
 
         for (int i = 0; i < ysize; i++) {
 
-            Term y = Y.term( (shuffle++) % ysize );
+            int yi = (shuffle++) % ysize;
+            Term y = Y.term(yi);
 
             boolean matched = matchXvar(Xvar, y);
 
             if (matched /*|| power <= 0*/) {
                 //assign remaining variables to ellipsis
-                putXY(Xellipsis, Xellipsis.match(xy, Y));
+                putXY(Xellipsis, Xellipsis.match(ShortSets.immutable.of((short) yi), Y));
                 return true;
             }
 
@@ -702,10 +747,12 @@ public class FindSubst extends Subst {
 
             //pop/restore
             if (yxChanged) {
-                yxChanged = false; restore(savedYX, yx);
+                yxChanged = false;
+                restore(savedYX, yx);
             }
             if (xyChanged) {
-                xyChanged = false; restore(savedXY, xy);
+                xyChanged = false;
+                restore(savedXY, xy);
             }
 
             //ready to continue on next permutation
@@ -738,11 +785,11 @@ public class FindSubst extends Subst {
     }
 
     private final void yxPut(Variable y, Term x) {
-        yxChanged|= (yx.put(y, x)!=x);
+        yxChanged |= (yx.put(y, x) != x);
     }
 
     private final void xyPut(Variable x, Term y) {
-        xyChanged|= (xy.put(x, y)!=y);
+        xyChanged |= (xy.put(x, y) != y);
     }
 
 
@@ -787,7 +834,7 @@ public class FindSubst extends Subst {
 
             phase = !phase;
 
-        } while(processed < yLen);
+        } while (processed < yLen);
 
         //success
         return true;
@@ -803,15 +850,22 @@ public class FindSubst extends Subst {
         //TODO make a half resolve that only does xy?
 
         Term ret = t.substituted(s, xy);
-        if(ret != null) {
+        if (ret != null) {
             ret = ret.substituted(s, yx);
         }
         return ret;
 
     }
 
-    @Override public final Map<Term, Term> xy() { return xy; }
-    @Override public final Map<Term, Term> yx() { return yx; }
+    @Override
+    public final Map<Term, Term> xy() {
+        return xy;
+    }
+
+    @Override
+    public final Map<Term, Term> yx() {
+        return yx;
+    }
 
     //    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
 //        public ShuffledPermutationsDequePool() {
