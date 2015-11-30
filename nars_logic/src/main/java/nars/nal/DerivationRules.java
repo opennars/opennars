@@ -134,6 +134,7 @@ public class DerivationRules extends FastList<TaskRule> {
         }
 
         ret = ret.replace("A..+","%A..+"); //add var pattern manually to ellipsis
+        ret = ret.replace("B..+","%B..+"); //add var pattern manually to ellipsis
 
         return ret.replace("\n", "");/*.replace("A_1..n","\"A_1..n\"")*/ //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }

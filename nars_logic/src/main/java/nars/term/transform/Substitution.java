@@ -105,7 +105,10 @@ public class Substitution implements Function<Compound,Term> {
                 final int es = expansion.length;
 
                 for (int e = 0; e < es; ) {
-                    sub[j++] = expansion[e++];
+                    Term xx = expansion[e++];
+                    if (xx==Ellipsis.Expand)
+                        continue; //ignore any '..' which may be present in the expansion
+                    sub[j++] = xx;
                 }
             } else if (t == Ellipsis.Expand) {
                 continue; //skip

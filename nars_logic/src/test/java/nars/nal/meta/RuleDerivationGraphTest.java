@@ -16,6 +16,13 @@ import static org.junit.Assert.assertEquals;
 public class RuleDerivationGraphTest {
 
 
+
+
+    @Test public void testRuleTrie() {
+        RuleTrie x = new RuleTrie(Deriver.standard);
+        x.printSummary();
+    }
+
     @Test
     public void testRuleStatistics() {
         //SimpleDeriver d = new SimpleDeriver(Deriver.standard);
@@ -64,11 +71,6 @@ public class RuleDerivationGraphTest {
     }
 
 
-
-    @Test public void testRuleTrie() {
-        RuleTrie x = new RuleTrie(Deriver.standard);
-        x.printSummary();
-    }
 
     @Test public void testPostconditionSingletons() {
 //        System.out.println(PostCondition.postconditions.size() + " unique postconditions " + PostCondition.totalPostconditionsRequested);

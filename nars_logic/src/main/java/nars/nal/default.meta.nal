@@ -309,8 +309,8 @@
 
     (S ==> M), ((||,S,A..+) ==> M) |- ((||,A,..) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     (S ==> M), ((&&,S,A..+) ==> M) |- ((&&,A,..) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)
-    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromBelief)
-    (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
+    (M ==> S), (M ==> (&&,S,A..+)) |- (M ==> (&&,A,..)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromBelief)
+    (M ==> S), (M ==> (||,S,A..+)) |- (M ==> (||,A,..)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
@@ -339,27 +339,28 @@
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
 
-    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromBelief)
-    S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
+    S, (&&,S,A..+) |- (&&,A,..), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromBelief)
+    S, (||,S,A..+) |- (||,A,..), (Truth:DecomposeNegativePositivePositive)
 
 //Additional for negation: https://groups.google.com/forum/#!topic/open-nars/g-7r0jjq2Vc
 
-    S, (&&,(--,S),A_1..n) |- (&&,A_1..n), (Truth:DecomposeNegativeNegativeNegative, Order:ForAllSame, SequenceIntervals:FromBelief)
-    S, (||,(--,S),A_1..n) |- (||,A_1..n), (Truth:DecomposePositivePositivePositive)
+    S, (&&,(--,S),A..+) |- (&&,A,..), (Truth:DecomposeNegativeNegativeNegative, Order:ForAllSame, SequenceIntervals:FromBelief)
+    S, (||,(--,S),A..+) |- (||,A,..), (Truth:DecomposePositivePositivePositive)
 
 //// multi-conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Inference about the pre/postconditions
 
-    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
+    Y, ((&&,X,A..+) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A,..) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
 
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
 
 //the first rule does not have Order:ForAllSame because it would be invalid, see: https://groups.google.com/forum/#!topic/open-nars/r5UJo64Qhrk
-    ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
-    ((&&,A_1..n) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
-    ((&&,A_1..n) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
-    ((&&,A_1..n) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
+    ((&&,A..+, ..) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A) ==> C), (Truth:Induction)
+    ((&&,A..+, ..) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A) =|> C), (Truth:Induction)
+    ((&&,A..+, ..) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A) =/> C), (Truth:Induction)
+    ((&&,A..+, ..) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A) =\> C), (Truth:Induction)
+
     ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromTask)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
     ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromTask)
@@ -402,14 +403,14 @@
     (A ==> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) ==> ($X --> P)), (Truth:Induction),
                                                              (&&,(A ==> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
 
-    (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A_1..n)), (Truth:Induction),
-                                                         (&&,(#Y --> S), (#Y --> P), A_1..n), (Truth:Intersection)
+    (&&,(M --> P), A..+), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A)), (Truth:Induction),
+                                                       (&&,(#Y --> S), (#Y --> P), A), (Truth:Intersection)
 
     (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction),
                                                                              (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection)
 
-    (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                         (&&, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
+    (&&,(P --> M), A..+), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A)), (Truth:Abduction),
+                                                         (&&, (S --> #Y), (P --> #Y), A), (Truth:Intersection)
 
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
@@ -418,7 +419,7 @@
 
 //conditional abduction by dependent variable
 
-    ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A_1..n) ==> Z) |- (A --> B), (Truth:Abduction)
+    ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),Z..+) ==> Z) |- (A --> B), (Truth:Abduction)
     ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R)) ==> Z) |- (A --> B), (Truth:Abduction)
 
 // conditional deduction "An inverse inference has been implemented as a form of deduction" https://code.google.com/p/open-nars/issues/detail?id=40&can=1
@@ -442,8 +443,8 @@
 
 //precondition combiner inference rule (variable_unification6):
 
-    ((&&,C,A_1..n) ==> Z), ((&&,C,B_1..m) ==> Z) |- ((&&,A_1..n) ==> (&&,B_1..m)), (Truth:Induction)
-    ((&&,C,A_1..n) ==> Z), ((&&,C,B_1..m) ==> Z) |- ((&&,B_1..m) ==> (&&,A_1..n)), (Truth:Induction)
+    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Induction)
+    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,B,..) ==> (&&,A,..)), (Truth:Induction)
     (Z ==> (&&,C,A_1..n)), (Z ==> (&&,C,B_1..m)) |- ((&&,A_1..n) ==> (&&,B_1..m)), (Truth:Abduction)
     (Z ==> (&&,C,A_1..n)), (Z ==> (&&,C,B_1..m)) |- ((&&,B_1..m) ==> (&&,A_1..n)), (Truth:Abduction)
 

@@ -481,10 +481,7 @@ public class FindSubst extends Subst {
 
         final Op type1 = this.type;
         final Op xOp = x.op();
-        boolean xEllipsis = (x instanceof Ellipsis); //HACK
-        if (xEllipsis) {
-            System.out.println("elipsis " + x + " <<>> " + y);
-        }
+        //boolean xEllipsis = (x instanceof Ellipsis); //HACK
 
         if (xOp == type1)  {
             //if (!xEllipsis)
@@ -601,16 +598,7 @@ public class FindSubst extends Subst {
             }
         } else {
 
-            Ellipsis e = null;
-            for (int i = 0; i < xsize; i++) {
-                Term xi = X.term(i);
-                if (xi instanceof Ellipsis) {
-                    if (e!=null)
-                        throw new RuntimeException("only one elipsis per term currently implemented");
-                    e = (Ellipsis) xi;
-                }
-            }
-
+            Ellipsis e = Ellipsis.getFirstEllipsis(X);
 
             final int ysize = Y.size();
 
@@ -620,23 +608,15 @@ public class FindSubst extends Subst {
 
             if (numNonVarArgs == 0) {
                 //all are to be matched
-                return matchEllipsisAll((Ellipsis) (X.term(0)), Y);
+                return matchEllipsisAll(e, Y);
             }
 
             if (X.isCommutative()) {
 
                 if ((numNonVarArgs == 1) && (xsize == 2)) {
 
-                    Variable v = null;
-                    for (int i = 0; i < xsize; i++) {
-                        Term xi = X.term(i);
-                        if (!(xi instanceof Ellipsis))
-                            v = (Variable) xi;
-                    }
-
                     return matchEllipsisCombinations1(
-                            v, e,
-                            Y
+                        Ellipsis.getFirstNonEllipsis(X), e,    Y
                     );
 
                 }
@@ -708,7 +688,7 @@ public class FindSubst extends Subst {
     }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
-        putXY(Xellipsis, Product.make(Y.subterms()));
+        putXY(Xellipsis, Product.make(Y.subterms())); //this may capture a '..' expansion but it will not be inlined on substitution
         return true;
     }
 
@@ -716,9 +696,9 @@ public class FindSubst extends Subst {
     /**
      * X will contain one ellipsis and one non-ellipsis Varaible term
      *
-     * @param Xvar the non-ellipsis variable
+     * @param X the non-ellipsis variable
      */
-    public final boolean matchEllipsisCombinations1(Variable Xvar, Ellipsis Xellipsis, Compound Y) {
+    public final boolean matchEllipsisCombinations1(Term X, Ellipsis Xellipsis, Compound Y) {
 
         final Map<Term, Term> xy = this.xy; //local copy on stack
         final Map<Term, Term> yx = this.yx; //local copy on stack
@@ -738,7 +718,7 @@ public class FindSubst extends Subst {
             int yi = (shuffle++) % ysize;
             Term y = Y.term(yi);
 
-            boolean matched = matchXvar(Xvar, y);
+            boolean matched = match(X, y);
 
             if (matched /*|| power <= 0*/) {
                 //assign remaining variables to ellipsis

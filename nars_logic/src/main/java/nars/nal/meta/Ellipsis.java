@@ -3,6 +3,7 @@ package nars.nal.meta;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.InvisibleAtom;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -29,7 +30,9 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
      *    (|, %A, ..)
      *
      *  */
-    public final static Atom Expand = Atom.the("..");
+    public final static InvisibleAtom Expand = new InvisibleAtom("..") {
+
+    };
 
     /** 1 or more */
     public static Term PLUS = Atom.the("+");
@@ -72,16 +75,24 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     public static int countEllipsisSubterms(Compound x) {
         final int xs = x.size();
         int n = 0;
-        for (int i = 0; i < xs; i++)
-            if (x.term(i) instanceof Ellipsis) n++;
+        for (int i = 0; i < xs; i++) {
+            Term xt = x.term(i);
+            if (xt instanceof Ellipsis)
+                n++;
+        }
         return n;
     }
 
     public static int countNonEllipsisSubterms(Compound x) {
         final int xs = x.size();
         int n = xs;
-        for (int i = 0; i < xs; i++)
-            if (x.term(i) instanceof Ellipsis) n--;
+        for (int i = 0; i < xs; i++) {
+            Term xt = x.term(i);
+
+            if ((xt instanceof Ellipsis)
+             || (xt==Ellipsis.Expand)) //ignore expansion placeholders
+                n--;
+        }
         return n;
     }
 
@@ -146,7 +157,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     public static int countNumNonEllipsis(Compound x) {
         //TODO depending on the expression, determine the sufficient # of terms Y must contain
         final int xsize = x.size();
-        int numNonVarArgs = xsize - Ellipsis.countEllipsisSubterms(x);
+        int numNonVarArgs = Ellipsis.countNonEllipsisSubterms(x);
         return numNonVarArgs;
     }
 
@@ -161,6 +172,27 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
             return collectable >= 0;
 
         return false;
+    }
+
+    public static Ellipsis getFirstEllipsis(Compound X) {
+        final int xsize = X.size();
+        for (int i = 0; i < xsize; i++) {
+            Term xi = X.term(i);
+            if (xi instanceof Ellipsis) {
+                return (Ellipsis) xi;
+            }
+        }
+        return null;
+    }
+    public static Term getFirstNonEllipsis(Compound X) {
+        final int xsize = X.size();
+        for (int i = 0; i < xsize; i++) {
+            Term xi = X.term(i);
+            if (!(xi instanceof Ellipsis)) {
+                return xi;
+            }
+        }
+        return null;
     }
 
 

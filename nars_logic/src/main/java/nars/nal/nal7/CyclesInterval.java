@@ -2,12 +2,8 @@ package nars.nal.nal7;
 
 import nars.Op;
 import nars.term.Atom;
-import nars.term.MutableAtomic;
-import nars.term.Term;
-import nars.term.transform.Substitution;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Interval represented directly as a measure of cycles encoded as an integer in some # of bits
@@ -21,26 +17,11 @@ import java.util.Map;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-final public class CyclesInterval extends MutableAtomic implements Interval {
+final public class CyclesInterval extends InvisibleAtom implements Interval {
 
     final static CyclesInterval zero = new CyclesInterval(0);
 
     final int cyc;
-
-    @Override
-    public int varIndep() {
-        return 0;
-    }
-
-    @Override
-    public int varDep() {
-        return 0;
-    }
-
-    @Override
-    public int varQuery() {
-        return 0;
-    }
 
     public static CyclesInterval make(int numCycles) {
         if (numCycles == 0) return zero;
@@ -64,6 +45,15 @@ final public class CyclesInterval extends MutableAtomic implements Interval {
         return false;
     }
 
+    @Override
+    public final void append(Appendable output, boolean pretty) throws IOException {
+        output.append('/').append(Long.toString(cyc));//.append('/');
+    }
+
+    public final int duration() {
+        return cyc;
+    }
+
     //    public static CyclesInterval intervalLog(long mag) {
 //        long time = Math.round( LogInterval.time(mag, 5 /* memory.duration()*/) );
 //        return new CyclesInterval(time, 0);
@@ -76,89 +66,14 @@ final public class CyclesInterval extends MutableAtomic implements Interval {
 //        return Longs.toByteArray(numCycles);
 //    }
 
-    @Override
-    public final int duration() {
-        return cyc;
-    }
 
-
-    @Override
-    public final int structure() { return 0;     }
-
-
-    @Override
-    public final Op op() {
-        return Op.INTERVAL;
-    }
-
-//    @Override
+    //    @Override
 //    public final Term clone() {
 //        return this; /*new CyclesInterval(cyc, duration); */
 //    }
 
-    @Override
-    public final void append(Appendable output, boolean pretty) throws IOException {
-        output.append('/').append(Long.toString(cyc));//.append('/');
-    }
 
-
-    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    @Override
-    public StringBuilder toStringBuilder(final boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            append(sb, pretty);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb;
-    }
-
-    @Override
-    public Term substituted(Map<Term, Term> subs) {
-        return this;
-    }
-    @Override
-    public final Term substituted(Substitution s) {
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(false).toString();
-    }
-
-    @Override
-    public boolean hasVar() {
-        return false;
-    }
-
-    @Override
-    public int vars() {
-        return 0;
-    }
-
-    @Override
-    public boolean hasVarIndep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarDep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarQuery() {
-        return false;
-    }
-
-    @Override
-    public int complexity() {
-        return 0;
-    }
-
-//    /** filter any zero CyclesIntervals from the list and return a new one */
+    //    /** filter any zero CyclesIntervals from the list and return a new one */
 //    public static Term[] removeZeros(final Term[] relterms) {
 //        int zeros = 0;
 //        for (Term x : relterms)
