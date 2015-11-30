@@ -482,9 +482,14 @@ public class FindSubst extends Subst {
         final Op type1 = this.type;
         final Op xOp = x.op();
         boolean xEllipsis = (x instanceof Ellipsis); //HACK
+        if (xEllipsis) {
+            System.out.println("elipsis " + x + " <<>> " + y);
+        }
 
-        if ((xOp == type1) && (!xEllipsis)) {
+        if (xOp == type1)  {
+            //if (!xEllipsis)
             return matchXvar((Variable) x, y);
+            //else {}
         }
 
         final Op yOp = y.op();
@@ -492,7 +497,7 @@ public class FindSubst extends Subst {
             return matchYvar(x, y);
         }
 
-        if ((xOp.isVar()) && (!xEllipsis)) {
+        if (xOp.isVar()) {
             if (yOp.isVar()) {
                 nextVarX((Variable) x, y);
                 return true;

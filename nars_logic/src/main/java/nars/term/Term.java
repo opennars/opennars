@@ -181,6 +181,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     Term substituted(Substitution s);
 
     default Term substituted(Substitution s, final Map<Term, Term> subs) {
+        if (subs.isEmpty()) return this;
         return substituted(s.reset(subs));
     }
 

@@ -450,9 +450,11 @@ abstract public class Texts {
             if (i != -1) return i;
         } else if (s.length() == 2) {
             int dig1 = i(s.charAt(1));
-            int dig10 = i(s.charAt(0));
-            if ((dig1 != -1) && (dig10 != -1))
-                return dig10 * 10 + dig1;
+            if (dig1!=-1) {
+                int dig10 = i(s.charAt(0));
+                if (dig10 != -1)
+                    return dig10 * 10 + dig1;
+            }
         }
         return Integer.parseInt(s);
     }

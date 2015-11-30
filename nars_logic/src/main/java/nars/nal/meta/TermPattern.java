@@ -94,7 +94,7 @@ public class TermPattern {
             if (constant)
                 code.add(new FindSubst.TermEquals(t));
             else {
-                if (t.op() == type) {
+                if ((t.op() == type) && (!(t instanceof Ellipsis) /* HACK */)) {
                     code.add(new FindSubst.MatchXVar((Variable)t));
                 }
                 else {
@@ -117,7 +117,7 @@ public class TermPattern {
         code.add(new FindSubst.TermOpEquals(c.op())); //interference with (task,belief) pair term
 
         //TODO varargs with greaterEqualSize etc
-        code.add(new FindSubst.TermSizeEquals(c.size()));
+        //code.add(new FindSubst.TermSizeEquals(c.size()));
 
         boolean permute = c.isCommutative() && (s > 1);
 
@@ -140,13 +140,15 @@ public class TermPattern {
                 //code.add(new FindSubst.TermVolumeMin(c.volume()-1));
 
                 code.add(new FindSubst.TermStructure(type, c.structure()));
+                code.add(new FindSubst.MatchCompound(c));
 
-                if (permute) {
-                    code.add(new FindSubst.MatchPermute(c));
-                }
-                else {
-                    compileNonCommutative(code, c);
-                }
+
+//                if (permute) {
+//                    code.add(new FindSubst.MatchPermute(c));
+//                }
+//                else {
+//                    compileNonCommutative(code, c);
+//                }
 
             break;
         }

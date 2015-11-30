@@ -27,7 +27,7 @@ public class DerivationRules extends FastList<TaskRule> {
     private static final Pattern conjOperatorPattern = Pattern.compile("&&", Pattern.LITERAL);
 
     @Deprecated
-    public static int maxVarArgsToMatch = 4; //originally 5 but as few as 2 can allow tests to pass
+    public static int maxVarArgsToMatch = 3; //originally 5 but as few as 2 can allow tests to pass
 
     static final Narsese parser = Narsese.the();
 
@@ -132,6 +132,8 @@ public class DerivationRules extends FastList<TaskRule> {
         while (ret.contains("  ")) {
             ret = twoSpacePattern.matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
         }
+
+        ret = ret.replace("A..+","%A..+"); //add var pattern manually to ellipsis
 
         return ret.replace("\n", "");/*.replace("A_1..n","\"A_1..n\"")*/ //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
@@ -278,8 +280,7 @@ public class DerivationRules extends FastList<TaskRule> {
         expanded.forEach(s -> {
             try {
 
-
-                final TaskRule rUnnorm = parser.taskRule(s);
+                final TaskRule rUnnorm = parser.term(s);
 
                 final TaskRule rNorm = rUnnorm.normalizeRule();
                 AcceptRule(ur, s, rNorm);
@@ -291,6 +292,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
             } catch (Exception ex) {
                 System.err.println("invalid TaskRule:  " + s + " (" + ex + ')');
+                //ex.printStackTrace();
                 //ex.printStackTrace();//ex.printStackTrace();
             }
         });

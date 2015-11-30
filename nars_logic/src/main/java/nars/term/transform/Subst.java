@@ -29,7 +29,7 @@ public abstract class Subst extends Frame {
     public abstract Term resolve(Term t, Substitution s);
 
     //TODO hide these maps and allow access to their data through specific methods, because these need not be implemented as Map's
-    abstract @Deprecated Map<Term,Term> xy();
+    public abstract @Deprecated Map<Term,Term> xy();
     abstract @Deprecated Map<Term,Term> yx();
 
 }

@@ -2,7 +2,6 @@ package nars;
 
 import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
-import com.github.fge.grappa.buffers.CharSequenceInputBuffer;
 import com.github.fge.grappa.matchers.MatcherType;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
@@ -55,7 +54,7 @@ public class Narsese extends BaseParser<Object>  {
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());
     private final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     private final ParseRunner singleTermParser = new ListeningParseRunner3(Term());
-    private final ParseRunner singleTaskRuleParser = new ListeningParseRunner3(TaskRule());
+    //private final ParseRunner singleTaskRuleParser = new ListeningParseRunner3(TaskRule());
 
 
 
@@ -486,12 +485,6 @@ public class Narsese extends BaseParser<Object>  {
         );
     }
 
-    public TaskRule taskRule(String input) {
-        Term x = termRaw(input, singleTaskRuleParser);
-        if (x==null) return null;
-
-        return x.normalizeDestructively();
-    }
 
 
     public final static class ValidAtomCharMatcher extends AbstractMatcher
@@ -1045,6 +1038,13 @@ public class Narsese extends BaseParser<Object>  {
         return x.normalizeDestructively();
     }
 
+//    public TaskRule taskRule(String input) {
+//        Term x = termRaw(input, singleTaskRuleParser);
+//        if (x==null) return null;
+//
+//        return x.normalizeDestructively();
+//    }
+
 
     public <T extends Term> T termRaw(String input) throws NarseseException {
         return termRaw(input, singleTermParser);
@@ -1083,7 +1083,7 @@ public class Narsese extends BaseParser<Object>  {
 
     public static NarseseException newParseException(String input, ParsingResult r, Exception e) {
 
-        CharSequenceInputBuffer ib = (CharSequenceInputBuffer) r.getInputBuffer();
+        //CharSequenceInputBuffer ib = (CharSequenceInputBuffer) r.getInputBuffer();
 
 
         //if (!r.isSuccess()) {

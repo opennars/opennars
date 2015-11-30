@@ -37,6 +37,7 @@ public class TrieDeriver extends RuleTrie {
                 return;
         }
 
+
         RuleMatch subMatch = getSubMatch();
 
         for (RuleBranch s : r.children) {
