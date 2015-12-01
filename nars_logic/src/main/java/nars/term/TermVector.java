@@ -1,6 +1,7 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.util.data.Util;
 
 import java.io.Serializable;
@@ -24,6 +25,15 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
      * TODO make not public
      */
     public T[] term;
+
+
+    @Override public Term[] toArray() {
+        return term;
+    }
+
+    @Override public final Term[] toArray(IntObjectPredicate<Term> filter) {
+        return Terms.filter(term, filter);
+    }
 
 
     /**

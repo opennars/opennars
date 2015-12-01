@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 10/10/15.
  */
-public class InfiniClusterTest {
+@Ignore public class InfiniClusterTest {
 
     public synchronized static NAR newClusterPeer(Supplier<Cache<Term,byte[]>> s, int port) throws IOException {
         return new Default(

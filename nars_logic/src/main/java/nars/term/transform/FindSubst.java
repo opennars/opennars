@@ -1,5 +1,6 @@
 package nars.term.transform;
 
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.impl.factory.primitive.ShortSets;
 import nars.Global;
 import nars.Memory;
@@ -10,7 +11,6 @@ import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.nal4.Image;
-import nars.nal.nal4.Product;
 import nars.term.*;
 
 import java.util.Map;
@@ -611,19 +611,17 @@ public class FindSubst extends Subst {
                 return matchEllipsisAll(e, Y);
             }
 
-            if (X.isCommutative()) {
-
-                if ((numNonVarArgs == 1) && (xsize == 2)) {
-
+            if ((numNonVarArgs == 1) && (xsize == 2)) {
+                Term n = Ellipsis.getFirstNonEllipsis(X);
+                if (X.isCommutative()) {
                     return matchEllipsisCombinations1(
-                        Ellipsis.getFirstNonEllipsis(X), e,    Y
+                        n, e, Y
                     );
-
+                } else {
+                    return matchEllipsisTerms(
+                        e, Y, (i, t) -> t!=n
+                    );
                 }
-
-            } else {
-
-                //return matchSequence(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
             }
 
             throw new RuntimeException("unimpl yet");
@@ -688,12 +686,13 @@ public class FindSubst extends Subst {
     }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
-        putXY(Xellipsis, Product.make(Y.subterms())); //this may capture a '..' expansion but it will not be inlined on substitution
+        putXY(Xellipsis, Ellipsis.matchedSubterms(Y.subterms()));
         return true;
     }
 
 
     /**
+     * commutive compound match
      * X will contain one ellipsis and one non-ellipsis Varaible term
      *
      * @param X the non-ellipsis variable
@@ -748,6 +747,17 @@ public class FindSubst extends Subst {
         //finished
         return false;
 
+    }
+    /**
+     * non-commutive compound match
+     * X will contain one ellipsis and one non-ellipsis Varaible term
+     *
+     * @param X the non-ellipsis variable
+     *
+     */
+    public final boolean matchEllipsisTerms(Ellipsis Xellipsis, Compound Y, IntObjectPredicate<Term> allow) {
+        putXY(Xellipsis, Ellipsis.matchedSubterms(Y.subterms(), allow));
+        return true;
     }
 
 

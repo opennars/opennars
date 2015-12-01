@@ -1,5 +1,6 @@
 package nars.term;
 
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal1.Inheritance;
@@ -22,6 +23,8 @@ import nars.util.data.sorted.SortedList;
 
 import java.util.*;
 import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 
 /**
  * Static utility class for static methods related to Terms
@@ -874,4 +877,27 @@ public class Terms {
 
         return arr;
     }
+
+    public static Term[] filter(Term[] input, IntObjectPredicate<Term> filter) {
+
+        int s = input.length;
+
+        List<Term> l = Global.newArrayList(s);
+
+        for (int i = 0; i < s; i++) {
+            Term t = input[i];
+            if (filter.accept(i, t))
+                l.add(t);
+        }
+        if (l.isEmpty()) return Terms.EmptyTermArray;
+        return l.toArray(new Term[l.size()]);
+    }
+
+    public static Term[] filter(Term[] input, IntPredicate filter) {
+        return filter(input, (i, t) -> filter.test(i) );
+    }
+    public static Term[] filter(Term[] input, Predicate<Term> filter) {
+        return filter(input, (i, t) -> filter.test(t) );
+    }
+
 }

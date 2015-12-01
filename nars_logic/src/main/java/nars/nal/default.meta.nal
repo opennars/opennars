@@ -138,13 +138,13 @@
 //// inheritance-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //if (S --> M) is the case, and ((|,S,A_1..n) --> M) is not the case, then ((|,A_1..n) --> M) is not the case, hence Truth:DecomposePositiveNegativeNegative
 
-    (S --> M), ((|,S,A_1..n) --> M) |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
-    (S --> M), ((&,S,A_1..n) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
+    (S --> M), ((|,S,A..+) --> M) |- ((|,A,..) --> M), (Truth:DecomposePositiveNegativeNegative)
+    (S --> M), ((&,S,A..+) --> M) |- ((&,A,..) --> M), (Truth:DecomposeNegativePositivePositive)
     (S --> M), ((S ~ P) --> M) |- (P --> M), (Truth:DecomposePositiveNegativePositive)
     (S --> M), ((P ~ S) --> M) |- (P --> M), (Truth:DecomposeNegativeNegativeNegative)
 
-    (M --> S), (M --> (&,S,A_1..n)) |- (M --> (&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M --> S), (M --> (|,S,A_1..n)) |- (M --> (|,A_1..n)), (Truth:DecomposeNegativePositivePositive)
+    (M --> S), (M --> (&,S,A..+)) |- (M --> (&,A,..)), (Truth:DecomposePositiveNegativeNegative)
+    (M --> S), (M --> (|,S,A..+)) |- (M --> (|,A,..)), (Truth:DecomposeNegativePositivePositive)
     (M --> S), (M --> (S - P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
     (M --> S), (M --> (P - S)) |- (M --> P), (Truth:DecomposeNegativeNegativeNegative)
 
@@ -165,15 +165,15 @@
 
 //Set element takeout:
 
-    (C --> {A_1..n}), C |- (C --> {A_i}), (Truth:StructuralDeduction)
-    (C --> [A_1..n]), C |- (C --> [A_i]), (Truth:StructuralDeduction)
-    ({A_1..n} --> C), C |- ({A_i} --> C), (Truth:StructuralDeduction)
-    ([A_1..n] --> C), C |- ([A_i] --> C), (Truth:StructuralDeduction)
+    (C --> {X,A..+}), C |- (C --> {X}), (Truth:StructuralDeduction)
+    (C --> [X,A..+]), C |- (C --> [X]), (Truth:StructuralDeduction)
+    ({X,A..+} --> C), C |- ({X} --> C), (Truth:StructuralDeduction)
+    ([X,A..+] --> C), C |- ([X] --> C), (Truth:StructuralDeduction)
 
 //NAL3 single premise inference:
 
-    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
-    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
+    ((|,X,A..+) --> M), M |- (X --> M), (Truth:StructuralDeduction)
+    (M --> (&,X,A..+)), M |- (M --> X), (Truth:StructuralDeduction)
 
     ((B ~ G) --> S), S |- (B --> S), (Truth:StructuralDeduction)
     (R --> (B - S)), R |- (R --> B), (Truth:StructuralDeduction)
@@ -333,8 +333,8 @@
 
 //// conjunction decompose
 
-    (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong, Order:ForAllSame)
-    (&/,B,A_1..n), B, task("!") |- (&/,A_1..n), (Desire:Strong, SequenceIntervals:FromTask)
+    (&&,B,A..+), B |- B, (Truth:StructuralDeduction, Desire:StructuralStrong, Order:ForAllSame)
+    (&/,B,A..+), B, task("!") |- (&/,A,..), (Desire:Strong, SequenceIntervals:FromTask)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
@@ -415,11 +415,11 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,A, A_1..n), B, substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromTask)
+    (&&, X, A..+), B, substitute_if_unifies("#",X,B) |- (&&,A,..), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromTask)
 
 //conditional abduction by dependent variable
 
-    ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),Z..+) ==> Z) |- (A --> B), (Truth:Abduction)
+    ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A_1..n) ==> Z) |- (A --> B), (Truth:Abduction)
     ((A --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R)) ==> Z) |- (A --> B), (Truth:Abduction)
 
 // conditional deduction "An inverse inference has been implemented as a form of deduction" https://code.google.com/p/open-nars/issues/detail?id=40&can=1
@@ -445,8 +445,8 @@
 
     ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Induction)
     ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,B,..) ==> (&&,A,..)), (Truth:Induction)
-    (Z ==> (&&,C,A_1..n)), (Z ==> (&&,C,B_1..m)) |- ((&&,A_1..n) ==> (&&,B_1..m)), (Truth:Abduction)
-    (Z ==> (&&,C,A_1..n)), (Z ==> (&&,C,B_1..m)) |- ((&&,B_1..m) ==> (&&,A_1..n)), (Truth:Abduction)
+    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Abduction)
+    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,B,..) ==> (&&,A,..)), (Truth:Abduction)
 
 //second level variable introduction
 
@@ -507,8 +507,8 @@
 
 ////composition on one side of aay w statement:
 
-    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    (W --> (|,B,A..+)), (W --> B), task("?") |- (W --> (|,B,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((&,B,A..+) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
     (W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
     ((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgment)

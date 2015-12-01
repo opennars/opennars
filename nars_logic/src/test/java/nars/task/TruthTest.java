@@ -1,4 +1,4 @@
-package nars.core;
+package nars.task;
 
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;

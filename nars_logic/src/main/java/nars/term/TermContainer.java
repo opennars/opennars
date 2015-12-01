@@ -1,6 +1,11 @@
 package nars.term;
 
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.Global;
 import nars.Op;
+
+import java.util.List;
+
 
 /**
  * Methods common to both Term and Subterms
@@ -67,12 +72,28 @@ public interface TermContainer extends Comparable {
         return impossibleToMatch(c.structure());
     }
 
+    /** this is not required to produce a cloned copy; so be careful with the result.
+     *  ex: TermVector's implementation will provide a reference to its internal array
+     */
     default Term[] toArray() {
-        Term[] x = new Term[size()];
-        for (int i = 0; i < size(); i++) {
+        int s = size();
+        Term[] x = new Term[s];
+        for (int i = 0; i < s; i++) {
             x[i] = term(i);
         }
         return x;
+    }
+
+    default Term[] toArray(IntObjectPredicate<Term> filter) {
+        List<Term> l = Global.newArrayList(size());
+        int s = size();
+        for (int i = 0; i < s; i++) {
+            Term t = term(i);
+            if (filter.accept(i, t))
+                l.add(t);
+        }
+        if (l.isEmpty()) return Terms.EmptyTermArray;
+        return l.toArray(new Term[l.size()]);
     }
 
 }

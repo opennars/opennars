@@ -1,13 +1,11 @@
 package nars.nal.meta;
 
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.InvisibleAtom;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.util.utf8.Utf8;
 
 /**
@@ -193,6 +191,19 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
             }
         }
         return null;
+    }
+
+    public static Term matchedSubterms(TermContainer subterms) {
+        return matchedSubterms(subterms.toArray());
+    }
+
+    public static Term matchedSubterms(TermContainer subterms, IntObjectPredicate<Term> filter) {
+        return matchedSubterms(subterms.toArray(filter));
+    }
+
+    /** TODO use a special ProductN subclass */
+    public static Term matchedSubterms(Term[] subterms) {
+        return Product.make(subterms);
     }
 
 

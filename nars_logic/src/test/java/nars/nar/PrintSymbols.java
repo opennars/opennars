@@ -1,4 +1,4 @@
-package nars.core;
+package nars.nar;
 
 import nars.Op;/**
  *

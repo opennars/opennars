@@ -178,35 +178,47 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
     @Override
     public Term clone(final Term[] t) {
-//        return clone(t, intervals);
-//    }
-//
-//    public Sequence clone(Term[] t, long[] ii) {
-        //for now, require that cloning require same # of terms because intervals will be copied as-is
-//        int tlen = t.length;
-//
-//        if (ii.length != tlen +1) {
-//            /*throw new RuntimeException("invalid parameters for Sequence clone: " +
-//                    Arrays.toString(t) + " (len=" + t.length + ") and intervals " +
-//                    Arrays.toString(ii) + " (len=" + ii.length + ")");*/
-//            return null;
-//        }
-
 
         //HACK this reconstructs a dummy sequence of terms to send through makeSequence,
         // avoiding a cyclical normalization process necessary in order to avoid reduction
         //TODO do this without constructing such an array but just copying the int[] interval array to the result
 
-        List<Term> c = Global.newArrayList(t.length);
+        final int tLen = t.length;
+
+        final boolean equalLength = (size() == tLen);
+
+        List<Term> c = Global.newArrayList(tLen);
+
         int j = 0;
+        int p = 0; //pointer to term in this
         for (Term x : t) {
             c.add(x);
-            int d = intervals[j++];
+
+
+//            boolean aligned = equalLength;
+//            //scan ahead until either the term matches again, or end of the term is reached
+//            while (!aligned && p < tLen) {
+//                aligned = x.equals(term(p++));
+//            }
+//
+//            int d; //duration between
+//            if (equalLength || x.equals(term(p))) {
+//                //this term corresponds to the next one in this sequence, so use the interval from this
+            int d = intervals[p++];
+//            }
+//            else {
+//                d = 0; //default to zero; could be a method parameter
+//            }
+
             if (d > 0)
                 c.add($.cycles(d));
         }
-        if (intervals[j]>0)
-            c.add($.cycles(intervals[j])); //final suffix interval
+
+        if (p == j) {
+            //TODO check if this is necessary and/or correct
+            if (intervals[j] > 0)
+                c.add($.cycles(intervals[j])); //final suffix interval
+        }
 
         return makeSequence(c.toArray(new Term[c.size()]));
     }
@@ -259,6 +271,8 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
         int p = 0;
         for (final Term x : a) {
+            /*if (x == Ellipsis.Expand)
+                continue;*/
             if (x instanceof CyclesInterval) {
                 long dd = ((CyclesInterval) x).duration();
                 if (dd < 0)

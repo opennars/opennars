@@ -2,12 +2,11 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.core;
+package nars.nar;
 
 
 import com.google.common.collect.Iterables;
 import nars.concept.Concept;
-import nars.nar.Default;
 import org.junit.Test;
 
 import java.util.HashSet;

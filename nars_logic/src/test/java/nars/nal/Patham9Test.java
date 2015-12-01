@@ -197,12 +197,14 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nar.Default2;
 import nars.op.mental.Anticipate;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
+@Ignore
 public class Patham9Test {
 
 
