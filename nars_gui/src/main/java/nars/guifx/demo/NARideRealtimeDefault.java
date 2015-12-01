@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.bag.impl.MapCacheBag;
 import nars.guifx.NARide;
 import nars.nar.Default2;
+import nars.process.BagForgettingEnhancer;
 import nars.time.RealtimeMSClock;
 import org.infinispan.commons.util.WeakValueHashMap;
 
@@ -26,15 +27,19 @@ public class NARideRealtimeDefault {
                 )*/
             )
         );
-        Default2 nar = new Default2(mem, 1024, 1, 2, 3);
-        nar.nal(9);
+        Default2 nar = new Default2(mem, 1024, 1, 1, 3);
+        //nar.nal(9);
         nar.setTaskLinkBagSize(32);
         nar.setTermLinkBagSize(128);
+
+        new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
+
 
         /*nar.memory.conceptForgetDurations.set(10);
         nar.memory.termLinkForgetDurations.set(100);*/
 
-        nar.memory.duration.set(250 /* ie, milliseconds */);
+        nar.memory.duration.set(750 /* ie, milliseconds */);
+        nar.memory.conceptForgetDurations.setValue(20);
         //nar.spawnThread(1000/60);
 
 

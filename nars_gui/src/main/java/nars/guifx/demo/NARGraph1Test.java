@@ -1,7 +1,5 @@
 package nars.guifx.demo;
 
-import nars.Global;
-import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
@@ -12,6 +10,7 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
 import nars.nar.Default;
+import nars.process.BagForgettingEnhancer;
 import nars.time.FrameClock;
 
 /**
@@ -23,13 +22,14 @@ public class NARGraph1Test {
         DerivationRules.maxVarArgsToMatch = 2;
     }
 
-    public static SpaceGrapher newGraph(NAR n) {
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.8f;
+    public static SpaceGrapher newGraph(Default n) {
 
 
-        n.memory.conceptForgetDurations.setValue(8);
-        n.memory.termLinkForgetDurations.setValue(12);
-        n.memory.taskLinkForgetDurations.setValue(12);
+        new BagForgettingEnhancer(n.memory, n.core.concepts(), 0.8f, 0.8f, 0.8f);
+
+//        n.memory.conceptForgetDurations.setValue(8);
+//        n.memory.termLinkForgetDurations.setValue(12);
+//        n.memory.taskLinkForgetDurations.setValue(12);
 
         //n.input(new File("/tmp/h.nal"));
         n.input("<hydochloric --> acid>.");
@@ -48,7 +48,8 @@ public class NARGraph1Test {
 
                 128,
 
-                new DefaultVis(),
+                //new DefaultVis(),
+                new DefaultVis.HexagonVis(),
 
 
                 new BlurCanvasEdgeRenderer()
@@ -63,7 +64,7 @@ public class NARGraph1Test {
     public static void main(String[] args)  {
 
 
-        NAR n = new Default(512, 3,3,3, new FrameClock());
+        Default n = new Default(512, 3,3,3, new FrameClock());
 
         NARide.show(n.loop(), ide -> {
 

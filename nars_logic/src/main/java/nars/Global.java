@@ -170,32 +170,6 @@ public class Global {
 //     */
 //    public static final int SentenceOcurrenceTimeCyclesEqualityThreshold = 1;
 
-    /**
-     * this determines the percentage of additional items (concepts, termlinks, tasklinks, ...etc)
-     * which have their priority reduced by forgetting each cycle.
-     *
-     * forgetting an item can be applied as often
-     * as possible since it is governed by rate over time.  however we can
-     * afford to update item priority less frequently than every cycle.
-     * an accuracy of 1.0 means to process approximatley all concepts every cycle,
-     * while an accuracy of 0.5 would mean to process approximately half.
-     *
-     * since the items selected for update are determined by bag selection,
-     * higher priority items will tend to get updated more frequently.
-     *
-     * an estimate for average "error" due to latency can be calculated
-     * in terms of # of items, forgetting rate, and the accuracy rate.
-     * more accuracy = lower error because concepts are more likely to receive forget sooner
-     *
-     * a lower bound on accuracy is when the expected latency exceeds the forgetting time,
-     * in which case the forgetting will have been applied some amount of time past
-     * when it would have completed its forget descent.
-     */
-    @Deprecated public static float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.15f;
-    @Deprecated public static float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.075f;
-    @Deprecated public static float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.075f;
-
-
 
 
 

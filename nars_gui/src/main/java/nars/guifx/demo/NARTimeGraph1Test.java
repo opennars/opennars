@@ -1,6 +1,5 @@
 package nars.guifx.demo;
 
-import nars.Global;
 import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
@@ -25,8 +24,6 @@ public class NARTimeGraph1Test {
     }
 
     public static SpaceGrapher newGraph(NAR n) {
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.8f;
-
 
         n.memory.conceptForgetDurations.setValue(6);
         n.memory.termLinkForgetDurations.setValue(2);
