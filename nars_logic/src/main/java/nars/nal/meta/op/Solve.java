@@ -2,27 +2,32 @@ package nars.nal.meta.op;
 
 import nars.Op;
 import nars.Premise;
+import nars.Symbols;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
+import nars.nal.meta.BeliefFunction;
+import nars.nal.meta.DesireFunction;
 import nars.nal.meta.PreCondition;
+import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
+import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
 
 /**
  * first resolution of the conclusion's pattern term
  */
-public final class Resolve extends PreCondition {
+public final class Solve extends PreCondition {
 
     public final Term term;
     @Deprecated public final TaskRule rule;
 
     private transient final String id;
 
-    public Resolve(Term term, TaskRule rule) {
+    public Solve(Term term, TaskRule rule) {
         this.term = term;
         this.rule = rule;
-        this.id = getClass().getSimpleName() + '[' + term + ']';
+        this.id = getClass().getSimpleName() + '(' + term + ')';
     }
 
     @Override
@@ -157,5 +162,114 @@ public final class Resolve extends PreCondition {
         }
     }
 
+    public final static class Truth extends PreCondition {
+        public final BeliefFunction belief;
+        public final DesireFunction desire;
+        public final char puncOverride;
+
+        transient private final String id;
+
+        public Truth(BeliefFunction belief, DesireFunction desire, char puncOverride) {
+            this.belief = belief;
+            this.desire = desire;
+            this.puncOverride = puncOverride;
+
+            String beliefLabel = belief==null ? "_" : belief.toString();
+            String desireLabel = desire==null ? "_" : desire.toString();
+
+            this.id = (puncOverride == 0) ?
+                    (getClass().getSimpleName() + "(" + beliefLabel + ", " + desireLabel + ")")  :
+                    (getClass().getSimpleName() + "(" + beliefLabel + ", " + desireLabel + ", " + puncOverride + ")");
+
+        }
+
+        @Override
+        public String toString() {
+            return id;
+        }
+
+        TruthFunction getTruth(char punc) {
+
+            switch (punc) {
+
+                case Symbols.JUDGMENT:
+                    return belief;
+
+                case Symbols.GOAL:
+                    return desire;
+
+            /*case Symbols.QUEST:
+            case Symbols.QUESTION:
+            */
+
+                default:
+                    return null;
+            }
+
+        }
+
+        @Override
+        public boolean test(RuleMatch match) {
+
+            Premise premise = match.premise;
+
+            final Task task = premise.getTask();
+
+            /** calculate derived task truth value */
+
+
+            Task belief = premise.getBelief();
+
+
+            final nars.truth.Truth T = task.getTruth();
+            final nars.truth.Truth B = belief == null ? null : belief.getTruth();
+
+
+            /** calculate derived task punctuation */
+            char punct = puncOverride;
+            if (punct == 0) {
+                /** use the default policy determined by parent task */
+                punct = task.getPunctuation();
+            }
+
+
+            final nars.truth.Truth truth;
+            TruthFunction tf;
+
+            if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
+                tf = getTruth(punct);
+                if (tf == null)
+                    return false;
+
+                truth = tf.get(T, B);
+
+                if (truth == null) {
+                    //no truth value function was applicable but it was necessary, abort
+                    return false;
+                }
+            } else {
+                //question or quest, no truth is involved
+                truth = null;
+                tf = null;
+            }
+
+            /** eliminate cyclic double-premise results
+             *  TODO move this earlier to precondition check, or change to altogether new policy
+             */
+            final boolean single = (belief == null);
+            if ((!single) && (RuleMatch.cyclic(tf, premise))) {
+//                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
+//                    match.removeCyclic(outcome, premise, truth, punct);
+//                }
+                return false;
+            }
+
+            RuleMatch.PostMods post = match.post;
+            post.truth = truth;
+            post.punct = punct;
+
+            return true;
+        }
+    }
 
 }

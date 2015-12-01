@@ -20,7 +20,7 @@ abstract public class Frame {
     /** current y-term being matched against */
     public Term y;
 
-    protected Compound parent; //parent, if in subterms
+    public Compound parent; //parent, if in subterms
 
     /**
      * X var -> Y term mapping

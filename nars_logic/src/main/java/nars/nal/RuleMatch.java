@@ -5,7 +5,10 @@ import nars.Op;
 import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.meta.*;
+import nars.nal.meta.PostCondition;
+import nars.nal.meta.TaskBeliefPair;
+import nars.nal.meta.TermPattern;
+import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -43,22 +46,24 @@ public class RuleMatch {
     public Consumer<Task> receiver;
 
 
-    @Deprecated
+    @Deprecated //reference to the pattern should not be necessary when complete
     public TaskBeliefPair taskBelief;
+
+    @Deprecated //reference to the rule should not be necessary when complete
+    public TaskRule rule;
+
 
     /**
      * Premise Context
      */
     public Premise premise;
-    public enum MatchStage {
+    @Deprecated public enum MatchStage {
         Pre, Pattern, Post
     }
 
-    MatchStage stage = MatchStage.Pre;
+    //MatchStage stage = MatchStage.Pre;
 
 
-    @Deprecated
-    public TaskRule rule;
 
 
     /** MUTABLE DATA */
@@ -209,24 +214,24 @@ public class RuleMatch {
 
 
 
-    public static final class Stage extends PreCondition {
-        public final MatchStage s;
-
-        public Stage(MatchStage nextStage) {
-            this.s = nextStage;
-        }
-
-        @Override
-        public boolean test(RuleMatch ruleMatch) {
-            ruleMatch.stage = s;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "Stage{" + s + "}";
-        }
-    }
+//    public static final class Stage extends PreCondition {
+//        public final MatchStage s;
+//
+//        public Stage(MatchStage nextStage) {
+//            this.s = nextStage;
+//        }
+//
+//        @Override
+//        public boolean test(RuleMatch ruleMatch) {
+//            //ruleMatch.stage = s;
+//            return true;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "Stage{" + s + "}";
+//        }
+//    }
 
     public void copyTo(RuleMatch target ) {
 
@@ -269,7 +274,7 @@ public class RuleMatch {
         subst.clear();
         sub2.clear();
         post.clear();
-        stage = MatchStage.Pre;
+        //stage = MatchStage.Pre;
     }
 
     /**

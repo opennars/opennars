@@ -1,5 +1,6 @@
 package nars.nal.meta;
 
+import com.google.common.base.Joiner;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Global;
 import nars.nal.DerivationRules;
@@ -134,11 +135,12 @@ public class RuleTrie extends Deriver {
             int from = n.getStart();
             int to = n.getEnd();
 
-            List<PreCondition> sub = seq.subList(from, to);
 
             System.out.print(n.getChildCount() + "|" + n.getSize() + "  ");
+
             indent(from * 2);
-            System.out.println(sub);
+
+            System.out.println(Joiner.on(", ").join( seq.subList(from, to)));
 
             printSummary(n);
         });

@@ -6,7 +6,6 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Op;
-import nars.nal.RuleMatch;
 import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
@@ -47,6 +46,24 @@ public class FindSubst extends Subst {
     }
 
 
+    /**
+     * push in to children
+     */
+    public static final PatternOp Subterms = new PatternOp() {
+
+        @Override
+        public String toString() {
+            return "Sub";
+        }
+
+        @Override
+        public boolean run(Frame ff) {
+            ff.parent = (Compound) ff.y;
+            return true;
+        }
+    };
+
+
     @Override
     public final Subst clone() {
         FindSubst x = new FindSubst(type,
@@ -76,33 +93,6 @@ public class FindSubst extends Subst {
         System.out.println("     " + this);
     }
 
-
-    public abstract static class PatternOp extends PreCondition {
-        abstract boolean run(Frame ff);
-
-        @Override
-        public final boolean test(RuleMatch ruleMatch) {
-            return run(ruleMatch.subst);
-        }
-    }
-
-    public abstract static class MatchOp extends PatternOp {
-
-        /**
-         * if match not successful, does not cause the execution to
-         * terminate but instead sets the frame's match flag
-         */
-        abstract public boolean match(Term f);
-
-        @Override
-        public final boolean run(Frame ff) {
-//            if (ff.power < 0) {
-//                return false;
-//            }
-            return match(ff.y);
-        }
-
-    }
 
     public static final class TermEquals extends MatchOp {
         public final Term a;
@@ -191,29 +181,29 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "TermOpEq{" + type + '}';
+            return type + " ";
         }
     }
 
-    public static final class SubOpEquals extends MatchOp {
-        public final Op type;
-        private final int subterm;
-
-        public SubOpEquals(int subterm, Op type) {
-            this.subterm = subterm;
-            this.type = type;
-        }
-
-        @Override
-        public boolean match(Term t) {
-            return t.term(subterm).op() == type;
-        }
-
-        @Override
-        public String toString() {
-            return "SubOpEq{" + subterm + "," + type + '}';
-        }
-    }
+//    public static final class SubOpEquals extends MatchOp {
+//        public final Op type;
+//        private final int subterm;
+//
+//        public SubOpEquals(int subterm, Op type) {
+//            this.subterm = subterm;
+//            this.type = type;
+//        }
+//
+//        @Override
+//        public boolean match(Term t) {
+//            return t.term(subterm).op() == type;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "SubOpEq{" + subterm + "," + type + '}';
+//        }
+//    }
 
 
     public static final class MatchImageIndex extends MatchOp {
@@ -230,7 +220,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "MatchImageIndex{" + index + '}';
+            return "ImageIndex{" + index + '}';
         }
     }
 
@@ -242,6 +232,7 @@ public class FindSubst extends Subst {
 //        }
 //    }
 
+    /** invokes a dynamic FindSubst match via the generic entry method: match(Term,Term) */
     public static class MatchTerm extends PatternOp {
         public final Term x;
 
@@ -256,10 +247,12 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "MatchTerm{" + x + '}';
+            return "Term{" + x + '}';
         }
     }
 
+    /** invokes a dynamic FindSubst match via the matchVarX entry method;
+     *  this is more specific than match() so slightly faster */
     public static class MatchXVar extends PatternOp {
         public final Variable x;
 
@@ -274,11 +267,10 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "MatchXVar{" + x + '}';
+            return "XVar{" + x + '}';
         }
     }
 
-    @Deprecated
     public final static class MatchCompound extends PatternOp {
         public final Compound x;
 
@@ -293,44 +285,27 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "MatchCompound{" + x + '}';
+            return "Compound{" + x + '}';
         }
     }
 
-    public final static class MatchPermute extends PatternOp {
-        public final Compound x;
-
-        public MatchPermute(Compound c) {
-            this.x = c;
-        }
-
-        @Override
-        public boolean run(Frame ff) {
-            return ff.matchPermute(x, ((Compound) ff.y));
-        }
-
-        @Override
-        public String toString() {
-            return "MatchPermute{" + x + '}';
-        }
-    }
-
-    /**
-     * push in to children
-     */
-    public static final PatternOp Subterms = new PatternOp() {
-
-        @Override
-        public String toString() {
-            return "Subterms";
-        }
-
-        @Override
-        public boolean run(Frame ff) {
-            ff.parent = (Compound) ff.y;
-            return true;
-        }
-    };
+//    public final static class MatchPermute extends PatternOp {
+//        public final Compound x;
+//
+//        public MatchPermute(Compound c) {
+//            this.x = c;
+//        }
+//
+//        @Override
+//        public boolean run(Frame ff) {
+//            return ff.matchPermute(x, ((Compound) ff.y));
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "MatchPermute{" + x + '}';
+//        }
+//    }
 
     /**
      * pop out to parent
@@ -339,7 +314,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Superterm";
+            return "Super";
         }
 
         @Override
@@ -350,10 +325,11 @@ public class FindSubst extends Subst {
         }
     };
 
-    public static final class SelectSubterm extends PatternOp {
+    /** selects the ith sibling subterm of the current parent */
+    public static final class Subterm extends PatternOp {
         public final int index;
 
-        public SelectSubterm(int index) {
+        public Subterm(int index) {
             this.index = index;
         }
 
@@ -365,54 +341,54 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "SelectSubterm{" + index + '}';
+            return "s(" + index + ")"; //s for subterm and sibling
         }
     }
 
 
-    public static final class MatchSubterm extends PatternOp {
-        public final int index;
-        private final Term x;
+//    public static final class MatchSubterm extends PatternOp {
+//        public final int index;
+//        private final Term x;
+//
+//        public MatchSubterm(Term x, int index) {
+//            this.index = index;
+//            this.x = x;
+//        }
+//
+//        @Override
+//        public boolean run(Frame ff) {
+//            Term y = ff.y = ff.parent.term(index);
+//            return ff.match(x, y);
+//        }
+//
+//
+//        @Override
+//        public String toString() {
+//            return "MatchSubterm{" + x + "," + index + '}';
+//        }
+//    }
 
-        public MatchSubterm(Term x, int index) {
-            this.index = index;
-            this.x = x;
-        }
-
-        @Override
-        public boolean run(Frame ff) {
-            Term y = ff.y = ff.parent.term(index);
-            return ff.match(x, y);
-        }
-
-
-        @Override
-        public String toString() {
-            return "MatchSubterm{" + x + "," + index + '}';
-        }
-    }
-
-    /**
-     * match 0th subterm (fast)
-     */
-    public static final class MatchTheSubterm extends PatternOp {
-
-        private final Term x;
-
-        public MatchTheSubterm(Term x) {
-            this.x = x;
-        }
-
-        @Override
-        public boolean run(Frame ff) {
-            return ff.match(x, ff.y.term(0));
-        }
-
-        @Override
-        public String toString() {
-            return "MatchTheSubterm{" + x + '}';
-        }
-    }
+//    /**
+//     * match 0th subterm (fast)
+//     */
+//    public static final class MatchTheSubterm extends PatternOp {
+//
+//        private final Term x;
+//
+//        public MatchTheSubterm(Term x) {
+//            this.x = x;
+//        }
+//
+//        @Override
+//        public boolean run(Frame ff) {
+//            return ff.match(x, ff.y.term(0));
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "MatchTheSubterm{" + x + '}';
+//        }
+//    }
 
 
     /**
@@ -512,7 +488,7 @@ public class FindSubst extends Subst {
         final Term ySubst = yx.get(y);
 
         if (ySubst != null) {
-            return match(x, ySubst);
+            return match(x, ySubst); //loop
         } else {
             yxPut((Variable) y, x);
             if (y instanceof CommonVariable) {
@@ -579,7 +555,7 @@ public class FindSubst extends Subst {
         //TODO see if there is a volume or structural constraint that can terminate early here
 
         /** if they are images, they must have same relationIndex */
-        //TODO simplify comparison with Image base class
+        //TODO eliminate redudant test of index here if image is already verified in a previous condition
         if (X instanceof Image) {
             if (((Image) X).relationIndex != ((Image) Y).relationIndex)
                 return false;
@@ -657,10 +633,6 @@ public class FindSubst extends Subst {
 
             boolean matched = matchSequence(perm, y);
 
-            if (power < 0) {
-                return false;
-            }
-
             if (matched /*|| power <= 0*/)
                 return true;
 
@@ -675,7 +647,11 @@ public class FindSubst extends Subst {
                 restore(savedXY, xy);
             }
 
-            //ready to continue on next permutation
+            if (power < 0) {
+                return false;
+            }
+
+            //else: continue on next permutation
 
         }
 
@@ -725,21 +701,19 @@ public class FindSubst extends Subst {
                 return true;
             }
 
+            //pop/restore/undo
+            if (yxChanged) {
+                yxChanged = false; restore(savedYX, yx);
+            }
+            if (xyChanged) {
+                xyChanged = false; restore(savedXY, xy);
+            }
+
             if (power < 0) {
                 return false;
             }
 
-            //pop/restore
-            if (yxChanged) {
-                yxChanged = false;
-                restore(savedYX, yx);
-            }
-            if (xyChanged) {
-                xyChanged = false;
-                restore(savedXY, xy);
-            }
-
-            //ready to continue on next permutation
+            //else: continue on next permutation
 
         }
 
@@ -756,7 +730,9 @@ public class FindSubst extends Subst {
      *
      */
     public final boolean matchEllipsisTerms(Ellipsis Xellipsis, Compound Y, IntObjectPredicate<Term> allow) {
-        putXY(Xellipsis, Ellipsis.matchedSubterms(Y.subterms(), allow));
+        putXY(Xellipsis, Ellipsis.matchedSubterms(
+            Y.subterms(), allow)
+        );
         return true;
     }
 
@@ -793,9 +769,9 @@ public class FindSubst extends Subst {
         originToRevert.putAll(savedCopy);
     }
 
-    private boolean matchFork(final PatternOp[] code, int ip, Object calleeFrame, final Term Y) {
-        return false;
-    }
+//    private boolean matchFork(final PatternOp[] code, int ip, Object calleeFrame, final Term Y) {
+//        return false;
+//    }
 
     /**
      * a branch for comparing a particular permutation, called from the main next()
@@ -809,27 +785,14 @@ public class FindSubst extends Subst {
 
         final int yLen = Y.size();
 
-        boolean phase = false;
+        for (int i = 0; i < yLen; i++) {
 
-        int processed = 0;
+            Term xSub = X.term(i);
 
-        //process non-commutative subterms in phase 1, then phase 2
-        do {
-
-            for (int i = 0; i < yLen; i++) {
-
-                Term xSub = X.term(i);
-
-                if (xSub.isCommutative() == phase) {
-                    if (!match(xSub, Y.term(i)))
-                        return false;
-                    processed++;
-                }
+            if (!match(xSub, Y.term(i))) {
+                return false;
             }
-
-            phase = !phase;
-
-        } while (processed < yLen);
+        }
 
         //success
         return true;
@@ -980,3 +943,28 @@ public class FindSubst extends Subst {
 //            return power;
 //        return       find(x1, ySubterms[1], power);
 //    }
+
+/*
+        boolean phase = false;
+
+        int processed = 0;
+
+        //process non-commutative subterms in phase 1, then phase 2
+        do {
+
+            for (int i = 0; i < yLen; i++) {
+
+                Term xSub = X.term(i);
+
+                if (xSub.isCommutative() == phase) {
+                    if (!match(xSub, Y.term(i)))
+                        return false;
+                    processed++;
+                }
+            }
+
+            phase = !phase;
+
+        } while (processed < yLen);
+
+ */

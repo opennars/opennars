@@ -7,7 +7,7 @@ import nars.term.Term;
 
 import java.util.Set;
 
-
+/** Unique subterms */
 public class NoCommonSubterm extends PreCondition2 {
 
     public NoCommonSubterm(Term arg1, Term arg2) {

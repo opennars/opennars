@@ -113,7 +113,11 @@ abstract public class Variable extends ImmutableAtom {
         return has[0];
     }
 
-    /** necessary because VAR_PATTERN are hidden from substructure */
+
+
+    /**
+     * true if it has or is a pattern variable
+     * necessary because VAR_PATTERN are hidden from substructure */
     public static boolean hasPatternVariable(Term t) {
         final boolean[] has = {false};
         t.recurseTerms((t1, superterm) -> {

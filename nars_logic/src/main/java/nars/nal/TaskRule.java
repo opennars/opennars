@@ -7,10 +7,9 @@ import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.op.AfterAfterConclusions;
-import nars.nal.meta.op.GetTruth;
-import nars.nal.meta.op.MakeTasks;
-import nars.nal.meta.op.Resolve;
+import nars.nal.meta.op.End;
+import nars.nal.meta.op.PostSolve;
+import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.*;
 import nars.nal.meta.pre.*;
 import nars.nal.nal1.Inheritance;
@@ -39,7 +38,7 @@ public class TaskRule extends ProductN implements Level {
     public boolean anticipate = false;
     public boolean sequenceIntervalsFromTask = false;
     public boolean sequenceIntervalsFromBelief = false;
-    public boolean allowQuestionTask=false;
+    public char puncSpecific = 0;
 
     /** conditions which can be tested before term matching */
     public PreCondition[] prePreconditions;
@@ -141,22 +140,22 @@ public class TaskRule extends ProductN implements Level {
             p.addConditions(l);
 
         ///--------------
-        l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Pattern));
+        //l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Pattern));
 
         for (PreCondition p : postPreconditions)
             p.addConditions(l);
 
         ///--------------
 
-        l.add(new GetTruth(post.truth, post.desire, post.puncOverride));
-        l.add(new Resolve(post.term, this ));
+        l.add(new Solve.Truth(post.truth, post.desire, post.puncOverride));
+        l.add(new Solve(post.term, this ));
 
         if (post.afterConclusions.length > 0) {
             Collections.addAll(l, post.afterConclusions);
-            l.add(AfterAfterConclusions.the);
+            l.add(PostSolve.the);
         }
 
-        l.add(new MakeTasks(this));
+        l.add(new End(this));
 
         return l;
     }
@@ -395,7 +394,7 @@ public class TaskRule extends ProductN implements Level {
                     next = new NotConjunction(arg1);
                     break;
                 case "not_implication_or_equivalence":
-                    next = new NotImplicationOrEquivalence(arg1);
+                    next = new NotImplOrEquiv(arg1);
                     break;
                 case "no_common_subterm":
                     next = new NoCommonSubterm(arg1, arg2);
@@ -464,13 +463,15 @@ public class TaskRule extends ProductN implements Level {
                             break;
                         case "\"?\"":
                             preNext = TaskPunctuation.TaskQuestion;
-                            allowQuestionTask = true;
+                            puncSpecific = '?';
                             break;
                         case "\".\"":
                             preNext = TaskPunctuation.TaskJudgment;
+                            puncSpecific = '.';
                             break;
                         case "\"!\"":
                             preNext = TaskPunctuation.TaskGoal;
+                            puncSpecific = '!';
                             break;
                         default:
                             throw new RuntimeException("Unknown task punctuation type: " + predicate.getSubject());
@@ -490,10 +491,6 @@ public class TaskRule extends ProductN implements Level {
             if (next != null)
                 preConditionsList.add(next);
         }
-
-
-        if (!allowQuestionTask)
-            prePreConditionsList.add(TaskPunctuation.TaskNotQuestion);
 
         //store to arrays
         this.prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
@@ -594,12 +591,10 @@ public class TaskRule extends ProductN implements Level {
 
         //      C, B, [pre], task_is_question() |- T, [post]
         TaskRule clone1 = clone(C, B, T, true);
-        clone1.allowQuestionTask = true;
         w.accept(clone1);
 
         //      C, T, [pre], task_is_question() |- B, [post]
         TaskRule clone2 = clone(C, T, B, true);
-        clone1.allowQuestionTask = true;
         w.accept(clone2);
 
     }
@@ -636,7 +631,9 @@ public class TaskRule extends ProductN implements Level {
 
         final Product newConclusion = Product.make(getConclusion().cloneTermsReplacing(0, newR));
 
-        return new TaskRule(newPremise, newConclusion);
+        TaskRule t = new TaskRule(newPremise, newConclusion);
+
+        return t;
     }
 
 //    /**

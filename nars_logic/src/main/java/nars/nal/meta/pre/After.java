@@ -20,7 +20,7 @@ public class After extends PreCondition {
 
     @Override
     public String toString() {
-        return "after";
+        return "After";
     }
 
     @Override

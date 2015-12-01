@@ -9,18 +9,18 @@ import java.util.Map;
 /**
  * Called after 1 or more after conclusions have completed to apply their results to a rederived term
  */
-public final class AfterAfterConclusions extends PreCondition {
+public final class PostSolve extends PreCondition {
 
-    public final static AfterAfterConclusions the = new AfterAfterConclusions();
+    public final static PostSolve the = new PostSolve();
 
-    protected AfterAfterConclusions() {
+    protected PostSolve() {
         super();
     }
 
 
     @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return "PostSolve";
     }
 
     @Override

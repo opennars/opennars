@@ -24,17 +24,17 @@ import java.util.function.Consumer;
 /**
  * finally attempt to produce and input tasks
  */
-public final class MakeTasks extends PreCondition {
+public final class End extends PreCondition {
 
     @Deprecated final TaskRule rule;
 
-    public MakeTasks(TaskRule taskRule) {
+    public End(TaskRule taskRule) {
         this.rule = taskRule;
     }
 
     @Override
     public String toString() {
-        return "MakeTasks";
+        return "End";
         //return "MakeTasks[" + rule + "]";
     }
 
