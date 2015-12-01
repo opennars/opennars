@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import nars.NAR;
 import nars.Narsese;
 import nars.guifx.NARfx;
-import nars.guifx.demo.POJOPane;
+import nars.guifx.util.POJOPane;
 import nars.nar.Default2;
 import nars.task.Task;
 import nars.term.Term;

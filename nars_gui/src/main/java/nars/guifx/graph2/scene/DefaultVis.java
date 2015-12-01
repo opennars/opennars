@@ -22,13 +22,21 @@ import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.ColorMatrix;
 import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by me on 10/2/15.
  */
-public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.LabeledCanvasNode<C>> {
+public class DefaultVis<C extends Termed> implements VisModel<C, TermNode<C>> {
+
+    public static class HexagonVis extends DefaultVis<Term> {
+
+        @Override public TermNode newNode(Term term) {
+            return super.newNode(term);
+        }
+    }
 
     final static Font nodeFont = NARfx.mono(0.25);
 
@@ -63,12 +71,12 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
     //public Function<Term,TermNode> nodeBuilder;
 
     @Override
-    public LabeledCanvasNode<C> newNode(C term) {
+    public TermNode newNode(C term) {
         return new LabeledCanvasNode(term, mouseActivity, mouseUntivity);
     }
 
     @Override
-    public void accept(LabeledCanvasNode<C> t) {
+    public void accept(TermNode t) {
 
         if (t == null) {
             return;
@@ -231,7 +239,7 @@ public class DefaultVis<C extends Comparable> implements VisModel<C, DefaultVis.
         this.graph = null;
     }
 
-public static class LabeledCanvasNode<N extends Comparable> extends TermNode<N> {
+public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {
 
 
     private final Canvas base;

@@ -30,7 +30,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
     );*/
 
     Canvas floorCanvas = null;
-    private GraphicsContext gfx = null;
+    protected GraphicsContext gfx = null;
     private double tx = 0.0;
     private double ty = 0.0;
     private double s = 0.0;
@@ -172,10 +172,6 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 
     final Color FADEOUT = new Color(0,0,0,0.25);
 
-    protected final void clearFade(double w, double h) {
-        gfx.setFill(FADEOUT);
-        gfx.fillRect(0, 0, w, h );
-    }
 
 //    /** iteration in which min/max dynamic range is relaxed; if nothing has stretched it in the past cycle then it will expand the range to its limits */
 //    private void unnormalize(double rate) {

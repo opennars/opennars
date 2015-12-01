@@ -1,11 +1,12 @@
 package nars.guifx.graph2;
 
 import nars.guifx.graph2.source.SpaceGrapher;
+import nars.term.Termed;
 
 import java.util.function.Consumer;
 
 /** graph node visualization */
-public interface VisModel<K extends Comparable, T extends TermNode<K>> extends Consumer<T> {
+public interface VisModel<K extends Termed, T extends TermNode<K>> extends Consumer<T> {
 
     T newNode(K t);
 
@@ -14,6 +15,10 @@ public interface VisModel<K extends Comparable, T extends TermNode<K>> extends C
     }
 
     default void stop(SpaceGrapher<K,T> gg) {
+
+    }
+
+    default void updateNode(T prev) {
 
     }
 

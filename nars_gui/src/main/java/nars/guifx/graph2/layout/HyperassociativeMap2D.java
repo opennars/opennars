@@ -5,13 +5,14 @@ import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.annotation.Range;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
+import nars.term.Termed;
 
 import java.util.function.Consumer;
 
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMap2D<N extends Comparable> extends HyperassociativeMap<N> {
+public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap<N,TermNode<N>> implements IterativeLayout<TermNode<N>> {
     double scaleFactor = 1;
     private TermNode[] termList = null;
 
@@ -47,8 +48,16 @@ public class HyperassociativeMap2D<N extends Comparable> extends Hyperassociativ
                 -scale/2 + Math.random() * scale);
     }
 
+    @Override public void getPosition(final TermNode<N> node, final double[] v) {
+        node.getPosition(v);
+    }
 
-//
+    @Override
+    public void move(TermNode<N> node, double v0, double v1) {
+        node.move(v0, v1);
+    }
+
+    //
 //    private final ArrayRealVector reusedCurrentPosition;
 //
 //    //this assumes single-thread usage so we reuse the vector */
@@ -109,7 +118,7 @@ public class HyperassociativeMap2D<N extends Comparable> extends Hyperassociativ
     }
 
     @Override
-    protected void edges(TermNode nodeToQuery, Consumer<TermNode<N>> updateFunc) {
+    protected void edges(TermNode<N> t, Consumer<TermNode<N>> updateFunc) {
 
     }
 

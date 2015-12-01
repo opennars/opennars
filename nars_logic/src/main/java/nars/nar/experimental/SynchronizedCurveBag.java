@@ -57,7 +57,7 @@ public class SynchronizedCurveBag<K, V extends Itemized<K>> extends CurveBag<K, 
 
 
     @Override
-    public void forEach(int max, Consumer<V> action) {
+    public void forEach(int max, Consumer<? super V> action) {
         synchronized (lock) {
             super.forEach(max, action);
         }

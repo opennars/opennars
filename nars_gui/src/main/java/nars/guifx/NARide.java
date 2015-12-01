@@ -18,16 +18,16 @@ import nars.NARLoop;
 import nars.budget.Budget;
 import nars.budget.Budgeted;
 import nars.guifx.chart.TaskSheet;
-import nars.guifx.demo.POJOPane;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.layout.Grid;
-import nars.guifx.graph2.source.DefaultNARGraph;
+import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.NControl;
+import nars.guifx.util.POJOPane;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
@@ -96,7 +96,7 @@ public class NARide extends BorderPane {
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
+            ni.addTool("Concept Network", () -> new DefaultGrapher(64, new ConceptsSource(nar)));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
 

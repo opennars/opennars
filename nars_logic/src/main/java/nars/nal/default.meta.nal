@@ -361,9 +361,9 @@
     ((&&,A..+, ..) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A) =/> C), (Truth:Induction)
     ((&&,A..+, ..) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A) =\> C), (Truth:Induction)
 
-    ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromTask)
+    ((&&,M,A..+) ==> C), (B ==> M) |- ((&&,B,A) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromTask)
     ((&&,M,A..+) ==> C), ((&&,B,A) ==> C) |- (B ==> M), (Truth:Induction, Order:ForAllSame)
-    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromTask)
+    ((&&,B,A..+) ==> C), (B ==> M) |- ((&&,M,A) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromTask)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate

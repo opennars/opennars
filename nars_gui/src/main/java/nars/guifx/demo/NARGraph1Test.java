@@ -5,9 +5,9 @@ import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
-import nars.guifx.graph2.impl.CanvasEdgeRenderer;
+import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultVis;
-import nars.guifx.graph2.source.DefaultNARGraph;
+import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nal.DerivationRules;
@@ -41,7 +41,7 @@ public class NARGraph1Test {
         //n.frame(5);
 
 
-        SpaceGrapher<?,?> g = new DefaultNARGraph(
+        SpaceGrapher<?,?> g = new DefaultGrapher(
 
                 new ConceptsSource(n),
 
@@ -51,12 +51,8 @@ public class NARGraph1Test {
                 new DefaultVis(),
 
 
-                new CanvasEdgeRenderer() {
-                    @Override
-                    protected final void clear(double w, double h) {
-                        clearFade(w,h);
-                    }
-                });
+                new BlurCanvasEdgeRenderer()
+        );
 
 
 

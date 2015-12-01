@@ -1,6 +1,7 @@
 package nars.guifx.graph2;
 
 import nars.guifx.graph2.source.SpaceGrapher;
+import nars.term.Termed;
 
 import java.util.function.Consumer;
 
@@ -8,13 +9,15 @@ import java.util.function.Consumer;
  * Created by me on 9/6/15.
  */
 @FunctionalInterface
-public interface GraphSource<K extends Comparable> extends Consumer<SpaceGrapher<K,TermNode<K>>> {
-
-
+public interface GraphSource<K extends Termed> extends Consumer<SpaceGrapher<K,TermNode<K>>> {
 
 
     default void start(SpaceGrapher<K,? extends TermNode<K>> spaceGrapher) {
 
+
+    }
+
+    default void refresh(SpaceGrapher<K,? extends TermNode<K>> spaceGrapher, K k, TermNode<K> t) {
 
     }
 

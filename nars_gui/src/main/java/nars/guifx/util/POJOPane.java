@@ -1,4 +1,4 @@
-package nars.guifx.demo;
+package nars.guifx.util;
 
 import com.google.common.collect.Lists;
 import com.gs.collections.api.tuple.Twin;

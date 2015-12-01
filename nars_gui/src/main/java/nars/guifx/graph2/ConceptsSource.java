@@ -1,5 +1,6 @@
 package nars.guifx.graph2;
 
+import com.google.common.collect.Iterables;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import nars.NAR;
@@ -9,21 +10,20 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
 import nars.nar.Default;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.event.Active;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
 /**
  * Example Concept supplier with some filters
  */
-public class ConceptsSource<T extends Term> implements GraphSource<T> {
+public class ConceptsSource<T extends Termed> implements GraphSource<T> {
 
 
     private final NAR nar;
@@ -60,12 +60,12 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
         refresh();
 
         regs = new Active(
-                nar.memory.eventConceptActivated.on(
-                        (c) -> refresh.set(true)
-                ),
-                nar.memory.eventFrameStart.on(
-                        h -> update(g)
-                )
+            nar.memory.eventConceptActivated.on(
+                c -> refresh.set(true)
+            ),
+            nar.memory.eventFrameStart.on(
+                h -> update(g)
+            )
         );
 
         update(g);
@@ -92,89 +92,99 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
     public final void update(SpaceGrapher g) {
 
 
-        if (g.ready.get() &&
-                refresh.compareAndSet(true, false)) {
-
-            int maxNodes = g.maxNodes.get();
-            final Set<TermNode> active = new LinkedHashSet<>(maxNodes); //Global.newHashSet(maxNodes);
+        if (g.ready.get() && refresh.compareAndSet(true, false)) {
 
 
-            //synchronized (refresh)
-            {
-
-                Bag<Term, Concept> x = ((Default) nar).core.concepts();
-
-                //x.forEach(maxNodes, each);
+            Bag<Term, Concept> x = ((Default) nar).core.concepts();
 
 
-                String filter = includeString.get();
+            String keywordFilter, _keywordFilter = includeString.get();
+            if (_keywordFilter != null && _keywordFilter.isEmpty())
+                keywordFilter = null;
+            else
+                keywordFilter = _keywordFilter;
 
-                double minPri = this.minPri.get();
-                double maxPri = this.maxPri.get();
+            double minPri = this.minPri.get();
+            double maxPri = this.maxPri.get();
 
-                Iterator<Concept> cc = x.iterator();
-                int n = 0;
+            final Iterable<Term> ii = Iterables.transform( Iterables.filter(x, cc -> {
 
-                while (cc.hasNext() && n++ < maxNodes) {
-                    Concept c = cc.next();
-                    float p = c.getPriority();
-
-                    if ((p < minPri) || (p > maxPri)) continue;
-                    if ((filter != null) && (!c.getTerm().toString().contains(filter))) continue;
+                float p = cc.getPriority();
+                if ((p < minPri) || (p > maxPri))
+                    return false;
 
 
-                    TermNode tn = g.getOrCreateTermNode(c.getTerm());
-                    if (tn != null) {
-                        active.add(tn);
-                        refresh(g, tn, c);
-                    }
-
+                if (keywordFilter != null) {
+                    if (cc.getTerm().toString().contains(keywordFilter))
+                        return false;
                 }
 
+                return true;
 
-                if (!Objects.equals(prevActive, active)) {
-                    g.setVertices(active.toArray(new TermNode[active.size()]));
-                } else {
-                    prevActive = active;
-                }
+            }), c -> c.getTerm());
 
-            }
+            g.setVertices(ii);
+
+
         }
 
     }
 
 
-    public void refresh(SpaceGrapher<Term, TermNode<Term>> g, TermNode<Term> tn, Concept cc/*, long now*/) {
+//    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
+//
+//
+//        Term t = link.getTerm();
+//        TermNode target = g.getTermNode(t);
+//        if ((target == null) || (s.equals(target))) return;
+//
+//        TermEdge ee = getConceptEdge(g, s, target);
+//        if (ee != null) {
+//            ee.linkFrom(s, link);
+//            accumulator.accept(link.getPriority());
+//        }
+//    }
+
+
+    @Override
+    public void refresh(SpaceGrapher<T, ? extends TermNode<T>> sg, T k, TermNode<T> tn) {
 
         //final Term source = c.getTerm();
 
-        tn.c = cc;
-        //conPri.accept(cc.getPriority());
-        tn.priNorm = cc.getPriority();
+        if (k instanceof Concept) {
+            Concept cc = (Concept)k;
+
+            tn.c = cc;
+            tn.priNorm = cc.getPriority();
+
+            final int maxNodeLinks = 24;
+
+            Set<T> missing = tn.getEdgeSet();
+
+            Consumer<? super TLink<?>> linkUpdater = link -> {
+
+
+                T target = (T) link.getTerm();
+                if ((tn == null) || (k.getTerm().equals(target))) return;
+
+                TermEdge ee = getConceptEdge(sg, tn, sg.getTermNode(target));
+                if (ee != null) {
+                    ee.linkFrom(tn, link);
+                }
+
+                missing.remove(tn.term);
+            };
+
+            cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
+            cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
+
+            tn.removeEdges(missing);
+        }
 
         //final Term t = tn.term;
         //final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
         //final DoubleSummaryReusableStatistics te = tn.termLinkStat;
 
-        final int maxNodeLinks = 24;
-
-        Set<Term> missing = tn.getEdgeSet();
-
-//        tn.termLinkStat.clear();
-        cc.getTermLinks().forEach(maxNodeLinks / 2, l -> {
-            updateConceptEdges(g, tn, l);
-            missing.remove(l.getTerm());
-        });
-
-
-//        tn.taskLinkStat.clear();
-        cc.getTaskLinks().forEach(maxNodeLinks / 2, l -> {
-            //if (!l.getTerm().equals(t)) {
-            updateConceptEdges(g, tn, l);
-            missing.remove(l.getTerm());
-        });
-
-        tn.removeEdges(missing);
 
 //        System.out.println("refresh " + Thread.currentThread() + " " + termLinkMean.getResult() + " #" + termLinkMean.getN() );
 
@@ -194,38 +204,12 @@ public class ConceptsSource<T extends Term> implements GraphSource<T> {
 
     }
 
-//    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
-//
-//
-//        Term t = link.getTerm();
-//        TermNode target = g.getTermNode(t);
-//        if ((target == null) || (s.equals(target))) return;
-//
-//        TermEdge ee = getConceptEdge(g, s, target);
-//        if (ee != null) {
-//            ee.linkFrom(s, link);
-//            accumulator.accept(link.getPriority());
-//        }
-//    }
 
-    public static void updateConceptEdges(SpaceGrapher g, TermNode s, TLink link) {
-
-
-        Term t = link.getTerm();
-        TermNode target = g.getTermNode(t);
-        if ((target == null) || (s.equals(target))) return;
-
-        TermEdge ee = getConceptEdge(g, s, target);
-        if (ee != null) {
-            ee.linkFrom(s, link);
-        }
-    }
-
-    public static <K extends Comparable> TermEdge<TermNode<K>>
-    getConceptEdge(SpaceGrapher<K, TermNode<K>> g, TermNode<K> s, TermNode<K> t) {
+    public TermEdge<TermNode<T>>
+    getConceptEdge(SpaceGrapher<T, ? extends TermNode<T>> g, TermNode<T> s, TermNode<T> t) {
 
         //re-order
-        final int i = s.term.compareTo(t.term);
+        final int i = s.term.getTerm().compareTo(t.term.getTerm());
         if (i == 0) return null;
             /*throw new RuntimeException(
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"

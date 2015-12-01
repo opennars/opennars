@@ -336,7 +336,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
 
     /** default implementation; more optimal implementations will avoid instancing an iterator */
     @Override
-    public void forEach(final int max, final Consumer<V> action) {
+    public void forEach(final int max, final Consumer<? super V> action) {
         final List<V> l = items.getList();
         final int n = Math.min(l.size(), max);
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex

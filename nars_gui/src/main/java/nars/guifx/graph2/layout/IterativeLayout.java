@@ -1,11 +1,10 @@
 package nars.guifx.graph2.layout;
 
 
-import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
 
 @FunctionalInterface
-public interface IterativeLayout<V extends TermNode> {
+public interface IterativeLayout<V> {
 
 
     /** setup starting conditions for a new node */

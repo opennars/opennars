@@ -6,6 +6,7 @@ import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.HyperassociativeMap2D;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.scene.DefaultVis;
+import nars.term.Termed;
 import nars.util.data.random.XORShiftRandom;
 
 import java.util.Random;
@@ -13,7 +14,7 @@ import java.util.Random;
 /**
  * Created by me on 10/9/15.
  */
-abstract public class TimeGraph<K extends Comparable> extends SpaceGrapher<K,TermNode<K>> implements GraphSource<K>, IterativeLayout<TermNode<K>> {
+abstract public class TimeGraph<K extends Termed> extends SpaceGrapher<K,TermNode<K>> implements GraphSource<K>, IterativeLayout<TermNode<K>> {
 
     public TimeGraph(int size) {
         super(null, new DefaultVis(), new CanvasEdgeRenderer(), size);

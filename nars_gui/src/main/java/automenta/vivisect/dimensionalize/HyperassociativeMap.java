@@ -14,17 +14,15 @@
  */
 package automenta.vivisect.dimensionalize;
 
-import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
-import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.layout.IterativeLayout;
-import nars.util.data.random.XORShiftRandom;
-import org.apache.commons.math3.linear.ArrayRealVector;
+ import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
+ import nars.util.data.random.XORShiftRandom;
+ import org.apache.commons.math3.linear.ArrayRealVector;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
+ import java.util.*;
+ import java.util.Map.Entry;
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.Future;
+ import java.util.function.Consumer;
 
 /**
  * FROM:
@@ -40,7 +38,7 @@ import java.util.function.Consumer;
  *
  * @author Jeffrey Phillips Freeman
  * @param <G> The graph type
- * @param <N> The node type
+ * @param <K> The node type
  * 
  * 
  * TODO:
@@ -51,7 +49,7 @@ import java.util.function.Consumer;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-abstract public class HyperassociativeMap<N extends Comparable> implements IterativeLayout<TermNode<N>> {
+abstract public class HyperassociativeMap<K,V>  {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -71,7 +69,7 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
     private double scale = 1.0;
     private final int dimensions;
 
-    public final Map<TermNode<N>, ArrayRealVector> coordinates;
+    public final Map<V, ArrayRealVector> coordinates;
     
     private static final Random RANDOM = new XORShiftRandom();
     private double equilibriumDistance;
@@ -89,24 +87,21 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
     private double attractionStrength = DEFAULT_ATTRACTION_STRENGTH;
     private double repulsiveWeakness = DEFAULT_REPULSIVE_WEAKNESS;
 
-    transient final ObjectDoubleHashMap<TermNode<N>> reusableNeighborData = new ObjectDoubleHashMap();
-    private TermNode[] vertices;
+    transient final ObjectDoubleHashMap<V> reusableNeighborData = new ObjectDoubleHashMap();
+    private V[] vertices;
 
     //transient final FasterList<N> vertices = new FasterList();
     //boolean normalizeRepulsion = true;
 
 
-    public Collection<TermNode<N>> keys() {
+    public Collection<V> keys() {
         return coordinates.keySet();
     }
 
 
 
-    public void getPosition(final TermNode node, final double[] v) {
-        node.getPosition(v);
-    }
 
-    @Deprecated public ArrayRealVector getPosition(TermNode<N> node) {
+    @Deprecated public ArrayRealVector getPosition(V node) {
         ArrayRealVector location = coordinates.computeIfAbsent(node,
                 (n) -> {
                     return newVector();
@@ -130,9 +125,9 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
 
     /** commit computed coordinates to the objects */
     public void apply() {
-        Iterator<Entry<TermNode<N>, ArrayRealVector>> e = coordinates.entrySet().iterator();
+        Iterator<Entry<V, ArrayRealVector>> e = coordinates.entrySet().iterator();
         while (e.hasNext()) {
-            Entry<TermNode<N>, ArrayRealVector> x = e.next();
+            Entry<V, ArrayRealVector> x = e.next();
             ArrayRealVector v = x.getValue();
             if (v!=null)
                 apply(x.getKey(), v.getDataRef());
@@ -142,7 +137,7 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
 
     }
 
-    abstract public void apply(TermNode<N> node, double[] coord);
+    abstract public void apply(V node, double[] coord);
 
     public void align(final int iterations) {
         for (int i = iterations;i > 0; i--)
@@ -163,7 +158,7 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
 //        }
 //    }
 
-    abstract protected TermNode[] getVertices();
+    abstract protected V[] getVertices();
 
     public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
         if (dimensions <= 0) {
@@ -334,30 +329,29 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
     
     protected void recenterNodes(final ArrayRealVector center) {
 
-        TermNode[] vertices = this.vertices;
-        Map<TermNode<N>, ArrayRealVector> coordinates = this.coordinates;
+        V[] vertices = this.vertices;
+        Map<V, ArrayRealVector> coordinates = this.coordinates;
 
-        for (TermNode node : vertices) {
+        for (V node : vertices) {
         //vertices.forEach((Consumer<N>) node -> {
             recenterNode(node,
                     coordinates.get(node), center);
         }
     }
 
-    protected void recenterNode(TermNode node, ArrayRealVector v, ArrayRealVector center) {
+    protected void recenterNode(V node, ArrayRealVector v, ArrayRealVector center) {
         if (v!=null)
             sub(v, center);
     }
 
 
     /** added to equilibrium distance to get target alignment distance */
-    @Override
-    public double getRadius(TermNode<N> vertex) {
+    public double getRadius(V vertex) {
         return 0;
     }
 
     /** speed scaling factor for a node; should be <= 1.0 */
-    public double getSpeedFactor(TermNode<N> n) {
+    public double getSpeedFactor(V n) {
         return speedFactor;
     }
     
@@ -371,15 +365,15 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
 //    }
 
 
-    protected abstract void edges(TermNode nodeToQuery, Consumer<TermNode<N>> updateFunc);
+    protected abstract void edges(V nodeToQuery, Consumer<V> updateFunc);
 
-    void getNeighbors(final TermNode nodeToQuery, ObjectDoubleHashMap<TermNode<N>> neighbors) {
+    void getNeighbors(final V nodeToQuery, ObjectDoubleHashMap<V> neighbors) {
         if (neighbors == null)
             neighbors = new ObjectDoubleHashMap(vertices.length);
         else
             neighbors.clear();
 
-        final ObjectDoubleHashMap<TermNode<N>> finalNeighbors = neighbors;
+        final ObjectDoubleHashMap<V> finalNeighbors = neighbors;
         edges(nodeToQuery, otherNode -> updateNeighbors(nodeToQuery, finalNeighbors, otherNode, 1f));
 //
 //  for (Object neighborEdge : outs(nodeToQuery, )) {
@@ -404,11 +398,11 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
 
 
 
-    private void updateNeighbors(TermNode nodeToQuery, ObjectDoubleHashMap<TermNode<N>> neighbors, TermNode<N> other, double currentWeight) {
+    private void updateNeighbors(V nodeToQuery, ObjectDoubleHashMap<V> neighbors, V other, double currentWeight) {
         //N s = neighborEdge.getSource();
         //N t = neighborEdge.getTarget();
         //N neighbor = s == nodeToQuery ? t : s;
-        TermNode<N> neighbor = other;
+        V neighbor = other;
 
 //        Double existingWeight = neighbors.get(neighbor);
 //
@@ -459,14 +453,14 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
     }
 
     /** vertices is passed as a list because the Set iterator from JGraphT is slow */
-    public ArrayRealVector align(final TermNode nodeToAlign, ObjectDoubleHashMap<TermNode<N>> neighbors, TermNode[] vertices) {
+    public ArrayRealVector align(final V nodeToAlign, ObjectDoubleHashMap<V> neighbors, V[] vertices) {
 
         double nodeSpeed = getSpeedFactor(nodeToAlign);
 
         ArrayRealVector originalPosition = new ArrayRealVector(new double[2], true);
-        getPosition(nodeToAlign);
+        //getPosition(nodeToAlign);
         //getCurrentPosition(nodeToAlign);
-        nodeToAlign.getPosition(originalPosition.getDataRef());
+        getPosition(nodeToAlign, originalPosition.getDataRef());
 
         if (nodeSpeed == 0) return originalPosition;
 
@@ -526,7 +520,7 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
         final double minDistance = this.minDistance;
         final double repulsiveWeakness = this.repulsiveWeakness;
 
-        for (TermNode node : vertices) {
+        for (V node : vertices) {
 
             if (node == null) continue;
 
@@ -589,11 +583,16 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
 
 
         originalPosition.mapMultiplyToSelf(scale);
-        nodeToAlign.move(originalPosition.getEntry(0), originalPosition.getEntry(1));
+        move(nodeToAlign, originalPosition.getEntry(0), originalPosition.getEntry(1));
         return originalPosition;
     }
 
-//    protected ArrayRealVector getCurrentPosition(TermNode n) {
+
+    abstract public void getPosition(final V node, final double[] v);
+    abstract public void move(final V node, final double vx, double vy);
+
+
+//    protected ArrayRealVector getCurrentPosition(V n) {
 //        return new ArrayRealVector(getPosition(n), false);
 //    }
 
@@ -601,7 +600,7 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
         return new ArrayRealVector(dimensions);
     }
 
-    private ArrayRealVector getThePosition(TermNode n, ArrayRealVector v) {
+    private ArrayRealVector getThePosition(V n, ArrayRealVector v) {
         getPosition(n, v.getDataRef());
         return (ArrayRealVector) v.mapMultiply(1.0/scale);
     }
@@ -662,14 +661,14 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
         ArrayRealVector pointSum = newVector();
          //new HashMap();
 
-        Map<TermNode<N>, ArrayRealVector> c = this.coordinates;
+        Map<V, ArrayRealVector> c = this.coordinates;
 
-        TermNode[] vertices = this.vertices = getVertices();
+        V[] vertices = this.vertices = getVertices();
 
         pre(vertices);
 
 
-        for (TermNode node : vertices) {
+        for (V node : vertices) {
             if (node == null) continue;
         //vertices.forEach((Consumer<N>) node -> {
 //
@@ -694,8 +693,7 @@ abstract public class HyperassociativeMap<N extends Comparable> implements Itera
     }
 
     /** can be overriden to do some preprocessing on the vertices */
-    @Override
-    public void pre(TermNode[] vertices) {
+    public void pre(V[] vertices) {
 
     }
 

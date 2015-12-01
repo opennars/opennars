@@ -2,20 +2,21 @@ package nars.guifx.graph2.layout;
 
 import nars.guifx.graph2.TermNode;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.data.Util;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 /**
  * aligns the entries in a line
  */
-public class HyperassociativeMap1D extends HyperassociativeMap2D {
+public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap2D<N> {
 
     public HyperassociativeMap1D() {
         super();
     }
 
     @Override
-    public double getSpeedFactor(TermNode termNode) {
+    public double getSpeedFactor(TermNode<N> termNode) {
 
             //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
             return scaleFactor*5.0;

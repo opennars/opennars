@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class TermNode<K extends Comparable> extends Group {
+public class TermNode<K extends Termed> extends Group {
 
 
     public static final TermNode[] empty = new TermNode[0];

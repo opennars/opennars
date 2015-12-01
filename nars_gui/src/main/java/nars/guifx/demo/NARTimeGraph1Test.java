@@ -7,7 +7,7 @@ import nars.guifx.NARide;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.ConceptComet;
 import nars.guifx.graph2.scene.DefaultVis;
-import nars.guifx.graph2.source.DefaultNARGraph;
+import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.EventGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
@@ -42,7 +42,7 @@ public class NARTimeGraph1Test {
         //n.frame(5);
 
 
-        SpaceGrapher<?,?> g = new DefaultNARGraph(
+        SpaceGrapher<?,?> g = new DefaultGrapher(
 
                 new EventGraphSource(n),
 

@@ -3,7 +3,6 @@ package nars.guifx.graph2.source;
 import javafx.beans.InvalidationListener;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
-import nars.guifx.demo.POJOPane;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.GraphSource;
 import nars.guifx.graph2.TermNode;
@@ -11,6 +10,7 @@ import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.*;
 import nars.guifx.graph2.scene.DefaultVis;
+import nars.guifx.util.POJOPane;
 import nars.term.Termed;
 
 import static javafx.application.Platform.runLater;
@@ -18,7 +18,7 @@ import static javafx.application.Platform.runLater;
 /**
  * provides defalut settings for a NARGraph view
  */
-public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K>> extends SpaceGrapher<K,V> {
+public class DefaultGrapher<K extends Termed, V extends TermNode<K>> extends SpaceGrapher<K,V> {
 
     @Implementation(HyperOrganicLayout.class)
     @Implementation(HyperassociativeMap2D.class)
@@ -31,13 +31,13 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
 
-    public DefaultNARGraph(int capacity, ConceptsSource source) {
+    public DefaultGrapher(int capacity, ConceptsSource source) {
         this(
                 source, capacity, new DefaultVis(),
                 new CanvasEdgeRenderer());
     }
 
-    public DefaultNARGraph(GraphSource source, int size, VisModel v, CanvasEdgeRenderer edgeRenderer) {
+    public DefaultGrapher(GraphSource source, int size, VisModel v, CanvasEdgeRenderer edgeRenderer) {
 
         super(source, v, edgeRenderer, size);
 

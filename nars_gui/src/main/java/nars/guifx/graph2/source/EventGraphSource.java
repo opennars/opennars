@@ -43,7 +43,7 @@ public class EventGraphSource implements GraphSource<Task>,
 
         if (map.isEmpty()) {
             Set<TermNode<Task>> start = Global.newHashSet(1);
-            start.add(g.getOrCreateTermNode(nar.task("start:now.")));
+            start.add(g.getOrNewTermNode(nar.task("start:now.")));
             map.put(nar.time(), nar.time(), start);
         }
 
@@ -118,7 +118,7 @@ public class EventGraphSource implements GraphSource<Task>,
     }
 
     public TermNode taskAsTerm(Task t) {
-        return graph.getOrCreateTermNode(Atom.quote(t.toString()));
+        return graph.getOrNewTermNode(Atom.quote(t.toString()));
     }
 
     @Override

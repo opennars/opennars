@@ -179,17 +179,34 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     @Override
     public Term clone(final Term[] t) {
 
+//        if (Variable.hasPatternVariable(this)) {
+//            // this is a pattern, in which case all intervals will be zero.
+//            // so do a direct instantiation ignoring the all-zero intervals here
+//            // because due to varargs, the sizes may not match anyway
+//
+//        }
+
+        if (size()!=t.length) {
+            //direct clone, ignoring this instance's intervals which have different dimensions
+            return makeSequence(t);
+        }
+        else {
+            return cloneIntervals(t);
+        }
+    }
+
+    /** only works if the # of terms are the same as this */
+    protected Term cloneIntervals(final Term[] t) {
+
+
         //HACK this reconstructs a dummy sequence of terms to send through makeSequence,
         // avoiding a cyclical normalization process necessary in order to avoid reduction
         //TODO do this without constructing such an array but just copying the int[] interval array to the result
 
         final int tLen = t.length;
 
-        final boolean equalLength = (size() == tLen);
-
         List<Term> c = Global.newArrayList(tLen);
 
-        int j = 0;
         int p = 0; //pointer to term in this
         for (Term x : t) {
             c.add(x);
@@ -214,11 +231,10 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
                 c.add($.cycles(d));
         }
 
-        if (p == j) {
-            //TODO check if this is necessary and/or correct
-            if (intervals[j] > 0)
-                c.add($.cycles(intervals[j])); //final suffix interval
-        }
+        //TODO check if this is necessary and/or correct
+        if (intervals[p] > 0)
+            c.add($.cycles(intervals[p])); //final suffix interval
+
 
         return makeSequence(c.toArray(new Term[c.size()]));
     }

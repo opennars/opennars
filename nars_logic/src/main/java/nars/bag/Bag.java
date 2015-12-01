@@ -541,7 +541,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     /**
      * default implementation; more optimal implementations will avoid instancing an iterator
      */
-    public void forEach(int max, Consumer<V> action) {
+    public void forEach(int max, Consumer<? super V> action) {
 
         Iterator<V> ii = iterator();
         int n = 0;

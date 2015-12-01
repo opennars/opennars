@@ -4,7 +4,6 @@ package nars.guifx.graph2.source;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.Parent;
 import nars.Global;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
@@ -15,11 +14,9 @@ import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.layout.None;
+import nars.term.Termed;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -31,7 +28,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends Spacegraph {
+public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Spacegraph {
 
     final Map<K, V> terms = new UnifiedMap();
     //new WeakValueHashMap<>();
@@ -54,24 +51,24 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     //static final Random rng = new XORShiftRandom();
 
 
-
-
-    public final SimpleObjectProperty<VisModel> vis = new SimpleObjectProperty<>();
+    public final SimpleObjectProperty<VisModel<K,V>> vis = new SimpleObjectProperty<>();
     public TermNode[] displayed = new TermNode[0];
+    private Set<TermNode> prevActive;
 
-    /** produces a spacegraph instance for a given collection of items
-     *  and a method of rendering them
-     *  TODO does not yet support collections which change but this is feasible
-     *  */
-    static public <X extends Object, K extends Comparable> SpaceGrapher<K,TermNode<K>>
+    /**
+     * produces a spacegraph instance for a given collection of items
+     * and a method of rendering them
+     * TODO does not yet support collections which change but this is feasible
+     */
+    static public <X extends Object, K extends Termed> SpaceGrapher<K, TermNode<K>>
     forCollection(
             final Collection<X> c,
-            final Function<X,K> termize,
-            final BiConsumer<X,TermNode> builder /* decorator actually */,
+            final Function<X, K> termize,
+            final BiConsumer<X, TermNode> builder /* decorator actually */,
             final IterativeLayout layout /* the initial one, it can be changed */
     ) {
 
-        final Map<K,X> termObject = new HashMap();
+        final Map<K, X> termObject = new HashMap();
 
         int defaultCapacity = 128;
 
@@ -91,14 +88,14 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 //                    public void start(SpaceGrapher<K,TermNode<K>> spaceGrapher) {
 
                         c.forEach(o -> {
-                            if (o!=null) {
+                            if (o != null) {
 
                                 //TODO generalize this so term isnt needed here
                                 K term = termize.apply(o);
                                 termObject.put(term, o);
 
-                                TermNode tn = spaceGrapher.getOrCreateTermNode(term);
-                                if (tn!=null) {
+                                TermNode tn = spaceGrapher.getOrNewTermNode(term);
+                                if (tn != null) {
                                     nodes.add(tn);
                                 }
                             }
@@ -108,7 +105,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
                             accept(spaceGrapher);
                             spaceGrapher.layout.set(layout);
                             spaceGrapher.rerender();
-                        } );
+                        });
 
 
                     }
@@ -156,6 +153,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
     /**
      * assumes that 's' and 't' are already ordered
+     *
      * @param s
      * @param t
      * @param edgeBuilder
@@ -164,7 +162,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
         return getEdge(s.term, t.term, edgeBuilder);
     }
 
-    public final TermEdge getEdge(K a, K b, BiFunction<TermNode,TermNode,TermEdge> builder) {
+    public final TermEdge getEdge(K a, K b, BiFunction<TermNode, TermNode, TermEdge> builder) {
         TermNode<K> A = getTermNode(a);
         TermEdge newEdge = null;
         if (A != null) {
@@ -191,32 +189,22 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
         return terms.get(t);
     }
 
-
-    public final V getOrCreateTermNode(final K t/*, boolean createIfMissing*/) {
-        V tn = getTermNode(t);
-        if (tn == null) {
-            final VisModel<K,V> gv = vis.get();
-            tn = terms.compute(t,
-                    (k, prev) -> {
-                        V n = gv.newNode(k);
-
-                        IterativeLayout<V> l = layout.get();
-                        if (l != null)
-                            l.init(n);
-
-                        if (prev != null) {
-                            Parent p = prev.getParent();
-                            if (p!=null)
-                                getVertices().remove(prev);
-                        }
-
-                        return n;
-                    });
-        }
-
-        return tn;
+    public final V getOrNewTermNode(final K t/*, boolean createIfMissing*/) {
+        return terms.computeIfAbsent(t, k -> {
+            return newNode(k);
+        });
     }
 
+
+    protected final V newNode(K k) {
+        V v = vis.get().newNode(k);
+        if (v!=null) {
+            IterativeLayout<V> l = layout.get();
+            if (l != null)
+                l.init(v);
+        }
+        return v;
+    }
 
 //    /**
 //     * synchronizes an active graph with the scenegraph nodes
@@ -283,7 +271,9 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
         ready.set(true);
     };
 
-    /** commit what is to be displayed */
+    /**
+     * commit what is to be displayed
+     */
     public final void setVertices(TermNode[] active) { //final Set<? extends V> active) {
 
         ready.set(false);
@@ -304,8 +294,8 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
                 next = (() -> {
                     this.displayed = toDisplay;
                     getVertices().setAll(
-                            active
-                            //toDisplay
+                        active
+                        //toDisplay
                     );
                     ready.set(true);
                     //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
@@ -315,6 +305,42 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
 
         runLater(next);
+    }
+
+
+    public void setVertices(Iterable<K> v) {
+
+        final GraphSource<K> ss = this.source.get();
+        final VisModel vv = vis.get();
+
+        Iterator<K> cc = v.iterator();
+
+
+        int n = this.maxNodes.get();
+
+        final Set<TermNode> active = new LinkedHashSet(n); //Global.newHashSet(maxNodes);
+
+        while (cc.hasNext() && ((n--) > 0)) {
+
+            final K k = cc.next();
+            TermNode t = getOrNewTermNode(k);
+            if (t != null) {
+                active.add(t);
+
+                ss.refresh(this, k, t);
+                vv.updateNode(t);
+            }
+            else {
+                cc.remove();
+            }
+        }
+
+        if (!Objects.equals(prevActive, active)) {
+            setVertices(active.toArray(new TermNode[active.size()]));
+        } else {
+            prevActive = active;
+        }
+
     }
 
 
@@ -416,7 +442,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
             }
         });
         vis.addListener((l, p, n) -> {
-            SpaceGrapher<K,V> gg = SpaceGrapher.this;
+            SpaceGrapher<K, V> gg = SpaceGrapher.this;
             if (p != null)
                 p.stop(gg);
             if (n != null) {
@@ -450,7 +476,6 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
         runLater(() -> checkVisibility());
 
 
-
         this.edgeRenderer.set(edgeRenderer);
 
         this.vis.set(vv); //set vis before source
@@ -459,7 +484,9 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
     }
 
-    /** called before next layout changes */
+    /**
+     * called before next layout changes
+     */
     synchronized void layoutUpdated() {
         int animationPeriod = this.animatinPeriodMS;
 //        if (this.animator!=null) {
@@ -475,7 +502,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
         rerender();
 
-        if (animationPeriod!=-1)
+        if (animationPeriod != -1)
             start(animationPeriod);
     }
 
@@ -483,7 +510,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     final static int defaultFramePeriodMS = 30; //~60hz/2
 
     protected synchronized void checkVisibility() {
-        if (isVisible() && getParent() != null && getScene()!=null) {
+        if (isVisible() && getParent() != null && getScene() != null) {
             start(defaultFramePeriodMS);
         } else
             stop();
@@ -509,7 +536,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
                         renderEdges();
                     }
                 });*/
-            animatinPeriodMS=layoutPeriodMS;
+            animatinPeriodMS = layoutPeriodMS;
             animator.start();
             //updaterSlow.start();
         }
