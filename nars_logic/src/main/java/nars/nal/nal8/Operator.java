@@ -1,12 +1,12 @@
 package nars.nal.nal8;
 
+import com.google.common.primitives.Bytes;
 import nars.Op;
+import nars.term.AbstractAtomic;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.compile.TermIndex;
 import nars.term.transform.Substitution;
-import nars.term.transform.TermVisitor;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
@@ -17,16 +17,23 @@ import java.util.Map;
  * of an Operation
  * TODO inherit AbstractAtomic
  */
-public class Operator<T extends Term> implements Term {
+public class Operator<T extends Term> extends AbstractAtomic { //implements Term {
 
+
+    final static byte[] opPrefix = new byte[] { (byte)'^' };
 
     private final T term;
     private final int hash;
 
+    private transient final byte[] bytes;
+
     public Operator(T the) {
         super();
 
+
+
         this.term = the;
+        this.bytes = Bytes.concat(opPrefix, the.bytes());
         this.hash = Atom.hash(term.bytes(), Op.OPERATOR.ordinal());
     }
 
@@ -35,71 +42,17 @@ public class Operator<T extends Term> implements Term {
         return Op.OPERATOR;
     }
 
-    @Override
-    public final int volume() {
-        return 1;
-    }
+//defined in abstractatomic
+//    @Override
+//    public final int volume() {
+//        return 1;
+//    }
 
     @Override
     public final int complexity() {
         return 1;
     }
 
-    @Override public final int size() {
-        //copied from Atomic.java
-        throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
-    }
-
-    @Override
-    public boolean isCommutative() {
-        return false;
-    }
-
-    @Override
-    public Term term(int n) {
-        return null;
-    }
-
-    @Override
-    public boolean impossibleSubTermVolume(int otherTermVolume) {
-        return true;
-    }
-
-    @Override
-    public void recurseTerms(TermVisitor v, Term parent) {
-        v.visit(this, parent);
-    }
-
-    @Override
-    public String toString() {
-        return toString(false);
-    }
-
-    @Override
-    public <T extends Term> T normalized() {
-        return (T)this;
-    }
-
-    @Override
-    public boolean containsTerm(Term target) {
-        return false;
-    }
-
-    @Override
-    public boolean containsTermRecursively(Term target) {
-        return false;
-    }
-
-
-    @Override
-    public final Term clone() {
-        return this;
-    }
-
-    @Override
-    public Term cloneDeep() {
-        return this;
-    }
 
     @Override
     public boolean hasVar() {
@@ -126,10 +79,30 @@ public class Operator<T extends Term> implements Term {
         return 0;
     }
 
+    @Override
+    public boolean hasVarIndep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarDep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarQuery() {
+        return false;
+    }
+
 
     @Override
     public final byte[] bytes() {
         return Compound.newCompound1Key(op(), term);
+    }
+
+    @Override
+    public void setBytes(byte[] b) {
+
     }
 
     @Override
@@ -142,10 +115,6 @@ public class Operator<T extends Term> implements Term {
         return (1 << Op.OPERATOR.ordinal());
     }
 
-    @Override
-    public final Term normalized(TermIndex termIndex) {
-        return normalized();
-    }
 
     @Override
     public final void append(Appendable p, boolean pretty) throws IOException {
@@ -162,10 +131,6 @@ public class Operator<T extends Term> implements Term {
         return sb;
     }
 
-    @Override
-    public String toString(boolean pretty) {
-        return toStringBuilder(pretty).toString();
-    }
 
     @Override
     public Term substituted(Map<Term, Term> subs) {
@@ -174,12 +139,6 @@ public class Operator<T extends Term> implements Term {
     @Override
     public final Term substituted(Substitution s) {
         return this;
-    }
-
-    @Override
-    public final void rehash() {
-        //nothing
-        term.rehash();
     }
 
 //
@@ -198,16 +157,6 @@ public class Operator<T extends Term> implements Term {
         return new Operator(x);
     }
 
-    @Override
-    public final int compareTo(Object o) {
-        if (this == o) return 0;
-
-        Term t = (Term)o;
-        int diff = op().compareTo(t.op());
-        if (diff!=0) return diff;
-
-        return term.compareTo(((Operator)t).term);
-    }
 
     @Override
     public final boolean equals(Object obj) {

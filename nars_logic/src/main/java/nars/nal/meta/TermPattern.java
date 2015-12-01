@@ -98,7 +98,7 @@ public class TermPattern {
     }
 
     private void compileTaskBeliefPair(TaskBeliefPair x, List<PreCondition> code) {
-        code.add(FindSubst.Subterms);
+        //code.add(FindSubst.Subterms);
         compileSubterm(x, 0, code);
         compileSubterm(x, 1, code);
         code.add(FindSubst.Superterm);

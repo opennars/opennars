@@ -200,8 +200,7 @@ public class RuleMatch {
                 (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
                         + Global.UNIFICATION_POWERmin);
 
-        taskBelief = new TaskBeliefPair(p.getTask().getTerm(), p.getTermLink().getTerm());
-        this.subst.y = taskBelief;
+        this.subst.parent = taskBelief = new TaskBeliefPair(p.getTask().getTerm(), p.getTermLink().getTerm());
         this.subst.power = unificationPower;
     }
 
@@ -239,28 +238,14 @@ public class RuleMatch {
         target.receiver = receiver;
         target.taskBelief = taskBelief;
 
-        //if (stage == MatchStage.Pattern) {
-        //if (stage != MatchStage.Pre) {
-            subst.copyTo(target.subst);
-        //}
-        /*}
-        else {
-            //target.subst = subst; //it wont change outside Pattern stage
-        }*/
-
-        //if (stage != MatchStage.Pre) {
-            post.copyTo(target.post);
-            sub2.copyTo(target.sub2);
-        /*}
-        else {
-            m.post = post; //it wont change outside Post stage
-            m.sub2 = sub2;
-        }*/
+        subst.copyTo(target.subst);
+        post.copyTo(target.post);
+        sub2.copyTo(target.sub2);
 
 
 //        if (Global.DEBUG) {
 //            //  FOR EXTREME EQUALITY TESTING
-//            if (!m.toString().equals(toString()))
+//            if (!target.toString().equals(toString()))
 //                throw new RuntimeException("invalid copy");
 //        }
 
@@ -277,14 +262,7 @@ public class RuleMatch {
         //stage = MatchStage.Pre;
     }
 
-    /**
-     * clear and re-use with a next rule
-     */
-    @Deprecated
-    public final void start(TaskRule nextRule) {
-        start();
-        this.rule = nextRule;
-    }
+
 
 
 //    @Deprecated

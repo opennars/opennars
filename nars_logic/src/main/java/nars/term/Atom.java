@@ -13,8 +13,8 @@ public class Atom extends ImmutableAtom  {
 
     final static byte[] NullName = new byte[0];
     public static final Term Null = new MutableAtomic(NullName) {
-        @Override
-        public String toString() {
+
+        @Override public String toString() {
             return "NULL";
         }
 

@@ -58,6 +58,9 @@ public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
+            if (!(ff.y instanceof Compound)) {
+                throw new RuntimeException(ff.y + " not compound");
+            }
             ff.parent = (Compound) ff.y;
             return true;
         }
@@ -334,9 +337,8 @@ public class FindSubst extends Subst {
         }
 
         @Override
-        public boolean run(Frame ff) {
-            ff.y = ff.parent.term(index);
-            return true;
+        public final boolean run(Frame f) {
+            return (f.y = f.parent.termOr(index, null)) != null;
         }
 
         @Override

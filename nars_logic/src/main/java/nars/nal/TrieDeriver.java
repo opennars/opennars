@@ -32,7 +32,12 @@ public class TrieDeriver extends RuleTrie {
 
     private final void forEachRule(RuleBranch r, RuleMatch match) {
 
+        //System.out.println(">> " + r);
+
         for (PreCondition x : r.precondition) {
+
+            //System.out.println(x + " " + match.subst.y + " " + match.subst.parent);
+
             if (!x.test(match))
                 return;
         }

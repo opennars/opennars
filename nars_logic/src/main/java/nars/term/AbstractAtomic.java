@@ -36,8 +36,12 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
     }
 
     @Override
-    public Term term(int n) {
-        return null;
+    public final Term term(int n) {
+        throw new RuntimeException("Atoms have no subterms");
+    }
+    @Override
+    public final Term termOr(int n, Term x) {
+        return term(n);
     }
 
     @Override
@@ -84,7 +88,7 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
         return Byted.compare(this, (AbstractAtomic)that);
     }
 
-    @Override public final int getByteLen() {
+    @Override public int getByteLen() {
         return bytes().length;
     }
 

@@ -71,6 +71,14 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
     @Override
+    public final Term termOr(int index, Term resultIfInvalidIndex) {
+        final Term term[] = this.term;
+        if (term.length <= index)
+            return resultIfInvalidIndex;
+        return term[index];
+    }
+
+    @Override
     public final int volume() {
         return volume;
     }

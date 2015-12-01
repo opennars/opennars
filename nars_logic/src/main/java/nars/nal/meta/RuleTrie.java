@@ -40,6 +40,17 @@ public class RuleTrie extends Deriver {
             this.precondition = precondition;
             this.children = children.length > 0 ? children : null;
         }
+
+        @Override
+        public String toString() {
+            return
+                "(&/, " + Joiner.on(", ").join(precondition) +
+                ") =/> " +
+                "{" +
+                    ((children != null) ?
+                        Joiner.on(", ").join(children) : "End") +
+                "}>";
+        }
     }
 
     public final RuleBranch[] root;

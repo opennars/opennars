@@ -45,7 +45,12 @@ public final class ShuffleTermVector extends ShuffledPermutations implements Ter
     }
 
     @Override
-    public boolean impossibleSubTermVolume(int otherTermVolume) {
+    public Term termOr(int index, Term resultIfInvalidIndex) {
+        throw new RuntimeException("unimpl yet");
+    }
+
+    @Override
+    public final boolean impossibleSubTermVolume(int otherTermVolume) {
         return compound.impossibleToMatch(otherTermVolume);
     }
 

@@ -19,6 +19,7 @@ public interface TermContainer extends Comparable {
 
     /** nth subterm */
     Term term(int n);
+    Term termOr(int index, Term resultIfInvalidIndex);
 
     //TODO rename: impossibleToContain
     boolean impossibleSubTermVolume(final int otherTermVolume);
@@ -95,5 +96,6 @@ public interface TermContainer extends Comparable {
         if (l.isEmpty()) return Terms.EmptyTermArray;
         return l.toArray(new Term[l.size()]);
     }
+
 
 }

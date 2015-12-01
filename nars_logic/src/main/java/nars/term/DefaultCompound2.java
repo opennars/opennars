@@ -249,6 +249,11 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     }
 
     @Override
+    public final Term termOr(int index, Term resultIfInvalidIndex) {
+        return terms.termOr(index, resultIfInvalidIndex);
+    }
+
+    @Override
     public final boolean containsTerm(Term target) {
         return terms.containsTerm(target);
     }
