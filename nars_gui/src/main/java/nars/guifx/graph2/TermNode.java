@@ -6,6 +6,7 @@ import nars.Global;
 import nars.Op;
 import nars.concept.Concept;
 import nars.guifx.util.ColorMatrix;
+import nars.term.Term;
 import nars.term.Termed;
 
 import java.util.Collections;
@@ -264,5 +265,9 @@ public class TermNode<K extends Termed> extends Group {
 
         if (edges == null)
             updateEdges();
+    }
+
+    public final Term getTerm() {
+        return term.getTerm();
     }
 }

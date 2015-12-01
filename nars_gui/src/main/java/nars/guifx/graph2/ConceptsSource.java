@@ -107,7 +107,7 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
             double minPri = this.minPri.get();
             double maxPri = this.maxPri.get();
 
-            final Iterable<Term> ii = Iterables.transform( Iterables.filter(x, cc -> {
+            final Iterable<Concept> ii = Iterables.filter(x, cc -> {
 
                 float p = cc.getPriority();
                 if ((p < minPri) || (p > maxPri))
@@ -121,7 +121,7 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
 
                 return true;
 
-            }), c -> c.getTerm());
+            });
 
             g.setVertices(ii);
 
@@ -147,27 +147,32 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
 
 
     @Override
-    public void refresh(SpaceGrapher<T, ? extends TermNode<T>> sg, T k, TermNode<T> tn) {
-
-        //final Term source = c.getTerm();
+    public void refresh(SpaceGrapher<T, ? extends TermNode<T>> sg, T k, TermNode<T> sn) {
 
         if (k instanceof Concept) {
+
             Concept cc = (Concept)k;
 
-            tn.c = cc;
-            tn.priNorm = cc.getPriority();
+            sn.c = cc;
+            sn.priNorm = cc.getPriority();
 
             final int maxNodeLinks = 24;
 
-            Set<T> missing = tn.getEdgeSet();
+            Set<T> missing = sn.getEdgeSet();
 
             Consumer<? super TLink<?>> linkUpdater = link -> {
 
+                Term target = link.getTerm();
 
-                T target = (T) link.getTerm();
-                if ((tn == null) || (k.getTerm().equals(target))) return;
+                if (k.getTerm().equals(target)) //self-loop
+                    return;
 
-                TermEdge ee = getConceptEdge(sg, tn, sg.getTermNode(target));
+                TermNode<T> tn = sg.getTermNode(target);
+                if (tn == null)
+                    return;
+
+                TermEdge ee = getConceptEdge(sg, sn, tn);
+
                 if (ee != null) {
                     ee.linkFrom(tn, link);
                 }
@@ -178,7 +183,7 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
             cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
             cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
 
-            tn.removeEdges(missing);
+            sn.removeEdges(missing);
         }
 
         //final Term t = tn.term;
@@ -209,7 +214,7 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
     getConceptEdge(SpaceGrapher<T, ? extends TermNode<T>> g, TermNode<T> s, TermNode<T> t) {
 
         //re-order
-        final int i = s.term.getTerm().compareTo(t.term.getTerm());
+        final int i = s.getTerm().compareTo(t.getTerm());
         if (i == 0) return null;
             /*throw new RuntimeException(
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"

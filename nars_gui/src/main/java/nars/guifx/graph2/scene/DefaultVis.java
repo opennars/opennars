@@ -314,13 +314,13 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {
 
 
         //HACK specific to Term
-        if (term instanceof Term) {
-            g.setFill(TermNode.getTermColor( ((Term)term), colors, 0.5)); /*colors.get(
+        //if (term instanceof Term) {
+            g.setFill(TermNode.getTermColor( term, colors, 0.5)); /*colors.get(
                         ,
                         //c==null ? 0 : c.getPriority()) //this can work if re-rendered
                         0.5 //otherwise jus use medium
                 ));*/
-        }
+        //}
         g.fillRect(0, 0, W, H);
 
 

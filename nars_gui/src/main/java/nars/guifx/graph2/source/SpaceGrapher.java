@@ -14,6 +14,7 @@ import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.layout.None;
+import nars.term.Term;
 import nars.term.Termed;
 
 import java.util.*;
@@ -30,7 +31,7 @@ import static javafx.application.Platform.runLater;
  */
 public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Spacegraph {
 
-    final Map<K, V> terms = new UnifiedMap();
+    final Map<Term, V> terms = new UnifiedMap();
     //new WeakValueHashMap<>();
 
 
@@ -185,13 +186,16 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
         return false;
     }
 
-    public final V getTermNode(final K t) {
+    public final V getTermNode(final Term t) {
         return terms.get(t);
+    }
+    public final V getTermNode(final K t) {
+        return getTermNode(t.getTerm());
     }
 
     public final V getOrNewTermNode(final K t/*, boolean createIfMissing*/) {
-        return terms.computeIfAbsent(t, k -> {
-            return newNode(k);
+        return terms.computeIfAbsent(t.getTerm(), k -> {
+            return newNode(t);
         });
     }
 
