@@ -6,6 +6,7 @@ import nars.$;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.InvisibleAtom;
 import nars.term.*;
+import nars.term.transform.Subst;
 import nars.util.utf8.Utf8;
 
 /**
@@ -70,6 +71,19 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return false;
     }
 
+    public static int numUnmatchedEllipsis(Compound x, Subst ff) {
+        int n = 0;
+        int xs = x.size();
+        for (int i = 0; i < xs; i++) {
+            Term xt = x.term(i);
+            if (xt instanceof Ellipsis) {
+                if (!ff.xy().containsKey(xt))
+                    n++;
+            }
+        }
+        return n;
+    }
+
     public static int countEllipsisSubterms(Compound x) {
         final int xs = x.size();
         int n = 0;
@@ -98,8 +112,8 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 
     public Product match(ShortSet ySubsExcluded, Compound y) {
         Term ex = this.expression;
-        if (ex == PLUS) {
-            return matchRemainingOneOrMore(ySubsExcluded, y);
+        if ((ex == PLUS) || (ex == ASTERISK)) {
+            return matchRemaining(ySubsExcluded, y);
         }
 
         throw new RuntimeException("unimplemented expression: " + ex);
@@ -117,7 +131,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 //        }
     }
 
-    private static Product matchRemainingOneOrMore(ShortSet ySubsExcluded, Compound Y) {
+    private static Product matchRemaining(ShortSet ySubsExcluded, Compound Y) {
 
         final int ysize = Y.size();
         Term[] others = new Term[ysize-ySubsExcluded.size()];
@@ -154,7 +168,6 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
      * @param x a compound which contains one or more ellipsis terms */
     public static int countNumNonEllipsis(Compound x) {
         //TODO depending on the expression, determine the sufficient # of terms Y must contain
-        final int xsize = x.size();
         int numNonVarArgs = Ellipsis.countNonEllipsisSubterms(x);
         return numNonVarArgs;
     }
@@ -178,6 +191,20 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
             Term xi = X.term(i);
             if (xi instanceof Ellipsis) {
                 return (Ellipsis) xi;
+            }
+        }
+        return null;
+    }
+    public static Ellipsis getFirstUnmatchedEllipsis(Compound X, Subst ff) {
+        final int xsize = X.size();
+        for (int i = 0; i < xsize; i++) {
+            Term xi = X.term(i);
+            if (xi instanceof Ellipsis) {
+                if (ff.xy().get(X)==null)
+                    return (Ellipsis) xi;
+//                else {
+//                    System.err.println("already matched");
+//                }
             }
         }
         return null;

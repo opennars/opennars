@@ -565,8 +565,8 @@ public class FindSubst extends Subst {
         int xsize = X.size();
 
         final int numNonVarArgs;
-        boolean hasEllipsis = Ellipsis.hasEllipsis(X);
-        if (!hasEllipsis) {
+        int hasEllipsis = Ellipsis.numUnmatchedEllipsis(X, this);
+        if (hasEllipsis==0) {
             /** must have same # subterms */
             if (xsize != Y.size()) {
                 return false;
@@ -588,7 +588,7 @@ public class FindSubst extends Subst {
         if (xsize == 0) return true;
 
 
-        if (!hasEllipsis) {
+        if (hasEllipsis==0) {
             if (xsize == 1)
                 return match(X.term(0), Y.term(0));
             else if (X.isCommutative()) {

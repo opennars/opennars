@@ -3,8 +3,8 @@ package nars.nal;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.list.mutable.FastList;
+import nars.$;
 import nars.Global;
-import nars.Narsese;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,7 +29,7 @@ public class DerivationRules extends FastList<TaskRule> {
     @Deprecated
     public static int maxVarArgsToMatch = 3; //originally 5 but as few as 2 can allow tests to pass
 
-    static final Narsese parser = Narsese.the();
+    //static final Narsese parser = Narsese.the();
 
 
     public DerivationRules() throws IOException, URISyntaxException {
@@ -133,8 +133,8 @@ public class DerivationRules extends FastList<TaskRule> {
             ret = twoSpacePattern.matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
         }
 
-        ret = ret.replace("A..+","%A..+"); //add var pattern manually to ellipsis
-        ret = ret.replace("B..+","%B..+"); //add var pattern manually to ellipsis
+        ret = ret.replace("A..","%A.."); //add var pattern manually to ellipsis
+        ret = ret.replace("B..","%B.."); //add var pattern manually to ellipsis
 
         return ret.replace("\n", "");/*.replace("A_1..n","\"A_1..n\"")*/ //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
@@ -275,13 +275,13 @@ public class DerivationRules extends FastList<TaskRule> {
         });//.forEachOrdered(s -> expanded.addAll(s));
 
 
-        Set<TaskRule> ur = Global.newHashSet(4096);
+        Set<TaskRule> ur = Global.newHashSet(1024);
 
         //accumulate these in a set to eliminate duplicates
         expanded.forEach(s -> {
             try {
 
-                final TaskRule rUnnorm = parser.term(s);
+                final TaskRule rUnnorm = $.$(s);
 
                 final TaskRule rNorm = rUnnorm.normalizeRule();
                 AcceptRule(ur, s, rNorm);
