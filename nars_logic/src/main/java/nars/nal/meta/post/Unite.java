@@ -1,6 +1,5 @@
 package nars.nal.meta.post;
 
-import nars.Global;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
 import nars.nal.nal3.SetExt;
@@ -8,11 +7,10 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 import nars.term.Variable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by me on 8/15/15.
@@ -32,14 +30,16 @@ public class Unite extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        List<Term> terms = Global.newArrayList(A.volume() + B.volume());
-        Collections.addAll(terms, A.terms());
-        Collections.addAll(terms, B.terms());
-
-        return createSetAndAddToSubstitutes(m, a, c, terms);
+        return createSetAndAddToSubstitutes(m, a, c, Terms.concat( A.terms(), B.terms() ));
     }
 
-    public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Collection<Term> termsArray) {
+    public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Set<Term> terms) {
+        if (terms.isEmpty()) return false;
+
+        return createSetAndAddToSubstitutes(m, a, c, terms.toArray(new Term[terms.size()]) );
+    }
+
+    public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Term[] termsArray) {
         final Compound res;
 
         if(a instanceof SetExt) {

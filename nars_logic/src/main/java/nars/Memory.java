@@ -93,6 +93,7 @@ public class Memory extends Param {
 
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
     public transient final Topic<Serializable> eventError = new DefaultTopic<>();
+
     public transient final Topic<Task> eventDerived = new DefaultTopic<>();
 
     public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
@@ -266,7 +267,7 @@ public class Memory extends Param {
     /**
      * called anytime a task has been removed, deleted, discarded, ignored, etc.
      */
-    public final void remove(final Task task, final String removalReason) {
+    public final void remove(final Task task, final Object removalReason) {
 
         final boolean willBeReceived = eventTaskRemoved.size() > 0;
 

@@ -54,6 +54,14 @@ public class RuleMatch {
      * Premise Context
      */
     public Premise premise;
+
+    public final Task derive(Task derived) {
+        derived = premise.removeInvalid(derived);
+        if (derived != null)
+            receiver.accept(derived);
+        return derived;
+    }
+
     @Deprecated public enum MatchStage {
         Pre, Pattern, Post
     }

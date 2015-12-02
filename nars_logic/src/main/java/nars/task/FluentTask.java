@@ -401,4 +401,16 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     }
 
 
+    /** flag used for anticipatable derivation */
+    public FluentTask anticipate(boolean a) {
+        this.anticipate = a;
+        return this;
+    }
+
+    public FluentTask budgetCompoundForward(Premise premise) {
+        BudgetFunctions.compoundForward(
+                getBudget(), getTruth(),
+                getTerm(), premise);
+        return this;
+    }
 }

@@ -42,6 +42,9 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     public final SimpleObjectProperty<GraphSource<K, N, ?>> source = new SimpleObjectProperty<>();
     public final BiFunction<N, N, TermEdge> edgeVis;
 
+    /** graph source update period MS */
+    private final int updatePeriodMS = -1;
+
     private int animatinPeriodMS = -1;
 
 
@@ -459,15 +462,16 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
                         CanvasEdgeRenderer edgeRenderer) {
         super();
 
+        this.source.set(g);
 
 
         source.addListener((e, c, v) -> {
 
-            if (c != null) {
-                v.stop(this);
-            }
-
             if (v != null) {
+                if (c != null) {
+                    v.stop(this);
+                }
+
                 v.start(this);
             }
             /*else {
@@ -515,32 +519,32 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
         this.edgeVis = (edgeVis);
         this.edgeRenderer.set(edgeRenderer);
 
-        this.source.set(g);
 
 
 
     }
 
     /**
-     * called before next layout changes
+     * called when layout changes to restart the source & layout
      */
     synchronized void layoutUpdated() {
-        int animationPeriod = this.animatinPeriodMS;
-//        if (this.animator!=null) {
-//            this.animator.stop();
-//            this.animator = null;
-//        }
+        int lastAnimPeriodMS;
+        if (this.animator!=null) {
+            lastAnimPeriodMS = animator.getPeriod();
+        }
+        else
+            lastAnimPeriodMS = -1;
+
         stop();
 
         //reset visiblity state to true for all, in case previous layout had hidden then
         getVertices().forEach(t -> t.setVisible(true));
 
-        source.getValue().setUpdateable();
 
         rerender();
 
-        if (animationPeriod != -1)
-            start(animationPeriod);
+        if (lastAnimPeriodMS != -1)
+            start(lastAnimPeriodMS);
     }
 
 
@@ -553,20 +557,21 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
             stop();
     }
 
-    public synchronized void start(int layoutPeriodMS) {
 
+    public synchronized void start(int layoutPeriodMS) {
 
         stop();
 
+        GraphSource<K, N, ?> src = source.get();
 
-        if (this.animator == null) {
+        if (this.animator == null && src!=null)  {
             this.animator = new Animate(layoutPeriodMS, a -> {
                 if (displayed.length != 0) {
                     rerender();
                 }
             });
 
-            System.out.println(this + " started");
+            //System.out.println(this + " started");
 
 
                 /*this.updaterSlow = new Animate(updatePeriodMS, a -> {
@@ -575,8 +580,11 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
                         renderEdges();
                     }
                 });*/
-            animatinPeriodMS = layoutPeriodMS;
+
             animator.start();
+
+            src.start(this);
+
             //updaterSlow.start();
         }
 
@@ -586,9 +594,13 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
         if (this.animator != null) {
             animator.stop();
             animator = null;
-            animatinPeriodMS = -1;
 
             System.out.println(this + " stopped");
+        }
+
+        GraphSource<K, N, ?> s = source.get();
+        if (s!=null) {
+            s.stop();
         }
     }
 

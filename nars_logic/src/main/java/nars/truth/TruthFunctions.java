@@ -445,15 +445,19 @@ public final class TruthFunctions extends UtilityFunctions {
         return new DefaultTruth(and(f1,(1-f2)), and(c1,c2));
     }
 
+    public static final ProjectedTruth eternalize(final Truth t) {
+        return eternalize(t.getFrequency(), t.getConfidence());
+    }
+
     /**
      * From one moment to eternal
      * @param t Truth value of the premise
      * @return Truth value of the conclusion
      */
-    public static final ProjectedTruth eternalize(final Truth t) {
+    public static final ProjectedTruth eternalize(float freq, float conf) {
         return new ProjectedTruth(
-                t.getFrequency(),
-                eternalizedConfidence(t.getConfidence()),
+                freq,
+                eternalizedConfidence(conf),
                 Stamp.ETERNAL
         );
     }

@@ -1,12 +1,9 @@
 package nars.nal.meta.post;
 
-import nars.Global;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
 import nars.nal.nal3.SetTensional;
 import nars.term.Term;
-
-import java.util.List;
 
 /**
  * Created by me on 8/15/15.
@@ -27,22 +24,6 @@ public class Differ extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        List<Term> terms = Global.newArrayList();
-        for(Term t: A.terms()) { //set difference
-            boolean include = true;
-            for(Term t2 : B.terms()) {
-                if(t.equals(t2)) {
-                    include=false;
-                    break;
-                }
-            }
-            if(include) {
-                terms.add(t);
-            }
-        }
-
-        if (terms.isEmpty()) return false;
-
-        return Unite.createSetAndAddToSubstitutes(m, a, c, terms);
+        return Unite.createSetAndAddToSubstitutes(m, a, c, SetTensional.difference(A, B));
     }
 }

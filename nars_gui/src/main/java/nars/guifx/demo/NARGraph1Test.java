@@ -38,8 +38,8 @@ public class NARGraph1Test {
         n.input("<hydochloric --> acid>.");
         n.input("<#x-->base>. %0.65%");
         n.input("<neutralization --> (acid,base)>. %0.75;0.90%");
-        //n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
-        //n.input("<(&&,a,b,ca)-->#x>?");
+        n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
+        n.input("<(&&,a,b,ca)-->#x>?");
 
         //n.frame(5);
 
@@ -48,11 +48,10 @@ public class NARGraph1Test {
 
                 new ConceptsSource(n),
 
+                512,
 
-                128,
-
-                //new DefaultVis(),
-                new DefaultNodeVis.HexagonNodeVis(),
+                new DefaultNodeVis(),
+                //new DefaultNodeVis.HexagonNodeVis(),
 
                 (A,B) -> {
                     TermEdge te = new TermEdge(A,B) {
@@ -76,7 +75,7 @@ public class NARGraph1Test {
     public static void main(String[] args)  {
 
 
-        Default n = new Default(512, 3,3,3, new FrameClock());
+        Default n = new Default(1024, 3,3,3, new FrameClock());
 
         NARide.show(n.loop(), ide -> {
 

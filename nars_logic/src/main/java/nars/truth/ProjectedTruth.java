@@ -1,7 +1,7 @@
 package nars.truth;
 
 /** truth with additional occurence time used for projection & eternalization results */
-public final class ProjectedTruth extends DefaultTruth {
+@Deprecated final class ProjectedTruth extends DefaultTruth {
 
     private final long target;
 

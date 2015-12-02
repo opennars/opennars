@@ -18,6 +18,10 @@ public interface SetExt<T extends Term> extends SetTensional<T> {
     }
 
 
+    static Compound make(final Collection<Term> c) {
+        return SetExt.make(c.toArray(new Term[c.size()]));
+    }
+
     static Compound make(final Term... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");
@@ -26,14 +30,18 @@ public interface SetExt<T extends Term> extends SetTensional<T> {
         }
     }
 
-    static Compound make(Collection<Term> t) {
-        switch (t.size()) {
-            case 0: throw new RuntimeException("empty set");
-            case 1: return new SetExt1(t.iterator().next());
-            default: return new SetExtN( Terms.toSortedSetArray(t) );
-        }
-    }
+//    static Compound make(Collection<Term> t) {
+//        switch (t.size()) {
+//            case 0: throw new RuntimeException("empty set");
+//            case 1: return new SetExt1(t.iterator().next());
+//            default: return new SetExtN( Terms.toSortedSetArray(t) );
+//        }
+//    }
 
+    static Term subtract(SetExt A, SetExt B) {
+        if (A.equals(B)) return null; //empty set
+        return SetExt.make(SetTensional.subtract(A,B));
+    }
 
 
 //    default void appendCloser(Appendable p) throws IOException {

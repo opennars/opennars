@@ -20,12 +20,8 @@
  */
 package nars.nal.nal3;
 
-import nars.Global;
 import nars.Op;
-import nars.term.Compound;
 import nars.term.Term;
-
-import java.util.Set;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term
@@ -60,10 +56,8 @@ public class DifferenceInt extends Difference {
      * @return the Term generated from the arguments
      * @param arg The list of term
      */
-    public static Term make(Term[] arg) {
-        ensureValidDifferenceSubterms(arg);
-
-        return make(arg[0], arg[1]);
+    public static Term make(Term a, Term b) {
+        return DifferenceInt.make(a, b);
     }
 
     /**
@@ -72,13 +66,13 @@ public class DifferenceInt extends Difference {
      * @param b The second component
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term a, final Term b) {
+    public static Term make(final Term... arg) {
+        if (arg.length != 2) return null;
+
+        Term a = arg[0];
+        Term b = arg[1];
         if ((a instanceof SetInt) && (b instanceof SetInt)) {
-            //TODO maybe a faster way to calculate:
-            Set<Term> set = Global.newHashSet(a.volume());
-            ((Compound<?>) a).forEach(set::add);
-            ((Compound<?>) b).forEach(set::remove);
-            return SetInt.make(set);
+            return SetInt.subtract((SetInt)a, (SetInt)b);
         }
 
         return new DifferenceInt(a, b);

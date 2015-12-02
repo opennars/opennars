@@ -33,17 +33,19 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>> {
 
-    public static class HexagonNodeVis<C extends Termed> extends DefaultNodeVis<C> {
-
-        @Override public TermNode newNode(C c) {
-            return new HexTermNode(c, (e) -> { }, (e) -> { });
-        }
-    }
+//    public static class HexagonNodeVis<C extends Termed> extends DefaultNodeVis<C> {
+//
+//        @Override public TermNode newNode(C c) {
+//            return new HexTermNode(c, (e) -> { }, (e) -> { });
+//        }
+//    }
 
     final static Font nodeFont = NARfx.mono(0.25);
 
     protected double minSize = 16;
     protected double maxSize = 64;
+
+    int maxEdges = 16;
 
     double nodeScaleCache = 1.0;
 
@@ -74,7 +76,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 
     @Override
     public TermNode newNode(C term) {
-        return new LabeledCanvasNode(term, mouseActivity, mouseUntivity);
+        return new LabeledCanvasNode(term, maxEdges, mouseActivity, mouseUntivity);
     }
 
     @Override
@@ -248,8 +250,8 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {
 
     private GraphicsContext g = null;
 
-    public LabeledCanvasNode(N t, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
-        super(t);
+    public LabeledCanvasNode(N t, int maxEdges, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
+        super(t, maxEdges);
 
         base = newBase();
 
@@ -365,8 +367,8 @@ public static class HexTermNode extends LabeledCanvasNode<Termed> {
         //HACK
     }
 
-    public HexTermNode(Termed t, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
-        super(t, mouseActivity, mouseUntivity);
+    public HexTermNode(Termed t, int maxEdges, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
+        super(t, maxEdges, mouseActivity, mouseUntivity);
 
         Color color = TermNode.getTermColor(term, colors, 0.5);
 

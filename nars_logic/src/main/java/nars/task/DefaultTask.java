@@ -74,6 +74,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     private List log = null;
 
+    /** flag used for anticipatable derivation */
+    protected boolean anticipate = false;
 
 
     public DefaultTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
@@ -227,7 +229,9 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
     }
 
-
+    public final boolean isAnticipated() {
+        return anticipate || isInput();
+    }
 
     @Override
     public Task<T> setEvidence(final long... evidentialSet) {
@@ -489,6 +493,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
+    /** safely make a new task, if the term is not already known to be valid for a task */
     public static <C extends Compound> FluentTask make(C t) {
         t.normalizeDestructively();
         Compound u = Task.taskable(t);

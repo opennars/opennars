@@ -20,17 +20,26 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
 
     public final AtomicBoolean refresh = new AtomicBoolean(true);
 
+    /** current grapher after it starts this */
+    protected SpaceGrapher<V, N> grapher;
 
-    abstract public void forEachOutgoingEdgeOf(SpaceGrapher<V, N> sg, V src, Consumer<V> eachTarget);
+
+    abstract public void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget);
 
 
-    abstract public V getTargetVertex(SpaceGrapher<V, N> g, E edge);
+    abstract public V getTargetVertex(E edge);
 
+    /** if the grapher is ready */
+    public final boolean isReady() {
+        SpaceGrapher<V, N> grapher = this.grapher;
+        if (grapher == null) return false;
+        return grapher.isReady();
+    }
 
     final public void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
 
 
-        forEachOutgoingEdgeOf(g, s, t -> {
+        forEachOutgoingEdgeOf(s, t -> {
 
             N tn = g.getTermNode(t.getTerm());
             if (tn == null)
@@ -76,14 +85,41 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
 //        return e;
     }
 
-    public void start(SpaceGrapher<V, N> g) {
-        updateGraph(g);
-        setUpdateable();
+    public void stop() {
+        this.grapher = null;
     }
+
+    public void start(SpaceGrapher<V, N> g) {
+        if (grapher!=null) {
+            throw new RuntimeException(this + " already attached to grapher " + grapher + ", can not switch to " + g);
+        }
+
+        updateGraph();
+        setUpdateable();
+
+        this.grapher = g;
+    }
+
+//    public Animate start(SpaceGrapher<V, N> g, int loopMS) {
+//        start(g);
+//
+//        System.out.println(this + " start: " + loopMS + "ms loop");
+//
+//        Animate an = new Animate(loopMS, a -> {
+//
+//            setUpdateable();
+//            updateGraph();
+//
+//        });
+//
+//        an.start();
+//
+//        return an;
+//    }
 
 
     /** called once per frame to update anything about the grapher scope */
-    public void updateGraph(SpaceGrapher<V, N> g) {
+    public void updateGraph() {
 
     }
 

@@ -20,12 +20,8 @@
  */
 package nars.nal.nal3;
 
-import nars.Global;
 import nars.Op;
-import nars.term.Compound;
 import nars.term.Term;
-
-import java.util.Set;
 
 
 /**
@@ -64,15 +60,16 @@ public class DifferenceExt extends Difference {
      * @param arg The list of term
      */
     public static Term make(Term[] arg) {
-        ensureValidDifferenceSubterms(arg);
+        if (arg.length!=2) return null;
 
-        if ((arg[0] instanceof SetExt) && (arg[1] instanceof SetExt)) {
-            //TODO maybe a faster way to do this operation:
-            Set<Term> set = Global.newHashSet(arg[0].volume());
-            ((Compound<?>) arg[0]).forEach(set::add);
-            ((Compound<?>) arg[1]).forEach(set::remove);
-            return SetExt.make(set);
-        }                
+        Term A = arg[0];
+        Term B = arg[1];
+
+        if (A.equals(B)) return null;
+
+        if ((A instanceof SetExt) && (B instanceof SetExt)) {
+            return SetExt.subtract((SetExt)A, (SetExt)B);
+        }
 
         return new DifferenceExt(arg);
     }

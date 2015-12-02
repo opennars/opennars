@@ -1,62 +1,9 @@
 package nars.guifx.graph2;
 
-import nars.link.TLink;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-
 /**
  * Created by me on 9/5/15.
  */
 abstract public class TermEdge<N extends TermNode> /*implements ChangeListener*/ {
-
-    public static class TLinkEdge<N extends TermNode> extends TermEdge<N> {
-
-        private double w;
-        //TODO use a Half inner class for this
-        public TermLink termLinkAB = null;
-        public TermLink termLinkBA = null;
-        public TaskLink taskLinkAB = null;
-        public TaskLink taskLinkBA = null;
-
-        public TLinkEdge(N aSrc, N bSrc) {
-            super(aSrc, bSrc);
-        }
-
-        final public float termLinkFrom(TermNode src) {
-            TermLink tl = (src == aSrc) ? termLinkAB : termLinkBA;
-            if (tl == null) return 0;
-            return tl.getPriority();
-        }
-        final public float taskLinkFrom(TermNode src) {
-            TaskLink tl = (src == aSrc) ? taskLinkAB : taskLinkBA;
-            if (tl == null) return 0;
-            return tl.getPriority();
-        }
-
-        final public void linkFrom(TermNode src, TLink link) {
-
-            if (link instanceof TermLink) {
-                TermLink tl = (TermLink)link;
-                if (src == aSrc)
-                    termLinkAB = tl;
-                else
-                    termLinkBA = tl;
-            }
-            else {
-                TaskLink tl = (TaskLink)link;
-                if (src == aSrc)
-                    taskLinkAB = tl;
-                else
-                    taskLinkBA = tl;
-            }
-
-        }
-
-        @Override
-        public double getWeight() {
-            return 1.0;
-        }
-    }
 
 
     public static final TermEdge[] empty = new TermEdge[0];

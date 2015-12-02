@@ -5,12 +5,12 @@ import javafx.scene.control.Button;
 import nars.$;
 import nars.NAR;
 import nars.guifx.NARfx;
-import nars.guifx.graph2.GraphSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
+import nars.guifx.graph2.source.JGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.nal.DerivationRules;
 import nars.nal.nal1.Inheritance;
@@ -26,7 +26,6 @@ import org.jgrapht.generate.ScaleFreeGraphGenerator;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.HashMap;
-import java.util.function.Consumer;
 
 import static nars.$.$;
 
@@ -51,7 +50,7 @@ public class GraphPaneTest {
                 ) {
 
                     @Override
-                    public Term getTargetVertex(SpaceGrapher g, Product edge) {
+                    public Term getTargetVertex(Product edge) {
                         return edge.term(1);
                     }
 
@@ -63,8 +62,8 @@ public class GraphPaneTest {
 
                     @Override
                     public TermNode newNode(Termed term) {
-                        System.out.println("new node: " + term);
-                        TermNode t = new TermNode(term);
+                        //System.out.println("new node: " + term);
+                        TermNode t = new TermNode(term, 8);
                         t.priNorm = 0.25f;
                         Button b = new Button(term.toString());
                         b.setScaleX(0.1);
@@ -149,64 +148,4 @@ public class GraphPaneTest {
 
     }
 
-    public abstract static class JGraphSource<V extends Termed, E> extends GraphSource<V,TermNode<V>,E> {
-
-
-        DirectedGraph<V, E> graph;
-        private SpaceGrapher<V, TermNode<V>> grapher;
-
-
-        public JGraphSource(DirectedGraph<V, E> initialGraph) {
-            this.graph = initialGraph;
-        }
-
-
-        @Override
-        public void forEachOutgoingEdgeOf(SpaceGrapher<V, TermNode<V>> sg, V src, Consumer<V> eachTarget) {
-            graph.outgoingEdgesOf(src).forEach(edge ->
-                    eachTarget.accept(
-                            getTargetVertex(sg, edge)));
-        }
-
-
-        @Override
-        public void start(SpaceGrapher g) {
-            this.grapher = g;
-            //super.start(g);
-
-            new Animate(35, a -> {
-
-                setUpdateable();
-                updateGraph(g);
-
-            }).start();
-
-        }
-
-        public void setGraph(DirectedGraph<V, E> initialGraph) {
-            this.graph = initialGraph;
-            updateGraph(grapher);
-        }
-
-
-        @Override
-        public void updateGraph(SpaceGrapher g) {
-
-            if (graph == null) return;
-
-            if (!g.isReady())
-                return;
-
-            if (this.canUpdate()) {
-
-                if (graph == null) {
-                    //setvertices empty array?
-                    return;
-                }
-
-                g.setVertices(graph.vertexSet());
-            }
-        }
-
-    }
 }

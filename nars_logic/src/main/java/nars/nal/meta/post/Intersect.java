@@ -1,15 +1,9 @@
 package nars.nal.meta.post;
 
-import com.gs.collections.api.set.MutableSet;
-import com.gs.collections.impl.factory.Sets;
-import nars.Global;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
 import nars.nal.nal3.SetTensional;
 import nars.term.Term;
-
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Created by me on 8/15/15.
@@ -37,14 +31,6 @@ public class Intersect extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        Set<Term> aa = Global.newHashSet(A.size());
-        Collections.addAll(aa, A.terms());
-        Set<Term> bb = Global.newHashSet(B.size());
-        Collections.addAll(bb, B.terms());
-
-        MutableSet<Term> terms = Sets.intersect(bb,aa);
-        if (terms.isEmpty()) return false;
-
-        return Unite.createSetAndAddToSubstitutes(m, a, c, terms);
+        return Unite.createSetAndAddToSubstitutes(m, a, c, SetTensional.intersect(A,B));
     }
 }

@@ -27,11 +27,11 @@ import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Tense;
+import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.truth.ProjectedTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -130,22 +130,21 @@ public class LocalRules {
 
         Truth newBeliefTruth = newBelief.getTruth();
 
-        ProjectedTruth oldBeliefTruth = oldBelief.projection(newBelief.getOccurrenceTime(), nal.time());
+        long newOcc = newBelief.getOccurrenceTime();
+        Truth oldBeliefTruth = oldBelief.projection(newOcc, nal.time());
 
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
 
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        long target_time = oldBeliefTruth.getTargetTime();
-
         //Task<T> revised = nal.input(
-        return nal.newTask(newBelief.getTerm())
+        return DefaultTask.make(newBelief.getTerm())
                 .punctuation(newBelief.getPunctuation())
                 .truth(truth)
                 .budget(budget)
                 .parent(newBelief, oldBelief)
                 .because("Revision")
-                .time( now,  target_time )
+                .time( now,  newOcc )
                 .normalized();
     }
 

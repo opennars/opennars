@@ -25,7 +25,6 @@ package nars.op.mental;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -47,10 +46,10 @@ import java.util.Map;
  something expected did not happen
  anticipation will generate a negative event as consequence
  */
-public class Anticipate {
+public final class Anticipate {
 
+    public static final float TOLERANCE_DIV=5.0f;
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
-    public static float TOLERANCE_DIV=5.0f;
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -58,19 +57,34 @@ public class Anticipate {
     final Multimap<Compound,TaskTime> anticipations = LinkedHashMultimap.create();
 
     private final NAR nar;
-    private Memory memory;
+
     private final boolean debug = false;
     //private long nextUpdateTime = -1;
 
+    /** called each cycle to update calculations of anticipations */
+    int happeneds = 0, didnts = 0;
+
+//    public static boolean testing = false;
+//    public static String teststring = "";
+
+
+    final List<TaskTime> toRemove = Global.newArrayList();
+
+
     public Anticipate(NAR nar) {
         this.nar = nar;
-        this.memory = nar.memory;
 
         nar.memory.eventCycleEnd.on(c -> updateAnticipations());
-        nar.memory.eventInput.on(this::mayHaveHappenedAsExpected);
-        nar.memory.eventDerived.on(this::mayHaveHappenedAsExpected);
+        nar.memory.eventInput.on(this::onInput);
     }
 
+    public final void onInput(Task t) {
+        if (t.isAnticipated()) {
+            anticipate(t);
+            if (t.isInput())
+                mayHaveHappenedAsExpected(t);
+        }
+    }
 
     public void anticipate(Task t) {
 
@@ -83,7 +97,7 @@ public class Anticipate {
             return;
         }
 
-        long now = memory.time();
+        long now = nar.time();
 
         if (now > t.getOccurrenceTime()) //its about the past..
             return;
@@ -92,21 +106,22 @@ public class Anticipate {
             System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
         TaskTime taskTime = new TaskTime(t, t.getCreationTime());
-        if(testing) {
-            String s = "anticipating: "+taskTime.task.getTerm().toString();
-            System.out.println(s);
-            teststring += s + "\n";
-        }
+//        if(testing) {
+//            String s = "anticipating: "+taskTime.task.getTerm().toString();
+//            System.out.println(s);
+//            teststring += s + "\n";
+//        }
         anticipations.put(tt, taskTime);
+
     }
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
-        if(testing) {
-            String s = "did not happen: " + prediction.toString();
-            System.out.println(s);
-            teststring += s + "\n";
-        }
+//        if(testing) {
+//            String s = "did not happen: " + prediction.toString();
+//            System.out.println(s);
+//            teststring += s + "\n";
+//        }
 
         long expectedOccurrenceTime = tt.occurrTime;
 
@@ -116,19 +131,15 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        final Task derived = new FluentTask<>(prediction)
+        nar.input(new FluentTask<>(prediction)
                 .belief()
                 .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
                 .budget(expiredBudget)
-                .time(memory.time(), expectedOccurrenceTime)
+                .time(nar.time(), expectedOccurrenceTime)
                 .parent(tt.task, null)
-                .because("Absent Anticipated Event")
-                ;
-
-        nar.input(derived);
+                .because("Absent Anticipated Event"));
     }
 
-    List<TaskTime> toRemove = Global.newArrayList();
 
 
     protected void mayHaveHappenedAsExpected(Task c) {
@@ -149,11 +160,11 @@ public class Anticipate {
                 toRemove.add(tt);
 
                 happeneds++;
-                if(testing) {
-                    String s = "happened as expected: "+tt.task.getTerm().toString();
-                    System.out.println(s);
-                    teststring += s + "\n";
-                }
+//                if(testing) {
+//                    String s = "happened as expected: "+tt.task.getTerm().toString();
+//                    System.out.println(s);
+//                    teststring += s + "\n";
+//                }
             }
 
         }
@@ -161,11 +172,6 @@ public class Anticipate {
         toRemove.forEach(tt -> anticipations.remove(c.getTerm(),tt));
     }
 
-    /** called each cycle to update calculations of anticipations */
-    int happeneds = 0, didnts = 0;
-
-    public static boolean testing = false;
-    public static String teststring = "";
     protected void updateAnticipations() {
 
         long now = nar.memory.time();

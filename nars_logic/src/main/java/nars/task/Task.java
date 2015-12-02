@@ -30,7 +30,10 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.truth.*;
+import nars.truth.DefaultTruth;
+import nars.truth.Stamp;
+import nars.truth.Truth;
+import nars.truth.Truthed;
 import nars.util.data.array.LongArrays;
 
 import java.lang.ref.Reference;
@@ -234,13 +237,13 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     default Task clone(Compound t, Truth newTruth, long occ, boolean cloneEvenIfTruthEqual) {
-        if (newTruth instanceof ProjectedTruth) {
-            long target = ((ProjectedTruth) newTruth).getTargetTime();
-            if (occ!=target) {
-                cloneEvenIfTruthEqual = true;
-                occ = target;
-            }
-        }
+//        if (newTruth instanceof ProjectedTruth) {
+//            long target = ((ProjectedTruth) newTruth).getTargetTime();
+//            if (occ!=target) {
+//                cloneEvenIfTruthEqual = true;
+//                occ = target;
+//            }
+//        }
 
         if (!cloneEvenIfTruthEqual) {
             if (occ == getOccurrenceTime() && getTruth().equals(newTruth) && getTerm().equals(t))
@@ -641,4 +644,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
         }
 
     }
+
+    boolean isAnticipated();
 }

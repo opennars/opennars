@@ -41,6 +41,7 @@ public enum Op implements Serializable {
     /* CompountTerm operators, length = 1 */
     INTERSECTION_EXT("&", 3),
     INTERSECTION_INT("|", 3),
+
     DIFFERENCE_EXT("-", 3),
     DIFFERENCE_INT("~", 3),
 

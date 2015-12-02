@@ -254,30 +254,31 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
     //projects the truth to a certain time, covering all 4 cases as discussed in
     //https://groups.google.com/forum/#!searchin/open-nars/task$20eteneral/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
-    default ProjectedTruth projection(final long targetTime, final long currentTime) {
+    default DefaultTruth projection(final long targetTime, final long currentTime) {
 
         final Truth currentTruth = getTruth();
         long occurrenceTime = getOccurrenceTime();
 
-        if(targetTime == Stamp.ETERNAL && Tense.isEternal(occurrenceTime)) {
-            return new ProjectedTruth(currentTruth, targetTime);                 //target and itself is eternal so return the truth of itself
+        boolean eternal = targetTime == Stamp.ETERNAL;
+        boolean tenseEternal = Tense.isEternal(occurrenceTime);
+        if (eternal && tenseEternal) {
+            return new DefaultTruth(currentTruth);                 //target and itself is eternal so return the truth of itself
         }
-        else
-        if(targetTime != Stamp.ETERNAL && Tense.isEternal(occurrenceTime)) {
-            return new ProjectedTruth(currentTruth, targetTime);                 //target is not eternal but itself is,
+        else if(!eternal && tenseEternal) {
+            return new DefaultTruth(currentTruth);                 //target is not eternal but itself is,
         }                                                                        //note: we don't need to project since itself holds for every moment.
-        else
-        if (targetTime == Stamp.ETERNAL && !Tense.isEternal(occurrenceTime)) { //target is eternal, but ours isnt, so we need to eternalize it
+        else if (eternal && !tenseEternal) { //target is eternal, but ours isnt, so we need to eternalize it
             return TruthFunctions.eternalize(currentTruth);
         }
         else {
             //ok last option is that both are tensed, in this case we need to project to the target time
             //but since also eternalizing is valid, we use the stronger one.
-            ProjectedTruth eternalTruth = TruthFunctions.eternalize(currentTruth);
+            DefaultTruth eternalTruth = TruthFunctions.eternalize(currentTruth);
             float factor = TruthFunctions.temporalProjection(targetTime, occurrenceTime, currentTime);
             float projectedConfidence = factor * currentTruth.getConfidence();
+
             if(projectedConfidence > eternalTruth.getConfidence()) {
-                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, targetTime);
+                return new DefaultTruth(currentTruth.getFrequency(), projectedConfidence);
             }
             else {
                 return eternalTruth;

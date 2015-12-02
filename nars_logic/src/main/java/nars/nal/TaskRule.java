@@ -7,7 +7,7 @@ import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.op.End;
+import nars.nal.meta.op.Derive;
 import nars.nal.meta.op.PostSolve;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.*;
@@ -155,7 +155,7 @@ public class TaskRule extends ProductN implements Level {
             l.add(PostSolve.the);
         }
 
-        l.add(new End(this));
+        l.add(new Derive(this, anticipate, immediate_eternalize));
 
         return l;
     }

@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
+import nars.guifx.graph2.impl.TLinkEdge;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
 import nars.nar.Default;
@@ -23,15 +24,15 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
     private final NAR nar;
     private Active regs = null;
-    //private Set<TermNode> prevActive = null;
+
+    final int maxNodeLinks = 24; //per type
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
-    private BiFunction<TermNode<Concept>, TermNode<Concept>, TermEdge> edgeBuilder = (S,T) -> {
-        return new TermEdge.TLinkEdge(S,T);
-    };
+    private BiFunction<TermNode<Concept>, TermNode<Concept>, TermEdge> edgeBuilder =
+            (S,T) -> new TLinkEdge(S,T);
 
     public ConceptsSource(NAR nar) {
         super();
@@ -46,13 +47,11 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
 
     @Override
-    public void forEachOutgoingEdgeOf(SpaceGrapher<Concept, TermNode<Concept>> sg,
-                                      Concept cc,
+    public void forEachOutgoingEdgeOf(Concept cc,
                                       Consumer<Concept> eachTarget) {
-        final int maxNodeLinks = 24;
 
 
-        //Set<Concept> missing = sn.getEdgeSet();
+        SpaceGrapher<Concept, TermNode<Concept>> sg = this.grapher;
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
 
@@ -84,8 +83,8 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
     }
 
     @Override
-    public Concept getTargetVertex(SpaceGrapher<Concept, TermNode<Concept>> sg, TLink edge) {
-        return sg.getTermNode(edge.getTerm()).c;
+    public Concept getTargetVertex(TLink edge) {
+        return grapher.getTermNode(edge.getTerm()).c;
     }
 
 
@@ -107,7 +106,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
                         c -> refresh.set(true)
                 ),
                 nar.memory.eventFrameStart.on(
-                        h -> updateGraph(g)
+                        h -> updateGraph()
                 )
         );
 
@@ -123,18 +122,16 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
     }
 
 
+
     @Override
-    public void updateGraph(SpaceGrapher<Concept, TermNode<Concept>> g) {
+    public void updateGraph() {
 
-
-
-        if (!g.isReady())
+        if (!isReady())
             return;
 
         if (this.canUpdate()) {
 
             Bag<Term, Concept> x = ((Default) nar).core.concepts();
-
 
             String keywordFilter, _keywordFilter = includeString.get();
             if (_keywordFilter != null && _keywordFilter.isEmpty())
@@ -161,10 +158,14 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
             });
 
-            g.setVertices(ii);
+            commit(ii);
         }
 
 
+    }
+
+    private void commit(Iterable<Concept> ii) {
+        grapher.setVertices(ii);
     }
 
 
