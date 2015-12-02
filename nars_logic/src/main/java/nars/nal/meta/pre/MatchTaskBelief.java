@@ -52,18 +52,7 @@ import java.util.List;
 
     @Override
     public final boolean test(final RuleMatch m) {
-
-        final TaskBeliefPair tb = m.taskBelief;
-
-//        //if (!tb.substitutesMayExistParanoid(pattern)) {
-//        if (!tb.substitutesMayExistFast(pattern)) {
-//            return false;
-//        }
-//        return m.next(pattern, tb, m.unificationPower);
-
-        //TODO parameterize the power by budget
-        return m.next(compiled, tb, m.subst.power);
-
+        throw new RuntimeException("this should not be called");
     }
 
     @Override

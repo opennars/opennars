@@ -8,7 +8,13 @@ import nars.term.Term;
  */
 public class Equal extends PreCondition2 {
 
-    public Equal(Term var1, Term var2) {
+    /** commutivity: sort the terms */
+    public static Equal make(Term a, Term b) {
+        if (a.compareTo(b) <= 0) return new Equal(a, b);
+        else                     return new Equal(b, a);
+    }
+
+    Equal(Term var1, Term var2) {
         super(var1, var2);
     }
 

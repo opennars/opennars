@@ -10,7 +10,15 @@ import java.util.Set;
 /** Unique subterms */
 public class NoCommonSubterm extends PreCondition2 {
 
-    public NoCommonSubterm(Term arg1, Term arg2) {
+    /** commutivity: sort the terms */
+    public static NoCommonSubterm make(Term a, Term b) {
+        if (a.compareTo(b) <= 0)
+            return new NoCommonSubterm(a, b);
+        else
+            return new NoCommonSubterm(b, a);
+    }
+
+    NoCommonSubterm(Term arg1, Term arg2) {
         super(arg1, arg2);
     }
 

@@ -55,19 +55,21 @@ abstract public class Frame {
     public void clear() {
         xy.clear();
         yx.clear();
+        xyChanged = yxChanged = false;
         y = null;
         parent = null;
-        xyChanged = yxChanged = false;
+        power = 0;
     }
 
     public void copyTo(Frame m) {
-        m.xy.clear(); m.xy.putAll(xy);
-        m.yx.clear(); m.yx.putAll(yx);
+        Map<Term, Term> mxy = m.xy; mxy.clear(); mxy.putAll(this.xy);
+        Map<Term, Term> myx = m.yx; myx.clear(); myx.putAll(this.yx);
+        m.xyChanged = m.yxChanged = false;
         m.y = y;
         m.parent = parent;
-        m.xyChanged = false; //xyChanged;
-        m.yxChanged = false; //yxChanged;
         m.power = power;
+
+        xyChanged = yxChanged = false;
     }
 
 

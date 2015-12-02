@@ -46,9 +46,6 @@ public class RuleMatch {
     public Consumer<Task> receiver;
 
 
-    @Deprecated //reference to the pattern should not be necessary when complete
-    public TaskBeliefPair taskBelief;
-
     @Deprecated //reference to the rule should not be necessary when complete
     public TaskRule rule;
 
@@ -170,7 +167,6 @@ public class RuleMatch {
     public String toString() {
         return "RuleMatch{" +
                 "premise=" + premise +
-                ", taskBelief=" + taskBelief +
                 ", subst=" + subst +
                 ", post=" + post +
                 ", sub2=" + sub2 +
@@ -190,18 +186,21 @@ public class RuleMatch {
      * set the next premise
      */
     public final void start(Premise p, Consumer<Task> receiver) {
-        start();
+        clear();
 
         this.premise = p;
         this.receiver = receiver;
 
-        //scale unification power according to premise's mean priority linearly between min and max
-        int unificationPower =
-                (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
-                        + Global.UNIFICATION_POWERmin);
+        this.subst.parent = new TaskBeliefPair(
+            p.getTask().getTerm(),
+            p.getTermLink().getTerm()
+        );
 
-        this.subst.parent = taskBelief = new TaskBeliefPair(p.getTask().getTerm(), p.getTermLink().getTerm());
-        this.subst.power = unificationPower;
+        //scale unification power according to premise's mean priority linearly between min and max
+        this.subst.power =
+            (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
+                    + Global.UNIFICATION_POWERmin);
+
     }
 
 
@@ -236,7 +235,6 @@ public class RuleMatch {
 
         target.premise = premise;
         target.receiver = receiver;
-        target.taskBelief = taskBelief;
 
         subst.copyTo(target.subst);
         post.copyTo(target.post);
@@ -255,7 +253,7 @@ public class RuleMatch {
     /**
      * call at beginning to reset
      */
-    public final void start() {
+    public final void clear() {
         subst.clear();
         sub2.clear();
         post.clear();

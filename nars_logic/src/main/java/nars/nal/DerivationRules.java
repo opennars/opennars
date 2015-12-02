@@ -284,11 +284,11 @@ public class DerivationRules extends FastList<TaskRule> {
                 final TaskRule rUnnorm = $.$(s);
 
                 final TaskRule rNorm = rUnnorm.normalizeRule();
-                AcceptRule(ur, s, rNorm);
+                AcceptRule(ur, rNorm);
 
                 if(rNorm!=null) {
                     final TaskRule rNorm2 = rNorm.forwardPermutation();
-                    AcceptRule(ur, s, rNorm2);
+                    AcceptRule(ur, rNorm2);
                 }
 
             } catch (Exception ex) {
@@ -301,21 +301,30 @@ public class DerivationRules extends FastList<TaskRule> {
         return ur;
     }
 
-    private static void AcceptRule(Set<TaskRule> ur, String s, TaskRule rNorm) {
-        if (rNorm == null)
-            throw new RuntimeException("invalid rule, detected after normalization: " + s);
-
-        boolean added = ur.add(rNorm);
-        if (added) {
+    private static void AcceptRule(Set<TaskRule> c, TaskRule r) {
+//        if (rNorm == null)
+//            throw new RuntimeException("invalid rule, detected after normalization: " + s);
+//
+        /*if (added)*/ {
             //add reverse questions
-            rNorm.forEachQuestionReversal(q -> {
+            r.forEachQuestionReversal(q -> {
                 q = q.normalizeRule();
+                if (q == null)
+                    throw new RuntimeException("invalid rule at normalization");
+
                 //normalize may be returned null if the rearranging produced an invalid result, so do not add null
-                if (q != null && ur.add(q)) {
-                    //System.out.println("  " + q);
+                if (!c.add(q)) {
+                    System.err.println("DUPLICATE RULE: " + q);
                 }
             });
         }
+
+        //destructive, normalize this after clone created from unnormalized
+        boolean added = c.add(r.normalizeRule());
+        if (!added) {
+            System.err.println("DUPLICATE RULE: " + r);
+        }
+
     }
 
 

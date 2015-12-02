@@ -10,20 +10,16 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
 import nars.nar.Default;
 import nars.term.Term;
-import nars.term.Termed;
 import nars.util.event.Active;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-
-import static javafx.application.Platform.runLater;
 
 /**
  * Example Concept supplier with some filters
  */
-public class ConceptsSource<T extends Termed> implements GraphSource<T> {
+public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>> {
 
 
     private final NAR nar;
@@ -32,22 +28,27 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);
-
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
+    private BiFunction<TermNode, TermNode, TermEdge> edgeBuilder = (S,T) -> {
+        return new TermEdge.TLinkEdge(S,T);
+    };
+
     public ConceptsSource(NAR nar) {
+        super();
+
         this.nar = nar;
 
         includeString.addListener((e) -> {
             //System.out.println(includeString.getValue());
-            refresh();
+            setUpdateable();
         });
     }
 
-    final AtomicBoolean refresh = new AtomicBoolean(true);
 
     @Override
-    public void start(SpaceGrapher g) {
+    public void start(SpaceGrapher<Concept, TermNode<Concept>> g) {
+
 
         //.stdout()
         //.stdoutTrace()
@@ -57,43 +58,37 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
         if (regs != null)
             regs.off();
 
-        refresh();
 
         regs = new Active(
-            nar.memory.eventConceptActivated.on(
-                c -> refresh.set(true)
-            ),
-            nar.memory.eventFrameStart.on(
-                h -> update(g)
-            )
+                nar.memory.eventConceptActivated.on(
+                        c -> refresh.set(true)
+                ),
+                nar.memory.eventFrameStart.on(
+                        h -> updateGraph(g)
+                )
         );
 
-        update(g);
+        super.start(g);
+
 
     }
 
-
     @Override
-    public void refresh() {
-        runLater(() -> {
-            refresh.set(true);
-            if (prevActive != null)
-                prevActive.clear();
-        });
-    }
-
-    @Override
-    public void stop(SpaceGrapher vnarGraph) {
+    public void stop(SpaceGrapher<Concept, ? super TermNode<Concept>> vnarGraph) {
         regs.off();
         regs = null;
     }
 
 
-    public final void update(SpaceGrapher g) {
+    @Override
+    public void updateGraph(SpaceGrapher<Concept, TermNode<Concept>> g) {
 
 
-        if (g.ready.get() && refresh.compareAndSet(true, false)) {
 
+        if (!g.isReady())
+            return;
+
+        if (this.canUpdate()) {
 
             Bag<Term, Concept> x = ((Default) nar).core.concepts();
 
@@ -124,9 +119,8 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
             });
 
             g.setVertices(ii);
-
-
         }
+
 
     }
 
@@ -146,45 +140,42 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
 //    }
 
 
+
     @Override
-    public void refresh(SpaceGrapher<T, ? extends TermNode<T>> sg, T k, TermNode<T> sn) {
+    public final void updateNode(SpaceGrapher<Concept, TermNode<Concept>> sg, Concept cc, TermNode<Concept> sn) {
 
-        if (k instanceof Concept) {
+        sn.c = cc;
+        sn.priNorm = cc.getPriority();
 
-            Concept cc = (Concept)k;
+        final int maxNodeLinks = 24;
 
-            sn.c = cc;
-            sn.priNorm = cc.getPriority();
+        Set<Concept> missing = sn.getEdgeSet();
 
-            final int maxNodeLinks = 24;
+        Consumer<? super TLink<?>> linkUpdater = link -> {
 
-            Set<T> missing = sn.getEdgeSet();
+            Term target = link.getTerm();
 
-            Consumer<? super TLink<?>> linkUpdater = link -> {
+            if (cc.getTerm().equals(target)) //self-loop
+                return;
 
-                Term target = link.getTerm();
+            TermNode<Concept> tn = sg.getTermNode(target);
+            if (tn == null)
+                return;
 
-                if (k.getTerm().equals(target)) //self-loop
-                    return;
+            TermEdge.TLinkEdge ee = (TermEdge.TLinkEdge) getConceptEdge(sg, sn, tn, edgeBuilder);
 
-                TermNode<T> tn = sg.getTermNode(target);
-                if (tn == null)
-                    return;
+            if (ee != null) {
+                ee.linkFrom(tn, link);
+            }
 
-                TermEdge ee = getConceptEdge(sg, sn, tn);
+            missing.remove(tn.term);
+        };
 
-                if (ee != null) {
-                    ee.linkFrom(tn, link);
-                }
+        cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
+        cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
 
-                missing.remove(tn.term);
-            };
+        sn.removeEdges(missing);
 
-            cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
-            cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
-
-            sn.removeEdges(missing);
-        }
 
         //final Term t = tn.term;
         //final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
@@ -210,36 +201,4 @@ public class ConceptsSource<T extends Termed> implements GraphSource<T> {
     }
 
 
-    public TermEdge<TermNode<T>>
-    getConceptEdge(SpaceGrapher<T, ? extends TermNode<T>> g, TermNode<T> s, TermNode<T> t) {
-
-        //re-order
-        final int i = s.getTerm().compareTo(t.getTerm());
-        if (i == 0) return null;
-            /*throw new RuntimeException(
-                "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
-                        + s.term.equals(t.term) + " " + t.term.equals(s.term) + ", hash=" + s.term.hashCode() + "," + t.term.hashCode() );*/
-
-        if (!(i < 0)) { //swap
-            TermNode x = s;
-            s = t;
-            t = x;
-        }
-
-        return g.getConceptEdgeOrdered(s, t, defaultEdgeBuilder);
-//        if (e == null) {
-//            e = new TermEdge(s, t);
-//        }
-//        s.putEdge(t.term, e);
-//        return e;
-    }
-
-    static final BiFunction<TermNode, TermNode, TermEdge> defaultEdgeBuilder = (a, b) ->
-            new TermEdge(a, b);
-
-
-    @Override
-    public void accept(SpaceGrapher<T, TermNode<T>> tTermNodeSpaceGrapher) {
-
-    }
 }

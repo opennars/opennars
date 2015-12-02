@@ -1,32 +1,72 @@
 package nars.guifx.graph2;
 
+import nars.concept.Concept;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.term.Termed;
 
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+
+import static javafx.application.Platform.runLater;
 
 /**
  * Created by me on 9/6/15.
  */
-@FunctionalInterface
-public interface GraphSource<K extends Termed> extends Consumer<SpaceGrapher<K,TermNode<K>>> {
+abstract public class GraphSource<K extends Termed, V extends TermNode<K>>  {
 
+    public final AtomicBoolean refresh = new AtomicBoolean(true);
 
-    default void start(SpaceGrapher<K,? extends TermNode<K>> spaceGrapher) {
+    public static TermEdge<TermNode<Concept>>
+    getConceptEdge(SpaceGrapher<Concept, ? super TermNode<Concept>> g, TermNode<Concept> s, TermNode<Concept> t, BiFunction<TermNode, TermNode, TermEdge> edgeBuilder) {
 
+        //re-order
+        final int i = s.getTerm().compareTo(t.getTerm());
+        if (i == 0) return null;
+            /*throw new RuntimeException(
+                "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
+                        + s.term.equals(t.term) + " " + t.term.equals(s.term) + ", hash=" + s.term.hashCode() + "," + t.term.hashCode() );*/
+
+        if (!(i < 0)) { //swap
+            TermNode x = s;
+            s = t;
+            t = x;
+        }
+
+        return g.getConceptEdgeOrdered(s, t, edgeBuilder);
+//        if (e == null) {
+//            e = new TermEdge(s, t);
+//        }
+//        s.putEdge(t.term, e);
+//        return e;
+    }
+
+    public void start(SpaceGrapher<K, V> g) {
+        updateGraph(g);
+        setUpdateable();
+    }
+
+    /** called once for each visible node */
+    public void updateNode(SpaceGrapher<K,V> g, K k, V t) {
 
     }
 
-    default void refresh(SpaceGrapher<K,? extends TermNode<K>> spaceGrapher, K k, TermNode<K> t) {
+    /** called once per frame to update anything about the grapher scope */
+    public void updateGraph(SpaceGrapher<K,V> g) {
 
     }
 
-    /** called ex: invalidation */
-    default void refresh() {
 
+    final public boolean canUpdate() {
+        return refresh.compareAndSet(true, false);
     }
 
-    default void stop(SpaceGrapher<K,? extends TermNode<K>> spaceGrapher) {
+    final public void setUpdateable() {
+        runLater(() -> {
+            refresh.set(true);
+        });
+    }
+
+    public void stop(SpaceGrapher<K,? super V> g) {
 
     }
 

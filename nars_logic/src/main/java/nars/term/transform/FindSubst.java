@@ -23,7 +23,7 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-public class FindSubst extends Subst {
+final public class FindSubst extends Subst {
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -58,9 +58,6 @@ public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            if (!(ff.y instanceof Compound)) {
-                throw new RuntimeException(ff.y + " not compound");
-            }
             ff.parent = (Compound) ff.y;
             return true;
         }
@@ -111,7 +108,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Term{" + a + '}';
+            return "=" + a;
         }
     }
 
@@ -129,7 +126,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "TermSizeEq{" + size + '}';
+            return "size=" + size;
         }
     }
 
@@ -147,7 +144,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "TermVolumeMin{" + volume + '}';
+            return "vol>=" + volume;
         }
     }
 
@@ -166,7 +163,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Structure{" + Integer.toString(bits, 2) + '}';
+            return /*"Struct = " + */ Integer.toString(bits, 2);
         }
     }
 
@@ -184,7 +181,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return type + " ";
+            return type.toString(); /* + " "*/
         }
     }
 
@@ -209,10 +206,11 @@ public class FindSubst extends Subst {
 //    }
 
 
-    public static final class MatchImageIndex extends MatchOp {
+    /** Imdex == image index */
+    public static final class ImageIndexEquals extends MatchOp {
         public final int index;
 
-        public MatchImageIndex(int index) {
+        public ImageIndexEquals(int index) {
             this.index = index;
         }
 
@@ -223,7 +221,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "ImageIndex{" + index + '}';
+            return "imdex=" + index;
         }
     }
 
@@ -250,29 +248,29 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Term{" + x + '}';
+            return x.toString();
         }
     }
 
-    /** invokes a dynamic FindSubst match via the matchVarX entry method;
-     *  this is more specific than match() so slightly faster */
-    public static class MatchXVar extends PatternOp {
-        public final Variable x;
-
-        public MatchXVar(Variable c) {
-            this.x = c;
-        }
-
-        @Override
-        public boolean run(Frame ff) {
-            return ff.matchXvar(x, ff.y);
-        }
-
-        @Override
-        public String toString() {
-            return "XVar{" + x + '}';
-        }
-    }
+//    /** invokes a dynamic FindSubst match via the matchVarX entry method;
+//     *  this is more specific than match() so slightly faster */
+//    public static class MatchXVar extends PatternOp {
+//        public final Variable x;
+//
+//        public MatchXVar(Variable c) {
+//            this.x = c;
+//        }
+//
+//        @Override
+//        public boolean run(Frame ff) {
+//            return ff.matchXvar(x, ff.y);
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "XVar{" + x + '}';
+//        }
+//    }
 
     public final static class MatchCompound extends PatternOp {
         public final Compound x;
@@ -288,7 +286,7 @@ public class FindSubst extends Subst {
 
         @Override
         public String toString() {
-            return "Compound{" + x + '}';
+            return "..`" + x + '`';
         }
     }
 
@@ -338,7 +336,8 @@ public class FindSubst extends Subst {
 
         @Override
         public final boolean run(Frame f) {
-            return (f.y = f.parent.termOr(index, null)) != null;
+            return (f.y = f.parent.term(index)) != null;
+            //return (f.y = f.parent.termOr(index, null)) != null;
         }
 
         @Override
@@ -439,48 +438,32 @@ public class FindSubst extends Subst {
      */
     public final boolean match(final Term x, final Term y) {
 
-        //if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
-        //  return power; //fail due to insufficient power
-
-        //System.out.println("  m: " + x + " " + y + " " + power);
-
-
         if (x.equals(y)) {
-            /*if (x!=y)
-                System.err.println("NOT SHARED: " + x);
-            else
-                System.err.println("    SHARED: " + x);*/
-
-            return true; //match
+            return true;
         }
 
         if ((--power) < 0)
             return false;
 
-        final Op type1 = this.type;
+        final Op t = this.type;
         final Op xOp = x.op();
-        //boolean xEllipsis = (x instanceof Ellipsis); //HACK
-
-        if (xOp == type1)  {
-            //if (!xEllipsis)
-            return matchXvar((Variable) x, y);
-            //else {}
-        }
-
         final Op yOp = y.op();
-        if (yOp == type1) {
-            return matchYvar(x, y);
+
+        if ((xOp == yOp) && (x instanceof Compound)) {
+            return matchCompound((Compound) x, (Compound) y);
         }
 
-        if (xOp.isVar()) {
-            if (yOp.isVar()) {
-                nextVarX((Variable) x, y);
-                return true;
-            }
-        } else {
-            if ((xOp == yOp) && (x instanceof Compound)) {
-                return matchCompound((Compound) x, (Compound) y);
-            }
+        if (xOp == t)  {
+            return matchXvar((Variable) x, y);
+        }
+
+        if (yOp == t) {
+            return matchYvar(x, /*(Variable)*/y);
+        }
+
+        if (xOp.isVar() && yOp.isVar()) {
+            nextVarX((Variable) x, y);
+            return true;
         }
 
         return false;
@@ -719,16 +702,15 @@ public class FindSubst extends Subst {
 
         }
 
-
         //finished
         return false;
 
     }
+
     /**
      * non-commutive compound match
      * X will contain one ellipsis and one non-ellipsis Varaible term
      *
-     * @param X the non-ellipsis variable
      *
      */
     public final boolean matchEllipsisTerms(Ellipsis Xellipsis, Compound Y, IntObjectPredicate<Term> allow) {

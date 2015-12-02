@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends AbstractPremise  {
+abstract public class ConceptProcess extends AbstractPremise {
 
 
 

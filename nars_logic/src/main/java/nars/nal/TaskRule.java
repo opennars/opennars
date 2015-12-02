@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  */
 public class TaskRule extends ProductN implements Level {
 
-    //match first rule pattern with task
+
 
     public boolean immediate_eternalize = false;
 
@@ -38,7 +38,6 @@ public class TaskRule extends ProductN implements Level {
     public boolean anticipate = false;
     public boolean sequenceIntervalsFromTask = false;
     public boolean sequenceIntervalsFromBelief = false;
-    public char puncSpecific = 0;
 
     /** conditions which can be tested before term matching */
     public PreCondition[] prePreconditions;
@@ -148,6 +147,7 @@ public class TaskRule extends ProductN implements Level {
         ///--------------
 
         l.add(new Solve.Truth(post.truth, post.desire, post.puncOverride));
+
         l.add(new Solve(post.term, this ));
 
         if (post.afterConclusions.length > 0) {
@@ -370,7 +370,7 @@ public class TaskRule extends ProductN implements Level {
             switch (predicateNameStr) {
 
                 case "equal":
-                    next = new Equal(arg1, arg2);
+                    next = Equal.make(arg1, arg2);
                     break;
 
                 case "input_premises":
@@ -378,7 +378,7 @@ public class TaskRule extends ProductN implements Level {
                     break;
 
                 case "not_equal":
-                    next = new NotEqual(arg1, arg2);
+                    next = NotEqual.make(arg1, arg2);
                     break;
 
                 case "set_ext":
@@ -397,7 +397,7 @@ public class TaskRule extends ProductN implements Level {
                     next = new NotImplOrEquiv(arg1);
                     break;
                 case "no_common_subterm":
-                    next = new NoCommonSubterm(arg1, arg2);
+                    next = NoCommonSubterm.make(arg1, arg2);
                     break;
 
 
@@ -463,15 +463,12 @@ public class TaskRule extends ProductN implements Level {
                             break;
                         case "\"?\"":
                             preNext = TaskPunctuation.TaskQuestion;
-                            puncSpecific = '?';
                             break;
                         case "\".\"":
                             preNext = TaskPunctuation.TaskJudgment;
-                            puncSpecific = '.';
                             break;
                         case "\"!\"":
                             preNext = TaskPunctuation.TaskGoal;
-                            puncSpecific = '!';
                             break;
                         default:
                             throw new RuntimeException("Unknown task punctuation type: " + predicate.getSubject());
@@ -614,7 +611,7 @@ public class TaskRule extends ProductN implements Level {
         //      B, T, [pre], task_is_question() |- T, [post]
 
         TaskRule clone1 = clone(B, T, C, false);
-        return clone1.normalizeRule();
+        return clone1;//.normalizeRule();
     }
 
     private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {

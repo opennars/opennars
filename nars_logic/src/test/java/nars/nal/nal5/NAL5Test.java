@@ -19,7 +19,7 @@ public class NAL5Test extends AbstractNALTester {
         return AbstractNALTester.nars(5, true, true);
     }
 
-    final int cycles = 100;
+    final int cycles = 125;
 
     @Test public void revision(){
         TestNAR tester = test();
@@ -216,8 +216,8 @@ public class NAL5Test extends AbstractNALTester {
     @Test public void compound_decomposition_one_premises(){
         TestNAR tester = test();
         tester.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)",0.9f,0.9f); //.en("Robin can fly and swim.");
-        tester.mustBelieve(cycles*6,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
-        tester.mustBelieve(cycles*6,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
+        tester.mustBelieve(cycles*2,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
+        tester.mustBelieve(cycles*2,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
         tester.run();
     }
     @Test public void compound_decomposition_one_premises_2(){
@@ -305,7 +305,7 @@ public class NAL5Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [withWings]>,<robin --> [chirping]>) ==> <robin --> bird>>"); //.en("If robin is has wings and chirps, then robin is a bird");
         tester.believe("<(&&,<robin --> [flying]>,<robin --> [withWings]>,<robin --> [chirping]>) ==> <robin --> bird>>"); //.en("If robin can fly, has wings, and chirps, then robin is a bird");
-        tester.mustBelieve(cycles*2," <robin --> [flying]>",1.00f,0.45f); //.en("I guess that robin can fly.");
+        tester.mustBelieve(cycles," <robin --> [flying]>",1.00f,0.45f); //.en("I guess that robin can fly.");
         tester.run();
     }
 
@@ -322,7 +322,6 @@ public class NAL5Test extends AbstractNALTester {
     @Test
     public void conditional_abduction3_generic(){
         TestNAR tester = test();
-        tester.nar.log();
         tester.believe("<(&&,<r --> [f]>,<r --> [w]>) ==> <r --> [l]>>",0.9f,0.9f);
         tester.believe("<(&&,<r --> [f]>,<r --> b>) ==> <r --> [l]>>.");
         tester.mustBelieve(cycles,"<<r --> b> ==> <r --> [w]>>",1.00f,0.42f);

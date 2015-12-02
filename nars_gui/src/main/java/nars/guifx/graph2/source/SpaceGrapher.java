@@ -42,7 +42,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
 
 
     public final SimpleIntegerProperty maxNodes;
-    public final SimpleObjectProperty<GraphSource<K>> source = new SimpleObjectProperty<>();
+    public final SimpleObjectProperty<GraphSource<K,V>> source = new SimpleObjectProperty<>();
     private int animatinPeriodMS = -1;
 
 
@@ -61,11 +61,11 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
      * and a method of rendering them
      * TODO does not yet support collections which change but this is feasible
      */
-    static public <X extends Object, K extends Termed> SpaceGrapher<K, TermNode<K>>
+    static public <X extends Object, K extends Termed, V extends TermNode<K>> SpaceGrapher<K, V>
     forCollection(
             final Collection<X> c,
             final Function<X, K> termize,
-            final BiConsumer<X, TermNode> builder /* decorator actually */,
+            final BiConsumer<X, V> builder /* decorator actually */,
             final IterativeLayout layout /* the initial one, it can be changed */
     ) {
 
@@ -73,15 +73,15 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
 
         int defaultCapacity = 128;
 
-        return new SpaceGrapher(
+        return new SpaceGrapher<K,V>(
 
-                new GraphSource<K>() {
+                new GraphSource<K,V>() {
 
-                    Set<TermNode> nodes = Global.newHashSet(16);
+                    Set<V> nodes = Global.newHashSet(16);
 
 
                     @Override
-                    public void start(SpaceGrapher<K, ? extends TermNode<K>> spaceGrapher) {
+                    public void start(SpaceGrapher<K, V> spaceGrapher) {
 //
 //                    }
 //
@@ -95,7 +95,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
                                 K term = termize.apply(o);
                                 termObject.put(term, o);
 
-                                TermNode tn = spaceGrapher.getOrNewTermNode(term);
+                                V tn = spaceGrapher.getOrNewTermNode(term);
                                 if (tn != null) {
                                     nodes.add(tn);
                                 }
@@ -103,7 +103,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
                         });
 
                         runLater(() -> {
-                            accept(spaceGrapher);
+                            updateGraph(spaceGrapher);
                             spaceGrapher.layout.set(layout);
                             spaceGrapher.rerender();
                         });
@@ -122,14 +122,14 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
 //                    }
 
                     @Override
-                    public void accept(SpaceGrapher g) {
+                    public void updateGraph(SpaceGrapher<K,V> g) {
                         g.setVertices(nodes.toArray(new TermNode[nodes.size()]));
                     }
                 },
-                new VisModel<K, TermNode<K>>() {
+                new VisModel<K, V>() {
 
                     @Override
-                    public void accept(TermNode<K> termNode) {
+                    public void accept(V termNode) {
 
 
                         //t.update();
@@ -138,8 +138,8 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
                     }
 
                     @Override
-                    public TermNode<K> newNode(K t) {
-                        TermNode<K> tn = new TermNode<>(t);
+                    public V newNode(K t) {
+                        V tn = (V)new TermNode(t);
                         builder.accept(
                                 termObject.get(t),
                                 tn
@@ -314,8 +314,10 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
 
     public void setVertices(Iterable<K> v) {
 
-        final GraphSource<K> ss = this.source.get();
+        final GraphSource<K,V> ss = this.source.get();
         final VisModel vv = vis.get();
+
+        SpaceGrapher<K, V> ths = this;
 
         Iterator<K> cc = v.iterator();
 
@@ -327,11 +329,11 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
         while (cc.hasNext() && ((n--) > 0)) {
 
             final K k = cc.next();
-            TermNode t = getOrNewTermNode(k);
+            V t = getOrNewTermNode(k);
             if (t != null) {
                 active.add(t);
 
-                ss.refresh(this, k, t);
+                ss.updateNode(ths, k, t);
                 vv.updateNode(t);
             }
             else {
@@ -345,6 +347,10 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
             prevActive = active;
         }
 
+    }
+
+    public final boolean isReady() {
+        return ready.get();
     }
 
 
@@ -427,7 +433,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
     }
 
 
-    public SpaceGrapher(GraphSource<K> g, VisModel vv, CanvasEdgeRenderer edgeRenderer, int size) {
+    public SpaceGrapher(GraphSource<K,V> g, VisModel vv, CanvasEdgeRenderer edgeRenderer, int size) {
         super();
 
 
@@ -441,10 +447,12 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
 
             if (v != null) {
                 v.start(this);
-            } else {
-                System.out.println("no signal");
             }
+            /*else {
+                System.out.println("no signal");
+            }*/
         });
+
         vis.addListener((l, p, n) -> {
             SpaceGrapher<K, V> gg = SpaceGrapher.this;
             if (p != null)
@@ -477,7 +485,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
         parentProperty().addListener(v -> checkVisibility());
         visibleProperty().addListener(v -> checkVisibility());
 
-        runLater(() -> checkVisibility());
+        //runLater(() -> checkVisibility());
 
 
         this.edgeRenderer.set(edgeRenderer);
@@ -502,7 +510,7 @@ public class SpaceGrapher<K extends Termed, V extends TermNode<K>> extends Space
         //reset visiblity state to true for all, in case previous layout had hidden then
         getVertices().forEach(t -> t.setVisible(true));
 
-        source.getValue().refresh();
+        source.getValue().setUpdateable();
 
         rerender();
 

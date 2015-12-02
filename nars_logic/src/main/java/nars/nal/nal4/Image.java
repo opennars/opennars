@@ -20,7 +20,7 @@ import static nars.Symbols.*;
 abstract public class Image extends DefaultCompound2 {
 
     /**
-     * The index of relation in the component list
+     * "Imdex": subterm index of relation in the component list
      */
     public final short relationIndex;
 

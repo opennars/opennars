@@ -8,7 +8,13 @@ import nars.term.Term;
  */
 public class NotEqual extends PreCondition2 {
 
-    public NotEqual(Term var1, Term var2) {
+    /** commutivity: sort the terms */
+    public static NotEqual make(Term a, Term b) {
+        if (a.compareTo(b) <= 0) return new NotEqual(a, b);
+        else                     return new NotEqual(b, a);
+    }
+
+    NotEqual(Term var1, Term var2) {
         super(var1, var2);
     }
 

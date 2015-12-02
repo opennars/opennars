@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 
 import java.util.Arrays;
@@ -80,6 +79,12 @@ public class TermPattern {
         } else if (x instanceof Compound) {
 
             //compileCompound((Compound)x, code);
+            code.add(new FindSubst.TermOpEquals(x.op())); //interference with (task,belief) pair term
+
+            code.add(new FindSubst.TermVolumeMin(x.volume()-1));
+
+            code.add(new FindSubst.TermStructure(type, x.structure()));
+
             code.add(new FindSubst.MatchTerm(x));
             //code.add(new FindSubst.MatchCompound((Compound)x));
 
@@ -98,10 +103,10 @@ public class TermPattern {
     }
 
     private void compileTaskBeliefPair(TaskBeliefPair x, List<PreCondition> code) {
-        //code.add(FindSubst.Subterms);
+        //when derivation begins, frame's parent will be set to the TaskBeliefPair so that a Subterm code isnt necessary
         compileSubterm(x, 0, code);
         compileSubterm(x, 1, code);
-        code.add(FindSubst.Superterm);
+        //code.add(FindSubst.Superterm); //
     }
 
     private void compileSubterm(Compound x, int i, List<PreCondition> code) {
@@ -110,66 +115,66 @@ public class TermPattern {
         compile(xi, code);
     }
 
-    private void compileCompound(Compound<?> x, List<PreCondition> code) {
-
-        int s = x.size();
-
-        /** whether any subterms are matchable variables */
-        final boolean constant = !Variable.hasPatternVariable(x);
-        final boolean vararg = constant ? Ellipsis.hasEllipsis(x) : false;
-
-        if (constant) { /*(type == Op.VAR_PATTERN && (*/
-
-            /** allow to compile the structure of the compound
-             *  match statically, including any optimization
-             *  possibilties that foreknowledge of the pattern
-             *  like we have here may provide
-             */
-            //compileConstantCompound(x, code);
-        } else {
-
-        }
-
-
-        code.add(new FindSubst.TermOpEquals(x.op())); //interference with (task,belief) pair term
-
-        //TODO varargs with greaterEqualSize etc
-        //code.add(new FindSubst.TermSizeEquals(c.size()));
-
-        //boolean permute = x.isCommutative() && (s > 1);
-
-        switch (s) {
-            case 0:
-                //nothing to match
-                break;
-
-//            case 1:
-//                code.add(new FindSubst.MatchTheSubterm(x.term(0)));
+//    private void compileCompound(Compound<?> x, List<PreCondition> code) {
+//
+//        int s = x.size();
+//
+//        /** whether any subterms are matchable variables */
+//        final boolean constant = !Variable.hasPatternVariable(x);
+//        final boolean vararg = constant ? Ellipsis.hasEllipsis(x) : false;
+//
+//        if (constant) { /*(type == Op.VAR_PATTERN && (*/
+//
+//            /** allow to compile the structure of the compound
+//             *  match statically, including any optimization
+//             *  possibilties that foreknowledge of the pattern
+//             *  like we have here may provide
+//             */
+//            //compileConstantCompound(x, code);
+//        } else {
+//
+//        }
+//
+//
+//        code.add(new FindSubst.TermOpEquals(x.op())); //interference with (task,belief) pair term
+//
+//        //TODO varargs with greaterEqualSize etc
+//        //code.add(new FindSubst.TermSizeEquals(c.size()));
+//
+//        //boolean permute = x.isCommutative() && (s > 1);
+//
+//        switch (s) {
+//            case 0:
+//                //nothing to match
 //                break;
-
-            default:
-
-                /*if (x instanceof Image) {
-                    code.add(new FindSubst.MatchImageIndex(((Image)x).relationIndex)); //TODO varargs with greaterEqualSize etc
-                }*/
-
-                //TODO this may only be safe if no var-args
-                //code.add(new FindSubst.TermVolumeMin(c.volume()-1));
-
-//                code.add(new FindSubst.TermStructure(type, x.structure()));
-                code.add(new FindSubst.MatchCompound(x));
-
-
-//                if (permute) {
-//                    code.add(new FindSubst.MatchPermute(c));
-//                }
-//                else {
-//                    compileNonCommutative(code, c);
-//                }
-
-            break;
-        }
-    }
+//
+////            case 1:
+////                code.add(new FindSubst.MatchTheSubterm(x.term(0)));
+////                break;
+//
+//            default:
+//
+//                /*if (x instanceof Image) {
+//                    code.add(new FindSubst.MatchImageIndex(((Image)x).relationIndex)); //TODO varargs with greaterEqualSize etc
+//                }*/
+//
+//                //TODO this may only be safe if no var-args
+//                //code.add(new FindSubst.TermVolumeMin(c.volume()-1));
+//
+//
+//                code.add(new FindSubst.MatchCompound(x));
+//
+//
+////                if (permute) {
+////                    code.add(new FindSubst.MatchPermute(c));
+////                }
+////                else {
+////                    compileNonCommutative(code, c);
+////                }
+//
+//            break;
+//        }
+//    }
 
 
     /*private void compileConstantNonCommutiveCompound(Compound<?> x, List<PreCondition> code) {

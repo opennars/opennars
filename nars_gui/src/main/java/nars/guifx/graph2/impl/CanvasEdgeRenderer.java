@@ -79,11 +79,9 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
     public void drawHalf(TermEdge i, TermNode t, double x1, double y1, double x2, double y2) {
 
 
-        double cp = t.priNorm;
-        double te = i.termLinkFrom(t); //t.termLinkStat.getAverage();
-        double ta = i.taskLinkFrom(t); //t.taskLinkStat.getAverage();
 
-        double p = 0.5 * (te + ta) * cp;
+
+        double p = i.getWeight();
 
         //double np = normalize(p);
 
@@ -97,7 +95,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         //HACK specific to Term instances
         if (t.term instanceof Termed) {
             gfx.setStroke(
-                TermNode.getTermColor((Termed)t.term, colors, p)
+                TermNode.getTermColor(t.term, colors, p)
             );
         }
 
