@@ -172,6 +172,22 @@ abstract public class TermEdge<N extends TermNode> /*implements ChangeListener*/
 
     abstract public double getWeight();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        TermEdge<?> termEdge = (TermEdge<?>) o;
 
+        if (!aSrc.equals(termEdge.aSrc)) return false;
+        return bSrc.equals(termEdge.bSrc);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = aSrc.hashCode();
+        result = 31 * result + bSrc.hashCode();
+        return result;
+    }
 }

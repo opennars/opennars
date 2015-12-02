@@ -1,10 +1,13 @@
 package nars.guifx.demo;
 
+import nars.concept.Concept;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
-import nars.guifx.graph2.scene.DefaultVis;
+import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
@@ -41,7 +44,7 @@ public class NARGraph1Test {
         //n.frame(5);
 
 
-        SpaceGrapher<?,?> g = new DefaultGrapher(
+        SpaceGrapher<Concept,TermNode<Concept>> g = new DefaultGrapher<>(
 
                 new ConceptsSource(n),
 
@@ -49,8 +52,17 @@ public class NARGraph1Test {
                 128,
 
                 //new DefaultVis(),
-                new DefaultVis.HexagonVis(),
+                new DefaultNodeVis.HexagonNodeVis(),
 
+                (A,B) -> {
+                    TermEdge te = new TermEdge(A,B) {
+                        @Override public double getWeight() {
+                            return 0.25;
+                        }
+                    };
+                    return te;
+                    //return $.pro(A.getTerm(), B.getTerm());
+                },
 
                 new BlurCanvasEdgeRenderer()
         );

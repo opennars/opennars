@@ -1,13 +1,11 @@
 package nars.guifx;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -17,12 +15,14 @@ import nars.NAR;
 import nars.NARLoop;
 import nars.budget.Budget;
 import nars.budget.Budgeted;
+import nars.concept.Concept;
 import nars.guifx.chart.TaskSheet;
 import nars.guifx.graph2.ConceptsSource;
+import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.layout.Grid;
+import nars.guifx.graph2.impl.CanvasEdgeRenderer;
+import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
-import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
@@ -40,11 +40,11 @@ import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
 import javax.sound.sampled.LineUnavailableException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static javafx.application.Platform.runLater;
 import static nars.guifx.NARfx.scrolled;
@@ -96,7 +96,21 @@ public class NARide extends BorderPane {
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new DefaultGrapher(64, new ConceptsSource(nar)));
+            ni.addTool("Concept Network", () -> new DefaultGrapher<>(
+                new ConceptsSource(nar),
+                96,
+                new DefaultNodeVis(),
+                (A,B) -> {
+                    TermEdge<TermNode<Concept>> te = new TermEdge<TermNode<Concept>>(A,B) {
+                        @Override public double getWeight() {
+                            return 0.25;
+                        }
+                    };
+                    return te;
+                    //return $.pro(A.getTerm(), B.getTerm());
+                },
+                new CanvasEdgeRenderer()
+            ));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
 
@@ -188,67 +202,65 @@ public class NARide extends BorderPane {
 //        }
 //    }
 
-    public class ToolDialog extends BorderPane {
-
-        public ToolDialog(Consumer<Collection<Node>> results) {
-            super();
-
-            Set<Term> selected = new HashSet();
-
-
-            SpaceGrapher<Term, TermNode<Term>> chooser =
-                    SpaceGrapher.forCollection(tools.keySet(),
-                            t -> t,
-                            (t, tn) -> {
-                                ToggleButton tb = new ToggleButton(t.toString());
-                                tb.selectedProperty().addListener((c, p, v) -> {
-                                    if (v) selected.add(t);
-                                    else selected.remove(t);
-                                });
-                                tn.getChildren().add(tb);
-
-                            }, new Grid());
-
-
-//            chooser.minWidth(500);
-//            chooser.prefWidth(500);
-//            chooser.minHeight(500);
-//            chooser.prefHeight(500);
-
-
-            Button addButton = new Button("ADD");
-            addButton.setDefaultButton(true);
-            addButton.setOnMouseClicked((e) -> {
-                results.accept(
-                        selected.stream().map(s -> tools.get(s).get()).collect(Collectors.toList())
-                );
-
-                hide();
-            });
-
-            Button cancelButton = new Button("CANCEL");
-            cancelButton.setOnMouseClicked((e) -> {
-                hide();
-            });
-
-            FlowPane bottom = new FlowPane(cancelButton, addButton);
-            bottom.setAlignment(Pos.CENTER_RIGHT);
-
-            setCenter(new BorderPane(chooser));
-            setBottom(bottom);
-        }
-
-
-        public void hide() {
-            getChildren().clear();
-            getScene().getWindow().hide();
-        }
-    }
-
-
-    public void popupToolDialog(Consumer<Collection<Node>> x) {
-        NARfx.popup(new ToolDialog(x));
-    }
+//    public class ToolDialog extends BorderPane {
+//
+//        public ToolDialog(Consumer<Collection<Node>> results) {
+//            super();
+//
+//            Set<Term> selected = new HashSet();
+//
+//
+//            SpaceGrapher<Term, TermNode<Term>> chooser =
+//                    SpaceGrapher.forCollection(tools.keySet(),
+//                            t -> t,
+//                            (t, tn) -> {
+//                                ToggleButton tb = new ToggleButton(t.toString());
+//                                tb.selectedProperty().addListener((c, p, v) -> {
+//                                    if (v) selected.add(t);
+//                                    else selected.remove(t);
+//                                });
+//                                tn.getChildren().add(tb);
+//
+//                            }, new Grid());
+//
+//
+////            chooser.minWidth(500);
+////            chooser.prefWidth(500);
+////            chooser.minHeight(500);
+////            chooser.prefHeight(500);
+//
+//
+//            Button addButton = new Button("ADD");
+//            addButton.setDefaultButton(true);
+//            addButton.setOnMouseClicked((e) -> {
+//                results.accept(
+//                        selected.stream().map(s -> tools.get(s).get()).collect(Collectors.toList())
+//                );
+//
+//                hide();
+//            });
+//
+//            Button cancelButton = new Button("CANCEL");
+//            cancelButton.setOnMouseClicked((e) -> {
+//                hide();
+//            });
+//
+//            FlowPane bottom = new FlowPane(cancelButton, addButton);
+//            bottom.setAlignment(Pos.CENTER_RIGHT);
+//
+//            setCenter(new BorderPane(chooser));
+//            setBottom(bottom);
+//        }
+//
+//
+//        public void hide() {
+//            getChildren().clear();
+//            getScene().getWindow().hide();
+//        }
+//    }
+//    public void popupToolDialog(Consumer<Collection<Node>> x) {
+//        NARfx.popup(new ToolDialog(x));
+//    }
 
     public void addIcon(FXIconPaneBuilder n) {
         nar.memory.the(n);
@@ -306,12 +318,13 @@ public class NARide extends BorderPane {
         spp = scrolled(pp = new PluginPanel(this));
 
         controlPane = new NARMenu(nar);
-        Button addIcon = new Button("++");
-        addIcon.setOnMouseClicked(e -> {
-            popupToolDialog(
-                    pp.getChildren()::addAll);
-        });
-        controlPane.getChildren().add(addIcon);
+
+//        Button addIcon = new Button("++");
+//        addIcon.setOnMouseClicked(e -> {
+//            popupToolDialog(
+//                    pp.getChildren()::addAll);
+//        });
+//        controlPane.getChildren().add(addIcon);
 
 
         final BorderPane f = new BorderPane();

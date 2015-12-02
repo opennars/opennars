@@ -6,18 +6,54 @@ import nars.term.Termed;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
 /**
  * Created by me on 9/6/15.
+ * @param V vertex
+ * @param E edge
+ * @param N visualized node
  */
-abstract public class GraphSource<K extends Termed, V extends TermNode<K>>  {
+abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* W? */>  {
 
     public final AtomicBoolean refresh = new AtomicBoolean(true);
 
-    public static TermEdge<TermNode<Concept>>
-    getConceptEdge(SpaceGrapher<Concept, ? super TermNode<Concept>> g, TermNode<Concept> s, TermNode<Concept> t, BiFunction<TermNode, TermNode, TermEdge> edgeBuilder) {
+
+    abstract public void forEachOutgoingEdgeOf(SpaceGrapher<V, N> sg, V src, Consumer<V> eachTarget);
+
+
+    abstract public V getTargetVertex(SpaceGrapher<V, N> g, E edge);
+
+
+    final public void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
+
+
+        forEachOutgoingEdgeOf(g, s, t -> {
+
+            N tn = g.getTermNode(t.getTerm());
+            if (tn == null)
+                return;
+
+            TermEdge ee = getEdge(g, sn, tn, g.edgeVis);
+            if (ee != null) {
+                updateEdge(ee);
+            }
+
+        });
+        sn.commitEdges();
+    }
+
+
+    public void updateEdge(TermEdge ee) {
+
+    }
+
+
+    public static <K extends Termed,V extends TermNode<K>>
+        TermEdge<TermNode<Concept>>
+            getEdge(SpaceGrapher<K,V> g, V s, V t, BiFunction<V, V, TermEdge> edgeBuilder) {
 
         //re-order
         final int i = s.getTerm().compareTo(t.getTerm());
@@ -27,7 +63,7 @@ abstract public class GraphSource<K extends Termed, V extends TermNode<K>>  {
                         + s.term.equals(t.term) + " " + t.term.equals(s.term) + ", hash=" + s.term.hashCode() + "," + t.term.hashCode() );*/
 
         if (!(i < 0)) { //swap
-            TermNode x = s;
+            V x = s;
             s = t;
             t = x;
         }
@@ -40,18 +76,14 @@ abstract public class GraphSource<K extends Termed, V extends TermNode<K>>  {
 //        return e;
     }
 
-    public void start(SpaceGrapher<K, V> g) {
+    public void start(SpaceGrapher<V, N> g) {
         updateGraph(g);
         setUpdateable();
     }
 
-    /** called once for each visible node */
-    public void updateNode(SpaceGrapher<K,V> g, K k, V t) {
-
-    }
 
     /** called once per frame to update anything about the grapher scope */
-    public void updateGraph(SpaceGrapher<K,V> g) {
+    public void updateGraph(SpaceGrapher<V, N> g) {
 
     }
 
@@ -66,7 +98,7 @@ abstract public class GraphSource<K extends Termed, V extends TermNode<K>>  {
         });
     }
 
-    public void stop(SpaceGrapher<K,? super V> g) {
+    public void stop(SpaceGrapher<V,? super N> g) {
 
     }
 

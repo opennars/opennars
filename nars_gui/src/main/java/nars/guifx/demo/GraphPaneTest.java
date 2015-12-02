@@ -9,7 +9,7 @@ import nars.guifx.graph2.GraphSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
-import nars.guifx.graph2.scene.DefaultVis;
+import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.nal.DerivationRules;
@@ -26,6 +26,7 @@ import org.jgrapht.generate.ScaleFreeGraphGenerator;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 import static nars.$.$;
 
@@ -41,65 +42,28 @@ public class GraphPaneTest {
     public static SpaceGrapher newGrapher() {
 
 
-        SpaceGrapher g = new DefaultGrapher(
+        SpaceGrapher<Term, TermNode<Term>> g = new DefaultGrapher<>(
 
-                new JGraphSource<Term, Product> (
-                    //newExampleGraph()
-                    newExampleTermLinkGraph()
+                new JGraphSource<Term, Product>(
+                        //newExampleGraph()
+                        newExampleTermLinkGraph()
+
                 ) {
 
                     @Override
-                    public void start(SpaceGrapher g) {
-                        super.start(g);
-
-//                        new Thread(() -> {
-//
-//                            while (true) {
-//                                Util.pause(100);
-//
-//                                updateGraph(g);
-//                            }
-//                        }).start();
-                    }
-
-                    @Override
-                    public void updateNode(SpaceGrapher sg, Termed s, TermNode sn) {
-
-                        graph.outgoingEdgesOf(s.getTerm()).forEach(e -> {
-
-                            Term t = e.term(1);//other term
-
-                            TermNode tn = sg.getTermNode(t);
-                            if (tn == null) return;
-
-                            TermEdge ee = getConceptEdge(sg, sn, tn, (S, N) -> {
-
-                                return new TermEdge(S, N) {
-
-                                    @Override
-                                    public double getWeight() {
-                                        return Math.random() * 0.75;
-                                    }
-                                };
-                            });
-
-                            if (ee != null) {
-
-                                //ee.linkFrom(tn, link);
-                            }
-
-
-                        });
+                    public Term getTargetVertex(SpaceGrapher g, Product edge) {
+                        return edge.term(1);
                     }
 
                 },
 
                 128,
 
-                new DefaultVis() {
+                new DefaultNodeVis() {
 
                     @Override
                     public TermNode newNode(Termed term) {
+                        System.out.println("new node: " + term);
                         TermNode t = new TermNode(term);
                         t.priNorm = 0.25f;
                         Button b = new Button(term.toString());
@@ -110,6 +74,15 @@ public class GraphPaneTest {
                     }
                 },
 
+                (TermNode<Term> S, TermNode<Term> T) -> {
+
+                    return new TermEdge(S, T) {
+                        @Override
+                        public double getWeight() {
+                            return Math.random() * 0.75;
+                        }
+                    };
+                },
 
                 new BlurCanvasEdgeRenderer()
         );
@@ -132,7 +105,8 @@ public class GraphPaneTest {
                 new VertexFactory<Term>() {
                     int i = 0;
 
-                    @Override public Term createVertex() {
+                    @Override
+                    public Term createVertex() {
                         i++;
                         return $("x" + i);
                     }
@@ -158,10 +132,10 @@ public class GraphPaneTest {
         NARfx.run((a, b) -> {
             SpaceGrapher gggg = newGrapher();
             b.setScene(
-                new Scene(gggg, 800, 800)
+                    new Scene(gggg, 800, 800)
             );
-            gggg.start(35);
             b.show();
+            gggg.start(35);
 
 //            n.spawnThread(250, x -> {
 //
@@ -175,20 +149,30 @@ public class GraphPaneTest {
 
     }
 
-    private static class JGraphSource<V extends Termed, E> extends GraphSource {
+    public abstract static class JGraphSource<V extends Termed, E> extends GraphSource<V,TermNode<V>,E> {
 
 
         DirectedGraph<V, E> graph;
         private SpaceGrapher<V, TermNode<V>> grapher;
 
+
         public JGraphSource(DirectedGraph<V, E> initialGraph) {
             this.graph = initialGraph;
         }
 
+
+        @Override
+        public void forEachOutgoingEdgeOf(SpaceGrapher<V, TermNode<V>> sg, V src, Consumer<V> eachTarget) {
+            graph.outgoingEdgesOf(src).forEach(edge ->
+                    eachTarget.accept(
+                            getTargetVertex(sg, edge)));
+        }
+
+
         @Override
         public void start(SpaceGrapher g) {
             this.grapher = g;
-            super.start(g);
+            //super.start(g);
 
             new Animate(35, a -> {
 

@@ -1,13 +1,13 @@
 package nars.guifx.graph2.layout;
 
-import nars.guifx.graph2.VisModel;
+import nars.guifx.graph2.NodeVis;
 
 /**
  * TODO generic wordcloud/termcloud widget
  * If cells have rectangular backgrounds, then this
  * would appear as a sort of Tree Map diagram
  */
-abstract public class WordCloud implements IterativeLayout, VisModel {
+abstract public class WordCloud implements IterativeLayout, NodeVis {
 
 //    public WordCloud(NAR nar) {
 //        super(nar, new V(), 64, new CanvasEdgeRenderer());

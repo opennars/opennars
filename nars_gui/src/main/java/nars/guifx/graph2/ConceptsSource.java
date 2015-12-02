@@ -12,25 +12,24 @@ import nars.nar.Default;
 import nars.term.Term;
 import nars.util.event.Active;
 
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
  * Example Concept supplier with some filters
  */
-public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>> {
+public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLink> {
 
 
     private final NAR nar;
     private Active regs = null;
-    private Set<TermNode> prevActive = null;
+    //private Set<TermNode> prevActive = null;
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
-    private BiFunction<TermNode, TermNode, TermEdge> edgeBuilder = (S,T) -> {
+    private BiFunction<TermNode<Concept>, TermNode<Concept>, TermEdge> edgeBuilder = (S,T) -> {
         return new TermEdge.TLinkEdge(S,T);
     };
 
@@ -43,6 +42,50 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>> {
             //System.out.println(includeString.getValue());
             setUpdateable();
         });
+    }
+
+
+    @Override
+    public void forEachOutgoingEdgeOf(SpaceGrapher<Concept, TermNode<Concept>> sg,
+                                      Concept cc,
+                                      Consumer<Concept> eachTarget) {
+        final int maxNodeLinks = 24;
+
+
+        //Set<Concept> missing = sn.getEdgeSet();
+
+        Consumer<? super TLink<?>> linkUpdater = link -> {
+
+            Term target = link.getTerm();
+
+            if (cc.getTerm().equals(target)) //self-loop
+                return;
+
+            TermNode<Concept> tn = sg.getTermNode(target);
+            if (tn == null)
+                return;
+
+            eachTarget.accept(tn.c);
+
+//            TermEdge.TLinkEdge ee = (TermEdge.TLinkEdge) getEdge(sg, sn, tn, edgeBuilder);
+//
+//            if (ee != null) {
+//                ee.linkFrom(tn, link);
+//            }
+//
+//            //missing.remove(tn.term);
+        };
+
+        cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
+        cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
+
+        //sn.removeEdges(missing);
+
+    }
+
+    @Override
+    public Concept getTargetVertex(SpaceGrapher<Concept, TermNode<Concept>> sg, TLink edge) {
+        return sg.getTermNode(edge.getTerm()).c;
     }
 
 
@@ -141,40 +184,12 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>> {
 
 
 
-    @Override
-    public final void updateNode(SpaceGrapher<Concept, TermNode<Concept>> sg, Concept cc, TermNode<Concept> sn) {
+
+    public final void updateNodeOLD(SpaceGrapher<Concept, TermNode<Concept>> sg, Concept cc, TermNode<Concept> sn) {
 
         sn.c = cc;
         sn.priNorm = cc.getPriority();
 
-        final int maxNodeLinks = 24;
-
-        Set<Concept> missing = sn.getEdgeSet();
-
-        Consumer<? super TLink<?>> linkUpdater = link -> {
-
-            Term target = link.getTerm();
-
-            if (cc.getTerm().equals(target)) //self-loop
-                return;
-
-            TermNode<Concept> tn = sg.getTermNode(target);
-            if (tn == null)
-                return;
-
-            TermEdge.TLinkEdge ee = (TermEdge.TLinkEdge) getConceptEdge(sg, sn, tn, edgeBuilder);
-
-            if (ee != null) {
-                ee.linkFrom(tn, link);
-            }
-
-            missing.remove(tn.term);
-        };
-
-        cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
-        cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
-
-        sn.removeEdges(missing);
 
 
         //final Term t = tn.term;

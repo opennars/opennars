@@ -6,7 +6,7 @@ import nars.term.Termed;
 import java.util.function.Consumer;
 
 /** graph node visualization */
-public interface VisModel<K extends Termed, T extends TermNode<K>> extends Consumer<T> {
+public interface NodeVis<K extends Termed, T extends TermNode<K>> extends Consumer<T> {
 
     T newNode(K t);
 

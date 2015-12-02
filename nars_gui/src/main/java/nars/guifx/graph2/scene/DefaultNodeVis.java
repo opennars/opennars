@@ -20,8 +20,8 @@ import javafx.scene.text.TextAlignment;
 import nars.guifx.JFX;
 import nars.guifx.NARfx;
 import nars.guifx.annotation.Range;
+import nars.guifx.graph2.NodeVis;
 import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.ColorMatrix;
 import nars.term.Termed;
@@ -31,9 +31,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by me on 10/2/15.
  */
-public class DefaultVis<C extends Termed> implements VisModel<C, TermNode<C>> {
+public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>> {
 
-    public static class HexagonVis<C extends Termed> extends DefaultVis<C> {
+    public static class HexagonNodeVis<C extends Termed> extends DefaultNodeVis<C> {
 
         @Override public TermNode newNode(C c) {
             return new HexTermNode(c, (e) -> { }, (e) -> { });
@@ -52,7 +52,7 @@ public class DefaultVis<C extends Termed> implements VisModel<C, TermNode<C>> {
     private SpaceGrapher graph = null;
     final Rectangle hoverPanel = new Rectangle();
 
-    public DefaultVis() {
+    public DefaultNodeVis() {
         super();
         nodeScale.addListener((e) -> {
             nodeScaleCache = nodeScale.get();

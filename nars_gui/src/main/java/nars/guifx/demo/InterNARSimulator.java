@@ -1,14 +1,8 @@
 package nars.guifx.demo;
 
-import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
-import nars.guifx.IOPane;
 import nars.guifx.NARfx;
-import nars.guifx.NARide;
-import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.layout.HyperOrganicLayout;
-import nars.guifx.graph2.source.SpaceGrapher;
 import nars.nar.Default;
 import nars.nar.Default2;
 import nars.op.io.UDPNetwork;
@@ -17,9 +11,6 @@ import nars.util.data.Util;
 
 import java.net.SocketException;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static javafx.application.Platform.runLater;
 
 /**
  * Created by me on 10/8/15.
@@ -86,29 +77,29 @@ public class InterNARSimulator {
         NARfx.run((a, b) -> {
 
 
-            SpaceGrapher sg;
-            b.setScene(new Scene(
-                sg = SpaceGrapher.forCollection(group.stream().map(n -> {
-                            NARide x = new NARide(n.loop(250));//.start();
-                            if (Math.random() < 0.5)
-                                x.addView(new IOPane(n));
-                            else
-                                x.addView(NARGraph1Test.newGraph(n));
-                            return x;
-                        })
-                    .collect(Collectors.toList()),
-                        (NARide n) -> n.nar.self,
-                        (NARide n, TermNode tn) -> {
-                            n.setScaleX(0.45);
-                            n.setScaleY(0.45);
-                            tn.getChildren().add(n);
-                        }, new HyperOrganicLayout(1000))
-                    , 800, 600));
-
+//            SpaceGrapher sg;
+//            b.setScene(new Scene(
+//                sg = SpaceGrapher.forCollection(group.stream().map(n -> {
+//                            NARide x = new NARide(n.loop(250));//.start();
+//                            if (Math.random() < 0.5)
+//                                x.addView(new IOPane(n));
+//                            else
+//                                x.addView(NARGraph1Test.newGraph(n));
+//                            return x;
+//                        })
+//                    .collect(Collectors.toList()),
+//                        (NARide n) -> n.nar.self,
+//                        (NARide n, TermNode tn) -> {
+//                            n.setScaleX(0.45);
+//                            n.setScaleY(0.45);
+//                            tn.getChildren().add(n);
+//                        }, new HyperOrganicLayout(1000))
+//                    , 800, 600));
+//
             b.getScene().getStylesheets().add(NARfx.css);
             b.show();
 
-            runLater(()->  sg.start(250) );
+            //runLater(()->  sg.start(250) );
 
         });
 

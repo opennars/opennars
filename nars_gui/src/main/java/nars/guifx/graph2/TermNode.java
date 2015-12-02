@@ -20,12 +20,13 @@ public class TermNode<K extends Termed> extends Group {
 
     public static final TermNode[] empty = new TermNode[0];
 
-    final public Map<K, TermEdge> edge = new LinkedHashMap(8);
+    final public Map<K, TermEdge> edge = new FixedLinkedHashMap<>(4);
 
     /**
      * copy of termedge values for fast iteration during rendering
      */
-    TermEdge[] edges = null;
+    TermEdge[] edges = TermEdge.empty;
+    boolean modified = false;
 
     public final K term;
 
@@ -51,6 +52,8 @@ public class TermNode<K extends Termed> extends Group {
 
     public TermNode(K t) {
         super();
+
+        if (t instanceof Concept) c = (Concept)t; //HACK
 
         setManaged(false);
         setPickOnBounds(true);
@@ -184,21 +187,17 @@ public class TermNode<K extends Termed> extends Group {
 
     public final TermEdge putEdge(K b, TermEdge e) {
         TermEdge r = edge.put(b, e);
-        if (e != r)
-            edges = null;
+        modified |= (e != r);
         return r;
     }
 
     public TermEdge[] updateEdges() {
         final int s = edge.size();
-        //if (s == 0) return edges = empty;
-
-        //return edges = edge.values().toArray(new TermEdge[s]);
 
         final TermEdge[] edges = this.edges;
 
         TermEdge[] e;
-        if (edges == null || edges.length != s)
+        if (edges.length != s)
             e = new TermEdge[s];
         else
             e = edges; //re-use existing array
@@ -217,17 +216,7 @@ public class TermNode<K extends Termed> extends Group {
 //    }
 
     public final TermEdge[] getEdges() {
-        TermEdge[] edges = this.edges;
-        if (edges == null) {
-            if (edge.size() > 0)
-                edges = updateEdges();
-            else
-                edges = TermEdge.empty;
-
-            this.edges = edges;
-        }
-
-        return edges;
+        return this.edges;
     }
 
 
@@ -247,7 +236,7 @@ public class TermNode<K extends Termed> extends Group {
     }
 
     public Set<K> getEdgeSet() {
-        if (edges == null || edges.length == 0) return Collections.emptySet();
+        if (edges.length == 0) return Collections.emptySet();
 
         Set<K> ss = Global.newHashSet(edges.length);
         for (TermEdge<TermNode<K>> ee : edges)
@@ -260,14 +249,39 @@ public class TermNode<K extends Termed> extends Group {
         if (!toRemove.isEmpty()) {
 
             toRemove.forEach(edge::remove);
-            edges = null;
+            modified = true;
         }
 
-        if (edges == null)
-            updateEdges();
     }
 
     public final Term getTerm() {
         return term.getTerm();
+    }
+
+    public void commitEdges() {
+        if (modified) {
+            modified = false;
+            if (edge.size() > 0)
+                edges = updateEdges();
+            else
+                edges = TermEdge.empty;
+
+        }
+
+    }
+
+    public static final class FixedLinkedHashMap<K,V> extends LinkedHashMap<K, V> {
+
+        final int max_cap;
+
+        public FixedLinkedHashMap(int cap) {
+            super(cap, 0.75f, true);
+            this.max_cap = cap;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+            return size() > this.max_cap;
+        }
     }
 }

@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.scene.DefaultVis;
+import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.ColorMatrix;
 import nars.term.Termed;
@@ -22,7 +22,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 //            Color.BLUE,
 //            Color.GREEN
 //    );
-    static final ColorMatrix colors = DefaultVis.colors; /*new ColorMatrix(24,24,
+    static final ColorMatrix colors = DefaultNodeVis.colors; /*new ColorMatrix(24,24,
 
         (pri,termTaskBalance) -> {
             return Color.hsb(30 + 120.0 * termTaskBalance, 0.75, 0.35 + 0.5 * pri);
