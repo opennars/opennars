@@ -7,7 +7,7 @@ import nars.nal.meta.PreCondition;
  * Created by me on 12/1/15.
  */
 public abstract class PatternOp extends PreCondition {
-    abstract boolean run(Frame ff);
+    abstract boolean run(Subst ff);
 
     @Override
     public final boolean test(RuleMatch ruleMatch) {

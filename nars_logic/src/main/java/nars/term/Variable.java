@@ -152,7 +152,7 @@ abstract public class Variable extends ImmutableAtom {
     
     @Override
     public final Term substituted(Substitution s) {
-        Term x = s.get(this);
+        Term x = s.getXY(this);
         if (x == null)
             x = this;
         return x;

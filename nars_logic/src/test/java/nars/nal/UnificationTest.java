@@ -68,8 +68,8 @@ public class UnificationTest  {
             int n1 = Sets.difference(t1u, t2u).size();
             int n2 = Sets.difference(t2u, t1u).size();
 
-            //assertTrue( (n2) <= (sub.yx().size()));
-            //assertTrue( (n1) <= (sub.xy().size()));
+            assertTrue( (n2) <= (sub.yx.size()));
+            assertTrue( (n1) <= (sub.xy.size()));
         }
 
         return sub;

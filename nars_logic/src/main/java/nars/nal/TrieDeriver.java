@@ -38,9 +38,8 @@ public class TrieDeriver extends RuleTrie {
             }
         }
 
-
         int now = match.now();
-        System.out.println(now + " "  + match.values);
+        //System.out.println(now + " "  + match.values);
 
         for (RuleBranch s : r.children) {
             forEachRule(s, match);
@@ -48,8 +47,6 @@ public class TrieDeriver extends RuleTrie {
         }
 
     }
-
-
 
 
 //    final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {

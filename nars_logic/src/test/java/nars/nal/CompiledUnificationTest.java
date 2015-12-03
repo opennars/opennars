@@ -19,11 +19,12 @@ import org.junit.Test;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * "don't touch this file" - patham9
  */
-public class UnificationTest2 extends UnificationTest {
+public class CompiledUnificationTest extends UnificationTest {
 
     private TestNAR t;
 
@@ -87,8 +88,8 @@ public class UnificationTest2 extends UnificationTest {
             int n1 = Sets.difference(t1u, t2u).size();
             int n2 = Sets.difference(t2u, t1u).size();
 
-            //assertTrue((n2) <= (frame.yx().size()));
-            //assertTrue((n1) <= (frame.xy().size()));
+            assertTrue((n2) <= (frame.yx.size()));
+            assertTrue((n1) <= (frame.xy.size()));
         }
 
 

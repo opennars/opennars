@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
         if (r) {
 
             //identifier: punctuation, mapA, mapB
-            assertEquals("{?1=a}", f.toMap().toString());
+            assertEquals("{?1=a}", f.xy.toString());
 
             //output
             assertEquals(

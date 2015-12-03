@@ -37,7 +37,7 @@ public class MapSubstitution implements Substitution {
     /**
      * gets the substitute
      */
-    final public Term get(final Term t) {
+    final public Term getXY(final Term t) {
         return subs.get(t);
     }
 
@@ -49,10 +49,7 @@ public class MapSubstitution implements Substitution {
                 '}';
     }
 
-    @Override
-    public Substitution inverse() {
-        throw new RuntimeException("unimpl");
-    }
+
 
     @Override
     public void putXY(Term x, Term y) {

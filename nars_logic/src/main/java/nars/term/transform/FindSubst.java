@@ -2,7 +2,6 @@ package nars.term.transform;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.impl.factory.primitive.ShortSets;
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Op;
@@ -12,7 +11,6 @@ import nars.nal.meta.TermPattern;
 import nars.nal.nal4.Image;
 import nars.term.*;
 
-import java.util.Map;
 import java.util.Random;
 
 
@@ -38,7 +36,6 @@ public class FindSubst extends Subst implements Substitution {
     }
 
 
-
     /**
      * push in to children
      */
@@ -50,16 +47,13 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public boolean run(Frame ff) {
-            ff.parent = (Compound) ff.term;
+        public boolean run(Subst ff) {
+            ff.parent.set( (Compound) ff.term() );
             return true;
         }
     };
 
-    @Override
-    public Term get(Term t) {
-        return get((Object)t);
-    }
+
 
     //    @Override
 //    public final Subst clone() {
@@ -75,10 +69,6 @@ public class FindSubst extends Subst implements Substitution {
 //        return x;
 //    }
 
-    @Override
-    public String toString() {
-        return type + ":" + super.toString();
-    }
 
 
     private final void print(String prefix, Term a, Term b) {
@@ -90,13 +80,7 @@ public class FindSubst extends Subst implements Substitution {
         System.out.println("     " + this);
     }
 
-    public Term getXY(Term t) {
-        return get((Object)t);
-    }
 
-    public Term getYX(Term t) {
-        return get(new Inverse(t));
-    }
 
 
     public static final class TermEquals extends MatchOp {
@@ -238,13 +222,6 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //    }
 
-    public Map<Object,Object> toMap() {
-        Map m = Global.newHashMap(values.size());
-        values.forEach((k,v) -> {
-            m.put(k, v.getLatest());
-        });
-        return m;
-    }
 
     /** invokes a dynamic FindSubst match via the generic entry method: match(Term,Term) */
     public static class MatchTerm extends PatternOp {
@@ -255,8 +232,8 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public boolean run(Frame ff) {
-            return ff.match(x, ff.term);
+        public boolean run(Subst ff) {
+            return ff.match(x, ff.term());
         }
 
         @Override
@@ -275,7 +252,7 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //
 //        @Override
-//        public boolean run(Frame ff) {
+//        public boolean run(Subst ff) {
 //            return ff.matchXvar(x, ff.y);
 //        }
 //
@@ -293,8 +270,8 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public boolean run(Frame ff) {
-            return ff.matchCompound(x, ((Compound) ff.term));
+        public boolean run(Subst ff) {
+            return ff.matchCompound(x, ((Compound) ff.term()));
         }
 
         @Override
@@ -311,7 +288,7 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //
 //        @Override
-//        public boolean run(Frame ff) {
+//        public boolean run(Subst ff) {
 //            return ff.matchPermute(x, ((Compound) ff.y));
 //        }
 //
@@ -321,23 +298,23 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //    }
 
-    /**
-     * pop out to parent
-     */
-    public static final PatternOp Superterm = new PatternOp() {
-
-        @Override
-        public String toString() {
-            return "Super";
-        }
-
-        @Override
-        public boolean run(Frame ff) {
-            ff.term = ff.parent;
-            ff.parent = null;
-            return true;
-        }
-    };
+//    /**
+//     * pop out to parent
+//     */
+//    public static final PatternOp Superterm = new PatternOp() {
+//
+//        @Override
+//        public String toString() {
+//            return "Super";
+//        }
+//
+//        @Override
+//        public boolean run(Subst ff) {
+//            ff.term.set( ff.parent );
+//            ff.parent.set( null );
+//            return true;
+//        }
+//    };
 
     /** selects the ith sibling subterm of the current parent */
     public static final class Subterm extends PatternOp {
@@ -348,8 +325,11 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public final boolean run(Frame f) {
-            return (f.term = f.parent.term(index)) != null;
+        public final boolean run(Subst f) {
+            Term pp = f.parent().term(index);
+            if (pp == null) return false;
+            f.term.set( pp );
+            return true;
             //return (f.y = f.parent.termOr(index, null)) != null;
         }
 
@@ -370,7 +350,7 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //
 //        @Override
-//        public boolean run(Frame ff) {
+//        public boolean run(Subst ff) {
 //            Term y = ff.y = ff.parent.term(index);
 //            return ff.match(x, y);
 //        }
@@ -394,7 +374,7 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //
 //        @Override
-//        public boolean run(Frame ff) {
+//        public boolean run(Subst ff) {
 //            return ff.match(x, ff.y.term(0));
 //        }
 //
@@ -410,7 +390,7 @@ public class FindSubst extends Subst implements Substitution {
      */
     @Override
     public final boolean next(final Term x, final Term y, int startPower) {
-        this.power = startPower;
+        this.power.set( startPower );
 
         boolean b = match(x, y);
 
@@ -428,10 +408,11 @@ public class FindSubst extends Subst implements Substitution {
 
 //        return next(x.term, y, startPower);
 
-        this.power = startPower;
+        this.power.set( startPower );
 
         PreCondition[] code = x.code;
-        this.term = y;
+        this.term.set(y);
+
         for (PreCondition o : code) {
             if (!(o instanceof PatternOp)) continue;
             if (!((PatternOp) o).run(this))
@@ -455,8 +436,8 @@ public class FindSubst extends Subst implements Substitution {
             return true;
         }
 
-        if ((--power) < 0)
-            return false;
+        /*if ((--power) < 0)
+            return false;*/
 
         final Op t = this.type;
         final Op xOp = x.op();
@@ -532,13 +513,9 @@ public class FindSubst extends Subst implements Substitution {
     @Override
     public boolean isEmpty() {
         //throw new RuntimeException("unimpl");
-        return values.isEmpty();
+        return xy.isEmpty();
     }
 
-    @Override
-    public Substitution inverse() {
-        throw new RuntimeException("unimpl");
-    }
 
     /**
      * X and Y are of the same operator type and length (arity)
@@ -627,7 +604,9 @@ public class FindSubst extends Subst implements Substitution {
 
         int prePermute = now();
 
-        while (perm.hasNext()) {
+        int power = this.power.get(); //here power represents the # of permutations that can be attempted
+
+        while (perm.hasNext() && (power > 0)) {
 
             perm.next();
 
@@ -647,6 +626,7 @@ public class FindSubst extends Subst implements Substitution {
                 //else: continue on next permutation
             }
 
+            power--;
         }
 
 
@@ -675,7 +655,8 @@ public class FindSubst extends Subst implements Substitution {
 
         final int prePermute = now();
 
-        for (int i = 0; i < ysize; i++) {
+
+        for (int i = 0; i < Math.min(ysize, this.power.get()); i++) {
 
             int yi = (shuffle++) % ysize;
             Term y = Y.term(yi);
@@ -690,11 +671,8 @@ public class FindSubst extends Subst implements Substitution {
 
             else {
 
-                revert(now);
+                revert(prePermute);
 
-                if (power < 0) {
-                    return false;
-                }
 
                 //else: continue on next permutation
             }
@@ -737,35 +715,6 @@ public class FindSubst extends Subst implements Substitution {
         //return true;
     }
 
-    public static final class Inverse {
-        final Object o;
-
-        public Inverse(Object o) {
-            this.o = o;
-        }
-
-        @Override
-        public boolean equals(Object o1) {
-            if (this == o1) return true;
-            if (!(o instanceof Inverse)) return false;
-
-            return o.equals(((Inverse) o1).o);
-        }
-
-        @Override
-        public int hashCode() {
-            return (1 + o.hashCode()) * 31;
-        }
-
-        @Override
-        public String toString() {
-            return "~(" + o.toString() + ")";
-        }
-    }
-
-
-
-
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
@@ -788,10 +737,10 @@ public class FindSubst extends Subst implements Substitution {
 
     @Override
     public final void putXY(Term x /* usually a Variable */, Term y) {
-        set(x, y);
+        xy.put(x, y);
     }
     public final void putYX(Term y /* usually a Variable */, Term x) {
-        set(new Inverse(y), x);
+        yx.put(y, x);
     }
 
 
@@ -799,10 +748,10 @@ public class FindSubst extends Subst implements Substitution {
     public final Term resolve(Term t) {
         //TODO make a half resolve that only does xy?
 
-        Term ret = t.substituted(this);
-//        if (ret != null) {
-//            ret = ret.substituted(s, yx);
-//        }
+        Term ret = t.substituted(xy);
+        if (ret != null) {
+            ret = ret.substituted(yx);
+        }
         return ret;
 
     }

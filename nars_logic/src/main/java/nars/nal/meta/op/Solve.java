@@ -50,7 +50,7 @@ public final class Solve extends PreCondition {
             return false;
         }
 
-        match.set(RuleMatch.DERIVED, derivedTerm);
+        match.derived.set(derivedTerm);
 
 
         final Term pattern = rule.term(0);
@@ -156,14 +156,14 @@ public final class Solve extends PreCondition {
                     int[] pasteIntervals = paste.intervals();
 
                     if (OneLess) {
-                        match.set(RuleMatch.OCCURRENCE_SHIFT, copyIntervals[1]); //we shift according to first interval
+                        match.occurrenceShift.set(copyIntervals[1]); //we shift according to first interval
                         System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
                     } else if (sameLength) {
                         System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
                     }
                 } else /* if (paste == null)  */ {
                     //ok we reduced to a single element, so its a one less case
-                    match.set(RuleMatch.OCCURRENCE_SHIFT, copyIntervals[1]);
+                    match.occurrenceShift.set(copyIntervals[1]);
                 }
             }
         }
@@ -216,9 +216,9 @@ public final class Solve extends PreCondition {
         }
 
         @Override
-        public boolean test(RuleMatch match) {
+        public boolean test(RuleMatch m) {
 
-            Premise premise = match.premise;
+            Premise premise = m.premise;
 
             final Task task = premise.getTask();
 
@@ -271,8 +271,9 @@ public final class Solve extends PreCondition {
                 return false;
             }
 
-            match.set(RuleMatch.TRUTH, truth);
-            match.set(RuleMatch.PUNCT, punct);
+
+            m.truth.setWith(truth);
+            m.punct.setWith(punct).commit();
 
             return true;
         }

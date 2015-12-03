@@ -56,7 +56,7 @@ public final class Derive extends PreCondition {
 
         final Premise premise = m.premise;
 
-        Term derivedTerm = m.get(RuleMatch.DERIVED);
+        Term derivedTerm = m.derived.get();
 
         //test for reactor leak
         // TODO prevent this from happening
@@ -71,7 +71,7 @@ public final class Derive extends PreCondition {
         if (!(derivedTerm instanceof Compound))
             return false;
 
-        final Truth truth = m.get(RuleMatch.TRUTH);
+        final Truth truth = m.truth.get();
         final Budget budget;
         if (truth != null) {
             budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
@@ -83,8 +83,8 @@ public final class Derive extends PreCondition {
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
                 RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm,
-                        m.get(RuleMatch.PUNCT), truth, budget,
-                        m.get(RuleMatch.OCCURRENCE_SHIFT), premise));
+                        m.punct.get(), truth, budget,
+                        m.occurrenceShift.get(), premise));
             }
             return false;
         }
@@ -93,7 +93,7 @@ public final class Derive extends PreCondition {
         final Task belief = premise.getBelief();
 
 
-        final char punct = m.get(RuleMatch.PUNCT);
+        final char punct = m.punct.get();
 
         FluentTask deriving = DefaultTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving == null)
@@ -102,7 +102,7 @@ public final class Derive extends PreCondition {
         final long now = premise.time();
         final long occ;
 
-        final long occurence_shift = m.get(RuleMatch.OCCURRENCE_SHIFT);
+        final long occurence_shift = m.occurrenceShift.get();
         long taskOcc = task.getOccurrenceTime();
         if (occurence_shift > Stamp.TIMELESS) {
             occ = taskOcc + occurence_shift;

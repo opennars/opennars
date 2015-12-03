@@ -25,9 +25,9 @@ public final class PostSolve extends PreCondition {
     @Override
     public boolean test(RuleMatch m) {
 
-        final Substitution secondary = m.secondary();
+        final Substitution secondary = m.secondary.get();
 
-        Term dt = m.get(RuleMatch.DERIVED);
+        Term dt = m.derived.get();
 
         if (!secondary.isEmpty()) {
             Term rederivedTerm = dt.substituted(secondary);
@@ -44,7 +44,7 @@ public final class PostSolve extends PreCondition {
         //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
         Term t = dt.normalized();
         if (t!=null) {
-            m.set(RuleMatch.DERIVED, t);
+            m.derived.set(t);
             return true;
         }
 

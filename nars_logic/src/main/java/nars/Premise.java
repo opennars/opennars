@@ -11,12 +11,14 @@ import nars.task.Tasked;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
+import nars.term.transform.MapSubstitution;
 import nars.term.transform.Substitution;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -68,6 +70,7 @@ public interface Premise extends Level, Tasked {
         final Term a = t[0];
         Term aa = a;
 
+        //FORWARD
         if (a instanceof Compound) {
             aa = applySubstituteAndRenameVariables(((Compound) a), f);
 
@@ -82,9 +85,12 @@ public interface Premise extends Level, Tasked {
         final Term b = t[1];
         Term bb = b;
 
+        //REVERSE
         if (b instanceof Compound) {
-            //bb = applySubstituteAndRenameVariables(((Compound) b), f.inverse());
-            bb = applySubstituteAndRenameVariables(((Compound) b), f);
+            bb = applySubstituteAndRenameVariables(
+                ((Compound) b),
+                f.yx //inverse map
+            );
 
             if (bb == null) return false;
 
@@ -97,6 +103,14 @@ public interface Premise extends Level, Tasked {
         t[1] = bb;
 
         return true;
+    }
+
+    static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term,Term> subs) {
+        if ((subs == null) || (subs.isEmpty())) {
+            //no change needed
+            return t;
+        }
+        return t.substituted(new MapSubstitution(subs));
     }
 
     /**

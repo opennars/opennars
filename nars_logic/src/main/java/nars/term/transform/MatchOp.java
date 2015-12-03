@@ -14,11 +14,11 @@ public abstract class MatchOp extends PatternOp {
     abstract public boolean match(Term f);
 
     @Override
-    public final boolean run(Frame ff) {
+    public final boolean run(Subst ff) {
 //            if (ff.power < 0) {
 //                return false;
 //            }
-        return match(ff.term);
+        return match(ff.term());
     }
 
 }

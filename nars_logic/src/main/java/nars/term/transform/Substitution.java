@@ -13,7 +13,7 @@ import java.util.function.Function;
 public interface Substitution extends Function<Compound,Term> {
 
 
-    Term get(final Term t);
+    Term getXY(final Term t);
 
 
     @Override default Term apply(final Compound c) {
@@ -49,7 +49,7 @@ public interface Substitution extends Function<Compound,Term> {
 
                 changed = true;
 
-                Term[] expansion = ((InvisibleProduct)get(t)).term;
+                Term[] expansion = ((InvisibleProduct)getXY(t)).term;
 
                 final int es = expansion.length;
 
@@ -66,7 +66,7 @@ public interface Substitution extends Function<Compound,Term> {
                 Term s;
 
                 //attempt 1: apply known substitution
-                if ((s = get(t)) != null) {
+                if ((s = getXY(t)) != null) {
 
                     //prevents infinite recursion
                     if (s.containsTerm(t))
@@ -113,7 +113,7 @@ public interface Substitution extends Function<Compound,Term> {
             Term t = c.term(i);
             if (t == Ellipsis.Expand) n--; //skip expansion placeholder terms
             if (t instanceof Ellipsis) {
-                Term expanded = get(t);
+                Term expanded = getXY(t);
                 if (expanded == null) return -1; //missing ellipsis match
                 n += expanded.size() - 1; //-1 for the existing term already accounted for
             }
@@ -145,8 +145,6 @@ public interface Substitution extends Function<Compound,Term> {
     }
 
     boolean isEmpty();
-
-    Substitution inverse();
 
     void putXY(Term x, Term y);
 

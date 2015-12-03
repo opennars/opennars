@@ -9,10 +9,7 @@ import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
 import nars.task.Task;
-import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.transform.MapSubstitution;
-import nars.term.transform.Substitution;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -35,16 +32,8 @@ public class RuleMatch extends FindSubst {
         return new RuleMatch(new XorShift1024StarRandom(1));
     });
 
-    public static final String SECONDARY = "Secondary"; //key for the second-level mappings
-    public static final String OCCURRENCE_SHIFT = "OccShift"; //key for the second-level mappings
-    public static final String TRUTH = "Truth"; //key for the second-level mappings
-    public static final String PUNCT = "Punct"; //key for the second-level mappings
-    public static final String DERIVED = "Derived"; //key for the second-level mappings
 
 
-    public Substitution secondary() {
-        return get(SECONDARY, () -> new MapSubstitution(Global.newHashMap()));
-    }
 
     /**
      * Global Context
@@ -72,41 +61,6 @@ public class RuleMatch extends FindSubst {
 
 
 
-
-
-
-    public static final class PostMods {
-        public Truth truth;
-        public Term derivedTerm;
-        public long occurence_shift;
-        public char punct;
-
-        public void clear() {
-            truth = null;
-            derivedTerm = null;
-            occurence_shift = Stamp.TIMELESS;
-            punct = 0;
-        }
-
-        public void copyTo(PostMods m) {
-            m.occurence_shift = occurence_shift;
-            m.truth = truth;
-            m.derivedTerm = derivedTerm;
-            m.punct = punct;
-        }
-
-        @Override
-        public String toString() {
-            return "PostMods{" +
-                    "truth=" + truth +
-                    ", derivedTerm=" + derivedTerm +
-                    ", occurence_shift=" + occurence_shift +
-                    ", punct=" + punct +
-                    '}';
-        }
-    }
-
-
     @Override
     public String toString() {
         return "RuleMatch:{" +
@@ -128,17 +82,143 @@ public class RuleMatch extends FindSubst {
         this.premise = p;
         this.receiver = receiver;
 
-        this.parent = new TaskBeliefPair(
+        this.parent.set( new TaskBeliefPair(
             p.getTask().getTerm(),
             p.getTermLink().getTerm()
-        );
+        ) );
 
         //scale unification power according to premise's mean priority linearly between min and max
-        this.power =
+        this.power.set(
             (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
-                    + Global.UNIFICATION_POWERmin);
+                    + Global.UNIFICATION_POWERmin) );
 
     }
+
+
+
+    /**
+     * for debugging
+     */
+    public static void removeInsufficientBudget(Premise premise, PreTask task) {
+        premise.memory().remove(task, "Insufficient Derived Budget");
+    }
+
+//    /**
+//     * for debugging
+//     */
+//    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
+//        Term termm = resolve(outcome.term);
+//        if (termm != null) {
+//            premise.memory().remove(
+//                    new PreTask(termm, punct, truth,
+//                            Budget.zero, post.occurence_shift, premise
+//                    ),
+//                    "Cyclic:" +
+//                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
+//                            Arrays.toString(premise.getBelief().getEvidence())
+//            );
+//        }
+//    }
+
+
+    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
+
+
+        final TruthFunction f = getTruthFunction(punc, outcome);
+        if (f == null) return null;
+
+
+        final Truth truth = f.get(T, B);
+//        if (T!=null && truth == T)
+//            throw new RuntimeException("tried to steal Task's truth instance: " + f);
+//        if (B!=null && truth == B)
+//            throw new RuntimeException("tried to steal Belief's truth instance: " + f);
+
+
+        //minConfidence pre-filter
+        final float minConf = Global.DEBUG ? Global.CONFIDENCE_PREFILTER_DEBUG : Global.CONFIDENCE_PREFILTER;
+        return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
+    }
+
+    @Deprecated
+    static TruthFunction getTruthFunction(char punc, PostCondition outcome) {
+
+        switch (punc) {
+
+            case Symbols.JUDGMENT:
+                return outcome.truth;
+
+            case Symbols.GOAL:
+                if (outcome.desire == null) {
+                    //System.err.println(outcome + " has null desire function");
+                    return null; //no desire function specified for this rule
+                } else {
+                    return outcome.desire;
+                }
+
+            /*case Symbols.QUEST:
+            case Symbols.QUESTION:
+            */
+
+            default:
+                return null;
+        }
+
+    }
+
+
+    static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
+        return !((truth == null) || (truth.getConfidence() < minConf));
+    }
+
+    @Deprecated
+    protected static boolean cyclic(PostCondition outcome, Premise premise) {
+        return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
+    }
+
+    public static boolean cyclic(TruthFunction f, Premise premise) {
+        return (f != null && !f.allowOverlap()) && premise.isCyclic();
+    }
+
+
+//    public Term resolveTest(final Term t) {
+//        Term r = resolver.apply(t);
+//
+//        /* temporary */
+//        Term existing = resolutions.put(t, r);
+//        if ((existing!=null) && (!existing.equals(r))) {
+//            throw new RuntimeException("inconsistent resolution: " + r + "!= existing" + existing + "... in " + this);
+//        }
+//
+//        return r;
+//    }
+
+
+
+
+    public final void occurrenceAdd(final long cyclesDelta) {
+        //TODO move to post
+        long oc = occurrenceShift.get();
+        if (oc == Stamp.TIMELESS)
+            oc = 0;
+        oc += cyclesDelta;
+        occurrenceShift.set((int)oc);
+    }
+
+
+
+
+//    public void run(TaskRule rule, Stream.Builder<Task> stream) {
+//        //if preconditions are met:
+//        for (final PostCondition p : rule.postconditions) {
+//            Task t = apply(p);
+//            if (t!=null)
+//                stream.accept(t);
+//        }
+//
+//    }
+
+}
 
 
 //    @Override protected void putCommon(Variable a, Variable b) {
@@ -491,127 +571,3 @@ public class RuleMatch extends FindSubst {
 //
 //        return null;
 //    }
-
-    /**
-     * for debugging
-     */
-    public static void removeInsufficientBudget(Premise premise, PreTask task) {
-        premise.memory().remove(task, "Insufficient Derived Budget");
-    }
-
-//    /**
-//     * for debugging
-//     */
-//    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
-//        Term termm = resolve(outcome.term);
-//        if (termm != null) {
-//            premise.memory().remove(
-//                    new PreTask(termm, punct, truth,
-//                            Budget.zero, post.occurence_shift, premise
-//                    ),
-//                    "Cyclic:" +
-//                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
-//                            Arrays.toString(premise.getBelief().getEvidence())
-//            );
-//        }
-//    }
-
-
-    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
-
-
-        final TruthFunction f = getTruthFunction(punc, outcome);
-        if (f == null) return null;
-
-
-        final Truth truth = f.get(T, B);
-//        if (T!=null && truth == T)
-//            throw new RuntimeException("tried to steal Task's truth instance: " + f);
-//        if (B!=null && truth == B)
-//            throw new RuntimeException("tried to steal Belief's truth instance: " + f);
-
-
-        //minConfidence pre-filter
-        final float minConf = Global.DEBUG ? Global.CONFIDENCE_PREFILTER_DEBUG : Global.CONFIDENCE_PREFILTER;
-        return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
-    }
-
-    @Deprecated
-    static TruthFunction getTruthFunction(char punc, PostCondition outcome) {
-
-        switch (punc) {
-
-            case Symbols.JUDGMENT:
-                return outcome.truth;
-
-            case Symbols.GOAL:
-                if (outcome.desire == null) {
-                    //System.err.println(outcome + " has null desire function");
-                    return null; //no desire function specified for this rule
-                } else {
-                    return outcome.desire;
-                }
-
-            /*case Symbols.QUEST:
-            case Symbols.QUESTION:
-            */
-
-            default:
-                return null;
-        }
-
-    }
-
-
-    static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
-        return !((truth == null) || (truth.getConfidence() < minConf));
-    }
-
-    @Deprecated
-    protected static boolean cyclic(PostCondition outcome, Premise premise) {
-        return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
-    }
-
-    public static boolean cyclic(TruthFunction f, Premise premise) {
-        return (f != null && !f.allowOverlap()) && premise.isCyclic();
-    }
-
-
-//    public Term resolveTest(final Term t) {
-//        Term r = resolver.apply(t);
-//
-//        /* temporary */
-//        Term existing = resolutions.put(t, r);
-//        if ((existing!=null) && (!existing.equals(r))) {
-//            throw new RuntimeException("inconsistent resolution: " + r + "!= existing" + existing + "... in " + this);
-//        }
-//
-//        return r;
-//    }
-
-
-
-
-    public final void occurrenceAdd(final long cyclesDelta) {
-        //TODO move to post
-        long oc = get(OCCURRENCE_SHIFT);
-        if (oc == Stamp.TIMELESS)
-            oc = 0;
-        oc += cyclesDelta;
-        set(OCCURRENCE_SHIFT, oc);
-    }
-
-
-
-
-//    public void run(TaskRule rule, Stream.Builder<Task> stream) {
-//        //if preconditions are met:
-//        for (final PostCondition p : rule.postconditions) {
-//            Task t = apply(p);
-//            if (t!=null)
-//                stream.accept(t);
-//        }
-//
-//    }
-
-}
