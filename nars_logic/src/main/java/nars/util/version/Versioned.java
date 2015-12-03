@@ -37,21 +37,17 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
     }
 
 
-    boolean revert(int before) {
-
+    boolean revertNext(int before) {
         int p = this.size - 1;
-        if (p < 0) return false;
-
-        int[] a = this.items;
-        while (a[p] > before) {
-            p--;
-            if (p <= 0) break;
+        if (p >= 0) {
+            int[] a = this.items;
+            if (a[p--] > before) {
+                popTo(p);
+                value.popTo(p);
+                return true;
+            }
         }
-
-        popTo(p);
-        value.popTo(p);
-
-        return true;
+        return false;
     }
 
 

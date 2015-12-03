@@ -84,7 +84,7 @@ public class VersioningTest {
         assertEquals(4, v.size()); assertEquals("a2 b0", s.get());
 
         v.revert(); System.out.println(v);
-        assertEquals(3, v.size()); assertEquals("a2 null", s.get());
+        assertEquals(3, v.size()); assertEquals("a1 b0", s.get());
 
         v.revert(); System.out.println(v);
         assertEquals(2, v.size());  assertEquals("a1 null", s.get());
@@ -92,8 +92,8 @@ public class VersioningTest {
         v.revert(); System.out.println(v);
         assertEquals(1, v.size());  assertEquals("a0 null", s.get());
 
-
-        v.revert(); assertEquals("null null", s.get());
+        v.revert(); System.out.println(v);
+        assertEquals(0, v.size()); assertEquals("null null", s.get());
 
     }
 }

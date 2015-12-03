@@ -54,9 +54,10 @@ public class Versioning extends FasterList<Versioned> {
         int s = size()-1;
         if (s == -1) return; //empty
 
-        while (get(s).revert(when)) {
+        while (get(s).revertNext(when)) {
             --s;
-            if (s <= 0) break;
+            //if (s <= 0) break;
+            break; //HACK for now, 1 at a time
         }
 
         popTo(s);

@@ -102,8 +102,8 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         }
 
         @Override
-        boolean revert(int before) {
-            boolean v = super.revert(before);
+        boolean revertNext(int before) {
+            boolean v = super.revertNext(before);
             if (size == 0)
                 removeFromMap();
             return v;

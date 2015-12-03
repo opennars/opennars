@@ -42,7 +42,7 @@ public class FasterList<X> extends FastList<X> {
      * except the array items will not be null
      * */
     public void popTo(int index) {
-        size = index+1;
+        this.size = index+1;
     }
 
 
