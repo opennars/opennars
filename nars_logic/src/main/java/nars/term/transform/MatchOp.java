@@ -18,7 +18,7 @@ public abstract class MatchOp extends PatternOp {
 //            if (ff.power < 0) {
 //                return false;
 //            }
-        return match(ff.term());
+        return match(ff.term.get());
     }
 
 }

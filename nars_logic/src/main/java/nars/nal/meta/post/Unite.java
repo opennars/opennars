@@ -36,7 +36,8 @@ public class Unite extends PreCondition3Output {
     public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Set<Term> terms) {
         if (terms.isEmpty()) return false;
 
-        return createSetAndAddToSubstitutes(m, a, c, terms.toArray(new Term[terms.size()]) );
+        return createSetAndAddToSubstitutes(m, a, c,
+                terms.toArray(new Term[terms.size()]) );
     }
 
     public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Term[] termsArray) {
@@ -45,9 +46,12 @@ public class Unite extends PreCondition3Output {
         if(a instanceof SetExt) {
             res = SetExt.make(termsArray);
         }
-        else {
+        else /*if (a instanceof SetInt)*/ {
             res = SetInt.make(termsArray);
         }
+        /*else {
+            throw new RuntimeException("not a set");
+        }*/
 
         if(res==null)
             throw new RuntimeException("this condition should have been trapped earlier");

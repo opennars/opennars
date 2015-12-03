@@ -21,9 +21,10 @@ public class Differ extends PreCondition3Output {
             return false;
 
         //ok both are extensional sets or intensional sets, build difference
-        SetTensional A = (SetTensional) a;
-        SetTensional B = (SetTensional) b;
-
-        return Unite.createSetAndAddToSubstitutes(m, a, c, SetTensional.difference(A, B));
+        return Unite.createSetAndAddToSubstitutes(m, a, c,
+                SetTensional.difference(
+                        (SetTensional) a,
+                        (SetTensional) b)
+        );
     }
 }

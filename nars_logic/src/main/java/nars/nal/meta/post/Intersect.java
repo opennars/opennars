@@ -19,18 +19,12 @@ public class Intersect extends PreCondition3Output {
 
         if (Unite.invalid(a,b,c))
             return false;
-//        if(a==null || b==null || c==null ||
-//                !((a instanceof SetTensional) && (a.op()==b.op()))
-////                ( !((a instanceof SetExt) && (b instanceof SetExt)) &&
-////                  !((a instanceof SetInt) && (b instanceof SetInt)))
-//                ) {
-//            return false;
-//        }
 
         //ok both are extensional sets or intensional sets, build intersection, not difference
-        SetTensional A = (SetTensional) a;
-        SetTensional B = (SetTensional) b;
-
-        return Unite.createSetAndAddToSubstitutes(m, a, c, SetTensional.intersect(A,B));
+        return Unite.createSetAndAddToSubstitutes(m, a, c,
+            SetTensional.intersect(
+                (SetTensional) a,(SetTensional) b
+            )
+        );
     }
 }

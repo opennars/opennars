@@ -2,6 +2,7 @@ package nars.nal.meta.post;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import nars.Premise;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition1;
 import nars.nal.nal5.Implication;
@@ -60,24 +61,36 @@ public class ShiftOccurrence extends PreCondition1 {
 
     @Override public boolean test(final RuleMatch m) {
 
-        if (m.premise.isEternal()) {
+        Premise p = m.premise;
+
+        if (p.isEternal()) {
             //continue with derivation but dont apply shift
             return true;
         }
 
+        if (positive) {
+            Term ret = p.getTermLink().getTerm();
+            if (ret instanceof Implication) {
+                Term impSubj = ((Implication) ret).getSubject();
+                if (impSubj instanceof Sequence) {
+                    Sequence seq = (Sequence)impSubj;
 
-        Term ret = m.premise.getTermLink().getTerm();
-        if(ret instanceof Implication) {
-            if(((Implication) ret).getSubject() instanceof Sequence) {
-                Sequence seq = (Sequence)((Implication) ret).getSubject();
+                    int[] ii = seq.intervals();
+                    int iiLen = ii.length;
 
-                int[] ii = seq.intervals();
-                if(ii.length>0 && positive) { //on backward its already handled by shifting (&/,a,/i) backward on i and changing it to a
-                    int interval = ii[ii.length - 1];
-                    m.occurrenceShift.set(positive ? interval : -interval);
+                    if (iiLen > 0) {
+                        m.occurrenceShift.set(
+                            ii[iiLen - 1]
+                        );
+                        //positive ? interval : -interval);
+                    }
+
                 }
             }
         }
+        /* on backward its already handled by shifting
+           (&/,a,/i) backward on i and changing it to a
+         */
 
 
         return super.test(m);
@@ -104,7 +117,7 @@ public class ShiftOccurrence extends PreCondition1 {
         //if (offset > Stamp.TIMELESS) {
             //shift since it has an order..
             m.occurrenceAdd(
-                    (positive ? +1 : -1) * offset
+                (positive ? +1 : -1) * offset
             );
         //}
 

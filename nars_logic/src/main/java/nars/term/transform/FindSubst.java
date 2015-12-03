@@ -48,7 +48,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
-            ff.parent.set( (Compound) ff.term() );
+            ff.parent.set( (Compound) ff.term.get());
             return true;
         }
     };
@@ -233,7 +233,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
-            return ff.match(x, ff.term());
+            return ff.match(x, ff.term.get());
         }
 
         @Override
@@ -271,7 +271,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
-            return ff.matchCompound(x, ((Compound) ff.term()));
+            return ff.matchCompound(x, ((Compound) ff.term.get()));
         }
 
         @Override
@@ -326,11 +326,12 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public final boolean run(Subst f) {
-            Term pp = f.parent().term(index);
-            if (pp == null) return false;
+            Term pp = f.parent.get().term(index);
+            if (pp == null)
+                throw new RuntimeException("null subterm");
+
             f.term.set( pp );
             return true;
-            //return (f.y = f.parent.termOr(index, null)) != null;
         }
 
         @Override
@@ -410,10 +411,9 @@ public class FindSubst extends Subst implements Substitution {
 
         this.power.set( startPower );
 
-        PreCondition[] code = x.code;
         this.term.set(y);
 
-        for (PreCondition o : code) {
+        for (PreCondition o : x.code) {
             if (!(o instanceof PatternOp)) continue;
             if (!((PatternOp) o).run(this))
                 return false;
@@ -723,10 +723,7 @@ public class FindSubst extends Subst implements Substitution {
         final int yLen = Y.size();
 
         for (int i = 0; i < yLen; i++) {
-
-            Term xSub = X.term(i);
-
-            if (!match(xSub, Y.term(i))) {
+            if (!match(X.term(i), Y.term(i))) {
                 return false;
             }
         }

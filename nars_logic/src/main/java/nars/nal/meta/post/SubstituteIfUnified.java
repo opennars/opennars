@@ -18,8 +18,7 @@ public class SubstituteIfUnified extends Substitute {
     final static Atom DEP_VAR = Atom.the("#", true);
 
     private final Op type;
-
-    private transient final String id;
+    private final transient String id;
 
     /**
      *
@@ -45,7 +44,7 @@ public class SubstituteIfUnified extends Substitute {
     }
 
     @Override
-    protected String id() {
+    public String toString() {
         return id;
     }
 
@@ -60,11 +59,8 @@ public class SubstituteIfUnified extends Substitute {
         final boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
 
-            //m.secondary().putXY()
-            //throw new RuntimeException("unimpl");
-            return false;
-//            m.secondary().putAll(sub.xy());
-//            result = true;
+            m.secondary.putAll(sub.xy);
+            result = true;
         }
         else {
             result = false;

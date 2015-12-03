@@ -9,7 +9,10 @@ public class Substitute extends PreCondition {
 
     public final Term x;
     public final Term y;
-    private String str = null;
+
+
+
+    private transient final String id;
 
     /**
      *
@@ -19,19 +22,12 @@ public class Substitute extends PreCondition {
     public Substitute(Term x, Term y) {
         this.x = x;
         this.y = y;
-
-    }
-
-    protected String id() {
-        return getClass().getSimpleName() + ":(" + x + ',' + y + ')';
+        this.id = getClass().getSimpleName() + ":(" + x + ',' + y + ')';
     }
 
     @Override
-    public final String toString() {
-        if (str == null) {
-            this.str = id(); //must be computed outside of constructor, because of subclassing
-        }
-        return str;
+    public String toString() {
+        return id;
     }
 
     @Override public final boolean test(RuleMatch m) {

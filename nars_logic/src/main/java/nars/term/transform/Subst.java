@@ -4,17 +4,30 @@ import nars.Op;
 import nars.nal.meta.TermPattern;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.truth.Truth;
 import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
+import nars.util.version.Versioning;
 
 import java.util.LinkedHashMap;
 import java.util.Random;
 
 
-public abstract class Subst extends Frame {
+public abstract class Subst extends Versioning {
 
 
+    public final Random random;
+
+    protected final Op type;
+
+
+    abstract boolean match(final Term X, final Term Y);
+    abstract boolean matchCompound(final Compound X, final Compound Y);
+    abstract boolean matchPermute(Compound X, Compound Y);
+
+    /** matches when x is of target variable type */
+    abstract boolean matchXvar(Variable x, Term y);
 
     /** standard matching */
     public abstract boolean next(Term x, Term y, int power);
@@ -46,11 +59,9 @@ public abstract class Subst extends Frame {
     public final Versioned<Term> derived;
 
 
-    public final Term term() { return term.get(); }
-    public final Compound parent() { return parent.get(); }
-
     public Subst(Random random, Op type) {
-        super(random, type);
+        this.random = random;
+        this.type = type;
 
         xy = new VersionMap(this, new LinkedHashMap());
         yx = new VersionMap(this, new LinkedHashMap());

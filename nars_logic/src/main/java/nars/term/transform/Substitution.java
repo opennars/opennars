@@ -16,6 +16,7 @@ public interface Substitution extends Function<Compound,Term> {
     Term getXY(final Term t);
 
 
+
     @Override default Term apply(final Compound c) {
         //TODO optimization exclusion conditions, currently broke
         /*if (appliesTo < 0) {

@@ -40,17 +40,17 @@ public class CompiledUnificationTest extends UnificationTest {
     @Override
     FindSubst test(Op type, String s1, String s2, boolean shouldSub) {
 
+        TestNAR test = test();
+        NAR nar = test.nar;
         for (int i = 0; i < 5; i++) {
-            test(i, type, s1, s2, shouldSub);
+            test(nar, i, type, s1, s2, shouldSub);
         }
         return null;
     }
 
-    Subst test(int seed, Op type, String s1, String s2, boolean shouldSub) {
+    static Subst test(NAR nar, int seed, Op type, String s1, String s2, boolean shouldSub) {
 
         Global.DEBUG = true;
-        TestNAR test = test();
-        NAR nar = test.nar;
         nar.believe(s1);
         nar.believe(s2);
         nar.frame(2);

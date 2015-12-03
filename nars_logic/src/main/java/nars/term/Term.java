@@ -180,6 +180,8 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     Term substituted(Substitution s);
 
+
+
     //@Deprecated Term substituted(final Map<Term, Term> subs);
 
     default Term substituted(final Map<Term, Term> subs) {
