@@ -11,6 +11,11 @@ public class Versioning extends FasterList<Versioned> {
     private int nextID = 1;
 
 
+    @Override
+    public String toString() {
+        return now + ":" + super.toString();
+    }
+
     public int now() {
         return now;
     }
@@ -33,7 +38,10 @@ public class Versioning extends FasterList<Versioned> {
     }
 
 
-
+    /** reverts to previous state */
+    public final void revert() {
+        revert(this.now-1);
+    }
 
     /** reverts/undo to previous state */
     public final void revert(int when) {

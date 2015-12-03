@@ -6,7 +6,7 @@ import nars.util.data.list.FasterList;
 /**
  * Maintains a versioned snapshot history (stack) of a changing value
  */
-public final class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
+public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 
     public final FasterList<X> value;
     private final Versioning context;
@@ -111,7 +111,7 @@ public final class Versioned<X> extends FasterIntArrayList /*Comparable<Versione
 
 
     @Override
-    public final void clear() {
+    public void clear() {
         super.clear();
         value.clear();
     }

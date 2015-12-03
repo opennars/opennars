@@ -6,6 +6,7 @@ import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -27,6 +28,13 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     @Override
     public boolean containsKey(Object key) {
         return map.containsKey(key);
+    }
+
+    @Override
+    public Y remove(Object key) {
+        Versioned<Y> x = map.remove(key);
+        if (x == null) return null;
+        return x.get();
     }
 
     @Override
@@ -53,7 +61,8 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     @Override public Set<Entry<X, Y>> entrySet() {
         ArrayUnenforcedSet<Entry<X,Y>> e = new ArrayUnenforcedSet<>(size());
         map.forEach( (k, v) -> {
-            e.add(new AbstractMap.SimpleEntry<>(k, v.get()));
+            Y vv = v.get();
+            e.add(new AbstractMap.SimpleEntry<>(k, vv));
         });
         return e;
     }
@@ -61,20 +70,55 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
 
     /**
      * records an assignment operation
+     * follows semantics of set()
      */
     public Y put(X key, Y value) {
-        Versioned v = map.computeIfAbsent(key,
-                (k) -> new Versioned(context));
-        v.set(value);
+        getOrCreateIfAbsent(key).set(value);
         return null;
     }
 
-    public Versioning putWith(X key, Y value) {
-        Versioned v = map.computeIfAbsent(key,
-                (k) -> new Versioned(context));
-        v.set(value);
+    /** follows semantics of thenSet() */
+    public Versioning thenPut(X key, Y value) {
+        getOrCreateIfAbsent(key).thenSet(value);
         return context;
     }
+
+    public Versioned getOrCreateIfAbsent(X key) {
+        Function<X,Versioned<Y>> builder =
+                (k) -> new RemovingVersionedEntry(key, context);
+
+        return map.computeIfAbsent(key, builder);
+    }
+
+    /** this implementation removes itself from the map when it is reverted to
+     *  times prior to its appearance in the map */
+    final class RemovingVersionedEntry extends Versioned<Y> {
+
+        private final X key;
+
+        public RemovingVersionedEntry(X key, Versioning context) {
+            super(context);
+            this.key = key;
+        }
+
+        @Override
+        boolean revert(int before) {
+            boolean v = super.revert(before);
+            if (size == 0)
+                removeFromMap();
+            return v;
+        }
+
+        public void clear() {
+            super.clear();
+            removeFromMap();
+        }
+
+        private void removeFromMap() {
+            VersionMap.this.remove(key);
+        }
+    }
+
 
     public final Y get(/*X*/Object key) {
         Versioned<Y> v = version((X) key);
