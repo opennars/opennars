@@ -11,7 +11,9 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
     public final FasterList<X> value;
     private final Versioning context;
 
-    /** id, unique within the context this has registered with */
+    /**
+     * id, unique within the context this has registered with
+     */
     private final int id;
 
     public Versioned(Versioning context) {
@@ -51,8 +53,6 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
     }
 
 
-
-
     public int lastUpdatedAt() {
         if (isEmpty()) return -1;
         return getLast();
@@ -79,13 +79,17 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 //        return latest();
 //    }
 
-    /** sets thens commits */
+    /**
+     * sets thens commits
+     */
     public void set(X nextValue) {
         set(context.newChange(this), nextValue);
     }
 
-    /** set but does not commit;
-     * a commit should precede this call otherwise it will have the version of a previous commit */
+    /**
+     * set but does not commit;
+     * a commit should precede this call otherwise it will have the version of a previous commit
+     */
     public Versioning thenSet(X nextValue) {
         Versioning ctx = context;
         set(ctx.continueChange(this), nextValue);
@@ -142,4 +146,15 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
         if (isEmpty()) return valueIfMissing;
         return get();
     }
+
+    public int getIfAbsent(int valueIfMissing) {
+        if (isEmpty()) return valueIfMissing;
+        return ((Integer) get());
+    }
+
+    public char getIfAbsent(char valueIfMissing) {
+        if (isEmpty()) return valueIfMissing;
+        return ((Character) get());
+    }
+
 }

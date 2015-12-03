@@ -39,7 +39,7 @@ public abstract class Subst extends Frame {
 
     public final Versioned<Integer> power;
 
-    public final Versioned<Substitution> secondary;
+    public final VersionMap<Term,Term> secondary;
     public final Versioned<Integer> occurrenceShift;
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
@@ -56,7 +56,8 @@ public abstract class Subst extends Frame {
         term = new Versioned(this);
         parent = new Versioned(this);
         power = new Versioned(this);
-        secondary = new Versioned(this);
+
+        secondary = new VersionMap(this, new LinkedHashMap<>());
         occurrenceShift = new Versioned(this);
         truth = new Versioned(this);
         punct = new Versioned(this);
@@ -90,7 +91,7 @@ public abstract class Subst extends Frame {
                 ", xy:" + xy +
                 (derived.get()!=null ? (", derived:" + derived) : "")+
                 (truth.get()!=null ? (", truth:" + truth) : "")+
-                (secondary.get()!=null ? (", secondary:" + secondary) : "")+
+                (!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
                 (occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
                 ", yx:" + yx +
                 '}';

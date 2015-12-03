@@ -53,7 +53,7 @@ public class Unite extends PreCondition3Output {
             throw new RuntimeException("this condition should have been trapped earlier");
             //return false;
 
-        m.secondary.get().putXY((Variable)c, res);
+        m.secondary.put((Variable)c, res);
 
         return true;
     }

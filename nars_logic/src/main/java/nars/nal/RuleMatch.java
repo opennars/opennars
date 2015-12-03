@@ -198,7 +198,7 @@ public class RuleMatch extends FindSubst {
 
     public final void occurrenceAdd(final long cyclesDelta) {
         //TODO move to post
-        long oc = occurrenceShift.get();
+        int oc = occurrenceShift.getIfAbsent(Stamp.TIMELESS);
         if (oc == Stamp.TIMELESS)
             oc = 0;
         oc += cyclesDelta;
