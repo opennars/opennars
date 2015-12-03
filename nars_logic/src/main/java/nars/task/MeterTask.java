@@ -10,7 +10,7 @@ import nars.util.event.Active;
  * super-classes
  *
  */
-abstract public class MeterTask extends FluentTask {
+abstract public class MeterTask extends MutableTask {
 
     private final Active active = new Active();
 

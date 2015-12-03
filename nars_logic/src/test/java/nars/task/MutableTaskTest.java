@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 6/8/15.
  */
-public class FluentTaskTest {
+public class MutableTaskTest {
 
     @Test public void testTenseEternality() {
         NAR n = new Default();

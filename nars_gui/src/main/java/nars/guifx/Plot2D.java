@@ -56,6 +56,10 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     private final SimpleObjectProperty<PlotVis> plotVis = new SimpleObjectProperty<>();
 
 
+    public Plot2D(PlotVis p, int history, double h) {
+        this(p, history, 0, h);
+    }
+
     public Plot2D(PlotVis p, int history, double w, double h) {
         super(w, h);
 

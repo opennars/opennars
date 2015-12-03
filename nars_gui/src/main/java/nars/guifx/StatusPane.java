@@ -10,28 +10,31 @@ import nars.util.meter.MemoryBudget;
  */
 public class StatusPane extends PlotBox {
 
-    final MemoryBudget m = new MemoryBudget();
-    final int historySize = 256;
+    final MemoryBudget m;
     final double w = 0;
 
     public StatusPane(NAR nar, double height) {
-        super();
-        getChildren().addAll(
+        this(nar, new MemoryBudget(), 256, height);
+    }
+
+    public StatusPane(NAR nar, MemoryBudget m, int historySize, double height) {
+        super(
 
             new Plot2D(Plot2D.Line, historySize,
-                    w, height/3
+                    height/2
             ).add("Concept Energy",
-                    () -> m.getDouble(MemoryBudget.Budgeted.ActiveTermLinkPrioritySum)
+                    () -> m.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum)
             ),
 
             new Plot2D(Plot2D.Line, historySize,
-                    w, height/3
+                    height/2
             ).add("TermLink Energy",
                     () -> m.getDouble(MemoryBudget.Budgeted.ActiveTermLinkPrioritySum)
             ).add("TaskLink Energy",
                     () -> m.getDouble(MemoryBudget.Budgeted.ActiveTaskLinkPrioritySum)
-            ),
+            )
 
+                /*
             new Plot2D(Plot2D.Line, historySize,
                     w, height/3
             ).add("Concept Change",
@@ -41,12 +44,15 @@ public class StatusPane extends PlotBox {
             ).add("TaskLink Change",
                     () -> m.getDouble(MemoryBudget.Budgeted.ActiveTaskLinkPriorityStdDev)
             )
+            */
         );
+        this.m = m;
 
         new FrameReaction(nar) {
             @Override public void onFrame() {
                 m.update(nar);
                 update();
+                m.clear();
             }
         };
 

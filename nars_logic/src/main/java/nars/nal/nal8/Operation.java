@@ -29,7 +29,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.task.DefaultTask;
-import nars.task.FluentTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -358,7 +358,7 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
     }
 
     /** applies certain data to a feedback task relating to its causing operation's task */
-    public static Task asFeedback(FluentTask feedback, Task<Operation> goal, float priMult, float durMult) {
+    public static Task asFeedback(MutableTask feedback, Task<Operation> goal, float priMult, float durMult) {
         return feedback.budget(goal.getBudget()).
                 budgetScaled(priMult, durMult).
                 parent(goal);

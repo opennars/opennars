@@ -15,13 +15,13 @@ import nars.truth.Truth;
 import javax.annotation.Nullable;
 
 /**
- * task with additional fluent api utility methods for creating new tasks following a fluent builder pattern
+ * mutable task with additional fluent api utility methods for creating new tasks following a fluent builder pattern
  * warning: does not correctly support parent stamps, use .stamp() to specify one
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class FluentTask<C extends Compound> extends DefaultTask<C>  {
+public class MutableTask<C extends Compound> extends DefaultTask<C>  {
 
 
 //    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
@@ -29,7 +29,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 
 
-    public FluentTask() {
+    public MutableTask() {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char) 0, null, 0, 0, 0);
 
@@ -40,7 +40,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
         setOccurrenceTime(TIMELESS);
     }
 
-    public FluentTask(C term) {
+    public MutableTask(C term) {
         this();
         term(term);
     }
@@ -80,7 +80,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
      * this will set the truth instance directly. so avoid using shared terms unless it's really meant
      */
     @Deprecated
-    public FluentTask truth(final Truth tv) {
+    public MutableTask truth(final Truth tv) {
 
         if (tv == null) {
             if (isJudgmentOrGoal()) throw new RuntimeException("null truth value for judgment/goal");
@@ -105,13 +105,13 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 
     @Override
-    public final FluentTask budget(float p, float d, float q) {
+    public final MutableTask budget(float p, float d, float q) {
         super.budget(p, d, q);
         return this;
     }
 
     @Override
-    public final FluentTask budget(@Nullable Budget source) {
+    public final MutableTask budget(@Nullable Budget source) {
         super.budget(source);
         return this;
     }
@@ -119,7 +119,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     /**
      * uses default budget generation and multiplies it by gain factors
      */
-    public FluentTask budgetScaled(float priorityFactor, float durFactor) {
+    public MutableTask budgetScaled(float priorityFactor, float durFactor) {
 
         //TODO maybe lift this to Budget class
         if (!applyDefaultBudget()) {
@@ -142,7 +142,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //        return this;
 //    }
 
-    public final FluentTask term(C t) {
+    public final MutableTask term(C t) {
         this.term = t;
         return this;
     }
@@ -158,7 +158,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //        return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
 //    }
 
-    public final FluentTask truth(float freq, float conf) {
+    public final MutableTask truth(float freq, float conf) {
         if (truth == null)
             this.truth = new DefaultTruth(freq, conf);
         else
@@ -170,31 +170,31 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
     /**
      * alias for judgment
      */
-    public FluentTask belief() {
+    public MutableTask belief() {
         return judgment();
     }
 
-    public FluentTask judgment() {
+    public MutableTask judgment() {
         setPunctuation(Symbols.JUDGMENT);
         return this;
     }
 
-    public FluentTask question() {
+    public MutableTask question() {
         setPunctuation(Symbols.QUESTION);
         return this;
     }
 
-    public FluentTask quest() {
+    public MutableTask quest() {
         setPunctuation(Symbols.QUEST);
         return this;
     }
 
-    public FluentTask goal() {
+    public MutableTask goal() {
         setPunctuation(Symbols.GOAL);
         return this;
     }
 
-    public FluentTask tense(Tense t, Memory memory) {
+    public MutableTask tense(Tense t, Memory memory) {
         this.occurr(Tense.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
@@ -204,7 +204,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
         return tense(Tense.Eternal);
     }*/
 
-    public final FluentTask present(Memory memory) {
+    public final MutableTask present(Memory memory) {
         //return tense(Tense.Present, memory);
         long now = memory.time();
         return time(now, now);
@@ -225,7 +225,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //        return this;
 //    }
 
-    public FluentTask budget(float p, float d) {
+    public MutableTask budget(float p, float d) {
         final float q;
         Truth t = getTruth();
         if (!isQuestOrQuestion()) {
@@ -275,19 +275,19 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 
 
-    public FluentTask<C> punctuation(final char punctuation) {
+    public MutableTask<C> punctuation(final char punctuation) {
         setPunctuation(punctuation);
         return this;
     }
 
-    public FluentTask time(long creationTime, long occurrenceTime) {
+    public MutableTask time(long creationTime, long occurrenceTime) {
         setCreationTime(creationTime);
         occurr(occurrenceTime);
         return this;
     }
 
 
-    public FluentTask because(Object reason) {
+    public MutableTask because(Object reason) {
         log(reason);
         return this;
     }
@@ -313,7 +313,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 
 
-    public FluentTask parent(final Task parentTask, final Task parentBelief) {
+    public MutableTask parent(final Task parentTask, final Task parentBelief) {
         if (parentTask == null)
             throw new RuntimeException("parent task being set to null");
 
@@ -327,7 +327,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //        return this;
 //    }
 
-    public FluentTask occurr(long occurrenceTime) {
+    public MutableTask occurr(long occurrenceTime) {
         this.setOccurrenceTime(occurrenceTime);
         return this;
     }
@@ -348,7 +348,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 //
 
-    public FluentTask budgetCompoundForward(Compound result, Premise p) {
+    public MutableTask budgetCompoundForward(Compound result, Premise p) {
         BudgetFunctions.compoundForward(this, getTruth(), result, p);
         return this;
     }
@@ -372,7 +372,7 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //        return this;
 //    }
 
-    public FluentTask parent(Task task) {
+    public MutableTask parent(Task task) {
         parent(task, null);
         return this;
     }
@@ -395,19 +395,19 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //        return this;
 //    }
 
-    public FluentTask<C> eternal() {
+    public MutableTask<C> eternal() {
         setEternal();
         return this;
     }
 
 
     /** flag used for anticipatable derivation */
-    public FluentTask anticipate(boolean a) {
+    public MutableTask anticipate(boolean a) {
         this.anticipate = a;
         return this;
     }
 
-    public FluentTask budgetCompoundForward(Premise premise) {
+    public MutableTask budgetCompoundForward(Premise premise) {
         BudgetFunctions.compoundForward(
                 getBudget(), getTruth(),
                 getTerm(), premise);

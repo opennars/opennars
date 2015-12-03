@@ -35,6 +35,7 @@ import static nars.Global.reference;
 
 /**
  * Default Task implementation
+ * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
 @JsonSerialize(using = ToStringSerializer.class)
 public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
@@ -230,7 +231,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     public final boolean isAnticipated() {
-        return anticipate || isInput();
+        return isJudgmentOrGoal() && (anticipate || isInput());
     }
 
     @Override
@@ -494,21 +495,21 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     /** safely make a new task, if the term is not already known to be valid for a task */
-    public static <C extends Compound> FluentTask make(C t) {
+    public static <C extends Compound> MutableTask make(C t) {
         t.normalizeDestructively();
         Compound u = Task.taskable(t);
         if (u == null)
             return null;
 
-        FluentTask x = make();
+        MutableTask x = make();
 
         x.setTerm(u);
 
         return x;
     }
 
-    public static FluentTask make() {
-        return new FluentTask();
+    public static MutableTask make() {
+        return new MutableTask();
     }
 
     @Override

@@ -32,7 +32,7 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
-import nars.task.FluentTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
@@ -131,7 +131,7 @@ public final class Anticipate {
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        nar.input(new FluentTask<>(prediction)
+        nar.input(new MutableTask<>(prediction)
                 .belief()
                 .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
                 .budget(expiredBudget)

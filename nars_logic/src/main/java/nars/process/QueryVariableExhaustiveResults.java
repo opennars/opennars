@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.Op;
 import nars.nal.nal2.Property;
 import nars.nal.nal3.SetExt;
-import nars.task.FluentTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -61,7 +61,7 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
 
                 //generates a similarity group
                 long now = nar.time();
-                Task x = new FluentTask().term(
+                Task x = new MutableTask().term(
                     Property.make(
                         SetExt.make(terms),
                         t.getTerm()

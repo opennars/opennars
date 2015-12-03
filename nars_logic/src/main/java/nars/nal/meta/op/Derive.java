@@ -8,7 +8,7 @@ import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.meta.PreCondition;
 import nars.task.DefaultTask;
-import nars.task.FluentTask;
+import nars.task.MutableTask;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Compound;
@@ -84,7 +84,7 @@ public final class Derive extends PreCondition {
             if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
                 RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm,
                         m.punct.get(), truth, budget,
-                        m.occurrenceShift.get(), premise));
+                        m.occurrenceShift.getIfAbsent(Stamp.TIMELESS), premise));
             }
             return false;
         }
@@ -95,7 +95,7 @@ public final class Derive extends PreCondition {
 
         final char punct = m.punct.get();
 
-        FluentTask deriving = DefaultTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
+        MutableTask deriving = DefaultTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving == null)
             return false;
 
@@ -147,7 +147,7 @@ public final class Derive extends PreCondition {
         if (truth != null && eternalize && !derived.isEternal()) {
 
             m.derive(premise.removeInvalid(
-                new FluentTask(derived.getTerm())
+                new MutableTask(derived.getTerm())
                     .punctuation(punct)
                     .truth(
                             truth.getFrequency(),

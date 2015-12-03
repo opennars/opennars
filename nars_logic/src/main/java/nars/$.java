@@ -11,7 +11,7 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.FluentTask;
+import nars.task.MutableTask;
 import nars.term.*;
 import nars.truth.Truth;
 import nars.util.utf8.Utf8;
@@ -31,10 +31,10 @@ public class $ {
         //        catch (InvalidInputException e) { }
     }
 
-    public static final <C extends Compound> FluentTask $(final String term, char punc) {
+    public static final <C extends Compound> MutableTask $(final String term, char punc) {
         C t = Narsese.the().term(term);
         if (t == null) return null;
-        return (FluentTask) new FluentTask(t).punctuation(punc).eternal().normalized();
+        return (MutableTask) new MutableTask(t).punctuation(punc).eternal().normalized();
     }
 
 
@@ -155,16 +155,16 @@ public class $ {
         return Terms.term(op, args);
     }
 
-    public static FluentTask belief(Compound term, Truth copyFrom) {
+    public static MutableTask belief(Compound term, Truth copyFrom) {
         return belief(term, copyFrom.getFrequency(), copyFrom.getConfidence());
     }
 
-    public static FluentTask belief(Compound term, float freq, float conf) {
-        return new FluentTask(term).belief().truth(freq, conf);
+    public static MutableTask belief(Compound term, float freq, float conf) {
+        return new MutableTask(term).belief().truth(freq, conf);
     }
 
-    public static FluentTask goal(Compound term, float freq, float conf) {
-        return new FluentTask(term).goal().truth(freq, conf);
+    public static MutableTask goal(Compound term, float freq, float conf) {
+        return new MutableTask(term).goal().truth(freq, conf);
     }
 
     public static Implication implForward(Term condition, Term consequence) {
