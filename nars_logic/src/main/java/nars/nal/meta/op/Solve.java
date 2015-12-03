@@ -13,6 +13,7 @@ import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.Variable;
 
 /**
  * first resolution of the conclusion's pattern term
@@ -23,10 +24,12 @@ public final class Solve extends PreCondition {
     @Deprecated public final TaskRule rule;
 
     private transient final String id;
+    private final boolean continueIfIncomplete;
 
-    public Solve(Term term, TaskRule rule) {
+    public Solve(Term term, TaskRule rule, boolean continueIfIncomplete) {
         this.term = term;
         this.rule = rule;
+        this.continueIfIncomplete = continueIfIncomplete;
         this.id = getClass().getSimpleName() + '(' + term + ')';
     }
 
@@ -42,6 +45,10 @@ public final class Solve extends PreCondition {
 
         if(null==(derivedTerm=match.resolve(term)))
             return false;
+
+        if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {
+            return false;
+        }
 
         match.post.derivedTerm = derivedTerm;
 

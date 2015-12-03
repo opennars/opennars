@@ -55,10 +55,11 @@ public class RuleMatch {
      */
     public Premise premise;
 
-    public final Task derive(Task derived) {
-        derived = premise.removeInvalid(derived);
-        if (derived != null)
+    public Task derive(Task derived) {
+        derived = premise.derive(derived);
+        if (derived!=null) {
             receiver.accept(derived);
+        }
         return derived;
     }
 

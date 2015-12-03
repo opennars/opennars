@@ -79,7 +79,7 @@ public class Global {
     //public static final boolean DEBUG_DERIVATION_GRAPH = false;
     public static final boolean DEBUG_REMOVED_CYCLIC_DERIVATIONS = false;
     public static final boolean DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS = false;
-    public static boolean DEBUG_LOG_DERIVING_RULE = false;
+    public static boolean DEBUG_LOG_DERIVING_RULE = true;
 
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,6 +177,7 @@ public class Global {
      * if this is exceeded it may indicate a recursively
      * malformed term due to a serious inference bug */
     public static short COMPOUND_VOLUME_MAX = 1024;
+    public static boolean DEBUG_DETECT_DUPLICATE_DERIVATIONS = false;
 
 
 //    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {

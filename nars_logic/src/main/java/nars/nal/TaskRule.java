@@ -148,11 +148,14 @@ public class TaskRule extends ProductN implements Level {
 
         l.add(new Solve.Truth(post.truth, post.desire, post.puncOverride));
 
-        l.add(new Solve(post.term, this ));
 
         if (post.afterConclusions.length > 0) {
+            l.add(new Solve(post.term, this, true ));
             Collections.addAll(l, post.afterConclusions);
             l.add(PostSolve.the);
+        }
+        else {
+            l.add(new Solve(post.term, this, false ));
         }
 
         l.add(new Derive(this, anticipate, immediate_eternalize));

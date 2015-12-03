@@ -1,5 +1,7 @@
 package nars.nar;
 
+import com.gs.collections.impl.bag.mutable.HashBag;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
@@ -13,7 +15,11 @@ import nars.term.Term;
 import nars.time.FrameClock;
 import nars.util.data.list.FasterList;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Various extensions enabled
@@ -66,7 +72,10 @@ public class Default2 extends Default {
         public DefaultCycle2(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca, int initialCapacity) {
             super(nar, deriver, concepts, ca);
 
-            derivedTasksBuffer = new FasterList();
+            /* if detecting duplicates, use a list. otherwise use a set to deduplicate anyway */
+            derivedTasksBuffer =
+                    Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS ?
+                        new FasterList() : Global.newHashSet(1);
 
         }
 
@@ -76,35 +85,66 @@ public class Default2 extends Default {
          * be normalized or some other filter or aggregation
          * applied collectively.
          */
-        final List<Task> derivedTasksBuffer;
+        final Collection<Task> derivedTasksBuffer;
 
         @Override
         protected void fireConcept(Concept c) {
 
-            
-            //used to estimate the fraction this batch should be scaled but this is not accurate
+            Collection<Task> buffer = this.derivedTasksBuffer;
+            Consumer<Task> narInput = nar::input;
+            Deriver deriver = this.deriver;
 
             fireConcept(c, p -> {
 
+                deriver.run(p, buffer::add);
 
-                deriver.run(p, derivedTasksBuffer::add);
+                if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
+                    HashBag<Task> b = detectDuplicates(buffer);
+                    buffer.clear();
+                    b.addAll(b);
+                }
 
-                if (!derivedTasksBuffer.isEmpty()) {
 
+                if (!buffer.isEmpty()) {
 
                     Task.normalize(
-                            derivedTasksBuffer,
+                            buffer,
                             p.getMeanPriority());
 
-                    derivedTasksBuffer.forEach(
-                        t -> nar.input(t)
-                    );
 
-                    derivedTasksBuffer.clear();
+                    buffer.forEach(narInput);
+
+                    buffer.clear();
                 }
 
             });
 
+        }
+
+        static HashBag<Task> detectDuplicates(Collection<Task> buffer) {
+            HashBag<Task> taskCount = new HashBag<>();
+            taskCount.addAll(buffer);
+            taskCount.forEachWithOccurrences((t,i) -> {
+                if (i == 1) return;
+
+                System.err.println("DUPLICATE TASK(" + i +"): " + t);
+                List<Task> equiv = buffer.stream().filter(u -> u.equals(t)).collect(toList());
+                HashBag<String> rules = new HashBag();
+                equiv.forEach(u -> {
+                    String rule = u.getLogLast().toString();
+                    rules.add(rule);
+
+//                    System.err.println("\t" + u );
+//                    System.err.println("\t\t" + rule );
+//                    System.err.println();
+                });
+                rules.forEachWithOccurrences( (String r, int c) -> {
+                    System.err.println("\t" + c + "\t" + r);
+                });
+                System.err.println("--");
+
+            });
+            return taskCount;
         }
     }
 

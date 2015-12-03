@@ -55,6 +55,7 @@ public final class Derive extends PreCondition {
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
+
             return false;
         }
 
@@ -81,15 +82,10 @@ public final class Derive extends PreCondition {
         }
 
         final Task task = premise.getTask();
-
-        /** calculate derived task truth value */
-
         final Task belief = premise.getBelief();
 
 
         final char punct = post.punct;
-        /*if (punct == 0)
-            throw new RuntimeException("invalid punctuation");*/
 
         FluentTask deriving = DefaultTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving == null)
@@ -106,14 +102,16 @@ public final class Derive extends PreCondition {
             occ = taskOcc; //inherit premise task's
         }
 
+        //just not able to measure it, closed world assumption gone wild.
 
         if (occ != Stamp.ETERNAL && premise.isEternal() && !premise.nal(7)) {
             throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
         }
 
-        if (Global.DEBUG_LOG_DERIVING_RULE && Global.DEBUG) { //just not able to measure it, closed world assumption gone wild.
+        if ((Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS ||Global.DEBUG_LOG_DERIVING_RULE) && Global.DEBUG) {
             deriving.log(rule);
         }
+
 
         Task derived = m.derive(deriving
                 .punctuation(punct)

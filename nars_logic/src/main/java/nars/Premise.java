@@ -596,4 +596,13 @@ public interface Premise extends Level, Tasked {
     }
 
 
+
+    public default Task derive(Task derived) {
+        derived = removeInvalid(derived);
+        if (derived != null) {
+            memory().eventDerived.emit(derived);
+        }
+        return derived;
+    }
+
 }
