@@ -372,6 +372,9 @@ public interface Premise extends Level, Tasked {
      */
     default Task removeInvalid(Task task) {
 
+        if (task == null)
+            throw new RuntimeException("null task");
+
         final Memory memory = nar().memory;
 
         Object invalidationReason = validate(task);

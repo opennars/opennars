@@ -23,7 +23,7 @@ public class Substitute extends PreCondition {
     }
 
     protected String id() {
-        return getClass().getSimpleName() + '[' + x + ',' + y + ']';
+        return getClass().getSimpleName() + ":(" + x + ',' + y + ')';
     }
 
     @Override

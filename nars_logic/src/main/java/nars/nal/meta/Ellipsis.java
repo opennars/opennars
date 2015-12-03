@@ -3,7 +3,7 @@ package nars.nal.meta;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
-import nars.nal.nal4.Product;
+import nars.nal.nal4.InvisibleProduct;
 import nars.nal.nal7.InvisibleAtom;
 import nars.term.*;
 import nars.term.transform.Subst;
@@ -110,7 +110,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 
 
 
-    public Product match(ShortSet ySubsExcluded, Compound y) {
+    public InvisibleProduct match(ShortSet ySubsExcluded, Compound y) {
         Term ex = this.expression;
         if ((ex == PLUS) || (ex == ASTERISK)) {
             return matchRemaining(ySubsExcluded, y);
@@ -131,18 +131,20 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 //        }
     }
 
-    private static Product matchRemaining(ShortSet ySubsExcluded, Compound Y) {
+    private static InvisibleProduct matchRemaining(ShortSet ySubsExcluded, Compound Y) {
 
-        final int ysize = Y.size();
-        Term[] others = new Term[ysize-ySubsExcluded.size()];
-        int k = 0;
-        for (int j = 0; j < ysize; j++) {
-            if (!ySubsExcluded.contains((short) j)) {
-                Term yt = Y.term(j);
-                others[k++] = yt;
-            }
-        }
-        return Product.make(others);
+//        final int ysize = Y.size();
+//        Term[] others = new Term[ysize-ySubsExcluded.size()];
+//        int k = 0;
+//        for (int j = 0; j < ysize; j++) {
+//            if (!ySubsExcluded.contains((short) j)) {
+//                Term yt = Y.term(j);
+//                others[k++] = yt;
+//            }
+//        }
+
+        return matchedSubterms(Y.toArray( (index, term) ->
+                !ySubsExcluded.contains((short)index)));
     }
 
 //    private static Term matchNot(Term[] oa, Map<Term, Term> mapped, Compound Y) {
@@ -228,9 +230,11 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return matchedSubterms(subterms.toArray(filter));
     }
 
+
     /** TODO use a special ProductN subclass */
-    public static Term matchedSubterms(Term[] subterms) {
-        return Product.make(subterms);
+    public static InvisibleProduct matchedSubterms(Term[] subterms) {
+        //return Product.make(subterms);
+        return new InvisibleProduct(subterms);
     }
 
 

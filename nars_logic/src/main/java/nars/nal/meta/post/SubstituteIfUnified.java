@@ -21,6 +21,8 @@ public class SubstituteIfUnified extends Substitute {
 
     private final Op type;
 
+    private transient final String id;
+
     /**
      *
      * @param varType type for variable unification condition
@@ -39,11 +41,14 @@ public class SubstituteIfUnified extends Substitute {
         } else {
             throw new RuntimeException("invalid variable type: " + varType);
         }
+
+        this.id = getClass().getSimpleName() + ":(" +
+                type + "_," + x + ',' + y + ')';
     }
 
     @Override
     protected String id() {
-        return getClass().getSimpleName() + '[' + type + ',' + x + ',' + y + ']';
+        return id;
     }
 
     @Override

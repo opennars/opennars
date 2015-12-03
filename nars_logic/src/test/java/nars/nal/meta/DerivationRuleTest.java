@@ -5,7 +5,7 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.TaskRule;
-import nars.nal.nal4.Product;
+import nars.nal.nal4.InvisibleProduct;
 import nars.term.*;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -207,7 +207,7 @@ public class DerivationRuleTest extends TestCase {
                 assertEquals(f.xy() + " says " + varArgs.toString() + " product", Op.PRODUCT, varArgs.op());
                 assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
-                Set<Term> varArgTerms = Terms.toSortedSet(((Product) varArgs).terms());
+                Set<Term> varArgTerms = Terms.toSortedSet(((InvisibleProduct) varArgs).terms());
                 assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 
                 testFurther(selectedFixed, f, varArgTerms);

@@ -71,8 +71,8 @@ public class NARWebServer extends PathHandler {
             active = new Active(
                 nar.memory.eventInput.on(t -> send(socket,
                         " IN: " + t)),
-                nar.memory.eventDerived.on(t -> send(socket,
-                        "DER: " + t)),
+                /*nar.memory.eventDerived.on(t -> send(socket,
+                        "DER: " + t)),*/
                 nar.memory.eventAnswer.on(t -> send(socket,
                         "ANS: " + t)),
                 nar.memory.eventExecute.on(t -> send(socket,

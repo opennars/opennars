@@ -43,7 +43,7 @@ public class Abbreviation implements Consumer<Task> {
 
     public Abbreviation(NAR n) {
 
-        reg = n.memory.eventDerived.on(this);
+        reg = n.memory.eventInput.on(this);
 
         this.nar = n;
     }

@@ -36,7 +36,7 @@ public class TaskPunctuation extends PreCondition {
     public static final TaskPunctuation TaskGoal = new TaskPunctuation('!');
 
     TaskPunctuation(char p) {
-        this(p, "Punc{" + p + '}');
+        this(p, "Punc:\"" + p + '\"');
     }
 
     TaskPunctuation(char p, String id) {

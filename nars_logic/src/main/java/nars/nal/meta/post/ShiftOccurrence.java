@@ -40,10 +40,10 @@ public class ShiftOccurrence extends PreCondition1 {
 */
         this.positive = positive;
         this.direction = direction;
-        this.id = getClass().getSimpleName() + '[' + arg1 + ',' +
+        this.id = getClass().getSimpleName() + ":(" + arg1 + ',' +
                 (positive ? "Pos" : "Neg") +
                 ',' + direction +
-                ']';
+                ')';
 
 //        //if(operator.getTemporalOrder()== Temporal.ORDER_FORWARD) {
 //        //as long as this TemporalOrder()  check deosnt work we use string comparison:

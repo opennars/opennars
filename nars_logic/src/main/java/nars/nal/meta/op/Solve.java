@@ -30,7 +30,7 @@ public final class Solve extends PreCondition {
         this.term = term;
         this.rule = rule;
         this.continueIfIncomplete = continueIfIncomplete;
-        this.id = getClass().getSimpleName() + '(' + term + ')';
+        this.id = getClass().getSimpleName() + ':' + term;
     }
 
     @Override
@@ -150,7 +150,7 @@ public final class Solve extends PreCondition {
                     boolean OneLess = a - 1 == b;
 
                     if (!sameLength && !OneLess) {
-                        System.out.println("the case where the resulting sequence has less elements should not happen and needs to be analyzed!!");
+                        System.err.println("result Sequence insufficient elements; rule:" + rule);
                     }
 
                     int[] pasteIntervals = paste.intervals();
@@ -185,8 +185,8 @@ public final class Solve extends PreCondition {
             String desireLabel = desire==null ? "_" : desire.toString();
 
             this.id = (puncOverride == 0) ?
-                    (getClass().getSimpleName() + "(" + beliefLabel + ", " + desireLabel + ")")  :
-                    (getClass().getSimpleName() + "(" + beliefLabel + ", " + desireLabel + ", " + puncOverride + ")");
+                    (getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ")")  :
+                    (getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")");
 
         }
 

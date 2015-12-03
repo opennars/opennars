@@ -12,7 +12,7 @@ abstract public class PreCondition2 extends PreCondition {
     public PreCondition2(Term var1, Term var2) {
         this.arg1 = var1;
         this.arg2 = var2;
-        this.str = getClass().getSimpleName() + '[' + arg1 + ',' + arg2 + ']';
+        this.str = getClass().getSimpleName() + ":(" + arg1 + ',' + arg2 + ')';
     }
 
     @Override public final boolean test(RuleMatch m) {

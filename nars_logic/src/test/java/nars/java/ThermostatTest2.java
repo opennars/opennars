@@ -134,8 +134,8 @@ public class ThermostatTest2 {
 
         //n.trace();
 
-        boolean log = true;
-        if (log) {
+        boolean trace = false;
+        if (trace) {
             n.log(System.out, v -> {
 
                 if (v instanceof Twin) return true; //Q&A

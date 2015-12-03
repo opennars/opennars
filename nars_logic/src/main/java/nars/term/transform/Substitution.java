@@ -2,7 +2,7 @@ package nars.term.transform;
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.nal.meta.Ellipsis;
-import nars.nal.nal4.Product;
+import nars.nal.nal4.InvisibleProduct;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -85,7 +85,7 @@ public class Substitution implements Function<Compound,Term> {
 
         final int len = c.size();
         final int targetLen = getResultSize(c);
-        if (len == -1) return c;
+        if (targetLen < 0) return c;
 
         /** result */
         final Term[] sub = new Term[targetLen];
@@ -100,7 +100,7 @@ public class Substitution implements Function<Compound,Term> {
 
                 changed = true;
 
-                Term[] expansion = ((Product)get(t)).terms();
+                Term[] expansion = ((InvisibleProduct)get(t)).term;
 
                 final int es = expansion.length;
 

@@ -34,9 +34,15 @@ public final class Derive extends PreCondition {
         this.rule = rule;
         this.anticipate = anticipate;
         this.eternalize = eternalize;
-        this.id = "Derive(" +
-                (anticipate ? "anticipate," : "") +
-                (anticipate ? "eternalize" : "") + ')';
+        if (!anticipate && !eternalize) {
+            this.id = "Derive";
+        }
+        else {
+            this.id = "Derive:{" +
+                    (anticipate ? "anticipate" : "") +
+                    (anticipate && eternalize ? "," : "") +
+                    (eternalize ? "eternalize" : "") + '}';
+        }
     }
 
     @Override

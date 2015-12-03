@@ -94,6 +94,9 @@ public class Memory extends Param {
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
     public transient final Topic<Serializable> eventError = new DefaultTopic<>();
 
+    /** all derivations, even if they do not eventually reach the memory via input;
+     *  this generates many events, use with caution
+     */
     public transient final Topic<Task> eventDerived = new DefaultTopic<>();
 
     public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
