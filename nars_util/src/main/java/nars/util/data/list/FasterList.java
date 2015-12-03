@@ -35,9 +35,14 @@ public class FasterList<X> extends FastList<X> {
     }
 
 
-    /** this directly manipulates the 'size' value that the list uses to add new items at. use with caution */
-    public void moveTo(int newSize) {
-        size = newSize;
+    /**
+     * quickly remove the final elements without nulling them by setting the size pointer
+     * this directly manipulates the 'size' value that the list uses to add new items at. use with caution
+     * if index==-1, then size will be zero, similar to calling clear(),
+     * except the array items will not be null
+     * */
+    public void popTo(int index) {
+        size = index+1;
     }
 
 

@@ -68,6 +68,7 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         v.set(value);
         return null;
     }
+
     public Versioning putWith(X key, Y value) {
         Versioned v = map.computeIfAbsent(key,
                 (k) -> new Versioned(context));
@@ -75,10 +76,10 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         return context;
     }
 
-    public Y get(/*X*/Object key) {
-        Versioned<Y> v = map.get(key);
-        if (v == null) return null;
-        return v.get();
+    public final Y get(/*X*/Object key) {
+        Versioned<Y> v = version((X) key);
+        if (v!=null) return v.get();
+        return null;
     }
 
     public Y get(X key, Supplier<Y> ifAbsentPut) {
@@ -89,5 +90,13 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
             put(key, o);
         }
         return o;
+    }
+
+    public final Versioned<Y> version(X key) {
+        return map.computeIfPresent(key, (k, v) -> {
+            if (v == null || v.isEmpty())
+                return null;
+            return v;
+        });
     }
 }

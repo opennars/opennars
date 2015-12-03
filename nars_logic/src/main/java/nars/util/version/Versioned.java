@@ -1,15 +1,18 @@
 package nars.util.version;
 
-import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
+import nars.util.data.list.FasterIntArrayList;
 import nars.util.data.list.FasterList;
 
 /**
  * Maintains a versioned snapshot history (stack) of a changing value
  */
-public final class Versioned<X> extends IntArrayList implements Versionable /*Comparable<Versioned>*/ {
+public final class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 
     public final FasterList<X> value;
     private final Versioning context;
+
+    /** id, unique within the context this has registered with */
+    private final int id;
 
     public Versioned(Versioning context) {
         this(context, 1);
@@ -17,25 +20,42 @@ public final class Versioned<X> extends IntArrayList implements Versionable /*Co
 
     public Versioned(Versioning context, int capacity) {
         super(capacity);
+        this.id = context.track(this);
         this.context = context;
-        this.value = new FasterList(capacity);
-    }
-
-    final void moveTo(int newSize) {
-        if (newSize < 0)
-            throw new RuntimeException("negative index");
-        this.size = newSize;
-        value.moveTo(newSize);
+        this.value = new FasterList(capacity); //TODO allow pooling these from context
     }
 
 
-    /**
-     * gets the latest value
-     */
-    public X current() {
-        if (isEmpty()) return null;
-        return value.getLast();
+    @Override
+    public final boolean equals(Object otherVersioned) {
+        return this == otherVersioned;
     }
+
+    @Override
+    public final int hashCode() {
+        return id;
+    }
+
+
+    boolean revert(int before) {
+
+        int p = this.size - 1;
+        if (p < 0) return false;
+
+        int[] a = this.items;
+        while (a[p] > before) {
+            p--;
+            if (p <= 0) break;
+        }
+
+        popTo(p);
+        value.popTo(p);
+
+        return true;
+    }
+
+
+
 
     public int lastUpdatedAt() {
         if (isEmpty()) return -1;
@@ -50,29 +70,30 @@ public final class Versioned<X> extends IntArrayList implements Versionable /*Co
     /**
      * gets the latest value
      */
-    public X get() {
-        if (value.isEmpty()) return null;
+    public final X get() {
+        if (size == 0) return null;
         return value.getLast();
     }
 
 //    /**
 //     * gets the latest value at a specific time, rolling back as necessary
 //     */
-//    public X at(int now) {
+//    public X revertThenGet(int now) {
 //        revert(now);
 //        return latest();
 //    }
 
-    /** sets and commits */
+    /** sets thens commits */
     public void set(X nextValue) {
-        set(context.now(), nextValue);
-        context.onChanged(this, true);
+        set(context.newChange(this), nextValue);
     }
 
-    public Versioning setWith(X nextValue) {
-        Versioning v = set(context.now(), nextValue);
-        context.onChanged(this, false);
-        return v;
+    /** set but does not commit;
+     * a commit should precede this call otherwise it will have the version of a previous commit */
+    public Versioning thenSet(X nextValue) {
+        Versioning ctx = context;
+        set(ctx.continueChange(this), nextValue);
+        return ctx;
     }
 
     /**
@@ -88,17 +109,6 @@ public final class Versioned<X> extends IntArrayList implements Versionable /*Co
         return context;
     }
 
-    void revert(int before) {
-        int[] a = this.items;
-        int p = this.size;
-        int b = 0;
-        while (p > 0) {
-            if ((b = a[p]) <= before)
-                break;
-            p--;
-        }
-        moveTo(b);
-    }
 
     @Override
     public final void clear() {
@@ -118,11 +128,11 @@ public final class Versioned<X> extends IntArrayList implements Versionable /*Co
         StringBuilder sb = new StringBuilder("(");
         int s = size();
         for (int i = 0; i < s; i++) {
-            sb.append('(');
+            //sb.append('(');
             sb.append(get(i));
             sb.append(':');
             sb.append(value.get(i));
-            sb.append(')');
+            //sb.append(')');
             if (i < s - 1)
                 sb.append(", ");
         }

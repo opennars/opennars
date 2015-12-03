@@ -612,9 +612,9 @@ public class FindSubst extends Subst implements Substitution {
 
             boolean matched = matchSequence(perm, y);
 
-            if (matched /*|| power <= 0*/)
+            if (matched /*|| power <= 0*/) {
                 return true;
-
+            }
             else {
                 //pop/restore
                 revert(prePermute);

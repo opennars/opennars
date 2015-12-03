@@ -271,9 +271,8 @@ public final class Solve extends PreCondition {
                 return false;
             }
 
-
-            m.truth.setWith(truth);
-            m.punct.setWith(punct).commit();
+            m.truth.set(truth);
+            m.punct.thenSet(punct);
 
             return true;
         }
