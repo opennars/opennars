@@ -103,15 +103,16 @@ abstract public class Variable extends ImmutableAtom {
         throw new RuntimeException(o + " not a variable");
     }
 
-    //TODO replace this with a generic counting method of how many subterms there are present
-    public static int numPatternVariables(Term t) {
-        final int[] has = {0};
-        t.recurseTerms((t1, superterm) -> {
-            if (t1.op() == Op.VAR_PATTERN)
-                has[0]++;
-        });
-        return has[0];
-    }
+//    //TODO replace this with a generic counting method of how many subterms there are present
+//    public static int numPatternVariables(Term t) {
+//        t.value(new TermToInt()) //..
+////        final int[] has = {0};
+////        t.recurseTerms((t1, superterm) -> {
+////            if (t1.op() == Op.VAR_PATTERN)
+////                has[0]++;
+////        });
+////        return has[0];
+//    }
 
 
 
@@ -119,17 +120,10 @@ abstract public class Variable extends ImmutableAtom {
      * true if it has or is a pattern variable
      * necessary because VAR_PATTERN are hidden from substructure */
     public static boolean hasPatternVariable(Term t) {
-        final boolean[] has = {false};
-        t.recurseTerms((t1, superterm) -> {
-            if (!has[0]) {
-                if (t1.op() == Op.VAR_PATTERN)
-                    has[0] = true;
-            }
-        });
-        return has[0];
+        return t.or( x ->
+            x.op() == Op.VAR_PATTERN
+        );
     }
-
-
 
 
     @Override

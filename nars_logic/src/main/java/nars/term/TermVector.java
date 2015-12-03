@@ -2,6 +2,8 @@ package nars.term;
 
 import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.term.visit.SubtermVisitor;
+import nars.term.visit.TermPredicate;
 import nars.util.data.Util;
 
 import java.io.Serializable;
@@ -20,6 +22,7 @@ import static java.util.Arrays.copyOf;
  * provide a MutableTermVector that holds any write/change methods
  */
 public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
+
     /**
      * list of (direct) term
      * TODO make not public
@@ -262,6 +265,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return size() != 0;
     }
 
+
     /**
      * first level only, not recursive
      */
@@ -435,4 +439,28 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
         return 0;
     }
+
+    public final void visit(SubtermVisitor v, Compound parent) {
+        for (Term t : term)
+            v.visit(t, parent);
+    }
+
+    /** returns true if evaluates true for all terms */
+    public final boolean and(TermPredicate p) {
+        for (Term t : term) {
+            if (!p.test(t))
+                return false;
+        }
+        return true;
+    }
+    /** returns true if evaluates true for any terms */
+    public final boolean or(TermPredicate p) {
+        for (Term t : term) {
+            if (t.or(p))
+                return true;
+        }
+        return false;
+    }
+
+
 }

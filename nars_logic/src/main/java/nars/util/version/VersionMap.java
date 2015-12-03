@@ -25,15 +25,24 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public final boolean containsKey(Object key) {
         return map.containsKey(key);
     }
+
+//    @Override
+//    public final void forEach(BiConsumer<? super X, ? super Y> action) {
+//        map.forEach((BiConsumer<? super X, ? super Versioned<Y>>) action);
+//    }
 
     @Override
     public Y remove(Object key) {
         Versioned<Y> x = map.remove(key);
-        if (x == null) return null;
-        return x.get();
+        if (x == null)
+            return null;
+
+        Y value = x.get();
+        x.delete();
+        return value;
     }
 
     @Override
@@ -55,6 +64,11 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     public boolean isEmpty() {
         return map.isEmpty();
     }
+
+//    @Override
+//    public final void putAll(Map<? extends X, ? extends Y> m) {
+//        m.forEach(this::put);
+//    }
 
     /** avoid using this if possible because it involves transforming the entries from the internal map to the external form */
     @Override public Set<Entry<X, Y>> entrySet() {
@@ -107,11 +121,12 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         }
 
         public void clear() {
-            super.clear();
-            removeFromMap();
+//            super.clear();
+//            removeFromMap();
+            throw new RuntimeException("what is this supposed to do");
         }
 
-        private void removeFromMap() {
+        private final void removeFromMap() {
             VersionMap.this.remove(key);
         }
     }

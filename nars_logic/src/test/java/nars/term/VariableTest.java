@@ -1,10 +1,11 @@
 package nars.term;
 
+import nars.$;
 import nars.Narsese;
 import nars.nal.nal4.Product;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by me on 8/28/15.
@@ -66,5 +67,13 @@ public class VariableTest {
             expect,
             Product.make(a, b).normalized().toString()
         );
+    }
+
+    @Test public void testBooleanReductionViaHasPatternVar() {
+        Compound c = $.$("<a <-> <%1 --> b>>");
+        assertTrue( Variable.hasPatternVariable(c) );
+
+        Compound d = $.$("<a <-> <$1 --> b>>");
+        assertFalse( Variable.hasPatternVariable(d) );
     }
 }

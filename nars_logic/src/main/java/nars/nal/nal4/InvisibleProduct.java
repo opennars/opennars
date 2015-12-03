@@ -5,7 +5,7 @@ import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.compile.TermIndex;
 import nars.term.transform.Substitution;
-import nars.term.transform.TermVisitor;
+import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
 
@@ -31,9 +31,10 @@ public final class InvisibleProduct extends TermVector implements Term {
     }
 
     @Override
-    public void recurseTerms(TermVisitor v, Term parent) {
+    public void recurseTerms(SubtermVisitor v, Term parent) {
         throw new RuntimeException("unimpl");
     }
+
 
     @Override
     public Term normalized() {

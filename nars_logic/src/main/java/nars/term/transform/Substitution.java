@@ -50,7 +50,11 @@ public interface Substitution extends Function<Compound,Term> {
 
                 changed = true;
 
-                Term[] expansion = ((InvisibleProduct)getXY(t)).term;
+                Term te = getXY(t);
+                if (!(te instanceof InvisibleProduct))
+                    throw new RuntimeException("ellipsis must be matched only by InvisibleProduct, but was: " + te);
+
+                Term[] expansion = ((InvisibleProduct) te).term;
 
                 final int es = expansion.length;
 

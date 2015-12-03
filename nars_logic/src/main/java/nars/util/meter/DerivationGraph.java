@@ -17,7 +17,7 @@ import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.term.transform.TermVisitor;
+import nars.term.visit.SubtermVisitor;
 import nars.util.Texts;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;
@@ -438,7 +438,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
 
     public static String genericLiteral(Term c, ObjectIntHashMap<Term> unique) {
-        c.recurseTerms(new TermVisitor() {
+        c.recurseTerms(new SubtermVisitor() {
             @Override public void visit(Term t, Term superterm) {
                 if ((t instanceof Atom) && (!(t instanceof Variable))) {
                     unique.getIfAbsentPut(t, unique.size());

@@ -20,9 +20,14 @@ public class TrieDeriver extends RuleTrie {
     @Override
     public final void forEachRule(RuleMatch match) {
 
+        int now = match.now();
+
         for (RuleBranch r : root) {
             forEachRule(r, match);
         }
+
+        match.revert(now);
+
     }
 
     private final void forEachRule(RuleBranch r, RuleMatch match) {
@@ -39,7 +44,7 @@ public class TrieDeriver extends RuleTrie {
         }
 
         int now = match.now();
-        //System.out.println(now + " "  + match.values);
+        //System.out.println(now + " "  + match);
 
         for (RuleBranch s : r.children) {
             forEachRule(s, match);

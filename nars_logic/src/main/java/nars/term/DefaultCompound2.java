@@ -3,8 +3,9 @@ package nars.term;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
-import nars.term.transform.TermVisitor;
 import nars.term.transform.VariableNormalization;
+import nars.term.visit.SubtermVisitor;
+import nars.term.visit.TermPredicate;
 import nars.util.data.Util;
 import nars.util.utf8.ByteBuf;
 
@@ -429,15 +430,20 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     }
 
+    @Override
+    public boolean and(TermPredicate v) {
+        return terms.and(v);
+    }
+    @Override
+    public boolean or(TermPredicate v) {
+        return v.test(this) || terms.or(v);
+    }
+
 
     @Override
-    public final void recurseTerms(final TermVisitor v, final Term parent) {
+    public final void recurseTerms(final SubtermVisitor v, final Term parent) {
         v.visit(this, parent);
-
-        final int n = size();
-        for (int i = 0; i < n; i++) {
-            term(i).recurseTerms(v, this);
-        }
+        terms.visit(v, this);
     }
 
     @Override

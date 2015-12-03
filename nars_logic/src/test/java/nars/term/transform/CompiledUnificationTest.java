@@ -1,4 +1,4 @@
-package nars.nal;
+package nars.term.transform;
 
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
@@ -9,8 +9,6 @@ import nars.nar.Terminal;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.meter.TestNAR;
 import org.junit.Before;

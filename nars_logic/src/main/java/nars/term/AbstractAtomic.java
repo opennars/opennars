@@ -2,7 +2,8 @@ package nars.term;
 
 import nars.Op;
 import nars.term.compile.TermIndex;
-import nars.term.transform.TermVisitor;
+import nars.term.visit.SubtermVisitor;
+import nars.term.visit.TermPredicate;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
@@ -106,8 +107,17 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
     }
 
     @Override
-    public final void recurseTerms(final TermVisitor v, final Term parent) {
+    public final void recurseTerms(final SubtermVisitor v, final Term parent) {
         v.visit(this, parent);
+    }
+
+
+    @Override public boolean and(TermPredicate v) {
+        return v.test(this);
+    }
+
+    @Override public boolean or(TermPredicate v) {
+        return and(v); //re-use and, even though it's so similar
     }
 
     @Override

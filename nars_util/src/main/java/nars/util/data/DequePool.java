@@ -38,12 +38,13 @@ abstract public class DequePool<X> implements Pool<X> {
     }
 
     @Override
-    public X get() {
+    public final X get() {
         //synchronized (data) {
 
-        if (data.isEmpty()) return create();
+        Deque<X> d = this.data;
 
-        return data.poll();
+        if (d.isEmpty()) return create();
+        return d.poll();
         //}
     }
 

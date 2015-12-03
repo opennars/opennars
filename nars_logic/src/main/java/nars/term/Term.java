@@ -26,7 +26,8 @@ import nars.nal.nal7.Tense;
 import nars.term.compile.TermIndex;
 import nars.term.transform.MapSubstitution;
 import nars.term.transform.Substitution;
-import nars.term.transform.TermVisitor;
+import nars.term.visit.SubtermVisitor;
+import nars.term.visit.TermPredicate;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,11 +50,8 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     @Override int complexity();
 
 
-    void recurseTerms(final TermVisitor v, Term parent);
 
-    default void recurseTerms(final TermVisitor v) {
-        recurseTerms(v, null);
-    }
+
 
     /** number of subterms. if atomic, size=1 */
     int size();
@@ -68,7 +66,25 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     boolean containsTerm(final Term target);
 
-    boolean containsTermRecursively(Term target);
+
+    @Deprecated boolean containsTermRecursively(Term target);
+
+    default void recurseTerms(final SubtermVisitor v) {
+        recurseTerms(v, null);
+    }
+
+    void recurseTerms(final SubtermVisitor v, Term parent);
+
+
+    /** recurses all subterms while the result of the predicate is true;
+     *  returns true if all true
+     *  */
+    boolean and(final TermPredicate v);
+
+    /** recurses all subterms until the result of the predicate becomes true;
+     *  returns true if any true
+     * */
+    boolean or(final TermPredicate v);
 
     boolean isCommutative();
 
