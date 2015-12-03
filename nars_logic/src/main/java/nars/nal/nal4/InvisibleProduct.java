@@ -8,7 +8,6 @@ import nars.term.transform.Substitution;
 import nars.term.transform.TermVisitor;
 
 import java.io.IOException;
-import java.util.Map;
 
 /** lightweight vector of terms which is useful only for
  *  holding a vector of subterms and not much else.
@@ -84,11 +83,6 @@ public final class InvisibleProduct extends TermVector implements Term {
     @Override
     public String toString(boolean pretty) {
         throw new RuntimeException("unimpl");
-    }
-
-    @Override
-    public Term substituted(Map<Term, Term> subs) {
-        return this;
     }
 
     @Override

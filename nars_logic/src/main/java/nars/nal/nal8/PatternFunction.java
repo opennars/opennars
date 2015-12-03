@@ -6,10 +6,10 @@ import nars.Op;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Substitution;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 
@@ -30,10 +30,10 @@ abstract public class PatternFunction implements Function<Task<Operation>, List<
     public List<Task> apply(Task<Operation> operationTask) {
         FindSubst s = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(1));
         if (s.next(pattern, operationTask.getTerm(), Global.UNIFICATION_POWER)) {
-            return run(operationTask, s.xy());
+            return run(operationTask, s);
         }
         return null;
     }
 
-    abstract public List<Task> run(Task<Operation> operationTask, Map<Term, Term> map1);
+    abstract public List<Task> run(Task<Operation> operationTask, Substitution map1);
 }

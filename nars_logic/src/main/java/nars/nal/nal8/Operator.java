@@ -10,7 +10,6 @@ import nars.term.transform.Substitution;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Wraps a term to represent an operator that can be used as the predicate
@@ -132,10 +131,6 @@ public class Operator<T extends Term> extends AbstractAtomic { //implements Term
     }
 
 
-    @Override
-    public Term substituted(Map<Term, Term> subs) {
-        return this;
-    }
     @Override
     public final Term substituted(Substitution s) {
         return this;

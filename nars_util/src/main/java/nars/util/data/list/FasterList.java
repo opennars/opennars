@@ -34,6 +34,13 @@ public class FasterList<X> extends FastList<X> {
         super(x);
     }
 
+
+    /** this directly manipulates the 'size' value that the list uses to add new items at. use with caution */
+    public void moveTo(int newSize) {
+        size = newSize;
+    }
+
+
     @Override
     final public X get(final int index) {
         //if (index < this.size) {

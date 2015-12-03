@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
     public Subst testFindSubst(Term a, Term b, boolean returnsTrue) {
 
-        Subst f = new FindSubst(Op.VAR_QUERY, new XORShiftRandom());
+        FindSubst f = new FindSubst(Op.VAR_QUERY, new XORShiftRandom());
 
         boolean r = f.next(b, a, 1024);
 
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
         if (r) {
 
             //identifier: punctuation, mapA, mapB
-            assertEquals("?:{?1=a},{}", f.toString());
+            assertEquals("{?1=a}", f.toMap().toString());
 
             //output
             assertEquals(

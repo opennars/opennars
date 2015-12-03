@@ -4,23 +4,19 @@ import nars.Global;
 import nars.Op;
 import nars.Premise;
 import nars.Symbols;
-import nars.budget.Budget;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.TermPattern;
 import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
+import nars.term.transform.MapSubstitution;
 import nars.term.transform.Substitution;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -28,7 +24,7 @@ import java.util.function.Consumer;
 /**
  * rule matching context, re-recyclable as thread local
  */
-public class RuleMatch {
+public class RuleMatch extends FindSubst {
 
     /**
      * thread-specific pool of RuleMatchers
@@ -39,6 +35,16 @@ public class RuleMatch {
         return new RuleMatch(new XorShift1024StarRandom(1));
     });
 
+    public static final String SECONDARY = "Secondary"; //key for the second-level mappings
+    public static final String OCCURRENCE_SHIFT = "OccShift"; //key for the second-level mappings
+    public static final String TRUTH = "Truth"; //key for the second-level mappings
+    public static final String PUNCT = "Punct"; //key for the second-level mappings
+    public static final String DERIVED = "Derived"; //key for the second-level mappings
+
+
+    public Substitution secondary() {
+        return get(SECONDARY, () -> new MapSubstitution(Global.newHashMap()));
+    }
 
     /**
      * Global Context
@@ -63,20 +69,11 @@ public class RuleMatch {
         return derived;
     }
 
-    @Deprecated public enum MatchStage {
-        Pre, Pattern, Post
-    }
-
-    //MatchStage stage = MatchStage.Pre;
 
 
 
 
-    /** MUTABLE DATA */
-    /**
-     * stage S: primary pattern substutitions
-     */
-    public Subst subst;
+
 
     public static final class PostMods {
         public Truth truth;
@@ -109,86 +106,17 @@ public class RuleMatch {
         }
     }
 
-    /**
-     * stage P: postcondition modifiers
-     */
-    public PostMods post;
-
-    public static final class SecondarySubs {
-
-        /**
-         * pair of maps available for temporary use by conditions and modifiers
-         * NOTE: if you use this in a Precondition, make sure to clear() it before it exits
-         * ie. return it in the condition you took it, empty
-         */
-        public final Map<Term, Term> left = Global.newHashMap(0);
-        public final Map<Term, Term> right = Global.newHashMap(0);
-
-        /**
-         * 'outp' used by substitute to hold the current proposed / candidate
-         * additional substitutions. if the modifier doesn't
-         * succeed, the values it contains will have no effect
-         * before it is cleared.
-         * <p>
-         * temporary, re-cycled immediately
-         */
-        public final Map<Term, Term> outp = Global.newHashMap();
-
-        public void clear() {
-            left.clear(); right.clear();
-            outp.clear(); // necessary?
-        }
-
-        public void copyTo(SecondarySubs m) {
-            m.clear();
-            m.left.putAll(left);
-            m.right.putAll(right);
-            m.outp.putAll(outp); // necessary?
-        }
-
-        @Override
-        public String toString() {
-            return "SecondarySubs{" +
-                    "left=" + left +
-                    ", right=" + right +
-                    ", outp=" + outp +
-                    '}';
-        }
-    }
-
-    /**
-     * stage S2: secondary substutitions
-     */
-    public SecondarySubs sub2;
-
-    /**
-     * if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset
-     */
-
-
-//    @Override
-//    public String toString() {
-//        return taskBelief.toString() + ":<" + super.toString() + ">:";
-//    }
-
 
     @Override
     public String toString() {
-        return "RuleMatch{" +
-                "premise=" + premise +
-                ", subst=" + subst +
-                ", post=" + post +
-                ", sub2=" + sub2 +
+        return "RuleMatch:{" +
+                "premise:" + premise +
+                ", subst:" + super.toString() +
                 '}';
 
     }
     public RuleMatch(Random r) {
-        this.subst = new FindSubst(Op.VAR_PATTERN,
-                Global.newHashMap(0),
-                Global.newHashMap(0),
-                r);
-        this.sub2 = new SecondarySubs();
-        this.post = new PostMods();
+        super(Op.VAR_PATTERN, r );
     }
 
     /**
@@ -200,13 +128,13 @@ public class RuleMatch {
         this.premise = p;
         this.receiver = receiver;
 
-        this.subst.parent = new TaskBeliefPair(
+        this.parent = new TaskBeliefPair(
             p.getTask().getTerm(),
             p.getTermLink().getTerm()
         );
 
         //scale unification power according to premise's mean priority linearly between min and max
-        this.subst.power =
+        this.power =
             (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
                     + Global.UNIFICATION_POWERmin);
 
@@ -240,34 +168,6 @@ public class RuleMatch {
 //        }
 //    }
 
-    public void copyTo(RuleMatch target ) {
-
-        target.premise = premise;
-        target.receiver = receiver;
-
-        subst.copyTo(target.subst);
-        post.copyTo(target.post);
-        sub2.copyTo(target.sub2);
-
-
-//        if (Global.DEBUG) {
-//            //  FOR EXTREME EQUALITY TESTING
-//            if (!target.toString().equals(toString()))
-//                throw new RuntimeException("invalid copy");
-//        }
-
-    }
-
-
-    /**
-     * call at beginning to reset
-     */
-    public final void clear() {
-        subst.clear();
-        sub2.clear();
-        post.clear();
-        //stage = MatchStage.Pre;
-    }
 
 
 
@@ -599,22 +499,22 @@ public class RuleMatch {
         premise.memory().remove(task, "Insufficient Derived Budget");
     }
 
-    /**
-     * for debugging
-     */
-    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
-        Term termm = resolve(outcome.term);
-        if (termm != null) {
-            premise.memory().remove(
-                    new PreTask(termm, punct, truth,
-                            Budget.zero, post.occurence_shift, premise
-                    ),
-                    "Cyclic:" +
-                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
-                            Arrays.toString(premise.getBelief().getEvidence())
-            );
-        }
-    }
+//    /**
+//     * for debugging
+//     */
+//    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
+//        Term termm = resolve(outcome.term);
+//        if (termm != null) {
+//            premise.memory().remove(
+//                    new PreTask(termm, punct, truth,
+//                            Budget.zero, post.occurence_shift, premise
+//                    ),
+//                    "Cyclic:" +
+//                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
+//                            Arrays.toString(premise.getBelief().getEvidence())
+//            );
+//        }
+//    }
 
 
     static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
@@ -689,42 +589,20 @@ public class RuleMatch {
 //        return r;
 //    }
 
-    /**
-     * reusable instance (local only)
-     */
-    final Substitution substituter = new Substitution(null);
 
-    /**
-     * provides the cached result if it exists, otherwise computes it and adds to cache
-     */
-    public final Term resolve(final Term t) {
-
-//       //There are after-preconditions which bind a pattern variable
-//        if (rule.numPatternVariables() > map1.size()) {
-//            System.err.println("predicted reactor leak");
-//            //return null;
-//        }
-
-        return subst.resolve(t, substituter);
-    }
 
 
     public final void occurrenceAdd(final long cyclesDelta) {
         //TODO move to post
-        long oc = this.post.occurence_shift;
+        long oc = get(OCCURRENCE_SHIFT);
         if (oc == Stamp.TIMELESS)
             oc = 0;
         oc += cyclesDelta;
-        this.post.occurence_shift = oc;
+        set(OCCURRENCE_SHIFT, oc);
     }
 
-    @Deprecated public boolean next(Term x, Term y, int unificationPower) {
-        return subst.next(x, y, unificationPower);
-    }
 
-    public boolean next(TermPattern x, Term y, int unificationPower) {
-        return subst.next(x, y, unificationPower);
-    }
+
 
 //    public void run(TaskRule rule, Stream.Builder<Task> stream) {
 //        //if preconditions are met:

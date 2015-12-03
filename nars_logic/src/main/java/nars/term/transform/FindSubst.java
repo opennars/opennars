@@ -23,7 +23,7 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-final public class FindSubst extends Subst {
+public class FindSubst extends Subst implements Substitution {
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -34,16 +34,9 @@ final public class FindSubst extends Subst {
     }
 
     public FindSubst(Op type, Random random) {
-        this(type, newDefaultMap(), newDefaultMap(), random);
+        super(random, type);
     }
 
-    private static final Map<Term, Term> newDefaultMap() {
-        return Global.newHashMap(0);
-    }
-
-    public FindSubst(Op type, Map<Term, Term> xy, Map<Term, Term> yx, Random random) {
-        super(random, type, xy, yx);
-    }
 
 
     /**
@@ -58,29 +51,33 @@ final public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            ff.parent = (Compound) ff.y;
+            ff.parent = (Compound) ff.term;
             return true;
         }
     };
 
-
     @Override
-    public final Subst clone() {
-        FindSubst x = new FindSubst(type,
-                Global.newHashMap(xy),
-                Global.newHashMap(yx),
-                random);
-        x.parent = parent;
-        x.xyChanged = xyChanged; //necessary?
-        x.yxChanged = yxChanged; //necessary?
-        x.y = y;
-        x.power = power;
-        return x;
+    public Term get(Term t) {
+        return get((Object)t);
     }
+
+    //    @Override
+//    public final Subst clone() {
+//        FindSubst x = new FindSubst(type,
+//                Global.newHashMap(xy),
+//                Global.newHashMap(yx),
+//                random);
+//        x.parent = parent;
+//        x.xyChanged = xyChanged; //necessary?
+//        x.yxChanged = yxChanged; //necessary?
+//        x.y = y;
+//        x.power = power;
+//        return x;
+//    }
 
     @Override
     public String toString() {
-        return type + ":" + xy + ',' + yx;
+        return type + ":" + super.toString();
     }
 
 
@@ -91,6 +88,14 @@ final public class FindSubst extends Subst {
         else
             System.out.println();
         System.out.println("     " + this);
+    }
+
+    public Term getXY(Term t) {
+        return get((Object)t);
+    }
+
+    public Term getYX(Term t) {
+        return get(new Inverse(t));
     }
 
 
@@ -233,6 +238,14 @@ final public class FindSubst extends Subst {
 //        }
 //    }
 
+    public Map<Object,Object> toMap() {
+        Map m = Global.newHashMap(values.size());
+        values.forEach((k,v) -> {
+            m.put(k, v.getLatest());
+        });
+        return m;
+    }
+
     /** invokes a dynamic FindSubst match via the generic entry method: match(Term,Term) */
     public static class MatchTerm extends PatternOp {
         public final Term x;
@@ -243,7 +256,7 @@ final public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            return ff.match(x, ff.y);
+            return ff.match(x, ff.term);
         }
 
         @Override
@@ -281,7 +294,7 @@ final public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            return ff.matchCompound(x, ((Compound) ff.y));
+            return ff.matchCompound(x, ((Compound) ff.term));
         }
 
         @Override
@@ -320,7 +333,7 @@ final public class FindSubst extends Subst {
 
         @Override
         public boolean run(Frame ff) {
-            ff.y = ff.parent;
+            ff.term = ff.parent;
             ff.parent = null;
             return true;
         }
@@ -336,7 +349,7 @@ final public class FindSubst extends Subst {
 
         @Override
         public final boolean run(Frame f) {
-            return (f.y = f.parent.term(index)) != null;
+            return (f.term = f.parent.term(index)) != null;
             //return (f.y = f.parent.termOr(index, null)) != null;
         }
 
@@ -418,7 +431,7 @@ final public class FindSubst extends Subst {
         this.power = startPower;
 
         PreCondition[] code = x.code;
-        this.y = y;
+        this.term = y;
         for (PreCondition o : code) {
             if (!(o instanceof PatternOp)) continue;
             if (!((PatternOp) o).run(this))
@@ -470,21 +483,21 @@ final public class FindSubst extends Subst {
     }
 
     private boolean matchYvar(Term x, Term y) {
-        final Term ySubst = yx.get(y);
+        final Term ySubst = getYX(y);
 
         if (ySubst != null) {
             return match(x, ySubst); //loop
         } else {
-            yxPut((Variable) y, x);
+            putYX((Variable) y, x);
             if (y instanceof CommonVariable) {
-                xyPut((Variable) y, x);
+                putXY((Variable) y, x);
             }
             return true;
         }
     }
 
     public boolean matchXvar(Variable x, Term y) {
-        final Term xSubst = xy.get(x);
+        final Term xSubst = getXY(x);
 
         if (xSubst != null) {
             return match(xSubst, y);
@@ -516,6 +529,16 @@ final public class FindSubst extends Subst {
 
     }
 
+    @Override
+    public boolean isEmpty() {
+        //throw new RuntimeException("unimpl");
+        return values.isEmpty();
+    }
+
+    @Override
+    public Substitution inverse() {
+        throw new RuntimeException("unimpl");
+    }
 
     /**
      * X and Y are of the same operator type and length (arity)
@@ -594,7 +617,6 @@ final public class FindSubst extends Subst {
      * @param y what is being compared against
      */
     public final boolean matchPermute(Compound x, Compound y) {
-        //DequePool<ShuffledPermutations> pp = this.permutationPool;
 
         //final int len = x.size();
 
@@ -603,14 +625,7 @@ final public class FindSubst extends Subst {
 
         final ShuffleTermVector perm = new ShuffleTermVector(random, x);
 
-        final Map<Term, Term> xy = this.xy; //local copy on stack
-        final Map<Term, Term> yx = this.yx; //local copy on stack
-
-
-        //push/save:
-        final Map<Term, Term> savedXY = Global.newHashMap(xy);
-        final Map<Term, Term> savedYX = Global.newHashMap(yx);
-        xyChanged = yxChanged = false;
+        int prePermute = now();
 
         while (perm.hasNext()) {
 
@@ -621,22 +636,16 @@ final public class FindSubst extends Subst {
             if (matched /*|| power <= 0*/)
                 return true;
 
-            //pop/restore
-            if (yxChanged) {
-                yxChanged = false;
-                restore(savedYX, yx);
-            }
+            else {
+                //pop/restore
+                revert(prePermute);
 
-            if (xyChanged) {
-                xyChanged = false;
-                restore(savedXY, xy);
-            }
+                if (power < 0) {
+                    return false;
+                }
 
-            if (power < 0) {
-                return false;
+                //else: continue on next permutation
             }
-
-            //else: continue on next permutation
 
         }
 
@@ -660,18 +669,11 @@ final public class FindSubst extends Subst {
      */
     public final boolean matchEllipsisCombinations1(Term X, Ellipsis Xellipsis, Compound Y) {
 
-        final Map<Term, Term> xy = this.xy; //local copy on stack
-        final Map<Term, Term> yx = this.yx; //local copy on stack
-
-
-        //push/save:
-        final Map<Term, Term> savedXY = Global.newHashMap(xy);
-        final Map<Term, Term> savedYX = Global.newHashMap(yx);
-        xyChanged = yxChanged = false;
-
 
         final int ysize = Y.size();
         int shuffle = random.nextInt(ysize); //randomize starting offset
+
+        final int prePermute = now();
 
         for (int i = 0; i < ysize; i++) {
 
@@ -686,20 +688,16 @@ final public class FindSubst extends Subst {
                 return true;
             }
 
-            //pop/restore/undo
-            if (yxChanged) {
-                yxChanged = false; restore(savedYX, yx);
-            }
-            if (xyChanged) {
-                xyChanged = false; restore(savedXY, xy);
-            }
+            else {
 
-            if (power < 0) {
-                return false;
+                revert(now);
+
+                if (power < 0) {
+                    return false;
+                }
+
+                //else: continue on next permutation
             }
-
-            //else: continue on next permutation
-
         }
 
         //finished
@@ -725,41 +723,47 @@ final public class FindSubst extends Subst {
      * elimination
      */
     private final void putVarX(final Variable x, final Term y) {
-        xyPut(x, y);
+        putXY(x, y);
         if (x instanceof CommonVariable) {
-            yxPut(x, y);
+            putYX(x, y);
         }
     }
 
 
     private void putCommon(final Variable x, final Variable y) {
         final Variable commonVar = CommonVariable.make(x, y);
-        xyPut(x, commonVar);
-        yxPut(y, commonVar);
+        putXY(x, commonVar);
+        putYX(y, commonVar);
         //return true;
     }
 
-    private final void yxPut(Variable y, Term x) {
-        yxChanged |= (yx.put(y, x) != x);
+    public static final class Inverse {
+        final Object o;
+
+        public Inverse(Object o) {
+            this.o = o;
+        }
+
+        @Override
+        public boolean equals(Object o1) {
+            if (this == o1) return true;
+            if (!(o instanceof Inverse)) return false;
+
+            return o.equals(((Inverse) o1).o);
+        }
+
+        @Override
+        public int hashCode() {
+            return (1 + o.hashCode()) * 31;
+        }
+
+        @Override
+        public String toString() {
+            return "~(" + o.toString() + ")";
+        }
     }
 
-    private final void xyPut(Variable x, Term y) {
-        xyChanged |= (xy.put(x, y) != y);
-    }
 
-
-    private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
-        originToRevert.clear();
-        originToRevert.putAll(savedCopy);
-    }
-
-//    private boolean matchFork(final PatternOp[] code, int ip, Object calleeFrame, final Term Y) {
-//        return false;
-//    }
-
-    /**
-     * a branch for comparing a particular permutation, called from the main next()
-     */
 
 
     /**
@@ -783,31 +787,26 @@ final public class FindSubst extends Subst {
     }
 
     @Override
-    public final void putXY(Term x, Term y) {
-        xy.put(x, y);
+    public final void putXY(Term x /* usually a Variable */, Term y) {
+        set(x, y);
+    }
+    public final void putYX(Term y /* usually a Variable */, Term x) {
+        set(new Inverse(y), x);
     }
 
-    @Override
-    public final Term resolve(Term t, Substitution s) {
+
+
+    public final Term resolve(Term t) {
         //TODO make a half resolve that only does xy?
 
-        Term ret = t.substituted(s, xy);
-        if (ret != null) {
-            ret = ret.substituted(s, yx);
-        }
+        Term ret = t.substituted(this);
+//        if (ret != null) {
+//            ret = ret.substituted(s, yx);
+//        }
         return ret;
 
     }
 
-    @Override
-    public final Map<Term, Term> xy() {
-        return xy;
-    }
-
-    @Override
-    public final Map<Term, Term> yx() {
-        return yx;
-    }
 
     //    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
 //        public ShuffledPermutationsDequePool() {

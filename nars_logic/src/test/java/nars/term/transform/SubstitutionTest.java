@@ -31,10 +31,10 @@ public class SubstitutionTest {
         m.put($("$1"), $("test"));
 
         assertNull(
-            new Substitution(m).applyCompletely($("<($1, is, cat) --> test>"), Op.VAR_INDEPENDENT)
+            new MapSubstitution(m).applyCompletely($("<($1, is, cat) --> test>"), Op.VAR_INDEPENDENT)
         );
         assertNotNull(
-            new Substitution(m).applyCompletely($("<($1, is, cat) --> notTest>"), Op.VAR_INDEPENDENT)
+            new MapSubstitution(m).applyCompletely($("<($1, is, cat) --> notTest>"), Op.VAR_INDEPENDENT)
         );
 
     }

@@ -26,6 +26,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.term.transform.CompoundTransform;
+import nars.term.transform.MapSubstitution;
 import nars.term.transform.Substitution;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -148,7 +149,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
      *
      * @param subs
      */
-    @Override default Term substituted(Map<Term, Term> subs) {
+    default Term substituted(Map<Term, Term> subs) {
 
         //TODO calculate superterm capacity limits vs. subs min/max
 
@@ -156,8 +157,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
             return this;
         }
 
-        //return new Substitution(subs).apply(this);
-        return substituted(new Substitution(subs));
+        return substituted(new MapSubstitution(subs));
     }
 
     default Term substituted(Substitution s) {

@@ -50,7 +50,7 @@ public final class Solve extends PreCondition {
             return false;
         }
 
-        match.post.derivedTerm = derivedTerm;
+        match.set(RuleMatch.DERIVED, derivedTerm);
 
 
         final Term pattern = rule.term(0);
@@ -156,14 +156,14 @@ public final class Solve extends PreCondition {
                     int[] pasteIntervals = paste.intervals();
 
                     if (OneLess) {
-                        match.post.occurence_shift = copyIntervals[1]; //we shift according to first interval
+                        match.set(RuleMatch.OCCURRENCE_SHIFT, copyIntervals[1]); //we shift according to first interval
                         System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
                     } else if (sameLength) {
                         System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
                     }
                 } else /* if (paste == null)  */ {
                     //ok we reduced to a single element, so its a one less case
-                    match.post.occurence_shift = copyIntervals[1];
+                    match.set(RuleMatch.OCCURRENCE_SHIFT, copyIntervals[1]);
                 }
             }
         }
@@ -271,9 +271,8 @@ public final class Solve extends PreCondition {
                 return false;
             }
 
-            RuleMatch.PostMods post = match.post;
-            post.truth = truth;
-            post.punct = punct;
+            match.set(RuleMatch.TRUTH, truth);
+            match.set(RuleMatch.PUNCT, punct);
 
             return true;
         }

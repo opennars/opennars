@@ -6,7 +6,6 @@ import nars.term.Term;
 import nars.term.transform.Substitution;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Atom which is invisible to most if not all reasoner
@@ -63,10 +62,6 @@ public abstract class InvisibleAtom extends MutableAtomic {
         return sb;
     }
 
-    @Override
-    public Term substituted(Map<Term, Term> subs) {
-        return this;
-    }
 
     @Override
     public final Term substituted(Substitution s) {

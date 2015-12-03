@@ -2,9 +2,6 @@ package nars.nal;
 
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.RuleTrie;
-import nars.util.data.DequePool;
-
-import java.util.Random;
 
 /**
  * separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations
@@ -23,8 +20,6 @@ public class TrieDeriver extends RuleTrie {
     @Override
     public final void forEachRule(RuleMatch match) {
 
-        globalRNG = match.subst.random;
-
         for (RuleBranch r : root) {
             forEachRule(r, match);
         }
@@ -38,39 +33,23 @@ public class TrieDeriver extends RuleTrie {
 
             //System.out.println(x + " " + match.subst.y + " " + match.subst.parent);
 
-            if (!x.test(match))
+            if (!x.test(match)) {
                 return;
+            }
         }
 
 
-        RuleMatch subMatch = getSubMatch();
+        int now = match.now();
+        System.out.println(now + " "  + match.values);
 
         for (RuleBranch s : r.children) {
-            match.copyTo(subMatch);
-            forEachRule(s, subMatch);
+            forEachRule(s, match);
+            match.revert(now);
         }
 
-        returnSubMatch(subMatch);
-
-    }
-
-    Random globalRNG; //HACK refsthe same RNG which should be used everywhere
-
-    final DequePool<RuleMatch> submatches = new DequePool<RuleMatch>(8) {
-        @Override
-        public RuleMatch create() {
-            return new RuleMatch(globalRNG);
-        }
-    };
-
-    private final RuleMatch getSubMatch() {
-        return submatches.get();
     }
 
 
-    private final void returnSubMatch(RuleMatch subMatch) {
-        submatches.put(subMatch);
-    }
 
 
 //    final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {

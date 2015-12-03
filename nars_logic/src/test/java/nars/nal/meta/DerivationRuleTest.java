@@ -202,9 +202,9 @@ public class DerivationRuleTest extends TestCase {
                 //System.out.println(x + "\t" + y + "\t" +f);
                 assertTrue(matched);
 
-                Term varArgs = f.xy().get(ellipsisTerm);
+                Term varArgs = f.get(ellipsisTerm);
 
-                assertEquals(f.xy() + " says " + varArgs.toString() + " product", Op.PRODUCT, varArgs.op());
+                assertEquals(" says " + varArgs.toString() + " product", Op.PRODUCT, varArgs.op());
                 assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
                 Set<Term> varArgTerms = Terms.toSortedSet(((InvisibleProduct) varArgs).terms());
@@ -213,7 +213,7 @@ public class DerivationRuleTest extends TestCase {
                 testFurther(selectedFixed, f, varArgTerms);
 
                 //2. test substitution
-                Term s = r.substituted(f.xy());
+                Term s = r.substituted(f);
                 //System.out.println(s);
 
                 selectedFixed.add(s);
@@ -293,8 +293,8 @@ public class DerivationRuleTest extends TestCase {
         }
 
         @Override public void testFurther(Set<Term> selectedFixed, FindSubst f, Set<Term> varArgTerms) {
-            assertEquals(2, f.xy().size());
-            Term fixedTermValue = f.xy().get(fixedTerm);
+            assertEquals(2, f.size());
+            Term fixedTermValue = f.get(fixedTerm);
             assertEquals(Atom.class, fixedTermValue.getClass());
             assertFalse(varArgTerms.contains(fixedTermValue));
         }

@@ -53,10 +53,10 @@ public final class Derive extends PreCondition {
     @Override
     public boolean test(RuleMatch m) {
 
-        final RuleMatch.PostMods post = m.post;
+
         final Premise premise = m.premise;
 
-        Term derivedTerm = post.derivedTerm;
+        Term derivedTerm = m.get(RuleMatch.DERIVED);
 
         //test for reactor leak
         // TODO prevent this from happening
@@ -71,7 +71,7 @@ public final class Derive extends PreCondition {
         if (!(derivedTerm instanceof Compound))
             return false;
 
-        final Truth truth = post.truth;
+        final Truth truth = m.get(RuleMatch.TRUTH);
         final Budget budget;
         if (truth != null) {
             budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
@@ -82,7 +82,9 @@ public final class Derive extends PreCondition {
 
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
-                RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm, post.punct, truth, budget, post.occurence_shift, premise));
+                RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm,
+                        m.get(RuleMatch.PUNCT), truth, budget,
+                        m.get(RuleMatch.OCCURRENCE_SHIFT), premise));
             }
             return false;
         }
@@ -91,7 +93,7 @@ public final class Derive extends PreCondition {
         final Task belief = premise.getBelief();
 
 
-        final char punct = post.punct;
+        final char punct = m.get(RuleMatch.PUNCT);
 
         FluentTask deriving = DefaultTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving == null)
@@ -100,7 +102,7 @@ public final class Derive extends PreCondition {
         final long now = premise.time();
         final long occ;
 
-        final long occurence_shift = post.occurence_shift;
+        final long occurence_shift = m.get(RuleMatch.OCCURRENCE_SHIFT);
         long taskOcc = task.getOccurrenceTime();
         if (occurence_shift > Stamp.TIMELESS) {
             occ = taskOcc + occurence_shift;

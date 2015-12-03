@@ -58,7 +58,7 @@ public class Substitute extends PreCondition {
 
         boolean subs = substitute(m, a, b);
         if (!a.equals(b) && subs) {
-            m.sub2.outp.put(a, b);
+            m.secondary().putXY(a, b);
         }
         return !(!subs && this instanceof SubstituteIfUnified);
 

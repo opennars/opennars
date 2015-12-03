@@ -11,6 +11,6 @@ public abstract class PatternOp extends PreCondition {
 
     @Override
     public final boolean test(RuleMatch ruleMatch) {
-        return run(ruleMatch.subst);
+        return run(ruleMatch);
     }
 }

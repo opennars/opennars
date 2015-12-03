@@ -24,6 +24,7 @@ package nars.term;
 import nars.Op;
 import nars.nal.nal7.Tense;
 import nars.term.compile.TermIndex;
+import nars.term.transform.MapSubstitution;
 import nars.term.transform.Substitution;
 import nars.term.transform.TermVisitor;
 
@@ -177,12 +178,13 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return toString();
     }
 
-    @Deprecated Term substituted(final Map<Term, Term> subs);
     Term substituted(Substitution s);
 
-    default Term substituted(Substitution s, final Map<Term, Term> subs) {
+    //@Deprecated Term substituted(final Map<Term, Term> subs);
+
+    default Term substituted(final Map<Term, Term> subs) {
         if (subs.isEmpty()) return this;
-        return substituted(s.reset(subs));
+        return substituted(new MapSubstitution(subs));
     }
 
 //    /** returns the effective term as substituted by the set of subs */

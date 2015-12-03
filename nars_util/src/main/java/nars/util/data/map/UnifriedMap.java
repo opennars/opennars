@@ -307,7 +307,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     @Override
-    public final V put(K key, V value) {
+    public V put(K key, V value) {
         return (V)putFast(key, value);
     }
 

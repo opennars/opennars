@@ -8,8 +8,6 @@ import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 
-import java.util.Map;
-
 /**
  * Created by me on 8/15/15.
  */
@@ -54,22 +52,23 @@ public class SubstituteIfUnified extends Substitute {
     @Override
     protected boolean substitute(RuleMatch m, Term a, Term b) {
 
-        Map<Term, Term> left = m.sub2.left;
-        Map<Term, Term> right = m.sub2.right;
+//        Map<Term, Term> left = m.sub2.left;
+//        Map<Term, Term> right = m.sub2.right;
 
-        Subst sub = new FindSubst(type, left, right, m.premise.getRandom());
+        Subst sub = new FindSubst(type, m.premise.getRandom());
 
         final boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
-            m.sub2.outp.putAll(left);
-            result = true;
+
+            //m.secondary().putXY()
+            //throw new RuntimeException("unimpl");
+            return false;
+//            m.secondary().putAll(sub.xy());
+//            result = true;
         }
         else {
             result = false;
         }
-
-        left.clear();
-        right.clear();
 
         return result;
     }

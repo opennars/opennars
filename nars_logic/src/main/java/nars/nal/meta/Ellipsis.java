@@ -83,7 +83,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         for (int i = 0; i < xs; i++) {
             Term xt = x.term(i);
             if (xt instanceof Ellipsis) {
-                if (!ff.xy().containsKey(xt))
+                if (!ff.containsKey(xt))
                     n++;
             }
         }
@@ -193,7 +193,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         for (int i = 0; i < xsize; i++) {
             Term xi = X.term(i);
             if (xi instanceof Ellipsis) {
-                if (ff.xy().get(X)==null)
+                if (ff.get(X)==null)
                     return (Ellipsis) xi;
 //                else {
 //                    System.err.println("already matched");

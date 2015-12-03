@@ -3,8 +3,7 @@ package nars.nal.meta.op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.term.Term;
-
-import java.util.Map;
+import nars.term.transform.Substitution;
 
 /**
  * Called after 1 or more after conclusions have completed to apply their results to a rederived term
@@ -26,23 +25,29 @@ public final class PostSolve extends PreCondition {
     @Override
     public boolean test(RuleMatch m) {
 
-        final Map<Term, Term> Outp = m.sub2.outp;
+        final Substitution secondary = m.secondary();
 
-        Term dt = m.post.derivedTerm;
+        Term dt = m.get(RuleMatch.DERIVED);
 
-        if (!Outp.isEmpty()) {
-            Term rederivedTerm = dt.substituted(Outp);
-            Outp.clear();
+        if (!secondary.isEmpty()) {
+            Term rederivedTerm = dt.substituted(secondary);
+            //secondary.clear(); //necessary?
 
             //its possible that the substitution produces an invalid term, ex: an invalid statement
-            if (rederivedTerm == null)
-                return false;
 
             dt = rederivedTerm;
         }
 
+        if (dt == null)
+            return false;
 
         //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
-        return (m.post.derivedTerm = dt.normalized())!=null;
+        Term t = dt.normalized();
+        if (t!=null) {
+            m.set(RuleMatch.DERIVED, t);
+            return true;
+        }
+
+        return false;
     }
 }

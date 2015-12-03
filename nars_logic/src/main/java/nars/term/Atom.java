@@ -7,8 +7,6 @@ import nars.term.transform.Substitution;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
-import java.util.Map;
-
 public class Atom extends ImmutableAtom  {
 
     final static byte[] NullName = new byte[0];
@@ -43,10 +41,6 @@ public class Atom extends ImmutableAtom  {
             return false;
         }
 
-        @Override
-        public Term substituted(Map<Term, Term> subs) {
-            return null;
-        }
 
         @Override
         public final Term substituted(Substitution s) {
@@ -269,11 +263,6 @@ public class Atom extends ImmutableAtom  {
     @Override
     public final int structure() {
         return 1 << Op.ATOM.ordinal();
-    }
-
-    @Override
-    public final Term substituted(Map<Term, Term> subs) {
-        return this;
     }
 
     @Override
