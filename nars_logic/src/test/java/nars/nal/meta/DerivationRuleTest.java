@@ -293,7 +293,7 @@ public class DerivationRuleTest extends TestCase {
         }
 
         @Override public void testFurther(Set<Term> selectedFixed, FindSubst f, Set<Term> varArgTerms) {
-            assertEquals(2, f.size());
+            assertEquals(f.toString(), 2, f.xy.size());
             Term fixedTermValue = f.getXY(fixedTerm);
             assertEquals(Atom.class, fixedTermValue.getClass());
             assertFalse(varArgTerms.contains(fixedTermValue));

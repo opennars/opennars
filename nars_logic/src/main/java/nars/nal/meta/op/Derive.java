@@ -102,7 +102,7 @@ public final class Derive extends PreCondition {
         final long now = premise.time();
         final long occ;
 
-        final long occurence_shift = m.occurrenceShift.get();
+        final int occurence_shift = m.occurrenceShift.getIfAbsent(Stamp.TIMELESS);
         long taskOcc = task.getOccurrenceTime();
         if (occurence_shift > Stamp.TIMELESS) {
             occ = taskOcc + occurence_shift;
