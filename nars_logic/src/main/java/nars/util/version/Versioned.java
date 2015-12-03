@@ -17,16 +17,20 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
     private final int id;
 
     public Versioned(Versioning context) {
-        this(context, 1);
+        this(context, context.newValueStack());
     }
 
-    public Versioned(Versioning context, int capacity) {
-        super(capacity);
-        this.id = context.track(this);
+    public Versioned(Versioning context, FasterList<X> value) {
+        super(value.capacity() /* capacity */);
         this.context = context;
-        this.value = new FasterList(capacity); //TODO allow pooling these from context
+        this.value = value;
+        this.id = context.track(this);
     }
 
+    /** called when this versioned is removed/deleted from a context */
+    void delete() {
+        context.onDeleted(this);
+    }
 
     @Override
     public final boolean equals(Object otherVersioned) {

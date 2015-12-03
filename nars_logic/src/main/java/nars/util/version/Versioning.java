@@ -1,5 +1,6 @@
 package nars.util.version;
 
+import nars.util.data.DequePool;
 import nars.util.data.list.FasterList;
 
 /** versioning context that holds versioned instances */
@@ -69,6 +70,27 @@ public class Versioning extends FasterList<Versioned> {
     public final int track(Versioned v) {
         return nextID++;
     }
+
+    final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(1) {
+        @Override public FasterList create() {
+            return new FasterList(8);
+        }
+    };
+
+    public <X> FasterList<X> newValueStack() {
+        //return new FasterList(16);
+
+        //object pooling value stacks from context
+        return valueStackPool.get();
+    }
+
+    public <X> void onDeleted(Versioned v) {
+        FasterList vStack = v.value;
+        vStack.clear();
+        valueStackPool.put(vStack);
+    }
+
+
 
 //    public boolean toStackString() {
 //

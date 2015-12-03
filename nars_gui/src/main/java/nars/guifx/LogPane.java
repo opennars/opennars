@@ -248,8 +248,10 @@ public class LogPane extends BorderPane  {
         }
 
         public void setTo(long to) {
-            this.to = to;
-            runLater(this::update);
+            if (to!=this.to) {
+                this.to = to;
+                runLater(this::update);
+            }
         }
 
         protected void update() {

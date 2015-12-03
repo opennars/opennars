@@ -133,4 +133,10 @@ public class FasterList<X> extends FastList<X> {
         }
     }
 
+    public final int capacity() {
+        return items.length;
+    }
+
+
+
 }

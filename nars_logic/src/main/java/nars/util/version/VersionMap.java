@@ -6,7 +6,6 @@ import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -16,7 +15,7 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     private final Map<X, Versioned<Y>> map;
 
     public VersionMap(Versioning context) {
-        this(context, new LinkedHashMap<X, Versioned<Y>>());
+        this(context, new LinkedHashMap<>());
     }
 
     public VersionMap(Versioning context, Map<X, Versioned<Y>/*<Y>*/> map) {
@@ -84,10 +83,8 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     }
 
     public Versioned getOrCreateIfAbsent(X key) {
-        Function<X,Versioned<Y>> builder =
-                (k) -> new RemovingVersionedEntry(key, context);
-
-        return map.computeIfAbsent(key, builder);
+        return map.computeIfAbsent(key,
+                RemovingVersionedEntry::new);
     }
 
     /** this implementation removes itself from the map when it is reverted to
@@ -96,7 +93,7 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
 
         private final X key;
 
-        public RemovingVersionedEntry(X key, Versioning context) {
+        public RemovingVersionedEntry(X key) {
             super(context);
             this.key = key;
         }

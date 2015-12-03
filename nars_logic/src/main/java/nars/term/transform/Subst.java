@@ -51,6 +51,7 @@ public abstract class Subst extends Frame {
 
     public Subst(Random random, Op type) {
         super(random, type);
+
         xy = new VersionMap(this, new LinkedHashMap());
         yx = new VersionMap(this, new LinkedHashMap());
         term = new Versioned(this);
