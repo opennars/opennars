@@ -1,13 +1,14 @@
 package nars.term.transform;
 
 import nars.Global;
-import nars.NAR;
-import nars.nar.Terminal;
+import nars.Op;
 import nars.term.Term;
 import org.junit.Test;
 
 import java.util.Map;
 
+import static nars.$.$;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -25,16 +26,16 @@ public class SubstitutionTest {
 
         //   with: <($1, is, cat) --> test>
 
-        NAR t = new Terminal();
+
         Map<Term,Term> m = Global.newHashMap();
-        m.put(t.term("$1"), t.term("test"));
-        m.put(t.term("<$1 --> $2>"), t.term("<test --> (/, _, tim, is, cat)>"));
-        m.put(t.term("$2"), t.term("(/, _, tim, is, cat)"));
+        m.put($("$1"), $("test"));
+
         assertNull(
-            new Substitution(m).apply(t.term("<($1, is, cat) --> test>"))
+            new Substitution(m).applyCompletely($("<($1, is, cat) --> test>"), Op.VAR_INDEPENDENT)
         );
-        assertNull(
-            new Substitution(m).apply(t.term("<<($1, is, cat) --> test> --> super>"))
+        assertNotNull(
+            new Substitution(m).applyCompletely($("<($1, is, cat) --> notTest>"), Op.VAR_INDEPENDENT)
         );
+
     }
 }

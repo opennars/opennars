@@ -1,5 +1,6 @@
 package nars.nal.nal7;
 
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Global;
 import nars.Op;
@@ -7,6 +8,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Conjunctive;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -438,6 +440,28 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
         Term[] t = terms();
         return makeSequence(t, ii);
+    }
+
+
+    public final Term[] toArrayWithIntervals() {
+        return toArrayWithIntervals( (x,y) -> true );
+    }
+
+    /** constructs a subterm array with the relevant intervals included */
+    public final Term[] toArrayWithIntervals(IntObjectPredicate filter) {
+        List<Term> l = Global.newArrayList();
+        Term[] s = terms();
+        int[] i = intervals();
+        int p = 0;
+        for (Term x : s) {
+            if (filter.accept(p++, x)) {
+                l.add(x);
+                int d = i[p];
+                if (d!=0)
+                    l.add(CyclesInterval.make(d));
+            }
+        }
+        return Terms.toArray(l);
     }
 
 }

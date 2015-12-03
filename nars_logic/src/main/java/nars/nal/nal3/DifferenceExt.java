@@ -33,10 +33,10 @@ public class DifferenceExt extends Difference {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private DifferenceExt(Term[] arg) {
+    private DifferenceExt(Term a, Term b) {
         super();
 
-        init(arg);
+        init(a, b);
     }
 
 
@@ -46,7 +46,8 @@ public class DifferenceExt extends Difference {
      */
     @Override
     public DifferenceExt clone() {
-        return new DifferenceExt(terms.term);
+        Term[] t = terms.term;
+        return new DifferenceExt(t[0], t[1]);
     }
 
     @Override public Term clone(Term[] replaced) {
@@ -65,13 +66,7 @@ public class DifferenceExt extends Difference {
         Term A = arg[0];
         Term B = arg[1];
 
-        if (A.equals(B)) return null;
-
-        if ((A instanceof SetExt) && (B instanceof SetExt)) {
-            return SetExt.subtract((SetExt)A, (SetExt)B);
-        }
-
-        return new DifferenceExt(arg);
+        return DifferenceExt.make(A, B);
     }
 
 
@@ -81,8 +76,15 @@ public class DifferenceExt extends Difference {
      * @param t2 The second component
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term t1, final Term t2) {
-        return make(new Term[]{t1,t2});
+    public static Term make(final Term A, final Term B) {
+
+        if (A.equals(B)) return null;
+
+        if ((A instanceof SetExt) && (B instanceof SetExt)) {
+            return SetExt.subtract((SetExt)A, (SetExt)B);
+        }
+
+        return new DifferenceExt(A, B);
     }
 
     /**

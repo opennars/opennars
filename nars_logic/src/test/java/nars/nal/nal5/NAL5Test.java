@@ -216,8 +216,8 @@ public class NAL5Test extends AbstractNALTester {
     @Test public void compound_decomposition_one_premises(){
         TestNAR tester = test();
         tester.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)",0.9f,0.9f); //.en("Robin can fly and swim.");
-        tester.mustBelieve(cycles*2,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
-        tester.mustBelieve(cycles*2,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
+        tester.mustBelieve(cycles*4,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
+        tester.mustBelieve(cycles*4,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
         tester.run();
     }
     @Test public void compound_decomposition_one_premises_2(){

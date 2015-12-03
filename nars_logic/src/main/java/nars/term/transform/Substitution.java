@@ -1,10 +1,12 @@
 package nars.term.transform;
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
+import nars.Op;
 import nars.nal.meta.Ellipsis;
 import nars.nal.nal4.InvisibleProduct;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -178,6 +180,29 @@ public class Substitution implements Function<Compound,Term> {
                 "subs=" + subs +
                 '}';
     }
+
+    /** returns non-null result only if substitution with regard to a given variable Operator was complete */
+    public Term applyCompletely(Compound t, Op o) {
+        Term a = apply(t);
+
+        if (a == null)
+            return null;
+
+        if (!isSubstitutionComplete(a, o))
+            return null;
+
+        return a;
+    }
+
+    public static boolean isSubstitutionComplete(Term a, Op o) {
+        if (o == Op.VAR_PATTERN) {
+            return !Variable.hasPatternVariable(a);
+        }
+        else {
+            return !a.hasAny(o);
+        }
+    }
+
 }
 
 

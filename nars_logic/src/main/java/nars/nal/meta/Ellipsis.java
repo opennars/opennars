@@ -5,9 +5,15 @@ import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
 import nars.nal.nal4.InvisibleProduct;
 import nars.nal.nal7.InvisibleAtom;
-import nars.term.*;
+import nars.nal.nal7.Sequence;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.Subst;
 import nars.util.utf8.Utf8;
+
+import java.util.function.Function;
 
 /**
  * Meta-term of the form:
@@ -113,7 +119,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     public InvisibleProduct match(ShortSet ySubsExcluded, Compound y) {
         Term ex = this.expression;
         if ((ex == PLUS) || (ex == ASTERISK)) {
-            return matchRemaining(ySubsExcluded, y);
+            return matchRemaining(y, ySubsExcluded);
         }
 
         throw new RuntimeException("unimplemented expression: " + ex);
@@ -131,21 +137,6 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 //        }
     }
 
-    private static InvisibleProduct matchRemaining(ShortSet ySubsExcluded, Compound Y) {
-
-//        final int ysize = Y.size();
-//        Term[] others = new Term[ysize-ySubsExcluded.size()];
-//        int k = 0;
-//        for (int j = 0; j < ysize; j++) {
-//            if (!ySubsExcluded.contains((short) j)) {
-//                Term yt = Y.term(j);
-//                others[k++] = yt;
-//            }
-//        }
-
-        return matchedSubterms(Y.toArray( (index, term) ->
-                !ySubsExcluded.contains((short)index)));
-    }
 
 //    private static Term matchNot(Term[] oa, Map<Term, Term> mapped, Compound Y) {
 //
@@ -222,17 +213,31 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return null;
     }
 
-    public static Term matchedSubterms(TermContainer subterms) {
-        return matchedSubterms(subterms.toArray());
+    public static InvisibleProduct matchRemaining(Compound Y, ShortSet ySubsExcluded) {
+        return matchedSubterms(Y, (index, term) ->
+                !ySubsExcluded.contains((short)index) );
     }
 
-    public static Term matchedSubterms(TermContainer subterms, IntObjectPredicate<Term> filter) {
-        return matchedSubterms(subterms.toArray(filter));
+    public static InvisibleProduct matchedSubterms(Compound Y) {
+        Term[] arrayGen =
+                !(Y instanceof Sequence) ?
+                        Y.toArray() :
+                        ((Sequence)Y).toArrayWithIntervals();
+
+        return matchedSubterms(arrayGen);
+    }
+
+    public static InvisibleProduct matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
+        Function<IntObjectPredicate,Term[]> arrayGen =
+                !(Y instanceof Sequence) ?
+                        Y::toArray :
+                        ((Sequence)Y)::toArrayWithIntervals;
+
+        return matchedSubterms(arrayGen.apply( filter ) );
     }
 
 
-    /** TODO use a special ProductN subclass */
-    public static InvisibleProduct matchedSubterms(Term[] subterms) {
+    private static InvisibleProduct matchedSubterms(Term[] subterms) {
         //return Product.make(subterms);
         return new InvisibleProduct(subterms);
     }

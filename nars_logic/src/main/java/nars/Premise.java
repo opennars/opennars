@@ -8,7 +8,6 @@ import nars.nal.nal1.LocalRules;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.task.Tasked;
-import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
@@ -407,9 +406,9 @@ public interface Premise extends Level, Tasked {
             return "Unnormalizable";
         }
 
-        if (!FilterDuplicateExistingBelief.isUniqueBelief(this, task)) {
+        /*if (!FilterDuplicateExistingBelief.isUniqueBelief(this, task)) {
             return "Duplicate";
-        }
+        }*/
 
         return null;
     }

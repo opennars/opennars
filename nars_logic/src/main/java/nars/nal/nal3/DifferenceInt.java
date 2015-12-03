@@ -44,7 +44,8 @@ public class DifferenceInt extends Difference {
      */
     @Override
     public final DifferenceInt clone() {
-        return new DifferenceInt(term(0), term(1));
+        Term[] t = terms.term;
+        return new DifferenceInt(t[0], t[1]);
     }
     
     @Override public final Term clone(Term[] replaced) {
@@ -57,7 +58,11 @@ public class DifferenceInt extends Difference {
      * @param arg The list of term
      */
     public static Term make(Term a, Term b) {
-        return DifferenceInt.make(a, b);
+        if ((a instanceof SetInt) && (b instanceof SetInt)) {
+            return SetInt.subtract((SetInt)a, (SetInt)b);
+        }
+
+        return new DifferenceInt(a, b);
     }
 
     /**
@@ -71,11 +76,7 @@ public class DifferenceInt extends Difference {
 
         Term a = arg[0];
         Term b = arg[1];
-        if ((a instanceof SetInt) && (b instanceof SetInt)) {
-            return SetInt.subtract((SetInt)a, (SetInt)b);
-        }
-
-        return new DifferenceInt(a, b);
+        return DifferenceInt.make(a,b);
     }
 
     /**

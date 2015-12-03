@@ -1,8 +1,8 @@
 package nars.nal.nal7;
 
+import nars.$;
 import nars.NAR;
 import nars.Op;
-import nars.nar.Default;
 import nars.nar.Default2;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -225,7 +225,7 @@ public class SequenceParallelTest {
     }
 
     @Test public void testConstruction() {
-        NAR nar = new Default();
+        NAR nar = new Terminal();
 
         String seq = "(&/, /1, a, /2, b)";
         Sequence s = nar.term(seq);
@@ -245,14 +245,14 @@ public class SequenceParallelTest {
     }
 
     @Test public void testSingleTermSequence() {
-        NAR nar = new Default();
+        NAR nar = new Terminal();
         Term x = nar.term("(&/, a)");
         assertNotNull(x);
         assertEquals(Atom.class, x.getClass());
     }
 
     @Test public void testSequenceToString() {
-        NAR nar = new Default();
+        NAR nar = new Terminal();
 
         testSeqTermString(nar, "(&/, a, /1, b)");
         testSeqTermString(nar, "(&/, a, /3, b, /5, c, /10, d)");
@@ -280,7 +280,7 @@ public class SequenceParallelTest {
 
 //    @Test public void testSequenceSentenceNormalization() {
 //        //sequences at the top level as terms must not have any trailing intervals
-//        NAR nar = new Default();
+//        NAR nar = new Terminal();
 //
 //        String tt = "(&/, a, /1, b, /2)";
 //        Sequence term = nar.term(tt);
@@ -310,7 +310,7 @@ public class SequenceParallelTest {
     }
 
     @Test public void testDistance1() {
-        NAR nar = new Default();
+        NAR nar = new Terminal();
 
         Sequence a = nar.term("(&/, x, /1, y)");
         Sequence b = nar.term("(&/, x, /2, y)");
@@ -327,7 +327,7 @@ public class SequenceParallelTest {
     }
 
     @Test public void testDoesntLoseInfo() {
-        NAR nar = new Default();
+        NAR nar = new Terminal();
         Term t = nar.term("<(&/, <$1 --> (/, open, _, door)>, /5) =/> <$1 --> (/, enter, _, room)>>");
         Term t2 = t.normalized();
         String s1 = t.toString();
@@ -360,4 +360,11 @@ public class SequenceParallelTest {
 
     }
 
+    @Test public void testSequenceToArrayWithIntervals() {
+        Sequence a = $.$("(&/, x, /3, y)");
+        assertEquals("[x, y]", Arrays.toString(a.toArray()));
+        assertEquals("[x, /3, y]", Arrays.toString(a.toArrayWithIntervals()));
+        assertEquals("[x, /3]", Arrays.toString(a.toArrayWithIntervals((i,x) -> i==0)));
+        assertEquals("[y]", Arrays.toString(a.toArrayWithIntervals((i,x) -> i==1)));
+    }
 }

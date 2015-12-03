@@ -1,5 +1,6 @@
 package nars.term;
 
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.TermVisitor;
@@ -226,6 +227,15 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     @Override
     public final void forEach(Consumer<? super T> c) {
         terms.forEach(c);
+    }
+
+    @Override public Term[] toArray() {
+        return terms.toArray();
+    }
+
+    @Override
+    public Term[] toArray(IntObjectPredicate<Term> filter) {
+        return terms.toArray(filter);
     }
 
     @Override

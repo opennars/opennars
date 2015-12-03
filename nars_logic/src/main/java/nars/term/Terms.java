@@ -900,4 +900,8 @@ public class Terms {
         return filter(input, (i, t) -> filter.test(t) );
     }
 
+    public static Term[] toArray(List<Term> l) {
+        return l.toArray(new Term[l.size()]);
+    }
+
 }

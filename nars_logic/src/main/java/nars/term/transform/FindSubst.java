@@ -647,7 +647,7 @@ final public class FindSubst extends Subst {
     }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
-        putXY(Xellipsis, Ellipsis.matchedSubterms(Y.subterms()));
+        putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
         return true;
     }
 
@@ -715,7 +715,7 @@ final public class FindSubst extends Subst {
      */
     public final boolean matchEllipsisTerms(Ellipsis Xellipsis, Compound Y, IntObjectPredicate<Term> allow) {
         putXY(Xellipsis, Ellipsis.matchedSubterms(
-            Y.subterms(), allow)
+            Y, allow)
         );
         return true;
     }
