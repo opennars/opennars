@@ -336,12 +336,14 @@ public class DerivationRules extends FastList<TaskRule> {
         Collection<TaskRule> existing = c.get(q);
         if (existing!=null && !existing.isEmpty()) {
 
-            System.err.println(q);
-            System.err.println("\t" + src);
-            existing.forEach(e -> {
-               System.err.println("\t" + e.source);
-            });
-            System.err.println();
+            if (Global.DEBUG_DETECT_DUPLICATE_RULES) {
+                System.err.println(q);
+                System.err.println("\t" + src);
+                existing.forEach(e -> {
+                    System.err.println("\t" + e.source);
+                });
+                System.err.println();
+            }
         }
         else {
             q.setSource(src);

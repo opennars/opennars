@@ -104,8 +104,11 @@ public class RuleTrie extends Deriver {
                 TaskRule existing = trie.put(s.getConditions(p), s);
                 if (existing != null) {
 
-                    if (!existing.equals(s)) {
-                        System.err.println(s + " replaced: " + existing);
+                    if (s!=existing && existing.equals(s)) {
+                        System.err.println("DUPL: " + existing);
+                        System.err.println("      " + existing.getSource());
+                        System.err.println("EXST: " + s.getSource());
+                        System.err.println();
                     }
                 }
             }
