@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Created by me on 10/16/15.
+ * Receives tasks which are input to a memory
  */
 public abstract class TaskPerception implements Consumer<Task> {
 
@@ -35,7 +35,6 @@ public abstract class TaskPerception implements Consumer<Task> {
 
         active.add(
             m.eventInput.on(this),
-            m.eventDerived.on(this),
             m.eventFrameStart.on((M) -> send()),
             m.eventReset.on((M) -> clear() )
         );

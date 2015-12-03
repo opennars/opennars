@@ -22,7 +22,7 @@ import nars.term.transform.VariableNormalization;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * A rule which produces a Task
@@ -58,6 +58,7 @@ public class TaskRule extends ProductN implements Level {
     public int minNAL;
 
     private String str;
+    protected String source;
 
     public final ProductN getPremise() {
         return (ProductN) term(0);
@@ -170,6 +171,15 @@ public class TaskRule extends ProductN implements Level {
      */
     public final Op getTaskTermType() {
         return getTask().op();
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /** source string that generated this rule (for debugging) */
+    public String getSource() {
+        return source;
     }
 
     protected final Term getTask() {
@@ -569,7 +579,7 @@ public class TaskRule extends ProductN implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    public final void forEachQuestionReversal(Consumer<TaskRule> w) {
+    public final void forEachQuestionReversal(BiConsumer<TaskRule,String> w) {
 
         //String s = w.toString();
         /*if(s.contains("task(\"?") || s.contains("task(\"@")) { //these are backward inference already
@@ -591,11 +601,11 @@ public class TaskRule extends ProductN implements Level {
 
         //      C, B, [pre], task_is_question() |- T, [post]
         TaskRule clone1 = clone(C, B, T, true);
-        w.accept(clone1);
+        w.accept(clone1, "C,B,[pre],question |- T,[post]");
 
         //      C, T, [pre], task_is_question() |- B, [post]
         TaskRule clone2 = clone(C, T, B, true);
-        w.accept(clone2);
+        w.accept(clone2, "C,T,[pre],question |- B,[post]");
 
     }
 

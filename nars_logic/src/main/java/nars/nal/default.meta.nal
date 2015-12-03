@@ -443,10 +443,11 @@
 
 //precondition combiner inference rule (variable_unification6):
 
-    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Induction)
-    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,B,..) ==> (&&,A,..)), (Truth:Induction)
-    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Abduction)
-    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,B,..) ==> (&&,A,..)), (Truth:Abduction)
+    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Induction),
+                                                ((&&,B,..) ==> (&&,A,..)), (Truth:Induction)
+    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Abduction),
+                                                ((&&,B,..) ==> (&&,A,..)), (Truth:Abduction)
+
 
 //second level variable introduction
 

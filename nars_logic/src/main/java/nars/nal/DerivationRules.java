@@ -1,7 +1,6 @@
 package nars.nal;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
@@ -50,10 +49,11 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
     public DerivationRules(TaskRule... r) {
-        this( Sets.newHashSet(r) );
+        this(Sets.newHashSet(r));
     }
+
     public DerivationRules(TaskRule r) {
-        this(Collections.singleton(r) );
+        this(Collections.singleton(r));
     }
 
     public DerivationRules(Set<TaskRule> r) {
@@ -133,8 +133,8 @@ public class DerivationRules extends FastList<TaskRule> {
             ret = twoSpacePattern.matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
         }
 
-        ret = ret.replace("A..","%A.."); //add var pattern manually to ellipsis
-        ret = ret.replace("B..","%B.."); //add var pattern manually to ellipsis
+        ret = ret.replace("A..", "%A.."); //add var pattern manually to ellipsis
+        ret = ret.replace("B..", "%B.."); //add var pattern manually to ellipsis
 
         return ret.replace("\n", "");/*.replace("A_1..n","\"A_1..n\"")*/ //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
@@ -153,43 +153,46 @@ public class DerivationRules extends FastList<TaskRule> {
      * @param ruleString
      */
     static void addAndPermuteTenses(Collection<String> rules /* results collection */,
-                                     String ruleString) {
+                                    String ruleString) {
 
         //Original version which permutes in different tenses
 
-        if (ruleString.contains("Order:ForAllSame")) {
-
-            final String[] equs =
-                    ruleString.contains("<=>") ?
-                            equFull :
-                            unchanged;
-
-
-            final String[] impls =
-                    ruleString.contains("==>") ?
-                            implFull :
-                            unchanged;
-
-            final String[] conjs =
-                    ruleString.contains("&&") ?
-                            conjFull :
-                            unchanged;
-
-
+        if (!ruleString.contains("Order:ForAllSame")) {
             rules.add(ruleString);
+            return;
+        }
+
+        final String[] equs =
+                ruleString.contains("<=>") ?
+                        equFull :
+                        unchanged;
 
 
-            for (String equ : equs) {
+        final String[] impls =
+                ruleString.contains("==>") ?
+                        implFull :
+                        unchanged;
 
-                String p1 = equ != null ? equivOperatorPattern.matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
+        final String[] conjs =
+                ruleString.contains("&&") ?
+                        conjFull :
+                        unchanged;
 
-                for (String imp : impls) {
 
-                    String p2 = imp != null ? implOperatorPattern.matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
+        rules.add(ruleString);
 
-                    for (String conj : conjs) {
 
-                        String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
+        for (String equ : equs) {
+
+            String p1 = equ != null ? equivOperatorPattern.matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
+
+            for (String imp : impls) {
+
+                String p2 = imp != null ? implOperatorPattern.matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
+
+                for (String conj : conjs) {
+
+                    String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
 
 //                        String[] premiseConc = p3.split("\\|\\-");
 //
@@ -212,14 +215,10 @@ public class DerivationRules extends FastList<TaskRule> {
 //                        }
 //                        if (valid)
 
-                        //System.out.println(ruleString + " " + p3);
-                            rules.add(p3);
-                    }
+                    //System.out.println(ruleString + " " + p3);
+                    rules.add(p3);
                 }
             }
-
-        } else {
-            rules.add(ruleString);
         }
 
 
@@ -275,7 +274,7 @@ public class DerivationRules extends FastList<TaskRule> {
         });//.forEachOrdered(s -> expanded.addAll(s));
 
 
-        Set<TaskRule> ur = Global.newHashSet(1024);
+        ListMultimap<TaskRule, TaskRule> ur = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
         //accumulate these in a set to eliminate duplicates
         expanded.forEach(s -> {
@@ -283,12 +282,15 @@ public class DerivationRules extends FastList<TaskRule> {
 
                 final TaskRule rUnnorm = $.$(s);
 
-                final TaskRule rNorm = rUnnorm.normalizeRule();
-                AcceptRule(ur, rNorm);
+                final TaskRule r = rUnnorm.normalizeRule();
+                if (r != null) {
+                    AcceptRule(ur, r, s);
 
-                if(rNorm!=null) {
-                    final TaskRule rNorm2 = rNorm.forwardPermutation();
-                    AcceptRule(ur, rNorm2);
+                    final TaskRule rFwd = r.forwardPermutation();
+                    AcceptRule(ur, rFwd, s);
+                }
+                else {
+                    throw new RuntimeException("unnormalizable task: " + r);
                 }
 
             } catch (Exception ex) {
@@ -298,31 +300,52 @@ public class DerivationRules extends FastList<TaskRule> {
             }
         });
 
-        return ur;
+//        ur.asMap().forEach((t, copies) -> {
+//            if (copies.size() <= 1) return;
+//
+//            System.err.println("DUPLICATE RULE: " + t);
+//            copies.forEach(d -> System.err.println("\t" + d));
+//            System.err.println();
+//        });
+
+        return ur.keySet();
     }
 
-    private static void AcceptRule(Set<TaskRule> c, TaskRule r) {
+    private static void AcceptRule(Multimap<TaskRule, TaskRule> c, TaskRule r, String src) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //
-        /*if (added)*/ {
-            //add reverse questions
-            r.forEachQuestionReversal(q -> {
-                q = q.normalizeRule();
-                if (q == null)
-                    throw new RuntimeException("invalid rule at normalization");
+        /*if (added)*/
 
-                //normalize may be returned null if the rearranging produced an invalid result, so do not add null
-                if (!c.add(q)) {
-                    System.err.println("DUPLICATE RULE: " + q);
-                }
+        //add reverse questions
+
+        r.forEachQuestionReversal((q,reason) -> {
+            q = q.normalizeRule();
+            if (q == null)
+                throw new RuntimeException("invalid rule at normalization");
+
+            //normalize may be returned null if the rearranging produced an invalid result, so do not add null
+            addRule(c, q, src + "//" + reason);
+
+        });
+
+        addRule(c, r.normalizeRule(), src);
+    }
+
+    private static void addRule(Multimap<TaskRule, TaskRule> c, TaskRule q, String src) {
+        Collection<TaskRule> existing = c.get(q);
+        if (existing!=null && !existing.isEmpty()) {
+
+            System.err.println(q);
+            System.err.println("\t" + src);
+            existing.forEach(e -> {
+               System.err.println("\t" + e.source);
             });
+            System.err.println();
         }
-
-        //destructive, normalize this after clone created from unnormalized
-        boolean added = c.add(r.normalizeRule());
-        if (!added) {
-            System.err.println("DUPLICATE RULE: " + r);
+        else {
+            q.setSource(src);
+            c.put(q, q);
         }
 
     }
