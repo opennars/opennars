@@ -56,8 +56,8 @@ public class Versioning extends FasterList<Versioned> {
 
         while (get(s).revertNext(when)) {
             --s;
-            //if (s <= 0) break;
-            break; //HACK for now, 1 at a time
+            if (s <= 0) break;
+            //break; //HACK for now, 1 at a time
         }
 
         popTo(s);
@@ -69,4 +69,11 @@ public class Versioning extends FasterList<Versioned> {
     public final int track(Versioned v) {
         return nextID++;
     }
+
+//    public boolean toStackString() {
+//
+//
+//
+//    }
+
 }
