@@ -34,7 +34,7 @@ public class TermNode<K extends Termed> extends GraphNode {
     public double priNorm = 0;
 
     public Concept c = null;
-    private TermEdge[] edges;
+    private TermEdge[] edges = TermEdge.empty;
 
     /*
     DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();

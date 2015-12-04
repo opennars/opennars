@@ -3,7 +3,6 @@ package za.co.knonchalant.builder.converters;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFieldBuilder;
 import javafx.scene.control.TextInputControl;
 import za.co.knonchalant.JavaFXHelper;
 import za.co.knonchalant.builder.TaggedParameters;
@@ -18,7 +17,7 @@ public class IntegerConverter extends BaseConverter<Integer> {
         Node returned;
         String stringVersion = object == null ? "0" : object.toString();
         if (!readOnly) {
-            TextField build = TextFieldBuilder.create().text(stringVersion).build();
+            TextField build = new TextField(); build.setText(stringVersion); //TextFieldBuilder.create().text(stringVersion).build();
             JavaFXHelper.numericOnly(build);
 
             returned = build;

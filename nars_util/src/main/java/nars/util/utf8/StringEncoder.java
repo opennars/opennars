@@ -190,6 +190,7 @@ final class StringEncoder {
 
         final ByteBuffer byteTemp = this.byteTemp;
 
+
         // Optimized for short strings
         //assert byteTemp.remaining() == byteTemp.capacity();
         boolean done = encode(source, byteTemp);

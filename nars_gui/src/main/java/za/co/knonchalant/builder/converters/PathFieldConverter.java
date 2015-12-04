@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFieldBuilder;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import za.co.knonchalant.builder.TaggedParameters;
@@ -34,7 +33,7 @@ public class PathFieldConverter extends StandardTextFieldConverter {
         }
 
         VBox vbox = new VBox();
-        final TextField path = TextFieldBuilder.create().text(object).build();
+        final TextField path = new TextField(); path.setText(object); //TextFieldBuilder.create().text(object).build();
         path.getStyleClass().add("actual-path");
         Button button = new Button("Browse");
         button.setOnAction(new EventHandler<ActionEvent>() {

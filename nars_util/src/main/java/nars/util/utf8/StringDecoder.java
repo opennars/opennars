@@ -63,6 +63,7 @@ final class StringDecoder {
         // TODO: we could cache the input ByteBuffer if source doesn't change
         final ByteBuffer input = ByteBuffer.wrap(source, offset, length);
 
+
         // Call decode at least once to pass the endOfInput signal through
         do {
             CoderResult result = decoder.decode(input, outBuffer, endOfInput);

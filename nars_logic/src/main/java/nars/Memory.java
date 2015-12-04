@@ -22,6 +22,7 @@ package nars;
 
 
 import com.gs.collections.api.tuple.Twin;
+import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
 import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
 import nars.nal.nal8.ExecutionResult;
@@ -41,7 +42,6 @@ import nars.util.meter.EmotionMeter;
 import nars.util.meter.LogicMeter;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -536,7 +536,7 @@ public class Memory extends Param {
 
     private static class MyTermIndex implements TermIndex {
 
-        final Map<Term,Term> terms = new HashMap(4096); //TODO try weakref identity hash map etc
+        final Map<Term,Term> terms = new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
         @Override public final Termed get(Term t) {
 

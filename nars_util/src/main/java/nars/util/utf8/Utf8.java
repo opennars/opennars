@@ -170,6 +170,61 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         return sbbe.get().toNewArray(s);
     }
 
+    /** # bytes must be even */
+    public static final char[] bytesToChars(byte[] b) {
+        int blen = b.length;
+        //boolean odd = blen % 2 == 1;
+        //int slen = odd ? (blen /2)+1 : (blen/2);
+        int slen = blen/2;
+        char[] c = new char[slen];
+        int j = 0;
+        for (int i = 0; i < slen; i++) {
+            int d = (b[j++]) << 8;
+            //if (j < slen)
+                d |= b[j++];
+            c[i] = (char) d;
+        }
+        return c;
+    }
+
+    public static final byte[] charsToBytes(char[] s) {
+        int slen = s.length;
+        byte[] b = new byte[slen *2];
+        int j = 0;
+        for (int i = 0; i< slen; i++) {
+            int c = s[i];
+            b[j++] = (byte)((c & 0xFF00)>>8);
+            b[j++] = (byte)((c & 0x00FF));
+        }
+        return b;
+    }
+
+    public static final byte[] charsToBytes(CharSequence s) {
+        int slen = s.length();
+
+        //boolean odd = slen%2==1 && (s.charAt(slen-1) & 0x00FF) == 0; //is last byte 0?
+
+        int bb = slen * 2;// - (odd ? 1 : 0);
+        byte[] b = new byte[bb];
+        int j = 0;
+        for (int i = 0; i< slen; i++) {
+            int c = s.charAt(i);
+            b[j++] = (byte)((c & 0xFF00)>>8);
+            if (j < bb)
+                b[j++] = (byte)((c & 0x00FF));
+        }
+        return b;
+    }
+
+    /** packs a String as UTF8 into a new String */
+    public static final String fromStringtoStringUtf8(final String s) {
+        return new String(bytesToChars(toUtf8(s)));
+    }
+
+    public static final String fromStringUtf8(final String s) {
+        return Utf8.fromUtf8toString(charsToBytes(s));
+    }
+
     public static final String fromUtf8toString(final byte[] bytes, final int length) {
         return sbbd.get().newString(bytes, 0, length);
     }

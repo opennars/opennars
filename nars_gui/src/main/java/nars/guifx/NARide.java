@@ -16,7 +16,6 @@ import nars.NARLoop;
 import nars.budget.Budget;
 import nars.budget.Budgeted;
 import nars.concept.Concept;
-import nars.guifx.chart.TaskSheet;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
@@ -77,7 +76,7 @@ public class NARide extends BorderPane {
             NARide ni = new NARide(loop);
 
             {
-                ni.addView(new TaskSheet(nar));
+                //ni.addView(new TaskSheet(nar));
                 ni.addView(new IOPane(nar));
 
                 /*ni.addView(new UDPPane(new UDPNetwork(

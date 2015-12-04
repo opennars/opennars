@@ -1,9 +1,11 @@
 package za.co.knonchalant.builder.converters;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextFieldBuilder;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyEvent;
 import za.co.knonchalant.builder.TaggedParameters;
 
 /**
@@ -19,9 +21,9 @@ public class StandardTextFieldConverter extends BaseConverter<String> {
                 prompt = "";
             }
 
-            returned = TextFieldBuilder.create().text(object).promptText(prompt).build();
+            returned = new TextField(object); //TextFieldBuilder.create().text(object).promptText(prompt).build();
             if (isTagSet()) {
-                returned.setOnKeyReleased((javafx.event.EventHandler<? super javafx.scene.input.KeyEvent>) parameters.get(getTag()));
+                returned.setOnKeyReleased((EventHandler<? super KeyEvent>) parameters.get(getTag()));
             }
         } else {
             returned = new Label(object);
