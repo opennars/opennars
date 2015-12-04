@@ -71,24 +71,44 @@ public class Versioning extends FasterList<Versioned> {
         return nextID++;
     }
 
-    final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(1) {
+    final static int initiALPOOL_CAPACITY = 16;
+    final static int stackLimit = 16;
+
+    final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(initiALPOOL_CAPACITY) {
         @Override public FasterList create() {
             return new FasterList(8);
         }
     };
+    final DequePool<int[]> intStackPool = new DequePool<int[]>(initiALPOOL_CAPACITY) {
+        @Override public int[] create() {
+            return new int[stackLimit];
+        }
+    };
 
-    public <X> FasterList<X> newValueStack() {
+    public final <X> FasterList<X> newValueStack() {
+        //from heap:
         //return new FasterList(16);
 
-        //object pooling value stacks from context
+        //object pooling value stacks from context:
         return valueStackPool.get();
     }
 
+    public final int[] newIntStack() {
+        return intStackPool.get();
+    }
+
+    /** should only call this when v will never be used again because its buffers are recycled here */
     public <X> void onDeleted(Versioned v) {
         FasterList vStack = v.value;
-        vStack.clear();
+
+        //TODO maybe flush these periodically for GC
+        //vStack.clear();
+
+        //TODO reject arrays that have grown beyond a certain size
         valueStackPool.put(vStack);
+        intStackPool.put(v.array());
     }
+
 
 
 

@@ -2,6 +2,7 @@ package nars.nal;
 
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.RuleTrie;
+import nars.util.version.Versioned;
 
 /**
  * separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations
@@ -17,8 +18,7 @@ public class TrieDeriver extends RuleTrie {
         super(rules);
     }
 
-    @Override
-    public final void forEachRule(RuleMatch match) {
+    @Override public final void run(RuleMatch match) {
 
         int now = match.now();
 
@@ -43,10 +43,17 @@ public class TrieDeriver extends RuleTrie {
             }
         }
 
-        int now = match.now();
-        //System.out.println(now + " "  + match);
+        int now = match.now(); //RESTORE POINT ----
 
-        for (RuleBranch s : r.children) {
+        RuleBranch[] children = r.children;
+        int branchingFactor = children.length;
+
+        //limit each branch to an equal fraction of the input power
+        Versioned<Integer> branchPower = match.branchPower;
+        branchPower.set( branchPower.get() / branchingFactor );
+        //System.out.println("    branch power: " + branchPower + " x " + branchingFactor);
+
+        for (RuleBranch s : children) {
             forEachRule(s, match);
             match.revert(now);
         }

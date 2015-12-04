@@ -17,11 +17,11 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
     private final int id;
 
     public Versioned(Versioning context) {
-        this(context, context.newValueStack());
+        this(context, context.newIntStack(), context.newValueStack());
     }
 
-    public Versioned(Versioning context, FasterList<X> value) {
-        super(value.capacity() /* capacity */);
+    public Versioned(Versioning context, int[] buffer, FasterList<X> value) {
+        super(buffer);
         this.context = context;
         this.value = value;
         this.id = context.track(this);
@@ -145,6 +145,11 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 
     }
 
+//    public int setInt(IntToIntFunction f) {
+//        Integer x = (Integer) get();
+//        Integer y = f.valueOf(x);
+//        set(y);
+//    }
 
     public X getIfAbsent(X valueIfMissing) {
         if (isEmpty()) return valueIfMissing;

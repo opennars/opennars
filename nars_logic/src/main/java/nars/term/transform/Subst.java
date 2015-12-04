@@ -5,7 +5,6 @@ import nars.nal.meta.TermPattern;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.truth.Truth;
 import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
 import nars.util.version.Versioning;
@@ -50,13 +49,16 @@ public abstract class Subst extends Versioning {
     /** parent, if in subterms */
     public final Versioned<Compound> parent;
 
-    public final Versioned<Integer> power;
 
-    public final VersionMap<Term,Term> secondary;
-    public final Versioned<Integer> occurrenceShift;
-    public final Versioned<Truth> truth;
-    public final Versioned<Character> punct;
-    public final Versioned<Term> derived;
+    /** unification power remaining in the current branch */
+    int power;
+
+    /** current power divisor which divides power to
+     *  limits the # of permutations
+     *  that can be tried, or the # of subterms that can be compared
+     */
+    int powerDivisor;
+
 
 
     public Subst(Random random, Op type) {
@@ -67,19 +69,10 @@ public abstract class Subst extends Versioning {
         yx = new VersionMap(this, new LinkedHashMap());
         term = new Versioned(this);
         parent = new Versioned(this);
-        power = new Versioned(this);
 
-        secondary = new VersionMap(this, new LinkedHashMap<>());
-        occurrenceShift = new Versioned(this);
-        truth = new Versioned(this);
-        punct = new Versioned(this);
-        derived = new Versioned(this);
     }
 
     public void clear() {
-//        term = null;
-//        parent = null;
-//        power = 0;
         revert(0);
     }
 
@@ -101,10 +94,6 @@ public abstract class Subst extends Versioning {
                 //"random:" + random +
                 ", power:" + power +
                 ", xy:" + xy +
-                (derived.get()!=null ? (", derived:" + derived) : "")+
-                (truth.get()!=null ? (", truth:" + truth) : "")+
-                (!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
-                (occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
                 ", yx:" + yx +
                 '}';
     }

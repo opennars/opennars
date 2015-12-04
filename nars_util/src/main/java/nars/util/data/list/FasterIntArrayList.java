@@ -11,6 +11,12 @@ public class FasterIntArrayList extends IntArrayList {
         super(initialCapacity);
     }
 
+    /** uses the int as a buffer; additions start at index 0 (unlike superclass's constructor) */
+    public FasterIntArrayList(int[] zeroCopyBuffer) {
+        super(zeroCopyBuffer);
+        this.size = 0;
+    }
+
     public final int[] array() {
         return items;
     }

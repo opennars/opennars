@@ -69,11 +69,12 @@ abstract public class Deriver  {
         }
     }
 
-    abstract protected void forEachRule(final RuleMatch match);
+    /** run an initialized rule matcher */
+    abstract protected void run(final RuleMatch matcher);
 
 
-    /** runs a ConceptProcess (premise) and supplies
-     *  a consumer with all resulting derived tasks.
+    /** initialize a rule matcher with a Premise to supply
+     *  a consumer with zero or more derived tasks.
      *  this method does not provide a way to stop or interrupt
      *  the process once it begins.
      */
@@ -81,9 +82,10 @@ abstract public class Deriver  {
         premise.memory().eventConceptProcess.emit((ConceptProcess)premise);
 
         RuleMatch m = RuleMatch.matchers.get();
+
         m.start(premise, t);
 
-        forEachRule(m);
+        run(m);
     }
 
 

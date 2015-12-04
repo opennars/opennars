@@ -9,11 +9,15 @@ import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
 import nars.task.Task;
+import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.version.VersionMap;
+import nars.util.version.Versioned;
 
+import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -22,6 +26,43 @@ import java.util.function.Consumer;
  * rule matching context, re-recyclable as thread local
  */
 public class RuleMatch extends FindSubst {
+
+
+
+
+    /** Global Context */
+    public Consumer<Task> receiver;
+
+
+    @Deprecated //reference to the rule should not be necessary when complete
+    public TaskRule rule;
+
+
+    /** current Premise */
+    public Premise premise;
+
+
+    /** unification power available at start of current branch */
+    public final Versioned<Integer> branchPower;
+
+    public final VersionMap<Term,Term> secondary;
+    public final Versioned<Integer> occurrenceShift;
+    public final Versioned<Truth> truth;
+    public final Versioned<Character> punct;
+    public final Versioned<Term> derived;
+
+    public RuleMatch(Random r) {
+        super(Op.VAR_PATTERN, r );
+
+        branchPower = new Versioned(this);
+
+        secondary = new VersionMap(this, new LinkedHashMap<>());
+        occurrenceShift = new Versioned(this);
+        truth = new Versioned(this);
+        punct = new Versioned(this);
+        derived = new Versioned(this);
+    }
+
 
     /**
      * thread-specific pool of RuleMatchers
@@ -32,23 +73,6 @@ public class RuleMatch extends FindSubst {
         return new RuleMatch(new XorShift1024StarRandom(1));
     });
 
-
-
-
-    /**
-     * Global Context
-     */
-    public Consumer<Task> receiver;
-
-
-    @Deprecated //reference to the rule should not be necessary when complete
-    public TaskRule rule;
-
-
-    /**
-     * Premise Context
-     */
-    public Premise premise;
 
     public Task derive(Task derived) {
         derived = premise.derive(derived);
@@ -66,12 +90,15 @@ public class RuleMatch extends FindSubst {
         return "RuleMatch:{" +
                 "premise:" + premise +
                 ", subst:" + super.toString() +
+                (derived.get()!=null ? (", derived:" + derived) : "")+
+                (truth.get()!=null ? (", truth:" + truth) : "")+
+                (!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
+                (occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
+                (branchPower.get()!=null ? (", derived:" + branchPower) : "")+
                 '}';
 
     }
-    public RuleMatch(Random r) {
-        super(Op.VAR_PATTERN, r );
-    }
+
 
     /**
      * set the next premise
@@ -87,10 +114,12 @@ public class RuleMatch extends FindSubst {
             p.getTermLink().getTerm()
         ) );
 
-        //scale unification power according to premise's mean priority linearly between min and max
-        this.power.set(
+        //set initial power which will be divided by branch
+        this.branchPower.set(
+            //LERP the power in min/max range by premise mean priority
             (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
-                    + Global.UNIFICATION_POWERmin) );
+                    + Global.UNIFICATION_POWERmin)
+        );
 
     }
 

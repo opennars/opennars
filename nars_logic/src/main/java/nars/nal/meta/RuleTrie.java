@@ -22,7 +22,7 @@ public class RuleTrie extends Deriver {
     private final Trie<List<PreCondition>, TaskRule> trie;
 
     @Override
-    protected void forEachRule(RuleMatch match) {
+    protected void run(RuleMatch match) {
         throw new RuntimeException("impl in subclass");
     }
 

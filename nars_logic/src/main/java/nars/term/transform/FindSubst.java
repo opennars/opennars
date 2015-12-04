@@ -391,7 +391,8 @@ public class FindSubst extends Subst implements Substitution {
      */
     @Override
     public final boolean next(final Term x, final Term y, int startPower) {
-        this.power.set( startPower );
+
+        setPower(startPower);
 
         boolean b = match(x, y);
 
@@ -407,11 +408,9 @@ public class FindSubst extends Subst implements Substitution {
     @Deprecated
     public final boolean next(final TermPattern x, final Term y, int startPower) {
 
-//        return next(x.term, y, startPower);
-
-        this.power.set( startPower );
-
         this.term.set(y);
+
+        setPower(startPower);
 
         for (PreCondition o : x.code) {
             if (!(o instanceof PatternOp)) continue;
@@ -420,6 +419,11 @@ public class FindSubst extends Subst implements Substitution {
         }
         return true;
 
+    }
+
+    private void setPower(int startPower) {
+        this.power = startPower;
+        this.powerDivisor = 1;
     }
 
     /**
@@ -595,43 +599,36 @@ public class FindSubst extends Subst implements Substitution {
      */
     public final boolean matchPermute(Compound x, Compound y) {
 
-        //final int len = x.size();
+        final int len = x.size();
 
-        //final int minAttempts = len; //heuristic assumption
-
+        /* heuristic: use the term size as the subset # of permutations to try */
 
         final ShuffleTermVector perm = new ShuffleTermVector(random, x);
+        int attempts = Math.min(perm.total(), powerDivided(len));
+
 
         int prePermute = now();
 
-        int power = this.power.get(); //here power represents the # of permutations that can be attempted
 
-        while (perm.hasNext() && (power > 0)) {
+
+        boolean matched = false;
+        while ((attempts-- > 0) && perm.hasNext()) {
 
             perm.next();
 
-            boolean matched = matchSequence(perm, y);
+            matched = matchSequence(perm, y);
 
             if (matched /*|| power <= 0*/) {
-                return true;
-            }
-            else {
-                //pop/restore
+                break;
+            } else {
                 revert(prePermute);
-
-                if (power < 0) {
-                    return false;
-                }
-
-                //else: continue on next permutation
             }
-
-            power--;
         }
 
+        powerRestore(len);
 
         //finished
-        return false;
+        return matched;
 
     }
 
@@ -656,7 +653,9 @@ public class FindSubst extends Subst implements Substitution {
         final int prePermute = now();
 
 
-        for (int i = 0; i < Math.min(ysize, this.power.get()); i++) {
+        int iterations = Math.min(ysize, (powerAvailable()));
+
+        for (int i = 0; i < iterations; i++) {
 
             int yi = (shuffle++) % ysize;
             Term y = Y.term(yi);
@@ -722,14 +721,54 @@ public class FindSubst extends Subst implements Substitution {
 
         final int yLen = Y.size();
 
+        if (!powerDividable(yLen))
+            return false;
+
+        boolean success = true;
         for (int i = 0; i < yLen; i++) {
             if (!match(X.term(i), Y.term(i))) {
-                return false;
+                success = false;
+                break;
             }
         }
 
+        powerRestore(yLen);
+
         //success
+        return success;
+    }
+
+
+
+    private boolean powerDividable(int factor) {
+        if (powerAvailable() < factor) return false;
+
+        powerDivide(factor);
+
         return true;
+    }
+    private void powerRestore(int factor) {
+        if (factor <= 0)
+            factor = 1; //HACK
+        this.powerDivisor = Math.max(1, this.powerDivisor / factor);
+    }
+    private void powerDivide(int factor) {
+        if (factor <= 0)
+            factor = 1; //HACK
+        this.powerDivisor = Math.max(1, this.powerDivisor * factor);
+    }
+
+    private int powerDivided(int factor) {
+        if (powerAvailable() < factor) return 0;
+
+        powerDivide(factor);
+
+        return powerAvailable();
+    }
+
+    private int powerAvailable() {
+        if (powerDivisor <= 0) powerDivisor = 1; //HACK
+        return power / powerDivisor;
     }
 
     @Override
