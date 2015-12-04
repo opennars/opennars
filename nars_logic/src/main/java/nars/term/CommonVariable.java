@@ -12,7 +12,7 @@ public class CommonVariable extends Variable  {
     private final Op type;
 
     CommonVariable(Op type, byte[] n) {
-        super(n, type.ordinal());
+        super(n, type);
         this.type = type;
     }
 

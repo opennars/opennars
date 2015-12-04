@@ -9,7 +9,7 @@ import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
 /** default Atom implementation */
-public class Atom extends AbstractUtf8Atom {
+public class Atom extends StringAtom {
 
 
     public static final Term Null = new InvisibleAtom("NULL");
@@ -18,16 +18,36 @@ public class Atom extends AbstractUtf8Atom {
     //private static final Map<String,Atom> atoms = Global.newHashMap();
 
 
-    public static int hash(byte[] id, int ordinal) {
-        return Util.ELFHashNonZero(id, Util.PRIME1 * (1+ordinal));
-        //return Util.WildPlasserHashNonZero(id, (1+ordinal));
+//    public static int hash(byte[] id, int ordinal) {
+//        return Util.ELFHashNonZero(id, Util.PRIME1 * (1+ordinal));
+//        //return Util.WildPlasserHashNonZero(id, (1+ordinal));
+//    }
+
+    /** TODO use a hash function equivalent to String's but without allocating a String */
+    @Deprecated public static int hash(byte[] id, int ordinal) {
+        return hash(new String(id).hashCode(), ordinal);
     }
+
+    public static int hash(String id, Op op) {
+        return hash(id.hashCode(), op);
+    }
+
+    public static int hash(int id, Op op) {
+        return hash(id, op.ordinal());
+    }
+
     public static int hash(int id, int ordinal) {
+        /* for Op.ATOM, we use String hashCode() as-is
+          avoiding need to calculate or store a
+          hash mutated by the Op (below) */
+        if (ordinal == Op.ATOM.ordinal())
+            return id;
+
         return Util.hashCombine(id, ordinal);
     }
 
     public Atom(byte[] n) {
-        super(n, Op.ATOM );
+        super( new String(n) );
     }
 
     public Atom(String n) {
@@ -128,6 +148,9 @@ public class Atom extends AbstractUtf8Atom {
 
     /** gets the atomic term given a name */
     public final static Atom the(final String name) {
+        //return Atom.the(Utf8.toUtf8(name));
+        return new Atom(name);
+
 //        int olen = name.length();
 //        switch (olen) {
 //            case 0:
@@ -142,7 +165,6 @@ public class Atom extends AbstractUtf8Atom {
 //                if (olen > Short.MAX_VALUE/2)
 //                    throw new RuntimeException("atom name too long");
 
-                return Atom.the(Utf8.toUtf8(name));
       //  }
     }
 

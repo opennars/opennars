@@ -33,10 +33,14 @@ import java.util.Map;
 /**
  * A variable term, which does not correspond to a concept
  */
-abstract public class Variable extends AbstractUtf8Atom {
+abstract public class Variable extends AbstractStringAtom {
 
-    protected Variable(final byte[] n, int ordinal) {
-        super(n, Atom.hash(n,ordinal));
+    protected Variable(final byte[] n) {
+        super(n);
+    }
+
+    protected Variable(final byte[] n, Op specificOp) {
+        super(n, specificOp);
     }
 
 //    Variable(final String name) {
@@ -163,7 +167,7 @@ abstract public class Variable extends AbstractUtf8Atom {
 
     public static final class VarDep extends Variable {
 
-        public VarDep(byte[] name)  { super(name, Op.VAR_DEPENDENT.ordinal());        }
+        public VarDep(byte[] name)  { super(name);        }
 
         @Override public final int structure() { return Op.VAR_DEPENDENT.bit();        }
 
@@ -179,7 +183,7 @@ abstract public class Variable extends AbstractUtf8Atom {
 
 
 
-        public VarIndep(byte[] name) { super(name, Op.VAR_INDEPENDENT.ordinal());         }
+        public VarIndep(byte[] name) { super(name);         }
 
         @Override public final int structure() {  return Op.VAR_INDEPENDENT.bit();        }
 
@@ -197,7 +201,7 @@ abstract public class Variable extends AbstractUtf8Atom {
 
 
 
-        public VarQuery(byte[] name) {  super(name, Op.VAR_QUERY.ordinal());         }
+        public VarQuery(byte[] name) {  super(name);         }
 
         @Override public final int structure() {  return Op.VAR_QUERY.bit();        }
 
@@ -215,7 +219,7 @@ abstract public class Variable extends AbstractUtf8Atom {
     public static class VarPattern extends Variable {
 
 
-        public VarPattern(byte[] name) {  super(name, Op.VAR_PATTERN.ordinal());         }
+        public VarPattern(byte[] name) {  super(name);         }
 
         @Override public final int structure() { return 0; } //Op.VAR_PATTERN.bit();        }
 

@@ -15,26 +15,26 @@ abstract public class AbstractUtf8Atom extends Atomic implements Byted, External
     private final byte[] id;
     private final int hash;
 
-    public AbstractUtf8Atom(String id, Op op) {
-        this(Utf8.toUtf8(id), op);
-    }
 
     public AbstractUtf8Atom(String id) {
-        this(Utf8.toUtf8(id));
+        this.id = Utf8.toUtf8(id);
+        this.hash = Atom.hash(
+            id.hashCode(), op().ordinal()
+        );
     }
+
     public AbstractUtf8Atom(byte[] id) {
         this.id = id;
         this.hash = Atom.hash(
-                this.id, op().ordinal()
+            id, op().ordinal()
         );
     }
-    public AbstractUtf8Atom(byte[] id, Op op) {
-        this(id, Atom.hash(id, op.ordinal() ));
-    }
-    public AbstractUtf8Atom(byte[] id, int hash) {
+
+    public AbstractUtf8Atom(byte[] id, Op specificOp) {
         this.id = id;
-        this.hash = hash;
+        this.hash = Atom.hash(id, specificOp.ordinal());
     }
+
 
     @Override
     public byte[] bytes() {
@@ -46,11 +46,22 @@ abstract public class AbstractUtf8Atom extends Atomic implements Byted, External
         return Utf8.fromUtf8toString(bytes());
     }
 
-    /**
-     * @param that The Term to be compared with the current Term
-     */
     @Override
-    public final int compareTo(final Object that) {
+    public boolean equals(final Object x) {
+        if (this == x) return true;
+
+        if (x instanceof Atomic) {
+            Atomic ax = (Atomic)x;
+            return Byted.equals(this, ax) && (op() == ax.op());
+        }
+        return false;
+    }
+
+    /**
+     * default implementation that uses bytes() as lowest common
+     * denominator of comparison
+     */
+    @Override public int compareTo(final Object that) {
         if (that==this) return 0;
 
         Term t = (Term)that;
@@ -59,29 +70,16 @@ abstract public class AbstractUtf8Atom extends Atomic implements Byted, External
 
         //if the op is the same, it will be a subclass of atom
         //which should have an ordering determined by its byte[]
-        return Byted.compare(this, (AbstractUtf8Atom)that);
+        return Byted.compare(this, (Atomic)that);
     }
 
-    @Override
-    public boolean equals(final Object x) {
-        if (this == x) return true;
-
-        if (x instanceof AbstractUtf8Atom) {
-            AbstractUtf8Atom ax = (AbstractUtf8Atom)x;
-            return Byted.equals(this, ax) && (op() == ax.op());
-        }
-        return false;
-    }
 
     @Override
     public final int hashCode() {
         return hash;
     }
 
-    @Override
-    public final void setBytes(byte[] b) {
-        throw new RuntimeException("immutable");
-    }
+
 
     @Override
     public final void writeExternal(ObjectOutput out) throws IOException {

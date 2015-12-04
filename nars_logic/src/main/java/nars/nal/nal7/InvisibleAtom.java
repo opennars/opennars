@@ -1,7 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.term.AbstractUtf8Atom;
+import nars.term.AbstractStringAtom;
 import nars.term.Term;
 import nars.term.transform.Substitution;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
  * representations.
  *
  */
-public class InvisibleAtom extends AbstractUtf8Atom {
+public class InvisibleAtom extends AbstractStringAtom {
 
     public InvisibleAtom(String id) {
         super(id);
@@ -34,7 +34,10 @@ public class InvisibleAtom extends AbstractUtf8Atom {
         return 0;
     }
 
-
+    @Override
+    public byte[] bytes() {
+        return new byte[0];
+    }
 
     @Override
     public final int structure() { return 0;     }

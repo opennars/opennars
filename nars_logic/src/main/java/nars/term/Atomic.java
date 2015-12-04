@@ -3,17 +3,20 @@ package nars.term;
 import nars.term.compile.TermIndex;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
+import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 
 
-public abstract class Atomic implements Term {
+public abstract class Atomic implements Term, Byted {
 
     @Override
     public final boolean containsTerm(Term t) {
         return false;
     }
+
+
 
 
     public final void rehash() {

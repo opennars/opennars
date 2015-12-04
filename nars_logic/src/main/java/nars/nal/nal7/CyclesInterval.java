@@ -42,6 +42,7 @@ final public class CyclesInterval extends InvisibleAtom implements Interval {
         return false;
     }
 
+
     @Override
     public final void append(Appendable output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc));//.append('/');

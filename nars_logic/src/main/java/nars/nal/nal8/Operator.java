@@ -1,13 +1,11 @@
 package nars.nal.nal8;
 
-import com.google.common.primitives.Bytes;
 import nars.Op;
-import nars.term.AbstractUtf8Atom;
 import nars.term.Atom;
+import nars.term.Atomic;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.Substitution;
-import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 
@@ -16,16 +14,16 @@ import java.io.IOException;
  * of an Operation
  * TODO inherit AbstractAtomic
  */
-public class Operator<T extends Term> extends AbstractUtf8Atom { //implements Term {
+public final class Operator<T extends Term> extends Atomic { //implements Term {
 
 
-    final static byte[] opPrefix = new byte[] { (byte)'^' };
+    //final static byte[] opPrefix = new byte[] { (byte)'^' };
 
     private final T term;
 
     public Operator(T the) {
-        super(Bytes.concat(opPrefix, the.bytes()),
-              Atom.hash(the.bytes(), Op.OPERATOR.ordinal()) );
+        super();
+
         this.term = the;
     }
 
@@ -65,20 +63,6 @@ public class Operator<T extends Term> extends AbstractUtf8Atom { //implements Te
         return 0;
     }
 
-    @Override
-    public boolean hasVarIndep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarDep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarQuery() {
-        return false;
-    }
 
 
     @Override
@@ -106,12 +90,15 @@ public class Operator<T extends Term> extends AbstractUtf8Atom { //implements Te
     @Override
     public StringBuilder toStringBuilder(boolean pretty) {
         //copied from Atomic.java:
-
-        StringBuilder sb = new StringBuilder();
-        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
-        return sb;
+        String tString = term.toString();
+        StringBuilder sb = new StringBuilder(tString.length()+1);
+        return sb.append('^').append(tString);
     }
 
+    @Override
+    public String toString() {
+        return '^' + term.toString();
+    }
 
     @Override
     public final Term substituted(Substitution s) {
@@ -135,6 +122,7 @@ public class Operator<T extends Term> extends AbstractUtf8Atom { //implements Te
     }
 
 
+
     @Override
     public final boolean equals(Object obj) {
         if (this == obj) return true;
@@ -146,4 +134,12 @@ public class Operator<T extends Term> extends AbstractUtf8Atom { //implements Te
         return term;
     }
 
+    @Override
+    public final int compareTo(Object o) {
+        if (o == this) return 0;
+        if (o instanceof Operator) {
+            return term.compareTo( ((Operator)o).term );
+        }
+        return 1;
+    }
 }

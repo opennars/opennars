@@ -78,7 +78,9 @@ public interface Byted {
 
     public byte[] bytes();
 
-    public void setBytes(byte[] b);
+    default void setBytes(byte[] b) {
+        throw new RuntimeException("immutable");
+    }
 
 
 }

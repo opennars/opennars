@@ -104,12 +104,47 @@ public class TermIDTest {
         return Arrays.toString(a.toCharArray()) + " != " + Arrays.toString(b.toCharArray());
     }
 
-    @Test public void testComparingStringAndUtf8Atoms() {
-
-        String id = "x";
-
-        Atom a = new Atom(id);
-        //AbstractStringAtom b = new AbstractStringAtom.StringAtom(id);
-
-    }
+//    @Test public void testComparingStringAndUtf8Atoms() {
+//        testStringUtf8Equal("x");
+//        testStringUtf8Equal("xy");
+//        testStringUtf8Equal("xyz");
+//        testTermInEqual(new StringAtom("x"), new Utf8Atom("y"));
+//        testTermInEqual($.$("$x"), new Utf8Atom("x"));
+//        testTermInEqual($.$("$x"), new StringAtom("x"));
+//    }
+//
+//    public void testStringUtf8Equal(String id) {
+//        StringAtom s = new StringAtom(id);
+//        Utf8Atom u = new Utf8Atom(id);
+//
+//        assertEquals(id, u.toString());
+//        assertEquals(id, s.toString());
+//        assertEquals(Op.ATOM, u.op());
+//
+//        testTermEqual(u, s);
+//        assertEquals(0, u.compareTo(s));
+//        assertEquals(0, s.compareTo(u));
+//        assertEquals(id.hashCode(), s.hashCode());
+//        assertEquals(u.hashCode(), s.hashCode());
+//
+//    }
+//
+//    public void testTermInEqual(Term u, Term s) {
+//
+//        int us = u.compareTo(s);
+//        assertNotEquals(0, us);
+//        assertEquals(-us, s.compareTo(u));
+//        assertNotEquals(u.hashCode(), s.hashCode());
+//
+//    }
+//    public void testTermEqual(Term u, Term s) {
+//
+//        assertEquals(u.op(), s.op());
+//
+//        assertEquals(u.hashCode(), s.hashCode());
+//
+//        assertEquals(u, s);
+//
+//
+//    }
 }
