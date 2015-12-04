@@ -6,13 +6,11 @@ import nars.$;
 import nars.nal.nal4.InvisibleProduct;
 import nars.nal.nal7.InvisibleAtom;
 import nars.nal.nal7.Sequence;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.term.transform.Subst;
 import nars.util.utf8.Utf8;
 
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -78,24 +76,31 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     }
 
     public static int numUnmatchedEllipsis(Compound x, Subst ff) {
-        int n = 0;
+
         int xs = x.size();
+
+        Map<Term, Term> xy = ff.xy;
+        if (xy.isEmpty()) {
+            //map is empty so return total # ellipsis
+            return countEllipsisSubterms(x);
+        }
+
+        int n = 0;
         for (int i = 0; i < xs; i++) {
             Term xt = x.term(i);
             if (xt instanceof Ellipsis) {
-                if (!ff.xy.containsKey(xt))
+                if (!xy.containsKey(xt))
                     n++;
             }
         }
         return n;
     }
 
-    public static int countEllipsisSubterms(Compound x) {
+    public static int countEllipsisSubterms(TermContainer x) {
         final int xs = x.size();
         int n = 0;
         for (int i = 0; i < xs; i++) {
-            Term xt = x.term(i);
-            if (xt instanceof Ellipsis)
+            if (x.term(i) instanceof Ellipsis)
                 n++;
         }
         return n;

@@ -66,7 +66,7 @@ public class Windget extends DefaultWindow {
         TriangleEdge dragging = null;
 
         public RectPort(Windget win, boolean incoming, double rx, double ry, double w, double h) {
-            super(rx * win.getWidth(), ry * win.getHeight(), w, h);
+            super(rx * win.content.getWidth(), ry * win.content.getHeight(), w, h);
             this.win = win;
 
             setFill(Color.ORANGE);
@@ -385,10 +385,10 @@ public class Windget extends DefaultWindow {
     }
 
     public final double getCenterX() {
-        return getLayoutX() + getWidth()/2d;
+        return getLayoutX() + content.getWidth()/2d;
     }
     public final double getCenterY() {
-        return getLayoutY() + getHeight()/2d;
+        return getLayoutY() + content.getHeight()/2d;
     }
     public final void move(final ArrayRealVector centerPosition) {
         double x = centerPosition.getEntry(0);

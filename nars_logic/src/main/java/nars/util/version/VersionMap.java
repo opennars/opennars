@@ -1,9 +1,9 @@
 package nars.util.version;
 
+import nars.Global;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
 import java.util.AbstractMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -15,7 +15,10 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     private final Map<X, Versioned<Y>> map;
 
     public VersionMap(Versioning context) {
-        this(context, new LinkedHashMap<>());
+        this(context,
+                //new LinkedHashMap<>()
+                Global.newHashMap()
+        );
     }
 
     public VersionMap(Versioning context, Map<X, Versioned<Y>/*<Y>*/> map) {
@@ -29,7 +32,12 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         return map.containsKey(key);
     }
 
-//    @Override
+    @Override
+    public Set<X> keySet() {
+        return map.keySet();
+    }
+
+    //    @Override
 //    public final void forEach(BiConsumer<? super X, ? super Y> action) {
 //        map.forEach((BiConsumer<? super X, ? super Versioned<Y>>) action);
 //    }
@@ -80,6 +88,17 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         return e;
     }
 
+    @Override
+    public void putAll(Map<? extends X, ? extends Y> m) {
+        if (m instanceof VersionMap) {
+            VersionMap<X,Y> o = (VersionMap)m;
+            o.map.forEach((k,v) -> put(k, v.get()));
+        }
+        else {
+            //default
+            super.putAll(m);
+        }
+    }
 
     /**
      * records an assignment operation

@@ -80,7 +80,7 @@ public class ThermostatTest2 {
 
         final int dur = 5;
 
-        Default2 n = new Default2(1024, 2, 2, 3);
+        Default2 n = new Default2(1024, 8, 2, 3);
         n.memory.duration.set(dur);
         n.getInput().inputPerCycle.set(2);
 

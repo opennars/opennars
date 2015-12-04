@@ -52,6 +52,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
 
         SpaceGrapher<Concept, TermNode<Concept>> sg = this.grapher;
+        if (sg == null) return; //???
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
 

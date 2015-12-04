@@ -210,7 +210,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public String toString() {
-            return "imdex=" + index;
+            return "imdex:" + index;
         }
     }
 
@@ -233,7 +233,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
-            ff.setPower(ff.branchPower.get());
+            ff.setPower(ff.branchPower.get()); //HACK
             return ff.match(x, ff.term.get());
         }
 
@@ -299,23 +299,25 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //    }
 
-//    /**
-//     * pop out to parent
-//     */
-//    public static final PatternOp Superterm = new PatternOp() {
-//
-//        @Override
-//        public String toString() {
-//            return "Super";
-//        }
-//
-//        @Override
-//        public boolean run(Subst ff) {
-//            ff.term.set( ff.parent );
-//            ff.parent.set( null );
-//            return true;
-//        }
-//    };
+    /**
+     * pop out to parent
+     */
+    public static final PatternOp Superterm = new PatternOp() {
+
+        @Override
+        public String toString() {
+            return "Super";
+        }
+
+        @Override
+        public boolean run(Subst ff) {
+
+            ff.term.set( ff.parent.get() );
+            ff.parent.set( null );
+            return true;
+        }
+    };
+
 
     /** selects the ith sibling subterm of the current parent */
     public static final class Subterm extends PatternOp {
@@ -327,17 +329,35 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public final boolean run(Subst f) {
-            Term pp = f.parent.get().term(index);
-            if (pp == null)
-                throw new RuntimeException("null subterm");
-
-            f.term.set( pp );
+            f.goSubterm(index);
             return true;
         }
 
         @Override
         public String toString() {
             return "s(" + index + ")"; //s for subterm and sibling
+        }
+    }
+
+    /** sets the term to its parent, and the parent to a hardcoded value (its parent) */
+    public static final class ParentTerm extends PatternOp {
+        public final Compound parent;
+
+        public ParentTerm(Compound parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public final boolean run(Subst f) {
+            f.term.set(f.parent.get());
+            f.parent.set(this.parent);
+
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "parent(" + parent + ")"; //s for subterm and sibling
         }
     }
 

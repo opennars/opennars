@@ -7,11 +7,12 @@ import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.stage.Stage;
-import nars.guifx.IOPane;
+import nars.$;
 import nars.guifx.Spacegraph;
+import nars.guifx.terminal.Console;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
-import nars.nar.Default;
+import za.co.knonchalant.builder.POJONode;
 
 
 public class RunSpacegraph extends Application {
@@ -36,11 +37,9 @@ public class RunSpacegraph extends Application {
             chart.setTitle("Invasive Species");
             chart.setCacheHint(CacheHint.SPEED);
 
-            Windget cc = new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100);
-            cc.addOverlay(new Windget.RectPort(cc, true, +1, -1, 30, 30));
+            //cc.addOverlay(new Windget.RectPort(cc, true, +1, -1, 30, 30));
 
-            Windget wc = new Windget("Chart", chart, 400, 400);
-            wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
+            //wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
 
 
             //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
@@ -71,20 +70,26 @@ public class RunSpacegraph extends Application {
 //            wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
 
 
-
-
-
-
-            IOPane np = new IOPane(new Default());
-
-            Windget nd = new Windget("NAR",
-                    np, 200, 200
-            ).move(-200,300);
-
-            setNodes(
-                    wc,
-                    cc, nd
+            addNodes(
+                new Windget("Chart", chart, 400, 400),
+                new Windget("Edit", new CodeInput("ABC"), 300, 200)
+                        .move(-100,-100),
+                    new Windget("Console", new Console(), 300, 200)
+                            .move(300,-100)
+                //new Windget("NAR",
+                    //new IOPane(new Default2(512,8,4,2)), 200, 200).move(-200,300)
             );
+
+            for (int i = 0; i < 4; i++) {
+                addNodes( new Windget("x" + i,
+                        POJONode.build(
+                        //new POJOPane(
+                                $.$("<a --> " + i + ">"))) );
+            }
+
+            //new HyperOrganicLayout().run(this, 10);
+
+            ground.getChildren().add(new GridCanvas(true));
 
         }
     }

@@ -41,6 +41,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -60,7 +61,7 @@ import jfxtras.util.NodeUtil;
  *
  * @author Michael Hoffer &lt;info@michaelhoffer.de&gt;
  */
-public class DefaultWindow extends BorderPane implements SelectableNode {
+public class DefaultWindow extends Group implements SelectableNode {
 
     private double mouseX;
     private double mouseY;
@@ -151,7 +152,7 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
      * Selectable property (defines whether this window is selectable.
      */
     private final BooleanProperty selectableProperty = new SimpleBooleanProperty(true);
-
+    public BorderPane content;
 
 
     public DefaultWindow(String title) {
@@ -556,10 +557,13 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
 
     private void init2() {
 
+        content = new BorderPane();
 
-        setCenter(root);
+        getChildren().add(content);
 
-        setTop(titleBar);
+        content.setCenter(root);
+
+        content.setTop(titleBar);
 
 
 
@@ -694,7 +698,7 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
                 double width = bil.getMaxX() - bil.getMinX();
                 double height = bil.getMaxY() - bil.getMinY();
 
-                Insets insets = getInsets();
+                Insets insets = content.getInsets();
                 if (RESIZE_TOP) {
 //                        System.out.println("TOP");
 
@@ -705,11 +709,11 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
                             + insetOffset
                             - event.getSceneY() / parentScaleY;
 
-                    double newHeight = this.getPrefHeight() + yDiff;
+                    double newHeight = content.getPrefHeight() + yDiff;
 
                     if (newHeight > this.minHeight(0)) {
-                        this.setLayoutY(this.getLayoutY() - yDiff);
-                        this.setPrefHeight(newHeight);
+                        content.setLayoutY(this.getLayoutY() - yDiff);
+                        content.setPrefHeight(newHeight);
                     }
                 }
                 Pane cp = root;
@@ -722,12 +726,12 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
                             + insetOffset
                             - event.getSceneX() / parentScaleX;
 
-                    double newWidth = this.getPrefWidth() + xDiff;
+                    double newWidth = content.getPrefWidth() + xDiff;
 
                     if (newWidth > Math.max(this.minWidth(0),
                             cp.minWidth(0))) {
-                        this.setLayoutX(this.getLayoutX() - xDiff);
-                        this.setPrefWidth(newWidth);
+                        content.setLayoutX(this.getLayoutX() - xDiff);
+                        content.setPrefWidth(newWidth);
                     } else {
                         //
                     }
@@ -747,7 +751,7 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
                             newHeight, this.minHeight(0));
 
                     if (newHeight < this.maxHeight(0)) {
-                        this.setPrefHeight(newHeight);
+                        content.setPrefHeight(newHeight);
                     }
                 }
                 if (RESIZE_RIGHT) {
@@ -762,10 +766,10 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
                     newWidth = Math.max(
                             newWidth,
                             Math.max(cp.minWidth(0),
-                            this.minWidth(0)));
+                            content.minWidth(0)));
 
                     if (newWidth < this.maxWidth(0)) {
-                        this.setPrefWidth(newWidth);
+                        content.setPrefWidth(newWidth);
                     }
                 }
             }
@@ -793,7 +797,7 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
 
             final Node n = this;
             final Bounds lb = n.getLayoutBounds();
-            final Insets insets = getInsets();
+            final Insets insets = content.getInsets();
 
             Transform lp = n.getParent().localToSceneTransformProperty().getValue();
             final double parentScaleX = lp.getMxx();

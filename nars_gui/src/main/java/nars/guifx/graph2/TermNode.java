@@ -1,10 +1,10 @@
 package nars.guifx.graph2;
 
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import nars.Global;
 import nars.Op;
 import nars.concept.Concept;
+import nars.guifx.graph2.layout.GraphNode;
 import nars.guifx.util.ColorMatrix;
 import nars.term.Term;
 import nars.term.Termed;
@@ -15,17 +15,17 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class TermNode<K extends Termed> extends Group {
+public class TermNode<K extends Termed> extends GraphNode {
 
 
     public static final TermNode[] empty = new TermNode[0];
+
 
     final public Map<K, TermEdge> edge;
 
     /**
      * copy of termedge values for fast iteration during rendering
      */
-    TermEdge[] edges = TermEdge.empty;
     boolean modified = false;
 
     public final K term;
@@ -34,18 +34,14 @@ public class TermNode<K extends Termed> extends Group {
     public double priNorm = 0;
 
     public Concept c = null;
+    private TermEdge[] edges;
 
     /*
     DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();
     DoubleSummaryReusableStatistics taskLinkStat = new DoubleSummaryReusableStatistics();
     */
 
-    /**
-     * cached from last set
-     */
-    private double scaled = 0.0;
-    private double tx = 0.0;
-    private double ty = 0.0;
+
 
 
 
@@ -57,8 +53,6 @@ public class TermNode<K extends Termed> extends Group {
 
         edge = new FixedLinkedHashMap<>(maxEdges);
 
-        setManaged(false);
-        setPickOnBounds(true);
 
         this.term = t;
 
@@ -102,90 +96,6 @@ public class TermNode<K extends Termed> extends Group {
 //
 //    }
 
-    public void scale(double scale) {
-        this.scaled = scale;
-
-
-        setScaleX(scale);
-        setScaleY(scale);
-
-        //float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
-            /*base.setFill(NARGraph.vis.get().getVertexColor(priNorm, conf));*/
-
-        //setOpacity(0.75f + 0.25f * vertexScale);
-
-        //System.out.println(scale + " " + vertexScale + " " + (int)(priorityDisplayedResolution * vertexScale));
-    }
-
-
-    public final void getPosition(final double[] v) {
-        v[0] = tx;
-        v[1] = ty;
-    }
-
-    //Point2D sceneCoord;// = new Point2D(0,0);
-
-    final public TermNode move(final double x, final double y) {
-        setTranslateX(this.tx = x);
-        setTranslateY(this.ty = y);
-
-        //sceneCoord = null;
-        return this;
-    }
-
-    final public void move(final double[] v, final double speed, final double threshold) {
-        move(v[0], v[1], speed, threshold);
-    }
-    final public void move(final double v0, final double v1, final double speed, final double threshold) {
-        final double px = tx;
-        final double py = ty;
-        final double momentum = 1f - speed;
-        final double nx = v0 * speed + px * momentum;
-        final double ny = v1 * speed + py * momentum;
-        final double dx = Math.abs(px - nx);
-        final double dy = Math.abs(py - ny);
-        if ((dx > threshold) || (dy > threshold)) {
-            move(nx, ny);
-        }
-    }
-
-    final public boolean move(final double[] v, final double threshold) {
-        final double x = tx;
-        final double y = ty;
-        final double nx = v[0];
-        final double ny = v[1];
-        if (!((Math.abs(x - nx) < threshold) && (Math.abs(y - ny) < threshold))) {
-            move(nx, ny);
-            return true;
-        }
-        return false;
-    }
-
-    public final double width() {
-        return scaled; //getScaleX();
-    }
-
-    public final double height() {
-        return scaled; //getScaleY();
-    }
-
-//    public double sx() {
-//        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
-//        return sceneCoord.getX();
-//    }
-//
-//    public double sy() {
-//        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
-//        return sceneCoord.getY();
-//    }
-
-    public final double x() {
-        return tx;
-    }
-
-    public final double y() {
-        return ty;
-    }
 
     public final TermEdge putEdge(K b, TermEdge e) {
         TermEdge r = edge.put(b, e);
@@ -223,9 +133,7 @@ public class TermNode<K extends Termed> extends Group {
 
 
 
-    public boolean visible() {
-        return isVisible() && getParent()!=null;
-    }
+
 
     public static Color getTermColor(Termed term, ColorMatrix colors, double v) {
         return colors.get(

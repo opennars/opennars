@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.nal4.Image;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
@@ -85,7 +86,26 @@ public class TermPattern {
 
             code.add(new FindSubst.TermStructure(type, x.structure()));
 
-            code.add(new FindSubst.MatchTerm(x));
+            if (x instanceof Image) {
+                code.add(new FindSubst.ImageIndexEquals(
+                        ((Image)x).relationIndex)); //TODO varargs with greaterEqualSize etc
+            }
+
+            //if (!x.isCommutative() && Ellipsis.countEllipsisSubterms(x)==0) {
+                //ACCELERATED MATCH allows folding of common prefix matches between rules
+
+
+
+                //at this point we are certain that the compound itself should match
+                //so we proceed with comparing subterms
+
+                //TODO
+                //compileCompoundSubterms((Compound)x, code);
+            //}
+            //else {
+                //DEFAULT DYNAMIC MATCH (should work for anything)
+                code.add(new FindSubst.MatchTerm(x));
+            //}
             //code.add(new FindSubst.MatchCompound((Compound)x));
 
         } else {
@@ -102,6 +122,22 @@ public class TermPattern {
 
     }
 
+    /** compiles a match for the subterms of an ordered, non-commutative compound */
+    private void compileCompoundSubterms(Compound x, List<PreCondition> code) {
+
+        //TODO
+        //1. test equality. if equal, then skip past the remaining tests
+        //code.add(FindSubst.TermEquals);
+
+        code.add(FindSubst.Subterms);
+
+        for (int i = 0; i < x.size(); i++)
+            matchSubterm(x, i, code); //eventually this will be fully recursive and can compile not match
+
+        code.add(new FindSubst.ParentTerm(x)); //return to parent/child state
+
+    }
+
     private void compileTaskBeliefPair(TaskBeliefPair x, List<PreCondition> code) {
         //when derivation begins, frame's parent will be set to the TaskBeliefPair so that a Subterm code isnt necessary
         compileSubterm(x, 0, code);
@@ -113,6 +149,10 @@ public class TermPattern {
         Term xi = x.term(i);
         code.add(new FindSubst.Subterm(i));
         compile(xi, code);
+    }
+    private void matchSubterm(Compound x, int i, List<PreCondition> code) {
+        code.add(new FindSubst.Subterm(i));
+        code.add(new FindSubst.MatchTerm(x.term(i)));
     }
 
 //    private void compileCompound(Compound<?> x, List<PreCondition> code) {

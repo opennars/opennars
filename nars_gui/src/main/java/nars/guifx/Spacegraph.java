@@ -21,12 +21,15 @@ import nars.guifx.util.ZoomFX;
 import java.util.Collection;
 import java.util.function.Function;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * Created by me on 8/2/15.
  */
 public class Spacegraph extends ZoomFX {
 
     static final String spacegraphCSS = Spacegraph.class.getResource("spacegraph.css").toExternalForm();
+
 
     //private final GridCanvas grid = null;
 
@@ -75,12 +78,13 @@ public class Spacegraph extends ZoomFX {
     public class GridCanvas extends Canvas {
 
         private final boolean drawSharpLines;
-        final Color c = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+        final Color c = new Color(0.8f, 0.3f, 0.3f, 0.8f);
 
         public GridCanvas(boolean drawSharpLines) {
-            super();
+            super(1000,1000);
             this.drawSharpLines = drawSharpLines;
             setMouseTransparent(true);
+            runLater(this::update);
         }
 
         final double minScale = 30;
@@ -142,6 +146,7 @@ public class Spacegraph extends ZoomFX {
 
     }
 
+
     public static Spacegraph getSpace(final Node n) {
         Node p = n;
         while ((p = p.getParent())!=null) {
@@ -155,8 +160,16 @@ public class Spacegraph extends ZoomFX {
         return ((int) y) + .5;
     }
 
+    public final Group bg = new Group();
+
+    public final Group ground = new Group();
+
     //public final Group edges = new Group();
     public final Group verts = new Group();
+
+    public final Group sky = new Group();
+
+    public final Group hud = new Group();
 
 
 
@@ -164,7 +177,7 @@ public class Spacegraph extends ZoomFX {
         super();
 
         //setCacheShape(false);
-        //getChildren().add(0, grid = new GridCanvas(true));
+        //getChildren().add(0, new GridCanvas(true));
 
 //        verts.maxWidth(Double.MAX_VALUE);
 //        verts.maxHeight(Double.MAX_VALUE);
@@ -178,7 +191,11 @@ public class Spacegraph extends ZoomFX {
 
 
 
-        content().addAll(/*edges,*/verts);
+        getChildren().add( 0, bg );
+        content().addAll( ground, /*edges,*/verts, sky);
+        getChildren().add( hud );
+
+
 
         //verts.setAutoSizeChildren(false);
         //edges.setAutoSizeChildren(false);
@@ -220,6 +237,7 @@ public class Spacegraph extends ZoomFX {
     public Scene newScene(double width, double height) {
         Scene s = new Scene(this, width, height);
         s.getStylesheets().add(Spacegraph.spacegraphCSS);
+        s.getStylesheets().add(NARfx.css);
         return s;
     }
     public SubScene newSubScene(double width, double height) {

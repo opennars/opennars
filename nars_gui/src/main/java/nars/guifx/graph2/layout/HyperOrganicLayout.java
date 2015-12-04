@@ -397,14 +397,20 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 //		return false;
 //	}
 
+	@Override public void run(SpaceGrapher graph, int iterations) {
+		run(graph.displayed, iterations);
+	}
+
+//	public void run(Parent p, int iterations) {
+//		ObservableList<Node> c = p.getChildrenUnmodifiable();
+//		run(c.toArray(new Node[c.size()]), iterations);
+//	}
+
+	public void run(GraphNode[] nodes, int iterations) {
 
 
-	@Override
-	public void run(SpaceGrapher graph, int iterations) {
-
-
-		TermNode[] vertexSet =  graph.displayed;
-		TermNode[] vertices = vertexSet;
+		GraphNode[] vertexSet =  nodes;
+		GraphNode[] vertices = vertexSet;
 
 		//HashSet<Object> vertexSet = new HashSet<Object>(Arrays.asList(vertices));
 
@@ -523,7 +529,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
         final List<CellWrapper<TermEdge>> e = this.e;
 		e.clear();
 
-        for (TermNode vi : vertices) {
+        for (GraphNode vi : vertices) {
 			if (vi == null)
 				continue;
             TermEdge[] eii = vi.getEdges();
@@ -607,7 +613,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		/*try
 		{*/
 			for (int i = 0; i < vertices.length; i++) {
-				TermNode vertice = vertices[i];
+				GraphNode vertice = vertices[i];
 				if (vertice!=null) {
 					float[] ri = result[i];
 					vertice.move(ri[0], ri[1], vertexSpeed, vertexMotionThreshold);
@@ -623,7 +629,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 	Rectangle2D.Float unit = new Rectangle2D.Float(-32f,-32f,32f,32f);
 
-	private Rectangle2D.Float getVertexBounds(TermNode vertice) {
+	private Rectangle2D.Float getVertexBounds(GraphNode vertice) {
 		return unit;
 	}
 

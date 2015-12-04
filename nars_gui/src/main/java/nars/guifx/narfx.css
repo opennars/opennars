@@ -157,7 +157,7 @@
 
 .windget {
 
-    -fx-border-width: 8px 8px 8px 8px;
+    -fx-border-width: 4px 4px 4px 4px;
     -fx-border-color: transparent;
 
     -fx-background-color: rgb(75,75,75) !important;

@@ -10,6 +10,7 @@ import nars.util.version.Versioned;
 import nars.util.version.Versioning;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -40,8 +41,8 @@ public abstract class Subst extends Versioning {
 
     //public abstract Term resolve(Term t, Substitution s);
 
-    public final VersionMap<Term,Term> xy;
-    public final VersionMap<Term,Term> yx;
+    public final Map<Term,Term> xy;
+    public final Map<Term,Term> yx;
 
     /** current "y"-term being matched against */
     public final Versioned<Term> term;
@@ -60,6 +61,7 @@ public abstract class Subst extends Versioning {
      *  that can be tried, or the # of subterms that can be compared
      */
     int powerDivisor;
+
 
 
 
@@ -109,4 +111,10 @@ public abstract class Subst extends Versioning {
 
 
 
+    public final void goSubterm(int index) {
+        Term pp = parent.get().term(index);
+        /*if (pp == null)
+            throw new RuntimeException("null subterm");*/
+        term.set( pp );
+    }
 }

@@ -58,7 +58,6 @@ public class SubstituteIfUnified extends Substitute {
 
         final boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
-
             m.secondary.putAll(sub.xy);
             result = true;
         }
