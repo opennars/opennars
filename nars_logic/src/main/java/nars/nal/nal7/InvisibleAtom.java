@@ -1,8 +1,8 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.term.MutableAtomic;
 import nars.term.Term;
+import nars.term.Utf8Atom;
 import nars.term.transform.Substitution;
 
 import java.io.IOException;
@@ -14,11 +14,8 @@ import java.io.IOException;
  *
  * TODO make ImmutableAtom
  */
-public abstract class InvisibleAtom extends MutableAtomic {
+public abstract class InvisibleAtom extends Utf8Atom {
 
-    public InvisibleAtom() {
-        super();
-    }
     public InvisibleAtom(String id) {
         super(id);
     }

@@ -7,10 +7,10 @@ import nars.term.transform.Substitution;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
-public class Atom extends ImmutableAtom  {
+public class Atom extends Utf8Atom {
 
     final static byte[] NullName = new byte[0];
-    public static final Term Null = new MutableAtomic(NullName) {
+    public static final Term Null = new Utf8Atom(NullName) {
 
         @Override public String toString() {
             return "NULL";
@@ -93,7 +93,7 @@ public class Atom extends ImmutableAtom  {
     }
 
     public Atom(byte[] n) {
-        super(n, Atom.hash(n, Op.ATOM.ordinal() ));
+        super(n, Op.ATOM );
     }
 
     public Atom(String n) {

@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * A variable term, which does not correspond to a concept
  */
-abstract public class Variable extends ImmutableAtom {
+abstract public class Variable extends Utf8Atom {
 
     protected Variable(final byte[] n, int ordinal) {
         super(n, Atom.hash(n,ordinal));

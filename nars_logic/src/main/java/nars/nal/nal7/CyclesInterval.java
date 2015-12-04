@@ -1,8 +1,5 @@
 package nars.nal.nal7;
 
-import nars.Op;
-import nars.term.Atom;
-
 import java.io.IOException;
 
 /**
@@ -29,13 +26,13 @@ final public class CyclesInterval extends InvisibleAtom implements Interval {
     }
 
     protected CyclesInterval(int numCycles) {
-        super(); //interval(numCycles, bytesPrecision));
+        super("/" + numCycles); //interval(numCycles, bytesPrecision));
 
         if (numCycles < 0)
             throw new RuntimeException("cycles must be >= 0");
 
         this.cyc = numCycles;
-        this.hash = Atom.hash(numCycles, Op.INTERVAL.ordinal());
+
     }
 
     public boolean equals(Object o) {

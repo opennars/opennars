@@ -2,10 +2,10 @@ package nars.nal.nal8;
 
 import com.google.common.primitives.Bytes;
 import nars.Op;
-import nars.term.AbstractAtomic;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Utf8Atom;
 import nars.term.transform.Substitution;
 import nars.util.utf8.Utf8;
 
@@ -16,24 +16,17 @@ import java.io.IOException;
  * of an Operation
  * TODO inherit AbstractAtomic
  */
-public class Operator<T extends Term> extends AbstractAtomic { //implements Term {
+public class Operator<T extends Term> extends Utf8Atom { //implements Term {
 
 
     final static byte[] opPrefix = new byte[] { (byte)'^' };
 
     private final T term;
-    private final int hash;
-
-    private transient final byte[] bytes;
 
     public Operator(T the) {
-        super();
-
-
-
+        super(Bytes.concat(opPrefix, the.bytes()),
+              Atom.hash(the.bytes(), Op.OPERATOR.ordinal()) );
         this.term = the;
-        this.bytes = Bytes.concat(opPrefix, the.bytes());
-        this.hash = Atom.hash(term.bytes(), Op.OPERATOR.ordinal());
     }
 
     @Override
@@ -100,11 +93,6 @@ public class Operator<T extends Term> extends AbstractAtomic { //implements Term
     }
 
     @Override
-    public void setBytes(byte[] b) {
-
-    }
-
-    @Override
     public int getByteLen() {
         return 1 + term.getByteLen();
     }
@@ -158,11 +146,6 @@ public class Operator<T extends Term> extends AbstractAtomic { //implements Term
         if (this == obj) return true;
         Term t = (Term)obj;
         return (t.op() == Op.OPERATOR) && term.equals(((Operator)t).term);
-    }
-
-    @Override
-    public final int hashCode() {
-        return hash;
     }
 
     public final Term identifier() {
