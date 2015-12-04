@@ -1,6 +1,7 @@
 package nars.term.transform;
 
 import com.gs.collections.impl.factory.Sets;
+import nars.$;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
@@ -108,28 +109,24 @@ public class CompiledUnificationTest extends UnificationTest {
     }
 
 
-    boolean permuteTest(int seed, String s1, String s2, int startPower) {
+    Subst permuteTest(int seed, TermPattern tp, Term t2, int startPower) {
 
         Op type = Op.VAR_PATTERN;
-        NAR nar = test().nar;
-
-        Global.DEBUG = true;
-        nar.believe(s1);
-        nar.believe(s2);
-        nar.frame(2);
-
-        Term t1 = nar.concept(s1).getTerm();
-        Term t2 = nar.concept(s2).getTerm();
-
+//        NAR nar = test().nar;
+//
+//        Global.DEBUG = true;
+//        nar.believe(s1);
+//        nar.believe(s2);
+//        nar.frame(2);
 
         final XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
 
-        TermPattern tp = new TermPattern(type, t1);
+
 
         FindSubst subst = new FindSubst(type, rng);
         boolean subbed = subst.next(tp, t2, startPower);
 
-        //System.out.println(t1 + " " + t2 + "\n\tXY: " + subst.xy + "\n\tYX: " + subst.yx);
+        //System.out.println(tp.term + " " + t2 + "\n\tXY: " + subst.xy + "\n\tYX: " + subst.yx);
         //System.out.println("\tsuccess: " + subbed);
 
         //int powerLoss = startPower - subst.branchPower.get();
@@ -141,49 +138,82 @@ public class CompiledUnificationTest extends UnificationTest {
 
 
 
-        return subbed;
+        if (subbed) return subst;
+        return null;
     }
 
-    void permuteTest(String s1, String s2) {
+    Set<String> permuteTest(String s1, String s2, int expectedPermutations) {
 
-        for (int p = 16; p < 1024; p+=10) {
+        Term t1 = $.$(s1);
+        Term t2 = $.$(s2);
+        TermPattern tp = new TermPattern(Op.VAR_PATTERN, t1);
+
+        Set<String> found = Global.newHashSet(expectedPermutations);
+
+        for (int p = 1; p < t1.volume()*t1.volume()*8; p+=1) {
             int success = 0, tries = 0;
             for (int s = 1; s<16; s++) {
-                boolean valid = permuteTest(s, s1, s2, p);
-                if (valid) success++;
+                Subst r = permuteTest(s, tp, t2, p);
+                if (r!=null) {
+                    found.add(r.xy.toString());
+                    success++;
+                }
                 tries++;
             }
-            System.out.println(p + ":\t" + ( ((double)success)/tries) );
+            //System.out.println(p + ":\t" + ( ((double)success)/tries) );
         }
+
+        System.out.println(found);
+        assertEquals(expectedPermutations, found.size());
+        return found;
     }
 
     @Test public void testPermutationPowerA() {
-        permuteTest(
+        Set<String> r = permuteTest(
                 "<{%1,%2} <-> {a,b}>",
-                "<{c,d} <-> {a,b}>");
+                "<{c,d} <-> {a,b}>", 2);
+        assertEquals("[{%2=c, %1=d}, {%1=c, %2=d}]", r.toString());
     }
 
     @Test public void testPermutationPowerB() {
+        //combination of 4
         permuteTest(
                 "<{%1,%2,%3,%4} <-> {a,%1,%4,%2,%3}>",
-                "<{b,d,e,c} <-> {a,b,c,d,e}>");
+                "<{b,d,e,c} <-> {a,b,c,d,e}>", 12);
+    }
+    @Test public void testPermutationPowerC() {
+        //one permutation, determined by the product
+        permuteTest(
+                "<{%1,%2,%3,%4} <-> (a,%1,%4,%2,%3)>",
+                "<{b,d,e,c} <-> (a,b,c,d,e)>", 1);
     }
 
 
-    @Test public void testPermutationPower1() {
+//    @Test public void testPermutationPower1() {
+//        permuteTest(
+//                "<{%1,%2} <-> {a,b,%1,%2,e,f,g,h}>",
+//                "<{c,d} <-> {a,b,c,d,e,f,g,h}>");
+//    }
+//
+    @Test public void testPermutationPowerEmbedded2() {
         permuteTest(
-                "<{%1,%2} <-> {a,b,%1,%2,e,f,g,h}>",
-                "<{c,d} <-> {a,b,c,d,e,f,g,h}>");
-    }
-
-    @Test public void testPermutationPower2() {
-        permuteTest(
-                "<{%2,%1} <-> {a,b,%2,{e,%1},f,g,h}>",
-                "<{d,c} <-> {a,b,c,{e,d},f,g,h}>" );
+                "{%2,{%1,%3}}",
+                "{a,{b,c}}", 2 );
 
         //System.out.println(s);
     }
+    @Test public void testPermutationPowerEmbedded3() {
+        permuteTest(
+                "{%2, {%1, %3, {%4, %5}}}",
+                "{a, {b, c, {d, e}}}", 4 );
 
+        //System.out.println(s);
+    }
+    @Test public void testPermutationPowerEmbedded3b() {
+        permuteTest(
+                "{%2, {%1, %3, {%4, e}}}",
+                "{a, {b, c, {d, e}}}", 2 );
+    }
 
     //overrides
     @Test

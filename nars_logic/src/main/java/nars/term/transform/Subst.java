@@ -49,6 +49,8 @@ public abstract class Subst extends Versioning {
     /** parent, if in subterms */
     public final Versioned<Compound> parent;
 
+    /** unification power available at start of current branch */
+    public final Versioned<Integer> branchPower;
 
     /** unification power remaining in the current branch */
     int power;
@@ -69,8 +71,15 @@ public abstract class Subst extends Versioning {
         yx = new VersionMap(this, new LinkedHashMap());
         term = new Versioned(this);
         parent = new Versioned(this);
+        branchPower = new Versioned(this);
 
     }
+
+    public void setPower(int startPower) {
+        this.power = startPower;
+        this.powerDivisor = 1;
+    }
+
 
     public void clear() {
         revert(0);

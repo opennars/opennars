@@ -42,8 +42,7 @@ public class RuleMatch extends FindSubst {
     public Premise premise;
 
 
-    /** unification power available at start of current branch */
-    public final Versioned<Integer> branchPower;
+
 
     public final VersionMap<Term,Term> secondary;
     public final Versioned<Integer> occurrenceShift;
@@ -54,7 +53,6 @@ public class RuleMatch extends FindSubst {
     public RuleMatch(Random r) {
         super(Op.VAR_PATTERN, r );
 
-        branchPower = new Versioned(this);
 
         secondary = new VersionMap(this, new LinkedHashMap<>());
         occurrenceShift = new Versioned(this);

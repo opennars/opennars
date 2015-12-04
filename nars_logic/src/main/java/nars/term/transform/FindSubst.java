@@ -233,6 +233,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
+            ff.setPower(ff.branchPower.get());
             return ff.match(x, ff.term.get());
         }
 
@@ -412,19 +413,23 @@ public class FindSubst extends Subst implements Substitution {
 
         setPower(startPower);
 
+        boolean match = true;
+
         for (PreCondition o : x.code) {
             if (!(o instanceof PatternOp)) continue;
-            if (!((PatternOp) o).run(this))
-                return false;
+            if (!((PatternOp) o).run(this)) {
+                match = false;
+                break;
+            }
         }
-        return true;
+
+        if (powerDivisor!=1f)
+            throw new RuntimeException("power divisor not restored");
+
+        return match;
 
     }
 
-    private void setPower(int startPower) {
-        this.power = startPower;
-        this.powerDivisor = 1;
-    }
 
     /**
      * recurses into the next sublevel of the term
@@ -603,6 +608,8 @@ public class FindSubst extends Subst implements Substitution {
 
         /* heuristic: use the term size as the subset # of permutations to try */
 
+        int startDivisor = this.powerDivisor;
+
         final ShuffleTermVector perm = new ShuffleTermVector(random, x);
         int attempts = Math.min(perm.total(), powerDivided(len));
 
@@ -625,7 +632,7 @@ public class FindSubst extends Subst implements Substitution {
             }
         }
 
-        powerRestore(len);
+        powerDivisor = startDivisor;
 
         //finished
         return matched;
@@ -721,6 +728,7 @@ public class FindSubst extends Subst implements Substitution {
 
         final int yLen = Y.size();
 
+        int startDivisor = powerDivisor;
         if (!powerDividable(yLen))
             return false;
 
@@ -732,7 +740,7 @@ public class FindSubst extends Subst implements Substitution {
             }
         }
 
-        powerRestore(yLen);
+        powerDivisor = startDivisor;
 
         //success
         return success;
@@ -747,11 +755,8 @@ public class FindSubst extends Subst implements Substitution {
 
         return true;
     }
-    private void powerRestore(int factor) {
-        if (factor <= 0)
-            factor = 1; //HACK
-        this.powerDivisor = Math.max(1, this.powerDivisor / factor);
-    }
+
+
     private void powerDivide(int factor) {
         if (factor <= 0)
             factor = 1; //HACK
