@@ -5,32 +5,33 @@ import nars.Op;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-abstract public class Utf8Atom extends Atomic implements Byted {
+abstract public class AbstractUtf8Atom extends Atomic implements Byted, Externalizable {
 
     private final byte[] id;
     private final int hash;
 
-    public Utf8Atom(String id, Op op) {
+    public AbstractUtf8Atom(String id, Op op) {
         this(Utf8.toUtf8(id), op);
     }
 
-    public Utf8Atom(String id) {
+    public AbstractUtf8Atom(String id) {
         this(Utf8.toUtf8(id));
     }
-    public Utf8Atom(byte[] id) {
+    public AbstractUtf8Atom(byte[] id) {
         this.id = id;
         this.hash = Atom.hash(
                 this.id, op().ordinal()
         );
     }
-    public Utf8Atom(byte[] id, Op op) {
+    public AbstractUtf8Atom(byte[] id, Op op) {
         this(id, Atom.hash(id, op.ordinal() ));
     }
-    public Utf8Atom(byte[] id, int hash) {
+    public AbstractUtf8Atom(byte[] id, int hash) {
         this.id = id;
         this.hash = hash;
     }
@@ -58,15 +59,15 @@ abstract public class Utf8Atom extends Atomic implements Byted {
 
         //if the op is the same, it will be a subclass of atom
         //which should have an ordering determined by its byte[]
-        return Byted.compare(this, (Utf8Atom)that);
+        return Byted.compare(this, (AbstractUtf8Atom)that);
     }
 
     @Override
     public boolean equals(final Object x) {
         if (this == x) return true;
 
-        if (x instanceof Utf8Atom) {
-            Utf8Atom ax = (Utf8Atom)x;
+        if (x instanceof AbstractUtf8Atom) {
+            AbstractUtf8Atom ax = (AbstractUtf8Atom)x;
             return Byted.equals(this, ax) && (op() == ax.op());
         }
         return false;

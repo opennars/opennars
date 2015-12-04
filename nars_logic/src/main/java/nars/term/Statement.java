@@ -35,15 +35,15 @@ import static nars.Symbols.STATEMENT_OPENER;
  */
 public abstract class Statement<A extends Term, B extends Term>
     extends DefaultCompound2 {
-        //extends Compound2<A, B> {
 
-
-    protected Statement() {
-        super();
-    }
     protected Statement(TermVector v) {
         super(v);
     }
+
+    public Statement(A subject, B predicate) {
+        this(new TermVector(subject, predicate));
+    }
+
 
     @Override public final Term clone() {
         return Terms.term(op(), getSubject(), getPredicate());

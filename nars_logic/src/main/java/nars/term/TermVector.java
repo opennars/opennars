@@ -21,20 +21,22 @@ import static java.util.Arrays.copyOf;
  * TODO make this class immutable and term field private
  * provide a MutableTermVector that holds any write/change methods
  */
-public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
+public class TermVector<T extends Term> implements TermContainer<T>, Comparable, Serializable {
 
     /**
      * list of (direct) term
      * TODO make not public
      */
-    public T[] term;
+    public final T[] term;
 
 
-    @Override public Term[] toArray() {
+    @Override public T[] terms() {
         return term;
     }
 
-    @Override public final Term[] toArray(IntObjectPredicate<Term> filter) {
+
+
+    @Override public final Term[] terms(IntObjectPredicate<T> filter) {
         return Terms.filter(term, filter);
     }
 
@@ -59,8 +61,9 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 //        this(null);
 //    }
 
-    public TermVector() {
+    public TermVector(T... t) {
         super();
+        this.term = t;
     }
 
     @Override
@@ -86,19 +89,6 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return volume;
     }
 
-    @Override
-    public final boolean impossibleSubTermVolume(int otherTermVolume) {
-//        return otherTermVolume >
-//                volume()
-//                        - 1 /* for the compound itself */
-//                        - (size() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
-
-        /*
-        otherTermVolume > volume - 1 - (size - 1)
-                        > volume - size
-         */
-        return otherTermVolume > volume() - size();
-    }
 
 
     /**
@@ -124,7 +114,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     /**
      * (shallow) Clone the component list
      */
-    public final T[] cloneTerms() {
+    public final T[] termsCopy() {
         return copyOf(term, size());
     }
 
@@ -193,17 +183,6 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 //        return l;
 //    }
 
-    /**
-     * forced deep clone of terms - should not be necessary
-     */
-    public final Term[] cloneTermsDeep() {
-        int s = size();
-        Term[] l = new Term[s];
-        final Term[] t = this.term;
-        for (int i = 0; i < s; i++)
-            l[i] = t[i].cloneDeep();
-        return l;
-    }
 
 //    /**
 //     * clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step
@@ -244,17 +223,12 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return varTotal;
     }
 
-    public final boolean hasVar() {
-        return varTotal > 0;
-    }
-
-
 //    final public void addTermsTo(final Collection<Term> c) {
 //        Collections.addAll(c, term);
 //    }
 
     public Term[] cloneTermsReplacing(int index, final Term replaced) {
-        Term[] y = cloneTerms();
+        Term[] y = termsCopy();
         y[index] = replaced;
         return y;
     }
@@ -280,7 +254,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
         return Iterators.forArray(term);
     }
 
-    @Override
+
     public final void forEach(Consumer<? super T> action, int start, int stop) {
         final T[] tt = this.term;
         for (int i = start; i < stop; i++) {
@@ -317,8 +291,7 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
 
     /** returns hashcode */
-    public int init(T[] term) {
-
+    public int init() {
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1, vol = 1;
@@ -351,8 +324,6 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
 
         this.complexity = (short) compl;
         this.volume = (short) vol;
-
-        this.term = term;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
         this.contentHash = contentHash;

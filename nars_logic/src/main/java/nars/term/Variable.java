@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * A variable term, which does not correspond to a concept
  */
-abstract public class Variable extends Utf8Atom {
+abstract public class Variable extends AbstractUtf8Atom {
 
     protected Variable(final byte[] n, int ordinal) {
         super(n, Atom.hash(n,ordinal));
@@ -160,7 +160,6 @@ abstract public class Variable extends Utf8Atom {
      */
     @Override public final int complexity() {       return 0;   }
 
-    @Override public final boolean hasVar() { return true;     }
 
     public static final class VarDep extends Variable {
 
@@ -171,16 +170,9 @@ abstract public class Variable extends Utf8Atom {
         @Override public final Op op() { return Op.VAR_DEPENDENT; }
 
         @Override public final int vars() { return 1; }
-
-        @Override public final boolean hasVarDep() { return true;  }
-        @Override public final int varDep() {  return 1;        }
-
-        @Override public final boolean hasVarIndep() { return false;  }
+        @Override public final int varDep() {  return 1; }
         @Override public final int varIndep() { return 0;}
-
-        @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
-
     }
 
     public static final class VarIndep extends Variable {
@@ -195,13 +187,8 @@ abstract public class Variable extends Utf8Atom {
 
         @Override public final int vars() { return 1; }
 
-        @Override public final boolean hasVarDep() { return false;  }
         @Override public final int varDep() {  return 0;        }
-
-        @Override public final boolean hasVarIndep() { return true;  }
         @Override public final int varIndep() { return 1;}
-
-        @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
 
     }
@@ -218,13 +205,8 @@ abstract public class Variable extends Utf8Atom {
 
         @Override public final int vars() { return 1; }
 
-        @Override public final boolean hasVarDep() { return false;  }
         @Override public final int varDep() {  return 0;        }
-
-        @Override public final boolean hasVarIndep() { return false;  }
         @Override public final int varIndep() { return 0;}
-
-        @Override public final boolean hasVarQuery() { return true;  }
         @Override public final int varQuery() { return 1; }
 
     }
@@ -242,13 +224,8 @@ abstract public class Variable extends Utf8Atom {
         /** pattern variable hidden in the count 0 */
         @Override public final int vars() { return 0; }
 
-        @Override public final boolean hasVarDep() { return false;  }
         @Override public final int varDep() {  return 0;        }
-
-        @Override public final boolean hasVarIndep() { return false;  }
         @Override public final int varIndep() { return 0;}
-
-        @Override public final boolean hasVarQuery() { return false;  }
         @Override public final int varQuery() { return 0; }
 
     }

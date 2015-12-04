@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * A Product is a sequence of 1 or more terms.
  */
-public interface Product<T extends Term> extends Term, Iterable<T> {
+public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 
     Product empty = new ProductN(); //length 0 product
 
@@ -55,7 +55,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
      * @return A compound generated or a term it reduced to
      */
     static Term make(final Compound<Term> image, final Term component, final int index) {
-        Term[] argument = image.cloneTerms();
+        Term[] argument = image.termsCopy();
         argument[index] = component;
         return make(argument);
     }
@@ -76,8 +76,8 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
 //        return make(Iterables.toArray(t, Term.class));
 //    }
 
-    static <T extends Term> Product1<T> only(final T the) {
-        return new Product1<>(the);
+    static <T extends Term> ProductN<T> only(final T the) {
+        return new ProductN<>(the);
     }
 
     /** 2 term constructor */
@@ -112,13 +112,6 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return $.pro(argAtoms);
     }
 
-//    Term[] cloneTermsReplacing(final Term from, final Term to);
-
-    T[] cloneTerms();
-
-    T term(int i);
-
-    @Deprecated  T[] terms();
 
 
     /** returns the first subterm, or null if there are 0 */
@@ -138,6 +131,6 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     /** create a Product from terms contained in a TermContainer
      *  (ex: the subterms of a compound) */
     public static Product make(TermContainer c) {
-        return Product.make( c.toArray() );
+        return Product.make( c.terms() );
     }
 }

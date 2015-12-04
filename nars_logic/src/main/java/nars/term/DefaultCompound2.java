@@ -2,20 +2,18 @@ package nars.term;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compile.TermIndex;
-import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
-import nars.util.data.Util;
 import nars.util.utf8.ByteBuf;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
+import static nars.util.data.Util.hashCombine;
 
 
 public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
@@ -27,22 +25,35 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
      * used to prevent repeated normalizations
      */
     protected transient boolean normalized = false;
-    protected transient int hash;
+    protected transient final int hash;
 
-    /**
-     * subclasses should be sure to call init() in their constructors; it is not done here
-     * to allow subclass constructors to set data before calling init()
-     */
-    protected DefaultCompound2() {
-        super();
-        this.terms = isCommutative() ?
-                new TermSet() :
-                new TermVector();
+
+    protected DefaultCompound2(Term... t) {
+        this(new TermVector(t));
+    }
+    protected DefaultCompound2(Term[] t, int hashSalt) {
+        this(new TermVector(t), hashSalt);
     }
 
     protected DefaultCompound2(TermVector subterms) {
-        this.terms = subterms;
+        this(subterms, 0);
     }
+
+    /** if hash salt is non-zero, it will be combined with the default hash value of the compound */
+    protected DefaultCompound2(TermVector subterms, int hashSalt) {
+        this.terms = subterms;
+        this.normalized = !hasVar();
+        int h = hashCombine( subterms().hashCode(), op().ordinal() );
+        if (hashSalt!=0)
+            h = hashCombine(h, hashSalt);
+
+        this.hash = h;
+    }
+
+    public DefaultCompound2(T t) {
+        this(new Term[] { t } );
+    }
+
 
     @Override
     public String toString() {
@@ -62,16 +73,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     }
 
 
-    /**
-     * call this after changing Term[] contents: recalculates variables and complexity
-     */
-    protected void init(final T... term) {
-
-        this.terms.init(term);
-
-        this.normalized = !hasVar();
-        this.hash = Util.hashCombine( subterms().hashCode(), op().ordinal() );
-    }
 
 
     @Override
@@ -80,12 +81,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     }
 
 
-    //    /**
-//     * (shallow) Clone the component list
-//     */
-    public final Term[] cloneTerms(final Term... additional) {
-        return Compound.cloneTermsAppend(terms.term, additional);
-    }
+
 
 
     @Override
@@ -152,10 +148,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
             term(i).setDuration(duration);
     }
 
-    @Override
-    public final void rehash() {
-        init(this.terms.term);
-    }
 
     @Override
     public final int hashCode() {
@@ -189,22 +181,10 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         return terms.vars();
     }
 
-    @Override
-    public final boolean hasVar() {
-        return terms.hasVar();
-    }
-
-
     public final Term[] cloneTermsReplacing(int index, Term replaced) {
         return terms.cloneTermsReplacing(index, replaced);
     }
 
-
-
-//    public Term[] cloneTermsDeep() {
-//        return terms.cloneTermsDeep();
-//    }
-//
 
     public final boolean isEmpty() {
         return terms.isEmpty();
@@ -219,24 +199,23 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 //        return terms.equalsAll(cls);
 //    }
 
-    //
-//    @Override
-//    public final void forEach(Consumer<? super T> action, int start, int stop) {
-//        terms.forEach(action, start, stop);
-//    }
+    @Override
+    public final void forEach(Consumer<? super T> action, int start, int stop) {
+        terms.forEach(action, start, stop);
+    }
 
     @Override
     public final void forEach(Consumer<? super T> c) {
         terms.forEach(c);
     }
 
-    @Override public Term[] toArray() {
-        return terms.toArray();
+    @Override public T[] terms() {
+        return terms.terms();
     }
 
     @Override
-    public Term[] toArray(IntObjectPredicate<Term> filter) {
-        return terms.toArray(filter);
+    public Term[] terms(IntObjectPredicate<T> filter) {
+        return terms.terms(filter);
     }
 
     @Override
@@ -245,8 +224,8 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final  T[] cloneTerms() {
-        return terms.cloneTerms();
+    public final  T[] termsCopy() {
+        return terms.termsCopy();
     }
 
     @Override
@@ -310,19 +289,8 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         return false;
     }
 
+
     abstract public Term clone();
-
-    @Override
-    public final Compound cloneDeep() {
-        Term c = clone(terms.cloneTermsDeep());
-        if (c == null) return null;
-
-        if (c.op() != op()) {
-            throw new RuntimeException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
-        }
-
-        return ((Compound) c);
-    }
 
 
     /**
@@ -346,45 +314,43 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     }
 
-    /**
-     * transforms destructively, may need to use on a new clone
-     *
-     * @return if changed
-     */
-    @Override
-    public boolean transform(CompoundTransform<Compound<T>, T> trans, int depth) {
-
-        boolean changed = false;
-
-        T[] term = this.terms.term;
-        final int len = term.length;
-
-        for (int i = 0; i < len; i++) {
-            T t = term[i];
-
-            if (trans.test(t)) {
-                T s = term[i] = trans.apply(this, t, depth + 1);
-                if (!s.equals(t)) {
-                    changed = true;
-                }
-            } else if (t instanceof Compound) {
-                //recurse
-                changed |= ((Compound) t).transform(trans, depth + 1);
-            }
-
-        }
-
-
-        if (changed) {
-            if (isCommutative()) {
-                Arrays.sort(term);
-            }
-
-            rehash();
-        }
-
-        return changed;
-    }
+//    /**
+//     * produces a new clone if changed
+//     * @return if changed
+//     */
+//    @Override
+//    public boolean transform(CompoundTransform<Compound<T>, T> trans, int depth) {
+//
+//        boolean changed = false;
+//
+//        Term[] term = new Term[size()];
+//        int mods = cloneTermsTransforming(trans,
+//        final int len = term.length;
+//
+//        for (int i = 0; i < len; i++) {
+//            T t = term[i];
+//
+//            if (trans.test(t)) {
+//                T s = term[i] = trans.apply(this, t, depth + 1);
+//                if (!s.equals(t)) {
+//                    changed = true;
+//                }
+//            } else if (t instanceof Compound) {
+//                //recurse
+//                changed |= ((Compound) t).transform(trans, depth + 1);
+//            }
+//
+//        }
+//
+//
+//        if (changed) {
+//            if (isCommutative()) {
+//                Arrays.sort(term);
+//            }
+//        }
+//
+//        return changed;
+//    }
 
 
     @Override

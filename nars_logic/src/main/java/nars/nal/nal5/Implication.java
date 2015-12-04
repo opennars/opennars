@@ -36,15 +36,13 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
 
 
     protected Implication(final A subject, final B predicate, final int order) {
-        super();
+        super(subject, predicate);
 
         if (order == Tense.ORDER_INVALID) {
             throw new RuntimeException("Invalid temporal order; args=" + subject + ',' + predicate);
         }
 
         temporalOrder = order;
-
-        init(subject, predicate);
     }
 
 

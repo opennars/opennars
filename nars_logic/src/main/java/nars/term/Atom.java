@@ -9,7 +9,7 @@ import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
 /** default Atom implementation */
-public class Atom extends Utf8Atom {
+public class Atom extends AbstractUtf8Atom {
 
 
     public static final Term Null = new InvisibleAtom("NULL");
@@ -209,15 +209,8 @@ public class Atom extends Utf8Atom {
      *
      * @return Whether the name contains a variable
      */
-    @Override public final boolean hasVar() { return false;    }
 
     @Override public final int vars() { return 0;    }
-
-    @Override public final boolean hasVarIndep() { return false;    }
-
-    @Override public final boolean hasVarDep() { return false;    }
-
-    @Override public final boolean hasVarQuery() { return false;    }
 
     public final String toStringUnquoted() {
         return toUnquoted(toString());

@@ -1,95 +1,63 @@
 package nars.term;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import com.gs.collections.api.set.MutableSet;
+import com.gs.collections.impl.factory.Sets;
 import nars.Global;
-import nars.Op;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 
 /**
  * Methods common to both Term and Subterms
+ * @param T subterm type
  */
-public interface TermContainer extends Comparable {
+public interface TermContainer<T extends Term> extends Termlike, Comparable, Iterable<T> {
 
-    int structure();
-    int volume();
-    int complexity();
-    int size();
+    int varDep();
 
-    /** nth subterm */
-    Term term(int n);
-    Term termOr(int index, Term resultIfInvalidIndex);
+    int varIndep();
 
-    //TODO rename: impossibleToContain
-    boolean impossibleSubTermVolume(final int otherTermVolume);
+    int varQuery();
 
+    int vars();
 
-    /** TODO use hasAll or hasAny and test them */
-    @Deprecated default boolean impossibleToMatch(final int possibleSubtermStructure) {
-        return Term.impossibleToMatch(
-                structure(),
-                possibleSubtermStructure
-        );
+    /** gets subterm at index i */
+    T term(int i);
+
+    T termOr(int index, T resultIfInvalidIndex);
+
+    T[] termsCopy();
+
+    default Term[] termsCopy(Term... additional) {
+        if (additional.length == 0) return termsCopy();
+        return Terms.concat(terms(), additional);
     }
 
-    /** if it's larger than this term it can not be equal to this.
-     * if it's larger than some number less than that, it can't be a subterm.
+    default MutableSet<Term> toSet() {
+        return Sets.mutable.of(terms());
+    }
+    static MutableSet<Term> intersect(TermContainer a, TermContainer b) {
+        return Sets.intersect(a.toSet(),b.toSet());
+    }
+    static MutableSet<Term> difference(TermContainer a, TermContainer b) {
+        return Sets.difference(a.toSet(), b.toSet());
+    }
+
+    /** expected to provide a non-copy reference to an internal array,
+     *  if it exists. otherwise it should create such array.
+     *  if this creates a new array, consider using .term(i) to access
+     *  subterms iteratively.
      */
-    default boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
-        return otherTermsVolume > volume();
-    }
+    T[] terms();
 
 
-    /** tests if contains a term in the structural hash
-     *  WARNING currently this does not detect presence of pattern variables
-     * */
-    default boolean hasAny(final Op op) {
-//        if (op == Op.VAR_PATTERN)
-//            return Variable.hasPatternVariable(this);
-        return hasAny((1<<op.ordinal()));
-    }
-
-//    default boolean hasAll(int structuralVector) {
-//        final int s = structure();
-//        return (s & structuralVector) == s;
-//    }
-//
-
-    default boolean hasAny(final int structuralVector) {
-        final int s = structure();
-        return (s & structuralVector) != 0;
-    }
-
-    default boolean impossibleSubterm(final Term target) {
-        return ((impossibleToMatch(target.structure())) ||
-                (impossibleSubTermVolume(target.volume())));
-    }
-    default boolean impossibleSubTermOrEquality(final Term target) {
-        return ((impossibleToMatch(target.structure())) ||
-                (impossibleSubTermOrEqualityVolume(target.volume())));
-    }
-    default boolean impossibleToMatch(final Term c) {
-        return impossibleToMatch(c.structure());
-    }
-
-    /** this is not required to produce a cloned copy; so be careful with the result.
-     *  ex: TermVector's implementation will provide a reference to its internal array
-     */
-    default Term[] toArray() {
-        int s = size();
-        Term[] x = new Term[s];
-        for (int i = 0; i < s; i++) {
-            x[i] = term(i);
-        }
-        return x;
-    }
-
-    default Term[] toArray(IntObjectPredicate<Term> filter) {
-        List<Term> l = Global.newArrayList(size());
+    default Term[] terms(IntObjectPredicate<T> filter) {
+        List<T> l = Global.newArrayList(size());
         int s = size();
         for (int i = 0; i < s; i++) {
-            Term t = term(i);
+            T t = term(i);
             if (filter.accept(i, t))
                 l.add(t);
         }
@@ -98,7 +66,15 @@ public interface TermContainer extends Comparable {
     }
 
 
+    void forEach(Consumer<? super T> action, int start, int stop);
 
 
-
+    static Term[] copyByIndex(TermContainer c) {
+        int s = c.size();
+        Term[] x = new Term[s];
+        for (int i = 0; i < s; i++) {
+            x[i] = c.term(i);
+        }
+        return x;
+    }
 }

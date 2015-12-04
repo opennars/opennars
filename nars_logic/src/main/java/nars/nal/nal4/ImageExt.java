@@ -64,11 +64,6 @@ public class ImageExt extends Image {
     }
     
 
-    
-
-
-
-
 
     /**
      * Try to make an Image from an existing Image and a component. Called by the logic rules.
@@ -78,7 +73,7 @@ public class ImageExt extends Image {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(ImageExt oldImage, Term component, short index) {
-        Term[] argList = oldImage.cloneTerms();
+        Term[] argList = oldImage.termsCopy();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;

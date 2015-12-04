@@ -11,6 +11,7 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Variable;
@@ -53,7 +54,7 @@ public final class Solve extends PreCondition {
         match.derived.set(derivedTerm);
 
 
-        final Term pattern = rule.term(0);
+        final Compound pattern = (Compound) rule.term(0);
         final Term taskpart = pattern.term(0);
         final Term beliefpart = pattern.term(1);
 

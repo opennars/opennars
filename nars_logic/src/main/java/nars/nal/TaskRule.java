@@ -70,6 +70,7 @@ public class TaskRule extends ProductN implements Level {
 
     public TaskRule(Product premises, Product result) {
         super(premises, result);
+        this.str = super.toString();
     }
 
 
@@ -80,7 +81,6 @@ public class TaskRule extends ProductN implements Level {
 //    }
 
     protected final void ensureValid() {
-        rehash();
 
         if (getConclusionTerm().containsTemporal()) {
             if ((!getTaskTermPattern().containsTemporal())
@@ -228,20 +228,7 @@ public class TaskRule extends ProductN implements Level {
 //        return numPatternVar;
 //    }
 
-    @Override
-    public void init(Term... term) {
-        super.init(term);
 
-
-//        final Set<Term> patternVars = new HashSet();
-//        recurseTerms((v,p) -> {
-//            if (v.op() == Op.VAR_PATTERN)
-//                patternVars.add(v);
-//        });
-
-        this.str = super.toString();
-
-    }
 
 //    public String getFlagsString() {
 //        return "TaskRule{" +
@@ -294,15 +281,7 @@ public class TaskRule extends ProductN implements Level {
 
     final static UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
 
-    @Override
-    public final TaskRule normalizeDestructively() {
 
-        this.transform(uppercaseAtomsToPatternVariables);
-
-        rehash();
-
-        return this;
-    }
 
     public final TaskRule normalizeRule() {
         TaskRule tr = (TaskRule) new TaskRuleVariableNormalization().getResult();
@@ -631,9 +610,9 @@ public class TaskRule extends ProductN implements Level {
 
         ProductN newPremise = null;
         if(question) {
-            newPremise = (ProductN) Product.make(getPremise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
+            newPremise = (ProductN) Product.make(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm));
         } else {
-            newPremise = (ProductN) Product.make(getPremise().cloneTerms());
+            newPremise = (ProductN) Product.make(getPremise().terms());
         }
 
         newPremise.terms()[0] = newT;
@@ -674,7 +653,7 @@ public class TaskRule extends ProductN implements Level {
         //List<Ellipsis> ellipses = Global.newArrayList();
 
         public TaskRuleVariableNormalization() {
-            super(TaskRule.this, false);
+            super(TaskRule.this);
 
 //            ellipses.forEach(e -> {
 //                e.expressoin
@@ -695,7 +674,7 @@ public class TaskRule extends ProductN implements Level {
 
                 Term ee = e.expression;
                 if (ee instanceof Compound)
-                    ee = ((Compound)ee).cloneTransforming(this);
+                    ee = ((Compound)ee).transform(this);
 
                 return new Ellipsis( Variable.the(v.op(), i), ee );
             }

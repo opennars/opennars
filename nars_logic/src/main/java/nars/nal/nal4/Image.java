@@ -5,7 +5,6 @@ import nars.Symbols;
 import nars.term.Compound;
 import nars.term.DefaultCompound2;
 import nars.term.Term;
-import nars.util.data.Util;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -24,18 +23,11 @@ abstract public class Image extends DefaultCompound2 {
      */
     public final short relationIndex;
 
+
     protected Image(Term[] components, int relationIndex) {
-        super();
+        super(components, relationIndex+1 /* non-zero */);
 
         this.relationIndex = (short) relationIndex;
-
-        init(components);
-    }
-
-    @Override
-    protected void init(Term[] term) {
-        super.init(term);
-        this.hash = Util.hashCombine( hash, relationIndex );
     }
 
 

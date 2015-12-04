@@ -18,8 +18,8 @@ import java.util.List;
 public abstract class Conjunctive<X extends Term> extends Junction<X> {
 
 
-    protected Conjunctive() {
-        super();
+    protected Conjunctive(Term[] arg) {
+        super(arg);
     }
 
 //    public Conjunctive(Term[] arg) {
@@ -152,7 +152,4 @@ public abstract class Conjunctive<X extends Term> extends Junction<X> {
         }
     }
 
-    public final Term[] terms() {
-        return terms.term;
-    }
 }

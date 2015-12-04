@@ -33,8 +33,6 @@ import nars.term.Term;
  */
 public class ImageInt extends Image {
 
-
-
     /**
      * constructor with partial values, called by make
      * @param arg The component list of the term
@@ -83,7 +81,7 @@ public class ImageInt extends Image {
             }
         }
 
-        Term[] argument = product.cloneTerms(); //shallow clone necessary because the index argument is replaced
+        Term[] argument = product.termsCopy(); //shallow clone necessary because the index argument is replaced
         argument[index] = relation;
         return make(argument, index);
     }
@@ -96,7 +94,7 @@ public class ImageInt extends Image {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final ImageInt oldImage, final Term component, final short index) {
-        Term[] argList = oldImage.cloneTerms();
+        Term[] argList = oldImage.termsCopy();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;

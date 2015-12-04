@@ -22,19 +22,19 @@ public class TermIDTest {
     // '&&' 'a' ',' 'b' ')'
     @Test
     public void testInternalRepresentation28() {
-        testInternalRepresentation("(&&, a, b)", 5);
+        testBytesRepresentation("(&&, a, b)", 5);
     }
 
     // '--', 'a'
     @Test
     public void testInternalRepresentation29() {
-        testInternalRepresentation("(--,a)", 2);
+        testBytesRepresentation("(--,a)", 2);
     }
 
     // '*' 'a' ',' 'b' ')'
     @Test
     public void testInternalRepresentation2z() {
-        testInternalRepresentation("(a, b)", 5);
+        testBytesRepresentation("(a, b)", 5);
     }
 
 
@@ -46,28 +46,28 @@ public class TermIDTest {
 
     @Test
     public void testInternalRepresentation23() {
-        testInternalRepresentation("x", 1);
+        testBytesRepresentation("x", 1);
     }
 
     @Test
     public void testInternalRepresentation24() {
-        testInternalRepresentation("xyz", 3);
+        testBytesRepresentation("xyz", 3);
     }
 
     @Test
     public void testInternalRepresentation25() {
-        testInternalRepresentation("\u00ea", 2);
+        testBytesRepresentation("\u00ea", 2);
     }
 
     @Test
     public void testInternalRepresentation26() {
-        testInternalRepresentation("xyz\u00e3", 3 + 2);
+        testBytesRepresentation("xyz\u00e3", 3 + 2);
     }
 
     //  '-->' 'a' ','  'b' ')' == 5
     @Test
     public void testInternalRepresentation27() {
-        testInternalRepresentation("<a --> b>", 5);
+        testBytesRepresentation("<a --> b>", 5);
     }
 
 
@@ -76,11 +76,11 @@ public class TermIDTest {
     //@Test public void testInternalRepresentation2() { testInternalRepresentation("<a && b>", 5); }
 
 
-    public Term testInternalRepresentation(String expectedPrettyOutput, int expectedLength) {
-        return testInternalRepresentation(null, expectedPrettyOutput, expectedLength);
+    public Term testBytesRepresentation(String expectedPrettyOutput, int expectedLength) {
+        return testBytesRepresentation(null, expectedPrettyOutput, expectedLength);
     }
 
-    public Term testInternalRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {
+    public Term testBytesRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {
         //UTF8Identifier b = new UTF8Identifier(expectedPrettyOutput);
         Term i = nar.term(expectedPrettyOutput);
         byte[] b = i.bytes();
@@ -104,4 +104,12 @@ public class TermIDTest {
         return Arrays.toString(a.toCharArray()) + " != " + Arrays.toString(b.toCharArray());
     }
 
+    @Test public void testComparingStringAndUtf8Atoms() {
+
+        String id = "x";
+
+        Atom a = new Atom(id);
+        //AbstractStringAtom b = new AbstractStringAtom.StringAtom(id);
+
+    }
 }

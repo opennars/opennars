@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import static nars.Symbols.*;
 
@@ -43,36 +42,9 @@ import static nars.Symbols.*;
  * a compound term
  * TODO make this an interface extending Subterms
  */
-public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
+public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> {
 
 
-    /** gets subterm at index i */
-    T term(int i);
-
-
-    boolean equals(Object o);
-
-    int hashCode();
-
-    /**
-     * Commutivity in NARS means that a Compound term's
-     * subterms will be unique and arranged in order (compareTo)
-     *
-     * <p>
-     * commutative CompoundTerms: Sets, Intersections Commutative Statements:
-     * Similarity, Equivalence (except the one with a temporal order)
-     * Commutative CompoundStatements: Disjunction, Conjunction (except the one
-     * with a temporal order)
-     *
-     * @return The default value is false
-     */
-
-    T[] cloneTerms();
-
-    @Override
-    void forEach(Consumer<? super T> c);
-
-    Term[] cloneTerms(final Term... additional);
 
     /**
      * Must be Term return type because the type of Term may change with different arguments
@@ -118,15 +90,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
                 .toBytes();
     }
 
-    /**
-     * Shallow clone an array list of terms
-     *
-     * @param original The original component list
-     * @return an identical and separate copy of the list
-     */
-    static Term[] cloneTermsAppend(final Term[] original, final Term... additional) {
-        return Terms.concat(original, additional );
-    }
+
 
 
     /** gets the set of unique recursively contained terms of a specific type
@@ -250,7 +214,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
     }
 
     /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
-    default <T extends Term> int cloneTermsTransforming(final CompoundTransform<Compound<T>, T> trans, Term[] target, final int level) {
+    default <T extends Term> int transform(final CompoundTransform<Compound<T>, T> trans, Term[] target, final int level) {
         final int n = size();
 
         int modifications = 0;
@@ -274,7 +238,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
                 if (trans.testSuperTerm(cx)) {
 
                     Term[] yy = new Term[cx.size()];
-                    int submods = cx.cloneTermsTransforming(trans, yy, level + 1);
+                    int submods = cx.transform(trans, yy, level + 1);
 
                     if (submods == -1) return -1;
                     if (submods > 0) {
@@ -298,7 +262,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         Term ptr = this;
         for (final int i : address) {
             if (ptr instanceof Compound) {
-                ptr = ptr.term(i);
+                ptr = ((Compound)ptr).term(i);
             }
         }
         return (X) ptr;
@@ -310,8 +274,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
 
 
 
-    @Override
-    Compound cloneDeep();
 
 
 //    @Override
@@ -342,16 +304,16 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
 //    }
 
 
-    default <X extends Compound> X cloneTransforming(final CompoundTransform t) {
-        return cloneTransforming(t, true);
+    default <X extends Compound> X transform(final CompoundTransform t) {
+        return transform(t, true);
     }
 
-    default <X extends Compound> X cloneTransforming(final CompoundTransform t, boolean requireEqualityForNewInstance) {
+    default <X extends Compound> X transform(final CompoundTransform t, boolean requireEqualityForNewInstance) {
         if (t.testSuperTerm(this)) {
 
             Term[] cls = new Term[size()];
 
-            int mods = cloneTermsTransforming(t, cls, 0);
+            int mods = transform(t, cls, 0);
 
             if (mods == -1) {
                 return null;
@@ -364,12 +326,6 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return (X) this; //nothing changed
     }
 
-
-
-
-    default boolean transform(CompoundTransform trans) {
-        return transform(trans, 0);
-    }
 
     @Override
     default boolean levelValid(final int nal) {
@@ -386,7 +342,7 @@ public interface Compound<T extends Term> extends Term, IPair, Iterable<T> {
         return true;
     }
 
-    boolean transform(CompoundTransform<Compound<T>, T> trans, int depth);
+    //boolean transform(CompoundTransform<Compound<T>, T> trans, int depth);
 
 
 

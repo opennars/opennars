@@ -268,7 +268,6 @@ public class TermTest {
 
             forced.subterms().term[0] = subj;
             forced.subterms().term[1] = pred;
-            forced.rehash();
 
             assertEquals(t, forced.toStringCompact());
 

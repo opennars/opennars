@@ -37,9 +37,7 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
      * Constructor with partial values, called by make
      */
     protected Inheritance(final A a, final B b) {
-        super();
-
-        init(a, b);
+        super(a,b);
     }
 
     @Override public final boolean isCommutative() {

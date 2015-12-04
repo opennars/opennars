@@ -29,9 +29,6 @@ import nars.term.Term;
  */
 public class Conjunction extends Conjunctive {
 
-    public Conjunction() {
-        super();
-    }
 
     /**
      * Constructor with partial values, called by make
@@ -45,7 +42,7 @@ public class Conjunction extends Conjunctive {
             order == Temporal.ORDER_NONE ?
                     flatten(arg, order) : arg
         );*/
-        super();
+        super(arg);
 
 //        if ((order == Temporal.ORDER_BACKWARD) ||
 //                (order == Temporal.ORDER_INVALID)) {
@@ -68,10 +65,6 @@ public class Conjunction extends Conjunctive {
 //                this.op = Op.CONJUNCTION;
 //                break;
 //        }
-
-
-        init(arg);
-
     }
 
     @Override

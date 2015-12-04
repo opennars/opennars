@@ -22,7 +22,7 @@ package nars.nal.nal1;
 
 import nars.Op;
 import nars.term.Compound;
-import nars.term.Compound1;
+import nars.term.DefaultCompound2;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -30,21 +30,19 @@ import java.io.IOException;
 /**
  * A negation of a statement.
  */
-public final class Negation extends Compound1 {
-
-
+public final class Negation<T extends Term> extends DefaultCompound2<T> {
 
     /** avoid using this externally, because double-negatives can be unwrapped to the 
      * original term using Negation.make */
-    protected Negation(final Term t) {
-        super();
-        
-        init(t);
+    protected Negation(final T t) {
+        super(t);
     }
 
     @Override public final boolean isCommutative() {
         return false;
     }
+
+    public T the() { return term(0); }
 
     public final Term clone() {
         return Negation.make(the());

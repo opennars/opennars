@@ -8,8 +8,8 @@ import nars.term.Term;
  */
 abstract public class Junction<T extends Term> extends DefaultCompound2<T> {
 
-    protected Junction() {
-        super();
+    protected Junction(Term[] arg) {
+        super(arg);
     }
 
 }

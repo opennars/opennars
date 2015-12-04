@@ -4,6 +4,7 @@ import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
 import nars.nal.nal3.SetTensional;
 import nars.term.Term;
+import nars.term.TermContainer;
 
 /**
  * Created by me on 8/15/15.
@@ -22,7 +23,7 @@ public class Differ extends PreCondition3Output {
 
         //ok both are extensional sets or intensional sets, build difference
         return Unite.createSetAndAddToSubstitutes(m, a, c,
-                SetTensional.difference(
+                TermContainer.difference(
                         (SetTensional) a,
                         (SetTensional) b)
         );

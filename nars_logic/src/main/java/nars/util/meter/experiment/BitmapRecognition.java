@@ -3,7 +3,7 @@ package nars.util.meter.experiment;
 import nars.Global;
 import nars.NAR;
 import nars.nal.nal4.Product;
-import nars.nal.nal4.Product1;
+import nars.nal.nal4.ProductN;
 import nars.nal.nal5.Conjunctive;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Tense;
@@ -139,7 +139,7 @@ public class BitmapRecognition {
                     Implication.make(
                             pixelTerms,
                             new Operation(Operator.the("echo"),
-                                    new Product1(similaritage)),
+                                    new ProductN(similaritage)),
                             Tense.ORDER_CONCURRENT
                             ), Tense.Eternal, 1.0f, 0.95f
             );

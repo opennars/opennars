@@ -31,12 +31,9 @@ public class DifferenceExt extends Difference {
 
     /**
      * Constructor with partial values, called by make
-     * @param arg The component list of the term
      */
     private DifferenceExt(Term a, Term b) {
-        super();
-
-        init(a, b);
+        super(a, b);
     }
 
 

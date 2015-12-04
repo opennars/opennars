@@ -34,11 +34,8 @@ public class IntersectionInt extends Intersect {
      * @param arg The component list of the term
      */
     private IntersectionInt(final Term[] arg) {
-        super();
-        
-        init(arg);
+        super(arg);
     }
-
 
     /**
      * Clone an object

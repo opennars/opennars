@@ -41,7 +41,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
      *
      */
     private Sequence(Term[] subterms, int[] intervals) {
-        super();
+        super(subterms);
 
         if (intervals == null) {
             //TODO leave as null, avoiding allocating this array if all zeros
@@ -61,8 +61,6 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 //        }
 
         this.intervals = intervals;
-
-        init(subterms);
 
     }
 

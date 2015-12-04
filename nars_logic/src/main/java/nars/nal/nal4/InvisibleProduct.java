@@ -16,11 +16,14 @@ import java.io.IOException;
 public final class InvisibleProduct extends TermVector implements Term {
 
     public InvisibleProduct(Term[] subterms) {
-        init(subterms);
+        super(subterms);
     }
 
-    @Override public int init(Term[] term) {
-        this.term = term;
+    public final Term[] terms() {
+        return term;
+    }
+
+    @Override public int init() {
         //nothing else
         return 0;
     }
@@ -56,10 +59,6 @@ public final class InvisibleProduct extends TermVector implements Term {
         return this;
     }
 
-    @Override
-    public Term cloneDeep() {
-        return this;
-    }
 
     @Override
     public byte[] bytes() {
@@ -91,17 +90,11 @@ public final class InvisibleProduct extends TermVector implements Term {
         return this;
     }
 
-    @Override
-    public void rehash() {
-
-    }
 
     @Override
     public Term normalized(TermIndex termIndex) {
         return this;
     }
 
-    public Term[] terms() {
-        return term;
-    }
+
 }

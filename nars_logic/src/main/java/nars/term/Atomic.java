@@ -1,22 +1,19 @@
 package nars.term;
 
-import nars.Op;
 import nars.term.compile.TermIndex;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 import nars.util.utf8.Utf8;
 
-import java.io.Externalizable;
 import java.io.IOException;
 
 
-public abstract class Atomic implements Term, Externalizable {
+public abstract class Atomic implements Term {
 
     @Override
-    public abstract Op op();
-
-    @Override
-    public abstract int structure();
+    public final boolean containsTerm(Term t) {
+        return false;
+    }
 
 
     public final void rehash() {
@@ -27,14 +24,14 @@ public abstract class Atomic implements Term, Externalizable {
         return false;
     }
 
-    @Override
-    public final Term term(int n) {
-        throw new RuntimeException("Atoms have no subterms");
-    }
-    @Override
-    public final Term termOr(int n, Term x) {
-        return term(n);
-    }
+//    @Override
+//    public final Term term(int n) {
+//        throw new RuntimeException("Atoms have no subterms");
+//    }
+//    @Override
+//    public final Term termOr(int n, Term x) {
+//        return term(n);
+//    }
 
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
@@ -62,10 +59,7 @@ public abstract class Atomic implements Term, Externalizable {
         return this;
     }
 
-    @Override
-    public final Term cloneDeep() {
-        return this;
-    }
+
 
     @Override
     public final void recurseTerms(final SubtermVisitor v, final Term parent) {
@@ -86,17 +80,6 @@ public abstract class Atomic implements Term, Externalizable {
         return toString();
     }
 
-    @Override public abstract boolean hasVar();
-
-    @Override public abstract int vars();
-
-    @Override public abstract boolean hasVarIndep();
-
-    @Override public abstract boolean hasVarDep();
-
-    @Override public abstract boolean hasVarQuery();
-
-    @Override public abstract int complexity();
 
     @Override
     public final int size() {
@@ -111,10 +94,6 @@ public abstract class Atomic implements Term, Externalizable {
 
     @Override public abstract byte[] bytes();
 
-    /** atomic terms contain nothing */
-    @Override public final boolean containsTerm(Term target) {
-        return false;
-    }
 
     /** atomic terms contain nothing */
     @Override public final boolean containsTermRecursively(Term target) {

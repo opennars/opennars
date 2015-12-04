@@ -32,9 +32,7 @@ public class DifferenceInt extends Difference {
      * Constructor with partial values, called by make
      */
     private DifferenceInt(final Term a, final Term b) {
-        super();
-
-        init(a, b);
+        super(a, b);
     }
 
 

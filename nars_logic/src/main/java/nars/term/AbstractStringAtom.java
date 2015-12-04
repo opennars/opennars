@@ -3,16 +3,20 @@ package nars.term;
 import nars.Op;
 import nars.util.utf8.Utf8;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-
-public abstract class StringAtom extends Atomic {
+/** implemented with a native Java string.
+ *  this should be the ideal choice for JDK9
+ *  since it does Utf8 internally and many
+ *  string operations are intrinsics.  */
+public abstract class AbstractStringAtom extends Atomic implements Externalizable {
 
     private final String id;
 
-    public StringAtom(String id) {
+    public AbstractStringAtom(String id) {
         this.id = id;
     }
 
@@ -26,8 +30,6 @@ public abstract class StringAtom extends Atomic {
 
     @Override
     public abstract int structure();
-
-
 
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
@@ -50,8 +52,8 @@ public abstract class StringAtom extends Atomic {
     public boolean equals(final Object x) {
         if (this == x) return true;
 
-        if (x instanceof StringAtom) {
-            StringAtom ax = (StringAtom)x;
+        if (x instanceof AbstractStringAtom) {
+            AbstractStringAtom ax = (AbstractStringAtom)x;
             return id.equals(ax.id);
         }
         return false;
@@ -71,7 +73,7 @@ public abstract class StringAtom extends Atomic {
         //if (that instanceof StringAtomic) {
             //if the op is the same, it will be a subclass of atom
             //which should have an ordering determined by its byte[]
-            return id.compareTo(((StringAtom)that).id);
+            return id.compareTo(((AbstractStringAtom)that).id);
         //}
 
     }
@@ -80,33 +82,8 @@ public abstract class StringAtom extends Atomic {
         return bytes().length;
     }
 
-    @Override public abstract boolean hasVar();
-
-    @Override public abstract int vars();
-
-    @Override public abstract boolean hasVarIndep();
-
-    @Override public abstract boolean hasVarDep();
-
-    @Override public abstract boolean hasVarQuery();
-
-    @Override public abstract int complexity();
-
 
     @Override public int volume() { return 1; }
-
-
-    @Override public abstract byte[] bytes();
-
-
-    @Override
-    public abstract int varIndep();
-
-    @Override
-    public abstract int varDep();
-
-    @Override
-    public abstract int varQuery();
 
 
     @Override
@@ -119,4 +96,7 @@ public abstract class StringAtom extends Atomic {
         throw new RuntimeException("unimpl");
     }
 
+//    public static class StringAtom extends AbstractStringAtom {
+//
+//    }
 }

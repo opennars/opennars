@@ -878,14 +878,14 @@ public class Terms {
         return arr;
     }
 
-    public static Term[] filter(Term[] input, IntObjectPredicate<Term> filter) {
+    public static <T> Term[] filter(T[] input, IntObjectPredicate<T> filter) {
 
         int s = input.length;
 
-        List<Term> l = Global.newArrayList(s);
+        List<T> l = Global.newArrayList(s);
 
         for (int i = 0; i < s; i++) {
-            Term t = input[i];
+            T t = input[i];
             if (filter.accept(i, t))
                 l.add(t);
         }

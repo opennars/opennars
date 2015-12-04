@@ -11,15 +11,12 @@ import java.io.IOException;
  */
 public class ProductN<T extends Term> extends DefaultCompound2<T> implements Product<T> {
 
-
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
     public ProductN(final T... arg) {
-        super();
-
-        init(arg);
+        super(arg);
     }
 
     @Override public final boolean isCommutative() {

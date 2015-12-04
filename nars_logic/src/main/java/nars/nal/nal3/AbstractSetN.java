@@ -14,9 +14,7 @@ abstract public class AbstractSetN<T extends Term> extends DefaultCompound2<T> i
      * @param arg The component list of the term
      */
     protected AbstractSetN(final T[] arg) {
-        super();
-
-        init(arg);
+        super(arg);
     }
 
 

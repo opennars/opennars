@@ -4,7 +4,9 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.util.math.ShuffledPermutations;
 
+import java.util.Iterator;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * proxy to a TermContainer providing access to its subterms via a shuffling order
@@ -51,7 +53,37 @@ public final class ShuffleTermVector extends ShuffledPermutations implements Ter
 
     @Override
     public final boolean impossibleSubTermVolume(int otherTermVolume) {
-        return compound.impossibleToMatch(otherTermVolume);
+        return compound.impossibleSubTermVolume(otherTermVolume);
+    }
+
+    @Override
+    public boolean containsTerm(Term term) {
+        return compound.containsTerm(term);
+    }
+
+    @Override
+    public void forEach(Consumer action, int start, int stop) {
+        compound.forEach(action, start, stop);
+    }
+
+    @Override
+    public int varDep() {
+        return compound.varDep();
+    }
+
+    @Override
+    public int varIndep() {
+        return compound.varIndep();
+    }
+
+    @Override
+    public int varQuery() {
+        return compound.varQuery();
+    }
+
+    @Override
+    public int vars() {
+        return compound.vars();
     }
 
     @Override
@@ -59,4 +91,17 @@ public final class ShuffleTermVector extends ShuffledPermutations implements Ter
         return compound.compareTo(o);
     }
 
+    @Override
+    public Iterator iterator() {
+        return compound.iterator();
+    }
+
+    public Term[] termsCopy() {
+        return TermContainer.copyByIndex(this);
+    }
+
+    @Override
+    public Term[] terms() {
+        throw new RuntimeException("only termsCopy available and its not efficient");
+    }
 }

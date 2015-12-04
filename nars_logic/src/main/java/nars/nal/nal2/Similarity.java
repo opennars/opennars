@@ -33,8 +33,7 @@ public class Similarity extends Statement {
      * Constructor with partial values, called by make
      */
     protected Similarity(final Term subj, final Term pred) {
-        super();
-        init(subj, pred);
+        super(subj, pred);
     }
 
 

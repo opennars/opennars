@@ -2,10 +2,10 @@ package nars.nal.nal8;
 
 import com.google.common.primitives.Bytes;
 import nars.Op;
+import nars.term.AbstractUtf8Atom;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Utf8Atom;
 import nars.term.transform.Substitution;
 import nars.util.utf8.Utf8;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
  * of an Operation
  * TODO inherit AbstractAtomic
  */
-public class Operator<T extends Term> extends Utf8Atom { //implements Term {
+public class Operator<T extends Term> extends AbstractUtf8Atom { //implements Term {
 
 
     final static byte[] opPrefix = new byte[] { (byte)'^' };
@@ -43,12 +43,6 @@ public class Operator<T extends Term> extends Utf8Atom { //implements Term {
     @Override
     public final int complexity() {
         return 1;
-    }
-
-
-    @Override
-    public boolean hasVar() {
-        return false;
     }
 
     @Override

@@ -362,7 +362,7 @@ public class SequenceParallelTest {
 
     @Test public void testSequenceToArrayWithIntervals() {
         Sequence a = $.$("(&/, x, /3, y)");
-        assertEquals("[x, y]", Arrays.toString(a.toArray()));
+        assertEquals("[x, y]", Arrays.toString(a.terms()));
         assertEquals("[x, /3, y]", Arrays.toString(a.toArrayWithIntervals()));
         assertEquals("[x, /3]", Arrays.toString(a.toArrayWithIntervals((i,x) -> i==0)));
         assertEquals("[y]", Arrays.toString(a.toArrayWithIntervals((i,x) -> i==1)));

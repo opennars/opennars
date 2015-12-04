@@ -61,7 +61,6 @@ public class TermSerializationTest extends AbstractSerializationTest<String,Term
     @Override
     protected Term post(Term deserialized) {
         Term t = super.post(deserialized);
-        t.rehash();
         return t;
     }
 

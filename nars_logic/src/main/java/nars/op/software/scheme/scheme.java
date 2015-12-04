@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.nal.nal4.Product;
-import nars.nal.nal4.Product1;
 import nars.nal.nal4.ProductN;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
@@ -54,18 +53,12 @@ public class scheme extends TermFunction {
     /** adapter class for NARS term -> Scheme expression; temporary until the two API are merged better */
     public static class SchemeProduct extends ListExpression {
 
-        public SchemeProduct(Product1 p) {
-            super(Cons.copyOf(narsToScheme.apply(p.the())));
-        }
 
         public SchemeProduct(ProductN p) {
             super(Cons.copyOf(Iterables.transform(p, narsToScheme)));
         }
     }
 
-    public Expression eval(Product1 p) {
-        return Evaluator.evaluate(new SchemeProduct(p), env);
-    }
     public Expression eval(ProductN p) {
         return Evaluator.evaluate(new SchemeProduct(p), env);
     }
@@ -94,10 +87,7 @@ public class scheme extends TermFunction {
         Term[] x = o.args();
         Term code = x[0];
 
-        if (code instanceof Product1) {
-            return schemeToNars.apply(eval( ((Product1) code)  ));
-        }
-        else if (code instanceof ProductN) {
+        if (code instanceof ProductN) {
             return schemeToNars.apply(eval( ((ProductN) code)  ));
         }
         else {

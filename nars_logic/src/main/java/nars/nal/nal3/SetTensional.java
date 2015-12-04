@@ -1,8 +1,6 @@
 package nars.nal.nal3;
 
 
-import com.gs.collections.api.set.MutableSet;
-import com.gs.collections.impl.factory.Sets;
 import nars.Op;
 import nars.Symbols;
 import nars.term.Compound;
@@ -94,37 +92,9 @@ public interface SetTensional<T extends Term> extends Compound<T> {
         p.append(closer);
     }
 
-    Term[] terms();
 
 
-    default Set<Term> toSet() {
-        return Sets.mutable.of(terms());
-    }
 
-    static MutableSet<Term> intersect(SetTensional a, SetTensional b) {
-        return Sets.intersect(a.toSet(),b.toSet());
-    }
-
-    static Set<Term> difference(SetTensional a, SetTensional b) {
-        return Sets.difference(a.toSet(), b.toSet());
-
-//        List<Term> terms = Global.newArrayList();
-//        for(Term t: A.terms()) { //set difference
-//            boolean include = true;
-//            for(Term t2 : B.terms()) {
-//                if(t.equals(t2)) {
-//                    include=false;
-//                    break;
-//                }
-//            }
-//            if(include) {
-//                terms.add(t);
-//            }
-//        }
-//        if (terms.isEmpty()) return false;
-
-
-    }
 
     static Set<Term> subtract(SetTensional a, SetTensional b) {
         Set<Term> set = a.toSet();

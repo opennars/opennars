@@ -29,8 +29,6 @@ public class RuleSerializationTest extends AbstractSerializationTest<Collection<
 
     @Override
     protected Collection<TaskRule> post(Collection<TaskRule> deserialized) {
-        for (TaskRule rr: deserialized)
-            rr.rehash();
         return deserialized;
     }
 

@@ -1,8 +1,8 @@
 package nars.nal.nal7;
 
 import nars.Op;
+import nars.term.AbstractUtf8Atom;
 import nars.term.Term;
-import nars.term.Utf8Atom;
 import nars.term.transform.Substitution;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.io.IOException;
  * representations.
  *
  */
-public class InvisibleAtom extends Utf8Atom {
+public class InvisibleAtom extends AbstractUtf8Atom {
 
     public InvisibleAtom(String id) {
         super(id);
@@ -70,29 +70,10 @@ public class InvisibleAtom extends Utf8Atom {
     }
 
     @Override
-    public boolean hasVar() {
-        return false;
-    }
-
-    @Override
     public int vars() {
         return 0;
     }
 
-    @Override
-    public boolean hasVarIndep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarDep() {
-        return false;
-    }
-
-    @Override
-    public boolean hasVarQuery() {
-        return false;
-    }
 
     @Override
     public int complexity() {

@@ -24,8 +24,7 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
 
 
     protected Parallel(Term[] arg) {
-        super();
-        init(Terms.toSortedSetArray(arg));
+        super(Terms.toSortedSetArray(arg));
     }
 
     @Override

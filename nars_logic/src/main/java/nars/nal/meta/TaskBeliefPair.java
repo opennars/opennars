@@ -21,17 +21,10 @@ public class TaskBeliefPair extends ProductN {
 
     public TaskBeliefPair(Term a, Term b) {
         super(a, b);
-    }
 
-    @Override
-    public void init(final Term... term) {
-        super.init(term);
-
-        final Term a = term[0];
         volA = a.volume();
         structureA = a.structure();
 
-        final Term b = term[1];
         volB = b.volume();
         structureB = b.structure();
     }
@@ -41,7 +34,7 @@ public class TaskBeliefPair extends ProductN {
         Term[] t = this.terms();
         t[0] = a;
         t[1] = b;
-        init(t);
+        terms.init(); //rehash
     }
 
 

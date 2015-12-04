@@ -226,7 +226,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     public static InvisibleProduct matchedSubterms(Compound Y) {
         Term[] arrayGen =
                 !(Y instanceof Sequence) ?
-                        Y.toArray() :
+                        Y.terms() :
                         ((Sequence)Y).toArrayWithIntervals();
 
         return matchedSubterms(arrayGen);
@@ -235,7 +235,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     public static InvisibleProduct matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
         Function<IntObjectPredicate,Term[]> arrayGen =
                 !(Y instanceof Sequence) ?
-                        Y::toArray :
+                        Y::terms :
                         ((Sequence)Y)::toArrayWithIntervals;
 
         return matchedSubterms(arrayGen.apply( filter ) );

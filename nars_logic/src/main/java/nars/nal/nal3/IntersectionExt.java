@@ -31,12 +31,9 @@ public class IntersectionExt extends Intersect {
 
     /**
      * Constructor with partial values, called by make
-     * @param arg The component list of the term
      */
-    private IntersectionExt(Term[] arg) {
-        super();
-
-        init(arg);
+    private IntersectionExt(Term[] args) {
+        super(args);
     }
 
 
@@ -46,7 +43,7 @@ public class IntersectionExt extends Intersect {
      */
     @Override
     public IntersectionExt clone() {
-        return new IntersectionExt(terms.term);
+        return new IntersectionExt(terms());
     }
     
     @Override

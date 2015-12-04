@@ -34,7 +34,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 
-public interface Term extends TermContainer, Cloneable, Comparable, Termed, Serializable {
+public interface Term extends Cloneable, Comparable, Termed, Termlike, Serializable {
 
 
     @Override default Term getTerm() {
@@ -44,16 +44,16 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
     Op op();
 
     /** volume = total number of terms = complexity + # total variables */
-    @Override int volume();
+    int volume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
-    @Override int complexity();
+    int complexity();
 
 
+    int structure();
 
 
-
-    /** number of subterms. if atomic, size=1 */
+    /** number of subterms. if atomic, size=0 */
     int size();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
@@ -64,7 +64,6 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return (T) this;
     }
 
-    boolean containsTerm(final Term target);
 
 
     @Deprecated boolean containsTermRecursively(Term target);
@@ -86,17 +85,29 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
      * */
     boolean or(final TermPredicate v);
 
+
+    /**
+     * Commutivity in NARS means that a Compound term's
+     * subterms will be unique and arranged in order (compareTo)
+     *
+     * <p>
+     * commutative CompoundTerms: Sets, Intersections Commutative Statements:
+     * Similarity, Equivalence (except the one with a temporal order)
+     * Commutative CompoundStatements: Disjunction, Conjunction (except the one
+     * with a temporal order)
+     *
+     * @return The default value is false
+     */
     boolean isCommutative();
 
     Term clone();
 
-    /** deep clone, creating clones of all subterms recursively */
-    Term cloneDeep();
-
     /**
      * Whether this compound term contains any variable term
      */
-    boolean hasVar();
+    default boolean hasVar() {
+        return vars() > 0;
+    }
 
     default int getTemporalOrder() {
         return Tense.ORDER_NONE;
@@ -104,6 +115,26 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
     //boolean hasVar(final Op type);
 
+
+    /** tests if contains a term in the structural hash
+     *  WARNING currently this does not detect presence of pattern variables
+     * */
+    default boolean hasAny(final Op op) {
+//        if (op == Op.VAR_PATTERN)
+//            return Variable.hasPatternVariable(this);
+        return hasAny((1<<op.ordinal()));
+    }
+
+//    default boolean hasAll(int structuralVector) {
+//        final int s = structure();
+//        return (s & structuralVector) == s;
+//    }
+//
+
+    default boolean hasAny(final int structuralVector) {
+        final int s = structure();
+        return (s & structuralVector) != 0;
+    }
 
 
     /** # of contained independent variables */
@@ -205,6 +236,8 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return substituted(new MapSubstitution(subs));
     }
 
+
+
 //    /** returns the effective term as substituted by the set of subs */
 //    default Term substituted(final Map<Variable, Term> subs) {
 //
@@ -237,9 +270,6 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
         return op().levelValid(nal);
     }
 
-    /** called during construction, or after serialization,
-     * to recompute any transient fields (hashes, etc..)  */
-    void rehash();
 
     default String structureString() {
         return String.format("%16s",
@@ -247,11 +277,13 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
                     .replace(" ", "0");
     }
 
-    static boolean impossibleToMatch(int existingStructure, int possibleSubtermStructure) {
-        //if the OR produces a different result compared to subterms,
-        // it means there is some component of the other term which is not found
-        return ((possibleSubtermStructure | existingStructure) != existingStructure);
-    }
+
+
+//    //TODO
+//    static final int TemporalStructure =
+//            hasAny(Op.PARALLEL) || hasAny(Op.SEQUENCE) ||
+//                    hasAny(Op.EQUIVALENCE_AFTER) || hasAny(Op.EQUIVALENCE_WHEN) ||
+//                    hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
 
     default boolean containsTemporal() {
         //TODO construct bit vector for one comparison
