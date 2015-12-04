@@ -286,7 +286,9 @@ public class DerivationRules extends FastList<TaskRule> {
 
                 if(rNorm!=null) {
                     final TaskRule rNorm2 = rNorm.forwardPermutation();
-                    AcceptRule(ur, s, rNorm2);
+                    if(rNorm2 != null) {
+                        AcceptRule(ur, s, rNorm2);
+                    }
                 }
 
             } catch (Exception ex) {

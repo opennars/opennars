@@ -611,6 +611,7 @@ public class TaskRule extends ProductN implements Level {
      */
     static final Term sequenceIntervalsFromTaskTerm = $.$("SequenceIntervals:FromTask");
     static final Term sequenceIntervalsFromBeliefTerm = $.$("SequenceIntervals:FromBelief");
+    static final Term afterPred = $.$("after(Task,Belief)");
     public final TaskRule forwardPermutation() {
 
         // T, B, [pre] |- C, [post] ||--
@@ -618,6 +619,12 @@ public class TaskRule extends ProductN implements Level {
         Term T = this.getTask();
         Term B = this.getBelief();
         Term C = this.getConclusionTerm();
+
+        for(PreCondition post : this.prePreconditions) {
+           if(post instanceof After) {
+               return null;
+           }
+        }
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
