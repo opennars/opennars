@@ -13,6 +13,9 @@ package nars.guifx.graph2.layout;
 
 import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
@@ -401,13 +404,19 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		run(graph.displayed, iterations);
 	}
 
-//	public void run(Parent p, int iterations) {
-//		ObservableList<Node> c = p.getChildrenUnmodifiable();
-//		run(c.toArray(new Node[c.size()]), iterations);
-//	}
+	public void run(Parent p, int iterations) {
+		ObservableList<Node> c = p.getChildrenUnmodifiable();
+		run(c, iterations);
+	}
+
+	public void run(ObservableList<Node> c, int iterations) {
+		GraphNode[] gg = c.stream().filter(nn -> nn instanceof GraphNode).map(nn -> (GraphNode) nn).toArray(ii -> new GraphNode[ii]);
+		run(gg, iterations);
+	}
 
 	public void run(GraphNode[] nodes, int iterations) {
 
+		if (nodes.length == 0) return;
 
 		GraphNode[] vertexSet =  nodes;
 		GraphNode[] vertices = vertexSet;

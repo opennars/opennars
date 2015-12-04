@@ -46,7 +46,7 @@ public class GraphNode extends Group {
 
 	//Point2D sceneCoord;// = new Point2D(0,0);
 
-	final public GraphNode move(final double x, final double y) {
+	public GraphNode move(final double x, final double y) {
 		setTranslateX(this.tx = x);
 		setTranslateY(this.ty = y);
 
@@ -70,7 +70,7 @@ public class GraphNode extends Group {
 		}
 	}
 
-	final public boolean move(final double[] v, final double threshold) {
+	public boolean move(final double[] v, final double threshold) {
 		final double x = tx;
 		final double y = ty;
 		final double nx = v[0];
@@ -100,11 +100,11 @@ public class GraphNode extends Group {
 //        return sceneCoord.getY();
 //    }
 
-	public final double x() {
+	public double x() {
 		return tx;
 	}
 
-	public final double y() {
+	public double y() {
 		return ty;
 	}
 

@@ -9,6 +9,7 @@ import javafx.scene.chart.PieChart;
 import javafx.stage.Stage;
 import nars.$;
 import nars.guifx.Spacegraph;
+import nars.guifx.graph2.layout.HyperOrganicLayout;
 import nars.guifx.terminal.Console;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
@@ -87,7 +88,8 @@ public class RunSpacegraph extends Application {
                                 $.$("<a --> " + i + ">"))) );
             }
 
-            //new HyperOrganicLayout().run(this, 10);
+            new HyperOrganicLayout().run(this.verts, 10);
+
 
             ground.getChildren().add(new GridCanvas(true));
 

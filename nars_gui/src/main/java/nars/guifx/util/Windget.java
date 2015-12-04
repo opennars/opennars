@@ -384,6 +384,15 @@ public class Windget extends DefaultWindow {
         return false;
     }
 
+    @Override
+    public double x() {
+        return getCenterX();
+    }
+    @Override
+    public double y() {
+        return getCenterY();
+    }
+
     public final double getCenterX() {
         return getLayoutX() + content.getWidth()/2d;
     }

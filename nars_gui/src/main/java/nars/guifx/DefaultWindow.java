@@ -41,7 +41,6 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -56,12 +55,13 @@ import jfxtras.labs.scene.control.window.SelectableNode;
 import jfxtras.labs.scene.control.window.Window;
 import jfxtras.labs.util.WindowUtil;
 import jfxtras.util.NodeUtil;
+import nars.guifx.graph2.layout.GraphNode;
 
 /**
  *
  * @author Michael Hoffer &lt;info@michaelhoffer.de&gt;
  */
-public class DefaultWindow extends Group implements SelectableNode {
+public class DefaultWindow extends GraphNode implements SelectableNode {
 
     private double mouseX;
     private double mouseY;
