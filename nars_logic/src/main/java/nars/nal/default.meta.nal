@@ -387,7 +387,7 @@
                                             (($X --> S) <=> ($X --> P)), (Truth:Comparison),
                                             (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
 
-try:    (M --> S), (M --> P), not_equal(S,P), after(Task,Belief), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
+    (M --> S), (M --> P), not_equal(S,P), after(Task,Belief), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
                                                                                  (($X --> P) =\> (&/,($X --> S),I)), (Truth:Abduction),
                                                                                  ((&/,($X --> S),I) </> ($X --> P)), (Truth:Comparison),
                                                                                  (&/,(#Y --> S), I ,(#Y --> P)), (Truth:Intersection)

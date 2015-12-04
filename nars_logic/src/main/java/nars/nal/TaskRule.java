@@ -611,7 +611,7 @@ public class TaskRule extends ProductN implements Level {
      */
     static final Term sequenceIntervalsFromTaskTerm = $.$("SequenceIntervals:FromTask");
     static final Term sequenceIntervalsFromBeliefTerm = $.$("SequenceIntervals:FromBelief");
-    static final Term afterPred = $.$("after(Task,Belief)");
+
     public final TaskRule forwardPermutation() {
 
         // T, B, [pre] |- C, [post] ||--
