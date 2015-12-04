@@ -132,13 +132,12 @@ abstract public class Variable extends AbstractStringAtom {
 
     @Override
     public final void append(Appendable w, boolean pretty) throws IOException {
-        w.append(op().ch);
-        super.append(w, pretty);
+        w.append(op().ch).append(id);
     }
 
     @Override
     public final String toString() {
-        return Utf8.fromUtf8toString(op().ch, bytes());
+        return op().ch + id;
     }
 
     @Override public final Term substituted(Map<Term, Term> subs) {

@@ -105,7 +105,12 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
         return this;
     }
 
-//
+    @Override
+    public int hashCode() {
+        return term.hashCode() ^ 0xAADEADAA;
+    }
+
+    //
 //    @Override
 //    protected final void init(T... term) {
 //        super.init(term);
@@ -135,11 +140,15 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     }
 
     @Override
-    public final int compareTo(Object o) {
-        if (o == this) return 0;
-        if (o instanceof Operator) {
-            return term.compareTo( ((Operator)o).term );
-        }
-        return 1;
+    public final int compareTo(Object that) {
+        if (that == this) return 0;
+
+
+        Term t = (Term)that;
+        int d = Integer.compare(op().ordinal(), t.op().ordinal());
+        if (d!=0) return d;
+
+
+        return term.compareTo( ((Operator)that).term );
     }
 }

@@ -18,6 +18,11 @@ public class StringAtom extends AbstractStringAtomRaw {
     }
 
     @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
     public int hashCode() {
         /** for Op.ATOM, we use String hashCode() as-is, avoiding need to calculate or store a hash mutated by the Op */
         return id.hashCode();

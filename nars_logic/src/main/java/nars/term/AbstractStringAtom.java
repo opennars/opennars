@@ -18,9 +18,7 @@ public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
     }
 
     public AbstractStringAtom(byte[] id, Op specificOp) {
-        this(//Utf8.fromUtf8toString(id),
-            new String(id),
-            specificOp);
+        this( new String(id), specificOp);
     }
 
     public AbstractStringAtom(String id, Op specificOp) {

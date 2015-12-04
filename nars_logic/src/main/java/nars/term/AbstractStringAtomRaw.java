@@ -1,7 +1,6 @@
 package nars.term;
 
 import nars.Op;
-import nars.util.utf8.Utf8;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -36,14 +35,12 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
 
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
-        Utf8.fromUtf8ToAppendable(bytes(), w);
+        w.append(id);
     }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public StringBuilder toStringBuilder(final boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(id);
-        return sb;
+        return new StringBuilder(id);
     }
 
     @Override
