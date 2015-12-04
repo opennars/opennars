@@ -139,8 +139,8 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
         root.add(save);
 
-        //String levelPath2="C:\\Users\\patrick.hammer\\IdeaProjects\\opennars\\nars_lab\\src\\main\\java\\nars\\grid2d\\level";
-        File f = new File(levelPath); // current directory
+        String levelPath2="C:\\Users\\patrick.hammer\\IdeaProjects\\opennars_radical2\\nars_lab\\src\\main\\java\\nars\\testchamber\\level";
+        File f = new File(levelPath2); // current directory
         try {
             File[] files = f.listFiles();
             for (File file : files) {

@@ -135,17 +135,20 @@ public final class Resolve extends PreCondition {
                     int a = copy.terms().length;
                     int b = paste.terms().length;
                     boolean sameLength = a == b;
-                    boolean OneLess = a - 1 == b;
+                   // boolean OneLess = a - 1 == b;
 
-                    if (!sameLength && !OneLess) {
+                    boolean kLess = a > b;
+                    int k = a-b;
+
+                    if (!sameLength && !kLess) {
                         System.out.println("the case where the resulting sequence has less elements should not happen and needs to be analyzed!!");
                     }
 
                     int[] pasteIntervals = paste.intervals();
 
-                    if (OneLess) {
+                    if (kLess) {
                         match.post.occurence_shift = copyIntervals[1]; //we shift according to first interval
-                        System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
+                        System.arraycopy(copyIntervals, 1+k, pasteIntervals, 1 , copyIntervals.length - (1+k));
                     } else if (sameLength) {
                         System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
                     }
