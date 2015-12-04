@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.google.common.collect.Sets;
+import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.Ellipsis;
@@ -608,6 +609,8 @@ public class TaskRule extends ProductN implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
+    static final Term sequenceIntervalsFromTaskTerm = $.$("SequenceIntervals:FromTask");
+    static final Term sequenceIntervalsFromBeliefTerm = $.$("SequenceIntervals:FromBelief");
     public final TaskRule forwardPermutation() {
 
         // T, B, [pre] |- C, [post] ||--
@@ -618,8 +621,25 @@ public class TaskRule extends ProductN implements Level {
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
-        TaskRule clone1 = clone(B, T, C, false);
-        return null; //clone1.normalizeRule();
+        TaskRule ruleCloned = (TaskRule) clone(B, T, C, false).cloneTransforming(new CompoundTransform() {
+            @Override
+            public Term apply(Compound parent, Term s, int depth) {
+                if (s.equals(sequenceIntervalsFromTaskTerm)) {
+                    return sequenceIntervalsFromBeliefTerm;
+                }
+                if (s.equals(sequenceIntervalsFromBeliefTerm)) {
+                    return sequenceIntervalsFromTaskTerm;
+                }
+                return s;
+            }
+
+            @Override
+            public boolean test(Object o) {
+                return true;
+            }
+        });
+
+        return ruleCloned.normalizeRule();
     }
 
     private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {

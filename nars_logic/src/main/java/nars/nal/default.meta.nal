@@ -537,4 +537,4 @@
 
 //generalized detachment
 
-   (&&,A_1..n), ((&&,A_1..n,B_1..m,/1) ==> C) |- ((&&,B_1..m,/1) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
+   (&/,A_1..n), ((&/,A_1..n,B_1..m,/1) ==> C) |- ((&/,B_1..m,/1) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
