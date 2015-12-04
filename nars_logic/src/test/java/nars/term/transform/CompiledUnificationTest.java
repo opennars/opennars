@@ -124,6 +124,7 @@ public class CompiledUnificationTest extends UnificationTest {
 
 
         FindSubst subst = new FindSubst(type, rng);
+        subst.branchPower.set(startPower);
         boolean subbed = subst.next(tp, t2, startPower);
 
         //System.out.println(tp.term + " " + t2 + "\n\tXY: " + subst.xy + "\n\tYX: " + subst.yx);

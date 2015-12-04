@@ -45,7 +45,7 @@ public class UnificationTest  {
         Term t2 = nar.concept(s2).getTerm();
 
         //a somewhat strict lower bound
-        int power = 1 + t1.volume() * t2.volume();
+        int power = 4 * (1 + t1.volume() * t2.volume());
         //power*=power;
 
         FindSubst sub = new FindSubst(type, nar);

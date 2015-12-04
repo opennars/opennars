@@ -1,7 +1,7 @@
 package nars.term.compile;
 
-import nars.term.AbstractAtomic;
 import nars.term.Atom;
+import nars.term.Atomic;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.transform.CompoundTransform;
@@ -32,7 +32,7 @@ public class CompiledTermIndex extends ByteBuddy implements TermIndex {
     public Term compile(Term t) {
         if (t instanceof Atom) {
             //TODO make the type final
-            DynamicType.Unloaded<AbstractAtomic> uc = subclass(AbstractAtomic.class)
+            DynamicType.Unloaded<Atomic> uc = subclass(Atomic.class)
                     .method(named("bytes")).intercept(value(t.bytes()))
                     .method(named("getByteLen")).intercept(value(t.getByteLen()))
                     .method(named("hashCode")).intercept(value(t.hashCode()))
@@ -50,7 +50,7 @@ public class CompiledTermIndex extends ByteBuddy implements TermIndex {
             }*/
 
             System.out.println(uc);
-            DynamicType.Loaded<AbstractAtomic> ux = uc.load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER);
+            DynamicType.Loaded<Atomic> ux = uc.load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER);
             System.out.println(ux + " " + ux.getBytes().length + " bytes");
             Class c = ux.getLoaded();
             System.out.println(c);

@@ -3,82 +3,16 @@ package nars.term;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
+import nars.nal.nal7.InvisibleAtom;
 import nars.term.transform.Substitution;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
+/** default Atom implementation */
 public class Atom extends Utf8Atom {
 
-    final static byte[] NullName = new byte[0];
-    public static final Term Null = new Utf8Atom(NullName) {
 
-        @Override public String toString() {
-            return "NULL";
-        }
-
-        @Override
-        public boolean hasVar() {
-            return false;
-        }
-
-        @Override
-        public int vars() {
-            return 0;
-        }
-
-        @Override
-        public boolean hasVarIndep() {
-            return false;
-        }
-
-        @Override
-        public boolean hasVarDep() {
-            return false;
-        }
-
-        @Override
-        public boolean hasVarQuery() {
-            return false;
-        }
-
-
-        @Override
-        public final Term substituted(Substitution s) {
-            return null;
-        }
-
-        @Override
-        public int complexity() {
-            return 0;
-        }
-
-        @Override
-        public int varIndep() {
-            return 0;
-        }
-
-        @Override
-        public int varDep() {
-            return 0;
-        }
-
-        @Override
-        public int varQuery() {
-            return 0;
-        }
-
-        @Override
-        public Op op() {
-            return Op.NONE;
-        }
-
-        @Override
-        public int structure() {
-            return 0;
-        }
-
-
-    };
+    public static final Term Null = new InvisibleAtom("NULL");
 
     final static Atom[] digits = new Atom[10];
     //private static final Map<String,Atom> atoms = Global.newHashMap();

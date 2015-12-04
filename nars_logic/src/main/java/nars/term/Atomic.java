@@ -10,11 +10,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 
 
-public abstract class AbstractAtomic implements Term, Externalizable {
-
-    public AbstractAtomic() {
-
-    }
+public abstract class Atomic implements Term, Externalizable {
 
     @Override
     public abstract Op op();
@@ -51,12 +47,6 @@ public abstract class AbstractAtomic implements Term, Externalizable {
         Utf8.fromUtf8ToStringBuilder(bytes(), sb);
         return sb;
     }
-
-    @Override
-    public String toString() {
-        return Utf8.fromUtf8toString(bytes());
-    }
-
 
 
 
@@ -141,7 +131,7 @@ public abstract class AbstractAtomic implements Term, Externalizable {
     public abstract int varQuery();
 
     @Override
-    public final AbstractAtomic normalized() {
+    public final Atomic normalized() {
         return this;
     }
 

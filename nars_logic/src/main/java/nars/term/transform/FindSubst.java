@@ -233,7 +233,6 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
-            ff.setPower(ff.branchPower.get()); //HACK
             return ff.match(x, ff.term.get());
         }
 

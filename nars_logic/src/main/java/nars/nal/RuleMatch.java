@@ -119,6 +119,8 @@ public class RuleMatch extends FindSubst {
                     + Global.UNIFICATION_POWERmin)
         );
 
+        setPower(branchPower.get()); //HACK is this where it should be assigned?
+
     }
 
 

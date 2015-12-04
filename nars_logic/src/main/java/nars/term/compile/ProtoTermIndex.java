@@ -1,6 +1,5 @@
 package nars.term.compile;
 
-import nars.term.AbstractAtomic;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Termed;
@@ -21,10 +20,10 @@ public class ProtoTermIndex extends ByteBuddy implements TermIndex {
         return terms.computeIfAbsent(t, this::compile);
     }
 
-    abstract public static class ProtoAtomic extends AbstractAtomic {
-
-        //public static final byte[]
-    }
+//    abstract public static class ProtoAtomic extends Atomic {
+//
+//        //public static final byte[]
+//    }
 
     public Term compile(Term t) {
         if (t instanceof Atom) {

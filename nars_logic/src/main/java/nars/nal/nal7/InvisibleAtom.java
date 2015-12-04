@@ -12,9 +12,8 @@ import java.io.IOException;
  * processes, useful for placeholders and intermediate
  * representations.
  *
- * TODO make ImmutableAtom
  */
-public abstract class InvisibleAtom extends Utf8Atom {
+public class InvisibleAtom extends Utf8Atom {
 
     public InvisibleAtom(String id) {
         super(id);

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-abstract public class Utf8Atom extends AbstractAtomic implements Byted {
+abstract public class Utf8Atom extends Atomic implements Byted {
 
     private final byte[] id;
     private final int hash;
@@ -40,6 +40,10 @@ abstract public class Utf8Atom extends AbstractAtomic implements Byted {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return Utf8.fromUtf8toString(bytes());
+    }
 
     /**
      * @param that The Term to be compared with the current Term
