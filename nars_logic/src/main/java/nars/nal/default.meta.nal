@@ -532,3 +532,9 @@
 //compound composition one premise
 
     (||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+
+//Inference booster rules
+
+//generalized detachment
+
+   (&&,A_1..n), ((&&,A_1..n,B_1..m,/1) ==> C) |- ((&&,B_1..m,/1) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)

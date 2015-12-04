@@ -619,7 +619,7 @@ public class TaskRule extends ProductN implements Level {
         //      B, T, [pre], task_is_question() |- T, [post]
 
         TaskRule clone1 = clone(B, T, C, false);
-        return clone1.normalizeRule();
+        return null; //clone1.normalizeRule();
     }
 
     private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {

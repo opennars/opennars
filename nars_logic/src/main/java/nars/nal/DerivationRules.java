@@ -117,7 +117,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
         if (current_rule.length() > 0) {
             if (!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
-                unparsed_rules.add(current_rule.toString());
+                unparsed_rules.add(current_rule.toString().trim().replace("try:", ""));
             }
         }
 
@@ -354,8 +354,8 @@ public class DerivationRules extends FastList<TaskRule> {
                 if (p.contains("B_1..m")) {
                     String str2 = "B_1";
                     for (int k = 0; k < maxVarArgs; k++) {
-                        str2 += ", B_" + (k + 2);
                         String parsable_unrolled = p.replace("A_1..n", str + ' ').replace("B_1..m", str2 + ' ');
+                        str2 += ", B_" + (k + 2);
                         addAndPermuteTenses(expanded, parsable_unrolled);
                     }
                 } else {

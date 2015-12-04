@@ -193,17 +193,26 @@
 
 package nars.nal;
 
+import nars.$;
 import nars.NAR;
 import nars.Narsese;
+import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default2;
 import nars.op.mental.Anticipate;
+import nars.term.Term;
+import nars.util.meter.TestNAR;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
-public class Patham9Test {
+@RunWith(Parameterized.class)
+public class Patham9Test extends AbstractNALTester {
 
 
     //final int cycles = 2000;
@@ -220,7 +229,7 @@ public class Patham9Test {
 
 
 
-    @Test
+    /*@Test
     public void noise_simple() throws Narsese.NarseseException {
         NAR nar =new Default2(1000, 1, 1, 3);
         //NAR nar = nar();
@@ -243,11 +252,11 @@ public class Patham9Test {
         assertEquals(a, b);
 
         //Concept c = nar.concept("<(&/, <b --> B>, /25) =/> <a --> A>>");
-       /* nar.forEachConcept(h -> {
-            if(!h.getBeliefs().isEmpty()) {
-                System.out.println(h.toString()+" "+h.getBeliefs().topTruth().toString());
-            }
-        });*/
+      // nar.forEachConcept(h -> {
+      //      if(!h.getBeliefs().isEmpty()) {
+       //         System.out.println(h.toString()+" "+h.getBeliefs().topTruth().toString());
+        //    }
+       // });
     }
 
 
@@ -276,6 +285,43 @@ public class Patham9Test {
         String a ="anticipating: <c --> C>\ndid not happen: <c --> C>\n";
         String b = Anticipate.teststring;
         assertTrue(b.contains(a));
+    }*/
+
+    final int cycles = 500;
+    int exeCount = 0;
+    private TermFunction exeFunc;
+
+    public Patham9Test(Supplier<NAR> b) { super(b); }
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Iterable configurations() {
+        return AbstractNALTester.nars(8, false);
+    }
+
+    @Override
+    public NAR nar() {
+        NAR n = super.nar();
+
+        final Term v = $.the("a");
+        exeFunc = n.onExecTerm("exe", (Term[] t) -> {
+            exeCount++;
+            return v;
+        });
+
+        return n;
+    }
+
+    @Test
+    public void subsent_1() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(&/,<a --> b>,/10,<b --> c>,/100,<x --> y>,/20) =/> <d --> D>>. :|:");
+        tester.inputAt(10, "(&/,<a --> b>,<b --> c>). :|:");
+
+        tester.mustBelieve(cycles, "<(&/,<x --> y>,/20) =/> <d --> D>>",
+                1.0f, 0.81f,
+                120); // :|:
+        tester.run();
     }
 
 }

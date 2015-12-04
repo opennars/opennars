@@ -147,7 +147,13 @@ public final class Resolve extends PreCondition {
                     int[] pasteIntervals = paste.intervals();
 
                     if (kLess) {
-                        match.post.occurence_shift = copyIntervals[1]; //we shift according to first interval
+
+                        int sum = 0;
+                        for(int i=1;i <= k;i++) { //it was k shorter? so k intervals were skipped, beginning with the first
+                            sum+=copyIntervals[i];
+                        }
+
+                        match.post.occurence_shift = sum; //we shift according to first interval
                         System.arraycopy(copyIntervals, 1+k, pasteIntervals, 1 , copyIntervals.length - (1+k));
                     } else if (sameLength) {
                         System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
