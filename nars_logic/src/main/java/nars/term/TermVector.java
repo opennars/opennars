@@ -64,6 +64,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     public TermVector(T... t) {
         super();
         this.term = t;
+        init();
     }
 
     @Override

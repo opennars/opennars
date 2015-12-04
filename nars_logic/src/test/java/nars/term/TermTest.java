@@ -34,6 +34,7 @@ import java.util.TreeSet;
 import static java.lang.Long.toBinaryString;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
+import static nars.$.$;
 import static org.junit.Assert.*;
 
 /**
@@ -449,10 +450,10 @@ public class TermTest {
 
     public void statementHash(String a, String b) {
 
-        NAR n = new Default();
 
-        Term ta = n.term(a);
-        Term tb = n.term(b);
+
+        Term ta = $(a);
+        Term tb = $(b);
 
         assertNotEquals(ta, tb);
         assertNotEquals(ta.toString() + " vs. " + tb.toString(),

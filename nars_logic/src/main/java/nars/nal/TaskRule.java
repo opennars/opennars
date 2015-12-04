@@ -109,8 +109,17 @@ public class TaskRule extends ProductN implements Level {
             throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
     }
 
+
+    @Override
+    public final TaskRule normalizeDestructively() {
+        return (TaskRule) this.transform(uppercaseAtomsToPatternVariables);
+    }
+
     @Override
     public Term normalized(TermIndex termIndex) {
+
+
+
         //task and belief pattern term
         for (int i = 0; i < 2; i++)
             getPremise().terms()[i] = (Term) termIndex.get(getPremise().terms()[i]);
@@ -317,7 +326,7 @@ public class TaskRule extends ProductN implements Level {
         Term beliefTermPattern = getBeliefTermPattern();
 
         if (beliefTermPattern.hasAny(Op.ATOM)) {
-            throw new RuntimeException("belief term must be a pattern");
+            throw new RuntimeException("belief term must be a pattern: " + beliefTermPattern);
         }
 
         //if it contains an atom term, this means it is a modifier,

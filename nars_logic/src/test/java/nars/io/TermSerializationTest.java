@@ -2,6 +2,7 @@ package nars.io;
 
 import nars.term.Term;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 9/7/15.
  */
+@Ignore
 @RunWith(Parameterized.class)
 public class TermSerializationTest extends AbstractSerializationTest<String,Term> {
 

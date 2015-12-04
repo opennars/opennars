@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.nar.Default;
 import nars.task.DefaultTask;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -13,6 +14,7 @@ import java.util.Collection;
 /**
  * Created by me on 9/7/15.
  */
+@Ignore
 @RunWith(Parameterized.class)
 public class TaskSerializationTest  extends AbstractSerializationTest<String,DefaultTask> {
 
