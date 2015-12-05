@@ -81,6 +81,9 @@ public enum Op implements Serializable {
     NONE('\u2205', Op.ANY),
 
 
+    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, OpType.Variable),
+
+
     INTERVAL(
             //TODO decide what this value should be, it overrides with IMAGE_EXT
             //but otherwise it's not used
@@ -89,10 +92,7 @@ public enum Op implements Serializable {
 
     INSTANCE("{--", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
     PROPERTY("--]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
-    INSTANCE_PROPERTY("{-]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
-
-
-    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, OpType.Variable);
+    INSTANCE_PROPERTY("{-]", 2, OpType.Relation); //should not be given a compact representation because this will not exist internally after parsing
 
 
     //-----------------------------------------------------

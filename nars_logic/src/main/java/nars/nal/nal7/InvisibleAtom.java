@@ -5,8 +5,6 @@ import nars.term.AbstractStringAtom;
 import nars.term.Term;
 import nars.term.transform.Substitution;
 
-import java.io.IOException;
-
 /**
  * Atom which is invisible to most if not all reasoner
  * processes, useful for placeholders and intermediate
@@ -15,9 +13,19 @@ import java.io.IOException;
  */
 public class InvisibleAtom extends AbstractStringAtom {
 
+    private static final byte[] empty = new byte[0];
+
+
     public InvisibleAtom(String id) {
         super(id);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj;
+    }
+
+
 
     @Override
     public int varIndep() {
@@ -36,31 +44,17 @@ public class InvisibleAtom extends AbstractStringAtom {
 
     @Override
     public byte[] bytes() {
-        return new byte[0];
+        return empty;
     }
+
 
     @Override
     public final int structure() { return 0;     }
 
     @Override
-    public final Op op() {
-        return Op.INTERVAL;
+    public Op op() {
+        return Op.NONE;
     }
-
-
-
-    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    @Override
-    public StringBuilder toStringBuilder(final boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            append(sb, pretty);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb;
-    }
-
 
     @Override
     public final Term substituted(Substitution s) {
@@ -69,7 +63,7 @@ public class InvisibleAtom extends AbstractStringAtom {
 
     @Override
     public String toString() {
-        return toStringBuilder(false).toString();
+        return id;
     }
 
     @Override
@@ -82,4 +76,10 @@ public class InvisibleAtom extends AbstractStringAtom {
     public int complexity() {
         return 0;
     }
+
+    @Override
+    public int volume() {
+        return 0;
+    }
+
 }

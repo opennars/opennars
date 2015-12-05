@@ -3,6 +3,7 @@ package nars.nal.meta;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
+import nars.Op;
 import nars.nal.nal4.ShadowProduct;
 import nars.nal.nal7.InvisibleAtom;
 import nars.nal.nal7.Sequence;
@@ -32,9 +33,13 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
      *  ex:
      *    (|, %A, ..)
      *
-     *  */
+     *
+     * IMPORTANT: InvisibleAtom's default compareTo of -1
+     * ensures this will appear always at the end of any ordering */
     public final static InvisibleAtom Expand = new InvisibleAtom("..") {
-
+        @Override public Op op() {
+            return Op.INTERVAL;
+        }
     };
 
     /** 1 or more */

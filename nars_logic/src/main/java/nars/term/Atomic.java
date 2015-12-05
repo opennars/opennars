@@ -4,7 +4,6 @@ import nars.term.compile.TermIndex;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 import nars.util.utf8.Byted;
-import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 
@@ -38,13 +37,14 @@ public abstract class Atomic implements Term, Byted {
 
     @Override
     public void append(final Appendable w, final boolean pretty) throws IOException {
-        Utf8.fromUtf8ToAppendable(bytes(), w);
+        //Utf8.fromUtf8ToAppendable(bytes(), w);
+        w.append(toString());
     }
-
+//
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public StringBuilder toStringBuilder(final boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
+        StringBuilder sb = new StringBuilder(toString());
+//        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
         return sb;
     }
 
