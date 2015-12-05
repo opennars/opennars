@@ -391,7 +391,15 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
                 b.add(ARGUMENT_SEPARATORbyte);
             }
 
-            b.add(t.bytes());
+            try {
+                byte[] bb = t.bytes();
+                if (bb.length!=t.getByteLen())
+                    System.err.println("wtf");
+                b.add(bb);
+            }
+            catch (ArrayIndexOutOfBoundsException a) {
+                System.err.println("Wtf");
+            }
         }
 
     }

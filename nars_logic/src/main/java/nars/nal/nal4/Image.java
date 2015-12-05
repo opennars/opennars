@@ -115,42 +115,63 @@ abstract public class Image extends DefaultCompound2 {
 //        return r;
 //    }
 
+    @Override
+    public int getByteLen() {
+        return super.getByteLen() + 1;
+    }
 
     @Override
     public byte[] bytes() {
+        final int numArgs = size();
 
-        final int len = this.size();
+        ByteBuf b = ByteBuf.create(getByteLen());
 
-        //calculate total size
-        int bytes = 2 + 2 + 2;
-        for (int i = 0; i < len; i++) {
-            Term tt = this.term(i);
-            bytes += tt.bytes().length;
-            if (i != 0) bytes++; //comma
-        }
+        b.add((byte) op().ordinal()); //header
 
-        ByteBuf b = ByteBuf.create(bytes)
-                .add((byte) COMPOUND_TERM_OPENER)
-                .add(this.op().bytes)
-                .add((byte) ARGUMENT_SEPARATOR)
-                .add(this.relation().bytes());
+        b.add((byte)relationIndex); //relation index
 
+        appendBytes(numArgs, b);
 
-        final int relationIndex = this.relationIndex;
-        for (int i = 0; i < len; i++) {
-            Term tt = this.term(i);
-            b.add((byte) ARGUMENT_SEPARATOR);
-            if (i == relationIndex) {
-                b.add((byte) Symbols.IMAGE_PLACE_HOLDER);
-            } else {
-                b.add(tt.bytes());
-            }
-        }
-        b.add((byte) COMPOUND_TERM_CLOSER);
+        b.add(COMPOUND_TERM_CLOSERbyte); //closer
 
         return b.toBytes();
-
     }
+
+    //    @Override
+//    public byte[] bytes() {
+//
+//        final int len = this.size();
+//
+//        //calculate total size
+//        int bytes = 2 + 2 + 2;
+//        for (int i = 0; i < len; i++) {
+//            Term tt = this.term(i);
+//            bytes += tt.bytes().length;
+//            if (i != 0) bytes++; //comma
+//        }
+//
+//        ByteBuf b = ByteBuf.create(bytes)
+//                .add((byte) COMPOUND_TERM_OPENER)
+//                .add(this.op().bytes)
+//                .add((byte) ARGUMENT_SEPARATOR)
+//                .add(this.relation().bytes());
+//
+//
+//        final int relationIndex = this.relationIndex;
+//        for (int i = 0; i < len; i++) {
+//            Term tt = this.term(i);
+//            b.add((byte) ARGUMENT_SEPARATOR);
+//            if (i == relationIndex) {
+//                b.add((byte) Symbols.IMAGE_PLACE_HOLDER);
+//            } else {
+//                b.add(tt.bytes());
+//            }
+//        }
+//        b.add((byte) COMPOUND_TERM_CLOSER);
+//
+//        return b.toBytes();
+//
+//    }
 
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {

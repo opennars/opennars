@@ -70,7 +70,14 @@ public class TermIDTest {
         testBytesRepresentation("<a --> b>", 5);
     }
 
-
+    @Test public void testInternalRepresentationImage1() {
+        for (char t : new char[] { '/', '\\'}) {
+            testBytesRepresentation("("+t+", _, a)", 3 + 1);
+            testBytesRepresentation("("+t+", _, a, b)", 5 + 1);
+            testBytesRepresentation("("+t+", a, _, b)", 5 + 1);
+            testBytesRepresentation("("+t+", a, b, _)", 5 + 1);
+        }
+    }
 
 
     //@Test public void testInternalRepresentation2() { testInternalRepresentation("<a && b>", 5); }

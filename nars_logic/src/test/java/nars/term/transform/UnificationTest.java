@@ -572,6 +572,53 @@ public class UnificationTest  {
                 "(a, %X..+, d)",
                 "(a, b, c, d)", true);*/
     }
+    @Test public void patternImage()  {
+        test(Op.VAR_PATTERN,
+                "<A --> (/, _, %X)>",
+                "<A --> (/, _, A)>", true);
+        test(Op.VAR_PATTERN,
+                "<A --> (/, %X, _)>",
+                "<A --> (/, A, _)>", true);
+        test(Op.VAR_PATTERN,
+                "<A --> (/, %X, _)>",
+                "<A --> (/, _, A)>", false);
+
+
+        test(Op.VAR_PATTERN,
+                "(&&,<F --> A>,<%X --> (/,_,C)>)",
+                "(&&,<F --> A>,<E --> (/,_,C)>)", true);
+        test(Op.VAR_PATTERN,
+                "(&&,<F --> A>,<%X --> (/,C,D,_)>)",
+                "(&&,<F --> A>,<E --> (/,C,D,_)>)", true);
+        test(Op.VAR_PATTERN,
+                "(&&,<F --> A>,<D --> (/,C,%X, _)>)",
+                "(&&,<F --> A>,<D --> (/,C,E, _)>)", true);
+
+    }
+    @Test public void ellipsisImage()  {
+        test(Op.VAR_PATTERN,
+                "<A --> (/,_, %X..+)>",
+                "<A --> (/,_, B)>", true);
+        test(Op.VAR_PATTERN,
+                "<A --> (/,_, %X..+)>",
+                "<A --> (/,_, B,C)>", true);
+        test(Op.VAR_PATTERN,
+                "<A --> (/,_, B, %X..+)>",
+                "<A --> (/,_, B, C, D)>", true);
+        test(Op.VAR_PATTERN,
+                "<A --> (/,_, E, %X..+)>",
+                "<A --> (/,_, B, C, D)>", false);
+        test(Op.VAR_PATTERN,
+                "<A --> (/, B, _, %X..+)>",
+                "<A --> (/, B, _, C, D)>", true);
+
+    }
+
+    @Test public void testImageRelationAfterEllipsis() {
+        test(Op.VAR_PATTERN,
+                "<A --> (/, B, %X..+, _)>",
+                "<A --> (/, B, C, D, _)>", true);
+    }
 
     @Test public void ellipsisSequence() {
         //TODO test for inclusion of intervals in matching
