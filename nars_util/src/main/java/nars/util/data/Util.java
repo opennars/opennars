@@ -18,7 +18,6 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import javolution.context.ConcurrentContext;
 import nars.util.utf8.Utf8;
-import org.apache.commons.math3.util.FastMath;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -717,7 +716,7 @@ public class Util {
     }
 
     public static int bin(final float x, final int bins) {
-        return (int) FastMath.floor((x + (0.5f / bins)) * bins);
+        return (int) Math.floor((x + (0.5f / bins)) * bins);
     }
 
     /** bins a priority value to an integer */

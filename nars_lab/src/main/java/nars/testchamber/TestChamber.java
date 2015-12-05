@@ -1,10 +1,14 @@
 package nars.testchamber;
 
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
+import nars.bag.impl.MapCacheBag;
+import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.process.BagForgettingEnhancer;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
@@ -13,6 +17,8 @@ import nars.testchamber.operator.Activate;
 import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
 import nars.testchamber.operator.Pick;
+import nars.time.RealtimeMSClock;
+import org.infinispan.commons.util.WeakValueHashMap;
 import processing.core.PVector;
 
 import java.util.List;
@@ -35,7 +41,28 @@ public class TestChamber {
 
 
     public static void main(String[] args) {
-        Default nar = new Default2(1024, 1, 1, 3);
+        Default nar = new Default2(1024, 100, 1, 3);
+        Memory mem = new Memory(new RealtimeMSClock(),
+                new MapCacheBag(
+                        new WeakValueHashMap<>()
+                        //new GuavaCacheBag<>()
+                /*new InfiniCacheBag(
+                    InfiniPeer.tmp().getCache()
+                )*/
+                )
+        );
+        //nar.nal(9);
+        nar.setTaskLinkBagSize(32);
+        nar.setTermLinkBagSize(128);
+
+        new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
+
+
+        /*nar.memory.conceptForgetDurations.set(10);
+        nar.memory.termLinkForgetDurations.set(100);*/
+
+        nar.memory.duration.set(750 /* ie, milliseconds */);
+        nar.memory.conceptForgetDurations.setValue(20);
 
         //set NAR architecture parameters:
         //builder...
@@ -55,6 +82,10 @@ public class TestChamber {
 
 
         NARide.show(nar.loop(narFrameRate), i -> {
+
+
+                //ide.content.getTabs().setAll(new TabX("Graph", newGraph(n)));
+            i.addView(new IOPane(nar));
 
             //new NARSwing(nar);
             new TestChamber(nar);

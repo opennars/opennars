@@ -28,7 +28,6 @@ import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.Texts;
 import nars.util.data.Util;
-import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -274,7 +273,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final float currentPriority = getPriorityIfNaNThenZero();
 
-        final float nextPriority = FastMath.min(1,currentPriority + dp);
+        final float nextPriority = Math.min(1,currentPriority + dp);
 
         final float currentNextPrioritySum = (currentPriority + nextPriority);
 

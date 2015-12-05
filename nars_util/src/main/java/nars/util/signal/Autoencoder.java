@@ -1,7 +1,6 @@
 package nars.util.signal;
 
 
-import org.apache.commons.math3.util.FastMath;
 
 import java.util.Random;
 
@@ -50,7 +49,7 @@ public class Autoencoder {
     */
 
     final public static double sigmoid(final double x) {
-        return 1.0 / (1.0 + FastMath.pow(Math.E, -x));
+        return 1.0 / (1.0 + Math.pow(Math.E, -x));
     }
     
     public Autoencoder(int n_visible, int n_hidden) {

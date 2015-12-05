@@ -9,7 +9,6 @@ import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
 import nars.util.data.list.CircularArrayList;
 import nars.util.data.sorted.SortedIndex;
-import org.apache.commons.math3.util.FastMath;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -341,7 +340,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         float y = curve.valueOf(x);
 
-        int result = (int) FastMath.floor(y * s);
+        int result = (int)Math.floor(y * s);
 
         if (result < 0) return 0;
         if (result >= s) return s-1;

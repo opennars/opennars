@@ -22,7 +22,6 @@ package nars;
 
 
 import com.gs.collections.api.tuple.Twin;
-import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
 import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
 import nars.nal.nal8.ExecutionResult;
@@ -34,6 +33,7 @@ import nars.term.*;
 import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.time.Clock;
+import nars.util.data.map.UnifriedMap;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
@@ -536,7 +536,9 @@ public class Memory extends Param {
 
     private static class MyTermIndex implements TermIndex {
 
-        final Map<Term,Term> terms = new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
+        final Map<Term,Term> terms =
+                new UnifriedMap(1024);
+                //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
         @Override public final Termed get(Term t) {
 

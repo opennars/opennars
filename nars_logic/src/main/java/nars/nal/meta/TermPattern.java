@@ -82,6 +82,13 @@ public class TermPattern {
             //compileCompound((Compound)x, code);
             code.add(new FindSubst.TermOpEquals(x.op())); //interference with (task,belief) pair term
 
+            if (!Ellipsis.hasEllipsis((Compound)x)) {
+                code.add(new FindSubst.TermSizeEquals(x.size()));
+            }
+            else {
+                //TODO get a min bound for the term's size according to the ellipsis type
+            }
+
             code.add(new FindSubst.TermVolumeMin(x.volume()-1));
 
             code.add(new FindSubst.TermStructure(type, x.structure()));
@@ -90,6 +97,8 @@ public class TermPattern {
                 code.add(new FindSubst.ImageIndexEquals(
                         ((Image)x).relationIndex)); //TODO varargs with greaterEqualSize etc
             }
+
+
 
             //if (!x.isCommutative() && Ellipsis.countEllipsisSubterms(x)==0) {
                 //ACCELERATED MATCH allows folding of common prefix matches between rules

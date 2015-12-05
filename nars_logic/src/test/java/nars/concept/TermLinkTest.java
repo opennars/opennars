@@ -56,7 +56,7 @@ public class TermLinkTest {
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
         assertEquals(
-                "[[x, <x --> y>, y], [(x,<x-->y>), (y,<x-->y>), (<x-->y>,x), (<x-->y>,y)]]",
+                "[[y, <x --> y>, x], [(y,<x-->y>), (x,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
                 g.toString());
     }
 

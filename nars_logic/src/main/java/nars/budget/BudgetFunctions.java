@@ -32,7 +32,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.Truth;
-import nars.util.data.Util;
 
 import static java.lang.Math.pow;
 
@@ -251,7 +250,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         final float relativeThreshold = 0.1f;
 
-        float expDecayed = currentPriority * (float) Util.expFast(-lambda * t);
+        float expDecayed = currentPriority * (float) Math.exp(-lambda * t);
         float threshold = budget.getQuality() * relativeThreshold;
 
         final float nextPriority =

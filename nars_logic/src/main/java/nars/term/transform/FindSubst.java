@@ -2,6 +2,7 @@ package nars.term.transform;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.impl.factory.primitive.ShortSets;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Op;
@@ -11,7 +12,9 @@ import nars.nal.meta.TermPattern;
 import nars.nal.nal4.Image;
 import nars.term.*;
 
+import java.util.Collection;
 import java.util.Random;
+import java.util.Set;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -553,16 +556,16 @@ public class FindSubst extends Subst implements Substitution {
 
         int xsize = X.size();
 
-        final int numNonVarArgs;
+        final int numNonPatternVarArgs;
         int hasEllipsis = Ellipsis.numUnmatchedEllipsis(X, this);
         if (hasEllipsis==0) {
             /** must have same # subterms */
             if (xsize != Y.size()) {
                 return false;
             }
-            numNonVarArgs = xsize;
+            numNonPatternVarArgs = xsize;
         } else {
-            numNonVarArgs = Ellipsis.countNumNonEllipsis(X);
+            numNonPatternVarArgs = Ellipsis.countNumNonEllipsis(X);
         }
 
         //TODO see if there is a volume or structural constraint that can terminate early here
@@ -587,26 +590,26 @@ public class FindSubst extends Subst implements Substitution {
             }
         } else {
 
-            Ellipsis e = Ellipsis.getFirstEllipsis(X);
+            Ellipsis e = Ellipsis.getFirstUnmatchedEllipsis(X, this);
 
             final int ysize = Y.size();
 
-            if (!e.valid(numNonVarArgs, ysize)) {
+            if (!e.valid(numNonPatternVarArgs, ysize)) {
                 return false;
             }
 
-            if (numNonVarArgs == 0) {
-                //all are to be matched
+            if (numNonPatternVarArgs == 0) {
+                //all are to be matched, regardless of commutivity
                 return matchEllipsisAll(e, Y);
             }
 
-            if ((numNonVarArgs == 1) && (xsize == 2)) {
-                Term n = Ellipsis.getFirstNonEllipsis(X);
-                if (X.isCommutative()) {
-                    return matchEllipsisCombinations1(
-                        n, e, Y
-                    );
-                } else {
+            if (X.isCommutative()) {
+                return matchCommutativeContainingEllipsis(
+                        X, e, Y
+                );
+            } else {
+                if ((numNonPatternVarArgs == 1) && (xsize == 2)) {
+                    Term n = Ellipsis.getFirstNonEllipsis(X);
                     return matchEllipsisTerms(
                         e, Y, (i, t) -> t!=n
                     );
@@ -621,7 +624,7 @@ public class FindSubst extends Subst implements Substitution {
      * @param x the compound which is permuted/shuffled
      * @param y what is being compared against
      */
-    public final boolean matchPermute(Compound x, Compound y) {
+    public final boolean matchPermute(TermVector x, Compound y) {
 
         final int len = x.size();
 
@@ -665,12 +668,70 @@ public class FindSubst extends Subst implements Substitution {
 
 
     /**
-     * commutive compound match
-     * X will contain one ellipsis and one non-ellipsis Varaible term
+     * commutive compound match: Y into X which contains one ellipsis
      *
-     * @param X the non-ellipsis variable
+     *      X pattern contains:
+     *
+     *        one unmatched ellipsis (identified)
+     *
+     *        zero or more "constant" (non-pattern var) terms
+     *              all of which Y must contain
+     *
+     *        zero or more (non-ellipsis) pattern variables,
+     *              each of which may be matched or not.
+     *                  matched variables whose resolved values that Y must contain
+     *                  unmatched variables determine the amount of permutations/combinations:
+     *
+     *        if the number of matches available to the ellipse is incompatible with the ellipse requirements, fail
+     *
+     *        (total eligible terms) Choose (total - #normal variables)
+     *        these are then matched in revertable frames.
+     *
+*    *        proceed to collect the remaining zero or more terms as the ellipse's match using a predicate filter
+     *
+     * @param X the pattern term
+     * @param Y the compound being matched into X
      */
-    public final boolean matchEllipsisCombinations1(Term X, Ellipsis Xellipsis, Compound Y) {
+    public final boolean matchCommutativeContainingEllipsis(Compound X, Ellipsis Xellipsis, Compound Y) {
+
+        //ALL OF THIS CAN BE PRECOMPUTED
+        Set<Term> yMustContain = Global.newHashSet(0);
+        Collection<Term> xVariablesToChooseCombinationsFrom = Global.newArrayList(); //Global.newHashSet(0);
+        for (Term x : X.terms()) {
+            if (x == Xellipsis) continue;
+            if (x.op() == Op.VAR_PATTERN) {
+                if (getXY(x)!=null) {
+                    yMustContain.add(x); //pattern already matched
+                }
+                else {
+                    xVariablesToChooseCombinationsFrom.add(x);
+                }
+            }
+            else {
+                yMustContain.add(x); //constant value which must be in Y
+            }
+        }
+        if (yMustContain.size() + xVariablesToChooseCombinationsFrom.size() + 1 != X.size())
+            throw new RuntimeException("ellipsis fault");
+        int collectable = Y.size() - xVariablesToChooseCombinationsFrom.size();
+        if (!Xellipsis.valid(xVariablesToChooseCombinationsFrom.size(), Y.size())) {
+            return false;
+        }
+
+        //Step 1. Determine that Y has all of the possibly required terms
+        if (!Y.containsAllOf(yMustContain)) {
+            return false;
+        }
+
+        //Step 2. Match the specified pattern variables
+        int attemptMatchFix = now(); //revert point
+
+        xFixed = new TermVector(xVariablesToChooseCombinationsFrom)
+        if (!matchPermute(xFixed, Y)) {
+            revert(attemptMatchFix);
+            return false;
+        }
+        //Step 3. Collect the free terms
 
 
         final int ysize = Y.size();
