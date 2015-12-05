@@ -8,14 +8,19 @@ import nars.term.transform.Substitution;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
+import java.util.Collection;
 
 /** lightweight vector of terms which is useful only for
  *  holding a vector of subterms and not much else.
  *  this makes it generally invisible to reasoning since
  *  behaves only partially like a real Product term. */
-public final class InvisibleProduct extends TermVector implements Term {
+public final class ShadowProduct extends TermVector implements Term {
 
-    public InvisibleProduct(Term[] subterms) {
+    public ShadowProduct(Collection<Term> subterms) {
+        super(subterms);
+    }
+
+    public ShadowProduct(Term[] subterms) {
         super(subterms);
     }
 

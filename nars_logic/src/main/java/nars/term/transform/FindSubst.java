@@ -1,7 +1,6 @@
 package nars.term.transform;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
-import com.gs.collections.impl.factory.primitive.ShortSets;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -10,9 +9,11 @@ import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.nal4.Image;
+import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 
@@ -624,7 +625,7 @@ public class FindSubst extends Subst implements Substitution {
      * @param x the compound which is permuted/shuffled
      * @param y what is being compared against
      */
-    public final boolean matchPermute(TermVector x, Compound y) {
+    public final boolean matchPermute(TermContainer x, Compound y) {
 
         final int len = x.size();
 
@@ -632,7 +633,7 @@ public class FindSubst extends Subst implements Substitution {
 
         int startDivisor = this.powerDivisor;
 
-        final ShuffleTermVector perm = new ShuffleTermVector(random, x);
+        final Termutator perm = new Termutator(random, x);
         int attempts = Math.min(perm.total(), powerDivided(len));
 
 
@@ -696,15 +697,22 @@ public class FindSubst extends Subst implements Substitution {
 
         //ALL OF THIS CAN BE PRECOMPUTED
         Set<Term> yMustContain = Global.newHashSet(0);
-        Collection<Term> xVariablesToChooseCombinationsFrom = Global.newArrayList(); //Global.newHashSet(0);
+        Collection<Variable> xVariablesToChooseCombinationsFrom = Global.newArrayList(); //Global.newHashSet(0);
         for (Term x : X.terms()) {
             if (x == Xellipsis) continue;
             if (x.op() == Op.VAR_PATTERN) {
-                if (getXY(x)!=null) {
-                    yMustContain.add(x); //pattern already matched
+                Term r = getXY(x);
+                if (r!=null) {
+                    if (r instanceof ShadowProduct) {
+                        //this is a secondary ellipse, and there was a previous ellipse match. add them all
+                        Collections.addAll(yMustContain, ((ShadowProduct)r ).terms() );
+                    }
+                    else {
+                        yMustContain.add(r); //pattern already matched
+                    }
                 }
                 else {
-                    xVariablesToChooseCombinationsFrom.add(x);
+                    xVariablesToChooseCombinationsFrom.add((Variable) x);
                 }
             }
             else {
@@ -713,7 +721,8 @@ public class FindSubst extends Subst implements Substitution {
         }
         if (yMustContain.size() + xVariablesToChooseCombinationsFrom.size() + 1 != X.size())
             throw new RuntimeException("ellipsis fault");
-        int collectable = Y.size() - xVariablesToChooseCombinationsFrom.size();
+
+        //int collectable = Y.size() - xVariablesToChooseCombinationsFrom.size();
         if (!Xellipsis.valid(xVariablesToChooseCombinationsFrom.size(), Y.size())) {
             return false;
         }
@@ -723,43 +732,60 @@ public class FindSubst extends Subst implements Substitution {
             return false;
         }
 
+        Set<Term> Yfree = Y.toSet();
+        Yfree.removeAll(yMustContain);
+
         //Step 2. Match the specified pattern variables
-        int attemptMatchFix = now(); //revert point
+        if (!xVariablesToChooseCombinationsFrom.isEmpty()) {
+            TermVector<Variable> xFixed = new TermVector(xVariablesToChooseCombinationsFrom);
+            if (xFixed.size() == 1) {
 
-        xFixed = new TermVector(xVariablesToChooseCombinationsFrom)
-        if (!matchPermute(xFixed, Y)) {
-            revert(attemptMatchFix);
-            return false;
+                //TODO limit power here based on worst case # of matches
+
+                if (!matchChoose1(xFixed.term(0), Yfree)) {
+                    return false;
+                }
+
+                //Step 3. Collect the free terms
+                putXY( Xellipsis, new ShadowProduct(Yfree));
+                return true;
+            } else {
+                //not impl yet
+                return false;
+            }
         }
-        //Step 3. Collect the free terms
 
+        //not impl yet?
+        return false;
+    }
 
-        final int ysize = Y.size();
+    /** choose 1 at a time from a set of N, which means iterating up to N
+     *  will remove the chosen item(s) from Y if successful before returning
+     * */
+    private boolean matchChoose1(Variable X, Set<Term> Yfree) {
+
+        final int ysize = Yfree.size();
         int shuffle = random.nextInt(ysize); //randomize starting offset
 
         final int prePermute = now();
 
-
         int iterations = Math.min(ysize, (powerAvailable()));
+
+
+
+        Term[] yy = Yfree.toArray(new Term[ysize]);
 
         for (int i = 0; i < iterations; i++) {
 
-            int yi = (shuffle++) % ysize;
-            Term y = Y.term(yi);
+            Term y = yy[ (shuffle++) % ysize ];
 
             boolean matched = match(X, y);
 
-            if (matched /*|| power <= 0*/) {
-                //assign remaining variables to ellipsis
-                putXY(Xellipsis, Xellipsis.match(ShortSets.immutable.of((short) yi), Y));
+            if (matched) {
+                Yfree.remove(y); //exclude this item from the set of free terms
                 return true;
-            }
-
-            else {
-
+            } else {
                 revert(prePermute);
-
-
                 //else: continue on next permutation
             }
         }

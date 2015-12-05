@@ -137,6 +137,7 @@ public enum Op implements Serializable {
     public final byte byt;
 
 
+
     Op(char c, int minLevel, int... bytes) {
         this(c, minLevel, OpType.Other, bytes);
     }

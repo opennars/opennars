@@ -11,11 +11,11 @@ import java.util.function.Consumer;
 /**
  * proxy to a TermContainer providing access to its subterms via a shuffling order
  */
-public final class ShuffleTermVector extends ShuffledPermutations implements TermContainer {
+public final class Termutator extends ShuffledPermutations implements TermContainer {
 
     private final TermContainer compound;
 
-    public ShuffleTermVector(Random rng, TermContainer x) {
+    public Termutator(Random rng, TermContainer x) {
         super();
         restart(x.size(), rng);
         this.compound = x;

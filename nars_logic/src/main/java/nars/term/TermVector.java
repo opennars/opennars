@@ -7,6 +7,7 @@ import nars.term.visit.TermPredicate;
 import nars.util.data.Util;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -60,6 +61,10 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     //    public TermVector() {
 //        this(null);
 //    }
+
+    public TermVector(Collection<T> t) {
+        this((T[]) t.toArray(new Term[t.size()]));
+    }
 
     public TermVector(T... t) {
         super();
@@ -119,7 +124,12 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return copyOf(term, size());
     }
 
-//    /**
+    @Override
+    public String toString() {
+        return "(" + Arrays.toString(term) + ')';
+    }
+
+    //    /**
 //     * Cloned array of Terms, except for one or more Terms.
 //     *
 //     * @param toRemove

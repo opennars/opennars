@@ -5,12 +5,13 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.TaskRule;
-import nars.nal.nal4.InvisibleProduct;
+import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
 
+import java.util.Random;
 import java.util.Set;
 
 import static nars.$.$;
@@ -207,7 +208,7 @@ public class DerivationRuleTest extends TestCase {
                 assertEquals(" says " + varArgs.toString() + " product", Op.PRODUCT, varArgs.op());
                 assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
-                Set<Term> varArgTerms = Terms.toSortedSet(((InvisibleProduct) varArgs).terms());
+                Set<Term> varArgTerms = Terms.toSortedSet(((ShadowProduct) varArgs).terms());
                 assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 
                 testFurther(selectedFixed, f, varArgTerms);
@@ -379,4 +380,23 @@ public class DerivationRuleTest extends TestCase {
         return sb.toString();
     }
 
+
+    public void testEllipsisCombinatorics() {
+
+        //rule: ((&&,M,A..+) ==> C), ((&&,A,..) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
+        Compound X = $("(&&, %1..+, %2)");
+        Compound Y = $("(&&, <r --> [c]>, <r --> [w]>, <r --> [f]>)");
+
+        Random rng = new XorShift1024StarRandom(1);
+        FindSubst f = new FindSubst(Op.VAR_PATTERN, rng);
+        f.setPower(1000);
+        boolean b = f.matchCompound(X, Y);
+        System.out.println(f);
+        System.out.println(f.xy);
+        assertTrue(b);
+
+
+
+
+    }
 }

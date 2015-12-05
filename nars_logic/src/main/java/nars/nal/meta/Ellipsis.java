@@ -3,7 +3,7 @@ package nars.nal.meta;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.$;
-import nars.nal.nal4.InvisibleProduct;
+import nars.nal.nal4.ShadowProduct;
 import nars.nal.nal7.InvisibleAtom;
 import nars.nal.nal7.Sequence;
 import nars.term.*;
@@ -121,7 +121,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 
 
 
-    public InvisibleProduct match(ShortSet ySubsExcluded, Compound y) {
+    public ShadowProduct match(ShortSet ySubsExcluded, Compound y) {
         Term ex = this.expression;
         if ((ex == PLUS) || (ex == ASTERISK)) {
             return matchRemaining(y, ySubsExcluded);
@@ -218,12 +218,12 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return null;
     }
 
-    public static InvisibleProduct matchRemaining(Compound Y, ShortSet ySubsExcluded) {
+    public static ShadowProduct matchRemaining(Compound Y, ShortSet ySubsExcluded) {
         return matchedSubterms(Y, (index, term) ->
                 !ySubsExcluded.contains((short)index) );
     }
 
-    public static InvisibleProduct matchedSubterms(Compound Y) {
+    public static ShadowProduct matchedSubterms(Compound Y) {
         Term[] arrayGen =
                 !(Y instanceof Sequence) ?
                         Y.terms() :
@@ -232,7 +232,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return matchedSubterms(arrayGen);
     }
 
-    public static InvisibleProduct matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
+    public static ShadowProduct matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
         Function<IntObjectPredicate,Term[]> arrayGen =
                 !(Y instanceof Sequence) ?
                         Y::terms :
@@ -242,9 +242,9 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
     }
 
 
-    private static InvisibleProduct matchedSubterms(Term[] subterms) {
+    private static ShadowProduct matchedSubterms(Term[] subterms) {
         //return Product.make(subterms);
-        return new InvisibleProduct(subterms);
+        return new ShadowProduct(subterms);
     }
 
 

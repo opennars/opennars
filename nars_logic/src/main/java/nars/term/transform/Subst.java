@@ -4,6 +4,7 @@ import nars.Op;
 import nars.nal.meta.TermPattern;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.Variable;
 import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
@@ -24,7 +25,7 @@ public abstract class Subst extends Versioning {
 
     abstract boolean match(final Term X, final Term Y);
     abstract boolean matchCompound(final Compound X, final Compound Y);
-    abstract boolean matchPermute(Compound X, Compound Y);
+    abstract boolean matchPermute(TermContainer X, Compound Y);
 
     /** matches when x is of target variable type */
     abstract boolean matchXvar(Variable x, Term y);

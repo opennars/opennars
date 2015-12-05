@@ -22,7 +22,7 @@ import nars.util.utf8.Utf8;
        (which can be constructed in a static context)
     --??
  */
-public class $ {
+abstract public class $  {
 
 
     public static final <T extends Term> T $(final String term) {

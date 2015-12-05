@@ -2,7 +2,7 @@ package nars.term.transform;
 
 import nars.Op;
 import nars.nal.meta.Ellipsis;
-import nars.nal.nal4.InvisibleProduct;
+import nars.nal.nal4.ShadowProduct;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
@@ -51,10 +51,10 @@ public interface Substitution extends Function<Compound,Term> {
                 changed = true;
 
                 Term te = getXY(t);
-                if (!(te instanceof InvisibleProduct))
+                if (!(te instanceof ShadowProduct))
                     throw new RuntimeException("ellipsis must be matched only by InvisibleProduct, but was: " + te);
 
-                Term[] expansion = ((InvisibleProduct) te).term;
+                Term[] expansion = ((ShadowProduct) te).term;
 
                 final int es = expansion.length;
 
