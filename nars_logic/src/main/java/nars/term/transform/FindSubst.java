@@ -51,11 +51,10 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public boolean run(Subst ff) {
-            ff.parent.set( (Compound) ff.term.get());
+            ff.parent.set((Compound) ff.term.get());
             return true;
         }
     };
-
 
 
     //    @Override
@@ -73,7 +72,6 @@ public class FindSubst extends Subst implements Substitution {
 //    }
 
 
-
     private final void print(String prefix, Term a, Term b) {
         System.out.print(prefix);
         if (a != null)
@@ -82,8 +80,6 @@ public class FindSubst extends Subst implements Substitution {
             System.out.println();
         System.out.println("     " + this);
     }
-
-
 
 
     public static final class TermEquals extends MatchOp {
@@ -159,7 +155,9 @@ public class FindSubst extends Subst implements Substitution {
         }
     }
 
-    /** requires a specific subterm to have minimum bit structure */
+    /**
+     * requires a specific subterm to have minimum bit structure
+     */
     public static final class SubTermStructure extends PatternOp {
         public final int subterm;
         public final int bits;
@@ -167,7 +165,7 @@ public class FindSubst extends Subst implements Substitution {
 
 
         public SubTermStructure(Op matchingType, int subterm, int bits) {
-            this.subterm  = subterm;
+            this.subterm = subterm;
 
             if (matchingType != Op.VAR_PATTERN)
                 bits &= (~matchingType.bit());
@@ -191,7 +189,9 @@ public class FindSubst extends Subst implements Substitution {
         }
     }
 
-    /** requires a specific subterm type  */
+    /**
+     * requires a specific subterm type
+     */
     public static final class SubTermOp extends PatternOp {
         public final int subterm;
         public final Op op;
@@ -199,7 +199,7 @@ public class FindSubst extends Subst implements Substitution {
 
 
         public SubTermOp(int subterm, Op op) {
-            this.subterm  = subterm;
+            this.subterm = subterm;
             this.op = op;
             this.id = "t" + subterm + ":" + op;
         }
@@ -255,7 +255,9 @@ public class FindSubst extends Subst implements Substitution {
 //    }
 
 
-    /** Imdex == image index */
+    /**
+     * Imdex == image index
+     */
     public static final class ImageIndexEquals extends MatchOp {
         public final int index;
 
@@ -283,7 +285,9 @@ public class FindSubst extends Subst implements Substitution {
 //    }
 
 
-    /** invokes a dynamic FindSubst match via the generic entry method: match(Term,Term) */
+    /**
+     * invokes a dynamic FindSubst match via the generic entry method: match(Term,Term)
+     */
     public static class MatchTerm extends PatternOp {
         public final Term x;
 
@@ -371,14 +375,16 @@ public class FindSubst extends Subst implements Substitution {
         @Override
         public boolean run(Subst ff) {
 
-            ff.term.set( ff.parent.get() );
-            ff.parent.set( null );
+            ff.term.set(ff.parent.get());
+            ff.parent.set(null);
             return true;
         }
     };
 
 
-    /** selects the ith sibling subterm of the current parent */
+    /**
+     * selects the ith sibling subterm of the current parent
+     */
     public static final class Subterm extends PatternOp {
         public final int index;
 
@@ -398,7 +404,9 @@ public class FindSubst extends Subst implements Substitution {
         }
     }
 
-    /** sets the term to its parent, and the parent to a hardcoded value (its parent) */
+    /**
+     * sets the term to its parent, and the parent to a hardcoded value (its parent)
+     */
     public static final class ParentTerm extends PatternOp {
         public final Compound parent;
 
@@ -502,7 +510,7 @@ public class FindSubst extends Subst implements Substitution {
             }
         }
 
-        if (powerDivisor!=1f)
+        if (powerDivisor != 1f)
             throw new RuntimeException("power divisor not restored");
 
         return match;
@@ -535,7 +543,7 @@ public class FindSubst extends Subst implements Substitution {
             return matchCompound((Compound) x, (Compound) y);
         }
 
-        if (xOp == t)  {
+        if (xOp == t) {
             return matchXvar((Variable) x, y);
         }
 
@@ -604,25 +612,13 @@ public class FindSubst extends Subst implements Substitution {
         return xy.isEmpty();
     }
 
-
-    /**
-     * X and Y are of the same operator type and length (arity)
-     * X's permutations matched against constant Y
-     */
-    public final boolean matchCompound(Compound X, final Compound Y) {
-
-        /** if they are images, they must have same relationIndex */
-        //TODO eliminate redudant test of index here if image is already verified in a previous condition
-        if (X instanceof Image) {
-            if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                return false;
-        }
+    public final boolean matchCompoundWithEllipsis(Compound X, final Compound Y) {
 
         int xsize = X.size();
 
         final int numNonpatternVars;
         int ellipsisToMatch = Ellipsis.numUnmatchedEllipsis(X, this);
-        if (ellipsisToMatch==0) {
+        if (ellipsisToMatch == 0) {
 
             int ellipsisTotal = Ellipsis.numEllipsis(X);
             if (ellipsisTotal > 0) {
@@ -643,44 +639,81 @@ public class FindSubst extends Subst implements Substitution {
         //TODO see if there is a volume or structural constraint that can terminate early here
 
 
+        Ellipsis e = Ellipsis.getFirstUnmatchedEllipsis(X, this);
 
-        if (xsize == 0) return true;
+        final int ysize = Y.size();
 
+        if (!e.valid(numNonpatternVars, ysize)) {
+            return false;
+        }
 
-        if (ellipsisToMatch==0) {
-            if (xsize == 1)
-                return match(X.term(0), Y.term(0));
-            else if (X.isCommutative()) {
+        if (numNonpatternVars == 0) {
+            //all are to be matched, regardless of commutivity
+            return matchEllipsisAll(e, Y);
+        }
+
+        if (X.isCommutative()) {
+            return matchEllipsedCommutative(
+                    X, e, Y
+            );
+        } else {
+            //TODO case where relation is after the ellipsis
+
+            /** if they are images, they must have same relationIndex */
+            if (X instanceof Image) { //PRECOMPUTABLE
+                if (((Image) X).relationIndex != ((Image) Y).relationIndex)
+                    return false;
+            }
+
+            return matchEllipsedLinear(
+                    X, e, Y
+            );
+        }
+
+    }
+
+    /**
+     * X contains no ellipsis to consider (simple/fast)
+     */
+    public final boolean matchCompoundWithoutEllipsis(Compound X, final Compound Y) {
+        int xsize = X.size();
+        int ysize = Y.size();
+
+        if (xsize != ysize)
+            return false;
+
+        if (xsize == 1) {
+            return match(X.term(0), Y.term(0));
+        } else {
+            if (X.isCommutative()) {
                 return matchPermute(X, Y); //commutative, try permutations
             } else {
+
+                /** if they are images, they must have same relationIndex */
+                if (X instanceof Image) { //PRECOMPUTABLE
+                    if (((Image) X).relationIndex != ((Image) Y).relationIndex)
+                        return false;
+                }
+
                 return matchLinear(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
             }
-        } else {
-
-            Ellipsis e = Ellipsis.getFirstUnmatchedEllipsis(X, this);
-
-            final int ysize = Y.size();
-
-            if (!e.valid(numNonpatternVars, ysize)) {
-                return false;
-            }
-
-            if (numNonpatternVars == 0) {
-                //all are to be matched, regardless of commutivity
-                return matchEllipsisAll(e, Y);
-            }
-
-            if (X.isCommutative()) {
-                return matchEllipsedCommutative(
-                    X, e, Y
-                );
-            } else {
-                return matchEllipsedLinear(
-                    X, e, Y
-                );
-            }
-
         }
+    }
+
+    /**
+     * X and Y are of the same operator type and length (arity)
+     * X's permutations matched against constant Y
+     */
+    public final boolean matchCompound(Compound X, final Compound Y) {
+
+        int xsize = X.size();
+        if (xsize == 0)
+            return true; //empty product, ex: ()
+
+        if (Ellipsis.hasEllipsis(X)) //PRECOMPUTABLE
+            return matchCompoundWithEllipsis(X, Y);
+        else
+            return matchCompoundWithoutEllipsis(X, Y);
     }
 
     /**
@@ -700,7 +733,6 @@ public class FindSubst extends Subst implements Substitution {
 
 
         int prePermute = now();
-
 
 
         boolean matched = false;
@@ -728,6 +760,7 @@ public class FindSubst extends Subst implements Substitution {
         putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
         return true;
     }
+
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
         putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
         return true;
@@ -736,25 +769,25 @@ public class FindSubst extends Subst implements Substitution {
 
     /**
      * commutive compound match: Y into X which contains one ellipsis
-     *
-     *      X pattern contains:
-     *
-     *        one unmatched ellipsis (identified)
-     *
-     *        zero or more "constant" (non-pattern var) terms
-     *              all of which Y must contain
-     *
-     *        zero or more (non-ellipsis) pattern variables,
-     *              each of which may be matched or not.
-     *                  matched variables whose resolved values that Y must contain
-     *                  unmatched variables determine the amount of permutations/combinations:
-     *
-     *        if the number of matches available to the ellipse is incompatible with the ellipse requirements, fail
-     *
-     *        (total eligible terms) Choose (total - #normal variables)
-     *        these are then matched in revertable frames.
-     *
-*    *        proceed to collect the remaining zero or more terms as the ellipse's match using a predicate filter
+     * <p>
+     * X pattern contains:
+     * <p>
+     * one unmatched ellipsis (identified)
+     * <p>
+     * zero or more "constant" (non-pattern var) terms
+     * all of which Y must contain
+     * <p>
+     * zero or more (non-ellipsis) pattern variables,
+     * each of which may be matched or not.
+     * matched variables whose resolved values that Y must contain
+     * unmatched variables determine the amount of permutations/combinations:
+     * <p>
+     * if the number of matches available to the ellipse is incompatible with the ellipse requirements, fail
+     * <p>
+     * (total eligible terms) Choose (total - #normal variables)
+     * these are then matched in revertable frames.
+     * <p>
+     * *        proceed to collect the remaining zero or more terms as the ellipse's match using a predicate filter
      *
      * @param X the pattern term
      * @param Y the compound being matched into X
@@ -768,39 +801,33 @@ public class FindSubst extends Subst implements Substitution {
             if (x == Xellipsis) continue;
             if (x.op() == type) {
                 Term r = getXY(x);
-                if (r!=null) {
+                if (r != null) {
                     if (r instanceof ShadowProduct) {
                         //this is a secondary ellipse, and there was a previous ellipse match. add them all
-                        Collections.addAll(yRequiredByX, ((ShadowProduct)r ).terms() );
-                    }
-                    else {
+                        Collections.addAll(yRequiredByX, ((ShadowProduct) r).terms());
+                    } else {
                         yRequiredByX.add(r); //pattern already matched
                     }
-                }
-                else {
+                } else {
                     xUnmatched.add((Variable) x);
                 }
-            }
-            else if (!(x instanceof Compound)) {
-                //an atomic non-pattern, non-compound term
-                yRequiredByX.add(x); //constant value which must be in Y
+            } else {
+                //must be in Y
+                yRequiredByX.add(x);
             }
         }
 
-        //int collectable = Y.size() - xUnmatched.size();
-        if (!Xellipsis.valid(Y.size() - xUnmatched.size())) {
+        Set<Term> yFree = Y.toSet();
+        for (Term x : yRequiredByX) {
+            Term xResolved = resolve(x);
+            if (!yFree.remove(xResolved)) //required subterm not present
+                return false;
+        }
+
+        int numYFree = yFree.size(); //remaining
+        if (!Xellipsis.valid(yFree.size())) {
             return false;
         }
-
-        //Step 1. Determine that Y has all of the possibly required terms
-//        if (!Y.containsAllOf(yRequired)) {
-//            return false;
-//        }
-
-        Set<Term> Yfree = Y.toSet();
-        for (Term z : yRequiredByX)
-            if (!Yfree.remove(z))
-                return false; //x requires something y did not have
 
         //Step 2. Match the specified pattern variables
         if (!xUnmatched.isEmpty()) {
@@ -809,26 +836,27 @@ public class FindSubst extends Subst implements Substitution {
 
                 //TODO limit power here based on worst case # of matches
 
-                if (!matchChoose1(xFixed.term(0), Yfree)) {
+                if (!matchChoose1(xFixed.term(0), yFree)) {
                     return false;
                 }
 
                 //Step 3. Collect the free terms
-                putXY( Xellipsis, new ShadowProduct(Yfree));
+                putXY(Xellipsis, new ShadowProduct(yFree));
                 return true;
             } else {
                 //not impl yet
-                return false;
+                throw new RuntimeException("ellipsis commutive case not handled");
             }
+        } else {
+            //select all
+            return matchEllipsisAll(Xellipsis, yFree);
         }
-
-        //select all
-        return matchEllipsisAll(Xellipsis, Yfree);
     }
 
-    /** choose 1 at a time from a set of N, which means iterating up to N
-     *  will remove the chosen item(s) from Y if successful before returning
-     * */
+    /**
+     * choose 1 at a time from a set of N, which means iterating up to N
+     * will remove the chosen item(s) from Y if successful before returning
+     */
     private boolean matchChoose1(Variable X, Set<Term> Yfree) {
 
         final int ysize = Yfree.size();
@@ -839,12 +867,11 @@ public class FindSubst extends Subst implements Substitution {
         int iterations = Math.min(ysize, (powerAvailable()));
 
 
-
         Term[] yy = Yfree.toArray(new Term[ysize]);
 
         for (int i = 0; i < iterations; i++) {
 
-            Term y = yy[ (shuffle++) % ysize ];
+            Term y = yy[(shuffle++) % ysize];
 
             boolean matched = match(X, y);
 
@@ -865,12 +892,11 @@ public class FindSubst extends Subst implements Substitution {
     /**
      * non-commutive compound match
      * X will contain at least one ellipsis
-     *
+     * <p>
      * match subterms in sequence
-     *
+     * <p>
      * WARNING this implementation only works if there is one ellipse in the subterms
      * this is not tested for either
-     *
      */
     public final boolean matchEllipsedLinear(Compound X, Ellipsis Xellipsis, Compound Y) {
 
@@ -880,7 +906,7 @@ public class FindSubst extends Subst implements Substitution {
         while (i < xsize) {
             Term x = X.term(i++);
 
-            boolean expansionFollows = i<xsize && X.term(i) == Ellipsis.Expand;
+            boolean expansionFollows = i < xsize && X.term(i) == Ellipsis.Expand;
             if (expansionFollows) i++; //skip over it
 
             if (x instanceof Ellipsis) {
@@ -896,10 +922,9 @@ public class FindSubst extends Subst implements Substitution {
                         //TODO special handling to extract intermvals from Sequence terms here
 
                         putXY(Xellipsis, new ShadowProduct(
-                            Y.terms(j, ysize)
+                                Y.terms(j, ysize)
                         ));
-                    }
-                    else if (i == 0) {
+                    } else if (i == 0) {
                         //PREFIX the ellipsis occurred at the start and there are additional terms following it
                         //TODO
                         return false;
@@ -908,18 +933,16 @@ public class FindSubst extends Subst implements Substitution {
                         //TODO
                         return false;
                     }
-                }
-                else {
+                } else {
                     //previous match exists, match against what it had
                     if (i == xsize) {
                         //SUFFIX - match the remaining terms against what the ellipsis previously collected
-                        Term[] sp = ((ShadowProduct)eMatched).term;
+                        Term[] sp = ((ShadowProduct) eMatched).term;
                         for (int k = 0; k < sp.length; k++) {
                             if (!match(sp[k], Y.term(j++)))
                                 return false;
                         }
-                    }
-                    else {
+                    } else {
                         //TODO other cases
                         return false;
                     }
@@ -983,7 +1006,6 @@ public class FindSubst extends Subst implements Substitution {
     }
 
 
-
     private boolean powerDividable(int factor) {
         if (powerAvailable() < factor) return false;
 
@@ -1016,10 +1038,10 @@ public class FindSubst extends Subst implements Substitution {
     public final void putXY(Term x /* usually a Variable */, Term y) {
         xy.put(x, y);
     }
+
     public final void putYX(Term y /* usually a Variable */, Term x) {
         yx.put(y, x);
     }
-
 
 
     public final Term resolve(Term t) {
