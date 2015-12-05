@@ -422,14 +422,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     void addAllTo(Collection<Term> set);
 
-    default boolean containsAllOf(Collection<Term> s) {
-        if (s.isEmpty()) return true;
-        if (size() < s.size()) return false;
-        for (Term t : terms()) {
-            if (!s.contains(t)) return false;
-        }
-        return true;
-    }
 
 
 //    public int countOccurrences(final Term t) {

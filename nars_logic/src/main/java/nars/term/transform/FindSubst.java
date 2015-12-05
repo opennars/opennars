@@ -671,6 +671,10 @@ public class FindSubst extends Subst implements Substitution {
         putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
         return true;
     }
+    public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
+        putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
+        return true;
+    }
 
 
     /**
@@ -701,7 +705,7 @@ public class FindSubst extends Subst implements Substitution {
     public final boolean matchEllipsedCommutative(Compound X, Ellipsis Xellipsis, Compound Y) {
 
         //ALL OF THIS CAN BE PRECOMPUTED
-        Set<Term> yRequired = Global.newHashSet(0);
+        Set<Term> yRequiredByX = Global.newHashSet(0); //what y must require, but which will not be collected into elllipsis
         Collection<Variable> xUnmatched = Global.newArrayList(); //Global.newHashSet(0);
         for (Term x : X.terms()) {
             if (x == Xellipsis) continue;
@@ -710,10 +714,10 @@ public class FindSubst extends Subst implements Substitution {
                 if (r!=null) {
                     if (r instanceof ShadowProduct) {
                         //this is a secondary ellipse, and there was a previous ellipse match. add them all
-                        Collections.addAll(yRequired, ((ShadowProduct)r ).terms() );
+                        Collections.addAll(yRequiredByX, ((ShadowProduct)r ).terms() );
                     }
                     else {
-                        yRequired.add(r); //pattern already matched
+                        yRequiredByX.add(r); //pattern already matched
                     }
                 }
                 else {
@@ -722,22 +726,24 @@ public class FindSubst extends Subst implements Substitution {
             }
             else if (!(x instanceof Compound)) {
                 //an atomic non-pattern, non-compound term
-                yRequired.add(x); //constant value which must be in Y
+                yRequiredByX.add(x); //constant value which must be in Y
             }
         }
 
         //int collectable = Y.size() - xUnmatched.size();
-        if (!Xellipsis.valid(xUnmatched.size(), Y.size())) {
+        if (!Xellipsis.valid(Y.size() - xUnmatched.size())) {
             return false;
         }
 
         //Step 1. Determine that Y has all of the possibly required terms
-        if (!Y.containsAllOf(yRequired)) {
-            return false;
-        }
+//        if (!Y.containsAllOf(yRequired)) {
+//            return false;
+//        }
 
         Set<Term> Yfree = Y.toSet();
-        Yfree.removeAll(yRequired);
+        for (Term z : yRequiredByX)
+            if (!Yfree.remove(z))
+                return false; //x requires something y did not have
 
         //Step 2. Match the specified pattern variables
         if (!xUnmatched.isEmpty()) {
@@ -760,7 +766,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         //select all
-        return matchEllipsisAll(Xellipsis, Y);
+        return matchEllipsisAll(Xellipsis, Yfree);
     }
 
     /** choose 1 at a time from a set of N, which means iterating up to N

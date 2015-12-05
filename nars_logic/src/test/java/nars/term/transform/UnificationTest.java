@@ -495,7 +495,7 @@ public class UnificationTest  {
                 false);
     }
 
-    @Test public void ellipsisCommutive()  {
+    @Test public void ellipsisCommutive1() {
         test(Op.VAR_PATTERN,
                 "{%X..+}",
                 "{a}", true);
@@ -505,9 +505,9 @@ public class UnificationTest  {
         test(Op.VAR_PATTERN,
                 "{a, %X..*}",
                 "{a}", true);
+    }
 
-
-        //TODO:
+    @Test public void ellipsisCommutive2() {
 
         test(Op.VAR_PATTERN,
                 "{a, %X..+}",
@@ -517,14 +517,12 @@ public class UnificationTest  {
                 "{%X..+, a}",
                 "{a, b, c, d}", true);
 
-
         test(Op.VAR_PATTERN,
-                "{a, %X..+, a}",
+                "{a, %X..+, e}",
                 "{a, b, c, d}", false);
-
     }
 
-    @Test public void ellipsisLinear1()  {
+    @Test public void ellipsisLinear1() {
         test(Op.VAR_PATTERN,
                 "(%X..+)",
                 "(a)", true);
@@ -544,8 +542,11 @@ public class UnificationTest  {
         test(Op.VAR_PATTERN,
                 "(a, %X..+, a)",
                 "(a, b, c, d)", false);
+    }
 
-        //TODO
+    @Test public void ellipsisLinearInner()  {
+
+            //TODO - lower priority
         /*test(Op.VAR_PATTERN,
                 "(a, %X..+, d)",
                 "(a, b, c, d)", true);*/
@@ -554,7 +555,8 @@ public class UnificationTest  {
 
     @Test public void testA() {
         final String somethingIsBird = "bird:$x";
-        final String somethingIsAnimal = "animal:$x";        testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
+        final String somethingIsAnimal = "animal:$x";
+        testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
     }
 
 

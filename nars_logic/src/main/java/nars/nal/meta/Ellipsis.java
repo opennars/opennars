@@ -11,6 +11,7 @@ import nars.term.*;
 import nars.term.transform.Subst;
 import nars.util.utf8.Utf8;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -249,9 +250,12 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return matchedSubterms(arrayGen.apply( filter ) );
     }
 
+    public static ShadowProduct matchedSubterms(Collection<Term> subterms) {
+        return new ShadowProduct(subterms);
+    }
+
 
     private static ShadowProduct matchedSubterms(Term[] subterms) {
-        //return Product.make(subterms);
         return new ShadowProduct(subterms);
     }
 
