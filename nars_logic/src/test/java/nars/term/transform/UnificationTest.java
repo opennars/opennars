@@ -544,12 +544,37 @@ public class UnificationTest  {
                 "(a, b, c, d)", false);
     }
 
+    @Test public void ellipsisLinearRepeat1() {
+        test(Op.VAR_PATTERN,
+                "((a, %X..+), %X..+)",
+                "((a, b, c, d), b, c, d)", true);
+    }
+    @Test public void ellipsisLinearRepeat2() {
+        test(Op.VAR_PATTERN,
+                "((a, %X..+), (z, %X..+))",
+                "((a, b, c, d), (z, b, c, d))", true);
+    }
+    @Test public void ellipsisCommutiveRepeat() {
+        test(Op.VAR_PATTERN,
+                "{{a, %X..+}, %X..+}",
+                "{{a, b, c, d}, b, c, d}", true);
+    }
+    @Test public void ellipsisCommutiveRepeat2() {
+        test(Op.VAR_PATTERN,
+                "{{a, %X..+}, {z, %X..+}}",
+                "{{a, b, c, d}, {z, b, c, d}}", true);
+    }
+
     @Test public void ellipsisLinearInner()  {
 
             //TODO - lower priority
         /*test(Op.VAR_PATTERN,
                 "(a, %X..+, d)",
                 "(a, b, c, d)", true);*/
+    }
+
+    @Test public void ellipsisSequence() {
+        //TODO test for inclusion of intervals in matching
     }
 
 

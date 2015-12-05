@@ -884,7 +884,7 @@ public class FindSubst extends Subst implements Substitution {
             if (expansionFollows) i++; //skip over it
 
             if (x instanceof Ellipsis) {
-                Term eMatched = getXY(x);
+                Term eMatched = getXY(x); //ShadowProduct if non null
                 if (eMatched == null) {
                     //COLLECT
                     if (i == xsize) {
@@ -911,8 +911,19 @@ public class FindSubst extends Subst implements Substitution {
                 }
                 else {
                     //previous match exists, match against what it had
-                    //TODO
-                    return false;
+                    if (i == xsize) {
+                        //SUFFIX - match the remaining terms against what the ellipsis previously collected
+                        Term[] sp = ((ShadowProduct)eMatched).term;
+                        for (int k = 0; k < sp.length; k++) {
+                            if (!match(sp[k], Y.term(j++)))
+                                return false;
+                        }
+                    }
+                    else {
+                        //TODO other cases
+                        return false;
+                    }
+
                 }
             } else {
                 if (!match(x, Y.term(j++)))
@@ -942,10 +953,14 @@ public class FindSubst extends Subst implements Substitution {
         //return true;
     }
 
+    public boolean matchLinear(final TermContainer X, final TermContainer Y) {
+        return matchLinear(X, Y, 0, X.size());
+    }
+
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    public boolean matchLinear(final TermContainer X, final TermContainer Y) {
+    public boolean matchLinear(final TermContainer X, final TermContainer Y, int start, int stop) {
 
         final int yLen = Y.size();
 
@@ -954,7 +969,7 @@ public class FindSubst extends Subst implements Substitution {
             return false;
 
         boolean success = true;
-        for (int i = 0; i < yLen; i++) {
+        for (int i = start; i < stop; i++) {
             if (!match(X.term(i), Y.term(i))) {
                 success = false;
                 break;
