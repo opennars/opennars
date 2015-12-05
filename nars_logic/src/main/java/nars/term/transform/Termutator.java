@@ -47,6 +47,11 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     }
 
     @Override
+    public String toString() {
+        return TermContainer.toString(this);
+    }
+
+    @Override
     public Term termOr(int index, Term resultIfInvalidIndex) {
         throw new RuntimeException("unimpl yet");
     }

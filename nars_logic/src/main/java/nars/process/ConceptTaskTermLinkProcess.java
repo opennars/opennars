@@ -18,32 +18,33 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     protected final TermLink termLink;
 
     public ConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink) {
+        this(nar, concept, taskLink, termLink, null);
+    }
+
+    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink, Task belief) {
         super(nar, concept, taskLink);
 
         this.termLink = termLink;
 
-        final Concept beliefConcept = nar.concept(termLink.target);
-
         final Task task = taskLink.getTask();
 
+        if (belief == null) {
+            final Concept beliefConcept = nar.concept(termLink.target);
+            if (beliefConcept != null) {
 
-        if (beliefConcept != null) {
-            //belief can be null:
-            Task belief = beliefConcept.getBeliefs().top(task, nar.time());
+                belief = beliefConcept.getBeliefs().top(task, nar.time());
 
-            if (belief!=null)
-                belief = Premise.match(task, belief, this);
-
-            updateBelief(belief);
+                if (belief != null)
+                    belief = Premise.match(task, belief, this);
+            }
         }
 
+        //belief can be null:
+        if (belief!=null)
+            updateBelief(belief);
 
     }
 
-    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink, Task belief) {
-        this(nar, concept, taskLink, termLink);
-        updateBelief(belief);
-    }
 
     /**
      * @return the current termLink aka BeliefLink

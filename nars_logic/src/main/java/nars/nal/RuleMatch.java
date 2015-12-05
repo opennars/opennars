@@ -9,6 +9,7 @@ import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.truth.Stamp;
@@ -107,9 +108,14 @@ public class RuleMatch extends FindSubst {
         this.premise = p;
         this.receiver = receiver;
 
+        Compound taskTerm = p.getTask().getTerm();
+        Term beliefTerm = p.getBelief() != null ?
+            p.getBelief().getTerm()
+            : p.getTermLink().getTerm() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+
         this.parent.set( new TaskBeliefPair(
-            p.getTask().getTerm(),
-            p.getTermLink().getTerm()
+            taskTerm,
+            beliefTerm
         ) );
 
         //set initial power which will be divided by branch
@@ -200,14 +206,8 @@ public class RuleMatch extends FindSubst {
         return !((truth == null) || (truth.getConfidence() < minConf));
     }
 
-    @Deprecated
-    protected static boolean cyclic(PostCondition outcome, Premise premise) {
-        return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
-    }
 
-    public static boolean cyclic(TruthFunction f, Premise premise) {
-        return (f != null && !f.allowOverlap()) && premise.isCyclic();
-    }
+
 
 
 //    public Term resolveTest(final Term t) {

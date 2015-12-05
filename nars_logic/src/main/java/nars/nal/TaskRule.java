@@ -148,6 +148,8 @@ public class TaskRule extends ProductN implements Level {
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
 
+        l.add(new Solve.Truth(post.truth, post.desire, post.puncOverride));
+
         ///--------------
         //l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Pattern));
 
@@ -156,7 +158,7 @@ public class TaskRule extends ProductN implements Level {
 
         ///--------------
 
-        l.add(new Solve.Truth(post.truth, post.desire, post.puncOverride));
+
 
 
         if (post.afterConclusions.length > 0) {

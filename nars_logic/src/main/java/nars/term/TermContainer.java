@@ -77,4 +77,28 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         }
         return x;
     }
+
+
+    static String toString(TermContainer t) {
+        StringBuilder sb = new StringBuilder("{[(");
+        int s = t.size();
+        for (int i = 0; i < s; i++) {
+            sb.append(t.term(i));
+            if (i < s-1)
+                sb.append(", ");
+        }
+        sb.append(")]}");
+        return sb.toString();
+
+    }
+
+    /** extract a sublist of terms as an array */
+    default Term[] terms(int start, int end) {
+        Term[] t = new Term[end-start];
+        int j = 0;
+        for (int i = start; i < end; i++)
+            t[j++] = term(i);
+        return t;
+    }
+
 }

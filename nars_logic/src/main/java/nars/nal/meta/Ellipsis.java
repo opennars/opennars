@@ -82,7 +82,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         Map<Term, Term> xy = ff.xy;
         if (xy.isEmpty()) {
             //map is empty so return total # ellipsis
-            return countEllipsisSubterms(x);
+            return numEllipsis(x);
         }
 
         int n = 0;
@@ -96,7 +96,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return n;
     }
 
-    public static int countEllipsisSubterms(TermContainer x) {
+    public static int numEllipsis(TermContainer x) {
         final int xs = x.size();
         int n = 0;
         for (int i = 0; i < xs; i++) {
@@ -106,7 +106,7 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return n;
     }
 
-    public static int countNonEllipsisSubterms(Compound x) {
+    public static int numNonEllipsisSubterms(Compound x) {
         final int xs = x.size();
         int n = xs;
         for (int i = 0; i < xs; i++) {
@@ -166,13 +166,16 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
      * @param x a compound which contains one or more ellipsis terms */
     public static int countNumNonEllipsis(Compound x) {
         //TODO depending on the expression, determine the sufficient # of terms Y must contain
-        int numNonVarArgs = Ellipsis.countNonEllipsisSubterms(x);
+        int numNonVarArgs = Ellipsis.numNonEllipsisSubterms(x);
         return numNonVarArgs;
     }
 
-    public boolean valid(int numNonVarArgs, int ysize) {
-
+    @Deprecated public boolean valid(int numNonVarArgs, int ysize) {
         int collectable = ysize - numNonVarArgs;
+        return valid(collectable);
+    }
+
+    public boolean valid(int collectable) {
         Term exp = this.expression;
 
         if (exp == PLUS)

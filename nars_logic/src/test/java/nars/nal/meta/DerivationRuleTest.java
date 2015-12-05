@@ -381,19 +381,25 @@ public class DerivationRuleTest extends TestCase {
     }
 
 
-    public void testEllipsisCombinatorics() {
+    public void testEllipsisCombinatorics1() {
 
         //rule: ((&&,M,A..+) ==> C), ((&&,A,..) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
         Compound X = $("(&&, %1..+, %2)");
         Compound Y = $("(&&, <r --> [c]>, <r --> [w]>, <r --> [f]>)");
+        int expect = 3;
 
-        Random rng = new XorShift1024StarRandom(1);
-        FindSubst f = new FindSubst(Op.VAR_PATTERN, rng);
-        f.setPower(1000);
-        boolean b = f.matchCompound(X, Y);
-        System.out.println(f);
-        System.out.println(f.xy);
-        assertTrue(b);
+        Set<String> results = Global.newHashSet(0);
+        for (int seed = 0; seed < expect*5; seed++) {
+            Random rng = new XorShift1024StarRandom(seed);
+            FindSubst f = new FindSubst(Op.VAR_PATTERN, rng);
+            f.setPower(1000);
+            boolean b = f.matchCompound(X, Y);
+            assertTrue(b);
+            results.add(f.xy.toString());
+        }
+
+        results.forEach(System.out::println);
+        assertEquals(expect, results.size());
 
 
 

@@ -261,15 +261,15 @@ public final class Solve extends PreCondition {
                 tf = null;
             }
 
-            /** eliminate cyclic double-premise results
-             *  TODO move this earlier to precondition check, or change to altogether new policy
-             */
-            final boolean single = (belief == null);
-            if ((!single) && (RuleMatch.cyclic(tf, premise))) {
-//                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
-//                    match.removeCyclic(outcome, premise, truth, punct);
-//                }
-                return false;
+
+            /** filter cyclic double-premise results  */
+            if (tf != null && !tf.allowOverlap()) {
+                if (m.premise.isCyclic()) {
+                    //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
+                    //                    match.removeCyclic(outcome, premise, truth, punct);
+                    //                }
+                    return false;
+                }
             }
 
             m.truth.set(truth);
