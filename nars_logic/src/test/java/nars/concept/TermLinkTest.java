@@ -64,7 +64,7 @@ public class TermLinkTest {
     public void testConjunctionTermLinks() {
 
         Bag<TermLinkKey, TermLink> cj0 = getTermLinks("(&&,a,b)", false);
-        assertEquals("[a, b]", cj0.keySet().toString());
+        assertEquals("[b, a]", cj0.keySet().toString());
 
         assertEquals(2, cj0.size());
 

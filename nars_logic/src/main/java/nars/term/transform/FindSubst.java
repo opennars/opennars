@@ -720,12 +720,11 @@ public class FindSubst extends Subst implements Substitution {
                     xUnmatched.add((Variable) x);
                 }
             }
-            else {
+            else if (!(x instanceof Compound)) {
+                //an atomic non-pattern, non-compound term
                 yRequired.add(x); //constant value which must be in Y
             }
         }
-        if (yRequired.size() + xUnmatched.size() + 1 != X.size())
-            throw new RuntimeException("ellipsis fault");
 
         //int collectable = Y.size() - xUnmatched.size();
         if (!Xellipsis.valid(xUnmatched.size(), Y.size())) {
@@ -760,9 +759,8 @@ public class FindSubst extends Subst implements Substitution {
             }
         }
 
-        //not impl yet?
-        //select all?
-        return false;
+        //select all
+        return matchEllipsisAll(Xellipsis, Y);
     }
 
     /** choose 1 at a time from a set of N, which means iterating up to N

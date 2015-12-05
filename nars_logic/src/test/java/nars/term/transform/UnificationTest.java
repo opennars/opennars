@@ -495,6 +495,61 @@ public class UnificationTest  {
                 false);
     }
 
+    @Test public void ellipsisCommutive()  {
+        test(Op.VAR_PATTERN,
+                "{%X..+}",
+                "{a}", true);
+        test(Op.VAR_PATTERN,
+                "{a, %X..+}",
+                "{a}", false);
+        test(Op.VAR_PATTERN,
+                "{a, %X..*}",
+                "{a}", true);
+
+
+        //TODO:
+
+        test(Op.VAR_PATTERN,
+                "{a, %X..+}",
+                "{a, b}", true);
+
+        test(Op.VAR_PATTERN,
+                "{%X..+, a}",
+                "{a, b, c, d}", true);
+
+
+        test(Op.VAR_PATTERN,
+                "{a, %X..+, a}",
+                "{a, b, c, d}", false);
+
+    }
+
+    @Test public void ellipsisLinear1()  {
+        test(Op.VAR_PATTERN,
+                "(%X..+)",
+                "(a)", true);
+        test(Op.VAR_PATTERN,
+                "(a, %X..+)",
+                "(a)", false);
+        test(Op.VAR_PATTERN,
+                "(a, %X..*)",
+                "(a)", true);
+
+        test(Op.VAR_PATTERN,
+                "(a, %X..+)",
+                "(a, b, c, d)", true);
+        test(Op.VAR_PATTERN,
+                "(%X..+, a)",
+                "(a, b, c, d)", false);
+        test(Op.VAR_PATTERN,
+                "(a, %X..+, a)",
+                "(a, b, c, d)", false);
+
+        //TODO
+        /*test(Op.VAR_PATTERN,
+                "(a, %X..+, d)",
+                "(a, b, c, d)", true);*/
+    }
 
 
     @Test public void testA() {

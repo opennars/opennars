@@ -57,8 +57,8 @@ public class Global {
 
     /** allow everything */
 
-    public static int UNIFICATION_POWERmin = 16400;
-    public static int UNIFICATION_POWER = 25600;
+    public static int UNIFICATION_POWERmin = 100;
+    public static int UNIFICATION_POWER = 100;
 
     public static int DEFAULT_NAL_LEVEL = 8;
 
