@@ -334,9 +334,7 @@ public class Memory extends Param {
 //        return getCycleProcess().nextConcept(pred, v);
 //    }
 
-    public final Clock getClock() {
-        return clock;
-    }
+
 
 //    /**
 //     * TODO return value
@@ -426,7 +424,7 @@ public class Memory extends Param {
 //    }
 
     public final long time() {
-        return getClock().time();
+        return clock.time();
     }
 
 //    public final void put(final Concept c) {
@@ -534,9 +532,9 @@ public class Memory extends Param {
 
     }
 
-    private static class MyTermIndex implements TermIndex {
+    private static final class MyTermIndex implements TermIndex {
 
-        final Map<Term,Term> terms =
+        private final Map<Term,Term> terms =
                 new UnifriedMap(1024);
                 //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
@@ -573,7 +571,7 @@ public class Memory extends Param {
         }
 
         @Override
-        public void forEachTerm(Consumer<Termed> c) {
+        public final void forEachTerm(Consumer<Termed> c) {
             terms.forEach((k,v)->c.accept(v));
         }
     }

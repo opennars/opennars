@@ -9,7 +9,6 @@ import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift1024StarRandom;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
@@ -160,26 +159,7 @@ public class DerivationRuleTest extends TestCase {
 
     }
 
-    @Ignore
-    @Test public void testVarArg1() {
-        String rule = "((<%1 --> %2>, <(|, %1, %3..+) --> %2>), (<(|, %3..+, ..) --> %2>, (<DecomposePositiveNegativeNegative --> Truth>)))";
-        TaskRule x = p.term("<" + rule + ">");
-        //System.out.println(x);
-        x = x.normalizeRule();
-        //System.out.println(x);
 
-//        //test with the automatically added '%' prefixes for capital letters:
-//        String rule2 = "<(S --> M), ((|, S, A..not(S) ) --> M) |- ((|, A, ..) --> M), (Truth:DecomposePositiveNegativeNegative)>";
-//        assertEquals( x, ((TaskRule)p.term(rule2)).normalizeRule() );
-
-        assertEquals(
-                "((<%1 --> %2>, <(|, %1, %3..not(%1)) --> %2>), (<(|, .., %3..not(%1)) --> %2>, (<DecomposePositiveNegativeNegative --> Truth>)))",
-                x.toString());
-
-        /*TrieDeriver d = new TrieDeriver(new DerivationRules(x));
-        d.printSummary();*/
-
-    }
 
     public interface EllipsisTest {
         Compound getPattern();

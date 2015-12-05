@@ -159,6 +159,63 @@ public class FindSubst extends Subst implements Substitution {
         }
     }
 
+    /** requires a specific subterm to have minimum bit structure */
+    public static final class SubTermStructure extends PatternOp {
+        public final int subterm;
+        public final int bits;
+        private transient final String id;
+
+
+        public SubTermStructure(Op matchingType, int subterm, int bits) {
+            this.subterm  = subterm;
+
+            if (matchingType != Op.VAR_PATTERN)
+                bits &= (~matchingType.bit());
+
+            this.bits = bits;
+            this.id = "t" + subterm + ":" +
+                    Integer.toString(bits, 16);
+        }
+
+
+        @Override
+        public String toString() {
+            return id;
+        }
+
+        @Override
+        boolean run(Subst ff) {
+            Compound parent = ff.parent.get();
+            int s = parent.term(subterm).structure();
+            return (s | bits) == s;
+        }
+    }
+
+    /** requires a specific subterm type  */
+    public static final class SubTermOp extends PatternOp {
+        public final int subterm;
+        public final Op op;
+        private transient final String id;
+
+
+        public SubTermOp(int subterm, Op op) {
+            this.subterm  = subterm;
+            this.op = op;
+            this.id = "t" + subterm + ":" + op;
+        }
+
+        @Override
+        public String toString() {
+            return id;
+        }
+
+        @Override
+        boolean run(Subst ff) {
+            Compound parent = ff.parent.get();
+            return parent.term(subterm).op() == op;
+        }
+    }
+
     public static final class TermOpEquals extends MatchOp {
         public final Op type;
 
@@ -337,7 +394,7 @@ public class FindSubst extends Subst implements Substitution {
 
         @Override
         public String toString() {
-            return "s(" + index + ")"; //s for subterm and sibling
+            return "t" + index; //s for subterm and sibling
         }
     }
 

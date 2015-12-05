@@ -90,10 +90,9 @@ public class TermPattern {
                 //TODO get a min bound for the term's size according to the ellipsis type
             }
             */
-            code.add(new FindSubst.TermStructure(type, x.structure()));
+            //code.add(new FindSubst.TermStructure(type, x.structure()));
 
-            code.add(new FindSubst.TermVolumeMin(x.volume()-1));
-
+            //code.add(new FindSubst.TermVolumeMin(x.volume()-1));
 
             if (x instanceof Image) {
                 code.add(new FindSubst.ImageIndexEquals(
@@ -151,6 +150,20 @@ public class TermPattern {
 
     private void compileTaskBeliefPair(TaskBeliefPair x, List<PreCondition> code) {
         //when derivation begins, frame's parent will be set to the TaskBeliefPair so that a Subterm code isnt necessary
+
+        Term x0 = x.term(0);
+        Term x1 = x.term(1);
+
+        //add early preconditions for compounds
+        if (x0.op()!=Op.VAR_PATTERN) {
+            code.add(new FindSubst.SubTermOp(0, x0.op()));
+            code.add(new FindSubst.SubTermStructure(type, 0, x0.structure()));
+        }
+        if (x1.op()!=Op.VAR_PATTERN) {
+            code.add(new FindSubst.SubTermOp(1, x1.op()));
+            code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
+        }
+
         compileSubterm(x, 0, code);
         compileSubterm(x, 1, code);
         //code.add(FindSubst.Superterm); //
