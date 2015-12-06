@@ -264,7 +264,7 @@ public class TermTest {
 
 
 //        try {
-            DefaultCompound2 forced = n.term("<a --> b>");
+            CompoundN forced = n.term("<a --> b>");
             assertNotNull(forced);
 
             forced.subterms().term[0] = subj;

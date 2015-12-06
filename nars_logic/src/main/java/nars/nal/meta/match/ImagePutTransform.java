@@ -5,13 +5,14 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.Substitution;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * the indicated relation term is inserted
  * at the index location of the original image
+ * used to make products from image subterms
  */
-public class ImagePutTransform extends TransformingEllipsisMatch<Term> {
+public class ImagePutTransform extends AbstractEllipsisTransform<Term> {
 
     private final Term to;
     private final Image origin;
@@ -23,7 +24,7 @@ public class ImagePutTransform extends TransformingEllipsisMatch<Term> {
     }
 
     @Override
-    public boolean resolve(Substitution substitution, List<Term> target) {
+    public boolean resolve(Substitution substitution, Collection<Term> target) {
         Term relation = substitution.getXY(this.to);
         if (relation == null)
             return false;

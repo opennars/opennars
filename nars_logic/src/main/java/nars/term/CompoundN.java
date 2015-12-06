@@ -16,7 +16,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 import static nars.util.data.Util.hashCombine;
 
 
-public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
+public abstract class CompoundN<T extends Term> implements Compound<T> {
 
     protected final TermVector<T> terms;
 
@@ -28,19 +28,19 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     protected transient final int hash;
 
 
-    protected DefaultCompound2(Term... t) {
+    protected CompoundN(Term... t) {
         this(new TermVector(t));
     }
-    protected DefaultCompound2(Term[] t, int hashSalt) {
+    protected CompoundN(Term[] t, int hashSalt) {
         this(new TermVector(t), hashSalt);
     }
 
-    protected DefaultCompound2(TermVector subterms) {
+    protected CompoundN(TermVector subterms) {
         this(subterms, 0);
     }
 
     /** if hash salt is non-zero, it will be combined with the default hash value of the compound */
-    protected DefaultCompound2(TermVector subterms, int hashSalt) {
+    protected CompoundN(TermVector subterms, int hashSalt) {
         this.terms = subterms;
         this.normalized = !hasVar();
 
@@ -51,11 +51,9 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         this.hash = h;
     }
 
-    public DefaultCompound2(T t) {
+    public CompoundN(T t) {
         this(new Term[] { t } );
     }
-
-
 
     @Override
     public String toString() {
@@ -73,8 +71,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
         return subterms().compareTo( ((Compound)o).subterms() );
     }
-
-
 
 
     @Override
@@ -95,11 +91,12 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     public boolean equals(final Object that) {
         if (this == that)
             return true;
-        if (!(that instanceof Compound)) return false;
+        if (!(that instanceof Compound))
+            return false;
 
-        Compound c = (Compound)that;
+        if (hash != that.hashCode()) return false;
 
-        return c.subterms().equals(subterms()) && (c.op() == op());
+        return equalsCompound((Compound) that);
 /*
 
         TermContainer csubs = c.subterms();
@@ -113,6 +110,12 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         }
         return false;
         */
+    }
+
+    public boolean equalsCompound(Compound that) {
+        Compound c = that;
+
+        return c.subterms().equals(subterms()) && (c.op() == op());
     }
 
 
@@ -313,7 +316,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
                 return null;
 
 
-            ((DefaultCompound2) result).normalized = true;
+            ((CompoundN) result).normalized = true;
 
             return (T) result;
         }

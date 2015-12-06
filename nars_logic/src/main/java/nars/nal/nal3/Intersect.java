@@ -1,12 +1,12 @@
 package nars.nal.nal3;
 
-import nars.term.DefaultCompound2;
+import nars.term.CompoundN;
 import nars.term.Term;
 
 /**
  * Common parent class for IntersectInt and IntersectExt
  */
-abstract public class Intersect extends DefaultCompound2 {
+abstract public class Intersect extends CompoundN {
 
     protected Intersect(Term[] args) {
         super(args);

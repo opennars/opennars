@@ -5,7 +5,7 @@ import nars.Op;
 import nars.Symbols;
 import nars.term.Atom;
 import nars.term.Compound;
-import nars.term.DefaultCompound2;
+import nars.term.CompoundN;
 import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
@@ -18,7 +18,7 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image extends DefaultCompound2 {
+abstract public class Image extends CompoundN {
 
     /** Image index ("imdex") symbol */
     public final static Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));

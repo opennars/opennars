@@ -2,8 +2,8 @@ package nars.term.transform;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.match.AbstractEllipsisTransform;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.meta.match.TransformingEllipsisMatch;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.Compound;
 import nars.term.Term;
@@ -41,22 +41,30 @@ public interface Substitution extends Function<Compound,Term> {
         final int len = c.size();
         List<Term> sub = Global.newArrayList(len);
 
-        TransformingEllipsisMatch post = null;
+        AbstractEllipsisTransform post = null;
+
+
+        boolean changed = false;
 
 
         for (int i = 0; i < len; i++) {
             //t holds the
             final Term t = c.term(i);
 
+            //TODO change this to Compound.resolve(..,target) method call allowing any Compound to custom-handle its substitution contribution
+
             if (t instanceof Ellipsis) {
 
                 Term te = getXY(t);
+                if (te == null)
+                    return c;
+
+                changed = true; //even if the ellipsis matches blank it is a change
 
                 ShadowProduct sp = (ShadowProduct) te;
-                Term[] expansion;
-                if (sp instanceof TransformingEllipsisMatch) {
+                if (sp instanceof AbstractEllipsisTransform) {
                     if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + sp);
-                    post = (TransformingEllipsisMatch)sp;
+                    post = (AbstractEllipsisTransform)sp;
                     if (!post.resolve(this, sub))
                         return c;
                 } else {
@@ -73,13 +81,18 @@ public interface Substitution extends Function<Compound,Term> {
             } else {
                 // s holds a replacement substitution for t (i-th subterm of c)
                 Term s = subst(t);
-                if (s == null) {
+                if (s == null)
                     s = t;
-                }
+                else
+                    changed |= (s!=t);
+
 
                 sub.add(s);
             }
         }
+
+        if (!changed)
+            return c;
 
         final Term[] r = Terms.toArray(sub);
 

@@ -5,8 +5,8 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.Substitution;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Holds results of an ellipsis match and
@@ -14,9 +14,9 @@ import java.util.List;
  * subterm collection, and post-filter before
  * forming a resulting substituted term.
  */
-abstract public class TransformingEllipsisMatch<T extends Term> extends ShadowProduct {
+abstract public class AbstractEllipsisTransform<T extends Term> extends ShadowProduct {
 
-    public TransformingEllipsisMatch(Term[] t) {
+    public AbstractEllipsisTransform(Term[] t) {
         super(t);
     }
 
@@ -36,7 +36,7 @@ abstract public class TransformingEllipsisMatch<T extends Term> extends ShadowPr
      * using the Substitution parameters .getXY() method
      *
      * */
-    public boolean resolve(Substitution substitution, List<Term> target) {
+    public boolean resolve(Substitution substitution, Collection<Term> target) {
         Collections.addAll(target, term);
         return true;
     }

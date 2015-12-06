@@ -9,15 +9,15 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 
-public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
+public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
 
     private final Versioning context;
     private final Map<X, Versioned<Y>> map;
 
     public VersionMap(Versioning context) {
         this(context,
-                //new LinkedHashMap<>()
-                Global.newHashMap()
+            //new LinkedHashMap<>()
+            Global.newHashMap()
         );
     }
 
@@ -116,8 +116,10 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     }
 
     public Versioned getOrCreateIfAbsent(X key) {
-        return map.computeIfAbsent(key,
-                RemovingVersionedEntry::new);
+        return map.computeIfAbsent(key, k ->
+            cache(k) ? new Versioned(context) :
+                new RemovingVersionedEntry(k)
+        );
     }
 
     /** this implementation removes itself from the map when it is reverted to
@@ -150,6 +152,9 @@ public final class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         }
     }
 
+    public boolean cache(X key) {
+        return false;
+    }
 
     public final Y get(/*X*/Object key) {
         Versioned<Y> v = version((X) key);

@@ -49,8 +49,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
                     t[i++] = subst.resolve(to);
                 }
                 else {
-                    Term yy = y.term(ab);
-                    t[i++] = yy;
+                    t[i++] = y.term(ab);
                 }
                 ab++;
             }

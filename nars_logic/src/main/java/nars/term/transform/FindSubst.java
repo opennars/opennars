@@ -7,10 +7,7 @@ import nars.NAR;
 import nars.Op;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
-import nars.nal.meta.match.Ellipsis;
-import nars.nal.meta.match.EllipsisTransform;
-import nars.nal.meta.match.ImagePutTransform;
-import nars.nal.meta.match.ImageTakeTransform;
+import nars.nal.meta.match.*;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
@@ -23,10 +20,7 @@ import java.util.Set;
 /* recurses a pair of compound term tree's subterms
 across a hierarchy of sequential and permutative fanouts
 where valid matches are discovered, backtracked,
-and collected until a total solution is found.
-the magnitude of a running integer depth metric ("power") serves
-as a finite-time AIKR cutoff and its polarity as
-returned indicates success value to the callee.  */
+and collected until power is depleted. */
 public class FindSubst extends Subst implements Substitution {
 
     public FindSubst(Op type, NAR nar) {
@@ -755,7 +749,7 @@ public class FindSubst extends Subst implements Substitution {
             if (X.isCommutative()) {
                 return matchPermute(X, Y); //commutative, try permutations
             } else {
-                return matchLinear(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+                return matchLinear(X.subterms(), Y.subterms(), 0, xsize); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
             }
         }
     }
@@ -796,13 +790,12 @@ public class FindSubst extends Subst implements Substitution {
 
 
         boolean matched = false;
-        while ((attempts-- > 0) && perm.hasNext()) {
+        while (attempts-- > 0) { // && perm.hasNext()) {
 
             perm.next();
 
-            matched = matchLinear(perm, y);
-
-            if (matched /*|| power <= 0*/) {
+            if (matchLinear(perm, y, 0, len)) {
+                matched = true;
                 break;
             } else {
                 revert(prePermute);
@@ -816,10 +809,10 @@ public class FindSubst extends Subst implements Substitution {
 
     }
 
-    public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
-        putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
-        return true;
-    }
+//    public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
+//        putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
+//        return true;
+//    }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
         putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
@@ -858,23 +851,27 @@ public class FindSubst extends Subst implements Substitution {
         Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
         for (Term x : X.terms()) {
             if (x == Xellipsis) continue;
+            if (x.equals(Ellipsis.Shim))
+                continue;
             if (x.op() == type) {
                 Term r = getXY(x);
                 if (r != null) {
-                    if (r instanceof ShadowProduct) {
+                    if (r instanceof AbstractEllipsisTransform) {
+                        //adds what would ordinarily be inlined in a Substitution
+                        //which is not necessarily all of the terms it contains
+                        //if it were iterated directly
+                        ((AbstractEllipsisTransform) r).resolve(this, matchFirst);
+                        continue;
+                    } else if (r instanceof ShadowProduct) {
                         /* this is a subsequent instance of
                            an already matched ellipse, expand
                            its contents as if it were part of X  */
                         ((ShadowProduct) r).addAllTo(matchFirst);
-                    } else {
-                        matchFirst.add(r);
+                        continue;
                     }
-                } else {
-                    matchFirst.add(x);
                 }
-            } else {
-                matchFirst.add(x);
             }
+            matchFirst.add(x);
         }
 
         int numMatchable = Y.size() - matchFirst.size(); //remaining
@@ -1082,10 +1079,10 @@ public class FindSubst extends Subst implements Substitution {
      */
     public boolean matchLinear(final TermContainer X, final TermContainer Y, int start, int stop) {
 
-        final int yLen = Y.size();
+
 
         int startDivisor = powerDivisor;
-        if (!powerDividable(yLen))
+        if (!powerDividable(stop-start))
             return false;
 
         boolean success = true;

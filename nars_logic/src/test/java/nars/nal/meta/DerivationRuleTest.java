@@ -219,7 +219,7 @@ public class DerivationRuleTest extends TestCase {
 
                 //2. test substitution
                 Term s = r.substituted(f);
-                //System.out.println(s);
+                System.out.println(s);
 
                 selectedFixed.add(s);
 

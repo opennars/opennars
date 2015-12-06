@@ -22,7 +22,7 @@ package nars.nal.nal1;
 
 import nars.Op;
 import nars.term.Compound;
-import nars.term.DefaultCompound2;
+import nars.term.CompoundN;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * A negation of a statement.
  */
-public final class Negation<T extends Term> extends DefaultCompound2<T> {
+public final class Negation<T extends Term> extends CompoundN<T> {
 
     /** avoid using this externally, because double-negatives can be unwrapped to the 
      * original term using Negation.make */

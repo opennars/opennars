@@ -8,7 +8,7 @@ import nars.term.Term;
  * Masks image subterms selected by an ellipsis
  * for constructing an Image
  */
-public class ImageTakeTransform extends TransformingEllipsisMatch<Image> {
+public class ImageTakeTransform extends AbstractEllipsisTransform<Image> {
 
     //private final int imageIndex;
 

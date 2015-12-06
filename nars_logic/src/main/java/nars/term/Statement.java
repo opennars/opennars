@@ -34,7 +34,7 @@ import static nars.Symbols.STATEMENT_OPENER;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 public abstract class Statement<A extends Term, B extends Term>
-    extends DefaultCompound2 {
+    extends CompoundN {
 
     protected Statement(TermVector v) {
         super(v);
@@ -53,7 +53,14 @@ public abstract class Statement<A extends Term, B extends Term>
         if (replaced.length!=2)
             throw new RuntimeException("cloning " + op() + " requires 2 subterms");
 
-        return Terms.term(op(), replaced[0], replaced[1]);
+        //prevent useless clones
+        Term r0 = replaced[0];
+        Term r1 = replaced[1];
+        if (r0 == term(0) && r1 == term(1)) {
+            return this;
+        }
+
+        return Terms.term(op(), r0, r1);
     }
 
 //    /**

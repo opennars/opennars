@@ -1,7 +1,7 @@
 package nars.nal.nal4;
 
 import nars.Op;
-import nars.term.DefaultCompound2;
+import nars.term.CompoundN;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by me on 5/20/15.
  */
-public class ProductN<T extends Term> extends DefaultCompound2<T> implements Product<T> {
+public class ProductN<T extends Term> extends CompoundN<T> implements Product<T> {
 
     /**
      * Constructor with partial values, called by make
