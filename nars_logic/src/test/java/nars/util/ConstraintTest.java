@@ -6,6 +6,7 @@ import nars.Op;
 import nars.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nar.Default2;
+import nars.term.Compound;
 import nars.term.Term;
 import org.jacop.constraints.XeqY;
 import org.jacop.constraints.netflow.NetworkBuilder;
@@ -108,17 +109,17 @@ public class ConstraintTest {
     /** boolean satisfiability among a set of terms */
     abstract public static class SATNetwork {
         private final NAR nar;
-        protected final Set<Term> concepts;
+        protected final Set<Compound> concepts;
         protected Store store;
         final Map<Term,IntVar> termVars = Global.newHashMap();
 
         public SATNetwork(NAR n, String... terms) {
             this(n, Arrays.stream(terms)
-                    .map(t -> (Term)n.term(t))
+                    .map(t -> (Compound)n.term(t))
                     .collect(Collectors.toSet()));
         }
 
-        public SATNetwork(NAR n, Set<Term> concepts) {
+        public SATNetwork(NAR n, Set<Compound> concepts) {
             this.nar = n;
             this.concepts = concepts;
         }
@@ -127,7 +128,7 @@ public class ConstraintTest {
          *  creating constraints (in 'store') and variables */
         abstract public void addConstraintsFor(Concept c);
 
-        void related(Term t) {
+        void related(Compound t) {
             nar.forEachConcept( c-> {
                 if (c.getTerm().containsTermRecursively(t)) {
                     addConstraintsFor(c);

@@ -106,6 +106,16 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     }
 
     @Override
+    public void setNormalized(boolean b) {
+
+    }
+
+    @Override
+    public boolean isNormalized() {
+        return false;
+    }
+
+    @Override
     public Term[] terms() {
         throw new RuntimeException("only termsCopy available and its not efficient");
     }

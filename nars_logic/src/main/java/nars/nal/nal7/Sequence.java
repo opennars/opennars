@@ -405,11 +405,11 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     }
 
     @Override
-    public int getByteLen() {
+    public int bytesLength() {
 
         int add = intervals.length * 4;
         add += 4; //eventDuration int
-        return super.getByteLen() + add;
+        return super.bytesLength() + add;
     }
 
     @Override

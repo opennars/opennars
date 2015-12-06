@@ -71,8 +71,8 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     }
 
     @Override
-    public int getByteLen() {
-        return 1 + term.getByteLen();
+    public int bytesLength() {
+        return 1 + term.bytesLength();
     }
 
     @Override

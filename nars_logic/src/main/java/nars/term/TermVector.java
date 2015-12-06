@@ -58,6 +58,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     transient protected byte hasVarIndeps;
     transient protected byte hasVarDeps;
 
+    transient boolean normalized;
+
     //    public TermVector() {
 //        this(null);
 //    }
@@ -122,6 +124,16 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
      */
     public final T[] termsCopy() {
         return copyOf(term, size());
+    }
+
+    @Override
+    public void setNormalized(boolean b) {
+        this.normalized = true;
+    }
+
+    @Override
+    public boolean isNormalized() {
+        return false;
     }
 
     @Override
@@ -335,6 +347,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
         this.complexity = (short) compl;
         this.volume = (short) vol;
+
+        this.normalized = varTotal == 0;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
         this.contentHash = contentHash;

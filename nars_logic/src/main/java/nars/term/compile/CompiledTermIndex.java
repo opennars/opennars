@@ -34,7 +34,7 @@ public class CompiledTermIndex extends ByteBuddy implements TermIndex {
             //TODO make the type final
             DynamicType.Unloaded<Atomic> uc = subclass(Atomic.class)
                     .method(named("bytes")).intercept(value(t.bytes()))
-                    .method(named("getByteLen")).intercept(value(t.getByteLen()))
+                    .method(named("getByteLen")).intercept(value(t.bytesLength()))
                     .method(named("hashCode")).intercept(value(t.hashCode()))
                     .method(named("setBytes")).intercept(StubMethod.INSTANCE)
                     .method(named("op")).intercept(value(t.op()))

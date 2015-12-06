@@ -50,7 +50,7 @@ public abstract class Atomic implements Term, Byted {
 
 
 
-    @Override public int getByteLen() {
+    @Override public int bytesLength() {
         return bytes().length;
     }
 
@@ -98,11 +98,6 @@ public abstract class Atomic implements Term, Byted {
     @Override public abstract byte[] bytes();
 
 
-    /** atomic terms contain nothing */
-    @Override public final boolean containsTermRecursively(Term target) {
-        return false;
-    }
-
     @Override
     public abstract int varIndep();
 
@@ -123,6 +118,9 @@ public abstract class Atomic implements Term, Byted {
         return this;
     }
 
+    @Override public final boolean containsTermRecursively(Term target) {
+        return false;
+    }
 
 
 }

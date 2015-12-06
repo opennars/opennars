@@ -34,7 +34,8 @@ import java.io.Serializable;
 import java.util.Map;
 
 
-public interface Term extends Cloneable, Comparable, Termed, Termlike, Serializable {
+public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializable {
+
 
 
     @Override default Term getTerm() {
@@ -66,7 +67,7 @@ public interface Term extends Cloneable, Comparable, Termed, Termlike, Serializa
 
 
 
-    @Deprecated boolean containsTermRecursively(Term target);
+
 
     default void recurseTerms(final SubtermVisitor v) {
         recurseTerms(v, null);
@@ -148,19 +149,16 @@ public interface Term extends Cloneable, Comparable, Termed, Termlike, Serializa
     /** total # of variables, excluding pattern variables */
     int vars();
 
-//    /** tests if num variables of any type exceed a value */
-//    default public boolean varsInAnyTypeMoreThan(final int n) {
-//        return (varDep() > n) || (varIndep() > n) || (varQuery() > n);
-//    }
-
-//    default boolean hasVarPattern() { return varPattern()!=0; }
-
     default boolean hasVarIndep() {
         return varIndep()!=0;
     }
 
     default boolean hasVarDep() {
         return varDep()!=0;
+    }
+
+    default boolean hasVarQuery() {
+        return varQuery()!=0;
     }
 
     /** set the system's perceptual duration (cycles)
@@ -174,17 +172,12 @@ public interface Term extends Cloneable, Comparable, Termed, Termlike, Serializa
         //nothing
     }
 
-    default boolean hasVarQuery() {
-        return varQuery()!=0;
-    }
 
-//    @Deprecated default public boolean equalsType(final Term t) {
-//        return (op()== t.op());
-//    }
-
+    /** return the Universal NAL byte encoding of the term */
     byte[] bytes();
 
-    int getByteLen();
+    /** # of bytes the encoding will consume. a term needs to be able to know this in advance whether or not the bytes are generated */
+    int bytesLength();
 
 
 //    /** like hashCode except it permits the Term to recompute the hash (to be used in certain controlled situations, otherwise use hashCode() since it's is simpler  */

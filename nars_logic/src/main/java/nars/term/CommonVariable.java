@@ -31,33 +31,18 @@ public class CommonVariable extends Variable  {
     }
 
     @Override
-    public final boolean hasVarIndep() {
-        return op() == Op.VAR_INDEPENDENT;
-    }
-
-    @Override
-    public final boolean hasVarDep() {
-        return op() == Op.VAR_DEPENDENT;
-    }
-
-    @Override
-    public final boolean hasVarQuery() {
-        return op() == Op.VAR_QUERY;
-    }
-
-    @Override
     public final int varIndep() {
-        return hasVarIndep() ? 1 : 0;
+        return op() == Op.VAR_INDEPENDENT ? 1 : 0;
     }
 
     @Override
     public final int varDep() {
-        return hasVarDep() ? 1 : 0;
+        return op() == Op.VAR_DEPENDENT ? 1 : 0;
     }
 
     @Override
     public final int varQuery() {
-        return hasVarQuery() ? 1 : 0;
+        return op() == Op.VAR_QUERY ? 1 : 0;
     }
 
     public static CommonVariable make(Variable v1, Variable v2) {

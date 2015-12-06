@@ -3,7 +3,7 @@ package nars.term;
 /**
  * Features exhibited by, and which can classify terms
  */
-public interface Termlike {
+public interface Termlike  {
 
 
     int volume();
@@ -23,6 +23,8 @@ public interface Termlike {
                 possibleSubtermStructure
         );
     }
+
+    boolean containsTermRecursively(Term target);
 
     static boolean impossibleToMatch(int existingStructure, int possibleSubtermStructure) {
         //if the OR produces a different result compared to subterms,

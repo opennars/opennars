@@ -80,7 +80,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
     }
 
 
-    @Override public int getByteLen() {
+    @Override public int bytesLength() {
         return bytes().length;
     }
 

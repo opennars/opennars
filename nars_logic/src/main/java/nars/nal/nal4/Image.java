@@ -120,15 +120,15 @@ abstract public class Image extends CompoundN {
 //    }
 
     @Override
-    public int getByteLen() {
-        return super.getByteLen() + 1;
+    public int bytesLength() {
+        return super.bytesLength() + 1;
     }
 
     @Override
     public byte[] bytes() {
         final int numArgs = size();
 
-        ByteBuf b = ByteBuf.create(getByteLen());
+        ByteBuf b = ByteBuf.create(bytesLength());
 
         b.add((byte) op().ordinal()); //header
 

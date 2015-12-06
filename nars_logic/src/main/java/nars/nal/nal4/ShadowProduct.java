@@ -71,7 +71,7 @@ public class ShadowProduct extends TermVector implements Term {
     }
 
     @Override
-    public int getByteLen() {
+    public int bytesLength() {
         throw new RuntimeException("unimpl");
     }
 

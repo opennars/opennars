@@ -42,7 +42,7 @@ public final class Negation<T extends Term> extends CompoundN<T> {
         return false;
     }
 
-    public T the() { return term(0); }
+    public final T the() { return term(0); }
 
     public final Term clone() {
         return Negation.make(the());
@@ -50,6 +50,14 @@ public final class Negation<T extends Term> extends CompoundN<T> {
 
     @Override
     public Term clone(final Term[] replaced) {
+
+        if (replaced.length != 1)
+            throw new RuntimeException("negation requires 1 arg");
+
+        Term t = replaced[0];
+        if (t == the())
+            return this; //no change
+
         return Negation.make(replaced);
     }
 

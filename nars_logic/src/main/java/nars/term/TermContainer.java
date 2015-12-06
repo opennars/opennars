@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 /**
  * Methods common to both Term and Subterms
- * @param T subterm type
+ * T = subterm type
  */
 public interface TermContainer<T extends Term> extends Termlike, Comparable, Iterable<T> {
 
@@ -29,6 +29,9 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     T termOr(int index, T resultIfInvalidIndex);
 
     T[] termsCopy();
+
+    void setNormalized(boolean b);
+    boolean isNormalized();
 
     default Term[] termsCopy(Term... additional) {
         if (additional.length == 0) return termsCopy();
@@ -113,5 +116,21 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
                 return i;
         }
         return -1;
+    }
+
+    default boolean containsTermRecursively(Term target) {
+
+        for (final Term x : terms()) {
+            if (impossibleSubTermOrEquality(target))
+                continue;
+            if (x.equals(target)) return true;
+            if (x instanceof Compound) {
+                if (((Compound)x).containsTermRecursively(target)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
     }
 }

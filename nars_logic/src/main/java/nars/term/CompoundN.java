@@ -24,7 +24,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
      * true iff definitely normalized, false to cause it to update on next normalization.
      * used to prevent repeated normalizations
      */
-    protected transient boolean normalized = false;
+
     protected transient final int hash;
 
 
@@ -42,7 +42,6 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     /** if hash salt is non-zero, it will be combined with the default hash value of the compound */
     protected CompoundN(TermVector subterms, int hashSalt) {
         this.terms = subterms;
-        this.normalized = !hasVar();
 
         int h = hashCombine( subterms().hashCode(), op().ordinal() );
         if (hashSalt!=0)
@@ -91,31 +90,17 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     public boolean equals(final Object that) {
         if (this == that)
             return true;
-        if (!(that instanceof Compound))
-            return false;
 
         if (hash != that.hashCode()) return false;
 
+        if (!(that instanceof Compound))
+            return false;
+
         return equalsCompound((Compound) that);
-/*
-
-        TermContainer csubs = c.subterms();
-        TermVector<T> osubs = this.terms;
-        if (osubs.equals(csubs)) {
-            //TODO dont share if contains Sequence/Parallel because these could not actual be 'equal'
-
-            if (osubs.getClass() == csubs.getClass())
-                this.terms = (TermVector<T>) csubs; //share instance iff equal class
-            return (op() == c.op());
-        }
-        return false;
-        */
     }
 
-    public boolean equalsCompound(Compound that) {
-        Compound c = that;
-
-        return c.subterms().equals(subterms()) && (c.op() == op());
+    public final boolean equalsCompound(Compound that) {
+        return terms.equals(that.subterms()) && (op() == that.op());
     }
 
 
@@ -127,20 +112,9 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     @Override
     public Term normalized(TermIndex termIndex) {
         //return cloneTransforming(termIndex.getCompoundTransformer());
-        transform(termIndex.getCompoundTransformer());
-        return this;
+        return transform(termIndex.getCompoundTransformer());
+        //return this;
     }
-
-    //    @Override
-//    @Deprecated public final int rehashCode() {
-////        int ch = subterms().hashCode();
-////        if (ch == 0) {
-////            rehash();
-////            return subterms().hashCode();
-////        }
-////        return ch;
-//        return hashCode();
-//    }
 
 
     /**
@@ -157,12 +131,6 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     @Override
     public final int hashCode() {
         return hash;
-//        if (ch == 0) {
-//            throw new RuntimeException("should have hashed");
-////            rehash();
-////            ch = this.contentHash;
-//        }
-//        return ch;
     }
 
 
@@ -199,10 +167,6 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
         return terms.contains(o);
     }
 
-//    @Override
-//    public final boolean equalsAll(Term[] cls) {
-//        return terms.equalsAll(cls);
-//    }
 
     @Override
     public final void forEach(Consumer<? super T> action, int start, int stop) {
@@ -279,24 +243,18 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
      */
     @Override
     public boolean containsTermRecursively(final Term target) {
+
         if (impossibleSubterm(target)) return false;
 
-        for (final Term x : terms.term) {
-            if (impossibleSubTermOrEquality(target))
-                continue;
-            if (x.equals(target)) return true;
-            if (x instanceof Compound) {
-                if (x.containsTermRecursively(target)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return terms.containsTermRecursively(target);
     }
 
 
     abstract public Term clone();
 
+    @Override public boolean isNormalized() {
+        return terms.isNormalized();
+    }
 
     /**
      * Normalizes if contain variables which need to be finalized for use in a Sentence
@@ -304,7 +262,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
      */
     protected final <T extends Term> T normalized(final boolean destructive) {
 
-        if (normalized) {
+        if (isNormalized()) {
             return (T) this;
         } else {
             if (destructive) {
@@ -316,59 +274,25 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
                 return null;
 
 
-            ((CompoundN) result).normalized = true;
+            result.setNormalized(true);
 
             return (T) result;
         }
 
     }
 
-//    /**
-//     * produces a new clone if changed
-//     * @return if changed
-//     */
-//    @Override
-//    public boolean transform(CompoundTransform<Compound<T>, T> trans, int depth) {
-//
-//        boolean changed = false;
-//
-//        Term[] term = new Term[size()];
-//        int mods = cloneTermsTransforming(trans,
-//        final int len = term.length;
-//
-//        for (int i = 0; i < len; i++) {
-//            T t = term[i];
-//
-//            if (trans.test(t)) {
-//                T s = term[i] = trans.apply(this, t, depth + 1);
-//                if (!s.equals(t)) {
-//                    changed = true;
-//                }
-//            } else if (t instanceof Compound) {
-//                //recurse
-//                changed |= ((Compound) t).transform(trans, depth + 1);
-//            }
-//
-//        }
-//
-//
-//        if (changed) {
-//            if (isCommutative()) {
-//                Arrays.sort(term);
-//            }
-//        }
-//
-//        return changed;
-//    }
-
+    @Override
+    public void setNormalized(boolean b) {
+        terms.setNormalized(b);
+    }
 
     @Override
-    public int getByteLen() {
+    public int bytesLength() {
         int len = /* opener byte */1;
 
         final int n = size();
         for (int i = 0; i < n; i++) {
-            len += term(i).getByteLen() + 1 /* separator or closer if end*/;
+            len += term(i).bytesLength() + 1 /* separator or closer if end*/;
         }
 
         return len;
@@ -380,7 +304,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
 
         final int numArgs = size();
 
-        ByteBuf b = ByteBuf.create(getByteLen());
+        ByteBuf b = ByteBuf.create(bytesLength());
 
         b.add((byte) op().ordinal()); //header
 
@@ -402,7 +326,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
 
             try {
                 byte[] bb = t.bytes();
-                if (bb.length!=t.getByteLen())
+                if (bb.length!=t.bytesLength())
                     System.err.println("wtf");
                 b.add(bb);
             }
@@ -415,7 +339,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
 
     @Override
     public boolean and(TermPredicate v) {
-        return terms.and(v);
+        return v.test(this) && terms.and(v);
     }
     @Override
     public boolean or(TermPredicate v) {

@@ -57,8 +57,8 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
     }
 
     @Override
-    public final int getByteLen() {
-        return super.getByteLen()
+    public final int bytesLength() {
+        return super.bytesLength()
                 + 4 /* for storing eventDuration */
                 ;
     }
