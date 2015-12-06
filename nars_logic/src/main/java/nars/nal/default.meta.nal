@@ -181,17 +181,17 @@
 ////// NAL4 - Transformations between products and images: ////////////////////////////////////////////////////////////////////////////////////
 //Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
 
-    ((A..%B=_..+) --> M), B |- (B --> (/, M, A )), (Truth:Identity, Desire:Identity)
-    ((A..+) --> M), M |- (M --> (/,_, A)), (Truth:Identity, Desire:Identity)
+    ((A..B=_..+) --> M), B |- (B --> (/, M, A, _ )), (Truth:Identity, Desire:Identity)
+    ((A..+) --> M), M |- (M --> (/,_, A, ..)), (Truth:Identity, Desire:Identity)
 
-    (M --> (A..%B=_..+)), B |- ((\, M, A ) --> B), (Truth:Identity, Desire:Identity)
-    (M --> (A..+)), M |- ((\,_, A) --> M), (Truth:Identity, Desire:Identity)
+    (M --> (A..B=_..+)), B |- ((\, M, A, _ ) --> B), (Truth:Identity, Desire:Identity)
+    (M --> (A..+)), M |- ((\,_, A, ..) --> M), (Truth:Identity, Desire:Identity)
 
-    (B --> (/,M, A.._=%B..+ )), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
-    (M --> (/,_, A..+ )), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
+    (B --> (/,M, A.._=B..+, _)), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
+    (M --> (/,_, A..+, .. )), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
 
-    ((\,M, A.._=%B..+ ) --> B), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
-    ((\,_, A..+ ) --> M), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
+    ((\, M, A.._=B..+, _ ) --> B), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
+    ((\, _, A..+, .. ) --> M), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
 
 //// implication-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //       (A ==> B) ------- (B ==> C)

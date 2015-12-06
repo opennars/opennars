@@ -617,8 +617,8 @@ public class Narsese extends BaseParser<Object>  {
                     seq( Term(false,false), "=", Term(false,false), "..+",
                         swap(3),
                             push( new Ellipsis.EllipsisTransform(
-                            (Variable)pop(), (Term)pop(), (Term)pop()  ) )
-                    ),
+                            (Variable)pop(), (Term)pop(), (Term)pop()  ))
+                        ),
                     seq( "+",
                             push( new Ellipsis.EllipsisOneOrMore( (Variable)pop() ) )
                     ),
