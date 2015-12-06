@@ -634,7 +634,7 @@ public class Narsese extends BaseParser<Object>  {
     Rule EllipsisExpand() {
         return sequence(
                 "..",
-                push( Ellipsis.Expand )
+                push( Ellipsis.Shim)
         );
     }
 

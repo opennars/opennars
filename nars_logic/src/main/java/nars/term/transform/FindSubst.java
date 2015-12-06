@@ -9,6 +9,8 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisTransform;
+import nars.nal.meta.match.ImageGrowEllipsisMatch;
+import nars.nal.meta.match.ImageShrinkEllipsisMatch;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
@@ -659,22 +661,39 @@ public class FindSubst extends Subst implements Substitution {
                 //this involves a special "image ellipsis transform"
 
                 EllipsisTransform et = (EllipsisTransform)e;
-                Term n = resolve(et.from);
-                //n should not be null as long as this ellipse transform is processed after the specified variable has been matched, if it has
+                if (et.from.equals(Image.Index)) {
+                    //the indicated term should be inserted
+                    //at the index location of the image
+                    //being processed. (this is the opposite
+                    //of the other condition of this if { })
+                    if (matchEllipsedLinear(X, e, Y)) {
+                        ShadowProduct raw = (ShadowProduct) getXY(e);
+                        putXY(e, new ImageGrowEllipsisMatch(
+                                raw.terms(), et, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        return true;
+                    }
+                } else {
+                    Term n = resolve(et.from);
+                    //n should not be null as long as this ellipse transform is processed after the specified variable has been matched, if it has
 
-                int imageIndex = Y.indexOf(n);
-                if (imageIndex == -1) {
-                    //this specified term that should be
-                    //substituted with the relation index
-                    //is not contained in this compound;
-                    //does not match
-                    return false;
-                }
-                if (matchEllipsedLinear(X, e, Y)) {
-                    //mask the relation term
-                    ShadowProduct sp = (ShadowProduct)getXY(e);
-                    sp.terms()[imageIndex] = Image.Index;
-                    return true;
+                    //resolving can be deferred to substitution if
+                    //Y and et.from are components of ImageShrinkEllipsisMatch
+
+                    int imageIndex = Y.indexOf(n);
+                    if (imageIndex == -1) {
+                        //this specified term that should be
+                        //substituted with the relation index
+                        //is not contained in this compound;
+                        //does not match
+                        return false;
+                    }
+
+                    if (matchEllipsedLinear(X, e, Y)) {
+                        ShadowProduct raw = (ShadowProduct) getXY(e);
+                        putXY(e, new ImageShrinkEllipsisMatch(
+                            raw.terms(), imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -979,7 +998,7 @@ public class FindSubst extends Subst implements Substitution {
         while (i < xsize) {
             Term x = X.term(i++);
 
-            boolean expansionFollows = i < xsize && X.term(i) == Ellipsis.Expand;
+            boolean expansionFollows = i < xsize && X.term(i) == Ellipsis.Shim;
             if (expansionFollows) i++; //skip over it
 
             if (x instanceof Ellipsis) {

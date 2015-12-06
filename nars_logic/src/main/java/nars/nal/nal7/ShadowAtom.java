@@ -11,12 +11,12 @@ import nars.term.transform.Substitution;
  * representations.
  *
  */
-public class InvisibleAtom extends AbstractStringAtom {
+public class ShadowAtom extends AbstractStringAtom {
 
     private static final byte[] empty = new byte[0];
 
 
-    public InvisibleAtom(String id) {
+    public ShadowAtom(String id) {
         super(id);
     }
 

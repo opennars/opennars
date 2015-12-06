@@ -3,7 +3,7 @@ package nars.term;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
-import nars.nal.nal7.InvisibleAtom;
+import nars.nal.nal7.ShadowAtom;
 import nars.term.transform.Substitution;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
@@ -12,7 +12,7 @@ import nars.util.utf8.Utf8;
 public class Atom extends StringAtom {
 
 
-    public static final Term Null = new InvisibleAtom("NULL");
+    public static final Term Null = new ShadowAtom("NULL");
 
     final static Atom[] digits = new Atom[10];
     //private static final Map<String,Atom> atoms = Global.newHashMap();

@@ -2,8 +2,7 @@ package nars.term.transform;
 
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.meta.match.EllipsisTransform;
-import nars.nal.nal4.Image;
+import nars.nal.meta.match.TransformingEllipsisMatch;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.Compound;
 import nars.term.Term;
@@ -43,7 +42,8 @@ public interface Substitution extends Function<Compound,Term> {
         final Term[] sub = new Term[targetLen];
         boolean changed = targetLen!=len;
 
-        boolean postProcessImage = false;
+
+        TransformingEllipsisMatch post = null;
 
         int j = 0;
         for (int i = 0; i < len; i++) {
@@ -53,19 +53,27 @@ public interface Substitution extends Function<Compound,Term> {
             if (t instanceof Ellipsis) {
                 changed = true;
 
-                j = substEllipsis(sub, j, t);
+                Term te = getXY(t);
 
-
-                if (t instanceof EllipsisTransform) {
-                    if (((EllipsisTransform)t).to.equals(Image.Index)) {
-                        //imageRelation = ..
-                        if (c instanceof Image) {
-                            postProcessImage = true;
-                        }
-                    }
+                ShadowProduct sp = (ShadowProduct) te;
+                Term[] expansion;
+                if (sp instanceof TransformingEllipsisMatch) {
+                    if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + sp);
+                    post = (TransformingEllipsisMatch)sp;
+                    expansion = post.resolve(this);
+                } else {
+                    //default
+                    expansion = sp.term;
                 }
 
-            } else if (t == Ellipsis.Expand) {
+
+                for (Term xx : expansion) {
+                    if (xx== Ellipsis.Shim)
+                        continue; //ignore any '..' which may be present in the expansion
+                    sub[j++] = xx;
+                }
+
+            } else if (t == Ellipsis.Shim) {
                 continue; //skip
             } else {
                 // s holds a replacement substitution for t (i-th subterm of c)
@@ -87,11 +95,12 @@ public interface Substitution extends Function<Compound,Term> {
             return c;
         }
 
-        if (postProcessImage) {
-            return ((Image)c).build(c.op(), sub);
+        if (post!=null) {
+            return post.build(sub, c);
+        } else {
+            //default
+            return c.clone(sub);
         }
-
-        return c.clone(sub);
     }
 
     default Term subst(Term t) {
@@ -165,33 +174,13 @@ public interface Substitution extends Function<Compound,Term> {
 //    }
 
 
-    default int substEllipsis(Term[] sub, int j, Term t) {
-        Term te = getXY(t);
-//        if (!(te instanceof ShadowProduct))
-//            throw new RuntimeException("ellipsis must be matched only by InvisibleProduct, but was: " + te);
-
-        Term[] expansion = ((ShadowProduct) te).term;
-
-        final int es = expansion.length;
-
-        for (int e = 0; e < es; ) {
-            Term xx = expansion[e++];
-            if (xx== Ellipsis.Expand)
-                continue; //ignore any '..' which may be present in the expansion
-            sub[j++] = xx;
-        }
-
-
-
-        return j;
-    }
 
     @Deprecated default int getResultSize(Compound c) {
         int s = c.size();
         int n = s;
         for (int i = 0; i < s; i++) {
             Term t = c.term(i);
-            if (t == Ellipsis.Expand) n--; //skip expansion placeholder terms
+            if (t == Ellipsis.Shim) n--; //skip expansion placeholder terms
             if (t instanceof Ellipsis) {
                 Term expanded = getXY(t);
                 if (expanded == null) return -1; //missing ellipsis match

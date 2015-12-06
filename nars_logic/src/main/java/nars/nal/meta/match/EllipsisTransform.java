@@ -30,12 +30,10 @@ public class EllipsisTransform extends EllipsisOneOrMore {
 
     @Override
     public Variable clone(Variable v, VariableNormalization normalizer) {
+        //normalizes any variable parameter terms of an EllipsisTransform
         return new EllipsisTransform(v,
                 from instanceof Variable ? normalizer.apply((Variable)from) : from,
-                to);
-
-        //System.out.println(v);
-        //throw new RuntimeException("HACK - this is handled by TaskRule.TaskRuleVariableNormalization");
+                to instanceof Variable ? normalizer.apply((Variable)to) : to);
     }
 
     public ShadowProduct collect(Compound y, int a, int b, FindSubst subst) {

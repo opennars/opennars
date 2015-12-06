@@ -14,7 +14,7 @@ import java.util.Collection;
  *  holding a vector of subterms and not much else.
  *  this makes it generally invisible to reasoning since
  *  behaves only partially like a real Product term. */
-public final class ShadowProduct extends TermVector implements Term {
+public class ShadowProduct extends TermVector implements Term {
 
     public ShadowProduct(Collection<Term> subterms) {
         super(subterms);

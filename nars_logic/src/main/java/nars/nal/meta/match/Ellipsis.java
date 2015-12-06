@@ -4,8 +4,8 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.Op;
 import nars.nal.nal4.ShadowProduct;
-import nars.nal.nal7.InvisibleAtom;
 import nars.nal.nal7.Sequence;
+import nars.nal.nal7.ShadowAtom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermContainer;
@@ -40,7 +40,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
      *
      * IMPORTANT: InvisibleAtom's default compareTo of -1
      * ensures this will appear always at the end of any ordering */
-    public final static InvisibleAtom Expand = new InvisibleAtom("..") {
+    public final static ShadowAtom Shim = new ShadowAtom("..") {
         @Override public Op op() {
             return Op.INTERVAL;
         }
@@ -113,7 +113,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
             Term xt = x.term(i);
 
             if ((xt instanceof Ellipsis)
-             || (xt==Ellipsis.Expand)) //ignore expansion placeholders
+             || (xt==Ellipsis.Shim)) //ignore expansion placeholders
                 n--;
         }
         return n;

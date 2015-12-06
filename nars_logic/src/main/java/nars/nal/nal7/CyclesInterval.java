@@ -14,7 +14,7 @@ import java.io.IOException;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-final public class CyclesInterval extends InvisibleAtom implements Interval {
+final public class CyclesInterval extends ShadowAtom implements Interval {
 
     final static CyclesInterval zero = new CyclesInterval(0);
 
