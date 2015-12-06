@@ -59,7 +59,7 @@ public class ImageExt extends Image {
         if (replaced.length != size())
             return null;
             //throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
-        
+
         return new ImageExt(replaced, relationIndex);
     }
     

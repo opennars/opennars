@@ -43,7 +43,7 @@ public interface Substitution extends Function<Compound,Term> {
         final Term[] sub = new Term[targetLen];
         boolean changed = targetLen!=len;
 
-        //int imageRelation = -1;
+        boolean postProcessImage = false;
 
         int j = 0;
         for (int i = 0; i < len; i++) {
@@ -53,13 +53,17 @@ public interface Substitution extends Function<Compound,Term> {
             if (t instanceof Ellipsis) {
                 changed = true;
 
+                j = substEllipsis(sub, j, t);
+
+
                 if (t instanceof EllipsisTransform) {
                     if (((EllipsisTransform)t).to.equals(Image.Index)) {
                         //imageRelation = ..
+                        if (c instanceof Image) {
+                            postProcessImage = true;
+                        }
                     }
                 }
-
-                j = substEllipsis(sub, j, t);
 
             } else if (t == Ellipsis.Expand) {
                 continue; //skip
@@ -81,6 +85,10 @@ public interface Substitution extends Function<Compound,Term> {
         if (!changed) {
             //a new Term[] was not created, meaning nothing changed. return the input term
             return c;
+        }
+
+        if (postProcessImage) {
+            return ((Image)c).build(c.op(), sub);
         }
 
         return c.clone(sub);

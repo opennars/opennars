@@ -1,6 +1,7 @@
 package nars.nal.nal4;
 
 import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
+import nars.Op;
 import nars.Symbols;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -253,5 +254,38 @@ abstract public class Image extends DefaultCompound2 {
     }
 
 
+    /**
+     *
+     * @param ext - true if ext, false if int
+     * @param terms - terms to form the Image, extracting 0 or 1 index placeholders that override defaultIndex
+     * @return
+     */
+    public static Image build(Op o, Term[] res) {
+
+
+        int index = 0, j = 0;
+        for (Term x : res) {
+            if (x.equals(Image.Index)) {
+                index = j;
+            }
+            j++;
+        }
+
+        if (index == -1) {
+            index = 0;
+        } else {
+            int serN = res.length-1;
+            Term[] ser = new Term[serN];
+            System.arraycopy(res, 0, ser, 0, index);
+            System.arraycopy(res, index+1, ser, index, (serN - index));
+            res = ser;
+        }
+
+        boolean ext = (o == Op.IMAGE_EXT ?  true : false);
+        if (ext)
+            return new ImageExt(res, index);
+        else
+            return new ImageInt(res, index);
+    }
 }
 
