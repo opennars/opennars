@@ -3,10 +3,11 @@ package nars.nal;
 import com.google.common.collect.Sets;
 import nars.Global;
 import nars.Op;
-import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
+import nars.nal.meta.match.Ellipsis;
+import nars.nal.meta.match.EllipsisTransform;
 import nars.nal.meta.op.Derive;
 import nars.nal.meta.op.PostSolve;
 import nars.nal.meta.op.Solve;
@@ -680,11 +681,20 @@ public class TaskRule extends ProductN implements Level {
             return v;
         }
 
-        @Override protected Variable newVariable(final Variable v, Map<Variable, Variable> renames) {
+        @Override protected Variable newVariable(final Variable v, final Variable alreadyNormalized, Map<Variable, Variable> renames) {
+
+            if (alreadyNormalized!=null) {
+//                if (v instanceof Ellipsis) {
+//                    if (!alreadyNormalized.toString().contains("..")) {
+//                        System.err.println(alreadyNormalized);
+//                    }
+//                }
+                return alreadyNormalized;
+            }
 
             //HACK to handle the inner terms, possibly variables which need normalized
-            if (v instanceof Ellipsis.EllipsisTransform) {
-                Ellipsis.EllipsisTransform et = (Ellipsis.EllipsisTransform)v;
+            if (v instanceof EllipsisTransform) {
+                EllipsisTransform et = (EllipsisTransform)v;
                 Term from2, to2;
 
                 Variable vv = Variable.the(v.op(), renames.size() + 1);
@@ -700,7 +710,7 @@ public class TaskRule extends ProductN implements Level {
                 else
                     to2 = et.to;
 
-                return new Ellipsis.EllipsisTransform(
+                return new EllipsisTransform(
                         vv, from2, to2
                 );
             }

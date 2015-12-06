@@ -1,4 +1,4 @@
-package nars.nal.meta;
+package nars.nal.meta.match;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
@@ -10,6 +10,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Variable;
+import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 
@@ -28,7 +29,7 @@ import java.util.function.Function;
  *   B..not(first)
  *   B..not(first,last)
  */
-abstract public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
+abstract public class Ellipsis extends VarPattern { //TODO use Immutable
 
 
     /** a placeholder that indicates an expansion of one or more terms that will be provided by an Ellipsis match.
@@ -47,61 +48,6 @@ abstract public class Ellipsis extends Variable.VarPattern { //TODO use Immutabl
 
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
-
-    public static class EllipsisOneOrMore extends Ellipsis {
-
-        public EllipsisOneOrMore(Variable name) {
-            this(name, "..+");
-        }
-
-        @Override
-        public Variable clone(Variable newVar, VariableNormalization normalizer) {
-            return new EllipsisOneOrMore(newVar);
-        }
-
-        public EllipsisOneOrMore(Variable name, String s) {
-            super(name, s);
-        }
-
-        @Override
-        public boolean valid(int collectable) {
-            return collectable > 0;
-        }
-    }
-
-    public static class EllipsisZeroOrMore extends Ellipsis {
-        public EllipsisZeroOrMore(Variable name) {
-            super(name, "..*");
-        }
-
-        @Override
-        public boolean valid(int collectable) {
-            return collectable >= 0;
-        }
-        @Override
-        public Variable clone(Variable newVar, VariableNormalization normalizer) {
-            return new EllipsisZeroOrMore(newVar);
-        }
-    }
-
-    /** ellipsis that transforms one of its elements, which it is required to match within */
-    public static class EllipsisTransform extends EllipsisOneOrMore {
-
-        public final Term from;
-        public final Term to;
-
-        public EllipsisTransform(Variable name, Term from, Term to) {
-            super(name, ".." + from + "=" + to + "..+");
-            this.from = from;
-            this.to = to;
-        }
-
-        @Override
-        public Variable clone(Variable newVar, VariableNormalization normalizer) {
-            throw new RuntimeException("HACK - this is handled by TaskRule.TaskRuleVariableNormalization");
-        }
-
-    }
 
     public final Variable target;
 
@@ -297,6 +243,13 @@ abstract public class Ellipsis extends Variable.VarPattern { //TODO use Immutabl
 
     private static ShadowProduct matchedSubterms(Term[] subterms) {
         return new ShadowProduct(subterms);
+    }
+
+    /** collect a range of subterms */
+    public ShadowProduct matchRange(Compound x, Compound y, int from, int to, FindSubst subst) {
+        return new ShadowProduct(
+            subst.match(x, y, from, to)
+        );
     }
 
 

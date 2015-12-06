@@ -51,7 +51,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      */
     Term clone(final Term[] replaced);
 
-
     static void ensureFeasibleVolume(int vol) {
         if (vol > Global.COMPOUND_VOLUME_MAX) {
             throw new RuntimeException("volume limit exceeded");

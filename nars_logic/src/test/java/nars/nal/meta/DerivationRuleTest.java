@@ -5,6 +5,10 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.TaskRule;
+import nars.nal.meta.match.Ellipsis;
+import nars.nal.meta.match.EllipsisOneOrMore;
+import nars.nal.meta.match.EllipsisTransform;
+import nars.nal.meta.match.EllipsisZeroOrMore;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
@@ -131,7 +135,7 @@ public class DerivationRuleTest extends TestCase {
         assertNotNull(t);
         assertEquals(s, t.toString());
         assertEquals("%prefix", t.target.toString());
-        assertEquals(Ellipsis.EllipsisOneOrMore.class, t.getClass());
+        assertEquals(EllipsisOneOrMore.class, t.getClass());
     }
 
     @Test public void testEllipsisZeroOrMore() {
@@ -140,19 +144,19 @@ public class DerivationRuleTest extends TestCase {
         assertNotNull(t);
         assertEquals(s, t.toString());
         assertEquals("%prefix", t.target.toString());
-        assertEquals(Ellipsis.EllipsisZeroOrMore.class, t.getClass());
+        assertEquals(EllipsisZeroOrMore.class, t.getClass());
     }
     @Test public void testEllipsisTransform() {
         String s = "%A..%B=C..+";
-        Ellipsis.EllipsisTransform t = $(s);
+        EllipsisTransform t = $(s);
         assertNotNull(t);
         assertEquals(s, t.toString());
-        assertEquals(Ellipsis.EllipsisTransform.class, t.getClass());
+        assertEquals(EllipsisTransform.class, t.getClass());
         assertEquals($("%B"), t.from);
         assertEquals($("C"), t.to);
 
         Term u = new TaskRule.TaskRuleVariableNormalization(pro(t)).get();
-        t = (Ellipsis.EllipsisTransform)((Product)u).term(0);
+        t = (EllipsisTransform)((Product)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);
         assertEquals($("C"), t.to);

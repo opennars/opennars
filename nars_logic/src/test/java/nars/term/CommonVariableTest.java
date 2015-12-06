@@ -31,15 +31,15 @@ public class CommonVariableTest {
     @Test
     public void commonVariableTest2() {
         //different lengths
-        assertEquals("%2%00",
+        assertEquals("%12%2",
                 CommonVariable.make(
-                        p.term("%00"),
+                        p.term("%12"),
                         p.term("%2")).toString());
         //different lengths
-        assertEquals("%2%00",
+        assertEquals("%12%2",
                 CommonVariable.make(
                         p.term("%2"),
-                        p.term("%00")).toString());
+                        p.term("%12")).toString());
 
     }
 

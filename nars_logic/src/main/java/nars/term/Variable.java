@@ -23,9 +23,8 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
+import nars.nal.meta.match.VarPattern;
 import nars.term.transform.Substitution;
-import nars.util.data.Util;
-import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 import java.util.Map;
@@ -43,6 +42,9 @@ abstract public class Variable extends AbstractStringAtom {
         super(n);
     }
 
+    protected Variable(final String n, Op specificOp) {
+        super(n, specificOp);
+    }
     protected Variable(final byte[] n, Op specificOp) {
         super(n, specificOp);
     }
@@ -52,17 +54,25 @@ abstract public class Variable extends AbstractStringAtom {
 //    }
 
 
-
     public static Variable the(Op varType, byte[] baseName) {
         return the(varType.ch, baseName);
     }
 
-    public static Variable the(char varType, String baseName) {
-        return the(varType, Utf8.toUtf8(baseName));
+    public static Variable the(char ch, byte[] name) {
+        return the(ch, new String(name));
     }
 
-    public static Variable the(char ch, byte[] name) {
-         switch (ch) {
+    public static Variable the(char ch, String name) {
+
+//        if (name.length() < 3) {
+//            int digit = Texts.i(name, -1);
+//            if (digit != -1) {
+//                Op op = Variable.typeIndex(ch);
+//                return Variable.the(op, digit);
+//            }
+//        }
+
+        switch (ch) {
             case Symbols.VAR_DEPENDENT:
                 return new VarDep(name);
             case Symbols.VAR_INDEPENDENT:
@@ -80,33 +90,53 @@ abstract public class Variable extends AbstractStringAtom {
 
     final static int MAX_VARIABLE_CACHED_PER_TYPE = 16;
 
-    /** numerically-indexed variable instance cache; prevents duplicates and speeds comparisons */
+    /**
+     * numerically-indexed variable instance cache; prevents duplicates and speeds comparisons
+     */
     final static Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
 
     public static Variable the(Op type, int counter) {
         if (counter < MAX_VARIABLE_CACHED_PER_TYPE) {
             final Variable[] vct = varCache[typeIndex(type)];
             Variable existing = vct[counter];
-            if (existing!=null)
+            if (existing != null)
                 return existing;
             else {
                 return vct[counter] = _the(type, counter);
             }
         }
 
-        return _the(type, counter);
+        return the(type.ch, String.valueOf(counter));
     }
 
     static Variable _the(Op type, int counter) {
-        return the(type, Util.intAsByteArray(counter));
+        return the(type.ch, String.valueOf(counter));
+    }
+
+    public static Op typeIndex(char c) {
+        switch (c) {
+            case '%':
+                return Op.VAR_PATTERN;
+            case '#':
+                return Op.VAR_DEPENDENT;
+            case '$':
+                return Op.VAR_INDEPENDENT;
+            case '?':
+                return Op.VAR_QUERY;
+        }
+        throw new RuntimeException(c + " not a variable");
     }
 
     public static int typeIndex(Op o) {
         switch (o) {
-            case VAR_PATTERN: return 0;
-            case VAR_DEPENDENT: return 1;
-            case VAR_INDEPENDENT: return 2;
-            case VAR_QUERY: return 3;
+            case VAR_PATTERN:
+                return 0;
+            case VAR_DEPENDENT:
+                return 1;
+            case VAR_INDEPENDENT:
+                return 2;
+            case VAR_QUERY:
+                return 3;
         }
         throw new RuntimeException(o + " not a variable");
     }
@@ -123,13 +153,13 @@ abstract public class Variable extends AbstractStringAtom {
 //    }
 
 
-
     /**
      * true if it has or is a pattern variable
-     * necessary because VAR_PATTERN are hidden from substructure */
+     * necessary because VAR_PATTERN are hidden from substructure
+     */
     public static boolean hasPatternVariable(Term t) {
-        return t.or( x ->
-            x.op() == Op.VAR_PATTERN
+        return t.or(x ->
+                x.op() == Op.VAR_PATTERN
         );
     }
 
@@ -144,13 +174,14 @@ abstract public class Variable extends AbstractStringAtom {
         return op().ch + id;
     }
 
-    @Override public final Term substituted(Map<Term, Term> subs) {
+    @Override
+    public final Term substituted(Map<Term, Term> subs) {
         Term x = subs.get(this);
         if (x != null)
             return x;
         return this;
     }
-    
+
     @Override
     public final Term substituted(Substitution s) {
         Term x = s.getXY(this);
@@ -165,76 +196,126 @@ abstract public class Variable extends AbstractStringAtom {
      *
      * @return The complexity of the term, an integer
      */
-    @Override public final int complexity() {       return 0;   }
+    @Override
+    public final int complexity() {
+        return 0;
+    }
 
 
     public static final class VarDep extends Variable {
 
-        public VarDep(byte[] name)  { super(name);        }
+        public VarDep(String name) {
+            super(name);
+        }
 
-        @Override public final int structure() { return Op.VAR_DEPENDENT.bit();        }
+        @Override
+        public final int structure() {
+            return Op.VAR_DEPENDENT.bit();
+        }
 
-        @Override public final Op op() { return Op.VAR_DEPENDENT; }
+        @Override
+        public final Op op() {
+            return Op.VAR_DEPENDENT;
+        }
 
-        @Override public final int vars() { return 1; }
-        @Override public final int varDep() {  return 1; }
-        @Override public final int varIndep() { return 0;}
-        @Override public final int varQuery() { return 0; }
+        @Override
+        public final int vars() {
+            return 1;
+        }
+
+        @Override
+        public final int varDep() {
+            return 1;
+        }
+
+        @Override
+        public final int varIndep() {
+            return 0;
+        }
+
+        @Override
+        public final int varQuery() {
+            return 0;
+        }
     }
 
     public static final class VarIndep extends Variable {
 
 
+        public VarIndep(String name) {
+            super(name);
+        }
 
-        public VarIndep(byte[] name) { super(name);         }
+        @Override
+        public final int structure() {
+            return Op.VAR_INDEPENDENT.bit();
+        }
 
-        @Override public final int structure() {  return Op.VAR_INDEPENDENT.bit();        }
+        @Override
+        public final Op op() {
+            return Op.VAR_INDEPENDENT;
+        }
 
-        @Override public final Op op() { return Op.VAR_INDEPENDENT; }
+        @Override
+        public final int vars() {
+            return 1;
+        }
 
-        @Override public final int vars() { return 1; }
+        @Override
+        public final int varDep() {
+            return 0;
+        }
 
-        @Override public final int varDep() {  return 0;        }
-        @Override public final int varIndep() { return 1;}
-        @Override public final int varQuery() { return 0; }
+        @Override
+        public final int varIndep() {
+            return 1;
+        }
+
+        @Override
+        public final int varQuery() {
+            return 0;
+        }
 
     }
 
     public static final class VarQuery extends Variable {
 
 
+        public VarQuery(String name) {
+            super(name);
+        }
 
-        public VarQuery(byte[] name) {  super(name);         }
+        @Override
+        public final int structure() {
+            return Op.VAR_QUERY.bit();
+        }
 
-        @Override public final int structure() {  return Op.VAR_QUERY.bit();        }
+        @Override
+        public final Op op() {
+            return Op.VAR_QUERY;
+        }
 
-        @Override public final Op op() { return Op.VAR_QUERY; }
+        @Override
+        public final int vars() {
+            return 1;
+        }
 
-        @Override public final int vars() { return 1; }
+        @Override
+        public final int varDep() {
+            return 0;
+        }
 
-        @Override public final int varDep() {  return 0;        }
-        @Override public final int varIndep() { return 0;}
-        @Override public final int varQuery() { return 1; }
+        @Override
+        public final int varIndep() {
+            return 0;
+        }
+
+        @Override
+        public final int varQuery() {
+            return 1;
+        }
 
     }
 
 
-    public static class VarPattern extends Variable {
-
-
-        public VarPattern(String name) {  super(name);         }
-        public VarPattern(byte[] name) {  super(name);         }
-
-        @Override public final int structure() { return 0; } //Op.VAR_PATTERN.bit();        }
-
-        @Override public final Op op() { return Op.VAR_PATTERN; }
-
-        /** pattern variable hidden in the count 0 */
-        @Override public final int vars() { return 0; }
-
-        @Override public final int varDep() {  return 0;        }
-        @Override public final int varIndep() { return 0;}
-        @Override public final int varQuery() { return 0; }
-
-    }
 }

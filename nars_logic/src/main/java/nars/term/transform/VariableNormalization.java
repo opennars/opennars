@@ -90,55 +90,28 @@ public class VariableNormalization extends VariableTransform {
 
         if (tx == null) tx = this;
 
-        this.result = target.transform(tx);
+
+
+        this.result = target.transform(tx, true);
+
 
     }
 
 
     @Override
     public final Variable apply(final Compound ct, final Variable v, int depth) {
-        //            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
-//                vname = vname.toString() + v.getScope().name();
-
 
         Map<Variable, Variable> rename = this.rename;
 
-        //if (rename == null) this.rename = rename = Global.newHashMap(0); //lazy allocate
+        //serial++; //identifies terms by their unique final position
 
-//        Variable vv = rename.get(vname);
-//        if (vv == null) {
-//            //type + id
-//            vv = newVariable(v.getType(), rename.size() + 1);
-//            rename.put(vname, vv);
-//            renamed = !vv.name().equals(v.name());
-//        }
-
-        /* 1.6.4:
-        CharSequence vname = v.name();
-        if (!v.hasVarIndep())
-            vname = vname + " " + v.getScope().name(); */
-
-
-        //int context = v.op() == Op.VAR_DEPENDENT ? -1 : serial;
-        //int context = -1; //(v.op() != Op.VAR_DEPENDENT) ? -1 : serial;
-        //int context = v.op() == Op.VAR_INDEPENDENT ? System.identityHashCode(v) : -1;
-
-        //IntObjectPair<Variable> scoping = PrimitiveTuples.pair(-1, v);
-
-
-
-        final Map<Variable,Variable> finalRename = rename;
-        Variable vv = rename.computeIfAbsent(resolve(v), _vname -> {
-            //type + id
-            Variable rvv = newVariable(v, finalRename );
+        return rename.compute(resolve(v), (_vname, alreadyNormalized) -> {
+            Variable rvv = newVariable(v, alreadyNormalized, rename);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= rvv.equals(v);//!Byted.equals(rvv, v);
             return rvv;
         });
 
-        //serial++; //identifies terms by their unique final position
-
-        return vv;
     }
 
     /** allows subclasses to provide a different name of a variable */
@@ -146,8 +119,11 @@ public class VariableNormalization extends VariableTransform {
         return v;
     }
 
-    protected Variable newVariable(final Variable v, Map<Variable, Variable> renames) {
-        return Variable.the(v.op(), renames.size() + 1);
+    /** if already normalized, alreadyNormalized will be non-null with the value */
+    protected Variable newVariable(final Variable v, final Variable alreadyNormalized, Map<Variable, Variable> renames) {
+        if (alreadyNormalized==null)
+            return Variable.the(v.op(), renames.size() + 1);  //type + id
+        return alreadyNormalized;
     }
 
     public final Compound get() {

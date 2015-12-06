@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.match.Ellipsis;
 import nars.nal.nal4.Image;
 import nars.term.Compound;
 import nars.term.Term;

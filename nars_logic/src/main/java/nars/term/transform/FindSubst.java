@@ -5,9 +5,10 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Op;
-import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
+import nars.nal.meta.match.Ellipsis;
+import nars.nal.meta.match.EllipsisTransform;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
@@ -662,18 +663,25 @@ public class FindSubst extends Subst implements Substitution {
             /** if they are images, they must have same relationIndex */
             if (X instanceof Image) { //PRECOMPUTABLE
 
-                int xEllipseIndex = X.indexOf(e);
-                int xRelationIndex = ((Image) X).relationIndex;
-                int yRelationIndex = ((Image) Y).relationIndex;
+                if (!(e instanceof EllipsisTransform)) {
+                    //if the ellipsis is normal, then interpret the relationIndex as it is
 
-                if (xEllipseIndex >= xRelationIndex) {
-                    //compare relation from beginning as in non-ellipsis case
-                    if (xRelationIndex != yRelationIndex)
-                        return false;
+                    int xEllipseIndex = X.indexOf(e);
+                    int xRelationIndex = ((Image) X).relationIndex;
+                    int yRelationIndex = ((Image) Y).relationIndex;
+
+                    if (xEllipseIndex >= xRelationIndex) {
+                        //compare relation from beginning as in non-ellipsis case
+                        if (xRelationIndex != yRelationIndex)
+                            return false;
+                    } else {
+                        //compare relation from end
+                        if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
+                            return false;
+                    }
                 } else {
-                    //compare relation from end
-                    if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
-                        return false;
+                    //this involves a special "image ellipsis transform"
+                    //..
                 }
             }
 
@@ -683,6 +691,14 @@ public class FindSubst extends Subst implements Substitution {
         }
 
     }
+
+//    private boolean matchEllipsisImage(Compound x, Ellipsis e, Compound y) {
+//        /*  ex:
+//           (M --> (A..B=_..+))
+//        */
+//        putXY(e, new ShadowProduct(x.terms()));
+//        return false;
+//    }
 
     /**
      * X contains no ellipsis to consider (simple/fast)
@@ -965,9 +981,9 @@ public class FindSubst extends Subst implements Substitution {
 
                         //TODO special handling to extract intermvals from Sequence terms here
 
-                        putXY(Xellipsis, new ShadowProduct(
-                                Y.terms(j, ysize)
-                        ));
+                        putXY(Xellipsis,
+                                Xellipsis.matchRange(X, Y, j, ysize, this));
+                        i += j;
                     } else if (i == 0) {
                         //PREFIX the ellipsis occurred at the start and there are additional terms following it
                         //TODO

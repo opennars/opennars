@@ -459,6 +459,58 @@ abstract public class Texts {
         return Integer.parseInt(s);
     }
 
+
+
+
+    /**
+     * fast parse a non-negative int under certain conditions, avoiding Integer.parse if possible
+     *
+     */
+    public static int i(final String s, int ifMissing) {
+        switch (s.length()) {
+            case 0: return ifMissing;
+            case 1: return i1(s, ifMissing);
+            case 2: return i2(s, ifMissing);
+            case 3: return i3(s, ifMissing);
+            default:
+                try {
+                    return Integer.parseInt(s);
+                }
+                catch (NumberFormatException e) {
+                    return ifMissing;
+                }
+        }
+    }
+
+    private static int i3(String s, int ifMissing) {
+        int dig100 = i(s.charAt(0));
+        if (dig100 == -1) return ifMissing;
+
+        int dig10 = i(s.charAt(1));
+        if (dig10 == -1) return ifMissing;
+
+        int dig1 = i(s.charAt(2));
+        if (dig1 == -1) return ifMissing;
+
+        return dig100 * 100 + dig10 * 10 + dig1;
+    }
+
+    private static int i2(String s, int ifMissing) {
+        int dig10 = i(s.charAt(0));
+        if (dig10 == -1) return ifMissing;
+
+        int dig1 = i(s.charAt(1));
+        if (dig1 == -1) return ifMissing;
+
+        return dig10 * 10 + dig1;
+    }
+
+    private static int i1(String s, int ifMissing) {
+        int dig1 = i(s.charAt(0));
+        if (dig1 != -1) return ifMissing;
+        return dig1;
+    }
+
     /**
      * fast parse for float, checking common conditions
      */

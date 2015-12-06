@@ -13,8 +13,12 @@ import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
 import nars.nal.TaskRule;
-import nars.nal.meta.Ellipsis;
+import nars.nal.meta.match.Ellipsis;
+import nars.nal.meta.match.EllipsisOneOrMore;
+import nars.nal.meta.match.EllipsisTransform;
+import nars.nal.meta.match.EllipsisZeroOrMore;
 import nars.nal.nal1.Negation;
+import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
@@ -587,10 +591,8 @@ public class Narsese extends BaseParser<Object>  {
 //        return newParser((Memory)null);
 //    }
 
-    final static Atom imageIndexTerm = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
-
     Rule ImageIndex() {
-        return sequence('_', push(imageIndexTerm));
+        return sequence('_', push(Image.Index));
     }
 
     Rule QuotedLiteral() {
@@ -616,14 +618,14 @@ public class Narsese extends BaseParser<Object>  {
 
                     seq( Term(false,false), "=", Term(false,false), "..+",
                         swap(3),
-                            push( new Ellipsis.EllipsisTransform(
+                            push( new EllipsisTransform(
                             (Variable)pop(), (Term)pop(), (Term)pop()  ))
                         ),
                     seq( "+",
-                            push( new Ellipsis.EllipsisOneOrMore( (Variable)pop() ) )
+                            push( new EllipsisOneOrMore( (Variable)pop() ) )
                     ),
                     seq( "*",
-                            push( new Ellipsis.EllipsisZeroOrMore( (Variable)pop() ) )
+                            push( new EllipsisZeroOrMore( (Variable)pop() ) )
                     )
                 )
         );

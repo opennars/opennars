@@ -2,6 +2,7 @@ package nars.nal.nal4;
 
 import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
 import nars.Symbols;
+import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.DefaultCompound2;
 import nars.term.Term;
@@ -18,6 +19,8 @@ import static nars.Symbols.*;
 
 abstract public class Image extends DefaultCompound2 {
 
+    /** Image index ("imdex") symbol */
+    public final static Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
     /**
      * "Imdex": subterm index of relation in the component list
      */
@@ -27,7 +30,7 @@ abstract public class Image extends DefaultCompound2 {
     protected Image(Term[] components, int relationIndex) {
         super(components, relationIndex+1 /* non-zero */);
 
-        this.relationIndex = (short) relationIndex;
+        this.relationIndex = ((short) relationIndex);
     }
 
 

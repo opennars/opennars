@@ -43,6 +43,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     protected DefaultCompound2(TermVector subterms, int hashSalt) {
         this.terms = subterms;
         this.normalized = !hasVar();
+
         int h = hashCombine( subterms().hashCode(), op().ordinal() );
         if (hashSalt!=0)
             h = hashCombine(h, hashSalt);
@@ -53,6 +54,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
     public DefaultCompound2(T t) {
         this(new Term[] { t } );
     }
+
 
 
     @Override
@@ -302,11 +304,15 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         if (normalized) {
             return (T) this;
         } else {
+            if (destructive) {
+                throw new RuntimeException("destructive normalization disabled");
+            }
+
             final Compound result = VariableNormalization.normalizeFast(this, destructive).get();
             if (result == null)
                 return null;
 
-            //HACK
+
             ((DefaultCompound2) result).normalized = true;
 
             return (T) result;
@@ -422,7 +428,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
 
     @Override
     public Compound<T> normalizeDestructively() {
-        return normalized(true);
+        return normalized(false);
     }
 
 }
