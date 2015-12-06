@@ -13,9 +13,11 @@ package nars.guifx.graph2.layout;
 
 import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import nars.guifx.annotation.Range;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
@@ -91,8 +93,7 @@ import java.util.List;
  * that a finer granularity is required.
  * 
  */
-public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V>
-{
+public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V> {
 
 	/**
 	 * Whether or not the distance between edge and nodes will be calculated
@@ -114,7 +115,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Whether or not edge lengths will be calculated as an energy cost
 	 * function. This function not CPU intensive.
 	 */
-	protected boolean isOptimizeEdgeLength = true;
+	protected boolean isOptimizeEdgeLength = false;
 
 	/**
 	 * Whether or not nodes will contribute an energy cost as they approach
@@ -154,14 +155,15 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * minimum energy positions and decreasing it causes the minimum radius
 	 * termination condition to occur more quickly.
 	 */
-	protected float radiusScaleFactor = 0.75f;
+	protected float radiusScaleFactor = 0.10f;
 
 	/**
 	 * The average amount of area allocated per node. If <code> bounds</code>
 	 * is not set this value mutiplied by the number of nodes to find
 	 * the total graph area. The graph is assumed square.
 	 */
-	protected float averageNodeArea = 160000;
+	@Range(min = 1000, max = 200000)
+	public final SimpleDoubleProperty averageNodeArea = new SimpleDoubleProperty(160000);
 
 	/**
 	 * The radius below which fine tuning of the layout should start
@@ -175,7 +177,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Limit to the number of iterations that may take place. This is only
 	 * reached if one of the termination conditions does not occur first.
 	 */
-	protected int maxIterations = 5;
+	protected int maxIterations = 1;
 
 	/**
 	 * Cost factor applied to energy calculations involving the distance
@@ -250,12 +252,13 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 */
 	protected int iteration = 0;
 
-
 	/**
 	 * prevents from dividing with zero and from creating excessive energy
 	 * values
 	 */
-	protected float minDistanceLimit = 0.5f;
+	@Range(min = 1, max = 2)
+	public final SimpleDoubleProperty minDistanceLimit = new SimpleDoubleProperty(0.5);
+
 
 	/**
 	 * cached version of <code>minDistanceLimit</code> squared
@@ -266,7 +269,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * distance limit beyond which energy costs due to object repulsive is
 	 * not calculated as it would be too insignificant
 	 */
-	protected float maxDistanceLimit = 50;
+	@Range(min = 0, max = 100)
+	public final SimpleDoubleProperty maxDistanceLimit = new SimpleDoubleProperty(50);
 
 	/**
 	 * cached version of <code>maxDistanceLimit</code> squared
@@ -275,12 +279,14 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 	/**
 	 * Keeps track of how many consecutive round have passed without any energy
-	 * changes 
+	 * changes
 	 */
 	protected int unchangedEnergyRoundCount = 0;
 
-	float vertexSpeed = 0.04f;
-	float vertexMotionThreshold  = 0f;
+	@Range(min = 0, max = 0.2)
+	public final SimpleDoubleProperty vertexSpeed = new SimpleDoubleProperty(0.04);
+
+	float vertexMotionThreshold = 0f;
 
 
 	/**
@@ -305,20 +311,20 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	/**
 	 * Internal models collection of edges to be laid out
 	 */
-	protected java.util.List<CellWrapper<TermEdge>> e = new FasterList();
+	protected List<CellWrapper<TermEdge>> e = new FasterList();
 
 	/**
-	 * Array of the x portion of the normalised test vectors that 
-	 * are tested for a lower energy around each vertex. The vector 
-	 * of the combined x and y normals are multipled by the current 
+	 * Array of the x portion of the normalised test vectors that
+	 * are tested for a lower energy around each vertex. The vector
+	 * of the combined x and y normals are multipled by the current
 	 * radius to obtain test points for each vector in the array.
 	 */
 	static protected final float[] xNormTry;
 
 	/**
-	 * Array of the y portion of the normalised test vectors that 
-	 * are tested for a lower energy around each vertex. The vector 
-	 * of the combined x and y normals are multipled by the current 
+	 * Array of the y portion of the normalised test vectors that
+	 * are tested for a lower energy around each vertex. The vector
+	 * of the combined x and y normals are multipled by the current
 	 * radius to obtain test points for each vector in the array.
 	 */
 	static protected final float[] yNormTry;
@@ -331,20 +337,21 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * small performance hit. The change is described in the method comment.
 	 */
 	protected final static int circleResolution = 8; //originally 8, lets try an odd or prime #
+
 	static {
 
 		// Setup the normal vectors for the test points to move each vertex to
 		xNormTry = new float[circleResolution];
 		yNormTry = new float[circleResolution];
 
-		for (int i = 0; i < circleResolution; i++)
-		{
+		for (int i = 0; i < circleResolution; i++) {
 			double angle = i
 					* ((2.0 * Math.PI) / circleResolution);
-			xNormTry[i] = (float)Math.cos(angle);
-			yNormTry[i] = (float)Math.sin(angle);
+			xNormTry[i] = (float) Math.cos(angle);
+			yNormTry[i] = (float) Math.sin(angle);
 		}
 	}
+
 	/**
 	 * Whether or not fine tuning is on. The determines whether or not
 	 * node to edge distances are calculated in the total system energy.
@@ -359,7 +366,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	protected boolean isFineTuning = false;
 
 	/**
-	 *  Specifies if the STYLE_NOEDGESTYLE flag should be set on edges that are
+	 * Specifies if the STYLE_NOEDGESTYLE flag should be set on edges that are
 	 * modified by the result. Default is true.
 	 */
 	protected boolean disableEdgeStyle = true;
@@ -371,17 +378,17 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	protected boolean resetEdges = false;
 
 	public HyperOrganicLayout() {
-		this(new Rectangle2D.Float(-400*1.0f,-400*1.0f,800.0f*1.0f,800.0f*1.0f));
+		this(new Rectangle2D.Float(-25 * 1.0f, -25 * 1.0f, 25.0f * 1.0f, 25.0f * 1.0f));
 	}
-    public HyperOrganicLayout(float scale) {
-        this(new Rectangle2D.Float(-scale/2.0f,-scale/2.0f,scale*1.0f,scale*1.0f));
-    }
+
+	public HyperOrganicLayout(float scale) {
+		this(new Rectangle2D.Float(-scale / 2.0f, -scale / 2.0f, scale * 1.0f, scale * 1.0f));
+	}
 
 	/**
 	 * Constructor for HyperOrganicLayout.
 	 */
-	public HyperOrganicLayout(Rectangle2D.Float bounds)
-	{
+	public HyperOrganicLayout(Rectangle2D.Float bounds) {
 		super();
 		boundsX = bounds.x;
 		boundsY = bounds.y;
@@ -400,25 +407,26 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 //		return false;
 //	}
 
-	@Override public void run(SpaceGrapher graph, int iterations) {
-		run(graph.displayed, iterations);
+	@Override
+	public void run(SpaceGrapher graph, int iterations) {
+		run(graph.displayed);
 	}
 
 	public void run(Parent p, int iterations) {
 		ObservableList<Node> c = p.getChildrenUnmodifiable();
-		run(c, iterations);
+		run(c);
 	}
 
-	public void run(ObservableList<Node> c, int iterations) {
+	public void run(ObservableList<Node> c) {
 		GraphNode[] gg = c.stream().filter(nn -> nn instanceof GraphNode).map(nn -> (GraphNode) nn).toArray(ii -> new GraphNode[ii]);
-		run(gg, iterations);
+		run(gg);
 	}
 
-	public void run(GraphNode[] nodes, int iterations) {
+	public void run(GraphNode[] nodes) {
 
 		if (nodes.length == 0) return;
 
-		GraphNode[] vertexSet =  nodes;
+		GraphNode[] vertexSet = nodes;
 		GraphNode[] vertices = vertexSet;
 
 		//HashSet<Object> vertexSet = new HashSet<Object>(Arrays.asList(vertices));
@@ -450,24 +458,20 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		// per node has been
 		Rectangle2D.Float totalBounds = null;
 		Rectangle2D.Float bounds = null;
-		
+
 		// Form internal model of nodes
 		ObjectIntHashMap vertexMap = new ObjectIntHashMap();
 
-        CellWrapper<TermNode>[] v = this.v = new CellWrapper[vertices.length];
-		for (int i = 0; i < vertices.length; i++)
-		{
+		CellWrapper<TermNode>[] v = this.v = new CellWrapper[vertices.length];
+		for (int i = 0; i < vertices.length; i++) {
 			final CellWrapper vi = v[i] = new CellWrapper(vertices[i]);
 
 			vertexMap.put(vertices[i], i); //new Integer(i));
 			bounds = getVertexBounds(vertices[i]);
-			
-			if (totalBounds == null)
-			{
+
+			if (totalBounds == null) {
 				totalBounds = (Rectangle2D.Float) bounds.clone();
-			}
-			else
-			{
+			} else {
 				totalBounds.add(bounds);
 			}
 
@@ -477,52 +481,42 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			float height = bounds.height;
 			vi.x = bounds.x + width / 2.0f;
 			vi.y = bounds.y + height / 2.0f;
-			if (approxNodeDimensions)
-			{
+			if (approxNodeDimensions) {
 				vi.radiusSquared = Math.min(width, height);
 				vi.radiusSquared *= vi.radiusSquared;
-			}
-			else
-			{
+			} else {
 				vi.radiusSquared = width * width;
 				vi.heightSquared = height * height;
 			}
 		}
 
-		if (averageNodeArea == 0.0)
-		{
-			if (boundsWidth == 0.0 && totalBounds != null)
-			{
+		float averageNodeArea = this.averageNodeArea.floatValue();
+		if (averageNodeArea == 0.0) {
+			if (boundsWidth == 0.0 && totalBounds != null) {
 				// Just use current bounds of graph
 				boundsX = totalBounds.x;
 				boundsY = totalBounds.y;
 				boundsWidth = totalBounds.width;
 				boundsHeight = totalBounds.height;
 			}
-		}
-		else
-		{
+		} else {
 			// find the center point of the current graph
 			// based the new graph bounds on the average node area set
 			float newArea = averageNodeArea * vertices.length;
-			float squareLength = (float)Math.sqrt(newArea);
-			if (bounds != null)
-			{
+			float squareLength = (float) Math.sqrt(newArea);
+			if (bounds != null) {
 				float centreX = totalBounds.x + totalBounds.width / 2.0f;
 				float centreY = totalBounds.y + totalBounds.height / 2.0f;
 				boundsX = centreX - squareLength / 2.0f;
 				boundsY = centreY - squareLength / 2.0f;
-			}
-			else
-			{
+			} else {
 				boundsX = 0;
 				boundsY = 0;
 			}
 			boundsWidth = squareLength;
 			boundsHeight = squareLength;
 			// Ensure x and y are 0 or positive
-			if (boundsX < 0.0 || boundsY < 0.0)
-			{
+			if (boundsX < 0.0 || boundsY < 0.0) {
 				float maxNegativeAxis = Math.min(boundsX, boundsY);
 				float axisOffset = -maxNegativeAxis;
 				boundsX += axisOffset;
@@ -531,85 +525,80 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		}
 
 
-
-
 		// Form internal model of edges
 
-        final List<CellWrapper<TermEdge>> e = this.e;
+		final List<CellWrapper<TermEdge>> e = this.e;
 		e.clear();
 
-        for (GraphNode vi : vertices) {
+		for (GraphNode vi : vertices) {
 			if (vi == null)
 				continue;
-            TermEdge[] eii = vi.getEdges();
-            for (TermEdge ei : eii) {
+			TermEdge[] eii = vi.getEdges();
+			for (TermEdge ei : eii) {
 
-                CellWrapper w = new CellWrapper(ei);
-                e.add(w);
+				CellWrapper w = new CellWrapper(ei);
+				e.add(w);
 
 
-                Object sourceCell = ei.aSrc; //model.getTerminal(edges[i], true);
-                Object targetCell = ei.bSrc; //model.getTerminal(edges[i], false);
-                int source = -1;
+				Object sourceCell = ei.aSrc; //model.getTerminal(edges[i], true);
+				Object targetCell = ei.bSrc; //model.getTerminal(edges[i], false);
+				int source = -1;
 				// Check if either end of the edge is not connected
-                if (sourceCell != null) {
-                    source = vertexMap.get(sourceCell);
-                }
+				if (sourceCell != null) {
+					source = vertexMap.get(sourceCell);
+				}
 				int target = -1;
 				if (targetCell != null) {
-                    target = vertexMap.get(targetCell);
-                }
-                if (source != -1) {
-                    w.source = source;
-                } else {
-                    // source end is not connected
-                    w.source = -1;
-                }
-                if (target != -1) {
-                    w.target = target;
-                } else {
-                    // target end is not connected
-                    w.target = -1;
-                }
-            }
-        }
-
+					target = vertexMap.get(targetCell);
+				}
+				if (source != -1) {
+					w.source = source;
+				} else {
+					// source end is not connected
+					w.source = -1;
+				}
+				if (target != -1) {
+					w.target = target;
+				} else {
+					// target end is not connected
+					w.target = -1;
+				}
+			}
+		}
 
 
 		// Set up internal nodes with information about whether edges
 		// are connected to them or not
 		IntArrayList relevantBuffer = null;
-		for (int i = 0; i < v.length; i++)
-		{
+		for (int i = 0; i < v.length; i++) {
 			relevantBuffer = v[i].relevantEdges = getRelevantEdges(i, relevantBuffer);
 			v[i].connectedEdges = getConnectedEdges(i);
 		}
 
-        // If the initial move radius has not been set find a suitable value.
-        // A good value is half the maximum dimension of the final graph area
-        if (initialMoveRadius == 0.0f)
-        {
-            initialMoveRadius = Math.max(boundsWidth, boundsHeight) / 2.0f;
-        }
+		// If the initial move radius has not been set find a suitable value.
+		// A good value is half the maximum dimension of the final graph area
+		if (initialMoveRadius == 0.0f) {
+			initialMoveRadius = Math.max(boundsWidth, boundsHeight) / 2.0f;
+		}
 
-        moveRadius = initialMoveRadius;
+		moveRadius = initialMoveRadius;
 
-        minDistanceLimitSquared = minDistanceLimit * minDistanceLimit;
-        maxDistanceLimitSquared = maxDistanceLimit * maxDistanceLimit;
+		final float maxDistanceLimit = this.maxDistanceLimit.floatValue();
+		final float minDistanceLimit = this.minDistanceLimit.floatValue();
+		minDistanceLimitSquared = minDistanceLimit * minDistanceLimit;
+		maxDistanceLimitSquared = maxDistanceLimit * maxDistanceLimit;
 
-        unchangedEnergyRoundCount = 0;
+		unchangedEnergyRoundCount = 0;
 
 
 		// The main layout loop
-		for (iteration = 0; iteration < maxIterations; iteration++)
-		{
+		for (iteration = 0; iteration < maxIterations; iteration++) {
 			performRound();
 		}
 
 		// Obtain the final positions
 		float[][] result = new float[v.length][2];
-		for (int i = 0; i < v.length; i++)
-		{
+		for (int i = 0; i < v.length; i++) {
 			CellWrapper<TermNode> vi = v[i];
 			vertices[i] = vi.cell;
 			bounds = getVertexBounds(vertices[i]);
@@ -618,25 +607,27 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			result[i][1] = vi.y - bounds.height / 2f;
 		}
 
+		final float vertexSpeed = this.vertexSpeed.floatValue();
+
 		//model.beginUpdate();
 		/*try
 		{*/
-			for (int i = 0; i < vertices.length; i++) {
-				GraphNode vertice = vertices[i];
-				if (vertice!=null) {
-					float[] ri = result[i];
-					vertice.move(ri[0], ri[1], vertexSpeed, vertexMotionThreshold);
-				}
-				//setVertexLocation(vertices[i], result[i][0], result[i][1]);
+		for (int i = 0; i < vertices.length; i++) {
+			GraphNode vertice = vertices[i];
+			if (vertice != null) {
+				float[] ri = result[i];
+				vertice.move(ri[0], ri[1], vertexSpeed, vertexMotionThreshold);
 			}
+			//setVertexLocation(vertices[i], result[i][0], result[i][1]);
+		}
 		/*}
 		finally
 		{*/
-			//model.endUpdate();
+		//model.endUpdate();
 		//}
 	}
 
-	Rectangle2D.Float unit = new Rectangle2D.Float(-32f,-32f,32f,32f);
+	Rectangle2D.Float unit = new Rectangle2D.Float(-32f, -32f, 32f, 32f);
 
 	private Rectangle2D.Float getVertexBounds(GraphNode vertice) {
 		return unit;
@@ -659,14 +650,12 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * almost always the lowest energy position. This adds about two loop
 	 * iterations to the inner loop and only makes sense with 16 tries or more.
 	 */
-	protected void performRound()
-	{
+	protected void performRound() {
 		// sequential order cells are computed (every round the same order)
 
 		// boolean to keep track of whether any moves were made in this round
 		boolean energyHasChanged = false;
-		for (int i = 0; i < v.length; i++)
-		{
+		for (int i = 0; i < v.length; i++) {
 			int index = i;
 
 			// Obtain the energies for the node is its current position
@@ -682,8 +671,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 			final CellWrapper[] v = this.v;
 			final float moveRadius = this.moveRadius;
-			for (int j = 0; j < circleResolution; j++)
-			{
+			for (int j = 0; j < circleResolution; j++) {
 				float movex = moveRadius * xNormTry[j];
 				float movey = moveRadius * yNormTry[j];
 
@@ -698,15 +686,12 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 						oldNodeDistribution, oldEdgeDistance, oldEdgeCrossing,
 						oldBorderLine, oldEdgeLength, oldAdditionFactors);
 
-				if (energyDelta < 0)
-				{
+				if (energyDelta < 0) {
 					// energy of moved node is lower, finish tries for this
 					// node
 					energyHasChanged = true;
 					break; // exits loop
-				}
-				else
-				{
+				} else {
 					// Revert node coordinates
 					v[index].x = oldx;
 					v[index].y = oldy;
@@ -715,19 +700,15 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		}
 		// Check if we've hit the limit number of unchanged rounds that cause
 		// a termination condition
-		if (energyHasChanged)
-		{
+		if (energyHasChanged) {
 			unchangedEnergyRoundCount = 0;
-		}
-		else
-		{
+		} else {
 			unchangedEnergyRoundCount++;
 			// Half the move radius in case assuming it's set too high for
 			// what might be an optimisation case
 			moveRadius /= 2.0;
 		}
-		if (unchangedEnergyRoundCount >= unchangedEnergyRoundTermination)
-		{
+		if (unchangedEnergyRoundCount >= unchangedEnergyRoundTermination) {
 			iteration = maxIterations;
 		}
 
@@ -735,18 +716,15 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		float newMoveRadius = moveRadius * radiusScaleFactor;
 		// Don't waste time on tiny decrements, if the final pixel resolution
 		// is 50 then there's no point doing 55,54.1, 53.2 etc
-		if (moveRadius - newMoveRadius < minMoveRadius)
-		{
+		if (moveRadius - newMoveRadius < minMoveRadius) {
 			newMoveRadius = moveRadius - minMoveRadius;
 		}
 		// If the temperature reaches its minimum temperature then finish
-		if (newMoveRadius <= minMoveRadius)
-		{
+		if (newMoveRadius <= minMoveRadius) {
 			iteration = maxIterations;
 		}
 		// Switch on fine tuning below the specified temperature
-		if (newMoveRadius < fineTuningRadius)
-		{
+		if (newMoveRadius < fineTuningRadius) {
 			isFineTuning = true;
 		}
 
@@ -758,33 +736,23 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Calculates the change in energy for the specified node. The new energy is
 	 * calculated from the cost function methods and the old energy values for
 	 * each cost function are passed in as parameters
-	 * 
-	 * @param index
-	 *            The index of the node in the <code>vertices</code> array
-	 * @param oldNodeDistribution
-	 *            The previous node distribution energy cost of this node
-	 * @param oldEdgeDistance
-	 *            The previous edge distance energy cost of this node
-	 * @param oldEdgeCrossing
-	 *            The previous edge crossing energy cost for edges connected to
-	 *            this node
-	 * @param oldBorderLine
-	 *            The previous border line energy cost for this node
-	 * @param oldEdgeLength
-	 *            The previous edge length energy cost for edges connected to
-	 *            this node
-	 * @param oldAdditionalFactorsEnergy
-	 *            The previous energy cost for additional factors from
-	 *            sub-classes
-	 * 
+	 *
+	 * @param index                      The index of the node in the <code>vertices</code> array
+	 * @param oldNodeDistribution        The previous node distribution energy cost of this node
+	 * @param oldEdgeDistance            The previous edge distance energy cost of this node
+	 * @param oldEdgeCrossing            The previous edge crossing energy cost for edges connected to
+	 *                                   this node
+	 * @param oldBorderLine              The previous border line energy cost for this node
+	 * @param oldEdgeLength              The previous edge length energy cost for edges connected to
+	 *                                   this node
+	 * @param oldAdditionalFactorsEnergy The previous energy cost for additional factors from
+	 *                                   sub-classes
 	 * @return the delta of the new energy cost to the old energy cost
-	 * 
 	 */
 	protected float calcEnergyDelta(int index, float oldNodeDistribution,
-			float oldEdgeDistance, float oldEdgeCrossing,
-			float oldBorderLine, float oldEdgeLength,
-			float oldAdditionalFactorsEnergy)
-	{
+									float oldEdgeDistance, float oldEdgeCrossing,
+									float oldBorderLine, float oldEdgeLength,
+									float oldAdditionalFactorsEnergy) {
 		float energyDelta = 0.0f;
 		energyDelta += getNodeDistribution(index) * 2.0f;
 		energyDelta -= oldNodeDistribution * 2.0f;
@@ -811,26 +779,21 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	/**
 	 * Calculates the energy cost of the specified node relative to all other
 	 * nodes. Basically produces a higher energy the closer nodes are together.
-	 * 
+	 *
 	 * @param i the index of the node in the array <code>v</code>
-	 * @return the total node distribution energy of the specified node 
+	 * @return the total node distribution energy of the specified node
 	 */
-	protected float getNodeDistribution(int i)
-	{
+	protected float getNodeDistribution(int i) {
 		float energy = 0.0f;
 
 		final float minDistanceLimitSquared = this.minDistanceLimitSquared;
 
 		// This check is placed outside of the inner loop for speed, even
 		// though the code then has to be duplicated
-		if (isOptimizeNodeDistribution == true)
-		{
-			if (approxNodeDimensions)
-			{
-				for (int j = 0; j < v.length; j++)
-				{
-					if (i != j)
-					{
+		if (isOptimizeNodeDistribution == true) {
+			if (approxNodeDimensions) {
+				for (int j = 0; j < v.length; j++) {
+					if (i != j) {
 						CellWrapper<TermNode> vi = v[i];
 						CellWrapper<TermNode> vj = v[j];
 						float vx = vi.x - vj.x;
@@ -840,21 +803,16 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 						distanceSquared -= vj.radiusSquared;
 
 						// prevents from dividing with Zero.
-						if (distanceSquared < minDistanceLimitSquared)
-						{
+						if (distanceSquared < minDistanceLimitSquared) {
 							distanceSquared = minDistanceLimitSquared;
 						}
 
 						energy += nodeDistributionCostFactor / distanceSquared;
 					}
 				}
-			}
-			else
-			{
-				for (int j = 0; j < v.length; j++)
-				{
-					if (i != j)
-					{
+			} else {
+				for (int j = 0; j < v.length; j++) {
+					if (i != j) {
 						CellWrapper<TermNode> vi = v[i];
 						CellWrapper<TermNode> vj = v[j];
 						float vx = vi.x - vj.x;
@@ -867,8 +825,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 						// TODO						if ()
 
 						// prevents from dividing with Zero.
-						if (distanceSquared < minDistanceLimitSquared)
-						{
+						if (distanceSquared < minDistanceLimitSquared) {
 							distanceSquared = minDistanceLimitSquared;
 						}
 
@@ -885,16 +842,14 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * node to the notional border of the graph. The energy increases up to
 	 * a limited maximum close to the border and stays at that maximum
 	 * up to and over the border.
-	 * 
+	 *
 	 * @param i the index of the node in the array <code>v</code>
-	 * @return the total border line energy of the specified node 
+	 * @return the total border line energy of the specified node
 	 */
-	protected float getBorderline(int i)
-	{
+	protected float getBorderline(int i) {
 		float energy = 0.0f;
-		final float minDistanceLimit = this.minDistanceLimit;
-		if (isOptimizeBorderLine)
-		{
+		if (isOptimizeBorderLine) {
+			final float minDistanceLimit = this.minDistanceLimit.floatValue();
 			// Avoid very small distances and convert negative distance (i.e
 			// outside the border to small positive ones )
 			CellWrapper<TermNode> vi = v[i];
@@ -913,7 +868,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 				b = minDistanceLimit;
 			energy += borderLineCostFactor
 					* ((1000000.0 / (t * t)) + (1000000.0 / (l * l))
-							+ (1000000.0 / (b * b)) + (1000000.0 / (r * r)));
+					+ (1000000.0 / (b * b)) + (1000000.0 / (r * r)));
 		}
 		return energy;
 	}
@@ -922,17 +877,15 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Obtains the energy cost function for the specified node being moved.
 	 * This involves calling <code>getEdgeLength</code> for all
 	 * edges connected to the specified node
-	 * @param node
-	 * 				the node whose connected edges cost functions are to be
-	 * 				calculated
-	 * @return the total edge length energy of the connected edges 
+	 *
+	 * @param node the node whose connected edges cost functions are to be
+	 *             calculated
+	 * @return the total edge length energy of the connected edges
 	 */
-	protected float getEdgeLengthAffectedEdges(int node)
-	{
+	protected float getEdgeLengthAffectedEdges(int node) {
 		float energy = 0.0f;
 		IntArrayList vce = v[node].connectedEdges;
-		for (int i = 0; i < vce.size(); i++)
-		{
+		for (int i = 0; i < vce.size(); i++) {
 			energy += getEdgeLength(vce.get(i));
 		}
 		return energy;
@@ -942,25 +895,21 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * This method calculates the energy due to the length of the specified
 	 * edge. The energy is proportional to the length of the edge, making
 	 * shorter edges preferable in the layout.
-	 * 
+	 *
 	 * @param i the index of the edge in the array <code>e</code>
-	 * @return the total edge length energy of the specified edge 
+	 * @return the total edge length energy of the specified edge
 	 */
-	protected float getEdgeLength(int i)
-	{
-		if (isOptimizeEdgeLength)
-		{
+	protected float getEdgeLength(int i) {
+		if (isOptimizeEdgeLength) {
 			CellWrapper ei = e.get(i);
 			CellWrapper eis = v[ei.source];
 			CellWrapper eit = v[ei.target];
 
 			float dx = eis.x - eit.x;
 			float dy = eis.y - eit.y;
-			float edgeLength = (float)Math.sqrt(dx*dx+dy*dy);
+			float edgeLength = (float) Math.sqrt(dx * dx + dy * dy);
 			return (edgeLengthCostFactor * edgeLength * edgeLength);
-		}
-		else
-		{
+		} else {
 			return 0.0f;
 		}
 	}
@@ -969,13 +918,12 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Obtains the energy cost function for the specified node being moved.
 	 * This involves calling <code>getEdgeCrossing</code> for all
 	 * edges connected to the specified node
-	 * @param node
-	 * 				the node whose connected edges cost functions are to be
-	 * 				calculated
-	 * @return the total edge crossing energy of the connected edges 
+	 *
+	 * @param node the node whose connected edges cost functions are to be
+	 *             calculated
+	 * @return the total edge crossing energy of the connected edges
 	 */
-	protected float getEdgeCrossingAffectedEdges(int node)
-	{
+	protected float getEdgeCrossingAffectedEdges(int node) {
 		float energy = 0.0f;
 		IntArrayList vce = v[node].connectedEdges;
 		for (int i = 0; i < vce.size(); i++) {
@@ -989,12 +937,11 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * This method calculates the energy of the distance from the specified
 	 * edge crossing any other edges. Each crossing add a constant factor
 	 * to the total energy
-	 * 
+	 *
 	 * @param i the index of the edge in the array <code>e</code>
-	 * @return the total edge crossing energy of the specified edge 
+	 * @return the total edge crossing energy of the specified edge
 	 */
-	protected float getEdgeCrossing(int i)
-	{
+	protected float getEdgeCrossing(int i) {
 		// TODO Could have a cost function per edge
 		int n = 0; // counts energy of edgecrossings through edge i
 
@@ -1021,8 +968,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 				int ejt = ej.target;
 				float jP2X = v[ejt].x;
 				float jP2Y = v[ejt].y;
-				if (j != i)
-				{
+				if (j != i) {
 					// First check is to see if the minimum bounding rectangles
 					// of the edges overlap at all. Since the layout tries
 					// to separate nodes and shorten edges, the majority do not
@@ -1031,68 +977,53 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 					// Some long code to avoid a Math.max call...
 					float maxiX;
 					float miniX;
-					if (iP1X < iP2X)
-					{
+					if (iP1X < iP2X) {
 						miniX = iP1X;
 						maxiX = iP2X;
-					}
-					else
-					{
+					} else {
 						miniX = iP2X;
 						maxiX = iP1X;
 					}
 					float maxjX;
 					float minjX;
-					if (jP1X < jP2X)
-					{
+					if (jP1X < jP2X) {
 						minjX = jP1X;
 						maxjX = jP2X;
-					}
-					else
-					{
+					} else {
 						minjX = jP2X;
 						maxjX = jP1X;
 					}
-					if (maxiX < minjX || miniX > maxjX)
-					{
+					if (maxiX < minjX || miniX > maxjX) {
 						continue;
 					}
 
 					float maxiY;
 					float miniY;
-					if (iP1Y < iP2Y)
-					{
+					if (iP1Y < iP2Y) {
 						miniY = iP1Y;
 						maxiY = iP2Y;
-					}
-					else
-					{
+					} else {
 						miniY = iP2Y;
 						maxiY = iP1Y;
 					}
 					float maxjY;
 					float minjY;
-					if (jP1Y < jP2Y)
-					{
+					if (jP1Y < jP2Y) {
 						minjY = jP1Y;
 						maxjY = jP2Y;
-					}
-					else
-					{
+					} else {
 						minjY = jP2Y;
 						maxjY = jP1Y;
 					}
-					if (maxiY < minjY || miniY > maxjY)
-					{
+					if (maxiY < minjY || miniY > maxjY) {
 						continue;
 					}
 
 					// Ignore if any end points are coincident
-					if (((iP1X != jP1X) &&  (iP1Y != jP1Y))
+					if (((iP1X != jP1X) && (iP1Y != jP1Y))
 							&& ((iP1X != jP2X) && (iP1Y != jP2Y))
 							&& ((iP2X != jP1X) && (iP2Y != jP1Y))
-							&& ((iP2X != jP2X) && (iP2Y != jP2Y)))
-					{
+							&& ((iP2X != jP2X) && (iP2Y != jP2Y))) {
 						// Values of zero returned from Line2D.relativeCCW are
 						// ignored because the point being exactly on the line
 						// is very rare for float and we've already checked if
@@ -1111,8 +1042,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 								.relativeCCW(jP1X, jP1Y, jP2X, jP2Y, iP1X, iP1Y) != Line2D
 								.relativeCCW(jP1X, jP1Y, jP2X, jP2Y, iP2X, iP2Y)));
 
-						if (intersects)
-						{
+						if (intersects) {
 							n++;
 						}
 					}
@@ -1130,13 +1060,13 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		var10 -= var2;
 		float var12 = var8 * var4 + var10 * var6;
 		float var14;
-		if(var12 <= 0.0f) {
+		if (var12 <= 0.0f) {
 			var14 = 0.0f;
 		} else {
 			var8 = var4 - var8;
 			var10 = var6 - var10;
 			var12 = var8 * var4 + var10 * var6;
-			if(var12 <= 0f) {
+			if (var12 <= 0f) {
 				var14 = 0f;
 			} else {
 				var14 = var12 * var12 / (var4 * var4 + var6 * var6);
@@ -1144,34 +1074,31 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		}
 
 		float var16 = var8 * var8 + var10 * var10 - var14;
-		if(var16 < 0f) {
+		if (var16 < 0f) {
 			var16 = 0f;
 		}
 
 		return var16;
 	}
 
-	
+
 	/**
 	 * This method calculates the energy of the distance between Cells and
 	 * Edges. This version of the edge distance cost calculates the energy
 	 * cost from a specified <strong>node</strong>. The distance cost to all
 	 * unconnected edges is calculated and the total returned.
-	 * 
+	 *
 	 * @param i the index of the node in the array <code>v</code>
 	 * @return the total edge distance energy of the node
 	 */
-	protected float getEdgeDistanceFromNode(int i)
-	{
+	protected float getEdgeDistanceFromNode(int i) {
 		float energy = 0.0f;
 		// This function is only performed during fine tuning for performance
-		if (isOptimizeEdgeDistance && isFineTuning)
-		{
+		if (isOptimizeEdgeDistance && isFineTuning) {
 			CellWrapper<TermNode> vi = v[i];
 
 			IntArrayList edges = vi.relevantEdges;
-			for (int j = 0; j < edges.size(); j++)
-			{
+			for (int j = 0; j < edges.size(); j++) {
 				// Note that the distance value is squared
 				CellWrapper ejj = e.get(edges.get(j));
 				CellWrapper<TermNode> vejjs = v[ejj.source];
@@ -1186,15 +1113,13 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 				// prevents from dividing with Zero. No Math.abs() call
 				// for performance
-				if (distSquare < minDistanceLimitSquared)
-				{
+				if (distSquare < minDistanceLimitSquared) {
 					distSquare = minDistanceLimitSquared;
 				}
 
 				// Only bother with the divide if the node and edge are
 				// fairly close together
-				if (distSquare < maxDistanceLimitSquared)
-				{
+				if (distSquare < maxDistanceLimitSquared) {
 					energy += edgeDistanceCostFactor / distSquare;
 				}
 			}
@@ -1206,17 +1131,15 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Obtains the energy cost function for the specified node being moved.
 	 * This involves calling <code>getEdgeDistanceFromEdge</code> for all
 	 * edges connected to the specified node
-	 * @param node
-	 * 				the node whose connected edges cost functions are to be
-	 * 				calculated
-	 * @return the total edge distance energy of the connected edges 
+	 *
+	 * @param node the node whose connected edges cost functions are to be
+	 *             calculated
+	 * @return the total edge distance energy of the connected edges
 	 */
-	protected float getEdgeDistanceAffectedNodes(int node)
-	{
+	protected float getEdgeDistanceAffectedNodes(int node) {
 		float energy = 0.0f;
 		IntArrayList vce = v[node].connectedEdges;
-		for (int i = 0; i < (vce.size()); i++)
-		{
+		for (int i = 0; i < (vce.size()); i++) {
 			energy += getEdgeDistanceFromEdge(vce.get(i));
 		}
 
@@ -1228,22 +1151,18 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Edges. This version of the edge distance cost calculates the energy
 	 * cost from a specified <strong>edge</strong>. The distance cost to all
 	 * unconnected nodes is calculated and the total returned.
-	 * 
+	 *
 	 * @param i the index of the edge in the array <code>e</code>
 	 * @return the total edge distance energy of the edge
 	 */
-	protected float getEdgeDistanceFromEdge(int i)
-	{
+	protected float getEdgeDistanceFromEdge(int i) {
 		float energy = 0.0f;
 		// This function is only performed during fine tuning for performance
-		if (isOptimizeEdgeDistance && isFineTuning)
-		{
-			for (int j = 0; j < v.length; j++)
-			{
+		if (isOptimizeEdgeDistance && isFineTuning) {
+			for (int j = 0; j < v.length; j++) {
 				// Don't calculate for connected nodes
 				CellWrapper<TermEdge> ei = e.get(i);
-				if (ei.source != j && ei.target != j)
-				{
+				if (ei.source != j && ei.target != j) {
 					CellWrapper vs = v[ei.source];
 					CellWrapper vt = v[ei.target];
 					CellWrapper<TermNode> vj = v[j];
@@ -1260,8 +1179,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 					// Only bother with the divide if the node and edge are
 					// fairly close together
-					if (distSquare < maxDistanceLimitSquared)
-					{
+					if (distSquare < maxDistanceLimitSquared) {
 						energy += edgeDistanceCostFactor / distSquare;
 					}
 				}
@@ -1273,35 +1191,31 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	/**
 	 * Hook method to adding additional energy factors into the layout.
 	 * Calculates the energy just for the specified node.
+	 *
 	 * @param i the nodes whose energy is being calculated
 	 * @return the energy of this node caused by the additional factors
 	 */
-	protected static float getAdditionFactorsEnergy(int i)	{
+	protected static float getAdditionFactorsEnergy(int i) {
 		return 0.0f;
 	}
 
 	/**
 	 * Returns all Edges that are not connected to the specified cell
-	 * 
-	 * @param cellIndex
-	 *            the cell index to which the edges are not connected
+	 *
+	 * @param cellIndex the cell index to which the edges are not connected
 	 * @return Array of all interesting Edges
 	 */
-	protected IntArrayList getRelevantEdges(int cellIndex, IntArrayList buffer)
-	{
+	protected IntArrayList getRelevantEdges(int cellIndex, IntArrayList buffer) {
 		if (buffer == null) {
 			buffer = new IntArrayList(e.size());
-		}
-		else {
+		} else {
 			buffer.clear();
 		}
 
 
-		for (int i = 0; i < e.size(); i++)
-		{
+		for (int i = 0; i < e.size(); i++) {
 			CellWrapper ei = e.get(i);
-			if (ei.source != cellIndex && ei.target != cellIndex)
-			{
+			if (ei.source != cellIndex && ei.target != cellIndex) {
 				// Add non-connected edges
 				buffer.add(i);
 			}
@@ -1312,20 +1226,16 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 	/**
 	 * Returns all Edges that are connected with the specified cell
-	 * 
-	 * @param cellIndex
-	 *            the cell index to which the edges are connected
+	 *
+	 * @param cellIndex the cell index to which the edges are connected
 	 * @return Array of all connected Edges
 	 */
-	protected IntArrayList getConnectedEdges(int cellIndex)
-	{
+	protected IntArrayList getConnectedEdges(int cellIndex) {
 		IntArrayList connectedEdgeList = new IntArrayList(e.size());
 
-		for (int i = 0; i < e.size(); i++)
-		{
+		for (int i = 0; i < e.size(); i++) {
 			CellWrapper ei = e.get(i);
-			if (ei.source == cellIndex || ei.target == cellIndex)
-			{
+			if (ei.source == cellIndex || ei.target == cellIndex) {
 				// Add connected edges to list by their index number
 				connectedEdgeList.add(i);
 			}
@@ -1348,18 +1258,16 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	}
 
 
-
 	/**
 	 * Internal representation of a node or edge that holds cached information
 	 * to enable the layout to perform more quickly and to simplify the code
 	 */
-	public static class CellWrapper<O>
-	{
+	static final class CellWrapper<O> {
 
 		/**
 		 * The actual graph cell this wrapper represents
 		 */
-		protected O cell;
+		protected final O cell;
 
 		/**
 		 * All edge that repel this cell, only used for nodes. This array
@@ -1408,525 +1316,131 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 		/**
 		 * Constructs a new CellWrapper
+		 *
 		 * @param cell the graph cell this wrapper represents
 		 */
-		public CellWrapper(O cell)
-		{
+		public CellWrapper(O cell) {
 			this.cell = cell;
 		}
 
 		/**
 		 * @return the relevantEdges
 		 */
-		public IntArrayList getRelevantEdges()
-		{
+		public IntArrayList getRelevantEdges() {
 			return relevantEdges;
 		}
 
 		/**
 		 * @param relevantEdges the relevantEdges to set
 		 */
-		public void setRelevantEdges(IntArrayList relevantEdges)
-		{
+		public void setRelevantEdges(IntArrayList relevantEdges) {
 			this.relevantEdges = relevantEdges;
 		}
 
 		/**
 		 * @return the connectedEdges
 		 */
-		public IntArrayList getConnectedEdges()
-		{
+		public IntArrayList getConnectedEdges() {
 			return connectedEdges;
 		}
 
 		/**
 		 * @param connectedEdges the connectedEdges to set
 		 */
-		public void setConnectedEdges(IntArrayList connectedEdges)
-		{
+		public void setConnectedEdges(IntArrayList connectedEdges) {
 			this.connectedEdges = connectedEdges;
 		}
 
 		/**
 		 * @return the x
 		 */
-		public float getX()
-		{
+		public float getX() {
 			return x;
 		}
 
 		/**
 		 * @param x the x to set
 		 */
-		public void setX(float x)
-		{
+		public void setX(float x) {
 			this.x = x;
 		}
 
 		/**
 		 * @return the y
 		 */
-		public float getY()
-		{
+		public float getY() {
 			return y;
 		}
 
 		/**
 		 * @param y the y to set
 		 */
-		public void setY(float y)
-		{
+		public void setY(float y) {
 			this.y = y;
 		}
 
 		/**
 		 * @return the radiusSquared
 		 */
-		public float getRadiusSquared()
-		{
+		public float getRadiusSquared() {
 			return radiusSquared;
 		}
 
 		/**
 		 * @param radiusSquared the radiusSquared to set
 		 */
-		public void setRadiusSquared(float radiusSquared)
-		{
+		public void setRadiusSquared(float radiusSquared) {
 			this.radiusSquared = radiusSquared;
 		}
 
 		/**
 		 * @return the heightSquared
 		 */
-		public float getHeightSquared()
-		{
+		public float getHeightSquared() {
 			return heightSquared;
 		}
 
 		/**
 		 * @param heightSquared the heightSquared to set
 		 */
-		public void setHeightSquared(float heightSquared)
-		{
+		public void setHeightSquared(float heightSquared) {
 			this.heightSquared = heightSquared;
 		}
 
 		/**
 		 * @return the source
 		 */
-		public int getSource()
-		{
+		public int getSource() {
 			return source;
 		}
 
 		/**
 		 * @param source the source to set
 		 */
-		public void setSource(int source)
-		{
+		public void setSource(int source) {
 			this.source = source;
 		}
 
 		/**
 		 * @return the target
 		 */
-		public int getTarget()
-		{
+		public int getTarget() {
 			return target;
 		}
 
 		/**
 		 * @param target the target to set
 		 */
-		public void setTarget(int target)
-		{
+		public void setTarget(int target) {
 			this.target = target;
 		}
 
 		/**
 		 * @return the cell
 		 */
-		public O getCell()
-		{
+		public O getCell() {
 			return cell;
 		}
 	}
 
-	/**
-	 * @return Returns the averageNodeArea.
-	 */
-	public float getAverageNodeArea()
-	{
-		return averageNodeArea;
-	}
-
-	/**
-	 * @param averageNodeArea The averageNodeArea to set.
-	 */
-	public void setAverageNodeArea(float averageNodeArea)
-	{
-		this.averageNodeArea = averageNodeArea;
-	}
-
-	/**
-	 * @return Returns the borderLineCostFactor.
-	 */
-	public float getBorderLineCostFactor()
-	{
-		return borderLineCostFactor;
-	}
-
-	/**
-	 * @param borderLineCostFactor The borderLineCostFactor to set.
-	 */
-	public void setBorderLineCostFactor(float borderLineCostFactor)
-	{
-		this.borderLineCostFactor = borderLineCostFactor;
-	}
-
-	/**
-	 * @return Returns the edgeCrossingCostFactor.
-	 */
-	public float getEdgeCrossingCostFactor()
-	{
-		return edgeCrossingCostFactor;
-	}
-
-	/**
-	 * @param edgeCrossingCostFactor The edgeCrossingCostFactor to set.
-	 */
-	public void setEdgeCrossingCostFactor(float edgeCrossingCostFactor)
-	{
-		this.edgeCrossingCostFactor = edgeCrossingCostFactor;
-	}
-
-	/**
-	 * @return Returns the edgeDistanceCostFactor.
-	 */
-	public float getEdgeDistanceCostFactor()
-	{
-		return edgeDistanceCostFactor;
-	}
-
-	/**
-	 * @param edgeDistanceCostFactor The edgeDistanceCostFactor to set.
-	 */
-	public void setEdgeDistanceCostFactor(float edgeDistanceCostFactor)
-	{
-		this.edgeDistanceCostFactor = edgeDistanceCostFactor;
-	}
-
-	/**
-	 * @return Returns the edgeLengthCostFactor.
-	 */
-	public float getEdgeLengthCostFactor()
-	{
-		return edgeLengthCostFactor;
-	}
-
-	/**
-	 * @param edgeLengthCostFactor The edgeLengthCostFactor to set.
-	 */
-	public void setEdgeLengthCostFactor(float edgeLengthCostFactor)
-	{
-		this.edgeLengthCostFactor = edgeLengthCostFactor;
-	}
-
-	/**
-	 * @return Returns the fineTuningRadius.
-	 */
-	public float getFineTuningRadius()
-	{
-		return fineTuningRadius;
-	}
-
-	/**
-	 * @param fineTuningRadius The fineTuningRadius to set.
-	 */
-	public void setFineTuningRadius(float fineTuningRadius)
-	{
-		this.fineTuningRadius = fineTuningRadius;
-	}
-
-	/**
-	 * @return Returns the initialMoveRadius.
-	 */
-	public float getInitialMoveRadius()
-	{
-		return initialMoveRadius;
-	}
-
-	/**
-	 * @param initialMoveRadius The initialMoveRadius to set.
-	 */
-	public void setInitialMoveRadius(float initialMoveRadius)
-	{
-		this.initialMoveRadius = initialMoveRadius;
-	}
-
-	/**
-	 * @return Returns the isFineTuning.
-	 */
-	public boolean isFineTuning()
-	{
-		return isFineTuning;
-	}
-
-	/**
-	 * @param isFineTuning The isFineTuning to set.
-	 */
-	public void setFineTuning(boolean isFineTuning)
-	{
-		this.isFineTuning = isFineTuning;
-	}
-
-	/**
-	 * @return Returns the isOptimizeBorderLine.
-	 */
-	public boolean isOptimizeBorderLine()
-	{
-		return isOptimizeBorderLine;
-	}
-
-	/**
-	 * @param isOptimizeBorderLine The isOptimizeBorderLine to set.
-	 */
-	public void setOptimizeBorderLine(boolean isOptimizeBorderLine)
-	{
-		this.isOptimizeBorderLine = isOptimizeBorderLine;
-	}
-
-	/**
-	 * @return Returns the isOptimizeEdgeCrossing.
-	 */
-	public boolean isOptimizeEdgeCrossing()
-	{
-		return isOptimizeEdgeCrossing;
-	}
-
-	/**
-	 * @param isOptimizeEdgeCrossing The isOptimizeEdgeCrossing to set.
-	 */
-	public void setOptimizeEdgeCrossing(boolean isOptimizeEdgeCrossing)
-	{
-		this.isOptimizeEdgeCrossing = isOptimizeEdgeCrossing;
-	}
-
-	/**
-	 * @return Returns the isOptimizeEdgeDistance.
-	 */
-	public boolean isOptimizeEdgeDistance()
-	{
-		return isOptimizeEdgeDistance;
-	}
-
-	/**
-	 * @param isOptimizeEdgeDistance The isOptimizeEdgeDistance to set.
-	 */
-	public void setOptimizeEdgeDistance(boolean isOptimizeEdgeDistance)
-	{
-		this.isOptimizeEdgeDistance = isOptimizeEdgeDistance;
-	}
-
-	/**
-	 * @return Returns the isOptimizeEdgeLength.
-	 */
-	public boolean isOptimizeEdgeLength()
-	{
-		return isOptimizeEdgeLength;
-	}
-
-	/**
-	 * @param isOptimizeEdgeLength The isOptimizeEdgeLength to set.
-	 */
-	public void setOptimizeEdgeLength(boolean isOptimizeEdgeLength)
-	{
-		this.isOptimizeEdgeLength = isOptimizeEdgeLength;
-	}
-
-	/**
-	 * @return Returns the isOptimizeNodeDistribution.
-	 */
-	public boolean isOptimizeNodeDistribution()
-	{
-		return isOptimizeNodeDistribution;
-	}
-
-//	/**
-//	 * @param isOptimizeNodeDistribution The isOptimizeNodeDistribution to set.
-//	 */
-//	public void setOptimizeNodeDistribution(boolean isOptimizeNodeDistribution)
-//	{
-//		this.isOptimizeNodeDistribution = isOptimizeNodeDistribution;
-//	}
-
-	/**
-	 * @return Returns the maxIterations.
-	 */
-	public int getMaxIterations()
-	{
-		return maxIterations;
-	}
-
-	/**
-	 * @param maxIterations The maxIterations to set.
-	 */
-	public void setMaxIterations(int maxIterations)
-	{
-		this.maxIterations = maxIterations;
-	}
-
-	/**
-	 * @return Returns the minDistanceLimit.
-	 */
-	public float getMinDistanceLimit()
-	{
-		return minDistanceLimit;
-	}
-
-	/**
-	 * @param minDistanceLimit The minDistanceLimit to set.
-	 */
-	public void setMinDistanceLimit(float minDistanceLimit)
-	{
-		this.minDistanceLimit = minDistanceLimit;
-	}
-
-	/**
-	 * @return Returns the minMoveRadius.
-	 */
-	public float getMinMoveRadius()
-	{
-		return minMoveRadius;
-	}
-
-	/**
-	 * @param minMoveRadius The minMoveRadius to set.
-	 */
-	public void setMinMoveRadius(float minMoveRadius)
-	{
-		this.minMoveRadius = minMoveRadius;
-	}
-
-	/**
-	 * @return Returns the nodeDistributionCostFactor.
-	 */
-	public float getNodeDistributionCostFactor()
-	{
-		return nodeDistributionCostFactor;
-	}
-
-	/**
-	 * @param nodeDistributionCostFactor The nodeDistributionCostFactor to set.
-	 */
-	public void setNodeDistributionCostFactor(float nodeDistributionCostFactor)
-	{
-		this.nodeDistributionCostFactor = nodeDistributionCostFactor;
-	}
-
-	/**
-	 * @return Returns the radiusScaleFactor.
-	 */
-	public float getRadiusScaleFactor()
-	{
-		return radiusScaleFactor;
-	}
-
-	/**
-	 * @param radiusScaleFactor The radiusScaleFactor to set.
-	 */
-	public void setRadiusScaleFactor(float radiusScaleFactor)
-	{
-		this.radiusScaleFactor = radiusScaleFactor;
-	}
-
-	/**
-	 * @return Returns the circleResolution.
-	 */
-	public static int getCircleResolution()
-	{
-		return circleResolution;
-	}
-
-
-	/**
-	 * @return Returns the unchangedEnergyRoundTermination.
-	 */
-	public int getUnchangedEnergyRoundTermination()
-	{
-		return unchangedEnergyRoundTermination;
-	}
-
-	/**
-	 * @param unchangedEnergyRoundTermination The unchangedEnergyRoundTermination to set.
-	 */
-	public void setUnchangedEnergyRoundTermination(
-			int unchangedEnergyRoundTermination)
-	{
-		this.unchangedEnergyRoundTermination = unchangedEnergyRoundTermination;
-	}
-
-	/**
-	 * @return Returns the maxDistanceLimit.
-	 */
-	public float getMaxDistanceLimit()
-	{
-		return maxDistanceLimit;
-	}
-
-	/**
-	 * @param maxDistanceLimit The maxDistanceLimit to set.
-	 */
-	public void setMaxDistanceLimit(float maxDistanceLimit)
-	{
-		this.maxDistanceLimit = maxDistanceLimit;
-	}
-
-	/**
-	 * @return the approxNodeDimensions
-	 */
-	public boolean isApproxNodeDimensions()
-	{
-		return approxNodeDimensions;
-	}
-
-	/**
-	 * @param approxNodeDimensions the approxNodeDimensions to set
-	 */
-	public void setApproxNodeDimensions(boolean approxNodeDimensions)
-	{
-		this.approxNodeDimensions = approxNodeDimensions;
-	}
-	
-	/**
-	 * @return the disableEdgeStyle
-	 */
-	public boolean isDisableEdgeStyle()
-	{
-		return disableEdgeStyle;
-	}
-
-	/**
-	 * @param disableEdgeStyle the disableEdgeStyle to set
-	 */
-	public void setDisableEdgeStyle(boolean disableEdgeStyle)
-	{
-		this.disableEdgeStyle = disableEdgeStyle;
-	}
-
-	/**
-	 * @return the resetEdges
-	 */
-	public boolean isResetEdges()
-	{
-		return resetEdges;
-	}
-
-	/**
-	 * @param resetEdges the resetEdges to set
-	 */
-	public void setResetEdges(boolean resetEdges)
-	{
-		this.resetEdges = resetEdges;
-	}
 }

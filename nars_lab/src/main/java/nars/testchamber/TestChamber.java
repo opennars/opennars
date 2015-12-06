@@ -1,9 +1,8 @@
 package nars.testchamber;
 
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.bag.impl.MapCacheBag;
+import nars.bag.impl.GuavaCacheBag;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.nar.Default;
@@ -18,7 +17,6 @@ import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
 import nars.testchamber.operator.Pick;
 import nars.time.RealtimeMSClock;
-import org.infinispan.commons.util.WeakValueHashMap;
 import processing.core.PVector;
 
 import java.util.List;
@@ -41,16 +39,17 @@ public class TestChamber {
 
 
     public static void main(String[] args) {
-        Default nar = new Default2(1024, 100, 1, 3);
         Memory mem = new Memory(new RealtimeMSClock(),
-                new MapCacheBag(
-                        new WeakValueHashMap<>()
-                        //new GuavaCacheBag<>()
+                //new MapCacheBag(
+                        //new WeakValueHashMap<>())
+                        GuavaCacheBag.make(1024*1024)
                 /*new InfiniCacheBag(
                     InfiniPeer.tmp().getCache()
                 )*/
-                )
+
         );
+        Default nar = new Default2(mem, 4096, 100, 1, 3);
+
         //nar.nal(9);
         nar.setTaskLinkBagSize(32);
         nar.setTermLinkBagSize(128);
@@ -58,15 +57,18 @@ public class TestChamber {
         new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
 
 
+        nar.the(Default.DefaultCycle.class, nar.core);
+
         /*nar.memory.conceptForgetDurations.set(10);
         nar.memory.termLinkForgetDurations.set(100);*/
 
-        nar.memory.duration.set(750 /* ie, milliseconds */);
+        nar.memory.duration.set(50 /* ie, milliseconds */);
         nar.memory.conceptForgetDurations.setValue(20);
+
 
         //set NAR architecture parameters:
         //builder...
-        Global.DEFAULT_JUDGMENT_DURABILITY = 0.99f; //try to don't forget the input in TestChamber domain
+        //Global.DEFAULT_JUDGMENT_DURABILITY = 0.99f; //try to don't forget the input in TestChamber domain
 
         //set NAR runtime parmeters:  
 //
@@ -86,6 +88,7 @@ public class TestChamber {
 
                 //ide.content.getTabs().setAll(new TabX("Graph", newGraph(n)));
             i.addView(new IOPane(nar));
+
 
             //new NARSwing(nar);
             new TestChamber(nar);

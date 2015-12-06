@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTester {
 
-    public static final int cycles = 60;
+    public static final int cycles = 120;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -196,7 +196,7 @@ public class NAL3Test extends AbstractNALTester {
     public void compound_decomposition_one_premise2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(|, boy, girl) --> youth>", 0.9f, 0.9f); //.en("Boys and gials are youth.");
-        tester.mustBelieve(cycles, "<boy --> youth>", 0.90f ,0.73f); //.en("Boys are youth.");
+        tester.mustBelieve(cycles*2, "<boy --> youth>", 0.90f ,0.73f); //.en("Boys are youth.");
         tester.run();
     }
 

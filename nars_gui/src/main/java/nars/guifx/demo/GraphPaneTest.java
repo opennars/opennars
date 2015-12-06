@@ -12,7 +12,6 @@ import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.JGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
-import nars.nal.DerivationRules;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nar.Default2;
@@ -34,9 +33,7 @@ import static nars.$.$;
  */
 public class GraphPaneTest {
 
-    static {
-        DerivationRules.maxVarArgsToMatch = 2;
-    }
+
 
     public static SpaceGrapher newGrapher() {
 

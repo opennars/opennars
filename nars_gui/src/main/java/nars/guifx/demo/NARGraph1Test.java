@@ -1,7 +1,6 @@
 package nars.guifx.demo;
 
 import nars.concept.Concept;
-import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
@@ -11,7 +10,6 @@ import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
-import nars.nal.DerivationRules;
 import nars.nar.Default;
 import nars.process.BagForgettingEnhancer;
 import nars.time.FrameClock;
@@ -21,9 +19,6 @@ import nars.time.FrameClock;
  */
 public class NARGraph1Test {
 
-    static {
-        DerivationRules.maxVarArgsToMatch = 2;
-    }
 
     public static SpaceGrapher newGraph(Default n) {
 
@@ -79,8 +74,8 @@ public class NARGraph1Test {
 
         NARide.show(n.loop(), ide -> {
 
+            //ide.addView(new IOPane(n));
             ide.content.getTabs().setAll(new TabX("Graph", newGraph(n)));
-            ide.addView(new IOPane(n));
 
 
             //n.frame(5);

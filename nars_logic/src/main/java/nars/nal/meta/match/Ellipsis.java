@@ -246,9 +246,9 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
     }
 
     /** collect a range of subterms */
-    public ShadowProduct matchRange(Compound x, Compound y, int from, int to, FindSubst subst) {
+    public ShadowProduct collect(Compound y, int from, int to, FindSubst subst) {
         return new ShadowProduct(
-            subst.match(x, y, from, to)
+            subst.collect(y, from, to)
         );
     }
 

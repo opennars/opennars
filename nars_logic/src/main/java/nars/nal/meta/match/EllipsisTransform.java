@@ -33,26 +33,27 @@ public class EllipsisTransform extends EllipsisOneOrMore {
         throw new RuntimeException("HACK - this is handled by TaskRule.TaskRuleVariableNormalization");
     }
 
-    public ShadowProduct matchRange(Compound x, Compound y, int a, int b, FindSubst subst) {
+    public ShadowProduct collect(Compound y, int a, int b, FindSubst subst) {
         if (from.equals(Image.Index) && (y instanceof Image)) {
             Image ii = (Image)y;
             int rel = ii.relationIndex;
-            int n = (b-a)+1+1;
+            int n = (b-a)+1;
             int i = 0;
             int ab = 0;
             Term[] t = new Term[n];
             while (i < n)  {
                 if (i == rel) {
-                    t[i++] = subst.getXY(to);
+                    t[i++] = subst.resolve(to);
                 }
-                Term yy = y.term(ab);
-                subst.match(x.term(ab), yy);
-                t[i++] = yy;
+                else {
+                    Term yy = y.term(ab);
+                    t[i++] = yy;
+                }
                 ab++;
             }
             return new ShadowProduct(t);
         }
 
-        return super.matchRange(x, y, a, b, subst);
+        return super.collect(y, a, b, subst);
     }
 }

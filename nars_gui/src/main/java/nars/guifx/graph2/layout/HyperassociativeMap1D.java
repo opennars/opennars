@@ -16,7 +16,7 @@ public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap
     }
 
     @Override
-    public double getSpeedFactor(TermNode<N> termNode) {
+    public double getSpeedFactor(TermNode termNode) {
 
             //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
             return scaleFactor*5.0;

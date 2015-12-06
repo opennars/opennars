@@ -25,8 +25,8 @@ public class DerivationRules extends FastList<TaskRule> {
     private static final Pattern implOperatorPattern = Pattern.compile("==>", Pattern.LITERAL);
     private static final Pattern conjOperatorPattern = Pattern.compile("&&", Pattern.LITERAL);
 
-    @Deprecated
-    public static int maxVarArgsToMatch = 3; //originally 5 but as few as 2 can allow tests to pass
+//    @Deprecated
+//    public static int maxVarArgsToMatch = 3; //originally 5 but as few as 2 can allow tests to pass
 
     //static final Narsese parser = Narsese.the();
 
@@ -125,7 +125,7 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
     @Deprecated /* soon */ static String preprocess(String rule) //minor things like Truth.Comparison -> Truth_Comparison
-    {                                     //A_1..n ->  "A_1_n" and adding of "<" and ">" in order to be parsable
+    {
 
         String ret = '<' + rule + '>';
 
@@ -256,7 +256,7 @@ public class DerivationRules extends FastList<TaskRule> {
     static Set<TaskRule> parseRules(final Collection<String> rawRules) {
 
 
-        final Set<String> expanded = new HashSet(); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
+        final Set<String> expanded = new HashSet(1000); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
 
         rawRules/*.parallelStream()*/.forEach(rule -> {
@@ -265,11 +265,11 @@ public class DerivationRules extends FastList<TaskRule> {
 
 
             //there might be now be A_1..maxVarArgsToMatch in it, if this is the case we have to add up to maxVarArgsToMatch ur
-            if (p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
+            /*if (p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
                 addUnrolledVarArgs(expanded, p, maxVarArgsToMatch);
-            } else {
-                addAndPermuteTenses(expanded, p);
-            }
+            } else {*/
+            addAndPermuteTenses(expanded, p);
+
 
 
         });//.forEachOrdered(s -> expanded.addAll(s));
@@ -354,66 +354,66 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
 
-    private static void addUnrolledVarArgs(Set<String> expanded,
-                                           final String p,
-                                           @Deprecated int maxVarArgs
-                                           //TODO replace this with a var arg matcher, to reduce # of rules that would need to be created
-    )
-
-    {
-        String str = "A_1";
-
-        final boolean pAi = p.contains("A_i");
-        final boolean pBi = p.contains("B_1..m");
-        final boolean pSubst = p.contains("A_1..A_i.substitute(");
-
-        for (int i = 0; i < maxVarArgs; i++) {
-
-            if (pAi) {
-                for (int j = 0; j <= i; j++) {
-
-
-                    if (!pBi) {
-                        String A_i = "A_" + String.valueOf(j + 1);
-                        String strrep = str;
-                        if (pSubst) { //todo maybe allow others than just _ as argument
-                            strrep = str.replace(A_i, "_");
-                        }
-                        String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("A_i", A_i);
-                        addAndPermuteTenses(expanded, parsable_unrolled);
-                    } else {
-                        String str2 = "B_1";
-                        for (int k = 0; k < maxVarArgs; k++) {
-                            String A_i = "A_" + String.valueOf(j + 1);
-                            String strrep = str;
-                            if (pSubst) { //todo maybe allow others than just _ as argument
-                                strrep = str.replace(A_i, "_");
-                            }
-                            String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..m", str2).replace("A_i", A_i);
-                            addAndPermuteTenses(expanded, parsable_unrolled);
-                            str2 += ", B_" + (k + 2);
-                        }
-                    }
-                }
-            } else {
-                if (p.contains("B_1..m")) {
-                    String str2 = "B_1";
-                    for (int k = 0; k < maxVarArgs; k++) {
-                        str2 += ", B_" + (k + 2);
-                        String parsable_unrolled = p.replace("A_1..n", str + ' ').replace("B_1..m", str2 + ' ');
-                        addAndPermuteTenses(expanded, parsable_unrolled);
-                    }
-                } else {
-                    String parsable_unrolled = p.replace("A_1..n", str);
-                    addAndPermuteTenses(expanded, parsable_unrolled);
-                }
-            }
-
-            final int iPlus2 = i + 2;
-            str += ", A_" + iPlus2;
-
-        }
-    }
+//    private static void addUnrolledVarArgs(Set<String> expanded,
+//                                           final String p,
+//                                           @Deprecated int maxVarArgs
+//                                           //TODO replace this with a var arg matcher, to reduce # of rules that would need to be created
+//    )
+//
+//    {
+//        String str = "A_1";
+//
+//        final boolean pAi = p.contains("A_i");
+//        final boolean pBi = p.contains("B_1..m");
+//        final boolean pSubst = p.contains("A_1..A_i.substitute(");
+//
+//        for (int i = 0; i < maxVarArgs; i++) {
+//
+//            if (pAi) {
+//                for (int j = 0; j <= i; j++) {
+//
+//
+//                    if (!pBi) {
+//                        String A_i = "A_" + String.valueOf(j + 1);
+//                        String strrep = str;
+//                        if (pSubst) { //todo maybe allow others than just _ as argument
+//                            strrep = str.replace(A_i, "_");
+//                        }
+//                        String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("A_i", A_i);
+//                        addAndPermuteTenses(expanded, parsable_unrolled);
+//                    } else {
+//                        String str2 = "B_1";
+//                        for (int k = 0; k < maxVarArgs; k++) {
+//                            String A_i = "A_" + String.valueOf(j + 1);
+//                            String strrep = str;
+//                            if (pSubst) { //todo maybe allow others than just _ as argument
+//                                strrep = str.replace(A_i, "_");
+//                            }
+//                            String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..m", str2).replace("A_i", A_i);
+//                            addAndPermuteTenses(expanded, parsable_unrolled);
+//                            str2 += ", B_" + (k + 2);
+//                        }
+//                    }
+//                }
+//            } else {
+//                if (p.contains("B_1..m")) {
+//                    String str2 = "B_1";
+//                    for (int k = 0; k < maxVarArgs; k++) {
+//                        str2 += ", B_" + (k + 2);
+//                        String parsable_unrolled = p.replace("A_1..n", str + ' ').replace("B_1..m", str2 + ' ');
+//                        addAndPermuteTenses(expanded, parsable_unrolled);
+//                    }
+//                } else {
+//                    String parsable_unrolled = p.replace("A_1..n", str);
+//                    addAndPermuteTenses(expanded, parsable_unrolled);
+//                }
+//            }
+//
+//            final int iPlus2 = i + 2;
+//            str += ", A_" + iPlus2;
+//
+//        }
+//    }
 
 
 //    public boolean isValid() {

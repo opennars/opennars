@@ -6,7 +6,6 @@ import nars.NAR;
 import nars.guifx.NARfx;
 import nars.guifx.StatusPane;
 import nars.guifx.util.NSlider;
-import nars.nal.DerivationRules;
 import nars.nar.Default;
 import nars.util.meter.MemoryBudget;
 
@@ -17,9 +16,6 @@ public class BudgetControlGame {
 
     public static final int historySize = 256;
 
-    static {
-        DerivationRules.maxVarArgsToMatch = 2;
-    }
 
     MemoryBudget m = new MemoryBudget();
 

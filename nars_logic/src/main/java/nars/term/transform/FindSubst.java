@@ -982,8 +982,7 @@ public class FindSubst extends Subst implements Substitution {
                         //TODO special handling to extract intermvals from Sequence terms here
 
                         putXY(Xellipsis,
-                                Xellipsis.matchRange(X, Y, j, ysize, this));
-                        i += j;
+                                Xellipsis.collect(Y, j, j + available, this));
                     } else if (i == 0) {
                         //PREFIX the ellipsis occurred at the start and there are additional terms following it
                         //TODO

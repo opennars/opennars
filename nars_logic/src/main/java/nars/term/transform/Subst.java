@@ -120,14 +120,12 @@ public abstract class Subst extends Versioning {
     }
 
     /** match a range of subterms of Y */
-    public Term[] match(Compound x, Compound y, int from, int to) {
+    public Term[] collect(Compound y, int from, int to) {
         final int s = to-from;
         Term[] m = new Term[s];
         for (int i = 0; i < s; i++) {
             int k = i+from;
-            Term yy = yy = y.term(k);
-            match(x.term(k), yy);
-            m[i] = yy;
+            m[i] = y.term(k);
         }
 
         return m;

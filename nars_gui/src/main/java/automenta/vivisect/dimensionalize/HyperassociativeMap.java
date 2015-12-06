@@ -22,7 +22,6 @@ package automenta.vivisect.dimensionalize;
  import java.util.Map.Entry;
  import java.util.concurrent.ExecutionException;
  import java.util.concurrent.Future;
- import java.util.function.Consumer;
 
 /**
  * FROM:
@@ -365,7 +364,7 @@ abstract public class HyperassociativeMap<K,V>  {
 //    }
 
 
-    protected abstract void edges(V nodeToQuery, Consumer<V> updateFunc);
+    protected abstract void edges(V nodeToQuery, ObjectDoubleHashMap<V> neighbors);
 
     void getNeighbors(final V nodeToQuery, ObjectDoubleHashMap<V> neighbors) {
         if (neighbors == null)
@@ -373,10 +372,13 @@ abstract public class HyperassociativeMap<K,V>  {
         else
             neighbors.clear();
 
+
         final ObjectDoubleHashMap<V> finalNeighbors = neighbors;
-        edges(nodeToQuery, otherNode -> updateNeighbors(nodeToQuery, finalNeighbors, otherNode, 1f));
-//
-//  for (Object neighborEdge : outs(nodeToQuery, )) {
+        edges(nodeToQuery, finalNeighbors);
+
+
+
+//        for (Object neighborEdge : outs(nodeToQuery, )) {
 //            updateNeighbors(nodeToQuery, neighbors, (E) neighborEdge);
 //        }
 //        for (Object neighborEdge : ins(nodeToQuery.getEdgesIn()) {

@@ -55,7 +55,7 @@ public interface Substitution extends Function<Compound,Term> {
 
                 if (t instanceof EllipsisTransform) {
                     if (((EllipsisTransform)t).to.equals(Image.Index)) {
-
+                        //imageRelation = ..
                     }
                 }
 
@@ -172,6 +172,9 @@ public interface Substitution extends Function<Compound,Term> {
                 continue; //ignore any '..' which may be present in the expansion
             sub[j++] = xx;
         }
+
+
+
         return j;
     }
 

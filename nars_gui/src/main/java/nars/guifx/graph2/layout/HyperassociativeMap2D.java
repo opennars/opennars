@@ -1,28 +1,38 @@
 package nars.guifx.graph2.layout;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
+import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.annotation.Range;
+import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.term.Termed;
 
-import java.util.function.Consumer;
-
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap<N,TermNode<N>> implements IterativeLayout<TermNode<N>> {
+public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap<N,TermNode> implements IterativeLayout<TermNode> {
     double scaleFactor = 1;
     private TermNode[] termList = null;
 
 
     //TODO equilibrum distance, speed, etc
 
-    @Range(min = 1, max = 20)
+    @Range(min = 0.1, max = 10)
     public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(15.0);
-    @Range(min = 1, max = 20)
+    @Range(min = 0.1, max = 10)
     public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(10.0);
+    @Range(min = 0, max = 25)
+    public final SimpleDoubleProperty nodeSpeed = new SimpleDoubleProperty(5.0);
+    @Range(min = 0, max = 4)
+    public final SimpleDoubleProperty equilibriumDistance = new SimpleDoubleProperty(0.1);
+
+    @Range(min = 1, max = 400)
+    public final SimpleDoubleProperty scale = new SimpleDoubleProperty(100.0);
+    private float _nodeSpeed;
+    private SpaceGrapher graph;
+
 
     public HyperassociativeMap2D() {
         this(2);
@@ -34,26 +44,27 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
 
     public HyperassociativeMap2D(int dim, double eqDist) {
         super(dim, eqDist,
-                Manhattan);
-                //Euclidean);
+                //Manhattan);
+                Euclidean);
 
         //reusedCurrentPosition = new ArrayRealVector(dim);
     }
 
-    double scale = 100;
+
 
     @Override
-    public void init(TermNode<N> n) {
+    public void init(TermNode n) {
+        final float scale = this.scale.floatValue();
         n.move(-scale/2 + Math.random() * scale,
                 -scale/2 + Math.random() * scale);
     }
 
-    @Override public void getPosition(final TermNode<N> node, final double[] v) {
+    @Override public void getPosition(final TermNode node, final double[] v) {
         node.getPosition(v);
     }
 
     @Override
-    public void move(TermNode<N> node, double v0, double v1) {
+    public void move(TermNode node, double v0, double v1) {
         node.move(v0, v1);
     }
 
@@ -74,6 +85,7 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
         init();
 
         this.termList = graph.displayed;
+        this.graph = graph;
 
         align(i);
 
@@ -86,7 +98,8 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
         setRepulsiveWeakness(repulseWeakness.get());
         setAttractionStrength(attractionStrength.get());
         setMaxRepulsionDistance(1000);
-        setEquilibriumDistance(0.01f);
+        setEquilibriumDistance(equilibriumDistance.floatValue());
+        this._nodeSpeed = this.nodeSpeed.floatValue();
     }
 
 
@@ -111,17 +124,18 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
 
 
     @Override
-    public double getRadius(TermNode<N> termNode) {
+    public double getRadius(TermNode termNode) {
 
         return termNode.priNorm * 1;
 
     }
 
     @Override
-    protected void edges(TermNode<N> t, Consumer<TermNode<N>> updateFunc) {
+    protected void edges(TermNode t, ObjectDoubleHashMap<TermNode> neighbors) {
 
+        for (TermEdge e : t.getEdges())
+            neighbors.put(graph.getTermNode(e.bSrc.getTerm()), e.getWeight());
     }
-
 
 //    @Override
 //    public double getSpeedFactor(TermNode<N> termNode) {
@@ -133,7 +147,7 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
     @Override
     public void apply(TermNode node, double[] dataRef) {
 
-        node.move(dataRef[0], dataRef[1], 0.65, 0);
+        node.move(dataRef[0], dataRef[1], _nodeSpeed);
     }
 
     @Override
