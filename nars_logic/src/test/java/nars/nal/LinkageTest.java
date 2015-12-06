@@ -7,7 +7,6 @@ import nars.nar.Default;
 import nars.nar.Default2;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.graph.TermLinkGraph;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +21,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTester {
 
-    private int cycles = 55;
+    private int cycles = 35;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
@@ -132,11 +131,13 @@ public class LinkageTest extends AbstractNALTester {
             }
         }
 
-        System.err.println(premise1 + " not linked with " + premise2);
-        TermLinkGraph g = new TermLinkGraph(nar);
-        g.print(System.out);
+        //System.err.println(premise1 + " not linked with " + premise2);
+        //TermLinkGraph g = new TermLinkGraph(nar);
+
+        //g.print(System.out);
 
         assertTrue(passed && passed2);
+        //assertTrue(g.isConnected());
 
 //        if(passed && passed2) { //dummy to pass the test:
 //            tester.believe("<a --> b>");

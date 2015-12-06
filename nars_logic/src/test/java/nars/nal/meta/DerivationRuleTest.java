@@ -5,12 +5,8 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.TaskRule;
-import nars.nal.meta.match.Ellipsis;
-import nars.nal.meta.match.EllipsisOneOrMore;
-import nars.nal.meta.match.EllipsisTransform;
-import nars.nal.meta.match.EllipsisZeroOrMore;
+import nars.nal.meta.match.*;
 import nars.nal.nal4.Product;
-import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -207,12 +203,14 @@ public class DerivationRuleTest extends TestCase {
                 //System.out.println(x + "\t" + y + "\t" +f);
                 assertTrue(matched);
 
-                Term varArgs = f.getXY(ellipsisTerm);
+                EllipsisMatch varArgs = (EllipsisMatch)f.getXY(ellipsisTerm);
 
-                assertEquals(" says " + varArgs.toString() + " product", Op.PRODUCT, varArgs.op());
+
                 assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
-                Set<Term> varArgTerms = Terms.toSortedSet(((ShadowProduct) varArgs).terms());
+                Set<Term> varArgTerms = Global.newHashSet(1);
+                varArgs.resolve(f, varArgTerms);
+
                 assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 
                 testFurther(selectedFixed, f, varArgTerms);
@@ -397,7 +395,7 @@ public class DerivationRuleTest extends TestCase {
             Random rng = new XorShift1024StarRandom(seed);
             FindSubst f = new FindSubst(Op.VAR_PATTERN, rng);
             f.setPower(1000);
-            boolean b = f.matchCompound(X, Y);
+            boolean b = f.match(X, Y);
             assertTrue(b);
             results.add(f.xy.toString());
         }

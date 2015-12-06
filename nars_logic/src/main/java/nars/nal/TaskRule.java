@@ -111,14 +111,12 @@ public class TaskRule extends ProductN implements Level {
 
 
     @Override
-    public final TaskRule normalizeDestructively() {
+    public final TaskRule normalized() {
         return (TaskRule) this.transform(uppercaseAtomsToPatternVariables);
     }
 
     @Override
     public Term normalized(TermIndex termIndex) {
-
-
 
         //task and belief pattern term
         for (int i = 0; i < 2; i++)

@@ -12,12 +12,12 @@ import java.util.Collection;
  * at the index location of the original image
  * used to make products from image subterms
  */
-public class ImagePutTransform extends AbstractEllipsisTransform<Term> {
+public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
 
     private final Term to;
     private final Image origin;
 
-    public ImagePutTransform(Term[] t, Term relationTerm, Image y) {
+    public ImagePutMatch(Term[] t, Term relationTerm, Image y) {
         super(t);
         this.to = relationTerm;
         this.origin = y;

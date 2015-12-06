@@ -126,7 +126,6 @@ abstract public class Image extends CompoundN {
 
     @Override
     public byte[] bytes() {
-        final int numArgs = size();
 
         ByteBuf b = ByteBuf.create(bytesLength());
 
@@ -134,12 +133,18 @@ abstract public class Image extends CompoundN {
 
         b.add((byte)relationIndex); //relation index
 
-        appendBytes(numArgs, b);
+        appendSubtermBytes(b);
 
         b.add(COMPOUND_TERM_CLOSERbyte); //closer
 
         return b.toBytes();
     }
+
+    @Override public boolean matchCompoundEx(Compound y) {
+        /** if they are images, they must have same relationIndex */
+        return (relationIndex != ((Image) y).relationIndex);
+    }
+
 
     //    @Override
 //    public byte[] bytes() {

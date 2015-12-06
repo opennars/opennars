@@ -60,14 +60,6 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
     <T extends Term> T normalized();
 
-    /** careful: this will modify the term and should not be used unless the instance is new and unreferenced. */
-    default <T extends Term> T normalizeDestructively() {
-        return (T) this;
-    }
-
-
-
-
 
     default void recurseTerms(final SubtermVisitor v) {
         recurseTerms(v, null);
@@ -285,7 +277,7 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
                 hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
     }
 
-    Term normalized(TermIndex termIndex);
+    <T extends Term> T normalized(TermIndex termIndex);
 
 
 

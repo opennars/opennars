@@ -24,6 +24,7 @@ import nars.Op;
 import nars.term.Compound;
 import nars.term.CompoundN;
 import nars.term.Term;
+import nars.term.transform.FindSubst;
 
 import java.io.IOException;
 
@@ -117,6 +118,12 @@ public final class Negation<T extends Term> extends CompoundN<T> {
     @Override
     public final void append(Appendable p, boolean pretty) throws IOException {
         Compound.writeCompound1(op(), the(), p, pretty);
+    }
+
+
+    @Override public boolean matchSubterms(Compound Y, FindSubst subst) {
+        return subst.match(the(), Y.term(0));
+        //return matchSubterm(0, Y, subst);
     }
 
     /*

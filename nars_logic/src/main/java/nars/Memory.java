@@ -552,6 +552,7 @@ public class Memory extends Param {
             //return terms.computeIfAbsent(t, n -> n.normalized(this));
         }
 
+        //TODO combine this step with variable normalization
         final CompoundTransform<Compound,Term> ct = new CompoundTransform<Compound,Term>() {
 
             @Override

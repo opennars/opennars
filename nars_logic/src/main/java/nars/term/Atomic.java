@@ -85,7 +85,7 @@ public abstract class Atomic implements Term, Byted {
 
 
     @Override
-    public final int size() {
+    public int size() {
         return 0;
     }
 
@@ -114,7 +114,6 @@ public abstract class Atomic implements Term, Byted {
 
     @Override
     public final Term normalized(TermIndex termIndex) {
-        //if this is called, this atom will be the unique reference for any subsequent equivalent atomic terms which are normalized
         return this;
     }
 

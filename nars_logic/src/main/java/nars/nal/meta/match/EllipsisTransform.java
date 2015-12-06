@@ -1,7 +1,6 @@
 package nars.nal.meta.match;
 
 import nars.nal.nal4.Image;
-import nars.nal.nal4.ShadowProduct;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
@@ -36,7 +35,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
                 to instanceof Variable ? normalizer.apply((Variable)to) : to);
     }
 
-    public ShadowProduct collect(Compound y, int a, int b, FindSubst subst) {
+    public ArrayEllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
         if (from.equals(Image.Index) && (y instanceof Image)) {
             Image ii = (Image)y;
             int rel = ii.relationIndex;
@@ -53,9 +52,11 @@ public class EllipsisTransform extends EllipsisOneOrMore {
                 }
                 ab++;
             }
-            return new ShadowProduct(t);
+            return new ArrayEllipsisMatch(t);
         }
 
-        return super.collect(y, a, b, subst);
+        return new ArrayEllipsisMatch(
+                subst, y, a, b
+        );
     }
 }

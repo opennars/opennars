@@ -22,11 +22,15 @@ package nars.term;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.match.Ellipsis;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
+import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
+import nars.term.transform.FindSubst;
 import nars.term.transform.Substitution;
+import nars.term.transform.VariableNormalization;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -37,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static nars.Symbols.*;
+import static nars.util.data.Util.hashCombine;
 
 /**
  * a compound term
@@ -107,6 +112,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
 
+    @Override
     default Term substituted(Substitution s) {
         return s.apply(this);
     }
@@ -303,6 +309,29 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 //    }
 
 
+
+    @Override
+    default Term normalized(TermIndex termIndex) {
+        return transform(termIndex.getCompoundTransformer());
+    }
+    /**
+     * Normalizes if contain variables which need to be finalized for use in a Sentence
+     * May return null if the resulting compound term is invalid
+     */
+    @Override
+    default <T extends Term> T normalized() {
+        if (isNormalized())
+            return (T) this;
+
+        final Compound result = VariableNormalization.normalizeFast(this).get();
+        if (result == null)
+            return null;
+
+        result.setNormalized(true);
+
+        return (T) result;
+    }
+
     default <X extends Compound> X transform(final CompoundTransform t) {
         return transform(t, true);
     }
@@ -357,7 +386,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-    TermContainer subterms();
+    TermContainer<T> subterms();
 
 //    public Term[] cloneTermsReplacing(final Term from, final Term to) {
 //        Term[] y = new Term[length()];
@@ -421,6 +450,88 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     void addAllTo(Collection<Term> set);
 
+    /** universal compound hash function */
+    static <T extends Term> int hash(CompoundN c, int hashSalt) {
+        int h = hashCombine( c.subterms().hashCode(), c.op().ordinal() );
+        if (hashSalt!=0)
+            h = hashCombine(h, hashSalt);
+        return h;
+    }
+
+    /**
+     * unification matching entry point (default implementation)
+     *
+     * @param y compound to match against (the instance executing this method is considered 'x')
+     * @param subst the substitution context holding the match state
+     * @return whether match was successful or not, possibly having modified subst regardless
+     *
+     * implementations may assume that y's .op() already matches this, and that
+     * equality has already determined to be false.
+     * */
+    default boolean match(Compound y, FindSubst subst) {
+
+        //TODO in compiled Compound's for patterns, include
+        //# of PATTERN_VAR so that at this point, if
+        //# vars of the expected pattern are zero,
+        //and since it doesnt equal, there is no match to test
+
+        if (!Ellipsis.hasEllipsis(this)) { //PRECOMPUTABLE
+            if (matchCompoundEx(y)) {
+                return matchSubterms(y, subst);
+            } else {
+                return false;
+            }
+        } else {
+            return subst.matchCompoundWithEllipsis(this, y);
+        }
+    }
+
+    /**
+     * default implementation
+     *
+     * X contains no ellipsis to consider (simple/fast)
+     * this implementation can assume that Y has the same size as this, same op.
+     * any additional metadata checks are performed in matchCompoundEx() which by default returns true
+     */
+    default boolean matchSubterms(final Compound Y, final FindSubst subst) {
+
+        int size = Y.size();
+
+        if (size == 1) {
+            return matchSubterm(0, Y, subst);
+        } else {
+            if (isCommutative()) {
+                return subst.matchPermute(this, Y); //commutative, try permutations
+            } else {
+                return subst.matchLinear(subterms(), Y.subterms(), 0, size); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+            }
+        }
+    }
+
+    default boolean matchSubterm(int Xn, final Compound Y, final FindSubst subst) {
+        return subst.match(term(Xn), Y.term(Xn));
+    }
+
+    /** implementatoins may assume that y has:
+     *      equal op()
+     *
+     *  (and that no ellipsis is involved.)
+     */
+    default boolean matchCompoundEx(Compound y) {
+        final int yStructure = y.structure();
+
+        return
+                //this term as a pattern involves anything y does not?
+                ((yStructure | structure()) == yStructure)
+                // ?? && ( y.volume() >= volume() )
+                //same size
+             && (size()==y.size());
+    }
+
+    default boolean matchCompoundExEllipsis(Compound y, Ellipsis e) {
+        //TODO a more careful handling when an Ellipsis term is involved in the match
+        return true;
+    }
 
 
 //    public int countOccurrences(final Term t) {

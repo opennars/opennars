@@ -133,7 +133,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public boolean isNormalized() {
-        return false;
+        return normalized;
     }
 
     @Override

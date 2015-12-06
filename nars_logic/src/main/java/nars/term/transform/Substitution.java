@@ -2,9 +2,8 @@ package nars.term.transform;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.meta.match.AbstractEllipsisTransform;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.nal4.ShadowProduct;
+import nars.nal.meta.match.EllipsisMatch;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
@@ -41,7 +40,7 @@ public interface Substitution extends Function<Compound,Term> {
         final int len = c.size();
         List<Term> sub = Global.newArrayList(len);
 
-        AbstractEllipsisTransform post = null;
+        EllipsisMatch post = null;
 
 
         boolean changed = false;
@@ -61,19 +60,20 @@ public interface Substitution extends Function<Compound,Term> {
 
                 changed = true; //even if the ellipsis matches blank it is a change
 
-                ShadowProduct sp = (ShadowProduct) te;
-                if (sp instanceof AbstractEllipsisTransform) {
-                    if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + sp);
-                    post = (AbstractEllipsisTransform)sp;
-                    if (!post.resolve(this, sub))
+                EllipsisMatch am = (EllipsisMatch) te;
+                if (am instanceof EllipsisMatch) {
+                    if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + am);
+                    if (!am.resolve(this, sub))
                         return c;
+                    post = am;
                 } else {
                     //default
-                    for (Term xx : sp.term) {
-                        if (xx== Ellipsis.Shim)
-                            continue; //ignore any '..' which may be present in the expansion
-                        sub.add(xx);
-                    }
+//                    for (Term xx : am.term) {
+//                        if (xx== Ellipsis.Shim)
+//                            continue; //ignore any '..' which may be present in the expansion
+//                        sub.add(xx);
+//                    }
+                    throw new RuntimeException("..");
                 }
 
             } else if (t == Ellipsis.Shim) {

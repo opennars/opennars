@@ -143,7 +143,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         }
 
         //avoid cloning by transforming this new compound directly
-        Term ccontent = content.normalizeDestructively();
+        Term ccontent = content.normalized();
         if (ccontent!=null)
             ccontent = taskable(ccontent);
 

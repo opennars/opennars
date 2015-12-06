@@ -9,7 +9,6 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.meta.match.*;
 import nars.nal.nal4.Image;
-import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 
 import java.util.Collection;
@@ -323,23 +322,6 @@ public class FindSubst extends Subst implements Substitution {
 //        }
 //    }
 
-    public final static class MatchCompound extends PatternOp {
-        public final Compound x;
-
-        public MatchCompound(Compound c) {
-            this.x = c;
-        }
-
-        @Override
-        public boolean run(Subst ff) {
-            return ff.matchCompound(x, ((Compound) ff.term.get()));
-        }
-
-        @Override
-        public String toString() {
-            return "..`" + x + '`';
-        }
-    }
 
 //    public final static class MatchPermute extends PatternOp {
 //        public final Compound x;
@@ -537,7 +519,7 @@ public class FindSubst extends Subst implements Substitution {
         final Op yOp = y.op();
 
         if ((xOp == yOp) && (x instanceof Compound)) {
-            return matchCompound((Compound) x, (Compound) y);
+            return ((Compound)x).match((Compound)y, this);
         }
 
         if (xOp == t) {
@@ -662,9 +644,9 @@ public class FindSubst extends Subst implements Substitution {
                     //being processed. (this is the opposite
                     //of the other condition of this if { })
                     if (matchEllipsedLinear(X, e, Y)) {
-                        ShadowProduct raw = (ShadowProduct) getXY(e);
-                        putXY(e, new ImagePutTransform(
-                                raw.terms(), et.to, (Image)Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
+                        putXY(e, new ImagePutMatch(
+                                raw.term, et.to, (Image)Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                         return true;
                     }
                 } else {
@@ -684,9 +666,9 @@ public class FindSubst extends Subst implements Substitution {
                     }
 
                     if (matchEllipsedLinear(X, e, Y)) {
-                        ShadowProduct raw = (ShadowProduct) getXY(e);
-                        putXY(e, new ImageTakeTransform(
-                            raw.terms(), imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
+                        putXY(e, new ImageTakeMatch(
+                            raw.term, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                         return true;
                     }
                 }
@@ -727,48 +709,8 @@ public class FindSubst extends Subst implements Substitution {
 //        return false;
 //    }
 
-    /**
-     * X contains no ellipsis to consider (simple/fast)
-     */
-    public final boolean matchCompoundWithoutEllipsis(Compound X, final Compound Y) {
-        int xsize = X.size();
-        int ysize = Y.size();
 
-        if (xsize != ysize)
-            return false;
 
-        /** if they are images, they must have same relationIndex */
-        if (X instanceof Image) { //PRECOMPUTABLE
-            if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                return false;
-        }
-
-        if (xsize == 1) {
-            return match(X.term(0), Y.term(0));
-        } else {
-            if (X.isCommutative()) {
-                return matchPermute(X, Y); //commutative, try permutations
-            } else {
-                return matchLinear(X.subterms(), Y.subterms(), 0, xsize); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-            }
-        }
-    }
-
-    /**
-     * X and Y are of the same operator type and length (arity)
-     * X's permutations matched against constant Y
-     */
-    public final boolean matchCompound(Compound X, final Compound Y) {
-
-        int xsize = X.size();
-        if (xsize == 0)
-            return true; //empty product, ex: ()
-
-        if (Ellipsis.hasEllipsis(X)) //PRECOMPUTABLE
-            return matchCompoundWithEllipsis(X, Y);
-        else
-            return matchCompoundWithoutEllipsis(X, Y);
-    }
 
     /**
      * @param x the compound which is permuted/shuffled
@@ -815,7 +757,7 @@ public class FindSubst extends Subst implements Substitution {
 //    }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
-        putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
+        putXY(Xellipsis, new CollectionEllipsisMatch(Y));
         return true;
     }
 
@@ -850,27 +792,19 @@ public class FindSubst extends Subst implements Substitution {
         //ALL OF THIS CAN BE PRECOMPUTED
         Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
         for (Term x : X.terms()) {
-            if (x == Xellipsis) continue;
-            if (x.equals(Ellipsis.Shim))
+            if (x == Xellipsis || x.equals(Ellipsis.Shim))
                 continue;
-            if (x.op() == type) {
+            if (x.op().isVar()) { // == type) {
                 Term r = getXY(x);
-                if (r != null) {
-                    if (r instanceof AbstractEllipsisTransform) {
-                        //adds what would ordinarily be inlined in a Substitution
-                        //which is not necessarily all of the terms it contains
-                        //if it were iterated directly
-                        ((AbstractEllipsisTransform) r).resolve(this, matchFirst);
-                        continue;
-                    } else if (r instanceof ShadowProduct) {
-                        /* this is a subsequent instance of
-                           an already matched ellipse, expand
-                           its contents as if it were part of X  */
-                        ((ShadowProduct) r).addAllTo(matchFirst);
-                        continue;
-                    }
-                }
+                if (r instanceof EllipsisMatch) {
+                    //adds what would ordinarily be inlined in a Substitution
+                    //which is not necessarily all of the terms it contains
+                    //if it were iterated directly
+                    ((EllipsisMatch) r).resolve(this, matchFirst);
+                    continue;
+                } //else r == null
             }
+
             matchFirst.add(x);
         }
 
@@ -915,13 +849,19 @@ public class FindSubst extends Subst implements Substitution {
                 x[1] = p;
             }
 
+            int startDivisor = powerDivisor;
+            if (!powerDividable(2))
+                return false;
+
+            boolean matched = false;
             for (int i = 0; i < 2; i++) {
 
                 boolean modified = false;
                 if (matchChoose1(x[0], y)) {
                     modified = true;
                     if (matchChoose1(x[1], y)) {
-                        return true;
+                        matched = true;
+                        break;
                     }
                 }
 
@@ -937,7 +877,9 @@ public class FindSubst extends Subst implements Substitution {
                 x[1] = p;
             }
 
-            return false;
+            powerDivisor = startDivisor;
+            return matched;
+
         } else if (xsize == 0) {
             return true;
         }
@@ -1005,7 +947,7 @@ public class FindSubst extends Subst implements Substitution {
             if (expansionFollows) i++; //skip over it
 
             if (x instanceof Ellipsis) {
-                Term eMatched = getXY(x); //ShadowProduct if non null
+                Term eMatched = getXY(x); //EllipsisMatch, or null
                 if (eMatched == null) {
                     //COLLECT
                     if (i == xsize) {
@@ -1017,7 +959,9 @@ public class FindSubst extends Subst implements Substitution {
                         //TODO special handling to extract intermvals from Sequence terms here
 
                         putXY(Xellipsis,
-                                Xellipsis.collect(Y, j, j + available, this));
+                                new ArrayEllipsisMatch(this,
+                                    Y, j, j + available
+                                ));
                     } else if (i == 0) {
                         //PREFIX the ellipsis occurred at the start and there are additional terms following it
                         //TODO
@@ -1031,7 +975,8 @@ public class FindSubst extends Subst implements Substitution {
                     //previous match exists, match against what it had
                     if (i == xsize) {
                         //SUFFIX - match the remaining terms against what the ellipsis previously collected
-                        Term[] sp = ((ShadowProduct) eMatched).term;
+                        //HACK this only works with ArrayEllipsisMatch type
+                        Term[] sp = ((ArrayEllipsisMatch) eMatched).term;
                         for (int k = 0; k < sp.length; k++) {
                             if (!match(sp[k], Y.term(j++)))
                                 return false;
@@ -1078,8 +1023,6 @@ public class FindSubst extends Subst implements Substitution {
      * a branch for comparing a particular permutation, called from the main next()
      */
     public boolean matchLinear(final TermContainer X, final TermContainer Y, int start, int stop) {
-
-
 
         int startDivisor = powerDivisor;
         if (!powerDividable(stop-start))

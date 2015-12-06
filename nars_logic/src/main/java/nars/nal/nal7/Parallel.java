@@ -64,8 +64,8 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
     }
 
     @Override
-    protected final void appendBytes(int numArgs, ByteBuf b) {
-        super.appendBytes(numArgs, b);
+    public final void appendSubtermBytes(ByteBuf b) {
+        super.appendSubtermBytes(b);
 
         //add intermval suffix
         b.addUnsignedInt(eventDuration);

@@ -496,7 +496,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     /** safely make a new task, if the term is not already known to be valid for a task */
     public static <C extends Compound> MutableTask make(C t) {
-        t.normalizeDestructively();
         Compound u = Task.taskable(t);
         if (u == null)
             return null;

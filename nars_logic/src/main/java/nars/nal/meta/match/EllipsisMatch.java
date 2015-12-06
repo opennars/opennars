@@ -1,12 +1,14 @@
 package nars.nal.meta.match;
 
-import nars.nal.nal4.ShadowProduct;
+import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.nal.nal7.Sequence;
+import nars.nal.nal7.ShadowAtom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.Substitution;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.function.Function;
 
 /**
  * Holds results of an ellipsis match and
@@ -14,10 +16,19 @@ import java.util.Collections;
  * subterm collection, and post-filter before
  * forming a resulting substituted term.
  */
-abstract public class AbstractEllipsisTransform<T extends Term> extends ShadowProduct {
+abstract public class EllipsisMatch<T extends Term> extends ShadowAtom {
 
-    public AbstractEllipsisTransform(Term[] t) {
-        super(t);
+    public EllipsisMatch() {
+        super("");
+    }
+
+    public static ArrayEllipsisMatch matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
+        Function<IntObjectPredicate,Term[]> arrayGen =
+                !(Y instanceof Sequence) ?
+                        Y::terms :
+                        ((Sequence)Y)::toArrayWithIntervals;
+
+        return new ArrayEllipsisMatch(arrayGen.apply( filter ));
     }
 
     /**
@@ -36,8 +47,7 @@ abstract public class AbstractEllipsisTransform<T extends Term> extends ShadowPr
      * using the Substitution parameters .getXY() method
      *
      * */
-    public boolean resolve(Substitution substitution, Collection<Term> target) {
-        Collections.addAll(target, term);
-        return true;
-    }
+    abstract public boolean resolve(Substitution substitution, Collection<Term> target);
+
+    abstract public int size();
 }

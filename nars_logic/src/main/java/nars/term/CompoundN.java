@@ -1,8 +1,6 @@
 package nars.term;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
-import nars.term.compile.TermIndex;
-import nars.term.transform.VariableNormalization;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 import nars.util.utf8.ByteBuf;
@@ -11,9 +9,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
-import static nars.util.data.Util.hashCombine;
 
 
 public abstract class CompoundN<T extends Term> implements Compound<T> {
@@ -43,11 +39,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     protected CompoundN(TermVector subterms, int hashSalt) {
         this.terms = subterms;
 
-        int h = hashCombine( subterms().hashCode(), op().ordinal() );
-        if (hashSalt!=0)
-            h = hashCombine(h, hashSalt);
-
-        this.hash = h;
+        this.hash = Compound.hash(this, hashSalt);
     }
 
     public CompoundN(T t) {
@@ -77,10 +69,6 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
         terms.addAllTo(set);
     }
 
-
-
-
-
     @Override
     public final TermVector<T> subterms() {
         return terms;
@@ -100,21 +88,11 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     public final boolean equalsCompound(Compound that) {
-        return terms.equals(that.subterms()) && (op() == that.op());
+        return subterms().equals(that.subterms()) && (op() == that.op());
     }
 
 
-    @Override
-    public <T extends Term> T normalized() {
-        return normalized(false);
-    }
 
-    @Override
-    public Term normalized(TermIndex termIndex) {
-        //return cloneTransforming(termIndex.getCompoundTransformer());
-        return transform(termIndex.getCompoundTransformer());
-        //return this;
-    }
 
 
     /**
@@ -256,30 +234,6 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
         return terms.isNormalized();
     }
 
-    /**
-     * Normalizes if contain variables which need to be finalized for use in a Sentence
-     * May return null if the resulting compound term is invalid
-     */
-    protected final <T extends Term> T normalized(final boolean destructive) {
-
-        if (isNormalized()) {
-            return (T) this;
-        } else {
-            if (destructive) {
-                throw new RuntimeException("destructive normalization disabled");
-            }
-
-            final Compound result = VariableNormalization.normalizeFast(this, destructive).get();
-            if (result == null)
-                return null;
-
-
-            result.setNormalized(true);
-
-            return (T) result;
-        }
-
-    }
 
     @Override
     public void setNormalized(boolean b) {
@@ -302,39 +256,21 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     @Override
     public byte[] bytes() {
 
-        final int numArgs = size();
-
         ByteBuf b = ByteBuf.create(bytesLength());
 
         b.add((byte) op().ordinal()); //header
 
-        appendBytes(numArgs, b);
+        appendSubtermBytes(b);
 
         b.add(COMPOUND_TERM_CLOSERbyte); //closer
 
         return b.toBytes();
     }
 
-    protected void appendBytes(int numArgs, ByteBuf b) {
 
-        for (int i = 0; i < numArgs; i++) {
-            Term t = term(i);
-
-            if (i != 0) {
-                b.add(ARGUMENT_SEPARATORbyte);
-            }
-
-            try {
-                byte[] bb = t.bytes();
-                if (bb.length!=t.bytesLength())
-                    System.err.println("wtf");
-                b.add(bb);
-            }
-            catch (ArrayIndexOutOfBoundsException a) {
-                System.err.println("Wtf");
-            }
-        }
-
+    @Override
+    public void appendSubtermBytes(ByteBuf b) {
+        terms.appendSubtermBytes(b);
     }
 
     @Override
@@ -353,9 +289,5 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
         terms.visit(v, this);
     }
 
-    @Override
-    public Compound<T> normalizeDestructively() {
-        return normalized(false);
-    }
 
 }

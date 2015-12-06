@@ -71,13 +71,13 @@ public class VariableNormalization extends VariableTransform {
     //int serial = 0;
 
 
-    public static VariableNormalization normalize(Compound target, boolean destructive) {
+    public static VariableNormalization normalize(Compound target) {
         return new VariableNormalization(target, null);
     }
 
     /** allows using the single variable normalization,
      * which is safe if the term doesnt contain pattern variables */
-    public static VariableNormalization normalizeFast(Compound target, boolean destructive) {
+    public static VariableNormalization normalizeFast(Compound target) {
         return new VariableNormalization(target, target.vars() == 1 ?
                 singleVariableNormalization : null);
     }

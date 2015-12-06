@@ -41,13 +41,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         Term host = c.getTerm();
         if (host instanceof Compound) {
 
-            int complexity = host.complexity();
-
-            template = Global.newArrayList(/* initial size estimate */complexity + 1);
-
             Set<Term> components = Global.newHashSet(host.complexity());
             prepareComponentLinks((Compound)host, components);
 
+            template = Global.newArrayList(components.size());
             components.forEach(t -> template.add(
                     new TermLinkTemplate(host, t))
             );
@@ -76,7 +73,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
         for (int i = 0; i < t.size(); i++) {
-            Term ti = t.term(i).normalized();
+            Term ti = t.term(i); //.normalized();
             if (!growComponent(ti)) {
                 continue;
             }
@@ -101,7 +98,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 boolean t1Grow = growLevel1(ti);
 
                 for (int j = 0; j < cti.size(); j++) {
-                    Term tj = cti.term(j).normalized();
+                    Term tj = cti.term(j); //.normalized();
 
                     if (!(tj instanceof Variable)) {
                         if (t1Grow) {
@@ -114,7 +111,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         if(tj instanceof Compound) {
                             Compound cctj = (Compound) tj;
                             for (int k = 0; k < cctj.size(); k++) {
-                                final Term tk = cctj.term(k).normalized();
+                                final Term tk = cctj.term(k); //.normalized();
 
                                 if (!(tk instanceof Variable)) {
                                     components.add(tk);

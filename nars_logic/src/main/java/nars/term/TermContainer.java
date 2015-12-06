@@ -4,9 +4,12 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
+import nars.util.utf8.ByteBuf;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 
 
 /**
@@ -116,6 +119,32 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
                 return i;
         }
         return -1;
+    }
+
+
+    /** writes subterm bytes, including any attached metadata preceding or following it */
+    default void appendSubtermBytes(ByteBuf b) {
+
+        final int n = size();
+
+        for (int i = 0; i < n; i++) {
+            Term t = term(i);
+
+            if (i != 0) {
+                b.add(ARGUMENT_SEPARATORbyte);
+            }
+
+            try {
+                byte[] bb = t.bytes();
+                if (bb.length!=t.bytesLength())
+                    System.err.println("wtf");
+                b.add(bb);
+            }
+            catch (ArrayIndexOutOfBoundsException a) {
+                System.err.println("Wtf");
+            }
+        }
+
     }
 
     default boolean containsTermRecursively(Term target) {

@@ -27,6 +27,7 @@ import nars.nal.nal8.Operator;
 import nars.op.io.echo;
 import nars.task.Task;
 import nars.term.*;
+import nars.term.compile.TermIndex;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
@@ -1044,7 +1045,14 @@ public class Narsese extends BaseParser<Object>  {
         Term x = termRaw(s);
         if (x==null) return null;
 
-        return x.normalizeDestructively();
+        return x.normalized();
+    }
+    /** parse one term and normalize it if successful */
+    public <T extends Term> T term(String s, TermIndex i) {
+        Term x = termRaw(s);
+        if (x==null) return null;
+
+        return x.normalized().normalized(i);
     }
 
 //    public TaskRule taskRule(String input) {

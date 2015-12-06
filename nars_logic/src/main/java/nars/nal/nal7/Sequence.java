@@ -413,8 +413,8 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     }
 
     @Override
-    protected void appendBytes(int numArgs, ByteBuf b) {
-        super.appendBytes(numArgs, b);
+    public void appendSubtermBytes(ByteBuf b) {
+        super.appendSubtermBytes(b);
 
         b.addUnsignedInt(eventDuration);
 

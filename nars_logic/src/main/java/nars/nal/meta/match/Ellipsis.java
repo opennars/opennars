@@ -1,22 +1,17 @@
 package nars.nal.meta.match;
 
-import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
 import nars.Op;
-import nars.nal.nal4.ShadowProduct;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.ShadowAtom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Variable;
-import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Meta-term of the form:
@@ -188,7 +183,8 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
         }
         return null;
     }
-//    public static Ellipsis getFirstUnmatchedEllipsis(Compound X, Subst ff) {
+
+    //    public static Ellipsis getFirstUnmatchedEllipsis(Compound X, Subst ff) {
 //        final int xsize = X.size();
 //        for (int i = 0; i < xsize; i++) {
 //            Term xi = X.term(i);
@@ -213,43 +209,18 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
         return null;
     }
 
-    public static ShadowProduct matchRemaining(Compound Y, ShortSet ySubsExcluded) {
-        return matchedSubterms(Y, (index, term) ->
+    public static ArrayEllipsisMatch matchRemaining(Compound Y, ShortSet ySubsExcluded) {
+        return EllipsisMatch.matchedSubterms(Y, (index, term) ->
                 !ySubsExcluded.contains((short)index) );
     }
 
-    public static ShadowProduct matchedSubterms(Compound Y) {
+    public static ArrayEllipsisMatch matchedSubterms(Compound Y) {
         Term[] arrayGen =
                 !(Y instanceof Sequence) ?
                         Y.terms() :
                         ((Sequence)Y).toArrayWithIntervals();
 
-        return matchedSubterms(arrayGen);
-    }
-
-    public static ShadowProduct matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
-        Function<IntObjectPredicate,Term[]> arrayGen =
-                !(Y instanceof Sequence) ?
-                        Y::terms :
-                        ((Sequence)Y)::toArrayWithIntervals;
-
-        return matchedSubterms(arrayGen.apply( filter ) );
-    }
-
-    public static ShadowProduct matchedSubterms(Collection<Term> subterms) {
-        return new ShadowProduct(subterms);
-    }
-
-
-    private static ShadowProduct matchedSubterms(Term[] subterms) {
-        return new ShadowProduct(subterms);
-    }
-
-    /** collect a range of subterms */
-    public ShadowProduct collect(Compound y, int from, int to, FindSubst subst) {
-        return new ShadowProduct(
-            subst.collect(y, from, to)
-        );
+        return new ArrayEllipsisMatch(arrayGen);
     }
 
 

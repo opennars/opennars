@@ -258,8 +258,8 @@ public interface Stamp extends Interval, Cloneable, Serializable {
         final long oc = getOccurrenceTime();
         final long ct = getCreationTime();
 
-        if (oc == Stamp.TIMELESS)
-            throw new RuntimeException("invalid occurrence time");
+        /*if (oc == Stamp.TIMELESS)
+            throw new RuntimeException("invalid occurrence time");*/
         if (ct == Stamp.ETERNAL)
             throw new RuntimeException("invalid creation time");
 
@@ -271,6 +271,10 @@ public interface Stamp extends Interval, Cloneable, Serializable {
             } else {
                 sb.append(':').append(Long.toString(ct)).append(':');
             }
+
+        } else if (oc == TIMELESS) {
+            sb.append("N/A");
+
         } else {
             int estTimeLength = 8; /* # digits */
             sb.ensureCapacity(estTimeLength);
@@ -281,7 +285,9 @@ public interface Stamp extends Interval, Cloneable, Serializable {
             if (OCrelativeToCT >= 0)
                 sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
             sb.append(OCrelativeToCT);
+
         }
+
         return sb;
     }
 
