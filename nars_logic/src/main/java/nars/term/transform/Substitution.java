@@ -1,20 +1,24 @@
 package nars.term.transform;
 
+import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.TransformingEllipsisMatch;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 import nars.term.Variable;
 
+import java.util.List;
 import java.util.function.Function;
 
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
 public interface Substitution extends Function<Compound,Term> {
 
 
-    Term getXY(final Term t);
+    /** resolve a term */
+    Term getXY(final Term t); //should this be renamed to 'resolve' ?
 
 
 
@@ -35,23 +39,16 @@ public interface Substitution extends Function<Compound,Term> {
             return c;*/
 
         final int len = c.size();
-        final int targetLen = getResultSize(c);
-        if (targetLen < 0) return c;
-
-        /** result */
-        final Term[] sub = new Term[targetLen];
-        boolean changed = targetLen!=len;
-
+        List<Term> sub = Global.newArrayList(len);
 
         TransformingEllipsisMatch post = null;
 
-        int j = 0;
+
         for (int i = 0; i < len; i++) {
             //t holds the
             final Term t = c.term(i);
 
             if (t instanceof Ellipsis) {
-                changed = true;
 
                 Term te = getXY(t);
 
@@ -60,17 +57,15 @@ public interface Substitution extends Function<Compound,Term> {
                 if (sp instanceof TransformingEllipsisMatch) {
                     if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + sp);
                     post = (TransformingEllipsisMatch)sp;
-                    expansion = post.resolve(this);
+                    if (!post.resolve(this, sub))
+                        return c;
                 } else {
                     //default
-                    expansion = sp.term;
-                }
-
-
-                for (Term xx : expansion) {
-                    if (xx== Ellipsis.Shim)
-                        continue; //ignore any '..' which may be present in the expansion
-                    sub[j++] = xx;
+                    for (Term xx : sp.term) {
+                        if (xx== Ellipsis.Shim)
+                            continue; //ignore any '..' which may be present in the expansion
+                        sub.add(xx);
+                    }
                 }
 
             } else if (t == Ellipsis.Shim) {
@@ -78,28 +73,21 @@ public interface Substitution extends Function<Compound,Term> {
             } else {
                 // s holds a replacement substitution for t (i-th subterm of c)
                 Term s = subst(t);
-                if (s != null) {
-                    //replace the value at the current index
-                    changed |= !(t.equals(s));
-                }
-                else {
+                if (s == null) {
                     s = t;
                 }
 
-                sub[j++] = s;
+                sub.add(s);
             }
         }
 
-        if (!changed) {
-            //a new Term[] was not created, meaning nothing changed. return the input term
-            return c;
-        }
+        final Term[] r = Terms.toArray(sub);
 
         if (post!=null) {
-            return post.build(sub, c);
+            return post.build(r, c);
         } else {
             //default
-            return c.clone(sub);
+            return c.clone(r);
         }
     }
 
@@ -175,20 +163,20 @@ public interface Substitution extends Function<Compound,Term> {
 
 
 
-    @Deprecated default int getResultSize(Compound c) {
-        int s = c.size();
-        int n = s;
-        for (int i = 0; i < s; i++) {
-            Term t = c.term(i);
-            if (t == Ellipsis.Shim) n--; //skip expansion placeholder terms
-            if (t instanceof Ellipsis) {
-                Term expanded = getXY(t);
-                if (expanded == null) return -1; //missing ellipsis match
-                n += expanded.size() - 1; //-1 for the existing term already accounted for
-            }
-        }
-        return n;
-    }
+//    @Deprecated default int getResultSize(Compound c) {
+//        int s = c.size();
+//        int n = s;
+//        for (int i = 0; i < s; i++) {
+//            Term t = c.term(i);
+//            if (t == Ellipsis.Shim) n--; //skip expansion placeholder terms
+//            if (t instanceof Ellipsis) {
+//                Term expanded = getXY(t);
+//                if (expanded == null) return -1; //missing ellipsis match
+//                n += expanded.size() - 1; //-1 for the existing term already accounted for
+//            }
+//        }
+//        return n;
+//    }
 
 
     /** returns non-null result only if substitution with regard to a given variable Operator was complete */

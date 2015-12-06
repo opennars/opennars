@@ -9,8 +9,8 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisTransform;
-import nars.nal.meta.match.ImageGrowEllipsisMatch;
-import nars.nal.meta.match.ImageShrinkEllipsisMatch;
+import nars.nal.meta.match.ImagePutTransform;
+import nars.nal.meta.match.ImageTakeTransform;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
@@ -662,21 +662,22 @@ public class FindSubst extends Subst implements Substitution {
 
                 EllipsisTransform et = (EllipsisTransform)e;
                 if (et.from.equals(Image.Index)) {
+
                     //the indicated term should be inserted
                     //at the index location of the image
                     //being processed. (this is the opposite
                     //of the other condition of this if { })
                     if (matchEllipsedLinear(X, e, Y)) {
                         ShadowProduct raw = (ShadowProduct) getXY(e);
-                        putXY(e, new ImageGrowEllipsisMatch(
-                                raw.terms(), et, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        putXY(e, new ImagePutTransform(
+                                raw.terms(), et.to, (Image)Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                         return true;
                     }
                 } else {
                     Term n = resolve(et.from);
                     //n should not be null as long as this ellipse transform is processed after the specified variable has been matched, if it has
 
-                    //resolving can be deferred to substitution if
+                    //resolving may be possible to defer to substitution if
                     //Y and et.from are components of ImageShrinkEllipsisMatch
 
                     int imageIndex = Y.indexOf(n);
@@ -690,7 +691,7 @@ public class FindSubst extends Subst implements Substitution {
 
                     if (matchEllipsedLinear(X, e, Y)) {
                         ShadowProduct raw = (ShadowProduct) getXY(e);
-                        putXY(e, new ImageShrinkEllipsisMatch(
+                        putXY(e, new ImageTakeTransform(
                             raw.terms(), imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                         return true;
                     }
@@ -882,10 +883,13 @@ public class FindSubst extends Subst implements Substitution {
             return false;
         }
 
-        //match all the fixed-position subterms
         MutableSet<Term> yFree = Y.toSet();
-        if (!matchAllCommutive(matchFirst, yFree)) {
-            return false;
+
+        if (!matchFirst.isEmpty()) {
+            //match all the fixed-position subterms
+            if (!matchAllCommutive(matchFirst, yFree)) {
+                return false;
+            }
         }
 
         //select all remaining
@@ -937,10 +941,12 @@ public class FindSubst extends Subst implements Substitution {
             }
 
             return false;
-        } else {
-            //3 or more combination
-            throw new RuntimeException("unimpl");
+        } else if (xsize == 0) {
+            return true;
         }
+
+        //3 or more combination
+        throw new RuntimeException("unimpl: " + xsize + " arity combination unimplemented");
 
 
     }

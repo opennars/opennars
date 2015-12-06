@@ -187,10 +187,10 @@
     (M --> (A..B=_..+)), B |- ((\, M, A, _ ) --> B), (Truth:Identity, Desire:Identity)
     (M --> (A..+)), M |- ((\,_, A, ..) --> M), (Truth:Identity, Desire:Identity)
 
-try:    (B --> (/,M, A.._=B..+, _)), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
+    (B --> (/,M, A.._=B..+, _)), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
     (M --> (/,_, A..+, .. )), M |- ((A) --> M), (Truth:Identity, Desire:Identity)
 
-try:    ((\, M, A.._=B..+, _ ) --> B), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
+    ((\, M, A.._=B..+, _ ) --> B), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
     ((\, _, A..+, .. ) --> M), M |- (M --> (A)), (Truth:Identity, Desire:Identity)
 
 //// implication-based syllogism ////////////////////////////////////////////////////////////////////////////////////
