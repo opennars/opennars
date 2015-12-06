@@ -518,14 +518,15 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      *  (and that no ellipsis is involved.)
      */
     default boolean matchCompoundEx(Compound y) {
-        final int yStructure = y.structure();
+        //final int yStructure = y.structure();
 
         return
                 //this term as a pattern involves anything y does not?
-                ((yStructure | structure()) == yStructure)
+                //((yStructure | structure()) == yStructure)
+                //&&
                 // ?? && ( y.volume() >= volume() )
                 //same size
-             && (size()==y.size());
+                (size()==y.size());
     }
 
     default boolean matchCompoundExEllipsis(Compound y, Ellipsis e) {

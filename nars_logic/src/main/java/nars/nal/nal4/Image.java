@@ -142,7 +142,8 @@ abstract public class Image extends CompoundN {
 
     @Override public boolean matchCompoundEx(Compound y) {
         /** if they are images, they must have same relationIndex */
-        return (relationIndex != ((Image) y).relationIndex);
+        return super.matchCompoundEx(y)
+            && (relationIndex == ((Image) y).relationIndex);
     }
 
 
