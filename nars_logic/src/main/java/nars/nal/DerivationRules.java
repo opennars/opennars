@@ -292,6 +292,7 @@ public class DerivationRules extends FastList<TaskRule> {
                 }
                 else {
                     throw new RuntimeException("unnormalizable task: " + r);
+
                 }
 
             } catch (Exception ex) {

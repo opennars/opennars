@@ -66,7 +66,7 @@ public class VariableNormalization extends VariableTransform {
 
     final Map<Variable, Variable> rename = Global.newHashMap(0);
 
-    final Compound result;
+    protected final Compound result;
     boolean renamed = false;
     //int serial = 0;
 
@@ -82,6 +82,7 @@ public class VariableNormalization extends VariableTransform {
                 singleVariableNormalization : null);
     }
 
+
     public VariableNormalization(Compound target) {
         this(target, null);
     }
@@ -92,21 +93,27 @@ public class VariableNormalization extends VariableTransform {
 
 
 
-        this.result = target.transform(tx, true);
+        this.result = target.transform(tx);
 
 
     }
 
 
+    int serial = 0;
+
+    public Variable apply(final Variable v) {
+        return apply(null, v, -1);
+    }
+
     @Override
-    public final Variable apply(final Compound ct, final Variable v, int depth) {
+    public Variable apply(final Compound ct, final Variable v, int depth) {
 
         Map<Variable, Variable> rename = this.rename;
 
         //serial++; //identifies terms by their unique final position
 
         return rename.compute(resolve(v), (_vname, alreadyNormalized) -> {
-            Variable rvv = newVariable(v, alreadyNormalized, rename);
+            Variable rvv = newVariable(v, alreadyNormalized, ++serial);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= rvv.equals(v);//!Byted.equals(rvv, v);
             return rvv;
@@ -120,9 +127,9 @@ public class VariableNormalization extends VariableTransform {
     }
 
     /** if already normalized, alreadyNormalized will be non-null with the value */
-    protected Variable newVariable(final Variable v, final Variable alreadyNormalized, Map<Variable, Variable> renames) {
+    protected Variable newVariable(final Variable v, Variable alreadyNormalized, int serial) {
         if (alreadyNormalized==null)
-            return Variable.the(v.op(), renames.size() + 1);  //type + id
+            return Variable.the(v.op(), serial);  //type + id
         return alreadyNormalized;
     }
 

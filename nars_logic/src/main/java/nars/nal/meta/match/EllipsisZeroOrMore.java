@@ -18,6 +18,6 @@ public class EllipsisZeroOrMore extends Ellipsis {
 
     @Override
     public Variable clone(Variable newVar, VariableNormalization normalizer) {
-        return new nars.nal.meta.match.EllipsisZeroOrMore(newVar);
+        return new EllipsisZeroOrMore(newVar);
     }
 }

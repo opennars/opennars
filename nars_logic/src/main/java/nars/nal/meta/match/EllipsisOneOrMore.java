@@ -14,7 +14,7 @@ public class EllipsisOneOrMore extends Ellipsis {
 
     @Override
     public Variable clone(Variable newVar, VariableNormalization normalizer) {
-        return new nars.nal.meta.match.EllipsisOneOrMore(newVar);
+        return new EllipsisOneOrMore(newVar);
     }
 
     public EllipsisOneOrMore(Variable name, String s) {

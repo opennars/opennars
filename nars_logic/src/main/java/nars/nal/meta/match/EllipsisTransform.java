@@ -11,8 +11,8 @@ import nars.term.transform.VariableNormalization;
 /** ellipsis that transforms one of its elements, which it is required to match within */
 public class EllipsisTransform extends EllipsisOneOrMore {
 
-    public final Term from;
-    public final Term to;
+    public Term from;
+    public Term to;
 
     public EllipsisTransform(Variable name, Term from, Term to) {
         super(name, ".." + from + "=" + to + "..+");
@@ -29,8 +29,13 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     }
 
     @Override
-    public Variable clone(Variable newVar, VariableNormalization normalizer) {
-        throw new RuntimeException("HACK - this is handled by TaskRule.TaskRuleVariableNormalization");
+    public Variable clone(Variable v, VariableNormalization normalizer) {
+        return new EllipsisTransform(v,
+                from instanceof Variable ? normalizer.apply((Variable)from) : from,
+                to);
+
+        //System.out.println(v);
+        //throw new RuntimeException("HACK - this is handled by TaskRule.TaskRuleVariableNormalization");
     }
 
     public ShadowProduct collect(Compound y, int a, int b, FindSubst subst) {

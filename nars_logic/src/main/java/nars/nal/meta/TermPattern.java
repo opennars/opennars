@@ -158,22 +158,37 @@ public class TermPattern {
     private void compileTaskBeliefPair(TaskBeliefPair x, List<PreCondition> code) {
         //when derivation begins, frame's parent will be set to the TaskBeliefPair so that a Subterm code isnt necessary
 
-        Term x0 = x.term(0);
-        Term x1 = x.term(1);
+        int first, second;
+        if (x.term(1).op() == Op.VAR_PATTERN) {
+            //if the belief term is just a pattern,
+            //meaning it can match anything,
+            //then match this first because
+            //likely something in the task term will
+            //depend on it.
+            first = 1;
+            second = 0;
+
+        } else {
+            first = 0;
+            second = 1;
+        }
+
+
+        Term x0 = x.term(first);
+        Term x1 = x.term(second);
 
         //add early preconditions for compounds
         if (x0.op()!=Op.VAR_PATTERN) {
-            code.add(new FindSubst.SubTermOp(0, x0.op()));
-            code.add(new FindSubst.SubTermStructure(type, 0, x0.structure()));
+            code.add(new FindSubst.SubTermOp(first, x0.op()));
+            code.add(new FindSubst.SubTermStructure(type, first, x0.structure()));
         }
         if (x1.op()!=Op.VAR_PATTERN) {
-            code.add(new FindSubst.SubTermOp(1, x1.op()));
-            code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
+            code.add(new FindSubst.SubTermOp(second, x1.op()));
+            code.add(new FindSubst.SubTermStructure(type, second, x1.structure()));
         }
 
-        compileSubterm(x, 0, code);
-        compileSubterm(x, 1, code);
-        //code.add(FindSubst.Superterm); //
+        compileSubterm(x, first, code);
+        compileSubterm(x, second, code);
     }
 
     private void compileSubterm(Compound x, int i, List<PreCondition> code) {

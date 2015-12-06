@@ -648,46 +648,59 @@ public class FindSubst extends Subst implements Substitution {
             return false;
         }
 
-        if (numNonpatternVars == 0) {
-            //all are to be matched, regardless of commutivity
-            return matchEllipsisAll(e, Y);
-        }
 
         if (X.isCommutative()) {
             return matchEllipsedCommutative(
                     X, e, Y
             );
         } else {
-            //TODO case where relation is after the ellipsis
+
+            if (e instanceof EllipsisTransform) {
+                //this involves a special "image ellipsis transform"
+
+                EllipsisTransform et = (EllipsisTransform)e;
+                Term n = resolve(et.from);
+                //n should not be null as long as this ellipse transform is processed after the specified variable has been matched, if it has
+
+                int imageIndex = Y.indexOf(n);
+                if (imageIndex == -1) {
+                    //this specified term that should be
+                    //substituted with the relation index
+                    //is not contained in this compound;
+                    //does not match
+                    return false;
+                }
+                if (matchEllipsedLinear(X, e, Y)) {
+                    //mask the relation term
+                    ShadowProduct sp = (ShadowProduct)getXY(e);
+                    sp.terms()[imageIndex] = Image.Index;
+                    return true;
+                }
+                return false;
+            }
 
             /** if they are images, they must have same relationIndex */
             if (X instanceof Image) { //PRECOMPUTABLE
 
-                if (!(e instanceof EllipsisTransform)) {
-                    //if the ellipsis is normal, then interpret the relationIndex as it is
+                //if the ellipsis is normal, then interpret the relationIndex as it is
 
-                    int xEllipseIndex = X.indexOf(e);
-                    int xRelationIndex = ((Image) X).relationIndex;
-                    int yRelationIndex = ((Image) Y).relationIndex;
+                int xEllipseIndex = X.indexOf(e);
+                int xRelationIndex = ((Image) X).relationIndex;
+                int yRelationIndex = ((Image) Y).relationIndex;
 
-                    if (xEllipseIndex >= xRelationIndex) {
-                        //compare relation from beginning as in non-ellipsis case
-                        if (xRelationIndex != yRelationIndex)
-                            return false;
-                    } else {
-                        //compare relation from end
-                        if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
-                            return false;
-                    }
+                if (xEllipseIndex >= xRelationIndex) {
+                    //compare relation from beginning as in non-ellipsis case
+                    if (xRelationIndex != yRelationIndex)
+                        return false;
                 } else {
-                    //this involves a special "image ellipsis transform"
-                    //..
+                    //compare relation from end
+                    if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
+                        return false;
                 }
+
             }
 
-            return matchEllipsedLinear(
-                    X, e, Y
-            );
+            return matchEllipsedLinear( X, e, Y );
         }
 
     }
