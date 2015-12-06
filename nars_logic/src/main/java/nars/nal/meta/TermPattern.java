@@ -94,9 +94,15 @@ public class TermPattern {
 
             //code.add(new FindSubst.TermVolumeMin(x.volume()-1));
 
+            int numEllipsis = Ellipsis.numEllipsis((Compound)x);
             if (x instanceof Image) {
-                code.add(new FindSubst.ImageIndexEquals(
-                        ((Image)x).relationIndex)); //TODO varargs with greaterEqualSize etc
+                if (numEllipsis == 0) {
+                    //TODO implement case for varargs
+                    code.add(new FindSubst.ImageIndexEquals(
+                            ((Image) x).relationIndex));
+                } else {
+
+                }
             }
 
 

@@ -101,4 +101,13 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return t;
     }
 
+    /** follows normal indexOf() semantics; -1 if not found */
+    default int indexOf(Term t) {
+        int s = size();
+        for (int i = 0; i < s; i++) {
+            if (t.equals(term(i)))
+                return i;
+        }
+        return -1;
+    }
 }

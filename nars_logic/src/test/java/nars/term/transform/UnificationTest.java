@@ -13,6 +13,7 @@ import nars.util.graph.TermLinkGraph;
 import nars.util.meter.RuleTest;
 import nars.util.meter.TestNAR;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Set;
@@ -579,6 +580,8 @@ public class UnificationTest  {
         test(Op.VAR_PATTERN,
                 "<A --> (/, %X, _)>",
                 "<A --> (/, A, _)>", true);
+
+
         test(Op.VAR_PATTERN,
                 "<A --> (/, %X, _)>",
                 "<A --> (/, _, A)>", false);
@@ -595,6 +598,13 @@ public class UnificationTest  {
                 "(&&,<F --> A>,<D --> (/,C,E, _)>)", true);
 
     }
+
+    @Test public void testImage2ShouldNotMatch() {
+        test(Op.VAR_PATTERN,
+                "(/, %X, _)",
+                "(/, _, A)", false);
+    }
+
     @Test public void ellipsisImage()  {
         test(Op.VAR_PATTERN,
                 "<A --> (/,_, %X..+)>",
@@ -602,6 +612,17 @@ public class UnificationTest  {
         test(Op.VAR_PATTERN,
                 "<A --> (/,_, %X..+)>",
                 "<A --> (/,_, B,C)>", true);
+
+    }
+
+    @Test public void testEllipsisImage2() {
+        test(Op.VAR_PATTERN,
+                "(/,_, B, %X..+)",
+                "(/,_, B, C, D)", true);
+        test(Op.VAR_PATTERN,
+                "(/,_, %X..+)",
+                "(/,_, B, C, D)", true);
+
         test(Op.VAR_PATTERN,
                 "<A --> (/,_, B, %X..+)>",
                 "<A --> (/,_, B, C, D)>", true);
@@ -611,13 +632,24 @@ public class UnificationTest  {
         test(Op.VAR_PATTERN,
                 "<A --> (/, B, _, %X..+)>",
                 "<A --> (/, B, _, C, D)>", true);
-
     }
+
 
     @Test public void testImageRelationAfterEllipsis() {
         test(Op.VAR_PATTERN,
                 "<A --> (/, B, %X..+, _)>",
                 "<A --> (/, B, C, D, _)>", true);
+        test(Op.VAR_PATTERN,
+                "<A --> (/, B, %X..+, _)>",
+                "<A --> (/, B, C, _, D)>", false);
+
+    }
+
+    @Ignore
+    @Test public void testInnerEllipsis() {
+        test(Op.VAR_PATTERN,
+                "<A --> (/, B, %X..+, E, _)>",
+                "<A --> (/, B, C, D, E, _)>", true);
     }
 
     @Test public void ellipsisSequence() {

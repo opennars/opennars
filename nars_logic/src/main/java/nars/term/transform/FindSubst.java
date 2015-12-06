@@ -661,8 +661,20 @@ public class FindSubst extends Subst implements Substitution {
 
             /** if they are images, they must have same relationIndex */
             if (X instanceof Image) { //PRECOMPUTABLE
-                if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                    return false;
+
+                int xEllipseIndex = X.indexOf(e);
+                int xRelationIndex = ((Image) X).relationIndex;
+                int yRelationIndex = ((Image) Y).relationIndex;
+
+                if (xEllipseIndex >= xRelationIndex) {
+                    //compare relation from beginning as in non-ellipsis case
+                    if (xRelationIndex != yRelationIndex)
+                        return false;
+                } else {
+                    //compare relation from end
+                    if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
+                        return false;
+                }
             }
 
             return matchEllipsedLinear(
@@ -682,19 +694,18 @@ public class FindSubst extends Subst implements Substitution {
         if (xsize != ysize)
             return false;
 
+        /** if they are images, they must have same relationIndex */
+        if (X instanceof Image) { //PRECOMPUTABLE
+            if (((Image) X).relationIndex != ((Image) Y).relationIndex)
+                return false;
+        }
+
         if (xsize == 1) {
             return match(X.term(0), Y.term(0));
         } else {
             if (X.isCommutative()) {
                 return matchPermute(X, Y); //commutative, try permutations
             } else {
-
-                /** if they are images, they must have same relationIndex */
-                if (X instanceof Image) { //PRECOMPUTABLE
-                    if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                        return false;
-                }
-
                 return matchLinear(X.subterms(), Y.subterms()); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
             }
         }
@@ -840,10 +851,13 @@ public class FindSubst extends Subst implements Substitution {
         int xsize = toMatch.size();
         Term[] x = toMatch.toArray(new Term[xsize]);
         if (xsize == 1) {
+
             return matchChoose1(x[0], y);
+
         } else if (xsize == 2) {
 
             int prePermute = now();
+            MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
 
             //initial shuffle
             if (random.nextBoolean()) {
@@ -853,8 +867,6 @@ public class FindSubst extends Subst implements Substitution {
             }
 
             for (int i = 0; i < 2; i++) {
-
-                MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
 
                 boolean modified = false;
                 if (matchChoose1(x[0], y)) {
@@ -877,9 +889,12 @@ public class FindSubst extends Subst implements Substitution {
             }
 
             return false;
+        } else {
+            //3 or more combination
+            throw new RuntimeException("unimpl");
         }
 
-        throw new RuntimeException("unimpl");
+
     }
 
     /**

@@ -366,7 +366,7 @@ public class NAL8Test extends AbstractNALTester {
 
         if (!(tester.nar instanceof SingleStepNAR)) {
             //tester.nar.log();
-            tester.mustBelieve(72, "exe(x, a)", 1.0f, 0.99f, 10);
+            tester.mustBelieve(250, "exe(x, a)", 1.0f, 0.99f, 10);
             //        tester.mustBelieve(26, "<a --> (/, ^exe, x, _)>",
             //                exeFunc.getResultFrequency(),
             //                exeFunc.getResultConfidence(),
