@@ -302,7 +302,7 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
         if (normalized) {
             return (T) this;
         } else {
-            final Compound result = VariableNormalization.normalizeFast(this, destructive).getResult();
+            final Compound result = VariableNormalization.normalizeFast(this, destructive).get();
             if (result == null)
                 return null;
 

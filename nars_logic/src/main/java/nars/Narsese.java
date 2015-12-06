@@ -613,12 +613,19 @@ public class Narsese extends BaseParser<Object>  {
         return sequence(
                 Variable(), "..",
                 firstOf(
-                    seq( "+", push(Ellipsis.PLUS) ),
-                    seq( "*", push(Ellipsis.ASTERISK) ),
-                    Term(true,false)
-                ),
-                swap(),
-                push( new Ellipsis( (Variable)pop(), (Term)pop() ) )
+
+                    seq( Term(false,false), "=", Term(false,false), "..+",
+                        swap(3),
+                            push( new Ellipsis.EllipsisTransform(
+                            (Variable)pop(), (Term)pop(), (Term)pop()  ) )
+                    ),
+                    seq( "+",
+                            push( new Ellipsis.EllipsisOneOrMore( (Variable)pop() ) )
+                    ),
+                    seq( "*",
+                            push( new Ellipsis.EllipsisZeroOrMore( (Variable)pop() ) )
+                    )
+                )
         );
     }
 

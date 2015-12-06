@@ -639,7 +639,7 @@ public class FindSubst extends Subst implements Substitution {
         //TODO see if there is a volume or structural constraint that can terminate early here
 
 
-        Ellipsis e = Ellipsis.getFirstUnmatchedEllipsis(X, this);
+        Ellipsis e = Ellipsis.getFirstEllipsis(X);
 
         final int ysize = Y.size();
 

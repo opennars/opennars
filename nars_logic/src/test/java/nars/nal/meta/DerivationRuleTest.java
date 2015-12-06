@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Narsese;
 import nars.Op;
 import nars.nal.TaskRule;
+import nars.nal.nal4.Product;
 import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 import nars.term.transform.FindSubst;
@@ -15,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static nars.$.$;
+import static nars.$.pro;
 
 /**
  * Created by me on 7/7/15.
@@ -123,21 +125,37 @@ public class DerivationRuleTest extends TestCase {
         Terms.printRecursive(y);
     }
 
-    @Test public void testEllipsis() {
-        Narsese p = Narsese.the();
-        String s = "%prefix..expression";
-        Ellipsis t = p.term(s);
+    @Test public void testEllipsisOneOrMore() {
+        String s = "%prefix..+";
+        Ellipsis t = $(s);
         assertNotNull(t);
-        assertEquals(Ellipsis.class, t.getClass());
         assertEquals(s, t.toString());
-        assertEquals("%prefix", t.name.toString());
-        assertEquals("expression", t.expression.toString());
+        assertEquals("%prefix", t.target.toString());
+        assertEquals(Ellipsis.EllipsisOneOrMore.class, t.getClass());
+    }
 
-//        //multichar prefix
-//        final Ellipsis abc0x = p.term("Abc:0..x");
-//        assertEquals("Abc", abc0x.prefix);
-//        assertEquals(0, abc0x.from);
-//        assertEquals('x', abc0x.to);
+    @Test public void testEllipsisZeroOrMore() {
+        String s = "%prefix..*";
+        Ellipsis t = $(s);
+        assertNotNull(t);
+        assertEquals(s, t.toString());
+        assertEquals("%prefix", t.target.toString());
+        assertEquals(Ellipsis.EllipsisZeroOrMore.class, t.getClass());
+    }
+    @Test public void testEllipsisTransform() {
+        String s = "%A..%B=C..+";
+        Ellipsis.EllipsisTransform t = $(s);
+        assertNotNull(t);
+        assertEquals(s, t.toString());
+        assertEquals(Ellipsis.EllipsisTransform.class, t.getClass());
+        assertEquals($("%B"), t.from);
+        assertEquals($("C"), t.to);
+
+        Term u = new TaskRule.TaskRuleVariableNormalization(pro(t)).get();
+        t = (Ellipsis.EllipsisTransform)((Product)u).term(0);
+        assertEquals("(%1..%2=C..+)", u.toString());
+        assertEquals($("%2"), t.from);
+        assertEquals($("C"), t.to);
     }
 
     @Test public void testEllipsisExpression() {

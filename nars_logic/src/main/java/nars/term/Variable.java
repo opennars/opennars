@@ -35,6 +35,10 @@ import java.util.Map;
  */
 abstract public class Variable extends AbstractStringAtom {
 
+    protected Variable(final String n) {
+        super(n);
+    }
+
     protected Variable(final byte[] n) {
         super(n);
     }
@@ -218,6 +222,7 @@ abstract public class Variable extends AbstractStringAtom {
     public static class VarPattern extends Variable {
 
 
+        public VarPattern(String name) {  super(name);         }
         public VarPattern(byte[] name) {  super(name);         }
 
         @Override public final int structure() { return 0; } //Op.VAR_PATTERN.bit();        }

@@ -22,6 +22,7 @@ import nars.term.transform.VariableNormalization;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
@@ -295,7 +296,7 @@ public class TaskRule extends ProductN implements Level {
 
 
     public final TaskRule normalizeRule() {
-        TaskRule tr = (TaskRule) new TaskRuleVariableNormalization().getResult();
+        TaskRule tr = (TaskRule) new TaskRuleVariableNormalization(this).get();
         if (tr == null)
             return null;
         return tr.setup();
@@ -659,12 +660,12 @@ public class TaskRule extends ProductN implements Level {
 
     final public int nal() { return minNAL; }
 
-    private class TaskRuleVariableNormalization extends VariableNormalization {
+    public static class TaskRuleVariableNormalization extends VariableNormalization {
 
         //List<Ellipsis> ellipses = Global.newArrayList();
 
-        public TaskRuleVariableNormalization() {
-            super(TaskRule.this);
+        public TaskRuleVariableNormalization(Compound target) {
+            super(target);
 
 //            ellipses.forEach(e -> {
 //                e.expressoin
@@ -674,23 +675,50 @@ public class TaskRule extends ProductN implements Level {
 
         @Override protected Variable resolve(Variable v) {
             if (v instanceof Ellipsis) {
-                return ((Ellipsis) v).name;
+                return ((Ellipsis) v).target;
             }
             return v;
         }
 
-        @Override protected Variable newVariable(final Variable v, final int i) {
+        @Override protected Variable newVariable(final Variable v, Map<Variable, Variable> renames) {
+
+            //HACK to handle the inner terms, possibly variables which need normalized
+            if (v instanceof Ellipsis.EllipsisTransform) {
+                Ellipsis.EllipsisTransform et = (Ellipsis.EllipsisTransform)v;
+                Term from2, to2;
+
+                Variable vv = Variable.the(v.op(), renames.size() + 1);
+                renames.put(v, v); //temporary placeholder to increment the #'s for the subterms so they are a higher number than the target (first) var
+
+                if (et.from instanceof Variable)
+                    from2 = apply(null, (Variable)et.from, -1);
+                else
+                    from2 = et.from;
+
+                if (et.to instanceof Variable)
+                    to2 = apply(null, (Variable)et.to, -1);
+                else
+                    to2 = et.to;
+
+                return new Ellipsis.EllipsisTransform(
+                        vv, from2, to2
+                );
+            }
+
+            Variable newVar = Variable.the(v.op(), renames.size()+1);
+
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;
 
-                Term ee = e.expression;
-                if (ee instanceof Compound)
-                    ee = ((Compound)ee).transform(this);
+//                Term ee = e.expression;
+//                if (ee instanceof Compound)
+//                    ee = ((Compound)ee).transform(this);
 
-                return new Ellipsis( Variable.the(v.op(), i), ee );
+                return e.clone(newVar, this);
+
             }
             else {
-                return Variable.the(v.op(), i);
+                return newVar;
             }
         }
 

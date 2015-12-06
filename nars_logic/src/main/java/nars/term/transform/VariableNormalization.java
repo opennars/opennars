@@ -3,7 +3,6 @@ package nars.term.transform;
 import nars.Global;
 import nars.term.Compound;
 import nars.term.Variable;
-import nars.util.utf8.Byted;
 
 import java.util.Map;
 
@@ -69,7 +68,7 @@ public class VariableNormalization extends VariableTransform {
 
     final Compound result;
     boolean renamed = false;
-    int serial = 0;
+    //int serial = 0;
 
 
     public static VariableNormalization normalize(Compound target, boolean destructive) {
@@ -131,13 +130,13 @@ public class VariableNormalization extends VariableTransform {
         final Map<Variable,Variable> finalRename = rename;
         Variable vv = rename.computeIfAbsent(resolve(v), _vname -> {
             //type + id
-            Variable rvv = newVariable(v, finalRename.size() + 1);
+            Variable rvv = newVariable(v, finalRename );
             if (!renamed) //test for any rename to know if we need to rehash
-                renamed |= !Byted.equals(rvv, v);
+                renamed |= rvv.equals(v);//!Byted.equals(rvv, v);
             return rvv;
         });
 
-        serial++; //identifies terms by their unique final position
+        //serial++; //identifies terms by their unique final position
 
         return vv;
     }
@@ -147,11 +146,11 @@ public class VariableNormalization extends VariableTransform {
         return v;
     }
 
-    protected Variable newVariable(final Variable v, final int i) {
-        return Variable.the(v.op(), i);
+    protected Variable newVariable(final Variable v, Map<Variable, Variable> renames) {
+        return Variable.the(v.op(), renames.size() + 1);
     }
 
-    public final Compound getResult() {
+    public final Compound get() {
         return result;
     }
 }

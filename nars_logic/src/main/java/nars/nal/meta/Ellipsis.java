@@ -2,14 +2,16 @@ package nars.nal.meta;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.primitive.ShortSet;
-import nars.$;
 import nars.Op;
 import nars.nal.nal4.ShadowProduct;
 import nars.nal.nal7.InvisibleAtom;
 import nars.nal.nal7.Sequence;
-import nars.term.*;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.TermContainer;
+import nars.term.Variable;
 import nars.term.transform.Subst;
-import nars.util.utf8.Utf8;
+import nars.term.transform.VariableNormalization;
 
 import java.util.Collection;
 import java.util.Map;
@@ -26,7 +28,7 @@ import java.util.function.Function;
  *   B..not(first)
  *   B..not(first,last)
  */
-public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
+abstract public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 
 
     /** a placeholder that indicates an expansion of one or more terms that will be provided by an Ellipsis match.
@@ -43,28 +45,74 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         }
     };
 
-    /** 1 or more */
-    public static Term PLUS = Atom.the("+");
-
-    /** 0 or more */
-    public static Term ASTERISK = Atom.the("*");
-
-    /** everything except, ex: not(%2) */
-    public static final Atom NOT = $.the("not");
+    public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
 
+    public static class EllipsisOneOrMore extends Ellipsis {
 
-    public final Variable name;
-    public final Term expression;
+        public EllipsisOneOrMore(Variable name) {
+            this(name, "..+");
+        }
 
-    public Ellipsis(Variable name, Term expression) {
+        @Override
+        public Variable clone(Variable newVar, VariableNormalization normalizer) {
+            return new EllipsisOneOrMore(newVar);
+        }
+
+        public EllipsisOneOrMore(Variable name, String s) {
+            super(name, s);
+        }
+
+        @Override
+        public boolean valid(int collectable) {
+            return collectable > 0;
+        }
+    }
+
+    public static class EllipsisZeroOrMore extends Ellipsis {
+        public EllipsisZeroOrMore(Variable name) {
+            super(name, "..*");
+        }
+
+        @Override
+        public boolean valid(int collectable) {
+            return collectable >= 0;
+        }
+        @Override
+        public Variable clone(Variable newVar, VariableNormalization normalizer) {
+            return new EllipsisZeroOrMore(newVar);
+        }
+    }
+
+    /** ellipsis that transforms one of its elements, which it is required to match within */
+    public static class EllipsisTransform extends EllipsisOneOrMore {
+
+        public final Term from;
+        public final Term to;
+
+        public EllipsisTransform(Variable name, Term from, Term to) {
+            super(name, ".." + from + "=" + to + "..+");
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public Variable clone(Variable newVar, VariableNormalization normalizer) {
+            throw new RuntimeException("HACK - this is handled by TaskRule.TaskRuleVariableNormalization");
+        }
+
+    }
+
+    public final Variable target;
+
+
+    public Ellipsis(Variable target, String suffix) {
         super(
-            Utf8.toUtf8(name.toString().substring(1) /* exclude variable type char */
-                    + ".." + expression.toString())
+            target.toString().substring(1) /* exclude variable type char */
+                    + suffix
         );
 
-        this.name= name;
-        this.expression = expression;
+        this.target = target;
     }
 
 
@@ -127,26 +175,26 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
 
 
 
-    public ShadowProduct match(ShortSet ySubsExcluded, Compound y) {
-        Term ex = this.expression;
-        if ((ex == PLUS) || (ex == ASTERISK)) {
-            return matchRemaining(y, ySubsExcluded);
-        }
-
-        throw new RuntimeException("unimplemented expression: " + ex);
-
-//        else if (ex instanceof Operation) {
-//
-//            Operation o = (Operation) ex;
-//
-//            //only NOT implemented currently
-//            if (!o.getOperatorTerm().equals(NOT)) {
-//                throw new RuntimeException("ellipsis operation " + expression + " not implemented");
-//            }
-//
-//            return matchNot(o.args(), mapped, y);
+//    public ShadowProduct match(ShortSet ySubsExcluded, Compound y) {
+//        Term ex = this.expression;
+//        if ((ex == PLUS) || (ex == ASTERISK)) {
+//            return matchRemaining(y, ySubsExcluded);
 //        }
-    }
+//
+//        throw new RuntimeException("unimplemented expression: " + ex);
+//
+////        else if (ex instanceof Operation) {
+////
+////            Operation o = (Operation) ex;
+////
+////            //only NOT implemented currently
+////            if (!o.getOperatorTerm().equals(NOT)) {
+////                throw new RuntimeException("ellipsis operation " + expression + " not implemented");
+////            }
+////
+////            return matchNot(o.args(), mapped, y);
+////        }
+//    }
 
 
 //    private static Term matchNot(Term[] oa, Map<Term, Term> mapped, Compound Y) {
@@ -181,16 +229,8 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         return valid(collectable);
     }
 
-    public boolean valid(int collectable) {
-        Term exp = this.expression;
 
-        if (exp == PLUS)
-            return collectable > 0;
-        else if (exp == ASTERISK)
-            return collectable >= 0;
-
-        return false;
-    }
+    abstract public boolean valid(int collectable);
 
     public static Ellipsis getFirstEllipsis(Compound X) {
         final int xsize = X.size();
@@ -202,20 +242,20 @@ public class Ellipsis extends Variable.VarPattern { //TODO use Immutable
         }
         return null;
     }
-    public static Ellipsis getFirstUnmatchedEllipsis(Compound X, Subst ff) {
-        final int xsize = X.size();
-        for (int i = 0; i < xsize; i++) {
-            Term xi = X.term(i);
-            if (xi instanceof Ellipsis) {
-                if (ff.getXY(X)==null)
-                    return (Ellipsis) xi;
-//                else {
-//                    System.err.println("already matched");
-//                }
-            }
-        }
-        return null;
-    }
+//    public static Ellipsis getFirstUnmatchedEllipsis(Compound X, Subst ff) {
+//        final int xsize = X.size();
+//        for (int i = 0; i < xsize; i++) {
+//            Term xi = X.term(i);
+//            if (xi instanceof Ellipsis) {
+//                if (ff.getXY(X)==null)
+//                    return (Ellipsis) xi;
+////                else {
+////                    System.err.println("already matched");
+////                }
+//            }
+//        }
+//        return null;
+//    }
     public static Term getFirstNonEllipsis(Compound X) {
         final int xsize = X.size();
         for (int i = 0; i < xsize; i++) {
