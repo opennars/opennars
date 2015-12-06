@@ -1,5 +1,6 @@
 package nars.term.transform;
 
+import com.gs.collections.api.set.MutableSet;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -12,7 +13,6 @@ import nars.nal.nal4.ShadowProduct;
 import nars.term.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 
@@ -795,69 +795,98 @@ public class FindSubst extends Subst implements Substitution {
     public final boolean matchEllipsedCommutative(Compound X, Ellipsis Xellipsis, Compound Y) {
 
         //ALL OF THIS CAN BE PRECOMPUTED
-        Set<Term> yRequiredByX = Global.newHashSet(0); //what y must require, but which will not be collected into elllipsis
-        Collection<Variable> xUnmatched = Global.newArrayList(); //Global.newHashSet(0);
+        Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
         for (Term x : X.terms()) {
             if (x == Xellipsis) continue;
             if (x.op() == type) {
                 Term r = getXY(x);
                 if (r != null) {
                     if (r instanceof ShadowProduct) {
-                        //this is a secondary ellipse, and there was a previous ellipse match. add them all
-                        Collections.addAll(yRequiredByX, ((ShadowProduct) r).terms());
+                        /* this is a subsequent instance of
+                           an already matched ellipse, expand
+                           its contents as if it were part of X  */
+                        ((ShadowProduct) r).addAllTo(matchFirst);
                     } else {
-                        yRequiredByX.add(r); //pattern already matched
+                        matchFirst.add(r);
                     }
                 } else {
-                    xUnmatched.add((Variable) x);
+                    matchFirst.add(x);
                 }
             } else {
-                //must be in Y
-                yRequiredByX.add(x);
+                matchFirst.add(x);
             }
         }
 
-        Set<Term> yFree = Y.toSet();
-        for (Term x : yRequiredByX) {
-            Term xResolved = resolve(x);
-            if (!yFree.remove(xResolved)) //required subterm not present
-                return false;
-        }
-
-        int numYFree = yFree.size(); //remaining
-        if (!Xellipsis.valid(yFree.size())) {
+        int numMatchable = Y.size() - matchFirst.size(); //remaining
+        if (!Xellipsis.valid(numMatchable)) {
+            //wouldnt be enough remaining matches to satisfy ellipsis cardinality
             return false;
         }
 
-        //Step 2. Match the specified pattern variables
-        if (!xUnmatched.isEmpty()) {
-            TermVector<Variable> xFixed = new TermVector(xUnmatched);
-            if (xFixed.size() == 1) {
+        //match all the fixed-position subterms
+        MutableSet<Term> yFree = Y.toSet();
+        if (!matchAllCommutive(matchFirst, yFree)) {
+            return false;
+        }
 
-                //TODO limit power here based on worst case # of matches
+        //select all remaining
+        return matchEllipsisAll(Xellipsis, yFree);
+    }
 
-                if (!matchChoose1(xFixed.term(0), yFree)) {
-                    return false;
+
+
+    /** toMatch matched into some or all of Y's terms */
+    private boolean matchAllCommutive(Set<Term> toMatch, MutableSet<Term> y) {
+        int xsize = toMatch.size();
+        Term[] x = toMatch.toArray(new Term[xsize]);
+        if (xsize == 1) {
+            return matchChoose1(x[0], y);
+        } else if (xsize == 2) {
+
+            int prePermute = now();
+
+            //initial shuffle
+            if (random.nextBoolean()) {
+                Term p = x[0];
+                x[0] = x[1];
+                x[1] = p;
+            }
+
+            for (int i = 0; i < 2; i++) {
+
+                MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
+
+                boolean modified = false;
+                if (matchChoose1(x[0], y)) {
+                    modified = true;
+                    if (matchChoose1(x[1], y)) {
+                        return true;
+                    }
                 }
 
-                //Step 3. Collect the free terms
-                putXY(Xellipsis, new ShadowProduct(yFree));
-                return true;
-            } else {
-                //not impl yet
-                throw new RuntimeException("ellipsis commutive case not handled");
+                if (modified) {
+                    y.addAll(yCopy); //restore the original set if any where removed during an incomplete match
+                }
+
+                revert(prePermute);
+
+                /* swap */
+                Term p = x[0];
+                x[0] = x[1];
+                x[1] = p;
             }
-        } else {
-            //select all
-            return matchEllipsisAll(Xellipsis, yFree);
+
+            return false;
         }
+
+        throw new RuntimeException("unimpl");
     }
 
     /**
      * choose 1 at a time from a set of N, which means iterating up to N
      * will remove the chosen item(s) from Y if successful before returning
      */
-    private boolean matchChoose1(Variable X, Set<Term> Yfree) {
+    private boolean matchChoose1(Term X, Set<Term> Yfree) {
 
         final int ysize = Yfree.size();
         int shuffle = random.nextInt(ysize); //randomize starting offset
