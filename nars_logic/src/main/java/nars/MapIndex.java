@@ -103,7 +103,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
 
     @Override
-    public final void forEachTerm(Consumer<Termed> c) {
+    public final void forEach(Consumer<? super Termed> c) {
         data.forEach((k, v) -> c.accept(v));
     }
 }

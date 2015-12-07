@@ -501,7 +501,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * returns the global concept index
      */
-    public final TermIndex concepts() {
+    public final TermIndex index() {
         return memory.getIndex();
     }
 

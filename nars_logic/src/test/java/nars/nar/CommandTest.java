@@ -2,6 +2,7 @@ package nars.nar;
 
 import nars.NAR;
 import nars.Symbols;
+import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
@@ -11,8 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by me on 8/19/15.
@@ -46,7 +46,9 @@ public class CommandTest {
         assertTrue(invoked.get());
 
         //no concepts created because this command bypassed inference
-        assertEquals(0, n.concepts().size());
+        n.index().forEach(c -> {
+           assertFalse(c instanceof Concept);
+        });
 
     }
 }

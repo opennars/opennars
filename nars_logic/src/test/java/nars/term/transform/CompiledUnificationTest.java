@@ -56,12 +56,12 @@ public class CompiledUnificationTest extends UnificationTest {
     static Subst test(NAR nar, int seed, Op type, String s1, String s2, boolean shouldSub) {
 
         Global.DEBUG = true;
-        nar.believe(s1);
-        nar.believe(s2);
-        nar.frame(2);
+        //nar.believe(s1);
+        //nar.believe(s2);
+        //nar.frame(2);
 
-        Term t1 = nar.concept(s1).getTerm();
-        Term t2 = nar.concept(s2).getTerm();
+        Term t1 = nar.term(s1);
+        Term t2 = nar.term(s2);
 
         //this only tests assymetric matching:
         if ((type == Op.VAR_PATTERN && Variable.hasPatternVariable(t2)) || t2.hasAny(type)) {

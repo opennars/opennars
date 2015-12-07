@@ -256,7 +256,7 @@ public class ThermostatTest2 {
 //                    c.print(System.out);
 //        });
 
-        System.out.println(n.concepts().size() + " total concepts cached");
+        System.out.println(n.index().size() + " total concepts cached");
 
         System.out.println(taskStats);
     }

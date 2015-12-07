@@ -1,6 +1,6 @@
 package nars.term;
 
-import nars.Narsese;
+import nars.nar.Terminal;
 import nars.term.variable.CommonVariable;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static junit.framework.Assert.assertEquals;
  */
 public class CommonVariableTest {
 
-    Narsese p = Narsese.the();
+    Terminal p = new Terminal();
 
     @Test
     public void commonVariableTest1() {

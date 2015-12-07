@@ -17,8 +17,6 @@ import java.util.function.Predicate;
  * reason.  however it will produce an event
  * stream which can be delegated to other
  * components like other NAR's
- *
- * TODO extend AbstractNAR, not Default
  */
 public class Terminal extends AbstractNAR {
 

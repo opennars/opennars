@@ -206,7 +206,7 @@ public class BitmapRecognition {
 
 
         for (int i = 0; i < 10; i++) {
-            System.out.println(n.concepts().size());
+            System.out.println(n.index().size());
             //n.input("(--,<white <-> black>).");
 
             tb.fill((float)Math.random());

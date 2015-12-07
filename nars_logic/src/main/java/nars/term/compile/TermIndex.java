@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public interface TermIndex extends CacheBag<Term,Termed> {
 
 
-    void forEachTerm(Consumer<Termed> c);
+    void forEach(Consumer<? super Termed> c);
 
     default <T extends Term> T getTerm(T t) {
         Termed<T> u = get(t);
@@ -54,7 +54,7 @@ public interface TermIndex extends CacheBag<Term,Termed> {
     }
 
     default void print(PrintStream out) {
-        forEachTerm( c -> out.println(c) );
+        forEach(c -> out.println(c) );
     }
 
 //    /** for long-running processes, this uses

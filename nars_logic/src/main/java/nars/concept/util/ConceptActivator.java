@@ -55,7 +55,7 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
     @Override
     public final Concept newItem() {
-        TermIndex i = nar.concepts();
+        TermIndex i = nar.index();
         Term n = name();
         Termed c = i.get(n);
         if (!(c instanceof Concept)) {
