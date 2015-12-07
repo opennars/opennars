@@ -322,7 +322,7 @@ public class TaskRule extends ProductN implements Level {
         TaskRule tr = (TaskRule) new TaskRuleVariableNormalization(this).get();
         if (tr == null)
             return null;
-        return tr.setup();
+        return tr;
     }
 
 
@@ -331,8 +331,9 @@ public class TaskRule extends ProductN implements Level {
         return new TaskRule((Product) replaced[0], (Product) replaced[1]);
     }
 
-    public final TaskRule setup() {
+    public final TaskRule setup(TermIndex index) {
 
+        compile(index);
 
         //1. construct precondition term array
         //Term[] terms = terms();

@@ -16,9 +16,9 @@ public interface Termlike  {
      * */
     boolean containsTerm(Term t);
 
-    /** TODO use hasAll or hasAny and test them */
-    @Deprecated default boolean impossibleToMatch(final int possibleSubtermStructure) {
-        return impossibleToMatch(
+
+    default boolean impossibleStructureMatch(final int possibleSubtermStructure) {
+        return impossibleStructureMatch(
                 structure(),
                 possibleSubtermStructure
         );
@@ -26,14 +26,14 @@ public interface Termlike  {
 
     boolean containsTermRecursively(Term target);
 
-    static boolean impossibleToMatch(int existingStructure, int possibleSubtermStructure) {
+    static boolean impossibleStructureMatch(int existingStructure, int possibleSubtermStructure) {
         //if the OR produces a different result compared to subterms,
         // it means there is some component of the other term which is not found
         return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
 
     default boolean impossibleSubterm(final Term target) {
-        return ((impossibleToMatch(structure(), target.structure()))) ||
+        return ((impossibleStructureMatch(structure(), target.structure()))) ||
                 (impossibleSubTermVolume(target.volume()));
     }
 
@@ -60,11 +60,8 @@ public interface Termlike  {
 
 
     default boolean impossibleSubTermOrEquality(final Term target) {
-        return ((impossibleToMatch(target.structure())) ||
+        return ((impossibleStructureMatch(target.structure())) ||
                 (impossibleSubTermOrEqualityVolume(target.volume())));
-    }
-    default boolean impossibleToMatch(final Term c) {
-        return impossibleToMatch(c.structure());
     }
 
 }

@@ -33,7 +33,7 @@ public class FindSubst extends Versioning implements Subst {
 
     public final Random random;
 
-    protected final Op type;
+    public final Op type;
 
 
     @Override
@@ -674,12 +674,12 @@ public class FindSubst extends Versioning implements Subst {
         }
     }
 
-    private static void printComparison(int power, Compound cx, Compound cy) {
-        System.out.println(cx.structureString() + " " + cx.volume() + "\t" + cx);
-        System.out.println(cy.structureString() + " " + cy.volume() + "\t" + cy);
-        System.out.println(!cx.impossibleToMatch(cy) + "|" + !cy.impossibleToMatch(cx) + " ---> " + (power >= 0) + " " + power);
-        System.out.println();
-    }
+//    private static void printComparison(int power, Compound cx, Compound cy) {
+//        System.out.println(cx.structureString() + " " + cx.volume() + "\t" + cx);
+//        System.out.println(cy.structureString() + " " + cy.volume() + "\t" + cy);
+//        System.out.println(!cx.impossibleToMatch(cy) + "|" + !cy.impossibleToMatch(cx) + " ---> " + (power >= 0) + " " + power);
+//        System.out.println();
+//    }
 
 
     private final void nextVarX(final Variable xVar, final Term y) {

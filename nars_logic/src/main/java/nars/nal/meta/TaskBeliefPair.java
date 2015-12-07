@@ -5,11 +5,11 @@ import nars.term.Term;
 import nars.term.atom.Atom;
 
 /**
- * TODO decide if the volume bounds are correct when varargs are involved,
- * and if not, make a special case
+ * just holds two terms, not really necessary
  */
 public class TaskBeliefPair extends ProductN {
 
+    private final Term[] t;
     public int volA, volB;
     public int structureA, structureB; //should use the long stuctureHash?
 
@@ -22,6 +22,9 @@ public class TaskBeliefPair extends ProductN {
     public TaskBeliefPair(Term a, Term b) {
         super(a, b);
 
+        t = this.terms();
+
+
         volA = a.volume();
         structureA = a.structure();
 
@@ -30,11 +33,11 @@ public class TaskBeliefPair extends ProductN {
     }
 
 
+
     public final void set(final Term a, final Term b) {
-        Term[] t = this.terms();
+        Term[] t = this.t;
         t[0] = a;
         t[1] = b;
-        terms.init(); //rehash
     }
 
 

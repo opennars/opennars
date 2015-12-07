@@ -524,8 +524,9 @@ public class TermTest {
         Compound a2 = testStructure("<c <=> <a --> b>>",   "10000000000000000001000001");
         Compound b = testStructure("<<$1 --> #2> </> ?3>", "100000000000000000001001110");
 
-        assertTrue( a.impossibleToMatch(b) );
-        assertFalse( a.impossibleToMatch(a3));
+
+        assertTrue( a.impossibleStructureMatch(b.structure()) );
+        assertFalse( a.impossibleStructureMatch(a3.structure()));
 
 
         assertEquals("no additional structure code in upper bits",
@@ -609,8 +610,8 @@ public class TermTest {
                 )
         );
         assertTrue(
-                n.term("<a --> b>").impossibleToMatch(
-                        n.term("<a-->#b>")
+                n.term("<a --> b>").impossibleStructureMatch(
+                        n.term("<a-->#b>").structure()
                 )
         );
 

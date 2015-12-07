@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTester {
 
-    final int cycles = 500;
+    final int cycles = 600;
     int exeCount = 0;
     private TermFunction exeFunc;
 

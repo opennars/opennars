@@ -149,12 +149,30 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         if (t == null)
             throw new RuntimeException("null term");
 
+        // if a task has an unperceived creationTime,
+        // set it to the memory's current time here,
+        // and adjust occurenceTime if it's not eternal
+
+        setDuration(
+                memory.duration() //assume the default perceptual duration?
+        );
+
+        if (getCreationTime() <= Stamp.TIMELESS) {
+            final long now = memory.time();
+            long oc = getOccurrenceTime();
+            if (oc != Stamp.ETERNAL)
+                oc += now;
+
+            setTime(now, oc);
+        }
+
+
         if (t instanceof Sequence)  {
             long[] offset = new long[1];
             Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
             if ((st == null) || (Sentence.invalidSentenceTerm(st)))
                 return null; //it reduced to an invalid sentence term so return null
-            this.term = (T)st;
+            t = (T)st;
             if (!isEternal())
                 occurrenceTime -= offset[0];
         }
@@ -177,23 +195,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         this.hash = rehash();
 
-
-        // if a task has an unperceived creationTime,
-        // set it to the memory's current time here,
-        // and adjust occurenceTime if it's not eternal
-
-        if (getCreationTime() <= Stamp.TIMELESS) {
-            final long now = memory.time();
-            long oc = getOccurrenceTime();
-            if (oc != Stamp.ETERNAL)
-                oc += now;
-
-            setTime(now, oc);
-        }
-
-        setDuration(
-                memory.duration() //assume the default perceptual duration?
-        );
 
         //finally, assign a unique stamp if none specified (input)
         if (getEvidence().length == 0) {

@@ -5,10 +5,12 @@ import nars.Op;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.nal4.Image;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.compound.Compound;
 import nars.term.compound.CompoundN;
 import nars.term.transform.FindSubst;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -40,44 +42,67 @@ public class PatternIndex extends MapIndex {
         private final Op op;
         private final int structureCached;
         private final int sizeCached;
+        private final int volCached;
+        private final int structureCachedWithoutVars;
+        private final int[] subtermOrder;
+        private final Term[] termsCached;
 
         public LinearCompoundPattern(Compound seed) {
             super((CompoundN)seed);
             this.seed = seed;
             this.op = seed.op();
             this.structureCached = seed.structure();
+            this.structureCachedWithoutVars =
+                    seed.structure()
+                    & ~(Op.VAR_INDEPENDENT.bit())
+                    & ~(Op.VAR_DEPENDENT.bit())
+                    & ~(Op.VAR_QUERY.bit());
+
+            this.termsCached = this.terms();
             this.sizeCached = seed.size();
+            this.volCached = seed.volume();
+            this.subtermOrder = getSubtermOrder(terms());
         }
+
+        private static int[] getSubtermOrder(Term[] terms) {
+            Integer[] x = new Integer[terms.length];
+            for (int i = 0; i < terms.length; i++)
+                x[i] = i;
+            Arrays.sort(x, (Integer a, Integer b) -> {
+                int volA = terms[a].volume();
+                int volB = terms[b].volume();
+                return Integer.compare(volA, volB);
+            });
+            int[] y = new int[terms.length];
+            for (int i = 0; i < terms.length; i++) {
+                y[i] = x[i];
+            }
+            return y;
+        }
+
 
         @Override
         public final boolean match(Compound y, FindSubst subst) {
             if (y.size() != sizeCached)
                 return false;
-                    //this term as a pattern involves anything y does not?
-                    //((yStructure | structure()) == yStructure) &&
-                    //&&
-                    // ?? && ( y.volume() >= volume() )
+            if (y.volume() < volCached)
+                return false;
+            final int yStructure = y.structure();
+            if ((yStructure | structureCachedWithoutVars) != yStructure)
+                return false;
 
             return matchLinear(y, subst);
-                /*
-                        int s = size();
-        if (s == 2) {
-            //HACK - match smallest (least specific) first
-            int v0 = term(0).volume();
-            int v1 = term(1).volume();
-            if (v0 <= v1) {
-                return matchSubterm(0, y, subst)&&
-                       matchSubterm(1, y, subst);
-            } else {
-                return matchSubterm(1, y, subst)&&
-                       matchSubterm(0, y, subst);
-            }
-        } else {
-            return subst.matchLinear(this, y, 0, size());
         }
 
-                 */
-
+        @Override
+        public boolean matchLinear(TermContainer y, FindSubst subst) {
+            int[] o = this.subtermOrder;
+            Term[] x = this.termsCached;
+            for (int i = 0; i < o.length; i++) {
+                if (!subst.match(x[i], y.term(i)))
+                    return false;
+            }
+            return true;
         }
 
 
