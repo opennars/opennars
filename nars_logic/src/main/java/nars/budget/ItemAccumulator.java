@@ -31,6 +31,7 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
         return removeHighest();
     }
 
+    @Override
     public final boolean contains(V t) {
         return index.containsKey(t.name());
     }

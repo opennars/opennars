@@ -92,6 +92,11 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return compound.equals(obj);
+    }
+
+    @Override
     public int compareTo(Object o) {
         return compound.compareTo(o);
     }
@@ -101,6 +106,7 @@ public final class Termutator extends ShuffledPermutations implements TermContai
         return compound.iterator();
     }
 
+    @Override
     public Term[] termsCopy() {
         return TermContainer.copyByIndex(this);
     }

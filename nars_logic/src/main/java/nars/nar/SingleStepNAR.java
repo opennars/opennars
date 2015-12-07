@@ -41,38 +41,6 @@ public class SingleStepNAR extends Default {
 //        }
 //    }
 
-    @Override
-    protected Deriver getDeriver() {
-//        if (Global.DEBUG_DERIVATION_GRAPH) {
-//
-//
-//            return new SimpleDeriver(SimpleDeriver.standard) {
-//
-//                @Override
-//                public Stream<Task> forEachRule(RuleMatch match) {
-//
-//                    //record an empty derivation, in case nothing is returned in the stream
-//                    //allowing us to see what is mising
-//                    derivations.add(match.premise /* none */);
-//
-//                    ;
-//                    Stream<Task> s = super.forEachRule(match).peek(t -> {
-//                        DerivationGraph.DerivationPattern dd =
-//                                derivations.add(match.premise, t);
-//                        ruleDerivations.put(match.rule, dd.key);
-//                        //derivationRules.put(dd.key, match.rule);
-//                    });
-//
-//                    return s;
-//                }
-//            };
-//        }
-//        else {
-            //return new SimpleDeriver();
-        return Deriver.standardDeriver;
-        //}
-    }
-
 
     public SingleStepNAR() {
         super(128, 2, 2, 3, new FrameClock());

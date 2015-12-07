@@ -12,6 +12,7 @@ import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
+import nars.budget.Budget;
 import nars.nal.TaskRule;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
@@ -25,12 +26,14 @@ import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.echo;
+import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.term.*;
 import nars.term.compile.TermIndex;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
+import nars.util.data.array.LongArrays;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,6 +70,55 @@ public class Narsese extends BaseParser<Object>  {
 
     public static final Narsese the() {
         return parsers.get();
+    }
+
+    public static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+
+        if (p == null)
+            throw new RuntimeException("character is null");
+
+        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
+            t = new DefaultTruth(p);
+
+        int blen = b!=null ? b.length : 0;
+        if ((blen > 0) && (Float.isNaN(b[0])))
+            blen = 0;
+
+        Budget B;
+        switch (blen) {
+            case 0:     B = new Budget(p, t); break;
+            case 1:     B = new Budget(b[0], p, t); break;
+            case 2:     B = new Budget(b[0], b[1], t); break;
+            default:    B = new Budget(b[0], b[1], b[2]); break;
+        }
+
+
+        if (!(content instanceof Compound)) {
+            return null;
+        }
+
+        //avoid cloning by transforming this new compound directly
+        Term ccontent = content.normalized();
+        if (ccontent!=null)
+            ccontent = Task.taskable(ccontent);
+
+        if (ccontent==null) return null;
+
+
+        Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
+        ttt.setCreationTime(memory.time());
+
+
+        ttt.setOccurrenceTime(tense, memory.duration());
+        ttt.setEvidence(LongArrays.EMPTY_ARRAY);
+
+        return ttt;
+
+        /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
+            return new Stamp(
+                    newStamp ? new long[] { memory.newStampSerial() } : new long[] { blank },
+                    //memory, creationTime, tense);
+        }*/
     }
 
 
@@ -168,7 +220,7 @@ public class Narsese extends BaseParser<Object>  {
 
                 zeroOrMore(noneOf("\n")),
 
-                push( ImmediateOperator.command(echo.class, match().toString()) ) );
+                push( ImmediateOperator.command(echo.class, match()) ) );
     }
 
 //    public Rule PauseInput() {
@@ -1033,7 +1085,7 @@ public class Narsese extends BaseParser<Object>  {
     public static Task decodeTask(String input, final Memory m, Object[] x) {
         if (x.length == 1 && x[0] instanceof Task)
             return (Task)x[0];
-        Task y = Task.makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
+        Task y = makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
         if (y == null) {
             m.eventError.emit("NarseseParser: Invalid task: " + input);
         }

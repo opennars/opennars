@@ -59,14 +59,14 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
     public int getInt(Budgeted b) {
         Integer i = (Integer)get(b);
         if (i != null)
-            return i.intValue();
+            return i;
         return 0;
     }
 
     public long getLong(Budgeted b) {
         Long l = (Long) get(b);
         if (l!=null)
-            return l.longValue();
+            return l;
         return 0;
     }
 

@@ -62,11 +62,6 @@ public class ShadowAtom extends AbstractStringAtom {
     }
 
     @Override
-    public String toString() {
-        return id;
-    }
-
-    @Override
     public int vars() {
         return 0;
     }

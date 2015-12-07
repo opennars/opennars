@@ -29,7 +29,7 @@ public class TrieDeriver extends RuleTrie {
 
     }
 
-    private final void forEachRule(RuleBranch r, RuleMatch match) {
+    private static void forEachRule(RuleBranch r, RuleMatch match) {
 
         //System.out.println(">> " + r);
 

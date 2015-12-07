@@ -147,6 +147,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
 
     }
 
+    @Override
     default boolean containsTermRecursively(Term target) {
 
         for (final Term x : terms()) {
@@ -154,7 +155,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
                 continue;
             if (x.equals(target)) return true;
             if (x instanceof Compound) {
-                if (((Compound)x).containsTermRecursively(target)) {
+                if (x.containsTermRecursively(target)) {
                     return true;
                 }
             }

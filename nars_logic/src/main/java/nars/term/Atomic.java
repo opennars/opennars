@@ -42,6 +42,7 @@ public abstract class Atomic implements Term, Byted {
     }
 //
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
+    @Override
     public StringBuilder toStringBuilder(final boolean pretty) {
         StringBuilder sb = new StringBuilder(toString());
 //        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
@@ -91,6 +92,7 @@ public abstract class Atomic implements Term, Byted {
 
     @Override public int volume() { return 1; }
 
+    @Override
     public final boolean impossibleSubTermVolume(final int otherTermVolume) {
         return true;
     }

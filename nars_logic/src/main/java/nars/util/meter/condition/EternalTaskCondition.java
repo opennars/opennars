@@ -305,7 +305,7 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
     private void ensureSimilar() {
         if (similar == null) {
             similar = new TreeMap();
-            similarset = new HashSet<Task>();
+            similarset = new HashSet<>();
         }
     }
 
@@ -426,6 +426,7 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
                 "), creation in(" + creationStart + "," + creationEnd + ")";
     }
 
+    @Override
     public void toString(PrintStream out) {
         out.println(isTrue() ? " OK" : "ERR" + "\t" + toString() + " " + toConditionString());
 

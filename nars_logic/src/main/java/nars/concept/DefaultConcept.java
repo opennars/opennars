@@ -101,6 +101,7 @@ public class DefaultConcept extends AtomConcept {
     /**
      * Pending Quests to be answered by new desire values
      */
+    @Override
     public final TaskTable getQuests() {
         return quests;
     }
@@ -109,6 +110,7 @@ public class DefaultConcept extends AtomConcept {
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
+    @Override
     public final BeliefTable getBeliefs() {
         return beliefs;
     }
@@ -116,6 +118,7 @@ public class DefaultConcept extends AtomConcept {
     /**
      * Desire values on the term, similar to the above one
      */
+    @Override
     public final BeliefTable getGoals() {
         return goals;
     }
@@ -209,6 +212,7 @@ public class DefaultConcept extends AtomConcept {
      * @param belief The task to be processed
      * @return Whether to continue the processing of the task
      */
+    @Override
     public boolean processBelief(final Premise nal) {
 
         final Task belief = nal.getTask();
@@ -246,6 +250,7 @@ public class DefaultConcept extends AtomConcept {
      * @param goal The task to be processed
      * @return Whether to continue the processing of the task
      */
+    @Override
     public boolean processGoal(final Premise nal) {
 
         final Task goal = nal.getTask();
@@ -369,6 +374,7 @@ public class DefaultConcept extends AtomConcept {
      * @param q The task to be processed
      * @return true if the quest/question table changed
      */
+    @Override
     public boolean processQuestion(final Premise nal) {
 
         Task q = nal.getTask();
@@ -482,6 +488,7 @@ public class DefaultConcept extends AtomConcept {
      * Return the questions, called in ComposionalRules in
      * dedConjunctionByQuestion only
      */
+    @Override
     public TaskTable getQuestions() {
         return questions;
     }

@@ -131,6 +131,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
     }
 
 
+    @Override
     public final boolean contains(Task t) {
         //        //equality:
 //        //  1. term (given because it is looking up in concept)

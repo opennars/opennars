@@ -228,6 +228,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
 
+    @Override
     abstract public Term clone();
 
     @Override public boolean isNormalized() {

@@ -287,7 +287,7 @@ abstract public class Image extends CompoundN {
             res = ser;
         }
 
-        boolean ext = (o == Op.IMAGE_EXT ?  true : false);
+        boolean ext = (o == Op.IMAGE_EXT);
         if (ext)
             return new ImageExt(res, index);
         else

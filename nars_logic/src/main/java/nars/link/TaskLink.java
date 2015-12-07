@@ -126,10 +126,12 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
         return targetTask.getTerm();
     }
 
+    @Override
     public final Task getTask() {
         return targetTask;
     }
 
+    @Override
     public boolean isDeleted() {
         boolean b = super.isDeleted();
         if (!b) {

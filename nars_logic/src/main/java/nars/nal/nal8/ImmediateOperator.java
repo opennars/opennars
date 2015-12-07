@@ -24,7 +24,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     }
 
     public Operation newOperation(Object...args) {
-        return newOperation(termizedProduct(args));
+        return new Operation(op, termizedProduct(args));
     }
 
     /** apply Atom.quoteI */

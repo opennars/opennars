@@ -25,6 +25,7 @@ public interface SetTensional<T extends Term> extends Compound<T> {
     Op op();
 
 
+    @Override
     T term(int subterm);
 
 

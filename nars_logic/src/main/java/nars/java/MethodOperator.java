@@ -34,7 +34,7 @@ public class MethodOperator extends TermFunction {
     boolean feedback = true;
 
     public static final Atom ERROR = Atom.the("ERR");
-    private Task currentTask = null;
+    private volatile Task currentTask = null;
 
     public MethodOperator(AtomicBoolean enable, Method m, NALObjects context) {
         super(getParentMethodName(m));

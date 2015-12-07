@@ -130,6 +130,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.bestSolution = solution;
     }
 
+    @Override
     public boolean init(final Memory memory) {
 
         if (!isCommand()) {
@@ -230,6 +231,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
     }
 
+    @Override
     public final boolean isAnticipated() {
         return isJudgmentOrGoal() && (anticipate || isInput());
     }

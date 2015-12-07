@@ -80,6 +80,7 @@ public abstract class Subst extends Versioning {
     }
 
 
+    @Override
     public void clear() {
         revert(0);
     }

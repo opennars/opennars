@@ -45,16 +45,20 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     Op op();
 
     /** volume = total number of terms = complexity + # total variables */
+    @Override
     int volume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
+    @Override
     int complexity();
 
 
+    @Override
     int structure();
 
 
     /** number of subterms. if atomic, size=0 */
+    @Override
     int size();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */

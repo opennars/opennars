@@ -57,6 +57,7 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
         this.id = id;
 
         peer = new GossipPeer(port) {
+            @Override
             public final void onUpdate(UUID id, Object j) {
 
                 try {

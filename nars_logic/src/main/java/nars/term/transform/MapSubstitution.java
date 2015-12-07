@@ -37,6 +37,7 @@ public class MapSubstitution implements Substitution {
     /**
      * gets the substitute
      */
+    @Override
     final public Term getXY(final Term t) {
         return subs.get(t);
     }

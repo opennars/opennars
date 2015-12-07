@@ -101,7 +101,7 @@ public class Default2 extends Default {
                 if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
                     HashBag<Task> b = detectDuplicates(buffer);
                     buffer.clear();
-                    b.addAll(b);
+                    b.addAll(buffer);
                 }
 
 

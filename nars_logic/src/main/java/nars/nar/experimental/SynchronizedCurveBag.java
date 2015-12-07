@@ -18,10 +18,10 @@ public class SynchronizedCurveBag<K, V extends Itemized<K>> extends CurveBag<K, 
     final Object lock = new Object();
 
     public SynchronizedCurveBag(Random rng, int capacity) {
-        super(new ArraySortedIndex<V>(
-                    new FasterList<V>(capacity).asSynchronized(),
-                    capacity
-              ),
+        super(new ArraySortedIndex<>(
+                        new FasterList<V>(capacity).asSynchronized(),
+                        capacity
+                ),
               CurveBag.power6BagCurve,
               rng);
 

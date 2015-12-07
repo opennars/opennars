@@ -104,6 +104,7 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
      * records an assignment operation
      * follows semantics of set()
      */
+    @Override
     public Y put(X key, Y value) {
         getOrCreateIfAbsent(key).set(value);
         return null;
@@ -141,6 +142,7 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
             return v;
         }
 
+        @Override
         public void clear() {
 //            super.clear();
 //            removeFromMap();
@@ -156,6 +158,7 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         return false;
     }
 
+    @Override
     public final Y get(/*X*/Object key) {
         Versioned<Y> v = version((X) key);
         if (v!=null) return v.get();

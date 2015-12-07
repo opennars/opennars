@@ -18,6 +18,7 @@ public class ExecutionResult implements Serializable, Tasked {
         this.feedback = feedback;
     }
 
+    @Override
     public Task getTask() {
         return operation;
     }

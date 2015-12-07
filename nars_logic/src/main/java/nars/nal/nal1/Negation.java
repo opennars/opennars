@@ -45,6 +45,7 @@ public final class Negation<T extends Term> extends CompoundN<T> {
 
     public final T the() { return term(0); }
 
+    @Override
     public final Term clone() {
         return Negation.make(the());
     }

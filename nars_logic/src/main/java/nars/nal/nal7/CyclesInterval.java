@@ -48,6 +48,7 @@ final public class CyclesInterval extends ShadowAtom implements Interval {
         output.append('/').append(Long.toString(cyc));//.append('/');
     }
 
+    @Override
     public final int duration() {
         return cyc;
     }

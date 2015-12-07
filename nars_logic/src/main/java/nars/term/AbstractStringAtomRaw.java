@@ -39,6 +39,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
     }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
+    @Override
     public StringBuilder toStringBuilder(final boolean pretty) {
         return new StringBuilder(id);
     }
@@ -78,14 +79,6 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
         //}
 
     }
-
-
-    @Override public int bytesLength() {
-        return bytes().length;
-    }
-
-
-    @Override public int volume() { return 1; }
 
 
     @Override

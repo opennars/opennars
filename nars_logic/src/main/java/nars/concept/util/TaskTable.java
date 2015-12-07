@@ -11,9 +11,7 @@ import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Iterator;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * holds a set of ranked question/quests tasks

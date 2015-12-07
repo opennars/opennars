@@ -4,7 +4,6 @@ import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
 import nars.nal.nal7.ShadowAtom;
-import nars.term.transform.Substitution;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
@@ -114,7 +113,7 @@ public class Atom extends StringAtom {
         if (o instanceof Short) return the(o.intValue());
         if (o instanceof Integer) return the(o.intValue());
 
-        if (o instanceof Long) return the(o.toString());
+        if (o instanceof Long) return the(Long.toString((long)o));
 
         if ((o instanceof Float) || (o instanceof Double)) return the(o.floatValue());
 
@@ -212,50 +211,12 @@ public class Atom extends StringAtom {
     }
 
     @Override
-    public final Op op() {
-        return Op.ATOM;
-    }
-
-    @Override
     public final int structure() {
         return 1 << Op.ATOM.ordinal();
     }
 
-    @Override
-    public final Term substituted(Substitution s) {
-        return this;
-    }
-
-    /**
-     * Whether this compound term contains any variable term
-     *
-     * @return Whether the name contains a variable
-     */
-
-    @Override public final int vars() { return 0;    }
-
     public final String toStringUnquoted() {
         return toUnquoted(toString());
-    }
-
-    @Override
-    public final int complexity() {
-        return 1;
-    }
-
-    @Override
-    public final int varIndep() {
-        return 0;
-    }
-
-    @Override
-    public final int varDep() {
-        return 0;
-    }
-
-    @Override
-    public final int varQuery() {
-        return 0;
     }
 
 

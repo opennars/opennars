@@ -66,8 +66,7 @@ public class RuleTrie extends Deriver {
 
             @Override
             public int matches(List<PreCondition> sequenceA, int indexA, List<PreCondition> sequenceB, int indexB, int count) {
-                int i = 0;
-                for (; i < count; i++) {
+                for (int i = 0; i < count; i++) {
                     PreCondition a = sequenceA.get(i + indexA);
                     PreCondition b = sequenceB.get(i + indexB);
                     if (!a.equals(b))

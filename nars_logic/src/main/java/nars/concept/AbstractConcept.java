@@ -54,6 +54,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
         return memory;
     }
 
+    @Override
     public final void setMemory(Memory memory) {
         this.memory = memory;
         if (memory!=null) {

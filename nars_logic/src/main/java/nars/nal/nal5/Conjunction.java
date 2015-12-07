@@ -68,11 +68,6 @@ public class Conjunction extends Conjunctive {
     }
 
     @Override
-    public final int getTemporalOrder() {
-        return Tense.ORDER_NONE;
-    }
-
-    @Override
     public final Term clone(Term[] t) {
         return make(t, getTemporalOrder());
     }

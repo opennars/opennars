@@ -26,15 +26,12 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.Truthed;
-import nars.util.data.array.LongArrays;
 
 import java.lang.ref.Reference;
 import java.util.Collection;
@@ -42,8 +39,6 @@ import java.util.List;
 import java.util.Set;
 
 import static nars.Global.dereference;
-import static nars.Symbols.GOAL;
-import static nars.Symbols.JUDGMENT;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -116,55 +111,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     @Override default Task getTask() { return this; }
-
-    static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
-
-        if (p == null)
-            throw new RuntimeException("character is null");
-
-        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
-            t = new DefaultTruth(p);
-
-        int blen = b!=null ? b.length : 0;
-        if ((blen > 0) && (Float.isNaN(b[0])))
-            blen = 0;
-
-        Budget B;
-        switch (blen) {
-            case 0:     B = new Budget(p, t); break;
-            case 1:     B = new Budget(b[0], p, t); break;
-            case 2:     B = new Budget(b[0], b[1], t); break;
-            default:    B = new Budget(b[0], b[1], b[2]); break;
-        }
-
-
-        if (!(content instanceof Compound)) {
-            return null;
-        }
-
-        //avoid cloning by transforming this new compound directly
-        Term ccontent = content.normalized();
-        if (ccontent!=null)
-            ccontent = taskable(ccontent);
-
-        if (ccontent==null) return null;
-
-
-        Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
-        ttt.setCreationTime(memory.time());
-
-
-        ttt.setOccurrenceTime(tense, memory.duration());
-        ttt.setEvidence(LongArrays.EMPTY_ARRAY);
-
-        return ttt;
-
-        /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
-            return new Stamp(
-                    newStamp ? new long[] { memory.newStampSerial() } : new long[] { blank },
-                    //memory, creationTime, tense);
-        }*/
-    }
 
     /** returns a valid Task term, or returns null */
     static <X extends Compound> X taskable(Term x) {

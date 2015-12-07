@@ -63,7 +63,7 @@ abstract public class $  {
     }
 
     public static <A extends Term, B extends Term> Inheritance<A, B> inh(String subj, String pred) {
-        return Inheritance.make((Term)$(subj), (Term)$(pred));
+        return Inheritance.make((A)$(subj), (B)$(pred));
     }
 
 

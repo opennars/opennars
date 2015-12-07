@@ -24,6 +24,7 @@ public class ShadowProduct extends TermVector implements Term {
         super(subterms);
     }
 
+    @Override
     public final Term[] terms() {
         return term;
     }

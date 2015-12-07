@@ -61,6 +61,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         this.random = rng;
     }
 
+    @Override
     public V peekNext(final boolean remove) {
 
         while (!isEmpty()) {
