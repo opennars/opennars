@@ -1,8 +1,8 @@
 package nars.nal.meta.match;
 
 import nars.nal.nal4.Image;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.util.Collection;

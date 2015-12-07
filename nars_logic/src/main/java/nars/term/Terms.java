@@ -19,6 +19,7 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Tense;
+import nars.term.compound.Compound;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;

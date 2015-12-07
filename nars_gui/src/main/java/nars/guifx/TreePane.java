@@ -12,12 +12,8 @@ import nars.nal.nal8.ImmediateOperator;
 import nars.op.io.echo;
 import nars.task.Task;
 import nars.util.event.FrameReaction;
-import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -35,8 +31,8 @@ public class TreePane extends BorderPane {
 
     final Set<Task> pendingTasks = new LinkedHashSet<>(); //Global.newHashSet(1);
 
-    final Map<Task, AutoLabel> labels = new ConcurrentWeakKeyHashMap<>();
-    final Map<Task, TaskTreeItem> tasks = new ConcurrentWeakKeyHashMap<>();
+    final Map<Task, AutoLabel> labels = new WeakHashMap<>();
+    final Map<Task, TaskTreeItem> tasks = new WeakHashMap<>();
 
 
     private final NAR nar;

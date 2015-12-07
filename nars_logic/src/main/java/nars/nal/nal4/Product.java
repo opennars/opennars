@@ -23,10 +23,10 @@ package nars.nal.nal4;
 
 import nars.$;
 import nars.Op;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import java.util.Collection;
 import java.util.List;

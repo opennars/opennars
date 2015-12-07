@@ -3,6 +3,8 @@ package nars.term;
 import nars.$;
 import nars.Narsese;
 import nars.nal.nal4.Product;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

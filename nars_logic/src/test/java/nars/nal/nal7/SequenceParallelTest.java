@@ -6,9 +6,9 @@ import nars.Op;
 import nars.nar.Default2;
 import nars.nar.Terminal;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.truth.Stamp;
 import org.junit.Test;
 

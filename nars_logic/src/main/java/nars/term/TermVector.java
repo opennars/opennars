@@ -2,6 +2,7 @@ package nars.term;
 
 import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 import nars.util.data.Util;

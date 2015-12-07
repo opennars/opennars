@@ -11,9 +11,9 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.util.event.On;
 
 import java.util.concurrent.atomic.AtomicInteger;

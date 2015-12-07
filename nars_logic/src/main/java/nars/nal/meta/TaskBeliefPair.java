@@ -1,8 +1,8 @@
 package nars.nal.meta;
 
 import nars.nal.nal4.ProductN;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 /**
  * TODO decide if the volume bounds are correct when varargs are involved,

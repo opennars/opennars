@@ -1,9 +1,10 @@
-package nars.term;
+package nars.term.atom;
 
 import nars.Narsese;
 import nars.Op;
 import nars.nal.nal1.Negation;
 import nars.nal.nal7.ShadowAtom;
+import nars.term.Term;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 

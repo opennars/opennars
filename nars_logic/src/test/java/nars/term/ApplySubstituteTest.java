@@ -4,6 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.nar.Default;
+import nars.term.compound.Compound;
 import org.junit.Test;
 
 import java.util.HashMap;

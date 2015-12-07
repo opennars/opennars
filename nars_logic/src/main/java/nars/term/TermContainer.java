@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
+import nars.term.compound.Compound;
 import nars.util.utf8.ByteBuf;
 
 import java.util.List;

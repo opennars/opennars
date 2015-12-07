@@ -1,7 +1,7 @@
 package nars.op.software.scheme.expressions;
 
 
-import nars.term.Atom;
+import nars.term.atom.Atom;
 
 public class SymbolExpression extends Atom implements Expression {
 

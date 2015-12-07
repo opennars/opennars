@@ -4,8 +4,8 @@ import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.nal4.Image;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 
 import java.util.Arrays;

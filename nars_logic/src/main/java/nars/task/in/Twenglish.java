@@ -25,8 +25,8 @@ import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
 

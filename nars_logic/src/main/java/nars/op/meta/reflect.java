@@ -9,10 +9,10 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term

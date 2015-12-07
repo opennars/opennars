@@ -1,4 +1,4 @@
-package nars.term;
+package nars.term.atom;
 
 import nars.Op;
 import nars.util.utf8.Utf8;

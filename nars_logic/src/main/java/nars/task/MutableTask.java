@@ -8,7 +8,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Tense;
-import nars.term.Compound;
+import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 

@@ -6,8 +6,8 @@ import nars.Premise;
 import nars.nal.nal3.SetInt;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.util.event.FrameReaction;
 import nars.util.meter.event.DoubleMeter;
 

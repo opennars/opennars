@@ -1,8 +1,8 @@
 package nars.nal.meta;
 
 import nars.Global;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;

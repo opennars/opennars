@@ -11,10 +11,10 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 
 /**
  * first resolution of the conclusion's pattern term

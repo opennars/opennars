@@ -63,14 +63,20 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     @Override
     abstract public V remove(K key);
 
+
+
     /**
      * @param newItem
      * @return null if put was successful, or a displaced item if newItem was inserted.
      * if newItem itself is returned, then it was rejected due to insufficient budget
      * if the newItem already existed, the resulting budget is merged.
      */
-    @Override
     abstract public V put(V newItem);
+
+    @Override
+    @Deprecated public V put(K k, V v) {
+        throw new RuntimeException("depr");
+    }
 
     /**
      * set the merging function to 'average'

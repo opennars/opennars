@@ -3,8 +3,8 @@ package nars.nal.nal3;
 
 import nars.Op;
 import nars.Symbols;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 import java.io.IOException;
 import java.util.Set;

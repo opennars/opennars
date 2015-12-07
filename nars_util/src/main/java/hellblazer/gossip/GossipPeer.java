@@ -2,7 +2,6 @@ package hellblazer.gossip;
 
 import hellblazer.gossip.configuration.GossipConfiguration;
 import nars.util.data.list.FasterList;
-import org.infinispan.marshall.core.JBossMarshaller;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
@@ -55,7 +54,7 @@ public class GossipPeer implements GossipListener {
         return put(null, j);
     }
 
-    final JBossMarshaller marshaller = new JBossMarshaller();
+
 
     public UUID put(UUID u, Serializable j) {
 
@@ -64,7 +63,7 @@ public class GossipPeer implements GossipListener {
 
         byte[] ba;
         try {
-            ba = marshaller.objectToByteBuffer(j);
+            ba = null; //TODO marshaller.objectToByteBuffer(j);
         } catch (Exception e) {
             log(e);
             return null;
@@ -132,7 +131,7 @@ public class GossipPeer implements GossipListener {
             //bais.
             //JsonNode x = Core.bson.readTree(bais);
 
-            Object x = marshaller.objectFromByteBuffer(state);
+            Object x = null; //TODO marshaller.objectFromByteBuffer(state);
             onUpdate(id, x);
         } catch (Exception e) {
             e.printStackTrace();

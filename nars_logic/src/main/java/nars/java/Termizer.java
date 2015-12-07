@@ -2,8 +2,8 @@ package nars.java;
 
 import nars.$;
 import nars.nal.nal1.Negation;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 /**
  * Converts POJOs to NAL Term's, and vice-versa

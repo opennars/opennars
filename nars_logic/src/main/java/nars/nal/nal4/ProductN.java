@@ -1,8 +1,8 @@
 package nars.nal.nal4;
 
 import nars.Op;
-import nars.term.CompoundN;
 import nars.term.Term;
+import nars.term.compound.CompoundN;
 
 import java.io.IOException;
 

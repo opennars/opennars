@@ -1,6 +1,7 @@
 package nars.term;
 
 import nars.Narsese;
+import nars.term.variable.CommonVariable;
 import org.junit.Assert;
 import org.junit.Test;
 

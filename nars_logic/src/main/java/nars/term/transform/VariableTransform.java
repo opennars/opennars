@@ -1,8 +1,8 @@
 package nars.term.transform;
 
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 
 /**
  * Created by me on 6/1/15.

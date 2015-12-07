@@ -7,8 +7,8 @@ import nars.nal.nal2.Property;
 import nars.nal.nal3.SetExt;
 import nars.task.MutableTask;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.util.event.On;
 

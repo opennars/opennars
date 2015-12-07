@@ -22,7 +22,7 @@ package nars;
 
 
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.term.Atom;
+import nars.term.atom.Atom;
 import nars.truth.DefaultTruth;
 import nars.util.data.list.FasterList;
 import nars.util.data.map.UnifriedMap;

@@ -18,12 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.term;
+package nars.term.variable;
 
 
 import nars.Op;
 import nars.Symbols;
 import nars.nal.meta.match.VarPattern;
+import nars.term.Term;
+import nars.term.atom.AbstractStringAtom;
 import nars.term.transform.Subst;
 
 import java.io.IOException;

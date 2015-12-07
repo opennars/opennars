@@ -53,7 +53,7 @@ public class Terminal extends Default {
         else {
             Concept c = apply(term);
             c.getBudget().budget(b);
-            memory.concepts.put(c);
+            memory.concepts.put(term, c);
             return c;
         }
     }

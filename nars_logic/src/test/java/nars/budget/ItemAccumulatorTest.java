@@ -4,7 +4,7 @@ import nars.$;
 import nars.NAR;
 import nars.nar.Terminal;
 import nars.task.Task;
-import nars.term.Compound;
+import nars.term.compound.Compound;
 import nars.util.data.MutableDouble;
 import org.junit.Test;
 

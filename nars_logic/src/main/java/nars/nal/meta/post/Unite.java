@@ -5,10 +5,10 @@ import nars.nal.meta.pre.PreCondition3Output;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 
 import java.util.Set;
 

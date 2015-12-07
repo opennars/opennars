@@ -25,8 +25,8 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.truth.DefaultTruth;
 
 import java.util.ArrayList;

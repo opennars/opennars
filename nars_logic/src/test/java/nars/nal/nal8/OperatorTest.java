@@ -170,10 +170,12 @@ public class OperatorTest {
         };
         Terminal t = new Terminal();
 
-        Task matching = t.task("(x,y).");
+        Task matching = t.task("(x,y)!");
         f.apply(matching);
 
-        Task nonMatching = t.task("(x,y,z).");
+        assertEquals(1, count.get());
+
+        Task nonMatching = t.task("(x,y,z)!");
         f.apply(nonMatching);
 
         //should only be triggered once, by the matching term

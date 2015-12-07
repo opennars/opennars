@@ -18,7 +18,7 @@
         <dependency>
         <groupId>com.github.0xCopy.prautobeans</groupId>
         <artifactId>prautobeans-lib</artifactId>
-            <version>1.0</version>
+            <version>1.0-pre1</version>
         </dependency>
     </dependencies>
     <build>

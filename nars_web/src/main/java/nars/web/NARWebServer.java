@@ -12,11 +12,10 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
 import nars.Memory;
 import nars.NAR;
 import nars.NARLoop;
-import nars.bag.impl.InfiniCacheBag;
+import nars.bag.impl.GuavaCacheBag;
 import nars.nar.Default;
 import nars.time.RealtimeMSClock;
 import nars.util.data.random.XorShift1024StarRandom;
-import nars.util.db.InfiniPeer;
 import nars.util.event.Active;
 import nars.util.io.JSON;
 
@@ -232,8 +231,8 @@ public class NARWebServer extends PathHandler {
                 new Memory(
                         new RealtimeMSClock(),
                         new XorShift1024StarRandom(1),
-                        new InfiniCacheBag(
-                                InfiniPeer.tmp().the("default")
+                        GuavaCacheBag.make(
+                            1024*1024
                         )),
                 1024,
                 1, 2, 3

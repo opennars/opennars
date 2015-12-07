@@ -7,8 +7,8 @@ import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition1;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Sequence;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 /**
  * Created by me on 8/15/15.

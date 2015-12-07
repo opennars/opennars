@@ -12,8 +12,8 @@ import nars.op.software.scheme.expressions.Expression;
 import nars.op.software.scheme.expressions.ListExpression;
 import nars.op.software.scheme.expressions.NumberExpression;
 import nars.op.software.scheme.expressions.SymbolExpression;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 import java.util.List;
 import java.util.stream.Collectors;

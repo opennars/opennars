@@ -1,5 +1,6 @@
-package nars.term;
+package nars.term.atom;
 
+import nars.term.Term;
 import nars.term.compile.TermIndex;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;

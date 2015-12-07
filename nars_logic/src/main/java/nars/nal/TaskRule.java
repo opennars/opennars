@@ -15,10 +15,14 @@ import nars.nal.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
-import nars.term.*;
+import nars.term.Term;
+import nars.term.Terms;
+import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
+import nars.term.compound.Compound;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
+import nars.term.variable.Variable;
 
 import java.util.Collections;
 import java.util.List;

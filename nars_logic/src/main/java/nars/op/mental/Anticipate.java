@@ -34,7 +34,7 @@ import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
 import nars.task.Task;
-import nars.term.Compound;
+import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 

@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
-import nars.term.Atom;
+import nars.term.atom.Atom;
 import nars.truth.Stamp;
 import nars.util.event.CycleReaction;
 import nars.util.event.Topic;

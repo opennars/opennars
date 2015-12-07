@@ -1,7 +1,7 @@
 package nars.util.meter.condition;
 
 import nars.NAR;
-import nars.term.Atom;
+import nars.term.atom.Atom;
 import nars.truth.Stamp;
 
 /**

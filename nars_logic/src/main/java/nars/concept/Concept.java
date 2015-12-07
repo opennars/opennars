@@ -20,9 +20,9 @@
  */
 package nars.concept;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
-import infinispan.com.google.common.collect.Iterators;
 import nars.Global;
 import nars.Memory;
 import nars.Premise;

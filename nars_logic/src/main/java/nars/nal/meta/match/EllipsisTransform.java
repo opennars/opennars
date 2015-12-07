@@ -1,11 +1,11 @@
 package nars.nal.meta.match;
 
 import nars.nal.nal4.Image;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.term.transform.VariableNormalization;
+import nars.term.variable.Variable;
 
 /** ellipsis that transforms one of its elements, which it is required to match within */
 public class EllipsisTransform extends EllipsisOneOrMore {

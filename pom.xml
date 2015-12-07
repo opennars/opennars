@@ -284,7 +284,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>19.0-rc2</version>
+                <version>19.0-rc3</version>
             </dependency>
             <dependency>
                 <groupId>org.javolution</groupId>

@@ -10,9 +10,9 @@ import nars.nal.nal4.Product;
 import nars.nar.Default2;
 import nars.task.Task;
 import nars.task.flow.TaskQueue;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.util.data.random.XORShiftRandom;
 
 import java.util.HashSet;

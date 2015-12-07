@@ -1,12 +1,11 @@
 package nars.bag.impl;
 
 import nars.Memory;
-import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.term.Term;
 
 
-public interface CacheBag<K, V extends Itemized<K>>  {
+public interface CacheBag<K, V>  {
     
 
     void clear();
@@ -16,7 +15,9 @@ public interface CacheBag<K, V extends Itemized<K>>  {
     V remove(K key);
 
     /** same semantics as Map.put; output value is an existing value or null if none */
-    V put(V v);
+    V put(K k, V v);
+
+
 
     int size();
 

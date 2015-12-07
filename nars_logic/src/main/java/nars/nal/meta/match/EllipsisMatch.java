@@ -3,8 +3,8 @@ package nars.nal.meta.match;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.ShadowAtom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.util.Collection;

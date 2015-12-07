@@ -1,7 +1,8 @@
-package nars.term;
+package nars.term.atom;
 
 
 import nars.Op;
+import nars.term.Term;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 

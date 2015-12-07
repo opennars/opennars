@@ -1,10 +1,10 @@
 package nars.nal.nal8;
 
 import nars.Op;
-import nars.term.Atom;
-import nars.term.Atomic;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.atom.Atomic;
+import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.io.IOException;

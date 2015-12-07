@@ -2,6 +2,7 @@ package nars.term;
 
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Implication;
+import nars.term.atom.Atom;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

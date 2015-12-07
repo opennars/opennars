@@ -7,7 +7,7 @@ import nars.concept.Concept;
 import nars.nal.Deriver;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.term.Compound;
+import nars.term.compound.Compound;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

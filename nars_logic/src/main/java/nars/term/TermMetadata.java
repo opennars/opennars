@@ -1,6 +1,7 @@
 package nars.term;
 
 import nars.Op;
+import nars.term.compound.Compound;
 
 /**
  * Marker class for Term types which store instance-specific metadata

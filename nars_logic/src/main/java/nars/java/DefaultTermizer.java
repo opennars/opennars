@@ -6,9 +6,9 @@ import nars.Global;
 import nars.nal.nal2.Instance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.term.Atom;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.atom.Atom;
+import nars.term.variable.Variable;
 
 import java.lang.reflect.Method;
 import java.util.*;

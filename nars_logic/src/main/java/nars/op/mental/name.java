@@ -26,8 +26,8 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 

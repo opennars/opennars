@@ -3,11 +3,8 @@ package nars.guifx;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import org.infinispan.commons.util.WeakValueHashMap;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javafx.application.Platform.runLater;
@@ -64,7 +61,8 @@ public class ActiveConceptsLog extends LogPane {
 
     }
 
-    final WeakValueHashMap<Concept,ConceptSummaryPane> cache = new WeakValueHashMap();
+    final Map<Concept,ConceptSummaryPane> cache =
+            new WeakHashMap();
 
     ConceptSummaryPane node(Concept cc) {
         ConceptSummaryPane cp = cache.computeIfAbsent(cc, koncept -> {

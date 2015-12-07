@@ -1,6 +1,9 @@
-package nars.term;
+package nars.term.compound;
 
 import nars.Op;
+import nars.term.Term;
+import nars.term.TermContainer;
+import nars.term.TermVector;
 import nars.term.visit.SubtermVisitor;
 
 /**

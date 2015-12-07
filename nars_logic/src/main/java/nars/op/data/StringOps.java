@@ -3,9 +3,9 @@ package nars.op.data;
 import nars.NAR;
 import nars.nal.nal7.Sequence;
 import nars.nar.Default;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.term.compound.Compound;
 
 import java.util.Map;
 

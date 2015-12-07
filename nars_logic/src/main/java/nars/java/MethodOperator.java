@@ -7,8 +7,8 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

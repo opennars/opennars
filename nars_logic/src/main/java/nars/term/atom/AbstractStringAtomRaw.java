@@ -1,6 +1,7 @@
-package nars.term;
+package nars.term.atom;
 
 import nars.Op;
+import nars.term.Term;
 import nars.term.transform.Subst;
 
 import java.io.Externalizable;

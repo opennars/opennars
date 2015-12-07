@@ -24,9 +24,9 @@ import nars.Op;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.term.Atom;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 /**
  * A Statement about an Inheritance relation.

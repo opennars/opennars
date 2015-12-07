@@ -5,9 +5,9 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

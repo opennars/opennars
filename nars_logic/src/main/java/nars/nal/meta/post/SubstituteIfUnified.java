@@ -3,8 +3,8 @@ package nars.nal.meta.post;
 import nars.Global;
 import nars.Op;
 import nars.nal.RuleMatch;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.term.transform.FindSubst;
 
 /**

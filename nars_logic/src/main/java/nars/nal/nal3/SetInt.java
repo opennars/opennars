@@ -1,8 +1,8 @@
 package nars.nal.nal3;
 
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.term.compound.Compound;
 
 import java.util.Collection;
 

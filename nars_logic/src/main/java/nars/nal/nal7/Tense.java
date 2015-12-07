@@ -10,9 +10,9 @@ import nars.nal.nal8.Operation;
 import nars.op.mental.Mental;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 

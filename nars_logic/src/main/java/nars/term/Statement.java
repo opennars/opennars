@@ -22,6 +22,9 @@ package nars.term;
 
 import nars.Symbols;
 import nars.nal.nal4.Image;
+import nars.term.compound.Compound;
+import nars.term.compound.CompoundN;
+import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;

@@ -4,8 +4,6 @@ import nars.Memory;
 import nars.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.util.db.TemporaryCache;
-import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.util.function.Consumer;
 
@@ -36,30 +34,30 @@ abstract public class Deriver  {
         this.rules = rules;
     }
 
-    //not ready yet
-    static void loadCachedRules() {
-        final String key = "derivation_rules:standard";
-        Deriver.standard = TemporaryCache.computeIfAbsent(
-                key, new GenericJBossMarshaller(),
-                () -> {
-                    try {
-//                        standard = new DerivationRules();
-
-                        return new DerivationRules();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.exit(1);
-                        return null;
-                    }
-                }
-//                //TODO compare hash/checksum of the input file
-//                //to what is stored in cached file
-//                (x) -> {
-//                    //this disables entirely and just creates a new one each time:
-//                    return  ...
+//    //not ready yet
+//    static void loadCachedRules() {
+//        final String key = "derivation_rules:standard";
+//        Deriver.standard = TemporaryCache.computeIfAbsent(
+//                key, new GenericJBossMarshaller(),
+//                () -> {
+//                    try {
+////                        standard = new DerivationRules();
+//
+//                        return new DerivationRules();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        System.exit(1);
+//                        return null;
+//                    }
 //                }
-        );
-    }
+////                //TODO compare hash/checksum of the input file
+////                //to what is stored in cached file
+////                (x) -> {
+////                    //this disables entirely and just creates a new one each time:
+////                    return  ...
+////                }
+//        );
+//    }
 
     static void loadRules() {
         try {

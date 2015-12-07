@@ -21,9 +21,9 @@
 package nars.nal.nal1;
 
 import nars.Op;
-import nars.term.Compound;
-import nars.term.CompoundN;
 import nars.term.Term;
+import nars.term.compound.Compound;
+import nars.term.compound.CompoundN;
 import nars.term.transform.FindSubst;
 
 import java.io.IOException;

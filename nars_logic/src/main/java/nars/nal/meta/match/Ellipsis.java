@@ -4,12 +4,12 @@ import com.gs.collections.api.set.primitive.ShortSet;
 import nars.Op;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.ShadowAtom;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermContainer;
-import nars.term.Variable;
+import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.term.transform.VariableNormalization;
+import nars.term.variable.Variable;
 
 import java.util.Map;
 

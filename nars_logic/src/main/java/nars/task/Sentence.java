@@ -25,10 +25,10 @@ import nars.NAR;
 import nars.Symbols;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Tense;
-import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.truth.*;
 import nars.util.data.id.Named;
 

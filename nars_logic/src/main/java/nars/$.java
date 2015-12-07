@@ -12,7 +12,11 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
-import nars.term.*;
+import nars.term.Term;
+import nars.term.Terms;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 import nars.truth.Truth;
 import nars.util.utf8.Utf8;
 

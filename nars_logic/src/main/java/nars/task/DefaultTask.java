@@ -1,11 +1,5 @@
 package nars.task;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializable;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
@@ -14,16 +8,15 @@ import nars.budget.Item;
 import nars.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermMetadata;
+import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.Util;
 import nars.util.data.array.LongArrays;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.util.Arrays;
@@ -37,8 +30,7 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-@JsonSerialize(using = ToStringSerializer.class)
-public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
+public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable {
 
     /** content term of this task */
     protected T term;
@@ -728,15 +720,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
-    @Override
-    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeString(toString());
-    }
-
-    @Override
-    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
-        serialize(jgen, provider);
-    }
 
 
 }

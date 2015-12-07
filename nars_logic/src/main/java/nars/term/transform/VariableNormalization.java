@@ -1,8 +1,8 @@
 package nars.term.transform;
 
 import nars.Global;
-import nars.term.Compound;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 
 import java.util.Map;
 

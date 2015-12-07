@@ -23,14 +23,19 @@ package nars;
 
 import com.gs.collections.api.tuple.Twin;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.MapCacheBag;
 import nars.concept.Concept;
 import nars.nal.nal8.ExecutionResult;
 import nars.nal.nal8.Operation;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.term.*;
+import nars.term.Term;
+import nars.term.TermMetadata;
+import nars.term.Termed;
+import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
+import nars.term.compound.Compound;
 import nars.term.transform.CompoundTransform;
 import nars.time.Clock;
 import nars.util.data.map.UnifriedMap;
@@ -533,11 +538,15 @@ public class Memory extends Param {
 
     }
 
-    private static final class MyTermIndex implements TermIndex {
+    private static final class MyTermIndex extends MapCacheBag<Term,Termed,Map<Term,Termed>> implements TermIndex {
 
-        private final Map<Term,Term> terms =
-                new UnifriedMap(1024);
-                //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
+        public MyTermIndex() {
+            super(new UnifriedMap(1024));
+        }
+        public MyTermIndex(Map<Term,Termed> data) {
+            super(data);
+        }
+        //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
         @Override public final Termed get(Term t) {
 
@@ -545,7 +554,7 @@ public class Memory extends Param {
                 return t.normalized(this); //term instance will remain unique because it has attached metadata
             }
 
-            return terms.compute(t, (k,vExist) -> {
+            return data.compute(t, (k,vExist) -> {
                 if (vExist == null) return k.normalized(this);
                 else
                     return vExist;
@@ -574,7 +583,7 @@ public class Memory extends Param {
 
         @Override
         public final void forEachTerm(Consumer<Termed> c) {
-            terms.forEach((k,v)->c.accept(v));
+            data.forEach((k,v)->c.accept(v));
         }
     }
 

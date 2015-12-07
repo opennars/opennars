@@ -1,5 +1,6 @@
 package nars.term;
 
+import nars.term.compound.Compound;
 import org.junit.Test;
 
 import static nars.$.$;

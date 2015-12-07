@@ -1,12 +1,11 @@
 package nars.bag.impl;
 
 import nars.Memory;
-import nars.budget.Itemized;
 
 /**
  * Created by me on 9/1/15.
  */
-abstract public class AbstractCacheBag<K, V extends Itemized<K>> implements CacheBag<K,V> {
+abstract public class AbstractCacheBag<K, V> implements CacheBag<K,V> {
 
     protected Memory memory = null;
 

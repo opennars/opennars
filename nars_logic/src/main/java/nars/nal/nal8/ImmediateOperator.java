@@ -6,8 +6,8 @@ import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 import java.util.List;
 import java.util.function.Consumer;

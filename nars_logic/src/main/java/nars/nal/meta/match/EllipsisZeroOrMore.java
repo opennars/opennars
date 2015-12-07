@@ -1,7 +1,7 @@
 package nars.nal.meta.match;
 
-import nars.term.Variable;
 import nars.term.transform.VariableNormalization;
+import nars.term.variable.Variable;
 
 /**
  * Created by me on 12/5/15.

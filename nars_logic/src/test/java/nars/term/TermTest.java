@@ -27,6 +27,9 @@ import nars.nal.nal8.Operation;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.term.compound.CompoundN;
 import org.junit.Test;
 
 import java.util.TreeSet;

@@ -1,7 +1,7 @@
 package nars.nal.nal3;
 
-import nars.term.CompoundN;
 import nars.term.Term;
+import nars.term.compound.CompoundN;
 
 /**
  * Common parent class for IntersectInt and IntersectExt

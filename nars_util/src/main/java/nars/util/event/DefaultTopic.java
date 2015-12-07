@@ -1,7 +1,7 @@
 package nars.util.event;
 
-import org.infinispan.commons.util.WeakValueHashMap;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -12,7 +12,7 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
 
     //TODO extract this to Topics and a graph metamodel of the events
 
-    static WeakValueHashMap<String, Topic<?>> topics = new WeakValueHashMap<>();
+    static Map<String, Topic<?>> topics = new HashMap();
 
 
 

@@ -1,14 +1,12 @@
 package nars.bag.impl;
 
 
-import nars.budget.Itemized;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
 
-public class MapCacheBag<K, V extends Itemized<K>, M extends Map<K,V>> extends AbstractCacheBag<K,V>  {
+public class MapCacheBag<K, V, M extends Map<K,V>> extends AbstractCacheBag<K,V>  {
 
     public final M data;
 
@@ -33,8 +31,8 @@ public class MapCacheBag<K, V extends Itemized<K>, M extends Map<K,V>> extends A
     }
 
     @Override
-    public V put(V v) {
-        return data.put(v.name(), v);
+    public V put(K k, V v) {
+        return data.put(k, v);
     }
 
     @Override

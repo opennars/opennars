@@ -29,8 +29,8 @@ import nars.budget.Budget;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.util.event.Reaction;
 
 import java.io.Serializable;

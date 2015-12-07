@@ -1,6 +1,8 @@
-package nars.term;
+package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 import nars.util.utf8.ByteBuf;

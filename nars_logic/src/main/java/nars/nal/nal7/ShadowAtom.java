@@ -1,8 +1,8 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.term.AbstractStringAtom;
 import nars.term.Term;
+import nars.term.atom.AbstractStringAtom;
 import nars.term.transform.Subst;
 
 /**

@@ -8,10 +8,10 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 
 import java.util.Collections;
 import java.util.List;

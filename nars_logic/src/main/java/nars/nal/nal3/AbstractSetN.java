@@ -1,7 +1,7 @@
 package nars.nal.nal3;
 
-import nars.term.CompoundN;
 import nars.term.Term;
+import nars.term.compound.CompoundN;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set), where N>1

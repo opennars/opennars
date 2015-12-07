@@ -8,8 +8,8 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nar.Default;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Statement;
+import nars.term.atom.Atom;
 import nars.util.meter.TestNAR;
 
 /**

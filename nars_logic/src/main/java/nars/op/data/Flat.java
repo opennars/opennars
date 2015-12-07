@@ -5,8 +5,8 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 import java.util.ArrayList;
 import java.util.List;

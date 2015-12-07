@@ -4,10 +4,10 @@ import nars.Symbols;
 import nars.nal.Level;
 import nars.nal.TaskRule;
 import nars.nal.nal1.Inheritance;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import java.io.Serializable;
 import java.util.Arrays;

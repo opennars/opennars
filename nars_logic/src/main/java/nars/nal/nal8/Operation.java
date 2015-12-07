@@ -31,9 +31,9 @@ import nars.nal.nal4.Product;
 import nars.task.DefaultTask;
 import nars.task.MutableTask;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 import nars.truth.Truth;
 import nars.util.utf8.ByteBuf;
 

@@ -8,8 +8,8 @@ package nars.op.app.farg;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
-import nars.term.Atom;
 import nars.term.Term;
+import nars.term.atom.Atom;
 
 /**
  *

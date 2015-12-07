@@ -3,10 +3,10 @@ package nars.nal.nal4;
 import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
 import nars.Op;
 import nars.Symbols;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.CompoundN;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.term.compound.CompoundN;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;

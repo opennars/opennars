@@ -13,8 +13,8 @@ import nars.nal.nal8.Operator;
 import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.truth.Truth;
 
 import java.util.Arrays;

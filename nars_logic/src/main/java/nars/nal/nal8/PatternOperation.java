@@ -30,7 +30,7 @@ abstract public class PatternOperation implements Function<Task<Operation>, List
     @Override
     public List<Task> apply(Task<Operation> operationTask) {
 
-        if (operationTask.isQuestion()) {
+        if (operationTask.isGoal()) {
             FindSubst s = new FindSubst(Op.VAR_PATTERN, rng);
             if (s.next(pattern, operationTask.getTerm(), Global.UNIFICATION_POWER)) {
                 return run(operationTask, s);

@@ -11,9 +11,9 @@ import nars.task.DefaultTask;
 import nars.task.MutableTask;
 import nars.task.PreTask;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 

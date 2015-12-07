@@ -3,20 +3,10 @@ package nars.nar;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
-import nars.nal.Deriver;
 import nars.nal.TaskRule;
 import nars.task.flow.FIFOTaskPerception;
 import nars.time.FrameClock;
-import nars.util.db.InfiniPeer;
 import nars.util.meter.DerivationGraph;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class SingleStepNAR extends Default {
 
@@ -63,130 +53,130 @@ public class SingleStepNAR extends Default {
         return input;
     }
 
-    private static class RuleReport implements Runnable {
-        @Override
-        public void run() {
-
-            try {
-                {
-                    PrintStream out = newReportStream("derivations.aggregate.txt");
-
-                    derivations.premiseResult.forEach((k, v) -> {
-
-                        out.println(k);// + " " v.actual.size() +
-
-                        for (DerivationGraph.TaskResult t : v.actual) {
-                            out.println('\t' + t.key);
-                        }
-                        out.println();
-
-                    });
-
-                    out.println();
-                    out.println("Rule -> Derivations:");
-                    for (TaskRule t : ruleDerivations.keySet()) {
-                        Collection<DerivationGraph.PremiseKey> c = ruleDerivations.get(t);
-                        out.println(c.size() + "\t" + t);
-                        c.forEach(x -> {
-                            out.print(' ');
-                            out.print(x + " ");
-                        });
-                    }
-                    out.close();
-                }
-                {
-
-                    PrintStream out = newReportStream("derivations.unused.txt");
-
-                    TreeSet<TaskRule> used = new TreeSet();
-                    TreeSet<TaskRule> unused = new TreeSet();
-                    for (TaskRule t : Deriver.standard) {
-                        Collection<DerivationGraph.PremiseKey> x = ruleDerivations.get(t);
-                        if (x == null || x.isEmpty()) {
-                            unused.add(t);
-                        } else {
-                            used.add(t);
-                        }
-                    }
-
-
-                    //organize by assigned NAL level
-                    Set<TaskRule>[] unusedCounts = new Set[9];
-                    Set<TaskRule>[] all = new Set[9];
-                    for (int i = 0; i < 9; i++) {
-                        unusedCounts[i] = new TreeSet();
-                        all[i] = new TreeSet();
-                    }
-
-                    used.forEach(p -> all[p.nal()].add(p));
-                    unused.forEach(p -> all[p.nal()].add(p));
-
-                    unused.forEach(p -> unusedCounts[p.nal()].add(p));
-
-                    for (int i = 0; i < 9; i++) {
-                        int us = all[i].size();
-                        int un = unusedCounts[i].size();
-                        if (us == 0) {
-                            out.println("\t NAL" + i + " has 0 specific rules\n");
-                            continue;
-                        }
-                        float p = (1f-(((float) un) / (us))) * 100.0f;
-                        out.println("\t NAL" + i + " Tested " + (us - un) + '/' + (us) + " (" +
-                                Math.ceil((int) p) + "% tested, " + un + " not tested): ");
-                        final int finalI = i;
-                        all[i].forEach(r -> {
-                            boolean tested = !unusedCounts[finalI].contains(r);
-
-                            out.print("\t\t");
-                            out.print(tested ? "YES\t" : " NO\t");
-                            out.print(r);
-
-//                            ///----------------AUTOTEST
-//                            try {
-//                                RuleTest rt = RuleTest.from(r);
-//                                rt.run(false);
-//                                TestNAR.Report report = rt.getReport();
-//                                out.println(report);
-//                            }
-//                            catch (Exception e) {
-//                                out.println(e);
-//                            }
-//                            //----------
-
-                            out.println();
-                        });
-                        out.println();
-                    }
-
-                    out.println();
-                    out.println("Unused rules:");
-                    unused.forEach(r -> out.println("\t" + r));
-                    out.println("Total Unused: " + unused.size());
-                    out.println();
-
-
-                    out.close();
-                }
-                {
-
-                    PrintStream out = newReportStream("derivations.gml");
-                    derivations.print(new OutputStreamWriter(out));
-                    out.close();
-                }
-
-
-                } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        public static PrintStream newReportStream(String file) throws FileNotFoundException {
-            String path = InfiniPeer.getTempDir() + '/' + file;
-
-            System.out.println("Saving results to: " + path);
-
-            return new PrintStream(new FileOutputStream(path));
-        }
-    }
+//    private static class RuleReport implements Runnable {
+//        @Override
+//        public void run() {
+//
+//            try {
+//                {
+//                    PrintStream out = newReportStream("derivations.aggregate.txt");
+//
+//                    derivations.premiseResult.forEach((k, v) -> {
+//
+//                        out.println(k);// + " " v.actual.size() +
+//
+//                        for (DerivationGraph.TaskResult t : v.actual) {
+//                            out.println('\t' + t.key);
+//                        }
+//                        out.println();
+//
+//                    });
+//
+//                    out.println();
+//                    out.println("Rule -> Derivations:");
+//                    for (TaskRule t : ruleDerivations.keySet()) {
+//                        Collection<DerivationGraph.PremiseKey> c = ruleDerivations.get(t);
+//                        out.println(c.size() + "\t" + t);
+//                        c.forEach(x -> {
+//                            out.print(' ');
+//                            out.print(x + " ");
+//                        });
+//                    }
+//                    out.close();
+//                }
+//                {
+//
+//                    PrintStream out = newReportStream("derivations.unused.txt");
+//
+//                    TreeSet<TaskRule> used = new TreeSet();
+//                    TreeSet<TaskRule> unused = new TreeSet();
+//                    for (TaskRule t : Deriver.standard) {
+//                        Collection<DerivationGraph.PremiseKey> x = ruleDerivations.get(t);
+//                        if (x == null || x.isEmpty()) {
+//                            unused.add(t);
+//                        } else {
+//                            used.add(t);
+//                        }
+//                    }
+//
+//
+//                    //organize by assigned NAL level
+//                    Set<TaskRule>[] unusedCounts = new Set[9];
+//                    Set<TaskRule>[] all = new Set[9];
+//                    for (int i = 0; i < 9; i++) {
+//                        unusedCounts[i] = new TreeSet();
+//                        all[i] = new TreeSet();
+//                    }
+//
+//                    used.forEach(p -> all[p.nal()].add(p));
+//                    unused.forEach(p -> all[p.nal()].add(p));
+//
+//                    unused.forEach(p -> unusedCounts[p.nal()].add(p));
+//
+//                    for (int i = 0; i < 9; i++) {
+//                        int us = all[i].size();
+//                        int un = unusedCounts[i].size();
+//                        if (us == 0) {
+//                            out.println("\t NAL" + i + " has 0 specific rules\n");
+//                            continue;
+//                        }
+//                        float p = (1f-(((float) un) / (us))) * 100.0f;
+//                        out.println("\t NAL" + i + " Tested " + (us - un) + '/' + (us) + " (" +
+//                                Math.ceil((int) p) + "% tested, " + un + " not tested): ");
+//                        final int finalI = i;
+//                        all[i].forEach(r -> {
+//                            boolean tested = !unusedCounts[finalI].contains(r);
+//
+//                            out.print("\t\t");
+//                            out.print(tested ? "YES\t" : " NO\t");
+//                            out.print(r);
+//
+////                            ///----------------AUTOTEST
+////                            try {
+////                                RuleTest rt = RuleTest.from(r);
+////                                rt.run(false);
+////                                TestNAR.Report report = rt.getReport();
+////                                out.println(report);
+////                            }
+////                            catch (Exception e) {
+////                                out.println(e);
+////                            }
+////                            //----------
+//
+//                            out.println();
+//                        });
+//                        out.println();
+//                    }
+//
+//                    out.println();
+//                    out.println("Unused rules:");
+//                    unused.forEach(r -> out.println("\t" + r));
+//                    out.println("Total Unused: " + unused.size());
+//                    out.println();
+//
+//
+//                    out.close();
+//                }
+//                {
+//
+//                    PrintStream out = newReportStream("derivations.gml");
+//                    derivations.print(new OutputStreamWriter(out));
+//                    out.close();
+//                }
+//
+//
+//                } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+////        public static PrintStream newReportStream(String file) throws FileNotFoundException {
+////            String path = InfiniPeer.getTempDir() + '/' + file;
+////
+////            System.out.println("Saving results to: " + path);
+////
+////            return new PrintStream(new FileOutputStream(path));
+////        }
+//    }
 }

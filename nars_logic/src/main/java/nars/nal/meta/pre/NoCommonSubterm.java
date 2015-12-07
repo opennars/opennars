@@ -2,8 +2,8 @@ package nars.nal.meta.pre;
 
 import nars.Global;
 import nars.nal.RuleMatch;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 import java.util.Set;
 

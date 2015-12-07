@@ -1,7 +1,7 @@
 package nars.concept.util;
 
+import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.procedure.Procedure2;
-import infinispan.com.google.common.collect.Iterators;
 import javolution.util.function.Equality;
 import nars.Memory;
 import nars.Premise;

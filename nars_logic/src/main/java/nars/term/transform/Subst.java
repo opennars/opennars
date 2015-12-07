@@ -1,9 +1,9 @@
 package nars.term.transform;
 
 import nars.Op;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 
 
 public interface Subst  {

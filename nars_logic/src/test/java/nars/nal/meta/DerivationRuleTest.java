@@ -7,8 +7,12 @@ import nars.Op;
 import nars.nal.TaskRule;
 import nars.nal.meta.match.*;
 import nars.nal.nal4.Product;
-import nars.term.*;
+import nars.term.Term;
+import nars.term.Terms;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
+import nars.term.variable.Variable;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
 

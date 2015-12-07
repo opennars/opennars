@@ -9,8 +9,8 @@ import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
 import nars.nar.Terminal;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import org.junit.Test;
 
 import static nars.io.NarseseTest.task;

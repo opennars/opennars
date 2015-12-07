@@ -6,9 +6,9 @@ import nars.Global;
 import nars.Op;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Conjunctive;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.term.compound.Compound;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;

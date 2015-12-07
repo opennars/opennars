@@ -59,7 +59,7 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
         Concept c = i.get(n);
         if (c == null) {
             c = builder.apply(n);
-            i.put(c);
+            i.put(n, c);
         }
         return c;
     }

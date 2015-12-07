@@ -12,9 +12,9 @@ import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.nar.Default2;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import java.util.Collection;
 import java.util.List;

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.term;
+package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
@@ -27,6 +27,9 @@ import nars.nal.meta.match.EllipsisMatch;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
+import nars.term.Term;
+import nars.term.TermContainer;
+import nars.term.Terms;
 import nars.term.compile.TermIndex;
 import nars.term.transform.*;
 import nars.util.data.sexpression.IPair;

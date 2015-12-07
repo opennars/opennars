@@ -3,9 +3,9 @@ package nars.task;
 import nars.Premise;
 import nars.budget.Budget;
 import nars.nal.nal1.Inheritance;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 

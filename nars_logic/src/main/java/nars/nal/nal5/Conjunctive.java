@@ -4,9 +4,9 @@ import nars.Global;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.term.compound.Compound;
 
 import java.util.Arrays;
 import java.util.Collection;

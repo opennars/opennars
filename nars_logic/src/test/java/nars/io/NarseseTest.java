@@ -12,10 +12,10 @@ import nars.nal.nal8.Operator;
 import nars.nar.Terminal;
 import nars.op.io.echo;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.term.variable.Variable;
 import org.junit.Test;
 
 import java.util.List;
