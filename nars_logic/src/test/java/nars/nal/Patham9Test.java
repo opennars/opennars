@@ -342,9 +342,9 @@ public class Patham9Test extends AbstractNALTester {
         Concept imp_b_c = nar.concept("<(&/,<b --> B>,/1) =/> <c --> C>>");
         Concept imp_s = nar.concept("<(&/,<a --> A>,<b --> B>) =/> <c --> C>>");
 
-        Concept imp_a = nar.concept("<a --> A>");
-        Concept imp_b = nar.concept("<b --> B>");
-        Concept imp_c = nar.concept("<c --> C>");
+        Concept c_a = nar.concept("<a --> A>");
+        Concept c_b = nar.concept("<b --> B>");
+        Concept c_c = nar.concept("<c --> C>");
 
         float priority_seq_a_b = priority_safe(seq_a_b);
         float priority_seq_b_c = priority_safe(seq_b_c);
@@ -352,12 +352,12 @@ public class Patham9Test extends AbstractNALTester {
         float priority_seq_a_b_c = priority_safe(seq_a_b_c);
 
         float priority_imp_a_b = priority_safe(imp_a_b);
-        float priority_imp_a_c = priority_safe(imp_a_b);
-        float priority_imp_b_c = priority_safe(imp_a_b);
+        float priority_imp_a_c = priority_safe(imp_a_c);
+        float priority_imp_b_c = priority_safe(imp_b_c);
 
-        float priority_imp_a = priority_safe(imp_a);
-        float priority_imp_b = priority_safe(imp_b);
-        float priority_imp_c = priority_safe(imp_c);
+        float priority_imp_a = priority_safe(c_a);
+        float priority_imp_b = priority_safe(c_b);
+        float priority_imp_c = priority_safe(c_c);
     }
 /*
     @Test
