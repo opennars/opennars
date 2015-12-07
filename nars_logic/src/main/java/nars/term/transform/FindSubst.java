@@ -1028,6 +1028,7 @@ public class FindSubst extends Subst implements Substitution {
         if (!powerDividable(stop-start))
             return false;
 
+
         boolean success = true;
         for (int i = start; i < stop; i++) {
             if (!match(X.term(i), Y.term(i))) {

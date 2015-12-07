@@ -503,12 +503,30 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             if (isCommutative()) {
                 return subst.matchPermute(this, Y); //commutative, try permutations
             } else {
-                return subst.matchLinear(subterms(), Y.subterms(), 0, size); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+                return matchLinear(Y.subterms(), subst); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
             }
         }
     }
 
-    default boolean matchSubterm(int Xn, final Compound Y, final FindSubst subst) {
+    default boolean matchLinear(TermContainer y, FindSubst subst) {
+        int s = size();
+        if (s == 2) {
+            int v0 = term(0).volume();
+            int v1 = term(1).volume();
+            //match smallest first
+            if (v0 <= v1) {
+                return matchSubterm(0, y, subst)&&
+                       matchSubterm(1, y, subst);
+            } else {
+                return matchSubterm(1, y, subst)&&
+                       matchSubterm(0, y, subst);
+            }
+        } else {
+            return subst.matchLinear(this, y, 0, size());
+        }
+    }
+
+    default boolean matchSubterm(int Xn, final TermContainer Y, final FindSubst subst) {
         return subst.match(term(Xn), Y.term(Xn));
     }
 
@@ -522,7 +540,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
         return
                 //this term as a pattern involves anything y does not?
-                //((yStructure | structure()) == yStructure)
+                //((yStructure | structure()) == yStructure) &&
                 //&&
                 // ?? && ( y.volume() >= volume() )
                 //same size

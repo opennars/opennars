@@ -9,7 +9,6 @@ import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
 import nars.util.version.Versioning;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -49,7 +48,7 @@ public abstract class Subst extends Versioning {
     public final Versioned<Compound> parent;
 
     /** unification power available at start of current branch */
-    public final Versioned<Integer> branchPower;
+    //public final Versioned<Integer> branchPower;
 
     /** unification power remaining in the current branch */
     int power;
@@ -67,11 +66,11 @@ public abstract class Subst extends Versioning {
         this.random = random;
         this.type = type;
 
-        xy = new VarCachedVersionMap(this, new LinkedHashMap());
-        yx = new VarCachedVersionMap(this, new LinkedHashMap());
+        xy = new VarCachedVersionMap(this);
+        yx = new VarCachedVersionMap(this);
         term = new Versioned(this);
         parent = new Versioned(this);
-        branchPower = new Versioned(this);
+        //branchPower = new Versioned(this);
 
     }
 
@@ -129,6 +128,10 @@ public abstract class Subst extends Versioning {
     }
 
     public static final class VarCachedVersionMap extends VersionMap<Term, Term> {
+
+        public VarCachedVersionMap(Subst context) {
+            super(context);
+        }
         public VarCachedVersionMap(Subst context, Map<Term,Versioned<Term>> map) {
             super(context, map);
         }

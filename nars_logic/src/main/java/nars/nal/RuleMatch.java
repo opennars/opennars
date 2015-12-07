@@ -18,7 +18,6 @@ import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
 
-import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -55,7 +54,9 @@ public class RuleMatch extends FindSubst {
         super(Op.VAR_PATTERN, r );
 
 
-        secondary = new VersionMap(this, new LinkedHashMap<>());
+        secondary = new VersionMap(this
+                //new LinkedHashMap<>()
+        );
         occurrenceShift = new Versioned(this);
         truth = new Versioned(this);
         punct = new Versioned(this);
@@ -93,7 +94,7 @@ public class RuleMatch extends FindSubst {
                 (truth.get()!=null ? (", truth:" + truth) : "")+
                 (!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
                 (occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
-                (branchPower.get()!=null ? (", derived:" + branchPower) : "")+
+                //(branchPower.get()!=null ? (", derived:" + branchPower) : "")+
                 '}';
 
     }
@@ -119,13 +120,13 @@ public class RuleMatch extends FindSubst {
         ) );
 
         //set initial power which will be divided by branch
-        this.branchPower.set(
+        setPower(
             //LERP the power in min/max range by premise mean priority
             (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
                     + Global.UNIFICATION_POWERmin)
         );
 
-        setPower(branchPower.get()); //HACK is this where it should be assigned?
+        //setPower(branchPower.get()); //HACK is this where it should be assigned?
 
     }
 
