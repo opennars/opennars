@@ -466,14 +466,10 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
 
-    boolean isNormalized();
-
-    /** updates all implied fields and re-hashes; returns this task */
-    boolean normalize();
-
-
-    boolean init(final Memory memory);
-
+    /** if unnormalized, returns a normalized version of the task,
+     *  null if not normalizable
+     */
+    Task normalize(final Memory memory);
 
 
     default void ensureValidParentTaskRef() {
@@ -573,11 +569,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
     default long start() { return getOccurrenceTime(); }
     default long end() { return start() + duration(); }
-
-    default <T extends Task<? extends Compound>> T normalized() {
-        if (!normalize()) return null;
-        return (T)this;
-    }
 
     default long getLifespan(Memory memory) {
         final long createdAt = getCreationTime();

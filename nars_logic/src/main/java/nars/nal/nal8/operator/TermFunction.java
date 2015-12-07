@@ -6,7 +6,7 @@ import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.task.DefaultTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -87,7 +87,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                Operation.asFeedback(DefaultTask.make(inh).
+                Operation.asFeedback(MutableTask.make(inh).
                         truth(getResultFrequency(), getResultConfidence()).
                         judgment().
                         tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
@@ -215,7 +215,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         if (y instanceof Truth) {
             //this will get the original input operation term, not after it has been inlined.
 
-            Task b = DefaultTask.make(operation).judgment().truth((Truth) y).setEternal();
+            Task b = MutableTask.make(operation).judgment().truth((Truth) y).setEternal();
 
             nar.input(b);
 

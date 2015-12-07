@@ -62,8 +62,6 @@ public class VariableTransformationTest {
         System.out.println(term);
         System.out.println(task);
 
-        task = task.normalized();
-        System.out.println(task);
 
         Task t2 = n.inputTask(t + ".");
         System.out.println(t2);

@@ -9,7 +9,7 @@ import nars.concept.Concept;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.DefaultTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -104,7 +104,7 @@ public class Abbreviation implements Consumer<Task> {
                 if (c!=null) {
 
                     Memory m = nar.memory;
-                    nar.input(DefaultTask.make(
+                    nar.input(MutableTask.make(
                             c)
                             .judgment().truth(1, abbreviationConfidence)
                             .parent(task).present(m)

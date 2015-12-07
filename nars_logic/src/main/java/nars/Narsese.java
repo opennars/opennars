@@ -105,14 +105,14 @@ public class Narsese extends BaseParser<Object>  {
         Term ccontent = content.normalized();
         if (ccontent!=null)
             ccontent = Task.taskable(ccontent);
-
         if (ccontent==null) return null;
+
+        //index
+        ccontent = memory.index.getTerm(ccontent);
 
 
         Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
         ttt.setCreationTime(memory.time());
-
-
         ttt.setOccurrenceTime(tense, memory.duration());
         ttt.setEvidence(LongArrays.EMPTY_ARRAY);
 
@@ -1108,12 +1108,12 @@ public class Narsese extends BaseParser<Object>  {
         Term x = termRaw(s);
         if (x==null) return null;
 
-        Term normalized = x.normalized();
+        T normalized = x.normalized();
         if (normalized == null) {
             throw new RuntimeException("Unnormalizable: " + s);
         }
 
-        return normalized.index(i);
+        return i.getTerm(normalized);
     }
 
 //    public TaskRule taskRule(String input) {

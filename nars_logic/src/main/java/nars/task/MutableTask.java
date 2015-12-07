@@ -45,6 +45,19 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
         term(term);
     }
 
+    /** safely make a new task, if the term is not already known to be valid for a task */
+    public static <C extends Compound> MutableTask make(C t) {
+        Compound u = Task.taskable(t);
+        if (u == null)
+            return null;
+
+        MutableTask x = make();
+
+        x.setTerm(u);
+
+        return x;
+    }
+
 //    public FluentTask(String termOrTaskString) {
 //        super();
 //

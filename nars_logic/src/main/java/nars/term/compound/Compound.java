@@ -30,7 +30,6 @@ import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Terms;
-import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
@@ -83,18 +82,15 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     static byte[] newCompound1Key(final Op op, final Term singleTerm) {
 
         final byte[] opBytes = op.bytes;
-
         if (opBytes.length > 1)
             throw new RuntimeException("Compound1 operators must have a 1 char representation; invalid: " + op);
+        byte opByte = opBytes[0];
 
         final byte[] termBytes = singleTerm.bytes();
 
         return ByteBuf.create(opBytes.length + termBytes.length)
-                //.add((byte)COMPOUND_TERM_OPENER.ch)
-                .add(opBytes)
-                        //.add((byte) ARGUMENT_SEPARATOR)
+                .add(opByte)
                 .add(termBytes)
-                        //.add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
     }
 
@@ -384,10 +380,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
 
-    @Override
-    default Term index(TermIndex termIndex) {
-        return transform(termIndex);
-    }
+
     /**
      * Normalizes if contain variables which need to be finalized for use in a Sentence
      * May return null if the resulting compound term is invalid
@@ -625,6 +618,10 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     default boolean matchCompoundExEllipsis(Compound y, Ellipsis e) {
         //TODO a more careful handling when an Ellipsis term is involved in the match
         return true;
+    }
+
+    default Term clone(TermContainer subs) {
+        return clone(subs.terms());
     }
 
 

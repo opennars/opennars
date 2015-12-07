@@ -1,7 +1,6 @@
 package nars.term.atom;
 
 import nars.term.Term;
-import nars.term.compile.TermIndex;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
@@ -116,10 +115,6 @@ public abstract class Atomic implements Term, Byted {
         return this;
     }
 
-    @Override
-    public final Term index(TermIndex termIndex) {
-        return this;
-    }
 
     @Override public final boolean containsTermRecursively(Term target) {
         return false;

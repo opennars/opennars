@@ -27,7 +27,7 @@ import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Tense;
-import nars.task.DefaultTask;
+import nars.task.MutableTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -138,14 +138,13 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
         //Task<T> revised = nal.input(
-        return DefaultTask.make(newBelief.getTerm())
+        return MutableTask.make(newBelief.getTerm())
                 .punctuation(newBelief.getPunctuation())
                 .truth(truth)
                 .budget(budget)
                 .parent(newBelief, oldBelief)
                 .because("Revision")
-                .time( now,  newOcc )
-                .normalized();
+                .time( now,  newOcc );
     }
 
 

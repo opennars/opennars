@@ -10,7 +10,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.DefaultTask;
+import nars.task.MutableTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -245,7 +245,7 @@ public class InternalExperience {
         }
 
         Task<Compound<?>> t;
-        nal.nar().input(t = DefaultTask.make(ret).judgment()
+        nal.nar().input(t = MutableTask.make(ret).judgment()
                         .parent(task).occurr(nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
@@ -311,7 +311,7 @@ public class InternalExperience {
 
         long now = p.time();
 
-        p.nar().input(DefaultTask.make(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+        p.nar().input(MutableTask.make(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
                                 Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
                         .parent(parent)

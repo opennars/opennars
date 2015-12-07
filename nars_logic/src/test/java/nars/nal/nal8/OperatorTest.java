@@ -187,7 +187,6 @@ public class OperatorTest {
         PatternAnswer f = new PatternAnswer("add(%a,%b,#x)") {
             @Override
             public List<Task> run(Task t, Subst s) {
-                //System.out.println(this.pattern + " " + t + "\n\t" + s);
                 assertEquals($("x"), s.getXY($("%a")));
                 assertEquals($("y"), s.getXY($("%b")));
                 assertEquals(Op.VAR_DEPENDENT, s.getXY($("#x")).op());
@@ -228,12 +227,11 @@ public class OperatorTest {
             }
         };
         n.onQuestion(addition);
-        n.log();
-
-        n.input("add(1,2,#x)?");
-        n.input("add(1,1,#x)?");
+        //n.log();
 
         TestNAR t = new TestNAR(n);
+        n.input("add(1,2,#x)?");
+        n.input("add(1,1,#x)?");
         t.mustBelieve(8, "add(1, 1, 2)", 1f, 0.99f);
         t.mustBelieve(8, "add(1, 2, 3)", 1f, 0.99f);
         t.run2();

@@ -1,6 +1,5 @@
 package nars.nal;
 
-import nars.Memory;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 
@@ -84,11 +83,11 @@ abstract public class Deriver  {
     }
 
 
-    public void load(Memory memory) {
-        DerivationRules r = this.rules;
-        int s = r.size();
-        for (int i = 0; i < s; i++) {
-            r.get(i).index(memory.index);
-        }
-    }
+//    public void load(Memory memory) {
+//        DerivationRules r = this.rules;
+//        int s = r.size();
+//        for (int i = 0; i < s; i++) {
+//            r.get(i).index(memory.index);
+//        }
+//    }
 }

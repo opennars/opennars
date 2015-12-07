@@ -54,7 +54,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     public Task<Operation> newTask(Operation o) {
         return new DefaultTask(newOperation(o.args()),
                 Symbols.COMMAND,
-                null, 0, 0, 0).normalized();
+                null, 0, 0, 0);
     }
 
     @Override

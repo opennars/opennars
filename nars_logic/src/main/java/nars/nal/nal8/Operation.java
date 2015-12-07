@@ -28,7 +28,6 @@ import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
-import nars.task.DefaultTask;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -102,7 +101,7 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
     }
 
     public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return DefaultTask.make(content)
+        return MutableTask.make(content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(p, d, q)

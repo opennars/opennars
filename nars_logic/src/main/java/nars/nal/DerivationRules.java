@@ -1,16 +1,21 @@
 package nars.nal;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
+import nars.MapIndex;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,20 +49,22 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
     public DerivationRules(final Collection<String> ruleStrings) {
-
         this(parseRules(loadRuleStrings(ruleStrings)));
     }
 
-    public DerivationRules(TaskRule... r) {
-        this(Sets.newHashSet(r));
-    }
+    /** for compiling and de-duplicating pattern term components */
+    final MapIndex patterns = new PatternIndex();
 
-    public DerivationRules(TaskRule r) {
-        this(Collections.singleton(r));
-    }
+    final static Logger logger = Logger.getLogger(DerivationRules.class.toString());
 
     public DerivationRules(Set<TaskRule> r) {
         super(r);
+        r.forEach(t -> {
+            t.compile(patterns);
+            add(t);
+        });
+
+        logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
     }
 
 //    public DerivationRules(Stream<TaskRule[]> r, Predicate<TaskRule[]> filter) {
@@ -276,7 +283,8 @@ public class DerivationRules extends FastList<TaskRule> {
         });//.forEachOrdered(s -> expanded.addAll(s));
 
 
-        ListMultimap<TaskRule, TaskRule> ur = MultimapBuilder.linkedHashKeys().arrayListValues().build();
+        Set<TaskRule> ur = Global.newHashSet(1024);
+        //ListMultimap<TaskRule, TaskRule> ur = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
         //accumulate these in a set to eliminate duplicates
         expanded.forEach(s -> {
@@ -286,7 +294,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
                 final TaskRule r = rUnnorm.normalizeRule();
                 if (r != null) {
-                    AcceptRule(ur, r, s);
+                    AcceptRule(ur, rUnnorm, s);
 
                     final TaskRule rFwd = r.forwardPermutation();
                     AcceptRule(ur, rFwd, s);
@@ -311,10 +319,11 @@ public class DerivationRules extends FastList<TaskRule> {
 //            System.err.println();
 //        });
 
-        return ur.keySet();
+        //return ur.keySet();
+        return ur;
     }
 
-    private static void AcceptRule(Multimap<TaskRule, TaskRule> c, TaskRule r, String src) {
+    private static void AcceptRule(Collection<TaskRule> c, TaskRule r, String src) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //
@@ -332,28 +341,36 @@ public class DerivationRules extends FastList<TaskRule> {
 
         });
 
+        //addRule(c, r.normalizeRule(), src);
         addRule(c, r.normalizeRule(), src);
     }
 
-    private static void addRule(Multimap<TaskRule, TaskRule> c, TaskRule q, String src) {
-        Collection<TaskRule> existing = c.get(q);
-        if (existing!=null && !existing.isEmpty()) {
-
-            if (Global.DEBUG_DETECT_DUPLICATE_RULES) {
-                System.err.println(q);
-                System.err.println("\t" + src);
-                existing.forEach(e -> {
-                    System.err.println("\t" + e.source);
-                });
-                System.err.println();
-            }
-        }
-        else {
+    static void addRule(Collection<TaskRule> c, TaskRule q, String src) {
+        if (q!=null) {
             q.setSource(src);
-            c.put(q, q);
+            c.add(q);
         }
-
     }
+
+    //    private static void addRule(Multimap<TaskRule, TaskRule> c, TaskRule q, String src) {
+//        Collection<TaskRule> existing = c.get(q);
+//        if (existing!=null && !existing.isEmpty()) {
+//
+//            if (Global.DEBUG_DETECT_DUPLICATE_RULES) {
+//                System.err.println(q);
+//                System.err.println("\t" + src);
+//                existing.forEach(e -> {
+//                    System.err.println("\t" + e.source);
+//                });
+//                System.err.println();
+//            }
+//        }
+//        else {
+//            q.setSource(src);
+//            c.put(q, q);
+//        }
+//
+//    }
 
 
 //    private static void addUnrolledVarArgs(Set<String> expanded,

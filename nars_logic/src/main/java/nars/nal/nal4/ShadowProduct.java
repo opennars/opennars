@@ -3,7 +3,6 @@ package nars.nal.nal4;
 import nars.Op;
 import nars.term.Term;
 import nars.term.TermVector;
-import nars.term.compile.TermIndex;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 
@@ -95,12 +94,5 @@ public class ShadowProduct extends TermVector implements Term {
     public Term substituted(Subst s) {
         return this;
     }
-
-
-    @Override
-    public Term index(TermIndex termIndex) {
-        return this;
-    }
-
 
 }

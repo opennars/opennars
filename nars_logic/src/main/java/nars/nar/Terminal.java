@@ -25,12 +25,16 @@ public class Terminal extends AbstractNAR {
     final Predicate<Task> taskFilter =
             task -> task.isCommand();
 
-    public Terminal() {
+    public Terminal(TermIndex termIndex) {
         super(new Memory(
-                    new RealtimeMSClock(),
-                    TermIndex.memory(1024)
-                    //new TrieCacheBag()
+                new RealtimeMSClock(),
+                termIndex
+                //new TrieCacheBag()
         ), 0,0,0,0);
+    }
+
+    public Terminal() {
+        this(TermIndex.memory(1024));
     }
 
     @Override

@@ -417,10 +417,6 @@ public interface Premise extends Level, Tasked {
             return "Insufficient confidence";
         }
 
-        if (!task.normalize()) {
-            return "Unnormalizable";
-        }
-
         /*if (!FilterDuplicateExistingBelief.isUniqueBelief(this, task)) {
             return "Duplicate";
         }*/

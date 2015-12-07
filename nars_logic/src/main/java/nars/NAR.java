@@ -227,6 +227,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
+        //TODO apply this in index on the original copy only
         x.setDuration(memory.duration());
 
         return x;
@@ -416,7 +417,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
-    public final boolean input(final Task<?> t) {
+    public final boolean input(Task<?> t) {
 
         final Memory m = memory;
 
@@ -424,9 +425,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //            throw new RuntimeException("null input");
 //        }
 
-        if (!t.init(m)) {
+        Task tNorm = t.normalize(m);
+        if (tNorm==null) {
             m.remove(t, "Garbage");
             return false;
+        } else {
+            t = tNorm;
         }
 
         if (t.isCommand()) {

@@ -1,6 +1,5 @@
 package nars.nal.nal7;
 
-import nars.$;
 import nars.NAR;
 import nars.Op;
 import nars.nar.Default;
@@ -14,6 +13,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static nars.$.$;
 import static org.junit.Assert.*;
 
 
@@ -124,9 +124,13 @@ public class SequenceParallelTest {
     }
 
     @Test public void testSequencesInParallel() {
+        String p = "(&|, (&/, a, b), c).";
+
         //for parallel conjunction, duration is determined by the maximum enduring subterm, ie. the sub-sequence
-        Parallel f = t.term("(&|, (&/, a, b), c)");
+
+        Task f = t.inputTask(p);
         assertEquals(DURATION * 2, f.duration());
+        assertEquals(DURATION * 2, ((Parallel)f.getTerm()).duration());
     }
     @Test public void testParallelInSequence() {
         Sequence f = t.term("(&/, (&|, (&/, a, /1), c), d )");
@@ -225,10 +229,9 @@ public class SequenceParallelTest {
     }
 
     @Test public void testConstruction() {
-        NAR nar = new Terminal();
 
         String seq = "(&/, /1, a, /2, b)";
-        Sequence s = nar.term(seq);
+        Sequence s = t.term(seq);
         assertNotNull(s);
         assertNotNull(s.intervals());
         assertEquals("only non-interval terms are allowed as subterms", 2, s.size());
@@ -310,16 +313,16 @@ public class SequenceParallelTest {
     }
 
     @Test public void testDistance1() {
-        NAR nar = new Terminal();
 
-        Sequence a = nar.term("(&/, x, /1, y)");
-        Sequence b = nar.term("(&/, x, /2, y)");
+        Sequence a = t.term("(&/, x, /1, y)");
+        Sequence b = t.term("(&/, x, /2, y)");
+        assertTrue(a!=b);
         assertEquals(1, a.distance1(b));
         assertEquals(1, b.distance1(a));
         assertEquals(0, a.distance1(a));
 
-        Sequence c = nar.term("(&/, x, /1, y)");
-        Sequence d = nar.term("(&/, x, /9, y)");
+        Sequence c = t.term("(&/, x, /1, y)");
+        Sequence d = t.term("(&/, x, /9, y)");
         assertEquals(Long.MAX_VALUE, c.distance1(d, 2));
         assertEquals(1, c.distance1(b, 2));
 
@@ -361,7 +364,7 @@ public class SequenceParallelTest {
     }
 
     @Test public void testSequenceToArrayWithIntervals() {
-        Sequence a = $.$("(&/, x, /3, y)");
+        Sequence a = $("(&/, x, /3, y)");
         assertEquals("[x, y]", Arrays.toString(a.terms()));
         assertEquals("[x, /3, y]", Arrays.toString(a.toArrayWithIntervals()));
         assertEquals("[x, /3]", Arrays.toString(a.toArrayWithIntervals((i,x) -> i==0)));

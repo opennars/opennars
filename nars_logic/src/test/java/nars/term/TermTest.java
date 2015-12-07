@@ -50,6 +50,7 @@ public class TermTest {
     }
 
     NAR n = new Terminal();
+    NAR n2 = new Terminal();
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
@@ -360,7 +361,8 @@ public class TermTest {
     protected void testTermEquality(String s) {
 
         Term a = n.term(s);
-        Term b = n.term(s);
+        Term b = n2.term(s);
+
         assertTrue(a!=b);
 
         assertEquals(0, a.compareTo(b));
@@ -399,10 +401,11 @@ public class TermTest {
     }
 
     @Test public void termEqualityWithMixedVariables() {
-        NAR n = new Default();
+
         String s = "(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)";
         Term a = n.term(s);
-        Term b = n.term(s);
+        Term b = n2.term(s);
+
         assertTrue(a!=b);
         assertEquals(a, b);
         b.equals(a.normalized());

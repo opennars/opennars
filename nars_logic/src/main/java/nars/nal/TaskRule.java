@@ -119,22 +119,22 @@ public class TaskRule extends ProductN implements Level {
         return (TaskRule) this.transform(uppercaseAtomsToPatternVariables);
     }
 
-    @Override
-    public Term index(TermIndex termIndex) {
-
-        //task and belief pattern term
-        for (int i = 0; i < 2; i++) {
-            Term s = (Term) getPremise().terms()[i];
-            if (s == null)
-                throw new RuntimeException("null premise term: " + this);
-            getPremise().terms()[i] = s;
-        }
-
-        //conclusion pattern term
-        getConclusion().terms()[0] = (Term) getConclusion().terms()[0];
-
-        return this;
-    }
+//    @Override
+//    public Term index(TermIndex termIndex) {
+//
+//        //task and belief pattern term
+//        for (int i = 0; i < 2; i++) {
+//            Term s = (Term) getPremise().terms()[i];
+//            if (s == null)
+//                throw new RuntimeException("null premise term: " + this);
+//            getPremise().terms()[i] = s;
+//        }
+//
+//        //conclusion pattern term
+//        getConclusion().terms()[0] = (Term) getConclusion().terms()[0];
+//
+//        return this;
+//    }
 
 
     //    public Product result() {
@@ -268,6 +268,24 @@ public class TaskRule extends ProductN implements Level {
     }
     public final Term belief() {
         return pattern.term(1);
+    }
+
+    /** deduplicate and generate match-optimized compounds for rules */
+    public void compile(TermIndex patterns) {
+        Term[] premisePattern = ((Product) term(0)).terms();
+        Term taskPattern = premisePattern[0];
+        Term beliefPattern = premisePattern[1];
+        premisePattern[0] = compilePattern(taskPattern, patterns);
+        premisePattern[1] = compilePattern(beliefPattern, patterns);
+    }
+
+    static Term compilePattern(Term c, TermIndex patterns) {
+        Term x = patterns.getTerm(c);
+        if (Global.DEBUG) {
+            if (x == null || !x.equals(c))
+                throw new RuntimeException("index fault");
+        }
+        return x;
     }
 
 

@@ -7,7 +7,6 @@ import nars.budget.BudgetFunctions;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.meta.PreCondition;
-import nars.task.DefaultTask;
 import nars.task.MutableTask;
 import nars.task.PreTask;
 import nars.task.Task;
@@ -95,7 +94,7 @@ public final class Derive extends PreCondition {
 
         final char punct = m.punct.get();
 
-        MutableTask deriving = DefaultTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
+        MutableTask deriving = MutableTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving == null)
             return false;
 

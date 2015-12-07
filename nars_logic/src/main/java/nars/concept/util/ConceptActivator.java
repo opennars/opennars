@@ -52,10 +52,6 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
         return activationFactor;
     }
 
-    @Override
-    public void updateItem(Concept concept, Budget result) {
-        super.updateItem(concept, result);
-    }
 
     @Override
     public final Concept newItem() {

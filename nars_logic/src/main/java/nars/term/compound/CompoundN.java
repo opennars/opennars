@@ -44,6 +44,11 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
         this.hash = Compound.hash(this, hashSalt);
     }
 
+    protected CompoundN(CompoundN shareSubterms) {
+        this.terms = shareSubterms.subterms();
+        this.hash = shareSubterms.hashCode();
+    }
+
     public CompoundN(T t) {
         this(new Term[] { t } );
     }
@@ -178,7 +183,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final int structure() {
+    public int structure() {
         return terms.structure() | (1 << op().ordinal());
     }
 
@@ -198,7 +203,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final int size() {
+    public int size() {
         return terms.size();
     }
 

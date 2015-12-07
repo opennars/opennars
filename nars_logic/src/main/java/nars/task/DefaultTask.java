@@ -123,7 +123,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public boolean init(final Memory memory) {
+    public Task normalize(final Memory memory) {
 
         if (!isCommand()) {
 
@@ -133,44 +133,84 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         }
 
-        if (normalize()) {
+        if (isDeleted())
+            return null;
 
-            // if a task has an unperceived creationTime,
-            // set it to the memory's current time here,
-            // and adjust occurenceTime if it's not eternal
+        final char punc = getPunctuation();
+        if (punc == 0)
+            throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
-            if (getCreationTime() <= Stamp.TIMELESS) {
-                final long now = memory.time();
-                long oc = getOccurrenceTime();
-                if (oc != Stamp.ETERNAL)
-                    oc += now;
-
-                setTime(now, oc);
-            }
-
-            setDuration(
-                    memory.duration() //assume the default perceptual duration?
-            );
-
-            //finally, assign a unique stamp if none specified (input)
-            if (getEvidence().length == 0) {
-                setEvidence(memory.newStampSerial());
-
-                //this actually means it arrived from unknown origin.
-                //we'll clarify what null evidence means later.
-                //if data arrives via a hardware device, can a virtual
-                //task be used as the parent when it generates it?
-                //doesnt everything originate from something else?
-                if (log == null)
-                    log("Input");
-            }
-
-            //setTerm((T) memory.concepts.get( term ).getTerm());
-
-            return true;
+        if ((truth == null) && (isJudgmentOrGoal())) {
+            truth = new DefaultTruth(punc);
         }
 
-        return false;
+
+        Compound t = getTerm();
+        if (t == null)
+            throw new RuntimeException("null term");
+
+        if (t instanceof Sequence)  {
+            long[] offset = new long[1];
+            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
+            if ((st == null) || (Sentence.invalidSentenceTerm(st)))
+                return null; //it reduced to an invalid sentence term so return null
+            this.term = (T)st;
+            if (!isEternal())
+                occurrenceTime -= offset[0];
+        }
+
+        updateEvidence();
+
+        //---- VALID TASK BEYOND THIS POINT
+
+        /** NaN quality is a signal that a budget's values need initialized */
+        if (Float.isNaN(getQuality())) {
+            applyDefaultBudget();
+        }
+
+        //obtain shared copy
+        setTerm((T)memory.index.getTerm(t));
+
+
+        //if (this.cause != null) t.setCause(cause);
+        //if (this.reason != null) t.log(reason);
+
+        this.hash = rehash();
+
+
+        // if a task has an unperceived creationTime,
+        // set it to the memory's current time here,
+        // and adjust occurenceTime if it's not eternal
+
+        if (getCreationTime() <= Stamp.TIMELESS) {
+            final long now = memory.time();
+            long oc = getOccurrenceTime();
+            if (oc != Stamp.ETERNAL)
+                oc += now;
+
+            setTime(now, oc);
+        }
+
+        setDuration(
+                memory.duration() //assume the default perceptual duration?
+        );
+
+        //finally, assign a unique stamp if none specified (input)
+        if (getEvidence().length == 0) {
+            setEvidence(memory.newStampSerial());
+
+            //this actually means it arrived from unknown origin.
+            //we'll clarify what null evidence means later.
+            //if data arrives via a hardware device, can a virtual
+            //task be used as the parent when it generates it?
+            //doesnt everything originate from something else?
+            if (log == null)
+                log("Input");
+        }
+
+        //setTerm((T) memory.concepts.get( term ).getTerm());
+
+        return this;
     }
 
     protected final void setPunctuation(char punctuation) {
@@ -345,73 +385,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-
-    @Override
-    public final boolean isNormalized() {
-        return this.hash != 0;
-    }
-
-    /**
-     * call if the task was changed; re-hashes it at the end.
-     * if the task was removed then this returns null
-     */
-    @Override
-    public final boolean normalize() {
-
-        //dont recompute if hash isnt invalid (==0)
-        if (isNormalized())
-            return true;
-
-        if (isDeleted())
-            return false;
-
-        return normalizeThis();
-    }
-
-    /** actual normalization process */
-    protected boolean normalizeThis() {
-
-        final char punc = getPunctuation();
-        if (punc == 0)
-            throw new RuntimeException("Punctuation must be specified before generating a default budget");
-
-        if ((truth == null) && (isJudgmentOrGoal())) {
-            truth = new DefaultTruth(punc);
-        }
-
-
-        Compound t = getTerm();
-        if (t == null)
-            return false;
-
-
-        if (t instanceof Sequence)  {
-            long[] offset = new long[1];
-            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
-            if ((st == null) || (Sentence.invalidSentenceTerm(st)))
-                return false; //it reduced to an invalid sentence term so return null
-            this.term = (T)st;
-            if (!isEternal())
-                occurrenceTime -= offset[0];
-        }
-
-        updateEvidence();
-
-
-
-        /** NaN quality is a signal that a budget's values need initialized */
-        if (Float.isNaN(getQuality())) {
-            applyDefaultBudget();
-        }
-
-        //if (this.cause != null) t.setCause(cause);
-        //if (this.reason != null) t.log(reason);
-
-        this.hash = rehash();
-
-        return true;
-    }
-
     protected boolean applyDefaultBudget() {
         //if (getBudget().isBudgetValid()) return true;
         if (getTruth() == null) return false;
@@ -486,19 +459,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             invalidate();
         }
         return this;
-    }
-
-    /** safely make a new task, if the term is not already known to be valid for a task */
-    public static <C extends Compound> MutableTask make(C t) {
-        Compound u = Task.taskable(t);
-        if (u == null)
-            return null;
-
-        MutableTask x = make();
-
-        x.setTerm(u);
-
-        return x;
     }
 
     public static MutableTask make() {

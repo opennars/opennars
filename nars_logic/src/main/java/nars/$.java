@@ -38,7 +38,10 @@ abstract public class $  {
     public static final <C extends Compound> MutableTask $(final String term, char punc) {
         C t = Narsese.the().term(term);
         if (t == null) return null;
-        return (MutableTask) new MutableTask(t).punctuation(punc).eternal().normalized();
+        return new MutableTask(t)
+                .punctuation(punc)
+                .eternal();
+                //.normalized();
     }
 
 
