@@ -196,6 +196,7 @@ package nars.nal;
 import nars.$;
 import nars.NAR;
 import nars.Narsese;
+import nars.concept.Concept;
 import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default2;
 import nars.op.mental.Anticipate;
@@ -311,6 +312,54 @@ public class Patham9Test extends AbstractNALTester {
         return n;
     }
 
+    public float priority_safe(Concept c) {
+        if(c == null) {
+            return 0;
+        }
+        return c.getPriority();
+    }
+
+    @Test
+    public void repeated_sequence_test() throws Narsese.NarseseException {
+        NAR nar = new Default2(1000, 1, 1, 3);
+
+        for(int i=0;i<1000;i++) {
+            nar.input("<a --> A>. :|:");
+            nar.frame(20);
+            nar.input("<b --> B>. :|:");
+            nar.frame(20);
+            nar.input("<c --> C>. :|:");
+            nar.frame(100);
+        }
+
+        Concept seq_a_b = nar.concept("(&/,<a --> A>,<b --> B>)");
+        Concept seq_b_c = nar.concept("(&/,<b --> B>,<c --> C>)");
+        Concept seq_a_c = nar.concept("(&/,<a --> A>,<c --> C>)");
+        Concept seq_a_b_c = nar.concept("(&/,<a --> A>,<b --> B>,<c --> C>)");
+
+        Concept imp_a_b = nar.concept("<(&/,<a --> A>,/1) =/> <b --> B>>");
+        Concept imp_a_c = nar.concept("<(&/,<a --> A>,/1) =/> <c --> C>>");
+        Concept imp_b_c = nar.concept("<(&/,<b --> B>,/1) =/> <c --> C>>");
+        Concept imp_s = nar.concept("<(&/,<a --> A>,<b --> B>) =/> <c --> C>>");
+
+        Concept imp_a = nar.concept("<a --> A>");
+        Concept imp_b = nar.concept("<b --> B>");
+        Concept imp_c = nar.concept("<c --> C>");
+
+        float priority_seq_a_b = priority_safe(seq_a_b);
+        float priority_seq_b_c = priority_safe(seq_b_c);
+        float priority_seq_a_c = priority_safe(seq_a_c);
+        float priority_seq_a_b_c = priority_safe(seq_a_b_c);
+
+        float priority_imp_a_b = priority_safe(imp_a_b);
+        float priority_imp_a_c = priority_safe(imp_a_b);
+        float priority_imp_b_c = priority_safe(imp_a_b);
+
+        float priority_imp_a = priority_safe(imp_a);
+        float priority_imp_b = priority_safe(imp_b);
+        float priority_imp_c = priority_safe(imp_c);
+    }
+/*
     @Test
     public void subsent_1() throws Narsese.NarseseException {
         TestNAR tester = test();
@@ -322,6 +371,6 @@ public class Patham9Test extends AbstractNALTester {
                 1.0f, 0.81f,
                 120); // :|:
         tester.run();
-    }
+    }*/
 
 }
