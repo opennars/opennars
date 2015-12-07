@@ -2,6 +2,7 @@ package nars;
 
 
 import com.google.common.collect.Sets;
+import com.gs.collections.impl.tuple.Tuples;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -12,6 +13,7 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.OperatorReaction;
+import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
 import nars.process.TaskProcess;
 import nars.task.DefaultTask;
@@ -27,7 +29,6 @@ import nars.truth.Truth;
 import nars.util.data.Util;
 import nars.util.event.*;
 import net.openhft.affinity.AffinityLock;
-import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.io.File;
 import java.io.IOException;
@@ -424,6 +425,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         }
 
         if (t.isCommand()) {
+            //direct execution pathway for commands
             int n = execute(t);
             if (n == 0) {
                 m.remove(t, "Unknown Command");
@@ -1360,6 +1362,23 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return concept(termed.getTerm());
     }
 
+    public On onQuestion(PatternAnswer p) {
+        return memory.eventTaskProcess.on(tp -> {
+            Task question = tp.getTask();
+            if (question.getPunctuation() == '?') {
+                beforeNextFrame(() -> {
+                    List<Task> l = p.apply(question);
+                    if (l != null) {
+                        l.forEach(answer -> {
+                            memory.eventAnswer.emit(Tuples.twin(question, answer));
+                        });
+                        input(l);
+                    }
+                });
+            }
+        });
+    }
+
 
 //    public NAR onAfterFrame(final Runnable r) {
 //        return onEachFrame(() -> {
@@ -1442,21 +1461,20 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        //}
 //    }
 
-    public byte[] toBytes() throws IOException, InterruptedException {
-        return new GenericJBossMarshaller().objectToByteBuffer(this);
-    }
-
-    public static <N extends NAR> N fromBytes(byte[] b) throws IOException, ClassNotFoundException {
-        return (N) new GenericJBossMarshaller().objectFromByteBuffer(b);
-    }
-
-    public NAR fork() throws Exception {
-        //TODO find more efficient way than this brute serialization/deserialization
-        final byte[] bb = toBytes();
-        NAR x = fromBytes(bb);
-        return x;
-
-    }
+//    public byte[] toBytes() throws IOException, InterruptedException {
+//        return new GenericJBossMarshaller().objectToByteBuffer(this);
+//    }
+//    public static <N extends NAR> N fromBytes(byte[] b) throws IOException, ClassNotFoundException {
+//        return (N) new GenericJBossMarshaller().objectFromByteBuffer(b);
+//    }
+//
+//    public NAR fork() throws Exception {
+//        //TODO find more efficient way than this brute serialization/deserialization
+//        final byte[] bb = toBytes();
+//        NAR x = fromBytes(bb);
+//        return x;
+//
+//    }
 
     @Override
     public boolean equals(Object obj) {

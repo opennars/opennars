@@ -1,5 +1,6 @@
 package nars.nal.nal8;
 
+import com.google.common.collect.Lists;
 import nars.$;
 import nars.NAR;
 import nars.Op;
@@ -20,6 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
+import static nars.$.$;
+import static nars.util.Texts.i;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -79,7 +82,7 @@ public class OperatorTest {
     }
 
     @Test public void testInhIsOperation() {
-        Operation o = $.$("<(a,b,c)-->^x>");
+        Operation o = $("<(a,b,c)-->^x>");
         assertTrue(o.getSubject() instanceof Product);
         assertTrue(o.getPredicate() instanceof Operator);
         assertEquals("x(a, b, c)", o.toString(true));
@@ -154,13 +157,13 @@ public class OperatorTest {
 
     }
 
-    @Test public void testPatternMap() {
+    @Test public void testPatternOperation() {
         AtomicInteger count = new AtomicInteger();
 
-        PatternFunction f = new PatternFunction("(%A,%B)") {
+        PatternOperation f = new PatternOperation("(%A,%B)") {
             @Override
             public List<Task> run(Task<Operation> operationTask, Substitution map1) {
-                System.out.println(this.pattern + " " + operationTask + "\n\t" + map1);
+                //System.out.println(this.pattern + " " + operationTask + "\n\t" + map1);
                 count.getAndIncrement();
                 return null;
             }
@@ -177,6 +180,67 @@ public class OperatorTest {
         assertEquals(1, count.get());
     }
 
+    @Test public void testPatternAnswerer() {
+        AtomicInteger count = new AtomicInteger();
+
+        PatternAnswer f = new PatternAnswer("add(%a,%b,#x)") {
+            @Override
+            public List<Task> run(Task t, Substitution s) {
+                //System.out.println(this.pattern + " " + t + "\n\t" + s);
+                assertEquals($("x"), s.getXY($("%a")));
+                assertEquals($("y"), s.getXY($("%b")));
+                assertEquals(Op.VAR_DEPENDENT, s.getXY($("#x")).op());
+                count.getAndIncrement();
+                return null;
+            }
+        };
+        Terminal t = new Terminal();
+
+        Task matching = t.task("add(x,y,#x)?");
+        f.apply(matching);
+
+        Task nonMatching = t.task("add(x)?");
+        f.apply(nonMatching);
+
+        //should only be triggered once, by the matching term
+        assertEquals(1, count.get());
+    }
+
+    @Test public void testPatternAnswererInNAR() {
+        NAR n = new Default2(100,1,1,1);
+
+        PatternAnswer addition = new PatternAnswer("add(%a,%b,#x)") {
+            final Term A = $("%a"), B = $("%b");
+            @Override public List<Task> run(Task question, Substitution s) {
+                int a = i(s.getXY(A).toString());
+                int b = i(s.getXY(B).toString());
+
+                return Lists.newArrayList(
+                        $.$("add(" + a + "," + b + "," +
+                            Integer.toString(a+b) + ")", '.')
+                            .eternal()
+                            .truth(1f, 0.99f)
+                            .parent(question)
+                            .budgetScaled(question.getPriority(), 1f)
+                            .because("Addition")
+                );
+            }
+        };
+        n.onQuestion(addition);
+        n.log();
+
+        n.input("add(1,2,#x)?");
+        n.input("add(1,1,#x)?");
+
+        TestNAR t = new TestNAR(n);
+        t.mustBelieve(8, "add(1, 1, 2)", 1f, 0.99f);
+        t.mustBelieve(8, "add(1, 2, 3)", 1f, 0.99f);
+        t.run2();
+
+        assertEquals(1, n.concept("add(1, 1, 2)").getBeliefs().size());
+        assertEquals(1, n.concept("add(1, 1, #x)").getQuestions().size());
+        n.concept("add(1, 1, 2)").print(System.out);
+    }
 
 //TODO: allow this in a special eval operator
 

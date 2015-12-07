@@ -40,7 +40,6 @@ import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import static com.google.common.collect.Iterators.concat;
 
@@ -269,6 +268,10 @@ public interface Concept extends Termed, Itemized<Term> {
         return null;
     }
 
+    default void print() {
+        print(System.out);
+    }
+
     default void print(PrintStream out) {
         print(out, true, true, true, true);
     }
@@ -277,27 +280,38 @@ public interface Concept extends Termed, Itemized<Term> {
     default void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
         long now = time();
 
-        out.println("CONCEPT: " + toInstanceString() + " @ " + now);
+        out.println("concept: " + toInstanceString() + " @ " + now);
 
         final String indent = "  \t";
         if (showbeliefs) {
             out.print(" Beliefs:");
             if (getBeliefs().isEmpty()) out.println(" none");
-            else out.println();
+            else {out.println();
             getBeliefs().forEach(s -> {
-                out.print(indent);
-                out.println(s);
-            });
+                out.print(indent); out.println(s);
+            });}
+            out.print(" Questions:");
+            if (getQuestions().isEmpty()) out.println(" none");
+            else {out.println();
+            getQuestions().forEach(s -> {
+                out.print(indent); out.println(s);
+            });}
         }
 
         if (showgoals) {
             out.print(" Goals:");
             if (getGoals().isEmpty()) out.println(" none");
-            else out.println();
+            else {out.println();
             getGoals().forEach(s -> {
                 out.print(indent);
                 out.println(s);
-            });
+            });}
+            out.print(" Quests:");
+            if (getQuestions().isEmpty()) out.println(" none");
+            else {out.println();
+                getQuests().forEach(s -> {
+                    out.print(indent); out.println(s);
+                });}
         }
 
         if (showtermlinks) {

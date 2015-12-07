@@ -106,6 +106,7 @@ public class Memory extends Param {
     transient public final EventEmitter<Term, Task<Operation>> exe;
 
 
+
     //TODO move these to separate components, not part of Memory:
     transient public final EmotionMeter emotion;
     transient public final LogicMeter logic;

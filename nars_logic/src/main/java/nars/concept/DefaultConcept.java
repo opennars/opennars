@@ -2,6 +2,7 @@ package nars.concept;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
+import nars.Global;
 import nars.Param;
 import nars.Premise;
 import nars.bag.Bag;
@@ -18,7 +19,6 @@ import nars.link.TermLinkKey;
 import nars.nal.nal1.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
-import nars.Global;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -382,11 +382,8 @@ public class DefaultConcept extends AtomConcept {
 //            }
         //}
 
-
         /** execute the question, for any attached operators that will handle it */
-
         //getMemory().execute(q);
-
 
         //boolean tableAffected = false;
 

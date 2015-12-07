@@ -511,9 +511,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     default boolean matchLinear(TermContainer y, FindSubst subst) {
         int s = size();
         if (s == 2) {
+            //HACK - match smallest (least specific) first
             int v0 = term(0).volume();
             int v1 = term(1).volume();
-            //match smallest first
             if (v0 <= v1) {
                 return matchSubterm(0, y, subst)&&
                        matchSubterm(1, y, subst);
