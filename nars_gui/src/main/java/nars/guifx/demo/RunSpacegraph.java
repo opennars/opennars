@@ -88,10 +88,11 @@ public class RunSpacegraph extends Application {
                                 $.$("<a --> " + i + ">"))) );
             }
 
+            ground.getChildren().add(new GridCanvas(true));
+
             new HyperOrganicLayout().run(this.verts, 10);
 
 
-            ground.getChildren().add(new GridCanvas(true));
 
         }
     }

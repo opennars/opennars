@@ -414,7 +414,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 	public void run(Parent p, int iterations) {
 		ObservableList<Node> c = p.getChildrenUnmodifiable();
-		run(c);
+		for (int i = 0; i < iterations; i++)
+			run(c);
 	}
 
 	public void run(ObservableList<Node> c) {

@@ -78,10 +78,10 @@ public class Spacegraph extends ZoomFX {
     public class GridCanvas extends Canvas {
 
         private final boolean drawSharpLines;
-        final Color c = new Color(0.8f, 0.3f, 0.3f, 0.8f);
+        final Color c = new Color(0.4, 0.4, 0.4, 1);
 
         public GridCanvas(boolean drawSharpLines) {
-            super(1000,1000);
+            super(3000,3000);
             this.drawSharpLines = drawSharpLines;
             setMouseTransparent(true);
             runLater(this::update);

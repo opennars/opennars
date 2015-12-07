@@ -18,10 +18,11 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import nars.guifx.DefaultWindow;
 import nars.guifx.Spacegraph;
+import nars.guifx.graph2.Tangible;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 /** window widget */
-public class Windget extends DefaultWindow {
+public class Windget extends DefaultWindow  {
 
 
     private final AnchorPane overlay;
@@ -29,6 +30,10 @@ public class Windget extends DefaultWindow {
     public void addOverlay(Node n) {
         overlay.getChildren().add(n);
     }
+
+
+
+
 
     public interface Port {
         public boolean acceptIn(Port from);
@@ -341,6 +346,7 @@ public class Windget extends DefaultWindow {
 
 
 
+
         getStyleClass().add("windget");
 
 
@@ -357,6 +363,7 @@ public class Windget extends DefaultWindow {
         this(title, content);
 
 
+        new Tangible(this);
 
 
         //content.setAutoSizeChildren(true);

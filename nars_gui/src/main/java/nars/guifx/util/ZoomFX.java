@@ -28,9 +28,9 @@ public class ZoomFX extends AnchorPane {
 //    private static final double SCROLL_UNIT_INC = 0.1;
 
     // Properties
-    private final LerpDoubleProperty zoomFactor = new LerpDoubleProperty(1.0);
-    protected final LerpDoubleProperty panX = new LerpDoubleProperty(0);
-    protected final LerpDoubleProperty panY = new LerpDoubleProperty(0);
+    public final LerpDoubleProperty zoomFactor = new LerpDoubleProperty(1.0);
+    public final LerpDoubleProperty panX = new LerpDoubleProperty(0);
+    public final LerpDoubleProperty panY = new LerpDoubleProperty(0);
 
     //Sub-controls
     /*private final ScrollBar hscroll = new ScrollBar();
