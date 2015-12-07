@@ -1,6 +1,9 @@
 package nars.bag.impl;
 
-import com.google.common.cache.*;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import nars.budget.Itemized;
 
 import java.util.Iterator;
@@ -43,7 +46,6 @@ public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements Remov
 
 
     public GuavaCacheBag(CacheBuilder<K, V> data) {
-        super();
 
         data.removalListener(this);
         this.data = data.build();
@@ -60,16 +62,19 @@ public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements Remov
 
 
     @Override
-    public V get(K key) {
+    public final V get(K key) {
+        if (key == null)
+            throw new RuntimeException("null");
         return data.getIfPresent(key);
     }
 
     @Override
     public V remove(K key) {
-        V v = data.getIfPresent(key);
+        Cache<K, V> d = this.data;
+        V v = d.getIfPresent(key);
         if (v !=null) {
-            data.invalidate(v);
-            data.cleanUp();
+            d.invalidate(v);
+            d.cleanUp();
             return v;
         }
         return null;
@@ -90,7 +95,7 @@ public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements Remov
 
     @Override
     public void onRemoval(RemovalNotification<K, V> rn) {
-        RemovalCause cause = rn.getCause();
+        //RemovalCause cause = rn.getCause();
 
 //        if (cause==RemovalCause.SIZE || cause==RemovalCause.COLLECTED) {
 //            V v = rn.getValue();

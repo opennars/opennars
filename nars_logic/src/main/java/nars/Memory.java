@@ -108,11 +108,9 @@ public class Memory extends Param {
     transient public final EmotionMeter emotion;
     transient public final LogicMeter logic;
 
-
     public final Clock clock;
 
-    //public final TermIndex terms = new MyTermIndex();
-
+    /** holds known Term's and Concept's */
     public final TermIndex index;
 
 

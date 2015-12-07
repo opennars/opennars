@@ -8,7 +8,7 @@ import nars.task.flow.FIFOTaskPerception;
 import nars.time.FrameClock;
 import nars.util.meter.DerivationGraph;
 
-public class SingleStepNAR extends AbstractDefaultNAR {
+public class SingleStepNAR extends AbstractNAR {
 
     //static DerivationGraph derivations = new DerivationGraph(false, false);
 

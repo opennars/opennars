@@ -3,7 +3,7 @@ package nars.guifx.demo;
 import nars.Global;
 import nars.NAR;
 import nars.guifx.NARfx;
-import nars.nar.AbstractDefaultNAR;
+import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.op.io.UDPNetwork;
 import nars.time.RealtimeMSClock;
@@ -20,7 +20,7 @@ public class InterNARSimulator {
     public static void main(String[] args) throws SocketException {
         int num = 5;
         float freq = 15f;
-        List<AbstractDefaultNAR> group = Global.newArrayList();
+        List<AbstractNAR> group = Global.newArrayList();
         @Deprecated /* to be accessed with narsese commands */ List<UDPNetwork> networks = Global.newArrayList();
 
         RealtimeMSClock clock = new RealtimeMSClock(); //common clock
@@ -28,7 +28,7 @@ public class InterNARSimulator {
         Global.DEBUG = true;
 
         for (int i = 0; i < num; i++) {
-            AbstractDefaultNAR a = new Default(1000, 1, 1, 3);
+            AbstractNAR a = new Default(1000, 1, 1, 3);
             group.add(a);
 
             UDPNetwork u = new UDPNetwork(10001 + i);

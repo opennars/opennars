@@ -24,7 +24,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
-import nars.nar.AbstractDefaultNAR;
+import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -167,7 +167,7 @@ public class TermTest {
 
     @Test
     public void testConceptInstancing() throws Narsese.NarseseException {
-        AbstractDefaultNAR n = new Default();
+        AbstractNAR n = new Default();
 
         String statement1 = "<a --> b>.";
 

@@ -1108,7 +1108,12 @@ public class Narsese extends BaseParser<Object>  {
         Term x = termRaw(s);
         if (x==null) return null;
 
-        return x.normalized().normalized(i);
+        Term normalized = x.normalized();
+        if (normalized == null) {
+            throw new RuntimeException("Unnormalizable: " + s);
+        }
+
+        return normalized.index(i);
     }
 
 //    public TaskRule taskRule(String input) {

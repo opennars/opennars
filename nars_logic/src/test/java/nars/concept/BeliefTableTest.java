@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import nars.Global;
 import nars.NAR;
 import nars.nal.nal7.Tense;
-import nars.nar.AbstractDefaultNAR;
+import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.util.meter.BeliefAnalysis;
 import nars.util.meter.MemoryBudget;
@@ -48,8 +48,8 @@ public class BeliefTableTest extends TestCase {
 //
 //    }
 
-    public AbstractDefaultNAR newNAR(int maxBeliefs) {
-        AbstractDefaultNAR d = new Default(256,1,2,3).nal(7);// {
+    public AbstractNAR newNAR(int maxBeliefs) {
+        AbstractNAR d = new Default(256,1,2,3).nal(7);// {
 
             /*
             @Override
@@ -80,7 +80,7 @@ public class BeliefTableTest extends TestCase {
     void testRevision(int delay1) {
         Global.DEBUG = true;
 
-        AbstractDefaultNAR n = newNAR(6);
+        AbstractNAR n = newNAR(6);
 
 
         //arbitrary time delays in which to observe that certain behavior does not happen

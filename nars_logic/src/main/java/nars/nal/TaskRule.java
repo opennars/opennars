@@ -120,14 +120,18 @@ public class TaskRule extends ProductN implements Level {
     }
 
     @Override
-    public Term normalized(TermIndex termIndex) {
+    public Term index(TermIndex termIndex) {
 
         //task and belief pattern term
-        for (int i = 0; i < 2; i++)
-            getPremise().terms()[i] = (Term) termIndex.get(getPremise().terms()[i]);
+        for (int i = 0; i < 2; i++) {
+            Term s = (Term) getPremise().terms()[i];
+            if (s == null)
+                throw new RuntimeException("null premise term: " + this);
+            getPremise().terms()[i] = s;
+        }
 
         //conclusion pattern term
-        getConclusion().terms()[0] = (Term) termIndex.get(getConclusion().terms()[0]);
+        getConclusion().terms()[0] = (Term) getConclusion().terms()[0];
 
         return this;
     }

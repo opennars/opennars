@@ -117,7 +117,7 @@ public abstract class Atomic implements Term, Byted {
     }
 
     @Override
-    public final Term normalized(TermIndex termIndex) {
+    public final Term index(TermIndex termIndex) {
         return this;
     }
 

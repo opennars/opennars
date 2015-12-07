@@ -55,7 +55,7 @@ import java.util.function.Consumer;
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
-abstract public class AbstractDefaultNAR extends NAR {
+abstract public class AbstractNAR extends NAR {
 
     public final DefaultCycle core;
     public final TaskPerception input;
@@ -77,13 +77,13 @@ abstract public class AbstractDefaultNAR extends NAR {
 //        this(1024, 1, 2, 3, new FrameClock());
 //    }
 
-    public AbstractDefaultNAR(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
+    public AbstractNAR(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
         this(new Memory(clock,
                 TermIndex.memory(activeConcepts)
         ), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
-    public AbstractDefaultNAR(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    public AbstractNAR(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(memory);
 
         getDeriver().load(memory);
@@ -347,7 +347,7 @@ abstract public class AbstractDefaultNAR extends NAR {
 //        };
 //    }
 
-    public AbstractDefaultNAR nal(int maxNALlevel) {
+    public AbstractNAR nal(int maxNALlevel) {
         memory.nal(maxNALlevel);
         return this;
     }
@@ -389,12 +389,12 @@ abstract public class AbstractDefaultNAR extends NAR {
         return new CurveBag<>(initialCapacity, rng).mergePlus();
     }
 
-    public AbstractDefaultNAR setTaskLinkBagSize(int taskLinkBagSize) {
+    public AbstractNAR setTaskLinkBagSize(int taskLinkBagSize) {
         this.taskLinkBagSize = taskLinkBagSize;
         return this;
     }
 
-    public AbstractDefaultNAR setTermLinkBagSize(int termLinkBagSize) {
+    public AbstractNAR setTermLinkBagSize(int termLinkBagSize) {
         this.termLinkBagSize = termLinkBagSize;
         return this;
     }

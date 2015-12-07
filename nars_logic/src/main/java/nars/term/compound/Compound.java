@@ -31,7 +31,10 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Terms;
 import nars.term.compile.TermIndex;
-import nars.term.transform.*;
+import nars.term.transform.CompoundTransform;
+import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
+import nars.term.transform.VariableNormalization;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -39,7 +42,6 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static nars.Symbols.*;
@@ -295,11 +297,14 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
         for (int i = 0; i < n; i++) {
             Term x = this.term(i);
+            if (x == null)
+                throw new RuntimeException("null subterm");
 
             if (trans.test(x)) {
 
                 Term y = trans.apply( (Compound<T>)this, (T) x, level);
-                if (y == null) return -1;
+                if (y == null)
+                    return -1;
 
                 if (!x.equals(y)) {
                     modifications++;
@@ -380,7 +385,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
     @Override
-    default Term normalized(TermIndex termIndex) {
+    default Term index(TermIndex termIndex) {
         return transform(termIndex);
     }
     /**
@@ -443,16 +448,17 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
 
-    /**
-     * returns result of applySubstitute, if and only if it's a CompoundTerm.
-     * otherwise it is null
-     */
-    default Compound applySubstituteToCompound(Map<Term, Term> substitute) {
-        Term t = Term.substituted(this, new MapSubst(substitute));
-        if (t instanceof Compound)
-            return ((Compound) t);
-        return null;
-    }
+//    /**
+//     * returns result of applySubstitute, if and only if it's a CompoundTerm.
+//     * otherwise it is null
+//     */
+//    default Compound applySubstituteToCompound(Map<Term, Term> substitute) {
+//        Term t = Term.substituted(this,
+//                new MapSubst(substitute));
+//        if (t instanceof Compound)
+//            return ((Compound) t);
+//        return null;
+//    }
 
 
     TermContainer<T> subterms();

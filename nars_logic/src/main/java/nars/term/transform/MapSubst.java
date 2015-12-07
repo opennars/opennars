@@ -21,7 +21,7 @@ public class MapSubst implements Subst {
 
 
     public MapSubst(final Map<Term, Term> subs) {
-        reset(subs);
+        this.subs = subs;
     }
 
     @Override
@@ -29,10 +29,7 @@ public class MapSubst implements Subst {
         subs.clear();
     }
 
-    public Subst reset(final Map<Term, Term> subs) {
-        this.subs = subs;
-        return this;
-    }
+
 
     @Override
     public boolean isEmpty() {

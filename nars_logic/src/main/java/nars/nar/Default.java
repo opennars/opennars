@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Various extensions enabled
  */
-public class Default extends AbstractDefaultNAR {
+public class Default extends AbstractNAR {
 
     /**
      * max # of tasks to accumulate in sorted buffer

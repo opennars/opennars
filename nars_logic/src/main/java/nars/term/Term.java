@@ -24,12 +24,14 @@ package nars.term;
 import nars.Op;
 import nars.nal.nal7.Tense;
 import nars.term.compile.TermIndex;
+import nars.term.transform.MapSubst;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 
 
 public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializable {
@@ -277,8 +279,11 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
                 hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
     }
 
-    <T extends Term> T normalized(TermIndex termIndex);
+    <T extends Term> T index(TermIndex termIndex);
 
+    default Term substMap(Map<Term,Term> m) {
+        return substituted(new MapSubst(m));
+    }
 
     static Term substituted(Term x, Subst f) {
         final Term y = f.getXY(x);

@@ -173,7 +173,7 @@ public class CompiledUnificationTest extends UnificationTest {
         Set<String> r = permuteTest(
                 "<{%1,%2} <-> {a,b}>",
                 "<{c,d} <-> {a,b}>", 2);
-        assertEquals("[{%2=c, %1=d}, {%1=c, %2=d}]", r.toString());
+        assertEquals("[{%1=d, %2=c}, {%1=c, %2=d}]", r.toString());
     }
 
     @Test public void testPermutationPowerB() {

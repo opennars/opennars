@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
 import nars.guifx.wikipedia.NARWikiBrowser;
-import nars.nar.AbstractDefaultNAR;
+import nars.nar.AbstractNAR;
 import nars.nar.Default;
 
 import java.util.function.Function;
@@ -36,7 +36,7 @@ public class NARspace extends Spacegraph {
 
 
 
-        final AbstractDefaultNAR b = new Default();
+        final AbstractNAR b = new Default();
         IOPane np = new IOPane(b);
 
         Windget nd = new Windget("NAR",

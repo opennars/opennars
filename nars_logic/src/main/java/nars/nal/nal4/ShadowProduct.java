@@ -98,7 +98,7 @@ public class ShadowProduct extends TermVector implements Term {
 
 
     @Override
-    public Term normalized(TermIndex termIndex) {
+    public Term index(TermIndex termIndex) {
         return this;
     }
 

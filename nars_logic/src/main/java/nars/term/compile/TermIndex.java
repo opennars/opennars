@@ -1,6 +1,7 @@
 package nars.term.compile;
 
 import com.google.common.cache.CacheBuilder;
+import nars.MapIndex;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.term.Term;
@@ -8,6 +9,7 @@ import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.transform.CompoundTransform;
 
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 /**
@@ -42,15 +44,21 @@ public interface TermIndex extends CacheBag<Term,Termed>, CompoundTransform<Comp
 
         @Override
         public final Term apply(Compound c, Term subterm, int depth) {
-            return get(subterm).getTerm();
+            Termed s = get(subterm);
+            if (s == null)
+                return null;
+            return s.getTerm();
         }
     }
 
     /** default memory-based (Guava) cache */
     static TermIndex memory(int capacity) {
-        CacheBuilder builder = CacheBuilder.newBuilder()
-            .maximumSize(capacity);
-        return new GuavaIndex( builder );
+//        CacheBuilder builder = CacheBuilder.newBuilder()
+//            .maximumSize(capacity);
+        return new MapIndex(
+            new HashMap(capacity)
+            //new UnifriedMap()
+        );
     }
 
     /** for long-running processes, this uses

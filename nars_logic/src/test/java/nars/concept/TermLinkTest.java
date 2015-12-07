@@ -5,7 +5,7 @@ import nars.bag.Bag;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
-import nars.nar.AbstractDefaultNAR;
+import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.nar.SingleStepNAR;
 import nars.term.Term;
@@ -48,7 +48,7 @@ public class TermLinkTest {
 
         // [[<x --> y>, y, x], [(<x --> y>,y), (<x --> y>,x), (y,<x --> y>), (x,<x --> y>)]]
 
-        AbstractDefaultNAR n = new Default();
+        AbstractNAR n = new Default();
         n.core.conceptsFiredPerCycle.set(0);
         n.believe("<x --> y>");
         n.frame(1);
@@ -111,8 +111,8 @@ public class TermLinkTest {
         */
     }
 
-    private static AbstractDefaultNAR nar(String term, boolean firing) {
-        AbstractDefaultNAR n = new Default();
+    private static AbstractNAR nar(String term, boolean firing) {
+        AbstractNAR n = new Default();
         if (!firing)
             n.core.conceptsFiredPerCycle.set(0);
         n.believe(term);
@@ -129,7 +129,7 @@ public class TermLinkTest {
     }
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term, boolean firing) {
-        AbstractDefaultNAR n = nar(term, firing);
+        AbstractNAR n = nar(term, firing);
 
         //note: this method also seems to work
         //Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f) );

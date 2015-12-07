@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  *
  * TODO extend AbstractNAR, not Default
  */
-public class Terminal extends AbstractDefaultNAR {
+public class Terminal extends AbstractNAR {
 
     final Predicate<Task> taskFilter =
             task -> task.isCommand();
