@@ -2,7 +2,7 @@ package nars.nal.nal6;
 
 import nars.NAR;
 import nars.Narsese;
-import nars.nar.Default2;
+import nars.nar.Default;
 import org.junit.Test;
 
 /**
@@ -13,7 +13,7 @@ public class SecondLevelUnificationTest {
 
     @Test
     public void test1() throws Narsese.NarseseException {
-        NAR n = new Default2(2512, 1, 2, 3);
+        NAR n = new Default(2512, 1, 2, 3);
 
         //n.log();
         n.memory.eventTaskRemoved.on(t -> {
@@ -27,7 +27,7 @@ public class SecondLevelUnificationTest {
     }
     @Test
     public void test2() throws Narsese.NarseseException {
-        NAR n = new Default2(2512, 1, 2, 3);
+        NAR n = new Default(2512, 1, 2, 3);
 
         //n.log();
         n.memory.eventTaskRemoved.on(t -> {

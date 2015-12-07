@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
 import nars.nal.nal5.Implication;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import org.jacop.constraints.XeqY;
@@ -38,7 +38,7 @@ public class ConstraintTest {
     @Test
     public void testJacop1() {
 
-        NAR n = new Default2(1000, 1, 1, 3);
+        NAR n = new Default(1000, 1, 1, 3);
         SATNetwork sat = new SATNetwork(n, "<x-->y>") {
 
 

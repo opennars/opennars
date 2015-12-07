@@ -2,7 +2,7 @@ package nars.java;
 
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default2;
+import nars.nar.Default;
 
 import java.util.Random;
 
@@ -67,7 +67,7 @@ public class ThermostatTest  {
         Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
-        NAR n = new Default2(512, 1, 2, 3);
+        NAR n = new Default(512, 1, 2, 3);
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
         NALObjects nobj = new NALObjects(n);

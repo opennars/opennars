@@ -1,7 +1,7 @@
 package nars.nal.meta;
 
 import nars.NAR;
-import nars.nar.Default;
+import nars.nar.AbstractDefaultNAR;
 import nars.nar.Terminal;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class BasicRulesTest {
     public void testNAL1() {
         //Deriver d = Deriver.defaults;
 
-        Default n = new Terminal().nal(3);
+        AbstractDefaultNAR n = new Terminal().nal(3);
 
 
 

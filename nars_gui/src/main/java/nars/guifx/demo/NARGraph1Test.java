@@ -12,7 +12,6 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
 import nars.process.BagForgettingEnhancer;
-import nars.time.FrameClock;
 
 /**
  * Created by me on 8/15/15.
@@ -70,7 +69,7 @@ public class NARGraph1Test {
     public static void main(String[] args)  {
 
 
-        Default n = new Default(1024, 3,3,3, new FrameClock());
+        Default n = new Default();
 
         NARide.show(n.loop(), ide -> {
 

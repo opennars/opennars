@@ -1,7 +1,7 @@
 package nars.term.compile;
 
 import nars.NAR;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
@@ -34,9 +34,9 @@ public class TermIndexTest {
     }
 
     @Test public void testRuleTermsAddedToMemoryTermIndex() {
-        final NAR d = new Default2(100,1,1,1);
+        final NAR d = new Default(100,1,1,1);
         Set<Term> t = new TreeSet();
-        d.memory.terms.forEachTerm(x -> t.add(x.getTerm()));
+        d.memory.index.forEachTerm(x -> t.add(x.getTerm()));
 
         assertTrue(t.size() > 100); //approximate
 

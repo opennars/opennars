@@ -5,8 +5,8 @@ import nars.bag.Bag;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
+import nars.nar.AbstractDefaultNAR;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.nar.SingleStepNAR;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
@@ -48,7 +48,7 @@ public class TermLinkTest {
 
         // [[<x --> y>, y, x], [(<x --> y>,y), (<x --> y>,x), (y,<x --> y>), (x,<x --> y>)]]
 
-        Default n = new Default();
+        AbstractDefaultNAR n = new Default();
         n.core.conceptsFiredPerCycle.set(0);
         n.believe("<x --> y>");
         n.frame(1);
@@ -111,8 +111,8 @@ public class TermLinkTest {
         */
     }
 
-    private static Default nar(String term, boolean firing) {
-        Default n = new Default();
+    private static AbstractDefaultNAR nar(String term, boolean firing) {
+        AbstractDefaultNAR n = new Default();
         if (!firing)
             n.core.conceptsFiredPerCycle.set(0);
         n.believe(term);
@@ -129,7 +129,7 @@ public class TermLinkTest {
     }
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term, boolean firing) {
-        Default n = nar(term, firing);
+        AbstractDefaultNAR n = nar(term, firing);
 
         //note: this method also seems to work
         //Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f) );
@@ -166,7 +166,7 @@ public class TermLinkTest {
 
     @Test
     public void testIdentifier() {
-        NAR n = new Default2(100, 1, 1, 3);
+        NAR n = new Default(100, 1, 1, 3);
         n.input("<a --> b>.");
         n.input("<<a --> b> --> d>.");
         n.input("<<a --> b> --> e>.");

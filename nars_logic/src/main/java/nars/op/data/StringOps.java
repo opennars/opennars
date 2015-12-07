@@ -49,7 +49,7 @@ public interface StringOps {
 
 
     default void testStrReplace() {
-        NAR n = new Default();
+        NAR n = new Default(256,1,1,3);
         n.trace();
 
         StringOps.initStringOps(n);

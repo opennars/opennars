@@ -12,7 +12,7 @@ import java.util.Iterator;
  * 
  * http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html*
  */
-public class GuavaCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements RemovalListener<K, V>, Iterable<V> {
+public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements RemovalListener<K, V>, Iterable<V> {
 
     public final Cache<K, V> data;
     //public final Observed<V> removed = new Observed();
@@ -40,6 +40,7 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K,
 
 
     }
+
 
     public GuavaCacheBag(CacheBuilder<K, V> data) {
         super();

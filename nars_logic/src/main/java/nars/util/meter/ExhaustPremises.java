@@ -49,7 +49,7 @@ public class ExhaustPremises extends TestNAR {
 
         //2. get the combined termlink graph resultnig from direct conceptualization of both concepts in this test NAR
         System.out.println("COMBINED PREMISE TERMLINK GRAPH");
-        NAR c = new Default();
+        NAR c = new Default(1024,1,1,3);
         termlinkAnalysis(c, nar.task(stask1), nar.task(stask2));
 
 
@@ -76,7 +76,7 @@ public class ExhaustPremises extends TestNAR {
     public static TermLinkGraph termlinkAnalysis(NAR n, Task... task) {
 
         if (n == null)
-            n = new Default();
+            n = new Default(512,1,1,3);
         //new Terminal();
 
         for (Task tt : task) {
@@ -111,7 +111,7 @@ public class ExhaustPremises extends TestNAR {
 
             current = new TermLinkGraph(n);
 
-            System.out.println("@" + n.time() + " numConcepts: " + n.memory.concepts.size());
+            System.out.println("@" + n.time() + " numConcepts: " + n.memory.index.size());
 
             System.out.println(new MemoryBudget(n));
 

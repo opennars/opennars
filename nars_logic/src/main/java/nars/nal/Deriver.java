@@ -1,7 +1,6 @@
 package nars.nal;
 
 import nars.Memory;
-import nars.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 
@@ -76,20 +75,20 @@ abstract public class Deriver  {
      *  this method does not provide a way to stop or interrupt
      *  the process once it begins.
      */
-    public final void run(Premise premise, Consumer<Task> t) {
-        premise.memory().eventConceptProcess.emit((ConceptProcess)premise);
+    public final void run(ConceptProcess premise, Consumer<Task> t) {
+        premise.memory().eventConceptProcess.emit(premise);
 
         RuleMatch m = RuleMatch.matchers.get();
 
-        m.start(premise, t);
-
-        run(m);
+        m.start(premise, t, this);
     }
 
 
     public void load(Memory memory) {
-        for (int i = 0; i < rules.size(); i++) {
-            rules.get(i).normalized(memory.terms);
+        DerivationRules r = this.rules;
+        int s = r.size();
+        for (int i = 0; i < s; i++) {
+            r.get(i).normalized(memory.index);
         }
     }
 }

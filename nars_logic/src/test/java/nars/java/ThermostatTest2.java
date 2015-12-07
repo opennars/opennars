@@ -3,7 +3,7 @@ package nars.java;
 import com.gs.collections.api.tuple.Twin;
 import nars.Global;
 import nars.nal.nal8.ExecutionResult;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.util.data.random.XORShiftRandom;
@@ -80,7 +80,7 @@ public class ThermostatTest2 {
 
         final int dur = 5;
 
-        Default2 n = new Default2(1024, 8, 2, 3);
+        Default n = new Default(1024, 8, 2, 3);
         n.memory.duration.set(dur);
         n.getInput().inputPerCycle.set(2);
 

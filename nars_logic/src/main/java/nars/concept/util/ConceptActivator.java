@@ -3,11 +3,12 @@ package nars.concept.util;
 import nars.NAR;
 import nars.Param;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.term.Term;
+import nars.term.Termed;
+import nars.term.compile.TermIndex;
 
 /**
  * Created by me on 3/15/15.
@@ -54,14 +55,15 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
     @Override
     public final Concept newItem() {
-        CacheBag<Term, Concept> i = nar.concepts();
+        TermIndex i = nar.concepts();
         Term n = name();
-        Concept c = i.get(n);
-        if (c == null) {
-            c = builder.apply(n);
-            i.put(n, c);
+        Termed c = i.get(n);
+        if (!(c instanceof Concept)) {
+            Concept newConcept = builder.apply(n);
+            i.put(n, newConcept);
+            return newConcept;
         }
-        return c;
+        return ((Concept)c);
     }
 
     @Override

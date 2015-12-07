@@ -24,6 +24,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
+import nars.nar.AbstractDefaultNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -52,7 +53,6 @@ public class TermTest {
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
-            NAR n = new Default();
 
             Term term1 = n.term(term1String);
             Term term2 = n.term(term2String);
@@ -71,7 +71,6 @@ public class TermTest {
 
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
-        NAR n = new Default();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -81,7 +80,6 @@ public class TermTest {
 
     @Test
     public void testTermSort() throws Exception {
-        NAR n = new Terminal();
 
         Term a = n.term("a");
         Term b = n.term("b");
@@ -96,8 +94,6 @@ public class TermTest {
 
     @Test
     public void testConjunctionTreeSet() throws Narsese.NarseseException {
-        NAR n = new Default();
-
 
         //these 2 representations are equal, after natural ordering
         String term1String = "<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
@@ -171,7 +167,7 @@ public class TermTest {
 
     @Test
     public void testConceptInstancing() throws Narsese.NarseseException {
-        Default n = new Default();
+        AbstractDefaultNAR n = new Default();
 
         String statement1 = "<a --> b>.";
 

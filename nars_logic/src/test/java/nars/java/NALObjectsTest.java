@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.term.Term;
 import nars.util.meter.EventCount;
 import org.junit.Ignore;
@@ -81,7 +80,7 @@ public class NALObjectsTest  {
      */
     public void testMethodInvocationAndFeedback(boolean external) throws Exception {
 
-        NAR n = new Default2(128, 1, 1, 1);
+        NAR n = new Default(128, 1, 1, 1);
 
         StringWriter ns = new StringWriter();
         n.log(new PrintWriter(ns));
@@ -300,7 +299,7 @@ public class NALObjectsTest  {
     public void testLearnMethods() throws Exception {
 
 
-        NAR n = new Default2(512,8,4,2);
+        NAR n = new Default(512,8,4,2);
 
         n.log();
 

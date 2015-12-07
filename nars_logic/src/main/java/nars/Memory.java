@@ -22,8 +22,6 @@ package nars;
 
 
 import com.gs.collections.api.tuple.Twin;
-import nars.bag.impl.CacheBag;
-import nars.bag.impl.MapCacheBag;
 import nars.concept.Concept;
 import nars.nal.nal8.ExecutionResult;
 import nars.nal.nal8.Operation;
@@ -31,14 +29,10 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.TermMetadata;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
-import nars.term.compound.Compound;
-import nars.term.transform.CompoundTransform;
 import nars.time.Clock;
-import nars.util.data.map.UnifriedMap;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
@@ -47,9 +41,7 @@ import nars.util.meter.EmotionMeter;
 import nars.util.meter.LogicMeter;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -119,9 +111,9 @@ public class Memory extends Param {
 
     public final Clock clock;
 
-    public final TermIndex terms = new MyTermIndex();
+    //public final TermIndex terms = new MyTermIndex();
 
-    public final CacheBag<Term, Concept> concepts;
+    public final TermIndex index;
 
 
     /** maximum NAL level currently supported by this memory, for restricting it to activity below NAL8 */
@@ -133,14 +125,14 @@ public class Memory extends Param {
     long currentStampSerial = 1;
 
 
-    public Memory(Clock clock, CacheBag<Term, Concept> concepts) {
-        this(clock, new XorShift1024StarRandom(1), concepts);
+    public Memory(Clock clock, TermIndex index) {
+        this(clock, new XorShift1024StarRandom(1), index);
     }
 
     /**
      * Create a new memory
      */
-    public Memory(Clock clock, Random rng, CacheBag<Term, Concept> concepts) {
+    public Memory(Clock clock, Random rng, TermIndex index) {
 
         this.random = rng;
 
@@ -148,7 +140,7 @@ public class Memory extends Param {
 
         this.clock = clock;
 
-        this.concepts = concepts;
+        this.index = index;
 
 
         this.self = Global.DEFAULT_SELF; //default value
@@ -221,7 +213,7 @@ public class Memory extends Param {
 
         //questionConcepts.clear();
 
-        concepts.clear();
+        index.clear();
 
         //goalConcepts.clear();
 
@@ -236,11 +228,13 @@ public class Memory extends Param {
      * by the provided Term
      */
     public final Concept concept(Term t) {
-        //if (!t.isNormalized()) {
         final Term u = t.normalized();
         if (u == null) return null;
-        //}
-        return concepts.get(u);
+
+        Termed tt = index.get(u);
+        if (tt instanceof Concept)
+            return ((Concept)tt);
+        return null;
     }
 
 
@@ -437,8 +431,8 @@ public class Memory extends Param {
 //        concepts.put(c);
 //    }
 
-    public final CacheBag<Term, Concept> getConcepts() {
-        return concepts;
+    public final TermIndex getIndex() {
+        return index;
     }
 
     public final void cycle(int num) {
@@ -523,7 +517,7 @@ public class Memory extends Param {
     }
 
     public final int size() {
-        return concepts.size();
+        return index.size();
     }
 
 //    /**
@@ -534,60 +528,11 @@ public class Memory extends Param {
 //    }
 
     public void start() {
-        this.concepts.start(this);
+        this.index.start(this);
 
     }
 
-    private static final class MyTermIndex extends MapCacheBag<Term,Termed,Map<Term,Termed>> implements TermIndex {
-
-        public MyTermIndex() {
-            super(new UnifriedMap(1024));
-        }
-        public MyTermIndex(Map<Term,Termed> data) {
-            super(data);
-        }
-        //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
-
-        @Override public final Termed get(Term t) {
-
-            if (t instanceof TermMetadata) {
-                return t.normalized(this); //term instance will remain unique because it has attached metadata
-            }
-
-            return data.compute(t, (k,vExist) -> {
-                if (vExist == null) return k.normalized(this);
-                else
-                    return vExist;
-            });
-            //return terms.computeIfAbsent(t, n -> n.normalized(this));
-        }
-
-        //TODO combine this step with variable normalization
-        final CompoundTransform<Compound,Term> ct = new CompoundTransform<Compound,Term>() {
-
-            @Override
-            public final boolean test(Term term) {
-                return true;
-            }
-
-            @Override
-            public final Term apply(Compound c, Term subterm, int depth) {
-                return get(subterm).getTerm();
-            }
-        };
-
-        @Override
-        public final CompoundTransform getCompoundTransformer() {
-            return ct;
-        }
-
-        @Override
-        public final void forEachTerm(Consumer<Termed> c) {
-            data.forEach((k,v)->c.accept(v));
-        }
-    }
-
-//    public byte[] toBytes() throws IOException, InterruptedException {
+    //    public byte[] toBytes() throws IOException, InterruptedException {
 //        //TODO probably will want to do something more careful
 //        return new JBossMarshaller().objectToByteBuffer(this);
 //    }

@@ -229,7 +229,7 @@ public class LogicMeter extends FrameReaction {
             super.commit();
 
             CONCEPTS_ACTIVE.set(count);
-            CONCEPTS_TOTAL.set(m.concepts.size());
+            CONCEPTS_TOTAL.set(m.index.size());
 //            TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
 //            TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
 //            TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());

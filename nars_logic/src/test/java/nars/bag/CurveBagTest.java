@@ -1,12 +1,10 @@
 package nars.bag;
 
 import nars.Global;
-import nars.Memory;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
-import nars.nar.Default;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -33,7 +31,6 @@ public class CurveBagTest extends AbstractBagTest {
         Global.DEBUG = true;
     }
 
-    Memory p = new Default().memory;
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test

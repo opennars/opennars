@@ -1,8 +1,6 @@
 package nars.bag.impl;
 
 import nars.Memory;
-import nars.concept.Concept;
-import nars.term.Term;
 
 
 public interface CacheBag<K, V>  {
@@ -72,13 +70,13 @@ public interface CacheBag<K, V>  {
 
 
 
-    static CacheBag<Term, Concept> memory() {
-        return memory(1);
-    }
-
-    static CacheBag<Term, Concept> memory(int capacity) {
-        return //new MapCacheBag(
-            //new WeakValueHashMap<>(capacity) );
-                GuavaCacheBag.make(capacity * 256);
-    }
+//    static TermIndex memory() {
+//        return memory(1);
+//    }
+//
+//    static TermIndex memory(int capacity) {
+//        return //new MapCacheBag(
+//            //new WeakValueHashMap<>(capacity) );
+//                GuavaCacheBag.make(capacity * 256);
+//    }
 }

@@ -3,7 +3,6 @@ package nars;
 
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.tuple.Tuples;
-import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
@@ -26,6 +25,7 @@ import nars.task.in.TextInput;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
@@ -222,7 +222,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public final <S extends Term, T extends S> T term(final String t) throws Narsese.NarseseException {
-        T x = Narsese.the().term(t, memory.terms);
+        T x = Narsese.the().term(t, memory.index);
 
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
@@ -496,8 +496,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * returns the global concept index
      */
-    public final CacheBag<Term, Concept> concepts() {
-        return memory.getConcepts();
+    public final TermIndex concepts() {
+        return memory.getIndex();
     }
 
     public TaskQueue input(final Collection<Task> t) {
@@ -1015,23 +1015,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return running.get();
     }
 
-
-
-
-
-//    public Concept put(Concept concept) {
-//        memory().put(concept);
-//        return concept;
-//    }
-
-
-    public final Concept remove(Term key) {
-        return remove(memory.get(key));
-    }
-
-
     public final Concept get(final Term key) {
-        return concepts().get(key);
+        return memory.concept(key);
     }
 
 

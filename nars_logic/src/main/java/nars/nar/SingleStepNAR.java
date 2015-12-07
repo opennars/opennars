@@ -8,9 +8,9 @@ import nars.task.flow.FIFOTaskPerception;
 import nars.time.FrameClock;
 import nars.util.meter.DerivationGraph;
 
-public class SingleStepNAR extends Default {
+public class SingleStepNAR extends AbstractDefaultNAR {
 
-    static DerivationGraph derivations = new DerivationGraph(false, false);
+    //static DerivationGraph derivations = new DerivationGraph(false, false);
 
     static Multimap<TaskRule, DerivationGraph.PremiseKey> ruleDerivations =
             Multimaps.newMultimap(Global.newHashMap(1024),
@@ -52,6 +52,8 @@ public class SingleStepNAR extends Default {
         );
         return input;
     }
+
+
 
 //    private static class RuleReport implements Runnable {
 //        @Override

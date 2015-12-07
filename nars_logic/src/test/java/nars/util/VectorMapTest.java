@@ -1,7 +1,7 @@
 package nars.util;
 
 import nars.NAR;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.util.data.UniformVector;
 import nars.util.data.VectorMap;
 import nars.util.event.CycleReaction;
@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class VectorMapTest {
 
-    NAR n = new Default2(100, 1, 1, 1);
+    NAR n = new Default(100, 1, 1, 1);
 
     @Test 
     public void testUniformVector() {

@@ -14,7 +14,7 @@ import nars.guifx.graph2.source.JGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.graph.TermLinkGraph2;
@@ -114,7 +114,7 @@ public class GraphPaneTest {
 
     private static DirectedGraph<Term, Product> newExampleTermLinkGraph() {
 
-        NAR n = new Default2(100, 3, 3, 3);
+        NAR n = new Default(100, 3, 3, 3);
         n.input("a:b.");
         n.input("b:c.");
         n.input("c:(d,a)!");

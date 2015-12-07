@@ -9,7 +9,7 @@ import nars.concept.Concept;
 import nars.guifx.graph2.impl.TLinkEdge;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
-import nars.nar.Default;
+import nars.nar.AbstractDefaultNAR;
 import nars.term.Term;
 import nars.util.event.Active;
 
@@ -132,7 +132,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
         if (this.canUpdate()) {
 
-            Bag<Term, Concept> x = ((Default) nar).core.concepts();
+            Bag<Term, Concept> x = ((AbstractDefaultNAR) nar).core.concepts();
 
             String keywordFilter, _keywordFilter = includeString.get();
             if (_keywordFilter != null && _keywordFilter.isEmpty())

@@ -18,7 +18,7 @@ public class NQuadsRDFTest {
         //n.stdout();
         NQuadsRDF.input(n, "<http://example.org/#spiderman> <http://xmlns.com/foaf/0.1/name> \"Человек-паук\"@ru .");
         n.frame(1);
-        assertTrue(n.memory.concepts.size() > 2);
+        assertTrue(n.memory.index.size() > 2);
     }
 
 

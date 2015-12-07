@@ -6,6 +6,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
+import nars.nar.AbstractDefaultNAR;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.term.Statement;
@@ -22,7 +23,7 @@ public class DeductiveChainTest extends TestNAR {
 
     @FunctionalInterface
     public interface IndexedStatementBuilder {
-        public Statement apply(int x, int y);
+        Statement apply(int x, int y);
     }
 
     final static public IndexedStatementBuilder inh = (int x, int y) ->
@@ -59,12 +60,12 @@ public class DeductiveChainTest extends TestNAR {
     }
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         Global.DEBUG = false;
 
         for (int length = 3; length < 10; length++) {
-            test(new Default().nal(6), length, 1000*length, inh);
+            test(new Default(1024,1,1,3).nal(6), length, 1000*length, inh);
         }
     }
 
@@ -103,7 +104,7 @@ public class DeductiveChainTest extends TestNAR {
         //n.stdout();
         //n.frame(5000);
 
-        int nc = ((Default)n).core.concepts().size();
+        int nc = ((AbstractDefaultNAR)n).core.concepts().size();
         String ts = timestamp(start);
         long time = n.time();
 

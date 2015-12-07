@@ -129,7 +129,7 @@ public class BeanPathAdapterTest extends Application {
 
     public static class SampleBean {
 
-        public final NAR nar = new Default();
+        public final NAR n = new Default();
 
         private String id = UUID.randomUUID().toString();
         private String firstName;

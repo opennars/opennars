@@ -2,12 +2,12 @@ package nars.testchamber;
 
 import nars.Memory;
 import nars.NAR;
-import nars.bag.impl.GuavaCacheBag;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
+import nars.nar.AbstractDefaultNAR;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.process.BagForgettingEnhancer;
+import nars.term.compile.TermIndex;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
@@ -42,13 +42,13 @@ public class TestChamber {
         Memory mem = new Memory(new RealtimeMSClock(),
                 //new MapCacheBag(
                         //new WeakValueHashMap<>())
-                        GuavaCacheBag.make(1024*1024)
+                        TermIndex.memory(1024*1024)
                 /*new InfiniCacheBag(
                     InfiniPeer.tmp().getCache()
                 )*/
 
         );
-        Default nar = new Default2(mem, 4096, 100, 1, 3);
+        AbstractDefaultNAR nar = new Default(mem, 4096, 100, 1, 3);
 
         //nar.nal(9);
         nar.setTaskLinkBagSize(32);
@@ -57,7 +57,7 @@ public class TestChamber {
         new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
 
 
-        nar.the(Default.DefaultCycle.class, nar.core);
+        nar.the(AbstractDefaultNAR.DefaultCycle.class, nar.core);
 
         /*nar.memory.conceptForgetDurations.set(10);
         nar.memory.termLinkForgetDurations.set(100);*/

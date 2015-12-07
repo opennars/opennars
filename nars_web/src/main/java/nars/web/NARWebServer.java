@@ -9,13 +9,9 @@ import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.*;
 import io.undertow.websockets.extensions.PerMessageDeflateHandshake;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
-import nars.Memory;
 import nars.NAR;
 import nars.NARLoop;
-import nars.bag.impl.GuavaCacheBag;
 import nars.nar.Default;
-import nars.time.RealtimeMSClock;
-import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.Active;
 import nars.util.io.JSON;
 
@@ -227,16 +223,17 @@ public class NARWebServer extends PathHandler {
     public static void main(String[] args) throws Exception {
 
 
-        NAR nar = new Default(
-                new Memory(
-                        new RealtimeMSClock(),
-                        new XorShift1024StarRandom(1),
-                        GuavaCacheBag.make(
-                            1024*1024
-                        )),
-                1024,
-                1, 2, 3
-        );
+        NAR nar = new Default(1024, 1, 1, 3);
+//                new Default(
+//                new Memory(
+//                        new RealtimeMSClock(),
+//                        new XorShift1024StarRandom(1),
+//                        GuavaCacheBag.make(
+//                            1024*1024
+//                        )),
+//                1024,
+//                1, 2, 3
+//        );
 
 
         //nar.forEachConcept(c -> System.out.println(c));

@@ -6,7 +6,6 @@ package nars.process;
 
 import nars.Memory;
 import nars.NAR;
-import nars.Premise;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -106,7 +105,7 @@ abstract public class ConceptProcess extends AbstractPremise {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void firePremiseSquare(NAR nar, Consumer<Premise> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
+    public static void firePremiseSquare(NAR nar, Consumer<ConceptProcess> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
 
         Memory m = nar.memory;
         int dur = m.duration();
@@ -130,17 +129,20 @@ abstract public class ConceptProcess extends AbstractPremise {
 
     }
 
-    public static void firePremises(NAR nar, Consumer<Premise> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
+    public static void firePremises(NAR nar, Consumer<ConceptProcess> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
+
         for (final TaskLink taskLink : tasks) {
+
             if (taskLink == null) break;
+
             for (TermLink termLink : terms) {
                 if (termLink == null) break;
 
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
                     continue;
 
-                Premise p = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
-                proc.accept(p);
+                proc.accept(new ConceptTaskTermLinkProcess(
+                        nar, concept, taskLink, termLink));
             }
         }
     }

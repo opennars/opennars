@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import nars.guifx.NARfx;
 import nars.guifx.NARide;
 import nars.nar.Default;
-import nars.time.FrameClock;
 import nars.util.data.map.LMap;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -200,8 +199,8 @@ public class SizeAwareWindow extends Scene {
         return new Button(":D");
     };
 
-    private static Supplier<Parent> Default = () -> {
-        return new NARide(new Default(1000, 1, 1, 3, new FrameClock()).loop());
+    private static Supplier<Parent> DefaultNAR = () -> {
+        return new NARide(new Default().loop());
     };
 
     private static Supplier<Parent> Row = () -> {
@@ -244,7 +243,7 @@ public class SizeAwareWindow extends Scene {
                 } else if (h < 200) {
                     return Row;
                 }
-                return Default;
+                return DefaultNAR;
             }).size(800, 800).show();
 
 

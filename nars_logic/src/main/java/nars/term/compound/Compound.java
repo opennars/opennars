@@ -381,7 +381,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default Term normalized(TermIndex termIndex) {
-        return transform(termIndex.getCompoundTransformer());
+        return transform(termIndex);
     }
     /**
      * Normalizes if contain variables which need to be finalized for use in a Sentence

@@ -1,13 +1,13 @@
 package nars.nar;
 
 import nars.Memory;
-import nars.bag.impl.TrieCacheBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
+import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
 
 import java.util.function.Predicate;
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  *
  * TODO extend AbstractNAR, not Default
  */
-public class Terminal extends Default {
+public class Terminal extends AbstractDefaultNAR {
 
     final Predicate<Task> taskFilter =
             task -> task.isCommand();
@@ -28,7 +28,8 @@ public class Terminal extends Default {
     public Terminal() {
         super(new Memory(
                     new RealtimeMSClock(),
-                    new TrieCacheBag()
+                    TermIndex.memory(1024)
+                    //new TrieCacheBag()
         ), 0,0,0,0);
     }
 
@@ -43,6 +44,7 @@ public class Terminal extends Default {
         return null;
     }
 
+
     @Override
     protected Concept doConceptualize(Term term, Budget b) {
         Concept exists = memory.concept(term);
@@ -53,7 +55,7 @@ public class Terminal extends Default {
         else {
             Concept c = apply(term);
             c.getBudget().budget(b);
-            memory.concepts.put(term, c);
+            memory.index.put(term, c);
             return c;
         }
     }

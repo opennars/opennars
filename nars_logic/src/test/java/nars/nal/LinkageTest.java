@@ -3,8 +3,8 @@ package nars.nal;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TermLink;
+import nars.nar.AbstractDefaultNAR;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.util.meter.TestNAR;
@@ -379,7 +379,7 @@ public class LinkageTest extends AbstractNALTester {
 
     @Test
     public void Variable_Normalization_1() throws Exception {
-        Default tester = new Default2(100,1,1,1);
+        AbstractDefaultNAR tester = new Default(100,1,1,1);
         String nonsense = "<(&&,<#1 --> M>,<#2 --> M>) ==> <#1 --> nonsense>>";
         tester.believe(nonsense); //.en("If robin is a type of bird then robin can fly.");
         tester.frame(10);

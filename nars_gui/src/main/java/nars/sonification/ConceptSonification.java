@@ -9,7 +9,6 @@ import nars.audio.sample.SampleLoader;
 import nars.audio.sample.SonarSample;
 import nars.concept.Concept;
 import nars.nar.Default;
-import nars.time.FrameClock;
 import nars.util.event.FrameReaction;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -84,7 +83,7 @@ public class ConceptSonification extends FrameReaction {
     }
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
-        Default d = new Default(1000, 2, 1, 2, new FrameClock());
+        Default d = new Default();
         Audio a = new Audio(32);
 
         new ConceptSonification(d, a);

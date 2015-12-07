@@ -1,7 +1,7 @@
 package nars.udp;
 
 import nars.NAR;
-import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.op.io.UDPNetwork;
 
 import java.net.SocketException;
@@ -21,7 +21,7 @@ public class NARUdpServer {
         float netHz = 25f;
         float narHz = 1f;
 
-        NAR n = new Default();
+        NAR n = new Terminal();
         UDPNetwork net = new UDPNetwork(port).setFrequency(netHz);
 
         //n.log();

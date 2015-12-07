@@ -3,7 +3,7 @@ package nars.nal.nal7;
 import nars.$;
 import nars.NAR;
 import nars.Op;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
@@ -342,7 +342,7 @@ public class SequenceParallelTest {
         /*
         ((<%1 ==> %2>, %3, not_implication_or_equivalence(%3)), (<(&|, %1, %3) ==> %2>, (<Induction --> Truth>, <ForAllSame --> Order>)))
          */
-        NAR nar = new Default2(200,4,3,2);
+        NAR nar = new Default(200,4,3,2);
         nar.nal(7);
         nar.log();
         nar.believe("<<{(#1, #2)} --> [commutatorArgument2]> ==> <{#1} --> [LinearOperator]>>.");

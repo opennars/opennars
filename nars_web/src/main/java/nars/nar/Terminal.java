@@ -13,7 +13,7 @@ import nars.time.FrameClock;
  *
  * TODO extend AbstractNAR, not Default
  */
-public class Terminal extends Default {
+public class Terminal extends AbstractDefaultNAR {
 
     public Terminal() {
         super(0,0,0,0, new FrameClock());

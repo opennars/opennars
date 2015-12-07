@@ -100,7 +100,7 @@ public class RuleMatch extends FindSubst {
     /**
      * set the next premise
      */
-    public final void start(Premise p, Consumer<Task> receiver) {
+    public final void start(Premise p, Consumer<Task> receiver, Deriver d) {
         clear();
 
         this.premise = p;
@@ -125,6 +125,7 @@ public class RuleMatch extends FindSubst {
 
         //setPower(branchPower.get()); //HACK is this where it should be assigned?
 
+        d.run(this);
     }
 
 

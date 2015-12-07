@@ -43,7 +43,7 @@ public class NARTest {
     @Test
     public void testMemoryTransplant() {
 
-        Default nar = new Default2(1000, 1, 5, 5);
+        AbstractDefaultNAR nar = new Default(1000, 1, 5, 5);
         //DefaultAlann nar = new DefaultAlann(m, 32);
 
         //TextOutput.out(nar);
@@ -61,7 +61,7 @@ public class NARTest {
 
         //a new nar with the same memory is allowed to
         //take control of it after the first stops
-        Default nar2 = new Default2(nar.memory, 1000, 1, 1, 3);
+        AbstractDefaultNAR nar2 = new Default(nar.memory, 1000, 1, 1, 3);
 
         assertTrue(nar2.memory.time() > 1);
 
@@ -118,12 +118,12 @@ public class NARTest {
                 "<a --> b>" /* unknown solution to be derived */ :
                 "<b --> a>" /* existing solution, to test finding existing solutions */;
 
-        new Default2(100, 1, 1, 3).nal(2)
+        new Default(100, 1, 1, 3).nal(2)
                 //.trace()
                 .input("<a <-> b>. %1.0;0.5%",
                        "<b --> a>. %1.0;0.5%").frame(cyclesBeforeQuestion);
 
-        NAR nar = new Default2(100, 1, 1, 3).nal(2)
+        NAR nar = new Default(100, 1, 1, 3).nal(2)
                 //.trace()
                 .input("<a <-> b>. %1.0;0.5%",
                         "<b --> a>. %1.0;0.5%")
