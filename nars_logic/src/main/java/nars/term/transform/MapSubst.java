@@ -8,23 +8,28 @@ import java.util.Map;
 /**
  * Created by me on 12/3/15.
  */
-public class MapSubstitution implements Substitution {
+public class MapSubst implements Subst {
+
     public Map<Term, Term> subs;
 
     /**
      * creates a substitution of one variable; more efficient than supplying a Map
      */
-    public MapSubstitution(Term termFrom, Term termTo) {
+    public MapSubst(Term termFrom, Term termTo) {
         this(UnifiedMap.newWithKeysValues(termFrom, termTo));
     }
 
 
-    public MapSubstitution(final Map<Term, Term> subs) {
+    public MapSubst(final Map<Term, Term> subs) {
         reset(subs);
     }
 
+    @Override
+    public void clear() {
+        subs.clear();
+    }
 
-    public Substitution reset(final Map<Term, Term> subs) {
+    public Subst reset(final Map<Term, Term> subs) {
         this.subs = subs;
         return this;
     }
@@ -51,9 +56,4 @@ public class MapSubstitution implements Substitution {
     }
 
 
-
-    @Override
-    public void putXY(Term x, Term y) {
-        subs.put(x, y);
-    }
 }

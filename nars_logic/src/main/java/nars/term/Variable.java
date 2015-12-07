@@ -24,7 +24,7 @@ package nars.term;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.meta.match.VarPattern;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 
 import java.io.IOException;
 import java.util.Map;
@@ -174,7 +174,7 @@ abstract public class Variable extends AbstractStringAtom {
         return op().ch + id;
     }
 
-    @Override
+
     public final Term substituted(Map<Term, Term> subs) {
         Term x = subs.get(this);
         if (x != null)
@@ -183,7 +183,7 @@ abstract public class Variable extends AbstractStringAtom {
     }
 
     @Override
-    public final Term substituted(Substitution s) {
+    public final Term substituted(Subst s) {
         Term x = s.getXY(this);
         if (x != null)
             return x;

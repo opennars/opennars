@@ -109,7 +109,7 @@ public class CompiledUnificationTest extends UnificationTest {
     }
 
 
-    Subst permuteTest(int seed, TermPattern tp, Term t2, int startPower) {
+    FindSubst permuteTest(int seed, TermPattern tp, Term t2, int startPower) {
 
         Op type = Op.VAR_PATTERN;
 //        NAR nar = test().nar;
@@ -154,7 +154,7 @@ public class CompiledUnificationTest extends UnificationTest {
         for (int p = 1; p < t1.volume()*t1.volume()*8; p+=1) {
             int success = 0, tries = 0;
             for (int s = 1; s<16; s++) {
-                Subst r = permuteTest(s, tp, t2, p);
+                FindSubst r = permuteTest(s, tp, t2, p);
                 if (r!=null) {
                     found.add(r.xy.toString());
                     success++;

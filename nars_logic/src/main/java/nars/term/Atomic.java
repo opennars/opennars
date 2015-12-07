@@ -1,6 +1,7 @@
 package nars.term;
 
 import nars.term.compile.TermIndex;
+import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 import nars.util.utf8.Byted;
@@ -124,4 +125,5 @@ public abstract class Atomic implements Term, Byted {
     }
 
 
+    public abstract Term substituted(Subst s);
 }

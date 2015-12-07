@@ -6,7 +6,7 @@ import nars.Op;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.List;
@@ -40,5 +40,5 @@ abstract public class PatternOperation implements Function<Task<Operation>, List
         return null;
     }
 
-    abstract public List<Task> run(Task<Operation> operationTask, Substitution map1);
+    abstract public List<Task> run(Task<Operation> operationTask, Subst map1);
 }

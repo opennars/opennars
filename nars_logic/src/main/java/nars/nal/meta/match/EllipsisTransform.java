@@ -56,7 +56,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
         }
 
         return new ArrayEllipsisMatch(
-                subst, y, a, b
+                y, a, b
         );
     }
 }

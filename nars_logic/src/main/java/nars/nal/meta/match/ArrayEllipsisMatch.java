@@ -3,7 +3,6 @@ package nars.nal.meta.match;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.Subst;
-import nars.term.transform.Substitution;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,8 +14,8 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch<T> {
 
     public final Term[] term;
 
-    public ArrayEllipsisMatch(Subst subst, Compound y, int from, int to) {
-        this(subst.collect(y, from, to));
+    public ArrayEllipsisMatch(Compound y, int from, int to) {
+        this(Subst.collect(y, from, to));
     }
 
     public ArrayEllipsisMatch(Term[] term) {
@@ -29,7 +28,7 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch<T> {
     }
 
     @Override
-    public boolean resolve(Substitution substitution, Collection<Term> target) {
+    public boolean resolve(Subst substitution, Collection<Term> target) {
         Collections.addAll(target, term);
         return true;
     }

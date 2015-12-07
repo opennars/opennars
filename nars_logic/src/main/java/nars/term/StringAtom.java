@@ -1,7 +1,7 @@
 package nars.term;
 
 import nars.Op;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 import nars.util.utf8.Utf8;
 
 
@@ -44,7 +44,7 @@ public class StringAtom extends AbstractStringAtomRaw {
     }
 
     @Override
-    public Term substituted(Substitution s) {
+    public Term substituted(Subst s) {
         return this;
     }
 

@@ -10,7 +10,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
 import nars.util.event.On;
 
 import java.util.List;
@@ -77,7 +76,7 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
     }
 
     public static void forEachMatch(NAR n, Compound queryTerm, Consumer<Task> withBelief) {
-        Subst f = new FindSubst(Op.VAR_QUERY, n.memory.random);
+        FindSubst f = new FindSubst(Op.VAR_QUERY, n.memory.random);
         n.forEachConcept(c -> {
             if (!c.hasBeliefs())
                 return;

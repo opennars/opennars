@@ -15,7 +15,6 @@ import nars.term.transform.FindSubst;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
-import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
 
 import java.util.Random;
@@ -44,7 +43,7 @@ public class RuleMatch extends FindSubst {
 
 
 
-    public final VersionMap<Term,Term> secondary;
+    public final VarCachedVersionMap secondary;
     public final Versioned<Integer> occurrenceShift;
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
@@ -54,9 +53,7 @@ public class RuleMatch extends FindSubst {
         super(Op.VAR_PATTERN, r );
 
 
-        secondary = new VersionMap(this
-                //new LinkedHashMap<>()
-        );
+        secondary = new VarCachedVersionMap(this);
         occurrenceShift = new Versioned(this);
         truth = new Versioned(this);
         punct = new Versioned(this);

@@ -4,7 +4,7 @@ import nars.Op;
 import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.compile.TermIndex;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
@@ -92,7 +92,7 @@ public class ShadowProduct extends TermVector implements Term {
     }
 
     @Override
-    public Term substituted(Substitution s) {
+    public Term substituted(Subst s) {
         return this;
     }
 

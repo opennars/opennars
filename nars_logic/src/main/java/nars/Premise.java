@@ -11,8 +11,8 @@ import nars.task.Tasked;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.transform.MapSubstitution;
-import nars.term.transform.Substitution;
+import nars.term.transform.MapSubst;
+import nars.term.transform.Subst;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 
@@ -89,7 +89,7 @@ public interface Premise extends Level, Tasked {
         if (b instanceof Compound) {
             bb = applySubstituteAndRenameVariables(
                 ((Compound) b),
-                f.yx //inverse map
+                (Map<Term, Term>) f.yx //inverse map
             );
 
             if (bb == null) return false;
@@ -110,14 +110,14 @@ public interface Premise extends Level, Tasked {
             //no change needed
             return t;
         }
-        return t.substituted(new MapSubstitution(subs));
+        return t.substituted(new MapSubst(subs));
     }
 
     /**
      * appliesSubstitute and renameVariables, resulting in a cloned object,
      * will not change this instance
      */
-    static Term applySubstituteAndRenameVariables(final Compound t, final Substitution subs) {
+    static Term applySubstituteAndRenameVariables(final Compound t, final Subst subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;

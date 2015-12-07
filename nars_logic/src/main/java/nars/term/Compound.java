@@ -23,20 +23,19 @@ package nars.term;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
+import nars.nal.meta.match.EllipsisMatch;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.term.compile.TermIndex;
-import nars.term.transform.CompoundTransform;
-import nars.term.transform.FindSubst;
-import nars.term.transform.Substitution;
-import nars.term.transform.VariableNormalization;
+import nars.term.transform.*;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,12 +110,79 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
+    default Term substituted(Subst f) {
 
-    @Override
-    default Term substituted(Substitution s) {
-        return s.apply(this);
+        Term s = Term.substituted(this, f);
+        if (s!=null)
+            return s;
+
+        final int len = size();
+        List<Term> sub = Global.newArrayList(len);
+
+        EllipsisMatch post = null;
+
+
+        boolean changed = false;
+
+
+        for (int i = 0; i < len; i++) {
+            //t holds the
+            final Term t = term(i);
+
+            //TODO change this to Compound.resolve(..,target) method call allowing any Compound to custom-handle its substitution contribution
+
+            if (t instanceof Ellipsis) {
+
+                Term te = f.getXY(t);
+                if (te == null)
+                    return this;
+
+                changed = true; //even if the ellipsis matches blank it is a change
+
+                EllipsisMatch am = (EllipsisMatch) te;
+                if (am instanceof EllipsisMatch) {
+                    if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + am);
+                    if (!am.resolve(f, sub))
+                        return this;
+                    post = am;
+                } else {
+                    //default
+//                    for (Term xx : am.term) {
+//                        if (xx== Ellipsis.Shim)
+//                            continue; //ignore any '..' which may be present in the expansion
+//                        sub.add(xx);
+//                    }
+                    throw new RuntimeException("expected ellipsis match: " + am);
+                }
+
+            } else if (t == Ellipsis.Shim) {
+                continue; //skip
+            } else {
+                // s holds a replacement substitution for t (i-th subterm of c)
+                Term u = t.substituted(f);
+                if (u == null)
+                    u = t;
+                else
+                    changed |= (u!=t);
+
+
+                sub.add(u);
+            }
+        }
+
+        if (!changed)
+            return this;
+
+        final Term[] r = Terms.toArray(sub);
+
+        if (post!=null) {
+            return post.build(r, this);
+        } else {
+            //default
+            return clone(r);
+        }
+
     }
-
 
 
 
@@ -379,7 +445,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * otherwise it is null
      */
     default Compound applySubstituteToCompound(Map<Term, Term> substitute) {
-        Term t = substituted(substitute);
+        Term t = Term.substituted(this, new MapSubst(substitute));
         if (t instanceof Compound)
             return ((Compound) t);
         return null;

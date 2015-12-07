@@ -2,7 +2,7 @@ package nars.nal.meta.match;
 
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 
 import java.util.Collection;
 
@@ -23,7 +23,7 @@ public class CollectionEllipsisMatch extends EllipsisMatch<Term> {
     }
 
     @Override
-    public boolean resolve(Substitution substitution, Collection<Term> target) {
+    public boolean resolve(Subst substitution, Collection<Term> target) {
         target.addAll(term);
         return true;
     }

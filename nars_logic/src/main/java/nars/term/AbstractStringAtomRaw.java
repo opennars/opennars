@@ -1,6 +1,7 @@
 package nars.term;
 
 import nars.Op;
+import nars.term.transform.Subst;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -42,6 +43,11 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
     @Override
     public StringBuilder toStringBuilder(final boolean pretty) {
         return new StringBuilder(id);
+    }
+
+    @Override
+    public Term substituted(Subst s) {
+        return this;
     }
 
     @Override

@@ -3,7 +3,7 @@ package nars.nal.nal7;
 import nars.Op;
 import nars.term.AbstractStringAtom;
 import nars.term.Term;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 
 /**
  * Atom which is invisible to most if not all reasoner
@@ -57,7 +57,7 @@ public class ShadowAtom extends AbstractStringAtom {
     }
 
     @Override
-    public final Term substituted(Substitution s) {
+    public final Term substituted(Subst s) {
         return this;
     }
 

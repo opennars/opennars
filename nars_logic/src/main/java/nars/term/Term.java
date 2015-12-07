@@ -24,14 +24,12 @@ package nars.term;
 import nars.Op;
 import nars.nal.nal7.Tense;
 import nars.term.compile.TermIndex;
-import nars.term.transform.MapSubstitution;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 
 
 public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializable {
@@ -70,6 +68,7 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     }
 
     void recurseTerms(final SubtermVisitor v, Term parent);
+
 
 
     /** recurses all subterms while the result of the predicate is true;
@@ -214,16 +213,13 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
         return toString();
     }
 
-    Term substituted(Substitution s);
-
-
 
     //@Deprecated Term substituted(final Map<Term, Term> subs);
 
-    default Term substituted(final Map<Term, Term> subs) {
-        if (subs.isEmpty()) return this;
-        return substituted(new MapSubstitution(subs));
-    }
+//    default Term substituted(final Map<Term, Term> subs) {
+//        if (subs.isEmpty()) return this;
+//        return substituted(new MapSubstitution(subs));
+//    }
 
 
 
@@ -284,6 +280,20 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     <T extends Term> T normalized(TermIndex termIndex);
 
 
+    static Term substituted(Term x, Subst f) {
+        final Term y = f.getXY(x);
+
+        //attempt 1: apply known substitution
+        //containsTerm prevents infinite recursion
+        if ((y == null || y.containsTerm(x)))
+            return null;
+
+        return y;
+    }
+
+    default Term substituted(Subst f) {
+        return Term.substituted(this, f);
+    }
 
 
 //    default public boolean hasAll(final Op... op) {

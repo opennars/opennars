@@ -5,7 +5,7 @@ import nars.term.Atom;
 import nars.term.Atomic;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 
 import java.io.IOException;
 
@@ -63,7 +63,10 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
         return 0;
     }
 
-
+    @Override
+    public Term substituted(Subst s) {
+        return this;
+    }
 
     @Override
     public final byte[] bytes() {
@@ -100,10 +103,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
         return '^' + term.toString();
     }
 
-    @Override
-    public final Term substituted(Substitution s) {
-        return this;
-    }
+
 
     @Override
     public int hashCode() {

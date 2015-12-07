@@ -6,7 +6,7 @@ import nars.Op;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.List;
@@ -46,5 +46,5 @@ abstract public class PatternAnswer implements Function<Task, List<Task>> {
         return answers;
     }
 
-    abstract public List<Task> run(Task operationTask, Substitution map1);
+    abstract public List<Task> run(Task operationTask, Subst map1);
 }

@@ -11,7 +11,7 @@ import nars.nar.Default2;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 
@@ -162,7 +162,7 @@ public class OperatorTest {
 
         PatternOperation f = new PatternOperation("(%A,%B)") {
             @Override
-            public List<Task> run(Task<Operation> operationTask, Substitution map1) {
+            public List<Task> run(Task<Operation> operationTask, Subst map1) {
                 //System.out.println(this.pattern + " " + operationTask + "\n\t" + map1);
                 count.getAndIncrement();
                 return null;
@@ -185,7 +185,7 @@ public class OperatorTest {
 
         PatternAnswer f = new PatternAnswer("add(%a,%b,#x)") {
             @Override
-            public List<Task> run(Task t, Substitution s) {
+            public List<Task> run(Task t, Subst s) {
                 //System.out.println(this.pattern + " " + t + "\n\t" + s);
                 assertEquals($("x"), s.getXY($("%a")));
                 assertEquals($("y"), s.getXY($("%b")));
@@ -211,7 +211,7 @@ public class OperatorTest {
 
         PatternAnswer addition = new PatternAnswer("add(%a,%b,#x)") {
             final Term A = $("%a"), B = $("%b");
-            @Override public List<Task> run(Task question, Substitution s) {
+            @Override public List<Task> run(Task question, Subst s) {
                 int a = i(s.getXY(A).toString());
                 int b = i(s.getXY(B).toString());
 

@@ -3,7 +3,7 @@ package nars.nal.meta.op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.term.Term;
-import nars.util.version.VersionMap;
+import nars.term.transform.FindSubst;
 
 /**
  * Called after 1 or more after conclusions have completed to apply their results to a rederived term
@@ -29,7 +29,7 @@ public final class PostSolve extends PreCondition {
 
         Term dt = m.derived.get();
 
-        VersionMap<Term, Term> secondary = m.secondary;
+        FindSubst.VarCachedVersionMap secondary = m.secondary;
         if (!secondary.isEmpty()) {
             Term rederivedTerm = dt.substituted(secondary);
             //secondary.clear(); //necessary?

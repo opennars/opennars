@@ -3,7 +3,7 @@ package nars.nal.meta.match;
 import nars.nal.nal4.Image;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.transform.Substitution;
+import nars.term.transform.Subst;
 
 import java.util.Collection;
 
@@ -24,7 +24,7 @@ public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
     }
 
     @Override
-    public boolean resolve(Substitution substitution, Collection<Term> target) {
+    public boolean resolve(Subst substitution, Collection<Term> target) {
         Term relation = substitution.getXY(this.to);
         if (relation == null)
             return false;

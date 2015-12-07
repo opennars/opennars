@@ -8,7 +8,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Variable;
-import nars.term.transform.Subst;
+import nars.term.transform.FindSubst;
 import nars.term.transform.VariableNormalization;
 
 import java.util.Map;
@@ -70,7 +70,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
         return false;
     }
 
-    public static int numUnmatchedEllipsis(Compound x, Subst ff) {
+    public static int numUnmatchedEllipsis(Compound x, FindSubst ff) {
 
         int xs = x.size();
 

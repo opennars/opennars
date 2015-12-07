@@ -14,7 +14,7 @@ public abstract class MatchOp extends PatternOp {
     abstract public boolean match(Term f);
 
     @Override
-    public final boolean run(Subst ff) {
+    public final boolean run(FindSubst ff) {
 //            if (ff.power < 0) {
 //                return false;
 //            }

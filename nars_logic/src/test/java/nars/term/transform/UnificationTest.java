@@ -91,7 +91,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        Subst wu = new FindSubst(Op.VAR_INDEPENDENT, tester.nar.memory.random);
+        FindSubst wu = new FindSubst(Op.VAR_INDEPENDENT, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -115,7 +115,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        Subst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
+        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -139,7 +139,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        Subst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
+        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -172,7 +172,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        Subst wu = new FindSubst(Op.VAR_DEPENDENT, tester.nar.memory.random);
+        FindSubst wu = new FindSubst(Op.VAR_DEPENDENT, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (!unifies)
             assertTrue("Unification is nonsensical", false);
@@ -192,7 +192,7 @@ public class UnificationTest  {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        Subst sub = new FindSubst(Op.VAR_PATTERN, nar.memory.random);
+        FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar.memory.random);
         if (!sub.next(t1, t2, 99999)) {
             assertTrue("Unification is nonsensical", false);
         }
@@ -211,7 +211,7 @@ public class UnificationTest  {
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
 
-        Subst sub = new FindSubst(Op.VAR_PATTERN, nar);
+        FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar);
         if (!sub.next(t1, t2, 99999)) {
             assertTrue("Unification with pattern variable failed", false);
         }

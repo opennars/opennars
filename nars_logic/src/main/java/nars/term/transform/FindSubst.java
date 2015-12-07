@@ -10,8 +10,12 @@ import nars.nal.meta.TermPattern;
 import nars.nal.meta.match.*;
 import nars.nal.nal4.Image;
 import nars.term.*;
+import nars.util.version.VersionMap;
+import nars.util.version.Versioned;
+import nars.util.version.Versioning;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -20,7 +24,54 @@ import java.util.Set;
 across a hierarchy of sequential and permutative fanouts
 where valid matches are discovered, backtracked,
 and collected until power is depleted. */
-public class FindSubst extends Subst implements Substitution {
+public class FindSubst extends Versioning implements Subst {
+
+
+    public final Random random;
+
+    protected final Op type;
+
+
+    @Override
+    public String toString() {
+        return "subst:{" +
+                "now:" + now() +
+                ", type:" + type +
+                ", term:" + term +
+                ", parent:" + parent +
+                //"random:" + random +
+                ", power:" + power +
+                ", xy:" + xy +
+                ", yx:" + yx +
+                '}';
+    }
+
+
+
+    //public abstract Term resolve(Term t, Substitution s);
+
+    public VarCachedVersionMap xy;
+    public VarCachedVersionMap yx;
+
+    /** current "y"-term being matched against */
+    Versioned<Term> term;
+
+    /** parent, if in subterms */
+    public Versioned<Compound> parent;
+
+    /** unification power available at start of current branch */
+    //public final Versioned<Integer> branchPower;
+
+    /** unification power remaining in the current branch */
+    int power;
+
+    /** current power divisor which divides power to
+     *  limits the # of permutations
+     *  that can be tried, or the # of subterms that can be compared
+     */
+    int powerDivisor;
+
+
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -31,7 +82,65 @@ public class FindSubst extends Subst implements Substitution {
     }
 
     public FindSubst(Op type, Random random) {
-        super(random, type);
+        this.random = random;
+        this.type = type;
+
+        xy = new VarCachedVersionMap(this);
+        yx = new VarCachedVersionMap(this);
+        term = new Versioned(this);
+        parent = new Versioned(this);
+        //branchPower = new Versioned(this);
+
+
+    }
+
+    public void setPower(int startPower) {
+        power = startPower;
+        powerDivisor = 1;
+    }
+
+
+    @Override
+    public void clear() {
+        revert(0);
+    }
+
+    public Term getXY(Term t) {
+        return xy.get(t);
+    }
+
+    public Term getYX(Term t) {
+        return yx.get(t);
+    }
+
+
+    final void goSubterm(int index) {
+        Term pp = parent.get().term(index);
+        /*if (pp == null)
+            throw new RuntimeException("null subterm");*/
+        term.set( pp );
+    }
+
+
+    public final class VarCachedVersionMap extends VersionMap<Term, Term> implements Subst {
+
+        public VarCachedVersionMap(Versioning context) {
+            super(context);
+        }
+        public VarCachedVersionMap(Versioning context, Map<Term,Versioned<Term>> map) {
+            super(context, map);
+        }
+
+        @Override
+        public final boolean cache(Term key) {
+            //since these should always be normalized variables, they will not exceed a predictable range of entries (ex: $1, $2, .. $n)
+            return key instanceof Variable;
+        }
+
+        @Override
+        public Term getXY(Term t) {
+            return get(t);
+        }
     }
 
 
@@ -46,7 +155,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public boolean run(Subst ff) {
+        public boolean run(FindSubst ff) {
             ff.parent.set((Compound) ff.term.get());
             return true;
         }
@@ -178,7 +287,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        boolean run(Subst ff) {
+        boolean run(FindSubst ff) {
             Compound parent = ff.parent.get();
             int s = parent.term(subterm).structure();
             return (s | bits) == s;
@@ -206,7 +315,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        boolean run(Subst ff) {
+        boolean run(FindSubst ff) {
             Compound parent = ff.parent.get();
             return parent.term(subterm).op() == op;
         }
@@ -292,7 +401,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public boolean run(Subst ff) {
+        public boolean run(FindSubst ff) {
             return ff.match(x, ff.term.get());
         }
 
@@ -352,7 +461,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public boolean run(Subst ff) {
+        public boolean run(FindSubst ff) {
 
             ff.term.set(ff.parent.get());
             ff.parent.set(null);
@@ -372,7 +481,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public final boolean run(Subst f) {
+        public final boolean run(FindSubst f) {
             f.goSubterm(index);
             return true;
         }
@@ -394,7 +503,7 @@ public class FindSubst extends Subst implements Substitution {
         }
 
         @Override
-        public final boolean run(Subst f) {
+        public final boolean run(FindSubst f) {
             f.term.set(f.parent.get());
             f.parent.set(this.parent);
 
@@ -456,7 +565,6 @@ public class FindSubst extends Subst implements Substitution {
     /**
      * find substitutions, returning the success state.
      */
-    @Override
     public final boolean next(final Term x, final Term y, int startPower) {
 
         setPower(startPower);
@@ -471,7 +579,6 @@ public class FindSubst extends Subst implements Substitution {
     /**
      * find substitutions using a pre-compiled term pattern
      */
-    @Override
     @Deprecated
     public final boolean next(final TermPattern x, final Term y, int startPower) {
 
@@ -959,8 +1066,8 @@ public class FindSubst extends Subst implements Substitution {
                         //TODO special handling to extract intermvals from Sequence terms here
 
                         putXY(Xellipsis,
-                                new ArrayEllipsisMatch(this,
-                                    Y, j, j + available
+                                new ArrayEllipsisMatch(
+                                        Y, j, j + available
                                 ));
                     } else if (i == 0) {
                         //PREFIX the ellipsis occurred at the start and there are additional terms following it
@@ -1072,7 +1179,6 @@ public class FindSubst extends Subst implements Substitution {
         return power / powerDivisor;
     }
 
-    @Override
     public final void putXY(Term x /* usually a Variable */, Term y) {
         xy.put(x, y);
     }
