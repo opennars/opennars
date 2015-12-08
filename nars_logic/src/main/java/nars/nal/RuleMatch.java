@@ -6,7 +6,6 @@ import nars.Premise;
 import nars.Symbols;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.TruthFunction;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -18,6 +17,7 @@ import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.version.Versioned;
 
 import java.util.Random;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 
 
@@ -158,11 +158,11 @@ public class RuleMatch extends FindSubst {
     static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
 
 
-        final TruthFunction f = getTruthFunction(punc, outcome);
+        final BinaryOperator<Truth> f = getTruthFunction(punc, outcome);
         if (f == null) return null;
 
 
-        final Truth truth = f.get(T, B);
+        final Truth truth = f.apply(T, B);
 //        if (T!=null && truth == T)
 //            throw new RuntimeException("tried to steal Task's truth instance: " + f);
 //        if (B!=null && truth == B)
@@ -175,7 +175,7 @@ public class RuleMatch extends FindSubst {
     }
 
     @Deprecated
-    static TruthFunction getTruthFunction(char punc, PostCondition outcome) {
+    static BinaryOperator<Truth> getTruthFunction(char punc, PostCondition outcome) {
 
         switch (punc) {
 
