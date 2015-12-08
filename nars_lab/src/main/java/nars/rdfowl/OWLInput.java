@@ -1,10 +1,9 @@
 package nars.rdfowl;
 
+import nars.$;
 import nars.NAR;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
@@ -381,7 +380,7 @@ public class OWLInput  {
 
     public static final Atom owlClass = Atom.the("class");
     public static Compound isAClass(Term clas) {
-        return Instance.make(clas, owlClass);
+        return $.instance(clas, owlClass);
     }
 
     /**
@@ -428,10 +427,10 @@ public class OWLInput  {
             return;
         }
         if (predicate.equals("parentOf")) {
-            nar.believe(Inheritance.make(atom(subject), atom(object)));
+            nar.believe((Compound) $.inh(atom(subject), atom(object)));
         }
         else {
-            nar.believe(Operation.make(atom(predicate),
+            nar.believe($.oper((Operator) atom(predicate),
                     Product.make(atom(subject), atom(object))));
         }
 

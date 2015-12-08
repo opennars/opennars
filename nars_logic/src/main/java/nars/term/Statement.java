@@ -30,6 +30,7 @@ import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import static nars.Symbols.STATEMENT_CLOSER;
 import static nars.Symbols.STATEMENT_OPENER;
@@ -38,8 +39,9 @@ import static nars.Symbols.STATEMENT_OPENER;
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-@Deprecated public abstract class Statement<A extends Term, B extends Term>
-    extends CompoundN {
+@Deprecated
+public abstract class Statement<A extends Term, B extends Term>
+        extends CompoundN {
 
 
     public Statement(A subject, B predicate) {
@@ -50,9 +52,36 @@ import static nars.Symbols.STATEMENT_OPENER;
         super(op, subterms);
     }
 
+    public static String toString(Term a, Op op, Term b, boolean pretty)  {
+        try {
+            StringWriter s = new StringWriter();
+            Statement.append(s, a, op, b, pretty);
+            return s.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void append(Appendable w, Term a, Op op, Term b, boolean pretty) throws IOException {
+
+        w.append(STATEMENT_OPENER);
+
+        a.append(w, pretty);
+
+        if (pretty) w.append(' ');
+
+        op.expand(w);
+
+        if (pretty) w.append(' ');
+
+        b.append(w, pretty);
+
+        w.append(STATEMENT_CLOSER);
+    }
 
 
-    @Override public final Term clone(Term[] replaced) {
+    @Override
+    public final Term clone(Term[] replaced) {
         return new GenericCompound(op(), replaced);
     }
 
@@ -194,12 +223,12 @@ import static nars.Symbols.STATEMENT_OPENER;
 
         ByteBuf b = ByteBuf.create(
                 subjBytes.length + predBytes.length + relationBytes.length +
-                        + 1 + 1 //separator and end closers
+                        +1 + 1 //separator and end closers
         );
 
         return b.add(relationBytes)
                 .add(subjBytes)
-                .add((byte)Symbols.STAMP_SEPARATOR)
+                .add((byte) Symbols.STAMP_SEPARATOR)
                 .add(predBytes)
                 .add((byte) STATEMENT_CLOSER).toBytes();
     }
@@ -224,8 +253,8 @@ import static nars.Symbols.STATEMENT_OPENER;
     }
 
 
-    final public static boolean invalidStatement(final Statement s) {
-        return invalidStatement(s.getSubject(), s.getPredicate());
+    final public static boolean invalidStatement(final Compound s) {
+        return invalidStatement(s.term(0), s.term(1));
     }
 
 
@@ -328,7 +357,6 @@ import static nars.Symbols.STATEMENT_OPENER;
     public B getPredicate() {
         return (B) term(1);
     }
-
 
 
 //    public Term getSubject(boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {

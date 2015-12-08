@@ -17,7 +17,6 @@ import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
 import nars.nal.meta.match.EllipsisTransform;
 import nars.nal.meta.match.EllipsisZeroOrMore;
-import nars.nal.nal1.Negation;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
@@ -172,9 +171,9 @@ public class Narsese extends BaseParser<Object>  {
         Collections.reverse(l);
         Collections.reverse(r);
 
-        Product premise;
+        Compound premise;
         if (l.size() >= 1) {
-            premise = Product.make(l);
+            premise = $.p(l);
         }
         else {
             //empty premise list is invalid
@@ -450,7 +449,7 @@ public class Narsese extends BaseParser<Object>  {
 //                        //negation shorthand
                         seq(Op.NEGATION.str, s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
-                            Negation.negation(Atom.the(pop())))),
+                            $.not(Atom.the(pop())))),
 
 
                         seq(

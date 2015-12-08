@@ -16,6 +16,7 @@
  */
 package nars.term;
 
+import nars.$;
 import nars.Global;
 import nars.NAR;
 import nars.Narsese;
@@ -252,11 +253,11 @@ public class TermTest {
         }
 
 
-        Term s = Inheritance.make(subj, pred);
+        Term s = $.inh(subj, pred);
         assertEquals(null, s);
 
 
-        Term i = Inheritance.make(subj, pred);
+        Term i = $.inh(subj, pred);
         assertEquals(null, i);
 
 
@@ -269,8 +270,6 @@ public class TermTest {
 
             assertEquals(t, forced.toStringCompact());
 
-            Term cloned = forced.clone();
-            assertEquals(null, cloned);
 
 
 //        } catch (Throwable ex) {
@@ -415,7 +414,7 @@ public class TermTest {
     public void validStatement() {
         NAR n = new Terminal();
         Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
-        assertFalse(Statement.invalidStatement((Inheritance) t));
+        assertFalse(Statement.invalidStatement((Compound) t));
     }
 
     @Test

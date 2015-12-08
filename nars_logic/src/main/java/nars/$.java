@@ -69,13 +69,15 @@ abstract public class $  {
 
     /**
      * Op.INHERITANCE from 2 Terms: subj --> pred
+     *  returns a Term if the two inputs are equal to each other
      */
-    public static Term inh(Term subj, Term pred) {
-        return Inheritance.inheritance(subj, pred);
+    public static <T extends Term> T inh(Term subj, Term pred) {
+        return (T) Inheritance.inheritance(subj, pred);
     }
 
-    public static Term inh(String subj, String pred) {
-        return Inheritance.inheritance($(subj), $(pred));
+
+    public static <T extends Term> T inh(String subj, String pred) {
+        return inh((Term)$(subj), (Term)$(pred));
     }
 
 
@@ -84,11 +86,12 @@ abstract public class $  {
     }
 
     public static Compound oper(String operator, String... args) {
-        return oper(Operator.the(operator), $.pro(args));
+        return oper(Operator.the(operator), $.p(args));
     }
 
+
     public static Compound oper(Operator opTerm, Term... arg) {
-        return oper(opTerm, $.pro(arg));
+        return oper(opTerm, $.p(arg));
     }
 
     public static Compound oper(Operator opTerm, Product arg) {
@@ -109,53 +112,54 @@ abstract public class $  {
         return CyclesInterval.make(numCycles);
     }
 
-    public static Product pro(Term... t) {
+
+    public static Compound p(Term... t) {
         return Product.make(t);
     }
 
-    public static Product<Atom> pro(String... t) {
+    public static Compound<Atom> p(String... t) {
         return Product.make($.the(t));
     }
 
-    public static Variable var(Op type, int i) {
+    public static Variable v(Op type, int i) {
         return Variable.the(type, i);
     }
 
-    public static Variable var(Op type, String s) {
+    public static Variable v(Op type, String s) {
         return Variable.the(type.ch, Utf8.toUtf8(s));
     }
 
 
     public static Variable varDep(int i) {
-        return var(Op.VAR_DEPENDENT, i);
+        return v(Op.VAR_DEPENDENT, i);
     }
 
     public static Variable varDep(String s) {
-        return var(Op.VAR_DEPENDENT, s);
+        return v(Op.VAR_DEPENDENT, s);
     }
 
     public static Variable varIndep(int i) {
-        return var(Op.VAR_INDEPENDENT, i);
+        return v(Op.VAR_INDEPENDENT, i);
     }
 
     public static Variable varIndep(String s) {
-        return var(Op.VAR_INDEPENDENT, s);
+        return v(Op.VAR_INDEPENDENT, s);
     }
 
     public static Variable varQuery(int i) {
-        return var(Op.VAR_QUERY, i);
+        return v(Op.VAR_QUERY, i);
     }
 
     public static Variable varQuery(String s) {
-        return var(Op.VAR_QUERY, s);
+        return v(Op.VAR_QUERY, s);
     }
 
     public static Variable varPattern(int i) {
-        return var(Op.VAR_PATTERN, i);
+        return v(Op.VAR_PATTERN, i);
     }
 
     public static Variable varPattern(String s) {
-        return var(Op.VAR_PATTERN, s);
+        return v(Op.VAR_PATTERN, s);
     }
 
     /**

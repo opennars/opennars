@@ -1,11 +1,9 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
-import nars.nal.nal4.ImageExt;
-import nars.nal.nal4.ImageInt;
+import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -85,9 +83,9 @@ public class NarseseTest {
         Task t = task("<a --> b>.");
         assertNotNull(t);
         assertEquals(Op.INHERITANCE, t.getTerm().op());
-        Inheritance i = (Inheritance) t.getTerm();
-        assertEquals("a", i.getSubject().toString());
-        assertEquals("b", i.getPredicate().toString());
+        Compound i = t.getTerm();
+        assertEquals("a", i.term(0).toString());
+        assertEquals("b", i.term(1).toString());
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
@@ -404,14 +402,14 @@ public class NarseseTest {
     public void testImageIntRel2() { testImageIntRel("<(\\, x, y, _) --> a>", 2); }
 
     private void testImageIntRel(String imageTerm, int relationIndexExpected) {
-        Inheritance<ImageInt,Atom> ti = term(imageTerm);
-        assertEquals(relationIndexExpected, ti.getSubject().relationIndex );
+        Compound ti = term(imageTerm);
+        assertEquals(relationIndexExpected, ((Image)(ti.term(0))).relationIndex );
         assertEquals(imageTerm, ti.toString());
     }
 
     private void testImageExtRel(String imageTerm, int relationIndexExpected) {
-        Inheritance<Atom,ImageExt> ti = term(imageTerm);
-        assertEquals(relationIndexExpected, ti.getPredicate().relationIndex );
+        Compound ti = term(imageTerm);
+        assertEquals(relationIndexExpected, ((Image)ti.term(1)).relationIndex );
         assertEquals(imageTerm, ti.toString());
     }
 

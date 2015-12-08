@@ -220,11 +220,11 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
         Term[] x = new Term[isVoid ? 2 : 3];
         x[0] = term(instance);
-        x[1] = $.pro(terms(args));
+        x[1] = $.p(terms(args));
         if (!isVoid) {
             x[2] = $.varDep("returnValue");
         }
-        return $.pro(x);
+        return $.p(x);
     }
 
     private Term[] terms(Object[] args) {

@@ -2,10 +2,7 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
-import nars.term.Term;
-import nars.term.TermMetadata;
-import nars.term.TermSet;
-import nars.term.TermVector;
+import nars.term.*;
 import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.ByteBuf;
 
@@ -50,13 +47,15 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return op.isCommutative();
     }
 
+
     @Override
-    public final String toString() {
-        switch (op) {
-            case NEGATION:
-                break;
+    public String toString(boolean pretty) {
+        if (op.type == Op.OpType.Relation) {
+            return Statement.toString(term(0), op(), term(1), pretty);
         }
-        return toString(true); //TODO make this default to false
+        else {
+            return super.toString(); //TODO make this default to false
+        }
     }
 
     @Override

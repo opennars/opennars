@@ -26,7 +26,7 @@ public class TermLinkGraph2 extends DirectedPseudograph<Term, Product> {
         super(new EdgeFactory<Term, Product>() {
             @Override
             public Product createEdge(Term a, Term b) {
-                return $.pro(a,b);
+                return $.p(a,b);
             }
         });
     }

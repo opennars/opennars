@@ -52,7 +52,7 @@ import static nars.Symbols.COMPOUND_TERM_OPENER;
 public class Operation extends GenericCompound {
 
     public Operation(Operator operator, Term... args) {
-        super(Op.INHERITANCE, $.inh(operator, $.pro(args)));
+        super(Op.INHERITANCE, $.inh(operator, $.p(args)));
     }
 
 

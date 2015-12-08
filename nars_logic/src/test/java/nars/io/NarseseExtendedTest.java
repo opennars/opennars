@@ -3,7 +3,6 @@ package nars.io;
 import nars.Narsese;
 import nars.Op;
 import nars.Symbols;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
@@ -77,10 +76,11 @@ public class NarseseExtendedTest {
 
     @Test
     public void testColonReverseInheritance() {
-        Inheritance t = term("namespace:named");
+        Compound t = term("namespace:named");
         assertEquals(t.op(), Op.INHERITANCE);
-        assertEquals("namespace", t.getPredicate().toString());
-        assertEquals("named", t.getSubject().toString());
+        assertEquals("named", t.term(0).toString());
+        assertEquals("namespace", t.term(1).toString());
+
 
 
         Compound u = term("<a:b --> c:d>");
@@ -166,8 +166,8 @@ public class NarseseExtendedTest {
             */
 
             Term tt = t.getTerm();
-            assertTrue(tt instanceof Negation);
-            assertTrue(((Negation) tt).the().toString().equals("negated"));
+            assertEquals(Op.NEGATION, tt.op());
+            assertTrue(((Compound) tt).term(0).toString().equals("negated"));
             assertTrue(t.getPunctuation() == Symbols.GOAL);
         }
     }
@@ -181,9 +181,9 @@ public class NarseseExtendedTest {
         assertEquals( "(--,(&&,x,y))", term("-- (x && y)").toStringCompact() );
 
 
-        Negation nab = term("--(a & b)");
+        Compound nab = term("--(a & b)");
         assertTrue(nab instanceof Negation);
-        IntersectionExt ab = (IntersectionExt) nab.the();
+        IntersectionExt ab = (IntersectionExt) nab.term(0);
         assertTrue(ab instanceof IntersectionExt);
 
 //        try {

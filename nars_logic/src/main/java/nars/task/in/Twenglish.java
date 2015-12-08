@@ -17,11 +17,7 @@
 package nars.task.in;
 
 import com.google.common.collect.Lists;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Narsese;
-import nars.nal.nal2.Property;
+import nars.*;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
@@ -187,12 +183,12 @@ public class Twenglish {
             else {
                 String pos = POS.get(c.content.toLowerCase());
                 if (pos != null) {
-                    return Property.make(lexToTerm(c.content), tagToTerm(pos));
+                    return $.property(lexToTerm(c.content), tagToTerm(pos));
                 }
             }
         }
             
-        return Property.make( lexToTerm(c.content), tagToTerm(c.pattern) );
+        return $.property( lexToTerm(c.content), tagToTerm(c.pattern) );
     }
     
     public static Term lexToTerm(String c) {

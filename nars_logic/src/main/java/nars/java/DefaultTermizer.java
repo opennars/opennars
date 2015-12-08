@@ -222,7 +222,7 @@ public class DefaultTermizer implements Termizer {
 
         String varPrefix = m.getName() + "_";
         int n = m.getParameterCount();
-        Product args = $.pro(getArgVariables(varPrefix, n));
+        Product args = $.p(getArgVariables(varPrefix, n));
 
         if (m.getReturnType() == void.class) {
             return new Term[]{
@@ -260,7 +260,7 @@ public class DefaultTermizer implements Termizer {
     public static Term termPackage(Package p) {
         //TODO cache?
         String[] path = p.getName().split("\\.");
-        return $.pro(path);
+        return $.p(path);
 
         //return Atom.the(p.getName());
     }

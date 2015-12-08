@@ -24,9 +24,9 @@ package nars.nal.nal4;
 import nars.$;
 import nars.Op;
 import nars.term.Term;
-import nars.term.TermContainer;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.List;
  */
 public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 
-    Product empty = new ProductN(new Term[] {}); //length 0 product
+    Compound empty = $.p(new Term[] {}); //length 0 product
 
     /**
      * Get the operate of the term.
@@ -69,24 +69,24 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 //        return make(x);
 //    }
 
-    static <T extends Term> Product<? extends T> make(final Collection<T> t) {
+    static <T extends Term> Compound<T> make(final Collection<T> t) {
         return make(t.toArray((T[]) new Term[t.size()]));
     }
 //    static Product makeFromIterable(final Iterable<Term> t) {
 //        return make(Iterables.toArray(t, Term.class));
 //    }
 
-    static <T extends Term> ProductN<T> only(final T the) {
-        return new ProductN(the);
+    static <T extends Term> Compound<T> only(final T the) {
+        return $.p(the);
     }
 
     /** 2 term constructor */
-    static <T extends Term> Product<T> make(final T a, final T b) {
-        return new ProductN(new Term[] { a, b });
+    static <T extends Term> Compound<T> make(final T a, final T b) {
+        return $.p(new Term[] { a, b });
     }
 
     /** creates from a sublist of a list */
-    static Product make(final List<Term> l, int from, int to) {
+    static Compound make(final List<Term> l, int from, int to) {
         Term[] x = new Term[to - from];
 
         for (int j = 0, i = from; i < to; i++)
@@ -95,7 +95,7 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
         return make(x);
     }
 
-    static <T extends Term> Product<T> make(final T... arg) {
+    public static <T extends Term> Compound<T> make(final T... arg) {
         int l = arg.length;
 
         //length 0 product are allowd
@@ -105,11 +105,11 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
         if (l == 1)
             return only(arg[0]);
 
-        return new ProductN<>(arg);
+        return new GenericCompound(Op.PRODUCT, arg);
     }
 
-    static Product<Atom> make(final String... argAtoms) {
-        return $.pro(argAtoms);
+    static Compound<Atom> make(final String... argAtoms) {
+        return $.p(argAtoms);
     }
 
 
@@ -128,9 +128,9 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
     }
 
 
-    /** create a Product from terms contained in a TermContainer
-     *  (ex: the subterms of a compound) */
-    static Product make(TermContainer c) {
-        return Product.make( c.terms() );
-    }
+//    /** create a Product from terms contained in a TermContainer
+//     *  (ex: the subterms of a compound) */
+//    static Product make(TermContainer c) {
+//        return Product.make( c.terms() );
+//    }
 }

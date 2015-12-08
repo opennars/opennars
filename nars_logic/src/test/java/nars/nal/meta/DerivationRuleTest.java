@@ -1,6 +1,7 @@
 package nars.nal.meta;
 
 import junit.framework.TestCase;
+import nars.$;
 import nars.Global;
 import nars.Narsese;
 import nars.Op;
@@ -20,7 +21,6 @@ import java.util.Random;
 import java.util.Set;
 
 import static nars.$.$;
-import static nars.$.pro;
 
 /**
  * Created by me on 7/7/15.
@@ -157,7 +157,7 @@ public class DerivationRuleTest extends TestCase {
         assertEquals($("%B"), t.from);
         assertEquals($("C"), t.to);
 
-        Term u = new TaskRule.TaskRuleVariableNormalization(pro(t)).get();
+        Term u = new TaskRule.TaskRuleVariableNormalization($.p(t)).get();
         t = (EllipsisTransform)((Product)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);

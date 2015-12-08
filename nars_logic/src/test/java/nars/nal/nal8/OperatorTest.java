@@ -10,6 +10,7 @@ import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
@@ -75,14 +76,14 @@ public class OperatorTest {
 //    }
 
     @Test public void testOperationIsInheritance() {
-        Operation o = $.oper(Operator.the("x"), Product.make("x"));
+        Compound o = $.oper(Operator.the("x"), Product.make("x"));
         assertEquals(Op.INHERITANCE, o.op());
     }
 
     @Test public void testInhIsOperation() {
         Operation o = $("<(a,b,c)-->^x>");
-        assertTrue(o.getSubject() instanceof Product);
-        assertTrue(o.getPredicate() instanceof Operator);
+        assertTrue(o.term(0) instanceof Product);
+        assertTrue(o.term(1) instanceof Operator);
         assertEquals("x(a, b, c)", o.toString(true));
         assertEquals(Op.INHERITANCE, o.op());
     }

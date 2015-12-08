@@ -2,7 +2,6 @@ package nars.term;
 
 import nars.$;
 import nars.Narsese;
-import nars.nal.nal4.Product;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import org.junit.Test;
@@ -67,7 +66,8 @@ public class VariableTest {
         //System.out.println(a + " " + b + " "  + Product.make(a, b).normalized().toString());
       assertEquals(
             expect,
-            Product.make(a, b).normalized().toString()
+            $.p(a, b).normalized()
+                    .toString()
         );
     }
 

@@ -1,8 +1,9 @@
 package nars.term;
 
-import nars.nal.nal1.Inheritance;
+import nars.$;
 import nars.nal.nal5.Implication;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +17,7 @@ public class TermVectorTest {
     @Test
     public void testSubtermsEquality() {
 
-        Inheritance a = Inheritance.make("a", "b");
+        Compound a = $.inh("a", "b");
         Implication b = Implication.make(Atom.the("a"), Atom.the("b"));
 
         assertEquals(a.subterms(), b.subterms());
