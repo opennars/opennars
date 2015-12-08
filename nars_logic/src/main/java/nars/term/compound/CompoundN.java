@@ -4,12 +4,12 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.visit.SubtermVisitor;
-import nars.term.visit.TermPredicate;
 import nars.util.utf8.ByteBuf;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
@@ -282,18 +282,18 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public boolean and(TermPredicate v) {
+    public boolean and(Predicate<Term> v) {
         return v.test(this) && terms.and(v);
     }
     @Override
-    public boolean or(TermPredicate v) {
+    public boolean or(Predicate<Term> v) {
         return v.test(this) || terms.or(v);
     }
 
 
     @Override
     public final void recurseTerms(final SubtermVisitor v, final Term parent) {
-        v.visit(this, parent);
+        v.accept(this, parent);
         terms.visit(v, this);
     }
 

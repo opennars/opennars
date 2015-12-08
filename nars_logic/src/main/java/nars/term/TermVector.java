@@ -4,7 +4,6 @@ import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
-import nars.term.visit.TermPredicate;
 import nars.util.data.Util;
 
 import java.io.Serializable;
@@ -13,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static java.util.Arrays.copyOf;
 
@@ -440,11 +440,11 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     public final void visit(SubtermVisitor v, Compound parent) {
         for (Term t : term)
-            v.visit(t, parent);
+            v.accept(t, parent);
     }
 
     /** returns true if evaluates true for all terms */
-    public final boolean and(TermPredicate p) {
+    public final boolean and(Predicate<Term> p) {
         for (Term t : term) {
             if (!p.test(t))
                 return false;
@@ -452,7 +452,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return true;
     }
     /** returns true if evaluates true for any terms */
-    public final boolean or(TermPredicate p) {
+    public final boolean or(Predicate<Term> p) {
         for (Term t : term) {
             if (t.or(p))
                 return true;

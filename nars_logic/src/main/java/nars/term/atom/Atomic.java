@@ -3,10 +3,10 @@ package nars.term.atom;
 import nars.term.Term;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
-import nars.term.visit.TermPredicate;
 import nars.util.utf8.Byted;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 
 public abstract class Atomic implements Term, Byted {
@@ -68,15 +68,15 @@ public abstract class Atomic implements Term, Byted {
 
     @Override
     public final void recurseTerms(final SubtermVisitor v, final Term parent) {
-        v.visit(this, parent);
+        v.accept(this, parent);
     }
 
 
-    @Override public boolean and(TermPredicate v) {
+    @Override public boolean and(Predicate<Term> v) {
         return v.test(this);
     }
 
-    @Override public boolean or(TermPredicate v) {
+    @Override public boolean or(Predicate<Term> v) {
         return and(v); //re-use and, even though it's so similar
     }
 
