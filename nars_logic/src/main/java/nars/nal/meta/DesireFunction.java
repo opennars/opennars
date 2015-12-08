@@ -7,70 +7,28 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
-/**
- * Created by me on 8/1/15.
- */
-public enum DesireFunction implements TruthFunction {
-
-    Negation() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            return TruthFunctions.negation(T); }
-    },
-
-    Strong() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            if (B == null) return null;
-            return TruthFunctions.desireStrong(T,B);
-        }
-    },
-    Weak() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            if (B == null) return null;
-            return TruthFunctions.desireWeak(T, B);
-        }
-    },
-    Induction() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            if (B == null) return null;
-            return TruthFunctions.desireInd(T,B);
-        }
-    },
-    Deduction() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            if (B==null) return null;
-            return TruthFunctions.desireDed(T,B);
-        }
-    },
-    Identity() {
-        @Override public Truth get(final Truth T, /* N/A: */ final Truth B) {
-            return new DefaultTruth(T.getFrequency(), T.getConfidence());
-        }
-    },
-    StructuralStrong() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            return TruthFunctions.desireStrong(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
-        }
-    }
+public interface DesireFunction extends BinaryOperator<Truth>{
+    DesireFunction
+            Negation = (t1, ignored) -> TruthFunctions.negation(t1),
+            Strong = (T, B) -> B == null ? null : TruthFunctions.desireStrong(T, B),
+            Weak = (T, B) -> B == null ? null : TruthFunctions.desireWeak(T, B),
+            Induction = (T, B) -> B == null ? null : TruthFunctions.desireInd(T, B),
+            Deduction = (T, B) -> B == null ? null : TruthFunctions.desireDed(T, B),
+            Identity = (T, B) -> new DefaultTruth(T.getFrequency(), T.getConfidence()),
+            StructuralStrong = (T, ignored) -> TruthFunctions.desireStrong(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE))
     ;
 
+    Map<Term, BinaryOperator<Truth>> atomToTruthModifier = Arrays.stream(
+            new BinaryOperator[]{Negation, Strong, Weak, Induction, Deduction, Identity, StructuralStrong,}
+    ).collect(Collectors.toMap( Atom::the, (p) -> p));
 
-
-    static final Map<Term, DesireFunction> atomToTruthModifier = Global.newHashMap(DesireFunction.values().length);
-
-    static {
-        for (DesireFunction tm : DesireFunction.values())
-            atomToTruthModifier.put(Atom.the(tm.toString()), tm);
-    }
-
-    @Override
-    public boolean allowOverlap() {
-        return false;
-    }
-
-    public static DesireFunction get(Term a) {
+    class Helper {static  BinaryOperator<Truth> apply(Term a) {
         return atomToTruthModifier.get(a);
     }
-
+    }
 }

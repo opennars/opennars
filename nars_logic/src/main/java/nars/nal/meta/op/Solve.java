@@ -5,8 +5,7 @@ import nars.Premise;
 import nars.Symbols;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
-import nars.nal.meta.BeliefFunction;
-import nars.nal.meta.DesireFunction;
+import nars.nal.meta.Overlapped;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
@@ -16,6 +15,8 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
+import java.util.function.BinaryOperator;
+
 /**
  * first resolution of the conclusion's pattern term
  */
@@ -24,19 +25,19 @@ public final class Solve extends PreCondition {
     public final Term term;
     @Deprecated public final TaskRule rule;
 
-    private transient final String id;
+    private final transient String id;
     private final boolean continueIfIncomplete;
 
     public Solve(Term term, TaskRule rule, boolean continueIfIncomplete) {
         this.term = term;
         this.rule = rule;
         this.continueIfIncomplete = continueIfIncomplete;
-        this.id = getClass().getSimpleName() + ':' + term;
+        id = this.getClass().getSimpleName() + ':' + term;
     }
 
     @Override
     public String toString() {
-        return id;
+        return this.id;
     }
 
     @Override
@@ -47,28 +48,28 @@ public final class Solve extends PreCondition {
         if(null==(derivedTerm=match.apply(term, !continueIfIncomplete)))
             return false;
 
-        if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {
+        if (!this.continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {
             return false;
         }
 
         match.derived.set(derivedTerm);
 
 
-        final Compound pattern = (Compound) rule.term(0);
-        final Term taskpart = pattern.term(0);
-        final Term beliefpart = pattern.term(1);
+        Compound pattern = (Compound) this.rule.term(0);
+        Term taskpart = pattern.term(0);
+        Term beliefpart = pattern.term(1);
 
         Term possibleSequenceHolder = null;
 
-        if (rule.sequenceIntervalsFromBelief) {
+        if (this.rule.sequenceIntervalsFromBelief) {
             possibleSequenceHolder = beliefpart;
         }
-        if (rule.sequenceIntervalsFromTask) {
+        if (this.rule.sequenceIntervalsFromTask) {
             possibleSequenceHolder = taskpart;
         }
 
         if (possibleSequenceHolder!=null && possibleSequenceHolder.hasAny(Op.SEQUENCE)) {
-            processSequence(match, derivedTerm, possibleSequenceHolder);
+            this.processSequence(match, derivedTerm, possibleSequenceHolder);
 
         }
 
@@ -84,7 +85,7 @@ public final class Solve extends PreCondition {
         //int sequence_term_amount = 0;
 
 
-        if (rule.sequenceIntervalsFromBelief || rule.sequenceIntervalsFromTask) {
+        if (this.rule.sequenceIntervalsFromBelief || this.rule.sequenceIntervalsFromTask) {
             if (toInvestigate instanceof Sequence) {
                 //sequence_term_amount = ((Sequence) toInvestigate).terms().length;
                 mode = TermIsSequence;
@@ -118,9 +119,9 @@ public final class Solve extends PreCondition {
             Term lookat = null;
             Premise premise = match.premise;
 
-            if (rule.sequenceIntervalsFromTask) {
+            if (this.rule.sequenceIntervalsFromTask) {
                 lookat = premise.getTask().getTerm();
-            } else if (rule.sequenceIntervalsFromBelief) {
+            } else if (this.rule.sequenceIntervalsFromBelief) {
                 lookat = premise.getBelief().getTerm();
             }
 
@@ -151,7 +152,7 @@ public final class Solve extends PreCondition {
                     boolean OneLess = a - 1 == b;
 
                     if (!sameLength && !OneLess) {
-                        System.err.println("result Sequence insufficient elements; rule:" + rule);
+                        System.err.println("result Sequence insufficient elements; rule:" + this.rule);
                     }
 
                     int[] pasteIntervals = paste.intervals();
@@ -170,14 +171,14 @@ public final class Solve extends PreCondition {
         }
     }
 
-    public final static class Truth extends PreCondition {
-        public final BeliefFunction belief;
-        public final DesireFunction desire;
+    public static final class Truth extends PreCondition {
+        public final BinaryOperator<nars.truth.Truth> belief;
+        public final BinaryOperator<nars.truth.Truth> desire;
         public final char puncOverride;
 
-        transient private final String id;
+        private final transient String id;
 
-        public Truth(BeliefFunction belief, DesireFunction desire, char puncOverride) {
+        public Truth(BinaryOperator<nars.truth.Truth> belief, BinaryOperator<nars.truth.Truth> desire, char puncOverride) {
             this.belief = belief;
             this.desire = desire;
             this.puncOverride = puncOverride;
@@ -185,26 +186,25 @@ public final class Solve extends PreCondition {
             String beliefLabel = belief==null ? "_" : belief.toString();
             String desireLabel = desire==null ? "_" : desire.toString();
 
-            this.id = (puncOverride == 0) ?
-                    (getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ")")  :
-                    (getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")");
-
+            id = puncOverride == 0 ?
+                    this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ")" :
+                    this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
         }
 
         @Override
         public String toString() {
-            return id;
+            return this.id;
         }
 
-        TruthFunction getTruth(char punc) {
+        BinaryOperator<nars.truth.Truth> getTruth(char punc) {
 
             switch (punc) {
 
                 case Symbols.JUDGMENT:
-                    return belief;
+                    return this.belief;
 
                 case Symbols.GOAL:
-                    return desire;
+                    return this.desire;
 
             /*case Symbols.QUEST:
             case Symbols.QUESTION:
@@ -221,7 +221,7 @@ public final class Solve extends PreCondition {
 
             Premise premise = m.premise;
 
-            final Task task = premise.getTask();
+            Task task = premise.getTask();
 
             /** calculate derived task truth value */
 
@@ -229,27 +229,27 @@ public final class Solve extends PreCondition {
             Task belief = premise.getBelief();
 
 
-            final nars.truth.Truth T = task.getTruth();
-            final nars.truth.Truth B = belief == null ? null : belief.getTruth();
+            nars.truth.Truth T = task.getTruth();
+            nars.truth.Truth B = belief == null ? null : belief.getTruth();
 
 
             /** calculate derived task punctuation */
-            char punct = puncOverride;
+            char punct = this.puncOverride;
             if (punct == 0) {
                 /** use the default policy determined by parent task */
                 punct = task.getPunctuation();
             }
 
 
-            final nars.truth.Truth truth;
-            TruthFunction tf;
+            nars.truth.Truth truth;
+            BinaryOperator<nars.truth.Truth> tf;
 
             if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
-                tf = getTruth(punct);
+                tf = this.getTruth(punct);
                 if (tf == null)
                     return false;
 
-                truth = tf.get(T, B);
+                truth = tf.apply(T, B);
 
                 if (truth == null) {
                     //no truth value function was applicable but it was necessary, abort
@@ -263,7 +263,7 @@ public final class Solve extends PreCondition {
 
 
             /** filter cyclic double-premise results  */
-            if (tf != null && !tf.allowOverlap()) {
+            if (tf != null && !(tf instanceof Overlapped)) {
                 if (m.premise.isCyclic()) {
                     //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
                     //                    match.removeCyclic(outcome, premise, truth, punct);

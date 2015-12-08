@@ -10,6 +10,7 @@ import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.op.Derive;
 import nars.nal.meta.op.PostSolve;
 import nars.nal.meta.op.Solve;
+import nars.nal.meta.op.Solve.Truth;
 import nars.nal.meta.post.*;
 import nars.nal.meta.pre.*;
 import nars.nal.nal1.Inheritance;
@@ -154,7 +155,7 @@ public class TaskRule extends ProductN implements Level {
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
 
-        l.add(new Solve.Truth(post.truth, post.desire, post.puncOverride));
+        l.add(new Truth(post.truth, post.desire, post.puncOverride));
 
         ///--------------
         //l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Pattern));
