@@ -80,11 +80,13 @@ public interface BeliefFunction extends BinaryOperator<Truth> {
             Function<Field, Atom> fieldAtomFunction = f-> {
                 try {
                     Atom a = $.$(f.getName());
-                    atomAtomObjectMap.put(
+                    AtomObject<BinaryOperator<Truth>> exist = atomAtomObjectMap.put(
                             a,
                             ref(f.getName(),
                                     ((BinaryOperator<Truth>) f.get(null)))
                     );
+                    /*if (exist!=null)
+                        throw new RuntimeException("conflict");*/
                     return a;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();

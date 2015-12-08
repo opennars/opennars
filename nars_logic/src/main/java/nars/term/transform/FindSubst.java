@@ -761,8 +761,9 @@ public class FindSubst extends Versioning implements Subst {
                         return true;
                     }
                 } else {
-                    Term n = apply(et.from, true);
-                    if (n == null) return false;
+                    Term n = apply(et.from, false);
+                    if (n == null)
+                        return false;
 
                     //resolving may be possible to defer to substitution if
                     //Y and et.from are components of ImageShrinkEllipsisMatch

@@ -10,6 +10,7 @@ import nars.term.compound.CompoundN;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static nars.Symbols.*;
 
@@ -69,10 +70,10 @@ abstract public class Image extends CompoundN {
 
     //TODO replace with a special Term type
     static boolean isPlaceHolder(final Term t) {
-        if (t instanceof Compound) return false;
-        byte[] n = t.bytes();
-        if (n.length != 1) return false;
-        return n[0] == Symbols.IMAGE_PLACE_HOLDER;
+//        if (t instanceof Compound) return false;
+//        byte[] n = t.bytes();
+//        if (n.length != 1) return false;
+        return t.equals(Index);
     }
 
 //   /**
@@ -225,10 +226,10 @@ abstract public class Image extends CompoundN {
         return term(relationIndex);
     }
 
-    public static Term makeInt(Term[] argList) {
+    public static Term makeInt(Term... argList) {
         return make(argList, (a, r) -> new ImageInt(a, (short)r));
     }
-    public static Term makeExt(Term[] argList) {
+    public static Term makeExt(Term... argList) {
         return make(argList, (a, r) -> new ImageExt(a, (short)r));
     }
     /**
@@ -237,24 +238,29 @@ abstract public class Image extends CompoundN {
      * @param argList The list of term
      */
     public static Term make(Term[] argList, ObjectIntToObjectFunction<Term[], Term> build) {
-        int alen = argList.length;
-        if (alen < 2) {
+        int l = argList.length;
+        if (l < 2) {
             return argList[0];
         }
 
         //Term relation = argList[0];
 
-        Term[] argument = new Term[alen -1];
+        Term[] argument = new Term[l];
         int index = 0, n = 0;
-        for (int j = 0; j < alen; j++) {
+        for (int j = 0; j < l; j++) {
             if (isPlaceHolder(argList[j])) {
                 index = j;
+                if (n == l-1)
+                    break;
             } else {
                 argument[n++] =  argList[j];
             }
         }
-        if (n!=alen - 1)
-            throw new RuntimeException("image must contain 1 relation");
+        if (n == l - 1) {
+            argument = Arrays.copyOf(argument, n);
+        } else if (n == l) {
+            index = l;
+        }
 
         return build.valueOf(argument, index);
     }
@@ -293,5 +299,13 @@ abstract public class Image extends CompoundN {
         else
             return new ImageInt(res, index);
     }
+
+    public static boolean hasPlaceHolder(Term[] r) {
+        for (Term x : r) {
+            if (isPlaceHolder(x)) return true;
+        }
+        return false;
+    }
+
 }
 

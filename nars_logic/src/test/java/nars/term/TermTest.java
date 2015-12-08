@@ -537,6 +537,50 @@ public class TermTest {
 
     }
 
+    @Test public void testImageConstruction() {
+        Image e1 = (Image) Image.makeExt($("X"), $("Y"), $("_"));
+        Term e2 = Image.makeExt($("X"), $("Y"), Image.Index);
+        assertEquals(e1, e2);
+
+        Image f1 = (Image) Image.makeInt($("X"), $("Y"), $("_"));
+        Term f2 = Image.makeInt($("X"), $("Y"), Image.Index);
+        assertEquals(f1, f2);
+
+        assertNotEquals(e1, f1);
+        assertEquals(e1.subterms(), f1.subterms());
+    }
+
+    @Test public void testImageConstruction2() {
+        assertEquals("(/, X, _, Y)", Image.makeExt($("X"), $("_"), $("Y")).toString());
+        assertEquals("(/, X, Y, _)", Image.makeExt($("X"), $("Y")).toString());
+        assertEquals("(/, _, X, Y)", Image.makeExt($("_"), $("X"), $("Y")).toString());
+
+        assertEquals("(\\, X, _, Y)", Image.makeInt($("X"), $("_"), $("Y")).toString());
+        assertEquals("(\\, X, Y, _)", Image.makeInt($("X"), $("Y")).toString());
+        assertEquals("(\\, _, X, Y)", Image.makeInt($("_"), $("X"), $("Y")).toString());
+
+    }
+
+    @Test public void testImageConstruction3() {
+        assertEquals(
+            Image.makeExt($("X"), $("_"), $("Y")), $("(/, X, _, Y)")
+        );
+        assertEquals(
+            Image.makeExt($("_"), $("X"), $("Y")), $("(/, _, X, Y)")
+        );
+        assertEquals(
+            Image.makeExt($("X"), $("Y"), $("_")), $("(/, X, Y, _)")
+        );
+        assertEquals(
+            Image.makeInt($("X"), $("_"), $("Y")), $("(\\, X, _, Y)")
+        );
+        assertEquals(
+            Image.makeInt($("_"), $("X"), $("Y")), $("(\\, _, X, Y)")
+        );
+        assertEquals(
+            Image.makeInt($("X"), $("Y"), $("_")), $("(\\, X, Y, _)")
+        );
+    }
 
     @Test
     public void testImageOrdering1() {

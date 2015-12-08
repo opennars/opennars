@@ -23,6 +23,8 @@ package nars.nal.nal4;
 import nars.Op;
 import nars.term.Term;
 
+import java.util.Arrays;
+
 
 /**
  * An intension image.
@@ -54,9 +56,12 @@ public class ImageInt extends Image {
 
     @Override
     public Term clone(Term[] replaced) {
+        if (Image.hasPlaceHolder(replaced)) //TODO indexOfPlaceHolder
+            return Image.makeInt(replaced);
+
         if (replaced.length != size())
-            return null;
-        //throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
+            //return null;
+            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + terms().length + "): " + Arrays.toString(replaced));
 
         return new ImageInt(replaced, relationIndex);
     }

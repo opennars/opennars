@@ -181,10 +181,12 @@
 ////// NAL4 - Transformations between products and images: ////////////////////////////////////////////////////////////////////////////////////
 //Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
 
-    ((A..B=_..+) --> M), B |- (B --> (/, M, A, _ )), (Truth:Identity, Desire:Identity)
+    //HACK we shouldnt need to duplcate the full form of the image ellipsis
+    ((A..B=_..+) --> M), B |- (B --> (/, M, A..B=_..+, _ )), (Truth:Identity, Desire:Identity)
     ((A..+) --> M), M |- (M --> (/,_, A, ..)), (Truth:Identity, Desire:Identity)
 
-    (M --> (A..B=_..+)), B |- ((\, M, A, _ ) --> B), (Truth:Identity, Desire:Identity)
+    //HACK we shouldnt need to duplcate the full form of the image ellipsis
+    (M --> (A..B=_..+)), B |- ((\, M, A..B=_..+, _ ) --> B), (Truth:Identity, Desire:Identity)
     (M --> (A..+)), M |- ((\,_, A, ..) --> M), (Truth:Identity, Desire:Identity)
 
     (B --> (/,M, A.._=B..+, _)), M |- ((A) --> M), (Truth:Identity, Desire:Identity)

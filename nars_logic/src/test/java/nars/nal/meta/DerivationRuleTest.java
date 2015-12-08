@@ -136,6 +136,8 @@ public class DerivationRuleTest extends TestCase {
         assertEquals(s, t.toString());
         assertEquals("%prefix", t.target.toString());
         assertEquals(EllipsisOneOrMore.class, t.getClass());
+
+        assertEquals(t, $("%prefix")); //equality between target and itself
     }
 
     @Test public void testEllipsisZeroOrMore() {
