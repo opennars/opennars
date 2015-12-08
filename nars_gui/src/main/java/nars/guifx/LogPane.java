@@ -15,7 +15,7 @@ import nars.Premise;
 import nars.concept.Concept;
 import nars.guifx.treemap.Item;
 import nars.guifx.treemap.TreemapChart;
-import nars.truth.Stamp;
+import nars.nal.nal7.Tense;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -239,7 +239,7 @@ public class LogPane extends BorderPane  {
     /** displays a specific (from) or a range (from..to) of cycle time values */
     static class CycleActivationBar extends Label {
         private final long from;
-        private long to = Stamp.TIMELESS;
+        private long to = Tense.TIMELESS;
 
         public CycleActivationBar(long from) {
             super(Long.toString(from));
@@ -255,7 +255,7 @@ public class LogPane extends BorderPane  {
         }
 
         protected void update() {
-            if (to == Stamp.TIMELESS)
+            if (to == Tense.TIMELESS)
                 setText(Long.toString(from));
             else {
                 setText(Long.toString(from) + " .. " + Long.toString(to) );

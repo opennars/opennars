@@ -3,9 +3,9 @@ package nars.guifx.graph2.layout;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.graph2.TermNode;
+import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.Term;
-import nars.truth.Stamp;
 
 import java.util.Iterator;
 
@@ -79,7 +79,7 @@ public class ConceptComet extends HyperassociativeMap2D {
 
 
         long xCreation = x.getCreationTime();
-        if (xCreation <= Stamp.TIMELESS) {
+        if (xCreation <= Tense.TIMELESS) {
             xCreation = (long) now;
         }
 

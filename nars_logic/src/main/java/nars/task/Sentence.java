@@ -29,7 +29,9 @@ import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
-import nars.truth.*;
+import nars.truth.Stamp;
+import nars.truth.Truth;
+import nars.truth.Truthed;
 import nars.util.data.id.Named;
 
 import javax.annotation.Nullable;
@@ -44,18 +46,43 @@ import java.util.Comparator;
  */
 public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Serializable {
 
+    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
+     * returns the compound valid for a Task if so,
+     * otherwise returns null
+     * */
+    static Compound validTaskTerm(final Term t) {
+        if (invalidTaskTerm(t))
+            return null;
+        return ((Compound)t);
+    }
+
+    /** only need the positive version of it which calls this */
+    @Deprecated static boolean invalidTaskTerm(Term t) {
+        if (t instanceof Statement) {
+            Statement st = (Statement) t;
+
+            /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
+            if (st.subjectOrPredicateIsIndependentVar())
+                return true;
+
+            return Statement.invalidStatement(st);
+
+        }
+        else {
+            return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)
+        }
+    }
+
     char getPunctuation();
+
     @Override
     long[] getEvidence();
+
     @Override
     long getCreationTime();
-    @Override
-    long getOccurrenceTime();
 
     @Override
     Sentence setCreationTime(long c);
-    @Override
-    Sentence setOccurrenceTime(long o);
     //public Sentence setDuration(int d);
 
 
@@ -125,52 +152,11 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //            into.putLong(e);
 //    }
 
-    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
-     * returns the compound valid for a Task if so,
-     * otherwise returns null
-     * */
-    static Compound validTaskTerm(final Term t) {
-        if (invalidTaskTerm(t))
-            return null;
-        return ((Compound)t);
-    }
-
-    /** only need the positive version of it which calls this */
-    @Deprecated static boolean invalidTaskTerm(Term t) {
-        if (t instanceof Statement) {
-            Statement st = (Statement) t;
-
-            /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
-            if (st.subjectOrPredicateIsIndependentVar())
-                return true;
-
-            return Statement.invalidStatement(st);
-
-        }
-        else {
-            return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)
-        }
-    }
 
 
 
 
-    /**
-     * Check whether different aspects of sentence are equivalent to another one
-     *
-     * @param that The other judgment
-     * @return Whether the two are equivalent
-     */
-    boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime);
 
-
-    default Sentence setOccurrenceTime(Tense tense, int duration) {
-        return setOccurrenceTime(getCreationTime(), tense, duration);
-    }
-
-    default Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
-        return setOccurrenceTime(Tense.getOccurrenceTime(creation, tense, duration));
-    }
 
 
 //
@@ -183,10 +169,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //        return clon;
 //    }
 
-    default Sentence setEternal() {
-        setTime(getCreationTime(), Stamp.ETERNAL);
-        return this;
-    }
+
 
 //    public final <X extends Compound> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
 //        X ct = termOrNull(t);
@@ -256,49 +239,6 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //        return s;
 //    }
 
-    //projects the truth to a certain time, covering all 4 cases as discussed in
-    //https://groups.google.com/forum/#!searchin/open-nars/task$20eteneral/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
-    default DefaultTruth projection(final long targetTime, final long currentTime) {
-
-        final Truth currentTruth = getTruth();
-        long occurrenceTime = getOccurrenceTime();
-
-        boolean eternal = targetTime == Stamp.ETERNAL;
-        boolean tenseEternal = Tense.isEternal(occurrenceTime);
-        if (eternal && tenseEternal) {
-            return new DefaultTruth(currentTruth);                 //target and itself is eternal so return the truth of itself
-        }
-        else if(!eternal && tenseEternal) {
-            return new DefaultTruth(currentTruth);                 //target is not eternal but itself is,
-        }                                                                        //note: we don't need to project since itself holds for every moment.
-        else if (eternal && !tenseEternal) { //target is eternal, but ours isnt, so we need to eternalize it
-            return TruthFunctions.eternalize(currentTruth);
-        }
-        else {
-            //ok last option is that both are tensed, in this case we need to project to the target time
-            //but since also eternalizing is valid, we use the stronger one.
-            DefaultTruth eternalTruth = TruthFunctions.eternalize(currentTruth);
-            float factor = TruthFunctions.temporalProjection(targetTime, occurrenceTime, currentTime);
-            float projectedConfidence = factor * currentTruth.getConfidence();
-
-            if(projectedConfidence > eternalTruth.getConfidence()) {
-                return new DefaultTruth(currentTruth.getFrequency(), projectedConfidence);
-            }
-            else {
-                return eternalTruth;
-            }
-        }
-    }
-
-    /** calculates projection truth quality without creating new TruthValue instances */
-    default float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
-        return projectionTruthQuality(getTruth(), targetTime, currentTime, problemHasQueryVar);
-    }
-
-    /** calculates projection truth quality without creating new TruthValue instances */
-    default float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
-        return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
-    }
 
     /**
      * Recognize a Question
@@ -432,9 +372,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
 
 
-    default boolean isTimeless() {
-        return getOccurrenceTime() == Stamp.TIMELESS;
-    }
+
 
 
 
@@ -452,9 +390,6 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
 
-    default boolean concurrent(final Sentence s, final int duration) {
-        return Tense.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
-    }
 
 
     @Override

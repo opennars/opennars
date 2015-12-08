@@ -13,12 +13,12 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -92,7 +92,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     protected Term termClassInPackage(Term classs, Term packagge) {
         Inheritance<SetExt<Term>, Term> t = $.inst(classs, packagge);
         nar.believe(metadataPriority, t,
-                Stamp.ETERNAL,
+                Tense.ETERNAL,
                 metadataBeliefFreq, metadataBeliefConf);
         return t;
     }
@@ -108,7 +108,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
     protected void onInstanceOfClass(Term identifier, Term clas) {
         nar.believe(metadataPriority, Instance.make(identifier, clas),
-            Stamp.ETERNAL,
+            Tense.ETERNAL,
             metadataBeliefFreq, metadataBeliefConf);
     }
 
@@ -118,7 +118,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
         Compound c = (Compound) Similarity.make(oterm, prevOterm);
         if (c!=null)
             nar.believe(metadataPriority, c,
-                Stamp.ETERNAL,
+                Tense.ETERNAL,
                 metadataBeliefFreq, metadataBeliefConf);
 
     }

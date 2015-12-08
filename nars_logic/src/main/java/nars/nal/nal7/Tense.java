@@ -10,10 +10,10 @@ import nars.nal.nal8.Operation;
 import nars.op.mental.Mental;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.TemporalTasked;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
 import nars.truth.Truth;
 
 import java.io.IOException;
@@ -39,6 +39,17 @@ public enum Tense  {
     public static final int ORDER_BACKWARD = -1;
 
     @Deprecated public static final int ORDER_INVALID = -2;
+    /**
+     * default for atemporal events
+     * means "always" in Judgment/Question, but "current" in Goal/Quest
+     */
+    public static final long ETERNAL = Integer.MIN_VALUE;
+    /**
+     * flag for an unknown time, or as-yet-un-perceived time,
+     * signalling a missing value to set to some default
+     * if eventually perceived or derived
+     */
+    public static final int TIMELESS = Integer.MIN_VALUE + 1;
 
     public final String symbol;
 
@@ -90,7 +101,7 @@ public enum Tense  {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
+    public static float solutionQuality(final Task problem, final Task solution, long time) {
 
         if (!matchingOrder(problem, solution)) {
             return 0;
@@ -99,14 +110,14 @@ public enum Tense  {
         return solutionQualityMatchingOrder(problem, solution, time);
     }
 
-    public static float solutionQualityMatchingOrder(final Sentence problem, final Sentence solution, final long time) {
+    public static float solutionQualityMatchingOrder(final Task problem, final Task solution, final long time) {
         return solutionQualityMatchingOrder(problem, solution, time, problem.hasQueryVar() );
     }
 
     /**
         this method is used if the order is known to be matching, so it is not checked
      */
-    public static float solutionQualityMatchingOrder(final Sentence problem, final Sentence solution, final long time, final boolean hasQueryVar) {
+    public static float solutionQualityMatchingOrder(final Task problem, final Task solution, final long time, final boolean hasQueryVar) {
 
         /*if ((problem == null) || (solution == null)) {
             throw new RuntimeException("problem or solution is null");
@@ -130,11 +141,11 @@ public enum Tense  {
         }
     }
 
-    public static float solutionQuality(boolean hasQueryVar, long occTime, final Sentence solution, final Truth projectedTruth, long time) {
+    public static float solutionQuality(boolean hasQueryVar, long occTime, final Task solution, final Truth projectedTruth, long time) {
         return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
     }
 
-    public static float solutionQuality(final Sentence problem, final Sentence solution, Truth truth, long time) {
+    public static float solutionQuality(final Task problem, final Task solution, Truth truth, long time) {
         return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
     }
 
@@ -149,7 +160,7 @@ public enum Tense  {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static Budget solutionEval(final Task task, final Sentence solution, final Premise p) {
+    public static Budget solutionEval(final Task task, final Task solution, final Premise p) {
         //boolean feedbackToLinks = false;
         /*if (task == null) {
             task = nal.getCurrentTask();
@@ -195,13 +206,13 @@ public enum Tense  {
      * occur at the same time, relative to duration: order = concurrent
      */
     public static int order(final long a, final long b, final int durationCycles) {
-        if ((a == Stamp.ETERNAL) || (b == Stamp.ETERNAL))
+        if ((a == ETERNAL) || (b == ETERNAL))
             throw new RuntimeException("order() does not compare ETERNAL times");
 
         return order(b - a, durationCycles);
     }
 
-    public static boolean concurrent(Sentence a, Sentence b, final int durationCycles) {
+    public static boolean concurrent(TemporalTasked a, TemporalTasked b, final int durationCycles) {
         return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
     }
 
@@ -212,11 +223,11 @@ public enum Tense  {
         //since Stamp.ETERNAL is Integer.MIN_VALUE,
         //avoid any overflow errors by checking eternal first
 
-        if (a == Stamp.ETERNAL) {
+        if (a == ETERNAL) {
             //if both are eternal, consider concurrent.  this is consistent with the original
             //method of calculation which compared equivalent integer values only
-            return (b == Stamp.ETERNAL);
-        } else if (b == Stamp.ETERNAL) {
+            return (b == ETERNAL);
+        } else if (b == ETERNAL) {
             return false; //a==b was compared above
         } else {
             return order(a, b, perceptualDuration) == ORDER_CONCURRENT;
@@ -229,13 +240,13 @@ public enum Tense  {
 
     /** true if B is after A */
     public static boolean after(long a, long b, int perceptualDuration) {
-        if (a == Stamp.ETERNAL || b == Stamp.ETERNAL)
+        if (a == ETERNAL || b == ETERNAL)
             return false;
         return order(a, b, perceptualDuration) == ORDER_FORWARD;
     }
 
     public static boolean isEternal(final long t)  {
-        return t <= Stamp.TIMELESS; /* includes ETERNAL */
+        return t <= TIMELESS; /* includes ETERNAL */
     }
 
     public static long getOccurrenceTime(final Tense tense, Memory m) {
@@ -248,7 +259,7 @@ public enum Tense  {
 
     public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
 
-        if (creationTime == Stamp.TIMELESS) {
+        if (creationTime == TIMELESS) {
             //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
             //so we base it at zero to make this possible
             creationTime = 0;
@@ -264,7 +275,7 @@ public enum Tense  {
             default:
             //case Unknown:
             //case Eternal:
-                return Stamp.ETERNAL;
+                return ETERNAL;
         }
     }
 
@@ -274,12 +285,12 @@ public enum Tense  {
     }
 
     /** inner between: time difference of later.start() - earlier.end() */
-    public static int between(Task task, Task belief) {
+    public static int between(TemporalTasked task, TemporalTasked belief) {
         long tStart = task.start();
         long bStart = belief.start();
 
-        Task earlier = tStart <= bStart ? task : belief;
-        Task later = earlier == task ? belief : task;
+        TemporalTasked earlier = tStart <= bStart ? task : belief;
+        TemporalTasked later = earlier == task ? belief : task;
 
         long a = earlier.end();
         long b = later.start();
@@ -288,12 +299,41 @@ public enum Tense  {
     }
 
     /** true if there is a non-zero overlap interval of the tasks */
-    public static boolean overlaps(Task a, Task b) {
+    public static boolean overlaps(TemporalTasked a, TemporalTasked b) {
         return overlaps(a.start(), a.end(), b.start(), b.end());
     }
 
     public static boolean overlaps(long xStart, long xEnd, long yStart, long yEnd) {
         return Math.max(xStart,yStart) <= Math.min(xEnd,yEnd);
+    }
+
+    /**
+     * true if there are any common elements; assumes the arrays are sorted and contain no duplicates
+     */
+    public static boolean overlapping(final long[] a, final long[] b) {
+
+        /** TODO there may be additional ways to exit early from this loop */
+
+        for (long x : a) {
+            for (long y : b) {
+                if (x == y) {
+                    return true;
+                } else if (y > x) {
+                    //any values after y in b will not be equal to x
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean overlapping(final Sentence a, final Sentence b) {
+
+
+        if (a == b) return true;
+        if (b == null) return false;
+
+        return overlapping(a.getEvidence(), b.getEvidence());
     }
 
     @Override

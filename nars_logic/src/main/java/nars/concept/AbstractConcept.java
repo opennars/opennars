@@ -3,8 +3,8 @@ package nars.concept;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
+import nars.nal.nal7.Tense;
 import nars.term.Term;
-import nars.truth.Stamp;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     private final Term term;
 
-    long creationTime = Stamp.TIMELESS;
+    long creationTime = Tense.TIMELESS;
     protected Map meta = null;
     protected boolean constant = false;
 
@@ -58,7 +58,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     public final void setMemory(Memory memory) {
         this.memory = memory;
         if (memory!=null) {
-            if (this.creationTime == Stamp.TIMELESS) {
+            if (this.creationTime == Tense.TIMELESS) {
                 this.creationTime = memory.time();
             }
         }

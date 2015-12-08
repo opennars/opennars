@@ -7,12 +7,12 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
+import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.parser.NxParser;
 
@@ -335,7 +335,7 @@ abstract public class NQuadsRDF {
             return new MutableTask().term(belief).
                     belief().truth(1f,0.9f)
                     .time(nar.time(),
-                    Stamp.ETERNAL //TODO Tense parameter
+                    Tense.ETERNAL //TODO Tense parameter
                     );
         }
 

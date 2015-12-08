@@ -23,7 +23,7 @@ package nars.truth;
 import nars.Global;
 import nars.Symbols;
 import nars.nal.nal7.Tense;
-import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.util.Texts;
@@ -202,13 +202,13 @@ public interface Truth extends MetaTruth<Float> {
         return setFrequency(1f - getFrequency());
     }
 
-    default float projectionQuality(Sentence s, long targetTime, long currentTime, boolean problemHasQueryVar) {
+    default float projectionQuality(Task s, long targetTime, long currentTime, boolean problemHasQueryVar) {
         float freq = getFrequency();
         float conf = getConfidence();
 
         if (!Tense.isEternal(s.getOccurrenceTime()) && (targetTime != s.getOccurrenceTime())) {
             conf = TruthFunctions.eternalizedConfidence(conf);
-            if (targetTime != Stamp.ETERNAL) {
+            if (targetTime != Tense.ETERNAL) {
                 long occurrenceTime = s.getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * s.getConfidence();

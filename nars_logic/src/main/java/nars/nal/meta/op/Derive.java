@@ -7,13 +7,13 @@ import nars.budget.BudgetFunctions;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.meta.PreCondition;
+import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
-import nars.truth.Stamp;
 import nars.truth.Truth;
 
 import static nars.truth.TruthFunctions.eternalizedConfidence;
@@ -83,7 +83,7 @@ public final class Derive extends PreCondition {
             if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
                 RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm,
                         m.punct.get(), truth, budget,
-                        m.occurrenceShift.getIfAbsent(Stamp.TIMELESS), premise));
+                        m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
             }
             return false;
         }
@@ -101,9 +101,9 @@ public final class Derive extends PreCondition {
         final long now = premise.time();
         final long occ;
 
-        final int occurence_shift = m.occurrenceShift.getIfAbsent(Stamp.TIMELESS);
+        final int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
         long taskOcc = task.getOccurrenceTime();
-        if (occurence_shift > Stamp.TIMELESS) {
+        if (occurence_shift > Tense.TIMELESS) {
             occ = taskOcc + occurence_shift;
         } else {
             occ = taskOcc; //inherit premise task's
@@ -111,7 +111,7 @@ public final class Derive extends PreCondition {
 
         //just not able to measure it, closed world assumption gone wild.
 
-        if (occ != Stamp.ETERNAL && premise.isEternal() && !premise.nal(7)) {
+        if (occ != Tense.ETERNAL && premise.isEternal() && !premise.nal(7)) {
             throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
         }
 
@@ -126,7 +126,7 @@ public final class Derive extends PreCondition {
                 .budget(budget)
                 .time(now, occ)
                 .parent(task, belief /* null if single */)
-                .anticipate(occ != Stamp.ETERNAL ? anticipate : false));
+                .anticipate(occ != Tense.ETERNAL ? anticipate : false));
 
         if (derived == null) return false;
 
@@ -153,7 +153,7 @@ public final class Derive extends PreCondition {
                             eternalizedConfidence(truth.getConfidence())
                     )
                     .budgetCompoundForward(premise)
-                    .time(now, Stamp.ETERNAL)
+                    .time(now, Tense.ETERNAL)
                     .parent(task, belief)
             ));
 

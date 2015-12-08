@@ -1,8 +1,12 @@
 package nars.task;
 
 
-public interface Tasked {
-    public Task getTask();
+import nars.term.compound.Compound;
+
+@FunctionalInterface
+public interface Tasked<T extends Compound> {
+
+    Task<T> getTask();
 
     static Task the(Object v) {
         if (v instanceof Tasked)

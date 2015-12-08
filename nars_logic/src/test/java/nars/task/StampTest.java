@@ -1,6 +1,6 @@
 package nars.task;
 
-import nars.truth.Stamp;
+import nars.nal.nal7.Tense;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -25,17 +25,17 @@ public class StampTest {
     public void testOverlap() {
 
 
-        assertTrue(Stamp.overlapping(a(1, 2), a(2)));
-        assertTrue(Stamp.overlapping(a(1), a(1, 2)));
-        assertFalse(Stamp.overlapping(a(1), a(2)));
-        assertFalse(Stamp.overlapping(a(2), a(1)));
-        assertFalse(Stamp.overlapping(a(1, 2), a(3, 4)));
-        assertTrue(Stamp.overlapping(a(1, 2), a(2, 3)));
-        assertTrue(Stamp.overlapping(a(2, 3), a(1, 2)));
-        assertFalse(Stamp.overlapping(a(2, 3), a(1)));
+        assertTrue(Tense.overlapping(a(1, 2), a(2)));
+        assertTrue(Tense.overlapping(a(1), a(1, 2)));
+        assertFalse(Tense.overlapping(a(1), a(2)));
+        assertFalse(Tense.overlapping(a(2), a(1)));
+        assertFalse(Tense.overlapping(a(1, 2), a(3, 4)));
+        assertTrue(Tense.overlapping(a(1, 2), a(2, 3)));
+        assertTrue(Tense.overlapping(a(2, 3), a(1, 2)));
+        assertFalse(Tense.overlapping(a(2, 3), a(1)));
 
-        assertFalse(Stamp.overlapping(a(1), a(2, 3, 4, 5, 6)));
-        assertFalse(Stamp.overlapping(a(2, 3, 4, 5, 6), a(1)));
+        assertFalse(Tense.overlapping(a(1), a(2, 3, 4, 5, 6)));
+        assertFalse(Tense.overlapping(a(2, 3, 4, 5, 6), a(1)));
 
 
     }

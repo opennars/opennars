@@ -6,7 +6,6 @@ import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.atom.Atom;
-import nars.truth.Stamp;
 import nars.util.event.CycleReaction;
 import nars.util.event.Topic;
 import nars.util.meter.condition.EternalTaskCondition;
@@ -210,7 +209,7 @@ public class TestNAR  {
 //    }
 
     public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
-        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
+        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Tense.ETERNAL );
     }
 
     public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, Tense t) throws Narsese.NarseseException {
@@ -229,7 +228,7 @@ public class TestNAR  {
         cycleEnd += tt;
 
         EternalTaskCondition tc;
-        if (occTimeAbsolute== Stamp.ETERNAL) {
+        if (occTimeAbsolute== Tense.ETERNAL) {
             tc = new EternalTaskCondition(nar,
                     cycleStart, cycleEnd,
                     sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
@@ -301,7 +300,7 @@ public class TestNAR  {
     }
 
     public TestNAR mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
-        return mustBelieve(withinCycles, term, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL);
+        return mustBelieve(withinCycles, term, freqMin, freqMax, confMin, confMax, Tense.ETERNAL);
     }
     public TestNAR mustBelieve(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax, long tense) throws Narsese.NarseseException {
         long now = time();

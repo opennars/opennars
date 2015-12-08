@@ -32,7 +32,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -125,7 +124,7 @@ public class LocalRules {
      * */
     public static <C extends Compound> Task<C> getRevision(final Task<C> newBelief, final Task<C> oldBelief, final Premise nal, long now) {
 
-        if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
+        if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
@@ -187,14 +186,20 @@ public class LocalRules {
 
             if ( Premise.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
 
-                sol = sol.clone((Compound)u[1], originalTruth);
+                sol = sol.solution((Compound)u[1],
+                        sol.getPunctuation(),
+                        originalTruth,
+                        sol.getOccurrenceTime(),
+                        question,
+                        memory
+                );
 
                 //float newQ1 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
                 //System.err.println(" before unf: " + newQ0 + " , after " + newQ1);
                 //System.err.println();
             }
         } else {
-            sol = sol.clone(originalTruth);
+            //sol = sol.clone(originalTruth);
         }
 
         if (sol == null)
@@ -268,12 +273,14 @@ public class LocalRules {
         //memory.eventDerived.emit(sol);
             //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
         //}
-        memory.eventAnswer.emit(Tuples.twin(question, sol));
+
+        final Task finalSol = sol;
+        nal.nar().beforeNextFrame(() -> {
+            //defer this event until after frame ends so reasoning in this cycle may continue
+            memory.eventAnswer.emit(Tuples.twin(question, finalSol));
+        });
 
         return sol;
-
-
-
 
         //} else {
             //

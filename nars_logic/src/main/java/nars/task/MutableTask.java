@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class MutableTask<C extends Compound> extends DefaultTask<C>  {
+public class MutableTask<C extends Compound> extends AbstractTask<C> {
 
 
 //    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
@@ -35,7 +35,7 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
             /* budget: */ 0, Float.NaN, Float.NaN);
 
         setEternal();
-        setOccurrenceTime(TIMELESS);
+        setOccurrenceTime(Tense.TIMELESS);
     }
 
     public MutableTask(C term) {
@@ -97,7 +97,7 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
      * this will set the truth instance directly. so avoid using shared terms unless it's really meant
      */
     public MutableTask truth(final Truth tv) {
-        this.truth = tv;
+        setTruth(tv);
         return this;
     }
 
@@ -155,7 +155,7 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 
     public final MutableTask term(C t) {
-        this.term = t;
+        setTerm(t);
         return this;
     }
 
@@ -171,10 +171,10 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 
     public final MutableTask truth(float freq, float conf) {
-        if (truth == null)
-            this.truth = new DefaultTruth(freq, conf);
-        else
-            this.truth.set(freq, conf);
+        //if (truth == null)
+            setTruth(new DefaultTruth(freq, conf));
+        //else
+            //this.truth.set(freq, conf);
         return this;
     }
 

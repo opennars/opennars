@@ -10,9 +10,9 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.Deriver;
+import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.Terms;
-import nars.truth.Stamp;
 
 import java.util.function.Consumer;
 
@@ -86,7 +86,7 @@ abstract public class ConceptProcess extends AbstractPremise {
     @Override public final void updateBelief(Task nextBelief) {
         this.currentBelief = nextBelief;
 
-        this.cyclic = (nextBelief!=null) ? Stamp.overlapping(getTask(), nextBelief) :
+        this.cyclic = (nextBelief!=null) ? Tense.overlapping(getTask(), nextBelief) :
                             false;
     }
 

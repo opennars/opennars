@@ -7,6 +7,7 @@ import nars.budget.Item;
 import nars.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
+import nars.nal.nal7.Tense;
 import nars.term.Term;
 import nars.term.TermMetadata;
 import nars.term.compound.Compound;
@@ -29,21 +30,22 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable {
+abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
+        implements Task<T>, TemporalTasked<T>, Serializable {
 
     /** content term of this task */
-    protected T term;
+    private T term;
 
 
     private char punctuation;
 
-    public Truth truth;
+    private Truth truth;
 
     private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
 
-    long creationTime = Stamp.TIMELESS;
-    long occurrenceTime = Stamp.ETERNAL;
-    private int duration = Stamp.TIMELESS;
+    private long creationTime = Tense.TIMELESS;
+    private long occurrenceTime = Tense.ETERNAL;
+    private int duration = Tense.TIMELESS;
 
     /**
      * Task from which the Task is derived, or null if input
@@ -70,7 +72,7 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
     protected boolean anticipate = false;
 
 
-    public DefaultTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
+    public AbstractTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
         this(term, punctuation, truth,
                 bv.getPriority(),
                 bv.getDurability(),
@@ -79,11 +81,11 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
                 solution);
     }
 
-    public DefaultTask(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
+    public AbstractTask(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
         this(term, punc, truth, p, d, q, (Task) null, null, null);
     }
 
-    public DefaultTask(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Task parentBelief, final Task solution) {
+    public AbstractTask(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Task parentBelief, final Task solution) {
         this(term, punc, truth,
                 p, d, q,
                 Global.reference(parentTask),
@@ -93,25 +95,31 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
     }
 
     /** copy/clone constructor */
-    public DefaultTask(Task<T> task) {
+    public AbstractTask(Task<T> task) {
         this(task.getTerm(), task.getPunctuation(), task.getTruth(),
                 task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
 
+    @Override
+    public Task<T> getTask() {
+        return this;
+    }
+
+    void setTime(final long creation, final long occurrence) {
+        setCreationTime(creation);
+        setOccurrenceTime(occurrence);
+    }
 
     protected final void setTerm(T t) {
-//        //if (Global.DEBUG) {
-//        if (Sentence.invalidSentenceTerm(t)) {
-//            throw new RuntimeException("Invalid sentence content term: " + t);
-//        }
-//        //}
-
-        term = t;
+        if (!Objects.equals(this.term, t)) {
+            term = t;
+            invalidate();
+        }
     }
 
 
-    public DefaultTask(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
+    public AbstractTask(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
         super(p, d, q);
         this.truth = truth;
         this.punctuation = punctuation;
@@ -177,10 +185,10 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
         // set it to the memory's current time here,
         // and adjust occurenceTime if it's not eternal
 
-        if (getCreationTime() <= Stamp.TIMELESS) {
+        if (getCreationTime() <= Tense.TIMELESS) {
             final long now = memory.time();
             long oc = getOccurrenceTime();
-            if (oc != Stamp.ETERNAL)
+            if (oc != Tense.ETERNAL)
                 oc += now;
 
             setTime(now, oc);
@@ -240,7 +248,10 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
     }
 
     protected final void setPunctuation(char punctuation) {
-        this.punctuation = punctuation;
+        if (this.punctuation!=punctuation) {
+            this.punctuation = punctuation;
+            invalidate();
+        }
     }
 
     /** includes: evidentialset, occurrencetime, truth, term, punctuation */
@@ -370,6 +381,8 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
         return duration;
     }
 
+
+
     @Override
     public int compareTo(Object obj) {
         if (this == obj) return 0;
@@ -388,7 +401,8 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
 
         }
 
-        tc = Long.compare( getOccurrenceTime(), o.getOccurrenceTime() );
+        tc = Long.compare( getOccurrenceTime(),
+                o.getOccurrenceTime() );
         if (tc!=0) return tc;
 
 
@@ -400,7 +414,7 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
 
     @Override
     public final Sentence<T> setCreationTime(final long creationTime) {
-        if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime > Stamp.TIMELESS)) {
+        if ((this.creationTime <= Tense.TIMELESS) && (this.occurrenceTime > Tense.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
             setOccurrenceTime(this.occurrenceTime + creationTime);
         }
@@ -464,12 +478,11 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
     }
 
     @Override
-    public Task setOccurrenceTime(final long o) {
+    public void setOccurrenceTime(final long o) {
         if (o != occurrenceTime) {
             this.occurrenceTime = o;
             invalidate();
         }
-        return this;
     }
 
     public static MutableTask make() {
@@ -477,9 +490,8 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
     }
 
     @Override
-    public final DefaultTask<T> setEternal() {
-        setOccurrenceTime(Stamp.ETERNAL);
-        return this;
+    public final void setEternal() {
+        setOccurrenceTime(Tense.ETERNAL);
     }
 
 
@@ -502,18 +514,18 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
     @Override
     public final boolean equals(final Object that) {
         if (this == that) return true;
-        if (that instanceof Sentence) {
+        if (that instanceof Task) {
 
             //hash test has probably already occurred, coming from a HashMap
             //if (hashCode() != that.hashCode()) return false;
 
-            return equivalentTo((Sentence) that, true, true, true, true, false);
+            return equivalentTo((Task) that, true, true, true, true, false);
         }
         return false;
     }
 
     @Override
-    public final boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
+    public final boolean equivalentTo(final Task that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
 
         if (this == that) return true;
 
@@ -559,7 +571,7 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public final boolean equalStamp(final Stamp s, final boolean evidentialSet, final boolean creationTime, final boolean occurrenceTime) {
+    public final boolean equalStamp(final Task s, final boolean evidentialSet, final boolean creationTime, final boolean occurrenceTime) {
         if (this == s) return true;
 
         /*if (hash && (!occurrenceTime || !evidentialSet))
@@ -657,12 +669,14 @@ abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> 
 
     public final void setParentTask(Task parentTask) {
         this.parentTask = reference(parentTask);
-        invalidate();
+    }
+    public final void setParents(Reference<Task> parentTask, Reference<Task> parentBelief) {
+        this.parentTask = parentTask;
+        this.parentBelief = parentBelief;
     }
 
     public final void setParentBelief(Task parentBelief) {
         this.parentBelief = reference(parentBelief);
-        invalidate();
     }
 
     /**

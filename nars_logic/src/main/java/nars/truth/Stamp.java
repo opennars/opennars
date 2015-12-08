@@ -21,35 +21,15 @@
 package nars.truth;
 
 import nars.Global;
-import nars.Symbols;
-import nars.nal.nal7.Interval;
-import nars.nal.nal7.Tense;
-import nars.task.Sentence;
 
-import java.io.Serializable;
 import java.util.Arrays;
-
-import static nars.nal.nal7.Tense.ORDER_BACKWARD;
-import static nars.nal.nal7.Tense.ORDER_FORWARD;
 
 /**
  * TODO divide this into a Stamp and Timed interfaces,
  * with a subclass of Time additionally responsible for NAL7+ occurenceTime
  */
 
-public interface Stamp extends Interval, Cloneable, Serializable {
-
-    /**
-     * default for atemporal events
-     * means "always" in Judgment/Question, but "current" in Goal/Quest
-     */
-    long ETERNAL = Integer.MIN_VALUE;
-    /**
-     * flag for an unknown time, or as-yet-un-perceived time,
-     * signalling a missing value to set to some default
-     * if eventually perceived or derived
-     */
-    int TIMELESS = Integer.MIN_VALUE + 1;
+public interface Stamp  {
 
     /***
      * zips two evidentialBase arrays into a new one
@@ -116,59 +96,10 @@ public interface Stamp extends Interval, Cloneable, Serializable {
         return deduplicated;
     }
 
-    /**
-     * true if there are any common elements; assumes the arrays are sorted and contain no duplicates
-     */
-    static boolean overlapping(final long[] a, final long[] b) {
-
-        /** TODO there may be additional ways to exit early from this loop */
-
-        for (long x : a) {
-            for (long y : b) {
-                if (x == y) {
-                    return true;
-                } else if (y > x) {
-                    //any values after y in b will not be equal to x
-                    break;
-                }
-            }
-        }
-        return false;
-    }
-
-    static boolean overlapping(final Sentence a, final Sentence b) {
-
-
-        if (a == b) return true;
-        if (b == null) return false;
-
-        return overlapping(a.getEvidence(), b.getEvidence());
-    }
-
-
-//    public static long[] toSetArrayHeap(final long[] x) {
-//        final int l = x.length;
-//
-//        if (l < 2)
-//            return x;
-//
-//        long[] y = Arrays.copyOf(x, l);
-//
-//        int duplicates = LongDeduplicatingHeapSort.sort(y);
-//        if (duplicates == 0)
-//            return y;
-//        else {
-//            return Arrays.copyOfRange(y, duplicates, l);
-//        }
-//    }
 
     long getCreationTime();
 
     Stamp setCreationTime(long t);
-
-    long getOccurrenceTime();
-
-    Stamp setOccurrenceTime(long t);
 
 
 
@@ -254,93 +185,6 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 //        this.creationTime = c;
 //        this.hash = 0;
 //    }
-    default StringBuilder appendOccurrenceTime(final StringBuilder sb) {
-        final long oc = getOccurrenceTime();
-        final long ct = getCreationTime();
-
-        /*if (oc == Stamp.TIMELESS)
-            throw new RuntimeException("invalid occurrence time");*/
-        if (ct == Stamp.ETERNAL)
-            throw new RuntimeException("invalid creation time");
-
-        //however, timeless creation time means it has not been perceived yet
-
-        if (oc == ETERNAL) {
-            if (ct == Stamp.TIMELESS) {
-                sb.append(":-:");
-            } else {
-                sb.append(':').append(Long.toString(ct)).append(':');
-            }
-
-        } else if (oc == TIMELESS) {
-            sb.append("N/A");
-
-        } else {
-            int estTimeLength = 8; /* # digits */
-            sb.ensureCapacity(estTimeLength);
-
-            sb.append(Long.toString(ct));
-
-            long OCrelativeToCT = (oc - ct);
-            if (OCrelativeToCT >= 0)
-                sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
-            sb.append(OCrelativeToCT);
-
-        }
-
-        return sb;
-    }
-
-    default String getTense(final long currentTime, final int duration) {
-
-        if (Tense.isEternal(getOccurrenceTime())) {
-            return "";
-        }
-
-        switch (Tense.order(currentTime, getOccurrenceTime(), duration)) {
-            case ORDER_FORWARD:
-                return Symbols.TENSE_FUTURE;
-            case ORDER_BACKWARD:
-                return Symbols.TENSE_PAST;
-            default:
-                return Symbols.TENSE_PRESENT;
-        }
-    }
-
-    default CharSequence stampAsStringBuilder() {
-
-        final long[] ev = getEvidence();
-        final int len = ev != null ? ev.length : 0;
-        final int estimatedInitialSize = 8 + (len * 3);
-
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-        buffer.append(Symbols.STAMP_OPENER);
-
-        if (getCreationTime() == Stamp.TIMELESS) {
-            buffer.append('?');
-        } else if (!Tense.isEternal(getOccurrenceTime())) {
-            appendOccurrenceTime(buffer);
-        } else {
-            buffer.append(getCreationTime());
-        }
-        buffer.append(Symbols.STAMP_STARTER).append(' ');
-        for (int i = 0; i < len; i++) {
-
-            buffer.append(Long.toString(ev[i], 36));
-            if (i < (len - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
-            }
-        }
-
-        buffer.append(Symbols.STAMP_CLOSER); //.append(' ');
-
-        //this is for estimating an initial size of the stringbuffer
-        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
-
-        return buffer;
-
-
-    }
 
     /**
      * deduplicated and sorted version of the evidentialBase.
@@ -425,11 +269,7 @@ public interface Stamp extends Interval, Cloneable, Serializable {
 //        */
 //
 //    }
-    default Stamp setTime(final long creation, final long occurrence) {
-        setCreationTime(creation);
-        setOccurrenceTime(occurrence);
-        return this;
-    }
+
 
 }
 

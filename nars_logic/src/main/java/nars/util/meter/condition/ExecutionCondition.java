@@ -1,8 +1,8 @@
 package nars.util.meter.condition;
 
 import nars.NAR;
+import nars.nal.nal7.Tense;
 import nars.term.atom.Atom;
-import nars.truth.Stamp;
 
 /**
  * measures the occurrence of an execution within certain
@@ -14,7 +14,7 @@ public class ExecutionCondition implements NARCondition {
     private final long start, end;
     private final float minExpect, maxExpect;
     private boolean success = false;
-    private long successTime = Stamp.TIMELESS;
+    private long successTime = Tense.TIMELESS;
 
     public ExecutionCondition(NAR n, long start, long end, Atom opTerm, float minExpect, float maxExpect) {
 

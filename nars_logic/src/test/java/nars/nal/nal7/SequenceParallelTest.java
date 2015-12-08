@@ -8,7 +8,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -32,7 +31,7 @@ public class SequenceParallelTest {
 
         Task y = t.inputTask("(&/, <a-->b>, /10).");
         assertEquals(t.term("<a-->b>"), y.getTerm());
-        assertEquals(Stamp.ETERNAL, y.getOccurrenceTime());
+        assertEquals(Tense.ETERNAL, y.getOccurrenceTime());
 
         Task z = t.inputTask("(&/, a, /10). :|:");
         assertNull(z);

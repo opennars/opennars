@@ -14,7 +14,6 @@ import nars.term.transform.FindSubst;
 import nars.term.transform.MapSubst;
 import nars.term.transform.Subst;
 import nars.truth.DefaultTruth;
-import nars.truth.Stamp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -560,7 +559,7 @@ public interface Premise extends Level, Tasked {
         Task t = getTask();
         Task b = getBelief();
         if (b != null) {
-            return Stamp.overlapping(t, b);
+            return Tense.overlapping(t, b);
         }
         return false;
     }

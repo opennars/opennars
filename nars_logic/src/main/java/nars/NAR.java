@@ -4,7 +4,6 @@ package nars;
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
 import nars.nal.Level;
@@ -15,7 +14,6 @@ import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
 import nars.process.TaskProcess;
-import nars.task.DefaultTask;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.flow.Input;
@@ -29,8 +27,6 @@ import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 import nars.util.data.Util;
 import nars.util.event.*;
 import net.openhft.affinity.AffinityLock;
@@ -45,7 +41,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import static nars.Symbols.*;
-import static nars.truth.Stamp.ETERNAL;
+import static nars.nal.nal7.Tense.ETERNAL;
 
 
 /**
@@ -379,16 +375,12 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return input(pri, dur, goal, GOAL, occurrence, freq, conf);
     }
 
-    final public <C extends Compound> Task<C> input(float pri, float dur, C belief, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
+    final public <C extends Compound> Task<C> input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
 
-        final Truth tv;
-
-        Task<C> t = new DefaultTask<>(belief,
-                punc,
-                tv = new DefaultTruth(freq, conf),
-                pri, dur, BudgetFunctions.truthToQuality(tv));
-        t.setCreationTime(time());
-        t.setOccurrenceTime(occurrenceTime);
+        Task<C> t = new MutableTask(term, punc)
+            .truth(freq, conf)
+            .budget(pri, dur)
+            .time(time(), occurrenceTime);
 
         input(t);
 

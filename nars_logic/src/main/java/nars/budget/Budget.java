@@ -23,7 +23,7 @@ package nars.budget;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Symbols;
-import nars.truth.Stamp;
+import nars.nal.nal7.Tense;
 import nars.truth.Truth;
 import nars.util.Texts;
 import nars.util.data.Util;
@@ -84,7 +84,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * time at which this budget was last forgotten, for calculating accurate memory decay rates
      */
-    protected long lastForgetTime = Stamp.TIMELESS;
+    protected long lastForgetTime = Tense.TIMELESS;
 
 //    public Budget newDefaultBudget(Memory m, char punctuation, Truth truth) {
 //        Budget b = new Budget();
@@ -671,7 +671,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final long period;
 
-        if (this.lastForgetTime == Stamp.TIMELESS) {
+        if (this.lastForgetTime == Tense.TIMELESS) {
             period = 0;
         }
         else {

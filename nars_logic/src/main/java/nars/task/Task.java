@@ -26,19 +26,24 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 import nars.truth.Truthed;
 
 import java.lang.ref.Reference;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static nars.Global.dereference;
+import static nars.nal.nal7.Tense.ORDER_BACKWARD;
+import static nars.nal.nal7.Tense.ORDER_FORWARD;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -49,7 +54,7 @@ import static nars.Global.dereference;
  * TODO decide if the Sentence fields need to be Reference<> also
  */
 public interface Task<T extends Compound> extends Sentence<T>,
-        Itemized<Sentence<T>>, Truthed, Comparable, Tasked {
+        Itemized<Sentence<T>>, Truthed, Comparable {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -110,7 +115,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return s;
     }
 
-    @Override default Task getTask() { return this; }
+    default Task<T> getTask() { return this; }
 
     /**
      * Sets the perceived temporal duration of the Task,
@@ -148,60 +153,42 @@ public interface Task<T extends Compound> extends Sentence<T>,
     Reference<Task> getParentBeliefRef();
 
 
+    /**
+     * Check whether different aspects of sentence are equivalent to another one
+     *
+     * @param that The other judgment
+     * @return Whether the two are equivalent
+     */
+    boolean equivalentTo(final Task that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime);
 
     /** called when a Concept processes this Task */
     void onConcept(final Concept/*<T>*/ equivalentInstance);
 
-    /** clones this Task with a new Term */
-    default <X extends Compound> Task<X> clone(final X t) {
-        return clone(t, getTruth());
-    }
+    default <X extends Compound> MutableTask<X> solution(X t, char newPunc, Truth newTruth, long newOcc, Task question, Memory memory) {
 
-    default <X extends Compound> Task<X> clone(X t, Truth newTruth) {
-        return clone(t, newTruth, true);
-    }
+        MutableTask tt = new MutableTask<>(t, newPunc)
+            .truth(newTruth)
+            .budget(getPriority(), getDurability(), getQuality())
+            .time(memory.time(), newOcc);
 
-    /** clones this Task with a new Term and truth  */
-    default Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {
-        return clone(newTerm, newTruth, getOccurrenceTime());
-    }
+        tt.setParents(getParentTaskRef(), getParentBeliefRef());
 
-    default <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
-        return clone(t, newTruth, occ, true);
-    }
-
-    default Task clone(Compound t, Truth newTruth, long occ, boolean cloneEvenIfTruthEqual) {
-//        if (newTruth instanceof ProjectedTruth) {
-//            long target = ((ProjectedTruth) newTruth).getTargetTime();
-//            if (occ!=target) {
-//                cloneEvenIfTruthEqual = true;
-//                occ = target;
-//            }
-//        }
-
-        if (!cloneEvenIfTruthEqual) {
-            if (occ == getOccurrenceTime() && getTruth().equals(newTruth) && getTerm().equals(t))
-                return this;
-        }
-
-        Task tt = new DefaultTask<>(t, getPunctuation(), newTruth,
-                getPriority(), getDurability(), getQuality(),
-                getParentTaskRef(), getParentBeliefRef(), getBestSolutionRef()
-        );
-
-        //tt.setLastForgetTime(getLastForgetTime());
 
         tt.setEvidence(getEvidence());
-
-        tt.setCreationTime(getCreationTime());
-        tt.setOccurrenceTime(occ);
-        tt.log(getLog());
+        //tt.log(getLog());
+        tt.log(new Solution(question));
         return tt;
     }
 
-    /** clones this Task with a new truth */
-    default Task<T> clone(Truth newTruth) {
-        return clone(getTerm(), newTruth, getOccurrenceTime());
+    final class Solution extends AtomicReference<Task> {
+        Solution(Task referent) {
+            super(referent);
+        }
+
+        @Override
+        public String toString() {
+            return "Solved: " + get();
+        }
     }
 
 
@@ -521,42 +508,155 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     static <X extends Term> Task<Operation<X>> command(Operation<X> op) {
-        return new DefaultTask<>(op, Symbols.COMMAND, null, 0, 0, 0);
+        //TODO use lightweight CommandTask impl without all the logic metadata
+        return new MutableTask(op, Symbols.COMMAND);
     }
 
     default boolean isEternal() {
-        return getOccurrenceTime()==Stamp.ETERNAL;
+        return getOccurrenceTime()== Tense.ETERNAL;
     }
 
-//    public static enum Temporally {
-//        Before, After
-//    }
-    default boolean startsAfter(Task other/*, int perceptualDuration*/) {
-        long start = start();
-        long other_end = other.end();
-        return start - other_end > 0;
-    }
 
-    default long start() { return getOccurrenceTime(); }
-    default long end() { return start() + duration(); }
+    default StringBuilder appendOccurrenceTime(final StringBuilder sb) {
+        final long oc = getOccurrenceTime();
+        final long ct = getCreationTime();
 
-    default long getLifespan(Memory memory) {
-        final long createdAt = getCreationTime();
+        /*if (oc == Stamp.TIMELESS)
+            throw new RuntimeException("invalid occurrence time");*/
+        if (ct == Tense.ETERNAL)
+            throw new RuntimeException("invalid creation time");
 
-        if (createdAt >= Stamp.TIMELESS) {
-            return memory.time() - createdAt;
+        //however, timeless creation time means it has not been perceived yet
+
+        if (oc == Tense.ETERNAL) {
+            if (ct == Tense.TIMELESS) {
+                sb.append(":-:");
+            } else {
+                sb.append(':').append(Long.toString(ct)).append(':');
+            }
+
+        } else if (oc == Tense.TIMELESS) {
+            sb.append("N/A");
+
+        } else {
+            int estTimeLength = 8; /* # digits */
+            sb.ensureCapacity(estTimeLength);
+
+            sb.append(Long.toString(ct));
+
+            long OCrelativeToCT = (oc - ct);
+            if (OCrelativeToCT >= 0)
+                sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
+            sb.append(OCrelativeToCT);
+
         }
-        else {
-            return -1;
+
+        return sb;
+    }
+
+    default String getTense(final long currentTime, final int duration) {
+
+        if (Tense.isEternal(getOccurrenceTime())) {
+            return "";
         }
+
+        switch (Tense.order(currentTime, getOccurrenceTime(), duration)) {
+            case ORDER_FORWARD:
+                return Symbols.TENSE_FUTURE;
+            case ORDER_BACKWARD:
+                return Symbols.TENSE_PAST;
+            default:
+                return Symbols.TENSE_PRESENT;
+        }
+    }
+
+    default CharSequence stampAsStringBuilder() {
+
+        final long[] ev = getEvidence();
+        final int len = ev != null ? ev.length : 0;
+        final int estimatedInitialSize = 8 + (len * 3);
+
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        buffer.append(Symbols.STAMP_OPENER);
+
+        if (getCreationTime() == Tense.TIMELESS) {
+            buffer.append('?');
+        } else if (!Tense.isEternal(getOccurrenceTime())) {
+            appendOccurrenceTime(buffer);
+        } else {
+            buffer.append(getCreationTime());
+        }
+        buffer.append(Symbols.STAMP_STARTER).append(' ');
+        for (int i = 0; i < len; i++) {
+
+            buffer.append(Long.toString(ev[i], 36));
+            if (i < (len - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
+            }
+        }
+
+        buffer.append(Symbols.STAMP_CLOSER); //.append(' ');
+
+        //this is for estimating an initial size of the stringbuffer
+        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
+
+        return buffer;
+
 
     }
 
-    boolean isAnticipated();
 
     /** creates a new child task (has this task as its parent) */
     default MutableTask spawn(Compound content, char punc) {
         return new MutableTask(content, punc);
+    }
+
+    default long getOccurrenceTime() {
+        return Tense.ETERNAL;
+    }
+
+    //projects the truth to a certain time, covering all 4 cases as discussed in
+    //https://groups.google.com/forum/#!searchin/open-nars/task$20eteneral/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
+    default DefaultTruth projection(final long targetTime, final long currentTime) {
+
+        final Truth currentTruth = getTruth();
+        long occurrenceTime = getOccurrenceTime();
+
+        boolean eternal = targetTime == Tense.ETERNAL;
+        boolean tenseEternal = Tense.isEternal(occurrenceTime);
+        if (eternal && tenseEternal) {
+            return new DefaultTruth(currentTruth);                 //target and itself is eternal so return the truth of itself
+        }
+        else if(!eternal && tenseEternal) {
+            return new DefaultTruth(currentTruth);                 //target is not eternal but itself is,
+        }                                                                        //note: we don't need to project since itself holds for every moment.
+        else if (eternal && !tenseEternal) { //target is eternal, but ours isnt, so we need to eternalize it
+            return TruthFunctions.eternalize(currentTruth);
+        }
+        else {
+            //ok last option is that both are tensed, in this case we need to project to the target time
+            //but since also eternalizing is valid, we use the stronger one.
+            DefaultTruth eternalTruth = TruthFunctions.eternalize(currentTruth);
+            float factor = TruthFunctions.temporalProjection(targetTime, occurrenceTime, currentTime);
+            float projectedConfidence = factor * currentTruth.getConfidence();
+
+            if(projectedConfidence > eternalTruth.getConfidence()) {
+                return new DefaultTruth(currentTruth.getFrequency(), projectedConfidence);
+            }
+            else {
+                return eternalTruth;
+            }
+        }
+    }
+
+    /** calculates projection truth quality without creating new TruthValue instances */
+    default float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
+        return projectionTruthQuality(getTruth(), targetTime, currentTime, problemHasQueryVar);
+    }
+
+    /** calculates projection truth quality without creating new TruthValue instances */
+    default float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
+        return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
     }
 
 }

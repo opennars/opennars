@@ -1,5 +1,6 @@
 package nars.truth;
 
+import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.util.Texts;
 
@@ -27,7 +28,7 @@ public class TruthWave {
         //get min and max occurence time
         for (Task t : beliefs) {
             long o = t.getOccurrenceTime();
-            if (o == Stamp.ETERNAL) {
+            if (o == Tense.ETERNAL) {
                 expectEternal1 += t.getTruth().getExpectationPositive();
                 expectEternal0 += t.getTruth().getExpectationNegative();
                 numEternal++;
@@ -55,7 +56,7 @@ public class TruthWave {
         if (numTemporal > 0) {
             for (Task t : beliefs) {
                 long o = t.getOccurrenceTime();
-                if (o != Stamp.ETERNAL) {
+                if (o != Tense.ETERNAL) {
                     int i = (int)(o - min);
                     expect[1][i] += t.getTruth().getExpectationPositive();
                     expect[0][i] += t.getTruth().getExpectationNegative();

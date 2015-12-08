@@ -4,12 +4,12 @@ import nars.Global;
 import nars.Op;
 import nars.Premise;
 import nars.nal.meta.TaskBeliefPair;
+import nars.nal.nal7.Tense;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
-import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.version.Versioned;
@@ -149,8 +149,8 @@ public class RuleMatch extends FindSubst {
 
     public final void occurrenceAdd(final long cyclesDelta) {
         //TODO move to post
-        int oc = occurrenceShift.getIfAbsent(Stamp.TIMELESS);
-        if (oc == Stamp.TIMELESS)
+        int oc = occurrenceShift.getIfAbsent(Tense.TIMELESS);
+        if (oc == Tense.TIMELESS)
             oc = 0;
         oc += cyclesDelta;
         occurrenceShift.set((int)oc);

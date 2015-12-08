@@ -4,10 +4,10 @@ package nars.util.meter.condition;
 import nars.Global;
 import nars.NAR;
 import nars.Narsese;
-import nars.task.DefaultTask;
+import nars.nal.nal7.Tense;
+import nars.task.AbstractTask;
 import nars.task.Task;
 import nars.truth.DefaultTruth;
-import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.Texts;
 
@@ -18,11 +18,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class EternalTaskCondition extends DefaultTask implements NARCondition, Predicate<Task>, Consumer<Task> {
+public class EternalTaskCondition extends AbstractTask implements NARCondition, Predicate<Task>, Consumer<Task> {
 
     protected final NAR nar;
     boolean succeeded = false;
-    long successTime = Stamp.TIMELESS;
+    long successTime = Tense.TIMELESS;
 
     //@Expose
 
@@ -376,16 +376,16 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
      *  if any conditions were not successful, the cost is infinity
      * */
     public static double cost(Iterable<EternalTaskCondition> conditions) {
-        long lastSuccess = Stamp.TIMELESS;
+        long lastSuccess = Tense.TIMELESS;
         for (EternalTaskCondition e : conditions) {
             long est = e.getSuccessTime();
-            if (est != Stamp.TIMELESS) {
+            if (est != Tense.TIMELESS) {
                 if (lastSuccess < est) {
                     lastSuccess = est;
                 }
             }
         }
-        if (lastSuccess != Stamp.TIMELESS) {
+        if (lastSuccess != Tense.TIMELESS) {
             //score = 1.0 + 1.0 / (1+lastSuccess);
             return lastSuccess;
         }
