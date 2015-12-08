@@ -23,8 +23,6 @@ package nars.nal.nal4;
 import nars.Op;
 import nars.term.Term;
 
-import java.util.Arrays;
-
 
 /**
  * An extension image.
@@ -58,12 +56,13 @@ public class ImageExt extends Image {
     }
     @Override
     public Term clone(Term[] replaced) {
-        if (Image.hasPlaceHolder(replaced)) //TODO indexOfPlaceHolder
+        if ((replaced.length != size())
+                || Image.hasPlaceHolder(replaced)) //TODO indexOfPlaceHolder
             return Image.makeExt(replaced);
 
-        if (replaced.length != size())
-            //return null;
-            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + terms().length + "): " + Arrays.toString(replaced));
+//        if (replaced.length != size())
+//            //return null;
+//            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + terms().length + "): " + Arrays.toString(replaced));
 
         return new ImageExt(replaced, relationIndex);
     }

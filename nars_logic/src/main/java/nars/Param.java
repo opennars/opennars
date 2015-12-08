@@ -1,12 +1,17 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.budget.BudgetFunctions;
 import nars.nal.Level;
+import nars.task.MutableTask;
 import nars.util.data.MutableInteger;
 import objenome.Container;
 import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static nars.Symbols.GOAL;
+import static nars.Symbols.JUDGMENT;
 
 /**
  * NAR Parameters which can be changed during runtime.
@@ -107,7 +112,101 @@ public abstract class Param extends Container implements Level {
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptGoalsMax = new AtomicInteger();
 
+    public float getDefaultConfidence(char punctuation) {
 
+        switch (punctuation) {
+            case JUDGMENT:
+                return DEFAULT_JUDGMENT_CONFIDENCE;
+
+            case GOAL:
+                return DEFAULT_GOAL_CONFIDENCE;
+
+            default:
+                throw new RuntimeException("Invalid punctuation " + punctuation + " for a TruthValue");
+        }
+    }
+
+    public void applyDefaultBudget(MutableTask t) {
+
+        final char punc = t.getPunctuation();
+        t.setPriority(getDefaultPriority(punc));
+        t.setDurability(getDefaultDurability(punc));
+
+        if (t.isJudgmentOrGoal()) {
+
+            /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
+            if (Float.isNaN(t.getQuality())) {
+                t.setQuality(BudgetFunctions.truthToQuality(t.getTruth()));
+            }
+        } else if (t.isQuestion()) {
+            t.setQuality(DEFAULT_QUESTION_QUALITY);
+        }
+
+    }
+
+    /** Default confidence of input judgment. */
+    float DEFAULT_JUDGMENT_CONFIDENCE = 0.9f;
+
+    /** Default priority of input judgment */
+    float DEFAULT_JUDGMENT_PRIORITY = 0.5f;
+    /** Default durability of input judgment */
+    float DEFAULT_JUDGMENT_DURABILITY = 0.8f; //was 0.8 in 1.5.5; 0.5 after
+    /** Default priority of input question */
+    float DEFAULT_QUESTION_PRIORITY = 0.5f;
+    /** Default durability of input question */
+    float DEFAULT_QUESTION_DURABILITY = 0.9f;
+
+
+    /** Default confidence of input goal. */
+    float DEFAULT_GOAL_CONFIDENCE = 0.9f;
+    /** Default priority of input judgment */
+    float DEFAULT_GOAL_PRIORITY = 0.6f;
+    /** Default durability of input judgment */
+    float DEFAULT_GOAL_DURABILITY = 0.9f;
+    /** Default priority of input question */
+    float DEFAULT_QUEST_PRIORITY = 0.5f;
+    /** Default durability of input question */
+    float DEFAULT_QUEST_DURABILITY = 0.9f;
+
+    float DEFAULT_QUESTION_QUALITY = 0.9f;
+
+    float getDefaultPriority(char punctuation) {
+        switch (punctuation) {
+            case Symbols.JUDGMENT:
+                return DEFAULT_JUDGMENT_PRIORITY;
+
+            case Symbols.QUEST:
+                return DEFAULT_QUEST_PRIORITY;
+
+            case Symbols.QUESTION:
+                return DEFAULT_QUESTION_PRIORITY;
+
+            case Symbols.GOAL:
+                return DEFAULT_GOAL_PRIORITY;
+        }
+        throw new RuntimeException("Unknown sentence type: " + punctuation);
+    }
+
+    float getDefaultDurability(char punctuation) {
+        switch (punctuation) {
+            case Symbols.JUDGMENT:
+                return DEFAULT_JUDGMENT_DURABILITY;
+            case Symbols.QUEST:
+                return DEFAULT_QUEST_DURABILITY;
+            case Symbols.QUESTION:
+                return DEFAULT_QUESTION_DURABILITY;
+            case Symbols.GOAL:
+                return DEFAULT_GOAL_DURABILITY;
+        }
+        throw new RuntimeException("Unknown sentence type: " + punctuation);
+    }
+
+    //decision threshold is enough for now
+    float EXECUTION_SATISFACTION_TRESHOLD = 0;
+
+    public float getExecutionSatisfactionThreshold() {
+        return EXECUTION_SATISFACTION_TRESHOLD;
+    }
 
 
 //    /** Reliance factor, the empirical confidence of analytical truth.

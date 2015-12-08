@@ -16,6 +16,7 @@ import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
 import nars.process.TaskProcess;
 import nars.task.DefaultTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.flow.Input;
 import nars.task.flow.TaskQueue;
@@ -42,6 +43,9 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
+
+import static nars.Symbols.*;
+import static nars.truth.Stamp.ETERNAL;
 
 
 /**
@@ -70,13 +74,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
                     "    Github website:  http://github.com/opennars/ \n" +
                     "               IRC:  http://webchat.freenode.net/?channels=nars \n";
 
-    float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
-    protected float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
-    protected float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
-    float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
-    float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
-    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
-    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
+//    float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
+//    protected float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
+//    protected float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
+//    float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
+//    float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
+//    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
+//    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
 
     final static Consumer<Serializable> onError = e -> {
         if (e instanceof Throwable) {
@@ -253,7 +257,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /** ask question */
     public Task ask(Compound c)  {
         //TODO remove '?' if it is attached at end
-        return ask(c, Symbols.QUESTION);
+        return ask(c, QUESTION);
     }
 
     /** ask quest */
@@ -266,12 +270,15 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     /** ask quest */
     public Task should(Compound quest)  {
-        return ask(quest, Symbols.QUEST);
+        return ask(quest, QUEST);
     }
 
     /** desire goal */
     public Task goal(Compound goalTerm, Tense tense, float freq, float conf) throws Narsese.NarseseException {
-        return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, time(tense), freq, conf);
+        return goal(
+                memory.getDefaultPriority(GOAL),
+                memory.getDefaultDurability(GOAL),
+                goalTerm, time(tense), freq, conf);
     }
 
 
@@ -279,22 +286,23 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        return believe(priority, termString, when, freq, conf);
 //    }
 
-    public Task believe(float priority, Compound term, long when, float freq, float conf) throws Narsese.NarseseException {
-        return believe(priority, defaultJudgmentDurability, term, when, freq, conf);
+    public NAR believe(Compound term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
+        believe(memory.getDefaultPriority(JUDGMENT), term, time(tense), freq, conf);
+        return this;
     }
 
+    public Task believe(float priority, Compound term, long when, float freq, float conf) throws Narsese.NarseseException {
+        return believe(priority, memory.getDefaultDurability(JUDGMENT), term, when, freq, conf);
+    }
 
     public NAR believe(Compound term, float freq, float conf) throws Narsese.NarseseException {
         return believe(term, Tense.Eternal, freq, conf);
     }
 
-    public NAR believe(Compound term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
-        believe(defaultJudgmentPriority, term, time(tense), freq, conf);
-        return this;
-    }
+
 
     public NAR believe(String term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
-        believe(defaultJudgmentPriority, term(term), time(tense), freq, conf);
+        believe(memory.getDefaultPriority(JUDGMENT), term(term), time(tense), freq, conf);
         return this;
     }
 
@@ -312,7 +320,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public NAR believe(Compound term) throws Narsese.NarseseException {
-        return believe(term, 1.0f, defaultJudgmentConfidence);
+        return believe(term, 1.0f, memory.getDefaultConfidence(JUDGMENT));
     }
 
 //    public NAR believe(Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
@@ -361,14 +369,14 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //    }
 
     public <C extends Compound> Task<C> believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
-        return input(pri, dur, term, Symbols.JUDGMENT, occurrenceTime, freq, conf);
+        return input(pri, dur, term, JUDGMENT, occurrenceTime, freq, conf);
     }
 
     /**
      * TODO add parameter for Tense control. until then, default is Now
      */
     public <T extends Compound> Task<T> goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws Narsese.NarseseException {
-        return input(pri, dur, goal, Symbols.GOAL, occurrence, freq, conf);
+        return input(pri, dur, goal, GOAL, occurrence, freq, conf);
     }
 
     final public <C extends Compound> Task<C> input(float pri, float dur, C belief, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
@@ -387,19 +395,21 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return t;
     }
 
-    public Task ask(Compound term, char questionOrQuest) throws Narsese.NarseseException {
+    public <T extends Compound> Task<T> ask(T term, char questionOrQuest) throws Narsese.NarseseException {
 
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
-        final Task<?> t = new DefaultTask<>(
-                term,
-                questionOrQuest,
-                null,
-                defaultQuestionPriority,
-                defaultQuestionDurability,
-                1);
-        t.setCreationTime(time());
+        final MutableTask<T> t = new MutableTask(term);
+        if (questionOrQuest == QUESTION)
+            t.question();
+        else if (questionOrQuest == QUEST)
+            t.quest();
+        else
+            throw new RuntimeException("invalid punctuation");
+
+        t.time(time(), ETERNAL);
+
         input(t);
 
         return t;
@@ -439,10 +449,6 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
             if (n == 0) {
                 m.remove(t, "Unknown Command");
             }
-            return false;
-        }
-
-        if (t.isDeleted()) {
             return false;
         }
 

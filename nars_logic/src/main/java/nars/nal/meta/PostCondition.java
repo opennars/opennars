@@ -8,13 +8,11 @@ import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.truth.Truth;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BinaryOperator;
 
 import static nars.$.the;
 
@@ -27,7 +25,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
     public static final float HALF = 0.5f;
 
-    public PostCondition(Term term, PreCondition[] afterConclusions, BinaryOperator<Truth> truth, BinaryOperator<Truth> desire) {
+    public PostCondition(Term term, PreCondition[] afterConclusions, TruthOperator truth, TruthOperator desire) {
         this.term = term;
         //this.modifiers = modifiers;
         this.afterConclusions = afterConclusions;
@@ -47,9 +45,7 @@ public class PostCondition implements Serializable, Level //since there can be m
      */
     public final PreCondition[] afterConclusions;
 
-    public final BinaryOperator<Truth> truth;
-    public final BinaryOperator<Truth> desire;
-    //public boolean negate = false;
+    public final TruthOperator truth, desire;
 
 
     /**
@@ -101,7 +97,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                                      Term... modifiers) throws RuntimeException {
 
 
-        BinaryOperator<Truth> judgmentTruth = null,goalTruth = null;
+        TruthOperator judgmentTruth = null,goalTruth = null;
 
         //boolean negate = false;
         char puncOverride = 0;
@@ -144,8 +140,10 @@ public class PostCondition implements Serializable, Level //since there can be m
                             throw new RuntimeException("unknown punctuation: " + which);
                     }
                     break;
+
+                //TODO rename to: 'Belief'
                 case "Truth":
-                    BinaryOperator<Truth> tm = BeliefFunction.Helper.apply(which);
+                    TruthOperator tm = BeliefFunction.get.belief(which);
                     if (tm != null) {
                         if (judgmentTruth != null) //only allow one
                             throw new RuntimeException("beliefTruth " + judgmentTruth + " already specified; attempting to set to " + tm);
@@ -156,7 +154,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "Desire":
-                    BinaryOperator<Truth> dm = BeliefFunction.Helper.apply(which);
+                    TruthOperator dm = BeliefFunction.get.desire(which);
                     if (dm != null) {
                         if (goalTruth != null) //only allow one
                             throw new RuntimeException("goalTruth " + goalTruth + " already specified; attempting to set to " + dm);

@@ -1,10 +1,6 @@
 package nars.truth;
 
-import nars.Global;
 import nars.util.data.Util;
-
-import static nars.Symbols.GOAL;
-import static nars.Symbols.JUDGMENT;
 
 
 public abstract class AbstractTruth<T> implements MetaTruth<T> {
@@ -55,19 +51,6 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     public abstract boolean equalsFrequency(Truth t);
 
 
-    public static float getDefaultConfidence(char punctuation) {
-
-        switch (punctuation) {
-            case JUDGMENT:
-                return Global.DEFAULT_JUDGMENT_CONFIDENCE;
-
-            case GOAL:
-                return Global.DEFAULT_GOAL_CONFIDENCE;
-
-            default:
-                throw new RuntimeException("Invalid punctuation " + punctuation + " for a TruthValue");
-        }
-    }
 
     /**
      * The String representation of a TruthValue, as used internally by the system

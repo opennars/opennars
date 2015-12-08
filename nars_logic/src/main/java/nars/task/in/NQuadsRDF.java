@@ -278,10 +278,12 @@ abstract public class NQuadsRDF {
 
         }
         else if (predicate.equals(equivalentClass)) {
-            belief = Task.taskable(Equivalence.make(subject, object));
+
+            belief = (Compound) Equivalence.make(subject, object);
         }
         else if (predicate.equals(sameAs)) {
-            belief = Task.taskable(Similarity.make(subject, object));
+
+            belief = (Compound) Similarity.make(subject, object);
             //belief = (Equivalence.make(subject, object));
         }
         else if (predicate.equals(domain)) {
@@ -307,7 +309,8 @@ abstract public class NQuadsRDF {
 
         }
         else if (predicate.equals(equivalentProperty)) {
-            belief = Task.taskable(Equivalence.make(subject, object));
+
+            belief = (Compound) Equivalence.make(subject, object);
         }
         else if (predicate.equals(inverseOf)) {
 
@@ -315,9 +318,8 @@ abstract public class NQuadsRDF {
         }
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
-            belief = Task.taskable(
-                Negation.make(Similarity.make(subject, object))
-            );
+
+            belief = (Compound) Negation.make(Similarity.make(subject, object));
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);

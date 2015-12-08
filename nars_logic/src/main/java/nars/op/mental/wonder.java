@@ -18,15 +18,12 @@
 package nars.op.mental;
 
 import com.google.common.collect.Lists;
-import nars.Global;
 import nars.Symbols;
-import nars.budget.Budget;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.truth.Stamp;
 
 import java.util.List;
 
@@ -45,11 +42,8 @@ public class wonder extends SyncOperator implements Mental {
         final Operation operation = t.getTerm();
         Term content = operation.arg(0);
 
-
-        Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-
         return Lists.newArrayList(
-                operation.newSubTask(t, nar.memory, (Compound)content, Symbols.QUESTION, null, Stamp.ETERNAL, budget)
+            t.spawn((Compound)content, Symbols.QUESTION).eternal()
         );
     }
         

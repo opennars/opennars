@@ -22,7 +22,6 @@ package nars.budget;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Global;
 import nars.Symbols;
 import nars.truth.Stamp;
 import nars.truth.Truth;
@@ -87,22 +86,20 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      */
     protected long lastForgetTime = Stamp.TIMELESS;
 
-    public Budget(char punctuation, Truth qualityFromTruth) {
-        this(punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_PRIORITY :
-                        (punctuation == Symbols.QUESTION ? Global.DEFAULT_QUESTION_PRIORITY :
-                                (punctuation == Symbols.GOAL ? Global.DEFAULT_GOAL_PRIORITY :
-                                        Global.DEFAULT_QUEST_PRIORITY)),
-                punctuation, qualityFromTruth);
-    }
-
-    public Budget(final float p, char punctuation, Truth qualityFromTruth) {
-        this(p,
-                punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_DURABILITY :
-                        (punctuation == Symbols.QUESTION ? Global.DEFAULT_QUESTION_DURABILITY :
-                                (punctuation == Symbols.GOAL ? Global.DEFAULT_GOAL_DURABILITY :
-                                        Global.DEFAULT_QUEST_DURABILITY)),
-                qualityFromTruth);
-    }
+//    public Budget newDefaultBudget(Memory m, char punctuation, Truth truth) {
+//        Budget b = new Budget();
+//        m.applyDefaultBudget(b, punctuation, truth);
+//        return b;
+//    }
+//
+//    public Budget(final float p, char punctuation, Truth qualityFromTruth) {
+//        this(p,
+//                punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_DURABILITY :
+//                        (punctuation == Symbols.QUESTION ? Global.DEFAULT_QUESTION_DURABILITY :
+//                                (punctuation == Symbols.GOAL ? Global.DEFAULT_GOAL_DURABILITY :
+//                                        Global.DEFAULT_QUEST_DURABILITY)),
+//                qualityFromTruth);
+//    }
 
     public Budget(final float p, final float d, final Truth qualityFromTruth) {
         this(p, d, qualityFromTruth !=
@@ -188,33 +185,6 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
 
-    public static float newDefaultPriority(char punctuation) {
-        switch (punctuation) {
-            case Symbols.JUDGMENT:
-                return Global.DEFAULT_JUDGMENT_PRIORITY;
-
-            case Symbols.QUEST:
-            case Symbols.QUESTION:
-                return Global.DEFAULT_QUESTION_PRIORITY;
-
-            case Symbols.GOAL:
-                return Global.DEFAULT_GOAL_PRIORITY;
-        }
-        throw new RuntimeException("Unknown sentence type: " + punctuation);
-    }
-
-    public static float newDefaultDurability(char punctuation) {
-        switch (punctuation) {
-            case Symbols.JUDGMENT:
-                return Global.DEFAULT_JUDGMENT_DURABILITY;
-            case Symbols.QUEST:
-            case Symbols.QUESTION:
-                return Global.DEFAULT_QUESTION_DURABILITY;
-            case Symbols.GOAL:
-                return Global.DEFAULT_GOAL_DURABILITY;
-        }
-        throw new RuntimeException("Unknown sentence type: " + punctuation);
-    }
 
     public static float summarySum(Iterable<? extends Budgeted> dd) {
         float f = 0;
@@ -365,7 +335,6 @@ public class Budget implements Cloneable, Prioritized, Serializable {
             throw new RuntimeException("NaN priority");
         }
         this.priority = Util.clamp(p);
-
     }
 
     /**

@@ -114,7 +114,8 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
     @Override
     protected void onInstanceChange(Term oterm, Term prevOterm) {
-        Compound c = Task.taskable( Similarity.make(oterm, prevOterm));
+
+        Compound c = (Compound) Similarity.make(oterm, prevOterm);
         if (c!=null)
             nar.believe(metadataPriority, c,
                 Stamp.ETERNAL,

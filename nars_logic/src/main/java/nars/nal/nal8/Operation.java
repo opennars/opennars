@@ -96,11 +96,12 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
         throw new RuntimeException("not what is intended");
     }
 
-    public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
-        return newSubTask(parent, m, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
+
+    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+        return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
     }
 
-    public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
+    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
         return MutableTask.make(content)
                 .punctuation(punctuation)
                 .truth(truth)

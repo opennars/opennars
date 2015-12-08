@@ -20,15 +20,10 @@
  */
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
-import nars.Global;
-import nars.Symbols;
-import nars.budget.Budget;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.compound.Compound;
-import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.ArrayList;
@@ -47,19 +42,20 @@ public class believe extends SyncOperator implements Mental {
 
         //TODO convert to TaskSeed
 
-        Compound content = Task.taskable(op.getTerm().arg(0));
+        Compound content = (Compound) op.getTerm().arg(0);
         if (content == null)
             return null;
 
         Truth truth;
 
-        //TODO clean this up, it's non-standard
-        return Lists.newArrayList(op.getTerm().newSubTask(
-                op,
-                nar.memory,
-                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),
-                nar.time(),
-                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)));
+        throw new RuntimeException("unimpl TODO");
+//        //TODO clean this up, it's non-standard
+//        return Lists.newArrayList(op.getTerm().newSubTask(
+//                op,
+//                nar.memory,
+//                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),
+//                nar.time(),
+//                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)));
     }
 
 //    @Override

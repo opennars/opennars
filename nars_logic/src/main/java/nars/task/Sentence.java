@@ -126,11 +126,17 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //    }
 
     /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
-     * returns true if the term is invalid for use as sentence content term
-     * TODO invert boolean to: isValidSentenceTerm
+     * returns the compound valid for a Task if so,
+     * otherwise returns null
      * */
-    static boolean invalidSentenceTerm(final Term t) {
+    static Compound validTaskTerm(final Term t) {
+        if (invalidTaskTerm(t))
+            return null;
+        return ((Compound)t);
+    }
 
+    /** only need the positive version of it which calls this */
+    @Deprecated static boolean invalidTaskTerm(Term t) {
         if (t instanceof Statement) {
             Statement st = (Statement) t;
 
@@ -144,9 +150,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         else {
             return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)
         }
-
     }
-
 
 
 

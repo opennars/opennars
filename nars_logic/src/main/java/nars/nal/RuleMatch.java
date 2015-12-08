@@ -3,8 +3,6 @@ package nars.nal;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
-import nars.Symbols;
-import nars.nal.meta.PostCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.task.PreTask;
 import nars.task.Task;
@@ -17,7 +15,6 @@ import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.version.Versioned;
 
 import java.util.Random;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 
 
@@ -26,9 +23,6 @@ import java.util.function.Consumer;
  */
 public class RuleMatch extends FindSubst {
 
-
-
-
     /** Global Context */
     public Consumer<Task> receiver;
 
@@ -36,12 +30,8 @@ public class RuleMatch extends FindSubst {
     @Deprecated //reference to the rule should not be necessary when complete
     public TaskRule rule;
 
-
     /** current Premise */
     public Premise premise;
-
-
-
 
     public final VarCachedVersionMap secondary;
     public final Versioned<Integer> occurrenceShift;
@@ -137,76 +127,9 @@ public class RuleMatch extends FindSubst {
         premise.memory().remove(task, "Insufficient Derived Budget");
     }
 
-//    /**
-//     * for debugging
-//     */
-//    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
-//        Term termm = resolve(outcome.term);
-//        if (termm != null) {
-//            premise.memory().remove(
-//                    new PreTask(termm, punct, truth,
-//                            Budget.zero, post.occurence_shift, premise
-//                    ),
-//                    "Cyclic:" +
-//                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
-//                            Arrays.toString(premise.getBelief().getEvidence())
-//            );
-//        }
+//    static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
+//        return !((truth == null) || (truth.getConfidence() < minConf));
 //    }
-
-
-    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
-
-
-        final BinaryOperator<Truth> f = getTruthFunction(punc, outcome);
-        if (f == null) return null;
-
-
-        final Truth truth = f.apply(T, B);
-//        if (T!=null && truth == T)
-//            throw new RuntimeException("tried to steal Task's truth instance: " + f);
-//        if (B!=null && truth == B)
-//            throw new RuntimeException("tried to steal Belief's truth instance: " + f);
-
-
-        //minConfidence pre-filter
-        final float minConf = Global.DEBUG ? Global.CONFIDENCE_PREFILTER_DEBUG : Global.CONFIDENCE_PREFILTER;
-        return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
-    }
-
-    @Deprecated
-    static BinaryOperator<Truth> getTruthFunction(char punc, PostCondition outcome) {
-
-        switch (punc) {
-
-            case Symbols.JUDGMENT:
-                return outcome.truth;
-
-            case Symbols.GOAL:
-                if (outcome.desire == null) {
-                    //System.err.println(outcome + " has null desire function");
-                    return null; //no desire function specified for this rule
-                } else {
-                    return outcome.desire;
-                }
-
-            /*case Symbols.QUEST:
-            case Symbols.QUESTION:
-            */
-
-            default:
-                return null;
-        }
-
-    }
-
-
-    static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
-        return !((truth == null) || (truth.getConfidence() < minConf));
-    }
-
-
-
 
 
 //    public Term resolveTest(final Term t) {
@@ -233,6 +156,69 @@ public class RuleMatch extends FindSubst {
         occurrenceShift.set((int)oc);
     }
 
+
+//    /**
+//     * for debugging
+//     */
+//    private void removeCyclic(PostCondition outcome, Premise premise, Truth truth, char punct) {
+//        Term termm = resolve(outcome.term);
+//        if (termm != null) {
+//            premise.memory().remove(
+//                    new PreTask(termm, punct, truth,
+//                            Budget.zero, post.occurence_shift, premise
+//                    ),
+//                    "Cyclic:" +
+//                            Arrays.toString(premise.getTask().getEvidence()) + ',' +
+//                            Arrays.toString(premise.getBelief().getEvidence())
+//            );
+//        }
+//    }
+
+//
+//    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
+//
+//
+//        final TruthOperator f = getTruthFunction(punc, outcome);
+//        if (f == null) return null;
+//
+//
+//        final Truth truth = f.apply(T, B, null);
+////        if (T!=null && truth == T)
+////            throw new RuntimeException("tried to steal Task's truth instance: " + f);
+////        if (B!=null && truth == B)
+////            throw new RuntimeException("tried to steal Belief's truth instance: " + f);
+//
+//
+//        //minConfidence pre-filter
+//        final float minConf = Global.DEBUG ? Global.CONFIDENCE_PREFILTER_DEBUG : Global.CONFIDENCE_PREFILTER;
+//        return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
+//    }
+
+//    @Deprecated
+//    static TruthOperator getTruthFunction(char punc, PostCondition outcome) {
+//
+//        switch (punc) {
+//
+//            case Symbols.JUDGMENT:
+//                return outcome.truth;
+//
+//            case Symbols.GOAL:
+//                if (outcome.desire == null) {
+//                    //System.err.println(outcome + " has null desire function");
+//                    return null; //no desire function specified for this rule
+//                } else {
+//                    return outcome.desire;
+//                }
+//
+//            /*case Symbols.QUEST:
+//            case Symbols.QUESTION:
+//            */
+//
+//            default:
+//                return null;
+//        }
+//
+//    }
 
 
 

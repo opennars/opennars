@@ -23,7 +23,6 @@ package nars;
 
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.term.atom.Atom;
-import nars.truth.DefaultTruth;
 import nars.util.data.list.FasterList;
 import nars.util.data.map.UnifriedMap;
 
@@ -108,36 +107,14 @@ public class Global {
 
 
     /** minimum difference necessary to indicate a significant modification in budget float number components */
-    public static float BUDGET_EPSILON = 0.01f;
+    public static float BUDGET_EPSILON = 0.005f;
 
 
 //    /* ---------- default input values ---------- */
 //    /** Default expectation for confirmation. */
 //    public static final float DEFAULT_CONFIRMATION_EXPECTATION = 0.8f;
 
-    /** Default confidence of input judgment. */
-    public static final float DEFAULT_JUDGMENT_CONFIDENCE = 0.9f;
-    /** Default priority of input judgment */
-    public static float DEFAULT_JUDGMENT_PRIORITY = 0.5f;
-    /** Default durability of input judgment */
-    public static float DEFAULT_JUDGMENT_DURABILITY = 0.8f; //was 0.8 in 1.5.5; 0.5 after
-    /** Default priority of input question */
-    public static final float DEFAULT_QUESTION_PRIORITY = 0.5f;
-    /** Default durability of input question */
-    public static final float DEFAULT_QUESTION_DURABILITY = 0.9f;
 
-    
-     /** Default confidence of input goal. */
-     public static final float DEFAULT_GOAL_CONFIDENCE = 0.9f;
-     /** Default priority of input judgment */
-     public static final float DEFAULT_GOAL_PRIORITY = 0.6f;
-     /** Default durability of input judgment */
-     public static final float DEFAULT_GOAL_DURABILITY = 0.9f;
-     /** Default priority of input question */
-     public static final float DEFAULT_QUEST_PRIORITY = 0.5f;
-     /** Default durability of input question */
-     public static final float DEFAULT_QUEST_DURABILITY = 0.9f;
- 
 
     
     
@@ -153,11 +130,6 @@ public class Global {
     public static float DISCOUNT_RATE = 0.5f;
 
 
-
-
-    public static final float MAX_CONFIDENCE = 0.99f - DefaultTruth.DEFAULT_TRUTH_EPSILON;
-
-    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE; /*DEFAULT_TRUTH_EPSILON*/;
 
 
     @Deprecated public static final int THREADS = 1; //temporary parameter for setting #threads to use, globally
@@ -178,7 +150,7 @@ public class Global {
     /** hard upper-bound limit on Compound term complexity;
      * if this is exceeded it may indicate a recursively
      * malformed term due to a serious inference bug */
-    public static short COMPOUND_VOLUME_MAX = 1024;
+    public static short COMPOUND_VOLUME_MAX = 256;
 
 
 //    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
@@ -233,23 +205,6 @@ public class Global {
     }
 
 
-//    public static <X,Y> HugeHashMap<X,Y> newHugeMap(int size, Class<? extends X> xClass, Class<? extends Y> yClass) {
-//
-//        HugeConfig config = HugeConfig.DEFAULT.clone()
-//                .setSegments(128)
-//                .setSmallEntrySize(128)
-//                .setCapacity(size);
-//
-//        return new HugeHashMap(config, xClass, yClass);
-//    }
-
-
-
-//    public static Reference<Task> reference(Task t) {
-//        if (t == null) return null;
-//        return new SoftReference(t);
-//    }
-
     public static <C> Reference<C> reference(C s) {
         if (s == null) return null;
         return new SoftReference(s);
@@ -264,31 +219,31 @@ public class Global {
 
 
     //TODO eventually sort out in case that a parameter is not needed anymore
-
-    public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
-    public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
-    public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
-    public static float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
-    public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
-    public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
-    public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
-    public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
-    
-    //public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
-    public static float HAPPY_EVENT_CHANGE_THRESHOLD =0.01f;
-    //public static float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
+//
+//    public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
+//    public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
+//    public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
+//    public static float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
+//    public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
+//    public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
+//    public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
+//    public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
+//
+//    //public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
+//    public static float HAPPY_EVENT_CHANGE_THRESHOLD =0.01f;
+//    //public static float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
     public static float BUSY_EVENT_CHANGE_THRESHOLD =0.5f;
-    public static boolean REFLECT_META_HAPPY_GOAL = false;
-    public static boolean REFLECT_META_BUSY_BELIEF = false;
-    public static boolean CONSIDER_REMIND=true;
+//    public static boolean REFLECT_META_HAPPY_GOAL = false;
+//    public static boolean REFLECT_META_BUSY_BELIEF = false;
+//    public static boolean CONSIDER_REMIND=true;
 
+//
+//    public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=true;
+//    public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
+//
+//    public static float ANTICIPATION_CONFIDENCE=0.95f;
+    
 
-    public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=true;
-    public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
-    
-    public static float ANTICIPATION_CONFIDENCE=0.95f;
-    
-    public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
 
 
 

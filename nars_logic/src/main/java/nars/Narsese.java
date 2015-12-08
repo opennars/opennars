@@ -12,7 +12,6 @@ import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.budget.Budget;
 import nars.nal.TaskRule;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
@@ -26,7 +25,7 @@ import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.echo;
-import nars.task.DefaultTask;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Terms;
@@ -37,7 +36,6 @@ import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
-import nars.util.data.array.LongArrays;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -78,51 +76,40 @@ public class Narsese extends BaseParser<Object>  {
 
     public static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 
-        if (p == null)
-            throw new RuntimeException("character is null");
-
-        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
-            t = new DefaultTruth(p);
-
+//        if (p == null)
+//            throw new RuntimeException("character is null");
+//
+//        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
+//            t = new DefaultTruth(p);
+//
         int blen = b!=null ? b.length : 0;
-        if ((blen > 0) && (Float.isNaN(b[0])))
-            blen = 0;
-
-        Budget B;
-        switch (blen) {
-            case 0:     B = new Budget(p, t); break;
-            case 1:     B = new Budget(b[0], p, t); break;
-            case 2:     B = new Budget(b[0], b[1], t); break;
-            default:    B = new Budget(b[0], b[1], b[2]); break;
-        }
-
+//        if ((blen > 0) && (Float.isNaN(b[0])))
+//            blen = 0;
+//
 
         if (!(content instanceof Compound)) {
             return null;
         }
 
-        //avoid cloning by transforming this new compound directly
-        Term ccontent = content.normalized();
-        if (ccontent!=null)
-            ccontent = Task.taskable(ccontent);
-        if (ccontent==null) return null;
+        MutableTask ttt =
+                new MutableTask((Compound)content)
+                                .punctuation(p)
+                                .truth(t)
+                                .time(
+                                    memory.time(), //creation time
+                                    Tense.getOccurrenceTime(
+                                        tense,
+                                        memory
+                                    ));
 
-        //index
-        ccontent = memory.index.getTerm(ccontent);
-
-
-        Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
-        ttt.setCreationTime(memory.time());
-        ttt.setOccurrenceTime(tense, memory.duration());
-        ttt.setEvidence(LongArrays.EMPTY_ARRAY);
+        switch (blen) {
+            case 0:     /* do not set, Memory will apply defaults */ break;
+            case 1:     ttt.budget(b[0], memory.getDefaultDurability(p)); break;
+            case 2:     ttt.budget(b[0], b[1]); break;
+            default:    ttt.budget(b[0], b[1], b[2]); break;
+        }
 
         return ttt;
-
-        /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
-            return new Stamp(
-                    newStamp ? new long[] { memory.newStampSerial() } : new long[] { blank },
-                    //memory, creationTime, tense);
-        }*/
     }
 
 
@@ -341,7 +328,7 @@ public class Narsese extends BaseParser<Object>  {
 
                         sequence(
 
-                                truth.set(new DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE)),
+                                truth.set(new DefaultTruth((float) pop(), Float.NaN /* will be set automatically by Memory */)),
 
                                 optional(TruthTenseSeparator(TRUTH_VALUE_MARK, tense)) ////tailing %,|,/,\ is optional
                         )

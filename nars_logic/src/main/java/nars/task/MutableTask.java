@@ -31,12 +31,10 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
 
     public MutableTask() {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-        super(null, (char) 0, null, 0, 0, 0);
-
-        budget(0, Float.NaN, Float.NaN);
+        super(null, (char) 0, null,
+            /* budget: */ 0, Float.NaN, Float.NaN);
 
         setEternal();
-
         setOccurrenceTime(TIMELESS);
     }
 
@@ -45,9 +43,15 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
         term(term);
     }
 
+    public MutableTask(C content, char punc) {
+        this(content);
+        punctuation(punc);
+    }
+
     /** safely make a new task, if the term is not already known to be valid for a task */
     public static <C extends Compound> MutableTask make(C t) {
-        Compound u = Task.taskable(t);
+
+        Compound u = (Compound) t;
         if (u == null)
             return null;
 
@@ -92,16 +96,7 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
      * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
      * this will set the truth instance directly. so avoid using shared terms unless it's really meant
      */
-    @Deprecated
     public MutableTask truth(final Truth tv) {
-
-        if (tv == null) {
-            if (isJudgmentOrGoal()) throw new RuntimeException("null truth value for judgment/goal");
-        }
-        else {
-            if (!isJudgmentOrGoal()) throw new RuntimeException("non-null truth value for non-judgment/non-goal");
-        }
-
         this.truth = tv;
         return this;
     }
@@ -129,13 +124,17 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
         return this;
     }
 
+    public boolean isBudgeted() {
+        return Float.isFinite(getQuality());
+    }
+
     /**
      * uses default budget generation and multiplies it by gain factors
      */
     public MutableTask budgetScaled(float priorityFactor, float durFactor) {
 
         //TODO maybe lift this to Budget class
-        if (!applyDefaultBudget()) {
+        if (!isBudgeted()) {
             throw new RuntimeException("budgetScaled unable to determine original budget values");
         }
 

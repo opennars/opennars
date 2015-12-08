@@ -1,6 +1,5 @@
 package nars.nal.nal1;
 
-import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
@@ -93,13 +92,13 @@ public class NAL1Test extends AbstractNALTester {
                         //.en("I guess chess is a type of sport");
                 .believe("<sport --> competition>")
                         //.en("sport is a type of competition.");
-                .believe("<chess --> competition>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+                .believe("<chess --> competition>", 0.90f, 0.9f);
     }
 
     @Test
     public void induction() throws Narsese.NarseseException {
         int withinCycles = 4;
-        test().believe("<swan --> swimmer>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+        test().believe("<swan --> swimmer>", 0.90f, 0.9f)
                 //.en("Swan is a type of swimmer.");
                 .believe("<swan --> bird>")
                         //.en("Swan is a type of bird.");

@@ -28,15 +28,12 @@ import nars.Global;
 import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.compound.Compound;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,8 +48,6 @@ public final class Anticipate {
     public static final float TOLERANCE_DIV=5.0f;
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
 
-    final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-    final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
 
     final Multimap<Compound,TaskTime> anticipations = LinkedHashMultimap.create();
 
@@ -133,8 +128,7 @@ public final class Anticipate {
 
         nar.input(new MutableTask<>(prediction)
                 .belief()
-                .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
-                .budget(expiredBudget)
+                .truth(0.0f, nar.memory.getDefaultConfidence(Symbols.JUDGMENT))
                 .time(nar.time(), expectedOccurrenceTime)
                 .parent(tt.task, null)
                 .because("Absent Anticipated Event"));

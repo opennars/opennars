@@ -103,6 +103,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
 
+
         /**
          * involves 3 potentially unique tasks:
          * input, strongest, revised (created here and returned)
@@ -229,8 +230,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
     private void checkForDeleted() {
 
-        for (int i = 0; i < data.size(); i++) {
-            Task dt = data.get(i);
+        data.forEach( (Task dt) -> {
 //            if (dt == null)
 //                throw new RuntimeException("wtf");
             if (dt == null || dt.isDeleted()) {
@@ -242,7 +242,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 //i--;
 //
             }
-        }
+        });
     }
 
 

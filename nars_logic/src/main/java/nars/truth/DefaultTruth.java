@@ -1,5 +1,7 @@
 package nars.truth;
 
+import nars.Memory;
+
 /**
  * Created by me on 5/19/15.
  */
@@ -47,9 +49,9 @@ public class DefaultTruth extends AbstractScalarTruth {
 //        super(v);
 //    }
 
-    public DefaultTruth(final char punctuation) {
+    public DefaultTruth(final char punctuation, Memory m) {
         super();
-        set(1f, getDefaultConfidence(punctuation));
+        set(1f, m.getDefaultConfidence(punctuation));
     }
 
     /** 0, 0 default */

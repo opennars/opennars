@@ -7,14 +7,13 @@ import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.meta.CanCycle;
 import nars.nal.meta.PreCondition;
+import nars.nal.meta.TruthOperator;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
-
-import java.util.function.BinaryOperator;
 
 /**
  * first resolution of the conclusion's pattern term
@@ -171,13 +170,13 @@ public final class Solve extends PreCondition {
     }
 
     public static final class Truth extends PreCondition {
-        public final BinaryOperator<nars.truth.Truth> belief;
-        public final BinaryOperator<nars.truth.Truth> desire;
+        public final TruthOperator belief;
+        public final TruthOperator desire;
         public final char puncOverride;
 
         private final transient String id;
 
-        public Truth(BinaryOperator<nars.truth.Truth> belief, BinaryOperator<nars.truth.Truth> desire, char puncOverride) {
+        public Truth(TruthOperator belief, TruthOperator desire, char puncOverride) {
             this.belief = belief;
             this.desire = desire;
             this.puncOverride = puncOverride;
@@ -195,7 +194,7 @@ public final class Solve extends PreCondition {
             return this.id;
         }
 
-        BinaryOperator<nars.truth.Truth> getTruth(char punc) {
+        TruthOperator getTruth(char punc) {
 
             switch (punc) {
 
@@ -241,14 +240,14 @@ public final class Solve extends PreCondition {
 
 
             nars.truth.Truth truth;
-            BinaryOperator<nars.truth.Truth> tf;
+            TruthOperator tf;
 
             if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
                 tf = this.getTruth(punct);
                 if (tf == null)
                     return false;
 
-                truth = tf.apply(T, B);
+                truth = tf.apply(T, B, premise.memory());
 
                 if (truth == null) {
                     //no truth value function was applicable but it was necessary, abort

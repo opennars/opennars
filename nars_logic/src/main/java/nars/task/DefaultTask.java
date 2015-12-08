@@ -3,7 +3,6 @@ package nars.task;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.budget.Item;
 import nars.concept.Concept;
 import nars.nal.nal7.Interval;
@@ -30,7 +29,7 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable {
+abstract public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable {
 
     /** content term of this task */
     protected T term;
@@ -123,39 +122,60 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public Task normalize(final Memory memory) {
+    public final Task normalize(final Memory memory) {
 
-        if (!isCommand()) {
-
-            Task.ensureValidPunctuationAndTruth(getPunctuation(), getTruth()!=null);
-
-            ensureValidParentTaskRef();
-
+        if (hash == 0) {
+            /* already validated */
+            return this;
         }
 
         if (isDeleted())
             return null;
 
+
         final char punc = getPunctuation();
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
-        if ((truth == null) && (isJudgmentOrGoal())) {
-            truth = new DefaultTruth(punc);
+        if (!isCommand()) {
+            ensureValidParentTaskRef();
+        }
+
+        if (isJudgmentOrGoal()) {
+            //...
+        } else if (isQuestOrQuestion()) {
+            if (truth!=null)
+                throw new RuntimeException("quests and questions must have null truth");
+        } else if (isCommand()) {
+            //..
+        } else {
+            throw new RuntimeException("invalid punctuation: " + punc);
         }
 
 
+
+
         Compound t = getTerm();
-        if (t == null)
-            throw new RuntimeException("null term");
+        if (t == null) throw new RuntimeException("null term");
+        Term tNorm = t.normalized();
+        if (tNorm == null)
+            throw new RuntimeException("term not normalized");
+        t = Sentence.validTaskTerm(tNorm);
+        if (t == null) {
+            throw new RuntimeException("invalid sentence term: " + tNorm);
+        }
+
+        updateEvidence();
+
+        if (truth == null && isJudgmentOrGoal()) {
+            //apply the default truth value for specified punctuation
+            truth = new DefaultTruth(punc, memory);
+        }
+
 
         // if a task has an unperceived creationTime,
         // set it to the memory's current time here,
         // and adjust occurenceTime if it's not eternal
-
-        setDuration(
-                memory.duration() //assume the default perceptual duration?
-        );
 
         if (getCreationTime() <= Stamp.TIMELESS) {
             final long now = memory.time();
@@ -166,38 +186,36 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             setTime(now, oc);
         }
 
-
         if (t instanceof Sequence)  {
             long[] offset = new long[1];
             Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
-            if ((st == null) || (Sentence.invalidSentenceTerm(st)))
+            if ((st == null) || (Sentence.invalidTaskTerm(st)))
                 return null; //it reduced to an invalid sentence term so return null
             t = (T)st;
             if (!isEternal())
                 occurrenceTime -= offset[0];
         }
 
-        updateEvidence();
+
 
         //---- VALID TASK BEYOND THIS POINT
 
         /** NaN quality is a signal that a budget's values need initialized */
         if (Float.isNaN(getQuality())) {
-            applyDefaultBudget();
+            //HACK for now just assume that only MutableTask supports unbudgeted input
+            memory.applyDefaultBudget((MutableTask)this);
         }
 
-        //obtain shared copy
+        //obtain shared copy of term
         setTerm((T)memory.index.getTerm(t));
 
-
-        //if (this.cause != null) t.setCause(cause);
-        //if (this.reason != null) t.log(reason);
-
-        this.hash = rehash();
+        setDuration(
+            memory.duration() //assume the default perceptual duration?
+        );
 
 
         //finally, assign a unique stamp if none specified (input)
-        if (getEvidence().length == 0) {
+        if (getEvidence().length== 0) {
             setEvidence(memory.newStampSerial());
 
             //this actually means it arrived from unknown origin.
@@ -209,9 +227,16 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
                 log("Input");
         }
 
-        //setTerm((T) memory.concepts.get( term ).getTerm());
+        this.hash = rehash();
+
+        onNormalized(memory);
 
         return this;
+    }
+
+    /** can be overridden in subclasses to handle this event */
+    protected void onNormalized(Memory m) {
+
     }
 
     protected final void setPunctuation(char punctuation) {
@@ -386,21 +411,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-    protected boolean applyDefaultBudget() {
-        //if (getBudget().isBudgetValid()) return true;
-        if (getTruth() == null) return false;
-
-        final char punc = getPunctuation();
-        setPriority(Budget.newDefaultPriority(punc));
-        setDurability(Budget.newDefaultDurability(punc));
-
-        /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
-        if (Float.isNaN(getQuality())) {
-            setQuality(BudgetFunctions.truthToQuality(truth));
-        }
-
-        return true;
-    }
 
     final void updateEvidence() {
         //supplying no evidence will be assigned a new serial

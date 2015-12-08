@@ -112,18 +112,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
     @Override default Task getTask() { return this; }
 
-    /** returns a valid Task term, or returns null */
-    static <X extends Compound> X taskable(Term x) {
-
-        x = x.normalized();
-
-        if (Sentence.invalidSentenceTerm(x)) {
-            return null;
-        }
-
-        return (X)x;
-    }
-
     /**
      * Sets the perceived temporal duration of the Task,
      * in cycles.  This corresponds to how long the Task
@@ -477,24 +465,6 @@ public interface Task<T extends Compound> extends Sentence<T>,
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
     }
 
-    static void ensureValidPunctuationAndTruth(char c, boolean hasTruth) {
-        switch (c) {
-            case Symbols.COMMAND:
-                break;
-            case Symbols.JUDGMENT:
-            case Symbols.GOAL:
-                if (!hasTruth)
-                    throw new RuntimeException("Judgment and Goal tasks require non-NULL truth value");
-                break;
-            case Symbols.QUESTION:
-            case Symbols.QUEST:
-                if (hasTruth)
-                    throw new RuntimeException("Question and Quest tasks require NULL truth value");
-                break;
-            default:
-                throw new RuntimeException("Invalid sentence punctuation");
-        }
-    }
 
 
 //    default Task projectTask(final long targetTime, final long currentTime) {
@@ -583,4 +553,10 @@ public interface Task<T extends Compound> extends Sentence<T>,
     }
 
     boolean isAnticipated();
+
+    /** creates a new child task (has this task as its parent) */
+    default MutableTask spawn(Compound content, char punc) {
+        return new MutableTask(content, punc);
+    }
+
 }

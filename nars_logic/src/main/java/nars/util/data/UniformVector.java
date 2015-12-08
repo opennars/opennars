@@ -1,6 +1,5 @@
 package nars.util.data;
 
-import nars.Global;
 import nars.NAR;
 import nars.truth.DefaultTruth;
 
@@ -18,12 +17,13 @@ public class UniformVector  {
     public final double[] data;
     private final String prefix;
     private final NAR nar;
-    private float priority = Global.DEFAULT_JUDGMENT_PRIORITY;
+    private float priority;
 
     public UniformVector(NAR n, String prefix, double[] data) {
         this.nar = n;
         this.prefix = prefix;
         this.data = data;
+        priority = Float.NaN;
     }
 
     public void update() {

@@ -17,18 +17,13 @@
 
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
-import nars.Global;
 import nars.Memory;
-import nars.Symbols;
-import nars.budget.Budget;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.List;
@@ -49,15 +44,17 @@ public class name extends SyncOperator implements Mental {
         Operation operation = t.getTerm();
         Term compound = operation.arg(0);
         Term atomic = operation.arg(1);
-        Compound content = Task.taskable( Similarity.make(compound, atomic) );
+
+        Compound content = (Compound) Similarity.make(compound, atomic);
         if (content == null) return null;
 
         final Truth truth;
         final Memory memory = nar.memory;
 
-        return Lists.newArrayList( operation.newSubTask(t, memory,
-                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f),
-                memory.time(),
-                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
+        throw new RuntimeException("unimpl TODO");
+//        return Lists.newArrayList( operation.newSubTask(t, memory,
+//                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f),
+//                memory.time(),
+//                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
     }
 }

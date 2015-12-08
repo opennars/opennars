@@ -109,7 +109,9 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         int totalDuration = eventDuration;
 
         //add embedded terms with temporal duration
-        for (Term t : this) {
+        int s = size();
+        for (int i = 0; i < s; i++) {
+            Term t = term(i);
             if (t instanceof Interval) {
                 totalDuration = Math.max(totalDuration,
                         ((Interval)t).duration());

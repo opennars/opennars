@@ -2,7 +2,7 @@ package nars.java;
 
 import nars.term.atom.StringAtom;
 
-
+/** refers to a java object instance */
 public final class AtomObject<O> extends StringAtom {
 
     public final O value;

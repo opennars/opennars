@@ -18,17 +18,12 @@
 package nars.op.mental;
 
 import com.google.common.collect.Lists;
-import nars.Global;
-import nars.Memory;
 import nars.Symbols;
-import nars.budget.Budget;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 
 import java.util.List;
 
@@ -47,16 +42,10 @@ public class want extends SyncOperator implements Mental {
     @Override
     public List<Task> apply(Task<Operation> t) {
         final Operation operation = t.getTerm();
-
         Term content = operation.arg(0);
 
-        Truth truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-
-        Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
-
-        final Memory m = nar.memory;
         return Lists.newArrayList(
-                operation.newSubTask(t, m, (Compound) content, Symbols.GOAL, truth, m.time(), budget)
+            t.spawn((Compound) content, Symbols.GOAL).present(nar.memory)
         );
     }
 

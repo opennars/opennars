@@ -10,7 +10,6 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.MutableTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -237,20 +236,23 @@ public class InternalExperience {
             return null;
         }
 
-        float pri = Global.DEFAULT_JUDGMENT_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL;
-        float dur = Global.DEFAULT_JUDGMENT_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL;
-        if (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
-            pri *= INTERNAL_EXPERIENCE_PRIORITY_MUL;
-            dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
-        }
+        throw new RuntimeException("unimpl TODO");
 
-        Task<Compound<?>> t;
-        nal.nar().input(t = MutableTask.make(ret).judgment()
-                        .parent(task).occurr(nal.time())
-                        .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                        .budget(pri, dur)
-                        .because("Remembered Action (Internal Experience)"));
-        return t;
+//
+//        float pri = Global.DEFAULT_JUDGMENT_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL;
+//        float dur = Global.DEFAULT_JUDGMENT_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL;
+//        if (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+//            pri *= INTERNAL_EXPERIENCE_PRIORITY_MUL;
+//            dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
+//        }
+//
+//        Task<Compound<?>> t;
+//        nal.nar().input(t = MutableTask.make(ret).judgment()
+//                        .parent(task).occurr(nal.time())
+//                        .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+//                        .budget(pri, dur)
+//                        .because("Remembered Action (Internal Experience)"));
+//        return t;
     }
 
 
@@ -311,11 +313,13 @@ public class InternalExperience {
 
         long now = p.time();
 
-        p.nar().input(MutableTask.make(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                        .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                                Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                        .parent(parent)
-                        .time(now, now + delay));
+        throw new RuntimeException("unimpl TODO");
+
+//        p.nar().input(MutableTask.make(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+//                        .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
+//                                Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
+//                        .parent(parent)
+//                        .time(now, now + delay));
 
     }
 

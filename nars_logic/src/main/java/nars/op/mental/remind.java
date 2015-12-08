@@ -16,9 +16,7 @@
  */
 package nars.op.mental;
 
-import nars.Global;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -38,8 +36,6 @@ public class remind extends SyncOperator implements Mental {
     /**
      * To activate a concept as if a question has been asked about it
      *
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
@@ -52,10 +48,12 @@ public class remind extends SyncOperator implements Mental {
     }
 
     public static Concept remind(Term term, NAR n) {
-        //Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
-        Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-        //nar.memory.concepts.activate(concept, budget, Activating.TaskLink);
-        return n.conceptualize(term, budget);
+        throw new RuntimeException("unimpl TODO");
+
+//        //Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
+//        Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
+//        //nar.memory.concepts.activate(concept, budget, Activating.TaskLink);
+//        return n.conceptualize(term, budget);
     }
 
 }

@@ -351,17 +351,18 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-    public static <T extends Term> SetExt<T> getStaticClassFields(Class c, Function<Field, T> each) {
+    public static <T extends Term> Map<Atom,T> mapStaticClassFields(Class c, Function<Field, T> each) {
         Field[] ff = c.getFields();
-        Set<T> t = Global.newHashSet(ff.length);
+        Map<Atom,T> t = Global.newHashMap(ff.length);
         for (Field f : ff) {
             if (Modifier.isStatic(f.getModifiers())) {
                 T xx = each.apply(f);
-                if (xx!=null)
-                    t.add(xx);
+                if (xx!=null) {
+                    t.put($.$(f.getName()), xx);
+                }
             }
         }
-        return $.extset(t);
+        return t;
     }
 
 

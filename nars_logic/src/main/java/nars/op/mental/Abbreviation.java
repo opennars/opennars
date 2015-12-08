@@ -1,7 +1,6 @@
 package nars.op.mental;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
@@ -100,16 +99,13 @@ public class Abbreviation implements Consumer<Task> {
 
                 concept.put(Abbreviation.class, atomic);
 
-                Compound c = Task.taskable( Similarity.make(termAbbreviating, atomic) );
+                Compound c = (Compound) Similarity.make(termAbbreviating, atomic);
                 if (c!=null) {
 
                     Memory m = nar.memory;
-                    nar.input(MutableTask.make(
-                            c)
+                    nar.input(MutableTask.make(c)
                             .judgment().truth(1, abbreviationConfidence)
                             .parent(task).present(m)
-                            .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
-                                    Global.DEFAULT_JUDGMENT_DURABILITY)
                     );
                 }
 

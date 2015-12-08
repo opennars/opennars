@@ -17,9 +17,6 @@
 
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
-import nars.Global;
-import nars.Symbols;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
@@ -41,18 +38,17 @@ public class evaluate extends SyncOperator implements Mental {
     public List<Task> apply(Task<Operation> op) {
 
 
-        Compound content = Task.taskable(op.getTerm().arg(0));
+        Compound content = (Compound) op.getTerm().arg(0);
         if (content == null)
             return null;
 
-        //Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamper(op, nar.memory, Tense.Present));
 
-        return Lists.newArrayList( op.getTerm().newSubTask(op,
-                nar.memory,
-                content, Symbols.QUEST, null,
-                nar.time(),
-                Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1
-        ) );
+        throw new RuntimeException("unimpl");
+//        return Lists.newArrayList( op.getTerm().spawn(op,
+//                content, Symbols.QUEST, null,
+//                nar.time(),
+//                Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1
+//        ) );
 
 
 //        return Lists.newArrayList( new DefaultTask<>(content, Symbols.QUEST, null,

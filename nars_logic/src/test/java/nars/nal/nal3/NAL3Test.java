@@ -58,7 +58,7 @@ public class NAL3Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<robin --> swimmer>",0.0f,0.9f); //.en("Robin is not a type of swimmer.");
         tester.believe("<robin --> (-,mammal,swimmer)>", 0.0f, 0.9f); //.en("Robin is not a nonswimming mammal.");
-        tester.mustBelieve(cycles, "<robin --> mammal>", 0.0f ,0.81f); //.en("Robin is not a type of mammal.");
+        tester.mustBelieve(cycles*5, "<robin --> mammal>", 0.0f ,0.81f); //.en("Robin is not a type of mammal.");
 
     }
 
