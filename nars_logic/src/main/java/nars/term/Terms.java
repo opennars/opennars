@@ -4,21 +4,11 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal1.Negation;
-import nars.nal.nal2.Instance;
-import nars.nal.nal2.InstanceProperty;
-import nars.nal.nal2.Property;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal3.*;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.ImageInt;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunctive;
-import nars.nal.nal5.Disjunction;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.Tense;
 import nars.term.compound.Compound;
 import nars.util.data.sorted.SortedList;
 
@@ -705,84 +695,84 @@ public class Terms {
             throw new CompoundTerm.InvalidTermConstruction("Expected " + num + " args to create Term from " + Arrays.toString(a));*/
     }
 
-    /**
-     * Try to make a compound term from an operate and a list of term
-     * <p>
-     * Called from StringParser
-     *
-     * @param op Term operate
-     * @return A term or null
-     */
-    public static Term term(final Op op, final Term... a) {
-
-        switch (op) {
-
-            case SET_EXT_OPENER:
-                return SetExt.make(a);
-            case SET_INT_OPENER:
-                return SetInt.make(a);
-            case INTERSECTION_EXT:
-                return IntersectionExt.make(a);
-            case INTERSECTION_INT:
-                return IntersectionInt.make(a);
-            case DIFFERENCE_EXT:
-                return DifferenceExt.make(a);
-            case DIFFERENCE_INT:
-                return DifferenceInt.make(a);
-            case PRODUCT:
-                return Product.make(a);
-            case IMAGE_EXT:
-                return Image.makeExt(a);
-            case IMAGE_INT:
-                return Image.makeInt(a);
-            case NEGATION:
-                return Negation.make(a);
-            case DISJUNCTION:
-                return Disjunction.make(a);
-            case CONJUNCTION:
-                return Conjunctive.make(a, Tense.ORDER_NONE);
-            case SEQUENCE:
-                return Conjunctive.make(a, Tense.ORDER_FORWARD);
-            case PARALLEL:
-                return Conjunctive.make(a, Tense.ORDER_CONCURRENT);
-
-            //STATEMENTS --------------------------
-            case PROPERTY:
-                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]); break;
-            case INSTANCE:
-                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]); break;
-            case INSTANCE_PROPERTY:
-                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]); break;
-
-            case INHERITANCE:
-                if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
-
-            case SIMILARITY:
-                if (ensureTermLength(2, a)) return Similarity.make(a[0], a[1]);
-                break;
-
-            case IMPLICATION:
-                if (ensureTermLength(2, a)) return Implication.makeImplication(a[0], a[1]); break;
-            case IMPLICATION_AFTER:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Tense.ORDER_FORWARD); break;
-            case IMPLICATION_BEFORE:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Tense.ORDER_BACKWARD); break;
-            case IMPLICATION_WHEN:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Tense.ORDER_CONCURRENT); break;
-
-            case EQUIVALENCE:
-                if (ensureTermLength(2, a)) return Equivalence.makeTerm(a[0], a[1]); break;
-            case EQUIVALENCE_WHEN:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], Tense.ORDER_CONCURRENT); break;
-            case EQUIVALENCE_AFTER:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], Tense.ORDER_FORWARD); break;
-
-            default:
-                throw new RuntimeException("Unknown op: " + op + " (" + op.name() + ')');
-        }
-
-        return null;
-    }
+//    /**
+//     * Try to make a compound term from an operate and a list of term
+//     * <p>
+//     * Called from StringParser
+//     *
+//     * @param op Term operate
+//     * @return A term or null
+//     */
+//    public static Term term(final Op op, final Term... a) {
+//
+//        switch (op) {
+//
+//            case SET_EXT_OPENER:
+//                return SetExt.make(a);
+//            case SET_INT_OPENER:
+//                return SetInt.make(a);
+//            case INTERSECTION_EXT:
+//                return IntersectionExt.make(a);
+//            case INTERSECTION_INT:
+//                return IntersectionInt.make(a);
+//            case DIFFERENCE_EXT:
+//                return DifferenceExt.make(a);
+//            case DIFFERENCE_INT:
+//                return DifferenceInt.make(a);
+//            case PRODUCT:
+//                return Product.make(a);
+//            case IMAGE_EXT:
+//                return Image.makeExt(a);
+//            case IMAGE_INT:
+//                return Image.makeInt(a);
+//            case NEGATION:
+//                return Negation.negation(a);
+//            case DISJUNCTION:
+//                return Disjunction.make(a);
+//            case CONJUNCTION:
+//                return Conjunctive.make(a, Tense.ORDER_NONE);
+//            case SEQUENCE:
+//                return Conjunctive.make(a, Tense.ORDER_FORWARD);
+//            case PARALLEL:
+//                return Conjunctive.make(a, Tense.ORDER_CONCURRENT);
+//
+//            //STATEMENTS --------------------------
+//            case PROPERTY:
+//                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]); break;
+//            case INSTANCE:
+//                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]); break;
+//            case INSTANCE_PROPERTY:
+//                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]); break;
+//
+//            case INHERITANCE:
+//                if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
+//
+//            case SIMILARITY:
+//                if (ensureTermLength(2, a)) return Similarity.make(a[0], a[1]);
+//                break;
+//
+//            case IMPLICATION:
+//                if (ensureTermLength(2, a)) return Implication.implication(a[0], a[1]); break;
+//            case IMPLICATION_AFTER:
+//                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Tense.ORDER_FORWARD); break;
+//            case IMPLICATION_BEFORE:
+//                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Tense.ORDER_BACKWARD); break;
+//            case IMPLICATION_WHEN:
+//                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Tense.ORDER_CONCURRENT); break;
+//
+//            case EQUIVALENCE:
+//                if (ensureTermLength(2, a)) return Equivalence.makeTerm(a[0], a[1]); break;
+//            case EQUIVALENCE_WHEN:
+//                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], Tense.ORDER_CONCURRENT); break;
+//            case EQUIVALENCE_AFTER:
+//                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], Tense.ORDER_FORWARD); break;
+//
+//            default:
+//                throw new RuntimeException("Unknown op: " + op + " (" + op.name() + ')');
+//        }
+//
+//        return null;
+//    }
 
     /**
      * build a component list from terms

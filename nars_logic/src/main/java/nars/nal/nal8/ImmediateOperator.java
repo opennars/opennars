@@ -1,11 +1,13 @@
 package nars.nal.nal8;
 
 
+import nars.$;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -61,15 +63,17 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
         return null;
     }
 
-    public static Task<Operation> command(Class<? extends ImmediateOperator> opClass, Object... args) {
+    public static Task command(Class<? extends ImmediateOperator> opClass, Object... args) {
         return Task.command(operation(opClass, args));
     }
 
-    public static Operation operation(Class<? extends ImmediateOperator> opClass, Object... args) {
+    public static Compound operation(Class<? extends ImmediateOperator> opClass, Object... args) {
         return operation( opClass, termizedProduct(args));
     }
-    public static Operation operation(Class<? extends ImmediateOperator> opClass, Product args) {
-        return new Operation( opClass.getSimpleName(), args);
+    public static Compound operation(Class<? extends ImmediateOperator> opClass, Product args) {
+        return $.oper(
+                $.$(opClass.getSimpleName().toString()),
+                args);
     }
 
 

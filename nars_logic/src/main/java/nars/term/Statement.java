@@ -25,6 +25,7 @@ import nars.Symbols;
 import nars.nal.nal4.Image;
 import nars.term.compound.Compound;
 import nars.term.compound.CompoundN;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
@@ -37,7 +38,7 @@ import static nars.Symbols.STATEMENT_OPENER;
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-public abstract class Statement<A extends Term, B extends Term>
+@Deprecated public abstract class Statement<A extends Term, B extends Term>
     extends CompoundN {
 
 
@@ -49,22 +50,10 @@ public abstract class Statement<A extends Term, B extends Term>
         super(op, subterms);
     }
 
-    @Override public final Term clone() {
-        return Terms.term(op(), getSubject(), getPredicate());
-    }
+
 
     @Override public final Term clone(Term[] replaced) {
-        if (replaced.length!=2)
-            throw new RuntimeException("cloning " + op() + " requires 2 subterms");
-
-        //prevent useless clones
-        Term r0 = replaced[0];
-        Term r1 = replaced[1];
-        if (r0 == term(0) && r1 == term(1)) {
-            return this;
-        }
-
-        return Terms.term(op(), r0, r1);
+        return new GenericCompound(op(), replaced);
     }
 
 //    /**

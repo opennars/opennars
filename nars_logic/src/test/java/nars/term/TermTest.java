@@ -120,11 +120,6 @@ public class TermTest {
         //System.out.println("t2: " + term2 + ", complexity=" + term2.getComplexity());
 
 
-        assertTrue(term1.equals(term1.clone()));
-        assertTrue(term1.compareTo(term1.clone()) == 0);
-        assertTrue(term2.equals(term2.clone()));
-        assertTrue(term2.compareTo(term2.clone()) == 0);
-
         boolean t1e2 = term1.equals(term2);
         int t1c2 = term1.compareTo(term2);
         int t2c1 = term2.compareTo(term1);
@@ -140,8 +135,8 @@ public class TermTest {
         */
 
         TreeSet<Term> set = new TreeSet<>();
-        boolean added1 = set.add(term1.clone());
-        boolean added2 = set.add(term2.clone());
+        boolean added1 = set.add(term1);
+        boolean added2 = set.add(term2);
         assertTrue("term 1 added to set", added1);
         assertTrue("term 2 added to set", added2);
 

@@ -6,9 +6,8 @@ import nars.nal.meta.match.Ellipsis;
 import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.TermContainer;
-import nars.term.TermVector;
 import nars.term.compound.Compound;
-import nars.term.compound.CompoundN;
+import nars.term.compound.GenericCompound;
 import nars.term.transform.FindSubst;
 
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class PatternIndex extends MapIndex {
     }
 
     /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
-    final static class LinearCompoundPattern extends CompoundN {
+    final static class LinearCompoundPattern extends GenericCompound {
 
         private final Compound seed;
         private final Op op;
@@ -51,7 +50,9 @@ public class PatternIndex extends MapIndex {
         private final Term[] termsCached;
 
         public LinearCompoundPattern(Compound seed) {
-            super(seed.op(), new TermVector(seed.terms()));
+            super(seed.op(), seed.terms(),
+                    (int)((seed instanceof Image) ? (((Image)seed).relation()) : 0)
+            );
             this.seed = seed;
             this.op = seed.op();
             this.structureCached = seed.structure();
@@ -103,10 +104,7 @@ public class PatternIndex extends MapIndex {
             return y;
         }
 
-        @Override
-        public String toString() {
-            return seed.toStringCompact();
-        }
+
 
         @Override
         public final boolean match(Compound y, FindSubst subst) {
@@ -143,34 +141,31 @@ public class PatternIndex extends MapIndex {
         }
 
 
-        @Override public int size() {
-            return sizeCached;
-        }
+//        @Override public int size() {
+//            return sizeCached;
+//        }
+//
+//        @Override
+//        public int structure() {
+//            return structureCached;
+//        }
 
-        @Override
-        public int structure() {
-            return structureCached;
-        }
 
+//
+//        @Override
+//        public Op op() {
+//            return op;
+//        }
+//
+//        @Override
+//        public boolean isCommutative() {
+//            return false;
+//        }
 
-        @Override
-        public Op op() {
-            return op;
-        }
-
-        @Override
-        public boolean isCommutative() {
-            return false;
-        }
-
-        @Override
-        public Term clone() {
-            return seed.clone();
-        }
-
-        @Override
-        public Term clone(Term[] replaced) {
-            return seed.clone(replaced);
-        }
+//
+//        @Override
+//        public Term clone(Term[] replaced) {
+//            return seed.clone(replaced);
+//        }
     }
 }

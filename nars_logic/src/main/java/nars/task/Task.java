@@ -27,8 +27,6 @@ import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
-import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -508,7 +506,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
     }
 
-    static <X extends Term> Task<Operation<X>> command(Operation<X> op) {
+    static Task command(Compound op) {
         //TODO use lightweight CommandTask impl without all the logic metadata
         return new MutableTask(op, Symbols.COMMAND);
     }

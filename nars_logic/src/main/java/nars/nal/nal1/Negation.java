@@ -23,127 +23,19 @@ package nars.nal.nal1;
 import nars.Op;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.compound.CompoundN;
-import nars.term.transform.FindSubst;
-
-import java.io.IOException;
+import nars.term.compound.GenericCompound;
 
 /**
  * A negation of a statement.
  */
-public final class Negation<T extends Term> extends CompoundN<T> {
+public interface Negation {
 
-    /** avoid using this externally, because double-negatives can be unwrapped to the 
-     * original term using Negation.make */
-    protected Negation(final T t) {
-        super(t);
-    }
-
-    @Override public final boolean isCommutative() {
-        return false;
-    }
-
-    public final T the() { return term(0); }
-
-    @Override
-    public final Term clone() {
-        return Negation.make(the());
-    }
-
-    @Override
-    public Term clone(final Term[] replaced) {
-
-        if (replaced.length != 1)
-            throw new RuntimeException("negation requires 1 arg");
-
-        Term t = replaced[0];
-        if (t == the())
-            return this; //no change
-
-        return Negation.make(replaced);
-    }
-
-    /**
-     * Try to make a Negation of one component. Called by the logic rules.
-     *
-     * @param t The component
-     * @return A compound generated or a term it reduced to
-     */
-    public static Term make(final Term t) {
-        if (t instanceof Negation) {
+    static Term negation(final Term t) {
+        if (t.op() == Op.NEGATION) {
             // (--,(--,P)) = P
-            return ((Negation) t).the();
+            return ((Compound) t).term(0);
         }
-        return new Negation(t);
+        return new GenericCompound(Op.NEGATION, t);
     }
-
-
-
-    /**
-     * Try to make a new Negation. Called by StringParser.
-     *
-     * @return the Term generated from the arguments
-     * @param argument The list of term
-     */
-    public static Term make(final Term[] argument) {
-        if (argument.length != 1)
-            throw new RuntimeException("negation requires 1 arg");
-
-        return make(argument[0]);
-    }
-
-
-    /**
-     * Get the operate of the term.
-     *
-     * @return the operate of the term
-     */
-    @Override
-    public final Op op() {
-        return Op.NEGATION;
-    }
-
-
-//    public static boolean areMutuallyInverse(Term a, Term b) {
-//        //doesnt seem necessary to check both, one seems sufficient.
-//        //incurs cost of creating a Negation and its id
-//        return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
-//    }
-
-
-    @Override
-    public final byte[] bytes() {
-        return Compound.newCompound1Key(Op.NEGATION, the());
-    }
-
-    @Override
-    public final void append(Appendable p, boolean pretty) throws IOException {
-        Compound.writeCompound1(op(), the(), p, pretty);
-    }
-
-
-    @Override public boolean matchSubterms(Compound Y, FindSubst subst) {
-        return subst.match(the(), Y.term(0));
-        //return matchSubterm(0, Y, subst);
-    }
-
-    /*
-    static boolean areMutuallyInverseNOTWORKINGYET(Term a, Term b) {
-        boolean aNeg = a instanceof Negation;
-        boolean bNeg = b instanceof Negation;
-
-        if (aNeg && !bNeg)
-            return areMutuallyInverse((Negation)a, b);
-        else if (!aNeg && bNeg)
-            return areMutuallyInverse((Negation)b, a);
-        else
-            return false;
-    }
-
-
-    static boolean areMutuallyInverse(Negation a, Term b) {
-        return (a.negated().equals(b));
-    }
-    */
 
 }

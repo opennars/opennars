@@ -17,47 +17,50 @@ import java.util.function.Predicate;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-@Deprecated abstract public class CompoundN<T extends Term> implements Compound<T> {
+public class GenericCompound<T extends Term> implements Compound<T> {
 
     protected final TermVector<T> terms;
 
-    /**
-     * true iff definitely normalized, false to cause it to update on next normalization.
-     * used to prevent repeated normalizations
-     */
-
     protected transient final int hash;
+    protected final Op op;
+    protected final int relation;
+    private boolean normalized = false;
 
-    protected CompoundN(T... t) {
-        this(0, t);
+    public GenericCompound(Op op, T... subterms) {
+        this(op, subterms, 0);
     }
 
-    protected CompoundN(Op op, TermVector subterms) {
-        this.terms = subterms;
-        this.hash = Compound.hash(subterms, op, 0);
+    protected GenericCompound(Op op, T[] subterms, int relation) {
+        this.op = op;
+        TermVector<T> terms = this.terms = op.isCommutative() ?
+                new TermSet(subterms) :
+                new TermVector(subterms);
+        this.hash = Compound.hash(terms, op, relation);
+        this.relation = relation;
     }
 
 
-    /** if hash salt is non-zero, it will be combined with the default hash value of the compound
-     * */
-    protected CompoundN(int hashSalt, T... subterms) {
-        this.terms = isCommutative() ?
-                        new TermSet(subterms) :
-                        new TermVector(subterms);
-        this.hash = Compound.hash(subterms(), op(), hashSalt);
-    }
-
-    public CompoundN(T t) {
-        this(0, t);
+    @Override
+    public final Op op() {
+        return op;
     }
 
     @Override
-    public String toString() {
+    public final boolean isCommutative() {
+        return op.isCommutative();
+    }
+
+    @Override
+    public final String toString() {
+        switch (op) {
+            case NEGATION:
+                break;
+        }
         return toString(true); //TODO make this default to false
     }
 
     @Override
-    public int compareTo(final Object o) {
+    public final int compareTo(final Object o) {
         if (this == o) return 0;
 
         Term t = (Term) o;
@@ -75,29 +78,31 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
     @Override
+    public final Term clone(Term[] replaced) {
+        return new GenericCompound(op(), replaced, relation);
+    }
+
+    @Override
     public final TermVector<T> subterms() {
         return terms;
     }
 
     @Override
-    public boolean equals(final Object that) {
+    public final boolean equals(final Object that) {
         if (this == that)
             return true;
 
-        if (hash != that.hashCode()) return false;
-
-        if (!(that instanceof Compound))
+        if (!(that instanceof GenericCompound))
             return false;
 
-        return equalsCompound((Compound) that);
+        GenericCompound c = (GenericCompound)that;
+        if (hash != c.hash||
+            (op != c.op) || (relation!=c.relation)
+            )
+            return false;
+
+        return subterms().equals(c.subterms());
     }
-
-    public final boolean equalsCompound(Compound that) {
-        return subterms().equals(that.subterms()) && (op() == that.op());
-    }
-
-
-
 
 
     /**
@@ -143,7 +148,6 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
         return terms.cloneTermsReplacing(index, replaced);
     }
 
-
     public final boolean isEmpty() {
         return terms.isEmpty();
     }
@@ -168,7 +172,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
     @Override
-    public Term[] terms(IntObjectPredicate<T> filter) {
+    public final Term[] terms(IntObjectPredicate<T> filter) {
         return terms.terms(filter);
     }
 
@@ -183,8 +187,8 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
     @Override
-    public int structure() {
-        return terms.structure() | (1 << op().ordinal());
+    public final int structure() {
+        return terms.structure() | (1 << op.ordinal());
     }
 
     @Override
@@ -203,7 +207,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return terms.size();
     }
 
@@ -227,7 +231,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
      * TODO parameter for max (int) level to scan down
      */
     @Override
-    public boolean containsTermRecursively(final Term target) {
+    public final boolean containsTermRecursively(final Term target) {
 
         if (impossibleSubterm(target)) return false;
 
@@ -235,19 +239,20 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
 
-    @Override public boolean isNormalized() {
-        return terms.isNormalized();
+
+    @Override public final boolean isNormalized() {
+        return normalized;
     }
 
 
     @Override
-    public void setNormalized(boolean b) {
-        terms.setNormalized(b);
+    public final void setNormalized(boolean b) {
+        this.normalized = b;
     }
 
     @Override
-    public int bytesLength() {
-        int len = /* opener byte */1;
+    public final int bytesLength() {
+        int len = /* opener byte */1 + 1;
 
         final int n = size();
         for (int i = 0; i < n; i++) {
@@ -259,11 +264,12 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
     @Override
-    public byte[] bytes() {
+    public final byte[] bytes() {
 
         ByteBuf b = ByteBuf.create(bytesLength());
 
         b.add((byte) op().ordinal()); //header
+        b.add((byte) relation); //header
 
         appendSubtermBytes(b);
 
@@ -274,16 +280,16 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
     @Override
-    public void appendSubtermBytes(ByteBuf b) {
+    public final void appendSubtermBytes(ByteBuf b) {
         terms.appendSubtermBytes(b);
     }
 
     @Override
-    public boolean and(Predicate<Term> v) {
+    public final boolean and(Predicate<Term> v) {
         return v.test(this) && terms.and(v);
     }
     @Override
-    public boolean or(Predicate<Term> v) {
+    public final boolean or(Predicate<Term> v) {
         return v.test(this) || terms.or(v);
     }
 

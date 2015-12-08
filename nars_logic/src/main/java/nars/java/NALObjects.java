@@ -8,10 +8,7 @@ import javassist.util.proxy.ProxyObject;
 import nars.$;
 import nars.Global;
 import nars.NAR;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
@@ -90,7 +87,8 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
     @Override
     protected Term termClassInPackage(Term classs, Term packagge) {
-        Inheritance<SetExt<Term>, Term> t = $.inst(classs, packagge);
+        Compound t =
+                $.instance(classs, packagge);
         nar.believe(metadataPriority, t,
                 Tense.ETERNAL,
                 metadataBeliefFreq, metadataBeliefConf);
@@ -107,7 +105,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     }
 
     protected void onInstanceOfClass(Term identifier, Term clas) {
-        nar.believe(metadataPriority, Instance.make(identifier, clas),
+        nar.believe(metadataPriority, $.instance(identifier, clas),
             Tense.ETERNAL,
             metadataBeliefFreq, metadataBeliefConf);
     }

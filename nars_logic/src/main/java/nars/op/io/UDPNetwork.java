@@ -6,9 +6,7 @@ import hellblazer.gossip.GossipPeer;
 import nars.NAR;
 import nars.java.DefaultTermizer;
 import nars.java.Termizer;
-import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
 import nars.term.Term;
@@ -146,24 +144,24 @@ public class UDPNetwork<O extends Serializable>  /* implements NARStream.. */
                 UUID u = p.getOne();
                 O o = p.getTwo();
 
-                nar.believe(
-                        Instance.make(
-                                //Atom.quote(u.toString()),
-                                termizer.term(o),
-                                Atom.the("recv")
-                                //Temporal.ORDER_FORWARD
-                        ),
-                        Tense.Present,
-                        1.0f,
-                        0.9f
-                );
+//                nar.believe(
+//                        Instance.make(
+//                                //Atom.quote(u.toString()),
+//                                termizer.term(o),
+//                                Atom.the("recv")
+//                                //Temporal.ORDER_FORWARD
+//                        ),
+//                        Tense.Present,
+//                        1.0f,
+//                        0.9f
+//                );
             })
         );
         return this;
     }
 
     void send(Term message) {
-        peer.put(message);
+        peer.put(message.bytes());
     }
 
     /** specifies how strongly to "peer" with another host:port */

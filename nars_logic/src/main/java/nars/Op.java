@@ -35,12 +35,12 @@ public enum Op implements Serializable {
 
     /* Relations */
     INHERITANCE("-->", 1, OpType.Relation, 2),
-    SIMILARITY("<->", 2, OpType.Relation, 3),
+    SIMILARITY("<->", true, 2, OpType.Relation, 3),
 
 
     /* CompountTerm operators, length = 1 */
-    INTERSECTION_EXT("&", 3),
-    INTERSECTION_INT("|", 3),
+    INTERSECTION_EXT("&", true, 3),
+    INTERSECTION_INT("|", true, 3),
 
     DIFFERENCE_EXT("-", 3),
     DIFFERENCE_INT("~", 3),
@@ -51,28 +51,28 @@ public enum Op implements Serializable {
     IMAGE_INT("\\", 4),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCTION("||", 5, 4),
-    CONJUNCTION("&&", 5, 5),
+    DISJUNCTION("||", true, 5, 4),
+    CONJUNCTION("&&", true, 5, 5),
 
     SEQUENCE("&/", 7, 6),
-    PARALLEL("&|", 7, 7),
+    PARALLEL("&|", true, 7, 7),
 
 
     /* CompountTerm delimiters, must use 4 different pairs */
-    SET_INT_OPENER("[", 3), //OPENER also functions as the symbol for the entire compound
-    SET_EXT_OPENER("{", 3), //OPENER also functions as the symbol for the entire compound
+    SET_INT_OPENER("[", true, 3), //OPENER also functions as the symbol for the entire compound
+    SET_EXT_OPENER("{", true, 3), //OPENER also functions as the symbol for the entire compound
 
 
     IMPLICATION("==>", 5, OpType.Relation, 8),
 
     /* Temporal Relations */
     IMPLICATION_AFTER("=/>", 7, OpType.Relation, 9),
-    IMPLICATION_WHEN("=|>", 7, OpType.Relation, 10),
+    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, 10),
     IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, 11),
 
-    EQUIVALENCE("<=>", 5, OpType.Relation, 12),
+    EQUIVALENCE("<=>", true, 5, OpType.Relation, 12),
     EQUIVALENCE_AFTER("</>", 7, OpType.Relation, 13),
-    EQUIVALENCE_WHEN("<|>", 7, OpType.Relation, 14),
+    EQUIVALENCE_WHEN("<|>", true, 7, OpType.Relation, 14),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -135,15 +135,24 @@ public enum Op implements Serializable {
      * 1-character representation, or 0 if a multibyte must be used
      */
     public final byte byt;
-
+    private final boolean commutative;
 
 
     Op(char c, int minLevel, int... bytes) {
         this(c, minLevel, OpType.Other, bytes);
     }
 
+    Op(String s, boolean commutative, int minLevel) {
+        this(s, commutative, minLevel, OpType.Other);
+    }
+
+
     Op(char c, int minLevel, OpType type, int... bytes) {
         this(Character.toString(c), minLevel, type, bytes);
+    }
+
+    Op(String string, boolean commutative, int minLevel, int... ibytes) {
+        this(string, commutative, minLevel, OpType.Other, ibytes);
     }
 
     Op(String string, int minLevel, int... ibytes) {
@@ -151,8 +160,13 @@ public enum Op implements Serializable {
     }
 
     Op(String string, int minLevel, OpType type, int... ibytes) {
+        this(string, false, minLevel, type, ibytes);
+    }
+
+    Op(String string, boolean commutative, int minLevel, OpType type, int... ibytes) {
 
         this.str = string;
+        this.commutative = commutative;
 
         final byte bb[];
 
@@ -185,7 +199,11 @@ public enum Op implements Serializable {
 
         this.opener = name().endsWith("_OPENER");
         this.closer = name().endsWith("_CLOSER");
+
+
     }
+
+
 
     @Override
     public String toString() {
@@ -241,6 +259,10 @@ public enum Op implements Serializable {
 
     public final boolean isVar() {
         return type == Op.OpType.Variable;
+    }
+
+    public boolean isCommutative() {
+        return commutative;
     }
 
     /** top-level Op categories */

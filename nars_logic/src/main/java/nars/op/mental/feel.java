@@ -16,8 +16,8 @@
  */
 package nars.op.mental;
 
+import nars.$;
 import nars.Memory;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.SyncOperator;
@@ -48,7 +48,7 @@ public abstract class feel extends SyncOperator implements Mental {
 
         final Term self = memory.self();
         final Term selfSubject = SetExt.make(self);
-        Inheritance content = Inheritance.make(selfSubject, predicate);
+        Term content = $.inh(selfSubject, predicate);
 
         throw new RuntimeException("unimpl TODO");
 //        return Lists.newArrayList(MutableTask.make(content)

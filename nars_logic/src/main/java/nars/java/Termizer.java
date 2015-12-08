@@ -1,7 +1,6 @@
 package nars.java;
 
 import nars.$;
-import nars.nal.nal1.Negation;
 import nars.term.Term;
 import nars.term.atom.Atom;
 
@@ -10,11 +9,11 @@ import nars.term.atom.Atom;
  */
 public interface Termizer {
 
-    Atom TRUE = Atom.the("true");
-    Negation FALSE = $.not(TRUE);
-    Atom VOID = Atom.the("void");
-    Atom EMPTY = Atom.the("empty");
-    Atom NULL = Atom.the("null");
+    Atom TRUE = $.the("true");
+    Atom FALSE = $.not(TRUE);
+    Atom VOID = $.the("void");
+    Atom EMPTY = $.the("empty");
+    Atom NULL = $.the("null");
 
     Term term(Object o);
     Object object(Term t);

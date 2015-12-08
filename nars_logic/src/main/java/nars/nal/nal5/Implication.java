@@ -25,6 +25,8 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.TermSet;
+import nars.term.TermVector;
 
 /**
  * A Statement about an Inheritance copula.
@@ -34,9 +36,28 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
     //TODO use subclasses like Conjunction
     @Deprecated protected final int temporalOrder;
 
+    @Deprecated static Op op(int order) {
+        switch (order) {
+            case Tense.ORDER_BACKWARD:
+                return Op.IMPLICATION_BEFORE;
+            case Tense.ORDER_FORWARD:
+                return Op.IMPLICATION_AFTER;
+            case Tense.ORDER_CONCURRENT:
+                return Op.IMPLICATION_WHEN;
+        }
+        return Op.IMPLICATION;
+    }
 
-    protected Implication(final A subject, final B predicate, final int order) {
-        super(subject, predicate);
+    /**
+     * Constructor with partial values, called by make
+     *
+     */
+    private Implication(A subject, B predicate, int order) {
+        super( op(order),
+                order!=Tense.ORDER_FORWARD ?
+                        new TermSet(subject, predicate) :
+                        new TermVector(subject, predicate)
+        );
 
         if (order == Tense.ORDER_INVALID) {
             throw new RuntimeException("Invalid temporal order; args=" + subject + ',' + predicate);
@@ -112,15 +133,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
      */
     @Override
     public Op op() {
-        switch (temporalOrder) {
-            case Tense.ORDER_FORWARD:
-                return Op.IMPLICATION_AFTER;
-            case Tense.ORDER_CONCURRENT:
-                return Op.IMPLICATION_WHEN;
-            case Tense.ORDER_BACKWARD:
-                return Op.IMPLICATION_BEFORE;
-        }
-        return Op.IMPLICATION;
+        return op(temporalOrder);
     }
     
     @Override

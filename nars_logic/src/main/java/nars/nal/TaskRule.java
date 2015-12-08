@@ -307,7 +307,7 @@ public class TaskRule extends ProductN implements Level {
             //do not alter postconditions
             if ((containingCompound instanceof Inheritance)
                     && PostCondition.reservedMetaInfoCategories.contains(
-                    ((Inheritance) containingCompound).getPredicate()))
+                    ((Compound) containingCompound).term(1)))
                 return v;
 
             return Variable.the(Op.VAR_PATTERN, v.bytes());
@@ -374,8 +374,8 @@ public class TaskRule extends ProductN implements Level {
 //                continue;
 //            }
 
-            Inheritance predicate = (Inheritance) precon[i];
-            Term predicate_name = predicate.getPredicate();
+            Compound predicate = (Compound) precon[i];
+            Term predicate_name = predicate.term(1);
 
             final String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
 
@@ -386,7 +386,7 @@ public class TaskRule extends ProductN implements Level {
 
             //if (predicate.getSubject() instanceof SetExt) {
                 //decode precondition predicate arguments
-            args = ((Product)(predicate.getSubject())).terms();
+            args = ((Product)(predicate.term(0))).terms();
             arg1 = args[0];
             arg2 = (args.length > 1) ? args[1] : null;
             /*} else {
@@ -499,7 +499,7 @@ public class TaskRule extends ProductN implements Level {
                             preNext = TaskPunctuation.TaskGoal;
                             break;
                         default:
-                            throw new RuntimeException("Unknown task punctuation type: " + predicate.getSubject());
+                            throw new RuntimeException("Unknown task punctuation type: " + predicate.term(0));
                     }
                     break;
 

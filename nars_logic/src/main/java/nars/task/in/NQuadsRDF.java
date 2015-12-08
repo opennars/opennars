@@ -2,7 +2,6 @@ package nars.task.in;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
@@ -274,7 +273,7 @@ abstract public class NQuadsRDF {
                 }
             //}
 
-            belief = (Inheritance.make(subject, object));
+            belief = (Compound) $.inh(subject, object);
 
         }
         else if (predicate.equals(equivalentClass)) {
@@ -319,12 +318,12 @@ abstract public class NQuadsRDF {
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
 
-            belief = (Compound) Negation.make(Similarity.make(subject, object));
+            belief = (Compound) Negation.negation(Similarity.make(subject, object));
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);
             if (subject!=null && object!=null && predicate!=null) {
-                belief = Inheritance.make(
+                belief = (Compound) $.inh(
                         Product.make(subject, object),
                         predicate
                 );

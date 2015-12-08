@@ -28,9 +28,9 @@ import nars.op.io.echo;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -450,7 +450,7 @@ public class Narsese extends BaseParser<Object>  {
 //                        //negation shorthand
                         seq(Op.NEGATION.str, s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
-                            Negation.make(Atom.the(pop())))),
+                            Negation.negation(Atom.the(pop())))),
 
 
                         seq(
@@ -959,12 +959,12 @@ public class Narsese extends BaseParser<Object>  {
             /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
-            Operation o = $.oper(new Operator(vectorterms.get(0)), Product.make(vectorterms, 1, vectorterms.size()));
-            return o;
+            return $.oper(new Operator(vectorterms.get(0)),
+                    Product.make(vectorterms, 1, vectorterms.size()));
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return Terms.term(op, va);
+            return new GenericCompound(op, va);
         }
     }
 

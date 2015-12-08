@@ -208,7 +208,7 @@ public class Atom extends StringAtom {
     }
 
     public static Negation notThe(String untrue) {
-        return (Negation) Negation.make(Atom.the(untrue));
+        return (Negation) Negation.negation(Atom.the(untrue));
     }
 
     @Override

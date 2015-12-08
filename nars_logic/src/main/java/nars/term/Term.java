@@ -26,16 +26,13 @@ import nars.nal.nal7.Tense;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
-import nars.term.visit.TermPredicate;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 import java.util.function.Predicate;
 
 
-public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializable {
+public interface Term extends Termed, Comparable, Termlike {
 
 
 
@@ -98,8 +95,6 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
      * @return The default value is false
      */
     boolean isCommutative();
-
-    Term clone();
 
     /**
      * Whether this compound term contains any variable term

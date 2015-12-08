@@ -145,11 +145,11 @@ public class InternalExperience {
         });
     }
 
-    public static Operation toTerm(final Sentence s, final Premise mem, float conceptCreationExpectation) {
+    public static Compound toTerm(final Sentence s, final Premise mem, float conceptCreationExpectation) {
         return toTerm(s, mem, conceptCreationExpectation, enableWantBelieve);
     }
 
-    public static Operation toTerm(final Sentence s, final Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
+    public static Compound toTerm(final Sentence s, final Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
         Operator opTerm;
         switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
@@ -182,7 +182,7 @@ public class InternalExperience {
         }
         arg[k] = nal.self();
 
-        Operation operation = $.oper(opTerm, arg);
+        Compound operation = $.oper(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -231,7 +231,7 @@ public class InternalExperience {
             return null;
         }
 
-        Operation ret = toTerm(task, nal, conceptCreationExpectation.floatValue());
+        Compound ret = toTerm(task, nal, conceptCreationExpectation.floatValue());
         if (ret == null) {
             return null;
         }

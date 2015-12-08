@@ -1,8 +1,8 @@
 package nars.task;
 
+import nars.$;
 import nars.Premise;
 import nars.budget.Budget;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal7.Tense;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -15,7 +15,7 @@ public class PreTask extends AbstractTask {
     //HACK wrap the non-compound in a compound to form a task
     public PreTask(Term term, char punctuation, Truth truth, Budget b, long occurr, Premise reason) {
         super(term instanceof Compound ? ((Compound)term) :
-                Inheritance.make(term, Atom.the("NON_COMPOUND")),
+            (Compound) $.inh(term, Atom.the("NON_COMPOUND")),
                 punctuation, truth, b, reason.getTask(), reason.getBelief(), null);
 
         if (occurr!= Tense.TIMELESS)

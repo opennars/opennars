@@ -35,6 +35,7 @@ public class Equivalence extends Statement {
 
     @Deprecated private final int temporalOrder; //TODO use subclasses
 
+
     @Deprecated static Op op(int order) {
         switch (order) {
             case Tense.ORDER_FORWARD:
@@ -52,8 +53,8 @@ public class Equivalence extends Statement {
     private Equivalence(Term subject, Term predicate, int order) {
         super( op(order),
                 order!=Tense.ORDER_FORWARD ?
-                    new TermVector(subject, predicate) :
-                        new TermSet(subject, predicate)
+                    new TermSet(subject, predicate) :
+                        new TermVector(subject, predicate)
         );
 
         if ((order == Tense.ORDER_BACKWARD) ||

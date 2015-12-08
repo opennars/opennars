@@ -21,73 +21,31 @@
 package nars.nal.nal1;
 
 import nars.Op;
-import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.term.atom.Atom;
+import nars.term.compound.GenericCompound;
 
 /**
  * A Statement about an Inheritance relation.
  */
-public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> {
-
-    /**
-     * Constructor with partial values, called by make
-     */
-    protected Inheritance(final A a, final B b) {
-        super(a,b);
-    }
-
-    @Override public final boolean isCommutative() {
-        return false;
-    }
-
+public interface Inheritance<A extends Term, B extends Term> {
 
 
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */
-    public static Term makeTerm(final Term subject, final Term predicate) {            
+    static Term inheritance(final Term subject, final Term predicate) {
         if (subject.equals(predicate))
             return subject;
-        return make(subject, predicate);
-    }
 
-    /**
-     * Try to make a new compound from two term. Called by the logic rules.
-     * @param subject The first compoment
-     * @param predicate The second compoment
-     * @return A compound generated or null
-     */
-    public static Inheritance make(final Term subject, final Term predicate) {
-
-
-        if (invalidStatement(subject, predicate)) {
+        if (Statement.invalidStatement(subject, predicate)) {
             return null;
         }
 
-        if (predicate instanceof Operator) {
-            if (subject instanceof Product)
-                return new Operation((Operator)predicate, (Product)subject);
-        }
-
-        return new Inheritance(subject, predicate);
-
+//        if ((predicate instanceof Operator) && if (subject instanceof Product))
+//            return new GenericCompound(Op.INHERITANCE, (Operator)predicate, (Product)subject);
+//        else
+            return new GenericCompound(Op.INHERITANCE, subject, predicate);
          
-    }
-
-    /**
-     * Get the operate of the term.
-     * @return the operate of the term
-     */
-    @Override
-    public final Op op() {
-        return Op.INHERITANCE;
-    }
-
-    public static Inheritance<Atom,Atom> make(String subj, String pred) {
-        return Inheritance.make( Atom.the(subj), Atom.the(pred) );
     }
 
 }

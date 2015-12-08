@@ -3,20 +3,19 @@ package nars;
 import nars.java.AtomObject;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
-import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 import nars.util.utf8.Utf8;
@@ -71,12 +70,12 @@ abstract public class $  {
     /**
      * Op.INHERITANCE from 2 Terms: subj --> pred
      */
-    public static <A extends Term, B extends Term> Inheritance<A, B> inh(A subj, B pred) {
-        return Inheritance.make(subj, pred);
+    public static Term inh(Term subj, Term pred) {
+        return Inheritance.inheritance(subj, pred);
     }
 
-    public static <A extends Term, B extends Term> Inheritance<A, B> inh(String subj, String pred) {
-        return Inheritance.make((A)$(subj), (B)$(pred));
+    public static Term inh(String subj, String pred) {
+        return Inheritance.inheritance($(subj), $(pred));
     }
 
 
@@ -84,17 +83,17 @@ abstract public class $  {
         return Similarity.make(subj, pred);
     }
 
-
-    public static Operation<Atom> oper(String operator, String... args) {
-        return oper(Operator.the(operator), Product.make(args));
+    public static Compound oper(String operator, String... args) {
+        return oper(Operator.the(operator), $.pro(args));
     }
 
-    public static <A extends Term> Operation<A> oper(Operator opTerm, A... arg) {
-        return oper(opTerm, pro(arg));
+    public static Compound oper(Operator opTerm, Term... arg) {
+        return oper(opTerm, $.pro(arg));
     }
 
-    public static <A extends Term> Operation<A> oper(final Operator oper, Product<A> arg) {
-        return new Operation(oper, arg);
+    public static Compound oper(Operator opTerm, Product arg) {
+        return new GenericCompound(Op.INHERITANCE,
+                $.inh(opTerm, arg));
     }
 
 
@@ -103,7 +102,7 @@ abstract public class $  {
     }
 
     public static <X extends Term> X not(Term x) {
-        return (X) Negation.make(x);
+        return (X) Negation.negation(x);
     }
 
     public static CyclesInterval cycles(int numCycles) {
@@ -159,14 +158,34 @@ abstract public class $  {
         return var(Op.VAR_PATTERN, s);
     }
 
-    public static <P extends Term, S extends Term> Inheritance<SetExt<S>, P>
-    inst(S subj, P pred) {
-        return Instance.make(subj, pred);
+    /**
+     * Try to make a new compound from two components. Called by the logic rules.
+     * <p>
+     *  A {-- B becomes {A} --> B
+     * @param subj The first component
+     * @param pred The second component
+     * @return A compound generated or null
+     */
+    public static Compound instance(Term subj, Term pred) {
+        return (Compound) $.inh(SetExt.make(subj), pred);
     }
 
-    public static Term term(final Op op, final Term... args) {
-        return Terms.term(op, args);
+
+    /**
+     * Try to make a new compound from two components. Called by the logic rules.
+     * <p>
+     *  A {-] B becomes {A} --> [B]
+     * @param subject The first component
+     * @param predicate The second component
+     * @return A compound generated or null
+     */
+    final public static Compound instprop(final Term subject, final Term predicate) {
+        return (Compound) $.inh(SetExt.make(subject), SetInt.make(predicate));
     }
+
+//    public static Term term(final Op op, final Term... args) {
+//        return Terms.term(op, args);
+//    }
 
     public static MutableTask belief(Compound term, Truth copyFrom) {
         return belief(term, copyFrom.getFrequency(), copyFrom.getConfidence());
@@ -186,5 +205,21 @@ abstract public class $  {
 
     public static <T extends Term> SetExt<T> extset(Collection<T> t) {
         return SetExt.make(t);
+    }
+
+    public static Compound intset(Term... t) {
+        return SetInt.make(t);
+    }
+
+    /**
+     * Try to make a new compound from two components. Called by the logic rules.
+     * <p>
+     *  A --] B becomes A --> [B]
+     * @param subject The first component
+     * @param predicate The second component
+     * @return A compound generated or null
+     */
+    public static Term property(Term subject, Term predicate) {
+        return inh(subject, $.intset(predicate));
     }
 }

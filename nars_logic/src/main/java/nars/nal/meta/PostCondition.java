@@ -108,14 +108,14 @@ public class PostCondition implements Serializable, Level //since there can be m
                 throw new RuntimeException("Unknown postcondition format: " + m);
             }
 
-            Inheritance<Term, Atom> i = (Inheritance) m;
+            Compound i = (Compound) m;
 
-            if (i.getPredicate() == null) {
+            Term type = i.term(1);
+            if (type == null) {
                 throw new RuntimeException("Unknown postcondition format (predicate must be atom): " + m);
             }
 
-            Term type = i.getPredicate();
-            Term which = i.getSubject();
+            Term which = i.term(0);
 
 
             //negate = type.equals(negation);

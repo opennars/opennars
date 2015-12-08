@@ -3,7 +3,6 @@ package nars.java;
 import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import nars.$;
 import nars.Global;
-import nars.nal.nal2.Instance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Term;
@@ -163,7 +162,7 @@ public class DefaultTermizer implements Termizer {
 
                 if ((tv != null) && (tk!=null)) {
                     components.add(
-                        Instance.make(tv, tk)
+                        $.inh(tv, tk)
                     );
                 }
             });

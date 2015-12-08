@@ -477,10 +477,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     void addAllTo(Collection<Term> set);
 
     /** universal compound hash function */
-    static <T extends Term> int hash(CompoundN c, int hashSalt) {
-        return hash(c.subterms(), c.op(), hashSalt);
-    }
-
     static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {
         int h = hashCombine( subterms.hashCode(), op.ordinal() );
         if (hashSalt!=0)

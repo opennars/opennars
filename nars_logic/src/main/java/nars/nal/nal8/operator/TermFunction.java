@@ -3,13 +3,13 @@ package nars.nal.nal8.operator;
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.Symbols;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -79,8 +79,9 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         //final int numArgs = x0.length;
 
-        Inheritance inh = Operation.result(operation, y);
-        if (inh == null) {
+        Term inh = Operation.result(operation, y);
+        if (inh == null || (!(inh instanceof Compound))) {
+            //TODO wrap a non-Compound result as some kind of statement
             return null;
         }
 
@@ -88,7 +89,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         return Lists.newArrayList(
                 Operation.asFeedback(
-                    new MutableTask(inh).
+                    new MutableTask((Compound)inh).
                         judgment().
                         truth(getResultFrequency(), getResultConfidence()).
                         tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)

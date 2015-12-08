@@ -1,9 +1,9 @@
 package nars.process;
 
+import nars.$;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
-import nars.nal.nal2.Property;
 import nars.nal.nal3.SetExt;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -61,7 +61,7 @@ public class QueryVariableExhaustiveResults implements Consumer<Task> {
                 //generates a similarity group
                 long now = nar.time();
                 Task x = new MutableTask().term(
-                    Property.make(
+                    $.property(
                         SetExt.make(terms),
                         t.getTerm()
                     )
