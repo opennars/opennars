@@ -44,7 +44,7 @@ public final class Solve extends PreCondition {
 
         Term derivedTerm;
 
-        if(null==(derivedTerm=match.apply(term)))
+        if(null==(derivedTerm=match.apply(term, !continueIfIncomplete)))
             return false;
 
         if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {

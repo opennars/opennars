@@ -37,7 +37,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.believe("<<($y, door) --> open> =\\> <($y, key) --> hold>>", 0.8f, 0.9f);
 
         tester.mustBelieve(cycles, "<<(*,$1,key) --> hold> =/> <(*,$1,room) --> enter>>", 1.00f, 0.37f);
-        tester.run();
+
     }
 
     @Test
@@ -47,7 +47,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.believe("<<($y, door) --> open> =\\> <($y, key) --> hold>>", 0.8f, 0.9f);
 
         tester.mustBelieve(cycles, "<<(*,$1,room) --> enter> =\\> <(*,$1,key) --> hold>>", 0.72f, 0.58f);
-        tester.run();
+
     }
 
     @Test
@@ -59,7 +59,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<<(*,$1,key) --> hold> =/> <(*,$1,room) --> enter>>", 0.9f, 0.39f);
         tester.mustBelieve(cycles, "<<(*,$1,room) --> enter> =\\> <(*,$1,key) --> hold>>", 0.8f, 0.42f);
         tester.mustBelieve(cycles, "<<(*,$1,key) --> hold> </> <(*,$1,room) --> enter>>", 0.73f, 0.44f);
-        tester.run();
+
     }
 
     @Test
@@ -71,7 +71,7 @@ public class NAL7Test extends AbstractNALTester {
                 1.0f, 0.9f);
 
         tester.mustBelieve(cycles, "<<(*, $x, door) --> open> =/> <(*, $x, corridor_100) --> leave>>", 0.95f, 0.81f);
-        tester.run();
+
     }
 
     @Test
@@ -82,7 +82,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<(John, key) --> hold>. :|:");
 
         tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, 55); //":\:"
-        tester.run();
+
     }
 
 
@@ -94,7 +94,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<(John, key) --> hold>. :|:");
 
         tester.mustBelieve(cycles, "<(John,room) --> enter>", 1.00f, 0.81f, 55); //":\:"
-        tester.run();
+
     }
 
 
@@ -106,7 +106,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<(*,John,room) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(John, key) --> hold>", 1.00f, 0.45f, -65); //":\:"
-        tester.run();
+
     }
 
     @Test
@@ -121,7 +121,7 @@ public class NAL7Test extends AbstractNALTester {
                 1.00f, 0.81f,
                 5); //":/:"
 
-        tester.run();
+
     }
 
     @Test
@@ -135,7 +135,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<(*,John,key) --> hold>",
                 1.00f, 0.45f,
                 -5 ); //:\\:
-        tester.run();
+
     }
 
     @Test
@@ -150,7 +150,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<<(John, room) --> enter> =\\> (&/, <(John, door) --> open>, /6)>",
                 1.00f, 0.45f,
                 11);
-        tester.run();
+
     }
 
     @Test
@@ -163,7 +163,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<(&/, <(John, door) --> open>, /6) =/> <(John, room) --> enter>>",
                 1.00f, 0.45f,
                 11);
-        tester.run();
+
     }
 
     @Test
@@ -176,7 +176,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, " <(&/, <(John, door) --> open>, /6) </> <(John, room) --> enter>>",
                 1.00f, 0.45f,
                 11);
-        tester.run();
+
     }
 
     @Test
@@ -194,7 +194,7 @@ public class NAL7Test extends AbstractNALTester {
                 1.00f, 0.45f,
                 0
         );
-        tester.run();
+
     }
     @Test
     public void induction_on_events_with_variable_introduction_d1000() throws Narsese.NarseseException {
@@ -211,7 +211,7 @@ public class NAL7Test extends AbstractNALTester {
                 1.00f, 0.45f,
                 delay
         );
-        tester.run();
+
     }
 
     @Test
@@ -225,7 +225,7 @@ public class NAL7Test extends AbstractNALTester {
                 "<(&/, <$1 --> (/, open, _, door)>, /5) =/> <$1 --> (/, enter, _, room)>>",
                 1.00f, 0.45f,
                 0);
-        tester.run();
+
     }
 
     @Test
@@ -238,7 +238,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<<$1 --> (/, enter, _, room)> =\\> (&/, <$1 --> (/, open, _, door)>, /5)>",
                 1.00f, 0.45f,
                 0);
-        tester.run();
+
     }
 
     @Test
@@ -252,7 +252,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "<(&&,<(*,John,key) --> hold>,<(*,John,door) --> open>) =/> <(*,John,room) --> enter>>",
                 1.00f, 0.45f,
                 10);
-        tester.run();
+
     }
 
     @Test
@@ -266,7 +266,7 @@ public class NAL7Test extends AbstractNALTester {
                 0.5f, 0.95f,
                 10);
 
-        tester.run();
+
     }
 
     //NAL7 tests which were accidentally in NAL8 category:
@@ -281,7 +281,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.mustBelieve(cycles, "(&&,<#1 --> (/,at,SELF,_)>,<#1 --> (/,on,{t002},_)>)",
                 1.0f, 0.81f,
                 10);
-        tester.run();
+
     }
 
     //TODO: investigate
@@ -295,7 +295,7 @@ public class NAL7Test extends AbstractNALTester {
 
         tester.mustBelieve(cycles, "<(*,SELF,{t002}) --> reachable>",
                 1.0f, 0.81f, T1.getOccurrenceTime()); //  TODO: find a way to check whether the occurence time is equal to the one of the first input
-        tester.run();
+
     }
 
     @Test
@@ -304,7 +304,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<<m --> M> =/> <p --> P>>.");
         tester.inputAt(10, "<<s --> S> <|> <m --> M>>. %0.9;0.9%");
         tester.mustBelieve(cycles, "<<s --> S> =/> <p --> P>>", 0.90f, 0.73f);
-        tester.run();
+
 
         //(M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
     }
@@ -318,7 +318,7 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<s --> S>.");
         tester.inputAt(10, "(&/,<s --> S>,/50,<y --> Y>,/3,<z --> Z>). :|:");
         tester.mustBelieve(cycles, "(&/, <y --> Y>, /3, <z --> Z>).", 1.00f, 0.42f, 60);
-        tester.run();
+
     }
 
     @Test
@@ -327,6 +327,6 @@ public class NAL7Test extends AbstractNALTester {
         tester.input("<s --> S>.");
         tester.inputAt(10, "(&/,<s --> S>,/50,<z --> Z>). :|:");
         tester.mustBelieve(cycles, "<z --> Z>.", 1.00f, 0.42f, 60);
-        tester.run();
+
     }
 }

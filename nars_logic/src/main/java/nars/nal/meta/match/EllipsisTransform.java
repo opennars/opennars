@@ -1,5 +1,6 @@
 package nars.nal.meta.match;
 
+import nars.nal.TaskRule;
 import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -30,9 +31,10 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     @Override
     public Variable clone(Variable v, VariableNormalization normalizer) {
         //normalizes any variable parameter terms of an EllipsisTransform
+        TaskRule.TaskRuleVariableNormalization vnn = (TaskRule.TaskRuleVariableNormalization) normalizer;
         return new EllipsisTransform(v,
-                from instanceof Variable ? normalizer.apply((Variable)from) : from,
-                to instanceof Variable ? normalizer.apply((Variable)to) : to);
+                from instanceof Variable ? vnn.applyAfter((Variable)from) : from,
+                to instanceof Variable ? vnn.applyAfter((Variable)to) : to);
     }
 
     public ArrayEllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
@@ -45,7 +47,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
             Term[] t = new Term[n];
             while (i < n)  {
                 if (i == rel) {
-                    t[i++] = subst.apply(to);
+                    t[i++] = subst.apply(to, false);
                 }
                 else {
                     t[i++] = y.term(ab);

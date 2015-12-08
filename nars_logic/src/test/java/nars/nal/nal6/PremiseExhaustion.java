@@ -20,8 +20,7 @@ public class PremiseExhaustion {
             "belief. %..."
             //|-
         ).mustBelieve(1 /*cycles*/,
-            "result.", 0.79f /* f */, 0.92f /* c */)
-        .run();
+            "result.", 0.79f /* f */, 0.92f /* c */);
 
     }
 
@@ -33,8 +32,7 @@ public class PremiseExhaustion {
             "<<$y --> a> ==> <$y --> b>>. %0.00;0.70%"
             //|-
         ).mustBelieve(1 /*cycles*/,
-            "<<$1 --> a> ==> <$1 --> b>>", 0.79f, 0.92f)
-        .run();
+            "<<$1 --> a> ==> <$1 --> b>>", 0.79f, 0.92f);
 
     }
 
@@ -47,8 +45,7 @@ public class PremiseExhaustion {
                 //|-
         ).mustBelieve(150 /*cycles*/,
                 "(&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>).",
-                1.00f /* f */, 0.81f /* c */)
-        .run();
+                1.00f /* f */, 0.81f /* c */);
 
 
     }

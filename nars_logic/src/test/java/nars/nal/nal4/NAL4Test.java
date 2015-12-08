@@ -26,11 +26,12 @@ public class NAL4Test extends AbstractNALTester {
 
     @Test
     public void structural_transformation() throws Narsese.NarseseException {
-        TestNAR tester = test();
-        tester.believe("<(acid,base) --> reaction>",1.0f,0.9f); //en("An acid and a base can have a reaction.");
-        tester.mustBelieve(CYCLES, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f); //en("Acid can react with base.");
-        tester.mustBelieve(CYCLES, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f); //en("A base is something that has a reaction with an acid.");
-        tester.run();
+        TestNAR t = test();
+        t.nar.log();
+        t.believe("<(acid,base) --> reaction>",1.0f,0.9f); //en("An acid and a base can have a reaction.");
+        t.mustBelieve(CYCLES, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f); //en("Acid can react with base.");
+        t.mustBelieve(CYCLES, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f); //en("A base is something that has a reaction with an acid.");
+
     }
 
     @Test
@@ -38,7 +39,7 @@ public class NAL4Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<acid --> (/,reaction,_,base)>",1.0f,0.9f); //en("Acid can react with base.");
         tester.mustBelieve(CYCLES, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
-        tester.run();
+
     }
 
     @Test
@@ -46,7 +47,7 @@ public class NAL4Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f); //en("A base is something that has a reaction with an acid.");
         tester.mustBelieve(CYCLES, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
-        tester.run();
+
     }
 
     @Test
@@ -55,7 +56,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<neutralization --> (acid,base)>",1.0f,0.9f); //en("Neutralization is a relation between an acid and a base. ");
         tester.mustBelieve(CYCLES, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(CYCLES, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
-        tester.run();
+
     }
 
     @Test
@@ -63,7 +64,7 @@ public class NAL4Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(CYCLES, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Neutralization is a relation between an acid and a base.");
-        tester.run();
+
     }
 
     @Test
@@ -71,7 +72,7 @@ public class NAL4Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(CYCLES, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
-        tester.run();
+
     }
 
     @Test
@@ -80,7 +81,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
         tester.ask("<(bird,plant) --> ?x>"); //en("What is the relation between a bird and a plant?");
         tester.mustBelieve(CYCLES, "<(bird,plant) --> (animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
-        tester.run();
+
     }
 
     @Test
@@ -89,7 +90,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
         tester.ask("<(bird,plant) --> (*,animal,plant)>");
         tester.mustBelieve(CYCLES, "<(*,bird,plant) --> (*,animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
-        tester.run();
+
     }
 
 //    @Test public void composition_on_both_sides_of_a_statement_long0()  {
@@ -120,7 +121,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<neutralization --> reaction>",1.0f,0.9f);
         tester.ask("<(\\,neutralization," + additional + " acid,_) --> ?x>");
         tester.mustBelieve(CYCLES*10, "<(\\,neutralization," + additional + " acid,_) --> (\\,reaction," + additional + " acid,_)>", 1.0f, 0.81f);
-        tester.run();
+
     }
 
     @Test
@@ -129,7 +130,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<neutralization --> reaction>",1.0f,0.9f); //en("Neutralization is a type of reaction.");
         tester.ask("<(\\,neutralization,acid,_) --> ?x>"); //en("What can be neutralized by acid?");
         tester.mustBelieve(CYCLES, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f); //en("What can be neutralized by acid can react with acid.");
-        tester.run();
+
     }
 
     @Test
@@ -138,7 +139,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<neutralization --> reaction>",1.0f,0.9f); //en("Neutralization is a type of reaction.");
         tester.ask("<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>");
         tester.mustBelieve(CYCLES, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f); //en("What can be neutralized by acid can react with acid.");
-        tester.run();
+
     }
 
     @Test
@@ -147,7 +148,7 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<soda --> base>",1.0f,0.9f); //en("Soda is a type of base.");
         tester.ask("<(/,neutralization,_,base) --> ?x>"); //en("What is something that can neutralize a base?");
         tester.mustBelieve(CYCLES, "<(/,neutralization,_,base) --> (/,neutralization,_,soda)>", 1.0f, 0.81f); //en("What can neutraliz base can react with base.");
-        tester.run();
+
     }
 
     /* NAL6
@@ -191,8 +192,7 @@ public class NAL4Test extends AbstractNALTester {
         new RuleTest(
                 "<(p1) --> belief:p2>.", "belief:p2.",
                 "<belief:p2 --> (/, _, p1)>.",
-                1f, 1f, 0.9f, 0.9f) //
-                .run();
+                1f, 1f, 0.9f, 0.9f);
     }
 
 
@@ -202,8 +202,7 @@ public class NAL4Test extends AbstractNALTester {
         new RuleTest(
                 "<(belief:p1) --> p2>.", "belief:p1.",
                 "<belief:p1 --> (/, p2, _)>.",
-                1f, 1f, 0.9f, 0.9f)
-            .run();
+                1f, 1f, 0.9f, 0.9f);
     }
 
     @Test public void missingEdgeCase4() {
@@ -211,8 +210,7 @@ public class NAL4Test extends AbstractNALTester {
         new RuleTest(
                 "<belief:p1 --> (p2)>.", "belief:p1.",
                 "<(\\, _, p2) --> belief:p1>.",
-                1f, 1f, 0.9f, 0.9f)
-                .run();
+                1f, 1f, 0.9f, 0.9f);
     }
 
     @Test public void missingEdgeCase5() {
@@ -220,8 +218,7 @@ public class NAL4Test extends AbstractNALTester {
         new RuleTest(
                 "<p1 --> (belief:p2)>.", "belief:p2.",
                 "<(\\, p1, _) --> belief:p2>.",
-                1f, 1f, 0.9f, 0.9f)
-                .run();
+                1f, 1f, 0.9f, 0.9f);
     }
 
 }

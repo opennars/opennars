@@ -42,7 +42,7 @@ public class NAL4MultistepTest extends AbstractNALTester {
 
         test().ask("<(cat,[blue]) --> likes>"); //cats like blue?
 
-        tester.run();
+
     }
 
     //like seen when changing the expected confidence in mustBelief, or also in the similar list here we have such a ghost task where I expect better budget:
@@ -55,7 +55,7 @@ public class NAL4MultistepTest extends AbstractNALTester {
         tester.believe("<(*,{tom},{sky}) --> likes>",1.0f,0.9f); //en("tom likes the sky");
         test().ask("<(*,cat,[blue]) --> likes>"); //cats like blue?
         tester.mustBelieve(1000, "<(*,cat,[blue]) --> likes>", 1.0f, 0.42f); //en("A base is something that has a reaction with an acid.");
-        tester.run();
+
     }
 
 }

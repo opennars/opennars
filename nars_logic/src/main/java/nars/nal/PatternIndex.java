@@ -61,15 +61,35 @@ public class PatternIndex extends MapIndex {
             this.subtermOrder = getSubtermOrder(terms());
         }
 
+        /** subterm match priority heuristic
+         *  (lower is earlier) */
+        public static int subtermPriority(Term x) {
+            boolean isEllipsis = x instanceof Ellipsis;
+            boolean hasEllipsis =
+                    (x instanceof Compound) ?
+                        Ellipsis.containsEllipsis((Compound)x) : false;
+
+            int s = x.volume();
+
+            if (isEllipsis)
+                s += 10;
+            if (hasEllipsis)
+                s += 5;
+
+            if (x.isCommutative())
+                s *= s;
+
+            return s;
+        }
+
         private static int[] getSubtermOrder(Term[] terms) {
             Integer[] x = new Integer[terms.length];
             for (int i = 0; i < terms.length; i++)
                 x[i] = i;
-            Arrays.sort(x, (Integer a, Integer b) -> {
-                int volA = terms[a].volume();
-                int volB = terms[b].volume();
-                return Integer.compare(volA, volB);
-            });
+            Arrays.sort(x,  (Integer a, Integer b) -> Integer.compare(
+                subtermPriority(terms[a]),
+                subtermPriority(terms[b])
+            ));
             int[] y = new int[terms.length];
             for (int i = 0; i < terms.length; i++) {
                 y[i] = x[i];

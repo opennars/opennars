@@ -461,8 +461,7 @@ public class UnificationTest  {
         new RuleTest(
                 "a:b?", "(--,a:b).",
                 "a:b.",
-                0,0,0.9f,0.9f)
-                .run();
+                0,0,0.9f,0.9f);
     }
 
     @Test public void patternSimilarity1()  {
@@ -669,8 +668,7 @@ public class UnificationTest  {
         new TestNAR(new Default().nal(6))
                 .believe("<" + subj + " " + relation + " " + pred + ">")
                 .believe(belief)
-                .mustBelieve(16, concl, 0.81f)
-                .run();
+                .mustBelieve(16, concl, 0.81f);
         //.next()
         //.run(1).assertTermLinkGraphConnectivity();
 

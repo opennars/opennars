@@ -761,8 +761,8 @@ public class FindSubst extends Versioning implements Subst {
                         return true;
                     }
                 } else {
-                    Term n = apply(et.from);
-                    //n should not be null as long as this ellipse transform is processed after the specified variable has been matched, if it has
+                    Term n = apply(et.from, true);
+                    if (n == null) return false;
 
                     //resolving may be possible to defer to substitution if
                     //Y and et.from are components of ImageShrinkEllipsisMatch
@@ -911,7 +911,7 @@ public class FindSubst extends Versioning implements Subst {
                     //adds what would ordinarily be inlined in a Substitution
                     //which is not necessarily all of the terms it contains
                     //if it were iterated directly
-                    ((EllipsisMatch) r).applyTo(this, matchFirst);
+                    ((EllipsisMatch) r).applyTo(this, matchFirst, false);
                     continue;
                 } //else r == null
             }
@@ -1192,12 +1192,13 @@ public class FindSubst extends Versioning implements Subst {
     }
 
 
-    public final Term apply(Term t) {
+    public final Term apply(Term t, boolean fullMatch) {
         //TODO make a half resolve that only does xy?
 
-        Term ret = t.apply(xy);
-        if (ret != null) {
-            ret = ret.apply(yx);
+        Term ret = t.apply(xy, fullMatch);
+
+        if ((ret != null) /*&& (!yx.isEmpty())*/) {
+            ret = ret.apply(yx, fullMatch);
         }
         return ret;
 

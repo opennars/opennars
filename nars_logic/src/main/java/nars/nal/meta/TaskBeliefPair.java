@@ -20,7 +20,7 @@ public class TaskBeliefPair extends ProductN {
     }
 
     public TaskBeliefPair(Term a, Term b) {
-        super(a, b);
+        super(new Term[] { a, b });
 
         t = this.terms();
 

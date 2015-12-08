@@ -36,7 +36,7 @@ import java.util.List;
  */
 public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 
-    Product empty = new ProductN(); //length 0 product
+    Product empty = new ProductN(new Term[] {}); //length 0 product
 
     /**
      * Get the operate of the term.
@@ -77,12 +77,12 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 //    }
 
     static <T extends Term> ProductN<T> only(final T the) {
-        return new ProductN<>(the);
+        return new ProductN(the);
     }
 
     /** 2 term constructor */
     static <T extends Term> Product<T> make(final T a, final T b) {
-        return new ProductN<>(a, b);
+        return new ProductN(new Term[] { a, b });
     }
 
     /** creates from a sublist of a list */
@@ -130,7 +130,7 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 
     /** create a Product from terms contained in a TermContainer
      *  (ex: the subterms of a compound) */
-    public static Product make(TermContainer c) {
+    static Product make(TermContainer c) {
         return Product.make( c.terms() );
     }
 }

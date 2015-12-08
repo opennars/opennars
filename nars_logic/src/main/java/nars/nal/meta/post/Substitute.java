@@ -32,11 +32,11 @@ public class Substitute extends PreCondition {
 
     @Override public final boolean test(RuleMatch m) {
 
-        Term a = m.apply(this.x);
+        Term a = m.apply(this.x, false);
         if (a == null)
             return false;
 
-        Term b = m.apply(this.y);
+        Term b = m.apply(this.y, false);
         if (b == null)
             return false;
 

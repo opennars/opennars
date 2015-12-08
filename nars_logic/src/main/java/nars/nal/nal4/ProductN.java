@@ -11,11 +11,15 @@ import java.io.IOException;
  */
 public class ProductN<T extends Term> extends CompoundN<T> implements Product<T> {
 
+    public ProductN(final T singleTerm) {
+        super(singleTerm);
+    }
+
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    public ProductN(final T... arg) {
+    public ProductN(final T[] arg) {
         super(arg);
     }
 

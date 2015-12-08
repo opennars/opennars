@@ -34,18 +34,18 @@ public class ExecutionResult implements Serializable, Tasked {
 
         /*if (operation instanceof ImmediateOperation) {
             return operation.toString();
-        } else */{
-            //Term[] args = operation.argArray();
-            //Term operator = operation.getOperator();
-            StringBuilder sb = new StringBuilder();
+        } else */
+        //Term[] args = operation.argArray();
+        //Term operator = operation.getOperator();
+        StringBuilder sb = new StringBuilder();
 
-            t.appendTo(sb, null);
+        t.appendTo(sb, null);
 
 //                Budget b = getTask();
 //                if (b!=null)
 //                    sb.append(b.toStringExternal()).append(' ');
 
-            //sb.append(operator).append('(');
+        //sb.append(operator).append('(');
 
             /*
             if (args.length > 0) {
@@ -54,17 +54,16 @@ public class ExecutionResult implements Serializable, Tasked {
             }
             */
 
-            //sb.append(')');
+        //sb.append(')');
 
-            sb.append(" >EXE> ");
+        sb.append(" >EXE> ");
 
-            if (feedback != null)
-                sb.append(feedback);
-            else
-                sb.append("void");
+        if (feedback != null)
+            sb.append(feedback);
+        else
+            sb.append("void");
 
-            return sb.toString();
-        }
+        return sb.toString();
     }
 
 

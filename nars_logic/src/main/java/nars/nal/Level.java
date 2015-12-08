@@ -22,7 +22,7 @@ public interface Level {
 
     Predicate<Level> AcceptAnyLevel = x -> true;
 
-    public static Predicate<Level> maxFilter(final int maxNALlevel) {
+    static Predicate<Level> maxFilter(final int maxNALlevel) {
         if (maxNALlevel < 8) {
             return max[maxNALlevel];
         }

@@ -73,7 +73,7 @@ public class TaskRule extends ProductN implements Level {
     }
 
     public TaskRule(Product premises, Product result) {
-        super(premises, result);
+        super(new Term[] { premises, result });
         this.str = super.toString();
     }
 
@@ -700,17 +700,17 @@ public class TaskRule extends ProductN implements Level {
 
 
 
-        @Override protected Variable newVariable(final Variable v, final Variable alreadyNormalized, int serial) {
+        int offset = 0;
 
-            if (alreadyNormalized!=null) {
-                return alreadyNormalized;
-            }
+        @Override protected Variable newVariable(final Variable v, int serial) {
 
-            Variable newVar = Variable.the(v.op(), serial);
+            Variable newVar = Variable.the(v.op(), serial+offset);
 
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;
-                return e.clone(newVar, this);
+                Variable r = e.clone(newVar, this);
+                offset = 0; //return to zero
+                return r;
             }
             else {
                 return newVar;
@@ -721,6 +721,11 @@ public class TaskRule extends ProductN implements Level {
         public final boolean testSuperTerm(Compound t) {
             //descend all, because VAR_PATTERN is not yet always considered a variable
             return true;
+        }
+
+        public Term applyAfter(Variable secondary) {
+            offset++;
+            return apply(secondary);
         }
     }
 }

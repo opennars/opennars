@@ -19,6 +19,8 @@ public abstract class Atomic implements Term, Byted {
 
 
 
+
+
     public final void rehash() {
         /** do nothing */
     }
@@ -115,11 +117,14 @@ public abstract class Atomic implements Term, Byted {
         return this;
     }
 
+    public Term apply(Subst f, boolean fullMatch) {
+        return this;
+    }
 
     @Override public final boolean containsTermRecursively(Term target) {
         return false;
     }
 
 
-    public abstract Term apply(Subst s);
+    //public abstract Term apply(Subst s, boolean fullMatch);
 }

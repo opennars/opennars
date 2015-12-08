@@ -185,7 +185,7 @@ abstract public class Variable extends AbstractStringAtom {
     }
 
     @Override
-    public final Term apply(Subst s) {
+    public Term apply(Subst s, boolean fullMatch) {
         Term x = s.getXY(this);
         if (x != null)
             return x;

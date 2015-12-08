@@ -18,7 +18,7 @@ public class CollectionEllipsisMatch extends EllipsisMatch<Term> {
 
 
     @Override
-    public boolean applyTo(Subst f, Collection<Term> target) {
+    public boolean applyTo(Subst f, Collection<Term> target, boolean fullMatch) {
         target.addAll(term);
         return true;
     }

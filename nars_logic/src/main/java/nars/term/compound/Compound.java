@@ -111,7 +111,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
     /** returns the resolved term according to the substitution    */
-    default Term apply(Subst f) {
+    @Override default Term apply(Subst f, boolean fullMatch) {
 
         final Term y = f.getXY(this);
         if (y!=null)
@@ -122,8 +122,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         final int len = size();
         for (int i = 0; i < len; i++) {
             final Term t = term(i);
-            if (!t.applyTo(f, sub))
-                return this;
+            if (!t.applyTo(f, sub, fullMatch)) {
+                if (fullMatch)
+                    return null;
+                else
+                    continue;
+            }
         }
 
         return apply(sub);

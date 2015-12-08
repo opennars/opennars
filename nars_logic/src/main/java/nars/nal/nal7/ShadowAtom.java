@@ -1,9 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.term.Term;
 import nars.term.atom.AbstractStringAtom;
-import nars.term.transform.Subst;
 
 /**
  * Atom which is invisible to most if not all reasoner
@@ -56,10 +54,7 @@ public class ShadowAtom extends AbstractStringAtom {
         return Op.NONE;
     }
 
-    @Override
-    public final Term apply(Subst s) {
-        return this;
-    }
+
 
     @Override
     public int vars() {

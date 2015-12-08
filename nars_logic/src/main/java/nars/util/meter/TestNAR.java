@@ -429,11 +429,6 @@ public class TestNAR  {
         }
     }
 
-    @Deprecated public TestNAR run() {
-        //return run(true);
-        return this;
-    }
-
     public TestNAR run2() {
         return run(true);
     }

@@ -39,7 +39,7 @@ public class Default extends AbstractNAR {
                    int tasklinkFirePerConcept,
                    int termlinkFirePerConcept) {
         this(new Memory(new FrameClock(),
-                TermIndex.memory(numConcepts*16)
+                TermIndex.memory(numConcepts*8)
         ), numConcepts, conceptsFirePerCycle, tasklinkFirePerConcept, termlinkFirePerConcept);
     }
 
@@ -65,8 +65,9 @@ public class Default extends AbstractNAR {
     }
 
     /**
-     * normalizes each derivation's tasks as a group before inputting into
-     * the main perception buffer.
+     * groups each derivation's tasks as a group before inputting into
+     * the main perception buffer, allowing post-processing such as budget normalization.
+     *
      * ex: this can ensure that a premise which produces many derived tasks
      * will not consume budget unfairly relative to another premise
      * with less tasks but equal budget.
@@ -113,8 +114,9 @@ public class Default extends AbstractNAR {
 
                     Task.normalize(
                             buffer,
-                            p.getMeanPriority());
-
+                            p.getTask().getPriority()
+                            //p.getMeanPriority()
+                    );
 
                     buffer.forEach(narInput);
 

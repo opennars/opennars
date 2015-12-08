@@ -1,8 +1,6 @@
 package nars.term.atom;
 
 import nars.Op;
-import nars.term.Term;
-import nars.term.transform.Subst;
 import nars.util.utf8.Utf8;
 
 
@@ -44,10 +42,6 @@ public class StringAtom extends AbstractStringAtomRaw {
         return Utf8.toUtf8(id);
     }
 
-    @Override
-    public Term apply(Subst s) {
-        return this;
-    }
 
     @Override
     public int varIndep() {

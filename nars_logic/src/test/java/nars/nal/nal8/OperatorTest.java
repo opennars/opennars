@@ -35,7 +35,7 @@ public class OperatorTest {
         t.mustExecute(0, 1, "operator");
 
         n.input("operator()!");
-        t.run();
+
 
     }
 
@@ -48,7 +48,6 @@ public class OperatorTest {
 
             n.input("xoperator()!");
 
-            t.run();
             assertTrue(false);
         }
         catch (AssertionError e) {

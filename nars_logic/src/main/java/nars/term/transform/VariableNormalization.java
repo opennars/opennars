@@ -64,11 +64,10 @@ public class VariableNormalization extends VariableTransform {
     };
 
 
-    final Map<Variable, Variable> rename = Global.newHashMap(0);
+    final Map<Variable, Variable> rename = Global.newHashMap(8);
 
     protected final Compound result;
     boolean renamed = false;
-    //int serial = 0;
 
 
     public static VariableNormalization normalize(Compound target) {
@@ -95,11 +94,7 @@ public class VariableNormalization extends VariableTransform {
 
         this.result = target.transform(tx);
 
-
     }
-
-
-    int serial = 0;
 
     public Variable apply(final Variable v) {
         return apply(null, v, -1);
@@ -110,10 +105,8 @@ public class VariableNormalization extends VariableTransform {
 
         Map<Variable, Variable> rename = this.rename;
 
-        //serial++; //identifies terms by their unique final position
-
-        return rename.compute(resolve(v), (_vname, alreadyNormalized) -> {
-            Variable rvv = newVariable(v, alreadyNormalized, ++serial);
+        return rename.computeIfAbsent(resolve(v), (_vname) -> {
+            Variable rvv = newVariable(v, rename.size()+1);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= rvv.equals(v);//!Byted.equals(rvv, v);
             return rvv;
@@ -127,10 +120,8 @@ public class VariableNormalization extends VariableTransform {
     }
 
     /** if already normalized, alreadyNormalized will be non-null with the value */
-    protected Variable newVariable(final Variable v, Variable alreadyNormalized, int serial) {
-        if (alreadyNormalized==null)
-            return Variable.the(v.op(), serial);  //type + id
-        return alreadyNormalized;
+    protected Variable newVariable(final Variable v, int serial) {
+        return Variable.the(v.op(), serial);  //type + id
     }
 
     public final Compound get() {

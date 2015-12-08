@@ -1,6 +1,8 @@
 package nars.nal.meta.match;
 
 import nars.Op;
+import nars.term.Term;
+import nars.term.transform.Subst;
 import nars.term.variable.Variable;
 
 /**
@@ -20,7 +22,7 @@ public class VarPattern extends Variable {
     @Override
     public final int structure() {
         return 0;
-    } //Op.VAR_PATTERN.bit();        }
+    }
 
     @Override
     public final Op op() {
@@ -49,5 +51,17 @@ public class VarPattern extends Variable {
     public final int varQuery() {
         return 0;
     }
+
+    public Term apply(Subst f, boolean fullMatch) {
+        final Term y = f.getXY(this);
+        if (y == null) {
+            if (fullMatch)
+                return null;
+            else
+                return this;
+        }
+        return y;
+    }
+
 
 }

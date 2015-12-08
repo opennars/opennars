@@ -23,7 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.nal.nal7.Tense;
-import nars.term.transform.MapSubst;
+import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
@@ -31,7 +31,6 @@ import nars.term.visit.TermPredicate;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 
 
 public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializable {
@@ -280,11 +279,6 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     }
 
 
-
-    default Term substMap(Map<Term,Term> m) {
-        return apply(new MapSubst(m));
-    }
-
     static Term apply(Term x, Subst f) {
         final Term y = f.getXY(x);
 
@@ -297,21 +291,39 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     }
 
     default Term apply(Subst f) {
+        return apply(f, false);
+    }
+
+    default Term apply(Subst f, boolean fullMatch) {
         return Term.apply(this, f);
     }
 
+    default Term applyOrSelf(FindSubst f) {
+        final Term y = f.getXY(this);
+        if (y == null)
+            return this;
+        return y;
+    }
+
+
     /** resolve the this term according to subst by appending to sub.
      * return false if this term fails the substitution */
-    default boolean applyTo(Subst f, Collection<Term> sub) {
-        Term u = apply(f);
-        if (u == null)
-            u = this;
+    default boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
+        Term u = apply(f, fullMatch);
+        if (u == null) {
+            if (!fullMatch)
+                u = this;
+            else
+                return false;
+        }
         /*else
             changed |= (u!=this);*/
 
         sub.add(u);
         return true;
     }
+
+
 
 
 //    default public boolean hasAll(final Op... op) {

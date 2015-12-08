@@ -25,13 +25,7 @@ abstract public class PreCondition implements Predicate<RuleMatch>, Comparable<P
 
     @Override
     public final boolean equals(Object obj) {
-        if (toString().equals(obj.toString())) {
-//            if (getClass()!=obj.getClass())
-//                throw new RuntimeException(this + " (" + getClass() + ") and " + obj + " (" + obj.getClass() + ") have equal string but different class");
-
-            return true;
-        }
-        return false;
+        return toString().equals(obj.toString());
     }
 
     public void addConditions(List<PreCondition> l) {

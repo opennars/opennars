@@ -15,9 +15,9 @@ abstract public class PreCondition3Output extends PreCondition3 {
     @Override
     public final boolean test(RuleMatch m) {
         //these should not resolve to null
-        Term a = m.apply(arg1);
+        Term a = m.apply(arg1, false);
         if (a == null) return false;
-        Term b = m.apply(arg2);
+        Term b = m.apply(arg2, false);
         if (b == null) return false;
 
         //Term c = m.resolve(arg3);

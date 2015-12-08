@@ -358,7 +358,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         if (truth!=null) {
 
             Truth otruth = o.getTruth();
-            tc = Truth.compare(truth, otruth);
+            tc = Truth.compare(otruth, truth);
             if (tc!=0) return tc;
 
         }

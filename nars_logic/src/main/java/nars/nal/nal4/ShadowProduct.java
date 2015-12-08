@@ -3,7 +3,6 @@ package nars.nal.nal4;
 import nars.Op;
 import nars.term.Term;
 import nars.term.TermVector;
-import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
@@ -90,9 +89,5 @@ public class ShadowProduct extends TermVector implements Term {
         throw new RuntimeException("unimpl");
     }
 
-    @Override
-    public Term apply(Subst s) {
-        return this;
-    }
 
 }

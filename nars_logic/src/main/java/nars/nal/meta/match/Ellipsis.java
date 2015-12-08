@@ -42,7 +42,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
             return Op.INTERVAL;
         }
 
-        @Override public boolean applyTo(Subst f, Collection<Term> sub) {
+        @Override public boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
             //do nothing, just continue
             return true;
         }
@@ -51,7 +51,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
     @Override
-    public boolean applyTo(Subst f, Collection<Term> sub) {
+    public boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
         Term u = f.getXY(this);
 
         if (u == null) {
@@ -64,7 +64,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
 //            throw new RuntimeException("expected ellipsis match: " + am);
 //        }
 
-        return ((EllipsisMatch) u).applyTo(f, sub);
+        return ((EllipsisMatch) u).applyTo(f, sub, fullMatch);
     }
 
     public final Variable target;
@@ -90,6 +90,22 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
         int xs = x.size();
         for (int i = 0; i < xs; i++)
             if (x.term(i) instanceof Ellipsis) return true;
+        return false;
+    }
+
+
+    /** recursively */
+    public static boolean containsEllipsis(Compound x) {
+        int xs = x.size();
+
+        for (int i = 0; i < xs; i++) {
+            Term y = x.term(i);
+            if (y instanceof Ellipsis) return true;
+            if (y instanceof Compound) {
+                if (containsEllipsis((Compound)y))
+                    return true;
+            }
+        }
         return false;
     }
 

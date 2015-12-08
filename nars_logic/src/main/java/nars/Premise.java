@@ -72,7 +72,8 @@ public interface Premise extends Level, Tasked {
 
         //FORWARD
         if (a instanceof Compound) {
-            aa = applySubstituteAndRenameVariables(((Compound) a), f);
+
+            aa = a.applyOrSelf(f);
 
             if (aa == null) return false;
 

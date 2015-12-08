@@ -25,8 +25,8 @@ import java.util.List;
  */
 public abstract class TermFunction<O> extends SyncOperator {
 
-    private float feedbackPriorityMultiplier = 1f;
-    private float feedbackDurabilityMultiplier = 1f;
+    private final float feedbackPriorityMultiplier = 1f;
+    private final float feedbackDurabilityMultiplier = 1f;
 
     protected TermFunction() {
         super();

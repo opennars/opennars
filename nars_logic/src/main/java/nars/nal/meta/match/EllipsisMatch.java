@@ -41,7 +41,8 @@ abstract public class EllipsisMatch<T extends Term> extends ShadowAtom {
      * using the Substitution parameters .getXY() method
      *
      * */
-    abstract public boolean applyTo(Subst substitution, Collection<Term> target);
+    @Override
+    abstract public boolean applyTo(Subst substitution, Collection<Term> target, boolean fullMatch);
 
     @Override
     abstract public int size();
