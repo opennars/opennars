@@ -180,6 +180,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return tt;
     }
 
+
     final class Solution extends AtomicReference<Task> {
         Solution(Task referent) {
             super(referent);
@@ -614,6 +615,16 @@ public interface Task<T extends Compound> extends Sentence<T>,
     default long getOccurrenceTime() {
         return Tense.ETERNAL;
     }
+
+    default long start() { return getOccurrenceTime(); }
+    default long end() {
+        return start() + duration();
+    }
+    default int duration() {
+        return 0;
+    }
+
+
 
     //projects the truth to a certain time, covering all 4 cases as discussed in
     //https://groups.google.com/forum/#!searchin/open-nars/task$20eteneral/open-nars/8KnAbKzjp4E/rBc-6V5pem8J

@@ -10,7 +10,7 @@ import nars.nal.nal8.Operation;
 import nars.op.mental.Mental;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TemporalTasked;
+import nars.task.Temporal;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
@@ -212,7 +212,7 @@ public enum Tense  {
         return order(b - a, durationCycles);
     }
 
-    public static boolean concurrent(TemporalTasked a, TemporalTasked b, final int durationCycles) {
+    public static boolean concurrent(Temporal a, Temporal b, final int durationCycles) {
         return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
     }
 
@@ -285,12 +285,12 @@ public enum Tense  {
     }
 
     /** inner between: time difference of later.start() - earlier.end() */
-    public static int between(TemporalTasked task, TemporalTasked belief) {
+    public static int between(Temporal task, Temporal belief) {
         long tStart = task.start();
         long bStart = belief.start();
 
-        TemporalTasked earlier = tStart <= bStart ? task : belief;
-        TemporalTasked later = earlier == task ? belief : task;
+        Temporal earlier = tStart <= bStart ? task : belief;
+        Temporal later = earlier == task ? belief : task;
 
         long a = earlier.end();
         long b = later.start();
@@ -299,7 +299,7 @@ public enum Tense  {
     }
 
     /** true if there is a non-zero overlap interval of the tasks */
-    public static boolean overlaps(TemporalTasked a, TemporalTasked b) {
+    public static boolean overlaps(Task a, Task b) {
         return overlaps(a.start(), a.end(), b.start(), b.end());
     }
 

@@ -13,8 +13,6 @@ public class reset extends ImmediateOperator {
         super();
     }
 
-    public Task reset() { return newTask(newOperation()); }
-
     @Override
     public String toString() {
         return "Reset";

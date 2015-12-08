@@ -215,9 +215,10 @@ public abstract class TermFunction<O> extends SyncOperator {
         if (y instanceof Truth) {
             //this will get the original input operation term, not after it has been inlined.
 
-            Task b = MutableTask.make(operation).judgment().truth((Truth) y).setEternal();
-
-            nar.input(b);
+            nar.input(
+                new MutableTask(operation).judgment()
+                        .truth((Truth) y).eternal()
+            );
 
             return null;
         }

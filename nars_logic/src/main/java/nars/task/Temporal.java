@@ -10,7 +10,7 @@ import nars.term.compound.Compound;
  * task to which this refers to.  used to separate
  * temporal tasks from non-temporal tasks
  */
-public interface TemporalTasked<T extends Compound> extends Tasked<T>, Interval {
+public interface Temporal<T extends Compound> extends Tasked<T>, Interval {
 
     boolean isAnticipated();
 
@@ -24,14 +24,14 @@ public interface TemporalTasked<T extends Compound> extends Tasked<T>, Interval 
         return Tense.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
-    default boolean startsAfter(TemporalTasked other/*, int perceptualDuration*/) {
+    default boolean startsAfter(Temporal other/*, int perceptualDuration*/) {
         long start = start();
         long other_end = other.end();
         return start - other_end > 0;
     }
 
-    default long start() { return getOccurrenceTime(); }
-    default long end() { return start() + duration(); }
+    long start();
+    long end();
 
     default long getLifespan(Memory memory) {
         final long createdAt = getCreationTime();

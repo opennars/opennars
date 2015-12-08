@@ -31,7 +31,7 @@ import static nars.Global.reference;
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
 abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
-        implements Task<T>, TemporalTasked<T>, Serializable {
+        implements Task<T>, Temporal<T>, Serializable {
 
     /** content term of this task */
     private T term;
@@ -132,7 +132,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     @Override
     public final Task normalize(final Memory memory) {
 
-        if (hash == 0) {
+        if (hash != 0) {
             /* already validated */
             return this;
         }
@@ -150,7 +150,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
         }
 
         if (isJudgmentOrGoal()) {
-            //...
+
         } else if (isQuestOrQuestion()) {
             if (truth!=null)
                 throw new RuntimeException("quests and questions must have null truth");
@@ -497,10 +497,6 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
 
     @Override
     public final int hashCode() {
-        int hash = this.hash;
-        if (hash == 0) {
-            return this.hash = rehash();
-        }
         return hash;
     }
 
@@ -702,6 +698,15 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
         return appendTo(null, null).toString();
     }
 
+    @Override
+    public long start() {
+        return occurrenceTime;
+    }
+
+    @Override
+    public long end() {
+        return occurrenceTime + duration;
+    }
 
     @Override
     public void discountConfidence() {

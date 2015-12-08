@@ -1,6 +1,7 @@
 package nars.util.meter;
 
 import nars.NAR;
+import nars.task.Temporal;
 import nars.util.event.On;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -25,7 +26,7 @@ public class TaskRemovalReasons {
         });
         removals = n.memory.eventTaskRemoved.on(t -> {
             freq.addValue(t.getLogLast().toString());
-            final long age = t.getLifespan(nar.memory);
+            final long age = ((Temporal)t).getLifespan(nar.memory);
             lifespanOfRemovals.addValue(age);
         });
     }
@@ -33,7 +34,7 @@ public class TaskRemovalReasons {
     public SummaryStatistics getLifespanOfActive() {
         SummaryStatistics s = new SummaryStatistics();
         nar.forEachConceptTask(t -> {
-            s.addValue(t.getLifespan(nar.memory));
+            s.addValue(((Temporal)t).getLifespan(nar.memory));
         });
         return s;
     }

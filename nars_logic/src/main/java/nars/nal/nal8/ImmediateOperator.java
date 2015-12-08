@@ -1,10 +1,8 @@
 package nars.nal.nal8;
 
 
-import nars.Symbols;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.NullOperator;
-import nars.task.AbstractTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -50,12 +48,12 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
         return x;
     }
 
-    /** create a new task that wraps this operation */
-    public Task<Operation> newTask(Operation o) {
-        return new AbstractTask(newOperation(o.args()),
-                Symbols.COMMAND,
-                null, 0, 0, 0);
-    }
+//    /** create a new task that wraps this operation */
+//    public Task<Operation> newTask(Operation o) {
+//        return new AbstractTask(newOperation(o.args()),
+//                Symbols.COMMAND,
+//                null, 0, 0, 0);
+//    }
 
     @Override
     public List<Task> apply(Task<Operation> o) {

@@ -3,7 +3,7 @@ package nars.nal.meta.pre;
 import nars.Premise;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
-import nars.task.Task;
+import nars.task.Temporal;
 
 /**
  * After(%X,%Y) Means that
@@ -30,9 +30,8 @@ public class After extends PreCondition {
         if (!premise.isEvent())
             return false;
 
-        final Task task = premise.getTask();
-        final Task belief = premise.getBelief();
-
-        return task.startsAfter(belief/*, premise.duration()*/);
+        return ((Temporal) premise.getTask()).startsAfter(
+            (Temporal) premise.getBelief()
+        );
     }
 }

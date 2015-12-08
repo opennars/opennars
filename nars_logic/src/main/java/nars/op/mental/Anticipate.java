@@ -33,6 +33,7 @@ import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
 import nars.task.Task;
+import nars.task.Temporal;
 import nars.term.compound.Compound;
 
 import java.util.Iterator;
@@ -74,7 +75,7 @@ public final class Anticipate {
     }
 
     public final void onInput(Task t) {
-        if (t.isAnticipated()) {
+        if (((Temporal)t).isAnticipated()) {
             anticipate(t);
             if (t.isInput())
                 mayHaveHappenedAsExpected(t);

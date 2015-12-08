@@ -4,6 +4,7 @@ import nars.$;
 import nars.Premise;
 import nars.nal.RuleMatch;
 import nars.nal.nal7.Tense;
+import nars.task.Temporal;
 import nars.term.Term;
 
 /**
@@ -26,7 +27,10 @@ public class MeasureTime extends AbstractMeasureTime {
     @Override protected final boolean testEvents(RuleMatch m, Term target) {
         Premise p = m.premise;
 
-        int time = Tense.between(p.getTask(), p.getBelief());
+        int time = Tense.between(
+            (Temporal)p.getTask(),
+            (Temporal)p.getBelief()
+        );
         if (time < 0) { //should this be <= 0  ??
             return false;
         }
