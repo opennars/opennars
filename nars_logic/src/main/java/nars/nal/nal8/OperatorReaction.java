@@ -45,7 +45,7 @@ import java.util.function.Function;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class OperatorReaction implements Function<Task<Operation>,List<Task>>, Reaction<Term,Task<Operation>>, Serializable {
+abstract public class OperatorReaction implements Function<Task,List<Task>>, Reaction<Term,Task>, Serializable {
 
 
     public final Term operatorTerm;
@@ -97,7 +97,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
 
     @Override
-    public final void event(final Term event, final Task<Operation> o) {
+    public final void event(final Term event, final Task o) {
 
         if (o.isCommand() || decider().test(o)) {
             execute(o);
@@ -118,7 +118,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
      * @param op     The operate to be executed
      * @return true if successful, false if an error occurred
      */
-    public final boolean execute(final Task<Operation> op) {
+    public final boolean execute(final Task op) {
         if (async()) {
             return nar.execAsync(() -> executeSynch(op));
         }
@@ -127,7 +127,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
         }
     }
 
-    final boolean executeSynch(Task<Operation> op) {
+    final boolean executeSynch(Task op) {
         try {
             List<Task> feedback = apply(op);
             executed(op, feedback);
@@ -173,7 +173,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
     /**
      * called after execution completed
      */
-    protected void executed(Task<Operation> op, List<Task> feedback) {
+    protected void executed(Task op, List<Task> feedback) {
 
         final NAR n = nar();
 
@@ -214,8 +214,9 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
     /**
      * internal notice of the execution
+     * @param operation
      */
-    protected void noticeExecuted(final Task<Operation> operation) {
+    protected void noticeExecuted(final Task operation) {
 
         Budget b;
         if (!operation.isDeleted())

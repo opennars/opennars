@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 
-abstract public class PatternOperation implements Function<Task<Operation>, List<Task>> {
+abstract public class PatternOperation implements Function<Task, List<Task>> {
 
     final XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
     public final Term pattern;
@@ -28,7 +28,7 @@ abstract public class PatternOperation implements Function<Task<Operation>, List
     }
 
     @Override
-    public List<Task> apply(Task<Operation> operationTask) {
+    public List<Task> apply(Task operationTask) {
 
         if (operationTask.isGoal()) {
             FindSubst s = new FindSubst(Op.VAR_PATTERN, rng);
@@ -40,5 +40,5 @@ abstract public class PatternOperation implements Function<Task<Operation>, List
         return null;
     }
 
-    abstract public List<Task> run(Task<Operation> operationTask, Subst map1);
+    abstract public List<Task> run(Task operationTask, Subst map1);
 }

@@ -1,7 +1,6 @@
 package nars.op.io;
 
 import nars.nal.nal8.ImmediateOperator;
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 /**
@@ -19,7 +18,7 @@ public class reset extends ImmediateOperator {
     }
 
     @Override
-    public void accept(Task<Operation> o) {
+    public void accept(Task o) {
         nar.memory.clear();
         //nar.reset()
     }

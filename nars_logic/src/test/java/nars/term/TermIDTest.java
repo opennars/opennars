@@ -1,7 +1,7 @@
 package nars.term;
 
 import nars.NAR;
-import nars.nar.Default;
+import nars.nar.Terminal;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TermIDTest {
 
-    final static NAR nar = new Default().nal(1);
+    final static NAR nar = new Terminal();
 
 
     /* i will make these 3 pass soon, this is an improvement on the representation
@@ -84,7 +84,10 @@ public class TermIDTest {
 
 
     public Term testBytesRepresentation(String expectedPrettyOutput, int expectedLength) {
-        return testBytesRepresentation(null, expectedPrettyOutput, expectedLength);
+        return testBytesRepresentation(
+            null,
+            expectedPrettyOutput,
+            expectedLength);
     }
 
     public Term testBytesRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {

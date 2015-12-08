@@ -7,6 +7,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
 import java.lang.reflect.Field;
@@ -222,7 +223,7 @@ public class DefaultTermizer implements Termizer {
 
         String varPrefix = m.getName() + "_";
         int n = m.getParameterCount();
-        Product args = $.p(getArgVariables(varPrefix, n));
+        Compound args = $.p(getArgVariables(varPrefix, n));
 
         if (m.getReturnType() == void.class) {
             return new Term[]{
@@ -268,7 +269,7 @@ public class DefaultTermizer implements Termizer {
     public static Term termInstanceInClassInPackage(Object o) {
         //return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
         //return o.getClass() + "_" + System.identityHashCode(o)
-        return Product.make(
+        return $.p(
                     termPackage(o.getClass().getPackage()),
                     termClassInPackage(o.getClass()),
                     Atom.the(System.identityHashCode(o), 36)

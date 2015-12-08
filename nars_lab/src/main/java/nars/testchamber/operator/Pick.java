@@ -40,7 +40,7 @@ public class Pick extends SyncOperator {
         this.chamb=chamb;
     }
 
-    @Override public List<Task> apply(Task<Operation> task) {
+    @Override public List<Task> apply(Task task) {
         Operation operation = task.getTerm();
 
          

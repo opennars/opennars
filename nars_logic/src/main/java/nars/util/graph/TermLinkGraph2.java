@@ -7,8 +7,8 @@ import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
-import nars.nal.nal4.Product;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
@@ -20,12 +20,12 @@ import java.util.Set;
  * Generates a graph of a set of Concept's TermLinks. Each TermLink is an edge,
  * and the set of unique Concepts and Terms linked are the vertices.
  */
-public class TermLinkGraph2 extends DirectedPseudograph<Term, Product> {
+public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
 
     public TermLinkGraph2() {
-        super(new EdgeFactory<Term, Product>() {
+        super(new EdgeFactory<Term, Compound>() {
             @Override
-            public Product createEdge(Term a, Term b) {
+            public Compound createEdge(Term a, Term b) {
                 return $.p(a,b);
             }
         });

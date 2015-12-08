@@ -51,7 +51,7 @@ public class reflect extends TermFunction {
         for (int i = 0; i < c.size(); i++)
             m[i] = getMetaTerm(c.term(i));
 
-        return $.inh(Product.make(m), Atom.quote(operatorName));
+        return $.inh($.p(m), Atom.quote(operatorName));
     }
     
     public static Term getMetaTerm(Term node) {

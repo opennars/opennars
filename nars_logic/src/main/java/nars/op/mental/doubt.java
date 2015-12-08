@@ -17,7 +17,6 @@
 
 package nars.op.mental;
 
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 
@@ -38,7 +37,7 @@ public class doubt extends SyncOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Task<Operation> operation) {
+    public List<Task> apply(Task operation) {
         System.err.println("^doubt unimpl");
 //        Term term = operation.getTerm().arg();
 //        Budget b = operation.getBudget();

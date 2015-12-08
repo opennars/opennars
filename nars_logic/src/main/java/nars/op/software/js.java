@@ -73,8 +73,8 @@ public class js extends TermFunction implements Mental {
     public class jsop extends NullOperator {
 
         @Override
-        public List<Task> apply(Task<Operation> op) {
-            Term[] x = op.getTerm().args();
+        public List<Task> apply(Task op) {
+            Term[] x = Operation.argTerms(op.getTerm());
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));

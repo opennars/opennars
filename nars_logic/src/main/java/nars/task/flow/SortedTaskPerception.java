@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 /** sorts and de-duplicates incoming tasks into a capacity-limited buffer */
 public class SortedTaskPerception extends TaskPerception {
 
-    final TaskAccumulator<?> buffer;
+    final TaskAccumulator buffer;
 
     public final MutableInteger inputPerCycle = new MutableInteger();
 
@@ -36,7 +36,7 @@ public class SortedTaskPerception extends TaskPerception {
     @Override
     final public void send() {
         //ItemAccumulator<> b = this.buffer;
-        final TaskAccumulator<?> buffer = this.buffer;
+        final TaskAccumulator buffer = this.buffer;
         int available = size();
         if (available > 0) {
             buffer.pop(receiver, Math.min(available, inputPerCycle.intValue()));

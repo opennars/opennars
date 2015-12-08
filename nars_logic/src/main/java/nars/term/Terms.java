@@ -23,8 +23,9 @@ import java.util.function.Predicate;
  */
 public class Terms {
 
-    public final static Term[] EmptyTermArray = new Term[0];
+    public final static Term[] Empty = new Term[0];
     public static final IntFunction<Term[]> TermArrayBuilder = (int xs) -> new Term[xs];
+
 
 
 //    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type */
@@ -880,7 +881,7 @@ public class Terms {
             if (filter.accept(i, t))
                 l.add(t);
         }
-        if (l.isEmpty()) return Terms.EmptyTermArray;
+        if (l.isEmpty()) return Terms.Empty;
         return l.toArray(new Term[l.size()]);
     }
 
@@ -895,4 +896,14 @@ public class Terms {
         return l.toArray(new Term[l.size()]);
     }
 
+    public static Term[] cloneTermsReplacing(final Term[] term, final Term from, final Term to) {
+        Term[] y = new Term[term.length];
+        int i = 0;
+        for (Term x : term) {
+            if (x.equals(from))
+                x = to;
+            y[i++] = x;
+        }
+        return y;
+    }
 }

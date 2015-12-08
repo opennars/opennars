@@ -17,7 +17,6 @@ import nars.truth.Truth;
 import nars.util.data.Util;
 import nars.util.data.array.LongArrays;
 
-import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.util.Arrays;
 import java.util.List;
@@ -30,11 +29,11 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
-        implements Task<T>, Temporal<T>, Serializable {
+abstract public class AbstractTask extends Item<Sentence>
+        implements Task, Temporal {
 
     /** content term of this task */
-    private T term;
+    private Compound term;
 
 
     private char punctuation;
@@ -72,7 +71,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     protected boolean anticipate = false;
 
 
-    public AbstractTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
+    public AbstractTask(Compound term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
         this(term, punctuation, truth,
                 bv.getPriority(),
                 bv.getDurability(),
@@ -81,11 +80,11 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
                 solution);
     }
 
-    public AbstractTask(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
+    public AbstractTask(Compound term, final char punc, final Truth truth, final float p, final float d, final float q) {
         this(term, punc, truth, p, d, q, (Task) null, null, null);
     }
 
-    public AbstractTask(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Task parentBelief, final Task solution) {
+    public AbstractTask(Compound term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Task parentBelief, final Task solution) {
         this(term, punc, truth,
                 p, d, q,
                 Global.reference(parentTask),
@@ -95,14 +94,14 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     }
 
     /** copy/clone constructor */
-    public AbstractTask(Task<T> task) {
+    public AbstractTask(Task task) {
         this(task.getTerm(), task.getPunctuation(), task.getTruth(),
                 task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
 
     @Override
-    public Task<T> getTask() {
+    public Task getTask() {
         return this;
     }
 
@@ -111,7 +110,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
         setOccurrenceTime(occurrence);
     }
 
-    protected final void setTerm(T t) {
+    protected final void setTerm(Compound t) {
         if (term!=t) {
             term = t;
             invalidate();
@@ -119,7 +118,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     }
 
 
-    public AbstractTask(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
+    public AbstractTask(Compound term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
         super(p, d, q);
         this.truth = truth;
         this.punctuation = punctuation;
@@ -199,7 +198,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
             Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
             if ((st == null) || (Sentence.invalidTaskTerm(st)))
                 return null; //it reduced to an invalid sentence term so return null
-            t = (T)st;
+            t = (Compound)st;
             if (!isEternal())
                 occurrenceTime -= offset[0];
         }
@@ -215,7 +214,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
         }
 
         //obtain shared copy of term
-        setTerm((T)memory.index.getTerm(t));
+        setTerm((Compound)memory.index.getTerm(t));
 
         setDuration(
             memory.duration() //assume the default perceptual duration?
@@ -279,11 +278,11 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
 
         //if debug, check that they are equal..
 
-        this.term = (T) c.getTerm(); //HACK the cast
+        this.term = (Compound) c.getTerm(); //HACK the cast
     }
 
     @Override
-    public final T getTerm() {
+    public final Compound getTerm() {
         return term;
     }
 
@@ -306,7 +305,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     }
 
     @Override
-    public Task<T> setEvidence(final long... evidentialSet) {
+    public Task setEvidence(final long... evidentialSet) {
         this.evidentialSet = evidentialSet;
         invalidate();
         return this;
@@ -413,7 +412,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     }
 
     @Override
-    public final Sentence<T> setCreationTime(final long creationTime) {
+    public final Sentence setCreationTime(final long creationTime) {
         if ((this.creationTime <= Tense.TIMELESS) && (this.occurrenceTime > Tense.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
             setOccurrenceTime(this.occurrenceTime + creationTime);
@@ -684,7 +683,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
 
 
     @Override
-    final public Sentence<T> name() {
+    final public Sentence name() {
         return this;
     }
 

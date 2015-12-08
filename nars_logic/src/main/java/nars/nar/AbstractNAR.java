@@ -132,7 +132,7 @@ abstract public class AbstractNAR extends NAR {
 
         new FullInternalExperience(this);
         new Abbreviation(this);
-        onExec(Counting.class);
+        //onExec(Counting.class);
 
 //                /*if (internalExperience == Minimal) {
 //                    new InternalExperience(this);
@@ -235,18 +235,18 @@ abstract public class AbstractNAR extends NAR {
             //new eval(),
             //new Wait(),
 
-            new believe(),  // accept a statement with a default truth-value
-            new want(),     // accept a statement with a default desire-value
-            new wonder(),   // find the truth-value of a statement
-            new evaluate(), // find the desire-value of a statement
+//            new believe(),  // accept a statement with a default truth-value
+//            new want(),     // accept a statement with a default desire-value
+//            new wonder(),   // find the truth-value of a statement
+//            new evaluate(), // find the desire-value of a statement
             //concept operations for internal perceptions
-            new remind(),   // create/activate a concept
-            new consider(),  // do one inference step on a concept
-            new name(),         // turn a compount term into an atomic term
+//            new remind(),   // create/activate a concept
+//            new consider(),  // do one inference step on a concept
+//            new name(),         // turn a compount term into an atomic term
             //new Abbreviate(),
             //new Register(),
             new doubt(),        // decrease the confidence of a belief
-            new hesitate(),      // decrease the confidence of a goal
+//            new hesitate(),      // decrease the confidence of a goal
 
             //Meta
             new reflect(),

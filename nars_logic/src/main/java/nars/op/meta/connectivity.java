@@ -1,7 +1,6 @@
 package nars.op.meta;
 
 import nars.link.TermLink;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
@@ -17,7 +16,7 @@ import java.util.Set;
 public class connectivity extends SyncOperator {
 
     @Override
-    public List<Task> apply(Task<Operation> o) {
+    public List<Task> apply(Task o) {
 
         TermLinkGraph g = new TermLinkGraph(nar);
 

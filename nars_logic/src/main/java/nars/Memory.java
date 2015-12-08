@@ -24,7 +24,6 @@ package nars;
 import com.gs.collections.api.tuple.Twin;
 import nars.concept.Concept;
 import nars.nal.nal8.ExecutionResult;
-import nars.nal.nal8.Operation;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
@@ -62,7 +61,7 @@ public class Memory extends Param {
     @Deprecated
     transient public final EventEmitter<Class, Object[]> event;
 
-    transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic<>();
+    transient public final Topic<Task> eventTaskRemoved = new DefaultTopic<>();
     transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
     transient public final Topic<Task> eventRevision = new DefaultTopic<>();
 
@@ -100,7 +99,7 @@ public class Memory extends Param {
     public transient final Topic<Concept> eventConceptChange = new DefaultTopic();
 
     /** executables (incl. operators) */
-    transient public final EventEmitter<Term, Task<Operation>> exe;
+    transient public final EventEmitter<Term, Task> exe;
 
 
 

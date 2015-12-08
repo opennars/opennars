@@ -113,7 +113,7 @@ public class Abbreviation implements Consumer<Task> {
             }
             else {
                 //already abbreviated, remember it
-                remind.remind(termAbbreviating, nar);
+                //remind.remind(termAbbreviating, nar);
             }
         }
     }

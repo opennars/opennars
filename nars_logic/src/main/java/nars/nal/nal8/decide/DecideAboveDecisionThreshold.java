@@ -1,7 +1,6 @@
 package nars.nal.nal8.decide;
 
 import nars.Memory;
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 import nars.truth.Truth;
 
@@ -21,7 +20,7 @@ abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
         }
 
         @Override
-        protected final float desire(Task<Operation> task) {
+        protected final float desire(Task task) {
             Truth t = task.getTruth();
             if (t == null)
                 throw new RuntimeException("null truth");
@@ -48,7 +47,7 @@ abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
 //    }
 
     @Override
-    public boolean test(final Task<Operation> task) {
+    public boolean test(final Task task) {
         if (super.test(task)) {
             return desire(task) > memory.executionExpectationThreshold.floatValue();
         }
@@ -56,7 +55,7 @@ abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
     }
 
     /** computes the effective desire value for a given task */
-    protected abstract float desire(Task<Operation> task);
+    protected abstract float desire(Task task);
 
 }
 /*

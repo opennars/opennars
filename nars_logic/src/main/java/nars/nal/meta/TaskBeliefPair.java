@@ -1,18 +1,19 @@
 package nars.nal.meta;
 
-import nars.nal.nal4.ProductN;
+import nars.Op;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.GenericCompound;
 
 /**
  * just holds two terms, not really necessary
  */
-public class TaskBeliefPair extends ProductN {
+public class TaskBeliefPair extends GenericCompound {
 
-    private final Term[] t;
     public int volA, volB;
     public int structureA, structureB; //should use the long stuctureHash?
 
+    private final Term[] t;
     //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
 
     public TaskBeliefPair() {
@@ -20,7 +21,7 @@ public class TaskBeliefPair extends ProductN {
     }
 
     public TaskBeliefPair(Term a, Term b) {
-        super(new Term[] { a, b });
+        super(Op.PRODUCT, a, b);
 
         t = this.terms();
 

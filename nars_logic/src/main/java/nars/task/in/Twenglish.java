@@ -18,11 +18,11 @@ package nars.task.in;
 
 import com.google.common.collect.Lists;
 import nars.*;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
 
@@ -134,8 +134,8 @@ public class Twenglish {
                 Sequence
                 //Product
                     .makeSequence(t.toArray(new Term[t.size()]));
-            Product q =
-                    Product.make(
+            Compound q =
+                    $.p(
                             //Atom.the(source),
                             p,
                             sentenceType

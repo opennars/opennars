@@ -1,6 +1,7 @@
 package nars;
 
 import nars.java.AtomObject;
+import nars.nal.meta.match.VarPattern;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -18,9 +19,9 @@ import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
-import nars.util.utf8.Utf8;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * core utility class for:
@@ -94,9 +95,11 @@ abstract public class $  {
         return oper(opTerm, $.p(arg));
     }
 
-    public static Compound oper(Operator opTerm, Product arg) {
-        return new GenericCompound(Op.INHERITANCE,
-                $.inh(opTerm, arg));
+    public static Compound oper(Operator opTerm, Compound arg) {
+        return new GenericCompound(
+                Op.INHERITANCE,
+                opTerm,
+                arg == null ? Product.Empty : arg);
     }
 
 
@@ -111,22 +114,39 @@ abstract public class $  {
     public static CyclesInterval cycles(int numCycles) {
         return CyclesInterval.make(numCycles);
     }
-
+    public static <T extends Term> Compound<T> p(Collection<? super T> t) {
+        return $.p(t.toArray((T[]) new Term[t.size()]));
+    }
 
     public static Compound p(Term... t) {
-        return Product.make(t);
+        if (t == null)
+            return Product.Empty;
+
+        int l = t.length;
+        if (l == 0) //length 0 product are allowd and shared
+            return Product.Empty;
+
+        return new GenericCompound(Op.PRODUCT, t);
+    }
+
+    /** creates from a sublist of a list */
+    static Compound p(final List<Term> l, int from, int to) {
+        Term[] x = new Term[to - from];
+
+        for (int j = 0, i = from; i < to; i++)
+            x[j++] = l.get(i);
+
+        return $.p(x);
     }
 
     public static Compound<Atom> p(String... t) {
-        return Product.make($.the(t));
+        return $.p($.the(t));
     }
 
-    public static Variable v(Op type, int i) {
-        return Variable.the(type, i);
-    }
+
 
     public static Variable v(Op type, String s) {
-        return Variable.the(type.ch, Utf8.toUtf8(s));
+        return v(type.ch, s);
     }
 
 
@@ -207,7 +227,15 @@ abstract public class $  {
         return Implication.make(condition, consequence, Tense.ORDER_FORWARD);
     }
 
-    public static <T extends Term> SetExt<T> extset(Collection<T> t) {
+    public static <T extends Term> Compound<T> extset(Collection<T> t) {
+        return SetExt.make(t);
+    }
+
+    public static <T extends Term> Compound<T> intset(Collection<T> t) {
+        return SetInt.make(t);
+    }
+
+    public static Compound extset(Term... t) {
         return SetExt.make(t);
     }
 
@@ -225,5 +253,44 @@ abstract public class $  {
      */
     public static Term property(Term subject, Term predicate) {
         return inh(subject, $.intset(predicate));
+    }
+
+    public static Variable v(char ch, String name) {
+
+//        if (name.length() < 3) {
+//            int digit = Texts.i(name, -1);
+//            if (digit != -1) {
+//                Op op = Variable.typeIndex(ch);
+//                return Variable.the(op, digit);
+//            }
+//        }
+
+        switch (ch) {
+            case Symbols.VAR_DEPENDENT:
+                return new Variable.VarDep(name);
+            case Symbols.VAR_INDEPENDENT:
+                return new Variable.VarIndep(name);
+            case Symbols.VAR_QUERY:
+                return new Variable.VarQuery(name);
+            case Symbols.VAR_PATTERN:
+                return new VarPattern(name);
+            default:
+                throw new RuntimeException("invalid variable type: " + ch);
+        }
+
+    }
+
+    public static Variable v(Op type, int counter) {
+        if (counter < Variable.MAX_VARIABLE_CACHED_PER_TYPE) {
+            final Variable[] vct = Variable.varCache[Variable.typeIndex(type)];
+            Variable existing = vct[counter];
+            if (existing != null)
+                return existing;
+            else {
+                return vct[counter] = Variable._the(type, counter);
+            }
+        }
+
+        return v(type.ch, String.valueOf(counter));
     }
 }

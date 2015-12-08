@@ -59,9 +59,9 @@ public abstract class TermFunction<O> extends SyncOperator {
     abstract public O function(Operation x);
 
 
-    protected List<Task> result(final Task<Operation> opTask, Term y, Term[] x0, Term lastTerm) {
+    protected List<Task> result(final Task opTask, Term y, Term[] x0, Term lastTerm) {
 
-        Operation operation = opTask.getTerm();
+        Compound operation = opTask.getTerm();
 
         //Variable var=new Variable("$1");
         //  Term actual_part = Similarity.make(var, y);
@@ -182,12 +182,12 @@ public abstract class TermFunction<O> extends SyncOperator {
 //    }
 
     @Override
-    public List<Task> apply(final Task<Operation> opTask) {
+    public List<Task> apply(final Task opTask) {
 
-        Operation operation = opTask.getTerm();
+        Compound operation = opTask.getTerm();
 
-
-        Term[] x = operation.args();
+        Term opTerm = Operation.opTerm(operation);
+        Term[] x = Operation.args(operation).terms();
 
         final Memory memory = nar.memory;
 
@@ -204,7 +204,18 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Term[] x0 = operation.getArgumentTerms(false, memory);
 
 
-        Object y = function(operation);
+        Object y = function(new Operation() {
+
+            @Override
+            public Term operator() {
+                return opTerm;
+            }
+
+            @Override
+            public Term[] args() {
+                return x;
+            }
+        });
 
         if (y == null) {
             return null;

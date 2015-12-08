@@ -44,7 +44,7 @@ import java.util.Comparator;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Serializable {
+public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
 
     /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
      * returns the compound valid for a Task if so,
@@ -393,7 +393,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
     @Override
-    T getTerm();
+    Compound getTerm();
     @Override
     Truth getTruth();
 

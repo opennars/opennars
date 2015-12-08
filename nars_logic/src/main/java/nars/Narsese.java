@@ -180,9 +180,9 @@ public class Narsese extends BaseParser<Object>  {
             return null;
         }
 
-        Product conclusion;
+        Compound conclusion;
         if (r.size() >= 1) {
-            conclusion = Product.make(r);
+            conclusion = $.p(r);
         }
         else {
             //empty premise list is invalid
@@ -512,7 +512,7 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule EmptyProduct() {
         return sequence(
-            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Product.empty)
+            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Product.Empty)
         );
     }
 
@@ -724,7 +724,7 @@ public class Narsese extends BaseParser<Object>  {
         return sequence(
                 anyOf(variables),
                 push(match().charAt(0)), Atom(), swap(),
-                    push(Variable.the((char)pop(), (String) pop())
+                    push($.v((char)pop(), (String) pop())
                 )
 
         );
@@ -958,8 +958,10 @@ public class Narsese extends BaseParser<Object>  {
             /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
-            return $.oper(new Operator(vectorterms.get(0)),
-                    Product.make(vectorterms, 1, vectorterms.size()));
+            return $.oper(
+                new Operator(vectorterms.get(0)),
+                $.p(vectorterms, 1, vectorterms.size())
+            );
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);

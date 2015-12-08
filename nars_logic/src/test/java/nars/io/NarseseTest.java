@@ -223,11 +223,12 @@ public class NarseseTest {
 
 
 
-    protected void testBelieveAB(Operation t) {
-        assertEquals(2, t.arg().size());
-        assertEquals("believe", t.getOperatorTerm().toString());
-        assertEquals("a", t.arg(0).toString());
-        assertEquals("b", t.arg(1).toString());
+    protected void testBelieveAB(Compound t) {
+        Term[] aa = Operation.argTerms(t);
+        assertEquals(2, aa.length);
+        assertEquals("believe", Operation.opTerm(t).toString());
+        assertEquals("a", aa[0].toString());
+        assertEquals("b", aa[1].toString());
     }
 
     @Test
@@ -470,14 +471,14 @@ public class NarseseTest {
         String a = "<a --> b>.\n//comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        Operation op = ((Task<Operation>)l.get(1)).getTerm();
+        Compound op = ((Task)l.get(1)).getTerm();
         ensureIsEcho(op);
         assertEquals("echo(\"comment1234\")", op.toString());
     }
 
-    protected void ensureIsEcho(Operation op) {
+    protected void ensureIsEcho(Compound op) {
         assertEquals(Atom.the(echo.class.getSimpleName()),
-                op.getOperatorTerm());
+                Operation.opTerm(op));
     }
 
 
@@ -514,9 +515,9 @@ public class NarseseTest {
 
     @Test
     public void testOperatorWithNoParams() {
-        Operation t = term("op()");
+        Compound t = term("op()");
         assertNotNull(t);
-        assertEquals(0, t.arg().size());
+        assertEquals(0, Operation.args(t).size());
     }
 
 }

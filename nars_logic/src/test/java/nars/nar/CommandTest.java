@@ -6,6 +6,7 @@ import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
+import nars.term.Term;
 import org.junit.Test;
 
 import java.util.List;
@@ -26,10 +27,11 @@ public class CommandTest {
         n.onExec(new NullOperator("c") {
 
             @Override
-            public List<Task> apply(Task<Operation> o) {
+            public List<Task> apply(Task o) {
                 invoked.set(true);
-                assertEquals(1, o.getTerm().args().length);
-                assertEquals("x", o.getTerm().arg(0).toString());
+                Term[] a = Operation.argTerms(o.getTerm());
+                assertEquals(1, a.length);
+                assertEquals("x", a[0].toString());
                 return null;
             }
         });

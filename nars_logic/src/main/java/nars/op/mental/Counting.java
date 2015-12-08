@@ -1,6 +1,5 @@
 package nars.op.mental;
 
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 
@@ -13,7 +12,7 @@ import java.util.List;
 public class Counting extends SyncOperator {
 
     @Override
-    public List<Task> apply(Task<Operation> operation) {
+    public List<Task> apply(Task operation) {
         //TODO upgrade code below to new api
         return null;
     }

@@ -51,8 +51,8 @@ import static nars.nal.nal7.Tense.ORDER_FORWARD;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task<T extends Compound> extends Sentence<T>,
-        Itemized<Sentence<T>>, Truthed, Comparable {
+public interface Task extends Sentence,
+        Itemized<Sentence>, Truthed, Comparable {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -113,7 +113,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
         return s;
     }
 
-    default Task<T> getTask() { return this; }
+    default Task getTask() { return this; }
 
     /**
      * Sets the perceived temporal duration of the Task,

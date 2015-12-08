@@ -3,7 +3,6 @@ package nars.java;
 import com.github.drapostolos.typeparser.TypeParser;
 import nars.$;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
@@ -144,14 +143,15 @@ public class MethodOperator extends TermFunction {
 
         } catch (IllegalArgumentException e) {
 
-            System.err.println(e + ": " + Arrays.toString(args) + " for " + method);
-            //e.printStackTrace();
-
-            //create a task to never desire this
-            nar.goal(o, Tense.Present, 0.0f, 0.9f);
-
-            //return ERROR atom as feedback
-            return ERROR;
+//            System.err.println(e + ": " + Arrays.toString(args) + " for " + method);
+//            //e.printStackTrace();
+//
+//            //create a task to never desire this
+//            nar.goal(o, Tense.Present, 0.0f, 0.9f);
+//
+//            //return ERROR atom as feedback
+//            return ERROR;
+            e.printStackTrace();
 
         } catch (Exception e) {
             //System.err.println(method + " <- " + instance + " (" + instance.getClass() + " =?= " + method.getDeclaringClass() + "\n\t<<< " + Arrays.toString(args));

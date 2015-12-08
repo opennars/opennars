@@ -81,10 +81,10 @@ public class OperatorTest {
     }
 
     @Test public void testInhIsOperation() {
-        Operation o = $("<(a,b,c)-->^x>");
+        Compound o = $("<(a,b,c)-->^x>");
         assertTrue(o.term(0) instanceof Product);
         assertTrue(o.term(1) instanceof Operator);
-        assertEquals("x(a, b, c)", o.toString(true));
+        assertEquals("x(a, b, c)", o.toString());
         assertEquals(Op.INHERITANCE, o.op());
     }
 
@@ -115,7 +115,7 @@ public class OperatorTest {
         NAR n = new Default();
         n.onExec(new SyncOperator("exe") {
             @Override
-            public List<Task> apply(Task<Operation> operation) {
+            public List<Task> apply(Task operation) {
                 executed.set(true);
                 return null;
             }
@@ -142,7 +142,7 @@ public class OperatorTest {
 
         NAR n = new Default();
         n.onExec(new SyncOperator((Term)n.term("<a --> b>")) {
-            public List<Task> apply(Task<Operation> operation) {
+            public List<Task> apply(Task operation) {
                 executed.set(true);
                 return null;
             }
@@ -161,7 +161,7 @@ public class OperatorTest {
 
         PatternOperation f = new PatternOperation("(%A,%B)") {
             @Override
-            public List<Task> run(Task<Operation> operationTask, Subst map1) {
+            public List<Task> run(Task operationTask, Subst map1) {
                 //System.out.println(this.pattern + " " + operationTask + "\n\t" + map1);
                 count.getAndIncrement();
                 return null;

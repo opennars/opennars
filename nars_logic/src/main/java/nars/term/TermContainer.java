@@ -68,7 +68,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
             if (filter.accept(i, t))
                 l.add(t);
         }
-        if (l.isEmpty()) return Terms.EmptyTermArray;
+        if (l.isEmpty()) return Terms.Empty;
         return l.toArray(new Term[l.size()]);
     }
 

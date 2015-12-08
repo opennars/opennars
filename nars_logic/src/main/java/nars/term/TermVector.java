@@ -327,6 +327,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
             if (t == this)
                 throw new RuntimeException("term can not contain itself");
+            if (t == null)
+                throw new RuntimeException("null subterm");
 
             contentHash = nextContentHash(contentHash, t.hashCode());
 

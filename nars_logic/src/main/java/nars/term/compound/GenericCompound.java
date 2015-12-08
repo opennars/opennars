@@ -2,6 +2,8 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
+import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
 import nars.term.*;
 import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.ByteBuf;
@@ -23,7 +25,17 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     protected final int relation;
     private boolean normalized = false;
 
-    public GenericCompound(Op op, T... subterms) {
+    public GenericCompound(Op op, Term a) {
+        this(op, (T[]) new Term[] { a });
+    }
+    public GenericCompound(Op op, Term a, Term b) {
+        this(op, (T[]) new Term[] { a, b });
+    }
+    public GenericCompound(Op op, Term a, Term b, Term c) {
+        this(op, (T[]) new Term[] { a, b, c });
+    }
+
+    public GenericCompound(Op op, T[] subterms) {
         this(op, subterms, 0);
     }
 
@@ -50,13 +62,27 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public String toString(boolean pretty) {
-        if (op.type == Op.OpType.Relation) {
+        if (Operation.isOperation(this)) {
+            return Operation.toString((Compound) term(0), term(1), pretty);
+        }
+        else if (op == Op.PRODUCT) {
+            return Product.toString(this);
+        }
+        else if (op.type == Op.OpType.Relation) {
             return Statement.toString(term(0), op(), term(1), pretty);
         }
+
         else {
-            return super.toString(); //TODO make this default to false
+            return toStringBuilder(pretty).toString();
         }
     }
+
+    @Override
+    public String toStringCompact() {
+        return toString(false);
+    }
+
+
 
     @Override
     public final int compareTo(final Object o) {
@@ -259,6 +285,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         }
 
         return len;
+    }
+
+    @Override
+    public String toString() {
+        return toString(true); //TODO make this default to false
     }
 
 

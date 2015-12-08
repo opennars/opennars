@@ -21,9 +21,8 @@
 package nars.term.variable;
 
 
+import nars.$;
 import nars.Op;
-import nars.Symbols;
-import nars.nal.meta.match.VarPattern;
 import nars.term.Term;
 import nars.term.atom.AbstractStringAtom;
 import nars.term.transform.Subst;
@@ -56,63 +55,24 @@ abstract public class Variable extends AbstractStringAtom {
 //    }
 
 
-    public static Variable the(Op varType, byte[] baseName) {
-        return the(varType.ch, baseName);
+    public static Variable v(Op varType, byte[] baseName) {
+        return v(varType.ch, baseName);
     }
 
-    public static Variable the(char ch, byte[] name) {
-        return the(ch, new String(name));
-    }
-
-    public static Variable the(char ch, String name) {
-
-//        if (name.length() < 3) {
-//            int digit = Texts.i(name, -1);
-//            if (digit != -1) {
-//                Op op = Variable.typeIndex(ch);
-//                return Variable.the(op, digit);
-//            }
-//        }
-
-        switch (ch) {
-            case Symbols.VAR_DEPENDENT:
-                return new VarDep(name);
-            case Symbols.VAR_INDEPENDENT:
-                return new VarIndep(name);
-            case Symbols.VAR_QUERY:
-                return new VarQuery(name);
-            case Symbols.VAR_PATTERN:
-                return new VarPattern(name);
-            default:
-                throw new RuntimeException("invalid variable type: " + ch);
-        }
-
+    public static Variable v(char ch, byte[] name) {
+        return $.v(ch, new String(name));
     }
 
 
-    final static int MAX_VARIABLE_CACHED_PER_TYPE = 16;
+    public final static int MAX_VARIABLE_CACHED_PER_TYPE = 16;
 
     /**
      * numerically-indexed variable instance cache; prevents duplicates and speeds comparisons
      */
-    final static Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
+    public final static Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
 
-    public static Variable the(Op type, int counter) {
-        if (counter < MAX_VARIABLE_CACHED_PER_TYPE) {
-            final Variable[] vct = varCache[typeIndex(type)];
-            Variable existing = vct[counter];
-            if (existing != null)
-                return existing;
-            else {
-                return vct[counter] = _the(type, counter);
-            }
-        }
-
-        return the(type.ch, String.valueOf(counter));
-    }
-
-    static Variable _the(Op type, int counter) {
-        return the(type.ch, String.valueOf(counter));
+    public static Variable _the(Op type, int counter) {
+        return $.v(type.ch, String.valueOf(counter));
     }
 
     public static Op typeIndex(char c) {

@@ -9,7 +9,6 @@ import nars.$;
 import nars.Global;
 import nars.NAR;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
@@ -165,7 +164,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
         final Operator op = getMethodOperator(method);
 
 
-        Product invocationArgs = getMethodInvocationTerms(method, object, args);
+        Compound invocationArgs = getMethodInvocationTerms(method, object, args);
 
 
 
@@ -212,7 +211,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
         return result;
     }
 
-    private final Product getMethodInvocationTerms(Method method, Object instance, Object[] args) {
+    private final Compound getMethodInvocationTerms(Method method, Object instance, Object[] args) {
 
         //TODO handle static methods
 

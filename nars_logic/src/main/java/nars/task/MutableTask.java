@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class MutableTask<C extends Compound> extends AbstractTask<C> {
+public class MutableTask<C extends Compound> extends AbstractTask {
 
 
 //    public static <C extends Compound> TaskSeed make(NAR nar, C t) {

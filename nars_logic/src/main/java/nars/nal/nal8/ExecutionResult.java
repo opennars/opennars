@@ -2,6 +2,7 @@ package nars.nal.nal8;
 
 import nars.task.Task;
 import nars.task.Tasked;
+import nars.term.compound.Compound;
 
 import java.io.Serializable;
 
@@ -10,10 +11,10 @@ import java.io.Serializable;
  */
 public class ExecutionResult implements Serializable, Tasked {
 
-    public final Task<Operation> operation;
+    public final Task operation;
     public final Object feedback;
 
-    public ExecutionResult(Task<Operation> op, Object feedback) {
+    public ExecutionResult(Task op, Object feedback) {
         this.operation = op;
         this.feedback = feedback;
     }
@@ -23,7 +24,7 @@ public class ExecutionResult implements Serializable, Tasked {
         return operation;
     }
 
-    public Operation getOperation() {
+    public Compound getOperation() {
         return operation.getTerm();
     }
 

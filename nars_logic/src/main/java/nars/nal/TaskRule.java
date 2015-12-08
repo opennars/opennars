@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.google.common.collect.Sets;
+import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.PostCondition;
@@ -13,13 +14,12 @@ import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.*;
 import nars.nal.meta.pre.*;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal4.Product;
-import nars.nal.nal4.ProductN;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
@@ -32,9 +32,7 @@ import java.util.function.BiConsumer;
  * A rule which produces a Task
  * contains: preconditions, predicates, postconditions, post-evaluations and metainfo
  */
-public class TaskRule extends ProductN implements Level {
-
-
+public class TaskRule extends GenericCompound implements Level {
 
     public boolean immediate_eternalize = false;
 
@@ -64,16 +62,16 @@ public class TaskRule extends ProductN implements Level {
     private String str;
     protected String source;
 
-    public final ProductN getPremise() {
-        return (ProductN) term(0);
+    public final Compound getPremise() {
+        return (Compound) term(0);
     }
 
-    public final ProductN getConclusion() {
-        return (ProductN) term(1);
+    public final Compound getConclusion() {
+        return (Compound) term(1);
     }
 
-    public TaskRule(Product premises, Product result) {
-        super(new Term[] { premises, result });
+    public TaskRule(Compound premises, Compound result) {
+        super(Op.PRODUCT, premises, result );
         this.str = super.toString();
     }
 
@@ -272,7 +270,7 @@ public class TaskRule extends ProductN implements Level {
 
     /** deduplicate and generate match-optimized compounds for rules */
     public void compile(TermIndex patterns) {
-        Term[] premisePattern = ((Product) term(0)).terms();
+        Term[] premisePattern = ((Compound) term(0)).terms();
         Term taskPattern = premisePattern[0];
         Term beliefPattern = premisePattern[1];
         premisePattern[0] = compilePattern(taskPattern, patterns);
@@ -310,7 +308,7 @@ public class TaskRule extends ProductN implements Level {
                     ((Compound) containingCompound).term(1)))
                 return v;
 
-            return Variable.the(Op.VAR_PATTERN, v.bytes());
+            return Variable.v(Op.VAR_PATTERN, v.bytes());
         }
     }
 
@@ -326,10 +324,6 @@ public class TaskRule extends ProductN implements Level {
     }
 
 
-    @Override
-    public final TaskRule clone(Term[] replaced) {
-        return new TaskRule((Product) replaced[0], (Product) replaced[1]);
-    }
 
     public final TaskRule setup(TermIndex index) {
 
@@ -338,8 +332,8 @@ public class TaskRule extends ProductN implements Level {
         //1. construct precondition term array
         //Term[] terms = terms();
 
-        Term[] precon = ((Product) term(0)).terms();
-        Term[] postcons = ((Product) term(1)).terms();
+        Term[] precon = ((Compound) term(0)).terms();
+        Term[] postcons = ((Compound) term(1)).terms();
 
 
         List<PreCondition> prePreConditionsList = Global.newArrayList(precon.length);
@@ -386,7 +380,7 @@ public class TaskRule extends ProductN implements Level {
 
             //if (predicate.getSubject() instanceof SetExt) {
                 //decode precondition predicate arguments
-            args = ((Product)(predicate.term(0))).terms();
+            args = ((Compound)(predicate.term(0))).terms();
             arg1 = args[0];
             arg2 = (args.length > 1) ? args[1] : null;
             /*} else {
@@ -530,7 +524,7 @@ public class TaskRule extends ProductN implements Level {
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
 
 
-            Term[] modifiers = ((Product) postcons[i++]).terms();
+            Term[] modifiers = ((Compound) postcons[i++]).terms();
 
             PreCondition[] afterConclusions = afterConcs.toArray(new PreCondition[afterConcs.size()]);
 
@@ -563,10 +557,10 @@ public class TaskRule extends ProductN implements Level {
     }
 
     public final Term getTaskTermPattern() {
-        return ((Product) term(0)).terms()[0];
+        return ((Compound) term(0)).terms()[0];
     }
     public final Term getBeliefTermPattern() {
-        return ((Product) term(0)).terms()[1];
+        return ((Compound) term(0)).terms()[1];
     }
 
     public final void setAllowBackward(boolean allowBackward) {
@@ -644,21 +638,20 @@ public class TaskRule extends ProductN implements Level {
 
     private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {
 
-        ProductN newPremise = null;
+        Compound newPremise = null;
         if(question) {
-            newPremise = (ProductN) Product.make(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm));
+            newPremise = $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm));
         } else {
-            newPremise = (ProductN) Product.make(getPremise().terms());
+            newPremise = $.p(getPremise().terms());
         }
 
         newPremise.terms()[0] = newT;
         newPremise.terms()[1] = newB;
 
-        final Product newConclusion = Product.make(getConclusion().cloneTermsReplacing(0, newR));
+        Term[] newConclusion = getConclusion().terms().clone();
+        newConclusion[0] = newR;
 
-        TaskRule t = new TaskRule(newPremise, newConclusion);
-
-        return t;
+        return new TaskRule(newPremise, $.p( newConclusion ));
     }
 
 //    /**
@@ -704,7 +697,7 @@ public class TaskRule extends ProductN implements Level {
 
         @Override protected Variable newVariable(final Variable v, int serial) {
 
-            Variable newVar = Variable.the(v.op(), serial+offset);
+            Variable newVar = $.v(v.op(), serial+offset);
 
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;

@@ -17,7 +17,6 @@
 
 package nars.op.mental;
 
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class feelBusy extends feel implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Task<Operation> operation) {
+    public List<Task> apply(Task operation) {
         return feeling(nar.memory.emotion.busy(), nar.memory);
     }    
 }

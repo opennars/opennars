@@ -20,8 +20,8 @@ public class echo extends ImmediateOperator {
 //    }
 
     @Override
-    public void accept(Task<Operation> o) {
-        nar().memory.eventSpeak.emit( o.getTerm().args() );
+    public void accept(Task o) {
+        nar().memory.eventSpeak.emit( Operation.args(o.getTerm()).terms() );
         //nar().emit(echo.class, Arrays.toString( o.args() ) );
     }
 

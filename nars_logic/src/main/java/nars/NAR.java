@@ -366,20 +366,20 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        return believe(pri, NAR.defaultJudgmentDurability, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
 //    }
 
-    public <C extends Compound> Task<C> believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
+    public <C extends Compound> Task believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
         return input(pri, dur, term, JUDGMENT, occurrenceTime, freq, conf);
     }
 
     /**
      * TODO add parameter for Tense control. until then, default is Now
      */
-    public <T extends Compound> Task<T> goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws Narsese.NarseseException {
+    public <T extends Compound> Task goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws Narsese.NarseseException {
         return input(pri, dur, goal, GOAL, occurrence, freq, conf);
     }
 
-    final public <C extends Compound> Task<C> input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
+    final public <C extends Compound> Task input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
 
-        Task<C> t = new MutableTask(term, punc)
+        Task t = new MutableTask(term, punc)
             .truth(freq, conf)
             .budget(pri, dur)
             .time(time(), occurrenceTime);
@@ -389,7 +389,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return t;
     }
 
-    public <T extends Compound> Task<T> ask(T term, char questionOrQuest) throws Narsese.NarseseException {
+    public <T extends Compound> Task ask(T term, char questionOrQuest) throws Narsese.NarseseException {
 
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
@@ -421,7 +421,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
-    public final boolean input(Task<?> t) {
+    public final boolean input(Task t) {
 
         final Memory m = memory;
 
@@ -461,13 +461,14 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public final int execute(final Task goal) {
         Term term = goal.getTerm();
 
-        if (term instanceof Operation) {
-            final Operation o = (Operation) term;
+        if (Operation.isOperation(term)) {
+            final Compound o = (Compound) term;
 
             //enqueue
             beforeNextFrame(()-> {
                 if (!goal.isDeleted()) //it may be deleted by the time this runs
-                    memory.exe.emit(o.getOperatorTerm(), goal);
+                    memory.exe.emit(
+                        Operation.opTerm(o), goal);
                 //else ... --> why?
             });
 
@@ -528,20 +529,20 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     public final void onExec(Term operator, Consumer<Term[]> func) {
         //wrap the procedure in a function, suboptimal but ok
-        onExecTask(operator, (Task<Operation> tt) -> {
-            func.accept(tt.getTerm().args());
+        onExecTask(operator, (Task tt) -> {
+            func.accept(Operation.args(tt.getTerm()).terms());
             return null;
         });
     }
 
-    public void onExecTask(String operator, Function<Task<Operation>, List<Task>> f) {
+    public void onExecTask(String operator, Function<Task, List<Task>> f) {
         onExecTask(Atom.the(operator), f);
     }
     //TODO use specific names for these types of functons in this class
-    public void onExecTask(Term operator, Function<Task<Operation>, List<Task>> f) {
+    public void onExecTask(Term operator, Function<Task, List<Task>> f) {
         onExec(new OperatorReaction(operator) {
             @Override
-            public List<Task> apply(Task<Operation> t) {
+            public List<Task> apply(Task t) {
                 return f.apply(t);
             }
         });
@@ -562,14 +563,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public EventEmitter.Registrations onExec(Class<? extends OperatorReaction> c) {
-        //for (Class<? extends OperatorReaction> c : x) {
-        OperatorReaction v = memory.the(c);
-        return onExec(v);
-        //}
-    }
 
-    public final EventEmitter.Registrations onExec(Reaction<Term, Task<Operation>> o, Term c) {
+    public final EventEmitter.Registrations onExec(Reaction<Term, Task> o, Term c) {
         return memory.exe.on(o, c);
     }
 

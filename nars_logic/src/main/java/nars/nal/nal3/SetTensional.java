@@ -96,7 +96,7 @@ public interface SetTensional<T extends Term> extends Compound<T> {
 
 
 
-    static Set<Term> subtract(SetTensional a, SetTensional b) {
+    static Set<Term> subtract(Compound a, Compound b) {
         Set<Term> set = a.toSet();
         b.forEach(set::remove);
         return set;

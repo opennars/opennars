@@ -1,5 +1,6 @@
 package nars.term.transform;
 
+import nars.$;
 import nars.Global;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
@@ -59,7 +60,7 @@ public class VariableNormalization extends VariableTransform {
         @Override
         public final Variable apply(Compound containing, Variable current, int depth) {
             //      (containing, current, depth) ->
-            return Variable.the(current.op(), 1);
+            return $.v(current.op(), 1);
         }
     };
 
@@ -121,7 +122,7 @@ public class VariableNormalization extends VariableTransform {
 
     /** if already normalized, alreadyNormalized will be non-null with the value */
     protected Variable newVariable(final Variable v, int serial) {
-        return Variable.the(v.op(), serial);  //type + id
+        return $.v(v.op(), serial);  //type + id
     }
 
     public final Compound get() {

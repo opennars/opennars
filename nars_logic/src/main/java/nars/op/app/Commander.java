@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public class Commander implements Consumer<NAR> {
 
     public final TaskAccumulator commands;
-    public final Iterator<Task<?>> commandIterator;
+    public final Iterator<Task> commandIterator;
 //    private final On cycleEnd;
 //    private final NAR nar;
 
@@ -97,7 +97,7 @@ public class Commander implements Consumer<NAR> {
         final long now = nar.time();
         if (now%cycleDivisor!= 0) return;
 
-        Iterator<Task<?>> commandIterator = this.commandIterator;
+        Iterator<Task> commandIterator = this.commandIterator;
         for (int i = 0; i < inputsPerFrame; i++) {
             if (commandIterator.hasNext()) {
                 final Task next = commandIterator.next();

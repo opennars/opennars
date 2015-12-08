@@ -6,14 +6,10 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.UtilityFunctions;
-import nars.nal.nal8.Operation;
-import nars.op.mental.Mental;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.Temporal;
-import nars.term.Term;
 import nars.term.Termed;
-import nars.term.compound.Compound;
 import nars.truth.Truth;
 
 import java.io.IOException;
@@ -66,33 +62,33 @@ public enum Tense  {
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
 
-    public static boolean containsMentalOperator(final Task t) {
-        return containsMentalOperator(t.getTerm(), true);
-        /*
-        if(!(t.term instanceof Operation))
-            return false;
-
-        Operation o= (Operation)t.term;
-        return (o.getOperator() instanceof Mental);
-        */
-    }
-
-    public static boolean containsMentalOperator(Term t, boolean recurse) {
-        if (t instanceof Operation) {
-            Operation o = (Operation) t;
-            if (o.getOperatorTerm() instanceof Mental) return true;
-        }
-        if ((recurse) && (t instanceof Compound)) {
-            Compound ct = (Compound)t;
-            int l = ct.size();
-            for (int i = 0; i < l; i++) {
-                Term s = ct.term(i);
-                if (containsMentalOperator(s, true)) return true;
-            }
-        }
-
-        return false;
-    }
+//    public static boolean containsMentalOperator(final Task t) {
+//        return containsMentalOperator(t.getTerm(), true);
+//        /*
+//        if(!(t.term instanceof Operation))
+//            return false;
+//
+//        Operation o= (Operation)t.term;
+//        return (o.getOperator() instanceof Mental);
+//        */
+//    }
+//
+//    public static boolean containsMentalOperator(Term t, boolean recurse) {
+//        if (t instanceof Operation) {
+//            //Operation o = (Operation) t;
+//            //if (o.getOperatorTerm() instanceof Mental) return true;
+//        }
+//        if ((recurse) && (t instanceof Compound)) {
+//            Compound ct = (Compound)t;
+//            int l = ct.size();
+//            for (int i = 0; i < l; i++) {
+//                Term s = ct.term(i);
+//                if (containsMentalOperator(s, true)) return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
     /**
      * Evaluate the quality of the judgment as a solution to a problem

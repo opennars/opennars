@@ -399,7 +399,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
         }
 
 
-        appendCloser(p);
+        Compound.appendCloser(p);
 
 
     }

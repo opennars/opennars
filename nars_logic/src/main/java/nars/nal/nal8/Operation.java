@@ -21,22 +21,20 @@
 package nars.nal.nal8;
 
 import nars.$;
-import nars.Memory;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.concept.Concept;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import static nars.Symbols.COMPOUND_TERM_CLOSER;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
@@ -49,11 +47,11 @@ import static nars.Symbols.COMPOUND_TERM_OPENER;
  *
  * @param A argument term type
  */
-public class Operation extends GenericCompound {
+public interface Operation  {
 
-    public Operation(Operator operator, Term... args) {
-        super(Op.INHERITANCE, $.inh(operator, $.p(args)));
-    }
+//    public Operation(Operator operator, Term... args) {
+//        super(Op.INHERITANCE, $.inh(operator, $.p(args)));
+//    }
 
 
 //    public Operation(String operatorName, A[] args) {
@@ -76,25 +74,28 @@ public class Operation extends GenericCompound {
 //    }
 
 
-    /**
-     * gets the term wrapped by the Operator predicate
-     */
-    public final Term getOperatorTerm() {
-        return getOperator().identifier();
-    }
+//    /**
+//     * gets the term wrapped by the Operator predicate
+//     */
+//    public final Term getOperatorTerm() {
+//        return getOperator().identifier();
+//    }
+//
+//    public final Operator getOperator() {
+//        return (Operator)term(1);
+//    }
+//
+//    public final Product arg() {
+//        return (Product)term(0);
+//    }
+//
+//    public final Term arg(int i) {
+//        return arg().term(i);
+//    }
 
-    public final Operator getOperator() {
-        return (Operator)term(1);
-    }
 
-    public final Product arg() {
-        return (Product)term(0);
-    }
-
-    public final Term arg(int i) {
-        return arg().term(i);
-    }
-
+    public Term operator();
+    public Term[] args();
 
     public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
@@ -109,46 +110,46 @@ public class Operation extends GenericCompound {
     }
 
 
+//
+//    /**
+//     * returns a reference to the raw arguments as contained by the Product subject of this operation
+//     * avoid using this because it may involve creation of unnecessary array
+//     * if Product1.terms() is called
+//     */
+//    public final Term[] args() {
+//        return arg().terms();
+//    }
+//
+//    public final Concept getConcept(Memory m) {
+//        if (m == null) return null;
+//        return m.concept(this);//getTerm());
+//    }
+//
+//    public final Truth getConceptDesire(Memory m) {
+//        Concept c = getConcept(m);
+//        if (c == null) return null;
+//        return c.getDesire();
+//    }
+//
+//    public final float getConceptExpectation(Memory m) {
+//        Truth tv = getConceptDesire(m);
+//        if (tv == null) return 0;
+//        return tv.getExpectation();
+//    }
 
-    /**
-     * returns a reference to the raw arguments as contained by the Product subject of this operation
-     * avoid using this because it may involve creation of unnecessary array
-     * if Product1.terms() is called
-     */
-    public final Term[] args() {
-        return arg().terms();
-    }
+//
+//    public final int numArgs() {
+//        return arg().size();
+//    }
 
-    public final Concept getConcept(Memory m) {
-        if (m == null) return null;
-        return m.concept(this);//getTerm());
-    }
-
-    public final Truth getConceptDesire(Memory m) {
-        Concept c = getConcept(m);
-        if (c == null) return null;
-        return c.getDesire();
-    }
-
-    public final float getConceptExpectation(Memory m) {
-        Truth tv = getConceptDesire(m);
-        if (tv == null) return 0;
-        return tv.getExpectation();
-    }
-
-
-    public final int numArgs() {
-        return arg().size();
-    }
-
-    public static boolean isA(Term x, Term someOperatorTerm) {
-        if (x instanceof Operation) {
-            Operation o = (Operation) x;
-            if (o.getOperatorTerm().equals(someOperatorTerm))
-                return true;
-        }
-        return false;
-    }
+//    public static boolean isA(Term x, Term someOperatorTerm) {
+//        if (x instanceof Operation) {
+//            Operation o = (Operation) x;
+//            if (o.getOperatorTerm().equals(someOperatorTerm))
+//                return true;
+//        }
+//        return false;
+//    }
 
 
 
@@ -192,43 +193,15 @@ public class Operation extends GenericCompound {
 //        return b.toBytes();
 //    }
 
-    @Override
-    public final void append(Appendable p, boolean pretty) throws IOException {
-
-        Term predTerm = getOperatorTerm();
-
-        if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
-            //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
-            super.append(p, pretty);
-            return;
-        }
 
 
-        final Term[] xt = arg().terms();
-
-        predTerm.append(p, pretty); //add the operator name without leading '^'
-        p.append(COMPOUND_TERM_OPENER);
-
-
-        int n = 0;
-        for (final Term t : xt) {
-            if (n != 0) {
-                p.append(Symbols.ARGUMENT_SEPARATOR);
-                if (pretty)
-                    p.append(' ');
-            }
-
-            t.append(p, pretty);
-
-
-            n++;
-        }
-
-        p.append(COMPOUND_TERM_CLOSER);
-
+    /** predicate term */
+    static Compound args(Compound operation) {
+        return (Compound) operation.term(1);
     }
-
-
+    static Term opTerm(Compound operation) {
+        return ((Compound)((Compound)operation).term(0)).term(0);
+    }
 
 
 //    public final String argString() {
@@ -241,15 +214,15 @@ public class Operation extends GenericCompound {
      * which will be replaced with the result term (y)
      *
      */
-    public static Term result(Operation op, Term y) {
-        Product x =  op.arg();
+    public static Term result(Compound operation, Term y) {
+        Compound x = (Compound) operation.term(0);
         Term t = x.last();
         if (!(t instanceof Variable))
             return null;
 
         return $.inh(
             y, //SetExt.make(y),
-            makeImageExt(x, op.getOperator(), (short) (x.size() - 1) /* position of the variable */)
+            makeImageExt(x, operation.term(1), (short) (x.size() - 1) /* position of the variable */)
         );
     }
     /**
@@ -259,7 +232,7 @@ public class Operation extends GenericCompound {
      * @param index The index of the place-holder (variable)
      * @return A compound generated or a term it reduced to
      */
-    static Term makeImageExt(Product product, Term relation, short index) {
+    static Term makeImageExt(Compound product, Term relation, short index) {
         int pl = product.size();
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
@@ -283,10 +256,72 @@ public class Operation extends GenericCompound {
     }
 
     /** applies certain data to a feedback task relating to its causing operation's task */
-    public static Task asFeedback(MutableTask feedback, Task<Operation> goal, float priMult, float durMult) {
+    public static Task asFeedback(MutableTask feedback, Task goal, float priMult, float durMult) {
         return feedback.budget(goal.getBudget()).
                 budgetScaled(priMult, durMult).
                 parent(goal);
+    }
+
+    static boolean isOperation(Term t) {
+        if (!(t instanceof Compound)) return false;
+        Compound c = (Compound)t;
+        return c.op() == Op.INHERITANCE &&
+            c.size() == 2 &&
+            c.term(1).op() == Op.OPERATOR
+            && c.term(0).op() == Op.PRODUCT;
+    }
+
+    static <T extends Term> String toString(Compound argsProduct, Term operator, boolean pretty) {
+        try {
+            StringWriter s = new StringWriter();
+            appendOperation(argsProduct, operator, s, pretty);
+            return s.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void appendOperation(Compound argsProduct, Term operator, Appendable p, boolean pretty) throws IOException {
+
+        Term predTerm = operator; //getOperatorTerm();
+
+        if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
+            //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
+            Compound.appendSeparator(p, pretty);
+            return;
+        }
+
+
+        final Term[] xt = argsProduct.terms();
+
+        predTerm.append(p, pretty); //add the operator name without leading '^'
+        p.append(COMPOUND_TERM_OPENER);
+
+
+        int n = 0;
+        for (final Term t : xt) {
+            if (n != 0) {
+                p.append(Symbols.ARGUMENT_SEPARATOR);
+                if (pretty)
+                    p.append(' ');
+            }
+
+            t.append(p, pretty);
+
+
+            n++;
+        }
+
+        p.append(COMPOUND_TERM_CLOSER);
+
+    }
+
+    default Term arg(int i) {
+        return args()[i];
+    }
+
+    static Term[] argTerms(Compound term) {
+        return args(term).terms();
     }
 
 

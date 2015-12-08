@@ -13,10 +13,10 @@ import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.JGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal4.Product;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.util.graph.TermLinkGraph2;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
@@ -40,14 +40,14 @@ public class GraphPaneTest {
 
         SpaceGrapher<Term, TermNode<Term>> g = new DefaultGrapher<>(
 
-                new JGraphSource<Term, Product>(
+                new JGraphSource<Term, Compound>(
                         //newExampleGraph()
                         newExampleTermLinkGraph()
 
                 ) {
 
                     @Override
-                    public Term getTargetVertex(Product edge) {
+                    public Term getTargetVertex(Compound edge) {
                         return edge.term(1);
                     }
 
@@ -112,7 +112,7 @@ public class GraphPaneTest {
 
     }
 
-    private static DirectedGraph<Term, Product> newExampleTermLinkGraph() {
+    private static DirectedGraph<Term, Compound> newExampleTermLinkGraph() {
 
         NAR n = new Default(100, 3, 3, 3);
         n.input("a:b.");

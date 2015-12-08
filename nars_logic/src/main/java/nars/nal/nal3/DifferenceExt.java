@@ -22,6 +22,7 @@ package nars.nal.nal3;
 
 import nars.Op;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 
 /**
@@ -69,16 +70,14 @@ public class DifferenceExt extends Difference {
 
     /**
      * Try to make a new compound from two term. Called by the logic rules.
-     * @param t1 The first component
-     * @param t2 The second component
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term A, final Term B) {
 
         if (A.equals(B)) return null;
 
-        if ((A instanceof SetExt) && (B instanceof SetExt)) {
-            return SetExt.subtract((SetExt)A, (SetExt)B);
+        if ((A instanceof Compound) && (B instanceof Compound)) {
+            return SetExt.subtractExt((Compound)A, (Compound)B);
         }
 
         return new DifferenceExt(A, B);

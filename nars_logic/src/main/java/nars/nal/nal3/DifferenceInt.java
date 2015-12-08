@@ -22,6 +22,7 @@ package nars.nal.nal3;
 
 import nars.Op;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term
@@ -53,11 +54,10 @@ public class DifferenceInt extends Difference {
     /**
      * Try to make a new DifferenceExt
      * @return the Term generated from the arguments
-     * @param arg The list of term
      */
     public static Term make(Term a, Term b) {
-        if ((a instanceof SetInt) && (b instanceof SetInt)) {
-            return SetInt.subtract((SetInt)a, (SetInt)b);
+        if ((a instanceof Compound) && (b instanceof Compound)) {
+            return SetInt.subtractInt((Compound)a, (Compound)b);
         }
 
         return new DifferenceInt(a, b);
@@ -65,8 +65,6 @@ public class DifferenceInt extends Difference {
 
     /**
      * Try to make a new compound from two term. Called by the logic rules.
-     * @param a The first component
-     * @param b The second component
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term... arg) {

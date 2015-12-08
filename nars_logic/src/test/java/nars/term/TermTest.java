@@ -16,13 +16,13 @@
  */
 package nars.term;
 
-import nars.$;
-import nars.Global;
-import nars.NAR;
-import nars.Narsese;
+import nars.*;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.*;
+import nars.nal.nal3.DifferenceExt;
+import nars.nal.nal3.DifferenceInt;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
 import nars.nar.AbstractNAR;
@@ -31,7 +31,6 @@ import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.term.compound.CompoundN;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -262,11 +261,11 @@ public class TermTest {
 
 
 //        try {
-            CompoundN forced = n.term("<a --> b>");
+            Compound forced = n.term("<a --> b>");
             assertNotNull(forced);
 
-            forced.subterms().term[0] = subj;
-            forced.subterms().term[1] = pred;
+            forced.terms()[0] = subj;
+            forced.terms()[1] = pred;
 
             assertEquals(t, forced.toStringCompact());
 
@@ -302,7 +301,7 @@ public class TermTest {
         Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
         Term d = DifferenceInt.make(a, b);
-        assertEquals(d.toString(), d.getClass(), SetIntN.class);
+        assertEquals(Op.SET_INT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("[a,c]", d.toString());
     }
@@ -314,7 +313,7 @@ public class TermTest {
         Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
         Term d = DifferenceExt.make(a, b);
-        assertEquals(d.toString(), d.getClass(), SetExtN.class);
+        assertEquals(Op.SET_EXT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("{a,c}", d.toString());
 

@@ -122,7 +122,7 @@ public class LocalRules {
     /** creates a revision task (but does not input it)
      *  if failed, returns null
      * */
-    public static <C extends Compound> Task<C> getRevision(final Task<C> newBelief, final Task<C> oldBelief, final Premise nal, long now) {
+    public static <C extends Compound> Task getRevision(final Task newBelief, final Task oldBelief, final Premise nal, long now) {
 
         if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
             return null;

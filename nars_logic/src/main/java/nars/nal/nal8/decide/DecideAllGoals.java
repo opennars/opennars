@@ -1,7 +1,6 @@
 package nars.nal.nal8.decide;
 
 import nars.Symbols;
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 /**
@@ -12,7 +11,7 @@ public class DecideAllGoals implements Decider {
     public final static DecideAllGoals the = new DecideAllGoals();
 
     @Override
-    public boolean test(Task<Operation> task) {
+    public boolean test(Task task) {
         return (task.getPunctuation() == Symbols.GOAL);
     }
 

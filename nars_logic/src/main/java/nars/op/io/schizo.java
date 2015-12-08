@@ -2,14 +2,13 @@ package nars.op.io;
 
 
 import nars.nal.nal8.ImmediateOperator;
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 /** sets the memory's current SELF term; warning: can cause mental disturbance */
 public class schizo extends ImmediateOperator {
 
     @Override
-    public void accept(Task<Operation> terms) {
+    public void accept(Task terms) {
 //
 //        Term x = operation.arg().term(0);
 //        if (x instanceof Atom) {

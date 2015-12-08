@@ -184,16 +184,20 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default void append(final Appendable p, final boolean pretty) throws IOException {
+        appendCompound(this, p, pretty);
+    }
 
-        boolean opener = appendTermOpener();
+    static void appendCompound(Compound c, final Appendable p, final boolean pretty) throws IOException {
+
+        boolean opener = c.appendTermOpener();
         if (opener)
             p.append(COMPOUND_TERM_OPENER);
 
 
-        final boolean appendedOperator = appendOperator(p);
+        final boolean appendedOperator = c.appendOperator(p);
 
 
-        appendArgs(p, pretty, appendedOperator);
+        c.appendArgs(p, pretty, appendedOperator);
 
 
         appendCloser(p);
@@ -218,7 +222,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return true;
     }
 
-    default void appendCloser(Appendable p) throws IOException {
+    static void appendCloser(Appendable p) throws IOException {
         p.append(COMPOUND_TERM_CLOSER);
     }
 
@@ -414,17 +418,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     TermContainer<T> subterms();
 
-//    public Term[] cloneTermsReplacing(final Term from, final Term to) {
-//        Term[] y = new Term[length()];
-//        int i = 0;
-//        for (Term x : term) {
-//            if (x.equals(from))
-//                x = to;
-//            y[i++] = x;
-//        }
-//        return y;
-//    }
-
 
     @Override
     default String toStringCompact() {
@@ -580,6 +573,10 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     default Term clone(TermContainer subs) {
         return clone(subs.terms());
+    }
+
+    default Term last() {
+        return term(size()-1);
     }
 
 

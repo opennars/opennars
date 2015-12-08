@@ -4,7 +4,6 @@ import nars.$;
 import nars.NAR;
 import nars.nar.Terminal;
 import nars.task.Task;
-import nars.term.compound.Compound;
 import nars.util.data.MutableDouble;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class ItemAccumulatorTest {
 
     @Test
     public void testAccumulatorDeduplication() {
-        TaskAccumulator ii = new TaskAccumulator<>(
+        TaskAccumulator ii = new TaskAccumulator(
                 2 //capacity = 2 but this test will only grow to size 1 if successful
         );
         ii.mergePlus();
@@ -47,7 +46,7 @@ public class ItemAccumulatorTest {
 
         final int capacity = 4;
 
-        TaskAccumulator<?> ii = new TaskAccumulator<>(
+        TaskAccumulator ii = new TaskAccumulator(
                 capacity
         );
 
@@ -66,7 +65,7 @@ public class ItemAccumulatorTest {
 
         assertEquals(capacity, ii.size());
 
-        Task<?> one = ii.pop();
+        Task one = ii.pop();
         assertEquals("$0.30;0.80;0.95$ <d --> x>. :0: %1.00;0.90%", one.toString());
 
         List<Task> two = new ArrayList();
@@ -92,7 +91,7 @@ public class ItemAccumulatorTest {
 
         final int capacity = 8;
 
-        TaskAccumulator<? extends Compound> ii = new TaskAccumulator<>(capacity);
+        TaskAccumulator ii = new TaskAccumulator(capacity);
         assertTrue(ii.isSorted());
 
         for (int i = 0; i < capacity - 1; i++) {
@@ -118,7 +117,7 @@ public class ItemAccumulatorTest {
 
         final int capacity = 8;
 
-        TaskAccumulator ii = new TaskAccumulator<>(capacity);
+        TaskAccumulator ii = new TaskAccumulator(capacity);
 
         for (int i = 0; i < capacity-1; i++) {
             float dur = i * 0.05f;

@@ -2,41 +2,31 @@ package nars.nal.nal3;
 
 import nars.Op;
 import nars.term.Term;
-import nars.term.Terms;
+import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 
 import java.util.Collection;
 
 /**
  * Created by me on 5/2/15.
  */
-public interface SetExt<T extends Term> extends SetTensional<T> {
-
-    @Override
-    default Op op() {
-        return Op.SET_EXT;
-    }
+public interface SetExt {
 
 
-    static <T extends Term> SetExt<T> make(final Collection<T> c) {
+    static <T extends Term> Compound<T> make(final Collection<T> c) {
         return SetExt.make((T[])c.toArray(new Term[c.size()]));
     }
 
-    static <T extends Term> SetExt<T> make(final T... t) {
+    static <T extends Term> Compound<T> make(final T... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");
-            default: return new SetExtN( Terms.toSortedSetArray(t) );
+            default:
+                return new GenericCompound(Op.SET_EXT, t);
         }
     }
 
-//    static Compound make(Collection<Term> t) {
-//        switch (t.size()) {
-//            case 0: throw new RuntimeException("empty set");
-//            case 1: return new SetExt1(t.iterator().next());
-//            default: return new SetExtN( Terms.toSortedSetArray(t) );
-//        }
-//    }
 
-    static Term subtract(SetExt A, SetExt B) {
+    static Term subtractExt(Compound A, Compound B) {
         if (A.equals(B)) return null; //empty set
         return SetExt.make(SetTensional.subtract(A,B));
     }

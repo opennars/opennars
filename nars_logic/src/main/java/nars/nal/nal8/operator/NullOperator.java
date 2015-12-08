@@ -20,7 +20,6 @@
  */
 package nars.nal.nal8.operator;
 
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class NullOperator extends SyncOperator {
     }
 
     @Override
-    public List<Task> apply(Task<Operation> o) {
+    public List<Task> apply(Task o) {
         return null;
     }
 }

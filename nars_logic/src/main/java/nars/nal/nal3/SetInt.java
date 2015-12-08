@@ -1,27 +1,28 @@
 package nars.nal.nal3;
 
+import nars.Op;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 
 import java.util.Collection;
 
 /**
  * Created by me on 5/2/15.
  */
-public interface SetInt<T extends Term> extends SetTensional<T> {
+public interface SetInt  {
 
-    static Compound make(final Collection<Term> c) {
-        return SetInt.make(c.toArray(new Term[c.size()]));
+    static <T extends Term> Compound<T> make(final Collection<T> c) {
+        return SetInt.make(c.toArray((T[]) new Term[c.size()]));
     }
 
-    static Compound make(final Term... t) {
+    static <T extends Term> Compound<T> make(final T... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");
-            default: return new SetIntN(Terms.toSortedSetArray(t));
+            default:
+                return new GenericCompound(Op.SET_INT, t);
         }
     }
-
 //    static Compound make(List<Term> t) {
 //        switch (t.size()) {
 //            case 0: throw new RuntimeException("empty set");
@@ -40,7 +41,7 @@ public interface SetInt<T extends Term> extends SetTensional<T> {
 //        }
 //    }
 
-    static Term subtract(SetInt A, SetInt B) {
+    static Compound subtractInt(Compound A, Compound B) {
         if (A.equals(B)) return null; //empty set
         return SetInt.make(SetTensional.subtract(A,B));
     }
