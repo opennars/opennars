@@ -7,7 +7,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.task.AbstractTask;
 import nars.task.Task;
 
 import static nars.guifx.NARfx.scrolled;
@@ -28,7 +27,7 @@ public class TaskPane extends BorderPane {
         Button reinforceButton = new Button("Reinforce");
         reinforceButton.setAccessibleText("Re-input task");
         reinforceButton.setOnMouseClicked(e -> {
-            nar.input(new AbstractTask(c));
+            //nar.input(new AbstractTask(c));
         });
 
         Button conceptButton = new Button("Concept" + c.getTerm().toStringCompact());

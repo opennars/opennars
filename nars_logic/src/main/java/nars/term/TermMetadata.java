@@ -9,10 +9,10 @@ import nars.term.compound.Compound;
  */
 public interface TermMetadata {
 
-    int metadataStruture = Op.or(Op.PARALLEL, Op.SEQUENCE);
+    int temporalBits = Op.or(Op.PARALLEL, Op.SEQUENCE);
 
-    static boolean hasTermMetadata(Compound term) {
-        return term.hasAny(metadataStruture);
+    static boolean hasTemporals(Compound term) {
+        return term.hasAny(temporalBits);
     }
 
 }

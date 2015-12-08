@@ -10,6 +10,7 @@ import nars.nal.meta.PreCondition;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.PreTask;
+import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -57,17 +58,14 @@ public final class Derive extends PreCondition {
 
         Term derivedTerm = m.derived.get();
 
-        //test for reactor leak
-        // TODO prevent this from happening
-        if (Variable.hasPatternVariable(derivedTerm)) {
 
+        Term t = derivedTerm.normalized();
+
+        if (t==null || Variable.hasPatternVariable(t))
             return false;
-        }
 
-        //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
-        derivedTerm = derivedTerm.normalized();
-
-        if (!(derivedTerm instanceof Compound))
+        Compound c = Sentence.validTaskTerm(t);
+        if (c == null)
             return false;
 
         final Truth truth = m.truth.get();
@@ -94,9 +92,7 @@ public final class Derive extends PreCondition {
 
         final char punct = m.punct.get();
 
-        MutableTask deriving = MutableTask.make((Compound) derivedTerm); //, task, belief, allowOverlap);
-        if (deriving == null)
-            return false;
+        MutableTask deriving = new MutableTask((Compound) derivedTerm);
 
         final long now = premise.time();
         final long occ;
@@ -119,43 +115,33 @@ public final class Derive extends PreCondition {
             deriving.log(rule);
         }
 
-
-        Task derived = m.derive(deriving
+        Task derived = deriving
                 .punctuation(punct)
                 .truth(truth)
                 .budget(budget)
                 .time(now, occ)
                 .parent(task, belief /* null if single */)
-                .anticipate(occ != Tense.ETERNAL ? anticipate : false));
+                .anticipate(occ != Tense.ETERNAL ? anticipate : false);
 
-        if (derived == null) return false;
-
+        if ((derived = m.derive(derived)) == null)
+            return false;
 
         //--------- TASK WAS DERIVED if it reaches here
 
 
-
-
-//                if (premise.nal(7) && rule.anticipate && task.isInput()) { //the prediction needs to be based on a observation
-//                    premise.memory().the(Anticipate.class).anticipate(derived); //else the system can anticipate things it can not measure
-//                }                    //thus these anticipations would fail, leading the system thinking that this did not happen altough it was
-
-
-
-
         if (truth != null && eternalize && !derived.isEternal()) {
 
-            m.derive(premise.removeInvalid(
+            m.derive(
                 new MutableTask(derived.getTerm())
                     .punctuation(punct)
                     .truth(
-                            truth.getFrequency(),
-                            eternalizedConfidence(truth.getConfidence())
+                        truth.getFrequency(),
+                        eternalizedConfidence(truth.getConfidence())
                     )
                     .budgetCompoundForward(premise)
                     .time(now, Tense.ETERNAL)
                     .parent(task, belief)
-            ));
+            );
 
         }
 

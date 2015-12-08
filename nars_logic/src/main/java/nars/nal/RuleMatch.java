@@ -62,6 +62,12 @@ public class RuleMatch extends FindSubst {
 
 
     public Task derive(Task derived) {
+
+        //pre-normalize to avoid discovering invalidity after having consumed space and survived the input queue
+        derived = derived.normalize(premise.memory());
+        if (derived == null)
+            return null;
+
         derived = premise.derive(derived);
         if (derived!=null) {
             receiver.accept(derived);

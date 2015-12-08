@@ -5,6 +5,7 @@ import nars.Premise;
 import nars.Symbols;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
+import nars.nal.meta.BeliefFunction;
 import nars.nal.meta.CanCycle;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TruthOperator;
@@ -170,19 +171,29 @@ public final class Solve extends PreCondition {
     }
 
     public static final class Truth extends PreCondition {
+        public final Term beliefTerm, desireTerm;
         public final TruthOperator belief;
         public final TruthOperator desire;
         public final char puncOverride;
 
         private final transient String id;
 
-        public Truth(TruthOperator belief, TruthOperator desire, char puncOverride) {
-            this.belief = belief;
-            this.desire = desire;
+        public Truth(Term beliefTerm, Term desireTerm, char puncOverride) {
+            this.beliefTerm = beliefTerm;
+            this.desireTerm = desireTerm;
             this.puncOverride = puncOverride;
 
-            String beliefLabel = belief==null ? "_" : belief.toString();
-            String desireLabel = desire==null ? "_" : desire.toString();
+            belief = BeliefFunction.get.belief(beliefTerm);
+            if (belief == null)
+                throw new RuntimeException("unknown belief function " + beliefTerm);
+
+            desire = BeliefFunction.get.desire(desireTerm);
+
+
+            String beliefLabel = belief==null ? "_" :
+                    beliefTerm.toString();
+            String desireLabel = desire==null ? "_" :
+                    desireTerm.toString();
 
             id = puncOverride == 0 ?
                     this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ")" :

@@ -103,7 +103,8 @@ public class Abbreviation implements Consumer<Task> {
                 if (c!=null) {
 
                     Memory m = nar.memory;
-                    nar.input(MutableTask.make(c)
+                    nar.input(
+                        new MutableTask(c)
                             .judgment().truth(1, abbreviationConfidence)
                             .parent(task).present(m)
                     );

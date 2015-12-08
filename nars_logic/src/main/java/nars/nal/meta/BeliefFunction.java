@@ -65,6 +65,7 @@ public interface BeliefFunction extends TruthOperator {
             Analogy = (T, B, m) -> B == null ? null : analogy(T, B);
 
 
+
     interface BeliefFunctionCyclicAllowed extends CanCycle, BeliefFunction {
     }
 
@@ -106,7 +107,9 @@ public interface BeliefFunction extends TruthOperator {
         }
 
         public static TruthOperator desire(Term which) {
-            return desireFuncs.get(which).get();
+            AtomObject<TruthOperator> f = desireFuncs.get(which);
+            if (f == null) return null;
+            return f.get();
         }
     }
 }

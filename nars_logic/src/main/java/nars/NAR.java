@@ -222,7 +222,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public final <S extends Term, T extends S> T term(final String t) throws Narsese.NarseseException {
-        T x = Narsese.the().term(t, memory.index);
+        T x = Narsese.the().term(t);
         if (x == null) return null;
 
         //this is applied automatically when a task is entered.

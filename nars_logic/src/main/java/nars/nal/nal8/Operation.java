@@ -102,8 +102,7 @@ public class Operation<A extends Term> extends Inheritance<Product<A>, Operator>
     }
 
     public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return MutableTask.make(content)
-                .punctuation(punctuation)
+        return new MutableTask(content, punctuation)
                 .truth(truth)
                 .budget(p, d, q)
                 .parent(parent)

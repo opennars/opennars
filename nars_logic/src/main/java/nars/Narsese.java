@@ -30,7 +30,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
@@ -1090,18 +1089,7 @@ public class Narsese extends BaseParser<Object>  {
 
         return x.normalized();
     }
-    /** parse one term and normalize it if successful */
-    public <T extends Term> T term(String s, TermIndex i) {
-        Term x = termRaw(s);
-        if (x==null) return null;
 
-        T normalized = x.normalized();
-        if (normalized == null) {
-            throw new RuntimeException("Unnormalizable: " + s);
-        }
-
-        return i.getTerm(normalized);
-    }
 
 //    public TaskRule taskRule(String input) {
 //        Term x = termRaw(input, singleTaskRuleParser);

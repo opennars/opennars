@@ -3,6 +3,7 @@ package nars.nal.meta;
 import nars.Symbols;
 import nars.nal.Level;
 import nars.nal.TaskRule;
+import nars.nal.meta.op.Solve;
 import nars.nal.nal1.Inheritance;
 import nars.term.Term;
 import nars.term.Terms;
@@ -24,13 +25,13 @@ public class PostCondition implements Serializable, Level //since there can be m
 {
 
     public static final float HALF = 0.5f;
+    private static Term beliefTruth, goalTruth;
 
-    public PostCondition(Term term, PreCondition[] afterConclusions, TruthOperator truth, TruthOperator desire) {
+    public PostCondition(Term term, PreCondition[] afterConclusions, Solve.Truth truth) {
         this.term = term;
         //this.modifiers = modifiers;
         this.afterConclusions = afterConclusions;
         this.truth = truth;
-        this.desire = desire;
         minNAL = Terms.maxLevel(term);// term.op().minLevel;
     }
 
@@ -45,7 +46,7 @@ public class PostCondition implements Serializable, Level //since there can be m
      */
     public final PreCondition[] afterConclusions;
 
-    public final TruthOperator truth, desire;
+    public final Solve.Truth truth;
 
 
     /**
@@ -97,7 +98,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                                      Term... modifiers) throws RuntimeException {
 
 
-        TruthOperator judgmentTruth = null,goalTruth = null;
+        //TruthOperator judgmentTruth = null,goalTruth = null;
 
         //boolean negate = false;
         char puncOverride = 0;
@@ -143,25 +144,11 @@ public class PostCondition implements Serializable, Level //since there can be m
 
                 //TODO rename to: 'Belief'
                 case "Truth":
-                    TruthOperator tm = BeliefFunction.get.belief(which);
-                    if (tm != null) {
-                        if (judgmentTruth != null) //only allow one
-                            throw new RuntimeException("beliefTruth " + judgmentTruth + " already specified; attempting to set to " + tm);
-                        judgmentTruth = tm;
-                    } else {
-                        throw new RuntimeException("unknown TruthFunction " + which);
-                    }
+                    beliefTruth = which;
                     break;
 
                 case "Desire":
-                    TruthOperator dm = BeliefFunction.get.desire(which);
-                    if (dm != null) {
-                        if (goalTruth != null) //only allow one
-                            throw new RuntimeException("goalTruth " + goalTruth + " already specified; attempting to set to " + dm);
-                        goalTruth = dm;
-                    } else {
-                        throw new RuntimeException("unknown DesireFunction " + which);
-                    }
+                    goalTruth = which;
                     break;
 
                 case "Derive":
@@ -203,7 +190,8 @@ public class PostCondition implements Serializable, Level //since there can be m
         }
 
 
-        PostCondition pc = new PostCondition(term, afterConclusions, judgmentTruth, goalTruth);
+        PostCondition pc = new PostCondition(term, afterConclusions,
+                new Solve.Truth(beliefTruth, goalTruth, puncOverride));
         //pc.negate = negate;
         pc.puncOverride = puncOverride;
         if (pc.valid(rule)) {
@@ -259,7 +247,6 @@ public class PostCondition implements Serializable, Level //since there can be m
                 ", afterConc=" + Arrays.toString(this.afterConclusions) +
                 //", modifiers=" + Arrays.toString(modifiers) +
                 ", truth=" + this.truth +
-                ", desire=" + this.desire +
                 '}';
     }
 

@@ -25,30 +25,18 @@ public final class PostSolve extends PreCondition {
     @Override
     public boolean test(RuleMatch m) {
 
-
-
         Term dt = m.derived.get();
 
         FindSubst.VarCachedVersionMap secondary = m.secondary;
         if (!secondary.isEmpty()) {
-            Term rederivedTerm = dt.apply(secondary);
-            //secondary.clear(); //necessary?
+            Term rederivedTerm = dt.apply(secondary, true);
 
             //its possible that the substitution produces an invalid term, ex: an invalid statement
-
             dt = rederivedTerm;
         }
 
-        if (dt == null)
-            return false;
-
-        //the apply substitute will invoke clone which invokes normalized, so its not necessary to call it here
-        Term t = dt.normalized();
-        if (t!=null) {
-            m.derived.set(t);
-            return true;
-        }
-
-        return false;
+        m.derived.set(dt);
+        return true;
     }
+
 }

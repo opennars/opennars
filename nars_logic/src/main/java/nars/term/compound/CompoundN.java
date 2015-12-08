@@ -2,6 +2,7 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.Term;
+import nars.term.TermMetadata;
 import nars.term.TermVector;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
@@ -107,9 +108,11 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
      */
     @Override
     public void setDuration(int duration) {
-        int n = size();
-        for (int i = 0; i < n; i++)
-            term(i).setDuration(duration);
+        if (TermMetadata.hasTemporals(this)) {
+            int n = size();
+            for (int i = 0; i < n; i++)
+                term(i).setDuration(duration);
+        }
     }
 
 

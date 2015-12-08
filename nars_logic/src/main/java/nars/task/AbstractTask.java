@@ -112,7 +112,7 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
     }
 
     protected final void setTerm(T t) {
-        if (!Objects.equals(this.term, t)) {
+        if (term!=t) {
             term = t;
             invalidate();
         }
@@ -483,10 +483,6 @@ abstract public class AbstractTask<T extends Compound> extends Item<Sentence<T>>
             this.occurrenceTime = o;
             invalidate();
         }
-    }
-
-    public static MutableTask make() {
-        return new MutableTask();
     }
 
     @Override

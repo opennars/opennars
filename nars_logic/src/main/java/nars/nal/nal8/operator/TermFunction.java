@@ -87,9 +87,10 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                Operation.asFeedback(MutableTask.make(inh).
-                        truth(getResultFrequency(), getResultConfidence()).
+                Operation.asFeedback(
+                    new MutableTask(inh).
                         judgment().
+                        truth(getResultFrequency(), getResultConfidence()).
                         tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
             );
 
