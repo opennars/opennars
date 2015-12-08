@@ -12,7 +12,7 @@ import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -42,7 +42,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
             return Op.INTERVAL;
         }
 
-        @Override public boolean applyTo(Subst f, List<Term> sub) {
+        @Override public boolean applyTo(Subst f, Collection<Term> sub) {
             //do nothing, just continue
             return true;
         }
@@ -51,7 +51,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
     @Override
-    public boolean applyTo(Subst f, List<Term> sub) {
+    public boolean applyTo(Subst f, Collection<Term> sub) {
         Term u = f.getXY(this);
 
         if (u == null) {

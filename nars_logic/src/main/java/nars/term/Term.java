@@ -30,7 +30,7 @@ import nars.term.visit.TermPredicate;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -302,7 +302,7 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
 
     /** resolve the this term according to subst by appending to sub.
      * return false if this term fails the substitution */
-    default boolean applyTo(Subst f, List<Term> sub) {
+    default boolean applyTo(Subst f, Collection<Term> sub) {
         Term u = apply(f);
         if (u == null)
             u = this;

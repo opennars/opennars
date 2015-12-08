@@ -4,7 +4,7 @@ import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.transform.Subst;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * the indicated relation term is inserted
@@ -23,7 +23,7 @@ public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
     }
 
     @Override
-    public boolean applyTo(Subst substitution, List<Term> target) {
+    public boolean applyTo(Subst substitution, Collection<Term> target) {
         Term relation = substitution.getXY(this.to);
         if (relation == null)
             return false;

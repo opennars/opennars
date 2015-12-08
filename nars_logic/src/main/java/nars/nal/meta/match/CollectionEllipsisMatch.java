@@ -4,7 +4,6 @@ import nars.term.Term;
 import nars.term.transform.Subst;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * implementation which stores its series of subterms as a Term[]
@@ -19,7 +18,7 @@ public class CollectionEllipsisMatch extends EllipsisMatch<Term> {
 
 
     @Override
-    public boolean applyTo(Subst f, List<Term> target) {
+    public boolean applyTo(Subst f, Collection<Term> target) {
         target.addAll(term);
         return true;
     }

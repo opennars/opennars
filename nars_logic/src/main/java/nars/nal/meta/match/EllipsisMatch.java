@@ -7,7 +7,7 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -41,7 +41,7 @@ abstract public class EllipsisMatch<T extends Term> extends ShadowAtom {
      * using the Substitution parameters .getXY() method
      *
      * */
-    abstract public boolean applyTo(Subst substitution, List<Term> target);
+    abstract public boolean applyTo(Subst substitution, Collection<Term> target);
 
     @Override
     abstract public int size();
