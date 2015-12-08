@@ -706,25 +706,25 @@ public class FindSubst extends Versioning implements Subst {
 
         int xsize = X.size();
 
-        final int numNonpatternVars;
-        int ellipsisToMatch = Ellipsis.numUnmatchedEllipsis(X, this);
-        if (ellipsisToMatch == 0) {
-
-            int ellipsisTotal = Ellipsis.numEllipsis(X);
-            if (ellipsisTotal > 0) {
-                //compute a virtual set of subterms based on an existing Ellipsis match
-                Term XX = X.substituted(this);
-                return (match(XX, Y));
-            }
-
-            /** NORMAL: match subterms but do not collect for ellipsis */
-            if (xsize != Y.size()) {
-                return false;
-            }
-            numNonpatternVars = xsize;
-        } else {
-            numNonpatternVars = Ellipsis.countNumNonEllipsis(X);
-        }
+//        final int numNonpatternVars;
+//        int ellipsisToMatch = Ellipsis.numUnmatchedEllipsis(X, this);
+//        if (ellipsisToMatch == 0) {
+//
+//            int ellipsisTotal = Ellipsis.numEllipsis(X);
+//            if (ellipsisTotal > 0) {
+//                //compute a virtual set of subterms based on an existing Ellipsis match
+//                Term XX = X.substituted(this);
+//                return (match(XX, Y));
+//            }
+//
+//            /** NORMAL: match subterms but do not collect for ellipsis */
+//            if (xsize != Y.size()) {
+//                return false;
+//            }
+//            numNonpatternVars = xsize;
+//        } else {
+//            numNonpatternVars = Ellipsis.countNumNonEllipsis(X);
+//        }
 
         //TODO see if there is a volume or structural constraint that can terminate early here
 
@@ -733,9 +733,9 @@ public class FindSubst extends Versioning implements Subst {
 
         final int ysize = Y.size();
 
-        if (!e.valid(numNonpatternVars, ysize)) {
-            return false;
-        }
+//        if (!e.valid(numNonpatternVars, ysize)) {
+//            return false;
+//        }
 
 
         if (X.isCommutative()) {

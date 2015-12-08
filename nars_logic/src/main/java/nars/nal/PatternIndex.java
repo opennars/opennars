@@ -77,6 +77,10 @@ public class PatternIndex extends MapIndex {
             return y;
         }
 
+        @Override
+        public String toString() {
+            return seed.toStringCompact();
+        }
 
         @Override
         public final boolean match(Compound y, FindSubst subst) {
