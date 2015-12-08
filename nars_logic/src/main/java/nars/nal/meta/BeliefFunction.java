@@ -2,18 +2,26 @@ package nars.nal.meta;
 
 import nars.$;
 import nars.Global;
+import nars.java.AtomObject;
+import nars.java.DefaultTermizer;
+import nars.nal.nal3.SetExt;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
+import static nars.$.ref;
 import static nars.truth.TruthFunctions.*;
 
 public interface BeliefFunction extends BinaryOperator<Truth> {
+
+
+
     BeliefFunction
             Revision = (T, B) -> revision(T, B),
             StructuralIntersection = (T, B) -> B == null ? null : intersection(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)),
@@ -40,58 +48,62 @@ public interface BeliefFunction extends BinaryOperator<Truth> {
             BeliefIdentity = (T, B) -> B == null ? null : new DefaultTruth(B.getFrequency(), B.getConfidence()),
             BeliefStructuralDeduction = (T, B) -> B == null ? null : deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)),
             BeliefStructuralDifference = (T, B) -> {
-                if (B == null) return null;else {
-                Truth res = deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
-                return new DefaultTruth(1.0f - res.getFrequency(), res.getConfidence());}
+                if (B == null) return null;
+                else {
+                    Truth res = deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
+                    return new DefaultTruth(1.0f - res.getFrequency(), res.getConfidence());
+                }
             },
             BeliefNegation = (T, B) -> B == null ? null : negation(B);
-    OverlappedBelief
+    CanCycleBelief
             StructuralDeduction = (T, B) -> deduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)),
             Resemblance = (T, B) -> B == null ? null : resemblance(T, B),
             Intersection = (T, B) -> B == null ? null : intersection(T, B),
             Difference = (T, B) -> B == null ? null : difference(T, B),
             Analogy = (T, B) -> B == null ? null : analogy(T, B);
 
-    Map<Term, BinaryOperator<Truth>> atomToTruthModifier = Arrays.stream(new BinaryOperator[]{
-            Revision,
-            StructuralIntersection,
-            StructuralDeduction,
-            StructuralAbduction,
-            Deduction,
-            Induction,
-            Abduction,
-            Comparison,
-            Conversion,
-            Negation,
-            Contraposition,
-            Resemblance,
-            Union,
-            Intersection,
-            Difference,
-            Analogy,
-            ReduceConjunction,
-            ReduceDisjunction,
-            ReduceConjunctionNeg,
-            AnonymousAnalogy,
-            Exemplification,
-            DecomposeNegativeNegativeNegative,
-            DecomposePositiveNegativePositive,
-            DecomposeNegativePositivePositive,
-            DecomposePositivePositivePositive,
-            DecomposePositiveNegativeNegative,
-            Identity,
-            BeliefIdentity,
-            BeliefStructuralDeduction,
-            BeliefStructuralDifference,
-            BeliefNegation
-    }).collect(Collectors.toMap(p -> $.the(p.getClass().getCanonicalName()), p -> p));
 
-    interface OverlappedBelief extends Overlapped, BeliefFunction {
+    interface CanCycleBelief extends CanCycle, BeliefFunction {
     }
 
+
+    ////TODO cleanup
     class Helper {
+
+        static final Map<? super Atom, AtomObject<BinaryOperator<Truth>>>
+                atomAtomObjectMap = Global.newHashMap(32);
+
+
+        static {
+
+
+            Function<Field, Atom> fieldAtomFunction = f-> {
+                try {
+                    Atom a = $.$(f.getName());
+                    atomAtomObjectMap.put(
+                            a,
+                            ref(f.getName(),
+                                    ((BinaryOperator<Truth>) f.get(null)))
+                    );
+                    return a;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            };
+
+            SetExt<Atom> beliefFuncs = DefaultTermizer.getStaticClassFields(
+                    BeliefFunction.class,
+                    fieldAtomFunction);
+
+            SetExt<Atom> desireFuncs = DefaultTermizer.getStaticClassFields(
+                    DesireFunction.class,
+                    fieldAtomFunction);
+
+        }
+
         public static BinaryOperator<Truth> apply(Term which) {
-            return atomToTruthModifier.get(which);
+            return atomAtomObjectMap.get(which).get();
         }
     }
 }

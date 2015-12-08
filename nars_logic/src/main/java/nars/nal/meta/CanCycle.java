@@ -11,5 +11,5 @@ import java.util.function.BinaryOperator;
  * <patham9> if you look at the graph you see why
  * <patham9> its both rules which allow the conclusion to be stronger than the premises
  */
-public interface Overlapped extends BinaryOperator<Truth> {
+public interface CanCycle extends BinaryOperator<Truth> {
 }

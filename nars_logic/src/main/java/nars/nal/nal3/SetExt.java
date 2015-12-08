@@ -3,7 +3,6 @@ package nars.nal.nal3;
 import nars.Op;
 import nars.term.Term;
 import nars.term.Terms;
-import nars.term.compound.Compound;
 
 import java.util.Collection;
 
@@ -18,14 +17,14 @@ public interface SetExt<T extends Term> extends SetTensional<T> {
     }
 
 
-    static Compound make(final Collection<Term> c) {
-        return SetExt.make(c.toArray(new Term[c.size()]));
+    static <T extends Term> SetExt<T> make(final Collection<T> c) {
+        return SetExt.make((T[])c.toArray(new Term[c.size()]));
     }
 
-    static Compound make(final Term... t) {
+    static <T extends Term> SetExt<T> make(final T... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");
-            default: return new SetExtN( Terms.toSortedSetArray(t));
+            default: return new SetExtN( Terms.toSortedSetArray(t) );
         }
     }
 

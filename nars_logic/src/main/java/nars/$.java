@@ -1,5 +1,6 @@
 package nars;
 
+import nars.java.AtomObject;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -19,6 +20,8 @@ import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 import nars.util.utf8.Utf8;
+
+import java.util.Collection;
 
 /**
  * core utility class for:
@@ -44,6 +47,9 @@ abstract public class $  {
                 //.normalized();
     }
 
+    public static <O> AtomObject<O> ref(final String term, O instance) {
+        return new AtomObject(term, instance);
+    }
 
     public static Atom the(String id) {
         return Atom.the(id);
@@ -176,5 +182,9 @@ abstract public class $  {
 
     public static Implication implForward(Term condition, Term consequence) {
         return Implication.make(condition, consequence, Tense.ORDER_FORWARD);
+    }
+
+    public static <T extends Term> SetExt<T> extset(Collection<T> t) {
+        return SetExt.make(t);
     }
 }

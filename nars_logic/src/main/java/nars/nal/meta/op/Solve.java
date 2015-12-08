@@ -5,9 +5,8 @@ import nars.Premise;
 import nars.Symbols;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
-import nars.nal.meta.Overlapped;
+import nars.nal.meta.CanCycle;
 import nars.nal.meta.PreCondition;
-import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Statement;
@@ -263,7 +262,7 @@ public final class Solve extends PreCondition {
 
 
             /** filter cyclic double-premise results  */
-            if (tf != null && !(tf instanceof Overlapped)) {
+            if (tf != null && !(tf instanceof CanCycle)) {
                 if (m.premise.isCyclic()) {
                     //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
                     //                    match.removeCyclic(outcome, premise, truth, punct);

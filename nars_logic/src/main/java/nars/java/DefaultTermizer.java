@@ -10,8 +10,11 @@ import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.variable.Variable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -346,6 +349,19 @@ public class DefaultTermizer implements Termizer {
 
     protected void onInstanceOfClass(Object o, Term oterm, Term clas) {
 
+    }
+
+    public static <T extends Term> SetExt<T> getStaticClassFields(Class c, Function<Field, T> each) {
+        Field[] ff = c.getFields();
+        Set<T> t = Global.newHashSet(ff.length);
+        for (Field f : ff) {
+            if (Modifier.isStatic(f.getModifiers())) {
+                T xx = each.apply(f);
+                if (xx!=null)
+                    t.add(xx);
+            }
+        }
+        return $.extset(t);
     }
 
 

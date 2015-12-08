@@ -3,7 +3,6 @@ package nars.nal.meta;
 import nars.Symbols;
 import nars.nal.Level;
 import nars.nal.TaskRule;
-import nars.nal.meta.DesireFunction.Helper;
 import nars.nal.nal1.Inheritance;
 import nars.term.Term;
 import nars.term.Terms;
@@ -157,7 +156,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "Desire":
-                    BinaryOperator<Truth> dm = Helper.apply(which);
+                    BinaryOperator<Truth> dm = BeliefFunction.Helper.apply(which);
                     if (dm != null) {
                         if (goalTruth != null) //only allow one
                             throw new RuntimeException("goalTruth " + goalTruth + " already specified; attempting to set to " + dm);
@@ -223,6 +222,8 @@ public class PostCondition implements Serializable, Level //since there can be m
     public int nal() {
         return this.minNAL;
     }
+
+
 
     boolean valid(TaskRule rule) {
         Term term = this.term;
