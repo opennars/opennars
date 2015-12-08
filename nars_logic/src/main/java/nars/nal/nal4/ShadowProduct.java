@@ -91,7 +91,7 @@ public class ShadowProduct extends TermVector implements Term {
     }
 
     @Override
-    public Term substituted(Subst s) {
+    public Term apply(Subst s) {
         return this;
     }
 

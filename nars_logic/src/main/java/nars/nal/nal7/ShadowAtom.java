@@ -57,7 +57,7 @@ public class ShadowAtom extends AbstractStringAtom {
     }
 
     @Override
-    public final Term substituted(Subst s) {
+    public final Term apply(Subst s) {
         return this;
     }
 

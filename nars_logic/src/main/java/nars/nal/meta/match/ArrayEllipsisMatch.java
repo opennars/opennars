@@ -4,8 +4,8 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * implementation which stores its series of subterms as a Term[]
@@ -22,13 +22,9 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch<T> {
         this.term = term;
     }
 
-    @Override
-    public T build(Term[] subterms, Compound superterm) {
-        return (T) superterm.clone(subterms);
-    }
 
     @Override
-    public boolean resolve(Subst substitution, Collection<Term> target) {
+    public boolean applyTo(Subst substitution, List<Term> target) {
         Collections.addAll(target, term);
         return true;
     }

@@ -177,7 +177,7 @@ abstract public class Variable extends AbstractStringAtom {
     }
 
 
-    public final Term substituted(Map<Term, Term> subs) {
+    public final Term apply(Map<Term, Term> subs) {
         Term x = subs.get(this);
         if (x != null)
             return x;
@@ -185,7 +185,7 @@ abstract public class Variable extends AbstractStringAtom {
     }
 
     @Override
-    public final Term substituted(Subst s) {
+    public final Term apply(Subst s) {
         Term x = s.getXY(this);
         if (x != null)
             return x;

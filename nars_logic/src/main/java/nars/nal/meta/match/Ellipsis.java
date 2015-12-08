@@ -8,9 +8,11 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,10 +41,31 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
         @Override public Op op() {
             return Op.INTERVAL;
         }
+
+        @Override public boolean applyTo(Subst f, List<Term> sub) {
+            //do nothing, just continue
+            return true;
+        }
     };
 
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
+    @Override
+    public boolean applyTo(Subst f, List<Term> sub) {
+        Term u = f.getXY(this);
+
+        if (u == null) {
+            //ellipsis allows 0, subst can NOT continue
+            //ellipsis required at least one, subst can continue
+            return valid(0);
+        }
+
+//        if (!(am instanceof EllipsisMatch)) {
+//            throw new RuntimeException("expected ellipsis match: " + am);
+//        }
+
+        return ((EllipsisMatch) u).applyTo(f, sub);
+    }
 
     public final Variable target;
 

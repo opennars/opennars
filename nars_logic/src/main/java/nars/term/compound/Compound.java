@@ -23,7 +23,6 @@ package nars.term.compound;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.meta.match.EllipsisMatch;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
@@ -58,6 +57,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * Must be Term return type because the type of Term may change with different arguments
      */
     Term clone(final Term[] replaced);
+
+
 
     static void ensureFeasibleVolume(int vol) {
         if (vol > Global.COMPOUND_VOLUME_MAX) {
@@ -95,8 +96,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-
-
     /** gets the set of unique recursively contained terms of a specific type
      * TODO generalize to a provided lambda predicate selector
      * */
@@ -111,78 +110,32 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-    default Term substituted(Subst f) {
+    /** returns the resolved term according to the substitution    */
+    default Term apply(Subst f) {
 
-        Term s = Term.substituted(this, f);
-        if (s!=null)
-            return s;
+        final Term y = f.getXY(this);
+        if (y!=null)
+            return y;
+
+        List<Term> sub = Global.newArrayList(0);
 
         final int len = size();
-        List<Term> sub = Global.newArrayList(len);
-
-        EllipsisMatch post = null;
-
-
-        boolean changed = false;
-
-
         for (int i = 0; i < len; i++) {
-            //t holds the
             final Term t = term(i);
-
-            //TODO change this to Compound.resolve(..,target) method call allowing any Compound to custom-handle its substitution contribution
-
-            if (t instanceof Ellipsis) {
-
-                Term te = f.getXY(t);
-                if (te == null)
-                    return this;
-
-                changed = true; //even if the ellipsis matches blank it is a change
-
-                EllipsisMatch am = (EllipsisMatch) te;
-                if (am instanceof EllipsisMatch) {
-                    if (post!=null) throw new RuntimeException("substitution alread involves a post-filter: " + post + " which conflicts with " + am);
-                    if (!am.resolve(f, sub))
-                        return this;
-                    post = am;
-                } else {
-                    //default
-//                    for (Term xx : am.term) {
-//                        if (xx== Ellipsis.Shim)
-//                            continue; //ignore any '..' which may be present in the expansion
-//                        sub.add(xx);
-//                    }
-                    throw new RuntimeException("expected ellipsis match: " + am);
-                }
-
-            } else if (t == Ellipsis.Shim) {
-                continue; //skip
-            } else {
-                // s holds a replacement substitution for t (i-th subterm of c)
-                Term u = t.substituted(f);
-                if (u == null)
-                    u = t;
-                else
-                    changed |= (u!=t);
-
-
-                sub.add(u);
-            }
+            if (!t.applyTo(f, sub))
+                return this;
         }
 
-        if (!changed)
-            return this;
+        return apply(sub);
+    }
+
+    default Term apply(List<Term> sub) {
+
+        /*if (subterms().equivalent(sub))
+            return this;*/
 
         final Term[] r = Terms.toArray(sub);
-
-        if (post!=null) {
-            return post.build(r, this);
-        } else {
-            //default
-            return clone(r);
-        }
-
+        return clone(r);
     }
 
 

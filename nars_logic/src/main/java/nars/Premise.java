@@ -110,7 +110,7 @@ public interface Premise extends Level, Tasked {
             //no change needed
             return t;
         }
-        return t.substituted(new MapSubst(subs));
+        return t.apply(new MapSubst(subs));
     }
 
     /**
@@ -123,7 +123,7 @@ public interface Premise extends Level, Tasked {
             return t;
         }
 
-        return t.substituted(subs);
+        return t.apply(subs);
     }
 
     Concept getConcept();

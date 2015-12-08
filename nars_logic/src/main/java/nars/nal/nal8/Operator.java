@@ -64,7 +64,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     }
 
     @Override
-    public Term substituted(Subst s) {
+    public Term apply(Subst s) {
         return this;
     }
 

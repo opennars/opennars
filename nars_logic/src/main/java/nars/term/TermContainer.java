@@ -164,4 +164,14 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return false;
 
     }
+
+    default boolean equivalent(List<Term> sub) {
+        final int s = size();
+        if (s!=sub.size()) return false;
+        for (int i = 0; i < size(); i++) {
+            if (!term(i).equals(sub.get(i))) return false;
+        }
+        return true;
+    }
+
 }

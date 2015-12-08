@@ -45,7 +45,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
             Term[] t = new Term[n];
             while (i < n)  {
                 if (i == rel) {
-                    t[i++] = subst.resolve(to);
+                    t[i++] = subst.apply(to);
                 }
                 else {
                     t[i++] = y.term(ab);

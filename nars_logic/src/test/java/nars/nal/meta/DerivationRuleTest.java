@@ -12,6 +12,7 @@ import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 import nars.term.variable.Variable;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
@@ -213,14 +214,14 @@ public class DerivationRuleTest extends TestCase {
                 assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
                 Set<Term> varArgTerms = Global.newHashSet(1);
-                varArgs.resolve(f, varArgTerms);
+                varArgs.applyTo(f, varArgTerms);
 
                 assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 
                 testFurther(selectedFixed, f, varArgTerms);
 
                 //2. test substitution
-                Term s = r.substituted(f);
+                Term s = r.apply((Subst)f);
                 System.out.println(s);
 
                 selectedFixed.add(s);

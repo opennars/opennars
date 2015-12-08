@@ -121,5 +121,5 @@ public abstract class Atomic implements Term, Byted {
     }
 
 
-    public abstract Term substituted(Subst s);
+    public abstract Term apply(Subst s);
 }

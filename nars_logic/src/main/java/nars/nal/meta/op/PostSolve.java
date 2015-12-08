@@ -31,7 +31,7 @@ public final class PostSolve extends PreCondition {
 
         FindSubst.VarCachedVersionMap secondary = m.secondary;
         if (!secondary.isEmpty()) {
-            Term rederivedTerm = dt.substituted(secondary);
+            Term rederivedTerm = dt.apply(secondary);
             //secondary.clear(); //necessary?
 
             //its possible that the substitution produces an invalid term, ex: an invalid statement

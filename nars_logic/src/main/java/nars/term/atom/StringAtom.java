@@ -45,7 +45,7 @@ public class StringAtom extends AbstractStringAtomRaw {
     }
 
     @Override
-    public Term substituted(Subst s) {
+    public Term apply(Subst s) {
         return this;
     }
 

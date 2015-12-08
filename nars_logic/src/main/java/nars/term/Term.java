@@ -30,6 +30,7 @@ import nars.term.visit.TermPredicate;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 
@@ -281,10 +282,10 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
 
 
     default Term substMap(Map<Term,Term> m) {
-        return substituted(new MapSubst(m));
+        return apply(new MapSubst(m));
     }
 
-    static Term substituted(Term x, Subst f) {
+    static Term apply(Term x, Subst f) {
         final Term y = f.getXY(x);
 
         //attempt 1: apply known substitution
@@ -295,8 +296,21 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
         return y;
     }
 
-    default Term substituted(Subst f) {
-        return Term.substituted(this, f);
+    default Term apply(Subst f) {
+        return Term.apply(this, f);
+    }
+
+    /** resolve the this term according to subst by appending to sub.
+     * return false if this term fails the substitution */
+    default boolean applyTo(Subst f, List<Term> sub) {
+        Term u = apply(f);
+        if (u == null)
+            u = this;
+        /*else
+            changed |= (u!=this);*/
+
+        sub.add(u);
+        return true;
     }
 
 

@@ -2,10 +2,9 @@ package nars.nal.meta.match;
 
 import nars.nal.nal4.Image;
 import nars.term.Term;
-import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * the indicated relation term is inserted
@@ -24,7 +23,7 @@ public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
     }
 
     @Override
-    public boolean resolve(Subst substitution, Collection<Term> target) {
+    public boolean applyTo(Subst substitution, List<Term> target) {
         Term relation = substitution.getXY(this.to);
         if (relation == null)
             return false;
@@ -47,9 +46,4 @@ public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
         return true;
     }
 
-    @Override
-    public Term build(Term[] subterms, Compound superterm) {
-        //default
-        return superterm.clone(subterms);
-    }
 }
