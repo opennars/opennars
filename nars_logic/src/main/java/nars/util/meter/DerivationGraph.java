@@ -439,7 +439,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
     public static String genericLiteral(Term c, ObjectIntHashMap<Term> unique) {
         c.recurseTerms(new SubtermVisitor() {
-            @Override public void visit(Term t, Term superterm) {
+            @Override public void accept(Term t, Term superterm) {
                 if ((t instanceof Atom) && (!(t instanceof Variable))) {
                     unique.getIfAbsentPut(t, unique.size());
                 }

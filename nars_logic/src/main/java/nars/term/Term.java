@@ -31,6 +31,8 @@ import nars.term.visit.TermPredicate;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
+import java.util.function.Predicate;
 
 
 public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializable {
@@ -75,12 +77,12 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
     /** recurses all subterms while the result of the predicate is true;
      *  returns true if all true
      *  */
-    boolean and(final TermPredicate v);
+    boolean and(final Predicate<Term> v);
 
     /** recurses all subterms until the result of the predicate becomes true;
      *  returns true if any true
      * */
-    boolean or(final TermPredicate v);
+    boolean or(final Predicate<Term> v);
 
 
     /**

@@ -30,7 +30,7 @@ public class InlinedCompoundN<T extends Term> extends TermVector<T> implements C
 
     @Override
     public void recurseTerms(SubtermVisitor v, Term parent) {
-        v.visit(this, parent);
+        v.accept(this, parent);
         super.visit(v, this);
     }
 
