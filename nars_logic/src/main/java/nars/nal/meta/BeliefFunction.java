@@ -70,7 +70,7 @@ public interface BeliefFunction extends TruthOperator {
     }
 
 
-    class get {
+    class the {
 
         private static final Map<Atom, AtomObject<TruthOperator>>
                 beliefFuncs;

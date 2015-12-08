@@ -30,14 +30,14 @@ import java.io.IOException;
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.
  */
-public class SetIntN extends AbstractSetN implements SetInt {
+public class SetIntN<T extends Term> extends AbstractSetN<T> implements SetInt<T> {
 
 
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term - args must be unique and sorted
      */
-    protected SetIntN(final Term... arg) {
+    protected SetIntN(final T... arg) {
         super(arg);
     }
 
@@ -48,7 +48,7 @@ public class SetIntN extends AbstractSetN implements SetInt {
     }
 
     @Override
-    public final Term[] terms() {
+    public final T[] terms() {
         return terms.term;
     }
 

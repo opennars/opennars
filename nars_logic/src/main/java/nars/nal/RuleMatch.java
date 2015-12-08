@@ -63,6 +63,10 @@ public class RuleMatch extends FindSubst {
 
     public Task derive(Task derived) {
 
+        //HACK this should exclude the invalid rules which form any of these
+        if (!derived.getTerm().levelValid( premise.nal()) )
+            return null;
+
         //pre-normalize to avoid discovering invalidity after having consumed space and survived the input queue
         derived = derived.normalize(premise.memory());
         if (derived == null)

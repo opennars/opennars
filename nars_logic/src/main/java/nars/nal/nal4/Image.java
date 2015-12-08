@@ -19,18 +19,27 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image extends CompoundN {
+abstract public class Image<T extends Term> extends CompoundN<T> {
 
-    /** Image index ("imdex") symbol */
+    public static Term makeInt(Term... argList) {
+        return make(argList, (a, r) -> new ImageInt(a, (short)r));
+    }
+    public static Term makeExt(Term... argList) {
+        return make(argList, (a, r) -> new ImageExt(a, (short) r));
+    }
+
+        /** Image index ("imdex") symbol */
     public final static Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
+
     /**
      * "Imdex": subterm index of relation in the component list
      */
     public final short relationIndex;
 
 
-    protected Image(Term[] components, int relationIndex) {
-        super(components, relationIndex+1 /* non-zero */);
+    protected Image(T[] components, int relationIndex) {
+        super(relationIndex+1 /* non-zero */,
+                components);
 
         this.relationIndex = ((short) relationIndex);
     }
@@ -76,50 +85,6 @@ abstract public class Image extends CompoundN {
         return t.equals(Index);
     }
 
-//   /**
-//     * default method to make the oldName of an image term from given fields
-//     *
-//     * @param op the term operate
-//     * @param arg the list of term
-//     * @param relationIndex the location of the place holder
-//     * @return the oldName of the term
-//     */
-//    protected static CharSequence makeImageName(final Op op, final Term[] arg, final int relationIndex) {
-//        throw new RuntimeException("should not be used, utf8 instead");
-////        final int sizeEstimate = 24 * arg.length + 2;
-////
-////        StringBuilder name = new StringBuilder(sizeEstimate)
-////            .append(COMPOUND_TERM_OPENER.ch)
-////            .append(op)
-////            .append(Symbols.ARGUMENT_SEPARATOR)
-////            .append(arg[relationIndex].toString());
-////
-////        for (int i = 0; i < arg.length; i++) {
-////            name.append(Symbols.ARGUMENT_SEPARATOR);
-////            if (i == relationIndex) {
-////                name.append(Symbols.IMAGE_PLACE_HOLDER);
-////            } else {
-////                name.append(arg[i].toString());
-////            }
-////        }
-////        name.append(COMPOUND_TERM_CLOSER.ch);
-////        return name.toString();
-//    }
-
-
-//    /**
-//     * Get the other term in the Image
-//     *
-//     * @return The term related
-//     */
-//    public Term getTheOtherComponent() {
-//        if (term.length != 2) {
-//            return null;
-//        }
-//        Term r = (relationIndex == 0) ? term[1] : term[0];
-//        return r;
-//    }
-
     @Override
     public int bytesLength() {
         return super.bytesLength() + 1;
@@ -144,45 +109,9 @@ abstract public class Image extends CompoundN {
     @Override public boolean matchCompoundEx(Compound y) {
         /** if they are images, they must have same relationIndex */
         return super.matchCompoundEx(y)
-            && (relationIndex == ((Image) y).relationIndex);
+                && (relationIndex == ((Image) y).relationIndex);
     }
 
-
-    //    @Override
-//    public byte[] bytes() {
-//
-//        final int len = this.size();
-//
-//        //calculate total size
-//        int bytes = 2 + 2 + 2;
-//        for (int i = 0; i < len; i++) {
-//            Term tt = this.term(i);
-//            bytes += tt.bytes().length;
-//            if (i != 0) bytes++; //comma
-//        }
-//
-//        ByteBuf b = ByteBuf.create(bytes)
-//                .add((byte) COMPOUND_TERM_OPENER)
-//                .add(this.op().bytes)
-//                .add((byte) ARGUMENT_SEPARATOR)
-//                .add(this.relation().bytes());
-//
-//
-//        final int relationIndex = this.relationIndex;
-//        for (int i = 0; i < len; i++) {
-//            Term tt = this.term(i);
-//            b.add((byte) ARGUMENT_SEPARATOR);
-//            if (i == relationIndex) {
-//                b.add((byte) Symbols.IMAGE_PLACE_HOLDER);
-//            } else {
-//                b.add(tt.bytes());
-//            }
-//        }
-//        b.add((byte) COMPOUND_TERM_CLOSER);
-//
-//        return b.toBytes();
-//
-//    }
 
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
@@ -191,10 +120,6 @@ abstract public class Image extends CompoundN {
 
         p.append(COMPOUND_TERM_OPENER);
         p.append(this.op().str);
-
-
-
-        //this.relation().append(p, pretty);
 
         final int relationIndex = this.relationIndex;
         int i;
@@ -226,12 +151,7 @@ abstract public class Image extends CompoundN {
         return term(relationIndex);
     }
 
-    public static Term makeInt(Term... argList) {
-        return make(argList, (a, r) -> new ImageInt(a, (short)r));
-    }
-    public static Term makeExt(Term... argList) {
-        return make(argList, (a, r) -> new ImageExt(a, (short)r));
-    }
+
     /**
      * Try to make a new ImageInt/ImageExt.
      * @return the Term generated from the arguments
@@ -306,6 +226,90 @@ abstract public class Image extends CompoundN {
         }
         return false;
     }
+
+
+
+//   /**
+//     * default method to make the oldName of an image term from given fields
+//     *
+//     * @param op the term operate
+//     * @param arg the list of term
+//     * @param relationIndex the location of the place holder
+//     * @return the oldName of the term
+//     */
+//    protected static CharSequence makeImageName(final Op op, final Term[] arg, final int relationIndex) {
+//        throw new RuntimeException("should not be used, utf8 instead");
+////        final int sizeEstimate = 24 * arg.length + 2;
+////
+////        StringBuilder name = new StringBuilder(sizeEstimate)
+////            .append(COMPOUND_TERM_OPENER.ch)
+////            .append(op)
+////            .append(Symbols.ARGUMENT_SEPARATOR)
+////            .append(arg[relationIndex].toString());
+////
+////        for (int i = 0; i < arg.length; i++) {
+////            name.append(Symbols.ARGUMENT_SEPARATOR);
+////            if (i == relationIndex) {
+////                name.append(Symbols.IMAGE_PLACE_HOLDER);
+////            } else {
+////                name.append(arg[i].toString());
+////            }
+////        }
+////        name.append(COMPOUND_TERM_CLOSER.ch);
+////        return name.toString();
+//    }
+
+
+//    /**
+//     * Get the other term in the Image
+//     *
+//     * @return The term related
+//     */
+//    public Term getTheOtherComponent() {
+//        if (term.length != 2) {
+//            return null;
+//        }
+//        Term r = (relationIndex == 0) ? term[1] : term[0];
+//        return r;
+//    }
+
+
+
+    //    @Override
+//    public byte[] bytes() {
+//
+//        final int len = this.size();
+//
+//        //calculate total size
+//        int bytes = 2 + 2 + 2;
+//        for (int i = 0; i < len; i++) {
+//            Term tt = this.term(i);
+//            bytes += tt.bytes().length;
+//            if (i != 0) bytes++; //comma
+//        }
+//
+//        ByteBuf b = ByteBuf.create(bytes)
+//                .add((byte) COMPOUND_TERM_OPENER)
+//                .add(this.op().bytes)
+//                .add((byte) ARGUMENT_SEPARATOR)
+//                .add(this.relation().bytes());
+//
+//
+//        final int relationIndex = this.relationIndex;
+//        for (int i = 0; i < len; i++) {
+//            Term tt = this.term(i);
+//            b.add((byte) ARGUMENT_SEPARATOR);
+//            if (i == relationIndex) {
+//                b.add((byte) Symbols.IMAGE_PLACE_HOLDER);
+//            } else {
+//                b.add(tt.bytes());
+//            }
+//        }
+//        b.add((byte) COMPOUND_TERM_CLOSER);
+//
+//        return b.toBytes();
+//
+//    }
 
 }
 

@@ -13,7 +13,7 @@ abstract public class AbstractSetN<T extends Term> extends CompoundN<T> implemen
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    protected AbstractSetN(final T[] arg) {
+    protected AbstractSetN(final T... arg) {
         super(arg);
     }
 

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
 
     private final Versioning context;
-    private final Map<X, Versioned<Y>> map;
+    public final Map<X, Versioned<Y>> map;
 
     public VersionMap(Versioning context) {
         this(context,

@@ -35,13 +35,25 @@ public class Equivalence extends Statement {
 
     @Deprecated private final int temporalOrder; //TODO use subclasses
 
+    @Deprecated static Op op(int order) {
+        switch (order) {
+            case Tense.ORDER_FORWARD:
+                return Op.EQUIVALENCE_AFTER;
+            case Tense.ORDER_CONCURRENT:
+                return Op.EQUIVALENCE_WHEN;
+        }
+        return Op.EQUIVALENCE;
+    }
+
     /**
      * Constructor with partial values, called by make
      *
      */
     private Equivalence(Term subject, Term predicate, int order) {
-        super( (order!=Tense.ORDER_FORWARD) ?
-            new TermSet(subject, predicate) : new TermVector(subject, predicate)
+        super( op(order),
+                order!=Tense.ORDER_FORWARD ?
+                    new TermVector(subject, predicate) :
+                        new TermSet(subject, predicate)
         );
 
         if ((order == Tense.ORDER_BACKWARD) ||
@@ -118,13 +130,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public final Op op() {
-        switch (temporalOrder) {
-            case Tense.ORDER_FORWARD:
-                return Op.EQUIVALENCE_AFTER;
-            case Tense.ORDER_CONCURRENT:
-                return Op.EQUIVALENCE_WHEN;
-        }
-        return Op.EQUIVALENCE;
+        return op(temporalOrder);
     }
 
     /**

@@ -323,6 +323,10 @@ public class Arrays {
 		for ( int i = 0; i < s; i++, from++, l++ ) swapper.swap( from, l );
 	}
 
+	public static void shuffle(final int[] array, final Random random) {
+		shuffle(array, array.length, random);
+	}
+
 	public static void shuffle(final int[] array, int len, final Random random) {
 
 		//probabality for no shuffle at all:

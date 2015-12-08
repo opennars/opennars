@@ -143,7 +143,9 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         public Term getXY(Term t) {
-            return get(t);
+            Versioned<Term> v = this.map.get(t);
+            if (v == null) return null;
+            return v.get();
         }
     }
 

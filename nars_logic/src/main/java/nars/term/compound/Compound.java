@@ -28,6 +28,7 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.TermVector;
 import nars.term.Terms;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.FindSubst;
@@ -477,7 +478,11 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     /** universal compound hash function */
     static <T extends Term> int hash(CompoundN c, int hashSalt) {
-        int h = hashCombine( c.subterms().hashCode(), c.op().ordinal() );
+        return hash(c.subterms(), c.op(), hashSalt);
+    }
+
+    static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {
+        int h = hashCombine( subterms.hashCode(), op.ordinal() );
         if (hashSalt!=0)
             h = hashCombine(h, hashSalt);
         return h;

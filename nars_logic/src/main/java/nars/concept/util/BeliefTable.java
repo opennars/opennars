@@ -122,6 +122,12 @@ public interface BeliefTable extends TaskTable {
     boolean add(Task t);
 
 
+    /** try to insert an input. returns true if it was
+     * not rejected for any reason (duplicate, etc..)
+     *
+     * additionally the input task may be set deleted
+     * so this should be checked after calling.
+     */
     boolean tryAdd(Task input, BeliefTable.Ranker r, Memory memory);
 
 

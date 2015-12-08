@@ -1,8 +1,10 @@
 package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.Op;
 import nars.term.Term;
 import nars.term.TermMetadata;
+import nars.term.TermSet;
 import nars.term.TermVector;
 import nars.term.visit.SubtermVisitor;
 import nars.term.visit.TermPredicate;
@@ -26,32 +28,26 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
 
     protected transient final int hash;
 
-
-    protected CompoundN(Term... t) {
-        this(new TermVector(t));
-    }
-    protected CompoundN(Term[] t, int hashSalt) {
-        this(new TermVector(t), hashSalt);
+    protected CompoundN(T... t) {
+        this(0, t);
     }
 
-    protected CompoundN(TermVector subterms) {
-        this(subterms, 0);
-    }
-
-    /** if hash salt is non-zero, it will be combined with the default hash value of the compound */
-    protected CompoundN(TermVector subterms, int hashSalt) {
+    protected CompoundN(Op op, TermVector subterms) {
         this.terms = subterms;
+        this.hash = Compound.hash(subterms, op, 0);
+    }
 
+    /** if hash salt is non-zero, it will be combined with the default hash value of the compound
+     * */
+    protected CompoundN(int hashSalt, T... subterms) {
+        this.terms = isCommutative() ?
+                        new TermSet(subterms) :
+                        new TermVector(subterms);
         this.hash = Compound.hash(this, hashSalt);
     }
 
-    protected CompoundN(CompoundN shareSubterms) {
-        this.terms = shareSubterms.subterms();
-        this.hash = shareSubterms.hashCode();
-    }
-
     public CompoundN(T t) {
-        this(new Term[] { t } );
+        this(0, t);
     }
 
     @Override

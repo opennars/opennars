@@ -77,6 +77,8 @@ public class TermTest {
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
         assertEquivalent("(&&,(||,c,b),a)", "(&&,a,(||,b,c))");
 
+        assertEquivalent("(&,a,b)", "(&,b,a)");
+        assertEquivalent("{a,c,b}", "{b,a,c}");
     }
 
     @Test
@@ -149,7 +151,7 @@ public class TermTest {
 
     @Test
     public void testUnconceptualizedTermInstancing() throws Narsese.NarseseException {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         String term1String = "<a --> b>";
         Term term1 = n.term(term1String);
@@ -203,7 +205,7 @@ public class TermTest {
 //    public void testEscaping() {
 //        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
 //
-////        NAR n = new Default().build();
+////        NAR n = new Terminal().build();
 ////        n.addInput("<a --> \"b c\">.");
 ////        n.step(1);
 ////        n.finish(1);
@@ -233,7 +235,7 @@ public class TermTest {
     public void invalidTermIndep() {
 
         String t = "<$1-->(~,{place4},$1)>";
-        NAR n = new Default();
+        NAR n = new Terminal();
 
 
         try {
@@ -285,7 +287,7 @@ public class TermTest {
     @Test
     public void testParseOperationInFunctionalForm() {
 
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         try {
             Term x = n.term("wonder(a,b)");
@@ -325,7 +327,7 @@ public class TermTest {
     }
 
 //    public void nullCachedName(String term) {
-//        NAR n = new Default();
+//        NAR n = new Terminal();
 //        n.input(term + ".");
 //        n.run(1);
 //        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).getTerm()).nameCached());
@@ -351,7 +353,7 @@ public class TermTest {
 
     @Test
     public void termEqualityWithQueryVariables() {
-        NAR n = new Default();
+        NAR n = new Terminal();
         String a = "<?1-->bird>";
         assertEquals(n.term(a), n.term(a));
         String b = "<bird-->?1>";
@@ -416,7 +418,7 @@ public class TermTest {
     }
     @Test
     public void validStatement() {
-        NAR n = new Default();
+        NAR n = new Terminal();
         Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
         assertFalse(Statement.invalidStatement((Inheritance) t));
     }
@@ -466,7 +468,7 @@ public class TermTest {
 
     @Test
     public void testTermComplexityMass() {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         testTermComplexityMass(n, "x", 1, 1);
 
@@ -515,14 +517,18 @@ public class TermTest {
     @Test
     public void testSubtermsVector() {
 
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         Term a3 = n.term("c");
 
-        Compound a = testStructure( "<<a --> b> </> c>",  "100000000000000000001000001");
+        Compound a = testStructure( "<c </> <a --> b>>",  "100000000000000000001000001");
+        Compound a0 = testStructure( "<<a --> b> </> c>",  "100000000000000000001000001");
+
         Compound a1 = testStructure("<c <|> <a --> b>>", "1000000000000000000001000001");
         Compound a2 = testStructure("<c <=> <a --> b>>",   "10000000000000000001000001");
-        Compound b = testStructure("<<$1 --> #2> </> ?3>", "100000000000000000001001110");
+
+        Compound b = testStructure("<?1 </> <$2 --> #3>>", "100000000000000000001001110");
+        Compound b2 = testStructure("<<$1 --> #2> </> ?3>", "100000000000000000001001110");
 
 
         assertTrue( a.impossibleStructureMatch(b.structure()) );

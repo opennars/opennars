@@ -530,6 +530,8 @@ public class Memory extends Param {
 
     }
 
+
+
     //    public byte[] toBytes() throws IOException, InterruptedException {
 //        //TODO probably will want to do something more careful
 //        return new JBossMarshaller().objectToByteBuffer(this);

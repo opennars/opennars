@@ -58,6 +58,8 @@ public final class Derive extends PreCondition {
 
         Term derivedTerm = m.derived.get();
 
+        if (derivedTerm == null)
+            return false;
 
         Term t = derivedTerm.normalized();
 

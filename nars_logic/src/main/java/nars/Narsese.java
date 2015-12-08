@@ -90,6 +90,10 @@ public class Narsese extends BaseParser<Object>  {
             return null;
         }
 
+        if (t == null) {
+            t = memory.newDefaultTruth(p);
+        }
+
         MutableTask ttt =
                 new MutableTask((Compound)content)
                                 .punctuation(p)

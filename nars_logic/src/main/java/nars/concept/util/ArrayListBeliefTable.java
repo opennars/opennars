@@ -124,6 +124,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         boolean tableChanged = false;
 
         boolean added = tryAdd(input, ranking, memory);
+        if (input.isDeleted()) {
+            return top();
+        }
+
         if (added) {
             tableChanged = true;
         }
@@ -134,8 +138,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         //TODO make sure input.isDeleted() can not happen
-        if ( added &&
-                !input.isDeleted() && revisible(input, top) ) {
+        if ( added && revisible(input, top) ) {
 
             Task revised = getRevision(input, top, nal, now);
 
@@ -145,11 +148,13 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 if (addedRevision) {
                     tableChanged = true;
                 }
+                if (!revised.isDeleted()) {
 
-                memory.eventRevision.emit(revised);
-                //nal.memory().logic.BELIEF_REVISION.hit();
+                    memory.eventRevision.emit(revised);
+                    //nal.memory().logic.BELIEF_REVISION.hit();
 
-                top = revised;
+                    top = revised;
+                }
             }
 
         }
@@ -172,6 +177,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     public final boolean tryAdd(Task input, Ranker r, Memory memory) {
 
         if (Global.DEBUG) {
+            if (input.isDeleted())
+                throw new RuntimeException("deleted task being added");
             checkForDeleted();
         }
 
@@ -184,11 +191,15 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         int i = 0;
 
             for (Task b; null != (b = tasks[i++]); ) {
-                if (b == input) return false;
+                if (b == input)
+                    return false;
 
                 if (b.equals(input)) {
                     //these should be preventable earlier
                     memory.remove(input, "Duplicate");
+                    if (Global.DEBUG) {
+                        checkForDeleted();
+                    }
                     return false;
                 }
 

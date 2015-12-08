@@ -20,6 +20,7 @@
  */
 package nars.term;
 
+import nars.Op;
 import nars.Symbols;
 import nars.nal.nal4.Image;
 import nars.term.compound.Compound;
@@ -39,14 +40,14 @@ import static nars.Symbols.STATEMENT_OPENER;
 public abstract class Statement<A extends Term, B extends Term>
     extends CompoundN {
 
-    protected Statement(TermVector v) {
-        super(v);
-    }
 
     public Statement(A subject, B predicate) {
-        this(new TermVector(subject, predicate));
+        super(subject, predicate);
     }
 
+    protected Statement(Op op, TermVector subterms) {
+        super(op, subterms);
+    }
 
     @Override public final Term clone() {
         return Terms.term(op(), getSubject(), getPredicate());

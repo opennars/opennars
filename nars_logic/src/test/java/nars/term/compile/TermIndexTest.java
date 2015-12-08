@@ -47,7 +47,6 @@ public class TermIndexTest {
         testShared(n, "<a --> b>");
         testShared(n, "(x, y)");
         testShared(n, "<a <=> b>");
-        testShared(n, "c");
 
         tt.print(System.out);
         System.out.println();

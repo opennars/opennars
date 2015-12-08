@@ -121,7 +121,8 @@ public final class Solve extends PreCondition {
             if (this.rule.sequenceIntervalsFromTask) {
                 lookat = premise.getTask().getTerm();
             } else if (this.rule.sequenceIntervalsFromBelief) {
-                lookat = premise.getBelief().getTerm();
+                lookat = premise.getBelief()!=null ?
+                        premise.getBelief().getTerm() : null;
             }
 
             //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE2
@@ -183,11 +184,11 @@ public final class Solve extends PreCondition {
             this.desireTerm = desireTerm;
             this.puncOverride = puncOverride;
 
-            belief = BeliefFunction.get.belief(beliefTerm);
+            belief = BeliefFunction.the.belief(beliefTerm);
             if (belief == null)
                 throw new RuntimeException("unknown belief function " + beliefTerm);
 
-            desire = BeliefFunction.get.desire(desireTerm);
+            desire = BeliefFunction.the.desire(desireTerm);
 
 
             String beliefLabel = belief==null ? "_" :

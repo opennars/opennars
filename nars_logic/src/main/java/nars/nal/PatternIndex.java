@@ -6,12 +6,14 @@ import nars.nal.meta.match.Ellipsis;
 import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.TermVector;
 import nars.term.compound.Compound;
 import nars.term.compound.CompoundN;
 import nars.term.transform.FindSubst;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by me on 12/7/15.
@@ -44,11 +46,12 @@ public class PatternIndex extends MapIndex {
         private final int sizeCached;
         private final int volCached;
         private final int structureCachedWithoutVars;
-        private final int[] subtermOrder;
+        private final int[] heuristicOrder;
+        private final int[] shuffleOrder;
         private final Term[] termsCached;
 
         public LinearCompoundPattern(Compound seed) {
-            super((CompoundN)seed);
+            super(seed.op(), new TermVector(seed.terms()));
             this.seed = seed;
             this.op = seed.op();
             this.structureCached = seed.structure();
@@ -58,7 +61,8 @@ public class PatternIndex extends MapIndex {
             this.termsCached = this.terms();
             this.sizeCached = seed.size();
             this.volCached = seed.volume();
-            this.subtermOrder = getSubtermOrder(terms());
+            this.heuristicOrder = getSubtermOrder(terms());
+            this.shuffleOrder = heuristicOrder.clone();
         }
 
         /** subterm match priority heuristic of
@@ -119,13 +123,23 @@ public class PatternIndex extends MapIndex {
 
         @Override
         public boolean matchLinear(TermContainer y, FindSubst subst) {
-            int[] o = this.subtermOrder;
+
+            //int[] o = this.heuristicOrder;
+            int[] o = shuffle(this.shuffleOrder, subst.random);
+
             Term[] x = this.termsCached;
             for (int i = 0; i < o.length; i++) {
                 if (!subst.match(x[i], y.term(i)))
                     return false;
             }
             return true;
+        }
+
+        static int[] shuffle(int[] shuffleOrder, Random random) {
+            nars.util.data.array.Arrays.shuffle(
+                    shuffleOrder, random
+            );
+            return shuffleOrder;
         }
 
 

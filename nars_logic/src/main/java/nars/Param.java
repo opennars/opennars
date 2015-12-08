@@ -4,6 +4,8 @@ import com.google.common.util.concurrent.AtomicDouble;
 import nars.budget.BudgetFunctions;
 import nars.nal.Level;
 import nars.task.MutableTask;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 import nars.util.data.MutableInteger;
 import objenome.Container;
 import org.apache.commons.lang3.mutable.MutableFloat;
@@ -206,6 +208,15 @@ public abstract class Param extends Container implements Level {
 
     public float getExecutionSatisfactionThreshold() {
         return EXECUTION_SATISFACTION_TRESHOLD;
+    }
+
+    public final Truth newDefaultTruth(char p) {
+        switch (p) {
+            case GOAL:
+            case JUDGMENT: return new DefaultTruth(1f, getDefaultConfidence(p));
+            default:
+                return null;
+        }
     }
 
 

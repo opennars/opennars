@@ -225,6 +225,8 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         T x = Narsese.the().term(t);
         if (x == null) return null;
 
+        x = (T) memory.index.getTerm(x);
+
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
         //TODO apply this in index on the original copy only

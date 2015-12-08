@@ -79,12 +79,19 @@ public class MutableTask<C extends Compound> extends AbstractTask<C> {
 
 
 
-    /**
-     * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
-     * this will set the truth instance directly. so avoid using shared terms unless it's really meant
-     */
+//    /**
+//     * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
+//     * this will set the truth instance directly. so avoid using shared terms unless it's really meant
+//     */
+    /*public MutableTask truth(final Truth tv) {
+        //setTruth(tv);
+        return this;
+    }*/
     public MutableTask truth(final Truth tv) {
-        setTruth(tv);
+        if (tv == null)
+            setTruth(null);
+        else
+            setTruth(new DefaultTruth(tv));
         return this;
     }
 
