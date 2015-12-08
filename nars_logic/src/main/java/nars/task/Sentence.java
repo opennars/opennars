@@ -428,15 +428,6 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
 
 
-    default boolean equalTerms(final Sentence s) {
-        return getTerm().equals(s.getTerm());
-    }
-
-    default boolean equalPunctuations(Sentence s) {
-        return getPunctuation() == s.getPunctuation();
-    }
-
-
     default boolean isTimeless() {
         return getOccurrenceTime() == Stamp.TIMELESS;
     }

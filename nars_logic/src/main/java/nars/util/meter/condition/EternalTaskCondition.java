@@ -12,7 +12,6 @@ import nars.truth.Truth;
 import nars.util.Texts;
 
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
@@ -59,8 +58,6 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
     transient int maxSimilars = 3;
 
     protected TreeMap<Float,Task> similar;
-    transient private HashSet<Task> similarset;
-
 
     @Override
     public final Truth getTruth() {
@@ -245,9 +242,6 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
     public void recordSimilar(Task task) {
         final TreeMap<Float, Task> similar = this.similar;
 
-        if (similarset!=null && similarset.contains(task))
-            return;
-
 
         //TODO add the levenshtein distance of other task components
         final float worstDiff;
@@ -290,7 +284,6 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
             //TODO more efficient way than this
 
             this.similar.put(difference, task);
-            this.similarset.add(task);
 
 
 //            if (similar.size() > maxSimilars) {
@@ -305,7 +298,6 @@ public class EternalTaskCondition extends DefaultTask implements NARCondition, P
     private void ensureSimilar() {
         if (similar == null) {
             similar = new TreeMap();
-            similarset = new HashSet<>();
         }
     }
 

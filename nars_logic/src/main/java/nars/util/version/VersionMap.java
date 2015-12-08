@@ -17,7 +17,8 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     public VersionMap(Versioning context) {
         this(context,
             //new LinkedHashMap<>()
-            Global.newHashMap()
+            Global.newHashMap(256)
+            //new HashMap(256)
         );
     }
 

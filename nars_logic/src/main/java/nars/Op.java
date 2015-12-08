@@ -251,4 +251,7 @@ public enum Op implements Serializable {
     }
 
 
+    public static final int VARIABLE_BITS =
+        Op.or(Op.VAR_PATTERN,Op.VAR_INDEPENDENT,Op.VAR_DEPENDENT,Op.VAR_QUERY);
+
 }

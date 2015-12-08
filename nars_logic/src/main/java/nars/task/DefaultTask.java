@@ -509,12 +509,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         final char thisPunc = this.getPunctuation();
 
-        if (term) {
-            if (!equalTerms(that)) return false;
-        }
-
-        if (punctuation) {
-            if (thisPunc != that.getPunctuation()) return false;
+        if (stamp) {
+            //uniqueness includes every aspect of stamp except creation time
+            //<patham9> if they are only different in creation time, then they are the same
+            if (!this.equalStamp(that, true, creationTime, true))
+                return false;
         }
 
         if (truth) {
@@ -527,12 +526,17 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
 
 
-        if (stamp) {
-            //uniqueness includes every aspect of stamp except creation time
-            //<patham9> if they are only different in creation time, then they are the same
-            if (!this.equalStamp(that, true, creationTime, true))
-                return false;
+        if (term) {
+            if (!this.term.equals(that.getTerm())) return false;
         }
+
+        if (punctuation) {
+            if (thisPunc != that.getPunctuation()) return false;
+        }
+
+
+
+
 
         return true;
     }

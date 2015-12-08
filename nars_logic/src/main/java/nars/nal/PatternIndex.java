@@ -53,10 +53,7 @@ public class PatternIndex extends MapIndex {
             this.op = seed.op();
             this.structureCached = seed.structure();
             this.structureCachedWithoutVars =
-                    seed.structure()
-                    & ~(Op.VAR_INDEPENDENT.bit())
-                    & ~(Op.VAR_DEPENDENT.bit())
-                    & ~(Op.VAR_QUERY.bit());
+                seed.structure() & ~(Op.VARIABLE_BITS);
 
             this.termsCached = this.terms();
             this.sizeCached = seed.size();
