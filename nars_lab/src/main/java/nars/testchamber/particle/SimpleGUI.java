@@ -84,12 +84,12 @@ public class SimpleGUI extends JFrame{
 		{
 			System.out.println("Button Registered");
 			
-			if (versionList.getSelectedItem().equals("v5"))
+			if ("v5".equals(versionList.getSelectedItem()))
 			{
 				new ParticleSystem_v5();
 			}
 			
-			else if (versionList.getSelectedItem().equals("v7"))
+			else if ("v7".equals(versionList.getSelectedItem()))
 			{
 				new ParticleSystem_v7();
 			}

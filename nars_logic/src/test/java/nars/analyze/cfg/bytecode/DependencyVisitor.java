@@ -278,7 +278,7 @@ public class DependencyVisitor extends ClassVisitor {
 
         @Override
         public void visitInnerClassType(final String name) {
-            signatureClassName = signatureClassName + "$" + name;
+            signatureClassName = signatureClassName + '$' + name;
             addInternalName(signatureClassName);
         }
     }

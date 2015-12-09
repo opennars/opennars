@@ -39,7 +39,7 @@ public class GossipPeer implements GossipListener {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+ ":" + gossip.communications.getLocalAddress();
+        return getClass().getSimpleName()+ ':' + gossip.communications.getLocalAddress();
     }
 
     public Logger log() {

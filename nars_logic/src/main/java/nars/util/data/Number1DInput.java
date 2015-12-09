@@ -71,7 +71,7 @@ public class Number1DInput {
         int i = (int) Math.round(v / dv);
         //double percent = (dv * i);
         String ps = intf.format(i);
-        return ("\u211d" + ps + "_" + resolution);
+        return ('\u211d' + ps + '_' + resolution);
     }
 
     public void initPredicates(int resolution) {
@@ -89,7 +89,7 @@ public class Number1DInput {
             append('<' + t + " --> " + "\u211d\u2359>. %1.00;1.00%\n");
             v += dv;
             if (prevT != null) {
-                append("<(*," + prevT + "," + t + ") --> \u22E8>. %1.00;1.00%\n");
+                append("<(*," + prevT + ',' + t + ") --> \u22E8>. %1.00;1.00%\n");
             }
             prevT = t;
 
@@ -142,7 +142,7 @@ public class Number1DInput {
         append(product);
 
         if (iteration > 0) {
-            append("<" + getTermID(iteration - 1) + " =\\> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n");
+            append('<' + getTermID(iteration - 1) + " =\\> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n");
         }
 
 //        
@@ -157,7 +157,7 @@ public class Number1DInput {
 
     public String getTermID(int iteration) {
         // variable id "contains as member" iteration (number)
-        return id + "\u220D" + iteration;
+        return id + '\u220D' + iteration;
     }
 
     static final String cert = "1.00"; //default certainty
@@ -166,7 +166,7 @@ public class Number1DInput {
     public String[] getStatementsFrequencyEncoded(int i, double value) {
         String freq = nf.format(value);
         //<(*, id_i, id) --> array_value_i>. %1.00;0.79%                    
-        String s = "<(*," + id + "_" + i + "," + id + ") --> ELEMENT_" + i + ">. %" + freq + ";" + cert + "%";
+        String s = "<(*," + id + '_' + i + ',' + id + ") --> ELEMENT_" + i + ">. %" + freq + ';' + cert + '%';
         return new String[]{s};
     }
 
@@ -175,9 +175,9 @@ public class Number1DInput {
         double op = 1.0 - value;
         return new String[]{
             //"<(*," + id + "_" + i + ",ELEMENT_" + id + ") --> ELEMENT>. %0.99;" + cert + "%",
-            "<" + id + "_" + i + " --> ELEMENT_" + i + ">. %0.99;" + cert + "%",
-            "<" + id + "_" + i + " --> ZERO>. %" + zp + ";" + cert + "%",
-            "<" + id + "_" + i + " --> ONE>. %" + op + ";" + cert + "%",};
+                '<' + id + '_' + i + " --> ELEMENT_" + i + ">. %0.99;" + cert + '%',
+                '<' + id + '_' + i + " --> ZERO>. %" + zp + ';' + cert + '%',
+                '<' + id + '_' + i + " --> ONE>. %" + op + ';' + cert + '%',};
     }
 
     private void set(double[] data) {

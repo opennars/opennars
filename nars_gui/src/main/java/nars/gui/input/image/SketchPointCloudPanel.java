@@ -132,20 +132,20 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             return;
         }
         
-        if(e.getSource() == addInput && !drawing.equals("")) {
-            nar.input("<" + drawing.replace(" ", "-") + " --> drawn>. :|:");
-            if(lastdrawing!=null && !lastdrawing.equals("")) {
+        if(e.getSource() == addInput && !"".equals(drawing)) {
+            nar.input('<' + drawing.replace(" ", "-") + " --> drawn>. :|:");
+            if(lastdrawing!=null && !"".equals(lastdrawing)) {
                 if(Math.abs(coordx-lastcoordx)>10) {
                     String direction=coordx-lastcoordx > 0 ? "left" : "right"; 
                     String opdirection=coordx-lastcoordx > 0 ? "right" : "left"; 
-                    nar.input("<(*," + drawing.replace(" ", "-") + "," + lastdrawing.replace(" ", "-") + ") --> " + direction + ">. :|:");
-                    nar.input("<(*," + lastdrawing.replace(" ", "-") + "," + drawing.replace(" ", "-") + ") --> " + opdirection + ">. :|:");
+                    nar.input("<(*," + drawing.replace(" ", "-") + ',' + lastdrawing.replace(" ", "-") + ") --> " + direction + ">. :|:");
+                    nar.input("<(*," + lastdrawing.replace(" ", "-") + ',' + drawing.replace(" ", "-") + ") --> " + opdirection + ">. :|:");
                 }
                 if(Math.abs(coordy-lastcoordy)>10) {
                     String direction=coordy-lastcoordy > 0 ? "up" : "down"; 
                     String opdirection=coordy-lastcoordy > 0 ? "down" : "up"; 
-                    nar.input("<(*," + drawing.replace(" ", "-") + "," + lastdrawing.replace(" ", "-") + ") --> " + direction + ">. :|:");
-                    nar.input("<(*," + lastdrawing.replace(" ", "-") + "," + drawing.replace(" ", "-") + ") --> " + opdirection + ">. :|:");
+                    nar.input("<(*," + drawing.replace(" ", "-") + ',' + lastdrawing.replace(" ", "-") + ") --> " + direction + ">. :|:");
+                    nar.input("<(*," + lastdrawing.replace(" ", "-") + ',' + drawing.replace(" ", "-") + ") --> " + opdirection + ">. :|:");
                 }
             }
             nar.frame(1);
@@ -258,7 +258,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 name = r.getName();
                 score = r.getScore();
                 caption.setForeground(defaultColor);
-                caption.setText("Result: " + name + " (" + round(score, 2) + ")");
+                caption.setText("Result: " + name + " (" + round(score, 2) + ')');
                 lastdrawing=drawing;
                 drawing=name;
                 state = GESTURE_PROCESSED;

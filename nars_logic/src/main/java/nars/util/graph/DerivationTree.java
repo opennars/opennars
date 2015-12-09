@@ -23,7 +23,7 @@ public class DerivationTree extends DirectedMultigraph<Task, String> {
     }
 
     public static String edge(String label, Task from, Task to) {
-        return label + "[" + from + "," + to + "]";
+        return label + '[' + from + ',' + to + ']';
     }
 
     public boolean add(Task t, int maxLevels) {

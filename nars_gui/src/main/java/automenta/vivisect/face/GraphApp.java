@@ -307,7 +307,7 @@ public class GraphApp extends JPanel
         }   
    
         Image image1 = createImage(new MemoryImageSource(k, l, ai1, 0, k));   
-        System.out.println(image1 + "  " + image1.getWidth(this) + "," + image1.getHeight(this));   
+        System.out.println(image1 + "  " + image1.getWidth(this) + ',' + image1.getHeight(this));
         return image1;   
     }   
    

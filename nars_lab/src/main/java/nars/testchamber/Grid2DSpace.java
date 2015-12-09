@@ -319,7 +319,7 @@ public class Grid2DSpace extends PApplet {
             return "Too far";
 
         if ((tx < 0) || (ty < 0) || (tx >= cells.w) || (ty >= cells.h))
-            return "Out of bounds: " + tx + " " + ty;
+            return "Out of bounds: " + tx + ' ' + ty;
             
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);

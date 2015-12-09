@@ -37,7 +37,7 @@ public class BaseObject extends Observable implements HasId {
     
 	public String toString() {
 		return super.toString() +
-			"[" + paramString() + "]";
+				'[' + paramString() + ']';
 	}
   
 	protected String paramString() {

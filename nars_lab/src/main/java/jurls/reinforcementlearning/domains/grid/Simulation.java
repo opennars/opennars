@@ -151,7 +151,7 @@ public class Simulation {
                 
                 double cycleTime = ((((double)n) - (lastCycleTime))/1000000000.0);
                 double fps = cycles/cycleTime;
-                System.out.println(time + " (" + fps + " cycles/sec)" + " " + cycleTime + "s");
+                System.out.println(time + " (" + fps + " cycles/sec)" + ' ' + cycleTime + 's');
 //                if (agent instanceof BeccaAgent) {
 //                    ((BeccaAgent)agent).printTiming(cycles);
 //                }

@@ -395,7 +395,7 @@ public class KBmanager {
         String pref;
         for (int i = 0; i < keys.length; i++) {
             pref = this.getPref(keys[i]);
-            if (Formula.isNonEmptyString(pref) && pref.equalsIgnoreCase("yes")) {
+            if (Formula.isNonEmptyString(pref) && "yes".equalsIgnoreCase(pref)) {
                 bv += vals[i];
             }
         }

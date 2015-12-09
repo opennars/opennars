@@ -65,7 +65,7 @@ public class LocationHandler {
                     )
             );
 
-            int filenameIdx = location.lastIndexOf("/") + 1;
+            int filenameIdx = location.lastIndexOf('/') + 1;
             if (filenameIdx != 0) {
                 File saveFile = chooser.showSaveDialog(view.getScene().getWindow());
 

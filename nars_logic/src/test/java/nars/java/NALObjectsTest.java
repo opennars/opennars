@@ -48,7 +48,7 @@ public class NALObjectsTest  {
 
         @Override
         public String toString() {
-            return "TestClass[" + count + "]";
+            return "TestClass[" + count + ']';
         }
 
         public List<Method> getClassMethods() {
@@ -56,7 +56,7 @@ public class NALObjectsTest  {
             List<Method> l = Global.newArrayList();
             for (Method x : m)
                 if (NALObjects.isMethodVisible(x))
-                    if (!x.getName().equals("getClassMethods"))
+                    if (!"getClassMethods".equals(x.getName()))
                         l.add(x);
             return l;
         }

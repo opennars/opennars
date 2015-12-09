@@ -94,82 +94,82 @@ public class WordNetUtilities {
      */
     public static String convertWordNetPointer(String ptr) {
 
-        if (ptr.equals("!")) {
+        if ("!".equals(ptr)) {
             ptr = "antonym";
         }
-        if (ptr.equals("@")) {
+        if ("@".equals(ptr)) {
             ptr = "hypernym";
         }
-        if (ptr.equals("@i")) {
+        if ("@i".equals(ptr)) {
             ptr = "instance hypernym";
         }
-        if (ptr.equals("~")) {
+        if ("~".equals(ptr)) {
             ptr = "hyponym";
         }
-        if (ptr.equals("~i")) {
+        if ("~i".equals(ptr)) {
             ptr = "instance hyponym";
         }
-        if (ptr.equals("#m")) {
+        if ("#m".equals(ptr)) {
             ptr = "member holonym";
         }
-        if (ptr.equals("#s")) {
+        if ("#s".equals(ptr)) {
             ptr = "substance holonym";
         }
-        if (ptr.equals("#p")) {
+        if ("#p".equals(ptr)) {
             ptr = "part holonym";
         }
-        if (ptr.equals("%m")) {
+        if ("%m".equals(ptr)) {
             ptr = "member meronym";
         }
-        if (ptr.equals("%s")) {
+        if ("%s".equals(ptr)) {
             ptr = "substance meronym";
         }
-        if (ptr.equals("%p")) {
+        if ("%p".equals(ptr)) {
             ptr = "part meronym";
         }
-        if (ptr.equals("=")) {
+        if ("=".equals(ptr)) {
             ptr = "attribute";
         }
-        if (ptr.equals("+")) {
+        if ("+".equals(ptr)) {
             ptr = "derivationally related";
         }
-        if (ptr.equals(";c")) {
+        if (";c".equals(ptr)) {
             ptr = "domain topic";
         }
-        if (ptr.equals("-c")) {
+        if ("-c".equals(ptr)) {
             ptr = "member topic";
         }
-        if (ptr.equals(";r")) {
+        if (";r".equals(ptr)) {
             ptr = "domain region";
         }
-        if (ptr.equals("-r")) {
+        if ("-r".equals(ptr)) {
             ptr = "member region";
         }
-        if (ptr.equals(";u")) {
+        if (";u".equals(ptr)) {
             ptr = "domain usage";
         }
-        if (ptr.equals("-u")) {
+        if ("-u".equals(ptr)) {
             ptr = "member usage";
         }
-        if (ptr.equals("*")) {
+        if ("*".equals(ptr)) {
             ptr = "entailment";
         }
-        if (ptr.equals(">")) {
+        if (">".equals(ptr)) {
             ptr = "cause";
         }
-        if (ptr.equals("^")) {
+        if ("^".equals(ptr)) {
             ptr = "also see";
         }
-        if (ptr.equals("$")) {
+        if ("$".equals(ptr)) {
             ptr = "verb group";
         }
-        if (ptr.equals("&")) {
+        if ("&".equals(ptr)) {
             ptr = "similar to";
         }
-        if (ptr.equals("<")) {
+        if ("<".equals(ptr)) {
             ptr = "participle";
         }
-        if (ptr.equals("\\")) {
+        if ("\\".equals(ptr)) {
             ptr = "pertainym";
         }
         return ptr;
@@ -224,19 +224,19 @@ public class WordNetUtilities {
      */
     public static String posNumberToLetters(String pos) {
 
-        if (pos.equalsIgnoreCase("1")) {
+        if ("1".equalsIgnoreCase(pos)) {
             return "NN";
         }
-        if (pos.equalsIgnoreCase("2")) {
+        if ("2".equalsIgnoreCase(pos)) {
             return "VB";
         }
-        if (pos.equalsIgnoreCase("3")) {
+        if ("3".equalsIgnoreCase(pos)) {
             return "JJ";
         }
-        if (pos.equalsIgnoreCase("4")) {
+        if ("4".equalsIgnoreCase(pos)) {
             return "RB";
         }
-        if (pos.equalsIgnoreCase("5")) {
+        if ("5".equalsIgnoreCase(pos)) {
             return "JJ";
         }
         System.out.println("Error in WordNetUtilities.posNumberToLetters(): bad number: " + pos);
@@ -250,16 +250,16 @@ public class WordNetUtilities {
      */
     public static String posLettersToNumber(String pos) {
 
-        if (pos.equalsIgnoreCase("NN")) {
+        if ("NN".equalsIgnoreCase(pos)) {
             return "1";
         }
-        if (pos.equalsIgnoreCase("VB")) {
+        if ("VB".equalsIgnoreCase(pos)) {
             return "2";
         }
-        if (pos.equalsIgnoreCase("JJ")) {
+        if ("JJ".equalsIgnoreCase(pos)) {
             return "3";
         }
-        if (pos.equalsIgnoreCase("RB")) {
+        if ("RB".equalsIgnoreCase(pos)) {
             return "4";
         }
         System.out.println("Error in WordNetUtilities.posNumberToLetters(): bad letters: " + pos);
@@ -393,9 +393,9 @@ public class WordNetUtilities {
             word = WordNetUtilities.subst(word, "y$", "ies");
         } else {
             if (word.matches(".*s$") || word.matches(".*x$") || word.matches(".*ch$")
-                    || word.matches(".*sh$") || word.matches(".*z$") || word.equals("go")) {
+                    || word.matches(".*sh$") || word.matches(".*z$") || "go".equals(word)) {
                 word += "es";
-            } else if (word.equals("be")) {
+            } else if ("be".equals(word)) {
                 word = "are";
             } else {
                 word += "s";
@@ -507,16 +507,16 @@ public class WordNetUtilities {
                     if (!bareOldTerm.contains("&%") && newTerm != null && !"".equals(newTerm) && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm, bareOldTerm)) {
                         pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " &%" + newTerm + mapType);
                         System.out.println("INFO in WordNet.processMergers(): synset, oldTerm, newterm: "
-                                + synset + " " + oldTerm + " " + newTerm);
+                                + synset + ' ' + oldTerm + ' ' + newTerm);
                     } else {
-                        pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " " + m.group(4));
+                        pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + ' ' + m.group(4));
                     }
                 } else {
                     pw.println(line.trim());
                 }
             }
         } catch (java.io.IOException e) {
-            throw new IOException("Error writing file " + fileName + "\n" + e.getMessage());
+            throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         } finally {
             if (pw != null) {
                 pw.close();
@@ -583,9 +583,9 @@ public class WordNetUtilities {
         if (rels != null) {
             for (Object rel : rels) {
                 AVPair avp = (AVPair) rel;
-                if (avp.attribute.equals("hypernym") || avp.attribute.equals("instance hypernym")) {
+                if ("hypernym".equals(avp.attribute) || "instance hypernym".equals(avp.attribute)) {
                     String mappingChar;
-                    if (avp.attribute.equals("instance hypernym")) {
+                    if ("instance hypernym".equals(avp.attribute)) {
                         mappingChar = "@";
                     } else {
                         mappingChar = "+";
@@ -643,7 +643,7 @@ public class WordNetUtilities {
                         String synset = posNum + m.group(1);
                         String newTerm = findMappingFromHypernym(synset);
                         if (newTerm != null && !"".equals(newTerm)) {
-                            pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " " + newTerm);
+                            pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + ' ' + newTerm);
 //                            System.out.println("INFO in WordNet.processMissingLinks(): synset, newterm: " + 
 //                                               synset + " " + " " + newTerm);
                         } else {
@@ -658,7 +658,7 @@ public class WordNetUtilities {
                 m = p.matcher(line);
             }
         } catch (java.io.IOException e) {
-            throw new IOException("Error writing file " + fileName + "\n" + e.getMessage());
+            throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         } finally {
             if (pw != null) {
                 pw.close();
@@ -743,9 +743,9 @@ public class WordNetUtilities {
                         if (term == null) {
                             pw.println(line.trim());
                             System.out.println("Error in WordNetUtilities.updateWNversionProcess(): No term for synsets (old, new): "
-                                    + posNum + oldsynset + " " + posNum + newsynset);
+                                    + posNum + oldsynset + ' ' + posNum + newsynset);
                         } else {
-                            pw.println(line + " " + term);
+                            pw.println(line + ' ' + term);
                         }
                     } else {
                         pw.println(line.trim());
@@ -756,7 +756,7 @@ public class WordNetUtilities {
                 }
             }
         } catch (java.io.IOException e) {
-            throw new IOException("Error writing file " + fileName + "\n" + e.getMessage());
+            throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         } finally {
             if (pw != null) {
                 pw.close();
@@ -794,7 +794,7 @@ public class WordNetUtilities {
                 }
             }
         } catch (java.io.IOException e) {
-            throw new IOException("Error writing file " + fileName + "\n" + e.getMessage());
+            throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         }
     }
 

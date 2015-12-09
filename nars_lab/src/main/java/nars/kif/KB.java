@@ -170,7 +170,7 @@ public class KB {
         KBmanager mgr = KBmanager.getMgr();
         if (mgr != null) {
             String loadCelt = mgr.getPref("loadCELT");
-            if ((loadCelt != null) && loadCelt.equalsIgnoreCase("yes")) {
+            if ((loadCelt != null) && "yes".equalsIgnoreCase(loadCelt)) {
                 //celt = new CELT();
             }
         }
@@ -244,7 +244,7 @@ public class KB {
                 // binary relations are cached in two RelationCaches,
                 // one that looks "upward" from the keys, and another
                 // that looks "downward" from the keys.
-                if (!relname.equals("disjoint")) {
+                if (!"disjoint".equals(relname)) {
                     relationCaches.add(new RelationCache(relname, 2, 1));
                 }
             }
@@ -473,7 +473,7 @@ public class KB {
      */
     private void computeTransitiveCacheClosure(String relationName) {
 
-        System.out.println("INFO in KB.computeTransitiveCacheClosure(" + relationName + ")");
+        System.out.println("INFO in KB.computeTransitiveCacheClosure(" + relationName + ')');
 
         try {
             long t1 = System.currentTimeMillis();
@@ -483,7 +483,7 @@ public class KB {
                 RelationCache c2 = getRelationCache(relationName, 2, 1);
                 RelationCache inst1 = null;
                 RelationCache inst2 = null;
-                boolean isSubrelationCache = relationName.equals("subrelation");
+                boolean isSubrelationCache = "subrelation".equals(relationName);
                 if (isSubrelationCache) {
                     inst1 = getRelationCache("instance", 1, 2);
                     inst2 = getRelationCache("instance", 2, 1);
@@ -503,8 +503,8 @@ public class KB {
                     while (it1.hasNext()) {
                         keyTerm = (String) it1.next();
                         if ((keyTerm == null) || keyTerm.isEmpty()) {
-                            System.out.println("Error in KB.computeTransitiveCacheClosure(" + relationName + ")");
-                            System.out.println("  keyTerm == " + ((keyTerm == null) ? null : "\"" + keyTerm + "\""));
+                            System.out.println("Error in KB.computeTransitiveCacheClosure(" + relationName + ')');
+                            System.out.println("  keyTerm == " + ((keyTerm == null) ? null : '"' + keyTerm + '"'));
                         } else {
                             valSet = (Set) c1.get(keyTerm);
                             valArr = valSet.toArray();
@@ -557,7 +557,7 @@ public class KB {
             }
             System.out.println("  "
                     + count
-                    + " "
+                    + ' '
                     + relationName
                     + " entries computed in "
                     + ((System.currentTimeMillis() - t1) / 1000.0)
@@ -1189,7 +1189,7 @@ public class KB {
                                     count += addRelationCacheEntry(c1, arg2, arg2);
                                     count += addRelationCacheEntry(c2, arg1, arg1);
                                     count += addRelationCacheEntry(c2, arg2, arg2);
-                                } else if (relation.equals("disjoint")) {
+                                } else if ("disjoint".equals(relation)) {
                                     count += addRelationCacheEntry(c1, arg2, arg1);
                                 }
                             }
@@ -1199,7 +1199,7 @@ public class KB {
 
                 // More ways of collecting implied disjointness
                 // assertions.
-                if (relation.equals("disjoint")) {
+                if ("disjoint".equals(relation)) {
                     List partitions = ask("arg", 0, "partition");
                     List decompositions = ask("arg", 0, "disjointDecomposition");
                     forms = new ArrayList();
@@ -1310,14 +1310,14 @@ public class KB {
         StringBuilder b = new StringBuilder();
         try {
             if (literal instanceof List) {
-                b.append("(");
+                b.append('(');
                 for (int i = 0; i < literal.size(); i++) {
                     if (i > 0) {
-                        b.append(" ");
+                        b.append(' ');
                     }
                     b.append((String) literal.get(i));
                 }
-                b.append(")");
+                b.append(')');
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1386,9 +1386,9 @@ public class KB {
     public ArrayList ask(String kind, int argnum, String term) {
 
         if (kind.compareTo("arg") == 0) {
-            return (ArrayList) formulas.get(kind + "-" + (new Integer(argnum)).toString() + "-" + term);
+            return (ArrayList) formulas.get(kind + '-' + (new Integer(argnum)).toString() + '-' + term);
         } else {
-            return (ArrayList) formulas.get(kind + "-" + term);
+            return (ArrayList) formulas.get(kind + '-' + term);
         }
     }
 
@@ -1922,10 +1922,10 @@ public class KB {
                 if (arg1.equalsIgnoreCase(lingua)) {
                     key = f.getArgument(2);
                     format = f.getArgument(3);
-                    if (format.startsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(0) == '\"') {
                         format = format.substring(1);
                     }
-                    if (format.endsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(format.length() - 1) == '\"') {
                         format = format.substring(0, format.length() - 1);
                     }
                     if (format.indexOf('$') < 0) {
@@ -1952,10 +1952,10 @@ public class KB {
                 if (arg1.equalsIgnoreCase(lingua)) {
                     key = f.getArgument(2);
                     format = f.getArgument(3);
-                    if (format.startsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(0) == '\"') {
                         format = format.substring(1);
                     }
-                    if (format.endsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(format.length() - 1) == '\"') {
                         format = format.substring(0, format.length() - 1);
                     }
                     //if (format.indexOf("$") < 0)
@@ -2068,7 +2068,7 @@ public class KB {
      */
     public String addConstituent(String filename, boolean buildCachesP, boolean loadVampireP) {
 
-        System.out.println("ENTER KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+        System.out.println("ENTER KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
         long t1 = System.currentTimeMillis();
         StringBuilder result = new StringBuilder();
 
@@ -2087,7 +2087,7 @@ public class KB {
             if (constituents.contains(canonicalPath)) {
                 return "Error: " + canonicalPath + " already loaded.";
             }
-            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
             System.out.println("  Adding " + canonicalPath);
             try {
                 file.readFile(canonicalPath);
@@ -2100,7 +2100,7 @@ public class KB {
                 return result.toString();
             }
 
-            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
             System.out.println("  Parsed file "
                     + canonicalPath
                     + " of size "
@@ -2162,7 +2162,7 @@ public class KB {
                 constituents.add(canonicalPath);
             }
 
-            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
             System.out.println("  File "
                     + canonicalPath
                     + " loaded in "
@@ -2181,7 +2181,7 @@ public class KB {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
-        System.out.println("EXIT KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+        System.out.println("EXIT KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
         return result.toString();
     }
 
@@ -2462,7 +2462,7 @@ public class KB {
         ArrayList ans = new ArrayList();
         if ((queryLit instanceof List) && !(queryLit.isEmpty())) {
             String pred = (String) queryLit.get(0);
-            if (pred.equals("instance")
+            if ("instance".equals(pred)
                     && isVariable((String) queryLit.get(1))
                     && !(isVariable((String) queryLit.get(2)))) {
                 String className = (String) queryLit.get(2);
@@ -2472,12 +2472,12 @@ public class KB {
                 Set ai = getAllInstances(className);
                 for (Object anAi : ai) {
                     inst = (String) anAi;
-                    fStr = ("(instance " + inst + " " + className + ")");
+                    fStr = ("(instance " + inst + ' ' + className + ')');
                     f = new Formula();
                     f.read(fStr);
                     ans.add(f);
                 }
-            } else if (pred.equals("valence")
+            } else if ("valence".equals(pred)
                     && isVariable((String) queryLit.get(1))
                     && isVariable((String) queryLit.get(2))) {
                 String inst;
@@ -2490,7 +2490,7 @@ public class KB {
                     inst = (String) it.next();
                     valence = getValence(inst);
                     if (valence > 0) {
-                        fStr = ("(valence " + inst + " " + valence + ")");
+                        fStr = ("(valence " + inst + ' ' + valence + ')');
                         f = new Formula();
                         f.read(fStr);
                         ans.add(f);
@@ -2859,7 +2859,7 @@ public class KB {
      */
     public static boolean isVariable(String obj) {
         if (Formula.isNonEmptyString(obj)) {
-            return (obj.startsWith("?") || obj.startsWith("@"));
+            return (obj.length() > 0 && obj.charAt(0) == '?' || obj.length() > 0 && obj.charAt(0) == '@');
         }
         return false;
     }
@@ -3098,7 +3098,7 @@ public class KB {
 
             Formula.resetSortalTypeCache();
 
-            boolean tptpParseP = KBmanager.getMgr().getPref("TPTP").equalsIgnoreCase("yes");
+            boolean tptpParseP = "yes".equalsIgnoreCase(KBmanager.getMgr().getPref("TPTP"));
             long t1 = System.currentTimeMillis();
             String form;
             Formula f;
@@ -3406,7 +3406,7 @@ public class KB {
             pr.println("% Copyright 2007 Articulate Software Incorporated");
             pr.println("% This software released under the GNU Public License <http://www.gnu.org/copyleft/gpl.html>.");
             pr.println("% This is a translation to TPTP of KB "
-                    + sanitizedKBName + "\n");
+                    + sanitizedKBName + '\n');
 
             orderedFormulae = new TreeSet(new Comparator() {
                 @Override
@@ -3445,7 +3445,7 @@ public class KB {
                 //----for some provers, such as E and EP.
                 if (onlyPlainFOL
                         && !tptpFormulas.isEmpty()
-                        && !KBmanager.getMgr().getPref("holdsPrefix").equalsIgnoreCase("yes")
+                        && !"yes".equalsIgnoreCase(KBmanager.getMgr().getPref("holdsPrefix"))
                         && f.containsVariableArityRelation(this)) {
                     Formula tmpF = new Formula();
                     tmpF.read(f.theFormula);
@@ -3482,17 +3482,17 @@ public class KB {
                             pr.print("%FOL ");
                             commentedFormula = true;
                         }
-                        if (reasoner.equals("Equinox---1.0b") && f.theFormula.indexOf("equal") > 2) {
+                        if ("Equinox---1.0b".equals(reasoner) && f.theFormula.indexOf("equal") > 2) {
                             Formula f2 = new Formula();
                             f2.read(f.cdr());
                             f2.read(f.car());
-                            if (f2.theFormula.equals("equals")) {
+                            if ("equals".equals(f2.theFormula)) {
                                 pr.print("%FOL ");
                                 commentedFormula = true;
                             }
                         }
                     }
-                    pr.println("fof(kb_" + sanitizedKBName + "_" + axiomIndex++
+                    pr.println("fof(kb_" + sanitizedKBName + '_' + axiomIndex++
                             + ",axiom,(" + theTPTPFormula + ")).");
                     // if (commentedFormula) {
                     pr.println();

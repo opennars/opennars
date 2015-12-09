@@ -153,7 +153,7 @@ public class POJOPane<X> extends BorderPane {
                 valueNode = new Text("null");
         } catch (IllegalAccessException e) {
             valueNode =
-                    new /*Error*/Label(field.getType().toString() + "\n" + e.toString());
+                    new /*Error*/Label(field.getType().toString() + '\n' + e.toString());
         }
 
 

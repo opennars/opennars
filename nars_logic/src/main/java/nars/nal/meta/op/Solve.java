@@ -197,7 +197,7 @@ public final class Solve extends PreCondition {
                     desireTerm.toString();
 
             id = puncOverride == 0 ?
-                    this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ")" :
+                    this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ')' :
                     this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
         }
 

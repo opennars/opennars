@@ -46,7 +46,7 @@ public class RuleTrie extends Deriver {
             return
                 "(&/, " + Joiner.on(", ").join(precondition) +
                 ") =/> " +
-                "{" +
+                        '{' +
                     ((children != null) ?
                         Joiner.on(", ").join(children) : "End") +
                 "}>";

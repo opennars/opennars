@@ -69,7 +69,7 @@ public class LibraryInput extends TextInput {
     }
 
     public static String getExamplePath(String path) {
-        if (path.startsWith("/")) return path; //dont modify, it's already absolute
+        if (path.length() > 0 && path.charAt(0) == '/') return path; //dont modify, it's already absolute
         if (cwd.endsWith("nars_logic") || cwd.endsWith("nars_lab"))
             return "../nal/" + path;
         else
@@ -103,7 +103,7 @@ public class LibraryInput extends TextInput {
                 throw new RuntimeException(se + " not found");
 
             for (final File file : ff) {
-                if (file.isDirectory() || file.getName().equals("README.txt") || file.getName().contains(".png"))
+                if (file.isDirectory() || "README.txt".equals(file.getName()) || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {
                     l.put(file.getName(), file.getAbsolutePath() );

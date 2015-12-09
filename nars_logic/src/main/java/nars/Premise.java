@@ -215,10 +215,10 @@ public interface Premise extends Level, Tasked {
                     continue;
                 if (className.contains("EventEmitter"))
                     continue;
-                if ((className.equals("NAL") || className.equals("Memory")) && methodName.equals("emit"))
+                if (("NAL".equals(className) || "Memory".equals(className)) && "emit".equals(methodName))
                     continue;
 
-                int cli = className.lastIndexOf(".") + 1;
+                int cli = className.lastIndexOf('.') + 1;
                 if (cli != -1)
                     className = className.substring(cli, className.length()); //class's simpleName
 
@@ -233,13 +233,13 @@ public interface Premise extends Level, Tasked {
 
 
                 //Termination conditions
-                if (className.contains("ConceptFireTask") && methodName.equals("accept"))
+                if (className.contains("ConceptFireTask") && "accept".equals(methodName))
                     break;
-                if (className.contains("ImmediateProcess") && methodName.equals("rule"))
+                if (className.contains("ImmediateProcess") && "rule".equals(methodName))
                     break;
-                if (className.contains("ConceptFire") && methodName.equals("rule"))
+                if (className.contains("ConceptFire") && "rule".equals(methodName))
                     break;
-            } else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {
+            } else if (className.endsWith(".NAL") && "deriveTask".equals(methodName)) {
                 tracing = true; //begins with next stack element
             }
 

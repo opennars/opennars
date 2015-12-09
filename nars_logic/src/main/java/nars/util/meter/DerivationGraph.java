@@ -254,8 +254,8 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
             this.termVolume = termlink.getTerm().volume();
             this.beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
 
-            this.key = (taskLinkKey + ":" +
-                    termLinkKey + ":" +
+            this.key = (taskLinkKey + ':' +
+                    termLinkKey + ':' +
                     beliefKey).trim();
         }
 
@@ -486,7 +486,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
 
         if (!s.isEternal()) {
-            t += " " + Tense.tenseRelative(s.getOccurrenceTime(), now);
+            t += ' ' + Tense.tenseRelative(s.getOccurrenceTime(), now);
         }
 
         return t;

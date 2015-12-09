@@ -154,7 +154,7 @@ public class ControlFlowGraph {
                     if (opcode > 0 && opcode <= OPCODES.length) {
                         sb.append(OPCODES[opcode]);
                         if (instruction.getType() == AbstractInsnNode.METHOD_INSN) {
-                            sb.append("(" + ((MethodInsnNode)instruction).name + ")");
+                            sb.append('(' + ((MethodInsnNode)instruction).name + ')');
                         }
                     }
                 } catch (Throwable t) {

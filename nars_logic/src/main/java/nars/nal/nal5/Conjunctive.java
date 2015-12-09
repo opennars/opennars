@@ -117,7 +117,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
             case Tense.ORDER_CONCURRENT:
                 return Parallel.makeParallel(argList);
         }
-        throw new RuntimeException("invalid: " + Arrays.toString(argList) + " " + temporalOrder);
+        throw new RuntimeException("invalid: " + Arrays.toString(argList) + ' ' + temporalOrder);
     }
 
     public static final Term make(final Term term1, final Term term2, int temporalOrder) {

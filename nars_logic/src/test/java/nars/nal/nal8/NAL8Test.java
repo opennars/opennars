@@ -61,7 +61,7 @@ public class NAL8Test extends AbstractNALTester {
         AtomicBoolean valid = new AtomicBoolean(false);
 
         //   eventAnswer: $0.10;0.90;1.00$ <a --> b>@ {0: 2} Input:$0.60;0.90;0.95$ <a --> b>! %1.00;0.90% {0: 1} Input
-        nar.answer(nar.task(term + "@"), a -> {
+        nar.answer(nar.task(term + '@'), a -> {
             //System.out.println("answer: " + a);
             if (a.toString().contains("<a --> b>!"))
                 valid.set(true);

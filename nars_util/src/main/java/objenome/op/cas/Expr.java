@@ -351,8 +351,8 @@ public abstract class Expr {
     }
     
     public String toString(String format) {
-        if (format.equals("s-expr")) return dump();
-        if (format.equals("pretty")) return pretty();
+        if ("s-expr".equals(format)) return dump();
+        if ("pretty".equals(format)) return pretty();
         return toString();
     }
     

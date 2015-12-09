@@ -282,7 +282,7 @@ public class FindSubst extends Versioning implements Subst {
                 bits &= (~matchingType.bit());
 
             this.bits = bits;
-            this.id = "t" + subterm + ":" +
+            this.id = "t" + subterm + ':' +
                     Integer.toString(bits, 16);
         }
 
@@ -312,7 +312,7 @@ public class FindSubst extends Versioning implements Subst {
         public SubTermOp(int subterm, Op op) {
             this.subterm = subterm;
             this.op = op;
-            this.id = "t" + subterm + ":" + op;
+            this.id = "t" + subterm + ':' + op;
         }
 
         @Override
@@ -518,7 +518,7 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         public String toString() {
-            return "parent(" + parent + ")"; //s for subterm and sibling
+            return "parent(" + parent + ')'; //s for subterm and sibling
         }
     }
 

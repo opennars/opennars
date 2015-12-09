@@ -855,7 +855,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     public void outputEvent(Appendable out, String previou, String k, Object v) throws IOException {
         //indent each cycle
-        if (!k.equals("eventCycleStart")) {
+        if (!"eventCycleStart".equals(k)) {
             out.append("  ");
         }
 
@@ -997,7 +997,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + memory.toString() + "]";
+        return getClass().getSimpleName() + '[' + memory.toString() + ']';
     }
 
     /**
@@ -1020,7 +1020,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     public NAR answer(String question, Consumer<Task> recvSolution) {
         //question punctuation optional
-        if (!question.endsWith("?")) question = question + "?";
+        if (!(question.length() > 0 && question.charAt(question.length() - 1) == '?')) question = question + '?';
         Task qt = this.task(question);
         return answer(qt, recvSolution);
     }

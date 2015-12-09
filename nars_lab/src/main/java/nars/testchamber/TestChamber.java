@@ -126,7 +126,7 @@ public class TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    if (opname.equals("goto"))
+                    if ("goto".equals(opname))
                         space.target = new PVector(i, j);
                 }
             }
@@ -135,7 +135,7 @@ public class TestChamber {
         for (GridObject gridi : space.objects) {
             if (gridi instanceof LocalGridObject && ((LocalGridObject) gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                 LocalGridObject gridu = (LocalGridObject) gridi;
-                if (opname.equals("goto"))
+                if ("goto".equals(opname))
                     space.target = new PVector(gridu.x, gridu.y);
             }
         }
@@ -341,7 +341,7 @@ public class TestChamber {
                                     }
                                     if ("goto".equals(opname)) {
                                         executed_going = false;
-                                        nar.input("<" + goal + " --> [at]>. :|:");
+                                        nar.input('<' + goal + " --> [at]>. :|:");
                                         if (goal.startsWith("{pizza")) {
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
@@ -357,7 +357,7 @@ public class TestChamber {
                                             }
                                             hungry = 500;
                                             //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
-                                            nar.input("<" + goal + " --> [at]>. :|:");
+                                            nar.input('<' + goal + " --> [at]>. :|:");
                                         }
                                         active = true;
                                     }

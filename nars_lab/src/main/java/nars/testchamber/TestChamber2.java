@@ -39,7 +39,7 @@ public class TestChamber2 extends TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    if(opname.equals("go-to"))
+                    if("go-to".equals(opname))
                         space.target = new PVector(i, j);
                 }
             }
@@ -48,7 +48,7 @@ public class TestChamber2 extends TestChamber {
             for(GridObject gridi : space.objects) {
                 if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                     LocalGridObject gridu=(LocalGridObject) gridi;
-                    if(opname.equals("go-to"))
+                    if("go-to".equals(opname))
                         space.target = new PVector(gridu.x, gridu.y);
                 }
             }
@@ -246,9 +246,9 @@ public class TestChamber2 extends TestChamber {
                 String actionParam = e.action.toParamString();                
                 String success = String.valueOf(e.success);
                 if (actionParam == null) actionParam = "";
-                if (!actionParam.isEmpty()) actionParam = "(*," + actionParam + ")";
+                if (!actionParam.isEmpty()) actionParam = "(*," + actionParam + ')';
                 
-                nar.input("$0.60$ (*,effect," + action + "," + actionParam + "," + success + "). :|:");
+                nar.input("$0.60$ (*,effect," + action + ',' + actionParam + ',' + success + "). :|:");
                 
                 final int SightPeriod = 32;
                 if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {

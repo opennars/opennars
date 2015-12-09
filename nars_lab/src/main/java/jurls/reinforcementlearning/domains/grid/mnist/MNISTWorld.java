@@ -119,7 +119,7 @@ public class MNISTWorld extends MNIST implements World {
         }
       
         
-        System.out.print(cycle + " " + currentFrame + " " + currentImage + " label=" + i.label + ": " + a + " " + r + " [");
+        System.out.print(cycle + " " + currentFrame + ' ' + currentImage + " label=" + i.label + ": " + a + ' ' + r + " [");
         //printArray(action);
         
         

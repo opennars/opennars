@@ -75,8 +75,8 @@ public class VarInitClassGeneratorTest extends TransformationTest {
                 "// class version 51.0 (51)\n" +
                 "// access flags 0x1011\n" +
                 "public final synthetic class com/github/fge/grappa/transform/process/VarInit$XXXXXXXXXXXXXXXX extends com/github/fge/grappa/transform/runtime/BaseVarInit  {\n" +
-                "\n" +
-                "\n" +
+                '\n' +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public <init>(Ljava/lang/String;)V\n" +
                 "    ALOAD 0\n" +
@@ -85,7 +85,7 @@ public class VarInitClassGeneratorTest extends TransformationTest {
                 "    RETURN\n" +
                 "    MAXSTACK = 2\n" +
                 "    MAXLOCALS = 2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public get()Ljava/lang/Object;\n" +
                 "    NEW java/util/ArrayList\n" +
@@ -102,8 +102,8 @@ public class VarInitClassGeneratorTest extends TransformationTest {
                 "// class version 51.0 (51)\n" +
                 "// access flags 0x1011\n" +
                 "public final synthetic class com/github/fge/grappa/transform/process/VarInit$XXXXXXXXXXXXXXXX extends com/github/fge/grappa/transform/runtime/BaseVarInit  {\n" +
-                "\n" +
-                "\n" +
+                '\n' +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public <init>(Ljava/lang/String;)V\n" +
                 "    ALOAD 0\n" +
@@ -112,7 +112,7 @@ public class VarInitClassGeneratorTest extends TransformationTest {
                 "    RETURN\n" +
                 "    MAXSTACK = 2\n" +
                 "    MAXLOCALS = 2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public get()Ljava/lang/Object;\n" +
                 "    BIPUSH 26\n" +
@@ -128,14 +128,14 @@ public class VarInitClassGeneratorTest extends TransformationTest {
                 "// class version 51.0 (51)\n" +
                 "// access flags 0x1011\n" +
                 "public final synthetic class com/github/fge/grappa/transform/process/Action$XXXXXXXXXXXXXXXX extends com/github/fge/grappa/transform/runtime/BaseAction  {\n" +
-                "\n" +
-                "\n" +
+                '\n' +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic Lcom/github/fge/grappa/support/Var; field$0\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic Lcom/github/fge/grappa/transform/process/VarInitClassGeneratorTest$Parser$$grappa; field$1\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public <init>(Ljava/lang/String;)V\n" +
                 "    ALOAD 0\n" +
@@ -144,7 +144,7 @@ public class VarInitClassGeneratorTest extends TransformationTest {
                 "    RETURN\n" +
                 "    MAXSTACK = 2\n" +
                 "    MAXLOCALS = 2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public run(Lcom/github/fge/grappa/run/context/Context;)Z\n" +
                 "    ALOAD 0\n" +

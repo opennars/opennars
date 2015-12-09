@@ -113,7 +113,7 @@ public class NarseseExtendedTest {
     static final Terminal t = new Terminal();
 
     static void eqTask(String x, String b) {
-        Task a = t.task(x + ".");
+        Task a = t.task(x + '.');
         assertNotNull(a);
         assertEquals(b, a.getTerm().toString());
     }
@@ -167,7 +167,7 @@ public class NarseseExtendedTest {
 
             Term tt = t.getTerm();
             assertEquals(Op.NEGATION, tt.op());
-            assertTrue(((Compound) tt).term(0).toString().equals("negated"));
+            assertTrue("negated".equals(((Compound) tt).term(0).toString()));
             assertTrue(t.getPunctuation() == Symbols.GOAL);
         }
     }

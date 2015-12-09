@@ -25,7 +25,7 @@ public class AttentionTest {
         int numConcepts = 32;
         AbstractNAR n = new Default();
         for (int i = 0; i < numConcepts; i++)
-            n.believe("<x" + i + " <-> x" + (i + 1) + ">");
+            n.believe("<x" + i + " <-> x" + (i + 1) + '>');
         
         //n.runWhileInputting(100);
         n.frame(16);

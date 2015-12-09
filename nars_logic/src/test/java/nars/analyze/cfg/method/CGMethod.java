@@ -94,7 +94,7 @@ public class CGMethod {
                 argumentTypes.add(type.toString());
             }
         }
-        this.key = className + "#" + methodName + "(" + argumentTypes.toString() + ')';
+        this.key = className + '#' + methodName + '(' + argumentTypes.toString() + ')';
 
     }
     protected void post() {

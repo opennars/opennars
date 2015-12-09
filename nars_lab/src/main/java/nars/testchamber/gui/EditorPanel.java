@@ -168,8 +168,8 @@ public class EditorPanel extends JPanel {
                                             continue;
                                         }
 
-                                        if (!c[11].equals("") && !c[11].contains("{")) {
-                                            c[11] = "{" + c[11] + "}";
+                                        if (!"".equals(c[11]) && !c[11].contains("{")) {
+                                            c[11] = '{' + c[11] + '}';
                                         }
 
                                         int i = Integer.valueOf(c[0]);
@@ -196,7 +196,7 @@ public class EditorPanel extends JPanel {
                                         s.cells.writeCells[i][j].logic = Logic.values()[Integer.valueOf(c[8])];
                                         if (s.cells.readCells[i][j].logic == Logic.SWITCH) {
                                             if (TestChamber.staticInformation)
-                                                s.nar.input("<" + c[11] + " --> switch>.");
+                                                s.nar.input('<' + c[11] + " --> switch>.");
                                             if (s.cells.readCells[i][j].light == 1.0f) {
                                                 //s.nar.input("<"+c[11]+" --> on>. :|:");
                                             } else {
@@ -205,7 +205,7 @@ public class EditorPanel extends JPanel {
                                         }
                                         if (s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
                                             if (TestChamber.staticInformation)
-                                                s.nar.input("<" + c[11] + " --> switch>.");
+                                                s.nar.input('<' + c[11] + " --> switch>.");
                                             if (s.cells.readCells[i][j].light == 1.0f) {
                                                 //s.nar.input("<"+c[11]+" --> on>. :|:");
                                             } else {
@@ -213,12 +213,12 @@ public class EditorPanel extends JPanel {
                                             }
                                         }
 
-                                        if (!c[9].equals("")) {
+                                        if (!"".equals(c[9])) {
                                             s.cells.readCells[i][j].machine = Machine.values()[Integer.valueOf(c[9])];
                                             s.cells.writeCells[i][j].machine = Machine.values()[Integer.valueOf(c[9])];
                                             if (s.cells.readCells[i][j].machine == Machine.Turret) {
                                                 if (TestChamber.staticInformation)
-                                                    s.nar.input("<" + c[11] + " --> firework>.");
+                                                    s.nar.input('<' + c[11] + " --> firework>.");
                                                 if (s.cells.readCells[i][j].light == 1.0f) {
                                                     //s.nar.input("<"+c[11]+" --> on>. :|:");
                                                 } else {
@@ -227,7 +227,7 @@ public class EditorPanel extends JPanel {
                                             }
                                             if (s.cells.readCells[i][j].machine == Machine.Light) {
                                                 if (TestChamber.staticInformation)
-                                                    s.nar.input("<" + c[11] + " --> light>.");
+                                                    s.nar.input('<' + c[11] + " --> light>.");
                                                 if (s.cells.readCells[i][j].light == 1.0f) {
                                                     //s.nar.input("<"+c[11]+" --> on>. :|:");
                                                 } else {
@@ -244,7 +244,7 @@ public class EditorPanel extends JPanel {
 
                                         if (s.cells.readCells[i][j].material == Material.Door) {
                                             if (TestChamber.staticInformation)
-                                                s.nar.input("<" + c[11] + " --> door>.");
+                                                s.nar.input('<' + c[11] + " --> door>.");
                                             //s.nar.input("<"+c[11]+" --> closed>. :|:");
                                         }
 
@@ -252,7 +252,7 @@ public class EditorPanel extends JPanel {
                                         s.cells.writeCells[i][j].name = c[11];
 
                                         try {
-                                            if (!c[11].equals("")) {
+                                            if (!"".equals(c[11])) {
                                                 String value = c[11].replaceAll("[A-Za-z]", "").replaceAll("\\}", "").replaceAll("\\{", "");
                                                 int res = Integer.parseInt(value);
                                                 if (res > Hauto.entityID) {
@@ -272,21 +272,21 @@ public class EditorPanel extends JPanel {
                                     String[] objs = allText.split("OBJECTS")[1].split(";");
                                     ArrayList<GridObject> newobj = new ArrayList<>(); //new ArrayList we have to fill
                                     for (String obj : objs) {
-                                        if (obj.equals("\n"))
+                                        if ("\n".equals(obj))
                                             continue;
                                         String[] val = obj.split(",");
                                         if (val.length == 0) {
                                             continue;
                                         }
 
-                                        if (!val[1].equals("") && !val[1].contains("{")) {
-                                            val[1] = "{" + val[1] + "}";
+                                        if (!"".equals(val[1]) && !val[1].contains("{")) {
+                                            val[1] = '{' + val[1] + '}';
                                         }
 
                                         String name = val[1];
 
                                         try {
-                                            if (!name.equals("")) {
+                                            if (!"".equals(name)) {
                                                 String value = name.replaceAll("[A-Za-z]", "");
                                                 int res = Integer.parseInt(value);
                                                 if (res > Hauto.entityID) {
@@ -300,7 +300,7 @@ public class EditorPanel extends JPanel {
                                         float cy = Float.valueOf(val[3]);
                                         int x = Integer.valueOf(val[5]);
                                         int y = Integer.valueOf(val[6]);
-                                        if (val[0].equals("GridAgent")) {
+                                        if ("GridAgent".equals(val[0])) {
                                             for (GridObject z : s.objects) {
                                                 if (z instanceof GridAgent) {
                                                     ((GridAgent) z).cx = cx;
@@ -313,17 +313,17 @@ public class EditorPanel extends JPanel {
                                                 }
                                             }
                                         }
-                                        if (val[0].equals("Key")) {
+                                        if ("Key".equals(val[0])) {
                                             Key addu = new Key(x, y, name);
                                             if (TestChamber.staticInformation)
-                                                s.nar.input("<" + name + " --> Key>.");
+                                                s.nar.input('<' + name + " --> Key>.");
                                             addu.space = s;
                                             newobj.add(addu);
                                         }
-                                        if (val[0].equals("Pizza")) {
+                                        if ("Pizza".equals(val[0])) {
                                             Pizza addu = new Pizza(x, y, name);
                                             if (TestChamber.staticInformation)
-                                                s.nar.input("<" + name + " --> pizza>.");
+                                                s.nar.input('<' + name + " --> pizza>.");
                                             addu.space = s;
                                             newobj.add(addu);
                                         }
@@ -349,24 +349,24 @@ public class EditorPanel extends JPanel {
                 StringBuilder wr=new StringBuilder();
                 for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:
                     for(int j=0;j<s.cells.w;j++) {
-                        wr.append(String.valueOf(i)).append(","); //also store coordinates, for case we may change size one day
-                        wr.append(String.valueOf(j)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].charge)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].chargeFront)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].conductivity)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].height)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].is_solid)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].light)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].logic.ordinal())).append(",");
+                        wr.append(String.valueOf(i)).append(','); //also store coordinates, for case we may change size one day
+                        wr.append(String.valueOf(j)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].charge)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].chargeFront)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].conductivity)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].height)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].is_solid)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].light)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].logic.ordinal())).append(',');
                         if(s.cells.readCells[i][j].machine!=null) { //wtf enum can be null? kk its java..
-                            wr.append(String.valueOf(s.cells.readCells[i][j].machine.ordinal())).append(",");
+                            wr.append(String.valueOf(s.cells.readCells[i][j].machine.ordinal())).append(',');
                         }
                         else
-                            wr.append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].material.ordinal())).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].name)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].value)).append(",");
-                        wr.append(String.valueOf(s.cells.readCells[i][j].value2)).append(";");
+                            wr.append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].material.ordinal())).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].name)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].value)).append(',');
+                        wr.append(String.valueOf(s.cells.readCells[i][j].value2)).append(';');
                     }
                 }
                 wr.append("OBJECTS");
@@ -382,22 +382,22 @@ public class EditorPanel extends JPanel {
                         boolean export=false;
                         if(g instanceof GridAgent) {
                             export=true;
-                            wr.append("GridAgent"+",");
+                            wr.append("GridAgent"+ ',');
                         }
                         if(g instanceof Key) {
                             export=true;
-                            wr.append("Key"+",");
+                            wr.append("Key"+ ',');
                         }
                         if(g instanceof Pizza) {
                             export=true;
-                            wr.append("Pizza"+",");
+                            wr.append("Pizza"+ ',');
                         }
-                        wr.append(String.valueOf(toSave.doorname)).append(",");
-                        wr.append(String.valueOf(toSave.cx)).append(",");
-                        wr.append(String.valueOf(toSave.cy)).append(",");
-                        wr.append(String.valueOf(toSave.cheading)).append(",");
-                        wr.append(String.valueOf(toSave.x)).append(",");
-                        wr.append(String.valueOf(toSave.y)).append(";");
+                        wr.append(String.valueOf(toSave.doorname)).append(',');
+                        wr.append(String.valueOf(toSave.cx)).append(',');
+                        wr.append(String.valueOf(toSave.cy)).append(',');
+                        wr.append(String.valueOf(toSave.cheading)).append(',');
+                        wr.append(String.valueOf(toSave.x)).append(',');
+                        wr.append(String.valueOf(toSave.y)).append(';');
                     }
                 }
                 try {

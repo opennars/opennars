@@ -76,6 +76,7 @@ public class MJDiversities {
 	// Initialize the specified item from the string
 	public void ItemFromString(String sStr, int sizX, int sizY) {
 		int itm = DIV_NONE;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		String sBff;

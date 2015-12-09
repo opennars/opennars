@@ -219,7 +219,7 @@ public class InjectionUtils {
         
         //TODO use switch statement
 
-        if (className.equals("int") || className.equals("java.lang.Integer")) {
+        if ("int".equals(className) || "java.lang.Integer".equals(className)) {
             int x = -1;
             try {
                 x = Integer.parseInt(value);
@@ -227,7 +227,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("short") || className.equals("java.lang.Short")) {
+        } else if ("short".equals(className) || "java.lang.Short".equals(className)) {
             short x = -1;
             try {
                 x = Short.parseShort(value);
@@ -236,7 +236,7 @@ public class InjectionUtils {
             }
             newValue = x;
 
-        } else if (className.equals("char") || className.equals("java.lang.Character")) {
+        } else if ("char".equals(className) || "java.lang.Character".equals(className)) {
 
             if (value.length() != 1) {
                 return null;
@@ -244,7 +244,7 @@ public class InjectionUtils {
 
             newValue = value.charAt(0);
 
-        } else if (className.equals("long") || className.equals("java.lang.Long")) {
+        } else if ("long".equals(className) || "java.lang.Long".equals(className)) {
             long x = -1;
             try {
                 x = Long.parseLong(value);
@@ -252,7 +252,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("float") || className.equals("java.lang.Float")) {
+        } else if ("float".equals(className) || "java.lang.Float".equals(className)) {
             float x = -1;
             try {
                 x = Float.parseFloat(value);
@@ -260,7 +260,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("double") || className.equals("java.lang.Double")) {
+        } else if ("double".equals(className) || "java.lang.Double".equals(className)) {
             double x = -1;
             try {
                 x = Double.parseDouble(value);
@@ -268,7 +268,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("boolean") || className.equals("java.lang.Boolean")) {
+        } else if ("boolean".equals(className) || "java.lang.Boolean".equals(className)) {
             try {
                 int x = Integer.parseInt(value);
                 if (x == 1) {
@@ -279,9 +279,9 @@ public class InjectionUtils {
                     return null;
                 }
             } catch (Exception e) {
-                if (value.equalsIgnoreCase("true") || value.equals("on")) {
+                if ("true".equalsIgnoreCase(value) || "on".equals(value)) {
                     newValue = Boolean.TRUE;
-                } else if (value.equalsIgnoreCase("false")) {
+                } else if ("false".equalsIgnoreCase(value)) {
                     newValue = Boolean.FALSE;
                 } else {
                     return null;
@@ -626,7 +626,7 @@ public class InjectionUtils {
             for (Method method : bean.getClass().getMethods()) {
                 String name = method.getName();
 
-                if (name.length() > 3 && name.startsWith("get") && !name.equals("getClass") && method.getParameterTypes().length == 0) {
+                if (name.length() > 3 && name.startsWith("get") && !"getClass".equals(name) && method.getParameterTypes().length == 0) {
 
                     method.setAccessible(true);
                     Object value = method.invoke(bean);

@@ -221,7 +221,7 @@ public class DefaultTermizer implements Termizer {
 
         //TODO handle static methods which will not receive first variable instance
 
-        String varPrefix = m.getName() + "_";
+        String varPrefix = m.getName() + '_';
         int n = m.getParameterCount();
         Compound args = $.p(getArgVariables(varPrefix, n));
 

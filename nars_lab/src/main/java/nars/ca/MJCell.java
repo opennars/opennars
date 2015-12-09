@@ -94,9 +94,9 @@ public class MJCell extends Applet {
 		// detect the location we started from
 		try {
 			sBaseURL = getCodeBase().toString();
-			if (sBaseURL.endsWith("."))
+			if (sBaseURL.length() > 0 && sBaseURL.charAt(sBaseURL.length() - 1) == '.')
 				sBaseURL = sBaseURL.substring(0, sBaseURL.length() - 1);
-			if (!sBaseURL.endsWith("/"))
+			if (!(sBaseURL.length() > 0 && sBaseURL.charAt(sBaseURL.length() - 1) == '/'))
 				sBaseURL += "/";
 			//System.out.println("Base: " + sBaseURL);
 		} catch (Exception e) {

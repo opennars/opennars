@@ -81,7 +81,7 @@ public class SchemeClosure {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "@" + Integer.toUnsignedString( hashCode(), Character.MAX_RADIX);
+        return getClass().getSimpleName() + '@' + Integer.toUnsignedString( hashCode(), Character.MAX_RADIX);
     }
 
     public Stream<Expression> evalStream(String input) {

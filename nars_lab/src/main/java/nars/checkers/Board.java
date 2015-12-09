@@ -196,7 +196,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 					repaint();
 				}
 				else
-					System.out.println("UNABLE TO MOVE [" + source.getCoordinateX() + ", " + source.getCoordinateY() + "] -> [" + destination.getCoordinateX() + ", " + destination.getCoordinateY() + "]");
+					System.out.println("UNABLE TO MOVE [" + source.getCoordinateX() + ", " + source.getCoordinateY() + "] -> [" + destination.getCoordinateX() + ", " + destination.getCoordinateY() + ']');
 			}
 
 			if(game.isTurnDark() && player2.hasTurn())

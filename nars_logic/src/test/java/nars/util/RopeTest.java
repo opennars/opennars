@@ -140,7 +140,7 @@ public class RopeTest  {
 		
 		Iterator<Character> i = c2.iterator();
 		for (int j = 0; j < c2.length(); ++j) {
-			assertTrue("Has next (" + j + "/" + c2.length() + ")", i.hasNext());
+			assertTrue("Has next (" + j + '/' + c2.length() + ')', i.hasNext());
 			i.next();
 		}
 		assertTrue(!i.hasNext());

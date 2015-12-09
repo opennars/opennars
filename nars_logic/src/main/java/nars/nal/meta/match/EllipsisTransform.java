@@ -15,7 +15,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     public Term to;
 
     public EllipsisTransform(Variable name, Term from, Term to) {
-        super(name, ".." + from + "=" + to + "..+");
+        super(name, ".." + from + '=' + to + "..+");
 
 //        if (from instanceof VarPattern)
 //            this.from = new VarPattern(((VarPattern) from).id);

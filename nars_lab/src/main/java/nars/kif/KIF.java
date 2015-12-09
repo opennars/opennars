@@ -250,12 +250,12 @@ public class KIF {
                         }
                     }
                     if ((parenLevel != 0) && (lastVal != 40) && (expression.length() > 0)) { // add back whitespace that ST removes
-                        expression.append(" ");
+                        expression.append(' ');
                     }
-                    expression.append("(");
+                    expression.append('(');
                 } else if (st.ttype == 41) {                                      // )  - close paren
                     parenLevel--;
-                    expression.append(")");
+                    expression.append(')');
                     if (parenLevel == 0) {                                    // The end of the statement...
                         f.theFormula = expression.toString().intern();
                         //if (KBmanager.getMgr().getPref("TPTP").equals("yes"))                       
@@ -309,18 +309,18 @@ public class KIF {
                 } else if (st.ttype == 34) {                                      // " - it's a string
                     if (lastVal != 40) // add back whitespace that ST removes
                     {
-                        expression.append(" ");
+                        expression.append(' ');
                     }
-                    expression.append("\"");
+                    expression.append('"');
                     com = st.sval;
                     totalLinesForComments += countChar(com, (char) 0X0A);
                     expression.append(com);
-                    expression.append("\"");
+                    expression.append('"');
                 } else if ((st.ttype == StreamTokenizer.TT_NUMBER)
                         || (st.sval != null && (Character.isDigit(st.sval.charAt(0))))) {                  // number
                     if (lastVal != 40) // add back whitespace that ST removes
                     {
-                        expression.append(" ");
+                        expression.append(' ');
                     }
                     if (st.nval == 0) {
                         expression.append(st.sval);
@@ -343,7 +343,7 @@ public class KIF {
                     }
                     if (lastVal != 40) // add back whitespace that ST removes
                     {
-                        expression.append(" ");
+                        expression.append(' ');
                     }
                     expression.append(String.valueOf(st.sval));
                     if (expression.length() > 64000) {
@@ -364,8 +364,8 @@ public class KIF {
 
                     // AB: 5/2007
                     // allow '`' in relaxed parse mode.
-                    expression.append(" ");
-                    expression.append("`");
+                    expression.append(' ');
+                    expression.append('`');
                 } else if (st.ttype != StreamTokenizer.TT_EOF) {
                     key = null;
                     // System.out.println( "st.ttype == " + st.ttype );

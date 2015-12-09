@@ -136,7 +136,7 @@ public final class SgAnnotation {
                 while (it.hasNext()) {
                     final String name = it.next();
                     final Object value = arguments.get(name);
-                    if (!name.equals("value")) {
+                    if (!"value".equals(name)) {
                         sb.append(name);
                         sb.append('=');
                     }

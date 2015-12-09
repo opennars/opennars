@@ -35,6 +35,7 @@ public class RuleUser {
 	// Parse the rule string
 	// Example: RUG,C128,I1
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i;
@@ -63,9 +64,9 @@ public class RuleUser {
 		st = new StringTokenizer(sStr, " ,", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			if (sTok.startsWith("I"))
+			if (sTok.length() > 0 && sTok.charAt(0) == 'I')
 				Increment = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("C"))
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'C')
 				iClo = Integer.valueOf(sTok.substring(1));
 		}
 

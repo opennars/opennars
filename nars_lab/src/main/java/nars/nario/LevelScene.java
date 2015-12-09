@@ -349,15 +349,15 @@ public class LevelScene extends Scene implements SpriteContext
         drawStringDropShadow(g, "00000000", 0, 1, 7);
         
         drawStringDropShadow(g, "COIN", 14, 0, 7);
-        drawStringDropShadow(g, " "+df.format(Mario.coins), 14, 1, 7);
+        drawStringDropShadow(g, ' ' +df.format(Mario.coins), 14, 1, 7);
 
         drawStringDropShadow(g, "WORLD", 24, 0, 7);
-        drawStringDropShadow(g, " "+Mario.levelString, 24, 1, 7);
+        drawStringDropShadow(g, ' ' +Mario.levelString, 24, 1, 7);
 
         drawStringDropShadow(g, "TIME", 35, 0, 7);
         int time = (timeLeft+15-1)/15;
         if (time<0) time = 0;
-        drawStringDropShadow(g, " "+df2.format(time), 35, 1, 7);
+        drawStringDropShadow(g, ' ' +df2.format(time), 35, 1, 7);
 
 
         if (startTime > 0)

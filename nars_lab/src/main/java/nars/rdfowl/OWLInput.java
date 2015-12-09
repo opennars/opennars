@@ -111,14 +111,14 @@ public class OWLInput  {
                     depth++;
                     String tagName = formatTag(parser.getName());
 
-                    if (tagName.equalsIgnoreCase("owl:Class")) {
+                    if ("owl:Class".equalsIgnoreCase(tagName)) {
                         processTag(parser, new TagProcessor() {
                             @Override
                             public void execute(XMLStreamReader parser) {
 
                                 String tagName = formatTag(parser.getName());
 
-                                if (tagName.equalsIgnoreCase("owl:Class")) {
+                                if ("owl:Class".equalsIgnoreCase(tagName)) {
                                     //String name = parser.getAttributeValue(RDF_URI, "ID");
                                     String name = parser.getAttributeValue(0);
 
@@ -130,7 +130,7 @@ public class OWLInput  {
 
                                         //saveEntity(classEntity);
                                     }
-                                } else if (tagName.equalsIgnoreCase("rdfs:subClassOf")) {
+                                } else if ("rdfs:subClassOf".equalsIgnoreCase(tagName)) {
                                     //String name = parser.getAttributeValue(RDF_URI, "resource");
                                     String name = parser.getAttributeValue(0);
                                     if (name != null) {
@@ -239,7 +239,7 @@ public class OWLInput  {
                                         String relationName = tagName;
                                         //String targetEntityName = parser.getAttributeValue(RDF_URI, "resource");
                                         String targetEntityName = parser.getAttributeValue(0);
-                                        if (targetEntityName != null && targetEntityName.startsWith("#")) {
+                                        if (targetEntityName != null && targetEntityName.length() > 0 && targetEntityName.charAt(0) == '#') {
                                             targetEntityName = targetEntityName.substring(1);
                                         }
                                         if (targetEntityName != null) {
@@ -257,7 +257,7 @@ public class OWLInput  {
                             String obj = formatTag(new QName(parser.getAttributeValue(0)));
 
                             System.out.println();
-                            System.out.println(tagName + " " + pred + " " + obj + " " +
+                            System.out.println(tagName + ' ' + pred + ' ' + obj + ' ' +
                                     parser.getAttributeValue(0));
                             //(parser.hasText() ? parser.getText() : ""));
                         }
@@ -426,7 +426,7 @@ public class OWLInput  {
         if ((subject == null) || (object == null)) {
             return;
         }
-        if (predicate.equals("parentOf")) {
+        if ("parentOf".equals(predicate)) {
             nar.believe((Compound) $.inh(atom(subject), atom(object)));
         }
         else {
@@ -497,7 +497,7 @@ public class OWLInput  {
         if (prefix == null || prefix.isEmpty()) {
             return suffix;
         } else {
-            return prefix + ":" + suffix;
+            return prefix + ':' + suffix;
         }
     }
 

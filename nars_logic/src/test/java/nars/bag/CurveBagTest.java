@@ -73,7 +73,7 @@ public class CurveBagTest extends AbstractBagTest {
                 total = MathArrays.ebeAdd(total, count);
             }
 
-            System.out.println("  " + capacity + "," + " = " + Arrays.toString(total));
+            System.out.println("  " + capacity + ',' + " = " + Arrays.toString(total));
 
         }
 

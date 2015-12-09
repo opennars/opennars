@@ -202,7 +202,7 @@ public class ImplementationFactory {
             final Class<?>[] exceptionTypes = methods[j].getExceptionTypes();
             for (int k = 0; k < exceptionTypes.length; k++) {
                 final SgClass ex = SgClass.create(pool, exceptionTypes[k]);
-                if (method.getExceptions().indexOf(ex) == -1) {
+                if (!method.getExceptions().contains(ex)) {
                     method.addException(ex);
                 }
             }

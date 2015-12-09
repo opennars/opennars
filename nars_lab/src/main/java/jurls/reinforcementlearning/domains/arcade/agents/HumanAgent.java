@@ -174,19 +174,19 @@ public class HumanAgent extends AbstractAgent {
         // Loop through the list of arguments
         while (!doneParsing) {
             // -nogui: do not display the Java GUI
-            if (args[argIndex].equals("-nogui")) {
+            if ("-nogui".equals(args[argIndex])) {
                 useGUI = false;
                 argIndex++;
             }
             // -named_pipes <basename>: use to communicate with ALE via named pipes
             //  (instead of stdin/out)
-            else if (args[argIndex].equals("-named_pipes") && (argIndex + 1) < args.length) {
+            else if ("-named_pipes".equals(args[argIndex]) && (argIndex + 1) < args.length) {
                 namedPipesName = args[argIndex+1];
 
                 argIndex += 2;
             }
             // -export_frames: use this to save frames as PNG images
-            else if (args[argIndex].equals("-export_frames")) {
+            else if ("-export_frames".equals(args[argIndex])) {
                 exportFrames = true;
                 argIndex++;
             }

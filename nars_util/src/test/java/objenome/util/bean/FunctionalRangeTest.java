@@ -46,7 +46,7 @@ public class FunctionalRangeTest {
         // variable because PMD does not like equals(null) very much
         final Object nullObject = null;
         assertFalse("fooBar equals null", fooBar.equals(nullObject)); //$NON-NLS-1$
-        assertFalse("fooBar equals java.lang.String", fooBar.equals("Classes are not compatible")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertFalse("fooBar equals java.lang.String", "Classes are not compatible".equals(fooBar)); //$NON-NLS-1$ //$NON-NLS-2$
 
         final FooBar secondInstance = BeanProxyBuilder.on(FooBar.class).build();
         assertFalse("fooBar equals unfilled secondInstance", fooBar.equals(secondInstance)); //$NON-NLS-1$

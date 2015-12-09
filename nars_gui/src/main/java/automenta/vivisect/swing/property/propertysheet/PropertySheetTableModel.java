@@ -565,7 +565,7 @@ public class PropertySheetTableModel
       StringBuilder key = new StringBuilder(name);
       Item itemParent = parent;
       while (itemParent != null) {
-        key.append(":");
+        key.append(':');
         key.append(itemParent.getName());
         itemParent = itemParent.getParent();
       }

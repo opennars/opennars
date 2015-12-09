@@ -33,6 +33,7 @@ public class RuleMarg {
 	public void InitFromString(String sStr) {
 		String sTok, sSwaps;
 		int i, iNum, iVal;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st, std;
 
 		ResetToDefaults();
@@ -40,10 +41,10 @@ public class RuleMarg {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
-			if (sTok.startsWith("M")) // Margholus rule type
+			if (sTok.length() > 0 && sTok.charAt(0) == 'M') // Margholus rule type
 			{
 				iTyp = TYPE_MS; // simple - the only one available now
-			} else if (sTok.startsWith("D")) // definition
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'D') // definition
 			{
 				std = new StringTokenizer(sTok.substring(1), ";", false);
 				iNum = 0;
@@ -81,7 +82,7 @@ public class RuleMarg {
 		String sBff = "MS,D";
 
 		for (int i = 0; i <= 14; i++)
-			sBff = sBff + String.valueOf(swapArray[i]) + ";";
+			sBff = sBff + String.valueOf(swapArray[i]) + ';';
 		sBff = sBff + String.valueOf(swapArray[15]);
 
 		return sBff;

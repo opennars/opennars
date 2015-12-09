@@ -240,7 +240,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             c = c.getSuperclass();
 
         return Operator.the(
-            c.getSimpleName() + "_" + overridden.getName()
+            c.getSimpleName() + '_' + overridden.getName()
         );
     }
 

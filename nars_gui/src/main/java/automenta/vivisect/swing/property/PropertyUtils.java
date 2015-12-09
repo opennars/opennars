@@ -222,7 +222,7 @@ public class PropertyUtils {
 
 		StringWriter writer = new StringWriter();
 		p.store(writer, null);
-		return writer.toString().replaceAll("^\\#.*", "").trim()+"\n";
+		return writer.toString().replaceAll("^\\#.*", "").trim()+ '\n';
 	}
 	
 	public static void setProperties(Object obj, Properties p,

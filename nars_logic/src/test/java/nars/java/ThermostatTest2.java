@@ -42,7 +42,7 @@ public class ThermostatTest2 {
         public int go(/*int speed,*/ boolean upOrDown) {
             final int speed = 1;
 
-            if (log) System.out.println("\tgo @ " + current + " (" + speed +  "," + upOrDown + ") TO " + target + " (" + (Math.abs(target-current)) + " dist)\n");
+            if (log) System.out.println("\tgo @ " + current + " (" + speed + ',' + upOrDown + ") TO " + target + " (" + (Math.abs(target-current)) + " dist)\n");
 
             current += speed * (upOrDown ? +1 : -1);
 
@@ -61,14 +61,14 @@ public class ThermostatTest2 {
             t.target = rng.nextInt(maxRange);
         } while ( Math.abs(t.current - t.target) < maxRange/3 );
 
-        if (t.log) System.out.println("reset: " + t.current + " " + t.target);
+        if (t.log) System.out.println("reset: " + t.current + ' ' + t.target);
     }
     private static void adjust(Model t, int scale) {
 
         t.target += (rng.nextBoolean() ? +1 : -1) * (1+rng.nextInt(scale));
         t.target = Math.max(0, Math.min(t.target, range));
 
-        if (t.log) System.out.println("adjust: " + t.current + " " + t.target);
+        if (t.log) System.out.println("adjust: " + t.current + ' ' + t.target);
 
     }
 
@@ -197,7 +197,7 @@ public class ThermostatTest2 {
 //                n.input(up + "@ :|:");
 //                n.input(down + "@ :|:");
 
-        n.input(isValid + "?");
+        n.input(isValid + '?');
 //        n.should(isValidThen.apply($(up)));
 //        n.should(isValidThen.apply($(down)));
 //        n.should(notValidThen.apply($(up)));

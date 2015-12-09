@@ -27,6 +27,7 @@ public class RuleLife {
 	// Parse the rule string
 	// Example: '23/3'
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i, iNum = 1;
@@ -89,7 +90,7 @@ public class RuleLife {
 			// S
 			if (RulesS[i])
 				sBff = sBff + String.valueOf(i);
-		sBff = sBff + "/";
+		sBff = sBff + '/';
 
 		for (i = 0; i <= 8; i++)
 			// B

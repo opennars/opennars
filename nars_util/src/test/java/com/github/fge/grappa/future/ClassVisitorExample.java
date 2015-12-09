@@ -72,7 +72,7 @@ public class ClassVisitorExample
                     {
                         if (nodes[i].getOpcode() == Opcodes.ARETURN) {
                             areturn = i;
-                            System.out.println(className + "." + name + desc);
+                            System.out.println(className + '.' + name + desc);
                             System.out.println("Found areturn at: " + i);
                         } else if (areturn != -1
                             && nodes[i].getOpcode() != -1

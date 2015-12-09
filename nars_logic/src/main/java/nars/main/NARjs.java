@@ -55,7 +55,7 @@ public class NARjs {
             
             
             try {
-                if (s.equals(":q"))
+                if (":q".equals(s))
                     break;
                 else if (s.startsWith(":h")) {
                     printHelp();

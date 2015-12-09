@@ -139,7 +139,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public String toString() {
-        return "(" + Arrays.toString(term) + ')';
+        return '(' + Arrays.toString(term) + ')';
     }
 
 

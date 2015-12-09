@@ -275,9 +275,9 @@ public class TetrisPiece {
         StringBuilder shapeBuffer = new StringBuilder();
         for (int i = 0; i < thePiece[currentOrientation].length; i++) {
             for (int j = 0; j < thePiece[currentOrientation][i].length; j++) {
-                shapeBuffer.append(" ").append(thePiece[currentOrientation][i][j]);
+                shapeBuffer.append(' ').append(thePiece[currentOrientation][i][j]);
             }
-            shapeBuffer.append("\n");
+            shapeBuffer.append('\n');
         }
         return shapeBuffer.toString();
 

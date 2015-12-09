@@ -107,9 +107,9 @@ public class TracePane extends LogPane {
         //double f = filter.value(channel);
 
         //temporary until filter working
-        if (!trace && (channel.equals("eventDerived")||
-                channel.equals("eventTaskRemoved") ||
-                channel.equals("eventConceptChange")
+        if (!trace && ("eventDerived".equals(channel) ||
+                "eventTaskRemoved".equals(channel) ||
+                "eventConceptChange".equals(channel)
         ) )
             return;
 
@@ -128,7 +128,7 @@ public class TracePane extends LogPane {
     boolean activationTreeMap = false;
 
     private Node getNode(Object channel, Object signal) {
-        if (channel.equals("eventConceptActivated")) {
+        if ("eventConceptActivated".equals(channel)) {
             boolean newn = false;
             if (activationSet == null && activationTreeMap) {
                 activationSet =
@@ -147,7 +147,7 @@ public class TracePane extends LogPane {
             if (!newn) return null;
             else
                 return activationSet;
-        } else if (channel.equals("eventCycleEnd")) {
+        } else if ("eventCycleEnd".equals(channel)) {
             if (prev != null && (prev instanceof CycleActivationBar)) {
                 ((CycleActivationBar) prev).setTo(nar.time());
                 return null;
@@ -160,10 +160,10 @@ public class TracePane extends LogPane {
 //            }
             //return null;
             //
-        } else if (channel.equals("eventFrameStart")) {
+        } else if ("eventFrameStart".equals(channel)) {
             return null;
             //
-        } else if (channel.equals("eventInput")) {
+        } else if ("eventInput".equals(channel)) {
             Task t = (Task) signal;
             if (t.getPriority() >= volume.get())
                 return new TaskLabel(t, nar);

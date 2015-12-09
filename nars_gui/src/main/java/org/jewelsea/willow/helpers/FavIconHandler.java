@@ -153,7 +153,7 @@ public class FavIconHandler {
         final int protocolSepLoc = browserLoc.indexOf("://");
         if (protocolSepLoc > 0) {
             // workout the location of the favicon.
-            final int pathSepLoc = browserLoc.indexOf("/", protocolSepLoc + 3);
+            final int pathSepLoc = browserLoc.indexOf('/', protocolSepLoc + 3);
             return (pathSepLoc > 0) ? browserLoc.substring(0, pathSepLoc) : browserLoc;
         }
 

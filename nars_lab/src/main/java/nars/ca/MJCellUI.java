@@ -405,8 +405,8 @@ class MJCellUI extends Frame {
 
 		// initial pattern
 		if (!sInitPatt.isEmpty()) {
-			mjo.OpenFile(cmbGames.getSelectedItem() + "/"
-					+ cmbRules.getSelectedItem() + "/" + sInitPatt);
+			mjo.OpenFile(cmbGames.getSelectedItem() + '/'
+					+ cmbRules.getSelectedItem() + '/' + sInitPatt);
 		}
 
 		// prepare the label for the rule definition
@@ -417,7 +417,7 @@ class MJCellUI extends Frame {
 			String str = "";
 			iLen = 20 - iLen;
 			while (iLen-- > 0)
-				str = str + " ";
+				str = str + ' ';
 			lblRule.setText(lblRule.getText() + str);
 		}
 	}
@@ -899,9 +899,9 @@ class MJCellUI extends Frame {
 	// ----------------------------------------------------------------
 	// Input the board size
 	private void InputBoardSize() {
-		String sDefault = String.valueOf(mjb.UnivSize.x) + "x"
+		String sDefault = String.valueOf(mjb.UnivSize.x) + 'x'
 				+ String.valueOf(mjb.UnivSize.y);
-		String sMax = "max. " + String.valueOf(MJBoard.MAX_X) + "x"
+		String sMax = "max. " + String.valueOf(MJBoard.MAX_X) + 'x'
 				+ String.valueOf(MJBoard.MAX_Y);
 		InputBox ib = new InputBox(new Frame(""), sDefault, "Board size",
 				"Input the new board size (" + sMax + "):");
@@ -910,6 +910,7 @@ class MJCellUI extends Frame {
 			Point iSize = mjb.UnivSize;
 			String sRetVal = ib.txtFld.getText(); // "999x999"
 			try {
+				//noinspection UseOfStringTokenizer
 				StringTokenizer st = new StringTokenizer(sRetVal, " .,;x-",
 						false);
 				if (st.hasMoreTokens()) {
@@ -933,10 +934,10 @@ class MJCellUI extends Frame {
 		itmCloMtdStd.setState(mjb.ColoringMethod == 1); // standard coloring
 		itmCloMtdAlt.setState(mjb.ColoringMethod == 2); // alternate coloring
 		itmCloStatesCnt.setLabel("Count of states... ("
-				+ String.valueOf(mjb.StatesCount) + ")");
+				+ String.valueOf(mjb.StatesCount) + ')');
 		itmCloCrrState.setLabel("Active state... ("
-				+ String.valueOf(mjb.CrrState) + ")");
-		lblStates.setText("States: " + Integer.toString(mjb.CrrState) + "/"
+				+ String.valueOf(mjb.CrrState) + ')');
+		lblStates.setText("States: " + Integer.toString(mjb.CrrState) + '/'
 				+ Integer.toString(mjb.StatesCount));
 
 		boolean fSttCntEna = false;
@@ -1023,11 +1024,11 @@ class MJCellUI extends Frame {
 		mjb.SetStatesCount(mjb.StatesCount); // force activation
 		mjb.RedrawBoard(true); // redraw everything
 
-		itmCPlMjcStd.setState(sPalNam.equalsIgnoreCase("MJCell Standard"));
-		itmCPl8Color.setState(sPalNam.equalsIgnoreCase("8 colors"));
-		itmCPlRedWht.setState(sPalNam.equalsIgnoreCase("Red & blue"));
-		itmCPlBlu.setState(sPalNam.equalsIgnoreCase("Dolphin"));
-		itmCPlTst.setState(sPalNam.equalsIgnoreCase("Milky way"));
+		itmCPlMjcStd.setState("MJCell Standard".equalsIgnoreCase(sPalNam));
+		itmCPl8Color.setState("8 colors".equalsIgnoreCase(sPalNam));
+		itmCPlRedWht.setState("Red & blue".equalsIgnoreCase(sPalNam));
+		itmCPlBlu.setState("Dolphin".equalsIgnoreCase(sPalNam));
+		itmCPlTst.setState("Milky way".equalsIgnoreCase(sPalNam));
 	}
 
 	// ----------------------------------------------------------------
@@ -1085,20 +1086,20 @@ class MJCellUI extends Frame {
 		btnPnl.setBackground(Color.lightGray);
 		btnPnl.add(btnOk);
 		ta.setEditable(false);
-		ta.append("Rule family: " + mjr.GetGameName(mjb.CrrGame) + "\n");
-		ta.append("Rule name: " + mjb.RuleName + "\n");
-		ta.append("Rule definition: " + mjb.RuleDef + "\n");
-		ta.append("Count of states: " + String.valueOf(mjb.StatesCount) + "\n");
-		ta.append("Color palette: " + mjb.mjPal.PalName + "\n");
+		ta.append("Rule family: " + mjr.GetGameName(mjb.CrrGame) + '\n');
+		ta.append("Rule name: " + mjb.RuleName + '\n');
+		ta.append("Rule definition: " + mjb.RuleDef + '\n');
+		ta.append("Count of states: " + String.valueOf(mjb.StatesCount) + '\n');
+		ta.append("Color palette: " + mjb.mjPal.PalName + '\n');
 		ta.append("\n");
-		ta.append("Board: " + String.valueOf(mjb.UnivSize.x) + "x"
-				+ String.valueOf(mjb.UnivSize.y) + "\n");
-		ta.append("Cell size: " + String.valueOf(mjb.CellSize) + "\n");
-		ta.append("1D current line: " + String.valueOf(mjb.i1DLastRow) + "\n");
+		ta.append("Board: " + String.valueOf(mjb.UnivSize.x) + 'x'
+				+ String.valueOf(mjb.UnivSize.y) + '\n');
+		ta.append("Cell size: " + String.valueOf(mjb.CellSize) + '\n');
+		ta.append("1D current line: " + String.valueOf(mjb.i1DLastRow) + '\n');
 		ta.append("\n");
-		ta.append("Speed: " + Integer.toString(mjb.AnimDelay) + "\n");
-		ta.append("Cycle: " + Integer.toString(mjb.Cycle) + "\n");
-		ta.append("Population: " + Integer.toString(mjb.Population) + "\n");
+		ta.append("Speed: " + Integer.toString(mjb.AnimDelay) + '\n');
+		ta.append("Cycle: " + Integer.toString(mjb.Cycle) + '\n');
+		ta.append("Population: " + Integer.toString(mjb.Population) + '\n');
 
 		double dTmp = 100.0 * mjb.Population
 				/ (mjb.UnivSize.x * mjb.UnivSize.y);
@@ -1107,7 +1108,7 @@ class MJCellUI extends Frame {
 		ta.append("\nDistribution:\n");
 		for (int i = 0; i < mjb.StatesCount; i++) {
 			ta.append("State " + Integer.toString(i) + ": "
-					+ Integer.toString(mjb.Populations[i]) + "\n");
+					+ Integer.toString(mjb.Populations[i]) + '\n');
 		}
 
 		msgDlg.add(ta, BorderLayout.CENTER);
@@ -1154,7 +1155,7 @@ class MJCellUI extends Frame {
 
 		if (!vDescr.isEmpty())
 			for (int i = 0; i < vDescr.size(); i++)
-				ta.append(vDescr.get(i) + "\n");
+				ta.append(vDescr.get(i) + '\n');
 		else
 			ta.append("\n No description");
 
@@ -1215,9 +1216,9 @@ class MJCellUI extends Frame {
 	public void UpdateUI() {
 		lblCycle.setText("Cycle: " + Integer.toString(mjb.Cycle));
 		lblPopul.setText("Population: " + Integer.toString(mjb.Population)
-				+ " ");
-		lblBoard.setText("Board: " + Integer.toString(mjb.UnivSize.x) + "x"
-				+ Integer.toString(mjb.UnivSize.y) + "/"
+				+ ' ');
+		lblBoard.setText("Board: " + Integer.toString(mjb.UnivSize.x) + 'x'
+				+ Integer.toString(mjb.UnivSize.y) + '/'
 				+ Integer.toString(mjb.CellSize));
 	}
 

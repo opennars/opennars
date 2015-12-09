@@ -21,7 +21,7 @@ public class PeriodicForgettingTest {
 
         for (int t = 0; t < maxTime; t++) {
             b.forget(t, forgetCycles, 0);
-            System.out.println(t + "," + b.getPriority() + "," + b.getDurability() + "," + b.getQuality());
+            System.out.println(t + "," + b.getPriority() + ',' + b.getDurability() + ',' + b.getQuality());
         }
 
     }

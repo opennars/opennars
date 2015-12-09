@@ -64,6 +64,7 @@ public class RuleGenBin {
 	public void InitFromString(String sStr) {
 		int i, iTmp;
 		String sTok;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 
 		ResetToDefaults();
@@ -71,17 +72,17 @@ public class RuleGenBin {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
-			if (sTok.startsWith("S")) // survivals
+			if (sTok.length() > 0 && sTok.charAt(0) == 'S') // survivals
 			{
 				sTok = ExpandIt(sTok.substring(1));
 				for (i = 0; (i < sTok.length()) && (i < 256); i++)
 					rulesS[i] = (sTok.charAt(i) == '1');
-			} else if (sTok.startsWith("B")) // births
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // births
 			{
 				sTok = ExpandIt(sTok.substring(1));
 				for (i = 0; (i < sTok.length()) && (i < 256); i++)
 					rulesB[i] = (sTok.charAt(i) == '1');
-			} else if (sTok.startsWith("C")) {
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'C') {
 				i = Integer.valueOf(sTok.substring(1));
 				if (i >= 3) {
 					isHist = true; // history, get the states count
@@ -170,7 +171,7 @@ public class RuleGenBin {
 			ih = iClo;
 		else
 			ih = 0;
-		sBff = "C" + String.valueOf(ih);
+		sBff = 'C' + String.valueOf(ih);
 
 		// neighbourhood
 		if (iNgh == MJRules.NGHTYP_NEUM) // von Neumann neighbourhood
@@ -187,9 +188,9 @@ public class RuleGenBin {
 		sTmp = "";
 		for (i = 0; i < maxIdx; i++) {
 			if (rulesS[i])
-				sTmp = sTmp + "1";
+				sTmp = sTmp + '1';
 			else
-				sTmp = sTmp + "0";
+				sTmp = sTmp + '0';
 		}
 		sBff = sBff + ",S" + CompactIt(sTmp);
 
@@ -197,9 +198,9 @@ public class RuleGenBin {
 		sTmp = "";
 		for (i = 0; i < maxIdx; i++) {
 			if (rulesB[i])
-				sTmp = sTmp + "1";
+				sTmp = sTmp + '1';
 			else
-				sTmp = sTmp + "0";
+				sTmp = sTmp + '0';
 		}
 		sBff = sBff + ",B" + CompactIt(sTmp);
 

@@ -35,7 +35,7 @@ public class TestAggregator extends RunListener {
 
     public void testStarted(Description d) throws Exception {
 
-        String si = "<" + getDescriptionTerm(d) + " --> " + testName + ">.";
+        String si = '<' + getDescriptionTerm(d) + " --> " + testName + ">.";
         nar.input(si);
     }
 
@@ -54,14 +54,14 @@ public class TestAggregator extends RunListener {
         String[] meth = d.getMethodName().split("[\\[\\]]");
         String m = String.join(",", meth);
 
-        return "{" + d.getTestClass().getSimpleName() /*.replace(".",",")*/
-                + "," + m + "}";
+        return '{' + d.getTestClass().getSimpleName() /*.replace(".",",")*/
+                + ',' + m + '}';
     }
 
     protected void describe(Description d, boolean success) {
 
 
-        String si = "<" + getDescriptionTerm(d) + " --> [" +
+        String si = '<' + getDescriptionTerm(d) + " --> [" +
                 (success ? "ok" : "fail") + "]>.";
 
         nar.input(si);

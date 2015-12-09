@@ -140,7 +140,7 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
             if (i < s - 1)
                 sb.append(", ");
         }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
 
     }

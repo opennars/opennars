@@ -178,11 +178,11 @@ public class Util {
         int strLen = line.length();
         StringBuilder sb = new StringBuilder(strLen);
         // Remove beginning and ending * globs because they're useless
-        if (line.startsWith("*")) {
+        if (line.length() > 0 && line.charAt(0) == '*') {
             line = line.substring(1);
             strLen--;
         }
-        if (line.endsWith("*")) {
+        if (line.length() > 0 && line.charAt(line.length() - 1) == '*') {
             line = line.substring(0, strLen - 1);
             strLen--;
         }

@@ -59,7 +59,7 @@ public final class SgAssert {
                 String line;
                 while ((line = lnr.readLine()) != null) {
                     sb.append(line);
-                    sb.append("\n");
+                    sb.append('\n');
                 }
                 return sb.toString();
             }

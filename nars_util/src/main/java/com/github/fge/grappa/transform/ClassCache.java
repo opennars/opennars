@@ -87,7 +87,7 @@ public final class ClassCache
             throws ClassNotFoundException
         {
             // Array...
-            if (key.startsWith("[")) {
+            if (key.length() > 0 && key.charAt(0) == '[') {
                 final String elementName = key.substring(1);
                 final Type type = Type.getType(elementName);
                 final Class<?> c = AsmUtils.getClassForType(type);

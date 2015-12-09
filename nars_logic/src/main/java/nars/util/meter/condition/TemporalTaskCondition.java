@@ -24,10 +24,10 @@ public class TemporalTaskCondition extends EternalTaskCondition {
     }
     @Override
     public String toConditionString() {
-        return  "  freq in(" + freqMin + "," + freqMax +
-                "), conf in(" + confMin + "," + confMax +
-                "), occurrs in(" + occStart + "," + occEnd +
-                "), creation in(" + creationStart + "," + creationEnd + ")";
+        return  "  freq in(" + freqMin + ',' + freqMax +
+                "), conf in(" + confMin + ',' + confMax +
+                "), occurrs in(" + occStart + ',' + occEnd +
+                "), creation in(" + creationStart + ',' + creationEnd + ')';
     }
     @Override
     protected boolean occurrenceTimeMatches(Task task) {

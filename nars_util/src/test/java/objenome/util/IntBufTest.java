@@ -53,7 +53,7 @@ public class IntBufTest {
         int ints = IntBuf.encode(s, i);
 
 
-        System.out.println("'" + s + "' : ints=" + Arrays.toString(Arrays.copyOf(i, ints)) + ", bytes=" + Arrays.toString(IntBuf.toBytes(i, ints)));
+        System.out.println('\'' + s + "' : ints=" + Arrays.toString(Arrays.copyOf(i, ints)) + ", bytes=" + Arrays.toString(IntBuf.toBytes(i, ints)));
 
         String e = IntBuf.asString(i, ints);
         assertEquals(s, e);

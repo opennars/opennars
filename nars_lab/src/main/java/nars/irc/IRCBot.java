@@ -161,7 +161,7 @@ public abstract class IRCBot {
             if (line.charAt(0) == '@') {
                 String[] rawTags;
 
-                nextspace = line.indexOf(" ");
+                nextspace = line.indexOf(' ');
                 System.out.println(nextspace);
                 if (nextspace == -1) {
                     return null;
@@ -187,7 +187,7 @@ public abstract class IRCBot {
             }
 
             if (line.charAt(position) == ':') {
-                nextspace = line.indexOf(" ", position);
+                nextspace = line.indexOf(' ', position);
                 if (nextspace == -1) {
                     return null;
                 }
@@ -202,7 +202,7 @@ public abstract class IRCBot {
                     message.nick = message.prefix.substring(0, message.prefix.indexOf('!'));
             }
 
-            nextspace = line.indexOf(" ", position);
+            nextspace = line.indexOf(' ', position);
 
             if (nextspace == -1) {
                 if (line.length() > position) {
@@ -220,7 +220,7 @@ public abstract class IRCBot {
             }
 
             while (position < line.length()) {
-                nextspace = line.indexOf(" ", position);
+                nextspace = line.indexOf(' ', position);
 
                 if (line.charAt(position) == ':') {
                     String param = line.substring(position + 1);

@@ -217,8 +217,8 @@ public class OperatorTest {
                 int b = i(s.getXY(B).toString());
 
                 return Lists.newArrayList(
-                        $.$("add(" + a + "," + b + "," +
-                            Integer.toString(a+b) + ")", '.')
+                        $.$("add(" + a + ',' + b + ',' +
+                            Integer.toString(a+b) + ')', '.')
                             .eternal()
                             .truth(1.0f, 0.99f)
                             .parent(question)

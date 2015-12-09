@@ -29,6 +29,7 @@ public class RuleGene {
 	// Parse the rule string
 	// Example: '345/2/4'
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i, iNum = 1;
@@ -94,13 +95,13 @@ public class RuleGene {
 			// S
 			if (RulesS[i])
 				sBff = sBff + String.valueOf(i);
-		sBff = sBff + "/";
+		sBff = sBff + '/';
 
 		for (i = 0; i <= 8; i++)
 			// B
 			if (RulesB[i])
 				sBff = sBff + String.valueOf(i);
-		sBff = sBff + "/";
+		sBff = sBff + '/';
 
 		sBff = sBff + String.valueOf(iClo);
 		return sBff;

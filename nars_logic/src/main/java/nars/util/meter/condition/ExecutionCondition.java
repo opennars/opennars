@@ -52,10 +52,10 @@ public class ExecutionCondition implements NARCondition {
 
     @Override
     public String toConditionString() {
-        return getClass().getSimpleName() + "[" + opTerm + ", time in " +
+        return getClass().getSimpleName() + '[' + opTerm + ", time in " +
                 start + ".." + end + ", expect in " + minExpect + ".." + maxExpect +
                 //minExpect, maxExpect
-                "]";
+                ']';
     }
 
     @Override

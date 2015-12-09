@@ -29,7 +29,7 @@ public class HitMeter extends FunctionMeter<Long> implements Serializable {
 
     @Override
     public String toString() {
-        return signalID(0) + "=" + hits.getValue();
+        return signalID(0) + '=' + hits.getValue();
     }
 
     public HitMeter(String id) {

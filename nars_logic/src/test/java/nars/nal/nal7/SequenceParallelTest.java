@@ -114,7 +114,7 @@ public class SequenceParallelTest {
         assertEquals(DURATION, e.duration());
 
 
-        String ts = "(&|, a, " + fs + ")";
+        String ts = "(&|, a, " + fs + ')';
         Parallel s = t.term(ts);
 
         assertEquals(ts, s.toString());

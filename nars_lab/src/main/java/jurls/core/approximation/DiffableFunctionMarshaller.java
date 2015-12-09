@@ -101,7 +101,7 @@ public class DiffableFunctionMarshaller implements ParameterizedFunction {
                     new ClassLoaderIClassLoader(cl));
 
             ClassFile[] classFiles = unitCompiler.compileUnit(debug, debug, debug);
-            Class<?> clazz = cl.defineClass(classPackage + "." + className,
+            Class<?> clazz = cl.defineClass(classPackage + '.' + className,
                     classFiles[0].toByteArray());
 
             return (DiffableFunction) clazz.newInstance();

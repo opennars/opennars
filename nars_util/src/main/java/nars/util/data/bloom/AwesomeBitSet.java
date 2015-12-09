@@ -62,7 +62,7 @@ public class AwesomeBitSet {
      */
     void putAll(AwesomeBitSet array) {
         assert data.length == array.data.length :
-                "BitArrays must be of equal length (" + data.length + "!= " + array.data.length + ")";
+                "BitArrays must be of equal length (" + data.length + "!= " + array.data.length + ')';
         for (int i = 0; i < data.length; i++) {
             data[i] |= array.data[i];
         }

@@ -25,6 +25,7 @@ public class RuleVote {
 	// Parse the rule string
 	// Example: '46789'
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i, iNum = 1;

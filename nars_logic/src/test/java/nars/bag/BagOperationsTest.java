@@ -43,7 +43,7 @@ public class BagOperationsTest {
 
         @Override
         public String toString() {
-            return getBudgetString() + " " +  id;
+            return getBudgetString() + ' ' +  id;
         }
     }
 

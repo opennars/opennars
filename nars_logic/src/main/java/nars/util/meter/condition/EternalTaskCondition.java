@@ -411,17 +411,17 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
     @Override
     public String toConditionString() {
-        return  "  freq in(" + freqMin + "," + freqMax +
-                "), conf in(" + confMin + "," + confMax +
-                "), creation in(" + creationStart + "," + creationEnd + ")";
+        return  "  freq in(" + freqMin + ',' + freqMax +
+                "), conf in(" + confMin + ',' + confMax +
+                "), creation in(" + creationStart + ',' + creationEnd + ')';
     }
 
     @Override
     public void toString(PrintStream out) {
-        out.println(isTrue() ? " OK" : "ERR" + "\t" + toString() + " " + toConditionString());
+        out.println(isTrue() ? " OK" : "ERR" + '\t' + toString() + ' ' + toConditionString());
 
         BiConsumer<String,Task> printer = (label,s) -> {
-            out.print("\t" + label + " ");
+            out.print('\t' + label + ' ');
             out.println(s.getExplanation().replace("\n", "\n\t\t"));
         };
 

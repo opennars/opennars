@@ -32,6 +32,7 @@ public class RuleCyclic {
 	// ----------------------------------------------------------------
 	// Parse the rule string
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		ResetToDefaults();
@@ -39,11 +40,11 @@ public class RuleCyclic {
 		st = new StringTokenizer(sStr, ",/", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			if (sTok.startsWith("R"))
+			if (sTok.length() > 0 && sTok.charAt(0) == 'R')
 				iRng = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("T"))
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'T')
 				iThr = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("C"))
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'C')
 				iClo = Integer.valueOf(sTok.substring(1));
 			else if (sTok.startsWith("NM"))
 				iNgh = MJRules.NGHTYP_MOOR;
@@ -78,7 +79,7 @@ public class RuleCyclic {
 		Validate();
 
 		// make the string
-		sBff = "R" + String.valueOf(iRng) + "/T" + String.valueOf(iThr) + "/C"
+		sBff = 'R' + String.valueOf(iRng) + "/T" + String.valueOf(iThr) + "/C"
 				+ String.valueOf(iClo);
 
 		if (iNgh == MJRules.NGHTYP_NEUM) // von Neumann neighbourhood

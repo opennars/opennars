@@ -85,7 +85,7 @@ public abstract class AbstractNALTester {
         final int finalLevel = level;
 
         if (multi) {
-            l.add(supply("Default2[NAL<=" + level + "]",
+            l.add(supply("Default2[NAL<=" + level + ']',
                     () -> {
                         Default d = new Default(256, 1, 2, 2);
                         d.nal(finalLevel);
@@ -96,7 +96,7 @@ public abstract class AbstractNALTester {
         }
 
         if (single) {
-            l.add( supply("SingleStep[NAL<=" + level + "]",
+            l.add( supply("SingleStep[NAL<=" + level + ']',
                     () -> new SingleStepNAR().nal(finalLevel) ) );
         }
 

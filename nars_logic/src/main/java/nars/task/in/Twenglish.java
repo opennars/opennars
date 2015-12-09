@@ -115,7 +115,7 @@ public class Twenglish {
         if (t.isEmpty()) return Collections.emptyList();
 
         Atom sentenceType = FRAGMENT;
-        if ((last!=null) && (last.pattern.equals("punct"))) {
+        if ((last!=null) && ("punct".equals(last.pattern))) {
             switch (last.content) {
                 case ".": sentenceType = JUDGMENT; break;
                 case "?": sentenceType = QUESTION; break;
@@ -123,7 +123,7 @@ public class Twenglish {
                 case "!": sentenceType = GOAL; break;
             }
         }
-        if (!sentenceType.equals("fragment"))
+        if (!"fragment".equals(sentenceType))
             t.removeLast(); //remove the punctuation, it will be redundant
 
         List<Task> tt = new ArrayList();
@@ -175,7 +175,7 @@ public class Twenglish {
     }
 
     public static Term spanToTerm(Span c, boolean includeWordPOS) {
-        if (c.pattern.equals("word")) {
+        if ("word".equals(c.pattern)) {
             //TODO support >1 and probabalistic POS
             if (!includeWordPOS) {
                 return lexToTerm(c.content);
@@ -197,7 +197,7 @@ public class Twenglish {
     }
     public static Term tagToTerm(String c) {
         c = c.toLowerCase();
-        if (c.equals("word")) return Atom.quote(" "); //space surrounded by quotes
+        if ("word".equals(c)) return Atom.quote(" "); //space surrounded by quotes
         return Atom.the(c, true);
     }
     
@@ -217,7 +217,7 @@ public class Twenglish {
             
             currentSentence.add(p);
             
-            if (p.pattern.equals("punct")) {
+            if ("punct".equals(p.pattern)) {
                 switch (p.content) {
                     case ".":
                     case "?":

@@ -360,7 +360,7 @@ public abstract class NQuadsRDF {
         if (prefix == null || prefix.isEmpty()) {
             return suffix;
         } else {
-            return prefix + ":" + suffix;
+            return prefix + ':' + suffix;
         }
     }
 

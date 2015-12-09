@@ -356,7 +356,7 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
         }
 
         //if (cycle % 64 == 0)
-            System.err.println( "\n" + pop.size() + " " + pop.size() + " organisms\n");
+            System.err.println( "\n" + pop.size() + ' ' + pop.size() + " organisms\n");
 
         System.err.println(ds.getMin() + ".." + ds.getMean() + ".." + ds.getMax());
 

@@ -146,7 +146,7 @@ public class NARio extends Run implements RLEnvironment {
 
     public static String direction(int i, int j) {
 
-        return "(*," + n(i) + "," + n(j) + ")";
+        return "(*," + n(i) + ',' + n(j) + ')';
 
     }
 
@@ -317,7 +317,7 @@ public class NARio extends Run implements RLEnvironment {
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(i * i + j * j)));
 
                     if (t % radarPeriod == 0) {
-                        String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
+                        String s2 = "$" + sightPriority + '$' + '<' + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
                         //System.out.println(blocked + " " + s2);
                         input(s2);
                     } else {
@@ -368,7 +368,7 @@ public class NARio extends Run implements RLEnvironment {
 
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
 
-                    String sees = "$" + sightPriority + "$" +
+                    String sees = "$" + sightPriority + '$' +
                             " <" + direction(dx, dy) + " --> [" + type + "]>. :|:";
                     //System.out.println(sees);
                     input(sees);

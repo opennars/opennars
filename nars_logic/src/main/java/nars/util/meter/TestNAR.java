@@ -415,8 +415,8 @@ public class TestNAR  {
             if (error!=null) {
                 out.println(error);
             }
-            out.print("@" + time + " ");
-            out.print(Arrays.toString(eventMeters) + "\n");
+            out.print("@" + time + ' ');
+            out.print(Arrays.toString(eventMeters) + '\n');
 
             for (Task t : inputs) {
                 out.println("IN " + t);

@@ -19,7 +19,7 @@ public class CGMethodCall extends CGMethod {
         this.className = method.className;
         this.methodName = method.methodName;
         this.argumentTypes = method.argumentTypes;
-        this.key = method.key() + "|" + at.toString();
+        this.key = method.key() + '|' + at.toString();
     }
 
     @Override

@@ -29,6 +29,7 @@ public class Rule1DBin {
 	// Parse the rule string
 	// Example: "R2,W23AC2"
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int iTmp;
@@ -38,10 +39,10 @@ public class Rule1DBin {
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
 			//System.out.println(sTok);
-			if (sTok.startsWith("R")) // range
+			if (sTok.length() > 0 && sTok.charAt(0) == 'R') // range
 			{
 				iRng = Integer.valueOf(sTok.substring(1));
-			} else if (sTok.startsWith("W")) // Wolfram's code
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'W') // Wolfram's code
 			{
 				sHex = sTok.substring(1);
 			}
@@ -68,7 +69,7 @@ public class Rule1DBin {
 		// correct parameters first
 		Validate();
 		// range
-		sBff = "R" + String.valueOf(iRng);
+		sBff = 'R' + String.valueOf(iRng);
 
 		// rule
 		sBff = sBff + ",R" + sHex;

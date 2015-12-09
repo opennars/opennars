@@ -36,6 +36,7 @@ public class RuleRTab {
 	// Parse the rule string
 	public void InitFromString(String sStr) {
 		int i_Stt, i_Ngh, iNum, iTmp;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		ResetToDefaults();
@@ -113,7 +114,7 @@ public class RuleRTab {
 					iTmp = 0;
 				if (iTmp > MJBoard.MAX_CLO)
 					iTmp = MJBoard.MAX_CLO;
-				sBff = sBff + "," + String.valueOf(iTmp);
+				sBff = sBff + ',' + String.valueOf(iTmp);
 			}
 		}
 

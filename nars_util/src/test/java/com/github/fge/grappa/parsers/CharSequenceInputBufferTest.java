@@ -59,9 +59,9 @@ public final class CharSequenceInputBufferTest
         final InputBuffer buf = new CharSequenceInputBuffer("" +
             "abcd\n" +
             "ef\r\n" +
-            "\n" +
+                '\n' +
             "gh\n" +
-            "\n"
+                '\n'
         );
         assertEquals(buf.charAt(0), 'a');
         assertEquals(buf.charAt(7), '\r');

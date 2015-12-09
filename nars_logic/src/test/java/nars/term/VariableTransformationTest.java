@@ -55,7 +55,7 @@ public class VariableTransformationTest {
         String t = "<<($1, $2) --> bigger> ==> <($2, $1) --> smaller>>";
 
         Term term = n.term(t);
-        Task task = n.task(t + ".");
+        Task task = n.task(t + '.');
         //n.input("<<($1, $2) --> bigger> ==> <($2, $1) --> smaller>>.");
 
         System.out.println(t);
@@ -63,7 +63,7 @@ public class VariableTransformationTest {
         System.out.println(task);
 
 
-        Task t2 = n.inputTask(t + ".");
+        Task t2 = n.inputTask(t + '.');
         System.out.println(t2);
 
         //TextOutput.out(n);

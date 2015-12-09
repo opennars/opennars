@@ -401,7 +401,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
                 throw new RuntimeException("required removal but nothing removed");
             else {
                 if (oldItem.name().equals(i.name())) {
-                    throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
+                    throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ')');
                 }
             }
 

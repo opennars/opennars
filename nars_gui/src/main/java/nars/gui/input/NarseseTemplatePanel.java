@@ -84,9 +84,9 @@ public class NarseseTemplatePanel {
             
             List<TemplateElement> l = new LinkedList();
             for (String a : pieces) {
-                if (a.equals("~t"))
+                if ("~t".equals(a))
                     l.add(new Truth());
-                else if (a.equals("~b"))
+                else if ("~b".equals(a))
                     l.add(new Budget());
                 else if (a.startsWith("~#"))
                     l.add(new Concept(a.substring(2)));
@@ -109,9 +109,9 @@ public class NarseseTemplatePanel {
         private String getSummaryString(String form) {
             StringBuilder s = new StringBuilder();
             for (TemplateElement e : forms.get(form)) {
-                if (!form.equals("narsese") && (!(e instanceof Text) || (e instanceof Concept)))
+                if (!"narsese".equals(form) && (!(e instanceof Text) || (e instanceof Concept)))
                     continue;
-                s.append(e.toString()).append(" ");    
+                s.append(e.toString()).append(' ');
             }
             return s.toString();
         }

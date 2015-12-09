@@ -26,7 +26,7 @@ public class Effect {
 
     @Override
     public String toString() {
-        String a = action.getClass().getSimpleName() + " " + (success ? "SUCCESS" : "FAIL") + " @" + when;
+        String a = action.getClass().getSimpleName() + ' ' + (success ? "SUCCESS" : "FAIL") + " @" + when;
         if (description!=null)
             a += ": " + description;
         return a;

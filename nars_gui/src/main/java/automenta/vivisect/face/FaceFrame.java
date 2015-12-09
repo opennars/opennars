@@ -24,12 +24,14 @@ public class FaceFrame extends Object {
     }
 
     public FaceFrame(String s) {
-	StringTokenizer outside = new StringTokenizer(s, "|\n");
+		//noinspection UseOfStringTokenizer
+		StringTokenizer outside = new StringTokenizer(s, "|\n");
 	String w = outside.nextToken();
 	when = Double.parseDouble(w);
 
 	String val = outside.nextToken();
-	StringTokenizer inside = new StringTokenizer(val, ",");
+		//noinspection UseOfStringTokenizer
+		StringTokenizer inside = new StringTokenizer(val, ",");
 	targets = new double[2][inside.countTokens()];
 	int i = 0;
 	String v;

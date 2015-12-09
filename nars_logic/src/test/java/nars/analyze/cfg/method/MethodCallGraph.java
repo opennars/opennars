@@ -119,13 +119,13 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
             addEdge(methodCall, targetMethod, ii.toString());
 
             addVertex(callingMethod);
-            addEdge(callingMethod, methodCall, callingMethod.key() + "@" + ii);
+            addEdge(callingMethod, methodCall, callingMethod.key() + '@' + ii);
         }
         else {
             addVertex(callingMethod);
             if (!callingMethod.equals(targetMethod)) {
                 addVertex(targetMethod);
-                addEdge(callingMethod, targetMethod, methodCall.key() + "@" + ii);
+                addEdge(callingMethod, targetMethod, methodCall.key() + '@' + ii);
             }
         }
     }

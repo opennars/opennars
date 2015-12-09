@@ -301,7 +301,7 @@ public class Grammar {
                         // Should be end of ::= token.
                         buffer.append(ch);
 
-                        if (!buffer.toString().equals("::=")) {
+                        if (!"::=".equals(buffer.toString())) {
                             throw new MalformedGrammarException("Expected '::=' " + "but found: " + buffer);
                         }
                         // Clear the buffer.

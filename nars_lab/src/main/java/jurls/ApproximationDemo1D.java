@@ -46,7 +46,7 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
             functionRenderer1.repaint();
 
             jTextArea1.setText(
-                    "Iterations : " + numIterations + "\n"
+                    "Iterations : " + numIterations + '\n'
                     + "No. parameters : "
                     + renderParameterizedFunction.getParameterizedFunction().numberOfParameters()
             );

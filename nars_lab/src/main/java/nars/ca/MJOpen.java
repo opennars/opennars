@@ -74,7 +74,7 @@ public class MJOpen {
 					sBff = (String) vLines.elementAt(i);
 					if ((sBff.isEmpty()) || (sBff.startsWith("#C"))
 							|| (sBff.startsWith("#D"))
-							|| (sBff.startsWith("!"))) {
+							|| (sBff.length() > 0 && sBff.charAt(0) == '!')) {
 						i++; // comment found, go on searching
 					} else {
 						sFirstLine = sBff;
@@ -97,7 +97,7 @@ public class MJOpen {
 					fOk = ReadLife106(vLines);
 				else if (sFirstLine.startsWith("#Life 1.05b"))
 					fOk = ReadLife106(vLines);
-				else if (sFirstLine.startsWith("x"))
+				else if (sFirstLine.length() > 0 && sFirstLine.charAt(0) == 'x')
 					fOk = ReadRLE(vLines);
 
 				if (!fOk)
@@ -271,6 +271,7 @@ public class MJOpen {
 					|| (bff.charAt(0) == '/')) {
 				if (bff.startsWith("#P")) // the block position
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #P
 					iRow105 = 0;
@@ -283,12 +284,14 @@ public class MJOpen {
 					m_sRules = "23/3"; // standard Conway's rules
 				} else if (bff.startsWith("#R")) // specific rules
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #R
 					if (st.hasMoreTokens())
 						m_sRules = st.nextToken();
 				} else if (bff.startsWith("#S")) // speed
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #S
 					if (st.hasMoreTokens())
@@ -300,7 +303,7 @@ public class MJOpen {
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
-				} else if (bff.startsWith("!")) // description
+				} else if (bff.length() > 0 && bff.charAt(0) == '!') // description
 				{
 					sTok = bff.substring(1);
 					if (!sTok.isEmpty()) // remove one leading blank
@@ -418,6 +421,7 @@ public class MJOpen {
 			} else if (bff.startsWith("#BOARD")) // board size,  "999x999"
 			{
 				sTok = bff.substring(6).trim();
+				//noinspection UseOfStringTokenizer
 				StringTokenizer st = new StringTokenizer(sTok, "x", false);
 				if (st.hasMoreTokens()) {
 					String sTmp = st.nextToken();
@@ -557,14 +561,16 @@ public class MJOpen {
 				m_vDescr.add(bff); // add the comment line
 			} else {
 				if (!bff.isEmpty()) {
-					if ((!fXYFound) && bff.startsWith("x")) // the first line
+					if ((!fXYFound) && bff.length() > 0 && bff.charAt(0) == 'x') // the first line
 					{
 						fXYFound = true;
 						fOk = true; // any line processed
 
+						//noinspection UseOfStringTokenizer
 						StringTokenizer stcomma = new StringTokenizer(bff, ",");
 						while (stcomma.hasMoreTokens()) {
 							String t = stcomma.nextToken();
+							//noinspection UseOfStringTokenizer
 							StringTokenizer stequal = new StringTokenizer(t,
 									"= ");
 							String tokenType = stequal.nextToken();
@@ -707,12 +713,14 @@ public class MJOpen {
 					m_sRules = "23/3"; // standard Conway's rules
 				} else if (bff.startsWith("#R")) // specific rules
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #R
 					if (st.hasMoreTokens())
 						m_sRules = st.nextToken();
 				} else if (bff.startsWith("#S")) // speed
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #S
 					if (st.hasMoreTokens())
@@ -724,7 +732,7 @@ public class MJOpen {
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
-				} else if (bff.startsWith("!")) {
+				} else if (bff.length() > 0 && bff.charAt(0) == '!') {
 					// description
 					sTok = bff.substring(1);
 					if (!sTok.isEmpty()) // remove one leading blank
@@ -734,6 +742,7 @@ public class MJOpen {
 				}
 			} else // a cell
 			{
+				//noinspection UseOfStringTokenizer
 				StringTokenizer st = new StringTokenizer(bff);
 				if (st.hasMoreTokens()) {
 					iCol = Integer.parseInt(st.nextToken());

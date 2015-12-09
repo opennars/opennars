@@ -169,7 +169,7 @@ public class DerivationRuleTest extends TestCase {
     @Test public void testVarArg0() {
         //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
         String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
-        Compound x = p.term("<" + rule + ">");
+        Compound x = p.term('<' + rule + '>');
         //System.out.println(x);
         x = ((TaskRule)x).normalizeRule();
         //System.out.println(x);
@@ -313,7 +313,7 @@ public class DerivationRuleTest extends TestCase {
 
         @Override
         public Compound getResult() {
-            return $("<" + prefix + getEllipsis() + ", .." + suffix + " --> %1>");
+            return $('<' + prefix + getEllipsis() + ", .." + suffix + " --> %1>");
         }
 
     }
@@ -329,7 +329,7 @@ public class DerivationRuleTest extends TestCase {
         public Set<Term> test(int arity, int repeats) {
             Set<Term> s = super.test(arity, repeats);
             Term the = s.iterator().next();
-            assertTrue( the.toString().substring(1).startsWith("Z"));
+            assertTrue(the.toString().substring(1).length() > 0 && the.toString().substring(1).charAt(0) == 'Z');
             return s;
         }
 

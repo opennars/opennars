@@ -53,7 +53,7 @@ public class TerminalWatcher implements Runnable {
                     numBacks = Texts.count(s, '\b');
                 }
 
-                if (s.equals("\u001B[C")) {
+                if ("\u001B[C".equals(s)) {
                     moveCursorRight(1);
                 }
 

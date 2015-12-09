@@ -16,7 +16,7 @@ public class RunAgent {
         String romPath = "/home/me/roms";
         String alePath = "/home/me/neuro/ale_0.4.4/ale_0_4";
 
-        String aleCommand = alePath + "/ale -game_controller fifo_named " + romPath + "/" + rom + ".bin";
+        String aleCommand = alePath + "/ale -game_controller fifo_named " + romPath + '/' + rom + ".bin";
         System.out.println(aleCommand);
 
         Process proc = Runtime.getRuntime().exec(aleCommand, new String[] {} , new File(alePath));

@@ -37,10 +37,10 @@ public class TaskRemovalReasons {
 
     public String toString() {
         long removed = freq.getSumFreq();
-        return freq.toString() + "\n" +
+        return freq.toString() + '\n' +
                 removed + " (eventually) removed, " + processed + " processed" +
                 ",\n\n" +
-                "lifespan (of removals)=" + lifespanOfRemovals + "\n" +
+                "lifespan (of removals)=" + lifespanOfRemovals + '\n' +
                 "lifespan (of active)=" + getLifespanOfActive();
     }
 }

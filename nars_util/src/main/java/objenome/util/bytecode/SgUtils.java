@@ -430,6 +430,7 @@ public final class SgUtils {
         }
         final String trimmedModifiers = modifiers.trim();
         int modifier = 0;
+        //noinspection UseOfStringTokenizer
         final StringTokenizer tok = new StringTokenizer(trimmedModifiers, " ");
         while (tok.hasMoreTokens()) {
             final String mod = tok.nextToken();

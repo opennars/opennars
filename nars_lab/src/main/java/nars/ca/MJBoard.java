@@ -898,6 +898,7 @@ class MJBoard extends Panel implements Runnable {
 
 		GameType = MJRules.GAMTYP_2D; // most are 2-dimensional
 
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		char cChar;

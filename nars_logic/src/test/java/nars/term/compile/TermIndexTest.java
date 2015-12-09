@@ -71,7 +71,7 @@ public class TermIndexTest {
         testShared(a, a2);
 
         //create by composition
-        Compound b = n.term("(" + s + ")");
+        Compound b = n.term('(' + s + ')');
         testShared(a, b.term(0));
 
         //create by transformation (substitution)

@@ -41,7 +41,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 
 			add(component);
 
-			if (getUI().getClass().getSimpleName().equals("SubstancePanelUI")) {
+			if ("SubstancePanelUI".equals(getUI().getClass().getSimpleName())) {
 				setLayout(new ResizeLayout());
 			} else {
 				setLayout(new BorderLayout());

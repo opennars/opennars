@@ -72,8 +72,8 @@ public class Reader {
 
     public static int countOpenParens(String input) {
         return tokenize(input).stream()
-                .filter(t -> t.equals("(") || t.equals(")"))
-                .map(t -> t.equals("(") ? 1 : -1)
+                .filter(t -> "(".equals(t) || ")".equals(t))
+                .map(t -> "(".equals(t) ? 1 : -1)
                 .reduce(0, (a, b) -> {
                     if (a + b < 0) {
                         throw new UnmatchedParenthesisExpection("Too many closed parenthesis ')'");
@@ -120,11 +120,11 @@ public class Reader {
     }
 
     private static Expression symbolOrNumber(String token) {
-        if (token.startsWith("\"")) {
+        if (token.length() > 0 && token.charAt(0) == '\"') {
             return StringExpression.string(token.substring(1, token.length() - 1));
-        } else if (token.equals("#t") || token.equals("true")) {
+        } else if ("#t".equals(token) || "true".equals(token)) {
             return BooleanExpression.bool(true);
-        } else if (token.equals("#f") || token.equals("false")) {
+        } else if ("#f".equals(token) || "false".equals(token)) {
             return BooleanExpression.bool(false);
         } else {
             try {

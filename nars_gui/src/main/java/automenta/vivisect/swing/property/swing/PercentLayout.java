@@ -151,7 +151,7 @@ public class PercentLayout implements LayoutManager2 {
       setConstraint(component, PREFERRED_SIZE);
     } else if (constraints instanceof String) {
       String s = (String)constraints;
-      if (s.endsWith("%")) {
+      if (s.length() > 0 && s.charAt(s.length() - 1) == '%') {
         float value = Float.valueOf(s.substring(0, s.length() - 1)) / 100;
         if (value > 1 || value < 0)
           throw new IllegalArgumentException("percent value must be >= 0 and <= 100");

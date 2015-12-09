@@ -120,7 +120,7 @@ public class BagSamplingPriorityTest {
 
                 if (p!=null) {
                     p.println(
-                            Texts.n3(a) + ".." + Texts.n3(b) + "(" + Texts.n3(pctBagItemsInBin) + "):   " +
+                            Texts.n3(a) + ".." + Texts.n3(b) + '(' + Texts.n3(pctBagItemsInBin) + "):   " +
                                     "prob: " + Texts.n3(prob) + "    idealProb: " + Texts.n3(idealProb) + "    err: " + Texts.n3(errorNormalized));
                 }
 

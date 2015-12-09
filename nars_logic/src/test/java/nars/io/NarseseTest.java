@@ -116,7 +116,7 @@ public class NarseseTest {
     @Test
     public void testMultiCompound() throws Narsese.NarseseException {
         String tt = "<<a <=> b> --> <c ==> d>>";
-        Task t = task(tt + "?");
+        Task t = task(tt + '?');
         assertNotNull(t);
         assertEquals(Op.INHERITANCE, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());
@@ -148,7 +148,7 @@ public class NarseseTest {
     @Test
     public void testQuest() throws Narsese.NarseseException {
         String tt = "(a, b, c)";
-        Task t = task(tt + "@");
+        Task t = task(tt + '@');
         assertNotNull(t);
         assertEquals(Op.PRODUCT, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());

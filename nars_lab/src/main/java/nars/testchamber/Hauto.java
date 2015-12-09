@@ -56,13 +56,13 @@ public class Hauto {
                         }
                     }
                     if(!nope) {
-                        TestChamber.space.add(new Pizza(i, j, "{pizza"+entityID.toString()+"}"));
+                        TestChamber.space.add(new Pizza(i, j, "{pizza"+entityID.toString()+ '}'));
                         if(TestChamber.staticInformation)
                         nar.input("<{pizza" + entityID.toString() + "} --> pizza>.");
                         entityID++;
                     }
                 }
-                nar.input("<" + r.name + " --> [on]>. :|:");
+                nar.input('<' + r.name + " --> [on]>. :|:");
             }
             w.light=1.0f;
             
@@ -77,13 +77,13 @@ public class Hauto {
             if(NeighborsValue2("op_or", i, j, readcells, "having_charge", 1.0f) != 0) {
                 w.is_solid=false;
                 if(r.is_solid) {
-                    nar.input("<" + r.name + " --> [opened]>. :|:");
+                    nar.input('<' + r.name + " --> [opened]>. :|:");
                 }
             }
             else {
                 if(!r.is_solid && TestChamber.keyn!=doornumber(r)) {
                     w.is_solid=true;
-                    nar.input("<"+r.name+" --> [opened]>. :|: %0.00;0.90%");
+                    nar.input('<' +r.name+" --> [opened]>. :|: %0.00;0.90%");
                 }
             }
         }
@@ -155,7 +155,7 @@ public class Hauto {
         }
         if(r.machine==Machine.Light || r.machine==Machine.Turret) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
-                nar.input("<"+r.name+" --> [on]>. :|: %0.00;0.90%");
+                nar.input('<' +r.name+" --> [on]>. :|: %0.00;0.90%");
             }
         }
             //w.charge *= w.conductivity;
@@ -169,15 +169,15 @@ public class Hauto {
         if(x == 0 || y ==0 || x == w-1 || y ==h-1)
             return;
         
-        if(!doorname.equals("") && !doorname.contains("{")) {
-            doorname="{"+doorname+"}";
+        if(!"".equals(doorname) && !doorname.contains("{")) {
+            doorname= '{' +doorname+ '}';
         }
         
-        if(oper.equals("perceive")) {
+        if("perceive".equals(oper)) {
              readCells[x][y].name = "place"+entityID.toString();
             writeCells[x][y].name = "place"+entityID.toString();
             if(TestChamber.staticInformation)
-            nar.input("<" + "{place" + entityID.toString() + "} --> place>.");
+            nar.input('<' + "{place" + entityID.toString() + "} --> place>.");
             if(TestChamber.curiousity) {
                 space.nar.input("<goto(" + "place" + entityID.toString() + ") =/> <Self --> [curious]>>.");
             }
@@ -188,10 +188,10 @@ public class Hauto {
         if(!"".equals(oper)) {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
                 if(allow_imitating) {
-                    nar.input(oper + "("+readCells[x][y].name + ")! :|:"); //we will force the action
+                    nar.input(oper + '(' +readCells[x][y].name + ")! :|:"); //we will force the action
                 }
                 else {
-                    nar.input(oper + "(" + readCells[x][y].name + "). :|:");
+                    nar.input(oper + '(' + readCells[x][y].name + "). :|:");
                     TestChamber.operateObj(readCells[x][y].name, oper);
                 }
                 //nar.input("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
@@ -199,12 +199,12 @@ public class Hauto {
                 //.operateObj(readCells[x][y].name, oper);
             }
             String s=TestChamber.getobj(x, y);
-            if(!s.equals("")) {
+            if(!"".equals(s)) {
                 if(allow_imitating) {
-                    nar.input(oper+"(" + s + ")! :|:");
+                    nar.input(oper+ '(' + s + ")! :|:");
                 }
                 else {
-                    nar.input(oper + "(" + s + "). :|:");
+                    nar.input(oper + '(' + s + "). :|:");
                     TestChamber.operateObj(s, oper);
                 }
                 //nar.input(oper+"("  +s+"). :|:");
@@ -216,26 +216,26 @@ public class Hauto {
         
         if(!"".equals(wish)) {
             boolean inverse=false;
-            if(wish.equals("closed") || wish.equals("off")) {
+            if("closed".equals(wish) || "off".equals(wish)) {
                 inverse=true;
             }
             String wishreal=wish.replace("closed", "opened").replace("off", "on");
             if(!"".equals(readCells[x][y].name)) {
                 //nar.input("oper +("+ readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
-                    nar.input("<" + readCells[x][y].name + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
+                    nar.input('<' + readCells[x][y].name + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.input("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|: %0.00;0.90%");
+                    nar.input('<' + readCells[x][y].name+" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
-            if(!s.equals("")) {
+            if(!"".equals(s)) {
                 //nar.input(oper + "(" +s+")!");
                 if(!inverse) {
-                    nar.input("<" + s + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
+                    nar.input('<' + s + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.input("<" + s +" --> ["+wishreal+"]>! :|: %0.00;0.90%");
+                    nar.input('<' + s +" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
@@ -245,7 +245,7 @@ public class Hauto {
         if(!"".equals(doorname) && selected.material==Material.Door) {
             space.add(new Key(x, y, doorname.replace("door", "key")));
             if(TestChamber.staticInformation)
-            nar.input("<" + doorname.replace("door", "key") + " --> key>.");
+            nar.input('<' + doorname.replace("door", "key") + " --> key>.");
             if(TestChamber.curiousity) {
                 space.nar.input("<goto(" + doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
                 space.nar.input("<pick("+ doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
@@ -254,12 +254,12 @@ public class Hauto {
             return;
         }
         if(selected.material==Material.Pizza) {
-            doorname="{pizza"+entityID.toString()+"}";
+            doorname="{pizza"+entityID.toString()+ '}';
         }
         if(!"".equals(doorname) && selected.material==Material.Pizza) {
             space.add(new Pizza(x, y, doorname));
             if(TestChamber.staticInformation)
-            nar.input("<" + doorname + " --> pizza>.");
+            nar.input('<' + doorname + " --> pizza>.");
             if(TestChamber.curiousity) {
                 space.nar.input("<goto(" + doorname + ") =/> <Self --> [curious]>>.");
             }
@@ -297,16 +297,16 @@ public class Hauto {
                 doorname=name;
             }
             
-            name="{"+name+"}";
+            name= '{' +name+ '}';
             //if it has name already, dont allow overwrite
 
-            if(readCells[x][y].name.equals("")) {
+            if("".equals(readCells[x][y].name)) {
                 if(TestChamber.staticInformation)
-                nar.input("<" + name + " --> " + Klass + ">.");
+                nar.input('<' + name + " --> " + Klass + ">.");
                 readCells[x][y].name = name;
                 writeCells[x][y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
-                    nar.input("<"+name+" --> "+"[on]>. :|: %0.00;0.90%");
+                    nar.input('<' +name+" --> "+"[on]>. :|: %0.00;0.90%");
                     if(TestChamber.curiousity) {
                         space.nar.input("<goto(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.input("<activate(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
@@ -314,7 +314,7 @@ public class Hauto {
                     }
                 }
                 if(selected.logic==Logic.SWITCH) {
-                    nar.input("<" + name + " --> " + "[on]>. :|:");
+                    nar.input('<' + name + " --> " + "[on]>. :|:");
                     if(TestChamber.curiousity) {
                         space.nar.input("<goto(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.input("<activate(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
@@ -325,7 +325,7 @@ public class Hauto {
             else
             {
                 if(selected.logic==Logic.OFFSWITCH) { //already has a name so use this one
-                    nar.input("<" + readCells[x][y].name + " --> " + "[off]>. :|:");
+                    nar.input('<' + readCells[x][y].name + " --> " + "[off]>. :|:");
                     if(TestChamber.curiousity) {
                         space.nar.input("<goto(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.input("<activate(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
@@ -333,7 +333,7 @@ public class Hauto {
                     }
                 }
                 if(selected.logic==Logic.SWITCH) {
-                    nar.input("<" + readCells[x][y].name + " --> " + "[on]>. :|:");
+                    nar.input('<' + readCells[x][y].name + " --> " + "[on]>. :|:");
                     if(TestChamber.curiousity) {
                         space.nar.input("<goto(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.input("<activate(" + readCells[x][y].name + ") =/> <Self --> [curious]>>.");

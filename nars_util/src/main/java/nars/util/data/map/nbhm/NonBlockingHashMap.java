@@ -208,7 +208,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
         Object U = Prime.unbox(V);
         String p = (V==U) ? "" : "prime_";
         String US = (U == TOMBSTONE) ? "tombstone" : U.toString();
-        System.out.println(""+i+" ("+KS+","+p+US+")");
+        System.out.println(""+i+" ("+KS+ ',' +p+US+ ')');
       }
     }
     Object[] newkvs = chm(kvs)._newkvs; // New table, if any
@@ -226,7 +226,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
       if( key != null && key != TOMBSTONE &&  // key is sane
           val != null && U   != TOMBSTONE ) { // val is sane
         String p = (val==U) ? "" : "prime_";
-        System.out.println(""+i+" ("+key+","+p+val+")");
+        System.out.println(""+i+" ("+key+ ',' +p+val+ ')');
       }
     }
     Object[] newkvs = chm(kvs)._newkvs; // New table, if any

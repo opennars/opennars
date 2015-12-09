@@ -39,6 +39,7 @@ public class RuleLgtL {
 	// Parse the rule string
 	// Example: "R3,C0,M1,S34..58,B34..45,NM"
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok, sBff;
 		int i, iTmp;
@@ -50,10 +51,10 @@ public class RuleLgtL {
 			sTok = sTok.trim();
 			//System.out.println(sTok);
 
-			if (sTok.startsWith("R")) // range
+			if (sTok.length() > 0 && sTok.charAt(0) == 'R') // range
 			{
 				iRng = Integer.valueOf(sTok.substring(1));
-			} else if (sTok.startsWith("C")) // states (history)
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'C') // states (history)
 			{
 				i = Integer.valueOf(sTok.substring(1));
 				if (i >= 3) {
@@ -61,7 +62,7 @@ public class RuleLgtL {
 					iClo = i;
 				} else
 					isHist = false; // states count is meaningless
-			} else if (sTok.startsWith("M")) // center cell?
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'M') // center cell?
 			{
 				isCentr = (Integer.valueOf(sTok.substring(1)) > 0);
 			} else if (sTok.startsWith("NM")) // Moore neighbourhood
@@ -70,7 +71,7 @@ public class RuleLgtL {
 			} else if (sTok.startsWith("NN")) // von Neumann neighbourhood
 			{
 				iNgh = MJRules.NGHTYP_NEUM;
-			} else if (sTok.startsWith("S")) // surviving rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'S') // surviving rules
 			{
 				if (sTok.length() >= 4) {
 					iTmp = sTok.indexOf("..");
@@ -81,7 +82,7 @@ public class RuleLgtL {
 						iSMax = Integer.valueOf(sBff);
 					}
 				}
-			} else if (sTok.startsWith("B")) // birth rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // birth rules
 			{
 				if (sTok.length() >= 4) {
 					iTmp = sTok.indexOf("..");
@@ -125,7 +126,7 @@ public class RuleLgtL {
 		Validate();
 
 		// range
-		sBff = "R" + String.valueOf(iRng);
+		sBff = 'R' + String.valueOf(iRng);
 
 		// states
 		if (isHist)

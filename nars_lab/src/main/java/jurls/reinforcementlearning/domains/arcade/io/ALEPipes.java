@@ -120,7 +120,7 @@ public class ALEPipes {
 
         // Do some error checking - our width and height should be positive
         if (width <= 0 || height <= 0) {
-            throw new RuntimeException("Invalid width/height: "+width+"x"+height);
+            throw new RuntimeException("Invalid width/height: "+width+ 'x' +height);
         }
 
         // Create the data structures used to store received information
@@ -191,7 +191,7 @@ public class ALEPipes {
         }
 
         // Catch the special keyword 'DIE'
-        if (line.equals("DIE")) {
+        if ("DIE".equals(line)) {
             terminateRequested = true;
             return false;
         }

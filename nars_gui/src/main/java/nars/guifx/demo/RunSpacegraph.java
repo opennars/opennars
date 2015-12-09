@@ -85,7 +85,7 @@ public class RunSpacegraph extends Application {
                 addNodes( new Windget("x" + i,
                         POJONode.build(
                         //new POJOPane(
-                                $.$("<a --> " + i + ">"))) );
+                                $.$("<a --> " + i + '>'))) );
             }
 
             ground.getChildren().add(new GridCanvas(true));

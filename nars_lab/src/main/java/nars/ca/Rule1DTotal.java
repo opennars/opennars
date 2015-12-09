@@ -38,6 +38,7 @@ public class Rule1DTotal {
 	// Parse the rule string
 	// Example: "R6,C25,M1,S1,S4,S7,S8,B0,B3,B5"
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int iTmp;
@@ -47,25 +48,25 @@ public class Rule1DTotal {
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
 			//System.out.println(sTok);
-			if (sTok.startsWith("R"))
+			if (sTok.length() > 0 && sTok.charAt(0) == 'R')
 				iRng = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("C")) {
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'C') {
 				iTmp = Integer.valueOf(sTok.substring(1));
 				if (iTmp >= 3) {
 					isHist = true; // history, get the states count
 					iClo = iTmp;
 				} else
 					isHist = false; // states count is meaningless
-			} else if (sTok.startsWith("M")) // center cell?
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'M') // center cell?
 			{
 				isCentr = (Integer.valueOf(sTok.substring(1)) > 0);
-			} else if (sTok.startsWith("S")) // surviving rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'S') // surviving rules
 			{
 				iTmp = Integer.valueOf(sTok.substring(1));
 				if ((iTmp >= 0) && (iTmp <= MAX_RANGE * 2 + 1)) {
 					rulesS[iTmp] = true;
 				}
-			} else if (sTok.startsWith("B")) // birth rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // birth rules
 			{
 				iTmp = Integer.valueOf(sTok.substring(1));
 				if ((iTmp >= 0) && (iTmp <= MAX_RANGE * 2 + 1)) {
@@ -102,7 +103,7 @@ public class Rule1DTotal {
 		// correct parameters first
 		Validate();
 		// range
-		sBff = "R" + String.valueOf(iRng);
+		sBff = 'R' + String.valueOf(iRng);
 
 		// states
 		if (isHist)

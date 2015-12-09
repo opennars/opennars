@@ -180,7 +180,7 @@ public class WordNet {
             if (!(regexPatterns[i] instanceof Pattern)) {
                 System.out.println("ERROR in WordNet.compileRegexPatterns(): could not compile \""
                         + regexPatternStrings[i]
-                        + "\"");
+                        + '"');
             }
         }
     }
@@ -390,11 +390,11 @@ public class WordNet {
         m = regexPatterns[1].matcher(pointers);
         while (m.lookingAt()) {
             String word = m.group(1);
-            if (word.length() > 3 && (word.substring(word.length() - 3, word.length()).equals("(a)")
-                    || word.substring(word.length() - 3, word.length()).equals("(p)"))) {
+            if (word.length() > 3 && ("(a)".equals(word.substring(word.length() - 3, word.length()))
+                    || "(p)".equals(word.substring(word.length() - 3, word.length())))) {
                 word = word.substring(0, word.length() - 3);
             }
-            if (word.length() > 4 && word.substring(word.length() - 4, word.length()).equals("(ip)")) {
+            if (word.length() > 4 && "(ip)".equals(word.substring(word.length() - 4, word.length()))) {
                 word = word.substring(0, word.length() - 4);
             }
             String count = m.group(2);
@@ -438,7 +438,7 @@ public class WordNet {
             //                   " " + synset + " " + avp.value);
             al.add(avp);
         }
-        if ((!"".equals(pointers)) && (!pointers.isEmpty()) && !pointers.equals(" ")) {
+        if ((!"".equals(pointers)) && (!pointers.isEmpty()) && !" ".equals(pointers)) {
             // Only for verbs may we have the following leftover
             // f_cnt + f_num  w_num  [ +  f_num  w_num...] 
             if (synset.charAt(0) == '2') {
@@ -451,7 +451,7 @@ public class WordNet {
                     String frameNum = m.group(1);
                     String wordNum = m.group(2);
                     String key;
-                    if (wordNum.equals("00")) {
+                    if ("00".equals(wordNum)) {
                         key = synset.substring(1);
                     } else {
                         int num = Integer.parseInt(wordNum);
@@ -461,10 +461,10 @@ public class WordNet {
                                     + synset
                                     + " has no words for pointers: \""
                                     + pointers
-                                    + "\"");
+                                    + '"');
                         }
                         String word = (String) al.get(num - 1);
-                        key = synset.substring(1) + "-" + word;
+                        key = synset.substring(1) + '-' + word;
                     }
                     ArrayList frames = new ArrayList();
                     if (!verbFrames.keySet().contains(key)) {
@@ -477,7 +477,7 @@ public class WordNet {
                     m = regexPatterns[5].matcher(pointers);
                 }
             } else {
-                System.out.println("Error in WordNet.processPointers(): " + synset.charAt(0) + " leftover pointers: \"" + pointers + "\"");
+                System.out.println("Error in WordNet.processPointers(): " + synset.charAt(0) + " leftover pointers: \"" + pointers + '"');
             }
         }
     }
@@ -570,16 +570,16 @@ public class WordNet {
                         }
                     }
                     if (!anyAreNull) {
-                        addSUMOMapping(m.group(4), "1" + m.group(1));
+                        addSUMOMapping(m.group(4), '1' + m.group(1));
                         nounDocumentationHash.put(m.group(1), m.group(3)); // 1-synset, 2-pointers, 3-docu, 4-SUMO term
-                        processPointers("1" + m.group(1), m.group(2));
+                        processPointers('1' + m.group(1), m.group(2));
                     }
                 } else {
                     // 7: p = Pattern.compile("^([0-9]{8})([\\S\\s]+)\\|\\s([\\S\\s]+)$");  // no SUMO mapping
                     m = regexPatterns[7].matcher(line);
                     if (m.matches()) {
                         nounDocumentationHash.put(m.group(1), m.group(3));
-                        processPointers("1" + m.group(1), m.group(2));
+                        processPointers('1' + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
                         if (!line.isEmpty() && line.charAt(0) != ';') {
@@ -669,14 +669,14 @@ public class WordNet {
                 m = regexPatterns[10].matcher(line);
                 if (m.matches()) {
                     verbDocumentationHash.put(m.group(1), m.group(3));
-                    addSUMOMapping(m.group(4), "2" + m.group(1));
-                    processPointers("2" + m.group(1), m.group(2));
+                    addSUMOMapping(m.group(4), '2' + m.group(1));
+                    processPointers('2' + m.group(1), m.group(2));
                 } else {
                     // 11: p = Pattern.compile("^([0-9]{8})([^\\|]+)\\|\\s([\\S\\s]+)$");   // no SUMO mapping
                     m = regexPatterns[11].matcher(line);
                     if (m.matches()) {
                         verbDocumentationHash.put(m.group(1), m.group(3));
-                        processPointers("2" + m.group(1), m.group(2));
+                        processPointers('2' + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
                         if (!line.isEmpty() && line.charAt(0) != ';') {
@@ -758,14 +758,14 @@ public class WordNet {
                 m = regexPatterns[13].matcher(line);
                 if (m.matches()) {
                     adjectiveDocumentationHash.put(m.group(1), m.group(3));
-                    addSUMOMapping(m.group(4), "3" + m.group(1));
-                    processPointers("3" + m.group(1), m.group(2));
+                    addSUMOMapping(m.group(4), '3' + m.group(1));
+                    processPointers('3' + m.group(1), m.group(2));
                 } else {
                     // 14: p = Pattern.compile("^([0-9]{8})([\\S\\s]+)\\|\\s([\\S\\s]+)$");     // no SUMO mapping
                     m = regexPatterns[14].matcher(line);
                     if (m.matches()) {
                         adjectiveDocumentationHash.put(m.group(1), m.group(3));
-                        processPointers("3" + m.group(1), m.group(2));
+                        processPointers('3' + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
                         if (!line.isEmpty() && line.charAt(0) != ';') {
@@ -819,14 +819,14 @@ public class WordNet {
                 m = regexPatterns[15].matcher(line);
                 if (m.matches()) {
                     adverbDocumentationHash.put(m.group(1), m.group(3));
-                    addSUMOMapping(m.group(4), "4" + m.group(1));
-                    processPointers("4" + m.group(1), m.group(2));
+                    addSUMOMapping(m.group(4), '4' + m.group(1));
+                    processPointers('4' + m.group(1), m.group(2));
                 } else {
                     // 16: p = Pattern.compile("^([0-9]{8})([\\S\\s]+)\\|\\s([\\S\\s]+)$");   // no SUMO mapping
                     m = regexPatterns[16].matcher(line);
                     if (m.matches()) {
                         adverbDocumentationHash.put(m.group(1), m.group(3));
-                        processPointers("4" + m.group(1), m.group(2));
+                        processPointers('4' + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
                         if (!line.isEmpty() && line.charAt(0) != ';') {
@@ -892,7 +892,7 @@ public class WordNet {
                     words = values.split(" ");
                     frequencies = new HashMap();
                     for (int i = 0; i < words.length - 3; i++) {
-                        if (words[i].equals("SUMOterm:")) {
+                        if ("SUMOterm:".equals(words[i])) {
                             i = words.length;
                         } else {
                             if (words[i].indexOf('_') == -1) {
@@ -1004,7 +1004,7 @@ public class WordNet {
                     synset = m.group(3);
                     sensenum = m.group(4);
                     posString = WordNetUtilities.posNumberToLetters(pos);
-                    key = word + "_" + posString + "_" + sensenum;
+                    key = word + '_' + posString + '_' + sensenum;
                     word = word.intern();
                     al = (ArrayList) wordsToSenses.get(word);
                     if (al == null) {
@@ -1259,7 +1259,7 @@ public class WordNet {
                 if ("".equals(result)) {
                     result = word;
                 } else {
-                    result = result + " " + word;
+                    result = result + ' ' + word;
                 }
             }
         }
@@ -1312,7 +1312,7 @@ public class WordNet {
                 if ("".equals(result)) {
                     result = SUMO;
                 } else {
-                    result = result + " " + SUMO;
+                    result = result + ' ' + SUMO;
                 }
             } else {                                    // assume it's a noun
                 SUMO = getBestDefaultSense(word);
@@ -1320,7 +1320,7 @@ public class WordNet {
                     if ("".equals(result)) {
                         result = SUMO;
                     } else {
-                        result = result + " " + SUMO;
+                        result = result + ' ' + SUMO;
                     }
                 }
             }
@@ -1401,7 +1401,7 @@ public class WordNet {
         } else {
             listLength = 0;
         }
-        result.append("<i>According to WordNet, the ").append(type).append("\"").append(word).append("\" has ");
+        result.append("<i>According to WordNet, the ").append(type).append('"').append(word).append("\" has ");
         result.append(String.valueOf(listLength)).append(" sense(s).</i><P>\n\n");
 
         for (int i = 0; i < listLength; i++) {         // Split apart the SUMO concepts, and store them as an associative array.
@@ -1413,25 +1413,25 @@ public class WordNet {
             if (type.compareTo("noun") == 0) {
                 documentation = (String) nounDocumentationHash.get(synset);
                 result.append("<a href=\"WordNet.jsp?synset=1").append(synset).append("\">1").append(synset).append("</a> ");
-                result.append(" ").append(documentation).append(".\n");
+                result.append(' ').append(documentation).append(".\n");
                 sumoEquivalent = (String) nounSUMOHash.get(synset);
             } else {
                 if (type.compareTo("verb") == 0) {
                     documentation = (String) verbDocumentationHash.get(synset);
                     result.append("<a href=\"WordNet.jsp?synset=2").append(synset).append("\">2").append(synset).append("</a> ");
-                    result.append(" ").append(documentation).append(".\n");
+                    result.append(' ').append(documentation).append(".\n");
                     sumoEquivalent = (String) verbSUMOHash.get(synset);
                 } else {
                     if (type.compareTo("adjective") == 0) {
                         documentation = (String) adjectiveDocumentationHash.get(synset);
                         result.append("<a href=\"WordNet.jsp?synset=3").append(synset).append("\">3").append(synset).append("</a> ");
-                        result.append(" ").append(documentation).append(".\n");
+                        result.append(' ').append(documentation).append(".\n");
                         sumoEquivalent = (String) adjectiveSUMOHash.get(synset);
                     } else {
                         if (type.compareTo("adverb") == 0) {
                             documentation = (String) adverbDocumentationHash.get(synset);
                             result.append("<a href=\"WordNet.jsp?synset=4").append(synset).append("\">4").append(synset).append("</a> ");
-                            result.append(" ").append(documentation).append(".\n");
+                            result.append(' ').append(documentation).append(".\n");
                             sumoEquivalent = (String) adverbSUMOHash.get(synset);
                         }
                     }
@@ -1444,7 +1444,7 @@ public class WordNet {
                 result.append("<P><ul><li>").append(word).append(" not yet mapped to SUMO</ul><P>");
             } else {
                 //result.append(HTMLformatter.termMappingsList(sumoEquivalent,"<a href=\"Browse.jsp?kb=" + sumokbname + "&term="));
-                result.append(sumoEquivalent).append(" ").append(sumokbname);
+                result.append(sumoEquivalent).append(' ').append(sumokbname);
             }
         }
         String searchTerm = word.replaceAll("_+", "+");
@@ -1825,7 +1825,7 @@ public class WordNet {
         for (int i = 0; i < s.length; i++) {
             sb.append(s[i]);
             if ((i + 1) < s.length) {
-                sb.append("_");
+                sb.append('_');
             }
         }
 
@@ -1842,7 +1842,7 @@ public class WordNet {
         if (pos == ADVERB) {
             buf.append(processAdverb(sumokbname, mixedCase, input, synset));
         }
-        buf.append("\n");
+        buf.append('\n');
 
         return buf.toString();
     }
@@ -1912,7 +1912,7 @@ public class WordNet {
             it = al.iterator();
             while (it.hasNext()) {
                 AVPair avp = (AVPair) it.next();
-                buf.append(avp.attribute).append(" ");
+                buf.append(avp.attribute).append(' ');
                 buf.append("<a href=\"WordNet.jsp?synset=").append(avp.value).append("\">").append(avp.value).append("</a> - ");
                 words = new TreeSet();
                 ArrayList al2 = (ArrayList) synsetsToWords.get(avp.value);
@@ -1966,7 +1966,7 @@ public class WordNet {
         if (res != null) {
             frames.addAll(res);
         }
-        res = (ArrayList) verbFrames.get(synset + "-" + word);
+        res = (ArrayList) verbFrames.get(synset + '-' + word);
         if (res != null) {
             frames.addAll(res);
         }
@@ -1981,7 +1981,7 @@ public class WordNet {
             }
         }
 
-        return "[" + intransitive + "," + transitive + "," + ditransitive + "]";
+        return '[' + intransitive + ',' + transitive + ',' + ditransitive + ']';
     }
 
     /**
@@ -1999,14 +1999,14 @@ public class WordNet {
             if (!words[i].isEmpty()
                     && (words[i].indexOf('-') > -1 || (words[i].indexOf('.') > -1)
                     || (words[i].contains("\\'")) || Character.isUpperCase(words[i].charAt(0)) || Character.isDigit(words[i].charAt(0)))) {
-                words[i] = "'" + words[i] + "'";
+                words[i] = '\'' + words[i] + '\'';
             }
             word += words[i];
             if (i < words.length - 1) {
                 word += ",";
             }
         }
-        return "[" + word + "]";
+        return '[' + word + ']';
     }
 
     /**
@@ -2037,8 +2037,8 @@ public class WordNet {
                 word = word.replace("'", "\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1)
                         || (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
-                    word = "'" + word + "'";
-                    plural = "'" + plural + "'";
+                    word = '\'' + word + '\'';
+                    plural = '\'' + plural + '\'';
                 }
             }
             String[] synsetList = splitSynsets(stringSynsets);
@@ -2053,7 +2053,7 @@ public class WordNet {
                     if (kb.childOf(bareSumoTerm, "Process")) {
                         eventstate = "event";
                     }
-                    pw.println("verb_in_lexicon(" + plural + "," + word + "," + transitivity
+                    pw.println("verb_in_lexicon(" + plural + ',' + word + ',' + transitivity
                             + ", singular, " + compound + ", " + eventstate + ", '" + bareSumoTerm + "',2"
                             + synset + ").");
                 }
@@ -2083,7 +2083,7 @@ public class WordNet {
                 word = word.replace("'", "\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1)
                         || (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
-                    word = "'" + word + "'";
+                    word = '\'' + word + '\'';
                 }
             }
             String[] synsetList = splitSynsets(stringSynsets);
@@ -2093,7 +2093,7 @@ public class WordNet {
                 String sumoTerm = (String) adjectiveSUMOHash.get(synset);
                 if (sumoTerm != null && !"".equals(sumoTerm)) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
-                    pw.println("adjective_in_lexicon(" + word + "," + word + ",normal,positive,"
+                    pw.println("adjective_in_lexicon(" + word + ',' + word + ",normal,positive,"
                             + bareSumoTerm + ").");
                 }
             }
@@ -2122,7 +2122,7 @@ public class WordNet {
                 word = word.replace("'", "\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1)
                         || (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
-                    word = "'" + word + "'";
+                    word = '\'' + word + '\'';
                 }
             }
             String[] synsetList = splitSynsets(stringSynsets);
@@ -2158,7 +2158,7 @@ public class WordNet {
                 word = word.replace("'", "\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1)
                         || (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
-                    word = "'" + word + "'";
+                    word = '\'' + word + '\'';
                 }
             }
             String[] synsetList = splitSynsets(stringSynsets);
@@ -2198,10 +2198,10 @@ public class WordNet {
                         } else {
                             parentTerm = bareSumoTerm;
                         }
-                        pw.println("proper_noun_in_lexicon(" + word + "," + type + ", neuter, singular, '"
+                        pw.println("proper_noun_in_lexicon(" + word + ',' + type + ", neuter, singular, '"
                                 + parentTerm + "','" + bareSumoTerm + "',1" + synset + ").");
                     } else {
-                        pw.println("noun_in_lexicon(" + word + "," + type + ", neuter, "
+                        pw.println("noun_in_lexicon(" + word + ',' + type + ", neuter, "
                                 + countOrMass + ", singular, '" + bareSumoTerm + "',1"
                                 + synset + ").");
                     }
@@ -2228,7 +2228,7 @@ public class WordNet {
             writeAdjectivesProlog(pw, kb);
             writeAdverbsProlog(pw, kb);
         } catch (Exception e) {
-            System.out.println("Error writing file " + dir + File.separator + fname + "\n" + e.getMessage());
+            System.out.println("Error writing file " + dir + File.separator + fname + '\n' + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -2365,11 +2365,11 @@ public class WordNet {
                     String POSchar = Character.toString(WordNetUtilities.posNumberToLetter(POS.charAt(0)));
                     String synset = (String) senseIndex.get(senseKey);
                     int wordNum = findWordNum(POS, synset, word);
-                    pw.println("s(" + POS + synset + "," + wordNum + ",'" + processedWord + "'," + POSchar + "," + senseNum + ",1).");
+                    pw.println("s(" + POS + synset + ',' + wordNum + ",'" + processedWord + "'," + POSchar + ',' + senseNum + ",1).");
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error writing file " + dir + File.separator + fname + "\n" + e.getMessage());
+            System.out.println("Error writing file " + dir + File.separator + fname + '\n' + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -2413,14 +2413,14 @@ public class WordNet {
                 if (rels != null) {
                     for (Object rel1 : rels) {
                         AVPair rel = (AVPair) rel1;
-                        if (rel.attribute.equals("hypernym")) {
-                            pw.println("hyp(" + synset + "," + rel.value + ").");
+                        if ("hypernym".equals(rel.attribute)) {
+                            pw.println("hyp(" + synset + ',' + rel.value + ").");
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error writing file " + dir + File.separator + fname + "\n" + e.getMessage());
+            System.out.println("Error writing file " + dir + File.separator + fname + '\n' + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -2474,31 +2474,31 @@ public class WordNet {
                 String synset = (String) it.next();
                 String doc = (String) nounDocumentationHash.get(synset);
                 doc = processPrologString(doc);
-                pw.println("g(" + "1" + synset + ",'(" + doc + ")').");
+                pw.println("g(" + '1' + synset + ",'(" + doc + ")').");
             }
             it = verbDocumentationHash.keySet().iterator();
             while (it.hasNext()) {
                 String synset = (String) it.next();
                 String doc = (String) verbDocumentationHash.get(synset);
                 doc = processPrologString(doc);
-                pw.println("g(" + "2" + synset + ",'(" + doc + ")').");
+                pw.println("g(" + '2' + synset + ",'(" + doc + ")').");
             }
             it = adjectiveDocumentationHash.keySet().iterator();
             while (it.hasNext()) {
                 String synset = (String) it.next();
                 String doc = (String) adjectiveDocumentationHash.get(synset);
                 doc = processPrologString(doc);
-                pw.println("g(" + "3" + synset + ",'(" + doc + ")').");
+                pw.println("g(" + '3' + synset + ",'(" + doc + ")').");
             }
             it = adverbDocumentationHash.keySet().iterator();
             while (it.hasNext()) {
                 String synset = (String) it.next();
                 String doc = (String) adverbDocumentationHash.get(synset);
                 doc = processPrologString(doc);
-                pw.println("g(" + "4" + synset + ",'(" + doc + ")').");
+                pw.println("g(" + '4' + synset + ",'(" + doc + ")').");
             }
         } catch (Exception e) {
-            System.out.println("Error writing file " + dir + File.separator + fname + "\n" + e.getMessage());
+            System.out.println("Error writing file " + dir + File.separator + fname + '\n' + e.getMessage());
             e.printStackTrace();
         } finally {
             try {

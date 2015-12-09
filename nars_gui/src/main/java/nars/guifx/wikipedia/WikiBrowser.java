@@ -300,7 +300,7 @@ public abstract class WikiBrowser extends BorderPane {
         if (url.startsWith(wikiPrefix)) {
             //ordinary wikilink
             tag = url.substring(wikiPrefix.length());
-        } else if (url.equals("undefined")) {
+        } else if ("undefined".equals(url)) {
             //section header link
             tag = getCurrentPageTag();
         } else {

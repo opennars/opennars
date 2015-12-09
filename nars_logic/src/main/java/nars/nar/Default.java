@@ -144,7 +144,7 @@ public class Default extends AbstractNAR {
 //                    System.err.println("\t\t" + rule );
 //                    System.err.println();
                 });
-                rules.forEachWithOccurrences( (String r, int c) -> System.err.println("\t" + c + "\t" + r));
+                rules.forEachWithOccurrences( (String r, int c) -> System.err.println("\t" + c + '\t' + r));
                 System.err.println("--");
 
             });

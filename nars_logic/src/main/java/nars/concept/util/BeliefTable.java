@@ -298,7 +298,7 @@ public interface BeliefTable extends TaskTable {
 
     default void print(PrintStream out) {
         for (Task t : this) {
-            out.println(t + " " + Arrays.toString(t.getEvidence()) + " " + t.getLog());
+            out.println(t + " " + Arrays.toString(t.getEvidence()) + ' ' + t.getLog());
         }
     }
 

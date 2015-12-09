@@ -55,7 +55,7 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
 
     @Override
     public String toString() {
-        return "^" + operatorTerm.toString();
+        return '^' + operatorTerm.toString();
     }
 
     public OperatorReaction(Term term) {

@@ -200,7 +200,7 @@ public class ClassUtils {
         final StringBuilder arrayPrefix = new StringBuilder();
 
         // Handle array encoding
-        if (className.startsWith("[")) {
+        if (className.length() > 0 && className.charAt(0) == '[') {
             while (className.charAt(0) == '[') {
                 className = className.substring(1);
                 arrayPrefix.append("[]");
@@ -1192,17 +1192,17 @@ public class ClassUtils {
             return null;
         }
         int dim = 0;
-        while (className.startsWith("[")) {
+        while (className.length() > 0 && className.charAt(0) == '[') {
             dim++;
             className = className.substring(1);
         }
         if (dim < 1) {
             return className;
         }
-        if (className.startsWith("L")) {
+        if (className.length() > 0 && className.charAt(0) == 'L') {
             className = className.substring(
                     1,
-                    className.endsWith(";")
+                    className.length() > 0 && className.charAt(className.length() - 1) == ';'
                             ? className.length() - 1
                             : className.length());
         } else {

@@ -105,7 +105,7 @@ class MatrixN
         for(int i = 0; i < size(); i++)   
             s = s + (i != 0 ? "," : "") + get(i);   
    
-        return s + "}";   
+        return s + '}';
     }
 
     private VectorN[] v;

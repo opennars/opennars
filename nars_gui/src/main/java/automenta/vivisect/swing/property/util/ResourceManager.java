@@ -174,10 +174,10 @@ public class ResourceManager {
     if (property != null) {
       int index = property.indexOf("${");
       if (index != -1) {
-        int endIndex = property.indexOf("}", index);
+        int endIndex = property.indexOf('}', index);
         String sub = property.substring(index + 2, endIndex);
         // check if sub contains a reference to another RB, key
-        int colon = sub.indexOf(":");
+        int colon = sub.indexOf(':');
         if (colon != -1) {
           String rbName = sub.substring(0, colon);
           String keyName = sub.substring(colon + 1);

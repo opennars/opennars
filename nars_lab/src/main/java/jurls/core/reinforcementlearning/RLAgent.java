@@ -180,9 +180,9 @@ public class RLAgent extends LearnerAndActor {
     public String getDebugString(int indent) {
         String ind = Utils.makeIndent(indent);
         return ind + "Q/SARSA(lambda)\n"
-                + ind + "factor1 = " + factor1 + "\n"
-                + ind + "factor2 = " + factor2 + "\n"
-                + ind + "epsilon = " + epsilon + "\n"
+                + ind + "factor1 = " + factor1 + '\n'
+                + ind + "factor2 = " + factor2 + '\n'
+                + ind + "epsilon = " + epsilon + '\n'
                 + super.getDebugString(indent);
     }
 

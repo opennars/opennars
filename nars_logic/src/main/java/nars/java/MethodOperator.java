@@ -49,7 +49,7 @@ public class MethodOperator extends TermFunction {
 
         String superClass = sc.getSimpleName();
         String methodName = m.getName();
-        return $.the(superClass + "_" + methodName);
+        return $.the(superClass + '_' + methodName);
     }
 
 

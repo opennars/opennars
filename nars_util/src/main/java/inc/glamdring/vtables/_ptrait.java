@@ -478,7 +478,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
             for (String string : strings) {
                 _ptrait ptrait = null;
                 try {
-                    ptrait = valueOf("$" + string);
+                    ptrait = valueOf('$' + string);
                     traits.addAll(ptrait.getTraits());
                 } catch (IllegalArgumentException e) {
                 }

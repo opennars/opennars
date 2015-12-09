@@ -24,7 +24,7 @@ public abstract class PatternAnswer implements Function<Task, List<Task>> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + pattern.toString() + "]";
+        return getClass().getSimpleName() + '[' + pattern.toString() + ']';
     }
 
     @Override

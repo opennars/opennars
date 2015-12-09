@@ -135,7 +135,7 @@ public class TermLinkTest {
         //Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f) );
 
         //TextOutput.out(n);
-        n.input(term + ".");
+        n.input(term + '.');
         n.frame(1);
 
         assertTrue(n.core.concepts().iterator().hasNext());
@@ -230,8 +230,8 @@ public class TermLinkTest {
 
         NAR n = new Default();
 
-        n.input(c + ".");
-        n.input(d + ".");
+        n.input(c + '.');
+        n.input(d + '.');
 
         //in each of the first two cycles (for each of the two inputs),
         //check that termlink connectivity is complete

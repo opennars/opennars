@@ -257,8 +257,10 @@ public class FaceGUI extends BaseClass {
             flex("tilt", "", "");
         }
         if (s != null) {
+            //noinspection UseOfStringTokenizer
             StringTokenizer stringtokenizer1;
-            for (StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();
+            for (//noinspection UseOfStringTokenizer
+                    StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();
                     vertexVector.addElement(new Double(stringtokenizer1.nextToken()))) {
                 stringtokenizer1 = new StringTokenizer(stringtokenizer.nextToken(), ",");
                 vertexVector.addElement(new Double(stringtokenizer1.nextToken()));
@@ -290,9 +292,11 @@ public class FaceGUI extends BaseClass {
         colorVector.addElement(new Color((float) d1, (float) d1, (float) d1));
         shapesVector.addElement(shapeVector = new Vector());
         if (s != null) {
-            for (StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();) {
+            for (//noinspection UseOfStringTokenizer
+                    StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();) {
                 shapeVector.addElement(face = new Vector());
-                for (StringTokenizer stringtokenizer1 = new StringTokenizer(stringtokenizer.nextToken(), ","); stringtokenizer1.hasMoreTokens(); face.addElement(new Integer(stringtokenizer1.nextToken())));
+                for (//noinspection UseOfStringTokenizer
+                        StringTokenizer stringtokenizer1 = new StringTokenizer(stringtokenizer.nextToken(), ","); stringtokenizer1.hasMoreTokens(); face.addElement(new Integer(stringtokenizer1.nextToken())));
             }
 
         }
@@ -308,14 +312,17 @@ public class FaceGUI extends BaseClass {
         flexNamesVector.addElement(s);
         flexSymmetryVector.addElement(-1);
         flexVector.addElement(flx = new Vector());
-        for (StringTokenizer stringtokenizer = new StringTokenizer(s1); stringtokenizer.hasMoreTokens(); ixyz.addElement(new Integer(stringtokenizer.nextToken()))) {
+        for (//noinspection UseOfStringTokenizer
+                StringTokenizer stringtokenizer = new StringTokenizer(s1); stringtokenizer.hasMoreTokens(); ixyz.addElement(new Integer(stringtokenizer.nextToken()))) {
             flx.addElement(ixyz = new Vector());
         }
 
         int i = 0;
-        for (StringTokenizer stringtokenizer1 = new StringTokenizer(s2); stringtokenizer1.hasMoreTokens();) {
+        for (//noinspection UseOfStringTokenizer
+                StringTokenizer stringtokenizer1 = new StringTokenizer(s2); stringtokenizer1.hasMoreTokens();) {
             ixyz = (Vector) flx.elementAt(i++);
-            for (StringTokenizer stringtokenizer2 = new StringTokenizer(stringtokenizer1.nextToken(), ","); stringtokenizer2.hasMoreTokens(); ixyz.addElement(new Double(stringtokenizer2.nextToken())));
+            for (//noinspection UseOfStringTokenizer
+                    StringTokenizer stringtokenizer2 = new StringTokenizer(stringtokenizer1.nextToken(), ","); stringtokenizer2.hasMoreTokens(); ixyz.addElement(new Double(stringtokenizer2.nextToken())));
         }
 
     }

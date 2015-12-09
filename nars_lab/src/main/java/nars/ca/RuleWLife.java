@@ -39,6 +39,7 @@ public class RuleWLife {
 	// Parse the rule string
 	// Example: #RULE NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI7,RS2,RB1,RB2,RB3
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i;
