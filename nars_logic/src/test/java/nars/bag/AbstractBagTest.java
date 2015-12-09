@@ -13,7 +13,7 @@ import java.util.Random;
  * Created by me on 1/18/15.
  */
 public class AbstractBagTest {
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, NullItem> f, boolean requireOrder) {
 

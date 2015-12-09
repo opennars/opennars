@@ -11,11 +11,11 @@ import nars.task.Task;
  */
 public class TaskSummaryIcon extends SummaryIcon implements Runnable {
 
-    final static int colorLevels = 32;
-    final static double VISIBLE_BUDGET_CHANGE = 0.5 / colorLevels;
-    final static ColorArray grayRange = new ColorArray(colorLevels, Color.DARKGRAY, Color.WHITE);
-    final static ColorArray beliefRange = new ColorArray(colorLevels, Color.RED, Color.ORANGE);
-    final static ColorArray goalRange = new ColorArray(colorLevels, Color.BLUE, Color.GREEN);
+    static final int colorLevels = 32;
+    static final double VISIBLE_BUDGET_CHANGE = 0.5 / colorLevels;
+    static final ColorArray grayRange = new ColorArray(colorLevels, Color.DARKGRAY, Color.WHITE);
+    static final ColorArray beliefRange = new ColorArray(colorLevels, Color.RED, Color.ORANGE);
+    static final ColorArray goalRange = new ColorArray(colorLevels, Color.BLUE, Color.GREEN);
 
     private final Task task;
 

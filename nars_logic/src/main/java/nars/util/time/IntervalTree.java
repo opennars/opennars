@@ -17,7 +17,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 		return c;
 	}
 
-	final public V getEqual(K low, K high){
+	public final V getEqual(K low, K high){
 		return getEqual(new Between<>(low, high));
 	}
 

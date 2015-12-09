@@ -6,7 +6,7 @@ import java.util.Deque;
 /**
  * Simple object pool implemented by a Deque (ex: ArrayDeque)
  */
-abstract public class DequePool<X> implements Pool<X> {
+public abstract class DequePool<X> implements Pool<X> {
 
     protected final Deque<X> data;
     private int capacity;

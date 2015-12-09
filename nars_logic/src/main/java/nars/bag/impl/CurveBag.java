@@ -29,8 +29,8 @@ import java.util.Random;
  */
 public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
-    public final static BagCurve power4BagCurve = new Power4BagCurve();
-    public final static BagCurve power6BagCurve = new Power6BagCurve();
+    public static final BagCurve power4BagCurve = new Power4BagCurve();
+    public static final BagCurve power6BagCurve = new Power6BagCurve();
 
     //TODO move sampler features to subclass of CurveBag which specifically provides sampling
     public final BagCurve curve;
@@ -101,7 +101,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     @Override
-    final public V peekNext() {
+    public final V peekNext() {
         return peekNext(false);
     }
 

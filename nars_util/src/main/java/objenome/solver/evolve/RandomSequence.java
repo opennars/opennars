@@ -32,7 +32,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
     /**
      * The key for setting and retrieving the random number generator.
      */
-    public static final GPKey<RandomSequence> RANDOM_SEQUENCE = new GPKey<>();
+    GPKey<RandomSequence> RANDOM_SEQUENCE = new GPKey<>();
 
     /**
      * Gets the next <code>int</code> between <code>0</code> (inclusive) and
@@ -41,7 +41,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
      * @param n the upper limit of the generation
      * @return the next <code>int</code> in the pseudo random sequence
      */
-    public int nextInt(int n);
+    int nextInt(int n);
 
     /**
      * Gets the next <code>int</code> between <code>Integer.MIN_VALUE</code>
@@ -49,7 +49,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
      *
      * @return the next <code>int</code> in the pseudo random sequence
      */
-    public int nextInt();
+    int nextInt();
 
     /**
      * Gets the next <code>long</code> between <code>0</code> (inclusive) and
@@ -58,7 +58,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
      * @param n the upper limit of the generation
      * @return the next <code>long</code> in the pseudo random sequence
      */
-    public long nextLong(long n);
+    long nextLong(long n);
 
     /**
      * Gets the next <code>long</code> between <code>Long.MIN_VALUE</code>
@@ -66,7 +66,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
      *
      * @return the next <code>long</code> in the pseudo random sequence
      */
-    public long nextLong();
+    long nextLong();
 
     /**
      * Gets the next <code>double</code> in the range <code>0.0</code>
@@ -74,7 +74,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
      *
      * @return the next <code>double</code> in the pseudo random sequence
      */
-    public double nextDouble();
+    double nextDouble();
 
     /**
      * Gets the next <code>boolean</code> value.
@@ -82,7 +82,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
      * @return the next <code>true</code> or <code>false</code> value in the
      * pseudo random sequence
      */
-    public boolean nextBoolean();
+    boolean nextBoolean();
 
     /**
      * Sets the initial seed of the random number generation. Two instances of
@@ -91,6 +91,6 @@ import objenome.solver.evolve.GPContainer.GPKey;
      *
      * @param seed the initial seed
      */
-    public void setSeed(long seed);
+    void setSeed(long seed);
 
 }

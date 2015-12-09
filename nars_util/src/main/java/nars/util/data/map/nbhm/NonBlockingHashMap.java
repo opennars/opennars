@@ -867,7 +867,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // current table, while a 'get' has decided the same key cannot be in this
     // table because of too many reprobes.  The invariant is:
     //   slots.estimate_sum >= max_reprobe_cnt >= reprobe_limit(len)
-    private final boolean tableFull( int reprobe_cnt, int len ) {
+    private boolean tableFull(int reprobe_cnt, int len ) {
       return
         // Do the cheap check first: we allow some number of reprobes always
         reprobe_cnt >= REPROBE_LIMIT &&
@@ -881,7 +881,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // Since this routine has a fast cutout for copy-already-started, callers
     // MUST 'help_copy' lest we have a path which forever runs through
     // 'resize' only to discover a copy-in-progress which never progresses.
-    private final Object[] resize( NonBlockingHashMap topmap, Object[] kvs) {
+    private Object[] resize(NonBlockingHashMap topmap, Object[] kvs) {
       assert chm(kvs) == this;
 
       // Check for resize already in progress, probably triggered by another thread
@@ -981,21 +981,21 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // the counter simply wraps and work is copied duplicately until somebody
     // somewhere completes the count.
     volatile long _copyIdx = 0;
-    static private final AtomicLongFieldUpdater<CHM> _copyIdxUpdater =
+    private static final AtomicLongFieldUpdater<CHM> _copyIdxUpdater =
       AtomicLongFieldUpdater.newUpdater(CHM.class, "_copyIdx");
 
     // Work-done reporting.  Used to efficiently signal when we can move to
     // the new table.  From 0 to len(oldkvs) refers to copying from the old
     // table to the new.
     volatile long _copyDone= 0;
-    static private final AtomicLongFieldUpdater<CHM> _copyDoneUpdater =
+    private static final AtomicLongFieldUpdater<CHM> _copyDoneUpdater =
       AtomicLongFieldUpdater.newUpdater(CHM.class, "_copyDone");
 
     // --- help_copy_impl ----------------------------------------------------
     // Help along an existing resize operation.  We hope its the top-level
     // copy (it was when we started) but this CHM might have been promoted out
     // of the top position.
-    private final void help_copy_impl( NonBlockingHashMap topmap, Object[] oldkvs, boolean copy_all ) {
+    private void help_copy_impl(NonBlockingHashMap topmap, Object[] oldkvs, boolean copy_all ) {
       assert chm(oldkvs) == this;
       Object[] newkvs = _newkvs;
       assert newkvs != null;    // Already checked by caller
@@ -1058,7 +1058,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // before any Prime appears.  So the caller needs to read the _newkvs
     // field to retry his operation in the new table, but probably has not
     // read it yet.
-    private final Object[] copy_slot_and_check( NonBlockingHashMap topmap, Object[] oldkvs, int idx, Object should_help ) {
+    private Object[] copy_slot_and_check(NonBlockingHashMap topmap, Object[] oldkvs, int idx, Object should_help ) {
       assert chm(oldkvs) == this;
       Object[] newkvs = _newkvs; // VOLATILE READ
       // We're only here because the caller saw a Prime, which implies a
@@ -1071,7 +1071,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     }
 
     // --- copy_check_and_promote --------------------------------------------
-    private final void copy_check_and_promote( NonBlockingHashMap topmap, Object[] oldkvs, int workdone ) {
+    private void copy_check_and_promote(NonBlockingHashMap topmap, Object[] oldkvs, int workdone ) {
       assert chm(oldkvs) == this;
       int oldlen = len(oldkvs);
       // We made a slot unusable and so did some of the needed copy work

@@ -380,7 +380,7 @@ float zfactor;
 	 * @param z the z coordinate
 	 */
    
-  public final Point project(float x, float y, float z) {
+  public Point project(float x, float y, float z) {
     float temp;
 
     // rotates

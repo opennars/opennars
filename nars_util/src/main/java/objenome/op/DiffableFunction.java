@@ -10,6 +10,6 @@ package objenome.op;
  * @author thorsten
  */
 public interface DiffableFunction  {
-    public double value();
-    public double partialDerive(Scalar parameter);
+    double value();
+    double partialDerive(Scalar parameter);
 }

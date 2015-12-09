@@ -74,7 +74,7 @@ public final class Anticipate {
         nar.memory.eventInput.on(this::onInput);
     }
 
-    public final void onInput(Task t) {
+    public void onInput(Task t) {
         if (((Temporal)t).isAnticipated()) {
             anticipate(t);
             if (t.isInput())
@@ -187,10 +187,10 @@ public final class Anticipate {
     public static final class TaskTime {
 
         /** all data is from task */
-        final public Task task;
+        public final Task task;
 
         /** cached locally, same value as in task */
-        final public long occurrTime;
+        public final long occurrTime;
         public long creationTime;
 
         /** cached locally, same value as in task */

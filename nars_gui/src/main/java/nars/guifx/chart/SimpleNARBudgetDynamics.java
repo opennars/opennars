@@ -126,7 +126,7 @@ public class SimpleNARBudgetDynamics {
                 System.out.println("done");
             });
 
-    public final static class Variables {
+    public static final class Variables {
         public final StringProperty input = new SimpleStringProperty("");
         public final ObjectProperty<NAR> nar = new SimpleObjectProperty(
                 new Default(1000, 1, 2, 2)

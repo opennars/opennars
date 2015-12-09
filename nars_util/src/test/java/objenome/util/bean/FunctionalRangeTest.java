@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class FunctionalRangeTest {
 
-    public static interface FooBar extends Cloneable {
+    public interface FooBar extends Cloneable {
 
         void setFoo(int foo);
 

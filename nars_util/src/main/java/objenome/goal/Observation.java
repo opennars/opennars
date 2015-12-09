@@ -11,9 +11,9 @@ package objenome.goal;
  */
 public class Observation<A,B> {
     
-    final public double weight;
-    final public A input;
-    final public B output;
+    public final double weight;
+    public final A input;
+    public final B output;
 
     public Observation(A input, B output) {
         this(input, output, 1.0);

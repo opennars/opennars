@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * ProblemSTGP with some generally useful default settings
  */
-abstract public class DefaultProblemSTGP extends ProblemSTGP {
+public abstract class DefaultProblemSTGP extends ProblemSTGP {
 
     public DefaultProblemSTGP(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
         super();
@@ -104,8 +104,8 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
     }
 
 
-    abstract protected FitnessFunction initFitness();
-    abstract protected Iterable<Variable> initVariables();
+    protected abstract FitnessFunction initFitness();
+    protected abstract Iterable<Variable> initVariables();
 
     public static DoubleVariable doubleVariable(String n) {
         return new DoubleVariable(n);

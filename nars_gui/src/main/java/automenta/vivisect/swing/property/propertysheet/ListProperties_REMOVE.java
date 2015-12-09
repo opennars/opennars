@@ -204,9 +204,9 @@ class TableSorter extends TableMap implements TableModelListener {
 				return 0;
 		} else if (type == Boolean.class) {
 			Boolean bool1 = (Boolean) data.getValueAt(row1, column);
-			boolean b1 = bool1.booleanValue();
+			boolean b1 = bool1;
 			Boolean bool2 = (Boolean) data.getValueAt(row2, column);
-			boolean b2 = bool2.booleanValue();
+			boolean b2 = bool2;
 
 			if (b1 == b2)
 				return 0;
@@ -233,7 +233,7 @@ class TableSorter extends TableMap implements TableModelListener {
 	public int compare(int row1, int row2) {
 		for (int level = 0, n = sortingColumns.size(); level < n; level++) {
 			Integer column = (Integer) sortingColumns.get(level);
-			int result = compareRowsByColumn(row1, row2, column.intValue());
+			int result = compareRowsByColumn(row1, row2, column);
 			if (result != 0) {
 				return (ascending ? result : -result);
 			}
@@ -308,7 +308,7 @@ class TableSorter extends TableMap implements TableModelListener {
 	public void sortByColumn(int column, boolean ascending) {
 		this.ascending = ascending;
 		sortingColumns.clear();
-		sortingColumns.add(new Integer(column));
+		sortingColumns.add(column);
 		sort();
 		super.tableChanged(new TableModelEvent(this));
 	}

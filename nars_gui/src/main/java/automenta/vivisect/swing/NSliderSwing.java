@@ -45,7 +45,7 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
     protected NumberFormat nf = NumberFormat.getInstance();
     protected String prefix = "";
 
-    final static Font defaultLabelFont = Video.monofont.deriveFont(11.0f);
+    static final Font defaultLabelFont = Video.monofont.deriveFont(11.0f);
 
     public NSliderSwing() {
         this(0,0,0);

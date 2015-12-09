@@ -84,7 +84,7 @@ public class IntArrays {
 	private IntArrays() {}
 
 	/** A static, final, empty array. */
-	public final static int[] EMPTY_ARRAY = {};
+	public static final int[] EMPTY_ARRAY = {};
 
 	/** Ensures that an array can contain the given number of entries.
 	 *
@@ -1443,7 +1443,7 @@ public class IntArrays {
 		}
 	}
 
-	protected final static class Segment {
+	protected static final class Segment {
 		protected final int offset, length, level;
 
 		protected Segment( final int offset, final int length, final int level ) {
@@ -1458,7 +1458,7 @@ public class IntArrays {
 		}
 	}
 
-	protected final static Segment POISON_PILL = new Segment( -1, -1, -1 );
+	protected static final Segment POISON_PILL = new Segment( -1, -1, -1 );
 
 	/** Sorts the specified range of an array using parallel radix sort.
 	 * 

@@ -636,11 +636,11 @@ public class InjectionUtils {
         }
     }
 
-    public static interface Provider {
+    public interface Provider {
 
-        public Object get(String key);
+        Object get(String key);
 
-        public boolean hasValue(String key);
+        boolean hasValue(String key);
     }
 
     public static void getObject(Object target, Provider provider, boolean tryField, String prefix, boolean tryToConvert, boolean convertBoolean, boolean allowRecursion)

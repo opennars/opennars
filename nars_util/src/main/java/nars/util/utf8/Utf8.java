@@ -100,7 +100,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         return fromUtf8toString(prefix, bytes, bytes.length);
     }
 
-    final static char[] emptyChars = new char[0];
+    static final char[] emptyChars = new char[0];
 
     public static byte base36(final int index) {
         if (index < 10)

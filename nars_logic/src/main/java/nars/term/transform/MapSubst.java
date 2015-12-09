@@ -40,7 +40,7 @@ public class MapSubst implements Subst {
      * gets the substitute
      */
     @Override
-    final public Term getXY(final Term t) {
+    public final Term getXY(final Term t) {
         return subs.get(t);
     }
 

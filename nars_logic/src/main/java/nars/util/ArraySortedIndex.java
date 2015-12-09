@@ -137,7 +137,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    final public E get(final int i) {
+    public final E get(final int i) {
         return list.get(i);
     }
 

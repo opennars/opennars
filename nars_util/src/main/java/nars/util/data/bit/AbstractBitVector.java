@@ -625,7 +625,7 @@ public abstract class AbstractBitVector implements BitVector {
 	/** A subvector of a given bit vector, specified by an initial and a final bit. */
 	
 	public static class SubBitVector extends AbstractBitVector implements BitVector {
-		final protected BitVector bitVector;		
+		protected final BitVector bitVector;
 		protected long from;
 		protected long to;
 		

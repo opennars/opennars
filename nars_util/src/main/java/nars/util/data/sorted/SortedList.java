@@ -18,9 +18,9 @@ public class SortedList<E extends Comparable> extends FasterList<E> {
 
     //private static final Comparator comparator = defaultComparator;
 
-    final static Comparator<Comparable> defaultComparator = new Comparator<Comparable>() {
+    static final Comparator<Comparable> defaultComparator = new Comparator<Comparable>() {
         @Override
-        public final int compare(Comparable x, Comparable y) {
+        public int compare(Comparable x, Comparable y) {
             return x.compareTo(y);
         }
     };

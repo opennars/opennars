@@ -287,11 +287,11 @@ public class TaskRule extends GenericCompound implements Level {
     }
 
 
-    final static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
+    static final class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
 
 
         @Override
-        public final boolean test(Term term) {
+        public boolean test(Term term) {
             if (term instanceof Atom) {
                 String name = term.toString();
                 return (Character.isUpperCase(name.charAt(0)));
@@ -312,7 +312,7 @@ public class TaskRule extends GenericCompound implements Level {
         }
     }
 
-    final static UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
+    static final UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
 
 
 
@@ -682,7 +682,7 @@ public class TaskRule extends GenericCompound implements Level {
 //    }
 
 
-    final public int nal() { return minNAL; }
+    public final int nal() { return minNAL; }
 
     public static class TaskRuleVariableNormalization extends VariableNormalization {
 

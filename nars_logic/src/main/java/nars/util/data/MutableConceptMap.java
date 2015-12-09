@@ -8,7 +8,7 @@ import nars.term.Term;
 
 import java.util.Set;
 
-abstract public class MutableConceptMap<T extends Term> extends ConceptMap implements Iterable<T> {
+public abstract class MutableConceptMap<T extends Term> extends ConceptMap implements Iterable<T> {
 
     public final Set<T> inclusions = Global.newHashSet(16);
 
@@ -24,8 +24,8 @@ abstract public class MutableConceptMap<T extends Term> extends ConceptMap imple
         inclusions.add(t);
     }
 
-    abstract public boolean include(Concept c);
-    abstract public boolean exclude(Concept c);
+    public abstract boolean include(Concept c);
+    public abstract boolean exclude(Concept c);
 
     @Override
     protected boolean onConceptActive(Concept c) {

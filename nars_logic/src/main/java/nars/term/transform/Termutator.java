@@ -37,12 +37,12 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     }
 
     @Override
-    public final int size() {
+    public int size() {
         return compound.size();
     }
 
     @Override
-    public final Term term(int i) {
+    public Term term(int i) {
         return compound.term(get(i));
     }
 
@@ -57,7 +57,7 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     }
 
     @Override
-    public final boolean impossibleSubTermVolume(int otherTermVolume) {
+    public boolean impossibleSubTermVolume(int otherTermVolume) {
         return compound.impossibleSubTermVolume(otherTermVolume);
     }
 

@@ -300,7 +300,7 @@ public class NARfx  {
 
     //final static public Font monospace = new Font("Monospace", 14);
 
-    final static int fontPrecision = 4; //how many intervals per 1.0 to round to
+    static final int fontPrecision = 4; //how many intervals per 1.0 to round to
     static final IntObjectHashMap<Font> monoFonts = new IntObjectHashMap();
 
     public static Font mono(double v) {

@@ -5,7 +5,7 @@ import nars.nal.RuleMatch;
 import nars.term.Term;
 
 
-final public class NotImplOrEquiv extends PreCondition1 {
+public final class NotImplOrEquiv extends PreCondition1 {
 
     public NotImplOrEquiv(final Term arg1) {
         super(arg1);

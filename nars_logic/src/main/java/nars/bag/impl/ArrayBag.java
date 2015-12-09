@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  */
 public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> implements Iterable<V> {
 
-    public final static Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.average;
+    public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.average;
 
     /**
      * mapping from key to item
@@ -91,7 +91,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The number of items
      */
     @Override
-    final public int size() {
+    public final int size() {
         /*if (Global.DEBUG)
             validate();*/
         return items.size();
@@ -183,11 +183,11 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    final public V pop() {
+    public final V pop() {
         return peekNext(true);
     }
 
-    abstract public V peekNext(final boolean remove);
+    public abstract V peekNext(final boolean remove);
 
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -255,20 +255,20 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         return (size() >= capacity());
     }
 
-    final protected V removeLowest() {
+    protected final V removeLowest() {
         if (isEmpty()) return null;
         return removeItem(size()-1);
     }
-    final protected V removeHighest() {
+    protected final V removeHighest() {
         if (isEmpty()) return null;
         return removeItem(0);
     }
 
-    final public V highest() {
+    public final V highest() {
         if (isEmpty()) return null;
         return getItem(0);
     }
-    final public V lowest() {
+    public final V lowest() {
         if (isEmpty()) return null;
         return getItem(size()-1);
     }
@@ -296,7 +296,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    final public int capacity() {
+    public final int capacity() {
         return items.capacity();
     }
 
@@ -306,17 +306,17 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    final public Set<K> keySet() {
+    public final Set<K> keySet() {
         return index.keySet();
     }
 
     @Override
-    final public Collection<V> values() {
+    public final Collection<V> values() {
         return items; //index.values();
     }
 
     @Override
-    final public Iterator<V> iterator() {
+    public final Iterator<V> iterator() {
         return items.iterator();
     }
 

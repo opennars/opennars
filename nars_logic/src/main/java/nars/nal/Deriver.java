@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  *
  * Created by patrick.hammer on 30.07.2015.
  */
-abstract public class Deriver  {
+public abstract class Deriver  {
 
     public static final Deriver standardDeriver;
     /**
@@ -66,7 +66,7 @@ abstract public class Deriver  {
     }
 
     /** run an initialized rule matcher */
-    abstract protected void run(final RuleMatch matcher);
+    protected abstract void run(final RuleMatch matcher);
 
 
     /** initialize a rule matcher with a Premise to supply

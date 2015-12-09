@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @param Source Return type
  */
-abstract public class DependsOnColumn<Source,Result> extends FunctionMeter<Result> {
+public abstract class DependsOnColumn<Source,Result> extends FunctionMeter<Result> {
 
     protected final int sourceColumn;
     protected final Metrics metrics;
@@ -57,6 +57,6 @@ abstract public class DependsOnColumn<Source,Result> extends FunctionMeter<Resul
         return metrics.getNewSignalValues(column, i);
     }
     
-    abstract protected String getColumnID(Signal dependent, int i);
+    protected abstract String getColumnID(Signal dependent, int i);
     
 }

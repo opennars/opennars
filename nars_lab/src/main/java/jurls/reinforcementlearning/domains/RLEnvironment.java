@@ -16,26 +16,28 @@ import java.awt.*;
 public interface RLEnvironment {
 
     /** current observation */
-    public double[] observe();
+    double[] observe();
 
     /** current reward */
-    public double getReward();
+    double getReward();
 
     /** set the next action (0 <= action < numActions)
      *  returns false if the action was not successfully applied
      * */
-    public boolean takeAction(int action);
+    boolean takeAction(int action);
 
     /** advance world simulation by 1 frame */
-    public void frame();
+    void frame();
 
-    public int numActions();
+    int numActions();
 
-    default public int numStates() { return observe().length; }
+    default int numStates() { return observe().length; }
 
 
-    @Deprecated public Component component();
-    @Deprecated default public NWindow newWindow() {
+    @Deprecated
+    Component component();
+    @Deprecated
+    default NWindow newWindow() {
         return new NWindow(getClass().toString(), component()).show(800,600);
     }
 

@@ -284,7 +284,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return index(key, this.table.length);
     }
 
-    protected final static int index(Object key, int tl) {
+    protected static final int index(Object key, int tl) {
         // This function ensures that hashCodes that differ only by
         // constant multiples at each bit position have a bounded
         // number of collisions (approximately 8 at default load factor).
@@ -2561,7 +2561,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
 
-    private final static Object nonSentinel(Object key) {
+    private static final Object nonSentinel(Object key) {
         return key == NULL_KEY ? null : key;
     }
 

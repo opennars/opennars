@@ -12,7 +12,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
-abstract public class LinePlotJFX extends Application {
+public abstract class LinePlotJFX extends Application {
 
 
 
@@ -35,7 +35,7 @@ abstract public class LinePlotJFX extends Application {
         stage.show();
     }
 
-    abstract public XYChart.Series[] initChart();
+    public abstract XYChart.Series[] initChart();
 
 
     public static void main(String[] args) {

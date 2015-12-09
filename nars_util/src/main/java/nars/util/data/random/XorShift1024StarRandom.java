@@ -169,7 +169,7 @@ public class XorShift1024StarRandom extends Random {
 		this.p = p;
 	}
 
-	static public class SplitMix64RandomGenerator extends AbstractRandomGenerator {
+	public static class SplitMix64RandomGenerator extends AbstractRandomGenerator {
 		/** 2<sup>64</sup> &middot; &phi;, &phi; = (&#x221A;5 &minus; 1)/2. */
 		private static final long PHI = 0x9E3779B97F4A7C15L;
 		/** 2<sup>53</sup> &minus; 1. */

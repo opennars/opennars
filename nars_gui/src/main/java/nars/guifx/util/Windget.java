@@ -36,16 +36,16 @@ public class Windget extends DefaultWindow  {
 
 
     public interface Port {
-        public boolean acceptIn(Port from);
+        boolean acceptIn(Port from);
 
-        public boolean acceptOut(Port to);
+        boolean acceptOut(Port to);
 
-        public void addIncoming(Link l);
+        void addIncoming(Link l);
 
-        public void addOutgoing(Link l);
+        void addOutgoing(Link l);
 
-        public double getX();
-        public double getY();
+        double getX();
+        double getY();
 
         /** the port node */
         Node getNode();
@@ -57,8 +57,8 @@ public class Windget extends DefaultWindow  {
     public interface Link {
 
         //TODO move this directionality-specific functions to DirectedLink
-        public Port getSource();
-        public Port getTarget();
+        Port getSource();
+        Port getTarget();
     }
 
     public interface DirectedLink extends Link {
@@ -374,12 +374,12 @@ public class Windget extends DefaultWindow  {
         autosize();
     }
 
-    final public Windget move(final double x, final double y) {
+    public final Windget move(final double x, final double y) {
         setLayoutX(x);
         setLayoutY(y);
         return this;
     }
-    final public boolean move(final double[] v, final double threshold) {
+    public final boolean move(final double[] v, final double threshold) {
         final double x = getLayoutX();
         final double y = getLayoutY();
         final double nx = v[0];

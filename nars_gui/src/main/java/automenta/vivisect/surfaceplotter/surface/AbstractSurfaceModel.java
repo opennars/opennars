@@ -21,15 +21,15 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	 * @author eric
 	 */
 	public interface Plotter {
-		public int getHeight();
+		int getHeight();
 
-		public int getWidth();
+		int getWidth();
 
-		public float getX(int i);
+		float getX(int i);
 
-		public float getY(int j);
+		float getY(int j);
 
-		public void setValue(int i, int j, float v1, float v2);
+		void setValue(int i, int j, float v1, float v2);
 
 	}
 	/**

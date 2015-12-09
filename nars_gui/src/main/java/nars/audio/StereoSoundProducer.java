@@ -2,6 +2,6 @@ package nars.audio;
 
 public interface StereoSoundProducer
 {
-    public float read(float[] leftBuf, float[] rightBuf, int readRate);
-    public void skip(int samplesToSkip, int readRate);
+    float read(float[] leftBuf, float[] rightBuf, int readRate);
+    void skip(int samplesToSkip, int readRate);
 }

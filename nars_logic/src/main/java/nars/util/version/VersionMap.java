@@ -150,7 +150,7 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
             throw new RuntimeException("what is this supposed to do");
         }
 
-        private final void removeFromMap() {
+        private void removeFromMap() {
             VersionMap.this.remove(key);
         }
     }

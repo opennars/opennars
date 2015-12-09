@@ -95,7 +95,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     private ArrayArrayList<E> buffer;
     private E[] backingArray;
     private int size = 0;
-    final private E[] empty;
+    private final E[] empty;
 
     public DirectCopyOnWriteArrayList(Class c) {
         this.elementType = c;

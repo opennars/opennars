@@ -71,8 +71,8 @@ public class Versioning extends FasterList<Versioned> {
         return nextID++;
     }
 
-    final static int initiALPOOL_CAPACITY = 16;
-    final static int stackLimit = 16;
+    static final int initiALPOOL_CAPACITY = 16;
+    static final int stackLimit = 16;
 
     final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(initiALPOOL_CAPACITY) {
         @Override public FasterList create() {

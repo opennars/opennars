@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-abstract public class AbstractUtf8Atom extends Atomic implements Byted, Externalizable {
+public abstract class AbstractUtf8Atom extends Atomic implements Byted, Externalizable {
 
     private final byte[] id;
     private final int hash;

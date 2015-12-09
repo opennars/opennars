@@ -76,8 +76,8 @@ public abstract class Microbenchmark {
         return this;
     }    
             
-    abstract public void init();
-    abstract public void run(boolean warmup);
+    public abstract void init();
+    public abstract void run(boolean warmup);
     
     
     public double getCycleTimeMS() {

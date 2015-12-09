@@ -35,7 +35,7 @@ public class TaskLabel extends AutoLabel<Task> {
 
     }
 
-    static private final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
+    private static final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
         nars.guifx.TaskLabel a = (nars.guifx.TaskLabel) e.getSource();
         Task t = a.obj;
         NARfx.newWindow(a.nar, t);

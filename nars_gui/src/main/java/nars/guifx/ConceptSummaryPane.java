@@ -178,10 +178,10 @@ public class ConceptSummaryPane extends Text {
             g.strokeLine(cx+w/2, cy-w/2, cx-w/2, cy+w/2);
     }
 
-    final static ColorMatrix red  = new ColorMatrix(8,8,(x,y) -> {
+    static final ColorMatrix red  = new ColorMatrix(8,8,(x, y) -> {
         return Color.hsb(360 * (x * 0.25 + 0.25), 0.67, 0.5 + 0.5 * y);
     });
-    final static ColorMatrix blue = new ColorMatrix(8,8,(x,y) -> {
+    static final ColorMatrix blue = new ColorMatrix(8,8,(x, y) -> {
         return Color.hsb(360 * (x * 0.25 + 0.65), 0.67, 0.5 + 0.5 * y);
     });
 

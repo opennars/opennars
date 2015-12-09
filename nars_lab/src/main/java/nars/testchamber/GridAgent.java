@@ -11,7 +11,7 @@ import java.util.Set;
 
 
 
-abstract public class GridAgent extends LocalGridObject {
+public abstract class GridAgent extends LocalGridObject {
     
     public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
     public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
@@ -44,7 +44,7 @@ abstract public class GridAgent extends LocalGridObject {
     public void turn(int angle) {   act(new Turn(angle(angle)));  }
 
     @Override
-    abstract public void update(Effect nextEffect);
+    public abstract void update(Effect nextEffect);
     
     @Override
     public void draw() {

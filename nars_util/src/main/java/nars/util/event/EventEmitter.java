@@ -10,13 +10,13 @@ import java.util.function.Function;
 /**
  * TODO separate this into a single-thread and multithread implementation
  */
-abstract public class EventEmitter<K,V>  {
+public abstract class EventEmitter<K,V>  {
 
 
     public abstract int size();
 
     public interface EventRegistration {
-        public void off();
+        void off();
     }
 
 //    /** more sophisticated event emitter which uses reactor.io */
@@ -215,7 +215,7 @@ abstract public class EventEmitter<K,V>  {
 
 
         @Override
-        final public int emit(final K channel, final V arg) {
+        public final int emit(final K channel, final V arg) {
             ArraySharingList<Reaction<K, V>> r = reactions.get(channel);
             if (r == null) return 0;
             final Reaction<K, V>[] c = r.getCachedNullTerminatedArray();
@@ -292,9 +292,9 @@ abstract public class EventEmitter<K,V>  {
 //
     public abstract int emit(K channel, V arg);
 //
-    abstract public EventRegistration on(K k, Reaction<K,V> o);
+public abstract EventRegistration on(K k, Reaction<K,V> o);
 //
-    abstract public boolean isActive(final K event);
+public abstract boolean isActive(final K event);
 //
 //
 //    /** for enabling many events at the same time */

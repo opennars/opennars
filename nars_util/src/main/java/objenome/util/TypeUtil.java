@@ -275,7 +275,7 @@ public final class TypeUtil {
      * @return <code>true</code> if it is a numeric type, <code>false</code>
      * otherwise
      */
-    public static final boolean isNumericType(final Class<?> type) {
+    public static boolean isNumericType(final Class<?> type) {
         return Number.class.isAssignableFrom(type);
         /*
         return ((type == Byte.class) || (type == Short.class) || (type == Integer.class) || (type == Long.class)

@@ -12,9 +12,9 @@ import nars.term.transform.FindSubst;
  */
 public class SubstituteIfUnified extends Substitute {
 
-    final static Atom INDEP_VAR = Atom.the("$", true);
-    final static Atom QUERY_VAR = Atom.the("?", true);
-    final static Atom DEP_VAR = Atom.the("#", true);
+    static final Atom INDEP_VAR = Atom.the("$", true);
+    static final Atom QUERY_VAR = Atom.the("?", true);
+    static final Atom DEP_VAR = Atom.the("#", true);
 
     private final Op type;
     private final transient String id;

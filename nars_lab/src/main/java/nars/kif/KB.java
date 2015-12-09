@@ -3546,7 +3546,7 @@ public class KB {
      * caches for subclass and instance.
      *
      */
-    class RelationCache extends HashMap {
+    static class RelationCache extends HashMap {
 
         private String relationName = "";
 

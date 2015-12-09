@@ -12,7 +12,7 @@ public class Substitute extends PreCondition {
 
 
 
-    private transient final String id;
+    private final transient String id;
 
     /**
      *

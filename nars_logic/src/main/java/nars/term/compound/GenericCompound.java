@@ -20,7 +20,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     protected final TermVector<T> terms;
 
-    protected transient final int hash;
+    protected final transient int hash;
     protected final Op op;
     protected final int relation;
     private boolean normalized = false;

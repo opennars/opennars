@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class RouletteSelector extends AbstractSelector {
 
-    final static Random rng = XORShiftRandom.global;
+    static final Random rng = XORShiftRandom.global;
 
     /**
      * The individuals' selection probabilities.

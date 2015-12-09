@@ -269,7 +269,7 @@ public class FaceGUI extends BaseClass {
     }
 
     int type(int i) {
-        return ((Integer) typeVector.elementAt(i)).intValue();
+        return (Integer) typeVector.elementAt(i);
     }
 
     Color color(int i, boolean flag) {
@@ -286,7 +286,7 @@ public class FaceGUI extends BaseClass {
 
     public int addFaces(int i, double d, double d1, double d2, String s) {
         int index = typeVector.size();
-        typeVector.addElement(new Integer(i));
+        typeVector.addElement(i);
         colorVector.addElement(new Color((float) d1, (float) d1, (float) d1));
         shapesVector.addElement(shapeVector = new Vector());
         if (s != null) {
@@ -301,12 +301,12 @@ public class FaceGUI extends BaseClass {
 
     public void assymetric() {
         int i = flexVector.size() - 1;
-        flexSymmetryVector.setElementAt(new Integer(1), i);
+        flexSymmetryVector.setElementAt(1, i);
     }
 
     public void flex(String s, String s1, String s2) {
         flexNamesVector.addElement(s);
-        flexSymmetryVector.addElement(new Integer(-1));
+        flexSymmetryVector.addElement(-1);
         flexVector.addElement(flx = new Vector());
         for (StringTokenizer stringtokenizer = new StringTokenizer(s1); stringtokenizer.hasMoreTokens(); ixyz.addElement(new Integer(stringtokenizer.nextToken()))) {
             flx.addElement(ixyz = new Vector());
@@ -412,7 +412,7 @@ public class FaceGUI extends BaseClass {
                 vertexArray = new double[nVertices][3];
                 for (int i = 0; i < nVertices; i++) {
                     for (int k = 0; k < 3; k++) {
-                        vertexArray[i][k] = ((Double) vertexVector.elementAt(3 * i + k)).doubleValue();
+                        vertexArray[i][k] = (Double) vertexVector.elementAt(3 * i + k);
                     }
 
                 }
@@ -426,7 +426,7 @@ public class FaceGUI extends BaseClass {
                         face = (Vector) shapeVector.elementAt(j1);
                         shape[l][j1] = new int[face.size()];
                         for (int i2 = 0; i2 < shape[l][j1].length; i2++) {
-                            shape[l][j1][i2] = ((Integer) face.elementAt(i2)).intValue();
+                            shape[l][j1][i2] = (Integer) face.elementAt(i2);
                         }
 
                     }
@@ -443,13 +443,13 @@ public class FaceGUI extends BaseClass {
                     flx = (Vector) flexVector.elementAt(k1);
                     flexData[k1] = new double[flx.size()][];
                     flexShape[k1] = new int[flx.size()];
-                    flexSymmetry[k1] = ((Integer) flexSymmetryVector.elementAt(k1)).intValue();
+                    flexSymmetry[k1] = (Integer) flexSymmetryVector.elementAt(k1);
                     for (int j2 = 0; j2 < flexShape[k1].length; j2++) {
                         ixyz = (Vector) flx.elementAt(j2);
-                        flexShape[k1][j2] = ((Integer) ixyz.elementAt(0)).intValue();
+                        flexShape[k1][j2] = (Integer) ixyz.elementAt(0);
                         flexData[k1][j2] = new double[3];
                         for (int k2 = 1; k2 < ixyz.size(); k2++) {
-                            flexData[k1][j2][k2 - 1] = ((Double) ixyz.elementAt(k2)).doubleValue();
+                            flexData[k1][j2][k2 - 1] = (Double) ixyz.elementAt(k2);
                         }
 
                     }

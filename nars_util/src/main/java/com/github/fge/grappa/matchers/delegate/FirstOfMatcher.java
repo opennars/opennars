@@ -37,13 +37,13 @@ public class FirstOfMatcher
     }
 
     @Override
-    final public MatcherType getType()
+    public final MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    final public <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(final MatcherContext<V> context)
     {
 
 

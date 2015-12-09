@@ -6,7 +6,7 @@ import nars.term.compound.CompoundN;
 /**
  * Common parent class for IntersectInt and IntersectExt
  */
-abstract public class Intersect extends CompoundN {
+public abstract class Intersect extends CompoundN {
 
     protected Intersect(Term[] args) {
         super(args);

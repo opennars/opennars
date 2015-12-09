@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
 
 public class NarseseTest {
 
-    final static NAR n = new Terminal();
-    final static Narsese p = Narsese.the();
+    static final NAR n = new Terminal();
+    static final Narsese p = Narsese.the();
 
     static <T extends Term> T term(String s) throws Narsese.NarseseException {
         //TODO n.term(s) when the parser is replaced

@@ -37,7 +37,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
      */
     @Override
-    final public Map<Object, Object> getMeta() {
+    public final Map<Object, Object> getMeta() {
         return meta;
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * Reference to the memory to which the Concept belongs
      */
     @Override
-    final public Memory getMemory() {
+    public final Memory getMemory() {
         return memory;
     }
 
@@ -68,12 +68,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * The term is the unique ID of the concept
      */
     @Override
-    final public Term getTerm() {
+    public final Term getTerm() {
         return term;
     }
 
     @Override
-    final public long getCreationTime() {
+    public final long getCreationTime() {
         return creationTime;
     }
 
@@ -85,12 +85,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     }
 
     @Override
-    final public int hashCode() {
+    public final int hashCode() {
         return getTerm().hashCode();
     }
 
     @Override
-    final public Term name() {
+    public final Term name() {
         return getTerm();
     }
 
@@ -100,7 +100,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * @return The concept name, with taskBudget in the full version
      */
     @Override
-    final public String toString() {  // called from concept bag
+    public final String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
         //return super.toStringExternal();
         return getTerm().toString();
@@ -156,12 +156,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
 
     @Override
-    final public boolean isConstant() {
+    public final boolean isConstant() {
         return constant;
     }
 
     @Override
-    final public boolean setConstant(boolean b) {
+    public final boolean setConstant(boolean b) {
         this.constant = b;
         return constant;
     }

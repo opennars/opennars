@@ -13,7 +13,7 @@ import java.util.Locale;
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms
  */
-abstract public class Texts {
+public abstract class Texts {
 
 
     //TODO find more appropriate symbol mapping
@@ -293,7 +293,7 @@ abstract public class Texts {
     }
 
 
-    final static ThreadLocal<Format> oneDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0") );
+    static final ThreadLocal<Format> oneDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0") );
 
     public static final String n1(final float x) {
         return oneDecimal.get().format(x);
@@ -304,7 +304,7 @@ abstract public class Texts {
     }
 
 
-    final static ThreadLocal<Format> threeDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.000") );
+    static final ThreadLocal<Format> threeDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.000") );
 
     public static final String n3(final float x) {
         return threeDecimal.get().format(x);
@@ -314,7 +314,7 @@ abstract public class Texts {
         return threeDecimal.get().format(x);
     }
 
-    final static ThreadLocal<Format> fourDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0000") );
+    static final ThreadLocal<Format> fourDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0000") );
 
     public static final String n4(final float x) {
         return fourDecimal.get().format(x);
@@ -324,7 +324,7 @@ abstract public class Texts {
         return fourDecimal.get().format(x);
     }
 
-    final static Format twoDecimal = new DecimalFormat("0.00");
+    static final Format twoDecimal = new DecimalFormat("0.00");
 
 //    public static final String n2Slow(final float x) {
 //        return twoDecimal.format(x);

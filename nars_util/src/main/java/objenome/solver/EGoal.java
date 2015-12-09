@@ -57,7 +57,7 @@ package objenome.solver;
  * model that can be evaluated in the Civilization system.
  *
  */
-abstract public class EGoal<I> {
+public abstract class EGoal<I> {
 
     public final String id;
 
@@ -66,7 +66,7 @@ abstract public class EGoal<I> {
     }
 
     /** inversely proportional to score or reward; generally minimized */
-    abstract public double cost(I o);
+    public abstract double cost(I o);
 
     @Override
     public String toString() {

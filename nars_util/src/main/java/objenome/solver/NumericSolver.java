@@ -32,7 +32,7 @@ public abstract class NumericSolver<C> implements Solver  {
         
     }
     
-    abstract public void solve(Objenome o, List<SetNumericValue> variables);
+    public abstract void solve(Objenome o, List<SetNumericValue> variables);
 
     @Override
     public void solve(Multitainer g, Map<Problem, Solution> p, Object[] targets) {

@@ -117,13 +117,13 @@ public class Byt {
 //    }
 
 
-    final public static int len( final byte[] array ) {
+    public static final int len(final byte[] array ) {
         return array.length;
     }
 
 
 
-    final public static int lengthOf( final byte[] array ) {
+    public static final int lengthOf(final byte[] array ) {
         return array.length;
     }
 

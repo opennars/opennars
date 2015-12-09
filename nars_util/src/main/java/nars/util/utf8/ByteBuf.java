@@ -71,12 +71,12 @@ public final class ByteBuf  {
         buffer = new byte[ capacity ];
     }
 
-    final public ByteBuf append(final String str) {
+    public ByteBuf append(final String str) {
         this.append(Utf8.toUtf8(str));
         return this;
     }
 
-    final public ByteBuf add( final String str ) {
+    public ByteBuf add( final String str ) {
         this.add(Utf8.toUtf8(str));
         return this;
     }
@@ -150,7 +150,7 @@ public final class ByteBuf  {
 
     }
 
-    final void grow(int bytes) {
+    void grow(int bytes) {
         if ( bytes + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + bytes );
         }
@@ -715,7 +715,7 @@ public final class ByteBuf  {
         return this;
     }
 
-    final public int getCapacity() {
+    public int getCapacity() {
         return buffer.length;
     }
 }

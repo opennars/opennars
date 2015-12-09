@@ -16,7 +16,7 @@ import static javafx.application.Platform.runLater;
 class ConceptSonificationPanel extends BorderPane {
 
     private final Label info;
-    final static int maxVoices = 4;
+    static final int maxVoices = 4;
     private final NAR nar;
     private ConceptSonification son;
 

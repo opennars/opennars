@@ -24,20 +24,20 @@ import java.awt.*;
  */
 public interface DockingChild {
 
-    public JComponent getComponent();
+    JComponent getComponent();
 
-    public DockingContainer getDockParent();
+    DockingContainer getDockParent();
 
-    public void setDockParent(DockingContainer dockParent);
+    void setDockParent(DockingContainer dockParent);
 
-    public void addDockContent(DockingContent content);
+    void addDockContent(DockingContent content);
 
-    public DockingChild getDockingChild(DockingPathRecord subpath);
+    DockingChild getDockingChild(DockingPathRecord subpath);
 
-    public void restore(DockingContent content, DockingPathRecord subpath);
+    void restore(DockingContent content, DockingPathRecord subpath);
 
-    public DockingPickRecord pickContainer(Point containerPoint);
+    DockingPickRecord pickContainer(Point containerPoint);
 
-    public void closeAll();
+    void closeAll();
 
 }

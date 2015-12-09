@@ -38,8 +38,8 @@ public class Hilbert extends Linear {
         super.run(graph, iterations);
     }
 
-    final static int MAX_CACHED_ORDER = 8;
-    final static FloatArrayList[] hilbertOrders = new FloatArrayList[MAX_CACHED_ORDER];
+    static final int MAX_CACHED_ORDER = 8;
+    static final FloatArrayList[] hilbertOrders = new FloatArrayList[MAX_CACHED_ORDER];
 
     private FloatArrayList update(int order, int north, int east, int south, int west) {
 

@@ -15,7 +15,7 @@ import java.util.Objects;
  * TODO when a vertex is removed and the superterm edge still exists,
  * add it to the missing set.
  */
-abstract public class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRelation> {
+public abstract class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRelation> {
 
     public final ConceptSet edgeConcepts;
 

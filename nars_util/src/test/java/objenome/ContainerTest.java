@@ -33,9 +33,9 @@ public class ContainerTest {
 
     }
 
-    public static interface UserDAO {
+    public interface UserDAO {
 
-        public String getUsername(int id);
+        String getUsername(int id);
     }
 
     public static class JdbcUserDAO implements UserDAO {
@@ -59,9 +59,9 @@ public class ContainerTest {
         }
     }
 
-    public static interface AccountDAO {
+    public interface AccountDAO {
 
-        public double getBalance(int id);
+        double getBalance(int id);
     }
 
     public static class JdbcAccountDAO implements AccountDAO {

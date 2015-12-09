@@ -26,30 +26,30 @@ import java.awt.image.BufferedImage;
  */
 public interface AbstractUI {
     /** This method is called to notify the UI that we want to terminate. */
-    public void die();
+    void die();
     /** Notifies the UI that it should refresh its display */
-    public void refresh();
+    void refresh();
 
     /** Sets the screen image to be displayed in the GUI */
-    public void setImage(BufferedImage img);
+    void setImage(BufferedImage img);
 
     /** Provides a string to be displayed (at the bottom of the GUI if using a GUI) */
-    public void setCenterString(String s);
-    public void addMessage(String s);
+    void setCenterString(String s);
+    void addMessage(String s);
 
     /** Obtain an ALE action from the UI, e.g. via the keyboard.
      * 
      * @return
      */
-    public int getKeyboardAction();
+    int getKeyboardAction();
     /** Returns true if the user requested the end of the program, e.g. via a
      *   keypress.
      * @return
      */
-    public boolean quitRequested();
+    boolean quitRequested();
 
     /** A method called to notify the UI that a new frame has been processed.
      *   Used to display frames per second information.
      */
-    public void updateFrameCount();
+    void updateFrameCount();
 }

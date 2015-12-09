@@ -59,7 +59,7 @@ public class TaskPane extends BorderPane {
 //        }
     }
 
-    private class QuestionPane extends BorderPane {
+    private static class QuestionPane extends BorderPane {
         public QuestionPane(Task c) {
             setTop(new Label("Answers:"));
             //TODO ..

@@ -123,7 +123,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
 
 
     @Override
-    final public boolean isEmpty() {
+    public final boolean isEmpty() {
         return array!=null && array.length!=0;
     }
 

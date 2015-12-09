@@ -20,7 +20,7 @@ import static nars.util.data.LabeledSupplier.supply;
  * Created by me on 2/10/15.
  */
 @Ignore
-abstract public class AbstractNALTester {
+public abstract class AbstractNALTester {
 
 
     //final ThreadLocal<NAR> nars;

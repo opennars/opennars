@@ -203,9 +203,9 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 //        print(new PrintStream(new FileOutputStream(new File(filePath))));
 //    }
 
-    abstract public static class Keyed implements Comparable<Keyed> {
+    public abstract static class Keyed implements Comparable<Keyed> {
 
-        abstract public String name();
+        public abstract String name();
 
         @Override
         public String toString() {

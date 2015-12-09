@@ -47,12 +47,12 @@ public class PercentLayout implements LayoutManager2 {
   /**
    * Useful constant to layout the components horizontally (from left to right).
    */
-  public final static int HORIZONTAL = 0;
+  public static final int HORIZONTAL = 0;
 
   /**
    * Useful constant to layout the components vertically (from top to bottom).
    */
-  public final static int VERTICAL = 1;
+  public static final int VERTICAL = 1;
 
   static class Constraint {
     protected Object value;
@@ -69,22 +69,22 @@ public class PercentLayout implements LayoutManager2 {
       super(d);
     }
     public int intValue() {
-      return ((Integer)value).intValue();
+      return (Integer) value;
     }
   }
 
   static class PercentConstraint extends Constraint {
     public PercentConstraint(float d) {
-      super(new Float(d));
+      super(d);
     }
     public float floatValue() {
-      return ((Float)value).floatValue();
+      return (Float) value;
     }
   }
 
-  private final static Constraint REMAINING_SPACE = new Constraint("*");
+  private static final Constraint REMAINING_SPACE = new Constraint("*");
 
-  private final static Constraint PREFERRED_SIZE = new Constraint("");
+  private static final Constraint PREFERRED_SIZE = new Constraint("");
 
   private int orientation;
   private int gap;
@@ -152,8 +152,7 @@ public class PercentLayout implements LayoutManager2 {
     } else if (constraints instanceof String) {
       String s = (String)constraints;
       if (s.endsWith("%")) {
-        float value = Float.valueOf(s.substring(0, s.length() - 1))
-          .floatValue() / 100;
+        float value = Float.valueOf(s.substring(0, s.length() - 1)) / 100;
         if (value > 1 || value < 0)
           throw new IllegalArgumentException("percent value must be >= 0 and <= 100");
         setConstraint(component, new PercentConstraint(value));
@@ -335,7 +334,7 @@ public class PercentLayout implements LayoutManager2 {
         Constraint constraint =
           (Constraint)m_ComponentToConstraint.get(components[i]);
         if (constraint == REMAINING_SPACE) {
-          remaining.add(new Integer(i));
+          remaining.add(i);
           sizes[i] = 0;
         }
       }
@@ -344,7 +343,7 @@ public class PercentLayout implements LayoutManager2 {
     if (!remaining.isEmpty()) {
       int rest = availableSize / remaining.size();
       for (Iterator iter = remaining.iterator(); iter.hasNext();) {
-        sizes[((Integer)iter.next()).intValue()] = rest;
+        sizes[((Integer) iter.next())] = rest;
       }
     }
 

@@ -6,7 +6,7 @@ import nars.NAR;
 import java.util.function.Consumer;
 
 /**  call at the end of a frame (a batch of cycles) */
-abstract public class FrameReaction implements Consumer<NAR> {
+public abstract class FrameReaction implements Consumer<NAR> {
 
     private On reg;
 
@@ -30,5 +30,6 @@ abstract public class FrameReaction implements Consumer<NAR> {
     }
 
 
-    @Deprecated abstract public void onFrame();
+    @Deprecated
+    public abstract void onFrame();
 }

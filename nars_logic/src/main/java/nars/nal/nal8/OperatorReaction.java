@@ -45,12 +45,12 @@ import java.util.function.Function;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class OperatorReaction implements Function<Task,List<Task>>, Reaction<Term,Task>, Serializable {
+public abstract class OperatorReaction implements Function<Task,List<Task>>, Reaction<Term,Task>, Serializable {
 
 
     public final Term operatorTerm;
 
-    transient protected NAR nar;
+    protected transient NAR nar;
 
 
     @Override

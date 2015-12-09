@@ -7,7 +7,7 @@ import objenome.op.Node;
 /**
  * Created by me on 5/6/15.
  */
-abstract public class MathNode extends Node<Node, Double> {
+public abstract class MathNode extends Node<Node, Double> {
 
     public final Literal zero = new Doubliteral(0.0);
     public final Literal one = new Doubliteral(1.0);
@@ -37,10 +37,10 @@ abstract public class MathNode extends Node<Node, Double> {
     }
 
     /** the fast double-only version that should be implemented */
-    abstract public double asDouble();
+    public abstract double asDouble();
 
     @Override
-    final public Double evaluate() {
+    public final Double evaluate() {
         return asDouble();
     }
 }

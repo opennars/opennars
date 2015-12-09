@@ -14,7 +14,7 @@ public class Atom extends StringAtom {
 
     public static final Term Null = new ShadowAtom("NULL");
 
-    final static Atom[] digits = new Atom[10];
+    static final Atom[] digits = new Atom[10];
     //private static final Map<String,Atom> atoms = Global.newHashMap();
 
 
@@ -97,18 +97,18 @@ public class Atom extends StringAtom {
 //        return atoms.computeIfAbsent(name, AtomInterner);
 //    }
 
-    public final static Atom the(final String name, boolean quoteIfNecessary) {
+    public static final Atom the(final String name, boolean quoteIfNecessary) {
         if (quoteIfNecessary && quoteNecessary(name))
             return quote(name);
 
         return the(name);
     }
 
-    public final static Term the(Term x) {
+    public static final Term the(Term x) {
         return x;
     }
 
-    public final static Atom the(Number o) {
+    public static final Atom the(Number o) {
 
         if (o instanceof Byte) return the(o.intValue());
         if (o instanceof Short) return the(o.intValue());
@@ -122,12 +122,12 @@ public class Atom extends StringAtom {
     }
 
     /** gets the atomic term of an integer */
-    public final static Atom the(final int i) {
+    public static final Atom the(final int i) {
         return the(i, 10);
     }
 
     /** gets the atomic term of an integer, with specific radix (up to 36) */
-    public final static Atom the(final int i, int radix) {
+    public static final Atom the(final int i, int radix) {
         //fast lookup for single digits
         if ((i >= 0) && (i <= 9)) {
             Atom a = digits[i];
@@ -138,7 +138,7 @@ public class Atom extends StringAtom {
         return the(Integer.toString(i, radix));
     }
 
-    public final static Atom the(final float v) {
+    public static final Atom the(final float v) {
         if (Util.equal( (float)Math.floor(v), v, Float.MIN_VALUE*2 )) {
             //close enough to be an int, so it doesnt need to be quoted
             return the((int)v);
@@ -147,7 +147,7 @@ public class Atom extends StringAtom {
     }
 
     /** gets the atomic term given a name */
-    public final static Atom the(final String name) {
+    public static final Atom the(final String name) {
         //return Atom.the(Utf8.toUtf8(name));
         return new Atom(name);
 
@@ -168,12 +168,12 @@ public class Atom extends StringAtom {
       //  }
     }
 
-    public final static Atom the(byte[] id) {
+    public static final Atom the(byte[] id) {
         return new Atom(id);
     }
 
 
-    public final static Atom the(byte c) {
+    public static final Atom the(byte c) {
         return Atom.the(new byte[] { c });
     }
 

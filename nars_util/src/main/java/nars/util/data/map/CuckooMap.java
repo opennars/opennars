@@ -42,7 +42,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     private static final int PRIME3 = 0xced1c241;
 
     //TODO allow setting this via constructor
-    transient final Random random;
+    final transient Random random;
 
     public int size;
 
@@ -705,7 +705,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         return new Keys(this);
     }
 
-    static public class Entry<K, V> {
+    public static class Entry<K, V> {
         public K key;
         public V value;
 
@@ -714,7 +714,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         }
     }
 
-    static private class MapIterator<K, V> {
+    private static class MapIterator<K, V> {
         public boolean hasNext;
 
         final CuckooMap<K, V> map;
@@ -757,7 +757,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         }
     }
 
-    static public class Entries<K, V> extends MapIterator<K, V> implements Iterable<Entry<K, V>>, Iterator<Entry<K, V>> {
+    public static class Entries<K, V> extends MapIterator<K, V> implements Iterable<Entry<K, V>>, Iterator<Entry<K, V>> {
         Entry<K, V> entry = new Entry();
 
         public Entries (CuckooMap<K, V> map) {
@@ -787,7 +787,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         }
     }
 
-    static public class Values<V> extends MapIterator<Object, V> implements Iterable<V>, Iterator<V> {
+    public static class Values<V> extends MapIterator<Object, V> implements Iterable<V>, Iterator<V> {
         public Values (CuckooMap<?, V> map) {
             super((CuckooMap<Object, V>)map);
         }
@@ -827,7 +827,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 //        }
     }
 
-    static public class Keys<K> extends MapIterator<K, Object> implements Iterable<K>, Iterator<K> {
+    public static class Keys<K> extends MapIterator<K, Object> implements Iterable<K>, Iterator<K> {
         public Keys (CuckooMap<K, ?> map) {
             super((CuckooMap<K, Object>)map);
         }
@@ -864,7 +864,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         */
     }
 
-    static public int nextPowerOfTwo (int value) {
+    public static int nextPowerOfTwo (int value) {
         if (value == 0) return 1;
         value--;
         value |= value >> 1;

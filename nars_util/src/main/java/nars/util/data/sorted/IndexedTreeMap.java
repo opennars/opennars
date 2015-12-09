@@ -1438,7 +1438,7 @@ public class IndexedTreeMap<K, V>
      * Test two values for equality.  Differs from o1.equals(o2) only in
      * that it copes with <tt>null</tt> o1 properly.
      */
-    final static boolean valEquals(Object o1, Object o2) {
+    static final boolean valEquals(Object o1, Object o2) {
         return (o1 == null ? o2 == null : o1.equals(o2));
     }
 
@@ -1474,7 +1474,7 @@ public class IndexedTreeMap<K, V>
     /**
      * @serial include
      */
-    static abstract class NavigableSubMap<K, V> extends java.util.AbstractMap<K, V>
+    abstract static class NavigableSubMap<K, V> extends java.util.AbstractMap<K, V>
             implements NavigableMap<K, V>, java.io.Serializable {
         /**
          * The backing map.

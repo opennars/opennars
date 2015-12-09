@@ -16,7 +16,7 @@ import static javafx.application.Platform.runLater;
  * @param E edge
  * @param N visualized node
  */
-abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* W? */>  {
+public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* W? */>  {
 
     public final AtomicBoolean refresh = new AtomicBoolean(true);
 
@@ -24,10 +24,10 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     protected SpaceGrapher<V, N> grapher;
 
 
-    abstract public void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget);
+    public abstract void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget);
 
 
-    abstract public V getTargetVertex(E edge);
+    public abstract V getTargetVertex(E edge);
 
     /** if the grapher is ready */
     public final boolean isReady() {
@@ -36,7 +36,7 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
         return grapher.isReady();
     }
 
-    final public void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
+    public final void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
 
 
         forEachOutgoingEdgeOf(s, t -> {
@@ -124,11 +124,11 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     }
 
 
-    final public boolean canUpdate() {
+    public final boolean canUpdate() {
         return refresh.compareAndSet(true, false);
     }
 
-    final public void setUpdateable() {
+    public final void setUpdateable() {
         runLater(() -> {
             refresh.set(true);
         });

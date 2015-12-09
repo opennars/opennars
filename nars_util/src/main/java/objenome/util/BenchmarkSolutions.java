@@ -51,7 +51,7 @@ public final class BenchmarkSolutions {
         return x + x * x + x * x * x;
     }
 
-    public final static Function<Double,Double> XpXXpXXX = new Function<Double,Double>() {
+    public static final Function<Double,Double> XpXXpXXX = new Function<Double,Double>() {
         @Override public Double apply(Double x) {
             return cubicRegression(x);
         }        

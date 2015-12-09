@@ -61,7 +61,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     }
 
-    final protected int newHash(final boolean in) {
+    protected final int newHash(final boolean in) {
         return term(in).hashCode();
     }
 

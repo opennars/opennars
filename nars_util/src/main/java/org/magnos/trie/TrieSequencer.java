@@ -47,7 +47,7 @@ public interface TrieSequencer<S>
     * @return A number between 0 (inclusive) and count (inclusive) that is the
     *         number of matches between the two sequence sections.
     */
-   public int matches( S sequenceA, int indexA, S sequenceB, int indexB, int count );
+   int matches(S sequenceA, int indexA, S sequenceB, int indexB, int count);
 
    /**
     * Calculates the length (number of elements) of the given sequence.
@@ -56,7 +56,7 @@ public interface TrieSequencer<S>
     *        The sequence to measure.
     * @return The length of the given sequence.
     */
-   public int lengthOf( S sequence );
+   int lengthOf(S sequence);
 
    /**
     * Calculates the hash of the element at the given index in the given
@@ -73,6 +73,6 @@ public interface TrieSequencer<S>
     *        The index of the element to calculate the hash of.
     * @return The hash of the element in the sequence at the index.
     */
-   public int hashOf( S sequence, int index );
+   int hashOf(S sequence, int index);
    
 }

@@ -35,7 +35,7 @@ public class JFX {
         Toolkit.getToolkit().init();
     }
 
-    final static ColorArray grayscale = new ColorArray(
+    static final ColorArray grayscale = new ColorArray(
             128,
             Color.rgb(0, 0, 0, 1.0),
             Color.rgb(255,255,255,1.0)

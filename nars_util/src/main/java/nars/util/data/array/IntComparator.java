@@ -14,5 +14,5 @@ public interface IntComparator extends Comparator<Long> {
 	 * second one.
 	 * @see Comparator
 	 */
-    public int compare(int k1, int k2);
+	int compare(int k1, int k2);
 }

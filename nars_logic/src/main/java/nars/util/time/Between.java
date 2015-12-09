@@ -48,7 +48,7 @@ public class Between<K extends Comparable<? super K>> {
 	}
 	
 	@Override
-    final public String toString() {
+	public final String toString() {
 		return String.format("[%s..%s]", low, high);
 	}
 

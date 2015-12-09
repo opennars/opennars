@@ -24,10 +24,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class MultitainerTest {
 
-    public static interface Part { 
-        public int function();    
+    public interface Part {
+        int function();
     }
-    public static interface SubPart { public int function();    }
+    public interface SubPart { int function();    }
 
     public static class SubPart0 implements SubPart {
         @Override public int function() { return 0; }

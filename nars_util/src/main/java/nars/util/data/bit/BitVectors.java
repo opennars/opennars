@@ -40,14 +40,14 @@ public class BitVectors {
         if ( to > bitVectorLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than bit vector length (" + bitVectorLength + ')');
     }
  	
-	/** An immutable, singleton empty bit vector. */ 
-	public final static BitVector EMPTY_VECTOR = new AbstractBitVector() {
-		public final long length() { return 0; }
-		public final BitVector copy( final long from, final long to ) { 
+	/** An immutable, singleton empty bit vector. */
+	public static final BitVector EMPTY_VECTOR = new AbstractBitVector() {
+		public long length() { return 0; }
+		public BitVector copy(final long from, final long to ) {
 			ensureFromTo( 0, from, to );
 			return EMPTY_VECTOR; 
 		}
-		public final boolean getBoolean( final long index ) { throw new IndexOutOfBoundsException(); }
+		public boolean getBoolean(final long index ) { throw new IndexOutOfBoundsException(); }
 		public BitVector copy() {
 			return this;
 		}
@@ -56,14 +56,14 @@ public class BitVectors {
 		}
 	};
 
-	/** An immutable bit vector of length one containing a zero. */ 
-	public final static BitVector ZERO = new AbstractBitVector() {
-		public final long length() { return 1; }
-		public final BitVector copy( final long from, final long to ) { 
+	/** An immutable bit vector of length one containing a zero. */
+	public static final BitVector ZERO = new AbstractBitVector() {
+		public long length() { return 1; }
+		public BitVector copy(final long from, final long to ) {
 			ensureFromTo( 1, from, to );
 			return from == to ? EMPTY_VECTOR : this; 
 		}
-		public final boolean getBoolean( final long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return false; } 
+		public boolean getBoolean(final long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return false; }
 		public BitVector copy() {
 			return this;
 		}
@@ -72,14 +72,14 @@ public class BitVectors {
 		}
 	};
 
-	/** An immutable bit vector of length one containing a one. */ 
-	public final static BitVector ONE = new AbstractBitVector() {
-		public final long length() { return 1; }
-		public final BitVector copy( final long from, final long to ) { 
+	/** An immutable bit vector of length one containing a one. */
+	public static final BitVector ONE = new AbstractBitVector() {
+		public long length() { return 1; }
+		public BitVector copy(final long from, final long to ) {
 			ensureFromTo( 1, from, to );
 			return from == to ? EMPTY_VECTOR : this; 
 		}
-		public final boolean getBoolean( final long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return true; } 
+		public boolean getBoolean(final long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return true; }
 		public BitVector copy() {
 			return this;
 		}

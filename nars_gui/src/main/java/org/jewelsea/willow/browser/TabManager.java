@@ -45,23 +45,23 @@ public class TabManager {
     /**
      * representation of the current browser.
      */
-    final private ReadOnlyObjectWrapper<UITab> currentBrowser = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<UITab> currentBrowser = new ReadOnlyObjectWrapper<>();
 
     /**
      * browser tabs.
      */
-    final public TabPane tabPane = new TabPane();
+    public final TabPane tabPane = new TabPane();
 
     /**
      * button to open a new tab
      */
-    final private Button newTabButton = new Button();
+    private final Button newTabButton = new Button();
 
     /**
      * a location field in the chrome representing the location of the current tab
      * (can be null if the location is not represented in the chrome but only in the browser in the tab itself).
      */
-    final private TextField chromeLocField;
+    private final TextField chromeLocField;
 
     public TabManager(TextField locField) {
         this.chromeLocField = locField;

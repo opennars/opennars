@@ -136,12 +136,12 @@ public class ConcurrentAutoTable implements Serializable {
       assert i >= 0 && i < ary.length;
       return _Lbase + i * _Lscale;
     }
-    private final static boolean CAS( long[] A, int idx, long old, long nnn ) {
+    private static final boolean CAS(long[] A, int idx, long old, long nnn ) {
       return _unsafe.compareAndSwapLong( A, rawIndex(A,idx), old, nnn );
     }
    
     volatile long _resizers;    // count of threads attempting a resize
-    static private final AtomicLongFieldUpdater<CAT> _resizerUpdater =
+    private static final AtomicLongFieldUpdater<CAT> _resizerUpdater =
       AtomicLongFieldUpdater.newUpdater(CAT.class, "_resizers");
 
     private final CAT _next;

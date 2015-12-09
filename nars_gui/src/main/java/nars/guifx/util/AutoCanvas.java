@@ -6,7 +6,7 @@ import javafx.scene.canvas.Canvas;
 /**
  * autosizing and other functions
  */
-abstract public class AutoCanvas extends Canvas {
+public abstract class AutoCanvas extends Canvas {
 
 
     public AutoCanvas() {
@@ -16,7 +16,7 @@ abstract public class AutoCanvas extends Canvas {
         heightProperty().addListener(evt -> render());
     }
 
-    abstract protected void render();
+    protected abstract void render();
 
 
     @Override

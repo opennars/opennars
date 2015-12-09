@@ -41,7 +41,7 @@ import org.jewelsea.willow.util.ResourceUtil;
 import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class NavTools {
-    final static int buttonHeight = 20;
+    static final int buttonHeight = 20;
 
     public static Pane createNavPane(final WebBrowser chrome) {
         // create a back button.

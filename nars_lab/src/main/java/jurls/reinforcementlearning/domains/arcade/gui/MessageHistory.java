@@ -25,7 +25,7 @@ import java.util.List;
  * @author Marc G. Bellemare <mgbellemare@ualberta.ca>
  */
 public class MessageHistory {
-    public class Message {
+    public static class Message {
         protected String text;
         protected long timeStamp;
 

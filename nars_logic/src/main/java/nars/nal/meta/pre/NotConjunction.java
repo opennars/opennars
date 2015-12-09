@@ -5,7 +5,7 @@ import nars.nal.RuleMatch;
 import nars.term.Term;
 
 
-final public class NotConjunction extends PreCondition1 {
+public final class NotConjunction extends PreCondition1 {
 
     public NotConjunction(final Term arg1) {
         super(arg1);

@@ -372,12 +372,12 @@ public class PropertySheetTableModel
       if (restoreOldStates) {
         Boolean oldState=(Boolean)toggleStates.get(item.getKey());
         if (oldState!=null) {
-          item.setVisible(oldState.booleanValue());
+          item.setVisible(oldState);
         }
         if (parent!=null) {
           oldState=(Boolean)toggleStates.get(parent.getKey());
           if (oldState!=null) {
-            parent.setVisible(oldState.booleanValue());
+            parent.setVisible(oldState);
           }
         }
       }

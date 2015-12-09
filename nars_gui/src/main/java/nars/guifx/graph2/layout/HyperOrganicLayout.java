@@ -319,7 +319,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * of the combined x and y normals are multipled by the current
 	 * radius to obtain test points for each vector in the array.
 	 */
-	static protected final float[] xNormTry;
+	protected static final float[] xNormTry;
 
 	/**
 	 * Array of the y portion of the normalised test vectors that
@@ -327,7 +327,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * of the combined x and y normals are multipled by the current
 	 * radius to obtain test points for each vector in the array.
 	 */
-	static protected final float[] yNormTry;
+	protected static final float[] yNormTry;
 
 	/**
 	 * determines, in how many segments the circle around cells is divided, to
@@ -336,7 +336,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>performRound</code> method might further improve accuracy for a
 	 * small performance hit. The change is described in the method comment.
 	 */
-	protected final static int circleResolution = 8; //originally 8, lets try an odd or prime #
+	protected static final int circleResolution = 8; //originally 8, lets try an odd or prime #
 
 	static {
 

@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class OWLInput  {
 
-    private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    private static final String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     private static String parentTagName = null;
 
@@ -46,7 +46,7 @@ public class OWLInput  {
         this.nar = n;
     }
 
-    static protected class Entity {
+    protected static class Entity {
 
         public String name;
         public final List<String[]> attributes = new LinkedList();
@@ -274,9 +274,9 @@ public class OWLInput  {
         }
     }
 
-    abstract public static class TagProcessor {
+    public abstract static class TagProcessor {
 
-        abstract protected void execute(XMLStreamReader parser);
+        protected abstract void execute(XMLStreamReader parser);
     }
 
     /**
@@ -316,7 +316,7 @@ public class OWLInput  {
         }
     }
 
-    static public Term atom(String uri) {
+    public static Term atom(String uri) {
         int lastSlash = uri.lastIndexOf('/');
         if (lastSlash!=-1)
             uri = uri.substring(lastSlash + 1);

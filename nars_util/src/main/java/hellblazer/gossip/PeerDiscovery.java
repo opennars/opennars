@@ -209,7 +209,7 @@ peer.disconnect();
     /**
      * Handles an exception. * * @author ryanm
      */
-    public class ExceptionHandler {
+    public static class ExceptionHandler {
         /**
          * Called whenever an exception is thrown from the listen thread. The * listen thread should now be dead * * @param e
          */

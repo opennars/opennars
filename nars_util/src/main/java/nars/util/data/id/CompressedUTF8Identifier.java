@@ -12,7 +12,7 @@ package nars.util.data.id;
  *
  * Default method: Run-length-encoding (RLE)
  */
-abstract public class CompressedUTF8Identifier extends UTF8Identifier {
+public abstract class CompressedUTF8Identifier extends UTF8Identifier {
 
     public CompressedUTF8Identifier(byte[] source) {
         super();

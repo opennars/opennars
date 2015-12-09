@@ -16,7 +16,7 @@
  */
 package nars.timeline;
 
-abstract public class TimelineExample {
+public abstract class TimelineExample {
  
     
 

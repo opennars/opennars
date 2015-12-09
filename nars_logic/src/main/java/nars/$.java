@@ -29,7 +29,7 @@ import java.util.List;
        (which can be constructed in a static context)
     --??
  */
-abstract public class $  {
+public abstract class $  {
 
 
     public static final <T extends Term> T $(final String term) {
@@ -206,7 +206,7 @@ abstract public class $  {
      * @param predicate The second component
      * @return A compound generated or null
      */
-    final public static Compound instprop(final Term subject, final Term predicate) {
+    public static final Compound instprop(final Term subject, final Term predicate) {
         return (Compound) $.inh(SetExt.make(subject), SetInt.make(predicate));
     }
 

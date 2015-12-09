@@ -4,14 +4,14 @@ import org.junit.Test;
 
 public class InheritanceTest {
 
-    private static interface A {
+    private interface A {
 
         int getFoo();
 
         void setBar(int bar);
     }
 
-    private static interface B extends A {
+    private interface B extends A {
 
         void setFoo(int foo);
 

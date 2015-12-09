@@ -355,7 +355,8 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
         return appendTo(new StringBuilder(), memory, showStamp);
     }
 
-    default @Deprecated
+    @Deprecated
+    default
     StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return appendTo(buffer, memory, true, notCommand, notCommand, true);
@@ -405,14 +406,14 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
     }
 
     final class ExpectationComparator implements Comparator<Sentence>, Serializable {
-        final static Comparator the = new ExpectationComparator();
+        static final Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getExpectation(), b.getExpectation());
         }
     }
 
     final class ConfidenceComparator implements Comparator<Sentence>, Serializable {
-        final static Comparator the = new ExpectationComparator();
+        static final Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getConfidence(), b.getConfidence());
         }

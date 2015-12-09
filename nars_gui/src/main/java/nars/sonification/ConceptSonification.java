@@ -30,7 +30,7 @@ public class ConceptSonification extends FrameReaction {
     public Map<Concept, SoundProducer> playing;
     private int polyphony;
 
-    class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
+    static class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
         private final int maxSize;
 
         public PlayingMap(int maxSize) {
@@ -205,7 +205,7 @@ public class ConceptSonification extends FrameReaction {
         return c.getPriority() > audiblePriorityThreshold;
     }
 
-    final static double twoTo12 = Math.pow((2),1/ 12.0);
+    static final double twoTo12 = Math.pow((2),1/ 12.0);
 
     /** return if it should continue */
     private boolean update(Concept c, SoundProducer g) {

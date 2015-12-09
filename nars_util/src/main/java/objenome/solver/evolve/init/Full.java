@@ -403,7 +403,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
         }
     }
     
-    final public Table<Integer, List<Class<?>>, Class<?>[][]> combinations = HashBasedTable.create();
+    public final Table<Integer, List<Class<?>>, Class<?>[][]> combinations = HashBasedTable.create();
 
     /*
      * Generates all possible combinations of the given data-types, with arity

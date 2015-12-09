@@ -134,18 +134,18 @@ public interface Premise extends Level, Tasked {
 
     Task getBelief();
 
-    default public Term getTerm() {
+    default Term getTerm() {
         return getConcept().getTerm();
     }
 
 
-    public Task getTask();
+    Task getTask();
 
 
-    public NAR nar();
+    NAR nar();
 
 
-    default public long time() {
+    default long time() {
         return nar().time();
     }
 
@@ -158,19 +158,19 @@ public interface Premise extends Level, Tasked {
     /**
      * curent maximum allowed NAL level the reasoner is configured to support
      */
-    default public int nal() {
+    default int nal() {
         return nar().nal();
     }
 
     /**
      * whether at least NAL level N is enabled
      */
-    default public boolean nal(int n) {
+    default boolean nal(int n) {
         return nal() >= n;
     }
 
 
-    default public float conceptPriority(Term target, float valueForMissing) {
+    default float conceptPriority(Term target, float valueForMissing) {
         return memory().conceptPriority(target, valueForMissing);
     }
 
@@ -179,12 +179,12 @@ public interface Premise extends Level, Tasked {
     }
 
 
-    default public Term self() {
+    default Term self() {
         return memory().self();
     }
 
 
-    default public Random getRandom() {
+    default Random getRandom() {
         return memory().random;
     }
 
@@ -192,7 +192,7 @@ public interface Premise extends Level, Tasked {
     /**
      * produces a cropped and filtered stack trace (list of methods called)
      */
-    public static List<String> getStack() {
+    static List<String> getStack() {
         StackTraceElement[] s = Thread.currentThread().getStackTrace();
 
         String prefix = "";
@@ -251,7 +251,7 @@ public interface Premise extends Level, Tasked {
     }
 
 
-    default public int duration() {
+    default int duration() {
         return memory().duration();
     }
 
@@ -562,7 +562,7 @@ public interface Premise extends Level, Tasked {
     }
 
     /** gets the average summary of one or both task/belief task's */
-    default public float getMeanPriority() {
+    default float getMeanPriority() {
         float total = 0;
         int n = 0;
         final Task pt = getTask();
@@ -597,7 +597,7 @@ public interface Premise extends Level, Tasked {
      * with a better belief than what it had previously. */
     void updateBelief(Task revised);
 
-    default public boolean validateDerivedBudget(Budget budget) {
+    default boolean validateDerivedBudget(Budget budget) {
         if (budget.isDeleted()) {
             throw new RuntimeException("why is " + budget + " deleted");
 
@@ -607,7 +607,7 @@ public interface Premise extends Level, Tasked {
 
 
 
-    public default Task derive(Task derived) {
+    default Task derive(Task derived) {
         derived = removeInvalid(derived);
         if (derived != null) {
             memory().eventDerived.emit(derived);

@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 public class VncClientApp extends Application {
 
     //private final static org.slf4j.Logger logger = LoggerFactory.getLogger(VncClientApp.class);
-    final static Logger logger = Logger.getLogger(VncClientApp.class.toString());
+    static final Logger logger = Logger.getLogger(VncClientApp.class.toString());
 
     private final StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
     private final StringExpression headerExpr = Bindings.format("JavaFX VNC Viewer (%s)", headerProperty);

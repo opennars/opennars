@@ -110,7 +110,7 @@ public class NarseseExtendedTest {
         eqTask(shorter, expected);
     }
 
-    final static Terminal t = new Terminal();
+    static final Terminal t = new Terminal();
 
     static void eqTask(String x, String b) {
         Task a = t.task(x + ".");

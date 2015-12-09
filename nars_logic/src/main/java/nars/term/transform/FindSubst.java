@@ -126,7 +126,7 @@ public class FindSubst extends Versioning implements Subst {
     }
 
 
-    public final class VarCachedVersionMap extends VersionMap<Term, Term> implements Subst {
+    public static final class VarCachedVersionMap extends VersionMap<Term, Term> implements Subst {
 
         public VarCachedVersionMap(Versioning context) {
             super(context);
@@ -136,7 +136,7 @@ public class FindSubst extends Versioning implements Subst {
         }
 
         @Override
-        public final boolean cache(Term key) {
+        public boolean cache(Term key) {
             //since these should always be normalized variables, they will not exceed a predictable range of entries (ex: $1, $2, .. $n)
             return key instanceof Variable;
         }
@@ -272,7 +272,7 @@ public class FindSubst extends Versioning implements Subst {
     public static final class SubTermStructure extends PatternOp {
         public final int subterm;
         public final int bits;
-        private transient final String id;
+        private final transient String id;
 
 
         public SubTermStructure(Op matchingType, int subterm, int bits) {
@@ -306,7 +306,7 @@ public class FindSubst extends Versioning implements Subst {
     public static final class SubTermOp extends PatternOp {
         public final int subterm;
         public final Op op;
-        private transient final String id;
+        private final transient String id;
 
 
         public SubTermOp(int subterm, Op op) {
@@ -487,7 +487,7 @@ public class FindSubst extends Versioning implements Subst {
         }
 
         @Override
-        public final boolean run(FindSubst f) {
+        public boolean run(FindSubst f) {
             f.goSubterm(index);
             return true;
         }
@@ -509,7 +509,7 @@ public class FindSubst extends Versioning implements Subst {
         }
 
         @Override
-        public final boolean run(FindSubst f) {
+        public boolean run(FindSubst f) {
             f.term.set(f.parent.get());
             f.parent.set(this.parent);
 

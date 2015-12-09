@@ -13,11 +13,11 @@ import objenome.solver.Solution;
 public interface SetNumericValue extends Solution {
     
     
-    public Number getMin();
-    public Number getMax();
+    Number getMin();
+    Number getMax();
     
-    public Number getNumber();
+    Number getNumber();
 
-    public void setValue(double d);
+    void setValue(double d);
     
 }

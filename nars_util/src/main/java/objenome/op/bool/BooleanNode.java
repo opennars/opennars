@@ -6,7 +6,7 @@ import objenome.op.Node;
 /**
  * Created by me on 5/6/15.
  */
-abstract public class BooleanNode<N extends Node> extends Node<N, Boolean> {
+public abstract class BooleanNode<N extends Node> extends Node<N, Boolean> {
 
     public static final Literal False = new Literal(false);
     public static final Literal True = new Literal(true);

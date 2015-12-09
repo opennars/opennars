@@ -217,7 +217,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * for its seed).
      */
     @Override
-    synchronized public void setSeed(final long seed) {
+    public synchronized void setSeed(final long seed) {
         // Due to a bug in java.util.Random clear up to 1.2, we're
         // doing our own Gaussian variable.
         __haveNextNextGaussian = false;
@@ -246,7 +246,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * array are used; if the array is shorter than this then integers are
      * repeatedly used in a wrap-around fashion.
      */
-    synchronized public void setSeed(final int[] array) {
+    public synchronized void setSeed(final int[] array) {
         if (array.length == 0) {
             throw new IllegalArgumentException("Array length must be greater than zero");
         }

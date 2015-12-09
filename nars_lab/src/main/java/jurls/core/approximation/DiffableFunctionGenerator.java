@@ -11,7 +11,7 @@ package jurls.core.approximation;
  */
 public interface DiffableFunctionGenerator {
 
-    public GeneratorContext generate(
+    GeneratorContext generate(
             int numInputs
     );
 }

@@ -5,9 +5,9 @@ package nars.util.data.sexpression;
 public interface IPaired {
 
     /** car, the first element */
-    public Object _car();
+    Object _car();
 
     /** cdr, the remainder (null if non-existent in the case of an atom) */
-    public Object _cdr();
+    Object _cdr();
 
 }

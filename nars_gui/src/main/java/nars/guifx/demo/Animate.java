@@ -18,7 +18,7 @@ public final class Animate extends AnimationTimer {
     }
 
     @Override
-    public final void handle(final long nowNS) {
+    public void handle(final long nowNS) {
         long now = nowNS/1000000L; //ns -> ms
         if (now - last > periodMS) {
             last = now;

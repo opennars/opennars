@@ -69,7 +69,7 @@ public final class SgAnnotation {
      * 
      * @return Name including package - Always non-null.
      */
-    public final String getName() {
+    public String getName() {
         if (packageName.isEmpty()) {
             return simpleName;
         }
@@ -81,7 +81,7 @@ public final class SgAnnotation {
      * 
      * @return Package name - Always non-null.
      */
-    public final String getPackageName() {
+    public String getPackageName() {
         return packageName;
     }
 
@@ -90,7 +90,7 @@ public final class SgAnnotation {
      * 
      * @return Name (without package) - Always non-null.
      */
-    public final String getSimpleName() {
+    public String getSimpleName() {
         return simpleName;
     }
 
@@ -99,7 +99,7 @@ public final class SgAnnotation {
      * 
      * @return Arguments - Always non-null, maybe empty and is unmodifiable.
      */
-    public final Map<String, Object> getArguments() {
+    public Map<String, Object> getArguments() {
         return Collections.unmodifiableMap(arguments);
     }
 
@@ -111,7 +111,7 @@ public final class SgAnnotation {
      * @param value
      *            Value of the argument - Cannot be null.
      */
-    public final void addArgument(final String name, final Object value) {
+    public void addArgument(final String name, final Object value) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
@@ -125,7 +125,7 @@ public final class SgAnnotation {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuffer sb = new StringBuffer();
         sb.append('@');
         sb.append(getName());

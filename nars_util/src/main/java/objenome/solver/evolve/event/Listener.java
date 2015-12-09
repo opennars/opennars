@@ -39,6 +39,6 @@ public interface Listener<T extends Event> {
      *
      * @param event the fired event object.
      */
-    public void onEvent(T event);
+    void onEvent(T event);
 
 }

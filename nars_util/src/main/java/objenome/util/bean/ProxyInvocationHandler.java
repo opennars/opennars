@@ -52,15 +52,15 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
 
         // hashCode
         if ("hashCode".equals(methodName) && paramCount == 0 && "int".equals(returnTypeName)) { //$NON-NLS-1$ //$NON-NLS-2$
-            return Integer.valueOf(this.data.hashCode());
+            return this.data.hashCode();
         }
 
         // equals
         if ("equals".equals(methodName) && paramCount == 1 && "boolean".equals(returnTypeName)) { //$NON-NLS-1$ //$NON-NLS-2$
-            return Boolean.valueOf(proxy == args[0] || args[0] != null
+            return proxy == args[0] || args[0] != null
                     && Proxy.isProxyClass(args[0].getClass())
                     && Proxy.getInvocationHandler(args[0]).getClass() == getClass()
-                    && this.data.equals(((ProxyInvocationHandler) Proxy.getInvocationHandler(args[0])).data));
+                    && this.data.equals(((ProxyInvocationHandler) Proxy.getInvocationHandler(args[0])).data);
         }
 
         // toString

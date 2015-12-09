@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * A variable term, which does not correspond to a concept
  */
-abstract public class Variable extends AbstractStringAtom {
+public abstract class Variable extends AbstractStringAtom {
 
     protected Variable(final String n) {
         super(n);
@@ -64,12 +64,12 @@ abstract public class Variable extends AbstractStringAtom {
     }
 
 
-    public final static int MAX_VARIABLE_CACHED_PER_TYPE = 16;
+    public static final int MAX_VARIABLE_CACHED_PER_TYPE = 16;
 
     /**
      * numerically-indexed variable instance cache; prevents duplicates and speeds comparisons
      */
-    public final static Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
+    public static final Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
 
     public static Variable _the(Op type, int counter) {
         return $.v(type.ch, String.valueOf(counter));
@@ -171,32 +171,32 @@ abstract public class Variable extends AbstractStringAtom {
         }
 
         @Override
-        public final int structure() {
+        public int structure() {
             return Op.VAR_DEPENDENT.bit();
         }
 
         @Override
-        public final Op op() {
+        public Op op() {
             return Op.VAR_DEPENDENT;
         }
 
         @Override
-        public final int vars() {
+        public int vars() {
             return 1;
         }
 
         @Override
-        public final int varDep() {
+        public int varDep() {
             return 1;
         }
 
         @Override
-        public final int varIndep() {
+        public int varIndep() {
             return 0;
         }
 
         @Override
-        public final int varQuery() {
+        public int varQuery() {
             return 0;
         }
     }
@@ -209,32 +209,32 @@ abstract public class Variable extends AbstractStringAtom {
         }
 
         @Override
-        public final int structure() {
+        public int structure() {
             return Op.VAR_INDEPENDENT.bit();
         }
 
         @Override
-        public final Op op() {
+        public Op op() {
             return Op.VAR_INDEPENDENT;
         }
 
         @Override
-        public final int vars() {
+        public int vars() {
             return 1;
         }
 
         @Override
-        public final int varDep() {
+        public int varDep() {
             return 0;
         }
 
         @Override
-        public final int varIndep() {
+        public int varIndep() {
             return 1;
         }
 
         @Override
-        public final int varQuery() {
+        public int varQuery() {
             return 0;
         }
 
@@ -248,32 +248,32 @@ abstract public class Variable extends AbstractStringAtom {
         }
 
         @Override
-        public final int structure() {
+        public int structure() {
             return Op.VAR_QUERY.bit();
         }
 
         @Override
-        public final Op op() {
+        public Op op() {
             return Op.VAR_QUERY;
         }
 
         @Override
-        public final int vars() {
+        public int vars() {
             return 1;
         }
 
         @Override
-        public final int varDep() {
+        public int varDep() {
             return 0;
         }
 
         @Override
-        public final int varIndep() {
+        public int varIndep() {
             return 0;
         }
 
         @Override
-        public final int varQuery() {
+        public int varQuery() {
             return 1;
         }
 

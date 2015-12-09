@@ -2,6 +2,6 @@ package nars.audio;
 
 public interface SoundSource
 {
-	public float getX(float alpha);
-	public float getY(float alpha);
+	float getX(float alpha);
+	float getY(float alpha);
 }

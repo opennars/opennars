@@ -150,7 +150,7 @@ public class GetGenericTest {
         Map<MyKeyEnum, Object> map = new HashMap<MyKeyEnum, Object>();
         map.put(MyKeyEnum.NAME, "Fichtner"); //$NON-NLS-1$
         map.put(MyKeyEnum.PRENAME, "Peter"); //$NON-NLS-1$
-        map.put(MyKeyEnum.YEAR_OF_BIRTH, Integer.valueOf(1974));
+        map.put(MyKeyEnum.YEAR_OF_BIRTH, 1974);
         return map;
     }
 

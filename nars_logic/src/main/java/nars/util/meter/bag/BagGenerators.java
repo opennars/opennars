@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class BagGenerators {
 
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
 
 

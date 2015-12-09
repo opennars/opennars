@@ -88,7 +88,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * @param obj The object whose hash code should be computed.
          * @return The object's hash code.
          */
-        public int hash(T obj);
+        int hash(T obj);
     }
 
     /***************************************************************************
@@ -114,7 +114,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * @return A random hash function whose distribution satisfies the above
          *         property.
          */
-        public HashFunction<T> randomHashFunction(int buckets);
+        HashFunction<T> randomHashFunction(int buckets);
     }
 
     /**

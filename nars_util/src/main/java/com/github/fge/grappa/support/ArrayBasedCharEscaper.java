@@ -57,7 +57,7 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
   }
 
 
-  public final static class ArrayBasedEscaperMap {
+  public static final class ArrayBasedEscaperMap {
     /**
      * Returns a new ArrayBasedEscaperMap for creating ArrayBasedCharEscaper or
      * ArrayBasedUnicodeEscaper instances.

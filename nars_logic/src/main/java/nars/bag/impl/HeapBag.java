@@ -242,7 +242,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The number of items
      */
     @Override
-    final public int size() {
+    public final int size() {
 
         int in = index.size();
 
@@ -313,7 +313,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    final public E pop() {
+    public final E pop() {
 
         if (isEmpty()) return null; // empty bag
         return removeItem(nextRemovalIndex());
@@ -322,7 +322,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
     @Override
-    final public E peekNext() {
+    public final E peekNext() {
 
         if (isEmpty()) return null; // empty bag
         return items.get(nextRemovalIndex());

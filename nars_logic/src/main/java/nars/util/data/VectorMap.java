@@ -8,7 +8,7 @@ import nars.NAR;
  */
 
 
-abstract public class VectorMap {
+public abstract class VectorMap {
 
     public final UniformVector input;
     public final UniformVector output;
@@ -25,7 +25,7 @@ abstract public class VectorMap {
        output.update();
     }
     
-    abstract protected void map(double[] in, double[] out);
+    protected abstract void map(double[] in, double[] out);
 
     
 }

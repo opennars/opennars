@@ -5,7 +5,7 @@
  */
 package jurls.core.becca;
 
-abstract public class Ziptie {
+public abstract class Ziptie {
     
     /**
      * 
@@ -13,6 +13,6 @@ abstract public class Ziptie {
      * @param result may be null, in which case a new array will be allocated
      * @return double[] result
      */
-    abstract public double[] in(double[] signal, double[] result);
+    public abstract double[] in(double[] signal, double[] result);
 
 }

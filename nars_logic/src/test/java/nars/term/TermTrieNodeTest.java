@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TermTrieNodeTest  {
 
-    final static NAR n = new Default();
+    static final NAR n = new Default();
 
     static Term t(String s) { return n.term(s); }
 

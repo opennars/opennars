@@ -112,7 +112,7 @@ public final class DefaultValueStackTest
     public void multiPushPeekPopPokeDupAndClearWorks()
     {
         final SoftAssertions soft = new SoftAssertions();
-        final Integer two = new Integer(2000000000);
+        final Integer two = 2000000000;
         stack.push(1);
         stack.push(two);
 

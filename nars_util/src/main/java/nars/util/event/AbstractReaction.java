@@ -3,10 +3,10 @@ package nars.util.event;
 /**
  * Reaction that manages its registration state
  */
-abstract public class AbstractReaction<K,V> implements Reaction<K,V> {
+public abstract class AbstractReaction<K,V> implements Reaction<K,V> {
 
-    transient protected EventEmitter<K,V> source;
-    transient protected EventEmitter.Registrations active;
+    protected transient EventEmitter<K,V> source;
+    protected transient EventEmitter.Registrations active;
     protected final K[] events;
 
     public AbstractReaction() {

@@ -21,7 +21,7 @@ public abstract class AxisPlot {
     float x = 0;
 
     public interface MultiChart {
-        public List<SignalData> getData();
+        List<SignalData> getData();
     }
     
     public AxisPlot() {

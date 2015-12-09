@@ -16,7 +16,7 @@ public final class On<V> {
         this.topic = t;
     }
 
-    final public void off() {
+    public void off() {
         topic.off(this);
     }
 

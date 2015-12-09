@@ -314,15 +314,15 @@ public class Sokoban extends Applet {
 
 	};
 	
-	final static char wall = '#';
-	final static char floor = ' ';
-	final static char me = '@';
-	final static char megoal = '&';
-	final static char occupied = '*';
-	final static char dollar = '$';
-	final static char cr = 'M';
-	final static char blank = '^';
-	final static char goal = '.';
+	static final char wall = '#';
+	static final char floor = ' ';
+	static final char me = '@';
+	static final char megoal = '&';
+	static final char occupied = '*';
+	static final char dollar = '$';
+	static final char cr = 'M';
+	static final char blank = '^';
+	static final char goal = '.';
 	Image[] tiles = new Image[128];
 	
 	AudioClip buzz, wow;

@@ -24,7 +24,7 @@ public class STMTemporalLinkage {
     //int stmSize;
     //public static STMTemporalLinkage I=null;
 
-    final private static String id = STMTemporalLinkage.class.getSimpleName();
+    private static final String id = STMTemporalLinkage.class.getSimpleName();
 
     @Override
     public final String toString() {

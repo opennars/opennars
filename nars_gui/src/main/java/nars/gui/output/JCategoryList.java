@@ -44,7 +44,7 @@ public class JCategoryList extends JList<JButton> {
         setModel(model);
     }
 
-    protected class CellRenderer implements ListCellRenderer<JButton> {
+    protected static class CellRenderer implements ListCellRenderer<JButton> {
 
         Font f = Video.fontMono(16.0f);
         private JButton lastCellFocus;

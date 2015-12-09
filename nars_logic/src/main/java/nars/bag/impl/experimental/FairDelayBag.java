@@ -16,9 +16,9 @@ import nars.util.math.Distributor;
 public class FairDelayBag<E extends Item<K>, K> extends DelayBag<K, E> {
 
     /** # of levels should be "fairly" low, reducing the complete cycle length of the distributor */
-    final static int levels = 10;
+    static final int levels = 10;
     
-    final static short[] distributor = Distributor.get(levels).order;
+    static final short[] distributor = Distributor.get(levels).order;
 
 
     public FairDelayBag(Memory m, AtomicDouble forgetRate, int capacity) {

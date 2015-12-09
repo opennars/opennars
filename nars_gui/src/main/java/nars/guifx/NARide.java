@@ -310,7 +310,7 @@ public class NARide extends BorderPane {
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
         icon(NARLoop.class, (ll) -> new LoopPane(l));
         icon(AbstractNAR.DefaultCycle.class, (c) ->
-                new DefaultCyclePane((AbstractNAR.DefaultCycle)c) //cast is hack
+                new DefaultCyclePane((AbstractNAR.DefaultCycle) c) //cast is hack
         );
 
 
@@ -445,7 +445,7 @@ public class NARide extends BorderPane {
 
     }
 
-    private class DefaultCyclePane extends BorderPane {
+    private static class DefaultCyclePane extends BorderPane {
 
         private final NAR nar;
         private final AbstractNAR.DefaultCycle cycle;

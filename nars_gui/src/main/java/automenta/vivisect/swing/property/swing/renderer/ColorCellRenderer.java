@@ -44,7 +44,7 @@ public class ColorCellRenderer extends DefaultCellRenderer {
 
   protected String convertToString(Object value) {
     if (value instanceof Integer) {
-      value = new Color(((Integer)value).intValue());
+      value = new Color((Integer) value);
     }
     if (!(value instanceof Color)) { return null; }
 
@@ -56,7 +56,7 @@ public class ColorCellRenderer extends DefaultCellRenderer {
   protected Icon convertToIcon(Object value) {
     if (value == null) { return null; }
     if (value instanceof Integer) {
-      value = new Color(((Integer)value).intValue());
+      value = new Color((Integer) value);
     }
     return new PaintIcon((Paint)value);
   }

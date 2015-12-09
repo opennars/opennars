@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-abstract public class Symbols {
+public abstract class Symbols {
 
     /* sentence type and delimitors
        TODO use an enum
@@ -96,17 +96,17 @@ abstract public class Symbols {
 
 
     /** index of operators which are encoded by 1 byte: must be less than 31 because this is the range for control characters */
-    final static int numByteSymbols = 15;
+    static final int numByteSymbols = 15;
     private static final Op[] byteSymbols = new Op[numByteSymbols];
 
 
-    public final static char SET_INT_CLOSER = ']';
-    public final static char SET_EXT_CLOSER = '}';
-    public final static char COMPOUND_TERM_OPENER = '(';
-    public final static char COMPOUND_TERM_CLOSER = ')';
-    public final static byte COMPOUND_TERM_CLOSERbyte = (byte)COMPOUND_TERM_CLOSER;
-    public final static char STATEMENT_OPENER = '<';
-    public final static char STATEMENT_CLOSER = '>';
+    public static final char SET_INT_CLOSER = ']';
+    public static final char SET_EXT_CLOSER = '}';
+    public static final char COMPOUND_TERM_OPENER = '(';
+    public static final char COMPOUND_TERM_CLOSER = ')';
+    public static final byte COMPOUND_TERM_CLOSERbyte = (byte)COMPOUND_TERM_CLOSER;
+    public static final char STATEMENT_OPENER = '<';
+    public static final char STATEMENT_CLOSER = '>';
 
 
 //    public static Op symbol(final byte b) {

@@ -49,7 +49,7 @@ public class CloneTest {
         C orig = BeanProxyBuilder.on(C.class).check(false).build();
         orig.setA("a"); //$NON-NLS-1$
         orig.setB(7);
-        Map<Float, Boolean> map = Collections.singletonMap(Float.valueOf(4), Boolean.TRUE);
+        Map<Float, Boolean> map = Collections.singletonMap(4f, Boolean.TRUE);
         orig.setMap(map);
         C clone = orig.clone();
 

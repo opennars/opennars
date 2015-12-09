@@ -20,13 +20,13 @@ import static org.junit.Assert.*;
  */
 public class MethodsGPEvolvedTest {
 
-    abstract public static class ExampleUnknownMethod {
+    public abstract static class ExampleUnknownMethod {
         
-        abstract public double unknown(double x);
+        public abstract double unknown(double x);
 
     }
 
-    abstract public static class ExampleUnknownMethodWithConstructor {
+    public abstract static class ExampleUnknownMethodWithConstructor {
         
         private final double constantParam;
 
@@ -34,7 +34,7 @@ public class MethodsGPEvolvedTest {
             this.constantParam = constantParam;
         }
 
-        abstract public double unknown(double x);
+        public abstract double unknown(double x);
         
         /*public double output(double x) {
             return unknown(x) + constantParam;

@@ -29,13 +29,13 @@ public class EditorPanel extends JPanel {
 
     final String levelPath = "./src/main/java/nars/grid2d/level/";
 
-    abstract public static class EditorMode extends DefaultMutableTreeNode {
+    public abstract static class EditorMode extends DefaultMutableTreeNode {
 
         public EditorMode(String label) {
             super(label);
         }
 
-        abstract public void run();
+        public abstract void run();
     }
 
     public EditorPanel(final Grid2DSpace s) {

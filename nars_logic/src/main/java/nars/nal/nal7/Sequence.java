@@ -32,7 +32,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
      *  duration at the time the Sequence is formed. */
     private int eventDuration = -1;
 
-    transient private int duration = -1;
+    private transient int duration = -1;
 
     /**
      * for subterms: (A, B, C) and intervals (i0, i1, i2, i3)

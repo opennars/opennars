@@ -56,7 +56,7 @@ import java.util.List;
     }
 
     @Override
-    final public String toString() {
+    public final String toString() {
         return id;
     }
 

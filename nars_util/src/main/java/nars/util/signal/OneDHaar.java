@@ -24,12 +24,12 @@ import static java.lang.System.out;
  */
 public class OneDHaar {
 
-    private final static double FSNORM = Math.sqrt(2);
-    private final static double FDNORM = 1/FSNORM;
-    public final static double log2 = Math.log(2);
+    private static final double FSNORM = Math.sqrt(2);
+    private static final double FDNORM = 1/FSNORM;
+    public static final double log2 = Math.log(2);
     
-    private final static double ISNORM = FDNORM;
-    private final static double IDNORM = FSNORM;
+    private static final double ISNORM = FDNORM;
+    private static final double IDNORM = FSNORM;
     
     private static void displaySample(double[] sample) {
         out.print("Sample: ");

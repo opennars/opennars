@@ -16,7 +16,7 @@ import java.util.Set;
  * Uses a concept meta to hold adjacency data
  * TODO incomplete
  */
-abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGraph<Concept,E>, EdgeFactory<Concept,E> {
+public abstract class ConceptGraph2<E> extends ConceptMap implements DirectedGraph<Concept,E>, EdgeFactory<Concept,E> {
 
     @Override
     public int inDegreeOf(Concept vertex) {
@@ -85,7 +85,7 @@ abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGra
     }
 
     @Override
-    abstract public boolean contains(Concept c);
+    public abstract boolean contains(Concept c);
 
     @Override
     protected boolean onConceptForget(Concept c) {
@@ -101,7 +101,7 @@ abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGra
 
 
     @Override
-    abstract public E createEdge(Concept source, Concept target);
+    public abstract E createEdge(Concept source, Concept target);
 
     @Override
     public Set<E> getAllEdges(Concept sourceVertex, Concept targetVertex) {

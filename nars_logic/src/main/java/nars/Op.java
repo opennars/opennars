@@ -232,7 +232,7 @@ public enum Op implements Serializable {
     }
 
 
-    public final static int or(final Op... o) {
+    public static final int or(final Op... o) {
         int bits = 0;
         for (Op n : o) {
             bits |= n.bit();
@@ -244,7 +244,7 @@ public enum Op implements Serializable {
         return (1 << ordinal());
     }
 
-    public final static int or(int bits, final Op o) {
+    public static final int or(int bits, final Op o) {
         return bits | o.bit();
     }
 
@@ -255,7 +255,7 @@ public enum Op implements Serializable {
     /**
      * specifier for any NAL level
      */
-    public final static int ANY = 0;
+    public static final int ANY = 0;
 
     public final boolean isVar() {
         return type == Op.OpType.Variable;

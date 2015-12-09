@@ -34,7 +34,7 @@ import java.util.List;
 *      --language switch
  *
  */
-abstract public class WikiBrowser extends BorderPane {
+public abstract class WikiBrowser extends BorderPane {
 
     public final int TIMEOUT_MS = 15 * 1000;
     private final WebView webview;
@@ -311,7 +311,7 @@ abstract public class WikiBrowser extends BorderPane {
         onTagClicked(tag);
     }
 
-    abstract public void onTagClicked(String id);
+    public abstract void onTagClicked(String id);
 
     protected Node newControls() {
         Button nearButton = new Button("Near");

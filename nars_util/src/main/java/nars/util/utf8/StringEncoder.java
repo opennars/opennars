@@ -136,7 +136,7 @@ final class StringEncoder {
         return true;
     }
 
-    private final int getCharsConverted() {
+    private int getCharsConverted() {
         int charsConverted = readOffset - inBuffer.remaining();
         //assert 0 <= charsConverted && charsConverted <= readOffset;
         return charsConverted;
@@ -219,7 +219,7 @@ final class StringEncoder {
         return out;
     }
 
-    public final void reset() {
+    public void reset() {
         readOffset = 0;
         // reset inBuffer in case we are in the middle of an operation
         inBuffer.position(0);

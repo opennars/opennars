@@ -126,17 +126,17 @@ public class NumberConverters implements Converter {
     // are we dealing with a number to number conversion?
     if ((value instanceof Number) && Number.class.isAssignableFrom(targetType)) {
       if (Double.class.equals(targetType)) {
-        return new Double(((Number)value).doubleValue());
+        return ((Number) value).doubleValue();
       } else if (Float.class.equals(targetType)) {
-        return new Float(((Number)value).floatValue());
+        return ((Number) value).floatValue();
       } else if (Integer.class.equals(targetType)) {
-        return new Integer(((Number)value).intValue());
+        return ((Number) value).intValue();
       } else if (Long.class.equals(targetType)) {
-        return new Long(((Number)value).longValue());
+        return ((Number) value).longValue();
       } else if (Short.class.equals(targetType)) {
-        return new Short(((Number)value).shortValue());
+        return ((Number) value).shortValue();
       } else if (Byte.class.equals(targetType)) {
-          return new Byte(((Number)value).byteValue());
+          return ((Number) value).byteValue();
       } else {
         throw new IllegalArgumentException("this code must not be reached");
       }

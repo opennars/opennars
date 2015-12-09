@@ -22,7 +22,7 @@ import java.util.function.Predicate;
  * @author me
  */
 public class Terms {
-    public final static Term[] Empty = new Term[0];
+    public static final Term[] Empty = new Term[0];
     public static final IntFunction<Term[]> TermArrayBuilder = Term[]::new;
 
     public static boolean equalSubTermsInRespectToImageAndProduct(final Term a, final Term b) {

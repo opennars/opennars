@@ -5,7 +5,7 @@ import nars.nal.meta.PreCondition;
 import nars.term.Term;
 
 /** tests the resolved terms specified by pattern variable terms */
-abstract public class PreCondition2 extends PreCondition {
+public abstract class PreCondition2 extends PreCondition {
     public final Term arg1, arg2;
     private final String str;
 
@@ -21,7 +21,7 @@ abstract public class PreCondition2 extends PreCondition {
                 m.apply(arg2, false));
     }
 
-    abstract public boolean test(RuleMatch m, Term a, Term b);
+    public abstract boolean test(RuleMatch m, Term a, Term b);
 
     @Override
     public final String toString() {

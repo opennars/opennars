@@ -7,7 +7,7 @@ import nars.Memory;
  */
 public class DefaultTruth extends AbstractScalarTruth {
 
-    public final static float DEFAULT_TRUTH_EPSILON = 0.01f;
+    public static final float DEFAULT_TRUTH_EPSILON = 0.01f;
 
     /** "not a truth" - freq and conf are NaN */
     public static Truth NULL = new DefaultTruth(Float.NaN, Float.NaN) {

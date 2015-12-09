@@ -107,7 +107,7 @@ public class ConstraintTest {
     }
 
     /** boolean satisfiability among a set of terms */
-    abstract public static class SATNetwork {
+    public abstract static class SATNetwork {
         private final NAR nar;
         protected final Set<Compound> concepts;
         protected Store store;
@@ -126,7 +126,7 @@ public class ConstraintTest {
 
         /** handle a related concept by doing nothing, or
          *  creating constraints (in 'store') and variables */
-        abstract public void addConstraintsFor(Concept c);
+        public abstract void addConstraintsFor(Concept c);
 
         void related(Compound t) {
             nar.forEachConcept( c-> {

@@ -19,7 +19,7 @@ public @interface GenericBeanMethod {
      * 
      * @author Peter Fichtner
      */
-    public enum Type {
+    enum Type {
         /** Method accepts a key and returns a value */
         GENERIC_GET,
         /** Method accepts key and value */

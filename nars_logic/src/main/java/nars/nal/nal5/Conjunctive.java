@@ -97,7 +97,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
      * @param c a set of Term as term
      * @return the Term generated from the arguments
      */
-    public final static Term make(final Collection<Term> c, int temporalOrder) {
+    public static final Term make(final Collection<Term> c, int temporalOrder) {
         Term[] argument = c.toArray(new Term[c.size()]);
         return make(argument, temporalOrder);
     }
@@ -120,7 +120,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
         throw new RuntimeException("invalid: " + Arrays.toString(argList) + " " + temporalOrder);
     }
 
-    final public static Term make(final Term term1, final Term term2, int temporalOrder) {
+    public static final Term make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == Tense.ORDER_FORWARD) {
             return Sequence.makeSequence(term1, term2);
         } else if (temporalOrder == Tense.ORDER_BACKWARD) {

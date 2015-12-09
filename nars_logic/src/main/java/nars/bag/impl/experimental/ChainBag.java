@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externalizable {
 
 
-    transient private final Mean mean; //priority mean, continuously calculated
+    private final transient Mean mean; //priority mean, continuously calculated
     private Random rng;
 
     private boolean ownsNodePool = false;
@@ -48,11 +48,11 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     transient DD<V> current = null;
 
-    transient public Frequency removal = new Frequency();
+    public transient Frequency removal = new Frequency();
 
     float minMaxMomentum = 0.98f;
 
-    transient private final DDNodePool<? extends Item> nodePool;
+    private final transient DDNodePool<? extends Item> nodePool;
 
     V nextRemoval = null;
 

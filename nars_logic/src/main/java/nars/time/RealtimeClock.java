@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by me on 7/2/15.
  */
-abstract public class RealtimeClock implements Clock {
+public abstract class RealtimeClock implements Clock {
 
     long t, t0 = -1;
     private long start;

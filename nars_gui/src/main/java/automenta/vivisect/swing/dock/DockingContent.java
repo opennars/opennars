@@ -28,9 +28,9 @@ public class DockingContent {
     public static final String PROP_PARENT = "parent";
 
     private final String uid;
-    final private String title;
-    final private Icon icon;
-    final private Component component;
+    private final String title;
+    private final Icon icon;
+    private final Component component;
     private DockingRegionTabbed parent;
     private RestoreRecord restoreRecord;
 

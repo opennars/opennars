@@ -62,7 +62,7 @@ public final class SgConstructor extends SgBehavior {
      * 
      * @return Body - Always non-null, maybe empty and is unmodifiable.
      */
-    public final List<String> getBody() {
+    public List<String> getBody() {
         return Collections.unmodifiableList(body);
     }
 
@@ -72,7 +72,7 @@ public final class SgConstructor extends SgBehavior {
      * @param line
      *            Line to add - Cannot be null (but empty).
      */
-    public final void addBodyLine(final String line) {
+    public void addBodyLine(final String line) {
         if (line == null) {
             throw new IllegalArgumentException("The argument 'line' cannot be null!");
         }
@@ -84,7 +84,7 @@ public final class SgConstructor extends SgBehavior {
      * 
      * @return Modifiers and arguments.
      */
-    public final String getSignature() {
+    public String getSignature() {
         final StringBuffer sb = new StringBuffer();
         if (!getModifiers().isEmpty()) {
             sb.append(getModifiers());
@@ -115,7 +115,7 @@ public final class SgConstructor extends SgBehavior {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuffer sb = new StringBuffer();
         if (!getAnnotations().isEmpty()) {
             for (int i = 0; i < getAnnotations().size(); i++) {

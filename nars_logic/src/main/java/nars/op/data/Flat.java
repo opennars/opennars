@@ -20,7 +20,7 @@ import java.util.List;
  *
  * TODO recursive version with order=breadth|depth option
  */
-abstract public class Flat extends TermFunction {
+public abstract class Flat extends TermFunction {
 
     @Override
     public Term function(Operation op) {
@@ -40,7 +40,7 @@ abstract public class Flat extends TermFunction {
         return l;
     }
 
-    abstract public Term result(List<Term> terms);
+    public abstract Term result(List<Term> terms);
 
     public static class flatProduct extends Flat {
 

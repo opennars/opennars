@@ -22,7 +22,7 @@ import static nars.util.utf8.Utf8.trim;
  * memory but it is faster to compare and hash, and may hash with
  * better entropy.
  */
-abstract public class Identifier<E extends Identifier> implements Comparable, Serializable {
+public abstract class Identifier<E extends Identifier> implements Comparable, Serializable {
 
     /** produces the character array by invoking the append()
      *  method that certain subclasses use to form their
@@ -71,7 +71,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
 
     @Override
-    abstract public boolean equals(final Object x);
+    public abstract boolean equals(final Object x);
 
 //    public void share(Identifier ix) {
 //        Identified localHost = host;
@@ -189,7 +189,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     abstract int charsEstimated();
 
     /** frees all associated memory */
-    abstract public void delete();
+    public abstract void delete();
 
     /** WARNING the toCharArray() result may need trimmed for trailing zero's */
     private static class EfficientCharArrayWriter extends CharArrayWriter {

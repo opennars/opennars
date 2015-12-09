@@ -15,8 +15,8 @@ import nars.term.atom.Atom;
  */
 public class ShiftOccurrence extends PreCondition1 {
 
-    final public boolean positive;
-    final public int direction;
+    public final boolean positive;
+    public final int direction;
     private final String id;
 
     public static ShiftOccurrence make(Term arg1, Term operator, boolean positive) {

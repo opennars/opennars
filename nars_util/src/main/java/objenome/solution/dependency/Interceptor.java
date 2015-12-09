@@ -26,7 +26,7 @@ public interface Interceptor<E> {
      *
      * @param createdObject The object that was just created.
      */
-    public void onCreated(E createdObject);
+    void onCreated(E createdObject);
 
     /**
      * This method will be called right before the object is cleared from the
@@ -34,5 +34,5 @@ public interface Interceptor<E> {
      *
      * @param clearedObject The object being cleared.
      */
-    public void onRemoved(E clearedObject);
+    void onRemoved(E clearedObject);
 }

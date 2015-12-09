@@ -7,7 +7,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/15/15.
  */
-abstract public class AbstractMeasureTime extends PreCondition1Output {
+public abstract class AbstractMeasureTime extends PreCondition1Output {
 
 
     public AbstractMeasureTime(Term target) {

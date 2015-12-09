@@ -76,12 +76,13 @@ import org.jewelsea.willow.util.ResourceUtil;
 import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class WebBrowser extends BorderPane {
-    @Deprecated final public static long start = System.currentTimeMillis();
+    @Deprecated
+    public static final long start = System.currentTimeMillis();
 
     private AnchorPane overlayLayer;
     private BorderPane underlayLayer;
 
-    public static abstract class Route {
+    public abstract static class Route {
         public final String url;
         public final String name;
 
@@ -90,7 +91,7 @@ public class WebBrowser extends BorderPane {
             this.name = name;
         }
 
-        abstract public Object handle(Map<String,String> parameters);
+        public abstract Object handle(Map<String,String> parameters);
     }
 
     public static class Router {

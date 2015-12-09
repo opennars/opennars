@@ -56,7 +56,7 @@ public abstract class TermFunction<O> extends SyncOperator {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    abstract public O function(Operation x);
+    public abstract O function(Operation x);
 
 
     protected List<Task> result(final Task opTask, Term y, Term[] x0, Term lastTerm) {

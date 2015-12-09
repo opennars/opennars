@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 /**
  * Direct access to String private fields
  */
-abstract public class StringHack {
+public abstract class StringHack {
 
     public static final Field sbval;
     public static final Field val;

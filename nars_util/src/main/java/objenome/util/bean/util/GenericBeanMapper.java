@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 public final class GenericBeanMapper {
 
-    private static enum OnNull {
+    private enum OnNull {
         THROW_EXCEPTION, RETURN_NULL;
     }
 
@@ -35,7 +35,7 @@ public final class GenericBeanMapper {
         try {
             for (final Object key : (Iterable<Object>) findMethod(src.getClass(), Type.KEYS,
                     OnNull.THROW_EXCEPTION).invoke(src)) {
-                if (isSet == null || ((Boolean) isSet.invoke(src, key)).booleanValue()) {
+                if (isSet == null || (Boolean) isSet.invoke(src, key)) {
                     set.invoke(target, key, get.invoke(src, key));
                 }
             }

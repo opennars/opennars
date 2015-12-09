@@ -40,7 +40,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 //        }
 //    }
 
-    final static Font nodeFont = NARfx.mono(0.25);
+    static final Font nodeFont = NARfx.mono(0.25);
 
     protected double minSize = 16;
     protected double maxSize = 64;
@@ -101,7 +101,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         t.scale( nodeScaleCache * (minSize + (maxSize - minSize) * t.priNorm) );
     }
 
-    final static Font mono = NARfx.mono(8);
+    static final Font mono = NARfx.mono(8);
 
     public static final ColorMatrix colors = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
             (op, activation) -> {
@@ -111,7 +111,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
             });
 
 
-    final private AtomicReference<Node> selected = new AtomicReference();
+    private final AtomicReference<Node> selected = new AtomicReference();
 
     final EventHandler<MouseEvent> mouseActivity = e -> {
         //if (!hoverPanel.isVisible()) {

@@ -171,7 +171,7 @@ public final class SgClass {
      * 
      * @return List of annotations - Always non-null and is unmodifiable
      */
-    public final List<SgAnnotation> getAnnotations() {
+    public List<SgAnnotation> getAnnotations() {
         return Collections.unmodifiableList(annotations);
     }
 
@@ -181,7 +181,7 @@ public final class SgClass {
      * @param annotation
      *            Annotation to add - Cannot be null.
      */
-    public final void addAnnotation(final SgAnnotation annotation) {
+    public void addAnnotation(final SgAnnotation annotation) {
         if (annotation == null) {
             throw new IllegalArgumentException("The argument 'annotation' cannot be NULL!");
         }
@@ -195,7 +195,7 @@ public final class SgClass {
      * @param annotations
      *            Annotations to add - Cannot be null.
      */
-    public final void addAnnotations(final List<SgAnnotation> annotations) {
+    public void addAnnotations(final List<SgAnnotation> annotations) {
         if (annotations == null) {
             throw new IllegalArgumentException("The argument 'annotations' cannot be NULL!");
         }
@@ -210,7 +210,7 @@ public final class SgClass {
      * 
      * @return If it's found true else false.
      */
-    public final boolean hasAnnotation(final String name) {
+    public boolean hasAnnotation(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be NULL!");
         }
@@ -228,7 +228,7 @@ public final class SgClass {
      * 
      * @return Super class or null.
      */
-    public final SgClass getSuperClass() {
+    public SgClass getSuperClass() {
         return superClass;
     }
 
@@ -238,7 +238,7 @@ public final class SgClass {
      * 
      * @return Name usable as a package - Always non-null.
      */
-    public final String getSimpleNameAsPackage() {
+    public String getSimpleNameAsPackage() {
         return SgUtils.uppercaseToUnderscore(getSimpleName());
     }
 
@@ -247,7 +247,7 @@ public final class SgClass {
      * 
      * @return Constructor list - Always non-null and is unmodifiable.
      */
-    public final List<SgConstructor> getConstructors() {
+    public List<SgConstructor> getConstructors() {
         return Collections.unmodifiableList(constructors);
     }
 
@@ -260,7 +260,7 @@ public final class SgClass {
      * @param constructor
      *            Constructor to add - Cannot be null.
      */
-    public final void addConstructor(final SgConstructor constructor) {
+    public void addConstructor(final SgConstructor constructor) {
         if (constructor == null) {
             throw new IllegalArgumentException("The argument 'constructor' cannot be null!");
         }
@@ -278,7 +278,7 @@ public final class SgClass {
      * 
      * @return If it's an interface true else false.
      */
-    public final boolean isInterface() {
+    public boolean isInterface() {
         return isinterface;
     }
 
@@ -287,7 +287,7 @@ public final class SgClass {
      * 
      * @return Method list - Always non-null and is unmodifiable.
      */
-    public final List<SgMethod> getMethods() {
+    public List<SgMethod> getMethods() {
         return Collections.unmodifiableList(methods);
     }
 
@@ -299,7 +299,7 @@ public final class SgClass {
      * @param method
      *            Method to add - Cannot be null.
      */
-    public final void addMethod(final SgMethod method) {
+    public void addMethod(final SgMethod method) {
         if (method == null) {
             throw new IllegalArgumentException("The argument 'method' cannot be null!");
         }
@@ -316,7 +316,7 @@ public final class SgClass {
      * 
      * @return Name with inner classes separated with "$".
      */
-    public final String getName() {
+    public String getName() {
         return getName("$");
     }
 
@@ -325,7 +325,7 @@ public final class SgClass {
      * 
      * @return Name with inner classes separated with ".".
      */
-    public final String getSourceName() {
+    public String getSourceName() {
         return getName(".");
     }
 
@@ -334,7 +334,7 @@ public final class SgClass {
      * 
      * @return Relative path and filename.
      */
-    public final String getNameAsFilename() {
+    public String getNameAsFilename() {
         return getName().replace('.', File.separatorChar);
     }
 
@@ -343,7 +343,7 @@ public final class SgClass {
      * 
      * @return Relative path and filename with extension ".java".
      */
-    public final String getNameAsSrcFilename() {
+    public String getNameAsSrcFilename() {
         return getNameAsFilename() + ".java";
     }
 
@@ -352,7 +352,7 @@ public final class SgClass {
      * 
      * @return Relative path and filename with extension ".class".
      */
-    public final String getNameAsBinFilename() {
+    public String getNameAsBinFilename() {
         return getNameAsFilename() + ".class";
     }
 
@@ -367,7 +367,7 @@ public final class SgClass {
         return sb.toString();
     }
 
-    private final String getName(final String innerDivider) {
+    private String getName(final String innerDivider) {
         if (packageName.isEmpty()) {
             if (enclosingClass == null) {
                 return simpleName;
@@ -387,7 +387,7 @@ public final class SgClass {
      * 
      * @return Package name.
      */
-    public final String getPackageName() {
+    public String getPackageName() {
         return packageName;
     }
 
@@ -396,7 +396,7 @@ public final class SgClass {
      * 
      * @return Name without package.
      */
-    public final String getSimpleName() {
+    public String getSimpleName() {
         return simpleName;
     }
 
@@ -405,7 +405,7 @@ public final class SgClass {
      * 
      * @return List of interfaces - Always non-null and unmodifiable.
      */
-    public final List<SgClass> getInterfaces() {
+    public List<SgClass> getInterfaces() {
         return Collections.unmodifiableList(interfaces);
     }
 
@@ -415,7 +415,7 @@ public final class SgClass {
      * @param intf
      *            Interface to add - Cannot be null.
      */
-    public final void addInterface(final SgClass intf) {
+    public void addInterface(final SgClass intf) {
         if (intf == null) {
             throw new IllegalArgumentException("The argument 'intf' cannot be null!");
         }
@@ -427,7 +427,7 @@ public final class SgClass {
      * 
      * @return Names separated by a comma - Always non-null.
      */
-    public final String getInterfacesCommaSeparated() {
+    public String getInterfacesCommaSeparated() {
         final StringBuffer sb = new StringBuffer();
         if (!interfaces.isEmpty()) {
             for (int i = 0; i < interfaces.size(); i++) {
@@ -445,7 +445,7 @@ public final class SgClass {
      * 
      * @return List of fields - Always non-null and is unmodifiable
      */
-    public final List<SgField> getFields() {
+    public List<SgField> getFields() {
         return Collections.unmodifiableList(fields);
     }
 
@@ -457,7 +457,7 @@ public final class SgClass {
      * @param field
      *            Field to add - Cannot be null.
      */
-    public final void addField(final SgField field) {
+    public void addField(final SgField field) {
         if (field == null) {
             throw new IllegalArgumentException("The argument 'field' cannot be null!");
         }
@@ -474,7 +474,7 @@ public final class SgClass {
      * 
      * @return List of inner classes - Always non-null and is unmodifiable.
      */
-    public final List<SgClass> getClasses() {
+    public List<SgClass> getClasses() {
         return Collections.unmodifiableList(classes);
     }
 
@@ -485,7 +485,7 @@ public final class SgClass {
      * @param clasz
      *            Inner class to add - Cannot be null.
      */
-    public final void addClass(final SgClass clasz) {
+    public void addClass(final SgClass clasz) {
         if (clasz == null) {
             throw new IllegalArgumentException("The argument 'clasz' cannot be null!");
         }
@@ -499,7 +499,7 @@ public final class SgClass {
      * 
      * @return Enclosing class or null.
      */
-    public final SgClass getEnclosingClass() {
+    public SgClass getEnclosingClass() {
         return enclosingClass;
     }
 
@@ -511,7 +511,7 @@ public final class SgClass {
      * 
      * @return Class or null if it's not found.
      */
-    public final SgClass findClassByName(final String name) {
+    public SgClass findClassByName(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
@@ -532,7 +532,7 @@ public final class SgClass {
      * 
      * @return Method or null if it's not found.
      */
-    public final SgMethod findMethodByName(final String name) {
+    public SgMethod findMethodByName(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
@@ -545,7 +545,7 @@ public final class SgClass {
         return null;
     }
     
-    public final SgMethod findMethod(final CtMethod em) {
+    public SgMethod findMethod(final CtMethod em) {
         String key = em.getLongName();
         for (int i = 0; i < methods.size(); i++) {
             final SgMethod method = methods.get(i);
@@ -566,7 +566,7 @@ public final class SgClass {
      * 
      * @return Field or null if it's not found.
      */
-    public final SgField findFieldByName(final String name) {
+    public SgField findFieldByName(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
@@ -663,7 +663,7 @@ public final class SgClass {
      * 
      * @return Modifier names.
      */
-    public final String getModifiers() {
+    public String getModifiers() {
         return modifiers;
     }
 
@@ -674,7 +674,7 @@ public final class SgClass {
      * 
      * @return true if and only if this class represents a primitive type
      */
-    public final boolean isPrimitive() {
+    public boolean isPrimitive() {
         return this.equals(VOID) || this.equals(BOOLEAN) || this.equals(BYTE) || this.equals(CHAR)
                 || this.equals(SHORT) || this.equals(INT) || this.equals(LONG)
                 || this.equals(FLOAT) || this.equals(DOUBLE);
@@ -690,7 +690,7 @@ public final class SgClass {
      * 
      * @return true if and only if this class represents one of those types.
      */
-    public final boolean isBaseType() {
+    public boolean isBaseType() {
         final String name = getName();
         if (name.equals(String.class.getName())) {
             return true;
@@ -737,7 +737,7 @@ public final class SgClass {
      * @return If the class implements the interface <code>true</code> else
      *         <code>false</code>.
      */
-    public final boolean hasInterface(final SgClass intf) {
+    public boolean hasInterface(final SgClass intf) {
 
         if (intf == null) {
             throw new IllegalArgumentException("The argument 'intf' cannot be null!");
@@ -762,7 +762,7 @@ public final class SgClass {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return toString(false);
     }
 
@@ -775,7 +775,7 @@ public final class SgClass {
      * 
      * @return Source code of the class.
      */
-    public final String toString(final boolean showAnnotations) {
+    public String toString(final boolean showAnnotations) {
         final StringBuffer sb = new StringBuffer();
         addPackageLine(sb);
         addNameLine(sb, showAnnotations);
@@ -981,7 +981,7 @@ public final class SgClass {
      * 
      * @return Non primitive class.
      */
-    public static final SgClass getNonPrimitiveClass(final SgClassPool pool, final SgClass primitive) {
+    public static SgClass getNonPrimitiveClass(final SgClassPool pool, final SgClass primitive) {
         if (primitive.equals(BOOLEAN)) {
             return SgClass.create(pool, Boolean.class);
         }
@@ -1026,7 +1026,7 @@ public final class SgClass {
      *         converting an {@link java.lang.Integer} into an <code>int</code>
      *         ).
      */
-    public static final String getToPrimitiveMethod(final SgClass clasz) {
+    public static String getToPrimitiveMethod(final SgClass clasz) {
         final String name = clasz.getName();
         if (name.equals(Boolean.class.getName())) {
             return "booleanValue";

@@ -35,16 +35,16 @@ public class IntBuf {
 
 
 
-    public final static void p(int[] x, int i, int v) {
+    public static final void p(int[] x, int i, int v) {
         p(x, i , (byte)v);
     }
-    final static void p(final int[] x, final int i, final byte v) {
+    static final void p(final int[] x, final int i, final byte v) {
         final int e = i / 4; //>> 2
         final int o = i % 4;
         final int b = 8 * o;
         p(x, e, b, v);
     }
-    final static void p(final int[] x, final int e, final int b, final byte v) {
+    static final void p(final int[] x, final int e, final int b, final byte v) {
         int c = x[e] & ~(((int)0xff) << b);
         x[e] = c | (v << b);
     }

@@ -473,14 +473,14 @@ public class Hauto {
         return 0.0f;
     }
 
-    final public static int RIGHT = -90;
-    final public static int DOWN = 180;
-    final public static int LEFT = 90;
-    final public static int UP = 0;
-    final public static int UPLEFT = (UP+LEFT)/2;
-    final public static int UPRIGHT = (UP+RIGHT)/2;
-    final public static int DOWNLEFT = (DOWN+LEFT)/2;
-    final public static int DOWNRIGHT = (DOWN+RIGHT)/2;
+    public static final int RIGHT = -90;
+    public static final int DOWN = 180;
+    public static final int LEFT = 90;
+    public static final int UP = 0;
+    public static final int UPLEFT = (UP+LEFT)/2;
+    public static final int UPRIGHT = (UP+RIGHT)/2;
+    public static final int DOWNLEFT = (DOWN+LEFT)/2;
+    public static final int DOWNRIGHT = (DOWN+RIGHT)/2;
     
     public int t = 0;
     public Cell[][] readCells; //2D-array(**) of Cell objects(*)

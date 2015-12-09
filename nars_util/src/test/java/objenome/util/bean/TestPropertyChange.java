@@ -42,8 +42,8 @@ public class TestPropertyChange {
         assertEquals("a", evt0.getNewValue()); //$NON-NLS-1$
 
         PropertyChangeEvent evt1 = listener.getEvents().get(1);
-        assertEquals(Integer.valueOf(0), evt1.getOldValue());
-        assertEquals(Integer.valueOf(88), evt1.getNewValue());
+        assertEquals(0, evt1.getOldValue());
+        assertEquals(88, evt1.getNewValue());
     }
 
     @Test

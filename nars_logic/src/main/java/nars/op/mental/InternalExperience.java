@@ -94,11 +94,11 @@ public class InternalExperience {
     //public static boolean enabled=true;
 
 
-    public final static Operator believe = Operator.the("believe");
-    public final static Operator want = Operator.the("want");
-    public final static Operator wonder = Operator.the("wonder");
-    public final static Operator evaluate = Operator.the("evaluate");
-    public final static Operator anticipate = Operator.the("anticipate");
+    public static final Operator believe = Operator.the("believe");
+    public static final Operator want = Operator.the("want");
+    public static final Operator wonder = Operator.the("wonder");
+    public static final Operator evaluate = Operator.the("evaluate");
+    public static final Operator anticipate = Operator.the("anticipate");
 
 
     /**
@@ -256,7 +256,7 @@ public class InternalExperience {
     }
 
 
-    final static Operator[] nonInnateBeliefOperators = {
+    static final Operator[] nonInnateBeliefOperators = {
             Operator.the("remind"),
             Operator.the("doubt"),
             Operator.the("consider"),

@@ -56,7 +56,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
      * @return Current key value
      */
     @Override
-    abstract public K name();
+    public abstract K name();
 
 
 
@@ -115,7 +115,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         return false;
     }
 
-    abstract public static class StringKeyItem extends Item<CharSequence> {
+    public abstract static class StringKeyItem extends Item<CharSequence> {
         
         public StringKeyItem(final Budget budget) { super(budget);         }
         public StringKeyItem(float p, float d, float q) { super(p, d, q);         }

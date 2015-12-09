@@ -5,7 +5,7 @@ package nars.util.data.id;
  * and a start, stop interval representing a subsequence,
  * TODO
  */
-abstract public class SlicedUTF8Identifier extends UTF8Identifier {
+public abstract class SlicedUTF8Identifier extends UTF8Identifier {
 
     final UTF8Identifier source;
     final short start;

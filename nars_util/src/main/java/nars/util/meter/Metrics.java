@@ -28,11 +28,11 @@ import java.util.*;
  */
 public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
-    final static int PRECISION = 4;
+    static final int PRECISION = 4;
 
 
 
-    final static ObjectMapper json = new ObjectMapper();
+    static final ObjectMapper json = new ObjectMapper();
 
     public static void printJSONArray(PrintStream out, Object[] row, boolean includeBrackets) {
         try {
@@ -208,8 +208,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     private final List<Signals<?>> meters = new ArrayList<>();
     private final ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
-    transient private List<Signal> signalList = new ArrayList<>();
-    transient private Map<String, Integer> signalIndex = new HashMap();
+    private transient List<Signal> signalList = new ArrayList<>();
+    private transient Map<String, Integer> signalIndex = new HashMap();
     
     int numColumns;
     

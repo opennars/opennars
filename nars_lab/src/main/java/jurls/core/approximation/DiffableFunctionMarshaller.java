@@ -36,7 +36,7 @@ public class DiffableFunctionMarshaller implements ParameterizedFunction {
     private static int COMPILED_CLASS_INDEX = 0;
     private final boolean debug = true;
 
-    private final static class JaninoRestrictedClassLoader extends
+    private static final class JaninoRestrictedClassLoader extends
             SecureClassLoader {
 
         Class<?> defineClass(String name, byte[] b) {

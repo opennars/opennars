@@ -46,7 +46,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         boolean includeConcept(Concept c);
     }
 
-    public final static Filter IncludeEverything = new Filter() {
+    public static final Filter IncludeEverything = new Filter() {
         @Override
         public boolean includePriority(float l) {
             return true;
@@ -58,7 +58,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
     };
 
-    public final static class ExcludeBelowPriority implements Filter {
+    public static final class ExcludeBelowPriority implements Filter {
 
         final float thresh;
 
@@ -108,7 +108,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         void setMinPriority(float minPriority);
     }
 
-    abstract public static class NAREdge<X> extends DefaultEdge implements Named<X> {
+    public abstract static class NAREdge<X> extends DefaultEdge implements Named<X> {
 
         private final X object;
         private final int hash;

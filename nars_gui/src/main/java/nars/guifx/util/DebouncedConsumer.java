@@ -41,17 +41,17 @@ public interface DebouncedConsumer extends Consumer<NAR> {
     /**
      * gate/lock which this will use to prevent repeats. should be initialized as true
      */
-    public AtomicBoolean canQueue();
+    AtomicBoolean canQueue();
 
-    public AtomicLong lastInvocation();
+    AtomicLong lastInvocation();
 
     //min update period?
 
     /**
      * invoked in the trigger thread
      */
-    public void update(long msSinceLast);
+    void update(long msSinceLast);
 
-    public void run(long msSinceLast);
+    void run(long msSinceLast);
 
 }

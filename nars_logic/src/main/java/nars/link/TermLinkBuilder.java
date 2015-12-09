@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
 
-    transient public final Termed concept;
+    public final transient Termed concept;
 
     protected final List<TermLinkTemplate> template;
 
@@ -137,7 +137,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return true;
     }
 
-    final static boolean growLevel1(final Term t) {
+    static final boolean growLevel1(final Term t) {
         return growComponent(t) /*&&
                 ( growProductOrImage(t) || (t instanceof SetTensional)) */;
     }
@@ -148,7 +148,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 //    }
 
 
-    final static boolean growLevel2(final Term t) {
+    static final boolean growLevel2(final Term t) {
         return growComponent(t); //growComponent(t); leads to failures, why?
         //return growComponent(t) && growProductOrImage(t);
         //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {

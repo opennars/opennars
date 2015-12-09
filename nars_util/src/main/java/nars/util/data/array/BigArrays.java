@@ -113,13 +113,13 @@ package nars.util.data.array;
 
 public class BigArrays {
 	/** The shift used to compute the segment associated with an index (equivalently, the logarithm of the segment size). */
-	public final static int SEGMENT_SHIFT = 27;
+	public static final int SEGMENT_SHIFT = 27;
 	/** The current size of a segment (2<sup>27</sup>) is the largest size that makes
 	 * the physical memory allocation for a single segment strictly smaller
 	 * than 2<sup>31</sup> bytes. */
-	public final static int SEGMENT_SIZE = 1 << SEGMENT_SHIFT;
+	public static final int SEGMENT_SIZE = 1 << SEGMENT_SHIFT;
 	/** The mask used to compute the displacement associated to an index. */
-	public final static int SEGMENT_MASK = SEGMENT_SIZE - 1;
+	public static final int SEGMENT_MASK = SEGMENT_SIZE - 1;
 	
 	protected BigArrays() {}
 	

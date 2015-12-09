@@ -34,7 +34,7 @@ import org.apache.commons.math3.analysis.function.Log;
  */
 public class Log2 extends Numeric1 {
 
-    final static double base2Div = Math.log(2);
+    static final double base2Div = Math.log(2);
     
     @Override
     public double value(double x) {

@@ -17,7 +17,8 @@ import java.util.function.Predicate;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-@Deprecated abstract public class CompoundN<T extends Term> implements Compound<T> {
+@Deprecated
+public abstract class CompoundN<T extends Term> implements Compound<T> {
 
     protected final TermVector<T> terms;
 
@@ -26,7 +27,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
      * used to prevent repeated normalizations
      */
 
-    protected transient final int hash;
+    protected final transient int hash;
 
     @SafeVarargs
     protected CompoundN(T... t) {

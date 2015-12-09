@@ -71,7 +71,7 @@ public class Gossip {
     public static final int                                  DEFAULT_CLEANUP_CYCLES  = 4;
     public static final int                                  DEFAULT_HEARTBEAT_CYCLE = 1;
     public static final int                                  DEFAULT_REDUNDANCY      = 3;
-    public final static Logger log                     = Logger.getLogger(Gossip.class.toString());
+    public static final Logger log                     = Logger.getLogger(Gossip.class.toString());
     private static final byte[]                              EMPTY_STATE             = new byte[0];
 
     private final int                                        cleanupCycles;

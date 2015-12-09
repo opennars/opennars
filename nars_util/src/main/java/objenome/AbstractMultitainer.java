@@ -18,9 +18,9 @@ import java.util.Set;
  */
 public interface AbstractMultitainer extends Prototainer {
     
-    public DecideImplementationClass any(Class abstractClass, Scope scope, Class<?>... klasses);
+    DecideImplementationClass any(Class abstractClass, Scope scope, Class<?>... klasses);
     
-    default public Builder any(Class<?> abstractClass, Class<?>[] klasses) {
+    default Builder any(Class<?> abstractClass, Class<?>[] klasses) {
         if (klasses.length == 0)
             usable(abstractClass, abstractClass);
             
@@ -36,14 +36,14 @@ public interface AbstractMultitainer extends Prototainer {
      *  deduces common parent classes from a supplied list of classes
      *  TODO
      */
-    default public List<Builder> possible(Set<Class<?>> classes) {
+    default List<Builder> possible(Set<Class<?>> classes) {
         return null;
     }
     
     /** create all possible builders that can be made involving the classes in a set of packages
      *  TODO
      */
-    default public List<Builder> possible(String... packages) {
+    default List<Builder> possible(String... packages) {
         //calls ReflectGraph, then Multainer.possible(classes)
         return null;
     }

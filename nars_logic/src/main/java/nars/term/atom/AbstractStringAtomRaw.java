@@ -26,7 +26,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
             id, op().ordinal()
         );
      */
-    abstract public int hashCode();
+    public abstract int hashCode();
 
     @Override
     public abstract Op op();

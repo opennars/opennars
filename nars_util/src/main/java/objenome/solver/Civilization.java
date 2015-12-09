@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  * a solution to a problem characterized by a set of goals defined
  * by the programmer.
  */
-abstract public class Civilization extends GPContainer<Civilized> implements Runnable {
+public abstract class Civilization extends GPContainer<Civilized> implements Runnable {
 
     double minLifeSpan = 0.25;
     double maxSurvivalCostPercentile = 80;
@@ -151,7 +151,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         return c;
     }
 
-    abstract public List<Node> getOperators(RandomSequence random);
+    public abstract List<Node> getOperators(RandomSequence random);
 
     public void add(EGoal goal) {
         goals.add(goal);
@@ -423,9 +423,9 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     }
 
 
-    public static interface GPContainerAware {
+    public interface GPContainerAware {
 
-        public void setConfig(Civilization c);
+        void setConfig(Civilization c);
     }
 
 //    /**

@@ -91,7 +91,7 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
         } else if (isAnnotated(method, KEYS)) {
             return this.keys;
         } else if (isAnnotated(method, IS_SET)) {
-            return Boolean.valueOf(this.delegate.isSet(proxy, this.getters.get(args[0])));
+            return this.delegate.isSet(proxy, this.getters.get(args[0]));
         } else {
             return this.delegate.invoke(proxy, method, args);
         }

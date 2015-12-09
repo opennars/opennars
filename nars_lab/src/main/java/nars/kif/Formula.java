@@ -3288,7 +3288,7 @@ public class Formula implements Comparable {
      */
     private static void incrementTOS(Stack countStack) {
 
-        countStack.push(new Integer((Integer) countStack.pop() + 1));
+        countStack.push((Integer) countStack.pop() + 1);
     }
 
     /**
@@ -3382,7 +3382,7 @@ public class Formula implements Comparable {
                     if (arity == 1) {
                         tptpFormula.append(translateWord(st, false));
                         //----Note the new operate (dummy) with 0 operands so far
-                        countStack.push(new Integer(0));
+                        countStack.push(0);
                         operatorStack.push(",");
                         //----Check if the next thing will be the quantified variables
                         if (st.sval.equals("forall") || st.sval.equals("exists")) {
@@ -3391,7 +3391,7 @@ public class Formula implements Comparable {
                         //----Binary operate
                     } else if (arity == 2) {
                         //----Note the new operate with 0 operands so far
-                        countStack.push(new Integer(0));
+                        countStack.push(0);
                         operatorStack.push(translateWord(st, false));
                     }
                     lastWasOpen = false;
@@ -3429,7 +3429,7 @@ public class Formula implements Comparable {
                             tptpFormula.append(translateWord(st, true));
                             tptpFormula.append("(");
                             //----Note the , for between arguments with 0 arguments so far
-                            countStack.push(new Integer(0));
+                            countStack.push(0);
                             operatorStack.push(",");
                         }
                         //----Argument or quantified variable

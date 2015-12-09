@@ -14,7 +14,7 @@ public class ExtSet extends PreCondition1 {
     }
 
     @Override
-    final public boolean test(final RuleMatch m, final Term a) {
+    public final boolean test(final RuleMatch m, final Term a) {
         return (a instanceof SetExt);
     }
 

@@ -344,7 +344,7 @@ class MJBoard extends Panel implements Runnable {
 	// ----------------------------------------------------------------
 	// Set one cell
 	// This should be *the only* fuction that modifies the board (crrState)
-	final public void SetCell(int x, int y, short bState) {
+	public final void SetCell(int x, int y, short bState) {
 		if ((x >= 0) && (y >= 0) && (x < UnivSize.x) && (y < UnivSize.y)) {
 			if (crrState[x][y] != bState) {
 				Populations[crrState[x][y]]--;
@@ -360,7 +360,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// Set one cell
-	final public void SetCell(CACell cell) {
+	public final void SetCell(CACell cell) {
 		if ((cell.x >= 0) && (cell.y >= 0) && (cell.x < UnivSize.x)
 				&& (cell.y < UnivSize.y)) {
 			if (crrState[cell.x][cell.y] != cell.state) {

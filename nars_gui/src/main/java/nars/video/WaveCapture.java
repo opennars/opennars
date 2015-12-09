@@ -215,7 +215,7 @@ public class WaveCapture implements Runnable {
 
     }
 
-    public synchronized final void setSource(WaveSource source) {
+    public final synchronized void setSource(WaveSource source) {
         if (this.source != null) {
             this.source.stop();
             this.source = null;

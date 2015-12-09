@@ -399,7 +399,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
         /**
          * called before any update begins
          */
-        public void reset(SpaceGrapher g);
+        void reset(SpaceGrapher g);
     }
 
 
@@ -548,7 +548,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     }
 
 
-    final static int defaultFramePeriodMS = 30; //~60hz/2
+    static final int defaultFramePeriodMS = 30; //~60hz/2
 
     protected synchronized void checkVisibility() {
         if (isVisible() && getParent() != null && getScene() != null) {

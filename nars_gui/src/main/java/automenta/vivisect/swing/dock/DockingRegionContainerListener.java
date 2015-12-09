@@ -24,5 +24,5 @@ import java.util.EventObject;
  */
 public interface DockingRegionContainerListener extends EventListener {
 
-    public void dockingContainerEmpty(EventObject evt);
+    void dockingContainerEmpty(EventObject evt);
 }

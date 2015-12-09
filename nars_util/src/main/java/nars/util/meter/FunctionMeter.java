@@ -58,7 +58,7 @@ public abstract class FunctionMeter<M> implements Signals<M>, Serializable {
         return signals;
     }
 
-    abstract public M getValue(Object key, int index);
+    public abstract M getValue(Object key, int index);
 
     protected void fillVector(Object key, int fromIndex, int toIndex) {
         for (int i = 0; i < vector.length; i++) {

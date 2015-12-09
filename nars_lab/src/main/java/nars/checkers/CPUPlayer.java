@@ -10,5 +10,5 @@ public interface CPUPlayer
 	/**
 	 * 
 	 */
-	public void takeTurn();
+	void takeTurn();
 }

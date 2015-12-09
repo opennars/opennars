@@ -5,7 +5,7 @@ import nars.task.Task;
 import nars.truth.Truth;
 
 
-abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
+public abstract class DecideAboveDecisionThreshold extends DecideAllGoals {
 
     public final Memory memory;
 
@@ -13,14 +13,14 @@ abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
         this.memory = m;
     }
 
-    public final static class DecideTaskDesireAboveDecisionThreshold extends DecideAboveDecisionThreshold {
+    public static final class DecideTaskDesireAboveDecisionThreshold extends DecideAboveDecisionThreshold {
 
         public DecideTaskDesireAboveDecisionThreshold(Memory m) {
             super(m);
         }
 
         @Override
-        protected final float desire(Task task) {
+        protected float desire(Task task) {
             Truth t = task.getTruth();
             if (t == null)
                 throw new RuntimeException("null truth");

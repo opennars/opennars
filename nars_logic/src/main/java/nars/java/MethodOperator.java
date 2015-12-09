@@ -27,7 +27,7 @@ public class MethodOperator extends TermFunction {
     private final Method method;
     private final Parameter[] params;
 
-    private final static Object[] empty = new Object[0];
+    private static final Object[] empty = new Object[0];
     private final AtomicBoolean enable;
     private final NALObjects context;
     boolean feedback = true;

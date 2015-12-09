@@ -18,7 +18,7 @@ public class TaskPunctuation extends PreCondition {
     public static final TaskPunctuation TaskJudgment = new TaskPunctuation('.');
 
     public static final TaskPunctuation TaskQuestion = new TaskPunctuation('?') {
-        @Override protected final boolean test(char taskPunc) {
+        @Override protected boolean test(char taskPunc) {
             return taskPunc == Symbols.QUESTION || taskPunc == Symbols.QUEST;
         }
     };

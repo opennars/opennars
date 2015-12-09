@@ -63,9 +63,9 @@ public final class VarListImplementationFactory {
      * 
      * @return New object implementing the interface.
      */
-    public final SgClass create(final String implPackageName, final String implClassName,
-            final SgClass superClass, final SgClass enclosingClass, final List<SgVariable> vars,
-            final ImplementationFactoryListener listener, final Class<?>... intf) {
+    public SgClass create(final String implPackageName, final String implClassName,
+                          final SgClass superClass, final SgClass enclosingClass, final List<SgVariable> vars,
+                          final ImplementationFactoryListener listener, final Class<?>... intf) {
 
         return factory.create(implPackageName, implClassName, superClass, enclosingClass,
                 new VarListImplFactoryListener(vars, listener), intf);
@@ -109,7 +109,7 @@ public final class VarListImplementationFactory {
         /**
          * {@inheritDoc}
          */
-        public final void afterClassCreated(final SgClass clasz) {
+        public void afterClassCreated(final SgClass clasz) {
 
             // Add all arguments as fields and to the constructor
             final SgConstructor constructor = new SgConstructor(clasz);
@@ -130,7 +130,7 @@ public final class VarListImplementationFactory {
         /**
          * {@inheritDoc}
          */
-        public final List<String> createBody(final SgMethod method, final Class<?>... intf) {
+        public List<String> createBody(final SgMethod method, final Class<?>... intf) {
             // Call user defined listener
             return listener.createBody(method, intf);
         }

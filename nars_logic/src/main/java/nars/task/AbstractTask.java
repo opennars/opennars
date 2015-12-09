@@ -29,7 +29,7 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-abstract public class AbstractTask extends Item<Sentence>
+public abstract class AbstractTask extends Item<Sentence>
         implements Task, Temporal {
 
     /** content term of this task */
@@ -49,20 +49,20 @@ abstract public class AbstractTask extends Item<Sentence>
     /**
      * Task from which the Task is derived, or null if input
      */
-    transient private Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+    private transient Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    transient private Reference<Task> parentBelief;
+    private transient Reference<Task> parentBelief;
 
 
-    transient private int hash;
+    private transient int hash;
 
     /**
      * TODO move to SolutionTask subclass
      * For Question and Goal: best solution found so far
      */
-    transient private Reference<Task> bestSolution;
+    private transient Reference<Task> bestSolution;
 
 
     private List log = null;
@@ -312,11 +312,11 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    final public boolean isDouble() {
+    public final boolean isDouble() {
         return getParentBelief() != null && getParentTask() != null;
     }
     @Override
-    final public boolean isSingle() {
+    public final boolean isSingle() {
         return getParentBelief()==null && getParentTask()!=null ;
     }
 
@@ -676,14 +676,14 @@ abstract public class AbstractTask extends Item<Sentence>
      * @return The belief from which the task is derived
      */
     @Override
-    final public Task getParentBelief() {
+    public final Task getParentBelief() {
         return dereference(parentBelief);
     }
 
 
 
     @Override
-    final public Sentence name() {
+    public final Sentence name() {
         return this;
     }
 

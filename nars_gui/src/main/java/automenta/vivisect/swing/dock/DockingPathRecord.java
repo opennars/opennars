@@ -19,7 +19,7 @@ package automenta.vivisect.swing.dock;
  *
  * @author kitfox
  */
-abstract public class DockingPathRecord {
+public abstract class DockingPathRecord {
 
     final DockingPathRecord next;
 

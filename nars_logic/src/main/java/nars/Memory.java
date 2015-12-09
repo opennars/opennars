@@ -59,53 +59,53 @@ public class Memory extends Param {
     public final Random random;
 
     @Deprecated
-    transient public final EventEmitter<Class, Object[]> event;
+    public final transient EventEmitter<Class, Object[]> event;
 
-    transient public final Topic<Task> eventTaskRemoved = new DefaultTopic<>();
-    transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
-    transient public final Topic<Task> eventRevision = new DefaultTopic<>();
+    public final transient Topic<Task> eventTaskRemoved = new DefaultTopic<>();
+    public final transient Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
+    public final transient Topic<Task> eventRevision = new DefaultTopic<>();
 
-    transient public final Topic<Memory> eventReset = new DefaultTopic<>();
+    public final transient Topic<Memory> eventReset = new DefaultTopic<>();
 
-    transient public final Topic<Concept> eventConceptActivated = new DefaultTopic<>();
+    public final transient Topic<Concept> eventConceptActivated = new DefaultTopic<>();
 
-    transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
+    public final transient Topic<NAR> eventFrameStart = new DefaultTopic<>();
 
     /**
      * fired at the end of each memory cycle
      */
-    transient public final Topic<Memory> eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
+    public final transient Topic<Memory> eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
 
-    transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
+    public final transient Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
 
     /**
      * used for reporting or informing outside. consists of additional notes
      * or data which could annotate a log or summary of system activity
      */
-    transient public final Topic<Serializable> eventSpeak = new DefaultTopic<>();
+    public final transient Topic<Serializable> eventSpeak = new DefaultTopic<>();
 
-    transient public final Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
+    public final transient Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
 
-    public transient final Topic<Task> eventInput = new DefaultTopic<>();
-    public transient final Topic<Serializable> eventError = new DefaultTopic<>();
+    public final transient Topic<Task> eventInput = new DefaultTopic<>();
+    public final transient Topic<Serializable> eventError = new DefaultTopic<>();
 
     /** all derivations, even if they do not eventually reach the memory via input;
      *  this generates many events, use with caution
      */
-    public transient final Topic<Task> eventDerived = new DefaultTopic<>();
+    public final transient Topic<Task> eventDerived = new DefaultTopic<>();
 
-    public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
-    public transient final Topic<Concept> eventConceptChange = new DefaultTopic();
+    public final transient Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
+    public final transient Topic<Concept> eventConceptChange = new DefaultTopic();
 
     /** executables (incl. operators) */
-    transient public final EventEmitter<Term, Task> exe;
+    public final transient EventEmitter<Term, Task> exe;
 
 
 
     //TODO move these to separate components, not part of Memory:
-    transient public final EmotionMeter emotion;
-    transient public final LogicMeter logic;
+    public final transient EmotionMeter emotion;
+    public final transient LogicMeter logic;
 
     public final Clock clock;
 

@@ -28,13 +28,13 @@ public class SortedTaskPerception extends TaskPerception {
     }
 
     @Override
-    final public void accept(Task t) {
+    public final void accept(Task t) {
         if (!t.isDeleted())
             buffer.put(t);
     }
 
     @Override
-    final public void send() {
+    public final void send() {
         //ItemAccumulator<> b = this.buffer;
         final TaskAccumulator buffer = this.buffer;
         int available = size();

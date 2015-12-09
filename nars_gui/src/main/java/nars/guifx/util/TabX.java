@@ -16,11 +16,11 @@ import java.util.logging.Logger;
 public class TabX extends Tab {
 
 
-    private final static Logger logger = Logger.getLogger(TabX.class.toString());
+    private static final Logger logger = Logger.getLogger(TabX.class.toString());
 
     public static class TabButton extends Tab {
 
-        final static int spacing = 2;
+        static final int spacing = 2;
 
         final Pane buttons = new HBox(spacing);
 

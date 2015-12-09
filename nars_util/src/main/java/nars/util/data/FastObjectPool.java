@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * from: https://github.com/ashkrit/blog/blob/master/src/main/java/objectpool/FastObjectPool.java
  */
-abstract public class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>> {
+public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>> {
 
     private Holder<T>[] objects;
 
@@ -32,7 +32,7 @@ abstract public class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
         return new Holder<T>(creation());
     }
 
-    abstract public T creation();
+    public abstract T creation();
 
     @SuppressWarnings("unchecked")
     public FastObjectPool(int size) {

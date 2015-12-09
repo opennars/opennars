@@ -212,7 +212,7 @@ public final class ByteCodeGenerator {
      * @return Class.
      */
     @SuppressWarnings("unchecked")
-    public final Class createClass(final SgClass modelClass) {
+    public Class createClass(final SgClass modelClass) {
         // We don't want to create it if it already exists
         Class implClass = loadClass(modelClass);
         if (implClass == null) {
@@ -259,7 +259,7 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public final Object createInstance(final Class clasz) {
+    public Object createInstance(final Class clasz) {
         return createInstance(clasz, new Class[] {}, new Object[] {});
     }
 
@@ -277,8 +277,8 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public final Object createInstance(final Class clasz, final Class[] argTypes,
-            final Object[] initArgs) {
+    public Object createInstance(final Class clasz, final Class[] argTypes,
+                                 final Object[] initArgs) {
         try {
             final Constructor constructor = clasz.getConstructor(argTypes);
             return constructor.newInstance(initArgs);
@@ -308,8 +308,8 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public final Object createInstance(final SgClass clasz, final Class[] argTypes,
-            final Object[] initArgs) {
+    public Object createInstance(final SgClass clasz, final Class[] argTypes,
+                                 final Object[] initArgs) {
 
         final Class newClass = createClass(clasz);
         return createInstance(newClass, argTypes, initArgs);
@@ -326,7 +326,7 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public final Object createInstance(final SgClass clasz) {
+    public Object createInstance(final SgClass clasz) {
 
         final Class newClass = createClass(clasz);
         return createInstance(newClass, new Class[] {}, new Object[] {});

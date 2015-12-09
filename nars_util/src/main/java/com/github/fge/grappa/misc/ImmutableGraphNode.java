@@ -65,7 +65,7 @@ public class ImmutableGraphNode<T extends GraphNode<T>>
         return children;
     }
 
-    final public void forEach(final Consumer<T> c) {
+    public final void forEach(final Consumer<T> c) {
         children.forEach(c);
     }
 }

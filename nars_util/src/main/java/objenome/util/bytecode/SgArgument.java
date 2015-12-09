@@ -82,7 +82,7 @@ public final class SgArgument extends SgVariable {
      * 
      * @return Behaviour.
      */
-    public final SgBehavior getOwner() {
+    public SgBehavior getOwner() {
         return owner;
     }
 
@@ -90,7 +90,7 @@ public final class SgArgument extends SgVariable {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < getAnnotations().size(); i++) {
             sb.append(getAnnotations().get(i));

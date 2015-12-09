@@ -25,13 +25,13 @@ import static org.junit.Assert.*;
  */
 public class CurveBagTest extends AbstractBagTest {
 
-    final static Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift1024StarRandom(1);
 
     static {
         Global.DEBUG = true;
     }
 
-    final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
+    static final BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test
     public void testBagSampling() {

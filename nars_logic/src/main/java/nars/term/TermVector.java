@@ -54,9 +54,9 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     /**
      * # variables contained, of each type
      */
-    transient protected byte hasVarQueries;
-    transient protected byte hasVarIndeps;
-    transient protected byte hasVarDeps;
+    protected transient byte hasVarQueries;
+    protected transient byte hasVarIndeps;
+    protected transient byte hasVarDeps;
 
     transient boolean normalized;
 

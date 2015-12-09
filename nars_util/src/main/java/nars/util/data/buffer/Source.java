@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  */
 public interface Source<Y> extends Supplier<Y> {
 
-    default public void stop() {
+    default void stop() {
 
     }
 

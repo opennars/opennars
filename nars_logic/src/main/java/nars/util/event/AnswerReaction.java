@@ -88,7 +88,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
 
 
     /** called when the question task has been solved directly */
-    abstract public void onSolution(Task belief);
+    public abstract void onSolution(Task belief);
     
     /** called when a subtask of the question has been solved */
     public void onChildSolution(Task question, Sentence belief) {

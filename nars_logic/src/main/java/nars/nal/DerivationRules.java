@@ -55,7 +55,7 @@ public class DerivationRules extends FastList<TaskRule> {
     /** for compiling and de-duplicating pattern term components */
     final MapIndex patterns = new PatternIndex();
 
-    final static Logger logger = Logger.getLogger(DerivationRules.class.toString());
+    static final Logger logger = Logger.getLogger(DerivationRules.class.toString());
 
     public DerivationRules(Set<TaskRule> r) {
         super();
@@ -146,10 +146,10 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
 
-    final static String[] equFull = {"<=>", "</>", "<|>"};
-    final static String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
-    final static String[] conjFull = {"&&", "&|", "&/"};
-    final static String[] unchanged = {null};
+    static final String[] equFull = {"<=>", "</>", "<|>"};
+    static final String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
+    static final String[] conjFull = {"&&", "&|", "&/"};
+    static final String[] unchanged = {null};
 
     /**
      * //TODO do this on the parsed rule, because string contents could be unpredictable:

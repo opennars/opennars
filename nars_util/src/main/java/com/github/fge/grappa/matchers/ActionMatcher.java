@@ -93,13 +93,13 @@ public final class ActionMatcher
     }
 
     @Override
-    public final MatcherType getType()
+    public MatcherType getType()
     {
         return MatcherType.ACTION;
     }
 
     @Override
-    public final <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
     {
         final MatcherContext<V> subContext = context.getBasicSubContext();
         subContext.setMatcher(this);
@@ -114,7 +114,7 @@ public final class ActionMatcher
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(final MatcherContext<V> context)
     {
         if (skipInPredicates && context.inPredicate())
             return true;

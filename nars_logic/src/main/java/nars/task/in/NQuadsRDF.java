@@ -24,10 +24,10 @@ import java.util.stream.StreamSupport;
 /**
  * Created by me on 6/4/15.
  */
-abstract public class NQuadsRDF {
+public abstract class NQuadsRDF {
 
 
-    private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    private static final String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     //private static String parentTagName = null;
 
@@ -207,7 +207,7 @@ abstract public class NQuadsRDF {
 //    }
 
 
-    static public Term atom(String uri) {
+    public static Term atom(String uri) {
         int lastSlash = uri.lastIndexOf('/');
         if (lastSlash!=-1)
             uri = uri.substring(lastSlash + 1);

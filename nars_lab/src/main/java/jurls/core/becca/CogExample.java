@@ -9,7 +9,7 @@ package jurls.core.becca;
  *
  * @author me
  */
-abstract public class CogExample extends IOMatrixExample  {
+public abstract class CogExample extends IOMatrixExample  {
 
     int delayMS = 1;
     final Cog cog;

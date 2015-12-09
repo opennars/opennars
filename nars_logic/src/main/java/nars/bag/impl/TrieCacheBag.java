@@ -10,7 +10,7 @@ import org.magnos.trie.TrieSequencer;
  */
 public class TrieCacheBag extends MapCacheBag<Term,Concept,Trie<Term,Concept>> {
 
-    final public static class TermByteTrieSequencer implements TrieSequencer<Term>
+    public static final class TermByteTrieSequencer implements TrieSequencer<Term>
     {
 
         @Override
@@ -74,7 +74,7 @@ public class TrieCacheBag extends MapCacheBag<Term,Concept,Trie<Term,Concept>> {
 
     //TODO sequence by subterm as a whole, since each subterm is hashed
 
-    public final static TrieSequencer termSequencer = new TermByteTrieSequencer();
+    public static final TrieSequencer termSequencer = new TermByteTrieSequencer();
 
     public TrieCacheBag() {
         super( new Trie(termSequencer) );

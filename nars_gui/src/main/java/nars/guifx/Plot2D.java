@@ -24,11 +24,11 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
     //public static final ColorArray BlueRed = new ColorArray(128, Color.BLUE, Color.RED);
 
-    final static ColorMatrix ca = new ColorMatrix(17, 1, (x, y) -> {
+    static final ColorMatrix ca = new ColorMatrix(17, 1, (x, y) -> {
         return Color.hsb(x * 360.0, 0.6f, y * 0.5 + 0.5);
     });
 
-    abstract public static class Series {
+    public abstract static class Series {
         public final FloatArrayList history = new FloatArrayList(); //TODO make Float
         final String name;
         final Color color; //main color
@@ -41,12 +41,12 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
             this.color = NARfx.hashColor(name, ca);
         }
 
-        abstract public void update(int maxHistory);
+        public abstract void update(int maxHistory);
 
     }
 
-    transient private double minValue;
-    transient private double maxValue;
+    private transient double minValue;
+    private transient double maxValue;
 
     public final List<Series> series = Global.newArrayList();
 
@@ -132,7 +132,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
         void draw(Collection<Series> series, GraphicsContext g, double minValue, double maxValue);
     }
 
-    public final static PlotVis BarWave = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
+    public static final PlotVis BarWave = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
         if (minValue != maxValue) {
 
             final double w = g.getCanvas().getWidth();

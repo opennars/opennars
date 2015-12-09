@@ -14,10 +14,10 @@ public @interface Type {
     /**
      * @return the type of the field
      */
-    public EType value();
+    EType value();
 
     /**
      * @return any specific tag to be used for this type.
      */
-    public String tag() default "";
+    String tag() default "";
 }

@@ -48,7 +48,7 @@ package automenta.vivisect.dimensionalize;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-abstract public class HyperassociativeMap<K,V>  {
+public abstract class HyperassociativeMap<K,V>  {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -86,7 +86,7 @@ abstract public class HyperassociativeMap<K,V>  {
     private double attractionStrength = DEFAULT_ATTRACTION_STRENGTH;
     private double repulsiveWeakness = DEFAULT_REPULSIVE_WEAKNESS;
 
-    transient final ObjectDoubleHashMap<V> reusableNeighborData = new ObjectDoubleHashMap();
+    final transient ObjectDoubleHashMap<V> reusableNeighborData = new ObjectDoubleHashMap();
     private V[] vertices;
 
     //transient final FasterList<N> vertices = new FasterList();
@@ -136,7 +136,7 @@ abstract public class HyperassociativeMap<K,V>  {
 
     }
 
-    abstract public void apply(V node, double[] coord);
+    public abstract void apply(V node, double[] coord);
 
     public void align(final int iterations) {
         for (int i = iterations;i > 0; i--)
@@ -157,7 +157,7 @@ abstract public class HyperassociativeMap<K,V>  {
 //        }
 //    }
 
-    abstract protected V[] getVertices();
+    protected abstract V[] getVertices();
 
     public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
         if (dimensions <= 0) {
@@ -590,8 +590,8 @@ abstract public class HyperassociativeMap<K,V>  {
     }
 
 
-    abstract public void getPosition(final V node, final double[] v);
-    abstract public void move(final V node, final double vx, double vy);
+    public abstract void getPosition(final V node, final double[] v);
+    public abstract void move(final V node, final double vx, double vy);
 
 
 //    protected ArrayRealVector getCurrentPosition(V n) {
@@ -734,16 +734,16 @@ abstract public class HyperassociativeMap<K,V>  {
     public interface DistanceMetric {
         
         /** version which can be overridden to eliminate max distance test in inner loop */
-        default public double getDistance(double[] a, double[] b) {
+        default double getDistance(double[] a, double[] b) {
             return getDistance(a, b, Double.POSITIVE_INFINITY);
         }
         
-        public double getDistance(double[] a, double[] b, double max);        
+        double getDistance(double[] a, double[] b, double max);
 
-        public double subtractIfLessThan(ArrayRealVector a, ArrayRealVector b, ArrayRealVector result, double maxDistance);
+        double subtractIfLessThan(ArrayRealVector a, ArrayRealVector b, ArrayRealVector result, double maxDistance);
     }
     
-    public final static DistanceMetric Euclidean = new DistanceMetric() {
+    public static final DistanceMetric Euclidean = new DistanceMetric() {
 
         @Override public double getDistance(double[] a, double[] b, double max) {
             double maxSquare = max*max;
@@ -787,7 +787,7 @@ abstract public class HyperassociativeMap<K,V>  {
             return Math.sqrt(d);
         }
     };
-    public final static DistanceMetric Manhattan = new DistanceMetric() {
+    public static final DistanceMetric Manhattan = new DistanceMetric() {
 
         @Override public double getDistance(double[] a, double[] b, double max) {            
             double d = 0;

@@ -24,17 +24,17 @@ public interface Solution {
 
 
     /** apply the consequences of this gene to an Phenotainer */
-    public void apply(Phenotainer c);
+    void apply(Phenotainer c);
 
 
 //    @Override
 //    public default Objene apply(Problem p) { return this; }
 
 
-    public String key();
+    String key();
 
     //TODO move this to separate interface: Mutable
-    default public void mutate() {
+    default void mutate() {
         throw new RuntimeException(this + " does not support mutate() not supported");
     }
     

@@ -8,7 +8,7 @@ import nars.term.Term;
  * Should be used only if the operation procedure will not take long
  * and block the reasoner thread.
  */
-abstract public class SyncOperator extends OperatorReaction {
+public abstract class SyncOperator extends OperatorReaction {
 
     public SyncOperator(Term term) {
         super(term);

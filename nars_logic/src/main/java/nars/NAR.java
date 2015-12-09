@@ -54,7 +54,7 @@ import static nars.nal.nal7.Tense.ETERNAL;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-abstract public class NAR implements Serializable, Level, ConceptBuilder {
+public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
 
     /**
@@ -78,7 +78,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
 //    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
 
-    final static Consumer<Serializable> onError = e -> {
+    static final Consumer<Serializable> onError = e -> {
         if (e instanceof Throwable) {
             Throwable ex = (Throwable) e;
 
@@ -117,7 +117,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public final transient List<Object> regs = new ArrayList();
 
 
-    transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
+    private final transient Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
     static final ThreadPoolExecutor asyncs =
             (ThreadPoolExecutor) Executors.newCachedThreadPool();
@@ -377,7 +377,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return input(pri, dur, goal, GOAL, occurrence, freq, conf);
     }
 
-    final public <C extends Compound> Task input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
+    public final <C extends Compound> Task input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
 
         Task t = new MutableTask(term, punc)
             .truth(freq, conf)
@@ -487,7 +487,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * register a singleton
      */
-    final public <X> X the(Object key, X value) {
+    public final <X> X the(Object key, X value) {
         if (value == null) {
             //TODO remove?
             return null;
@@ -556,7 +556,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         TermFunction f = new TermFunction(operator) {
 
             @Override
-            public final Object function(Operation x) {
+            public Object function(Operation x) {
                 return func.apply(x.args());
             }
         };
@@ -889,11 +889,11 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 
     //    /** creates a new loop which begins paused */
     @Deprecated
-    final public NARLoop loop() {
+    public final NARLoop loop() {
         return loop((int) 1000);
     }
 
-    final public NARLoop loop(final float initialFPS) {
+    public final NARLoop loop(final float initialFPS) {
         final float millisecPerFrame = 1000.0f / initialFPS;
         return loop((int) millisecPerFrame);
     }
@@ -930,7 +930,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      * adds a task to the queue of task which will be executed in batch
      * after the end of the current frame before the next frame.
      */
-    final public void beforeNextFrame(final Runnable t) {
+    public final void beforeNextFrame(final Runnable t) {
         nextTasks.addLast(t);
     }
 
@@ -1093,7 +1093,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
-    abstract public NAR forEachConcept(Consumer<Concept> recip);
+    public abstract NAR forEachConcept(Consumer<Concept> recip);
 
 //    public NAR forEachConceptActive(Consumer<Concept> recip) {
 //        nar.memory.getCycleProcess().forEachConcept(recip);
@@ -1180,7 +1180,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return c;
     }
 
-    abstract protected Concept doConceptualize(Term term, Budget budget);
+    protected abstract Concept doConceptualize(Term term, Budget budget);
 
     static boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof CyclesInterval));
@@ -1384,7 +1384,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //        spawnThread(msDelay, Thread::start);
 //    }
 
-    abstract private class StreamNARReaction extends NARReaction {
+    private abstract class StreamNARReaction extends NARReaction {
 
         public StreamNARReaction(Class... signal) {
             super((NAR) NAR.this, signal);

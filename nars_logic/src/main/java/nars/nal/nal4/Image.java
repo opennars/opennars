@@ -19,7 +19,7 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image<T extends Term> extends CompoundN<T> {
+public abstract class Image<T extends Term> extends CompoundN<T> {
 
     public static Term makeInt(Term... argList) {
         return make(argList, (a, r) -> new ImageInt(a, (short)r));
@@ -29,7 +29,7 @@ abstract public class Image<T extends Term> extends CompoundN<T> {
     }
 
         /** Image index ("imdex") symbol */
-    public final static Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
+        public static final Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
 
     /**
      * "Imdex": subterm index of relation in the component list

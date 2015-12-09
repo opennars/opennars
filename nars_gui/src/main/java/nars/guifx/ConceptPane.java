@@ -48,7 +48,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
     private final BagView<TermLinkKey, TermLink> termLinkView;
     private FrameReaction reaction;
 
-    abstract public class Scatter3D<X> extends SpaceNet {
+    public abstract static class Scatter3D<X> extends SpaceNet {
 
         final ColorArray ca = new ColorArray(32, Color.BLUE, Color.RED);
 
@@ -201,7 +201,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     }
 
-    public class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
+    public static class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
 
         final Map<X,Node> componentCache = new WeakHashMap<>();
         private final Bag<X, Y> bag;
@@ -308,7 +308,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label questions = new Label("Questions diagram");
         SplitPane links = new SplitPane(
                 scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
-                                (t) -> new ItemButton( t, (i) -> i.toString(),
+                                (t) -> new ItemButton(t, (i) -> i.toString(),
                                         (i) -> {
 
                                         }

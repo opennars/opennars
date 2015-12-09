@@ -6,7 +6,7 @@ import nars.term.Statement;
 import nars.term.Term;
 
 
-abstract public class StatementGraph extends SentenceGraph {
+public abstract class StatementGraph extends SentenceGraph {
 
     public StatementGraph(NAR nar) {
         this(nar, true);
@@ -24,7 +24,7 @@ abstract public class StatementGraph extends SentenceGraph {
         return false;
     }
 
-    abstract public boolean containsStatement(Statement term);
+    public abstract boolean containsStatement(Statement term);
 
     @Override
     ConceptRelation[] getRelations(Concept c) {

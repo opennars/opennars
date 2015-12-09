@@ -40,6 +40,6 @@ public interface EvolutionaryStrategy extends PopulationProcess {
      * The key for setting and retrieving a list of
      * <code>TerminationCriteria</code>.
      */
-    public static final GPKey<List<PopulationTermination>> TERMINATION_CRITERIA = new GPKey<>();
+    GPKey<List<PopulationTermination>> TERMINATION_CRITERIA = new GPKey<>();
 
 }

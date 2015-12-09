@@ -58,7 +58,7 @@ public class VariableNormalization extends VariableTransform {
     public static final VariableTransform singleVariableNormalization = new VariableTransform() {
 
         @Override
-        public final Variable apply(Compound containing, Variable current, int depth) {
+        public Variable apply(Compound containing, Variable current, int depth) {
             //      (containing, current, depth) ->
             return $.v(current.op(), 1);
         }

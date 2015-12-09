@@ -76,7 +76,7 @@ public interface TaskTable extends Iterable<Task> {
     }
 
 
-    public default void writeValues(ObjectOutput output) throws IOException {
+    default void writeValues(ObjectOutput output) throws IOException {
         int s = size(), c = getCapacity();
         try {
             output.writeInt(s);
@@ -98,7 +98,7 @@ public interface TaskTable extends Iterable<Task> {
         });
     }
 
-    default public <T> void readValues(ObjectInput input) throws IOException {
+    default <T> void readValues(ObjectInput input) throws IOException {
 
 
         try {

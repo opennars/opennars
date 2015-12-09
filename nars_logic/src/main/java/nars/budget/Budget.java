@@ -581,7 +581,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @return The decision on whether to process the Item
      */
-    final public boolean summaryGreaterOrEqual(final float budgetThreshold) {
+    public final boolean summaryGreaterOrEqual(final float budgetThreshold) {
 
         if (isDeleted()) return false;
 
@@ -592,7 +592,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return summaryNotLessThan(budgetThreshold);
     }
 
-    final public boolean summaryGreaterOrEqual(final AtomicDouble budgetThreshold) {
+    public final boolean summaryGreaterOrEqual(final AtomicDouble budgetThreshold) {
         return summaryGreaterOrEqual(budgetThreshold.floatValue());
     }
 
@@ -667,7 +667,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime
      */
     @Override
-    final public long setLastForgetTime(final long currentTime) {
+    public final long setLastForgetTime(final long currentTime) {
 
         final long period;
 
@@ -740,7 +740,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return this;
     }
 
-    final public float getPriorityIfNaNThenZero() {
+    public final float getPriorityIfNaNThenZero() {
         final float p;
         if (!Float.isNaN(p = getPriority()))
             return p;
@@ -787,7 +787,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return !summaryNotLessThan(s);
     }
 
-    final public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
+    public final Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
         if (!isDeleted()) {
             //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
             BudgetFunctions.forgetAlann(this, forgetCycles, now);

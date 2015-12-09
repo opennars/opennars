@@ -21,7 +21,7 @@ public class TermNode<K extends Termed> extends GraphNode {
     public static final TermNode[] empty = new TermNode[0];
 
 
-    final public Map<K, TermEdge> edge;
+    public final Map<K, TermEdge> edge;
 
     /**
      * copy of termedge values for fast iteration during rendering

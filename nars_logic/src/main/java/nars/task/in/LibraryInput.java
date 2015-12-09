@@ -61,7 +61,7 @@ public class LibraryInput extends TextInput {
         return new LibraryInput(n, path);
     }
 
-    final static String cwd;
+    static final String cwd;
 
     static {
         Path currentRelativePath = Paths.get("");
@@ -128,7 +128,7 @@ public class LibraryInput extends TextInput {
 
     protected static Map<String, String> examples = new HashMap(); //path -> script data
 
-    final static Function<? super String, CharSequence> lineFilter = _line -> {
+    static final Function<? super String, CharSequence> lineFilter = _line -> {
         String line = _line.trim();
         if (line.startsWith("IN:"))
             line = line.replace("IN:", "");

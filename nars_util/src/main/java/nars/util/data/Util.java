@@ -42,9 +42,9 @@ public class Util {
     protected Util() {
     }
 
-    public final static int PRIME3 = 524287;
-    public final static int PRIME2 = 92821;
-    public final static int PRIME1 = 31;
+    public static final int PRIME3 = 524287;
+    public static final int PRIME2 = 92821;
+    public static final int PRIME1 = 31;
 
     /**
      * It is basically the same as a lookup table with 2048 entries and linear interpolation between the entries, but all this with IEEE floating point tricks.
@@ -83,11 +83,11 @@ public class Util {
         ));
     }
 
-    public final static int hash(final int a, final int b) {
+    public static final int hash(final int a, final int b) {
         return PRIME2 * (PRIME2 + a) + b;
     }
 
-    public final static int hash(int a, int b, int c) {
+    public static final int hash(int a, int b, int c) {
         return PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c;
     }
 
@@ -100,11 +100,11 @@ public class Util {
 //        return (int)x;
 //    }
 
-    public final static int hash(Object a, Object b) {
+    public static final int hash(Object a, Object b) {
         return hash(a.hashCode(), b.hashCode());
     }
 
-    public final static int hash(Object a, Object b, Object c) {
+    public static final int hash(Object a, Object b, Object c) {
         return hash(a.hashCode(), b.hashCode(), c.hashCode());
     }
 
@@ -524,11 +524,11 @@ public class Util {
     /**
      * maximum, simpler and faster than Math.max without its additional tests
      */
-    public final static float max(final float a, final float b) {
+    public static final float max(final float a, final float b) {
         return (a > b) ? a : b;
     }
 
-    public final static float mean(final float a, final float b) {
+    public static final float mean(final float a, final float b) {
         return (a + b) * 0.5f;
     }
 
@@ -670,7 +670,7 @@ public class Util {
     /** applies a quick, non-lexicographic ordering compare
      * by first testing their lengths
      */
-    public final static int compare(long[] x, long[] y) {
+    public static final int compare(long[] x, long[] y) {
         if (x == y) return 0;
 
         int xlen = x.length;

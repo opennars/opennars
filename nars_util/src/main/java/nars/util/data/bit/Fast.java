@@ -262,7 +262,7 @@ public final class Fast {
         return (int)( byteOffset + ( ( ( ( ( byteRankStep8 | MSBS_STEP_8 ) - bitSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 56 ) );
 	}
 
-	private final static long[] overflow = {
+	private static final long[] overflow = {
 			0x7f7f7f7f7f7f7f7fL,
 			0x7e7e7e7e7e7e7e7eL,
 			0x7d7d7d7d7d7d7d7dL,

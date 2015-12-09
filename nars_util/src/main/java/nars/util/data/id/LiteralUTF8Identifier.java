@@ -13,7 +13,7 @@ import java.nio.CharBuffer;
 public class LiteralUTF8Identifier extends UTF8Identifier {
 
     protected byte[] data = null;
-    transient protected int hash = 0;
+    protected transient int hash = 0;
 
 
     /** do nothing, used by subclass */
@@ -64,11 +64,11 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
     }
 
 
-    final public int makeHash() {
+    public final int makeHash() {
         return (int) Util.ELFHash(data, 0);
     }
 
-    final public boolean hasName() { return data !=null;  }
+    public final boolean hasName() { return data !=null;  }
 
 /*    public boolean hasHash() {
         return hash!=0;

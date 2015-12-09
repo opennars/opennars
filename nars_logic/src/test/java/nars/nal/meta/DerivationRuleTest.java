@@ -247,7 +247,7 @@ public class DerivationRuleTest extends TestCase {
         }
     }
 
-    abstract public static class CommutiveEllipsisTest implements EllipsisTest {
+    public abstract static class CommutiveEllipsisTest implements EllipsisTest {
         protected final String prefix;
         protected final String suffix;
         protected final Compound p;
@@ -279,7 +279,7 @@ public class DerivationRuleTest extends TestCase {
 
     public static class CommutiveEllipsisTest1 extends CommutiveEllipsisTest {
 
-        final static Term fixedTerm = $("%1");
+        static final Term fixedTerm = $("%1");
 
         public CommutiveEllipsisTest1(String ellipsisTerm, String[] openClose) {
             super(ellipsisTerm, openClose[0], openClose[1]);

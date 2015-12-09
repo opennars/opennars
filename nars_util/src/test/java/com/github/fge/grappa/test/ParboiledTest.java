@@ -26,7 +26,7 @@ import static org.assertj.core.api.Fail.fail;
 
 public abstract class ParboiledTest<V> {
 
-    public class TestResult<V> {
+    public static class TestResult<V> {
         public final ParsingResult<V> result;
 
         public TestResult(final ParsingResult<V> result) {

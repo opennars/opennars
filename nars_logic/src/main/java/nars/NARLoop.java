@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  */
 public class NARLoop implements Runnable {
 
-    final static Logger logger = Logger.getLogger(NARLoop.class.getSimpleName());
+    static final Logger logger = Logger.getLogger(NARLoop.class.getSimpleName());
 
     public final NAR nar;
 
@@ -115,7 +115,7 @@ public class NARLoop implements Runnable {
     }
 
     @Override
-    final public void run() {
+    public final void run() {
 
 
 

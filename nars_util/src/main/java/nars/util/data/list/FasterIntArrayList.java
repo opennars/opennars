@@ -27,7 +27,7 @@ public class FasterIntArrayList extends IntArrayList {
     }
 
     /** quickly remove the final elements without nulling them by setting the size pointer */
-    final public void popTo(int index) {
+    public final void popTo(int index) {
         /*if (newSize < 0)
             throw new RuntimeException("negative index");*/
         this.size = index+1;

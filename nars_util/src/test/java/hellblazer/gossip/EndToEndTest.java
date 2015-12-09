@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  */
 public class EndToEndTest extends TestCase {
-    private class Receiver implements GossipListener {
+    private static class Receiver implements GossipListener {
 
         private final CountDownLatch[] latches;
 

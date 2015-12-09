@@ -44,10 +44,10 @@ public class NARui {
 
 
     @FunctionalInterface public interface MetricsCollector<X> {
-        public MetricsCollector<X> set(String signal, X value);
+        MetricsCollector<X> set(String signal, X value);
     }
     public interface CollectNARMetrics<X> {
-        public void eachFrame(MetricsCollector<X> c, NAR n);
+        void eachFrame(MetricsCollector<X> c, NAR n);
     }
 
     public <X> NARui meter(CollectNARMetrics<X> eachFrame) {

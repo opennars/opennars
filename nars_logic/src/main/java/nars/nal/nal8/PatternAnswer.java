@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /** responds to questions by inserting beliefs as answers */
-abstract public class PatternAnswer implements Function<Task, List<Task>> {
+public abstract class PatternAnswer implements Function<Task, List<Task>> {
 
     final XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
     public final Term pattern;
@@ -46,5 +46,5 @@ abstract public class PatternAnswer implements Function<Task, List<Task>> {
         return answers;
     }
 
-    abstract public List<Task> run(Task operationTask, Subst map1);
+    public abstract List<Task> run(Task operationTask, Subst map1);
 }

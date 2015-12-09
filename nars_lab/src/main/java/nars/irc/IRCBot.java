@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class IRCBot {
+public abstract class IRCBot {
 
     private final String server;
     public final String nick;
@@ -14,7 +14,7 @@ abstract public class IRCBot {
     protected final String channel;
     boolean outputting = false;
 
-    final static String pingHead = "PING ";
+    static final String pingHead = "PING ";
 
     protected BufferedWriter writer = null;
 

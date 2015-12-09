@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
  * @author me
  */
 public class NARjs {
-    final static ScriptEngineManager factory = new ScriptEngineManager();
+    static final ScriptEngineManager factory = new ScriptEngineManager();
     
     final ScriptEngine js = factory.getEngineByName("JavaScript");
 

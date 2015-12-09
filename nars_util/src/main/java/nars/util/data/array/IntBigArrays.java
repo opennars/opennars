@@ -84,7 +84,7 @@ public class IntBigArrays {
     /**
      * A static, final, empty big array.
      */
-    public final static int[][] EMPTY_BIG_ARRAY = {};
+    public static final int[][] EMPTY_BIG_ARRAY = {};
 
     /**
      * Returns the element of the given big array of specified index.

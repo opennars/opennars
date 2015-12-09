@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends AbstractPremise {
+public abstract class ConceptProcess extends AbstractPremise {
 
 
 
@@ -33,7 +33,8 @@ abstract public class ConceptProcess extends AbstractPremise {
     private Task currentBelief = null;
     private transient boolean cyclic;
 
-    @Override final public Task getTask() {
+    @Override
+    public final Task getTask() {
         return getTaskLink().getTask();
     }
 

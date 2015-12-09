@@ -38,7 +38,7 @@ public final class CharMatcher
     }
 
     @Override
-    public final MatcherType getType() {
+    public MatcherType getType() {
         return MatcherType.TERMINAL;
     }
 

@@ -50,7 +50,7 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    final static public Equality<Task> questionEquivalence = new Equality<Task>() {
+    public static final Equality<Task> questionEquivalence = new Equality<Task>() {
 
         @Override
         public boolean areEqual(Task a, Task b) {
@@ -63,7 +63,7 @@ public class DefaultConcept extends AtomConcept {
     };
 
     /** how incoming budget is merged into its existing duplicate quest/question */
-    final static Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
+    static final Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
 
     public DefaultConcept(final Term term, Param p) {
         this(term, new NullBag(), new NullBag(), p);

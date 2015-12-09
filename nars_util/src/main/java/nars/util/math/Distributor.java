@@ -36,7 +36,7 @@ public final class Distributor {
     /** Capacity of the array */
     public final int capacity;
 
-    private final static Map<Integer,Distributor> distributors = new HashMap(8);
+    private static final Map<Integer,Distributor> distributors = new HashMap(8);
     public static Distributor get(int range) {
         Distributor d = distributors.get(range);
         if (d==null) {
@@ -75,7 +75,7 @@ public final class Distributor {
      * @param index The current index
      * @return the random value
      */
-    public final short pick(final int index) {
+    public short pick(final int index) {
         return order[index];
     }
 
@@ -84,7 +84,7 @@ public final class Distributor {
      * @param index The current index
      * @return the next index
      */
-    public final int next(final int index) {
+    public int next(final int index) {
         return (index + 1) % capacity;
     }
 }

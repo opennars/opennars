@@ -94,14 +94,14 @@ public interface Operation  {
 //    }
 
 
-    public Term operator();
-    public Term[] args();
+    Term operator();
+    Term[] args();
 
-    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+    static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
     }
 
-    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
+    static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
         return new MutableTask(content, punctuation)
                 .truth(truth)
                 .budget(p, d, q)
@@ -214,7 +214,7 @@ public interface Operation  {
      * which will be replaced with the result term (y)
      *
      */
-    public static Term result(Compound operation, Term y) {
+    static Term result(Compound operation, Term y) {
         Compound x = (Compound) operation.term(0);
         Term t = x.last();
         if (!(t instanceof Variable))
@@ -256,7 +256,7 @@ public interface Operation  {
     }
 
     /** applies certain data to a feedback task relating to its causing operation's task */
-    public static Task asFeedback(MutableTask feedback, Task goal, float priMult, float durMult) {
+    static Task asFeedback(MutableTask feedback, Task goal, float priMult, float durMult) {
         return feedback.budget(goal.getBudget()).
                 budgetScaled(priMult, durMult).
                 parent(goal);
@@ -281,7 +281,7 @@ public interface Operation  {
         }
     }
 
-    public static void appendOperation(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
+    static void appendOperation(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
 
         Term predTerm = operator.identifier(); //getOperatorTerm();
 

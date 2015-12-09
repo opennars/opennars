@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BagIteratorTest {
 
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
     int L = 4;
 

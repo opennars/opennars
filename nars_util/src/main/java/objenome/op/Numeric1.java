@@ -16,7 +16,7 @@ import java.util.function.Function;
  * Takes all numeric inputs
  * Produces numeric output of the same type as input
  */
-abstract public class Numeric1 extends MathNode implements UnivariateFunction, Function<Double,Number> {
+public abstract class Numeric1 extends MathNode implements UnivariateFunction, Function<Double,Number> {
     
     protected Numeric1() {
         super();
@@ -32,7 +32,7 @@ abstract public class Numeric1 extends MathNode implements UnivariateFunction, F
     }
     
     @Override
-    abstract public double value(double x);
+    public abstract double value(double x);
     
     /** returns the one scalar input */
     public Node input() {

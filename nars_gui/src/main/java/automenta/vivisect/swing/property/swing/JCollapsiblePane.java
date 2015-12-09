@@ -97,26 +97,26 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Used when generating PropertyChangeEvents for the "animationState" property
    */
-  public final static String ANIMATION_STATE_KEY = "animationState";
+  public static final String ANIMATION_STATE_KEY = "animationState";
   
   /**
    * JCollapsible has a built-in toggle action which can be bound to buttons.
    * Accesses the action through
    * <code>collapsiblePane.getActionMap().get(JCollapsiblePane.TOGGLE_ACTION)</code>.
    */
-  public final static String TOGGLE_ACTION = "toggle";
+  public static final String TOGGLE_ACTION = "toggle";
   
   /**
    * The icon used by the "toggle" action when the JCollapsiblePane is
    * expanded, i.e the icon which indicates the pane can be collapsed.
    */
-  public final static String COLLAPSE_ICON = "collapseIcon";
+  public static final String COLLAPSE_ICON = "collapseIcon";
   
   /**
    * The icon used by the "toggle" action when the JCollapsiblePane is
    * collapsed, i.e the icon which indicates the pane can be expanded.
    */
-  public final static String EXPAND_ICON = "expandIcon";
+  public static final String EXPAND_ICON = "expandIcon";
 
   /**
    * Indicates whether the component is collapsed or expanded
@@ -400,7 +400,7 @@ public class JCollapsiblePane extends JPanel {
    * is enough but there might be cases where the parent parent must be
    * validated.
    */
-  public static interface JCollapsiblePaneContainer {
+  public interface JCollapsiblePaneContainer {
     Container getValidatingContainer();
   }
 

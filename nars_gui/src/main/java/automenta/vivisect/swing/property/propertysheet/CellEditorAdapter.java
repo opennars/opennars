@@ -52,24 +52,16 @@ public class CellEditorAdapter
   /**
    * Select all text when focus gained, deselect when focus lost.
    */
-  class SelectOnFocus implements FocusListener {
+  static class SelectOnFocus implements FocusListener {
     public void focusGained(final FocusEvent e) {
       if (! (e.getSource() instanceof JTextField))
         return;
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          ((JTextField) e.getSource()).selectAll();
-        }
-      });
+      SwingUtilities.invokeLater(() -> ((JTextField) e.getSource()).selectAll());
     }
     public void focusLost(final FocusEvent e) {
       if (! (e.getSource() instanceof JTextField))
         return;
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          ((JTextField) e.getSource()).select(0, 0);
-        }
-      });
+      SwingUtilities.invokeLater(() -> ((JTextField) e.getSource()).select(0, 0));
     }
   }
   

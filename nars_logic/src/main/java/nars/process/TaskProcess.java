@@ -36,10 +36,10 @@ public class TaskProcess extends AbstractPremise implements Serializable {
     /**
      * configuration
      */
-    final static boolean activateTermLinkTemplates = true;
-    final static boolean activateTermLinkTemplateTargetsFromTask = true;
-    final static boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
-    final private TaskLinkBuilder taskLinkBuilder;
+    static final boolean activateTermLinkTemplates = true;
+    static final boolean activateTermLinkTemplateTargetsFromTask = true;
+    static final boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
+    private final TaskLinkBuilder taskLinkBuilder;
 
     public TaskProcess(NAR nar, Task task) {
         super(nar);

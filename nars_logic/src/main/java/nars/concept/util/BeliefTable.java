@@ -42,71 +42,71 @@ public interface BeliefTable extends TaskTable {
         return or(confidence, originality);
     };*/
 
-    final static BeliefTable EMPTY = new BeliefTable() {
+    BeliefTable EMPTY = new BeliefTable() {
 
         @Override
-        final public Iterator<Task> iterator() {
+        public Iterator<Task> iterator() {
             return Iterators.emptyIterator();
         }
 
         @Override
-        public final void writeValues(ObjectOutput output) throws IOException {
+        public void writeValues(ObjectOutput output) throws IOException {
             output.writeInt(0);
             output.writeInt(0);
         }
 
         @Override
-        public final <T> void readValues(ObjectInput input) throws IOException {
+        public <T> void readValues(ObjectInput input) throws IOException {
             input.readInt();
             input.readInt();
         }
 
         @Override
-        public final int getCapacity() {
+        public int getCapacity() {
             return 0;
         }
 
         @Override
-        public final void setCapacity(int newCapacity) {
+        public void setCapacity(int newCapacity) {
 
         }
 
         @Override
-        public final int size() {
+        public int size() {
             return 0;
         }
 
         @Override
-        public final void clear() {
+        public void clear() {
 
         }
 
         @Override
-        public final boolean isEmpty() {
+        public boolean isEmpty() {
             return true;
         }
         @Override
-        public final Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
+        public Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
             return null;
         }
 
         @Override
-        public final Task add(Task input, Ranker ranking, Concept c, Premise nal) {
+        public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
             return null;
         }
 
         @Override
-        public final boolean tryAdd(Task input, Ranker r, Memory memory) {
+        public boolean tryAdd(Task input, Ranker r, Memory memory) {
             return false;
         }
 
         @Override
-        public final boolean add(Task t) {
+        public boolean add(Task t) {
             return false;
         }
 
         @Override
-        public final boolean contains(Task t) {
+        public boolean contains(Task t) {
             return false;
         }
 
@@ -221,7 +221,7 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    final static class SolutionQualityMatchingOrderRanker implements Ranker {
+    final class SolutionQualityMatchingOrderRanker implements Ranker {
 
         private final Task query;
         private final long now;
@@ -234,7 +234,7 @@ public interface BeliefTable extends TaskTable {
         }
 
         @Override
-        public final float rank(final Task t, final float bestToBeat) {
+        public float rank(final Task t, final float bestToBeat) {
             Task q = this.query;
 
             if (t.equals(q)) return Float.NaN; //dont compare to self

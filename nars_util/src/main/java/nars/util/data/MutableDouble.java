@@ -80,7 +80,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    */
   @Override
   public Object getValue() {
-    return new Double(this.value);
+    return this.value;
   }
 
   /**
@@ -179,7 +179,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @return a Double instance containing the value from this mutable
    */
   public Double toDouble() {
-    return new Double(doubleValue());
+    return doubleValue();
   }
 
   // -----------------------------------------------------------------------

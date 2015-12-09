@@ -42,11 +42,11 @@ public class ParticleSystem  {
 
     }
 
-    private final static float InvSqrt(float x) {
+    private static final float InvSqrt(float x) {
         return Float.intBitsToFloat(0x5f3759d5 - (Float.floatToIntBits(x) >> 1));
     }
 
-    public final static int additiveColor(int c1, int c2) {
+    public static final int additiveColor(int c1, int c2) {
         int red = (c1 & 0x00ff0000) + (c2 & 0x00ff0000);
         int grn = (c1 & 0x0000ff00) + (c2 & 0x0000ff00);
         int blu = (c1 & 0x000000ff) + (c2 & 0x000000ff);

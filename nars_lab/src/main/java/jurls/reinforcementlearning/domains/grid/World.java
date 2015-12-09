@@ -3,17 +3,17 @@ package jurls.reinforcementlearning.domains.grid;
 
 public interface World {
 
-    public String getName();
+    String getName();
     
-    public int getNumSensors();
-    public int getNumActions();
+    int getNumSensors();
+    int getNumActions();
 
-    public boolean isActive();
+    boolean isActive();
     
     /**     
      * @param actions input actions
      * @param sensors outpt sensors
      * @return reward
      */
-    public double step(double[] action, double[] sensor);
+    double step(double[] action, double[] sensor);
 }

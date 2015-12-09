@@ -56,7 +56,7 @@ public class Narsese extends BaseParser<Object>  {
     /** MetaNAL enable/disable */
     public static final boolean meta = true;
 
-    final static char[] variables = { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY, Symbols.VAR_PATTERN };
+    static final char[] variables = { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY, Symbols.VAR_PATTERN };
 
     //These should be set to something like RecoveringParseRunner for performance
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());
@@ -537,7 +537,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
 
-    public final static class ValidAtomCharMatcher extends AbstractMatcher
+    public static final class ValidAtomCharMatcher extends AbstractMatcher
     {
 
         public ValidAtomCharMatcher() {

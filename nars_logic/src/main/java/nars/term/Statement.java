@@ -253,7 +253,7 @@ public abstract class Statement<A extends Term, B extends Term>
     }
 
 
-    final public static boolean invalidStatement(final Compound s) {
+    public static final boolean invalidStatement(final Compound s) {
         return invalidStatement(s.term(0), s.term(1));
     }
 
@@ -266,7 +266,7 @@ public abstract class Statement<A extends Term, B extends Term>
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    final public static boolean invalidStatement(final Term subject, final Term predicate) {
+    public static final boolean invalidStatement(final Term subject, final Term predicate) {
         if (subject == null || predicate == null)
             return true;
 

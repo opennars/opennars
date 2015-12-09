@@ -128,9 +128,9 @@ import java.util.Map;
         return (I) i;
     }
 
-    public static interface GPContainerAware {
+    public interface GPContainerAware {
 
-        public void setConfig(GPContainer c);
+        void setConfig(GPContainer c);
     }
 
     /**

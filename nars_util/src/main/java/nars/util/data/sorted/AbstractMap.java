@@ -315,41 +315,39 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        if (keySet == null) {
-            keySet = new AbstractSet<K>() {
-                @Override
-                public Iterator<K> iterator() {
-                    return new Iterator<K>() {
-                        private final Iterator<Entry<K, V>> i = entrySet().iterator();
+        if (keySet == null) keySet = new AbstractSet<K>() {
+            @Override
+            public Iterator<K> iterator() {
+                return new Iterator<K>() {
+                    private final Iterator<Entry<K, V>> i = entrySet().iterator();
 
-                        @Override
-                        public boolean hasNext() {
-                            return i.hasNext();
-                        }
+                    @Override
+                    public boolean hasNext() {
+                        return i.hasNext();
+                    }
 
-                        @Override
-                        public K next() {
-                            return i.next().getKey();
-                        }
+                    @Override
+                    public K next() {
+                        return i.next().getKey();
+                    }
 
-                        @Override
-                        public void remove() {
-                            i.remove();
-                        }
-                    };
-                }
+                    @Override
+                    public void remove() {
+                        i.remove();
+                    }
+                };
+            }
 
-                @Override
-                public int size() {
-                    return AbstractMap.this.size();
-                }
+            @Override
+            public int size() {
+                return AbstractMap.this.size();
+            }
 
-                @Override
-                public boolean contains(Object k) {
-                    return AbstractMap.this.containsKey(k);
-                }
-            };
-        }
+            @Override
+            public boolean contains(Object k) {
+                return AbstractMap.this.containsKey(k);
+            }
+        };
         return keySet;
     }
 

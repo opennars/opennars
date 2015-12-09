@@ -11,7 +11,7 @@ package jurls.core.approximation;
  */
 public interface DiffableFunctionSource {
 
-    public String valueToSource(SourceEnvironment se);
+    String valueToSource(SourceEnvironment se);
 
-    public String partialDeriveToSource(SourceEnvironment se);
+    String partialDeriveToSource(SourceEnvironment se);
 }

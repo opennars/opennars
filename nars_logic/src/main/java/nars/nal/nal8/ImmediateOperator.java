@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
-abstract public class ImmediateOperator extends NullOperator implements Consumer<Task> {
+public abstract class ImmediateOperator extends NullOperator implements Consumer<Task> {
 
     public final Operator op;
 

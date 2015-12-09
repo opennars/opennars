@@ -168,7 +168,7 @@ public class BagSamplingPriorityTest {
         }
     }
 
-    final static Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift1024StarRandom(1);
 
     static final Function<Float,Float> uniform = ( x -> x);
     static final Function<Float,Float> skewedLow = ( x -> (float)Math.pow(1.0f - x, 2) );

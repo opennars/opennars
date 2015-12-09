@@ -48,7 +48,7 @@ public class Autoencoder {
     }
     */
 
-    final public static double sigmoid(final double x) {
+    public static final double sigmoid(final double x) {
         return 1.0 / (1.0 + Math.pow(Math.E, -x));
     }
     

@@ -122,7 +122,7 @@ public class MatrixImage extends JComponent {
 
     public interface Data2D {
 
-        public double getValue(int x, int y);
+        double getValue(int x, int y);
     }
 
     public void draw(final double[] v, double minValue, double maxValue, boolean vertical) {

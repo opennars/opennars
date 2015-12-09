@@ -37,7 +37,7 @@ public class PatternIndex extends MapIndex {
     }
 
     /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
-    final static class LinearCompoundPattern extends GenericCompound {
+    static final class LinearCompoundPattern extends GenericCompound {
 
 
         private final Op op;
@@ -104,7 +104,7 @@ public class PatternIndex extends MapIndex {
 
 
         @Override
-        public final boolean match(Compound y, FindSubst subst) {
+        public boolean match(Compound y, FindSubst subst) {
             if (y.size() != sizeCached)
                 return false;
             if (y.volume() < volCached)

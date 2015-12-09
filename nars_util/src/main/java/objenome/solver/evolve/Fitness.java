@@ -34,6 +34,6 @@ public interface Fitness extends Cloneable, Comparable<Fitness> {
      *
      * @return a clone of this fitness object.
      */
-    public Fitness clone();
+    Fitness clone();
 
 }

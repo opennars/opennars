@@ -163,7 +163,7 @@ public final class ProxyMatcher
     }
 
     @Override
-    final public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
     {
         if (dirty)
             apply();

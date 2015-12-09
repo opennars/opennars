@@ -71,7 +71,7 @@ public final class CharSequenceInputBuffer
     }
 
     @Override
-    final public char charAt(final int index)
+    public char charAt(final int index)
     {
         /*if (index < 0)
            throw new IllegalArgumentException("index is negative");*/

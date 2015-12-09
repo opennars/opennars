@@ -211,8 +211,8 @@ public class NALObjectsTest  {
     }
 
     @Test public void testTermizerBoxed() {
-        testTermizer(new Integer(1));
-        testTermizer(new Float(3.14159));
+        testTermizer(1);
+        testTermizer(3.14159f);
     }
     @Test public void testTermizerCollections() {
         testTermizer(Lists.newArrayList("x", "y"));

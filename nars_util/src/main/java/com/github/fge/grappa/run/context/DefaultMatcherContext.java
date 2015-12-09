@@ -129,56 +129,56 @@ public final class DefaultMatcherContext<V>
     //////////////////////////////// CONTEXT INTERFACE ////////////////////////////////////
 
     @Override
-    public final MatcherContext<V> getParent()
+    public MatcherContext<V> getParent()
     {
         return parent;
     }
 
     @Nonnull
     @Override
-    public final InputBuffer getInputBuffer()
+    public InputBuffer getInputBuffer()
     {
         return inputBuffer;
     }
 
     @Override
-    public final int getStartIndex()
+    public int getStartIndex()
     {
         return startIndex;
     }
 
     @Override
-    public final Matcher getMatcher()
+    public Matcher getMatcher()
     {
         return matcher;
     }
 
     @Override
-    public final char getCurrentChar()
+    public char getCurrentChar()
     {
         return inputBuffer.charAt(currentIndex);
     }
 
     @Override
-    public final int getCurrentCodePoint()
+    public int getCurrentCodePoint()
     {
         return inputBuffer.codePointAt(currentIndex);
     }
 
     @Override
-    public final int getCurrentIndex()
+    public int getCurrentIndex()
     {
         return currentIndex;
     }
 
     @Override
-    public final int getLevel()
+    public int getLevel()
     {
         return level;
     }
 
     @Override
-    public final boolean inPredicate()
+    public boolean inPredicate()
     {
         //noinspection SimplifiableIfStatement
         if (matcher.getType() == MatcherType.PREDICATE)
@@ -202,7 +202,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public final char getFirstMatchChar()
+    public char getFirstMatchChar()
     {
         final DefaultMatcherContext<V> subContext = this.subContext;
         final int index = subContext.startIndex;
@@ -253,7 +253,7 @@ public final class DefaultMatcherContext<V>
     //////////////////////////////// PUBLIC ////////////////////////////////////
 
     @Override
-    final public void setMatcher(final Matcher matcher)     {
+    public void setMatcher(final Matcher matcher)     {
         if ((this.matcher = matcher) == null)
             throw new RuntimeException("null matcher");
     }
@@ -273,7 +273,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    final public void advanceIndex(final int delta) {
+    public void advanceIndex(final int delta) {
         currentIndex += delta;
     }
 
@@ -304,7 +304,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    final public boolean runMatcher()
+    public boolean runMatcher()
     {
         try {
             final boolean ret = matchHandler.match(this);

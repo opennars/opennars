@@ -5,7 +5,7 @@ import nars.nal.nal8.OperatorReaction;
 /**
  * Executes in the NAR's threadpool
  */
-abstract public class AsynchOperator extends OperatorReaction {
+public abstract class AsynchOperator extends OperatorReaction {
 
 //    @Override public boolean execute(final Task<Operation> op) {
 //        nar.runAsync(() -> super.execute(op));

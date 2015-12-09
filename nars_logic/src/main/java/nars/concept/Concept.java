@@ -361,7 +361,7 @@ public interface Concept extends Termed, Itemized<Term> {
 
     List<TermLinkTemplate> getTermLinkTemplates();
 
-    final static Ordering<Task> taskCreationTime = new Ordering<Task>() {
+    Ordering<Task> taskCreationTime = new Ordering<Task>() {
         @Override
         public int compare(Task left, Task right) {
             return Longs.compare(

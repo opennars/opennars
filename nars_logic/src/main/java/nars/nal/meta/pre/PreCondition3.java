@@ -7,7 +7,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/15/15.
  */
-abstract public class PreCondition3 extends PreCondition {
+public abstract class PreCondition3 extends PreCondition {
     public Term arg1=null, arg2=null, arg3=null;
 
 
@@ -32,7 +32,7 @@ abstract public class PreCondition3 extends PreCondition {
         return test(m, a, b, c);
     }
 
-    abstract public boolean test(RuleMatch m, Term a, Term b, Term c);
+    public abstract boolean test(RuleMatch m, Term a, Term b, Term c);
 
     @Override
     public String toString() {

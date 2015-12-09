@@ -8,6 +8,6 @@ package objenome.op.compute;
 /**
  *  TODO not implemented yet
  */
-abstract public class JavascriptInterpreter {
+public abstract class JavascriptInterpreter {
     
 }

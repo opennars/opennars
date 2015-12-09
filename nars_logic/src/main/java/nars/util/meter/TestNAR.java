@@ -40,10 +40,10 @@ public class TestNAR  {
     public final List<NARCondition> requires = new ArrayList();
     //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
-    final transient private boolean exitOnAllSuccess = true;
+    private final transient boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
     private int temporalTolerance = 0;
-    protected final static float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
+    protected static final float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 
     /** enable this to print reports even if the test was successful.
@@ -383,7 +383,7 @@ public class TestNAR  {
         protected Serializable error = null;
         protected Task[] inputs;
         protected List<NARCondition> cond = Global.newArrayList(1);
-        transient final int stackElements = 4;
+        final transient int stackElements = 4;
 
         public Report(TestNAR n) {
             this.time = n.time();

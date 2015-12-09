@@ -53,7 +53,7 @@ final class ImplementedMethod {
      * 
      * @return Method - Always non <code>null</code>.
      */
-    public final SgMethod getMethod() {
+    public SgMethod getMethod() {
         return method;
     }
 
@@ -64,7 +64,7 @@ final class ImplementedMethod {
      *            Interface to add - Cannot be <code>null</code> and must be an
      *            interface.
      */
-    public final void addInterface(final Class<?> intf) {
+    public void addInterface(final Class<?> intf) {
         if (intf == null) {
             throw new IllegalArgumentException("The argument 'intf' cannot be null!");
         }
@@ -80,7 +80,7 @@ final class ImplementedMethod {
      * 
      * @return Copy of the internal method list.
      */
-    public final Class<?>[] getInterfaces() {
+    public Class<?>[] getInterfaces() {
         return interfaces.toArray(new Class<?>[interfaces.size()]);
     }
 
@@ -90,7 +90,7 @@ final class ImplementedMethod {
      * @return Method name and argument types (like
      *         "methodXY(String, int, boolean)").
      */
-    public final String getTypeSignature() {
+    public String getTypeSignature() {
         return method.getTypeSignature();
     }
 
@@ -99,7 +99,7 @@ final class ImplementedMethod {
      * 
      * @return Type - Always non-null.
      */
-    public final SgClass getReturnType() {
+    public SgClass getReturnType() {
         return method.getReturnType();
     }
 

@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-abstract public class TimeControl extends NPanel implements ActionListener {
+public abstract class TimeControl extends NPanel implements ActionListener {
 
     protected int GUIUpdatePeriodMS = 75;
     protected final char FA_StopCharacter = '\uf04c';
@@ -39,7 +39,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     }
 
     /** description of the current time */
-    abstract public String getTimeText();
+    public abstract String getTimeText();
 
     protected NSliderSwing newSpeedSlider() {
             //final StringBuilder sb = new StringBuilder(32);

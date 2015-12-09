@@ -81,7 +81,7 @@ public class Actions {
     public static int map(String actionName) {
         if (actionsMap == null) makeMap();
 
-        return actionsMap.get(actionName).intValue();
+        return actionsMap.get(actionName);
     }
 
     /** Construct the map from names to actions */
@@ -96,7 +96,7 @@ public class Actions {
             else {
                 v = i + 4;
             }
-            actionsMap.put(actionNames[i], new Integer(v));
+            actionsMap.put(actionNames[i], v);
         }
     }
 }

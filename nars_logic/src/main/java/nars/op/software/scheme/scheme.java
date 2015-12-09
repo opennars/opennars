@@ -24,7 +24,7 @@ public class scheme extends TermFunction {
 
     public static final SchemeClosure env = DefaultEnvironment.newInstance();
 
-    final static Function<Term,Expression> narsToScheme = term -> {
+    static final Function<Term,Expression> narsToScheme = term -> {
 
         if (term instanceof Compound) {
             //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));

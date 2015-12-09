@@ -72,7 +72,7 @@ public final class SgField extends SgVariable {
      * 
      * @return Class.
      */
-    public final SgClass getOwner() {
+    public SgClass getOwner() {
         return owner;
     }
 
@@ -81,7 +81,7 @@ public final class SgField extends SgVariable {
      * 
      * @return Initializer for the field - Maybe null.
      */
-    public final String getInitializer() {
+    public String getInitializer() {
         return initializer;
     }
 
@@ -89,7 +89,7 @@ public final class SgField extends SgVariable {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuffer sb = new StringBuffer();
         if (!getAnnotations().isEmpty()) {
             for (int i = 0; i < getAnnotations().size(); i++) {

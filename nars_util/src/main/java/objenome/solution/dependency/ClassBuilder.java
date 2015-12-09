@@ -670,7 +670,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         //return missing;
     }
 
-    public final static class DependencyKey {
+    public static final class DependencyKey {
 
         public final String key;
         public final Parameter param;

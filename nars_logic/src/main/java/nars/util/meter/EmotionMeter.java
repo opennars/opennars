@@ -40,7 +40,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     public final DoubleMeter busyMeter = new DoubleMeter("busy");
 
     public static final Atom satisfied = Atom.the("satisfied");
-    final static Compound satisfiedSetInt = SetInt.make(satisfied);
+    static final Compound satisfiedSetInt = SetInt.make(satisfied);
 
     public EmotionMeter(Memory memory) {
         super(memory);

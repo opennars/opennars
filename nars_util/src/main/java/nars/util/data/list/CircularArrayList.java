@@ -250,7 +250,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
 
     @Override
-    final public boolean isEmpty() {
+    public final boolean isEmpty() {
         return size==0;
     }
 

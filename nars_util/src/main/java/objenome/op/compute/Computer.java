@@ -51,7 +51,7 @@ import java.util.function.Function;
  */
 public interface Computer<I,P extends Organism,O> extends Function<ComputerInput<I,P>,O[]> {
 
-    public static class ComputerInput<I,P> {
+    class ComputerInput<I,P> {
         public final String[] argNames;
         public final P program;
         public final I[][] argValues;
@@ -99,7 +99,7 @@ public interface Computer<I,P extends Organism,O> extends Function<ComputerInput
      * @throws MalformedProgramException if the given expression is not valid
      * according to the language's syntax rules.
      */
-    public O[] eval(P expression, String[] argNames, I[][] argValues) throws MalformedProgramException;
+    O[] eval(P expression, String[] argNames, I[][] argValues) throws MalformedProgramException;
 
     /**
      * Executes a program which may consist of multiple program statements,
@@ -120,5 +120,5 @@ public interface Computer<I,P extends Organism,O> extends Function<ComputerInput
      * @throws MalformedProgramException if the given program is not valid
      * according to the language's syntax rules.
      */
-    public void exec(P program, String[] argNames, I[][] argValues) throws MalformedProgramException;
+    void exec(P program, String[] argNames, I[][] argValues) throws MalformedProgramException;
 }

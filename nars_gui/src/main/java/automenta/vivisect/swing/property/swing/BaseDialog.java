@@ -45,13 +45,13 @@ public class BaseDialog extends JDialog {
    * Used to set the mode of the dialog to OK/CANCEL. When in this mode, OK and
    * Cancel buttons are automatically added to the dialog.
    */
-  public final static int OK_CANCEL_DIALOG = 0;
+  public static final int OK_CANCEL_DIALOG = 0;
 
   /**
    * Used to set the mode of the dialog to OK/CANCEL. When in this mode, a
    * Close button is automatically added to the dialog.
    */
-  public final static int CLOSE_DIALOG = 1;
+  public static final int CLOSE_DIALOG = 1;
 
   private BannerPanel banner;
   private JPanel contentPane;

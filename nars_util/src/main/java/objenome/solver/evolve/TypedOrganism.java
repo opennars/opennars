@@ -66,7 +66,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
     // The root node of the program tree
     private Node<X,Y> root;
     
-    transient private Class dataType; //caches data type
+    private transient Class dataType; //caches data type
     private Map<String, ? extends Variable> vars = null;
 
     /**

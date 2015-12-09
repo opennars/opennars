@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Base class for premises
  */
-abstract public class AbstractPremise implements Premise {
+public abstract class AbstractPremise implements Premise {
 
     /** derivation queue (this might also work as a Set) */
     protected Collection<Task> derived = null;

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface ActivationFunctionFactory {
 
-    public DiffableFunctionSource newInstance(GeneratorContext gc, List<DiffableFunctionSource> xs);
+    DiffableFunctionSource newInstance(GeneratorContext gc, List<DiffableFunctionSource> xs);
 
-    public double getDelta();
+    double getDelta();
 }

@@ -86,7 +86,7 @@ public class LongArrays {
     /**
      * A static, final, empty array.
      */
-    public final static long[] EMPTY_ARRAY = {};
+    public static final long[] EMPTY_ARRAY = {};
 
     /**
      * Ensures that an array can contain the given number of entries.

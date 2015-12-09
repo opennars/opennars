@@ -55,7 +55,7 @@ import java.util.function.Consumer;
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
-abstract public class AbstractNAR extends NAR {
+public abstract class AbstractNAR extends NAR {
 
     public final DefaultCycle core;
     public final TaskPerception input;
@@ -414,7 +414,7 @@ abstract public class AbstractNAR extends NAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static abstract class DefaultCycle implements Serializable {
+    public abstract static class DefaultCycle implements Serializable {
 
         final Active handlers = new Active();
 
@@ -445,7 +445,7 @@ abstract public class AbstractNAR extends NAR {
 
 
         @Deprecated
-        transient public final NAR nar;
+        public final transient NAR nar;
 
         public final MutableInteger capacity = new MutableInteger();
 
@@ -524,7 +524,7 @@ abstract public class AbstractNAR extends NAR {
             }
         }
 
-        abstract protected void fireConcept(Concept c);
+        protected abstract void fireConcept(Concept c);
         /*{
             fireConcept(c, p -> {
                 //direct: just input to nar

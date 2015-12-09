@@ -263,6 +263,6 @@ public class NARMenu extends HBox {
             this.setOnAction((e) -> run(n));
         }
 
-        abstract public void run(NAR n);
+        public abstract void run(NAR n);
     }
 }

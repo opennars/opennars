@@ -65,53 +65,53 @@ public interface BitVector extends RandomAccess {
 	/** Sets a bit in this bit vector (optional operation). 
 	 * @param index the index of a bit.
 	 */
-	public void set(long index);
+	void set(long index);
 	
 	/** Clears a bit in this bit vector (optional operation). 
 	 * @param index the index of a bit.
 	 */
-	public void clear(long index);
+	void clear(long index);
 
 	/** Flips a bit in this bit vector (optional operation). 
 	 * @param index the index of a bit.
 	 */
-	public void flip(long index);
+	void flip(long index);
 
 	/** Fills a range of bits in this bit vector (optional operation). 
 	 * @param from the first index (inclusive).
 	 * @param to the last index (not inclusive).
 	 * @param value the value (true or false).
 	 */
-	public void fill(long from, long to, boolean value);
+	void fill(long from, long to, boolean value);
 	
 	/** Clears a range of bits in this bit vector (optional operation). 
 	 * @param from the first index (inclusive).
 	 * @param to the last index (not inclusive).
 	 * @param value the value (zero or nonzero).
 	 */
-	public void fill(long from, long to, int value);
+	void fill(long from, long to, int value);
 	
 	/** Sets all bits this bit vector to the given boolean value (optional operation). */
-	public void fill(boolean value);
+	void fill(boolean value);
 	
 	/** Sets all bits this bit vector to the given integer value (optional operation). */
-	public void fill(int value);
+	void fill(int value);
 	
 	/** Flips a range of bits in this bit vector (optional operation). 
 	 * @param from the first index (inclusive).
 	 * @param to the last index (not inclusive).
 	 */
-	public void flip(long from, long to);
+	void flip(long from, long to);
 
 	/** Flips all bits in this bit vector (optional operation). */
-	public void flip();
+	void flip();
 
 	/** Replaces the content of this bit vector with another bit vector.
 	 * 
 	 * @param bitVector a bit vector.
 	 * @return this bit vector.
 	 */
-	public BitVector replace(BitVector bitVector);
+	BitVector replace(BitVector bitVector);
 	
 	/** Returns a subvector view specified by initial and final index. 
 	 * 
@@ -122,14 +122,14 @@ public interface BitVector extends RandomAccess {
 	 * @param from the first index (inclusive).
 	 * @param to the last index (not inclusive).
 	 */
-	public BitVector subVector(long from, long to);
+	BitVector subVector(long from, long to);
 
 	/** Returns a subvector view specified by initial index and running up to the end of this vector.
 	 * 
 	 * @param from the first index (inclusive).
 	 * @see #subVector(long, long)
 	 */
-	public BitVector subVector(long from);
+	BitVector subVector(long from);
 
 //	/** Returns a view of this bit vector as a sorted set of long integers.
 //	 *
@@ -160,7 +160,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @return the value of the specified bit.
 	 */
-	public boolean getBoolean(long index);
+	boolean getBoolean(long index);
 
 	/** Returns the value of the specified bit as an integer.
 	 * 
@@ -169,7 +169,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @return the value of the specified bit as an integer (0 or 1).
 	 */
-	public int getInt(long index);
+	int getInt(long index);
 
 	/** Returns the specified bit range as a long.
 	 * 
@@ -186,7 +186,7 @@ public interface BitVector extends RandomAccess {
 	 * @param to the ending bit (exclusive).
 	 * @return the long value contained in the specified bits.
 	 */
-	public long getLong(long from, long to);
+	long getLong(long from, long to);
 
 	/** Sets the value of the specified bit (optional operation).
 	 * 
@@ -196,7 +196,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @param value the new value.
 	 */
-	public boolean set(long index, boolean value);
+	boolean set(long index, boolean value);
 	
 	/** Sets the value of the specified bit as an integer (optional operation).
 	 * 
@@ -205,7 +205,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @param value the new value (any nonzero integer for setting the bit, zero for clearing the bit).
 	 */
-	public void set(long index, int value);
+	void set(long index, int value);
 	
 	/** Adds a bit with specified value at the specified index (optional operation).
 	 * 
@@ -215,7 +215,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @param value the value that will be inserted at position <code>index</code>.
 	 */
-	public void add(long index, boolean value);
+	void add(long index, boolean value);
 	
 	/** Removes a bit with specified index (optional operation).
 	 * 
@@ -225,7 +225,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @return the previous value of the bit.
 	 */
-	public boolean removeBoolean(long index);
+	boolean removeBoolean(long index);
 	
 	/** Adds a bit with specified integer value at the specified index (optional operation).
 	 * 
@@ -234,7 +234,7 @@ public interface BitVector extends RandomAccess {
 	 * @param index the index of a bit.
 	 * @param value the value that will be inserted at position <code>index</code> (any nonzero integer for a true bit, zero for a false bit).
 	 */
-	public void add(long index, int value);
+	void add(long index, int value);
 	
 	/** Adds a bit with specified value at the end of this bit vector.
 	 * 
@@ -243,7 +243,7 @@ public interface BitVector extends RandomAccess {
 	 * @param value the new value (any nonzero integer for a true bit, zero for a false bit).
 	 */
 
-	public void add(int value);
+	void add(int value);
 
 	/** Appends the less significant bits of a long integer to this bit vector.
 	 * 
@@ -252,7 +252,7 @@ public interface BitVector extends RandomAccess {
 	 * @return this bit vector.
 	 */
 
-	public BitVector append(long value, int k);
+	BitVector append(long value, int k);
 
 	/** Appends another bit vector to this bit vector.
 	 * 
@@ -260,7 +260,7 @@ public interface BitVector extends RandomAccess {
 	 * @return this bit vector.
 	 */
 
-	public BitVector append(BitVector bitVector);
+	BitVector append(BitVector bitVector);
 
 	/** Returns the number of bits in this bit vector.
 	 *
@@ -270,9 +270,9 @@ public interface BitVector extends RandomAccess {
 	 *
 	 * @return the number of bits in this bit vector. 
 	 */
-	public long length();
+	long length();
 
-	default public long size64() { return length(); }
+	default long size64() { return length(); }
 	
 	/** Sets the number of bits in this bit vector.
 	 *
@@ -286,103 +286,103 @@ public interface BitVector extends RandomAccess {
 	 *  
 	 * @return this bit vector.
 	 */
-	public BitVector length(long newLength);
+	BitVector length(long newLength);
 	
 	/** Counts the number of bits set to true in this bit vector.
 	 *
 	 * @return the number of bits set to true in this bit vector. 
 	 */
-	public long count();
+	long count();
 	
 	/** Performs a logical and between this bit vector and another one, leaving the result in this vector.
 	 * 
 	 * @param v a bit vector.
 	 * @return this bit vector.
 	 */
-	public BitVector and(BitVector v);
+	BitVector and(BitVector v);
 
 	/** Performs a logical or between this bit vector and another one, leaving the result in this vector.
 	 * 
 	 * @param v a bit vector.
 	 * @return this bit vector.
 	 */
-	public BitVector or(BitVector v);
+	BitVector or(BitVector v);
 
 	/** Performs a logical xor between this bit vector and another one, leaving the result in this vector.
 	 * 
 	 * @param v a bit vector.
 	 * @return this bit vector.
 	 */
-	public BitVector xor(BitVector v);
+	BitVector xor(BitVector v);
 
 	/** Returns the position of the first bit set in this vector.
 	 *
 	 * @return the first bit set, or -1 for a vector of zeroes. 
 	 */
-	public long firstOne();
+	long firstOne();
 
 	/** Returns the position of the last bit set in this vector.
 	 *
 	 * @return the last bit set, or -1 for a vector of zeroes. 
 	 */
-	public long lastOne();
+	long lastOne();
 
 	/** Returns the position of the first bit set after the given position.
 	 *
 	 * @return the first bit set after position <code>index</code> (inclusive), or -1 if no such bit exists. 
 	 */
-	public long nextOne(long index);
+	long nextOne(long index);
 
 	/** Returns the position of the first bit set before or at the given position.
 	 *
 	 * @return the first bit set before or at the given position, or -1 if no such bit exists. 
 	 */
-	public long previousOne(long index);
+	long previousOne(long index);
 
 	/** Returns the position of the first bit unset in this vector.
 	 *
 	 * @return the first bit unset, or -1 for a vector of ones. 
 	 */
-	public long firstZero();
+	long firstZero();
 
 	/** Returns the position of the last bit unset in this vector.
 	 *
 	 * @return the last bit unset, or -1 for a vector of ones. 
 	 */
-	public long lastZero();
+	long lastZero();
 
 	/** Returns the position of the first bit unset after the given position.
 	 *
 	 * @return the first bit unset after position <code>index</code> (inclusive), or -1 if no such bit exists. 
 	 */
-	public long nextZero(long index);
+	long nextZero(long index);
 
 	/** Returns the position of the first bit unset before or at the given position.
 	 *
 	 * @return the first bit unset before or at the given position, or -1 if no such bit exists. 
 	 */
-	public long previousZero(long index);
+	long previousZero(long index);
 
 	/** Returns the length of the greatest common prefix between this and the specified vector.
 	 *
 	 * @param v a bit vector.
 	 * @return the length of the greatest common prefix.
 	 */
-	public long longestCommonPrefixLength(BitVector v);
+	long longestCommonPrefixLength(BitVector v);
 
 	/** Returns true if this vector is a prefix of the specified vector.
 	 *
 	 * @param v a bit vector.
 	 * @return true if this vector is a prefix of <code>v</code>.
 	 */
-	public boolean isPrefix(BitVector v);
+	boolean isPrefix(BitVector v);
 
 	/** Returns true if this vector is a proper prefix of the specified vector.
 	 *
 	 * @param v a bit vector.
 	 * @return true if this vector is a proper prefix of <code>v</code> (i.e., it is a prefix but not equal).
 	 */
-	public boolean isProperPrefix(BitVector v);
+	boolean isProperPrefix(BitVector v);
 
 	/** Checks for equality with a segment of another vector.
 	 * 
@@ -391,7 +391,7 @@ public interface BitVector extends RandomAccess {
 	 * @param to the ending bit, not inclusive.
 	 * @return true if this vector and v are equal in the range of positions [<code>from</code>..<code>to</code>).
 	 */
-	public boolean equals(final BitVector v, final long from, final long to);
+	boolean equals(final BitVector v, final long from, final long to);
 	
 	/** Returns a copy of a part of this bit vector.
 	 *
@@ -400,20 +400,20 @@ public interface BitVector extends RandomAccess {
 	 * @return a copy of the part of this bit vector going from bit <code>from</code> (inclusive) to bit <code>to</code>
 	 * (not inclusive)
 	 */
-	public BitVector copy(long from, long to);
+	BitVector copy(long from, long to);
 
 	/** Returns a copy of this bit vector.
 	 *
 	 * @return a copy of this bit vector. 
 	 */
-	public BitVector copy();
+	BitVector copy();
 	
 	/** Returns the bits in this bit vector as an array of longs, not to be modified.
 	 * 
 	 * @return an array of longs whose first {@link #length()} bits contain the bits of
 	 * this bit vector. The array cannot be modified.
 	 */
-	public long[] bits();
+	long[] bits();
 	
 	/** Returns a hash code for this bit vector. 
 	 * 
@@ -441,7 +441,7 @@ public interface BitVector extends RandomAccess {
 	 * 
 	 * @return a hash code for this bit vector.
 	 */
-	public int hashCode();
+	int hashCode();
 	
 	/** Returns a fast version of this bit vector.
 	 * 
@@ -455,5 +455,5 @@ public interface BitVector extends RandomAccess {
 	 * 
 	 * @return a fast version of this bit vector.
 	 */
-	public BitVector fast();
+	BitVector fast();
 }

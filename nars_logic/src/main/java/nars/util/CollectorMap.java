@@ -18,13 +18,13 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         this.map = map;
     }
 
-    abstract public Procedure2<Budget, Budget> getMerge();
+    public abstract Procedure2<Budget, Budget> getMerge();
 
     /** implementation for adding the value to another collecton (called internally)  */
-    abstract protected V addItem(final V e);
+    protected abstract V addItem(final V e);
 
     /** implementation for removing the value to another collecton (called internally) */
-    abstract protected V removeItem(final V e);
+    protected abstract V removeItem(final V e);
 
 
 
@@ -129,7 +129,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         map.clear();
     }
 
-    final public V get(final K key) {
+    public final V get(final K key) {
         return map.get(key);
     }
 

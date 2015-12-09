@@ -54,7 +54,7 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
     }
 
     @Override
-    final public void emit(final V arg) {
+    public final void emit(final V arg) {
         final Consumer[] vv = getCachedNullTerminatedArray();
         if (vv == null) return;
 
@@ -67,7 +67,7 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
     }
 
     @Override
-    final public On on(Consumer<V> o) {
+    public final On on(Consumer<V> o) {
         On d = new On(this,o);
         add(o);
         return d;
