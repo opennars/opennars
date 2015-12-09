@@ -51,7 +51,7 @@ public final class SgUtils {
     private static final int OUTER_INTERFACE = 5;
     private static final int INNER_INTERFACE = 6;
 
-    private static final String[] TYPE_NAMES = new String[] { "Field", "Method", "Constructor",
+    private static final String[] TYPE_NAMES = { "Field", "Method", "Constructor",
             "Outer Class", "Inner Class", "Outer Interface", "Inner Interface" };
 
     // Modifiers
@@ -67,16 +67,16 @@ public final class SgUtils {
     private static final int VOLATILE = 9;
     private static final int STRICTFP = 10;
 
-    private static final String[] MODIFIER_NAMES = new String[] { "abstract", "final", "native",
+    private static final String[] MODIFIER_NAMES = { "abstract", "final", "native",
             "private", "protected", "public", "static", "synchronized", "transient", "volatile",
             "strictfp" };
 
-    private static final int[] MODIFIER_VALUES = new int[] { Modifier.ABSTRACT, Modifier.FINAL,
+    private static final int[] MODIFIER_VALUES = { Modifier.ABSTRACT, Modifier.FINAL,
             Modifier.NATIVE, Modifier.PRIVATE, Modifier.PROTECTED, Modifier.PUBLIC,
             Modifier.STATIC, Modifier.SYNCHRONIZED, Modifier.TRANSIENT, Modifier.VOLATILE,
             Modifier.STRICT };
 
-    private static final boolean[][] MODIFIERS_MATRIX = new boolean[][] {
+    private static final boolean[][] MODIFIERS_MATRIX = {
             { false, true, false, true, true, true, true },
             { true, true, false, true, true, false, false },
             { false, true, false, false, false, false, false },

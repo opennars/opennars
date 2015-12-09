@@ -204,7 +204,7 @@ public class EpoxParser {
      */
     protected void load() {
         // Insert the Boolean functions.
-        Node[] toDeclare = new Node[]{
+        Node[] toDeclare = {
             new And(),
             new IfAndOnlyIf(),
             new Nand(),

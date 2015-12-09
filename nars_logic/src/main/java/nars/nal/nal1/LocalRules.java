@@ -182,7 +182,7 @@ public class LocalRules {
         final Term solTerm = sol.getTerm();
         if (solTerm.hasVarIndep() && !solTerm.equals(question.getTerm())) {
 
-            Term[] u = new Term[]{question.getTerm(), solTerm};
+            Term[] u = {question.getTerm(), solTerm};
 
             if ( Premise.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
 

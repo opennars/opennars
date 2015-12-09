@@ -38,7 +38,7 @@ public interface Premise extends Level, Tasked {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
-                Term[] u = new Term[]{question.getTerm(), solution.getTerm()};
+                Term[] u = {question.getTerm(), solution.getTerm()};
                 if (unify(Op.VAR_QUERY, u, nal.getRandom())) {
                     return LocalRules.trySolution(question, solution, nal);
                 }

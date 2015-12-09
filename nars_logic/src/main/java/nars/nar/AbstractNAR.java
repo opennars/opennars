@@ -208,7 +208,7 @@ abstract public class AbstractNAR extends NAR {
     }
 
 
-    public static final OperatorReaction[] exampleOperators = new OperatorReaction[]{
+    public static final OperatorReaction[] exampleOperators = {
             //new Wait(),
             new NullOperator("break"),
             new NullOperator("drop"),
@@ -224,7 +224,7 @@ abstract public class AbstractNAR extends NAR {
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng;
 
-    public final OperatorReaction[] defaultOperators = new OperatorReaction[]{
+    public final OperatorReaction[] defaultOperators = {
 
             //system control
             new echo(),

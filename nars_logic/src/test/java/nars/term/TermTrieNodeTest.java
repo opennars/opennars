@@ -30,7 +30,7 @@ public class TermTrieNodeTest  {
 // Given an IP, get the host name
 
 
-        String[] terms = new String[] {
+        String[] terms = {
                 "<a --> b>", "<a --> c>", "<a --> d>", "<b --> d>", "<b --> <a --> c>>"
         };
         int p = 0;

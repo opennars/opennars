@@ -85,7 +85,7 @@ public interface TaskTable extends Iterable<Task> {
             e.printStackTrace();
             return;
         }
-        int[] written = new int[]{0}; //HACK to prevent writing more than the specified
+        int[] written = {0}; //HACK to prevent writing more than the specified
         forEach(t -> {
             if (written[0] < s) {
                 try {

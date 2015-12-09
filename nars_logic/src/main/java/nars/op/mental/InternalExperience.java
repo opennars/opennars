@@ -256,7 +256,7 @@ public class InternalExperience {
     }
 
 
-    final static Operator[] nonInnateBeliefOperators = new Operator[]{
+    final static Operator[] nonInnateBeliefOperators = {
             Operator.the("remind"),
             Operator.the("doubt"),
             Operator.the("consider"),

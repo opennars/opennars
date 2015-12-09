@@ -184,8 +184,8 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
                     children  = new TypedOrganism[0];
                 }
 
-                int[] swapPoints = new int[]{swapPoint1, swapPoint2};
-                Node[] subtrees = new Node[]{subtree1, subtree2};
+                int[] swapPoints = {swapPoint1, swapPoint2};
+                Node[] subtrees = {subtree1, subtree2};
 
                 ((EndEvent) event).setCrossoverPoints(swapPoints);
                 ((EndEvent) event).setSubtrees(subtrees);
