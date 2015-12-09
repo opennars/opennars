@@ -112,9 +112,7 @@ public class DefaultSurfaceModel extends AbstractSurfaceModel implements Surface
 			protected void done() {
 				try {
 					get();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
+				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
 				z1Min = (float) floor(z1Min, 2);

@@ -765,9 +765,6 @@ public class MidiClock extends JPanel implements Clock {
                     if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
                         saveMidiFile(fc.getSelectedFile());
                     }
-                } catch (SecurityException ex) {
-
-                    ex.printStackTrace();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

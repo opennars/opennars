@@ -24,6 +24,7 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 
 /**
@@ -108,7 +109,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 		int index = -1;
 		for (int i = 0, c = combo.getModel().getSize(); i < c; i++) {
 			current = combo.getModel().getElementAt(i);
-			if (value == current || (current != null && current.equals(value))) {
+			if (Objects.equals(current, value)) {
 				index = i;
 				break;
 			}
@@ -163,7 +164,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 		public boolean equals(Object o) {
 			if (o == this)
 				return true;
-			if (value == o || (value != null && value.equals(o)))
+			if (Objects.equals(value, o))
 				return true;
 			return false;
 		}

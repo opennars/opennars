@@ -28,9 +28,7 @@ public class SampleLoader
     public static SonarSample load(String path)  {
         try {
             return loadSample(new FileInputStream(path));
-        } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
         }
         return null;

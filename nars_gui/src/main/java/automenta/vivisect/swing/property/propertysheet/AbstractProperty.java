@@ -20,6 +20,7 @@ package automenta.vivisect.swing.property.propertysheet;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * AbstractProperty. <br>
@@ -50,7 +51,7 @@ public abstract class AbstractProperty implements Property {
   public void setValue(Object value) {
     Object oldValue = this.value;
     this.value = value;
-    if (value != oldValue && (value == null || !value.equals(oldValue)))
+    if (!Objects.equals(value, oldValue))
       firePropertyChange(oldValue, getValue());
   }
 

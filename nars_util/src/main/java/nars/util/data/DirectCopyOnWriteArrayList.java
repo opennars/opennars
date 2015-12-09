@@ -245,7 +245,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
             Object o2 = i2.next();
             if( o1 == o2 )
                 continue;
-            if( o1 == null || !o1.equals(o2) )
+            if(!Objects.equals(o1, o2))
                 return false;
         }
         return !(i1.hasNext() || !i2.hasNext());
@@ -291,7 +291,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
             if( element == o ) {
                 return i;
             }
-            if( element != null && element.equals(o) ) {
+            if(Objects.equals(element, o)) {
                 return i;
             }
         }
@@ -305,7 +305,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
             if( element == o ) {
                 return i;
             }
-            if( element != null && element.equals(o) ) {
+            if(Objects.equals(element, o)) {
                 return i;
             }
         }

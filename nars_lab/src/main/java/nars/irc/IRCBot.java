@@ -71,11 +71,11 @@ public abstract class IRCBot {
                     // Read lines from the server until it tells us we have connected.
                     String line = null;
                     while ((line = reader.readLine( )) != null) {
-                        if (line.indexOf("004") >= 0) {
+                        if (line.contains("004")) {
                             // We are now logged in.
                             break;
                         }
-                        else if (line.indexOf("433") >= 0) {
+                        else if (line.contains("433")) {
                             System.out.println("Nickname is already in use.");
                             return;
                         }

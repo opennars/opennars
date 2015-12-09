@@ -86,9 +86,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
             for (int i = 0; i < noParamSets; i++) {
                 results[i] = invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (final ScriptException ex) {
-            ex.printStackTrace();
-        } catch (final NoSuchMethodException ex) {
+        } catch (final ScriptException | NoSuchMethodException ex) {
             ex.printStackTrace();
         }
 
@@ -120,9 +118,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
             for (int i = 0; i < noParamSets; i++) {
                 invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (ScriptException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             ex.printStackTrace();
         }
     }

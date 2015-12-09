@@ -38,11 +38,8 @@ public final class SgAssert {
     private static void writeToFile(final File file, final String src) {
         try {
             // Write to file
-            final FileWriter writer = new FileWriter(file);
-            try {
+            try (FileWriter writer = new FileWriter(file)) {
                 writer.write(src);
-            } finally {
-                writer.close();
             }
 //            // Format with Jalopy
 //            final Jalopy jalopy = new Jalopy();
@@ -57,8 +54,7 @@ public final class SgAssert {
 
     private static String readFromFile(final File file) {
         try {
-            final LineNumberReader lnr = new LineNumberReader(new FileReader(file));
-            try {
+            try (LineNumberReader lnr = new LineNumberReader(new FileReader(file))) {
                 final StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = lnr.readLine()) != null) {
@@ -66,8 +62,6 @@ public final class SgAssert {
                     sb.append("\n");
                 }
                 return sb.toString();
-            } finally {
-                lnr.close();
             }
         } catch (final IOException ex) {
             throw new RuntimeException(ex);

@@ -86,9 +86,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
             for (int i = 0; i < noParamSets; i++) {
                 result[i] = invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (final ScriptException ex) {
-            throw new MalformedProgramException();
-        } catch (final NoSuchMethodException ex) {
+        } catch (final ScriptException | NoSuchMethodException ex) {
             throw new MalformedProgramException();
         }
 
@@ -121,9 +119,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
             for (int i = 0; i < noParamSets; i++) {
                 invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (ScriptException ex) {
-            throw new MalformedProgramException();
-        } catch (NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             throw new MalformedProgramException();
         }
     }

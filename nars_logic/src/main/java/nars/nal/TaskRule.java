@@ -26,6 +26,7 @@ import nars.term.variable.Variable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -280,7 +281,7 @@ public class TaskRule extends GenericCompound implements Level {
     static Term compilePattern(Term c, TermIndex patterns) {
         Term x = patterns.getTerm(c);
         if (Global.DEBUG) {
-            if (x == null || !x.equals(c))
+            if (!Objects.equals(x, c))
                 throw new RuntimeException("index fault");
         }
         return x;

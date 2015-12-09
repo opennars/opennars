@@ -80,11 +80,7 @@ public class LookAndFeelAddons {
     try {
       setAddon(addonClassname);
       setTrackingLookAndFeelChanges(true);      
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (ClassNotFoundException e) {
+    } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
       e.printStackTrace();
     }
   }
@@ -92,8 +88,8 @@ public class LookAndFeelAddons {
   private static LookAndFeelAddons currentAddon;
 
   public void initialize() {
-    for (Iterator iter = contributedComponents.iterator(); iter.hasNext();) {
-      ComponentAddon addon = (ComponentAddon)iter.next();
+    for (Object contributedComponent : contributedComponents) {
+      ComponentAddon addon = (ComponentAddon) contributedComponent;
       addon.initialize(this);
     }
   }

@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.Math.min;
 
@@ -37,9 +38,9 @@ public class DockingRegionTabbed extends JTabbedPane implements DockingChild {
 
     public DockingContent getDockingContent(int index) {
         Component comp = getComponentAt(index);
-        for (DockingContent key : tabs.keySet()) {
-            if (tabs.get(key).component == comp) {
-                return key;
+        for (Map.Entry<DockingContent, TabLayout> dockingContentTabLayoutEntry : tabs.entrySet()) {
+            if (dockingContentTabLayoutEntry.getValue().component == comp) {
+                return dockingContentTabLayoutEntry.getKey();
             }
         }
         return null;

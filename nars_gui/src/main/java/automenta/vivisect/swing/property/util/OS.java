@@ -36,11 +36,11 @@ public class OS {
     String os = System.getProperty("os.name").toLowerCase();
 
     osIsMacOsX = "mac os x".equals(os);
-    osIsWindows = os.indexOf("windows") != -1;
+    osIsWindows = os.contains("windows");
     osIsWindowsXP = "windows xp".equals(os);
     osIsWindows2003 = "windows 2003".equals(os);
     osIsWindowsVista = "windows vista".equals(os);
-    osIsLinux = os != null && os.indexOf("linux") != -1;
+    osIsLinux = os != null && os.contains("linux");
   }
 
   /**

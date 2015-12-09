@@ -139,17 +139,14 @@ public class Grammar {
      * Reads the contents of the given File and returns it as a String.
      */
     private String readGrammarFile(File grammarFile) throws IOException {
-        BufferedReader input = new BufferedReader(new FileReader(grammarFile));
         StringBuilder grammarStr = new StringBuilder();
 
-        try {
+        try (BufferedReader input = new BufferedReader(new FileReader(grammarFile))) {
             String line = null;
             while ((line = input.readLine()) != null) {
                 grammarStr.append(line);
                 grammarStr.append(System.getProperty("line.separator"));
             }
-        } finally {
-            input.close();
         }
 
         return grammarStr.toString();

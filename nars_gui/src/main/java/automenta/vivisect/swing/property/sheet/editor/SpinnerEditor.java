@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Objects;
 
 
 /**
@@ -149,7 +150,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 			if (o == this) {
 				return true;
 			}
-			if (value == o || (value != null && value.equals(o))) {
+			if (Objects.equals(value, o)) {
 				return true;
 			}
 			return false;

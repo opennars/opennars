@@ -309,7 +309,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
             IndexedTreeMap<E, Object> map = (IndexedTreeMap<E, Object>) m;
             Comparator<? super E> cc = (Comparator<? super E>) set.comparator();
             Comparator<? super E> mc = map.comparator();
-            if (cc == mc || (cc != null && cc.equals(mc))) {
+            if (Objects.equals(cc, mc)) {
                 map.addAllForTreeSet(set, PRESENT);
                 return true;
             }

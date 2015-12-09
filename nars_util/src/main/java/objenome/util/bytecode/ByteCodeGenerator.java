@@ -220,9 +220,7 @@ public final class ByteCodeGenerator {
                 // Create class
                 final CtClass clasz = createCtClass(modelClass);
                 implClass = clasz.toClass(classLoader, domain);
-            } catch (final NotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (final CannotCompileException e) {
+            } catch (final NotFoundException | CannotCompileException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -282,13 +280,7 @@ public final class ByteCodeGenerator {
         try {
             final Constructor constructor = clasz.getConstructor(argTypes);
             return constructor.newInstance(initArgs);
-        } catch (final NoSuchMethodException ex) {
-            throw new RuntimeException(ex);
-        } catch (final InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (final IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        } catch (final InvocationTargetException ex) {
+        } catch (final NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException ex) {
             throw new RuntimeException(ex);
         }
 

@@ -102,9 +102,9 @@ public class WebBrowser extends BorderPane {
         }
 
         public Route get(String url) {
-            for (String s : routes.keySet()) {
-                if (s.equals(url))
-                    return routes.get(s);
+            for (Map.Entry<String, Route> stringRouteEntry : routes.entrySet()) {
+                if (stringRouteEntry.getKey().equals(url))
+                    return stringRouteEntry.getValue();
             }
             return null;
         }

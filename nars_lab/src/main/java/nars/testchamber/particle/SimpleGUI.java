@@ -29,21 +29,12 @@ public class SimpleGUI extends JFrame{
 		//Set GUI to look like native OS instead of crappy java default look
 	    try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); //make it look pretty
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
+		} catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
-	    particlenumberL = new JLabel ("Number of Particles?");	    
+
+		particlenumberL = new JLabel ("Number of Particles?");
 	    particlenumberTF = new JTextField();
 	    particlenumberTF.setText("500000");
 	    

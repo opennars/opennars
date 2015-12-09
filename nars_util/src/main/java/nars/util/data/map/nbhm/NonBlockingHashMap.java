@@ -753,7 +753,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
         V != expVal &&            // No instant match already?
         (expVal != MATCH_ANY || V == TOMBSTONE || V == null) &&
         !(V==null && expVal == TOMBSTONE) &&    // Match on null/TOMBSTONE combo
-        (expVal == null || !expVal.equals(V)) ) // Expensive equals check at the last
+        (!Objects.equals(expVal, V)) ) // Expensive equals check at the last
       return V;                                 // Do not update!
 
     // Actually change the Value in the Key,Value pair
