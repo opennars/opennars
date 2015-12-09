@@ -79,7 +79,7 @@ public abstract class AbstractNALTester {
 
         List<Supplier<NAR>> l = Global.newArrayList(2);
 
-        final int finalLevel = level;
+        int finalLevel = level;
 
         if (multi) {
             l.add(supply("Default2[NAL<=" + level + ']',

@@ -34,7 +34,7 @@ public final class OneOrMoreMatcher
 {
     private final Matcher subMatcher;
 
-    public OneOrMoreMatcher(final Rule subRule)
+    public OneOrMoreMatcher(Rule subRule)
     {
         super(Objects.requireNonNull(subRule, "subRule"), "oneOrMore");
         subMatcher = getChildren().get(0);
@@ -47,12 +47,12 @@ public final class OneOrMoreMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
 
-        final Matcher subMatcher = this.subMatcher;
+        Matcher subMatcher = this.subMatcher;
 
-        final boolean matched = subMatcher.getSubContext(context).runMatcher();
+        boolean matched = subMatcher.getSubContext(context).runMatcher();
         if (!matched)
             return false;
 

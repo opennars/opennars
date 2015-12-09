@@ -273,7 +273,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      *                              does not permit null elements
      */
     @Override
-    public boolean remove(final Object o) {
+    public boolean remove(Object o) {
         return m.remove(o) == PRESENT;
     }
 

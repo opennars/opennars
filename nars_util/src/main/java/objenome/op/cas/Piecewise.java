@@ -45,7 +45,7 @@ public class Piecewise extends Operation {
     public String pretty() {
         
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < possibilities.size(); i++) {
             Expr expr = possibilities.get(i);

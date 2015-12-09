@@ -34,7 +34,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     protected Procedure2<Budget, Budget> mergeFunction;
 
     public static final <V> boolean bufferIncludes(V[] buffer, V item) {
-        for (final V x : buffer) {
+        for (V x : buffer) {
             if (x == null)
                 break;
             if (x == item) return true;
@@ -99,7 +99,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         return this;
     }
 
-    protected final void merge(final Budget newBudget, final Budget oldBudget) {
+    protected final void merge(Budget newBudget, Budget oldBudget) {
         mergeFunction.value(newBudget, oldBudget);
     }
 
@@ -110,7 +110,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * @return The Item with the given key
      */
     @Override
-    public abstract V get(final K key);
+    public abstract V get(K key);
 
     public abstract Set<K> keySet();
 
@@ -137,7 +137,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     }
 
     public float getPriorityMean() {
-        final int s = size();
+        int s = size();
         if (s == 0) return 0;
         return getPrioritySum() / s;
     }
@@ -159,7 +159,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * @param it An item
      * @return Whether the Item is in the Bag
      */
-    public boolean contains(final V it) {
+    public boolean contains(V it) {
         V exist = get(it.name());
         if (exist == null) return false;
         return exist.equals(it);
@@ -220,7 +220,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
      * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
      */
-    public V update(final BagTransaction<K, V> tx) {
+    public V update(BagTransaction<K, V> tx) {
 
         K key = tx.name();
         V item;
@@ -255,7 +255,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
     public V updateReinsert(BagSelector<K, V> selector, V item) {
         // put the (new or merged) item into itemTable
-        final V overflow = put(item);
+        V overflow = put(item);
         if (overflow != null)
             selector.overflow(overflow);
 
@@ -304,7 +304,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     /**
      * faster than using the BagTransaction version when creation of instances is not necessary
      */
-    public V peekNext(final BagSelector<K, V> selector) {
+    public V peekNext(BagSelector<K, V> selector) {
 
         V item;
         do {
@@ -335,7 +335,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     }
 
     public void printAll(PrintStream p) {
-        this.forEach(x -> p.println(x.getPriority() + " " + x));
+        forEach(x -> p.println(x.getPriority() + " " + x));
     }
 
     /**
@@ -345,8 +345,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     //by default this will use iterator().forEach() but this can be used to make sure each implementation offers its best
     //@Override abstract public void forEach(final Consumer<? super V> action);
     public float getPrioritySum() {
-        final float[] total = {0};
-        this.forEach(x -> total[0] += x.getPriority());
+        float[] total = {0};
+        forEach(x -> total[0] += x.getPriority());
         return total[0];
     }
 
@@ -357,7 +357,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
     public double getStdDev(StandardDeviation target) {
         target.clear();
-        this.forEach(x -> target.increment(x.getPriority()));
+        forEach(x -> target.increment(x.getPriority()));
         return target.getResult();
     }
 
@@ -377,7 +377,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * the produced list may contain duplicates.
      * TODO make a non-duplicate Set based version of this
      */
-    public int forgetNext(float forgetCycles, V[] batch, final int start, final int stop, final long now, final int maxAdditionalAttempts) {
+    public int forgetNext(float forgetCycles, V[] batch, int start, int stop, long now, int maxAdditionalAttempts) {
         if (isEmpty())
             return 0;
 
@@ -385,7 +385,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
                 batch, start, stop, maxAdditionalAttempts);
     }
 
-    public final int forgetNext(float forgetCycles, V[] batch, final long now, final int maxAdditionalAttempts) {
+    public final int forgetNext(float forgetCycles, V[] batch, long now, int maxAdditionalAttempts) {
         return forgetNext(forgetCycles, batch, 0, batch.length, now, maxAdditionalAttempts);
     }
 
@@ -406,10 +406,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * <p>
      * TODO option for if duplicates are allowed
      */
-    protected final int peekNext(final BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
+    protected final int peekNext(BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
-        final int batchlen = Math.min(size(), stop - start);
-        final int maxAttempts = batchlen + maxAdditionalAttempts;
+        int batchlen = Math.min(size(), stop - start);
+        int maxAttempts = batchlen + maxAdditionalAttempts;
 
         return peekNextFill(tx, batch, start, batchlen, maxAttempts);
     }
@@ -420,7 +420,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
 
         for (int i = 0; (fill < len) && (i < maxAttempts); i++) {
-            final V x = peekNext(tx);
+            V x = peekNext(tx);
             if (x == null) break;
 
 
@@ -437,8 +437,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * should be between 0 and 1.0
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public void forgetNext(final float forgetCycles, final float accuracy, final Memory m) {
-        final int conceptsToForget = (int) Math.ceil(size() * accuracy);
+    public void forgetNext(float forgetCycles, float accuracy, Memory m) {
+        int conceptsToForget = (int) Math.ceil(size() * accuracy);
         if (conceptsToForget == 0) return;
 
         forgetNext.set(forgetCycles, m.time());
@@ -449,7 +449,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
     }
 
-    public final void forgetNext(MutableFloat forgetDurations, final float accuracy, final Memory m) {
+    public final void forgetNext(MutableFloat forgetDurations, float accuracy, Memory m) {
         float forgetCycles = m.durationToCycles(forgetDurations);
         forgetNext(forgetCycles, accuracy, m);
     }
@@ -460,11 +460,11 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 //     * @return the variable that was updated, or null if none was taken out
 //     * @forgetCycles forgetting time in cycles
 //     */
-    public final V forgetNext(final AtomicDouble forgetDurations, final Memory m) {
+    public final V forgetNext(AtomicDouble forgetDurations, Memory m) {
         return forgetNext(forgetDurations.floatValue(), m);
     }
 
-    public V forgetNext(final float forgetDurations, final Memory m) {
+    public V forgetNext(float forgetDurations, Memory m) {
         setForgetNext(forgetDurations, m);
         return forgetNext();
     }
@@ -477,7 +477,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     /**
      * call this to set the forgetNext settings prior to calling forgetNext()
      */
-    protected void setForgetNext(final float forgetDurations, final Memory m) {
+    protected void setForgetNext(float forgetDurations, Memory m) {
         forgetNext.set(m.durationToCycles(forgetDurations), m.time());
     }
 
@@ -523,8 +523,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * @param selector
      * @return
      */
-    protected V putReplacing(final V n, final BagSelector<K, V> selector) {
-        final V overflow = put(n);
+    protected V putReplacing(V n, BagSelector<K, V> selector) {
+        V overflow = put(n);
 
         if (overflow != null) {
             selector.overflow(overflow);
@@ -687,11 +687,11 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         return getPriorityHistogram(new double[bins]);
     }
 
-    public double[] getPriorityHistogram(final double[] x) {
+    public double[] getPriorityHistogram(double[] x) {
         int bins = x.length;
         forEach(e -> {
-            final float p = e.getPriority();
-            final int b = Util.bin(p, bins - 1);
+            float p = e.getPriority();
+            int b = Util.bin(p, bins - 1);
             x[b]++;
         });
         double total = 0;

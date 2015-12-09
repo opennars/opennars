@@ -10,11 +10,11 @@ public class PropertyChangeListenerMock implements PropertyChangeListener {
     private List<PropertyChangeEvent> events = new ArrayList<>();
 
     public void propertyChange(PropertyChangeEvent evt) {
-        this.events.add(evt);
+        events.add(evt);
     }
 
     public List<PropertyChangeEvent> getEvents() {
-        return this.events;
+        return events;
     }
 
 }

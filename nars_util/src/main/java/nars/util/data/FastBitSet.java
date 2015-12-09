@@ -82,11 +82,11 @@ public class FastBitSet {
      * @param that the second bit set.
      */
     public void and(FastBitSet that) {
-        final int n = MathLib.min(this._length, that._length);
+        int n = MathLib.min(_length, that._length);
         for (int i = 0; i < n; ++i) {
-            this.bits[i] &= that.bits[i];
+            bits[i] &= that.bits[i];
         }
-        this._length = n;
+        _length = n;
     }
 
     /**
@@ -98,9 +98,9 @@ public class FastBitSet {
      * @param that the second bit set
      */
     public void andNot(FastBitSet that) {
-        int i = Math.min(this._length, that._length);
+        int i = Math.min(_length, that._length);
         while (--i >= 0) {
-            this.bits[i] &= ~that.bits[i];
+            bits[i] &= ~that.bits[i];
         }
     }
 
@@ -247,7 +247,7 @@ public class FastBitSet {
      * @return {@code true} if the sets intersect; {@code false} otherwise.
      */
     public boolean intersects(FastBitSet that) {
-        int i = MathLib.min(this._length, that._length);
+        int i = MathLib.min(_length, that._length);
         while (--i >= 0) {
             if ((bits[i] & that.bits[i]) != 0) {
                 return true;
@@ -338,7 +338,7 @@ public class FastBitSet {
      * @param that the second bit set.
      */
     public void or(FastBitSet that) {
-        if (that._length > this._length) {
+        if (that._length > _length) {
             setLength(that._length);
         }
         for (int i = that._length; --i >= 0;) {
@@ -477,7 +477,7 @@ public class FastBitSet {
      * @param that the second bit set.
      */
     public void xor(FastBitSet that) {
-        if (that._length > this._length) {
+        if (that._length > _length) {
             setLength(that._length);
         }
         for (int i = that._length; --i >= 0;) {
@@ -490,13 +490,13 @@ public class FastBitSet {
         if (!(obj instanceof FastBitSet)) 
             return super.equals(obj);
         FastBitSet that = (FastBitSet) obj;
-        int n = MathLib.min(this._length, that._length);
+        int n = MathLib.min(_length, that._length);
         for (int i = 0; i < n; ++i) {
             if (bits[i] != that.bits[i]) 
                 return false;
         }
-        for (int i = n; i < this._length; i++) {
-            if (this.bits[i] != 0) 
+        for (int i = n; i < _length; i++) {
+            if (bits[i] != 0)
                 return false;
         }
         for (int i = n; i < that._length; i++) {
@@ -526,7 +526,7 @@ public class FastBitSet {
      *
      * @param newLength the new length of the table.
      */
-    private final void setLength(final int newLength) {
+    private final void setLength(int newLength) {
         if (bits.length < newLength) { // Resizes array.
             int arrayLength = bits.length;
             while (arrayLength < newLength) {

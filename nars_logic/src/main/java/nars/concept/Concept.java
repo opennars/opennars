@@ -97,28 +97,28 @@ public interface Concept extends Termed, Itemized<Term> {
         }
     }
 
-    default void discountTaskConfidences(final Iterable<Task> t) {
+    default void discountTaskConfidences(Iterable<Task> t) {
         t.forEach(Task::discountConfidence);
     }
 
 
     default boolean hasGoals() {
-        final BeliefTable s = getGoals();
+        BeliefTable s = getGoals();
         return (s != null) && !s.isEmpty();
     }
 
     default boolean hasBeliefs() {
-        final BeliefTable s = getBeliefs();
+        BeliefTable s = getBeliefs();
         return (s != null) && !s.isEmpty();
     }
 
     default boolean hasQuestions() {
-        final TaskTable s = getQuestions();
+        TaskTable s = getQuestions();
         return (s != null) && !s.isEmpty();
     }
 
     default boolean hasQuests() {
-        final TaskTable s = getQuests();
+        TaskTable s = getQuests();
         if (s == null) return false;
         return !s.isEmpty();
     }
@@ -170,7 +170,7 @@ public interface Concept extends Termed, Itemized<Term> {
 
     /** like Map.gett for getting data stored in meta map */
     default <C> C get(Object key) {
-        final Map<Object, Object> m = getMeta();
+        Map<Object, Object> m = getMeta();
         if (m == null) return null;
         return (C) m.get(key);
     }
@@ -252,14 +252,14 @@ public interface Concept extends Termed, Itemized<Term> {
     default Iterator<? extends Termed> getTermedAdjacents(boolean termLinks, boolean taskLinks) {
         if (termLinks && taskLinks) {
             return concat(
-                    this.getTermLinks().iterator(), this.getTaskLinks().iterator()
+                    getTermLinks().iterator(), getTaskLinks().iterator()
             );
         }
         if (termLinks) {
-            return this.getTermLinks().iterator();
+            return getTermLinks().iterator();
         }
         if (taskLinks) {
-            return this.getTaskLinks().iterator();
+            return getTaskLinks().iterator();
         }
 
         return null;
@@ -279,7 +279,7 @@ public interface Concept extends Termed, Itemized<Term> {
 
         out.println("concept: " + toInstanceString() + " @ " + now);
 
-        final String indent = "  \t";
+        String indent = "  \t";
         if (showbeliefs) {
             out.print(" Beliefs:");
             if (getBeliefs().isEmpty()) out.println(" none");

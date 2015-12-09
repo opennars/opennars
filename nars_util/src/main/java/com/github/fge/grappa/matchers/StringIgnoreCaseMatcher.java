@@ -31,7 +31,7 @@ public final class StringIgnoreCaseMatcher
 {
     private final String input;
 
-    public StringIgnoreCaseMatcher(final String input)
+    public StringIgnoreCaseMatcher(String input)
     {
         super("stringIgnoreCase(" + input + ')');
         this.input = Objects.requireNonNull(input);
@@ -44,11 +44,11 @@ public final class StringIgnoreCaseMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final int len = input.length();
-        final int index = context.getCurrentIndex();
-        final String s = context.getInputBuffer().extract(index, index + len);
+        int len = input.length();
+        int index = context.getCurrentIndex();
+        String s = context.getInputBuffer().extract(index, index + len);
 
         if (!s.equalsIgnoreCase(input))
             return false;

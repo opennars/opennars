@@ -57,7 +57,7 @@ public class CommonVariable extends Variable  {
 //            //System.out.println(v1 + " " + v2);
 //        }
 
-        final Op type = v1.op();
+        Op type = v1.op();
         if (v2.op()!=type)
             throw new RuntimeException("differing types");
 

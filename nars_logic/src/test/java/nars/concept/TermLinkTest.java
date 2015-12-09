@@ -26,7 +26,7 @@ public class TermLinkTest {
 
     @Test public void testTermLinkActivationOnConceptualization() {
         //when a concept is conceptualized, it should have all its templates activated into its TermLink bag
-        final String t = "<a --> b>";
+        String t = "<a --> b>";
 
         NAR n = new SingleStepNAR();
         n.believe(t);

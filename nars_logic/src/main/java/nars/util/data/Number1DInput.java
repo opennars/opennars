@@ -51,7 +51,7 @@ public class Number1DInput {
 
     public Number1DInput(NAR n, String id, double[] data, int resolution) {
 
-        this.nar = n;
+        nar = n;
         this.id = id;
         this.resolution = resolution;
         nf.setMaximumFractionDigits(2);

@@ -44,7 +44,7 @@ public abstract class FunctionMeter<M> implements Signals<M>, Serializable {
             s.add(new Signal(n, null));
         }
 
-        this.signals = Collections.unmodifiableList(s);
+        signals = Collections.unmodifiableList(s);
     }
     
     public void setUnits(String... units) { 

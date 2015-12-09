@@ -43,7 +43,7 @@ public abstract class RealtimeClock implements Clock {
         private final int dur;
 
         public Lag(int duration, double frameTime) {
-            this.dur= duration;
+            dur = duration;
             this.frameTime = frameTime;
         }
 
@@ -57,9 +57,9 @@ public abstract class RealtimeClock implements Clock {
     protected void update() {
         long now = getRealTime();
 
-        this.t0 = this.t0 != -1 ? t : now;
+        t0 = t0 != -1 ? t : now;
 
-        this.t = now;
+        t = now;
     }
 
 

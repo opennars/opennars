@@ -119,7 +119,7 @@ public abstract class Expr {
     
     public boolean isNumber() {
         if (this instanceof Num) return true;
-        if (this.isConstant()) return false;
+        if (isConstant()) return false;
         if (this instanceof Var) return false;
         for (Expr expr : ((Operation) this).getExprs()) {
             if (!expr.isNumber()) {
@@ -130,7 +130,7 @@ public abstract class Expr {
     }
     
     public boolean isFunction() {
-        return this.printSimplify().isFunctionPass();
+        return printSimplify().isFunctionPass();
     }
     
     public boolean isFunctionPass() {
@@ -158,15 +158,15 @@ public abstract class Expr {
     }
     
     public Integer personalLevelLeft() {
-        return classPersonalLevelLeft(this.getClass());
+        return classPersonalLevelLeft(getClass());
     }
     
     public Integer personalLevelRight() {
-        return classPersonalLevelRight(this.getClass());
+        return classPersonalLevelRight(getClass());
     }
     
     public Integer printLevelLeft() { // the tightest level allowed around it
-        return this.printSimplify().printLevelLeftPass();
+        return printSimplify().printLevelLeftPass();
     }
     
     public Integer printLevelLeftPass() {
@@ -174,7 +174,7 @@ public abstract class Expr {
         
         if (this instanceof Operation) {
             Expr firstExpr = ((Operation) this).getExpr(0);
-            if (!this.parensRight(firstExpr)) {
+            if (!parensRight(firstExpr)) {
                 Integer firstExprLevel = firstExpr.printLevelLeft();
                 if (firstExprLevel < thisLevel) return firstExprLevel;
             }
@@ -184,7 +184,7 @@ public abstract class Expr {
     }
     
     public Integer printLevelRight() {
-        return this.printSimplify().printLevelRightPass();
+        return printSimplify().printLevelRightPass();
     }
     
     public Integer printLevelRightPass() {
@@ -192,7 +192,7 @@ public abstract class Expr {
         
         if (this instanceof Operation) {
             Expr lastExpr = ((Operation) this).lastExpr();
-            if (!this.parensLeft(lastExpr)) {
+            if (!parensLeft(lastExpr)) {
                 Integer lastExprLevel = lastExpr.printLevelRight();
                 if (lastExprLevel < thisLevel) return lastExprLevel;
             }
@@ -209,14 +209,14 @@ public abstract class Expr {
 //         if (debug) System.err.println("parensRight: thisClassOrder: " + this.classOrder());
 //         if (debug) System.err.println("parensRight: expr: " + expr);
 //         if (debug) System.err.println("parensRight: expr.printLevelRight(): " + expr.printLevelRight());
-        return this.classOrder() > expr.printLevelRight();
+        return classOrder() > expr.printLevelRight();
     }
     
     public boolean parensLeft(Expr expr) {
 //         if (debug) System.err.println("parensLeft: thisClassOrder: " + this.classOrder());
 //         if (debug) System.err.println("parensLeft: expr: " + expr);
 //         if (debug) System.err.println("parensRight: expr.printLevelLeft(): " + expr.printLevelLeft());
-        return this.classOrder() > expr.printLevelLeft();
+        return classOrder() > expr.printLevelLeft();
     }
     
     public boolean functionalParens() {
@@ -237,7 +237,7 @@ public abstract class Expr {
 //     }
     
     public boolean isTrig() {
-        return Arrays.asList(trigs).contains(this.getClass())
+        return Arrays.asList(trigs).contains(getClass())
                 || (this instanceof Exponent && Arrays.asList(trigs).contains(((Exponent) this).getExpr(0).getClass()));
     }
     
@@ -305,11 +305,11 @@ public abstract class Expr {
     }
     
     public Integer classOrder() {
-        return this.printSimplify().classOrderPass();
+        return printSimplify().classOrderPass();
     }
     
     public Integer classOrderPass() {
-        return classOrder.get(this.getClass());
+        return classOrder.get(getClass());
     }
     
     public Expr copy() {
@@ -339,7 +339,7 @@ public abstract class Expr {
     
     public String dump() {
         if (this instanceof Operation) {
-            String dumpStr = '(' + this.getClass().getSimpleName();
+            String dumpStr = '(' + getClass().getSimpleName();
             for (Expr expr : ((Operation) this).getExprs()) dumpStr+= " " + expr;
             return  dumpStr + ')';
         }

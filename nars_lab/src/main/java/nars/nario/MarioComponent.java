@@ -39,8 +39,8 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
 
     public MarioComponent() {
-        this.setFocusable(true);
-        this.setEnabled(true);
+        setFocusable(true);
+        setEnabled(true);
 
 
 

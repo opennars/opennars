@@ -36,7 +36,7 @@ public class JSurfacePanel extends JPanel {
 	 * @return
 	 */
 	private static SurfaceModel createDefaultSurfaceModel() {
-		final DefaultSurfaceModel sm = new DefaultSurfaceModel();
+		DefaultSurfaceModel sm = new DefaultSurfaceModel();
 
 		sm.setPlotFunction2(false);
 		

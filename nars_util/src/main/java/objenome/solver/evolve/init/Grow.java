@@ -351,19 +351,19 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
         dataTypesTable = new Class<?>[maxDepth + 1][];
 
         for (int i = 0; i <= maxDepth; i++) {
-            final Set<Class<?>> types = new HashSet<>();
-            for (final Node n : terminals) {
+            Set<Class<?>> types = new HashSet<>();
+            for (Node n : terminals) {
                 types.add(n.dataType());
             }
 
             if (i > 0) {
                 // Also add any valid nonTerminals
-                for (final Node n : nonTerminals) {
-                    final Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[i - 1]);
+                for (Node n : nonTerminals) {
+                    Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[i - 1]);
 
                     // Test each possible set of arguments
-                    for (final Class<?>[] argTypes : argTypeSets) {
-                        final Class<?> returnType = n.dataType(argTypes);
+                    for (Class<?>[] argTypes : argTypeSets) {
+                        Class<?> returnType = n.dataType(argTypes);
                         if (returnType != null) {
                             types.add(returnType);
                         }
@@ -647,7 +647,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      *
      * @param returnType the data-type of the generated programs
      */
-    public void setReturnType(final Class<?> returnType) {
+    public void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
 
         // Lookup table will need regenerating
@@ -673,7 +673,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      * @param size the size of the populations generated
      */
     public void setPopulationSize(int size) {
-        this.populationSize = size;
+        populationSize = size;
     }
 
     /**

@@ -36,7 +36,7 @@ public class BulletBill extends Sprite
 
         xPic = 0;
         ya = -5;
-        this.facing = dir;
+        facing = dir;
     }
 
     public void collideCheck()

@@ -621,13 +621,13 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	}
 
 	public void setPlotFunction12(boolean p1, boolean p2) {
-		boolean o1 = this.plotFunction1;
-		boolean o2 = this.plotFunction2;
+		boolean o1 = plotFunction1;
+		boolean o2 = plotFunction2;
 
-		this.plotFunction1 = hasFunction1 && p1;
+		plotFunction1 = hasFunction1 && p1;
 		property.firePropertyChange("plotFunction1", o1, p1);
 
-		this.plotFunction2 = hasFunction2 && p2;
+		plotFunction2 = hasFunction2 && p2;
 		property.firePropertyChange("plotFunction1", o2, p2);
 		fireAllFunction(o1, o2);
 	}

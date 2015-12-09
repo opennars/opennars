@@ -138,7 +138,7 @@ public abstract class HyperassociativeMap<K,V>  {
 
     public abstract void apply(V node, double[] coord);
 
-    public void align(final int iterations) {
+    public void align(int iterations) {
         for (int i = iterations;i > 0; i--)
             align();
     }
@@ -159,7 +159,7 @@ public abstract class HyperassociativeMap<K,V>  {
 
     protected abstract V[] getVertices();
 
-    public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance) {
+    public HyperassociativeMap(int dimensions, double equilibriumDistance, DistanceMetric distance) {
         if (dimensions <= 0) {
             throw new IllegalArgumentException("dimensions must be 1 or more");
         }
@@ -167,8 +167,8 @@ public abstract class HyperassociativeMap<K,V>  {
 
         this.dimensions = dimensions;
         this.equilibriumDistance = Math.abs(equilibriumDistance);
-        this.distanceFunction = distance;
-        this.zero = new double[dimensions];
+        distanceFunction = distance;
+        zero = new double[dimensions];
 
         coordinates = new LinkedHashMap<>();
         //coordinates = Collections.synchronizedMap(new HashMap<N, ArrayRealVector>());
@@ -199,7 +199,7 @@ public abstract class HyperassociativeMap<K,V>  {
 //        return equilibriumDistance;
 //    }
 
-    public void setEquilibriumDistance(final double equilibriumDistance) {
+    public void setEquilibriumDistance(double equilibriumDistance) {
         this.equilibriumDistance = Math.abs(equilibriumDistance);
     }
 
@@ -326,7 +326,7 @@ public abstract class HyperassociativeMap<K,V>  {
         }
     }
     
-    protected void recenterNodes(final ArrayRealVector center) {
+    protected void recenterNodes(ArrayRealVector center) {
 
         V[] vertices = this.vertices;
         Map<V, ArrayRealVector> coordinates = this.coordinates;
@@ -366,14 +366,14 @@ public abstract class HyperassociativeMap<K,V>  {
 
     protected abstract void edges(V nodeToQuery, ObjectDoubleHashMap<V> neighbors);
 
-    void getNeighbors(final V nodeToQuery, ObjectDoubleHashMap<V> neighbors) {
+    void getNeighbors(V nodeToQuery, ObjectDoubleHashMap<V> neighbors) {
         if (neighbors == null)
             neighbors = new ObjectDoubleHashMap(vertices.length);
         else
             neighbors.clear();
 
 
-        final ObjectDoubleHashMap<V> finalNeighbors = neighbors;
+        ObjectDoubleHashMap<V> finalNeighbors = neighbors;
         edges(nodeToQuery, finalNeighbors);
 
 
@@ -455,7 +455,7 @@ public abstract class HyperassociativeMap<K,V>  {
     }
 
     /** vertices is passed as a list because the Set iterator from JGraphT is slow */
-    public ArrayRealVector align(final V nodeToAlign, ObjectDoubleHashMap<V> neighbors, V[] vertices) {
+    public ArrayRealVector align(V nodeToAlign, ObjectDoubleHashMap<V> neighbors, V[] vertices) {
 
         double nodeSpeed = getSpeedFactor(nodeToAlign);
 
@@ -475,9 +475,9 @@ public abstract class HyperassociativeMap<K,V>  {
 
         double radius = getRadius(nodeToAlign);
         double targetDistance = radius + equilibriumDistance;
-        final double learningRate = this.learningRate;
+        double learningRate = this.learningRate;
 
-        final ArrayRealVector tmpAttractVector = newVector();
+        ArrayRealVector tmpAttractVector = newVector();
 
         // align with neighbours
         neighbors.forEachKeyValue( (neighbor, distToNeighbor) -> {
@@ -488,7 +488,7 @@ public abstract class HyperassociativeMap<K,V>  {
             
             double newDistance;
             double factor = 0;
-            final double deltaDist = oldDistance - distToNeighbor;
+            double deltaDist = oldDistance - distToNeighbor;
             if (oldDistance > distToNeighbor) {
                 newDistance = Math.pow(deltaDist, attractionStrength);
                 
@@ -518,9 +518,9 @@ public abstract class HyperassociativeMap<K,V>  {
 
         // calculate repulsion with all non-neighbors
 
-        final DistanceMetric distanceFunction = this.distanceFunction;
-        final double minDistance = this.minDistance;
-        final double repulsiveWeakness = this.repulsiveWeakness;
+        DistanceMetric distanceFunction = this.distanceFunction;
+        double minDistance = this.minDistance;
+        double repulsiveWeakness = this.repulsiveWeakness;
 
         for (V node : vertices) {
 
@@ -565,7 +565,7 @@ public abstract class HyperassociativeMap<K,V>  {
             throw new RuntimeException("invalid magnitude");
         
         if (moveDistance > targetDistance * acceptableMaxDistanceFactor) {
-            final double newLearningRate = ((targetDistance * acceptableMaxDistanceFactor) / moveDistance);
+            double newLearningRate = ((targetDistance * acceptableMaxDistanceFactor) / moveDistance);
             if (newLearningRate < learningRate) {
                 this.learningRate = newLearningRate;
             } else {
@@ -590,8 +590,8 @@ public abstract class HyperassociativeMap<K,V>  {
     }
 
 
-    public abstract void getPosition(final V node, final double[] v);
-    public abstract void move(final V node, final double vx, double vy);
+    public abstract void getPosition(V node, double[] v);
+    public abstract void move(V node, double vx, double vy);
 
 
 //    protected ArrayRealVector getCurrentPosition(V n) {
@@ -622,11 +622,11 @@ public abstract class HyperassociativeMap<K,V>  {
      * @return New RANDOM ArrayRealVector
      * @since 1.0
      */
-    public static ArrayRealVector randomCoordinates(final int dimensions) {
+    public static ArrayRealVector randomCoordinates(int dimensions) {
         return new ArrayRealVector(randomCoordinatesArray(dimensions));
     }
-    public static double[] randomCoordinatesArray(final int dimensions) {
-        final double[] randomCoordinates = new double[dimensions];
+    public static double[] randomCoordinatesArray(int dimensions) {
+        double[] randomCoordinates = new double[dimensions];
         return randomCoordinatesArray(randomCoordinates);
     }
     public static double[] randomCoordinatesArray(double[] randomCoordinates) {
@@ -644,7 +644,7 @@ public abstract class HyperassociativeMap<K,V>  {
      * @param value the input.
      * @return the inverse hyperbolic tangent of value.
      */
-    private static double atanh(final double value) {
+    private static double atanh(double value) {
         return Math.log(Math.abs((value + 1.0) / (1.0 - value))) / 2;
     }
 
@@ -663,7 +663,7 @@ public abstract class HyperassociativeMap<K,V>  {
         ArrayRealVector pointSum = newVector();
          //new HashMap();
 
-        Map<V, ArrayRealVector> c = this.coordinates;
+        Map<V, ArrayRealVector> c = coordinates;
 
         V[] vertices = this.vertices = getVertices();
 
@@ -677,7 +677,7 @@ public abstract class HyperassociativeMap<K,V>  {
 //                    for (int i = 0; i < vertices.size(); i++) {
 //            N node = vertices.get(i);
 
-            final ArrayRealVector newPosition = align(node, reusableNeighborData, vertices);
+            ArrayRealVector newPosition = align(node, reusableNeighborData, vertices);
 
             add(pointSum, newPosition);
         }
@@ -705,12 +705,12 @@ public abstract class HyperassociativeMap<K,V>  {
     }
 
 
-    private ArrayRealVector waitAndProcessFutures(final List<Future<ArrayRealVector>> futures) throws InterruptedException {
+    private ArrayRealVector waitAndProcessFutures(List<Future<ArrayRealVector>> futures) throws InterruptedException {
         // wait for all nodes to finish aligning and calculate the new center point
         ArrayRealVector pointSum = newVector();
         try {
-            for (final Future<ArrayRealVector> future : futures) {
-                final ArrayRealVector newPoint = future.get();
+            for (Future<ArrayRealVector> future : futures) {
+                ArrayRealVector newPoint = future.get();
                 //TODO use direct array
                 pointSum = pointSum.add(newPoint);
 
@@ -775,7 +775,7 @@ public abstract class HyperassociativeMap<K,V>  {
             double[] r = result.getDataRef();
             double maxDistanceSq = maxDistance*maxDistance;
             double d = 0;
-            final int l = a.length;
+            int l = a.length;
             for (int i = 0; i < l; i++) {
                 double ab = a[i] - b[i];
                 d += ab*ab;

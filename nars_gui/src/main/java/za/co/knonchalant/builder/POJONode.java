@@ -68,8 +68,8 @@ public class POJONode {
      * @param <T>          standard POJO
      * @return a table view containing the objects
      */
-    public static <T> TableView build(List<T> objects, Class<T> clazz, boolean sortable, final TableCallback<T> eventHandler) {
-        final TableView<T> table = new TableView<>();
+    public static <T> TableView build(List<T> objects, Class<T> clazz, boolean sortable, TableCallback<T> eventHandler) {
+        TableView<T> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         List<Method> getterMethods = getValidGetters(clazz);
 
@@ -86,7 +86,7 @@ public class POJONode {
         }
 
         if (eventHandler != null) {
-            final EventHandler<ActionEvent> wrappedHandler = new EventHandler<ActionEvent>() {
+            EventHandler<ActionEvent> wrappedHandler = new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
                     TableButton<T> button = (TableButton<T>) actionEvent.getSource();

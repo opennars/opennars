@@ -30,13 +30,13 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
         this.sound = sound;
         sound.setListener(this);
 
-        this.playing = new DefaultTableModel();
+        playing = new DefaultTableModel();
 
         playing.addColumn("Sound");
         playing.addColumn("Volume");
         playing.addColumn("Pan");
 
-        this.playingTable = new JTable(playing);
+        playingTable = new JTable(playing);
         add(playingTable, BorderLayout.CENTER);
 
     }

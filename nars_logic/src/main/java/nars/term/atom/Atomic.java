@@ -39,14 +39,14 @@ public abstract class Atomic implements Term, Byted {
 //    }
 
     @Override
-    public void append(final Appendable w, final boolean pretty) throws IOException {
+    public void append(Appendable w, boolean pretty) throws IOException {
         //Utf8.fromUtf8ToAppendable(bytes(), w);
         w.append(toString());
     }
 //
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     @Override
-    public StringBuilder toStringBuilder(final boolean pretty) {
+    public StringBuilder toStringBuilder(boolean pretty) {
         StringBuilder sb = new StringBuilder(toString());
 //        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
         return sb;
@@ -69,7 +69,7 @@ public abstract class Atomic implements Term, Byted {
 
 
     @Override
-    public final void recurseTerms(final SubtermVisitor v, final Term parent) {
+    public final void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
     }
 
@@ -96,7 +96,7 @@ public abstract class Atomic implements Term, Byted {
     @Override public int volume() { return 1; }
 
     @Override
-    public final boolean impossibleSubTermVolume(final int otherTermVolume) {
+    public final boolean impossibleSubTermVolume(int otherTermVolume) {
         return true;
     }
 

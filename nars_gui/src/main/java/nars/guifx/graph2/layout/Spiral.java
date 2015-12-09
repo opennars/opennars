@@ -11,8 +11,8 @@ public class Spiral extends Linear {
     @Override
     public void setPosition(TermNode v, int i, int max) {
         double minR = 200;
-        final double dr = 15;
-        final double dt = 0.2;
+        double dr = 15;
+        double dt = 0.2;
         //double p = (i / ((double)max));
         double r = minR + i * dr;
         double theta = i * dt;

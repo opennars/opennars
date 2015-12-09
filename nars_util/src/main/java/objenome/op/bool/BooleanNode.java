@@ -19,7 +19,7 @@ public abstract class BooleanNode<N extends Node> extends Node<N, Boolean> {
     /** returns the constant (literal) boolean value (0 = false, 1 = true) of a child, if it exists.
      * return -1 if the child is not a literal
      */
-    public int getChildConstantValue(final int childNum) {
+    public int getChildConstantValue(int childNum) {
         Node c = getChild(childNum);
         if (c instanceof Literal) {
             boolean b = (Boolean)c.evaluate();

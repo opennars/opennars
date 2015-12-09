@@ -16,8 +16,8 @@ public class ImagePanel extends JComponent {
     public ImagePanel(int width, int height) {
         super();
 
-        this.w = width;
-        this.h = height;
+        w = width;
+        h = height;
 
         setDoubleBuffered(true);
         setIgnoreRepaint(true);
@@ -39,7 +39,7 @@ public class ImagePanel extends JComponent {
         return null;
     }
 
-    public void setImage(final BufferedImage image) {
+    public void setImage(BufferedImage image) {
         this.image = image;
         repaint();
     }

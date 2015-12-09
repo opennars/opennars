@@ -108,20 +108,20 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        final MersenneTwisterFast f = (MersenneTwisterFast) (super.clone());
+        MersenneTwisterFast f = (MersenneTwisterFast) (super.clone());
         f.mt = mt.clone();
         f.mag01 = mag01.clone();
         return f;
     }
 
-    public boolean stateEquals(final Object o) {
+    public boolean stateEquals(Object o) {
         if (o == this) {
             return true;
         }
         if (!(o instanceof MersenneTwisterFast)) {
             return false;
         }
-        final MersenneTwisterFast other = (MersenneTwisterFast) o;
+        MersenneTwisterFast other = (MersenneTwisterFast) o;
         if (mti != other.mti) {
             return false;
         }
@@ -144,7 +144,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * @param stream input stream
      * @throws IOException exception from stream reading
      */
-    public void readState(final DataInputStream stream) throws IOException {
+    public void readState(DataInputStream stream) throws IOException {
         int len = mt.length;
         for (int x = 0; x < len; x++) {
             mt[x] = stream.readInt();
@@ -166,7 +166,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * @param stream output stream
      * @throws IOException exception from stream reading
      */
-    public void writeState(final DataOutputStream stream) throws IOException {
+    public void writeState(DataOutputStream stream) throws IOException {
         int len = mt.length;
         for (int x = 0; x < len; x++) {
             stream.writeInt(mt[x]);
@@ -195,7 +195,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      *
      * @param seed seed
      */
-    public MersenneTwisterFast(final long seed) {
+    public MersenneTwisterFast(long seed) {
         setSeed(seed);
     }
 
@@ -207,7 +207,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      *
      * @param array seed array
      */
-    public MersenneTwisterFast(final int[] array) {
+    public MersenneTwisterFast(int[] array) {
         setSeed(array);
     }
 
@@ -217,7 +217,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * for its seed).
      */
     @Override
-    public synchronized void setSeed(final long seed) {
+    public synchronized void setSeed(long seed) {
         // Due to a bug in java.util.Random clear up to 1.2, we're
         // doing our own Gaussian variable.
         __haveNextNextGaussian = false;
@@ -246,7 +246,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * array are used; if the array is shorter than this then integers are
      * repeatedly used in a wrap-around fashion.
      */
-    public synchronized void setSeed(final int[] array) {
+    public synchronized void setSeed(int[] array) {
         if (array.length == 0) {
             throw new IllegalArgumentException("Array length must be greater than zero");
         }
@@ -298,8 +298,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -330,8 +330,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -362,8 +362,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -395,8 +395,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -431,7 +431,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * @param probability flip probability
      * @return next boolean
      */
-    public final boolean nextBoolean(final float probability) {
+    public final boolean nextBoolean(float probability) {
         int y;
 
         if ((probability < 0.0f) || (probability > 1.0f)) {
@@ -446,8 +446,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -477,7 +477,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * returning true, else returning false. <code>probability</code> must be
      * between 0.0 and 1.0, inclusive.
      */
-    public final boolean nextBoolean(final double probability) {
+    public final boolean nextBoolean(double probability) {
         int y;
         int z;
 
@@ -493,8 +493,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -519,8 +519,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -552,8 +552,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -578,15 +578,15 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         return (byte) (y >>> 24);
     }
 
-    public final void nextBytes(final byte[] bytes) {
+    public final void nextBytes(byte[] bytes) {
         int y;
 
         for (int x = 0; x < bytes.length; x++) {
             if (mti >= N) // generate N words at one time
             {
                 int kk;
-                final int[] mt = this.mt; // locals are slightly faster
-                final int[] mag01 = this.mag01; // locals are slightly faster
+                int[] mt = this.mt; // locals are slightly faster
+                int[] mag01 = this.mag01; // locals are slightly faster
 
                 for (kk = 0; kk < (N - M); kk++) {
                     y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -620,8 +620,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -646,8 +646,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -680,7 +680,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * @return next long
      */
     @Override
-    public final long nextLong(final long n) {
+    public final long nextLong(long n) {
         if (n <= 0) {
             throw new IllegalArgumentException("n must be positive");
         }
@@ -693,8 +693,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
             if (mti >= N) // generate N words at one time
             {
                 int kk;
-                final int[] mt = this.mt; // locals are slightly faster
-                final int[] mag01 = this.mag01; // locals are slightly faster
+                int[] mt = this.mt; // locals are slightly faster
+                int[] mag01 = this.mag01; // locals are slightly faster
 
                 for (kk = 0; kk < (N - M); kk++) {
                     y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -719,8 +719,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
             if (mti >= N) // generate N words at one time
             {
                 int kk;
-                final int[] mt = this.mt; // locals are slightly faster
-                final int[] mag01 = this.mag01; // locals are slightly faster
+                int[] mt = this.mt; // locals are slightly faster
+                int[] mag01 = this.mag01; // locals are slightly faster
 
                 for (kk = 0; kk < (N - M); kk++) {
                     z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -760,8 +760,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -786,8 +786,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -828,8 +828,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
                 if (mti >= N) // generate N words at one time
                 {
                     int kk;
-                    final int[] mt = this.mt; // locals are slightly faster
-                    final int[] mag01 = this.mag01; // locals are slightly
+                    int[] mt = this.mt; // locals are slightly faster
+                    int[] mag01 = this.mag01; // locals are slightly
                     // faster
 
                     for (kk = 0; kk < (N - M); kk++) {
@@ -855,8 +855,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
                 if (mti >= N) // generate N words at one time
                 {
                     int kk;
-                    final int[] mt = this.mt; // locals are slightly faster
-                    final int[] mag01 = this.mag01; // locals are slightly
+                    int[] mt = this.mt; // locals are slightly faster
+                    int[] mag01 = this.mag01; // locals are slightly
                     // faster
 
                     for (kk = 0; kk < (N - M); kk++) {
@@ -882,8 +882,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
                 if (mti >= N) // generate N words at one time
                 {
                     int kk;
-                    final int[] mt = this.mt; // locals are slightly faster
-                    final int[] mag01 = this.mag01; // locals are slightly
+                    int[] mt = this.mt; // locals are slightly faster
+                    int[] mag01 = this.mag01; // locals are slightly
                     // faster
 
                     for (kk = 0; kk < (N - M); kk++) {
@@ -909,8 +909,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
                 if (mti >= N) // generate N words at one time
                 {
                     int kk;
-                    final int[] mt = this.mt; // locals are slightly faster
-                    final int[] mag01 = this.mag01; // locals are slightly
+                    int[] mt = this.mt; // locals are slightly faster
+                    int[] mag01 = this.mag01; // locals are slightly
                     // faster
 
                     for (kk = 0; kk < (N - M); kk++) {
@@ -941,7 +941,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
                 v2 = (2 * (((((long) (a >>> 6)) << 27) + (b >>> 5)) / (double) (1L << 53))) - 1;
                 s = (v1 * v1) + (v2 * v2);
             } while ((s >= 1) || (s == 0));
-            final double multiplier = /* Strict */ Math.sqrt((-2 * /* Strict */ Math.log(s)) / s);
+            double multiplier = /* Strict */ Math.sqrt((-2 * /* Strict */ Math.log(s)) / s);
             __nextNextGaussian = v2 * multiplier;
             __haveNextNextGaussian = true;
             return v1 * multiplier;
@@ -960,8 +960,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (mti >= N) // generate N words at one time
         {
             int kk;
-            final int[] mt = this.mt; // locals are slightly faster
-            final int[] mag01 = this.mag01; // locals are slightly faster
+            int[] mt = this.mt; // locals are slightly faster
+            int[] mag01 = this.mag01; // locals are slightly faster
 
             for (kk = 0; kk < (N - M); kk++) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -991,7 +991,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      * must be > 0, or an IllegalArgumentException is raised.
      */
     @Override
-    public final int nextInt(final int n) {
+    public final int nextInt(int n) {
         if (n < 0) {
             throw new IllegalArgumentException("n must be positive or zero");
         }
@@ -1007,8 +1007,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
             if (mti >= N) // generate N words at one time
             {
                 int kk;
-                final int[] mt = this.mt; // locals are slightly faster
-                final int[] mag01 = this.mag01; // locals are slightly faster
+                int[] mt = this.mt; // locals are slightly faster
+                int[] mag01 = this.mag01; // locals are slightly faster
 
                 for (kk = 0; kk < (N - M); kk++) {
                     y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
@@ -1040,8 +1040,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
             if (mti >= N) // generate N words at one time
             {
                 int kk;
-                final int[] mt = this.mt; // locals are slightly faster
-                final int[] mag01 = this.mag01; // locals are slightly faster
+                int[] mt = this.mt; // locals are slightly faster
+                int[] mag01 = this.mag01; // locals are slightly faster
 
                 for (kk = 0; kk < (N - M); kk++) {
                     y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);

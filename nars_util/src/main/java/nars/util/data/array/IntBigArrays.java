@@ -93,7 +93,7 @@ public class IntBigArrays {
      * @param index a position in the big array.
      * @return the element of the big array at the specified position.
      */
-    public static int get(final int[][] array, final long index) {
+    public static int get(int[][] array, long index) {
         return array[segment(index)][displacement(index)];
     }
 
@@ -103,7 +103,7 @@ public class IntBigArrays {
      * @param array a big array.
      * @param index a position in the big array.
      */
-    public static void set(final int[][] array, final long index, int value) {
+    public static void set(int[][] array, long index, int value) {
         array[segment(index)][displacement(index)] = value;
     }
 
@@ -114,8 +114,8 @@ public class IntBigArrays {
      * @param first  a position in the big array.
      * @param second a position in the big array.
      */
-    public static void swap(final int[][] array, final long first, final long second) {
-        final int t = array[segment(first)][displacement(first)];
+    public static void swap(int[][] array, long first, long second) {
+        int t = array[segment(first)][displacement(first)];
         array[segment(first)][displacement(first)] = array[segment(second)][displacement(second)];
         array[segment(second)][displacement(second)] = t;
     }
@@ -127,7 +127,7 @@ public class IntBigArrays {
      * @param index a position in the big array.
      * @param incr  the increment
      */
-    public static void add(final int[][] array, final long index, int incr) {
+    public static void add(int[][] array, long index, int incr) {
         array[segment(index)][displacement(index)] += incr;
     }
 
@@ -138,7 +138,7 @@ public class IntBigArrays {
      * @param index  a position in the big array.
      * @param factor the factor
      */
-    public static void mul(final int[][] array, final long index, int factor) {
+    public static void mul(int[][] array, long index, int factor) {
         array[segment(index)][displacement(index)] *= factor;
     }
 
@@ -148,7 +148,7 @@ public class IntBigArrays {
      * @param array a big array.
      * @param index a position in the big array.
      */
-    public static void incr(final int[][] array, final long index) {
+    public static void incr(int[][] array, long index) {
         array[segment(index)][displacement(index)]++;
     }
 
@@ -158,7 +158,7 @@ public class IntBigArrays {
      * @param array a big array.
      * @param index a position in the big array.
      */
-    public static void decr(final int[][] array, final long index) {
+    public static void decr(int[][] array, long index) {
         array[segment(index)][displacement(index)]--;
     }
 
@@ -168,8 +168,8 @@ public class IntBigArrays {
      * @param array a big array.
      * @return the length of the given big array.
      */
-    public static long length(final int[][] array) {
-        final int length = array.length;
+    public static long length(int[][] array) {
+        int length = array.length;
         return length == 0 ? 0 : start(length - 1) + array[length - 1].length;
     }
 
@@ -183,7 +183,7 @@ public class IntBigArrays {
      * @param destPos   the starting position in the destination data.
      * @param length    the number of elements to be copied.
      */
-    public static void copy(final int[][] srcArray, final long srcPos, final int[][] destArray, final long destPos, long length) {
+    public static void copy(int[][] srcArray, long srcPos, int[][] destArray, long destPos, long length) {
         if (destPos <= srcPos) {
             int srcSegment = segment(srcPos);
             int destSegment = segment(destPos);
@@ -236,7 +236,7 @@ public class IntBigArrays {
      * @param destPos   the starting position in the destination data.
      * @param length    the number of elements to be copied.
      */
-    public static void copyFromBig(final int[][] srcArray, final long srcPos, final int[] destArray, int destPos, int length) {
+    public static void copyFromBig(int[][] srcArray, long srcPos, int[] destArray, int destPos, int length) {
         int srcSegment = segment(srcPos);
         int srcDispl = displacement(srcPos);
         int l;
@@ -261,7 +261,7 @@ public class IntBigArrays {
      * @param destPos   the starting position in the destination data.
      * @param length    the number of elements to be copied.
      */
-    public static void copyToBig(final int[] srcArray, int srcPos, final int[][] destArray, final long destPos, long length) {
+    public static void copyToBig(int[] srcArray, int srcPos, int[][] destArray, long destPos, long length) {
         int destSegment = segment(destPos);
         int destDispl = displacement(destPos);
         int l;
@@ -283,11 +283,11 @@ public class IntBigArrays {
      * @param length the length of the new big array.
      * @return a new big array of given length.
      */
-    public static int[][] newBigArray(final long length) {
+    public static int[][] newBigArray(long length) {
         if (length == 0) return EMPTY_BIG_ARRAY;
-        final int baseLength = (int) ((length + SEGMENT_MASK) / SEGMENT_SIZE);
+        int baseLength = (int) ((length + SEGMENT_MASK) / SEGMENT_SIZE);
         int[][] base = new int[baseLength][];
-        final int residual = (int) (length & SEGMENT_MASK);
+        int residual = (int) (length & SEGMENT_MASK);
         if (residual != 0) {
             for (int i = 0; i < baseLength - 1; i++) base[i] = new int[SEGMENT_SIZE];
             base[baseLength - 1] = new int[residual];
@@ -303,10 +303,10 @@ public class IntBigArrays {
      * @param array an array.
      * @return a new big array with the same length and content of <code>array</code>.
      */
-    public static int[][] wrap(final int[] array) {
+    public static int[][] wrap(int[] array) {
         if (array.length == 0) return EMPTY_BIG_ARRAY;
         if (array.length <= SEGMENT_SIZE) return new int[][]{array};
-        final int[][] bigArray = newBigArray(array.length);
+        int[][] bigArray = newBigArray(array.length);
         for (int i = 0; i < bigArray.length; i++)
             System.arraycopy(array, (int) start(i), bigArray[i], 0, bigArray[i].length);
         return bigArray;
@@ -327,7 +327,7 @@ public class IntBigArrays {
      * a big array with <code>length</code> entries whose first <code>length(array)</code>
      * entries are the same as those of <code>array</code>.
      */
-    public static int[][] ensureCapacity(final int[][] array, final long length) {
+    public static int[][] ensureCapacity(int[][] array, long length) {
         return ensureCapacity(array, length, length(array));
     }
 
@@ -344,13 +344,13 @@ public class IntBigArrays {
      * a big array with <code>length</code> entries whose first <code>preserve</code>
      * entries are the same as those of <code>array</code>.
      */
-    public static int[][] ensureCapacity(final int[][] array, final long length, final long preserve) {
-        final long oldLength = length(array);
+    public static int[][] ensureCapacity(int[][] array, long length, long preserve) {
+        long oldLength = length(array);
         if (length > oldLength) {
-            final int valid = array.length - (array.length == 0 || array.length > 0 && array[array.length - 1].length == SEGMENT_SIZE ? 0 : 1);
-            final int baseLength = (int) ((length + SEGMENT_MASK) / SEGMENT_SIZE);
-            final int[][] base = Arrays.copyOf(array, baseLength);
-            final int residual = (int) (length & SEGMENT_MASK);
+            int valid = array.length - (array.length == 0 || array.length > 0 && array[array.length - 1].length == SEGMENT_SIZE ? 0 : 1);
+            int baseLength = (int) ((length + SEGMENT_MASK) / SEGMENT_SIZE);
+            int[][] base = Arrays.copyOf(array, baseLength);
+            int residual = (int) (length & SEGMENT_MASK);
             if (residual != 0) {
                 for (int i = valid; i < baseLength - 1; i++) base[i] = new int[SEGMENT_SIZE];
                 base[baseLength - 1] = new int[residual];
@@ -381,8 +381,8 @@ public class IntBigArrays {
      * max(<code>length</code>,<code>length(array)</code>/&phi;) entries whose first
      * <code>length(array)</code> entries are the same as those of <code>array</code>.
      */
-    public static int[][] grow(final int[][] array, final long length) {
-        final long oldLength = length(array);
+    public static int[][] grow(int[][] array, long length) {
+        long oldLength = length(array);
         return length > oldLength ? grow(array, length, oldLength) : array;
     }
 
@@ -406,8 +406,8 @@ public class IntBigArrays {
      * max(<code>length</code>,<code>length(array)</code>/&phi;) entries whose first
      * <code>preserve</code> entries are the same as those of <code>array</code>.
      */
-    public static int[][] grow(final int[][] array, final long length, final long preserve) {
-        final long oldLength = length(array);
+    public static int[][] grow(int[][] array, long length, long preserve) {
+        long oldLength = length(array);
         return length > oldLength ? ensureCapacity(array, Math.max((ONEOVERPHI * oldLength) >>> 16, length), preserve) : array;
     }
 
@@ -424,12 +424,12 @@ public class IntBigArrays {
      * <code>length</code> entries whose entries are the same as
      * the first <code>length</code> entries of <code>array</code>.
      */
-    public static int[][] trim(final int[][] array, final long length) {
-        final long oldLength = length(array);
+    public static int[][] trim(int[][] array, long length) {
+        long oldLength = length(array);
         if (length >= oldLength) return array;
-        final int baseLength = (int) ((length + SEGMENT_MASK) / SEGMENT_SIZE);
-        final int[][] base = Arrays.copyOf(array, baseLength);
-        final int residual = (int) (length & SEGMENT_MASK);
+        int baseLength = (int) ((length + SEGMENT_MASK) / SEGMENT_SIZE);
+        int[][] base = Arrays.copyOf(array, baseLength);
+        int residual = (int) (length & SEGMENT_MASK);
         if (residual != 0) base[baseLength - 1] = IntArrays.trim(base[baseLength - 1], residual);
         return base;
     }
@@ -450,8 +450,8 @@ public class IntBigArrays {
      * whose first <code>length(array)</code> entries are the same as those of
      * <code>array</code>.
      */
-    public static int[][] setLength(final int[][] array, final long length) {
-        final long oldLength = length(array);
+    public static int[][] setLength(int[][] array, long length) {
+        long oldLength = length(array);
         if (length == oldLength) return array;
         if (length < oldLength) return trim(array, length);
         return ensureCapacity(array, length);
@@ -465,9 +465,9 @@ public class IntBigArrays {
      * @param length the number of elements to copy.
      * @return a new big array containing <code>length</code> elements of <code>array</code> starting at <code>offset</code>.
      */
-    public static int[][] copy(final int[][] array, final long offset, final long length) {
+    public static int[][] copy(int[][] array, long offset, long length) {
         ensureOffsetLength(array, offset, length);
-        final int[][] a =
+        int[][] a =
                 newBigArray(length);
         copy(array, offset, a, 0, length);
         return a;
@@ -479,8 +479,8 @@ public class IntBigArrays {
      * @param array a big array.
      * @return a copy of <code>array</code>.
      */
-    public static int[][] copy(final int[][] array) {
-        final int[][] base = array.clone();
+    public static int[][] copy(int[][] array) {
+        int[][] base = array.clone();
         for (int i = base.length; i-- != 0; ) base[i] = array[i].clone();
         return base;
     }
@@ -494,7 +494,7 @@ public class IntBigArrays {
      * @param array a big array.
      * @param value the new value for all elements of the big array.
      */
-    public static void fill(final int[][] array, final int value) {
+    public static void fill(int[][] array, int value) {
         for (int i = array.length; i-- != 0; ) Arrays.fill(array[i], value);
     }
 
@@ -510,8 +510,8 @@ public class IntBigArrays {
      * @param to    the end index of the portion to fill.
      * @param value the new value for all elements of the specified portion of the big array.
      */
-    public static void fill(final int[][] array, final long from, long to, final int value) {
-        final long length = length(array);
+    public static void fill(int[][] array, long from, long to, int value) {
+        long length = length(array);
         BigArrays.ensureFromTo(length, from, to);
         int fromSegment = segment(from);
         int toSegment = segment(to);
@@ -536,7 +536,7 @@ public class IntBigArrays {
      * @param a2 another big array.
      * @return true if the two big arrays are of the same length, and their elements are equal.
      */
-    public static boolean equals(final int[][] a1, final int[][] a2) {
+    public static boolean equals(int[][] a1, int[][] a2) {
         if (length(a1) != length(a2)) return false;
         int i = a1.length, j;
         int[] t, u;
@@ -555,11 +555,11 @@ public class IntBigArrays {
         * @param a the big array whose string representation to return.
         * @return the string representation of <code>a</code>.
         */
-    public static String toString(final int[][] a) {
+    public static String toString(int[][] a) {
         if (a == null) return "null";
-        final long last = length(a) - 1;
+        long last = length(a) - 1;
         if (last == -1) return "[]";
-        final StringBuilder b = new StringBuilder();
+        StringBuilder b = new StringBuilder();
         b.append('[');
         for (long i = 0; ; i++) {
             b.append(String.valueOf(get(a, i)));
@@ -579,7 +579,7 @@ public class IntBigArrays {
      * @throws IllegalArgumentException       if <code>from</code> is greater than <code>to</code>.
      * @throws ArrayIndexOutOfBoundsException if <code>from</code> or <code>to</code> are greater than the big array length or negative.
      */
-    public static void ensureFromTo(final int[][] a, final long from, final long to) {
+    public static void ensureFromTo(int[][] a, long from, long to) {
         BigArrays.ensureFromTo(length(a), from, to);
     }
 
@@ -594,7 +594,7 @@ public class IntBigArrays {
      * @throws IllegalArgumentException       if <code>length</code> is negative.
      * @throws ArrayIndexOutOfBoundsException if <code>offset</code> is negative or <code>offset</code>+<code>length</code> is greater than the big array length.
      */
-    public static void ensureOffsetLength(final int[][] a, final long offset, final long length) {
+    public static void ensureOffsetLength(int[][] a, long offset, long length) {
         BigArrays.ensureOffsetLength(length(a), offset, length);
     }
 
@@ -625,11 +625,11 @@ public class IntBigArrays {
     private static final int SMALL = 7;
     private static final int MEDIUM = 40;
 
-    private static void vecSwap(final int[][] x, long a, long b, final long n) {
+    private static void vecSwap(int[][] x, long a, long b, long n) {
         for (int i = 0; i < n; i++, a++, b++) swap(x, a, b);
     }
 
-    private static long med3(final int[][] x, final long a, final long b, final long c, IntComparator comp) {
+    private static long med3(int[][] x, long a, long b, long c, IntComparator comp) {
         int ab = comp.compare(get(x, a), get(x, b));
         int ac = comp.compare(get(x, a), get(x, c));
         int bc = comp.compare(get(x, b), get(x, c));
@@ -651,8 +651,8 @@ public class IntBigArrays {
      * @param to   the index of the last element (exclusive) to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void quickSort(final int[][] x, final long from, final long to, final IntComparator comp) {
-        final long len = to - from;
+    public static void quickSort(int[][] x, long from, long to, IntComparator comp) {
+        long len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
             for (long i = from; i < to; i++)
@@ -672,7 +672,7 @@ public class IntBigArrays {
             }
             m = med3(x, l, m, n, comp); // Mid-size, med of 3
         }
-        final int v = get(x, m);
+        int v = get(x, m);
         // Establish Invariant: v* (<v)* (>v)* v*
         long a = from, b = a, c = to - 1, d = c;
         while (true) {
@@ -700,7 +700,7 @@ public class IntBigArrays {
     }
 
     @SuppressWarnings("unchecked")
-    private static long med3(final int[][] x, final long a, final long b, final long c) {
+    private static long med3(int[][] x, long a, long b, long c) {
         int ab = ((get(x, a)) < (get(x, b)) ? -1 : ((get(x, a)) == (get(x, b)) ? 0 : 1));
         int ac = ((get(x, a)) < (get(x, c)) ? -1 : ((get(x, a)) == (get(x, c)) ? 0 : 1));
         int bc = ((get(x, b)) < (get(x, c)) ? -1 : ((get(x, b)) == (get(x, c)) ? 0 : 1));
@@ -720,7 +720,7 @@ public class IntBigArrays {
      * @param x    the big array to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void quickSort(final int[][] x, final IntComparator comp) {
+    public static void quickSort(int[][] x, IntComparator comp) {
         quickSort(x, 0, IntBigArrays.length(x), comp);
     }
 
@@ -736,8 +736,8 @@ public class IntBigArrays {
      * @param to   the index of the last element (exclusive) to be sorted.
      */
     @SuppressWarnings("unchecked")
-    public static void quickSort(final int[][] x, final long from, final long to) {
-        final long len = to - from;
+    public static void quickSort(int[][] x, long from, long to) {
+        long len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
             for (long i = from; i < to; i++)
@@ -758,7 +758,7 @@ public class IntBigArrays {
             }
             m = med3(x, l, m, n); // Mid-size, med of 3
         }
-        final int v = get(x, m);
+        int v = get(x, m);
         // Establish Invariant: v* (<v)* (>v)* v*
         long a = from, b = a, c = to - 1, d = c;
         while (true) {
@@ -795,7 +795,7 @@ public class IntBigArrays {
      * @param x the big array to be sorted.
      */
     @SuppressWarnings("unchecked")
-    public static void quickSort(final int[][] x) {
+    public static void quickSort(int[][] x) {
         quickSort(x, 0, IntBigArrays.length(x));
     }
 
@@ -820,10 +820,10 @@ public class IntBigArrays {
      * @see java.util.Arrays
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static long binarySearch(final int[][] a, long from, long to, final int key) {
+    public static long binarySearch(int[][] a, long from, long to, int key) {
         int midVal;
         while (from <= to) {
-            final long mid = (from + to) >>> 1;
+            long mid = (from + to) >>> 1;
             midVal = get(a, mid);
             if (midVal < key) from = mid + 1;
             else if (midVal > key) to = mid - 1;
@@ -850,7 +850,7 @@ public class IntBigArrays {
      * and only if the key is found.
      * @see java.util.Arrays
      */
-    public static long binarySearch(final int[][] a, final int key) {
+    public static long binarySearch(int[][] a, int key) {
         return binarySearch(a, 0, IntBigArrays.length(a), key);
     }
 
@@ -875,12 +875,12 @@ public class IntBigArrays {
      * and only if the key is found.
      * @see java.util.Arrays
      */
-    public static long binarySearch(final int[][] a, long from, long to, final int key, final IntComparator c) {
+    public static long binarySearch(int[][] a, long from, long to, int key, IntComparator c) {
         int midVal;
         while (from <= to) {
-            final long mid = (from + to) >>> 1;
+            long mid = (from + to) >>> 1;
             midVal = get(a, mid);
-            final int cmp = c.compare(midVal, key);
+            int cmp = c.compare(midVal, key);
             if (cmp < 0) from = mid + 1;
             else if (cmp > 0) to = mid - 1;
             else return mid; // key found
@@ -907,7 +907,7 @@ public class IntBigArrays {
      * and only if the key is found.
      * @see java.util.Arrays
      */
-    public static long binarySearch(final int[][] a, final int key, final IntComparator c) {
+    public static long binarySearch(int[][] a, int key, IntComparator c) {
         return binarySearch(a, 0, IntBigArrays.length(a), key, c);
     }
 }

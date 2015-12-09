@@ -41,12 +41,12 @@ public class DirectArrayList<E> extends ArrayList<E> {
     }
 
     //data may need updated with update() after call because it has ben
-    public boolean fastAdd(final E e) {
+    public boolean fastAdd(E e) {
         return super.add(e);
     }
 
     @Override
-    public boolean add(final E e) {
+    public boolean add(E e) {
 
         boolean b = super.add(e);
         if (autoupdateData) {

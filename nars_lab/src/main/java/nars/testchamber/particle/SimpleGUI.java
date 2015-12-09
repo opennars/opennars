@@ -52,13 +52,13 @@ public class SimpleGUI extends JFrame{
 	    runB = new JButton("RUN");
 	    runBHandler = new RunButtonHandler();
 		runB.addActionListener(runBHandler);
-		
-		this.setTitle("Particle Simulation Program");
+
+		setTitle("Particle Simulation Program");
 		
 		versionList.setSelectedItem("v7");
 
 		
-		Container pane = this.getContentPane();
+		Container pane = getContentPane();
 		pane.setLayout(new GridLayout(4,2));
 		
 		pane.add(particlenumberL);
@@ -69,11 +69,11 @@ public class SimpleGUI extends JFrame{
 		pane.add(tileTF);
 		pane.add(versionList);
 		pane.add(runB);
-		
-		this.setSize(WIDTH, HEIGHT);
-		this.setFocusable(true);
-		this.setVisible(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+		setSize(WIDTH, HEIGHT);
+		setFocusable(true);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	    
 	}
 	

@@ -23,11 +23,11 @@ public class GenericBuilder<E> implements Builder, Interceptor<E> {
 
         try {
 
-            this.method = FindMethod.getMethod(factory.getClass(), methodName, new Class[]{});
+            method = FindMethod.getMethod(factory.getClass(), methodName, new Class[]{});
 
-            this.method.setAccessible(true);
+            method.setAccessible(true);
 
-            this.type = method.getReturnType();
+            type = method.getReturnType();
 
         } catch (Exception e) {
 

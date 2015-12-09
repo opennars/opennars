@@ -47,7 +47,7 @@ public class Arrays {
 	 * @throws IllegalArgumentException if <code>from</code> is greater than <code>to</code>.
 	 * @throws ArrayIndexOutOfBoundsException if <code>from</code> or <code>to</code> are greater than <code>arrayLength</code> or negative.
 	 */
-	public static void ensureFromTo( final int arrayLength, final int from, final int to ) {
+	public static void ensureFromTo( int arrayLength, int from, int to ) {
 		if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
 		if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
 		if ( to > arrayLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than array length (" + arrayLength + ')');
@@ -63,7 +63,7 @@ public class Arrays {
 	 * @throws IllegalArgumentException if <code>length</code> is negative.
 	 * @throws ArrayIndexOutOfBoundsException if <code>offset</code> is negative or <code>offset</code>+<code>length</code> is greater than <code>arrayLength</code>.
 	 */
-	public static void ensureOffsetLength( final int arrayLength, final int offset, final int length ) {
+	public static void ensureOffsetLength( int arrayLength, int offset, int length ) {
 		if ( offset < 0 ) throw new ArrayIndexOutOfBoundsException( "Offset (" + offset + ") is negative" );
 		if ( length < 0 ) throw new IllegalArgumentException( "Length (" + length + ") is negative" );
 		if ( offset + length > arrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than array length (" + arrayLength + ')');
@@ -78,7 +78,7 @@ public class Arrays {
 	 * <code>[first, last)</code>. Elements in the first input range will precede equal elements in
 	 * the second.
 	 */
-	private static void inPlaceMerge( final int from, int mid, final int to, final IntComparator comp, final Swapper swapper ) {
+	private static void inPlaceMerge( int from, int mid, int to, IntComparator comp, Swapper swapper ) {
 		if ( from >= mid || mid >= to ) return;
 		if ( to - from == 2 ) {
 			if ( comp.compare( mid, from ) < 0 ) {
@@ -132,7 +132,7 @@ public class Arrays {
 	 * @return The largest index i such that, for every j in the range <code>[first, i)</code>,
 	 * <code>comp.apply(array[j], x)</code> is <code>true</code>.
 	 */
-	private static int lowerBound( int mid, final int to, final int firstCut, final IntComparator comp ) {
+	private static int lowerBound( int mid, int to, int firstCut, IntComparator comp ) {
 		// if (comp==null) throw new NullPointerException();
 		int len = to - mid;
 		while ( len > 0 ) {
@@ -152,7 +152,7 @@ public class Arrays {
 	/**
 	 * Returns the index of the median of the three indexed chars.
 	 */
-	private static int med3( final int a, final int b, final int c, final IntComparator comp ) {
+	private static int med3( int a, int b, int c, IntComparator comp ) {
 		int ab = comp.compare( a, b );
 		int ac = comp.compare( a, c );
 		int bc = comp.compare( b, c );
@@ -173,7 +173,7 @@ public class Arrays {
 	 * @param c the comparator to determine the order of the generic data (arguments are positions).
 	 * @param swapper an object that knows how to swap the elements at any two positions.
 	 */
-	public static void mergeSort( final int from, final int to, final IntComparator c, final Swapper swapper ) {
+	public static void mergeSort( int from, int to, IntComparator c, Swapper swapper ) {
 		/*
 		 * We retain the same method signature as quickSort. Given only a comparator and swapper we
 		 * do not know how to copy and move elements from/to temporary arrays. Hence, in contrast to
@@ -181,7 +181,7 @@ public class Arrays {
 		 * arrays. A non-inplace mergesort would perhaps be faster in most cases, but would require
 		 * non-intuitive delegate objects...
 		 */
-		final int length = to - from;
+		int length = to - from;
 
 		// Insertion sort on smallest arrays
 		if ( length < SMALL ) {
@@ -219,8 +219,8 @@ public class Arrays {
 	 * @param swapper an object that knows how to swap the elements at any two positions.
 	 * 
 	 */
-	public static void quickSort( final int from, final int to, final IntComparator comp, final Swapper swapper ) {
-		final int len = to - from;
+	public static void quickSort( int from, int to, IntComparator comp, Swapper swapper ) {
+		int len = to - from;
 		// Insertion sort on smallest arrays
 		if ( len < SMALL ) {
 			for ( int i = from; i < to; i++ )
@@ -299,7 +299,7 @@ public class Arrays {
 	 * @return The largest index i such that, for every j in the range <code>[first, i)</code>,
 	 * <code>comp.apply(x, array[j])</code> is <code>false</code>.
 	 */
-	private static int upperBound( int from, final int mid, final int secondCut, final IntComparator comp ) {
+	private static int upperBound( int from, int mid, int secondCut, IntComparator comp ) {
 		// if (comp==null) throw new NullPointerException();
 		int len = mid - from;
 		while ( len > 0 ) {
@@ -319,24 +319,24 @@ public class Arrays {
 	/**
 	 * Swaps x[a .. (a+n-1)] with x[b .. (b+n-1)].
 	 */
-	private static void vecSwap( final Swapper swapper, int from, int l, final int s ) {
+	private static void vecSwap( Swapper swapper, int from, int l, int s ) {
 		for ( int i = 0; i < s; i++, from++, l++ ) swapper.swap( from, l );
 	}
 
-	public static void shuffle(final int[] array, final Random random) {
+	public static void shuffle(int[] array, Random random) {
 		shuffle(array, array.length, random);
 	}
 
-	public static void shuffle(final int[] array, int len, final Random random) {
+	public static void shuffle(int[] array, int len, Random random) {
 
 		//probabality for no shuffle at all:
 		if (random.nextInt(factorial(len)) == 0) return;
 
         for (int i = len; i > 1; i--) {
-            final int a = i - 1;
-            final int b = random.nextInt(i);
+            int a = i - 1;
+            int b = random.nextInt(i);
             if (b != a) {
-                final int t = array[b];
+                int t = array[b];
                 array[b] = array[a];
                 array[a] = t;
             }

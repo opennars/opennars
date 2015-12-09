@@ -14,7 +14,7 @@ public abstract class AbstractSetN<T extends Term> extends CompoundN<T> implemen
      * @param arg The component list of the term
      */
     @SafeVarargs
-    protected AbstractSetN(final T... arg) {
+    protected AbstractSetN(T... arg) {
         super(arg);
     }
 

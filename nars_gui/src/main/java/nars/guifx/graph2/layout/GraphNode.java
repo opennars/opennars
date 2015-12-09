@@ -24,7 +24,7 @@ public class GraphNode extends Group {
 	}
 
 	public void scale(double scale) {
-		this.scaled = scale;
+		scaled = scale;
 
 
 		setScaleX(scale);
@@ -39,52 +39,52 @@ public class GraphNode extends Group {
 	}
 
 
-	public final void getPosition(final double[] v) {
+	public final void getPosition(double[] v) {
 		v[0] = tx;
 		v[1] = ty;
 	}
 
 	//Point2D sceneCoord;// = new Point2D(0,0);
 
-	public GraphNode move(final double x, final double y) {
-		setTranslateX(this.tx = x);
-		setTranslateY(this.ty = y);
+	public GraphNode move(double x, double y) {
+		setTranslateX(tx = x);
+		setTranslateY(ty = y);
 
 		//sceneCoord = null;
 		return this;
 	}
 
-	public final void move(final double[] v, final double speed, final double threshold) {
+	public final void move(double[] v, double speed, double threshold) {
 		move(v[0], v[1], speed, threshold);
 	}
 
-	public final void move(final double v0, final double v1, final double speed) {
-		final double px = tx;
-		final double py = ty;
-		final double momentum = 1.0f - speed;
-		final double nx = v0 * speed + px * momentum;
-		final double ny = v1 * speed + py * momentum;
+	public final void move(double v0, double v1, double speed) {
+		double px = tx;
+		double py = ty;
+		double momentum = 1.0f - speed;
+		double nx = v0 * speed + px * momentum;
+		double ny = v1 * speed + py * momentum;
 		move(nx, ny);
 	}
 
-	public final void move(final double v0, final double v1, final double speed, final double threshold) {
-		final double px = tx;
-		final double py = ty;
-		final double momentum = 1.0f - speed;
-		final double nx = v0 * speed + px * momentum;
-		final double ny = v1 * speed + py * momentum;
-		final double dx = Math.abs(px - nx);
-		final double dy = Math.abs(py - ny);
+	public final void move(double v0, double v1, double speed, double threshold) {
+		double px = tx;
+		double py = ty;
+		double momentum = 1.0f - speed;
+		double nx = v0 * speed + px * momentum;
+		double ny = v1 * speed + py * momentum;
+		double dx = Math.abs(px - nx);
+		double dy = Math.abs(py - ny);
 		if ((dx > threshold) || (dy > threshold)) {
 			move(nx, ny);
 		}
 	}
 
-	public boolean move(final double[] v, final double threshold) {
-		final double x = tx;
-		final double y = ty;
-		final double nx = v[0];
-		final double ny = v[1];
+	public boolean move(double[] v, double threshold) {
+		double x = tx;
+		double y = ty;
+		double nx = v[0];
+		double ny = v[1];
 		if (!((Math.abs(x - nx) < threshold) && (Math.abs(y - ny) < threshold))) {
 			move(nx, ny);
 			return true;

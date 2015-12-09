@@ -9,11 +9,11 @@ public abstract class PreCondition1 extends PreCondition {
     public final Term arg1;
 
     public PreCondition1(Term var1) {
-        this.arg1 = var1;
+        arg1 = var1;
     }
 
-    @Override public boolean test(final RuleMatch m) {
-        final Term a = m.apply(arg1, false);
+    @Override public boolean test(RuleMatch m) {
+        Term a = m.apply(arg1, false);
         if (a == null) return false;
         return test(m, a);
     }

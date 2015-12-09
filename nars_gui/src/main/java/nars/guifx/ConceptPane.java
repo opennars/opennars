@@ -86,7 +86,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
                 getChildren().add(shape);
 
-                this.x = tl;
+                x = tl;
 
                 frame();
 
@@ -106,7 +106,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
             }
 
             public void setColor(Color nextColor) {
-                this.color = nextColor;
+                color = nextColor;
             }
 
             public void frame() {
@@ -139,15 +139,15 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
             n = 0;
 
-            final double[] d = new double[3];
-            final double[] s = new double[3];
+            double[] d = new double[3];
+            double[] s = new double[3];
 
             List<DataPoint> toAdd = new ArrayList();
 
 
             Iterable<X>[] collects = get();
             if (collects != null) {
-                for (final Iterable<X> ii : collects) {
+                for (Iterable<X> ii : collects) {
                     ii.forEach(tl -> {
 
                         dead.remove(tl);
@@ -157,7 +157,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                             b = new DataPoint(tl);
                             linkShape.put(tl, b);
 
-                            final DataPoint _b = b;
+                            DataPoint _b = b;
                             update(tl, d, s, c -> _b.setColor(c));
                             b.setTranslateX(d[0] * spaceScale);
                             b.setTranslateY(d[1] * spaceScale);
@@ -176,7 +176,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
             }
 
             linkShape.keySet().removeAll(dead);
-            final Object[] deads = dead.toArray(new Object[dead.size()]);
+            Object[] deads = dead.toArray(new Object[dead.size()]);
 
             dead.clear();
 
@@ -217,7 +217,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         }
 
         Node getNode(Y c) {
-            final X n = c.name();
+            X n = c.name();
             Node existing = componentCache.get(n);
             if (existing == null) {
                 componentCache.put(n, existing = builder.apply(c));
@@ -245,7 +245,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                 queued.set(false);
             }
 
-            for (final Node n : getChildren())
+            for (Node n : getChildren())
                 if (n instanceof Runnable)
                     ((Runnable) n).run();
         }
@@ -253,12 +253,12 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     public ConceptPane(Concept c) {
 
-        this.concept = c;
+        concept = c;
 
 
         setTop(new Label(c.toInstanceString()));
 
-        final Iterable<Task>[] taskCollects = new Iterable[] {
+        Iterable<Task>[] taskCollects = new Iterable[] {
                 c.getBeliefs(),
                 c.getGoals(),
                 c.getQuestions(),
@@ -288,7 +288,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                     position[0] = t.getFrequency();
                     position[1] = t.getConfidence();
                 }
-                final float pri = tl.getPriority();
+                float pri = tl.getPriority();
                 position[2] = pri;
 
                 size[0] = size[1] = size[2] = 0.5f + pri;

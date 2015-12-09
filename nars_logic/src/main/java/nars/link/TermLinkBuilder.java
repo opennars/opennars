@@ -34,7 +34,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     public TermLinkBuilder(Termed c) {
         super();
 
-        this.concept = c;
+        concept = c;
 
         setBudget(null);
 
@@ -63,7 +63,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
      * @param t The CompoundTerm for which to build links
      * @param components set of components being accumulated, to avoid duplicates
      */
-    static void prepareComponentLinks(final Compound t, Set<Term> components) {
+    static void prepareComponentLinks(Compound t, Set<Term> components) {
 
         ///** add self link for structural transform: */
         //components.add(t);
@@ -94,7 +94,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 prepareComponentLinks((Compound) ti, components);
 
             } else if (ti instanceof Compound) {
-                final Compound cti = (Compound)ti;
+                Compound cti = (Compound)ti;
 
                 if (!growLevel1(ti)) continue;
 
@@ -112,7 +112,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                             Compound cctj = (Compound) tj;
                             int nk = cctj.size();
                             for (int k = 0; k < nk; k++) {
-                                final Term tk = cctj.term(k).normalized();
+                                Term tk = cctj.term(k).normalized();
 
                                 if (!(tk instanceof Variable)) {
                                     components.add(tk);
@@ -137,7 +137,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return true;
     }
 
-    static final boolean growLevel1(final Term t) {
+    static final boolean growLevel1(Term t) {
         return growComponent(t) /*&&
                 ( growProductOrImage(t) || (t instanceof SetTensional)) */;
     }
@@ -148,7 +148,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 //    }
 
 
-    static final boolean growLevel2(final Term t) {
+    static final boolean growLevel2(Term t) {
         return growComponent(t); //growComponent(t); leads to failures, why?
         //return growComponent(t) && growProductOrImage(t);
         //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
@@ -176,24 +176,24 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     /** configures this selector's current bag key for the next bag operation */
-    public final TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory m) {
-        if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
-            this.currentTemplate = temp;
-            this.incoming = initialDirection;
+    public final TermLinkBuilder set(TermLinkTemplate temp, boolean initialDirection, Memory m) {
+        if ((temp != currentTemplate) || (incoming != initialDirection)) {
+            currentTemplate = temp;
+            incoming = initialDirection;
             super.setBudget(/*(Budget)*/temp);
             validate();
         }
 
-        this.forgetCycles = m.durationToCycles(
+        forgetCycles = m.durationToCycles(
                 m.termLinkForgetDurations.floatValue()
         );
-        this.now = m.time();
+        now = m.time();
         return this;
     }
 
-    public final TermLinkBuilder setIncoming(final boolean b) {
-        if (this.incoming!=b) {
-            this.incoming = b;
+    public final TermLinkBuilder setIncoming(boolean b) {
+        if (incoming !=b) {
+            incoming = b;
             validate();
         }
         return this;
@@ -201,7 +201,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     protected final void validate() {
-        this.hash = currentTemplate.hash(incoming);
+        hash = currentTemplate.hash(incoming);
     }
 
     @Override
@@ -214,7 +214,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 //    }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(Object obj) {
         return TermLinkKey.termLinkEquals(this, (TermLinkKey) obj);
     }
 

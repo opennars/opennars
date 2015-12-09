@@ -60,7 +60,7 @@ public class Enemy extends Sprite
         if (yPic > 1) height = 12;
         facing = dir;
         if (facing == 0) facing = 1;
-        this.wPic = 16;
+        wPic = 16;
     }
 
     public void collideCheck()
@@ -87,7 +87,7 @@ public class Enemy extends Sprite
                     }
                     else
                     {
-                        this.yPicO = 31 - (32 - 8);
+                        yPicO = 31 - (32 - 8);
                         hPic = 8;
                         if (spriteTemplate != null) spriteTemplate.isDead = true;
                         deadTime = 10;

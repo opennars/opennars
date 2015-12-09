@@ -345,7 +345,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
             @Override
             public boolean contains(Object k) {
-                return AbstractMap.this.containsKey(k);
+                return containsKey(k);
             }
         };
         return keySet;
@@ -399,7 +399,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
                 @Override
                 public boolean contains(Object v) {
-                    return AbstractMap.this.containsValue(v);
+                    return containsValue(v);
                 }
             };
         }
@@ -589,8 +589,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
          * @param entry the entry to copy
          */
         public SimpleEntry(Entry<? extends K, ? extends V> entry) {
-            this.key = entry.getKey();
-            this.value = entry.getValue();
+            key = entry.getKey();
+            value = entry.getValue();
         }
 
         /**
@@ -721,8 +721,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
          * @param entry the entry to copy
          */
         public SimpleImmutableEntry(Entry<? extends K, ? extends V> entry) {
-            this.key = entry.getKey();
-            this.value = entry.getValue();
+            key = entry.getKey();
+            value = entry.getValue();
         }
 
         /**

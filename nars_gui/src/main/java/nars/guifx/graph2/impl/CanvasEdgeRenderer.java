@@ -43,7 +43,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
     double maxWidth = 10;
 
     @Override
-    public void accept(final TermEdge i) {
+    public void accept(TermEdge i) {
 
         TermNode aSrc = i.aSrc;
         TermNode bSrc = i.bSrc;
@@ -60,9 +60,9 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         if (!visible) return false;*/
 
 
-        final double tx = this.tx;
-        final double ty = this.ty;
-        final double s = this.s;
+        double tx = this.tx;
+        double ty = this.ty;
+        double s = this.s;
         double x1 = s*(tx+aSrc.x());// + fw / 2d;
         double y1 = s*(ty+aSrc.y());// + fh / 2d;
         double x2 = s*(tx+bSrc.x());// + tw / 2d;
@@ -90,7 +90,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         //gfx.setStroke(colors.get(np));
         //gfx.setStroke(colors.get(np, te/(te+ta)));
 
-        final GraphicsContext gfx = this.gfx;
+        GraphicsContext gfx = this.gfx;
 
         //HACK specific to Term instances
         if (t.term instanceof Termed) {
@@ -106,7 +106,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
             )
         );*/
 
-        final double mw = minWidth;
+        double mw = minWidth;
         gfx.setLineWidth(mw + p * (maxWidth-mw));
 
         gfx.strokeLine(x1, y1, x2, y2);
@@ -138,7 +138,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
                     add(0, floorCanvas); //underneath, background must be transparent to see
                     //add(floorCanvas); //over
 
-            this.gfx = floorCanvas.getGraphicsContext2D();
+            gfx = floorCanvas.getGraphicsContext2D();
         }
         else {
 

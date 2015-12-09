@@ -17,8 +17,8 @@ public abstract class DaisychainExample extends IOMatrixExample  {
     
     public DaisychainExample(Daisychain z) {
         super();
-        
-        this.daisy = z;
+
+        daisy = z;
     }
 
     @Override

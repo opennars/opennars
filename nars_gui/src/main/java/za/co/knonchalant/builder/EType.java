@@ -33,7 +33,7 @@ public enum EType {
 
     EType(Class<?> stringClass, Class<? extends IValueFieldConverter> fieldConverter, boolean defaultForType) {
         this.stringClass = stringClass;
-        this.converterClass = fieldConverter;
+        converterClass = fieldConverter;
         this.defaultForType = defaultForType;
     }
 

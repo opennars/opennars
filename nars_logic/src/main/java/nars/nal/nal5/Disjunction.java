@@ -36,7 +36,7 @@ public class Disjunction extends Junction {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private Disjunction(final Term[] arg) {
+    private Disjunction(Term[] arg) {
         super(arg);
     }
 

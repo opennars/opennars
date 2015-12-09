@@ -18,7 +18,7 @@ public class HanningWindow implements GrainWindow {
 
 
 	public HanningWindow(int size) {
-		this.factors = buildTable(size);
+		factors = buildTable(size);
 	}
 
 	private static float[] buildTable(int size) {

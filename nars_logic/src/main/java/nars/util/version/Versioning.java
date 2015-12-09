@@ -41,12 +41,12 @@ public class Versioning extends FasterList<Versioned> {
 
     /** reverts to previous state */
     public final void revert() {
-        revert(this.now-1);
+        revert(now -1);
     }
 
     /** reverts/undo to previous state */
     public final void revert(int when) {
-        final int was = this.now;
+        int was = now;
         if (was == when) return; //nothing
         if (was < when)
             throw new RuntimeException("reverting to future time");

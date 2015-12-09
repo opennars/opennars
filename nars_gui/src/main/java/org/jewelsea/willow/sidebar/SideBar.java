@@ -38,10 +38,10 @@ public class SideBar {
     /**
      * Create a private contructor so you can only create a sidebar via factory methods
      */
-    private SideBar(final VBox bar, VBox progressHolder) {
+    private SideBar(VBox bar, VBox progressHolder) {
         this.bar = bar;
         this.progressHolder = progressHolder;
-        this.sideBarScroll = new ScrollPane(bar);
+        sideBarScroll = new ScrollPane(bar);
         sideBarScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         sideBarScroll.getStyleClass().add("sidebar-scroll");
     }
@@ -52,22 +52,22 @@ public class SideBar {
      * @param chrome the chrome the sidebar will be placed into.
      * @return the new sidebar.
      */
-    public static SideBar createSidebar(final WebBrowser chrome) {
+    public static SideBar createSidebar(WebBrowser chrome) {
         // layout holder for the sidebar.
-        final VBox bar = new VBox();
+        VBox bar = new VBox();
         bar.getStyleClass().add("sidebar-background");
 
         // create a spacer for the sidebar.
-        final VBox spacer = new VBox();
+        VBox spacer = new VBox();
         spacer.getStyleClass().add("sidebar-background");
         VBox.setVgrow(spacer, Priority.ALWAYS);
         spacer.setAlignment(Pos.BOTTOM_CENTER);
 
         // create sidebar panels.
-        final TitledPane navigationPanel = new NavigationPanel(chrome);
+        TitledPane navigationPanel = new NavigationPanel(chrome);
         //final TitledPane developerPanel  = new DeveloperPanel(chrome);
-        final TitledPane demoPanel       = new DemoPanel(chrome);
-        final TitledPane benchPanel      = new BenchPanel(chrome);
+        TitledPane demoPanel       = new DemoPanel(chrome);
+        TitledPane benchPanel      = new BenchPanel(chrome);
 
         // size all of the panes similarly.
         navigationPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());

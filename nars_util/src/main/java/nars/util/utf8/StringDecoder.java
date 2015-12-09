@@ -61,7 +61,7 @@ final class StringDecoder {
 
     private void decode(byte[] source, int offset, int length, boolean endOfInput) {
         // TODO: we could cache the input ByteBuffer if source doesn't change
-        final ByteBuffer input = ByteBuffer.wrap(source, offset, length);
+        ByteBuffer input = ByteBuffer.wrap(source, offset, length);
 
 
         // Call decode at least once to pass the endOfInput signal through
@@ -91,7 +91,7 @@ final class StringDecoder {
     public char[] newChars(byte[] source, int offset, int length) {
         decodeIt(source, offset, length);
 
-        CharBuffer b = this.outBuffer;
+        CharBuffer b = outBuffer;
 
         // Copy out the string
         return Arrays.copyOf(b.array(), b.position());
@@ -105,7 +105,7 @@ final class StringDecoder {
 
         decodeIt(source, offset, length);
 
-        CharBuffer b = this.outBuffer;
+        CharBuffer b = outBuffer;
         int len = b.position();
         char[] a = b.array();
 
@@ -117,7 +117,7 @@ final class StringDecoder {
     public void appendChars(byte[] source, int offset, int length, StringBuilder target) {
         decodeIt(source, offset, length);
 
-        CharBuffer b = this.outBuffer;
+        CharBuffer b = outBuffer;
         int len = b.position();
         char[] a = b.array();
         target.append(a, 0, len);
@@ -126,7 +126,7 @@ final class StringDecoder {
     public String newString(byte[] source, int offset, int length) {
         decodeIt(source, offset, length);
 
-        CharBuffer b = this.outBuffer;
+        CharBuffer b = outBuffer;
 
         // Copy out the string
         return new String(b.array(), 0, b.position());
@@ -134,7 +134,7 @@ final class StringDecoder {
     public String newString(char prefix, byte[] source, int offset, int length) {
         decodeIt(source, offset, length);
 
-        CharBuffer b = this.outBuffer;
+        CharBuffer b = outBuffer;
 
         //TODO avoid instantiating new array by preallocating target buffer with prefix at index 0 to set
         char[] suffix = ArrayUtils.subarray(b.array(), 0, b.position());

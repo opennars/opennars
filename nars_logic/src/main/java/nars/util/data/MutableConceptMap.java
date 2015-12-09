@@ -16,7 +16,7 @@ public abstract class MutableConceptMap<T extends Term> extends ConceptMap imple
         super(n);
     }
 
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         return inclusions.contains(t);
     }
 

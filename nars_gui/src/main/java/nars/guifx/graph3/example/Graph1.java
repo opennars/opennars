@@ -38,7 +38,7 @@ public class Graph1 extends SpacenetApp {
             base.setTranslateZ(4);
             base.setMouseTransparent(true);
 
-            final PhongMaterial m = new PhongMaterial();
+            PhongMaterial m = new PhongMaterial();
             //m.setDiffuseColor(Color.web("#ffff0080"));
             base.setMaterial(m);
 
@@ -50,15 +50,15 @@ public class Graph1 extends SpacenetApp {
     @Override
     public Xform getRoot() {
 
-        final PhongMaterial redMaterial = new PhongMaterial();
+        PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);
         redMaterial.setSpecularColor(Color.RED);
 
-        final PhongMaterial whiteMaterial = new PhongMaterial();
+        PhongMaterial whiteMaterial = new PhongMaterial();
         whiteMaterial.setDiffuseColor(Color.WHITE);
         whiteMaterial.setSpecularColor(Color.LIGHTBLUE);
 
-        final PhongMaterial greyMaterial = new PhongMaterial();
+        PhongMaterial greyMaterial = new PhongMaterial();
         greyMaterial.setDiffuseColor(Color.DARKGREY);
         greyMaterial.setSpecularColor(Color.GREY);
 
@@ -105,7 +105,7 @@ public class Graph1 extends SpacenetApp {
                             new PieChart.Data("Plums", 10),
                             new PieChart.Data("Pears", 22),
                             new PieChart.Data("Apples", 30));
-            final PieChart wc = new PieChart(pieChartData);
+            PieChart wc = new PieChart(pieChartData);
             wc.setTitle("TEST");
             //wc.setCacheHint(CacheHint.SPEED);
 

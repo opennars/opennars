@@ -39,9 +39,9 @@ public class DependencyVisitor extends ClassVisitor {
     // ClassVisitor
 
     @Override
-    public void visit(final int version, final int access, final String name,
-                      final String signature, final String superName,
-                      final String[] interfaces) {
+    public void visit(int version, int access, String name,
+                      String signature, String superName,
+                      String[] interfaces) {
         String p = getGroupKey(name);
         current = groups.get(p);
         if (current == null) {
@@ -60,22 +60,22 @@ public class DependencyVisitor extends ClassVisitor {
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(final String desc,
-                                             final boolean visible) {
+    public AnnotationVisitor visitAnnotation(String desc,
+                                             boolean visible) {
         addDesc(desc);
         return new AnnotationDependencyVisitor();
     }
 
     @Override
-    public AnnotationVisitor visitTypeAnnotation(final int typeRef,
-                                                 final TypePath typePath, final String desc, final boolean visible) {
+    public AnnotationVisitor visitTypeAnnotation(int typeRef,
+                                                 TypePath typePath, String desc, boolean visible) {
         addDesc(desc);
         return new AnnotationDependencyVisitor();
     }
 
     @Override
-    public FieldVisitor visitField(final int access, final String name,
-                                   final String desc, final String signature, final Object value) {
+    public FieldVisitor visitField(int access, String name,
+                                   String desc, String signature, Object value) {
         if (signature == null) {
             addDesc(desc);
         } else {
@@ -88,8 +88,8 @@ public class DependencyVisitor extends ClassVisitor {
     }
 
     @Override
-    public MethodVisitor visitMethod(final int access, final String name,
-                                     final String desc, final String signature, final String[] exceptions) {
+    public MethodVisitor visitMethod(int access, String name,
+                                     String desc, String signature, String[] exceptions) {
         if (signature == null) {
             addMethodDesc(desc);
         } else {
@@ -106,27 +106,27 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public void visit(final String name, final Object value) {
+        public void visit(String name, Object value) {
             if (value instanceof Type) {
                 addType((Type) value);
             }
         }
 
         @Override
-        public void visitEnum(final String name, final String desc,
-                              final String value) {
+        public void visitEnum(String name, String desc,
+                              String value) {
             addDesc(desc);
         }
 
         @Override
-        public AnnotationVisitor visitAnnotation(final String name,
-                                                 final String desc) {
+        public AnnotationVisitor visitAnnotation(String name,
+                                                 String desc) {
             addDesc(desc);
             return this;
         }
 
         @Override
-        public AnnotationVisitor visitArray(final String name) {
+        public AnnotationVisitor visitArray(String name) {
             return this;
         }
     }
@@ -144,9 +144,9 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public AnnotationVisitor visitTypeAnnotation(final int typeRef,
-                                                     final TypePath typePath, final String desc,
-                                                     final boolean visible) {
+        public AnnotationVisitor visitTypeAnnotation(int typeRef,
+                                                     TypePath typePath, String desc,
+                                                     boolean visible) {
             addDesc(desc);
             return new AnnotationDependencyVisitor();
         }
@@ -164,42 +164,42 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public AnnotationVisitor visitAnnotation(final String desc,
-                                                 final boolean visible) {
+        public AnnotationVisitor visitAnnotation(String desc,
+                                                 boolean visible) {
             addDesc(desc);
             return new AnnotationDependencyVisitor();
         }
 
         @Override
-        public AnnotationVisitor visitTypeAnnotation(final int typeRef,
-                                                     final TypePath typePath, final String desc,
-                                                     final boolean visible) {
+        public AnnotationVisitor visitTypeAnnotation(int typeRef,
+                                                     TypePath typePath, String desc,
+                                                     boolean visible) {
             addDesc(desc);
             return new AnnotationDependencyVisitor();
         }
 
         @Override
-        public AnnotationVisitor visitParameterAnnotation(final int parameter,
-                                                          final String desc, final boolean visible) {
+        public AnnotationVisitor visitParameterAnnotation(int parameter,
+                                                          String desc, boolean visible) {
             addDesc(desc);
             return new AnnotationDependencyVisitor();
         }
 
         @Override
-        public void visitTypeInsn(final int opcode, final String type) {
+        public void visitTypeInsn(int opcode, String type) {
             addType(Type.getObjectType(type));
         }
 
         @Override
-        public void visitFieldInsn(final int opcode, final String owner,
-                                   final String name, final String desc) {
+        public void visitFieldInsn(int opcode, String owner,
+                                   String name, String desc) {
             addInternalName(owner);
             addDesc(desc);
         }
 
         @Override
-        public void visitMethodInsn(final int opcode, final String owner,
-                                    final String name, final String desc, final boolean itf) {
+        public void visitMethodInsn(int opcode, String owner,
+                                    String name, String desc, boolean itf) {
             addInternalName(owner);
             addMethodDesc(desc);
         }
@@ -215,12 +215,12 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public void visitLdcInsn(final Object cst) {
+        public void visitLdcInsn(Object cst) {
             addConstant(cst);
         }
 
         @Override
-        public void visitMultiANewArrayInsn(final String desc, final int dims) {
+        public void visitMultiANewArrayInsn(String desc, int dims) {
             addDesc(desc);
         }
 
@@ -232,9 +232,9 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public void visitLocalVariable(final String name, final String desc,
-                                       final String signature, final Label start, final Label end,
-                                       final int index) {
+        public void visitLocalVariable(String name, String desc,
+                                       String signature, Label start, Label end,
+                                       int index) {
             addTypeSignature(signature);
         }
 
@@ -247,8 +247,8 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public void visitTryCatchBlock(final Label start, final Label end,
-                                       final Label handler, final String type) {
+        public void visitTryCatchBlock(Label start, Label end,
+                                       Label handler, String type) {
             if (type != null) {
                 addInternalName(type);
             }
@@ -271,13 +271,13 @@ public class DependencyVisitor extends ClassVisitor {
         }
 
         @Override
-        public void visitClassType(final String name) {
+        public void visitClassType(String name) {
             signatureClassName = name;
             addInternalName(name);
         }
 
         @Override
-        public void visitInnerClassType(final String name) {
+        public void visitInnerClassType(String name) {
             signatureClassName = signatureClassName + '$' + name;
             addInternalName(signatureClassName);
         }
@@ -294,7 +294,7 @@ public class DependencyVisitor extends ClassVisitor {
         return name;
     }
 
-    private void addName(final String name) {
+    private void addName(String name) {
         if (name == null) {
             return;
         }
@@ -306,21 +306,21 @@ public class DependencyVisitor extends ClassVisitor {
         }
     }
 
-    void addInternalName(final String name) {
+    void addInternalName(String name) {
         addType(Type.getObjectType(name));
     }
 
-    private void addInternalNames(final String[] names) {
+    private void addInternalNames(String[] names) {
         for (int i = 0; names != null && i < names.length; i++) {
             addInternalName(names[i]);
         }
     }
 
-    void addDesc(final String desc) {
+    void addDesc(String desc) {
         addType(Type.getType(desc));
     }
 
-    void addMethodDesc(final String dscrptor) {
+    void addMethodDesc(String dscrptor) {
         addType(Type.getReturnType(dscrptor));
 
         Type[] types = Type.getArgumentTypes(dscrptor);
@@ -330,7 +330,7 @@ public class DependencyVisitor extends ClassVisitor {
 
     }
 
-    void addType(final Type t) {
+    void addType(Type t) {
         switch (t.getSort()) {
             case Type.ARRAY:
                 addType(t.getElementType());
@@ -348,21 +348,21 @@ public class DependencyVisitor extends ClassVisitor {
         }
     }
 
-    private void addSignature(final String signature) {
+    private void addSignature(String signature) {
         if (signature != null) {
             new SignatureReader(signature)
                     .accept(new SignatureDependencyVisitor());
         }
     }
 
-    void addTypeSignature(final String signature) {
+    void addTypeSignature(String signature) {
         if (signature != null) {
             new SignatureReader(signature)
                     .acceptType(new SignatureDependencyVisitor());
         }
     }
 
-    void addConstant(final Object cst) {
+    void addConstant(Object cst) {
         if (cst instanceof Type) {
             addType((Type) cst);
         } else if (cst instanceof Handle) {

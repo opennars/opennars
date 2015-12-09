@@ -59,9 +59,9 @@ public class WaveCapture implements Runnable {
     public Pane newMonitorPane() {
 
 
-        final Plot2D audioPlot = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
+        Plot2D audioPlot = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
         audioPlot.add(rawWave);
-        final Plot2D audioPlot2 = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
+        Plot2D audioPlot2 = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
         audioPlot2.add(wavelet1d);
 
 
@@ -157,7 +157,7 @@ public class WaveCapture implements Runnable {
                 if (ss == null) return;
                 //samples[0] = null;
 
-                final FloatArrayList history = this.history;
+                FloatArrayList history = this.history;
 
                 //                        for (short s : ss) {
                 //                            history.add((float)s);
@@ -226,7 +226,7 @@ public class WaveCapture implements Runnable {
         if (this.source != null) {
             int audioBufferSize = this.source.start();
 
-            this.bufferSamples = audioBufferSize;
+            bufferSamples = audioBufferSize;
 
             //System.out.println("bufferSamples=" + bufferSamples + ", sampleRate=" + sampleRate + ", numChannels=" + numChannels);
 

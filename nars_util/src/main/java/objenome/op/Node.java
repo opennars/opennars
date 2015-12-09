@@ -84,7 +84,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * from <code>0</code> to <code>getArity()-1</code>
      * @return the child node at the specified index
      */
-    public X getChild(final int index) {
+    public X getChild(int index) {
         return children[index];
     }
 
@@ -622,7 +622,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      */
     public final Class<?> dataType() {
         Class<?>[] argTypes = new Class<?>[getArity()];
-        final int arity = getArity();
+        int arity = getArity();
         for (int i = 0; i < arity; i++) {
             Node child = getChild(i);
             if (child != null) {
@@ -679,7 +679,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
     @Override
     public int hashCode() {
         int result = getIdentifier().hashCode();
-        for (final Node child : children) {
+        for (Node child : children) {
             if (child != null) {
                 result = 37 * result + child.hashCode();
             }
@@ -709,7 +709,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             }
 
             return clone;
-        } catch (final CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             assert false;
             // This shouldn't ever happen - if it does then everythings going to
             // blow up anyway.
@@ -733,7 +733,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             Node n = (Node) super.clone();
             n.children = new Node[children.length];
             return n;
-        } catch (final CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             assert false;
         }
 
@@ -744,7 +744,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             Node n = (Node) super.clone();
             n.children = newChildren;
             return n;
-        } catch (final CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             assert false;
         }
 
@@ -760,9 +760,9 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * @return {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (obj instanceof Node) {
-            final Node n = (Node) obj;
+            Node n = (Node) obj;
 
             if (n.getArity() != getArity()) {
                 return false;
@@ -770,7 +770,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             if (!getIdentifier().equals(n.getIdentifier())) {
                 return false;
             }
-            final int a = n.getArity();
+            int a = n.getArity();
             for (int i = 0; i < a; i++) {
                 Node thatChild = n.getChild(i);
                 Node thisChild = getChild(i);

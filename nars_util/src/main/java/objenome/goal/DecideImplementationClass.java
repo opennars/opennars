@@ -29,7 +29,7 @@ public class DecideImplementationClass implements Problem, Builder {
 
     public DecideImplementationClass(Class abstractClass, List<Class> implementations) {
         this.abstractClass = abstractClass;
-        this.implementors = implementations;
+        implementors = implementations;
     }
     
     public int size() { return implementors.size(); }

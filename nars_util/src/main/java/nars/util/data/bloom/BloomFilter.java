@@ -53,10 +53,10 @@ public class BloomFilter {
         assert maxNumEntries > 0 : "maxNumEntries should be > 0";
         assert fpp > 0.0 && fpp < 1.0 : "False positive percentage should be > 0.0 & < 1.0";
         this.fpp = fpp;
-        this.n = maxNumEntries;
-        this.m = optimalNumOfBits(maxNumEntries, fpp);
-        this.k = optimalNumOfHashFunctions(maxNumEntries, m);
-        this.bitSet = new AwesomeBitSet(m);
+        n = maxNumEntries;
+        m = optimalNumOfBits(maxNumEntries, fpp);
+        k = optimalNumOfHashFunctions(maxNumEntries, m);
+        bitSet = new AwesomeBitSet(m);
     }
 
     // deserialize bloomfilter. see serialize() for the format.
@@ -92,18 +92,18 @@ public class BloomFilter {
     public void add(byte[] val) {
         addBytes(val);
     }
-    public boolean testBytes(final byte[] val) {
-        final long hash64 = Murmur3Hash.hash64(val);
-        final int hash1 = (int) hash64;
-        final int hash2 = (int) (hash64 >>> 32);
+    public boolean testBytes(byte[] val) {
+        long hash64 = Murmur3Hash.hash64(val);
+        int hash1 = (int) hash64;
+        int hash2 = (int) (hash64 >>> 32);
 
 
-        final int k = this.k;
-        final int m = this.m;
-        final AwesomeBitSet bits = this.bitSet;
+        int k = this.k;
+        int m = this.m;
+        AwesomeBitSet bits = bitSet;
 
         for (int i = 1; i <= k; i++) {
-            final int combinedHash = combineHash(hash1, hash2, i);
+            int combinedHash = combineHash(hash1, hash2, i);
             if (!bits.get( /*pos*/ combinedHash % m)) {
                 return false;
             }
@@ -113,28 +113,28 @@ public class BloomFilter {
 
 
 
-    public final void addBytes(final byte[] val) {
+    public final void addBytes(byte[] val) {
         // We use the trick mentioned in "Less Hashing, Same Performance: Building a Better Bloom Filter"
         // by Kirsch et.al. From abstract 'only two hash functions are necessary to effectively
         // implement a Bloom filter without any loss in the asymptotic false positive probability'
 
         // Lets split up 64-bit hashcode into two 32-bit hashcodes and employ the technique mentioned
         // in the above paper
-        final long hash64 = Murmur3Hash.hash64(val);
-        final int hash1 = (int) hash64;
-        final int hash2 = (int) (hash64 >>> 32);
+        long hash64 = Murmur3Hash.hash64(val);
+        int hash1 = (int) hash64;
+        int hash2 = (int) (hash64 >>> 32);
 
-        final int k = this.k;
-        final int m = this.m;
-        final AwesomeBitSet bits = this.bitSet;
+        int k = this.k;
+        int m = this.m;
+        AwesomeBitSet bits = bitSet;
 
         for (int i = 1; i <= k; i++) {
-            final int combinedHash = combineHash(hash1, hash2, i);
+            int combinedHash = combineHash(hash1, hash2, i);
             bits.set( /*pos*/ combinedHash % m );
         }
     }
 
-    protected static int combineHash(final int hash1, final int hash2, final int i) {
+    protected static int combineHash(int hash1, int hash2, int i) {
         int combinedHash = hash1 + (i * hash2);
         // hashcode should be positive, flip all the bits if it's negative
         if (combinedHash < 0) {
@@ -254,8 +254,8 @@ public class BloomFilter {
      */
     public boolean isCompatible(BloomFilter that) {
         return this != that &&
-                this.getBitSize() == that.getBitSize() &&
-                this.getNumHashFunctions() == that.getNumHashFunctions();
+                getBitSize() == that.getBitSize() &&
+                getNumHashFunctions() == that.getNumHashFunctions();
     }
 
     /**
@@ -265,7 +265,7 @@ public class BloomFilter {
      * @param that - bloom filter to merge
      */
     public void merge(BloomFilter that) {
-        this.bitSet.putAll(that.bitSet);
+        bitSet.putAll(that.bitSet);
     }
 
 }

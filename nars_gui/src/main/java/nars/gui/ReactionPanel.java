@@ -14,7 +14,7 @@ public abstract class ReactionPanel extends NPanel implements Reaction<Class,Obj
 
     public ReactionPanel(NAR n) {
         super();
-        this.nar = n;
+        nar = n;
     }
     public ReactionPanel(NAR n, LayoutManager l) {
         this(n);

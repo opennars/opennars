@@ -45,7 +45,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
         super(nar);
 
         this.task = task;
-        this.taskLinkBuilder = new TaskLinkBuilder(nar.memory);
+        taskLinkBuilder = new TaskLinkBuilder(nar.memory);
     }
 
     @Override
@@ -114,30 +114,30 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTemplates(final Concept c, final Budget b, boolean updateTLinks) {
+    public boolean linkTemplates(Concept c, Budget b, boolean updateTLinks) {
 
         if ((b == null) || (b.isDeleted())) return false;
 
-        final List<TermLinkTemplate> tl = c.getTermLinkTemplates();
+        List<TermLinkTemplate> tl = c.getTermLinkTemplates();
         if (tl == null || tl.isEmpty())
             return false;
 
         //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-        final float factor = 1.0f / (tl.size());
+        float factor = 1.0f / (tl.size());
         Budget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
 
         if (subBudget.summaryLessThan(nar.memory.termLinkThreshold.floatValue()))
             return false;
 
-        final NAR nar = this.nar;
-        final int numTemplates = tl.size();
-        final float termLinkThresh = nar.memory.termLinkThreshold.floatValue();
+        NAR nar = this.nar;
+        int numTemplates = tl.size();
+        float termLinkThresh = nar.memory.termLinkThreshold.floatValue();
 
         boolean activity = false;
 
         for (int i = 0; i < numTemplates; i++) {
 
-            final TermLinkTemplate t = tl.get(i);
+            TermLinkTemplate t = tl.get(i);
 
             /*if ((t.getTarget().equals(getTerm()))) {
                 //self
@@ -181,7 +181,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
         //if (otherConcept.getTermLinkTemplates()) {
-            final Budget termlinkBudget = termLinkBuilder.getBudget();
+            Budget termlinkBudget = termLinkBuilder.getBudget();
             linkTemplates(otherConcept, termlinkBudget, immediateTermLinkPropagation);
         //}
 
@@ -198,8 +198,8 @@ public class TaskProcess extends AbstractPremise implements Serializable {
     }
 
     final Concept getTermLinkTemplateTarget(TermLinkTemplate t) {
-        final Term target = t.getTarget();
-        final NAR nar = this.nar;
+        Term target = t.getTarget();
+        NAR nar = this.nar;
         return activateTermLinkTemplates ? nar.conceptualize(target, t) : nar.concept(target);
     }
 
@@ -216,16 +216,16 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      *
      * @param task The task to be linked
      */
-    protected final boolean linkTask(final Concept c, final Task task) {
+    protected final boolean linkTask(Concept c, Task task) {
 
-        final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
-        final TaskLinkBuilder taskLinkBuilder = getTaskLinkBuilder();
-
-
+        TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
+        TaskLinkBuilder taskLinkBuilder = getTaskLinkBuilder();
 
 
-        final List<TermLinkTemplate> templates = termLinkBuilder.templates();
-        final int numTemplates = templates.size();
+
+
+        List<TermLinkTemplate> templates = termLinkBuilder.templates();
+        int numTemplates = templates.size();
         if (numTemplates == 0)
             return false;
 
@@ -239,7 +239,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
 
 
-        final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
+        Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
         if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
             return false;
 
@@ -288,7 +288,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      * @param taskLink The termLink to be inserted
      * @return the tasklink which was selected or updated
      */
-    protected static TaskLink activateTaskLink(Concept c, final TaskLinkBuilder taskLink) {
+    protected static TaskLink activateTaskLink(Concept c, TaskLinkBuilder taskLink) {
         return c.getTaskLinks().update(taskLink);
     }
 
@@ -301,13 +301,13 @@ public class TaskProcess extends AbstractPremise implements Serializable {
      *
      * @return whether it was processed
      */
-    protected final boolean processConcept(final Concept c) {
+    protected final boolean processConcept(Concept c) {
 
-        final Task task = getTask();
+        Task task = getTask();
 
         task.onConcept(c);
 
-        final LogicMeter logicMeter = nar.memory.logic;
+        LogicMeter logicMeter = nar.memory.logic;
 
         switch (task.getPunctuation()) {
 
@@ -356,7 +356,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
     public Concept run() {
 
 
-        final Task task = getTask();
+        Task task = getTask();
 
 //        /** deleted in the time between this was created, and run() */
 //        if (task.isDeleted()) {
@@ -364,9 +364,9 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 //            //return;
 //        }
 
-        final Memory memory = this.nar.memory;
+        Memory memory = nar.memory;
 
-        final Concept c = nar.conceptualize(task, task.getBudget());
+        Concept c = nar.conceptualize(task, task.getBudget());
 
         if (c == null) {
             memory.remove(task, "Inconceivable");

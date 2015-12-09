@@ -16,18 +16,18 @@ public class BinauralTones implements SoundProducer {
     private boolean playing;
 
     public BinauralTones(float initialBeat, float initialCarrier) {
-        this.beat = initialBeat;
-        this.carrier = initialCarrier;
-        this.x = 0;
-        this.playing = true;
+        beat = initialBeat;
+        carrier = initialCarrier;
+        x = 0;
+        playing = true;
     }
 
 
     @Override public float read(float[] buf, int readRate) {
         float dt = 1.0f / readRate;
 
-        final float leftRate = (carrier - (beat / 2.0f)) * (float)(Math.PI* 2.0f);
-        final float rigtRate = (carrier + (beat / 2.0f)) * (float)(Math.PI* 2.0f);
+        float leftRate = (carrier - (beat / 2.0f)) * (float)(Math.PI* 2.0f);
+        float rigtRate = (carrier + (beat / 2.0f)) * (float)(Math.PI* 2.0f);
         for (int i = 0; i < buf.length-1; /*stereo*/) {
             buf[i++] = (float)FastMath.sin( x * leftRate );
             buf[i++] = (float)FastMath.sin( x * rigtRate );

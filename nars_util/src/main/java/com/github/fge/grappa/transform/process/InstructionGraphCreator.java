@@ -38,8 +38,8 @@ public final class InstructionGraphCreator
     implements RuleMethodProcessor
 {
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -49,15 +49,15 @@ public final class InstructionGraphCreator
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(method, "method");
 
-        final RuleMethodInterpreter interpreter
+        RuleMethodInterpreter interpreter
             = new RuleMethodInterpreter(method);
-        final RuleMethodAnalyzer analyzer = new RuleMethodAnalyzer(interpreter);
+        RuleMethodAnalyzer analyzer = new RuleMethodAnalyzer(interpreter);
 
         analyzer.analyze(classNode.name, method);
 
@@ -70,21 +70,21 @@ public final class InstructionGraphCreator
     {
         private final RuleMethodInterpreter interpreter;
 
-        private RuleMethodAnalyzer(final RuleMethodInterpreter interpreter)
+        private RuleMethodAnalyzer(RuleMethodInterpreter interpreter)
         {
             super(Objects.requireNonNull(interpreter));
             this.interpreter = interpreter;
         }
 
         @Override
-        protected void newControlFlowEdge(final int insn, final int successor)
+        protected void newControlFlowEdge(int insn, int successor)
         {
             interpreter.newControlFlowEdge(insn, successor);
         }
 
         @Override
-        protected boolean newControlFlowExceptionEdge(final int insn,
-            final int successor)
+        protected boolean newControlFlowExceptionEdge(int insn,
+                                                      int successor)
         {
             interpreter.newControlFlowEdge(insn, successor);
             return true;

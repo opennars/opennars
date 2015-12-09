@@ -39,7 +39,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 
 	public ComboBoxPropertyEditor() {
 
-		final JComboBox combo = new JComboBox() {
+		JComboBox combo = new JComboBox() {
 
 			private static final long serialVersionUID = -7048198994640023540L;
 
@@ -69,7 +69,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-				ComboBoxPropertyEditor.this.firePropertyChange(oldValue, combo.getSelectedItem());
+				firePropertyChange(oldValue, combo.getSelectedItem());
 			}
 
 			@Override
@@ -82,7 +82,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					ComboBoxPropertyEditor.this.firePropertyChange(oldValue,
+					firePropertyChange(oldValue,
 					combo.getSelectedItem());
 				}
 			}

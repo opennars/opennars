@@ -62,7 +62,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
 
         @Override
         public void onEvent(T event) {
-            AbstractStat.this.refresh(event);
+            refresh(event);
         }
     };
 
@@ -154,14 +154,14 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
     public <E extends Event> AbstractStat(Class<T> clearOn, List<Class<? extends AbstractStat<?>>> dependencies) {
         
         this.dependencies = dependencies;
-        this.clearOnEvent = clearOn;
+        clearOnEvent = clearOn;
 
     }
 
 
     @Override
     public void setConfig(GPContainer c) {
-        this.config = c;
+        config = c;
         for (Class<? extends AbstractStat<?>> dependency : dependencies) {
             config.get(dependency);
         }

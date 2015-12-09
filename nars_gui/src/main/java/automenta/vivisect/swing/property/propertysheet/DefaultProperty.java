@@ -213,12 +213,12 @@ public class DefaultProperty extends AbstractProperty {
 	}
 
 	public void clearSubProperties() {
-		for (Iterator iter = this.subProperties.iterator(); iter.hasNext();) {
+		for (Iterator iter = subProperties.iterator(); iter.hasNext();) {
 			Property subProp = (Property) iter.next();
 			if (subProp instanceof DefaultProperty)
 				((DefaultProperty) subProp).setParentProperty(null);
 		}
-		this.subProperties.clear();
+		subProperties.clear();
 	}
 
 	public void addSubProperties(Collection subProperties) {
@@ -231,11 +231,11 @@ public class DefaultProperty extends AbstractProperty {
 	}
 
 	public void addSubProperties(Property[] subProperties) {
-		this.addSubProperties(Arrays.asList(subProperties));
+		addSubProperties(Arrays.asList(subProperties));
 	}
 
 	public void addSubProperty(Property subProperty) {
-		this.subProperties.add(subProperty);
+		subProperties.add(subProperty);
 		if (subProperty instanceof DefaultProperty)
 			((DefaultProperty) subProperty).setParentProperty(this);
 	}

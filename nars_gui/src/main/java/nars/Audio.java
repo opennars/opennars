@@ -115,7 +115,7 @@ public class Audio implements Runnable
 
         DefaultSource(SoundProducer p) {
             super();
-            this.producer = p;
+            producer = p;
         }
 
         @Override
@@ -165,8 +165,8 @@ public class Audio implements Runnable
         }
 
         soundBuffer.clear();
-        final int max16 = 32767;
-        final float gain = max16;
+        int max16 = 32767;
+        float gain = max16;
         for (int i = 0; i < bufferSize; i++)
         {
             //            amplitude += (targetAmplitude - amplitude) / rate;

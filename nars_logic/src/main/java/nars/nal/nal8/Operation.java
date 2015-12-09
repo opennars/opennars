@@ -292,14 +292,14 @@ public interface Operation  {
         }
 
 
-        final Term[] xt = argsProduct.terms();
+        Term[] xt = argsProduct.terms();
 
         predTerm.append(p, pretty); //add the operator name without leading '^'
         p.append(COMPOUND_TERM_OPENER);
 
 
         int n = 0;
-        for (final Term t : xt) {
+        for (Term t : xt) {
             if (n != 0) {
                 p.append(Symbols.ARGUMENT_SEPARATOR);
                 if (pretty)

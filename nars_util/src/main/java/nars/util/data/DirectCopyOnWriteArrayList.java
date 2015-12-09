@@ -98,7 +98,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     private final E[] empty;
 
     public DirectCopyOnWriteArrayList(Class c) {
-        this.elementType = c;
+        elementType = c;
         empty = createArray(elementType, 0);
     }
 
@@ -167,7 +167,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     }
 
 
-    public <T> T[] toArray(final T[] a) {
+    public <T> T[] toArray(T[] a) {
         return (T[]) backingArray;
     }
 
@@ -352,8 +352,8 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
 
         protected ArrayIterator( E[] array, int index ) {
             this.array = array;
-            this.next = index;
-            this.lastReturned = -1;
+            next = index;
+            lastReturned = -1;
         }
 
         public boolean hasNext() {

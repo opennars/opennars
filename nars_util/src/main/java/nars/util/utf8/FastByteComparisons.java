@@ -28,7 +28,7 @@ public abstract class FastByteComparisons {
         return 0;
     }
 
-    public static final int compare(final byte[] a, final byte[] b) {
+    public static final int compare(byte[] a, byte[] b) {
         if (a == b) return 0;
         return compareTo(a, 0, a.length, b, 0, b.length);
     }
@@ -154,8 +154,8 @@ public abstract class FastByteComparisons {
              * @return 0 if equal, < 0 if left is less than right, etc.
              */
             @Override
-            public int compareTo(final byte[] buffer1, final int offset1, final int length1,
-                                 final byte[] buffer2, final int offset2, final int length2) {
+            public int compareTo(byte[] buffer1, int offset1, int length1,
+                                 byte[] buffer2, int offset2, int length2) {
                 // Short circuit equal case
                 if (buffer1 == buffer2 &&
                         offset1 == offset2 &&
@@ -172,10 +172,10 @@ public abstract class FastByteComparisons {
      * time is no slower than comparing 4 bytes at a time even on 32-bit.
      * On the other hand, it is substantially faster on 64-bit.
      */
-                final Unsafe tu = theUnsafe;
-                final boolean e = littleEndian;
+                Unsafe tu = theUnsafe;
+                boolean e = littleEndian;
                 for (int i = 0; i < minWords * Longs.BYTES; i += Longs.BYTES) {
-                    final long li = i;
+                    long li = i;
                     long lw = tu.getLong(buffer1, offset1Adj + li);
                     long rw = tu.getLong(buffer2, offset2Adj + li);
                     long diff = lw ^ rw;

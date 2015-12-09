@@ -41,7 +41,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
      * Constructor with initial budget
      * @param budget The initial budget
      */
-    protected Item( final Budget budget) {
+    protected Item( Budget budget) {
         super(budget, false);
     }
 
@@ -86,8 +86,8 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
 
 
     public void appendWithBudget(StringBuilder sb) {
-        final StringBuilder briefBudget = super.toBudgetStringExternal();
-        final String n = name().toString();
+        StringBuilder briefBudget = super.toBudgetStringExternal();
+        String n = name().toString();
         sb.ensureCapacity(briefBudget.length()+n.length()+1);
         sb.append(briefBudget).append(' ').append(n);
     }
@@ -107,7 +107,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
 
     /** equality and hash entirely determined by name(), not budget data. use budgetEquals() for that comparison */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj instanceof Item) {
             return ((Item)obj).name().equals(name());
@@ -117,7 +117,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
 
     public abstract static class StringKeyItem extends Item<CharSequence> {
         
-        public StringKeyItem(final Budget budget) { super(budget);         }
+        public StringKeyItem(Budget budget) { super(budget);         }
         public StringKeyItem(float p, float d, float q) { super(p, d, q);         }
         public StringKeyItem(float p) { this(p, p, p);         }
 

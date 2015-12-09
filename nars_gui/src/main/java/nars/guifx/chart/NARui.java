@@ -33,7 +33,7 @@ public class NARui {
 
     public NARui(NAR s) {
         super();
-        this.nar = s;
+        nar = s;
 
     }
 
@@ -133,7 +133,7 @@ public class NARui {
                 .stream().map(s -> s.id).toArray(String[]::new);
 
 
-        final String[] _signals = signals;
+        String[] _signals = signals;
 
         LineChart<Double, Double> bc = new LineChart(xAxis, yAxis);
 

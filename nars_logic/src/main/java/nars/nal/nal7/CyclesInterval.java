@@ -31,7 +31,7 @@ public final class CyclesInterval extends ShadowAtom implements Interval {
         if (numCycles < 0)
             throw new RuntimeException("cycles must be >= 0");
 
-        this.cyc = numCycles;
+        cyc = numCycles;
 
     }
 

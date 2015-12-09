@@ -23,10 +23,10 @@ public class BagGenerators {
 
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToRemove, Bag<CharSequence, NullItem> f) {
 
-        final int levels = 13;
-        final int[] count = new int[levels];
+        int levels = 13;
+        int[] count = new int[levels];
 
-        final int[] nRemoved = {0};
+        int[] nRemoved = {0};
 
 //        Consumer<NullItem> prevRemoval = f.getOnRemoval();
 //        f.setOnRemoval(r -> {
@@ -78,7 +78,7 @@ public class BagGenerators {
             for (int i= 0; i < insertsPerLoop * accessFraction; i++) {
                 int sizeBefore = f.size();
 
-                final NullItem t = f.peekNext();
+                NullItem t = f.peekNext();
 
                 if (t == null) {
                     //Assert.assertTrue(sizeAfter == 0);

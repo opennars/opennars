@@ -46,7 +46,7 @@ public class And extends Operation {
     
     public String pretty() {
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);

@@ -20,7 +20,7 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
     public ItemButton(I i, Function<I,String> labeler, Consumer<I> clicked) {
         super();
 
-        this.item = i;
+        item = i;
         this.labeler = labeler;
 
         Task t = null;

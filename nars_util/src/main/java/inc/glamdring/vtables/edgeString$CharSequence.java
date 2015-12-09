@@ -10,7 +10,7 @@ class edgeString$CharSequence implements _edge<String,CharSequence> {
             return p.demote(p) ;  
     }
 
-    public _edge<String, CharSequence> bind(final String s, final CharSequence charSequence) {
+    public _edge<String, CharSequence> bind(String s, CharSequence charSequence) {
         return new _edge<String, CharSequence>() {
             public String demote(_edge<String, CharSequence> p) {
                 return s;

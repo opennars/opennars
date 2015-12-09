@@ -31,8 +31,8 @@ public class ParticleSystem  {
 
         gravitonAL.add(new Graviton());
 
-        this.cells = p.cells;
-        this.blockArray = p.cells.readCells;
+        cells = p.cells;
+        blockArray = p.cells.readCells;
        
 
         WIDTH = p.cells.w;
@@ -316,8 +316,8 @@ public class ParticleSystem  {
                 }
 
                 life -= 1;
-                final float axVel = Math.abs(xVel);
-                final float ayVel = Math.abs(yVel);
+                float axVel = Math.abs(xVel);
+                float ayVel = Math.abs(yVel);
                 
                 if ((axVel + ayVel) <= 0.3) {
                     life -= 10 / (axVel + ayVel);

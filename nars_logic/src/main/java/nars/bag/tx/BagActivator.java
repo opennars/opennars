@@ -39,7 +39,7 @@ public abstract class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
     public abstract long time();
 
-    @Override public void updateItem(final V v, final Budget result) {
+    @Override public void updateItem(V v, Budget result) {
         result.forget(time(), getForgetCycles(), 0);
 
         //TODO make this merge function parametric

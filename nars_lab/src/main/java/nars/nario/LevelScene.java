@@ -48,10 +48,10 @@ public class LevelScene extends Scene implements SpriteContext
     public LevelScene(GraphicsConfiguration graphicsConfiguration, MarioComponent renderer, long seed, int levelDifficulty, int type)
     {
         this.graphicsConfiguration = graphicsConfiguration;
-        this.levelSeed = seed;
+        levelSeed = seed;
         this.renderer = renderer;
         this.levelDifficulty = levelDifficulty;
-        this.levelType = type;
+        levelType = type;
     }
 
     public void init()

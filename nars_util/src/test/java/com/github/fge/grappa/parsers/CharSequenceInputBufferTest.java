@@ -40,7 +40,7 @@ public final class CharSequenceInputBufferTest
     @Test
     public void testOneliner()
     {
-        final InputBuffer buf = new CharSequenceInputBuffer("abcdefgh");
+        InputBuffer buf = new CharSequenceInputBuffer("abcdefgh");
         assertEquals(buf.charAt(0), 'a');
         assertEquals(buf.charAt(7), 'h');
         assertEquals(buf.charAt(8), Chars.EOI);
@@ -56,7 +56,7 @@ public final class CharSequenceInputBufferTest
     @Test
     public void testMultiliner()
     {
-        final InputBuffer buf = new CharSequenceInputBuffer("" +
+        InputBuffer buf = new CharSequenceInputBuffer("" +
             "abcd\n" +
             "ef\r\n" +
                 '\n' +
@@ -92,7 +92,7 @@ public final class CharSequenceInputBufferTest
     @Test
     public void charAtThrowsIAEOnNegativeIndex()
     {
-        final InputBuffer buf = new CharSequenceInputBuffer("abcdefgh");
+        InputBuffer buf = new CharSequenceInputBuffer("abcdefgh");
 
         try {
             buf.charAt(-1);
@@ -105,7 +105,7 @@ public final class CharSequenceInputBufferTest
     @DataProvider
     public Iterator<Object[]> indicesAndCodePoints()
     {
-        final List<Object[]> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
 
         list.add(new Object[] { 0, UNICODE_STRING.codePointAt(0) });
         list.add(new Object[] { 10, -1 });
@@ -118,7 +118,7 @@ public final class CharSequenceInputBufferTest
 
 
     @Test(dataProvider = "indicesAndCodePoints")
-    public void codePointTest(final int index, final int codePoint)
+    public void codePointTest(int index, int codePoint)
     {
         assertThat(UNICODE_BUFFER.codePointAt(index)).isEqualTo(codePoint);
     }

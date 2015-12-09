@@ -21,7 +21,7 @@ public abstract class AbstractCacheBag<K, V> implements CacheBag<K,V> {
     }*/
 
     @Override public void start(Memory n) {
-        this.memory = n;
+        memory = n;
     }
 
 

@@ -16,17 +16,17 @@ public class Molecule extends SpacenetApp {
 
     @Override
     public Xform getRoot() {
-        final Xform g = new Xform();
+        Xform g = new Xform();
 
-        final PhongMaterial redMaterial = new PhongMaterial();
+        PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);
         redMaterial.setSpecularColor(Color.RED);
 
-        final PhongMaterial whiteMaterial = new PhongMaterial();
+        PhongMaterial whiteMaterial = new PhongMaterial();
         whiteMaterial.setDiffuseColor(Color.WHITE);
         whiteMaterial.setSpecularColor(Color.LIGHTBLUE);
 
-        final PhongMaterial greyMaterial = new PhongMaterial();
+        PhongMaterial greyMaterial = new PhongMaterial();
         greyMaterial.setDiffuseColor(Color.DARKGREY);
         greyMaterial.setSpecularColor(Color.GREY);
 

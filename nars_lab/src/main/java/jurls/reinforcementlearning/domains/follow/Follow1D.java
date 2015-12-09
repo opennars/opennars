@@ -62,7 +62,7 @@ public class Follow1D implements RLEnvironment {
 
             int prevY, prevX, i;
 
-            final int margin = 10;
+            int margin = 10;
             
             prevX = 0;
             prevY = 0;
@@ -145,7 +145,7 @@ public class Follow1D implements RLEnvironment {
 
             
     public void updateTargetRandom(int cycle) {        
-        final double targetAcceleration = 0.002;
+        double targetAcceleration = 0.002;
         targetPos += targetV * speed;
         targetV += (Math.random() - 0.5) * targetAcceleration;        
     }

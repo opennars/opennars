@@ -76,11 +76,11 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
 
     public NALObjects(NAR n) {
-        this.nar = n;
+        nar = n;
     }
 
     public static <N extends NAR> N wrap(N n) throws Exception {
-        final NALObjects nalObjects = new NALObjects(n);
+        NALObjects nalObjects = new NALObjects(n);
         return nalObjects.wrap("this", n);
     }
 
@@ -161,7 +161,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             return result;
         }
 
-        final Operator op = getMethodOperator(method);
+        Operator op = getMethodOperator(method);
 
 
         Compound invocationArgs = getMethodInvocationTerms(method, object, args);
@@ -369,7 +369,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     }
 
     public void setGoalInvoke(boolean b) {
-        this.goalInvoke.set(b);
+        goalInvoke.set(b);
     }
 
 

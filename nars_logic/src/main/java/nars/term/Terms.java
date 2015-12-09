@@ -25,7 +25,7 @@ public class Terms {
     public static final Term[] Empty = new Term[0];
     public static final IntFunction<Term[]> TermArrayBuilder = Term[]::new;
 
-    public static boolean equalSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
+    public static boolean equalSubTermsInRespectToImageAndProduct(Term a, Term b) {
 
         if (a == null || b == null) {
             return false;
@@ -63,11 +63,11 @@ public class Terms {
     }
 
 
-    public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
+    public static boolean equalSubjectPredicateInRespectToImageAndProduct(Term a, Term b) {
         return equalSubjectPredicateInRespectToImageAndProduct((Statement) a, (Statement) b, true);
     }
 
-    static boolean equalSubjectPredicateInRespectToImageAndProduct(final Statement A, final Statement B, boolean requireEqualImageRelation) {
+    static boolean equalSubjectPredicateInRespectToImageAndProduct(Statement A, Statement B, boolean requireEqualImageRelation) {
 
 
         if (A.equals(B)) {
@@ -159,8 +159,8 @@ public class Terms {
     }
 
 
-    public static boolean contains(final Term[] container, final Term v) {
-        for (final Term e : container)
+    public static boolean contains(Term[] container, Term v) {
+        for (Term e : container)
             if (v.equals(e))
                 return true;
         return false;
@@ -176,7 +176,7 @@ public class Terms {
         return r;
     }
 
-    public static Term[] toSortedSetArray(final Term... arg) {
+    public static Term[] toSortedSetArray(Term... arg) {
         switch (arg.length) {
 
             case 0:
@@ -185,9 +185,9 @@ public class Terms {
             case 1:
                 return arg; //new Term[] { arg[0] };
             case 2:
-                final Term a = arg[0];
-                final Term b = arg[1];
-                final int c = a.compareTo(b);
+                Term a = arg[0];
+                Term b = arg[1];
+                int c = a.compareTo(b);
 
 //                if (Global.DEBUG) {
 //                    //verify consistency of compareTo() and equals()
@@ -209,7 +209,7 @@ public class Terms {
         }
     }
 
-    public static <T extends Term> T[] toSortedSetArray(final Collection<T> c) {
+    public static <T extends Term> T[] toSortedSetArray(Collection<T> c) {
         TreeSet<T> t = new TreeSet<>(c);
         return t.toArray((T[]) new Term[t.size()]);
     }
@@ -250,11 +250,11 @@ public class Terms {
      *
      * @return the component list
      */
-    public static Term[] toArray(final Term... t) {
+    public static Term[] toArray(Term... t) {
         return t;
     }
 
-    public static List<Term> toList(final Term... t) {
+    public static List<Term> toList(Term... t) {
         return Arrays.asList((Term[]) t);
     }
 
@@ -269,11 +269,11 @@ public class Terms {
     @SafeVarargs
     public static <T> Set<T> toSortedSet(T... t) {
 
-        final int l = t.length;
+        int l = t.length;
         if (l == 1)
             return Collections.singleton(t[0]);
 
-        final TreeSet<T> s = new TreeSet();
+        TreeSet<T> s = new TreeSet();
         Collections.addAll(s, t);
         return s;
     }
@@ -309,7 +309,7 @@ public class Terms {
     }
 
     public static int maxLevel(Term term) {
-        final int[] max = {0};
+        int[] max = {0};
         term.recurseTerms((t, p) -> {
             int m = t.op().minLevel;
             if (m > max[0])
@@ -331,9 +331,9 @@ public class Terms {
 
         //TODO apply preventUnnecessaryDeepCopy to more cases
 
-        final Term[] arr = new Term[L];
+        Term[] arr = new Term[L];
 
-        final int l = a.length;
+        int l = a.length;
         System.arraycopy(a, 0, arr, 0, l);
         System.arraycopy(b, 0, arr, l, b.length);
 
@@ -367,7 +367,7 @@ public class Terms {
         return l.toArray(new Term[l.size()]);
     }
 
-    public static Term[] cloneTermsReplacing(final Term[] term, final Term from, final Term to) {
+    public static Term[] cloneTermsReplacing(Term[] term, Term from, Term to) {
         Term[] y = new Term[term.length];
         int i = 0;
         for (Term x : term) {

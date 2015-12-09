@@ -26,7 +26,7 @@ public class AtomConcept extends AbstractConcept  {
         this(atom, new NullBag(), new NullBag());
     }
 
-    public AtomConcept(Term atom, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Task, TaskLink> taskLinks) {
+    public AtomConcept(Term atom, Bag<TermLinkKey, TermLink> termLinks, Bag<Task, TaskLink> taskLinks) {
         super(atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
@@ -107,7 +107,7 @@ public class AtomConcept extends AbstractConcept  {
      * @return the termlink which was selected or updated
      */
     @Override
-    public final TermLink activateTermLink(final TermLinkBuilder termLink) {
+    public final TermLink activateTermLink(TermLinkBuilder termLink) {
         return getTermLinks().update(termLink);
     }
 

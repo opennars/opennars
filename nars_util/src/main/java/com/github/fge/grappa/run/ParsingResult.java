@@ -40,9 +40,9 @@ public class ParsingResult<V>
      * @param valueStack the value stack of the parsing run
      * @param inputBuffer the input buffer
      */
-    public ParsingResult(final boolean matched,
-        @Nonnull final ValueStack<V> valueStack,
-        @Nonnull final InputBuffer inputBuffer)
+    public ParsingResult(boolean matched,
+                         @Nonnull ValueStack<V> valueStack,
+                         @Nonnull InputBuffer inputBuffer)
     {
         this.matched = matched;
         this.valueStack = Objects.requireNonNull(valueStack);

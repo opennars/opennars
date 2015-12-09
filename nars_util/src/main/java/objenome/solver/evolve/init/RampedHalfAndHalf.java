@@ -148,9 +148,9 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
         Integer startDepth = config.get(RAMPING_START_DEPTH);
 
         if (maxInitialDepth != null && (maxDepth == null || maxInitialDepth < maxDepth)) {
-            this.endDepth = maxInitialDepth;
+            endDepth = maxInitialDepth;
         } else {
-            this.endDepth = (maxDepth == null) ? -1 : maxDepth;
+            endDepth = (maxDepth == null) ? -1 : maxDepth;
         }
 
         this.startDepth = startDepth != null ? startDepth : 0;
@@ -287,7 +287,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
                 int target = noPrograms[i - startDepth];
                 BigInteger targetBI = BigInteger.valueOf(target);
                 if (!grow.sufficientVarieties(i, returnType, targetBI)) {
-                    final BigInteger noPossibleBI = grow.varieties(i, returnType);
+                    BigInteger noPossibleBI = grow.varieties(i, returnType);
 
                     // Must fit into an int because target was an int.
                     int noPossible = noPossibleBI.intValue();
@@ -454,7 +454,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
      * @param size the size of the populations generated
      */
     public void setPopulationSize(int size) {
-        this.populationSize = size;
+        populationSize = size;
     }
 
     /**

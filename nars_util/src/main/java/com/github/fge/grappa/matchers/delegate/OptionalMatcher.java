@@ -32,7 +32,7 @@ public final class OptionalMatcher
 {
     private final Matcher subMatcher;
 
-    public OptionalMatcher(final Rule subRule)
+    public OptionalMatcher(Rule subRule)
     {
         super(Objects.requireNonNull(subRule, "subRule"), "optional");
         subMatcher = getChildren().get(0);
@@ -45,7 +45,7 @@ public final class OptionalMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         subMatcher.getSubContext(context).runMatcher();
         return true;

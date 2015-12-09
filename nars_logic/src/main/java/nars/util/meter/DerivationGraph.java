@@ -246,15 +246,15 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
         public PremiseKey(Task tasklink, Term termlink, Task belief, ObjectIntHashMap<Term> unique, long now, boolean truth, boolean budget) {
             //this.conceptKey = genericString(concept.getTerm(), unique);
-            this.taskLinkKey = genericString(tasklink, unique, now, truth, budget, false);
-            this.termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
-            this.beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
+            taskLinkKey = genericString(tasklink, unique, now, truth, budget, false);
+            termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
+            beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
 
-            this.taskVolume = tasklink.getTerm().volume();
-            this.termVolume = termlink.getTerm().volume();
-            this.beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
+            taskVolume = tasklink.getTerm().volume();
+            termVolume = termlink.getTerm().volume();
+            beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
 
-            this.key = (taskLinkKey + ':' +
+            key = (taskLinkKey + ':' +
                     termLinkKey + ':' +
                     beliefKey).trim();
         }
@@ -447,7 +447,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         //TODO use a better generation method, replacement might cause error if term names contain common subsequences
         //maybe use a sorted Map so that the longest terms to be replaced are iterated first, so that a shorter subterm will not interfere with subsequent longer replacement
 
-        final String[] s = new String[1];
+        String[] s = new String[1];
         s[0] = c instanceof Compound ? c.toString(false) : c.toString();
 
         unique.forEachKeyValue( (tn, i) -> {

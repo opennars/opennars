@@ -30,7 +30,7 @@ public final class LoadingOpcode
     private static final Map<Integer, Integer> LOADING_OPCODES;
 
     static {
-        final ImmutableMap.Builder<Integer, Integer> builder
+        ImmutableMap.Builder<Integer, Integer> builder
             = ImmutableMap.builder();
 
         builder.put(Type.BOOLEAN, Opcodes.ILOAD);
@@ -51,7 +51,7 @@ public final class LoadingOpcode
     {
     }
 
-    public static int forType(@Nonnull final Type type)
+    public static int forType(@Nonnull Type type)
     {
         Objects.requireNonNull(type);
         // Will throw IllegalStateException if optional .isAbsent()

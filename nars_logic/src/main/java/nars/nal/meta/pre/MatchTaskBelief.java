@@ -21,7 +21,7 @@ import java.util.List;
     public MatchTaskBelief(TaskBeliefPair pattern) {
 
         //this.pattern = pattern;
-        this.compiled = new TermPattern(Op.VAR_PATTERN, pattern);
+        compiled = new TermPattern(Op.VAR_PATTERN, pattern);
 
         //Term beliefPattern = pattern.term(1);
 
@@ -41,7 +41,7 @@ import java.util.List;
                         pStructure) + " " + pattern
         );*/
 
-        this.id = getClass().getSimpleName() + '[' + pattern.toStringCompact() + ']';
+        id = getClass().getSimpleName() + '[' + pattern.toStringCompact() + ']';
 
     }
 
@@ -51,7 +51,7 @@ import java.util.List;
     }
 
     @Override
-    public final boolean test(final RuleMatch m) {
+    public final boolean test(RuleMatch m) {
         throw new RuntimeException("this should not be called");
     }
 

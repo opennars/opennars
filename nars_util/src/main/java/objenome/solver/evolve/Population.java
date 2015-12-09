@@ -150,7 +150,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
         }
 
 
-        Population<I> sorted = this.clone();
+        Population<I> sorted = clone();
         sorted.sort();
 
         for (int i = existing - numToRemove; i < existing; i++) {
@@ -173,7 +173,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
         if (size() <= size)
             size = size()-1;
 
-        Population<I> copy = this.clone();
+        Population<I> copy = clone();
         copy.sort();
 
         Organism[] fittest = new Organism[size];

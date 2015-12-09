@@ -64,7 +64,7 @@ public final class ClassNodeInitializer
         super(Opcodes.ASM5);
     }
 
-    public void process(final ParserClassNode classNode)
+    public void process(ParserClassNode classNode)
         throws IOException
     {
         this.classNode = Objects.requireNonNull(classNode, "classNode");
@@ -90,15 +90,15 @@ public final class ClassNodeInitializer
             ownerClass = ownerClass.getSuperclass();
         }
 
-        for (final RuleMethod method: classNode.getRuleMethods().values()) {
+        for (RuleMethod method: classNode.getRuleMethods().values()) {
             // move all flags from the super methods to their overriding methods
             if (!method.isSuperMethod())
                 continue;
 
-            final String overridingMethodName
+            String overridingMethodName
                 = method.name.substring(1) + method.desc;
 
-            final RuleMethod overridingMethod
+            RuleMethod overridingMethod
                 = classNode.getRuleMethods().get(overridingMethodName);
 
             method.moveFlagsTo(overridingMethod);
@@ -106,9 +106,9 @@ public final class ClassNodeInitializer
     }
 
     @Override
-    public void visit(final int version, final int access, final String name,
-        final String signature, final String superName,
-        final String[] interfaces)
+    public void visit(int version, int access, String name,
+                      String signature, String superName,
+                      String[] interfaces)
     {
         if (ownerClass == classNode.getParentClass()) {
             if ((access & ACC_PRIVATE) != 0)
@@ -117,7 +117,7 @@ public final class ClassNodeInitializer
             if ((access & ACC_FINAL) != 0)
                 throw new InvalidGrammarException("a parser class cannot be "
                     + "final");
-            final String className = getExtendedParserClassName(name);
+            String className = getExtendedParserClassName(name);
             classNode.visit(Opcodes.V1_7, ACC_PUBLIC, className, null,
                 classNode.getParentType().getInternalName(), null);
         }
@@ -125,8 +125,8 @@ public final class ClassNodeInitializer
 
     @Nullable
     @Override
-    public AnnotationVisitor visitAnnotation(final String desc,
-        final boolean visible)
+    public AnnotationVisitor visitAnnotation(String desc,
+                                             boolean visible)
     {
         if (recordAnnotation(annotations, desc))
             return null;
@@ -141,15 +141,15 @@ public final class ClassNodeInitializer
     }
 
     @Override
-    public void visitSource(final String source, final String debug)
+    public void visitSource(String source, String debug)
     {
         classNode.visitSource(null, null);
     }
 
     @Nullable
     @Override
-    public MethodVisitor visitMethod(final int access, String name,
-        final String desc, final String signature, final String[] exceptions)
+    public MethodVisitor visitMethod(int access, String name,
+                                     String desc, String signature, String[] exceptions)
     {
         if ("<init>".equals(name)) {
             // do not add constructors from super classes or private constructors
@@ -158,7 +158,7 @@ public final class ClassNodeInitializer
             if ((access & ACC_PRIVATE) > 0)
                 return null;
 
-            final MethodNode constructor = new MethodNode(access, name, desc,
+            MethodNode constructor = new MethodNode(access, name, desc,
                 signature, exceptions);
             classNode.getConstructors().add(constructor);
              // return the newly created method in order to have it "filled"
@@ -187,7 +187,7 @@ public final class ClassNodeInitializer
             methodKey = name + desc;
         }
 
-        final RuleMethod method = new RuleMethod(ownerClass, access, name, desc,
+        RuleMethod method = new RuleMethod(ownerClass, access, name, desc,
             signature, exceptions, annotations);
         classNode.getRuleMethods().put(methodKey, method);
         // return the newly created method in order to have it "filled" with the
@@ -201,14 +201,14 @@ public final class ClassNodeInitializer
         classNode.visitEnd();
     }
 
-    private static InputStream getInputStream(final Class<?> c)
+    private static InputStream getInputStream(Class<?> c)
     {
         Objects.requireNonNull(c);
-        final String name = c.getName().replace('.', '/') + ".class";
-        final ClassLoader me = ClassNodeInitializer.class.getClassLoader();
-        final ClassLoader context
+        String name = c.getName().replace('.', '/') + ".class";
+        ClassLoader me = ClassNodeInitializer.class.getClassLoader();
+        ClassLoader context
             = Thread.currentThread().getContextClassLoader();
-        final ClassLoader system = ClassLoader.getSystemClassLoader();
+        ClassLoader system = ClassLoader.getSystemClassLoader();
 
         InputStream ret = me.getResourceAsStream(name);
 

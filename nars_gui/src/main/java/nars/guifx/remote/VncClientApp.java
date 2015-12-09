@@ -91,7 +91,7 @@ public class VncClientApp extends Application {
 
         MainView main = new MainView();
 
-        final Scene scene = new Scene(main.getView(), sceneWidthProperty.get(), sceneHeightProperty.get());
+        Scene scene = new Scene(main.getView(), sceneWidthProperty.get(), sceneHeightProperty.get());
         stage.setOnCloseRequest((e) -> {
             sceneWidthProperty.set(scene.getWidth());
             sceneHeightProperty.set(scene.getHeight());
@@ -106,7 +106,7 @@ public class VncClientApp extends Application {
     public static Pane newView() {
         Injector.setLogger(logger::fine);
 
-        final StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
+        StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
 
         // Injector.setModelOrService(Stage.class, stage);
         Injector.setModelOrService(ProtocolConfiguration.class, Injector.instantiateModelOrService(DefaultProtocolConfiguration.class));

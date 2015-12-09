@@ -113,14 +113,14 @@ public class Digest implements Comparable<Digest> {
      */
     @Override
     public int hashCode() {
-        if (this.hash == 0) {
-            return this.hash = hash();
+        if (hash == 0) {
+            return hash = hash();
         }
-        return this.hash;
+        return hash;
     }
 
     public int hash() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + (id == null ? 0 : id.hashCode());
         result = prime * result + (int) (time ^ time >>> 32);
@@ -142,7 +142,7 @@ public class Digest implements Comparable<Digest> {
     public void writeTo(ByteBuffer buffer) {
         writeInetAddress(address, buffer);
 
-        final UUID id = this.id;
+        UUID id = this.id;
         buffer.putLong(id.getMostSignificantBits());
         buffer.putLong(id.getLeastSignificantBits());
 

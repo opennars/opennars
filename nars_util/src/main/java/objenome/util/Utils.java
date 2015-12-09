@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 public class Utils {
 
-    public static <T> T[] toArray(final Collection c) {
+    public static <T> T[] toArray(Collection c) {
         return (T[]) c.toArray((T[]) Array.newInstance(c.iterator().next().getClass(), c.size()));
     }
 

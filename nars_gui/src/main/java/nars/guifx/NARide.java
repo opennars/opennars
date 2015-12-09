@@ -301,7 +301,7 @@ public class NARide extends BorderPane {
         super();
 
 
-        this.nar = l.nar;
+        nar = l.nar;
 
 
         //default node builders
@@ -326,7 +326,7 @@ public class NARide extends BorderPane {
 //        controlPane.getChildren().add(addIcon);
 
 
-        final BorderPane f = new BorderPane();
+        BorderPane f = new BorderPane();
 
 
         /*LinePlot lp = new LinePlot(
@@ -452,8 +452,8 @@ public class NARide extends BorderPane {
         //final NSlider activation;
 
         public DefaultCyclePane(AbstractNAR.DefaultCycle l) {
-            this.cycle = l;
-            this.nar = l.nar;
+            cycle = l;
+            nar = l.nar;
 
             setCenter(new POJOPane(l));
         }
@@ -526,8 +526,8 @@ public class NARide extends BorderPane {
             double w = canvas.getWidth(), h = canvas.getHeight();
             g.clearRect(0, 0, w, h);
 
-            final double iw = 6;
-            final double ih = 6;
+            double iw = 6;
+            double ih = 6;
 
             if (source!=null) {
                 Iterable<X> si = source.get();

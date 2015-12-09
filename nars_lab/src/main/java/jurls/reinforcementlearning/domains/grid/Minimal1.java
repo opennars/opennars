@@ -16,7 +16,7 @@ public class Minimal1 implements World {
     
 
     public Minimal1(int totalTime, double frequency) {
-        this.time = 1;
+        time = 1;
         this.totalTime = totalTime;
         this.frequency = frequency;
     }
@@ -47,8 +47,8 @@ public class Minimal1 implements World {
         
         
         
-        final int duration = 9000000;
-        final double freq = 0.5;
+        int duration = 9000000;
+        double freq = 0.5;
         
         new Thread(new Runnable() {
             @Override

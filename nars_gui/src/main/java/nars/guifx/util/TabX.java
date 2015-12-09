@@ -70,13 +70,13 @@ public class TabX extends Tab {
 
     protected void update() {
 
-        final boolean s = !closed && isSelected();
+        boolean s = !closed && isSelected();
 
         //logger.severe(getText() + " visible=" + s);
 
         update(s);
 
-        final Node c = getContent();
+        Node c = getContent();
         if (c!=null)
             c.setVisible(s);
 

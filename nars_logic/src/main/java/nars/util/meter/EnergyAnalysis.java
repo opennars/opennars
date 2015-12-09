@@ -10,7 +10,7 @@ public class EnergyAnalysis {
     public final NAR nar;
 
     public EnergyAnalysis(NAR n) {
-        this.nar = n;
+        nar = n;
     }
 
 

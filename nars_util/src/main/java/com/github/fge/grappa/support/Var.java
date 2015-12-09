@@ -70,7 +70,7 @@ public class Var<T>
      *
      * @param value the value
      */
-    public Var(@Nullable final T value)
+    public Var(@Nullable T value)
     {
         super(value);
         supplier = Suppliers.ofInstance(value);
@@ -83,7 +83,7 @@ public class Var<T>
      * @param supplier the supplier used to create the initial value for a rule execution frame
      *
      */
-    public Var(@Nonnull final Supplier<T> supplier)
+    public Var(@Nonnull Supplier<T> supplier)
     {
         this.supplier = Objects.requireNonNull(supplier);
     }
@@ -103,7 +103,7 @@ public class Var<T>
      *
      * @param name the name
      */
-    public final void setName(final String name)
+    public final void setName(String name)
     {
         this.name = name;
     }

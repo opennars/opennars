@@ -26,8 +26,8 @@ public abstract class LocalGridObject implements GridObject {
     }
     
     public void setPosition(int x, int y) {
-        this.cx = this.x = x;
-        this.cy = this.y = y;
+        cx = this.x = x;
+        cy = this.y = y;
     }
     
     public int x() { return x; }

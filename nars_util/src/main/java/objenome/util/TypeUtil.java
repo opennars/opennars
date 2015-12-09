@@ -263,7 +263,7 @@ public final class TypeUtil {
      * @return <code>true</code> if it is a primitive integer type,
      * <code>false</code> otherwise
      */
-    public static boolean isIntegerType(final Class<?> type) {        
+    public static boolean isIntegerType(Class<?> type) {
         return ((type == Integer.class) || (type == Long.class) || (type == Byte.class) || (type == Short.class));
     }
 
@@ -275,7 +275,7 @@ public final class TypeUtil {
      * @return <code>true</code> if it is a numeric type, <code>false</code>
      * otherwise
      */
-    public static boolean isNumericType(final Class<?> type) {
+    public static boolean isNumericType(Class<?> type) {
         return Number.class.isAssignableFrom(type);
         /*
         return ((type == Byte.class) || (type == Short.class) || (type == Integer.class) || (type == Long.class)
@@ -291,7 +291,7 @@ public final class TypeUtil {
      * @return <code>true</code> if all given classes are for numeric types,
      * <code>false</code> otherwise
      */
-    public static boolean isAllNumericType(final Class<?>... classes) {
+    public static boolean isAllNumericType(Class<?>... classes) {
         for (Class<?> c : classes) {
             if (!TypeUtil.isNumericType(c)) {
                 return false;

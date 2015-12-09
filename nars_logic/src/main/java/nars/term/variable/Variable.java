@@ -35,18 +35,18 @@ import java.util.Map;
  */
 public abstract class Variable extends AbstractStringAtom {
 
-    protected Variable(final String n) {
+    protected Variable(String n) {
         super(n);
     }
 
-    protected Variable(final byte[] n) {
+    protected Variable(byte[] n) {
         super(n);
     }
 
-    protected Variable(final String n, Op specificOp) {
+    protected Variable(String n, Op specificOp) {
         super(n, specificOp);
     }
-    protected Variable(final byte[] n, Op specificOp) {
+    protected Variable(byte[] n, Op specificOp) {
         super(n, specificOp);
     }
 

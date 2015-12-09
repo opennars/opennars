@@ -78,16 +78,16 @@ public final class ParserExtensionVerificationTest {
     @DataProvider
     public Iterator<Object[]> getInstructionGroups()
     {
-        final List<Object[]> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
 
-        final Set<String> internalNames = new HashSet<>();
-        final Iterable<RuleMethod> methods
+        Set<String> internalNames = new HashSet<>();
+        Iterable<RuleMethod> methods
             = classNode.getRuleMethods().values();
 
         String internalName;
 
-        for (final RuleMethod method: methods) {
-            for (final InstructionGroup group: method.getGroups()) {
+        for (RuleMethod method: methods) {
+            for (InstructionGroup group: method.getGroups()) {
                 internalName = group.getGroupClassType().getInternalName();
                 if (internalNames.add(internalName))
                     list.add(new Object[] { internalName, method, group });
@@ -102,14 +102,14 @@ public final class ParserExtensionVerificationTest {
         dataProvider = "getInstructionGroups",
         dependsOnMethods = "classNodeIntegrityIsEnsured"
     )
-    public void instructionGroupIsCorrect(final String internalName,
-        final RuleMethod method, final InstructionGroup group)
+    public void instructionGroupIsCorrect(String internalName,
+                                          RuleMethod method, InstructionGroup group)
     {
-        final String where
+        String where
             = String.format("(internal name: %s, rule method: %s; group: %s)",
                 internalName, method, group);
 
-        final byte[] code = group.getGroupClassCode();
+        byte[] code = group.getGroupClassCode();
         assertNotNull(code, "class code is null! It should not be! " + where);
         verifyIntegrity(internalName, code);
     }

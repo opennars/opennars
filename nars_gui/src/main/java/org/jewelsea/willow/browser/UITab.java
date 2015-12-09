@@ -21,7 +21,7 @@ public class UITab<N extends Node> extends Tab {
 
     public UITab(N content) {
         super();
-        this.contnt = content;
+        contnt = content;
     }
     
     public N content() {

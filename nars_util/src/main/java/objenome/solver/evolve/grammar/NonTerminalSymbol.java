@@ -304,7 +304,7 @@ public class NonTerminalSymbol implements Symbol {
                     // It is this child.
                     return (NonTerminalSymbol) removeChild(i);
                 } else {
-                    final NonTerminalSymbol nth = nt.removeNthNonTerminal(n, (valid ? current + 1 : current), rule);
+                    NonTerminalSymbol nth = nt.removeNthNonTerminal(n, (valid ? current + 1 : current), rule);
 
                     if (nth != null) {
                         return nth;
@@ -389,7 +389,7 @@ public class NonTerminalSymbol implements Symbol {
      * tree.
      */
     public TerminalSymbol getNthTerminal(int n) {
-        final List<TerminalSymbol> terminals = getTerminalSymbols();
+        List<TerminalSymbol> terminals = getTerminalSymbols();
 
         return terminals.get(n);
     }

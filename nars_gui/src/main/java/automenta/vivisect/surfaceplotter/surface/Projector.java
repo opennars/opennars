@@ -400,7 +400,7 @@ float zfactor;
 	
 	public  void setZRange(float zmin, float zmax) {
 		this.zmin = zmin; this.zmax = zmax;
-		this.zfactor = 20/(zmax-zmin);
+        zfactor = 20/(zmax-zmin);
 	}
 	
 }

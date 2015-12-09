@@ -14,7 +14,7 @@ public class LabeledSupplier<X> implements Supplier<X> {
     }
 
     LabeledSupplier(String label, Supplier<X> sup) {
-        this.s = sup;
+        s = sup;
         this.label = label;
     }
 

@@ -68,12 +68,12 @@ public class ColorModelSet implements SurfaceColor
 	protected PlotColor color_mode= PlotColor.SPECTRUM;
 	public void setPlotColor(PlotColor v)	
 	{
-		this.color_mode=v;
+		color_mode =v;
 	}
 	protected PlotType plot_mode= PlotType.CONTOUR;
 	public void setPlotType(PlotType type)
 	{
-		this.plot_mode=type;
+		plot_mode =type;
 	}
 	
 	/* (non-Javadoc)

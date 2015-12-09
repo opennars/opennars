@@ -21,7 +21,7 @@ import com.github.fge.grappa.run.context.MatcherContext;
 public final class PreMatchEvent<V>
     extends MatchContextEvent<V>
 {
-    public PreMatchEvent(final MatcherContext<V> context)
+    public PreMatchEvent(MatcherContext<V> context)
     {
         super(context);
     }

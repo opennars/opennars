@@ -114,7 +114,7 @@ public class InternalExperience {
 
         n.memory.eventTaskProcess.on(tp -> {
 
-            final Task task = tp.getTask();
+            Task task = tp.getTask();
 
             //old strategy always, new strategy only for QUESTION and QUEST:
             ///final char punc = task.getPunctuation();
@@ -127,17 +127,17 @@ public class InternalExperience {
 
         });
         n.memory.eventConceptProcess.on(p -> {
-            final Task belief = p.getBelief();
+            Task belief = p.getBelief();
             if (belief == null) return;
 
-            final Task task = p.getTask();
-            final Random r = p.getRandom();
+            Task task = p.getTask();
+            Random r = p.getRandom();
 
             if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY) {
                 nonInnate(belief, task, p, randomNonInnate(r) );
             }
 
-            final Term beliefTerm = belief.getTerm();
+            Term beliefTerm = belief.getTerm();
 
             if (beliefTerm instanceof Implication && r.nextFloat() <= INTERNAL_EXPERIENCE_PROBABILITY) {
                 internalizeImplication(task, p, (Implication) beliefTerm);
@@ -145,11 +145,11 @@ public class InternalExperience {
         });
     }
 
-    public static Compound toTerm(final Sentence s, final Premise mem, float conceptCreationExpectation) {
+    public static Compound toTerm(Sentence s, Premise mem, float conceptCreationExpectation) {
         return toTerm(s, mem, conceptCreationExpectation, enableWantBelieve);
     }
 
-    public static Compound toTerm(final Sentence s, final Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
+    public static Compound toTerm(Sentence s, Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
         Operator opTerm;
         switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
@@ -172,7 +172,7 @@ public class InternalExperience {
                 return null;
         }
 
-        final Truth tr = s.getTruth();
+        Truth tr = s.getTruth();
         Term[] arg = new Term[1 + (tr == null ? 1 : 2)];
         arg[0] = s.getTerm();
         int k = 1;
@@ -215,7 +215,7 @@ public class InternalExperience {
         //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
         {
             //char punc = task.getPunctuation();
-            final Budget b = task.getBudget();
+            Budget b = task.getBudget();
             if (task.isQuestOrQuestion()) {
                 if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE)) {
                     return null;

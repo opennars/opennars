@@ -25,7 +25,7 @@ public class ParticleSystem_v5 extends Canvas {
 		frame.setResizable(false);
 		frame.setFocusable(true);
 
-		final RenderClass_v5 ren = new RenderClass_v5(WIDTH, HEIGHT);
+		RenderClass_v5 ren = new RenderClass_v5(WIDTH, HEIGHT);
 		frame.add(ren);
 
 		frame.setVisible(true);

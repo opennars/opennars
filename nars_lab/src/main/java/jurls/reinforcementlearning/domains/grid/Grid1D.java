@@ -29,20 +29,20 @@ public class Grid1D implements World {
     private final double cycleSkew;
 
     public Grid1D(int size, int totalTime, double noise, double cycleSkew) {
-        this.time = 0;
+        time = 0;
         this.size = size;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.REWARD_MAGNITUDE = 100.0;
-        this.ENERGY_COST =  this.REWARD_MAGNITUDE / 100.0;
-        this.JUMP_FRACTION = 0.0;        
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        REWARD_MAGNITUDE = 100.0;
+        ENERGY_COST = REWARD_MAGNITUDE / 100.0;
+        JUMP_FRACTION = 0.0;
         this.noise = noise;
         this.cycleSkew = cycleSkew;
         
         //this.name_long = 'one dimensional grid world'
-        
-        
-        this.worldState = 0.0;
-        this.simpleState = 0;
+
+
+        worldState = 0.0;
+        simpleState = 0;
         this.totalTime = totalTime;
         /*
         this.display_state = True;

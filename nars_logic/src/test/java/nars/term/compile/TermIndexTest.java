@@ -23,7 +23,7 @@ public class TermIndexTest {
 
     @Test public void testTaskTermSharing1() {
 
-        final NAR t = new Terminal();
+        NAR t = new Terminal();
 
         String term = "<a --> b>.";
 
@@ -96,7 +96,7 @@ public class TermIndexTest {
 
     @Ignore
     @Test public void testRuleTermsAddedToMemoryTermIndex() {
-        final NAR d = new Default(100,1,1,1);
+        NAR d = new Default(100,1,1,1);
         Set<Term> t = new TreeSet();
         d.memory.index.forEach(x -> t.add(x.getTerm()));
 

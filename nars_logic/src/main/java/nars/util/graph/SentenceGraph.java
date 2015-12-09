@@ -26,10 +26,10 @@ public abstract class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRe
         private final int hash;
 
         public ConceptRelation(Concept relation, Concept from, Concept to) {
-            this.edge = relation;
+            edge = relation;
             this.from = from;
             this.to = to;
-            this.hash = Objects.hash(relation, from, to);
+            hash = Objects.hash(relation, from, to);
         }
 
         @Override
@@ -66,7 +66,7 @@ public abstract class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRe
 
             @Override
             public boolean contains(Concept c) {
-                return SentenceGraph.this.containsRelation(c);
+                return containsRelation(c);
             }
 
             @Override

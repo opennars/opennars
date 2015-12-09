@@ -76,7 +76,7 @@ public class FrameHistory implements Cloneable {
 
             obj.frames = new LinkedList<>();
             // Copy over the frames; we do not clone them
-            for (ScreenMatrix screen : this.frames) {
+            for (ScreenMatrix screen : frames) {
                 obj.frames.add(screen);
             }
             return obj;

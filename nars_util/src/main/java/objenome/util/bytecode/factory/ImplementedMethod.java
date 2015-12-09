@@ -38,7 +38,7 @@ final class ImplementedMethod {
      * @param method
      *            Method - Cannot be <code>null</code>.
      */
-    public ImplementedMethod(final SgMethod method) {
+    public ImplementedMethod(SgMethod method) {
         super();
         if (method == null) {
             throw new IllegalArgumentException("The argument 'method' cannot be null!");
@@ -64,7 +64,7 @@ final class ImplementedMethod {
      *            Interface to add - Cannot be <code>null</code> and must be an
      *            interface.
      */
-    public void addInterface(final Class<?> intf) {
+    public void addInterface(Class<?> intf) {
         if (intf == null) {
             throw new IllegalArgumentException("The argument 'intf' cannot be null!");
         }

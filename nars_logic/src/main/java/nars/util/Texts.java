@@ -172,7 +172,7 @@ public abstract class Texts {
      */
 
     /** returns lev distance divided by max(a.length(), b.length() */
-    public static float levenshteinDistancePercent(final CharSequence a, final CharSequence b) {
+    public static float levenshteinDistancePercent(CharSequence a, CharSequence b) {
         float len = Math.max(a.length(), b.length());
         if (len == 0) return 0;
         return levenshteinDistance(a,b) / len;
@@ -181,7 +181,7 @@ public abstract class Texts {
     /**
      * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */
-    public static int levenshteinDistance(final CharSequence a, final CharSequence b) {
+    public static int levenshteinDistance(CharSequence a, CharSequence b) {
         int len0 = a.length() + 1;
         int len1 = b.length() + 1;
         int[] cost = new int[len0];
@@ -191,7 +191,7 @@ public abstract class Texts {
         }
         for (int j = 1; j < len1; j++) {
             newcost[0] = j;
-            final char bj = b.charAt(j - 1);
+            char bj = b.charAt(j - 1);
             for (int i = 1; i < len0; i++) {
                 int match = (a.charAt(i - 1) == bj) ? 0 : 1;
                 int cost_replace = cost[i - 1] + match;
@@ -238,11 +238,11 @@ public abstract class Texts {
      * <p>
      * TODO do not allow a StringBuilder to appear in output, instead wrap in CharArrayRope
      */
-    public static CharSequence yarn(final int maxLen, final CharSequence... components) {
+    public static CharSequence yarn(int maxLen, CharSequence... components) {
         int totalLen = 0;
         int total = 0;
         CharSequence lastNonNull = null;
-        for (final CharSequence s : components) {
+        for (CharSequence s : components) {
             if (s != null) {
                 totalLen += s.length();
                 total++;
@@ -269,7 +269,7 @@ public abstract class Texts {
 
 
             StringBuilder sb = new StringBuilder(totalLen);
-            for (final CharSequence s : components) {
+            for (CharSequence s : components) {
                 if (s != null) {
                     sb.append(s);
                 }
@@ -281,11 +281,11 @@ public abstract class Texts {
         }
     }
 
-    public static boolean containsChar(final CharSequence n, final char c) {
+    public static boolean containsChar(CharSequence n, char c) {
         if (n instanceof String)
             return ((String) n).indexOf(c) != -1;
 
-        final int l = n.length();
+        int l = n.length();
         for (int i = 0; i < l; i++)
             if (n.charAt(i) == c)
                 return true;
@@ -295,32 +295,32 @@ public abstract class Texts {
 
     static final ThreadLocal<Format> oneDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0") );
 
-    public static final String n1(final float x) {
+    public static final String n1(float x) {
         return oneDecimal.get().format(x);
     }
 
-    public static final String n1char(final double x) {
+    public static final String n1char(double x) {
         return oneDecimal.get().format(x);
     }
 
 
     static final ThreadLocal<Format> threeDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.000") );
 
-    public static final String n3(final float x) {
+    public static final String n3(float x) {
         return threeDecimal.get().format(x);
     }
 
-    public static final String n3(final double x) {
+    public static final String n3(double x) {
         return threeDecimal.get().format(x);
     }
 
     static final ThreadLocal<Format> fourDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0000") );
 
-    public static final String n4(final float x) {
+    public static final String n4(float x) {
         return fourDecimal.get().format(x);
     }
 
-    public static final String n4(final double x) {
+    public static final String n4(double x) {
         return fourDecimal.get().format(x);
     }
 
@@ -330,15 +330,15 @@ public abstract class Texts {
 //        return twoDecimal.format(x);
 //    }
 
-    public static long thousandths(final float d) {
+    public static long thousandths(float d) {
         return (long) ((d * 1000.0f + 0.5f));
     }
 
-    public static long hundredths(final float d) {
+    public static long hundredths(float d) {
         return (long) ((d * 100.0f + 0.5f));
     }
 
-    public static int tens(final float d) {
+    public static int tens(float d) {
         return (int) ((d * 10.0f + 0.5f));
     }
 
@@ -348,14 +348,14 @@ public abstract class Texts {
      * for compact display.
      * if the value=1.0, then 'aa' is the result
      */
-    public static final String n2u(final float x) {
+    public static final String n2u(float x) {
         if ((x < 0) || (x > 1)) throw new RuntimeException("values >=0 and <=1");
         int hundreds = (int) hundredths(x);
         if (x == 100) return "aa";
         return hundreds < 10 ? "0" + hundreds : Integer.toString(hundreds);
     }
 
-    public static final CharSequence n2(final float x) {
+    public static final CharSequence n2(float x) {
         if ((x < 0) || (x > 1.0f))
             return twoDecimal.format(x);
 
@@ -390,14 +390,14 @@ public abstract class Texts {
      * 1 character representing a 1 decimal of a value between 0..1.0;
      * representation; 0..9 //, A=1.0
      */
-    public static final char n1char(final float x) {
+    public static final char n1char(float x) {
         int i = tens(x);
         if (i >= 10)
             i = 9; //return 'A';
         return (char) ('0' + i);
     }
 
-    public static int compare(final CharSequence s, final CharSequence t) {
+    public static int compare(CharSequence s, CharSequence t) {
         if ((s instanceof String) && (t instanceof String)) {
             return ((String) s).compareTo((String) t);
         }
@@ -407,8 +407,8 @@ public abstract class Texts {
 
         int i = 0;
 
-        final int sl = s.length();
-        final int tl = t.length();
+        int sl = s.length();
+        int tl = t.length();
 
         while (i < sl && i < tl) {
             char a = s.charAt(i);
@@ -425,7 +425,7 @@ public abstract class Texts {
         return sl - tl;
     }
 
-    public static CharSequence n2(final double p) {
+    public static CharSequence n2(double p) {
         return n2((float) p);
     }
 
@@ -433,7 +433,7 @@ public abstract class Texts {
     /**
      * character to a digit, or -1 if it wasnt a digit
      */
-    public static int i(final char c) {
+    public static int i(char c) {
         if ((c >= '0' && c <= '9'))
             return c - '0';
         return -1;
@@ -442,7 +442,7 @@ public abstract class Texts {
     /**
      * fast parse an int under certain conditions, avoiding Integer.parse if possible
      */
-    public static int i(final String s) {
+    public static int i(String s) {
         if (s.length() == 1) {
             char c = s.charAt(0);
             int i = i(c);
@@ -465,7 +465,7 @@ public abstract class Texts {
      * fast parse a non-negative int under certain conditions, avoiding Integer.parse if possible
      *
      */
-    public static int i(final String s, int ifMissing) {
+    public static int i(String s, int ifMissing) {
         switch (s.length()) {
             case 0: return ifMissing;
             case 1: return i1(s, ifMissing);
@@ -513,7 +513,7 @@ public abstract class Texts {
     /**
      * fast parse for float, checking common conditions
      */
-    public static float f(final String s) {
+    public static float f(String s) {
 
         switch (s) {
             case "0":
@@ -536,16 +536,16 @@ public abstract class Texts {
 
     }
 
-    public static float f(final String s, final float min, final float max) {
+    public static float f(String s, float min, float max) {
         float x = f(s);
         if ((x < min) || x > max)
             return Float.NaN;
         return x;
     }
 
-    public static String arrayToString(final Object... signals) {
+    public static String arrayToString(Object... signals) {
         if (signals == null) return "";
-        final int slen = signals.length;
+        int slen = signals.length;
         if ((signals != null) && (slen > 1))
             return Arrays.toString(signals);
         if (slen > 0)

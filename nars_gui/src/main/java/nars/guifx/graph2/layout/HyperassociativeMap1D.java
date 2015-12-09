@@ -59,7 +59,7 @@ public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap
 
         //radiating circle
         {
-            final Term term = node.c.getTerm();
+            Term term = node.c.getTerm();
             double theta = (term.hashCode() % 64) / 64.0 * (3.14159 * 2);
             int complexity = term.volume();
 

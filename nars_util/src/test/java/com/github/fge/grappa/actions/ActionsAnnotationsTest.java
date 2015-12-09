@@ -33,7 +33,7 @@ public final class ActionsAnnotationsTest
     {
         protected final Dummy dummy;
 
-        Parser(final Dummy dummy)
+        Parser(Dummy dummy)
         {
             this.dummy = dummy;
         }
@@ -77,7 +77,7 @@ public final class ActionsAnnotationsTest
     @Test
     public void byDefaultActionsRunInPredicates()
     {
-        final Parser parser
+        Parser parser
             = Grappa.createParser(Parser.class, dummy);
         new ListeningParseRunner<>(parser.rule1()).run("f");
         verify(dummy).dummy();
@@ -86,7 +86,7 @@ public final class ActionsAnnotationsTest
     @Test
     public void whenAnnotatedActionsDoNotRunInPredicates()
     {
-        final Parser parser
+        Parser parser
             = Grappa.createParser(Parser.class, dummy);
         new ListeningParseRunner<>(parser.rule2()).run("f");
         verify(dummy, never()).dummy();

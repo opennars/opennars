@@ -39,9 +39,9 @@ public enum LdcInsnFunnel
     INSTANCE
     {
         @Override
-        public void funnel(final Object from, final PrimitiveSink into)
+        public void funnel(Object from, PrimitiveSink into)
         {
-            for (final Map.Entry<Class<?>, Funnel<Object>> entry:
+            for (Map.Entry<Class<?>, Funnel<Object>> entry:
                 FUNNELS.entrySet())
                 if (Predicates.instanceOf(entry.getKey()).apply(from)) {
                     entry.getValue().funnel(from, into);
@@ -56,7 +56,7 @@ public enum LdcInsnFunnel
     private static final Map<Class<?>, Funnel<Object>> FUNNELS;
 
     static {
-        final ImmutableMap.Builder<Class<?>, Funnel<Object>> builder
+        ImmutableMap.Builder<Class<?>, Funnel<Object>> builder
             = ImmutableMap.builder();
 
         builder.put(Integer.class, integerFunnel())
@@ -74,7 +74,7 @@ public enum LdcInsnFunnel
         return new Funnel<Object>()
         {
             @Override
-            public void funnel(final Object from, final PrimitiveSink into)
+            public void funnel(Object from, PrimitiveSink into)
             {
                 into.putInt((Integer) from);
             }
@@ -86,7 +86,7 @@ public enum LdcInsnFunnel
         return new Funnel<Object>()
         {
             @Override
-            public void funnel(final Object from, final PrimitiveSink into)
+            public void funnel(Object from, PrimitiveSink into)
             {
                 into.putFloat((Float) from);
             }
@@ -98,7 +98,7 @@ public enum LdcInsnFunnel
         return new Funnel<Object>()
         {
             @Override
-            public void funnel(final Object from, final PrimitiveSink into)
+            public void funnel(Object from, PrimitiveSink into)
             {
                 into.putLong((Long) from);
             }
@@ -110,7 +110,7 @@ public enum LdcInsnFunnel
         return new Funnel<Object>()
         {
             @Override
-            public void funnel(final Object from, final PrimitiveSink into)
+            public void funnel(Object from, PrimitiveSink into)
             {
                 into.putDouble((Double) from);
             }
@@ -122,7 +122,7 @@ public enum LdcInsnFunnel
         return new Funnel<Object>()
         {
             @Override
-            public void funnel(final Object from, final PrimitiveSink into)
+            public void funnel(Object from, PrimitiveSink into)
             {
                 into.putUnencodedChars((CharSequence) from);
             }
@@ -134,9 +134,9 @@ public enum LdcInsnFunnel
         return new Funnel<Object>()
         {
             @Override
-            public void funnel(final Object from, final PrimitiveSink into)
+            public void funnel(Object from, PrimitiveSink into)
             {
-                final Type type = (Type) from;
+                Type type = (Type) from;
                 into.putUnencodedChars(type.getInternalName());
             }
         };

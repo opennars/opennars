@@ -30,13 +30,13 @@ public abstract class ValueStackBase<V>
     implements ValueStack<V>
 {
     @Override
-    public final void push(final V value)
+    public final void push(V value)
     {
         push(0, value);
     }
 
     @Override
-    public final void push(final int down, final V value)
+    public final void push(int down, V value)
     {
         /*
          * It is legal to append at the end! We must therefore check that the
@@ -69,7 +69,7 @@ public abstract class ValueStackBase<V>
 
     @Nonnull
     @Override
-    public final V pop(final int down)
+    public final V pop(int down)
     {
         if (down < 0)
             throw new IllegalArgumentException("index cannot be negative");
@@ -79,14 +79,14 @@ public abstract class ValueStackBase<V>
 
     @Nonnull
     @Override
-    public final <T extends V> T popAs(final Class<T> type)
+    public final <T extends V> T popAs(Class<T> type)
     {
         return type.cast(pop(0));
     }
 
     @Nonnull
     @Override
-    public final <T extends V> T popAs(final Class<T> type, final int down)
+    public final <T extends V> T popAs(Class<T> type, int down)
     {
         return type.cast(pop(down));
     }
@@ -110,7 +110,7 @@ public abstract class ValueStackBase<V>
 
     @Nonnull
     @Override
-    public final V peek(final int down)
+    public final V peek(int down)
     {
         if (down < 0)
             throw new IllegalArgumentException("index cannot be negative");
@@ -120,14 +120,14 @@ public abstract class ValueStackBase<V>
 
     @Nonnull
     @Override
-    public final <T extends V> T peekAs(final Class<T> type)
+    public final <T extends V> T peekAs(Class<T> type)
     {
         return type.cast(peek(0));
     }
 
     @Nonnull
     @Override
-    public final <T extends V> T peekAs(final Class<T> type, final int down)
+    public final <T extends V> T peekAs(Class<T> type, int down)
     {
         return type.cast(peek(down));
     }
@@ -140,16 +140,16 @@ public abstract class ValueStackBase<V>
      * @param down the index
      * @return the value
      */
-    protected abstract V doPeek(final int down);
+    protected abstract V doPeek(int down);
 
     @Override
-    public final void poke(@Nonnull final V value)
+    public final void poke(@Nonnull V value)
     {
         poke(0, value);
     }
 
     @Override
-    public final void poke(final int down, final V value)
+    public final void poke(int down, V value)
     {
         if (down < 0)
             throw new IllegalArgumentException("index cannot be negative");
@@ -167,10 +167,10 @@ public abstract class ValueStackBase<V>
      * @param down the index
      * @param value the value
      */
-    protected abstract void doPoke(final int down, final V value);
+    protected abstract void doPoke(int down, V value);
 
     @Override
-    public final void swap(final int n)
+    public final void swap(int n)
     {
         if (n < 2)
             throw new IllegalArgumentException("argument must be >= 2");
@@ -206,7 +206,7 @@ public abstract class ValueStackBase<V>
      *
      * @param n the number of values to swap
      */
-    protected abstract void doSwap(final int n);
+    protected abstract void doSwap(int n);
 
-    protected abstract void checkIndex(final int index);
+    protected abstract void checkIndex(int index);
 }

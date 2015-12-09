@@ -42,7 +42,7 @@ public final class LabelListFunnel
     private int index = 0;
 
     @Override
-    public void funnel(final Label from, final PrimitiveSink into)
+    public void funnel(Label from, PrimitiveSink into)
     {
         if (labels.add(from))
             into.putInt(index++);

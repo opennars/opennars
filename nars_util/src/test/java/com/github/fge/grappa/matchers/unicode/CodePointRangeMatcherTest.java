@@ -52,7 +52,7 @@ public final class CodePointRangeMatcherTest
         doAnswer(new Answer<Void>()
         {
             @Override
-            public Void answer(final InvocationOnMock invocation)
+            public Void answer(InvocationOnMock invocation)
             {
                 index += (Integer) invocation.getArguments()[0];
                 return null;
@@ -61,7 +61,7 @@ public final class CodePointRangeMatcherTest
         doAnswer(new Answer<Void>()
         {
             @Override
-            public Void answer(final InvocationOnMock invocation)
+            public Void answer(InvocationOnMock invocation)
             {
                 index = (Integer) invocation.getArguments()[0];
                 return null;
@@ -76,7 +76,7 @@ public final class CodePointRangeMatcherTest
     @DataProvider
     public Iterator<Object[]> testData()
     {
-        final List<Object[]> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
 
         list.add(new Object[] { 100, 232, -1, false, 0 });
         list.add(new Object[] { 100, 232, 100, true, 1 });
@@ -94,10 +94,10 @@ public final class CodePointRangeMatcherTest
     }
 
     @Test(dataProvider = "testData")
-    public void matchingWorks(final int low, final int high, final int obtained,
-        final boolean success, final int delta)
+    public void matchingWorks(int low, int high, int obtained,
+                              boolean success, int delta)
     {
-        final CodePointRangeMatcher matcher
+        CodePointRangeMatcher matcher
             = new CodePointRangeMatcher(low, high);
         when(buffer.codePointAt(THE_ANSWER)).thenReturn(obtained);
 

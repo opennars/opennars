@@ -29,8 +29,8 @@ public class Circle implements IterativeLayout {
         for (TermNode v : verts) {
             if (v == null) continue; //break?
 
-            final double r = radiusFraction.applyAsDouble(v);
-            final double a = angle.applyAsDouble(v);
+            double r = radiusFraction.applyAsDouble(v);
+            double a = angle.applyAsDouble(v);
             d[0] = Math.cos(a) * r;
             d[1] = Math.sin(a) * r;
             setPosition.accept(v, d);
@@ -41,12 +41,12 @@ public class Circle implements IterativeLayout {
 
     @Override
     public void run(SpaceGrapher graph, int iterations) {
-        final TermNode[] termList = graph.displayed;
+        TermNode[] termList = graph.displayed;
 
         //double[] i = new double[1];
         //double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
 
-        final int num = graph.maxNodes.get(); //termList.length;
+        int num = graph.maxNodes.get(); //termList.length;
         double radiusMin = num * this.radiusMin.get();
         double radiusMax = radiusMin + num * this.radiusMax.get();
 

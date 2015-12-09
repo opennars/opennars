@@ -57,11 +57,11 @@ public class SetterDependency {
 
         SetterDependency d = (SetterDependency) obj;
 
-        if (!d.targetProperty.equals(this.targetProperty)) {
+        if (!d.targetProperty.equals(targetProperty)) {
             return false;
         }
 
-        return d.sourceFromContainer.equals(this.sourceFromContainer);
+        return d.sourceFromContainer.equals(sourceFromContainer);
     }
 
     public Method check(Class<?> targetClass) {

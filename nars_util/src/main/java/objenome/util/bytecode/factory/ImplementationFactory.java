@@ -43,7 +43,7 @@ public class ImplementationFactory {
      * @param pool
      *            Class pool.
      */
-    public ImplementationFactory(final SgClassPool pool) {
+    public ImplementationFactory(SgClassPool pool) {
         this(pool, false);
     }
 
@@ -55,7 +55,7 @@ public class ImplementationFactory {
      * @param onlyDeclaredMethods
      *            Should only declared methods be implemented?
      */
-    public ImplementationFactory(final SgClassPool pool, final boolean onlyDeclaredMethods) {
+    public ImplementationFactory(SgClassPool pool, boolean onlyDeclaredMethods) {
         super();
 
         assureNotNull("pool", pool);
@@ -79,8 +79,8 @@ public class ImplementationFactory {
      * 
      * @return New object implementing the interface.
      */
-    public final SgClass create(final String implPackageName, final String implClassName,
-            final ImplementationFactoryListener listener, final Class<?>... intf) {
+    public final SgClass create(String implPackageName, String implClassName,
+                                ImplementationFactoryListener listener, Class<?>... intf) {
         return create(implPackageName, implClassName, null, null, listener, intf);
     }
 
@@ -102,9 +102,9 @@ public class ImplementationFactory {
      * 
      * @return New object implementing the interface.
      */
-    public final SgClass create(final String implPackageName, final String implClassName,
-            final SgClass superClass, final SgClass enclosingClass,
-            final ImplementationFactoryListener listener, final Class<?>... intf) {
+    public final SgClass create(String implPackageName, String implClassName,
+                                SgClass superClass, SgClass enclosingClass,
+                                ImplementationFactoryListener listener, Class<?>... intf) {
 
         assureNotNull("implPackageName", implPackageName);
         assureNotNull("implClassName", implClassName);
@@ -114,14 +114,14 @@ public class ImplementationFactory {
         assureAllInterfaces(intf);
 
         // Create class with all interfaces
-        final SgClass clasz = new SgClass("public", implPackageName, implClassName, superClass,
+        SgClass clasz = new SgClass("public", implPackageName, implClassName, superClass,
                 false, enclosingClass);
         for (int i = 0; i < intf.length; i++) {
             clasz.addInterface(SgClass.create(pool, intf[i]));
         }
         listener.afterClassCreated(clasz);
 
-        final Map<String, ImplementedMethod> implMethods = new HashMap<>();
+        Map<String, ImplementedMethod> implMethods = new HashMap<>();
 
         // Iterate through interfaces and add methods
         for (int i = 0; i < intf.length; i++) {
@@ -129,12 +129,12 @@ public class ImplementationFactory {
         }
 
         // Iterate through methods and create body
-        final Iterator<String> it = implMethods.keySet().iterator();
+        Iterator<String> it = implMethods.keySet().iterator();
         while (it.hasNext()) {
-            final ImplementedMethod implMethod = implMethods.get(it.next());
-            final SgMethod method = implMethod.getMethod();
-            final Class<?>[] interfaces = implMethod.getInterfaces();
-            final List<String> lines = listener.createBody(method, interfaces);
+            ImplementedMethod implMethod = implMethods.get(it.next());
+            SgMethod method = implMethod.getMethod();
+            Class<?>[] interfaces = implMethod.getInterfaces();
+            List<String> lines = listener.createBody(method, interfaces);
             for (int k = 0; k < lines.size(); k++) {
                 implMethod.getMethod().addBodyLine(lines.get(k));
             }
@@ -143,30 +143,30 @@ public class ImplementationFactory {
         return clasz;
     }
 
-    private void addInterfaceMethods(final Map<String, ImplementedMethod> implMethods,
-            final SgClass clasz, final Class<?> intf, final ImplementationFactoryListener listener) {
+    private void addInterfaceMethods(Map<String, ImplementedMethod> implMethods,
+                                     SgClass clasz, Class<?> intf, ImplementationFactoryListener listener) {
 
-        final Method[] methods;
+        Method[] methods;
         methods = onlyDeclaredMethods ? intf.getDeclaredMethods() : intf.getMethods();
         for (int j = 0; j < methods.length; j++) {
 
             // Create method signature
-            final String name = methods[j].getName();
-            final String typeSignature = SgUtils.createTypeSignature(name, methods[j]
+            String name = methods[j].getName();
+            String typeSignature = SgUtils.createTypeSignature(name, methods[j]
                     .getParameterTypes());
 
             // Get return type
-            final SgClass returnType;
+            SgClass returnType;
             returnType = methods[j].getReturnType() == null ? SgClass.VOID : SgClass.create(pool, methods[j].getReturnType());
 
             // Check if we already implemented this method
             ImplementedMethod implMethod = implMethods.get(typeSignature);
             if (implMethod == null) {
-                final SgMethod method = new SgMethod(clasz, "public", returnType, name);
+                SgMethod method = new SgMethod(clasz, "public", returnType, name);
                 // Add arguments
-                final Class<?>[] paramTypes = methods[j].getParameterTypes();
+                Class<?>[] paramTypes = methods[j].getParameterTypes();
                 for (int k = 0; k < paramTypes.length; k++) {
-                    final SgClass paramType = SgClass.create(pool, paramTypes[k]);
+                    SgClass paramType = SgClass.create(pool, paramTypes[k]);
                     method.addArgument(new SgArgument(method, paramType, ("arg" + k)));
                 }
                 method.addAnnotations(SgUtils.createAnnotations(methods[j].getAnnotations()));
@@ -176,7 +176,7 @@ public class ImplementationFactory {
             } else {
                 implMethod.addInterface(intf);
                 if (!returnType.getName().equals(implMethod.getReturnType().getName())) {
-                    final StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < implMethod.getInterfaces().length; i++) {
                         if (i > 0) {
                             sb.append("' or '");
@@ -190,10 +190,10 @@ public class ImplementationFactory {
             }
 
             // Add exceptions if missing
-            final SgMethod method = implMethod.getMethod();
-            final Class<?>[] exceptionTypes = methods[j].getExceptionTypes();
+            SgMethod method = implMethod.getMethod();
+            Class<?>[] exceptionTypes = methods[j].getExceptionTypes();
             for (int k = 0; k < exceptionTypes.length; k++) {
-                final SgClass ex = SgClass.create(pool, exceptionTypes[k]);
+                SgClass ex = SgClass.create(pool, exceptionTypes[k]);
                 if (!method.getExceptions().contains(ex)) {
                     method.addException(ex);
                 }
@@ -203,20 +203,20 @@ public class ImplementationFactory {
 
     }
 
-    private static void assureNotNull(final String name, final Object value) {
+    private static void assureNotNull(String name, Object value) {
         if (value == null) {
             throw new IllegalArgumentException("The argument '" + name + "' cannot be null!");
         }
     }
 
-    private static void assureNotEmpty(final String name, final Object[] value) {
+    private static void assureNotEmpty(String name, Object[] value) {
         if (value.length == 0) {
             throw new IllegalArgumentException("The argument '" + name
                     + "' cannot be an empty array!");
         }
     }
 
-    private static void assureAllInterfaces(final Class<?>... intf) {
+    private static void assureAllInterfaces(Class<?>... intf) {
         for (int i = 0; i < intf.length; i++) {
             if (!intf[i].isInterface()) {
                 throw new IllegalArgumentException("Expected an interface: " + intf[i].getName()

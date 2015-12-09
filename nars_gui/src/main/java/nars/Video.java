@@ -140,18 +140,18 @@ public class Video {
       return ((int)a << 24) | ((int)x << 16) | ((int)y << 8) | (int)z;
   }
   
-    public static int getColor(final String s, final float alpha) {
+    public static int getColor(String s, float alpha) {
         float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
         return colorHSB(hue,0.8f,0.9f,alpha);
     }    
 
-    public static int getColor(final Class c) {            
+    public static int getColor(Class c) {
         //float hue = (((float)c.hashCode()) / Integer.MAX_VALUE);
         float hue = hashFloat(c.hashCode());
         return color(hue,0.8f,0.9f, 1.0f);
     }
     
-    public static int getColor(final String s) {
+    public static int getColor(String s) {
         float hue = hashFloat(s.hashCode()); //(((float)s.hashCode()) / Integer.MAX_VALUE);
         return color(hue,0.8f,0.9f, 1.0f);
     }
@@ -160,14 +160,14 @@ public class Video {
         return monofont.deriveFont(size);
     }
 
-    public static final float hashFloat(final int h) {
-        final int max = 32;
+    public static final float hashFloat(int h) {
+        int max = 32;
         return Math.abs(h % max) / ((float)max);
 
         //return (h) / (((float) Integer.MAX_VALUE) - ((float) Integer.MIN_VALUE));
     }
 
-    @Deprecated public static final Color getColor(final String s, final float saturation, final float brightness) {
+    @Deprecated public static final Color getColor(String s, float saturation, float brightness) {
         return getColor(s.hashCode(), saturation, brightness);
     }
 
@@ -184,11 +184,11 @@ public class Video {
         return colorHSB(hashCode, saturation, brightness, alpha);
     }
 
-    @Deprecated public static final Color getColor(final Color c, float alpha) {
+    @Deprecated public static final Color getColor(Color c, float alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255.0 * alpha));
     }
 
-    public static final int getColor(final String s, float sat, float bright, float alpha) {
+    public static final int getColor(String s, float sat, float bright, float alpha) {
         return colorHSB( hashFloat(s.hashCode()), sat, bright, alpha);
     }
     //    //NOT WORKING YET

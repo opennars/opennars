@@ -196,7 +196,7 @@ public abstract class EventEmitter<K,V>  {
 
             DefaultEventRegistration(K key, Reaction<K,V> o) {
                 this.key= key;
-                this.reaction = o;
+                reaction = o;
             }
 
             @Override
@@ -215,14 +215,14 @@ public abstract class EventEmitter<K,V>  {
 
 
         @Override
-        public final int emit(final K channel, final V arg) {
+        public final int emit(K channel, V arg) {
             ArraySharingList<Reaction<K, V>> r = reactions.get(channel);
             if (r == null) return 0;
-            final Reaction<K, V>[] c = r.getCachedNullTerminatedArray();
+            Reaction<K, V>[] c = r.getCachedNullTerminatedArray();
             if (c == null) return 0;
             int i;
             for (i = 0; ; i++) {
-                final Reaction<K, V> cc = c[i];
+                Reaction<K, V> cc = c[i];
                 if (cc == null) break;
                 cc.event(channel, arg);
             }
@@ -294,14 +294,14 @@ public abstract class EventEmitter<K,V>  {
 //
 public abstract EventRegistration on(K k, Reaction<K,V> o);
 //
-public abstract boolean isActive(final K event);
+public abstract boolean isActive(K event);
 //
 //
 //    /** for enabling many events at the same time */
     @SafeVarargs
-    @Deprecated public final void set(final Reaction<K, V> o, final boolean enable, final K... events) {
+    @Deprecated public final void set(Reaction<K, V> o, boolean enable, K... events) {
 
-        for (final K c : events) {
+        for (K c : events) {
             if (enable)
                 on(c, o);
             else
@@ -330,8 +330,8 @@ public abstract boolean isActive(final K event);
 //        }
 
         public synchronized void off() {
-            for (int i = 0; i < this.size(); i++) {
-                this.get(i).off();
+            for (int i = 0; i < size(); i++) {
+                get(i).off();
             }
             clear();
         }
@@ -341,10 +341,10 @@ public abstract boolean isActive(final K event);
 
     
     @SafeVarargs
-    public final Registrations on(final Reaction<K, V> o, final K... events) {
+    public final Registrations on(Reaction<K, V> o, K... events) {
         Registrations r = new Registrations(events.length);
     
-        for (final K c : events)
+        for (K c : events)
             r.add( on(c, o) );
         
         return r;
@@ -361,7 +361,7 @@ public abstract boolean isActive(final K event);
 //    }
 
 
-    public void emit(final K channel) {
+    public void emit(K channel) {
         emit(channel, null);
     }
 
@@ -375,7 +375,7 @@ public abstract boolean isActive(final K event);
      * @param o
      * @return  whether it was removed
      */
-    @Deprecated public void off(final K event, final Reaction<K,V> o) {
+    @Deprecated public void off(K event, Reaction<K,V> o) {
         throw new RuntimeException("off() not supported; use the returned Registration object to .cancel()");
     }
 

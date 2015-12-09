@@ -35,34 +35,34 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public final class ConstructorGenerator
 {
-    public void process(final ParserClassNode classNode)
+    public void process(ParserClassNode classNode)
     {
         Objects.requireNonNull(classNode, "classNode");
 
-        final List<MethodNode> constructors = classNode.getConstructors();
+        List<MethodNode> constructors = classNode.getConstructors();
 
         if (constructors.isEmpty())
             throw new InvalidGrammarException("parser class \"%s\" has no "
                 + "visible constructor for derives classes");
 
-        for (final MethodNode constructor: constructors)
+        for (MethodNode constructor: constructors)
             createConstuctor(classNode, constructor);
 
         createNewInstanceMethod(classNode);
     }
 
-    private static void createConstuctor(final ParserClassNode classNode,
-        final MethodNode constructor)
+    private static void createConstuctor(ParserClassNode classNode,
+                                         MethodNode constructor)
     {
-        final List<String> exceptions = constructor.exceptions;
-        final MethodNode newConstructor = new MethodNode(ACC_PUBLIC,
+        List<String> exceptions = constructor.exceptions;
+        MethodNode newConstructor = new MethodNode(ACC_PUBLIC,
             constructor.name, constructor.desc, constructor.signature,
             exceptions.toArray(new String[exceptions.size()])
         );
 
-        final InsnList instructions = newConstructor.instructions;
+        InsnList instructions = newConstructor.instructions;
 
-        final CodeBlock block = CodeBlock.newCodeBlock()
+        CodeBlock block = CodeBlock.newCodeBlock()
             .aload(0)
             .addAll(createArgumentLoaders(constructor.desc))
             .invokespecial(classNode.getParentType().getInternalName(),
@@ -74,14 +74,14 @@ public final class ConstructorGenerator
         classNode.methods.add(newConstructor);
     }
 
-    private static void createNewInstanceMethod(final ParserClassNode classNode)
+    private static void createNewInstanceMethod(ParserClassNode classNode)
     {
         // TODO: replace with Code{Block,GenUtils}
-        final String desc = "()L" + Type.getType(BaseParser.class)
+        String desc = "()L" + Type.getType(BaseParser.class)
             .getInternalName() + ';';
-        final MethodNode method = new MethodNode(ACC_PUBLIC, "newInstance",
+        MethodNode method = new MethodNode(ACC_PUBLIC, "newInstance",
             desc, null, null);
-        final InsnList instructions = method.instructions;
+        InsnList instructions = method.instructions;
 
         instructions.add(new TypeInsnNode(NEW, classNode.name));
         instructions.add(new InsnNode(DUP));

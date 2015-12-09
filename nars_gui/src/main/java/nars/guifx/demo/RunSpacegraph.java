@@ -34,7 +34,7 @@ public class RunSpacegraph extends Application {
                             new PieChart.Data("Human", 10),
                             new PieChart.Data("Pear", 22),
                             new PieChart.Data("Apple", 30));
-            final PieChart chart = new PieChart(pieChartData);
+            PieChart chart = new PieChart(pieChartData);
             chart.setTitle("Invasive Species");
             chart.setCacheHint(CacheHint.SPEED);
 
@@ -90,7 +90,7 @@ public class RunSpacegraph extends Application {
 
             ground.getChildren().add(new GridCanvas(true));
 
-            new HyperOrganicLayout().run(this.verts, 10);
+            new HyperOrganicLayout().run(verts, 10);
 
 
 

@@ -41,7 +41,7 @@ import java.util.*;
  */
 public class CFGAnalysisExample implements Opcodes {
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         ClassReader cr = new ClassReader("nars.cfg.bytecode.CFGAnalysisExample");
         ClassNode cn = new ClassNode();
         cr.accept(cn, ClassReader.SKIP_DEBUG);
@@ -57,7 +57,7 @@ public class CFGAnalysisExample implements Opcodes {
                         a.analyze(cn.name, method);
                     } catch (Exception ignored) {
                     }
-                    final Frame<?>[] frames = a.getFrames();
+                    Frame<?>[] frames = a.getFrames();
 
                     System.out.println(Arrays.toString(frames));
                     /*
@@ -101,7 +101,7 @@ public class CFGAnalysisExample implements Opcodes {
      * least one xLOAD corresponding instruction in their successor instructions
      * (in the control flow graph).
      */
-    public static boolean analyzeUselessStores(final ClassNode c, final MethodNode m)
+    public static boolean analyzeUselessStores(ClassNode c, MethodNode m)
             throws Exception {
         Analyzer<SourceValue> a = new Analyzer<>(
                 new SourceInterpreter());

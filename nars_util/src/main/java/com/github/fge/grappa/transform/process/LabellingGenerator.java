@@ -40,8 +40,8 @@ public final class LabellingGenerator
     implements RuleMethodProcessor
 {
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -49,8 +49,8 @@ public final class LabellingGenerator
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(classNode, "classNode");
@@ -58,14 +58,14 @@ public final class LabellingGenerator
         // super methods have flag moved to the overriding method
         Preconditions.checkState(!method.isSuperMethod());
 
-        final InsnList instructions = method.instructions;
+        InsnList instructions = method.instructions;
 
         AbstractInsnNode retInsn = instructions.getLast();
         while (retInsn.getOpcode() != ARETURN)
             retInsn = retInsn.getPrevious();
 
-        final LabelNode label = new LabelNode();
-        final CodeBlock block = CodeBlock.newCodeBlock()
+        LabelNode label = new LabelNode();
+        CodeBlock block = CodeBlock.newCodeBlock()
             .dup()
             .ifnull(label)
             .ldc(getLabelText(method))
@@ -76,13 +76,13 @@ public final class LabellingGenerator
         instructions.insertBefore(retInsn, block.getInstructionList());
     }
 
-    public static String getLabelText(final RuleMethod method) {
+    public static String getLabelText(RuleMethod method) {
         if (method.visibleAnnotations == null)
             return method.name;
 
         AnnotationNode annotation;
 
-        for (final Object annotationObj: method.visibleAnnotations) {
+        for (Object annotationObj: method.visibleAnnotations) {
             annotation = (AnnotationNode) annotationObj;
 
             if (!annotation.desc.equals(CodegenUtils.ci(Label.class)))
@@ -92,7 +92,7 @@ public final class LabellingGenerator
                 continue;
 
             Preconditions.checkState("value".equals(annotation.values.get(0)));
-            final String labelValue = (String) annotation.values.get(1);
+            String labelValue = (String) annotation.values.get(1);
             return labelValue.isEmpty() ? method.name : labelValue;
         }
 

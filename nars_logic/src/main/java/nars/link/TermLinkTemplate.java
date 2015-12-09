@@ -33,10 +33,10 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
      *
      * @param target  Target Term
      */
-    public TermLinkTemplate(final Termed host, Term target) {
+    public TermLinkTemplate(Termed host, Term target) {
         super(0, 0.5f, 0.5f);
 
-        this.concept = host.getTerm();
+        concept = host.getTerm();
 
         this.target = target;
 
@@ -56,12 +56,12 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 //            index = indices;
 //        }
 
-        this.hashIn = newHash(true);
-        this.hashOut = newHash(false);
+        hashIn = newHash(true);
+        hashOut = newHash(false);
 
     }
 
-    protected final int newHash(final boolean in) {
+    protected final int newHash(boolean in) {
         return term(in).hashCode();
     }
 
@@ -105,7 +105,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 //    public static final byte typeCharOffset = 'A';
 //    public static final byte indexCharOffset = 'a';
 
-    public Term term(final boolean in) {
+    public Term term(boolean in) {
         return in ? concept : getTarget();
     }
 

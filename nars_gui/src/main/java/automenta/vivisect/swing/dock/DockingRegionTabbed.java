@@ -250,7 +250,7 @@ public class DockingRegionTabbed extends JTabbedPane implements DockingChild {
 
         public TabLayout(DockingContent content) {
             this.content = content;
-            this.component = content.getComponent();
+            component = content.getComponent();
 //            this.scollPane = new JScrollPane(component);
         }
     }

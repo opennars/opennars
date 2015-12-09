@@ -54,12 +54,12 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
 
     @Override
     public void init(TermNode n) {
-        final float scale = this.scale.floatValue();
+        float scale = this.scale.floatValue();
         n.move(-scale/2 + Math.random() * scale,
                 -scale/2 + Math.random() * scale);
     }
 
-    @Override public void getPosition(final TermNode node, final double[] v) {
+    @Override public void getPosition(TermNode node, double[] v) {
         node.getPosition(v);
     }
 
@@ -84,7 +84,7 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
 
         init();
 
-        this.termList = graph.displayed;
+        termList = graph.displayed;
         this.graph = graph;
 
         align(i);
@@ -99,7 +99,7 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
         setAttractionStrength(attractionStrength.get());
         setMaxRepulsionDistance(1000);
         setEquilibriumDistance(equilibriumDistance.floatValue());
-        this._nodeSpeed = this.nodeSpeed.floatValue();
+        _nodeSpeed = nodeSpeed.floatValue();
     }
 
 

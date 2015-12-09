@@ -45,7 +45,7 @@ public abstract class SgBehavior {
      *            Modifiers for the constructor/method - Cannot be null (but
      *            empty).
      */
-    public SgBehavior(final SgClass owner, final String modifiers) {
+    public SgBehavior(SgClass owner, String modifiers) {
         super();
         if (owner == null) {
             throw new IllegalArgumentException("The argument 'owner' cannot be null!");
@@ -57,8 +57,8 @@ public abstract class SgBehavior {
         }
         this.modifiers = modifiers;
 
-        this.arguments = new ArrayList<>();
-        this.exceptions = new ArrayList<>();
+        arguments = new ArrayList<>();
+        exceptions = new ArrayList<>();
         annotations = new ArrayList<>();
     }
 
@@ -89,8 +89,8 @@ public abstract class SgBehavior {
         return Collections.unmodifiableList(arguments);
     }
 
-    private static final String commaSeparated(final List<SgArgument> args) {
-        final StringBuilder sb = new StringBuilder();
+    private static final String commaSeparated(List<SgArgument> args) {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < args.size(); i++) {
             if (i > 0) {
                 sb.append(',');
@@ -109,8 +109,8 @@ public abstract class SgBehavior {
      * 
      * @return Arguments without "less" arguments at the end of the list.
      */
-    public final String getCommaSeparatedArgumentNames(final int less) {
-        final List<SgArgument> args = getArguments(less);
+    public final String getCommaSeparatedArgumentNames(int less) {
+        List<SgArgument> args = getArguments(less);
         return commaSeparated(args);
     }
 
@@ -133,17 +133,17 @@ public abstract class SgBehavior {
      * @return Unmodifiable argument list without "less" arguments at the end of
      *         the list.
      */
-    public final List<SgArgument> getArguments(final int less) {
+    public final List<SgArgument> getArguments(int less) {
         if (less >= 0) {
             throw new IllegalArgumentException("Only negative values are allowed! [" + less
                     + ']');
         }
-        final int count = arguments.size() + less;
+        int count = arguments.size() + less;
         if (count < 0) {
             throw new IllegalArgumentException("There are only " + arguments.size()
                     + " arguments! Subtracting '" + less + "' would be below zero!");
         }
-        final List<SgArgument> list = new ArrayList<>();
+        List<SgArgument> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             list.add(arguments.get(i));
         }
@@ -156,7 +156,7 @@ public abstract class SgBehavior {
      * @return Last argument or null if the list is empty.
      */
     public final SgArgument getLastArgument() {
-        final int size = arguments.size();
+        int size = arguments.size();
         if (size == 0) {
             return null;
         }
@@ -172,7 +172,7 @@ public abstract class SgBehavior {
      * @param arg
      *            Argument to add - Non null.
      */
-    public final void addArgument(final SgArgument arg) {
+    public final void addArgument(SgArgument arg) {
         if (arg == null) {
             throw new IllegalArgumentException("The argument 'arg' cannot be null!");
         }
@@ -200,7 +200,7 @@ public abstract class SgBehavior {
      * @param clasz
      *            Exception to add.
      */
-    public final void addException(final SgClass clasz) {
+    public final void addException(SgClass clasz) {
         if (clasz == null) {
             throw new IllegalArgumentException("The argument 'clasz' cannot be null!");
         }
@@ -225,7 +225,7 @@ public abstract class SgBehavior {
      * @param annotation
      *            Annotation to add - Cannot be null.
      */
-    public final void addAnnotation(final SgAnnotation annotation) {
+    public final void addAnnotation(SgAnnotation annotation) {
         if (annotation == null) {
             throw new IllegalArgumentException("The argument 'annotation' cannot be NULL!");
         }
@@ -239,7 +239,7 @@ public abstract class SgBehavior {
      * @param annotations
      *            Annotations to add - Cannot be null.
      */
-    public final void addAnnotations(final List<SgAnnotation> annotations) {
+    public final void addAnnotations(List<SgAnnotation> annotations) {
         if (annotations == null) {
             throw new IllegalArgumentException("The argument 'annotations' cannot be NULL!");
         }
@@ -254,12 +254,12 @@ public abstract class SgBehavior {
      * 
      * @return If it's found true else false.
      */
-    public final boolean hasAnnotation(final String name) {
+    public final boolean hasAnnotation(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be NULL!");
         }
         for (int i = 0; i < annotations.size(); i++) {
-            final SgAnnotation annotation = annotations.get(i);
+            SgAnnotation annotation = annotations.get(i);
             if (annotation.getName().equals(name)) {
                 return true;
             }

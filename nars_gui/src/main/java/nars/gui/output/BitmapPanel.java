@@ -49,13 +49,13 @@ public class BitmapPanel extends JComponent {
         BufferedImage img;
         try {
             img = ImageIO.read(new File(imagePath));
-            this.image = img;
+            image = img;
             repaint();
         } catch (IOException ex) { }
     }
     
     public void setImage(BufferedImage img) {
-        this.image = img;
+        image = img;
         repaint();
     }
 

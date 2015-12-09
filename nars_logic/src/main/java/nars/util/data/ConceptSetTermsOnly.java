@@ -38,7 +38,7 @@ public abstract class ConceptSetTermsOnly<T extends Term> extends MutableConcept
 
 
     @Override
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         if (!values.contains(t)) {
             return super.contains(t);
         }

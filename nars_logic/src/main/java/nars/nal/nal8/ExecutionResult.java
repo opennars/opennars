@@ -15,7 +15,7 @@ public class ExecutionResult implements Serializable, Tasked {
     public final Object feedback;
 
     public ExecutionResult(Task op, Object feedback) {
-        this.operation = op;
+        operation = op;
         this.feedback = feedback;
     }
 

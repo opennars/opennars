@@ -50,14 +50,14 @@ public enum Tense  {
     public final String symbol;
 
     Tense(String string) {
-        this.symbol = string;
+        symbol = string;
     }
 
-    public static boolean matchingOrder(final Termed a, final Termed b) {
+    public static boolean matchingOrder(Termed a, Termed b) {
         return matchingOrder(a.getTerm().getTemporalOrder(), b.getTerm().getTemporalOrder());
     }
 
-    public static boolean matchingOrder(final int order1, final int order2) {
+    public static boolean matchingOrder(int order1, int order2) {
 
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
@@ -97,7 +97,7 @@ public enum Tense  {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final Task problem, final Task solution, long time) {
+    public static float solutionQuality(Task problem, Task solution, long time) {
 
         if (!matchingOrder(problem, solution)) {
             return 0;
@@ -106,14 +106,14 @@ public enum Tense  {
         return solutionQualityMatchingOrder(problem, solution, time);
     }
 
-    public static float solutionQualityMatchingOrder(final Task problem, final Task solution, final long time) {
+    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time) {
         return solutionQualityMatchingOrder(problem, solution, time, problem.hasQueryVar() );
     }
 
     /**
         this method is used if the order is known to be matching, so it is not checked
      */
-    public static float solutionQualityMatchingOrder(final Task problem, final Task solution, final long time, final boolean hasQueryVar) {
+    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time, boolean hasQueryVar) {
 
         /*if ((problem == null) || (solution == null)) {
             throw new RuntimeException("problem or solution is null");
@@ -127,11 +127,11 @@ public enum Tense  {
         return hasQueryVar ? truth.getExpectation() / solution.getTerm().complexity() : truth.getConfidence();
     }
 
-    public static float solutionQuality(boolean hasQueryVar, long occTime, final Task solution, final Truth projectedTruth, long time) {
+    public static float solutionQuality(boolean hasQueryVar, long occTime, Task solution, Truth projectedTruth, long time) {
         return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
     }
 
-    public static float solutionQuality(final Task problem, final Task solution, Truth truth, long time) {
+    public static float solutionQuality(Task problem, Task solution, Truth truth, long time) {
         return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
     }
 
@@ -146,14 +146,14 @@ public enum Tense  {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static Budget solutionEval(final Task task, final Task solution, final Premise p) {
+    public static Budget solutionEval(Task task, Task solution, Premise p) {
         //boolean feedbackToLinks = false;
         /*if (task == null) {
             task = nal.getCurrentTask();
             feedbackToLinks = true;
         }*/
         boolean judgmentTask = task.isJudgment();
-        final float quality = solutionQuality(task, solution, p.time());
+        float quality = solutionQuality(task, solution, p.time());
         if (quality <= 0)
             return null;
 
@@ -175,8 +175,8 @@ public enum Tense  {
         return budget;
     }
 
-    public static int order(final float timeDiff, final int durationCycles) {
-        final float halfDuration = durationCycles / 2.0f;
+    public static int order(float timeDiff, int durationCycles) {
+        float halfDuration = durationCycles / 2.0f;
         if (timeDiff >= halfDuration) {
             return ORDER_FORWARD;
         } else if (timeDiff <= -halfDuration) {
@@ -191,21 +191,21 @@ public enum Tense  {
      * event B before       then order=backward
      * occur at the same time, relative to duration: order = concurrent
      */
-    public static int order(final long a, final long b, final int durationCycles) {
+    public static int order(long a, long b, int durationCycles) {
         if ((a == ETERNAL) || (b == ETERNAL))
             throw new RuntimeException("order() does not compare ETERNAL times");
 
         return order(b - a, durationCycles);
     }
 
-    public static boolean concurrent(Temporal a, Temporal b, final int durationCycles) {
+    public static boolean concurrent(Temporal a, Temporal b, int durationCycles) {
         return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
     }
 
     /**
      * whether two times are concurrent with respect ao a specific duration ("present moment") # of cycles
      */
-    public static boolean concurrent(final long a, final long b, final int perceptualDuration) {
+    public static boolean concurrent(long a, long b, int perceptualDuration) {
         //since Stamp.ETERNAL is Integer.MIN_VALUE,
         //avoid any overflow errors by checking eternal first
 
@@ -231,19 +231,19 @@ public enum Tense  {
         return order(a, b, perceptualDuration) == ORDER_FORWARD;
     }
 
-    public static boolean isEternal(final long t)  {
+    public static boolean isEternal(long t)  {
         return t <= TIMELESS; /* includes ETERNAL */
     }
 
-    public static long getOccurrenceTime(final Tense tense, Memory m) {
+    public static long getOccurrenceTime(Tense tense, Memory m) {
         return getOccurrenceTime(m.time(), tense, m.duration());
     }
 
-    public static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
+    public static long getOccurrenceTime(long creationTime, Tense tense, Memory m) {
         return getOccurrenceTime(creationTime, tense, m.duration());
     }
 
-    public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
+    public static long getOccurrenceTime(long creationTime, Tense tense, int duration) {
 
         if (creationTime == TIMELESS) {
             //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
@@ -296,7 +296,7 @@ public enum Tense  {
     /**
      * true if there are any common elements; assumes the arrays are sorted and contain no duplicates
      */
-    public static boolean overlapping(final long[] a, final long[] b) {
+    public static boolean overlapping(long[] a, long[] b) {
 
         /** TODO there may be additional ways to exit early from this loop */
 
@@ -313,7 +313,7 @@ public enum Tense  {
         return false;
     }
 
-    public static boolean overlapping(final Sentence a, final Sentence b) {
+    public static boolean overlapping(Sentence a, Sentence b) {
 
 
         if (a == b) return true;
@@ -331,13 +331,13 @@ public enum Tense  {
     
     static {
         Map<String, Tense> stt = new HashMap(Tense.values().length*2);
-        for (final Tense t : Tense.values()) {
+        for (Tense t : Tense.values()) {
             stt.put(t.toString(), t);
         }
         stringToTense = Collections.unmodifiableMap( stt );
     }
 
-    public static Tense tense(final String s) {
+    public static Tense tense(String s) {
         return stringToTense.get(s);
     }
 

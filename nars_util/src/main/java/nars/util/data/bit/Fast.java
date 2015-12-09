@@ -112,7 +112,7 @@ public final class Fast {
 	 * @see #nat2int(int)
 	 */
 
-	public static int int2nat( final int x ) {
+	public static int int2nat( int x ) {
 		return x >= 0 ? x << 1 : -( ( x << 1 ) + 1 );
 	}
 
@@ -125,7 +125,7 @@ public final class Fast {
 	 * @see #int2nat(int)
 	 */
 
-	public static int nat2int( final int x ) {
+	public static int nat2int( int x ) {
 		return x % 2 == 0 ? x >> 1 : -( x >> 1 ) - 1;
 	}
 
@@ -145,7 +145,7 @@ public final class Fast {
 	 * @see #int2nat(int)
 	 */
 
-	public static long int2nat( final long x ) {
+	public static long int2nat( long x ) {
 		return x >= 0 ? x << 1 : -( ( x << 1 ) + 1 );
 	}
 
@@ -158,7 +158,7 @@ public final class Fast {
 	 * @see #nat2int(int)
 	 */
 
-	public static long nat2int( final long x ) {
+	public static long nat2int( long x ) {
 		return x % 2 == 0 ? x >> 1 : -( x >> 1 ) - 1;
 	}
 
@@ -167,7 +167,7 @@ public final class Fast {
 	 * @param x a double.
 	 * @return the base-2 logarithm of <code>x</code>.
 	 */
-	public static double log2( final double x ) {
+	public static double log2( double x ) {
 		return Math.log( x ) / 0.6931471805599453;
 	}
 
@@ -178,7 +178,7 @@ public final class Fast {
 	 * @param x an integer.
 	 * @return the ceiling of the base-two logarithm of the argument, or -1 if <code>x</code> is zero.
 	 */
-	public static int ceilLog2( final int x ) {
+	public static int ceilLog2( int x ) {
 		if ( x <= 2 ) return x - 1;
 		return Integer.SIZE - Integer.numberOfLeadingZeros( x - 1 );
 	}
@@ -190,7 +190,7 @@ public final class Fast {
 	 * @param x an integer.
 	 * @return the ceiling of the base-two logarithm of the argument, or -1 if <code>x</code> is zero.
 	 */
-	public static int ceilLog2( final long x ) {
+	public static int ceilLog2( long x ) {
 		if ( x <= 2 ) return (int)( x - 1 );
 		return Long.SIZE - Long.numberOfLeadingZeros( x - 1 );
 	}
@@ -203,8 +203,8 @@ public final class Fast {
 	 * @param x a double.
 	 * @return an integer approximation of the base-two logarithm of the argument.
 	 */
-	public static int approximateLog2( final double x ) {
-		final long bits = Double.doubleToRawLongBits( x );
+	public static int approximateLog2( double x ) {
+		long bits = Double.doubleToRawLongBits( x );
 		// The exponent is corrected by one if the first significand digits are big enough.
 		return (int)( ( bits >>> 52 ) & 0x7FF ) - 1023 + ( ( bits >>> 48 & 0xF ) > 6 ? 1 : 0 );
 	}
@@ -214,7 +214,7 @@ public final class Fast {
 	 * @param exponent an integer exponent between -62 ad 62.
 	 * @return 2<sup><code>exponent</code></sup>.
 	 */
-	public static double pow2( final int exponent ) {
+	public static double pow2( int exponent ) {
 		//return fixedValues[ approximate + ( 1 << EXPONENT_BITS ) - ADJUSTMENT - 1 ];
 		if ( exponent < 0 ) return 1.0 / ( 1L  << -exponent );
 		return 1L << exponent;
@@ -226,7 +226,7 @@ public final class Fast {
 	 * @param x an integer.
 	 * @return the number of bits that are necessary to encode <code>x</code>.
 	 */
-	public static int length( final int x ) {
+	public static int length( int x ) {
 		return x == 0 ? 1 : mostSignificantBit( x ) + 1;
 	}
 
@@ -235,11 +235,11 @@ public final class Fast {
 	 * @param x a long.
 	 * @return the number of bits that are necessary to encode <code>x</code>.
 	 */
-	public static int length( final long x ) {
+	public static int length( long x ) {
 		return x == 0 ? 1 : mostSignificantBit( x ) + 1;
 	}
 
-	private static int selectBroadword( final long x, final int rank ) {
+	private static int selectBroadword( long x, int rank ) {
         // Phase 1: sums by byte
         long byteSums = x - ( ( x & 0xa * ONES_STEP_4 ) >>> 1 );
         byteSums = ( byteSums & 3 * ONES_STEP_4 ) + ( ( byteSums >>> 2 ) & 3 * ONES_STEP_4 );
@@ -247,17 +247,17 @@ public final class Fast {
         byteSums *= ONES_STEP_8;
         
         // Phase 2: compare each byte sum with rank to obtain the relevant byte
-        final long rankStep8 = rank * ONES_STEP_8;
-        final long byteOffset = ( ( ( ( ( rankStep8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 53 ) & ~0x7;
+        long rankStep8 = rank * ONES_STEP_8;
+        long byteOffset = ( ( ( ( ( rankStep8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 53 ) & ~0x7;
 
         // Phase 3: Locate the relevant byte and make 8 copies with incremental masks
-        final int byteRank = (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) );
+        int byteRank = (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) );
 
-        final long spreadBits = ( x >>> byteOffset & 0xFF ) * ONES_STEP_8 & INCR_STEP_8;
-        final long bitSums = ( ( ( spreadBits | ( ( spreadBits | MSBS_STEP_8 ) - ONES_STEP_8 ) ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8;
+        long spreadBits = ( x >>> byteOffset & 0xFF ) * ONES_STEP_8 & INCR_STEP_8;
+        long bitSums = ( ( ( spreadBits | ( ( spreadBits | MSBS_STEP_8 ) - ONES_STEP_8 ) ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8;
 
         // Compute the inside-byte location and return the sum
-        final long byteRankStep8 = byteRank * ONES_STEP_8;
+        long byteRankStep8 = byteRank * ONES_STEP_8;
 
         return (int)( byteOffset + ( ( ( ( ( byteRankStep8 | MSBS_STEP_8 ) - bitSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 56 ) );
 	}
@@ -351,7 +351,7 @@ public final class Fast {
 	 * results (including exceptions) might happen if this constraint is violated.
 	 * @return the position in <code>x</code> of the bit of given rank.
 	 */
-	public static int select( final long x, final int rank ) {
+	public static int select( long x, int rank ) {
 		assert rank < Long.bitCount( x );
 		// Phase 1: sums by byte
 		long byteSums = x - ( ( x >>> 1 ) & 0x5 * ONES_STEP_4 );
@@ -360,7 +360,7 @@ public final class Fast {
 		byteSums *= ONES_STEP_8;
 
 		// Phase 2: compare each byte sum with rank to obtain the relevant byte
-		final int byteOffset = Long.bitCount( ( ( rank * ONES_STEP_8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) << 3;
+		int byteOffset = Long.bitCount( ( ( rank * ONES_STEP_8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) << 3;
 
 		return byteOffset + selectInByte[ (int)( x >>> byteOffset & 0xFF ) | (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) ) << 8 ];
 	}
@@ -373,7 +373,7 @@ public final class Fast {
 	 * @param x a long.
 	 * @return the most significant bit of <code>x</code>, of <code>x</code> is nonzero; &minus;1, otherwise.
 	 */
-	public static int mostSignificantBit( final long x ) {
+	public static int mostSignificantBit( long x ) {
 		return 63 - Long.numberOfLeadingZeros( x );
 	}
 
@@ -383,7 +383,7 @@ public final class Fast {
 	 * @return the most significant bit of <code>x</code>, of <code>x</code> is nonzero; &minus;1, otherwise.
 	 * @see #mostSignificantBit(long)
 	 */
-	public static int mostSignificantBit( final int x ) {
+	public static int mostSignificantBit( int x ) {
 		return 31 - Integer.numberOfLeadingZeros( x );
 	}
 	

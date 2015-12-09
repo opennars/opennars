@@ -24,7 +24,7 @@ public abstract class DecideNumericValue implements Problem {
     public final List path;
 
     public DecideNumericValue(Parameter p, List path) {
-        this.parameter = p;
+        parameter = p;
         this.path = path;
     }
 

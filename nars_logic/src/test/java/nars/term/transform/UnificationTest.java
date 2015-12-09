@@ -657,8 +657,8 @@ public class UnificationTest  {
 
 
     @Test public void testA() {
-        final String somethingIsBird = "bird:$x";
-        final String somethingIsAnimal = "animal:$x";
+        String somethingIsBird = "bird:$x";
+        String somethingIsAnimal = "animal:$x";
         testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
     }
 

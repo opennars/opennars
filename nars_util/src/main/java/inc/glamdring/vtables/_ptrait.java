@@ -401,13 +401,13 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
 
     public static void main(String[] a) {
 
-        final Class<_ptrait> ptraitClass = _ptrait.class;
-        final Package aPackage = ptraitClass.getPackage();
+        Class<_ptrait> ptraitClass = _ptrait.class;
+        Package aPackage = ptraitClass.getPackage();
 
 
         classMeta(ptraitClass);
 
-        final Enum<?>[] constants = ptraitClass.getEnumConstants();
+        Enum<?>[] constants = ptraitClass.getEnumConstants();
 
         for (
                 Enum<?> constant
@@ -415,9 +415,9 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
 
         {
 
-            final Class<? extends Enum<?>> declaringClass = constant.getDeclaringClass();
-            final int modifiers = declaringClass.getModifiers();
-            final String s = Modifier.toString(modifiers);
+            Class<? extends Enum<?>> declaringClass = constant.getDeclaringClass();
+            int modifiers = declaringClass.getModifiers();
+            String s = Modifier.toString(modifiers);
 //            System.err.println(" + " + s);
 
 
@@ -428,12 +428,12 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
 
     private static void classMeta(Class ptraitClass) {
         if (null == ptraitClass) return;
-        final TypeVariable[] typeVariables = ptraitClass.getTypeParameters();
+        TypeVariable[] typeVariables = ptraitClass.getTypeParameters();
         System.err.println("" + ptraitClass);
 //        System.err.println("" + Arrays.toString(typeVariables));
         for (TypeVariable typeVariable : typeVariables) {
             System.err.println("" + typeVariable);
-            final Type[] bounds = typeVariable.getBounds();
+            Type[] bounds = typeVariable.getBounds();
 
             for (Type bound : bounds) {
                 System.err.println("" + bound);
@@ -441,12 +441,12 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
                     System.err.println("" + bound );//+ "" + Arrays.toString(((ParameterizedType)
                             //(bound)).getActualTypeArguments()));
                 else {
-                    final Type type = ((Class) bound).getSuperclass();
+                    Type type = ((Class) bound).getSuperclass();
                     classMeta((Class) type);
                 }
             }
-            final GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
-            final TypeVariable<?>[] typeVariables1 = genericDeclaration.getTypeParameters();
+            GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
+            TypeVariable<?>[] typeVariables1 = genericDeclaration.getTypeParameters();
             for (TypeVariable<?> variable : typeVariables1) {
                 System.err.println("" + variable);
             }
@@ -457,7 +457,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
             if (type instanceof Class)
                 classMeta((Class) type);
             else {
-                final Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+                Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
 
                 for (Type actualTypeArgument : actualTypeArguments) {
                     System.err.println("" + actualTypeArgument);
@@ -474,7 +474,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
             Collections.addAll(traits, as);
 
             System.err.println("" + String.valueOf(traits) + "");
-            final String[] strings = name().split("$");
+            String[] strings = name().split("$");
             for (String string : strings) {
                 _ptrait ptrait = null;
                 try {
@@ -485,7 +485,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
             }
         }
         System.err.println("" + String.valueOf(traits) + "");
-        return this.traits;
+        return traits;
     }
 }
 

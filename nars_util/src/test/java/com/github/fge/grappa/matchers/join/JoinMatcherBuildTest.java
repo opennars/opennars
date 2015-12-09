@@ -59,7 +59,7 @@ public final class JoinMatcherBuildTest<V>
             .thenAnswer(new Answer<Object>()
             {
                 @Override
-                public Object answer(final InvocationOnMock invocation)
+                public Object answer(InvocationOnMock invocation)
                 {
                     return invocation.getArguments()[0];
                 }
@@ -71,13 +71,13 @@ public final class JoinMatcherBuildTest<V>
     @Test
     public void rangeMustNotBeNull()
     {
-        final String expected = "range must not be null";
+        String expected = "range must not be null";
         try {
             new JoinMatcherBootstrap<>(parser, joined)
                 .using(joining).range(null);
             fail("No exception thrown!!");
         } catch (NullPointerException e) {
-            final String actual = e.getMessage();
+            String actual = e.getMessage();
             assertThat(actual).overridingErrorMessage(
                 "Unexpected exception message!\nExpected: %s\nActual  : %s\n",
                 expected, actual
@@ -88,8 +88,8 @@ public final class JoinMatcherBuildTest<V>
     @Test
     public void rangeMustNotBeEmptyAfterIntersection()
     {
-        final Range<Integer> range = Range.lessThan(0);
-        final String expected = "illegal range " + range
+        Range<Integer> range = Range.lessThan(0);
+        String expected = "illegal range " + range
             + ": should not be empty after intersection with "
             + Range.atLeast(0);
         try {
@@ -97,7 +97,7 @@ public final class JoinMatcherBuildTest<V>
                 .using(joining).range(range);
             fail("No exception thrown!!");
         } catch (IllegalArgumentException e) {
-            final String actual = e.getMessage();
+            String actual = e.getMessage();
             assertThat(actual).overridingErrorMessage(
                 "Unexpected exception message!\nExpected: %s\nActual  : %s\n",
                 expected, actual
@@ -108,7 +108,7 @@ public final class JoinMatcherBuildTest<V>
     @DataProvider
     public Iterator<Object[]> getRanges()
     {
-        final List<Object[]> list = Lists.newArrayList();
+        List<Object[]> list = Lists.newArrayList();
 
         Range<Integer> range;
         Matcher matcher;
@@ -145,14 +145,14 @@ public final class JoinMatcherBuildTest<V>
     }
 
     @Test(dataProvider = "getRanges")
-    public void generatedMatchersHaveCorrectClasses(final Range<Integer> range,
-        final Matcher expected)
+    public void generatedMatchersHaveCorrectClasses(Range<Integer> range,
+                                                    Matcher expected)
     {
-        final Rule rule = JoinMatcherBootstrap.create(parser, JOINED)
+        Rule rule = JoinMatcherBootstrap.create(parser, JOINED)
             .using(joining).range(range);
-        final Matcher actual = (Matcher) rule;
+        Matcher actual = (Matcher) rule;
 
-        final Class<? extends Matcher> expectedClass = expected.getClass();
+        Class<? extends Matcher> expectedClass = expected.getClass();
         assertThat(actual).overridingErrorMessage(
             "Wrong class! Expected %s, got %s",
             expectedClass.getCanonicalName(),
@@ -161,8 +161,8 @@ public final class JoinMatcherBuildTest<V>
 
         // FIXME: hack...
         if (expectedClass == OptionalMatcher.class) {
-            final Matcher actualChild = actual.getChildren().get(0);
-            final Matcher expectedChild = expected.getChildren().get(0);
+            Matcher actualChild = actual.getChildren().get(0);
+            Matcher expectedChild = expected.getChildren().get(0);
             assertThat(actualChild).overridingErrorMessage(
                 "Child is not what is expected! Got %s, expected %s",
                 actualChild, expectedChild

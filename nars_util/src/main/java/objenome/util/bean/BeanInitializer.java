@@ -8,20 +8,20 @@ import java.lang.reflect.Modifier;
 
 public class BeanInitializer {
 
-    public static <T> T initialize(final Class<?> iface, final T bean) {
-        final Initializer anno = iface.getAnnotation(Initializer.class);
+    public static <T> T initialize(Class<?> iface, T bean) {
+        Initializer anno = iface.getAnnotation(Initializer.class);
         if (anno != null) {
             try {
                 findMethod(anno.value()).invoke(null, bean);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 throw new IllegalStateException("Error initializing " + bean, e); //$NON-NLS-1$
             }
         }
         return bean;
     }
 
-    private static Method findMethod(final Class<?> initializerClass) {
-        for (final Method method : initializerClass.getMethods()) {
+    private static Method findMethod(Class<?> initializerClass) {
+        for (Method method : initializerClass.getMethods()) {
             if (method.isAnnotationPresent(InitializerMethod.class)) {
                 if (!Modifier.isStatic(method.getModifiers())) {
                     throw new IllegalStateException("Method " + method //$NON-NLS-1$

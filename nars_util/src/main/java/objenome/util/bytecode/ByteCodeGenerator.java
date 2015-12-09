@@ -51,7 +51,7 @@ public final class ByteCodeGenerator {
      *            Class pool to use - If it's null
      *            <code>ClassPool.getDefault()</code>
      */
-    public ByteCodeGenerator(final ClassPool pool) {
+    public ByteCodeGenerator(ClassPool pool) {
         this(pool, null, null);
     }
 
@@ -67,7 +67,7 @@ public final class ByteCodeGenerator {
      *            class loader returned by
      *            <code>ClassPool.getClassLoader()</code> is used.
      */
-    public ByteCodeGenerator(final ClassPool pool, final ClassLoader classLoader) {
+    public ByteCodeGenerator(ClassPool pool, ClassLoader classLoader) {
         this(pool, classLoader, null);
     }
 
@@ -86,8 +86,8 @@ public final class ByteCodeGenerator {
      *            the default domain created by
      *            <code>java.lang.ClassLoader</code> is used.
      */
-    public ByteCodeGenerator(final ClassPool pool, final ClassLoader classLoader,
-            final ProtectionDomain domain) {
+    public ByteCodeGenerator(ClassPool pool, ClassLoader classLoader,
+                             ProtectionDomain domain) {
         super();
         this.pool = pool == null ? ClassPool.getDefault() : pool;
         this.classLoader = this.pool.getClassLoader();
@@ -107,11 +107,11 @@ public final class ByteCodeGenerator {
      * @throws CannotCompileException
      *             Some source from the model cannot be compiled.
      */
-    private CtClass createCtClass(final SgClass modelClass) throws NotFoundException,
+    private CtClass createCtClass(SgClass modelClass) throws NotFoundException,
             CannotCompileException {
 
         // Create class
-        final CtClass clasz = pool.makeClass(modelClass.getName());
+        CtClass clasz = pool.makeClass(modelClass.getName());
         clasz.setModifiers(SgUtils.toModifiers(modelClass.getModifiers()));
 
         // Add superclass
@@ -127,21 +127,21 @@ public final class ByteCodeGenerator {
         return clasz;
     }
 
-    private void addMethods(final SgClass modelClass, final CtClass clasz)
+    private void addMethods(SgClass modelClass, CtClass clasz)
             throws CannotCompileException, NotFoundException {
-        final List<SgMethod> methods = modelClass.getMethods();
+        List<SgMethod> methods = modelClass.getMethods();
         for (int i = 0; i < methods.size(); i++) {
 
-            final SgMethod method = methods.get(i);
+            SgMethod method = methods.get(i);
             // TODO Javassist cannot handle annotations
-            final String src = method.toString(false);
-            final CtMethod ctMethod = CtNewMethod.make(src, clasz);
+            String src = method.toString(false);
+            CtMethod ctMethod = CtNewMethod.make(src, clasz);
             clasz.addMethod(ctMethod);
 
             // Add exceptions
-            final List<SgClass> exceptions = method.getExceptions();
+            List<SgClass> exceptions = method.getExceptions();
             if (!exceptions.isEmpty()) {
-                final CtClass[] exceptionTypes = new CtClass[exceptions.size()];
+                CtClass[] exceptionTypes = new CtClass[exceptions.size()];
                 for (int j = 0; j < exceptions.size(); j++) {
                     exceptionTypes[j] = pool.get(exceptions.get(j).getName());
                 }
@@ -151,20 +151,20 @@ public final class ByteCodeGenerator {
         }
     }
 
-    private void addConstructors(final SgClass modelClass, final CtClass clasz)
+    private void addConstructors(SgClass modelClass, CtClass clasz)
             throws CannotCompileException, NotFoundException {
-        final List<SgConstructor> constructors = modelClass.getConstructors();
+        List<SgConstructor> constructors = modelClass.getConstructors();
         for (int i = 0; i < constructors.size(); i++) {
 
-            final SgConstructor constructor = constructors.get(i);
-            final String src = constructor.toString();
-            final CtConstructor ctConstructor = CtNewConstructor.make(src, clasz);
+            SgConstructor constructor = constructors.get(i);
+            String src = constructor.toString();
+            CtConstructor ctConstructor = CtNewConstructor.make(src, clasz);
             clasz.addConstructor(ctConstructor);
 
             // Add exceptions
-            final List<SgClass> exceptions = constructor.getExceptions();
+            List<SgClass> exceptions = constructor.getExceptions();
             if (!exceptions.isEmpty()) {
-                final CtClass[] exceptionTypes = new CtClass[exceptions.size()];
+                CtClass[] exceptionTypes = new CtClass[exceptions.size()];
                 for (int j = 0; j < exceptions.size(); j++) {                    
                     exceptionTypes[j] = pool.get(exceptions.get(j).getName());
                 }
@@ -174,23 +174,23 @@ public final class ByteCodeGenerator {
         }
     }
 
-    private static void addFields(final SgClass modelClass, final CtClass clasz)
+    private static void addFields(SgClass modelClass, CtClass clasz)
             throws CannotCompileException {
-        final List<SgField> fields = modelClass.getFields();
+        List<SgField> fields = modelClass.getFields();
         for (int i = 0; i < fields.size(); i++) {
-            final SgField field = fields.get(i);
-            final String src = field.toString();
-            final CtField ctField = CtField.make(src, clasz);
+            SgField field = fields.get(i);
+            String src = field.toString();
+            CtField ctField = CtField.make(src, clasz);
             clasz.addField(ctField);
         }
     }
 
-    private void addInterfaces(final SgClass modelClass, final CtClass clasz)
+    private void addInterfaces(SgClass modelClass, CtClass clasz)
             throws NotFoundException {
-        final List<SgClass> interfaces = modelClass.getInterfaces();
+        List<SgClass> interfaces = modelClass.getInterfaces();
         if (!interfaces.isEmpty()) {
             for (int i = 0; i < interfaces.size(); i++) {
-                final SgClass intf = interfaces.get(i);
+                SgClass intf = interfaces.get(i);
                 clasz.addInterface(pool.get(intf.getName()));
             }
         }
@@ -208,15 +208,15 @@ public final class ByteCodeGenerator {
      * @return Class.
      */
     @SuppressWarnings("unchecked")
-    public Class createClass(final SgClass modelClass) {
+    public Class createClass(SgClass modelClass) {
         // We don't want to create it if it already exists
         Class implClass = loadClass(modelClass);
         if (implClass == null) {
             try {
                 // Create class
-                final CtClass clasz = createCtClass(modelClass);
+                CtClass clasz = createCtClass(modelClass);
                 implClass = clasz.toClass(classLoader, domain);
-            } catch (final NotFoundException | CannotCompileException e) {
+            } catch (NotFoundException | CannotCompileException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -232,12 +232,12 @@ public final class ByteCodeGenerator {
      * @return Class (if it already exists) or null if it's unknown.
      */
     @SuppressWarnings("unchecked")
-    public static Class loadClass(final SgClass modelClass) {
+    public static Class loadClass(SgClass modelClass) {
         Class implClass;
         try {
             implClass = Class.forName(modelClass.getName());
             // The class already exists!
-        } catch (final ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             implClass = null;
         }
         return implClass;
@@ -253,7 +253,7 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public Object createInstance(final Class clasz) {
+    public Object createInstance(Class clasz) {
         return createInstance(clasz, new Class[] {}, new Object[] {});
     }
 
@@ -271,12 +271,12 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public Object createInstance(final Class clasz, final Class[] argTypes,
-                                 final Object[] initArgs) {
+    public Object createInstance(Class clasz, Class[] argTypes,
+                                 Object[] initArgs) {
         try {
-            final Constructor constructor = clasz.getConstructor(argTypes);
+            Constructor constructor = clasz.getConstructor(argTypes);
             return constructor.newInstance(initArgs);
-        } catch (final NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException ex) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -296,10 +296,10 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public Object createInstance(final SgClass clasz, final Class[] argTypes,
-                                 final Object[] initArgs) {
+    public Object createInstance(SgClass clasz, Class[] argTypes,
+                                 Object[] initArgs) {
 
-        final Class newClass = createClass(clasz);
+        Class newClass = createClass(clasz);
         return createInstance(newClass, argTypes, initArgs);
 
     }
@@ -314,9 +314,9 @@ public final class ByteCodeGenerator {
      * @return New instance.
      */
     @SuppressWarnings("unchecked")
-    public Object createInstance(final SgClass clasz) {
+    public Object createInstance(SgClass clasz) {
 
-        final Class newClass = createClass(clasz);
+        Class newClass = createClass(clasz);
         return createInstance(newClass, new Class[] {}, new Object[] {});
 
     }
@@ -328,8 +328,8 @@ public final class ByteCodeGenerator {
      * @return New byte code generator instance.
      */
     public static ByteCodeGenerator createWithCurrentThreadContextClassLoader() {
-        final ClassPool pool = ClassPool.getDefault();
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassPool pool = ClassPool.getDefault();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         pool.appendClassPath(new LoaderClassPath(classLoader));
         return new ByteCodeGenerator(pool, classLoader);
     }

@@ -73,10 +73,10 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
      * @param t target term
      * @param v Budget value of the tlink
      */
-    public TermLink(final Term t, final Budget v) {
+    public TermLink(Term t, Budget v) {
         super(v);
 
-        this.target = t;
+        target = t;
     }
 
 
@@ -93,7 +93,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(Object obj) {
         return TermLinkKey.termLinkEquals(this, (Termed) obj);
 
 //        if (this != obj) {

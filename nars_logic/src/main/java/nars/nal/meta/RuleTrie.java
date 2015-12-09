@@ -122,7 +122,7 @@ public class RuleTrie extends Deriver {
     });*/
         //System.out.println("root size: " + trie.root.getChildCount());
 
-        this.root = compile(trie.root);
+        root = compile(trie.root);
 
 //        //System.out.println(trie);
 //        trie.nodes.forEach(n -> {

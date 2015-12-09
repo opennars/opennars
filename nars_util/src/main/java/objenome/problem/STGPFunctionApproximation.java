@@ -55,8 +55,8 @@ public class STGPFunctionApproximation extends DefaultProblemSTGP {
     @Override
     protected FitnessFunction initFitness() {
 
-        if (this.fitness == null) {
-            this.fitness = new SumOfError() {
+        if (fitness == null) {
+            fitness = new SumOfError() {
                 @Override public void onNextBest(TypedOrganism s, double error) {
                     nextBest = s;
                     nextBestError = error;

@@ -55,7 +55,7 @@ public class LoadingProgressDisplay extends ProgressBar {
         // as the webview load progresses update progress.
         worker.workDoneProperty().addListener((observableValue, oldNumber, newNumber) -> {
             if (newNumber == null) newNumber = -1.0;
-            final double newValue = newNumber.doubleValue();
+            double newValue = newNumber.doubleValue();
             if (newValue < 0.0 || newValue > 100.0) {
                 setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             }

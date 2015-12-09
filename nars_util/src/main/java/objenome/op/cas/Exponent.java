@@ -89,7 +89,7 @@ public class Exponent extends Operation {
     public String pretty() {
         if (exponent.equalsExpr(Num.make(0.5))) return "sqrt" + (base.functionalParens()?"(":" ") + base.pretty() + (base.functionalParens()?")":"");
 
-        Integer thisClassOrder = this.classOrder();
+        Integer thisClassOrder = classOrder();
         
         boolean baseParens = false;
         if (thisClassOrder > base.printLevelRight() || base.isNegated()) baseParens = true;

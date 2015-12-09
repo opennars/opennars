@@ -252,9 +252,9 @@ public abstract class NQuadsRDF {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    public static Task input(final NAR nar,
-                             final Atom subject,
-                             final Atom predicate, final Term object) {
+    public static Task input(NAR nar,
+                             Atom subject,
+                             Atom predicate, Term object) {
 
         //http://www.w3.org/TR/owl-ref/
 

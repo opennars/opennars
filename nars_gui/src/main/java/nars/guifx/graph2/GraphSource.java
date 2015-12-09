@@ -65,7 +65,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
             getEdge(SpaceGrapher<K,V> g, V s, V t, BiFunction<V, V, TermEdge> edgeBuilder) {
 
         //re-order
-        final int i = s.getTerm().compareTo(t.getTerm());
+        int i = s.getTerm().compareTo(t.getTerm());
         if (i == 0) return null;
             /*throw new RuntimeException(
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
@@ -86,7 +86,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     }
 
     public void stop() {
-        this.grapher = null;
+        grapher = null;
     }
 
     public void start(SpaceGrapher<V, N> g) {
@@ -97,7 +97,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
         updateGraph();
         setUpdateable();
 
-        this.grapher = g;
+        grapher = g;
     }
 
 //    public Animate start(SpaceGrapher<V, N> g, int loopMS) {

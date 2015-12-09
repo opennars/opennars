@@ -44,7 +44,7 @@ public class Abbreviation implements Consumer<Task> {
 
         reg = n.memory.eventInput.on(this);
 
-        this.nar = n;
+        nar = n;
     }
 
     private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
@@ -55,8 +55,8 @@ public class Abbreviation implements Consumer<Task> {
 
 
 
-    public boolean canAbbreviate(final Task task) {
-        final Term t = task.getTerm();
+    public boolean canAbbreviate(Task task) {
+        Term t = task.getTerm();
 
         if (t instanceof Operation) return false;
         /*if (t instanceof Similarity) {
@@ -86,7 +86,7 @@ public class Abbreviation implements Consumer<Task> {
                 return;
 
 
-            final Compound termAbbreviating = task.getTerm();
+            Compound termAbbreviating = task.getTerm();
 
             /*Operation compound = Operation.make(
                     Product.make(termArray(termAbbreviating)), abbreviate);*/

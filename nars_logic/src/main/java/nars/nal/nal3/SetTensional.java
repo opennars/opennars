@@ -71,10 +71,10 @@ public interface SetTensional<T extends Term> extends Compound<T> {
     @Override
     default void append(Appendable p, boolean pretty) throws IOException {
 
-        final int len = size();
+        int len = size();
 
         //duplicated from above, dont want to store this as a field in the class
-        final char opener, closer;
+        char opener, closer;
         if (this instanceof SetExt) {
             opener = Op.SET_EXT_OPENER.ch;
             closer = Symbols.SET_EXT_CLOSER;

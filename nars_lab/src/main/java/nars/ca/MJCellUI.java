@@ -177,7 +177,7 @@ class MJCellUI extends Frame {
         Panel pnlWrapGrid = new Panel();
         Panel pnlRun = new Panel();
 
-		this.setTitle(mjc.getAppletName());
+		setTitle(mjc.getAppletName());
 		setLayout(new BorderLayout(1, 1)); // adds nice division lines
 		pnlLeft.setLayout(new GridLayout(12, 1)); // vertical layout for 12
 		// items
@@ -570,11 +570,11 @@ class MJCellUI extends Frame {
 			mjb.RedrawBoard(true);
 		} else if (e.target == itmViewControls) {
 			pnlLeft.setVisible(!pnlLeft.isVisible());
-			this.doLayout();
+			doLayout();
 			pnlLeft.doLayout();
 		} else if (e.target == itmViewSeed) {
 			pnlBotm.setVisible(!pnlBotm.isVisible());
-			this.doLayout();
+			doLayout();
 			pnlBotm.doLayout();
 		} else if ((e.target == btnClear) || (e.target == itmClear)) {
 			mjb.Clear(true);
@@ -1069,7 +1069,7 @@ class MJCellUI extends Frame {
 	// ----------------------------------------------------------------
 	// Show the 'Info...' dialog
 	public void DialogInfo() {
-		final boolean fOldRun = mjb.caThread != null;
+		boolean fOldRun = mjb.caThread != null;
 
 		// stop while the dialog in open
 		mjb.stop();
@@ -1135,7 +1135,7 @@ class MJCellUI extends Frame {
 	// ----------------------------------------------------------------
 	// show pattern description
 	public void DialogDesc() {
-		final boolean fOldRun = mjb.caThread != null;
+		boolean fOldRun = mjb.caThread != null;
 
 		// stop while the dialog in open
 		mjb.stop();

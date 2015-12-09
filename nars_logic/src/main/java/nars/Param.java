@@ -130,7 +130,7 @@ public abstract class Param extends Container implements Level {
 
     public void applyDefaultBudget(MutableTask t) {
 
-        final char punc = t.getPunctuation();
+        char punc = t.getPunctuation();
         t.setPriority(getDefaultPriority(punc));
         t.setDurability(getDefaultDurability(punc));
 

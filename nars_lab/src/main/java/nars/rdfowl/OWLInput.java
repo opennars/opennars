@@ -43,7 +43,7 @@ public class OWLInput  {
     }
 
     public OWLInput(NAR n) {
-        this.nar = n;
+        nar = n;
     }
 
     protected static class Entity {
@@ -335,7 +335,7 @@ public class OWLInput  {
      *
      * @param entity the Entity to save.
      */
-    protected void input(final Entity entity) {
+    protected void input(Entity entity) {
         //entities.put(entity.getName(), entity);
 
         Term clas = atom(entity.getName());
@@ -421,7 +421,7 @@ public class OWLInput  {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    private void input(final String subject, final String object, final String predicate) {
+    private void input(String subject, String object, String predicate) {
 
         if ((subject == null) || (object == null)) {
             return;

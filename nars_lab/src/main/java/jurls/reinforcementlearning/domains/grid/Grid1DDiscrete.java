@@ -24,14 +24,14 @@ public class Grid1DDiscrete implements World {
     
 
     public Grid1DDiscrete(int size, int totalTime) {
-        this.time = 1;
+        time = 1;
         this.size = size;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.ENERGY_COST_FACTOR = 0.5;
-        this.MATCH_REWARD_FACTOR = size*1.1;
-        this.REWARD_MAGNITUDE = 1;
-        
-        this.focusPosition = size/2;
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        ENERGY_COST_FACTOR = 0.5;
+        MATCH_REWARD_FACTOR = size*1.1;
+        REWARD_MAGNITUDE = 1;
+
+        focusPosition = size/2;
         this.totalTime = totalTime;
     }
 
@@ -85,7 +85,7 @@ public class Grid1DDiscrete implements World {
         
         
         for (int i = 0; i < size; i++) {
-            final double exp = 3.0; //sharpen
+            double exp = 3.0; //sharpen
             sensor[i] = i == focusPosition ? 1.0 : 0.0;
         }
         /*

@@ -205,7 +205,7 @@ public class DefaultZiptie extends Ziptie {
         private final RealMatrix newConnection;
 
         public CopySubmatrix(RealMatrix target) {
-            this.newConnection = target;
+            newConnection = target;
         }
 
         @Override

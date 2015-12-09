@@ -44,7 +44,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
         WIDTH = W / 2;
         HEIGHT = H / 2;
 
-        this.setBackground(Color.BLACK);
+        setBackground(Color.BLACK);
 
         particleImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         particleRaster = ((DataBufferInt) particleImage.getRaster().getDataBuffer()).getData();

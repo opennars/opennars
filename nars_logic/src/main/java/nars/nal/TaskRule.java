@@ -73,7 +73,7 @@ public class TaskRule extends GenericCompound implements Level {
 
     public TaskRule(Compound premises, Compound result) {
         super(Op.PRODUCT, premises, result );
-        this.str = super.toString();
+        str = super.toString();
     }
 
 
@@ -115,7 +115,7 @@ public class TaskRule extends GenericCompound implements Level {
 
     @Override
     public final Compound normalized() {
-        return this.transform(uppercaseAtomsToPatternVariables);
+        return transform(uppercaseAtomsToPatternVariables);
     }
 
 //    @Override
@@ -356,9 +356,9 @@ public class TaskRule extends GenericCompound implements Level {
         //(which will not reference any particular atoms)
 
 
-        this.pattern = new TaskBeliefPair(taskTermPattern, beliefTermPattern);
+        pattern = new TaskBeliefPair(taskTermPattern, beliefTermPattern);
 
-        final MatchTaskBelief matcher = new MatchTaskBelief(pattern);
+        MatchTaskBelief matcher = new MatchTaskBelief(pattern);
         preConditionsList.add(matcher);
 
 
@@ -372,12 +372,12 @@ public class TaskRule extends GenericCompound implements Level {
             Compound predicate = (Compound) precon[i];
             Term predicate_name = predicate.term(1);
 
-            final String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
+            String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
 
             PreCondition next = null, preNext = null;
 
-            final Term[] args;
-            final Term arg1, arg2;
+            Term[] args;
+            Term arg1, arg2;
 
             //if (predicate.getSubject() instanceof SetExt) {
                 //decode precondition predicate arguments
@@ -513,8 +513,8 @@ public class TaskRule extends GenericCompound implements Level {
         }
 
         //store to arrays
-        this.prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
-        this.postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
+        prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
+        postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
 
 
         List<PostCondition> postConditions = Global.newArrayList();
@@ -540,13 +540,13 @@ public class TaskRule extends GenericCompound implements Level {
         if (Sets.newHashSet(postConditions).size()!=postConditions.size())
             throw new RuntimeException("postcondition duplicates:\n\t" + postConditions);
 
-        this.postconditions = postConditions.toArray( new PostCondition[postConditions.size() ] );
+        postconditions = postConditions.toArray( new PostCondition[postConditions.size() ] );
 
 
         //TODO add modifiers to affect minNAL (ex: anything temporal set to 7)
         //this will be raised by conclusion postconditions of higher NAL level
-        this.minNAL =
-                Math.max(this.minNAL,
+        minNAL =
+                Math.max(minNAL,
                     Math.max(
                             Terms.maxLevel(pattern.term(0)),
                             Terms.maxLevel(pattern.term(1)
@@ -605,9 +605,9 @@ public class TaskRule extends GenericCompound implements Level {
 
         // T, B, [pre] |- C, [post] ||--
 
-        Term T = this.getTask();
-        Term B = this.getBelief();
-        Term C = this.getConclusionTerm();
+        Term T = getTask();
+        Term B = getBelief();
+        Term C = getConclusionTerm();
 
         //      C, B, [pre], task_is_question() |- T, [post]
         TaskRule clone1 = clone(C, B, T, true);
@@ -634,9 +634,9 @@ public class TaskRule extends GenericCompound implements Level {
 
         // T, B, [pre] |- C, [post] ||--
 
-        Term T = this.getTask();
-        Term B = this.getBelief();
-        Term C = this.getConclusionTerm();
+        Term T = getTask();
+        Term B = getBelief();
+        Term C = getConclusionTerm();
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
@@ -644,7 +644,7 @@ public class TaskRule extends GenericCompound implements Level {
         return clone1;//.normalizeRule();
     }
 
-    private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {
+    private final TaskRule clone(Term newT, Term newB, Term newR, boolean question) {
 
         Compound newPremise = null;
         newPremise = question ? $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm)) : $.p(getPremise().terms());
@@ -699,7 +699,7 @@ public class TaskRule extends GenericCompound implements Level {
 
         int offset = 0;
 
-        @Override protected Variable newVariable(final Variable v, int serial) {
+        @Override protected Variable newVariable(Variable v, int serial) {
 
             Variable newVar = $.v(v.op(), serial+offset);
 

@@ -25,30 +25,30 @@ public class FunctionalRangeTest {
 
     @Test
     public void test1() {
-        final FooBar fooBar = BeanProxyBuilder.on(FooBar.class).build();
+        FooBar fooBar = BeanProxyBuilder.on(FooBar.class).build();
         assertEquals("Wrong value of unset primitive type", 0, fooBar.getFoo()); //$NON-NLS-1$
 
-        final int testInt = 3;
+        int testInt = 3;
         fooBar.setFoo(testInt);
         assertEquals("Wrong value of set primitive type", testInt, fooBar.getFoo()); //$NON-NLS-1$
 
         assertNull("Wrong value of unset type", fooBar.getBar()); //$NON-NLS-1$
-        final String testString = "Hallo"; //$NON-NLS-1$
+        String testString = "Hallo"; //$NON-NLS-1$
         fooBar.setBar(testString);
         assertEquals("Wrong value of set type", testString, fooBar.getBar()); //$NON-NLS-1$ 
 
-        final int minLength = new HashMap<>().toString().length();
+        int minLength = new HashMap<>().toString().length();
         assertTrue("toString.length <= " + minLength, fooBar.toString().length() > minLength); //$NON-NLS-1$
         assertFalse("hashCode returned 0", 0 == fooBar.hashCode()); //$NON-NLS-1$
 
         assertEquals(fooBar, fooBar);
 
         // variable because PMD does not like equals(null) very much
-        final Object nullObject = null;
+        Object nullObject = null;
         assertFalse("fooBar equals null", fooBar.equals(nullObject)); //$NON-NLS-1$
         assertFalse("fooBar equals java.lang.String", "Classes are not compatible".equals(fooBar)); //$NON-NLS-1$ //$NON-NLS-2$
 
-        final FooBar secondInstance = BeanProxyBuilder.on(FooBar.class).build();
+        FooBar secondInstance = BeanProxyBuilder.on(FooBar.class).build();
         assertFalse("fooBar equals unfilled secondInstance", fooBar.equals(secondInstance)); //$NON-NLS-1$
         secondInstance.setFoo(fooBar.getFoo());
         secondInstance.setBar(fooBar.getBar());
@@ -59,18 +59,18 @@ public class FunctionalRangeTest {
 
     @Test
     public void testExternalize() throws FileNotFoundException, IOException, ClassNotFoundException {
-        final String testString = "Externalizable is working!"; //$NON-NLS-1$
+        String testString = "Externalizable is working!"; //$NON-NLS-1$
 
-        final FooBar ifaceOut = BeanProxyBuilder.on(FooBar.class).build();
+        FooBar ifaceOut = BeanProxyBuilder.on(FooBar.class).build();
         ifaceOut.setBar(testString);
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final ObjectOutputStream oStream = new ObjectOutputStream(byteArrayOutputStream);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream oStream = new ObjectOutputStream(byteArrayOutputStream);
         oStream.writeObject(ifaceOut);
         oStream.close();
 
-        final ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(
+        ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(
                 byteArrayOutputStream.toByteArray()));
-        final FooBar ifaceIn = (FooBar) iStream.readObject();
+        FooBar ifaceIn = (FooBar) iStream.readObject();
         iStream.close();
 
         assertEquals("testString of read object has wrong value", testString, ifaceIn.getBar()); //$NON-NLS-1$
@@ -79,8 +79,8 @@ public class FunctionalRangeTest {
 
     @Test
     public void testClone() throws CloneNotSupportedException {
-        final FooBar ifaceOrig = BeanProxyBuilder.on(FooBar.class).build();
-        final FooBar ifaceCloned = (FooBar) ifaceOrig.clone();
+        FooBar ifaceOrig = BeanProxyBuilder.on(FooBar.class).build();
+        FooBar ifaceCloned = (FooBar) ifaceOrig.clone();
 
         assertEquals("clone and original are not equal", ifaceOrig, ifaceCloned); //$NON-NLS-1$
         assertNotSame("clone and original are same", ifaceOrig, ifaceCloned); //$NON-NLS-1$
@@ -88,10 +88,10 @@ public class FunctionalRangeTest {
 
     @Test
     public void testCloneContent() throws CloneNotSupportedException {
-        final FooBar ifaceOrig = BeanProxyBuilder.on(FooBar.class).build();
+        FooBar ifaceOrig = BeanProxyBuilder.on(FooBar.class).build();
         ifaceOrig.setFoo(4711);
 
-        final FooBar ifaceCloned = (FooBar) ifaceOrig.clone();
+        FooBar ifaceCloned = (FooBar) ifaceOrig.clone();
         ifaceOrig.setFoo(ifaceOrig.getFoo() + 1);
         assertFalse("clone content changed", ifaceOrig.getFoo() == ifaceCloned.getFoo()); //$NON-NLS-1$
     }

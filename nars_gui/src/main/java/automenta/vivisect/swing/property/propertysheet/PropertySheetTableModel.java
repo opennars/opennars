@@ -357,11 +357,11 @@ public class PropertySheetTableModel
     listeners.firePropertyChange(evt);
   }
 
-  protected void visibilityChanged(final boolean restoreOldStates) {
+  protected void visibilityChanged(boolean restoreOldStates) {
     // Store the old visibility states
     if (restoreOldStates) {
       for (Iterator iter=publishedModel.iterator(); iter.hasNext();) {
-        final Item item=(Item)iter.next();
+        Item item=(Item)iter.next();
         toggleStates.put(item.getKey(), item.isVisible() ? Boolean.TRUE : Boolean.FALSE);
       }
     }
@@ -501,14 +501,14 @@ public class PropertySheetTableModel
       this.name = name;
       this.parent = parent;
       // this is not a property but a category, always has toggle
-      this.hasToggle = true;
+      hasToggle = true;
     }
     
     private Item(Property property, Item parent) {
-      this.name = property.getDisplayName();
+      name = property.getDisplayName();
       this.property = property;
       this.parent = parent;
-      this.visible = (property == null);
+      visible = (property == null);
       
       // properties toggle if there are sub-properties
       Property[] subProperties = property.getSubProperties();
@@ -553,7 +553,7 @@ public class PropertySheetTableModel
       }
     }
 
-    public void setVisible(final boolean visible) {
+    public void setVisible(boolean visible) {
       this.visible = visible;
     }
 

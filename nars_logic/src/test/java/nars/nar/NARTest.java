@@ -112,7 +112,7 @@ public class NARTest {
 
     public void testQueryAnswered(int cyclesBeforeQuestion, int cyclesAfterQuestion) throws Narsese.NarseseException {
 
-        final AtomicBoolean b = new AtomicBoolean(false);
+        AtomicBoolean b = new AtomicBoolean(false);
 
         String question = cyclesBeforeQuestion == 0 ?
                 "<a --> b>" /* unknown solution to be derived */ :

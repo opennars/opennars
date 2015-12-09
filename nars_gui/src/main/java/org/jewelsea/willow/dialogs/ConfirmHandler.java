@@ -39,26 +39,26 @@ public class ConfirmHandler extends VBox {
         super(14);
 
         // add controls to the popup.
-        final Label promptMessage = new Label(message);
+        Label promptMessage = new Label(message);
         promptMessage.setWrapText(true);
         promptMessage.setPrefWidth(350);
 
         // action button text setup.
         HBox buttonBar = new HBox(20);
 
-        final ImageView confirmImage = new ImageView(ResourceUtil.getImage("select_48.png"));
+        ImageView confirmImage = new ImageView(ResourceUtil.getImage("select_48.png"));
         confirmImage.setFitHeight(19);
         confirmImage.setPreserveRatio(true);
 
-        final Button confirmButton = new Button(getString("dialog.confirm"));
+        Button confirmButton = new Button(getString("dialog.confirm"));
         confirmButton.setGraphic(confirmImage);
         confirmButton.setDefaultButton(true);
 
-        final ImageView denyImage = new ImageView(ResourceUtil.getImage("stop_48.png"));
+        ImageView denyImage = new ImageView(ResourceUtil.getImage("stop_48.png"));
         denyImage.setFitHeight(19);
         denyImage.setPreserveRatio(true);
 
-        final Button denyButton = new Button(getString("dialog.deny"));
+        Button denyButton = new Button(getString("dialog.deny"));
         denyButton.setGraphic(denyImage);
         denyButton.setCancelButton(true);
 
@@ -69,7 +69,7 @@ public class ConfirmHandler extends VBox {
         getStyleClass().add("alert-dialog");
         getChildren().addAll(promptMessage, buttonBar);
 
-        final DropShadow dropShadow = new DropShadow();
+        DropShadow dropShadow = new DropShadow();
         setEffect(dropShadow);
 
         // confirm and close the popup.

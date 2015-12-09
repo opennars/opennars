@@ -22,7 +22,7 @@ public class Granulator extends Wave {
     public Granulator(int sc, int bps, int c, int sr, int f, ArrayList<String> l,
             String n) {
         super(sc, bps, c, sr, f, n);
-        this.samples = l;
+        samples = l;
     }
 
     public void synthesize(int size, double randDur, int numGrains, double pitch,
@@ -47,7 +47,7 @@ public class Granulator extends Wave {
 
     private void print(int[][] grainCloud) {
         for (int i = 0; i < grainCloud[0].length; i++) {
-            this.addSample(grainCloud[0][i] + "\t" + grainCloud[1][i]);
+            addSample(grainCloud[0][i] + "\t" + grainCloud[1][i]);
         }
     }
     public void createGrains(int numberOfGrains, int dur, double randDur,
@@ -74,10 +74,10 @@ public class Granulator extends Wave {
                     if (Math.ceil(amps) < samples.size()) {
                         //decimal part of 0.05 and lower are considered integers
                         grain[j][i] = amps - Math.floor(amps) > 0.05 ? super.interpolate(
-                                this.samples.get((int) amps).split("\t")[j],
-                                this.samples.get((int) Math.ceil(amps))
+                                samples.get((int) amps).split("\t")[j],
+                                samples.get((int) Math.ceil(amps))
                                         .split("\t")[j]) : Integer.parseInt(
-                                this.samples.get((int) amps).split("\t")[j]);
+                                samples.get((int) amps).split("\t")[j]);
                     }
                 }
                 amps += pitchh;

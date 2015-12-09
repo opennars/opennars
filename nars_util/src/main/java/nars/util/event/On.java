@@ -12,8 +12,8 @@ public final class On<V> {
     public final Topic<V> topic;
 
     On(Topic<V> t, Consumer<V> o) {
-        this.reaction = o;
-        this.topic = t;
+        reaction = o;
+        topic = t;
     }
 
     public void off() {

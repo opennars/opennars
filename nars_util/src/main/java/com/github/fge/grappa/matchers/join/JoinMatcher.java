@@ -71,7 +71,7 @@ public abstract class JoinMatcher
     protected final Matcher joined;
     protected final Matcher joining;
 
-    protected JoinMatcher(final Rule joined, final Rule joining)
+    protected JoinMatcher(Rule joined, Rule joining)
     {
         super(new Rule[] { joined, joining }, "join");
         this.joined = getChildren().get(JOINED_CHILD_INDEX);
@@ -91,7 +91,7 @@ public abstract class JoinMatcher
      * @return true if the match was successful
      */
     @Override
-    public final <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(MatcherContext<V> context)
     {
         /*
          * TODO! Check logic
@@ -120,12 +120,12 @@ public abstract class JoinMatcher
         return enoughCycles(cycles);
     }
 
-    protected abstract boolean runAgain(final int cycles);
+    protected abstract boolean runAgain(int cycles);
 
-    protected abstract boolean enoughCycles(final int cycles);
+    protected abstract boolean enoughCycles(int cycles);
 
-    protected final <V> boolean matchCycle(final MatcherContext<V> context,
-        final int beforeCycle)
+    protected final <V> boolean matchCycle(MatcherContext<V> context,
+                                           int beforeCycle)
     {
         if (!joining.getSubContext(context).runMatcher())
             return false;

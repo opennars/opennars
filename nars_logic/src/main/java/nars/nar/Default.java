@@ -57,7 +57,7 @@ public class Default extends AbstractNAR {
     @Override
     protected DefaultCycle2 initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
 
-        final int inputCapacity = activeConcepts/8; //HACK heuristic
+        int inputCapacity = activeConcepts/8; //HACK heuristic
 
         return new DefaultCycle2(this, deriver,
                 conceptBag, activator
@@ -95,7 +95,7 @@ public class Default extends AbstractNAR {
         @Override
         protected void fireConcept(Concept c) {
 
-            Collection<Task> buffer = this.derivedTasksBuffer;
+            Collection<Task> buffer = derivedTasksBuffer;
             Consumer<Task> narInput = nar::input;
             Deriver deriver = this.deriver;
 

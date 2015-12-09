@@ -7,17 +7,17 @@ package com.github.fge.grappa.exceptions;
 public final class InvalidGrammarException
     extends GrappaException
 {
-    public InvalidGrammarException(final Throwable cause)
+    public InvalidGrammarException(Throwable cause)
     {
         super(cause);
     }
 
-    public InvalidGrammarException(final String message, final Throwable cause)
+    public InvalidGrammarException(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public InvalidGrammarException(final String message)
+    public InvalidGrammarException(String message)
     {
         super(message);
     }

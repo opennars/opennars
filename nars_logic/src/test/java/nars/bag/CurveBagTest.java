@@ -217,7 +217,7 @@ public class CurveBagTest extends AbstractBagTest {
     public void testAveragePriority(int capacity, SortedIndex<NullItem> items) {
         
         
-        final float priorityEpsilon = 0.01f;
+        float priorityEpsilon = 0.01f;
         
         CurveBag<CharSequence, NullItem> c = new CurveBag<>(items, curve, rng);
         LevelBag<CharSequence, NullItem> d = new LevelBag<>(capacity, 10);

@@ -62,7 +62,7 @@ public class DefaultTermizer implements Termizer {
     }
 
     /** dereference a term to an object (but do not un-termize) */
-    @Override public Object object(final Term t) {
+    @Override public Object object(Term t) {
 
         if (t == NULL) return null;
 
@@ -116,7 +116,7 @@ public class DefaultTermizer implements Termizer {
         }
 
         if (o instanceof int[]) {
-            final List<Term> arg = Arrays.stream((int[]) o)
+            List<Term> arg = Arrays.stream((int[]) o)
                     .mapToObj(Atom::the).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
@@ -125,7 +125,7 @@ public class DefaultTermizer implements Termizer {
         }
         //noinspection IfStatementWithTooManyBranches
         if (o instanceof Object[]) {
-            final List<Term> arg = Arrays.stream((Object[]) o).map(this::term).collect(Collectors.toList());
+            List<Term> arg = Arrays.stream((Object[]) o).map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
@@ -280,7 +280,7 @@ public class DefaultTermizer implements Termizer {
         return null;
     }
 
-    public Term term(final Object o) {
+    public Term term(Object o) {
         if (o == null) return NULL;
 
         //        String cname = o.getClass().toString().substring(6) /* "class " */;
@@ -332,7 +332,7 @@ public class DefaultTermizer implements Termizer {
 
             Term clas = classes.computeIfAbsent(O.getClass(), this::obj2term);
 
-            final Term finalClas = clas;
+            Term finalClas = clas;
             post[0] = () ->  onInstanceOfClass(O, oterm, finalClas);
 
             //instances.put(oterm, o); //reverse

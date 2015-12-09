@@ -43,7 +43,7 @@ public final class StringUtils {
      * characters from the <code>chrs</code> array, and <code>false</code> if it
      * contains none
      */
-    public static boolean containsAny(final CharSequence str, final char[] chrs) {
+    public static boolean containsAny(CharSequence str, char[] chrs) {
         CharIterable x = new CharHashSet(chrs);
 
         for (int i = 0; i < str.length(); i++) {

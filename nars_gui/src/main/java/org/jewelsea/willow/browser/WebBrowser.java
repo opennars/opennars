@@ -193,7 +193,7 @@ public class WebBrowser extends BorderPane {
 
         // setup the main layout.
         HBox.setHgrow(chromeLocField, Priority.ALWAYS);
-        final Pane navPane = NavTools.createNavPane(this);
+        Pane navPane = NavTools.createNavPane(this);
         mainLayout.setTop(navPane);
 
         //System.out.println("navpane added " + (System.currentTimeMillis() - start)/1000.0);
@@ -204,7 +204,7 @@ public class WebBrowser extends BorderPane {
         // add an overlay layer over the main layout for effects and status messages.
         overlayLayer = new AnchorPane();
         underlayLayer = new BorderPane();
-        final StackPane overlaidLayout = new StackPane();
+        StackPane overlaidLayout = new StackPane();
         overlaidLayout.getChildren().addAll(underlayLayer, mainLayout, overlayLayer);
         overlayLayer.setPickOnBounds(false);
 
@@ -224,7 +224,7 @@ public class WebBrowser extends BorderPane {
 
 
         // create the scene.
-        final Scene scene = new Scene(
+        Scene scene = new Scene(
                 overlaidLayout,
                 INITIAL_SCENE_WIDTH,
                 INITIAL_SCENE_HEIGHT
@@ -326,7 +326,7 @@ public class WebBrowser extends BorderPane {
 
     }
 
-    private void debug(final Scene scene) {
+    private void debug(Scene scene) {
         System.getProperties().list(System.out);
         //ScenicView.show(scene);
         Platform.runLater(new Runnable() {
@@ -338,20 +338,20 @@ public class WebBrowser extends BorderPane {
     }
 
     // creates a button to hide and show the navigation pane.
-    private Button createNavPaneButton(final Pane navPane) {
-        final Button navPaneButton = new Button();
+    private Button createNavPaneButton(Pane navPane) {
+        Button navPaneButton = new Button();
 
-        final DoubleProperty startHeight = new SimpleDoubleProperty();
+        DoubleProperty startHeight = new SimpleDoubleProperty();
 
         // todo java 8 has a weird background issue on resize.
         // hide sidebar.
-        final Animation hideNavPane = new Transition() {
+        Animation hideNavPane = new Transition() {
             {
                 setCycleDuration(Duration.millis(250));
             }
 
             protected void interpolate(double frac) {
-                final double curHeight = startHeight.get() * (1.0 - frac);
+                double curHeight = startHeight.get() * (1.0 - frac);
                 navPane.setPrefHeight(curHeight);   // todo resize a spacing underlay to allow the scene to adjust.
                 navPane.setTranslateY(-startHeight.get() + curHeight);
             }
@@ -359,13 +359,13 @@ public class WebBrowser extends BorderPane {
         hideNavPane.onFinishedProperty().set(actionEvent -> navPane.setVisible(false));
 
         // show sidebar.
-        final Animation showNavPane = new Transition() {
+        Animation showNavPane = new Transition() {
             {
                 setCycleDuration(Duration.millis(250));
             }
 
             protected void interpolate(double frac) {
-                final double curHeight = startHeight.get() * frac;
+                double curHeight = startHeight.get() * frac;
                 navPane.setPrefHeight(curHeight);
                 navPane.setTranslateY(-startHeight.get() + curHeight);
             }
@@ -396,7 +396,7 @@ public class WebBrowser extends BorderPane {
      * @param stage        the stage displaying the chrome.
      * @param overlayLayer the overlay layer for status and other information in the chrome.
      */
-    private void browserChanged(final UITab oldTab, final UITab newTab, final Stage stage, AnchorPane overlayLayer) {
+    private void browserChanged(UITab oldTab, UITab newTab, Stage stage, AnchorPane overlayLayer) {
 
 
         if (oldTab instanceof BrowserTab) {
@@ -432,7 +432,7 @@ public class WebBrowser extends BorderPane {
             // monitor the status of the selected browser.
             //overlayLayer.getChildren().clear();
 
-            final StatusDisplay statusDisplay = new StatusDisplay(newBrowser.statusProperty());
+            StatusDisplay statusDisplay = new StatusDisplay(newBrowser.statusProperty());
 
             //statusDisplay.translateXProperty().bind(getSidebarDisplay().widthProperty().add(20).add(getSidebarDisplay().translateXProperty()));
             //statusDisplay.translateYProperty().bind(overlayLayer.heightProperty().subtract(50));

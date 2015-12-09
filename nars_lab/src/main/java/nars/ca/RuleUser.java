@@ -128,7 +128,7 @@ public class RuleUser {
 			lurd[2] = (i < sizX - 1) ? i + 1 : (isWrap) ? 0 : sizX;
 			for (j = 0; j < sizY; ++j) {
 				// determine up and down cells
-				lurd[1] = (j > 0) ? j - 1 : (isWrap) ? sizY - 1 : sizY;
+				lurd[1] = j > 0 ? j - 1 : (isWrap) ? sizY - 1 : sizY;
 				lurd[3] = (j < sizY - 1) ? j + 1 : (isWrap) ? 0 : sizY;
 				bOldVal = crrState[i][j];
 
@@ -166,9 +166,7 @@ public class RuleUser {
 					if (bOldVal == 0) {
 						if (sum8 < Increment) {
 							bNewVal = 0;
-						} else {
-							bNewVal = (short) (sum8 < 100 ? 2 : 3);
-						}
+						} else bNewVal = (short) (sum8 < 100 ? 2 : 3);
 					} else if ((bOldVal > 0) && (bOldVal < (iClo - 1))) {
 						bNewVal = (short) (((sum8 >> 3) + Increment) & 255);
 					}

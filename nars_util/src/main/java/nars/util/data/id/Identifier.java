@@ -54,7 +54,7 @@ public abstract class Identifier<E extends Identifier> implements Comparable, Se
 
     /** use this when this class must generate an output by a writer
      *  this is the default general implementation.  */
-    public char[] chars(final boolean pretty) {
+    public char[] chars(boolean pretty) {
         return charsFromWriter(pretty);
     }
 
@@ -71,7 +71,7 @@ public abstract class Identifier<E extends Identifier> implements Comparable, Se
 
 
     @Override
-    public abstract boolean equals(final Object x);
+    public abstract boolean equals(Object x);
 
 //    public void share(Identifier ix) {
 //        Identified localHost = host;
@@ -142,18 +142,18 @@ public abstract class Identifier<E extends Identifier> implements Comparable, Se
 //    }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    public String toString(final boolean pretty) {
+    public String toString(boolean pretty) {
         char[] c = chars(pretty);
         return new String(c);
     }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    public StringBuilder toStringBuilder(final boolean pretty) {
+    public StringBuilder toStringBuilder(boolean pretty) {
         char[] c = chars(pretty);
         return new StringBuilder(c.length).append(c);
     }
 
-    public CharSequence toCharSequence(final boolean pretty) {
+    public CharSequence toCharSequence(boolean pretty) {
         char[] c = chars(pretty, true);
         return new CharArrayRope(c);
     }
@@ -172,7 +172,7 @@ public abstract class Identifier<E extends Identifier> implements Comparable, Se
         return Utf8.toUtf8(chars(false));
     }
 
-    public byte byteAt(final int i) {
+    public byte byteAt(int i) {
         byte[] b = bytes();
         if (b == null) return 0;
         if (b.length <= i) return 0;

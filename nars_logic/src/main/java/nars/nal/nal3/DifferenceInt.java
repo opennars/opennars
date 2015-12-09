@@ -32,7 +32,7 @@ public class DifferenceInt extends Difference {
     /**
      * Constructor with partial values, called by make
      */
-    private DifferenceInt(final Term a, final Term b) {
+    private DifferenceInt(Term a, Term b) {
         super(a, b);
     }
 
@@ -67,7 +67,7 @@ public class DifferenceInt extends Difference {
      * Try to make a new compound from two term. Called by the logic rules.
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term... arg) {
+    public static Term make(Term... arg) {
         if (arg.length != 2) return null;
 
         Term a = arg[0];

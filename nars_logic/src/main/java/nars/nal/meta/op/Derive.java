@@ -34,7 +34,7 @@ public final class Derive extends PreCondition {
         this.rule = rule;
         this.anticipate = anticipate;
         this.eternalize = eternalize;
-        this.id = !anticipate && !eternalize ? "Derive" : "Derive:{" +
+        id = !anticipate && !eternalize ? "Derive" : "Derive:{" +
                 (anticipate ? "anticipate" : "") +
                 (anticipate && eternalize ? "," : "") +
                 (eternalize ? "eternalize" : "") + '}';
@@ -49,7 +49,7 @@ public final class Derive extends PreCondition {
     public boolean test(RuleMatch m) {
 
 
-        final Premise premise = m.premise;
+        Premise premise = m.premise;
 
         Term derivedTerm = m.derived.get();
 
@@ -65,8 +65,8 @@ public final class Derive extends PreCondition {
         if (c == null)
             return false;
 
-        final Truth truth = m.truth.get();
-        final Budget budget;
+        Truth truth = m.truth.get();
+        Budget budget;
         budget = truth != null ? BudgetFunctions.compoundForward(truth, derivedTerm, premise) : BudgetFunctions.compoundBackward(derivedTerm, premise);
 
         if (!premise.validateDerivedBudget(budget)) {
@@ -78,18 +78,18 @@ public final class Derive extends PreCondition {
             return false;
         }
 
-        final Task task = premise.getTask();
-        final Task belief = premise.getBelief();
+        Task task = premise.getTask();
+        Task belief = premise.getBelief();
 
 
-        final char punct = m.punct.get();
+        char punct = m.punct.get();
 
         MutableTask deriving = new MutableTask((Compound) derivedTerm);
 
-        final long now = premise.time();
-        final long occ;
+        long now = premise.time();
+        long occ;
 
-        final int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
+        int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
         long taskOcc = task.getOccurrenceTime();
         occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
 

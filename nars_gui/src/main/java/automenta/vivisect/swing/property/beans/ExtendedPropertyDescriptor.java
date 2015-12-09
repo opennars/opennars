@@ -90,7 +90,7 @@ public class ExtendedPropertyDescriptor extends PropertyDescriptor {
 	 * @return null or a custom TableCellRenderer-Class for this property
 	 */
 	public Class<?> getPropertyTableRendererClass() {
-		return this.tableCellRendererClass;
+		return tableCellRendererClass;
 	}
 
 	public static ExtendedPropertyDescriptor newPropertyDescriptor(String propertyName, Class<?> beanClass) throws IntrospectionException {

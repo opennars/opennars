@@ -37,7 +37,7 @@ import static org.jewelsea.willow.util.ResourceUtil.getString;
  * Sidebar panel for showing Benchmark information
  */
 public class BenchPanel extends TitledPane {
-    public BenchPanel(final WebBrowser chrome) {
+    public BenchPanel(WebBrowser chrome) {
         // create a layout container for the panel.
         VBox benchPanel = new VBox();
         benchPanel.setSpacing(5);
@@ -45,7 +45,7 @@ public class BenchPanel extends TitledPane {
 
         // info on benchmarks.
         // format: name, link, icon, (if link and icon are empty, then defines a benchmark category).
-        final String[][] benchmarkLinks = {
+        String[][] benchmarkLinks = {
                 {getString("bench-panel.compliance"), "", ""},
                 {"HTML 5 Test", "http://www.html5test.com", "HTML5_Badge_32.png"},
                 {"Acid 3 Test", "http://acid3.acidtests.org/", "acid.png"},
@@ -62,17 +62,17 @@ public class BenchPanel extends TitledPane {
         // create the panel contents and insert it into the panel.
         ToggleGroup benchToggleGroup = new ToggleGroup();
         boolean firstCategory = true;
-        for (final String[] link : benchmarkLinks) {
+        for (String[] link : benchmarkLinks) {
             if ("".equals(link[1])) {
                 // a category of benchmarks.
-                final Label categoryLabel = new Label(link[0]);
+                Label categoryLabel = new Label(link[0]);
                 categoryLabel.setStyle("-fx-text-fill: midnightblue; -fx-font-size: 16px;");
                 VBox.setMargin(categoryLabel, new Insets(firstCategory ? 1 : 8, 0, 0, 0));
                 benchPanel.getChildren().add(categoryLabel);
                 firstCategory = false;
             } else {
                 // create a toggle button to navigate to the given benchmark.
-                final ToggleButton benchLink = new ToggleButton(link[0]);
+                ToggleButton benchLink = new ToggleButton(link[0]);
                 benchLink.getStyleClass().add("icon-button");
                 benchLink.setAlignment(Pos.CENTER_LEFT);
                 benchLink.setContentDisplay(ContentDisplay.LEFT);
@@ -86,8 +86,8 @@ public class BenchPanel extends TitledPane {
 
                 // add a graphic to the link.
                 if (!link[2].isEmpty()) {
-                    final Image image = ResourceUtil.getImage(link[2]);
-                    final ImageView imageView = new ImageView(image);
+                    Image image = ResourceUtil.getImage(link[2]);
+                    ImageView imageView = new ImageView(image);
                     imageView.setPreserveRatio(true);
                     imageView.setFitHeight(16);
                     benchLink.setGraphic(imageView);
@@ -96,7 +96,7 @@ public class BenchPanel extends TitledPane {
         }
 
         // add a spacer to pad out the panel.
-        final Region spacer = new Region();
+        Region spacer = new Region();
         spacer.setPrefHeight(5);
         benchPanel.getChildren().add(spacer);
 

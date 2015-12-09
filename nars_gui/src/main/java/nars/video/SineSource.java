@@ -17,7 +17,7 @@ public class SineSource implements WaveSource {
     public SineSource(double freq) {
         this.freq = freq;
         //nyquist:
-        this.samples = OneDHaar.largestPowerOf2NoGreaterThan((int) Math.ceil(freq * 2));
+        samples = OneDHaar.largestPowerOf2NoGreaterThan((int) Math.ceil(freq * 2));
     }
 
     @Override
@@ -33,9 +33,9 @@ public class SineSource implements WaveSource {
     @Override
     public int next(float[] buffer) {
         float t = this.t;
-        final float dt = buffer.length / SAMPLE_RATE  / (float)(Math.PI*2);
-        final double f = this.freq;
-        final int num = buffer.length;
+        float dt = buffer.length / SAMPLE_RATE  / (float)(Math.PI*2);
+        double f = freq;
+        int num = buffer.length;
         for (int i = 0; i < num; i++) {
             buffer[i] = (float) FastMath.sin(f * t);
             t += dt;

@@ -41,7 +41,7 @@ public class TaskPunctuation extends PreCondition {
 
     TaskPunctuation(char p, String id) {
         super();
-        this.punc = p;
+        punc = p;
         this.id = id;
     }
 
@@ -51,8 +51,8 @@ public class TaskPunctuation extends PreCondition {
     }
 
     @Override
-    public final boolean test(final RuleMatch r) {
-        final char taskPunc = r.premise.getTask().getPunctuation();
+    public final boolean test(RuleMatch r) {
+        char taskPunc = r.premise.getTask().getPunctuation();
         return test(taskPunc);
     }
 

@@ -47,7 +47,7 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
      */
     public TabbedPaneTitle(DockingRegionTabbed tabPanel, DockingContent content) {
         super(content);
-        this.dockRegion = tabPanel;
+        dockRegion = tabPanel;
     
         //bn_maximize = new NARSwing.FAButton('\uf0de');
 
@@ -254,7 +254,7 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
     }
     public void setMenuButton(JComponent b) {        
         add(b, 0);
-        this.menuButton = b;
+        menuButton = b;
     }
     
 

@@ -46,7 +46,7 @@ public final class EndOfInputMatcherTest
     @DataProvider
     public Iterator<Object[]> indicesAndBooleans()
     {
-        final List<Object[]> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
 
         list.add(new Object[]{ 0, false });
         list.add(new Object[]{ 3, false });
@@ -57,9 +57,9 @@ public final class EndOfInputMatcherTest
     }
 
     @Test(dataProvider = "indicesAndBooleans")
-    public void matcherWorksCorrectly(final int index, final boolean expected)
+    public void matcherWorksCorrectly(int index, boolean expected)
     {
-        final boolean actual = handler.match(builder.withIndex(index).build());
+        boolean actual = handler.match(builder.withIndex(index).build());
 
         assertThat(actual).isEqualTo(expected);
     }

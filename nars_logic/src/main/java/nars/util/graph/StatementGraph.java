@@ -31,7 +31,7 @@ public abstract class StatementGraph extends SentenceGraph {
         Term tt = c.getTerm();
         if (!(tt instanceof Statement)) return null;
 
-        final Statement t = (Statement)tt;
+        Statement t = (Statement)tt;
         Term subj = t.getSubject();
         Concept subjTerm = nar.concept(subj);
         Term pred = t.getPredicate();

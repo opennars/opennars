@@ -14,8 +14,8 @@ public class AwesomeToggleButton extends JToggleButton {
 
     public AwesomeToggleButton(char faCodeUnselected, char faCodeSelected) {
         super();
-        this.codeUnselected = faCodeUnselected;
-        this.codeSelected = faCodeSelected;
+        codeUnselected = faCodeUnselected;
+        codeSelected = faCodeSelected;
         setFont(Video.FontAwesome);
         setText(String.valueOf(faCodeUnselected));
     }

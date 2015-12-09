@@ -34,7 +34,7 @@ public class SchemeClosure {
     }
 
 
-    public Expression get(final SymbolExpression symbol) {
+    public Expression get(SymbolExpression symbol) {
         if (bindings.containsKey(symbol)) {
             return bindings.get(symbol);
         }

@@ -90,7 +90,7 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
         the(RandomSequence.RANDOM_SEQUENCE, random);
         the(TypedOrganism.RETURN_TYPE, Double.class);
 
-        final ArrayList<Node> syntax = new ArrayList(getOperators(random));
+        ArrayList<Node> syntax = new ArrayList(getOperators(random));
         if (additionalOperators!=null)
             syntax.addAll(additionalOperators);
 
@@ -320,11 +320,11 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
         Collection<Civilized> toKill = new ArrayList();
 
 
-        final Population<Civilized> pop = getPopulation();
+        Population<Civilized> pop = getPopulation();
         synchronized (ds) {
             ds.clear();
 
-            final int ps = pop.size();
+            int ps = pop.size();
             if (ps > 0) {
                 ds.setWindowSize(ps * 2);
 

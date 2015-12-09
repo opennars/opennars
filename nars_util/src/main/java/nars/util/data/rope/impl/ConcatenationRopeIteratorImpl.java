@@ -43,89 +43,89 @@ public class ConcatenationRopeIteratorImpl implements Iterator<Character> {
     private int currentAbsolutePos;
     private int currentRopeLength;
 
-    public ConcatenationRopeIteratorImpl(final Rope rope) {
+    public ConcatenationRopeIteratorImpl(Rope rope) {
         this(rope, 0);
     }
 
-    public ConcatenationRopeIteratorImpl(final Rope rope, final int start) {
-        this.toTraverse = new ArrayDeque<>();
-        this.toTraverse.push(rope);
-        this.currentRope = null;
-        this.currentRopeLength = 0;
-        this.initialize();
+    public ConcatenationRopeIteratorImpl(Rope rope, int start) {
+        toTraverse = new ArrayDeque<>();
+        toTraverse.push(rope);
+        currentRope = null;
+        currentRopeLength = 0;
+        initialize();
 
         if (start < 0 || start > rope.length()) {
             throw new IllegalArgumentException("Rope index out of range: " + start);
         }
-        this.moveForward(start);
+        moveForward(start);
     }
 
-    public boolean canMoveBackwards(final int amount) {
-        return (-1 <= (this.currentRopePos - amount));
+    public boolean canMoveBackwards(int amount) {
+        return (-1 <= (currentRopePos - amount));
     }
 
     public int getPos() {
-        return this.currentAbsolutePos;
+        return currentAbsolutePos;
     }
 
     @Override
     public boolean hasNext() {
-        return this.currentRopePos < this.currentRopeLength - 1 || !this.toTraverse.isEmpty();
+        return currentRopePos < currentRopeLength - 1 || !toTraverse.isEmpty();
     }
 
     /**
      * Initialize the currentRope and currentRopePos fields.
      */
     private void initialize() {
-        while (!this.toTraverse.isEmpty()) {
-            this.currentRope = this.toTraverse.pop();
-            this.currentRopeLength = this.currentRope.length();
+        while (!toTraverse.isEmpty()) {
+            currentRope = toTraverse.pop();
+            currentRopeLength = currentRope.length();
 
-            if (this.currentRope instanceof ConcatenationRope) {
-                this.toTraverse.push(((ConcatenationRope) this.currentRope).getRight());
-                this.toTraverse.push(((ConcatenationRope) this.currentRope).getLeft());
+            if (currentRope instanceof ConcatenationRope) {
+                toTraverse.push(((ConcatenationRope) currentRope).getRight());
+                toTraverse.push(((ConcatenationRope) currentRope).getLeft());
             } else {
                 break;
             }
         }
-        if (this.currentRope == null) {
+        if (currentRope == null) {
             throw new IllegalArgumentException("No terminal ropes present.");
         }
-        this.currentRopePos = -1;
-        this.currentAbsolutePos = -1;
+        currentRopePos = -1;
+        currentAbsolutePos = -1;
     }
 
-    public void moveBackwards(final int amount) {
-        if (!this.canMoveBackwards(amount)) {
+    public void moveBackwards(int amount) {
+        if (!canMoveBackwards(amount)) {
             throw new IllegalArgumentException("Unable to move backwards " + amount + '.');
         }
-        this.currentRopePos -= amount;
-        this.currentAbsolutePos -= amount;
+        currentRopePos -= amount;
+        currentAbsolutePos -= amount;
     }
 
-    public void moveForward(final int amount) {
-        this.currentAbsolutePos += amount;
+    public void moveForward(int amount) {
+        currentAbsolutePos += amount;
         int remainingAmt = amount;
         while (remainingAmt != 0) {
-            final int available = this.currentRope.length() - this.currentRopePos - 1;
+            int available = currentRope.length() - currentRopePos - 1;
             if (remainingAmt <= available) {
-                this.currentRopePos += remainingAmt;
+                currentRopePos += remainingAmt;
                 return;
             }
             remainingAmt -= available;
-            if (this.toTraverse.isEmpty()) {
-                this.currentAbsolutePos -= remainingAmt;
+            if (toTraverse.isEmpty()) {
+                currentAbsolutePos -= remainingAmt;
                 throw new IllegalArgumentException("Unable to move forward " + amount + ". Reached end of rope.");
             }
 
-            while (!this.toTraverse.isEmpty()) {
-                this.currentRope = this.toTraverse.pop();
-                this.currentRopeLength = this.currentRope.length();
-                if (this.currentRope instanceof ConcatenationRope) {
-                    this.toTraverse.push(((ConcatenationRope) this.currentRope).getRight());
-                    this.toTraverse.push(((ConcatenationRope) this.currentRope).getLeft());
+            while (!toTraverse.isEmpty()) {
+                currentRope = toTraverse.pop();
+                currentRopeLength = currentRope.length();
+                if (currentRope instanceof ConcatenationRope) {
+                    toTraverse.push(((ConcatenationRope) currentRope).getRight());
+                    toTraverse.push(((ConcatenationRope) currentRope).getLeft());
                 } else {
-                    this.currentRopePos = -1;
+                    currentRopePos = -1;
                     break;
                 }
             }
@@ -134,9 +134,9 @@ public class ConcatenationRopeIteratorImpl implements Iterator<Character> {
 
     @Override
     public Character next() {
-        this.moveForward(1 + this.skip);
-        this.skip = 0;
-        return this.currentRope.charAt(this.currentRopePos);
+        moveForward(1 + skip);
+        skip = 0;
+        return currentRope.charAt(currentRopePos);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class ConcatenationRopeIteratorImpl implements Iterator<Character> {
     /* (non-Javadoc)
      * @see org.ahmadsoft.ropes.impl.RopeIterators#skip(int)
      */
-    public void skip(final int skip) {
+    public void skip(int skip) {
         this.skip = skip;
     }
 }

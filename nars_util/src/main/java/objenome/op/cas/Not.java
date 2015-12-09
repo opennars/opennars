@@ -65,7 +65,7 @@ public class Not extends Operation {
                 return new And(ands);
             }
         }
-        this.printSimplified = true;
+        printSimplified = true;
         return this;
     }
     

@@ -52,7 +52,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
                                       Consumer<Concept> eachTarget) {
 
 
-        SpaceGrapher<Concept, TermNode<Concept>> sg = this.grapher;
+        SpaceGrapher<Concept, TermNode<Concept>> sg = grapher;
         if (sg == null) return; //???
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
@@ -131,7 +131,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
         if (!isReady())
             return;
 
-        if (this.canUpdate()) {
+        if (canUpdate()) {
 
             Bag<Term, Concept> x = ((AbstractNAR) nar).core.concepts();
 
@@ -141,7 +141,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
             double minPri = this.minPri.get();
             double maxPri = this.maxPri.get();
 
-            final Iterable<Concept> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
+            Iterable<Concept> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
 
                 float p = cc.getPriority();
                 if ((p < minPri) || (p > maxPri))

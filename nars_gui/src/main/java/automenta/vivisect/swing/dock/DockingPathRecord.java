@@ -24,10 +24,10 @@ public abstract class DockingPathRecord {
     final DockingPathRecord next;
 
     public DockingPathRecord() {
-        this.next = null;
+        next = null;
     }
 
-    public DockingPathRecord(final DockingPathRecord next) {
+    public DockingPathRecord(DockingPathRecord next) {
         this.next = next;
     }
 

@@ -34,17 +34,17 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
      */
 
     @Override
-    public boolean equals(final Object that) {
+    public boolean equals(Object that) {
         if (that == this) return true;
         if (that instanceof Truth) {
-            final Truth t = ((Truth) that);
+            Truth t = ((Truth) that);
             return equalsConfidence(t) && equalsFrequency(t);
         }
         return false;
     }
 
-    public final boolean equalsConfidence(final Truth t) {
-        final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
+    public final boolean equalsConfidence(Truth t) {
+        float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
         return Util.equal(getConfidence(), t.getConfidence(), e);
     }
 

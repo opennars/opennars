@@ -37,7 +37,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         threadLocalsCache = concurrent ? new ConcurrentHashMap() : new UnifiedMap(0);
     }
 
-    public Container(final AbstractPrototainer parent) {
+    public Container(AbstractPrototainer parent) {
         super(
                 //TODO clone according to concurrent implementation:                
                 new UnifiedMap(parent.builders),
@@ -229,7 +229,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             usable(key, Scope.SINGLETON, builder);
         return get(key);
     }    
-    public <T> T the(final Class<? extends T> c) {        
+    public <T> T the(Class<? extends T> c) {
         T existing = get((Object)c);
         if (existing == null) {
             return the(c, new ClassBuilder(this, c).instance(this));
@@ -254,7 +254,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
     
     @Override
-    public <T> T get(final Class<? extends T> c) {
+    public <T> T get(Class<? extends T> c) {
         //if c is actually a key and not an arbitrary class this container has never been told about:
         String name = InjectionUtils.getKeyName(c);
         if (builders.containsKey(name)) {
@@ -279,7 +279,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             @Override
             public boolean hasValue(String key) {
 
-                return Container.this.contains(key);
+                return contains(key);
             }
 
         };

@@ -11,7 +11,7 @@ public class RealtimeNSClock extends RealtimeClock {
     }
 
     @Override
-    protected float unitsToSeconds(final long l) {
+    protected float unitsToSeconds(long l) {
         return (l / 1.0e9f);
     }
 

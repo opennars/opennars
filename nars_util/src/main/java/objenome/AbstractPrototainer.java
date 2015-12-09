@@ -32,7 +32,7 @@ public class AbstractPrototainer implements Prototainer  {
     public final boolean concurrent;
 
     
-    public AbstractPrototainer(final boolean concurrent) {
+    public AbstractPrototainer(boolean concurrent) {
         this(
                 (Map)(concurrent ? new ConcurrentHashMap() : new UnifiedMap(0)),
                 (Map)(concurrent ? new ConcurrentHashMap() : new UnifiedMap(0)),
@@ -55,12 +55,12 @@ public class AbstractPrototainer implements Prototainer  {
         this.setterDependencies = setterDependencies;
         this.constructorDependencies = constructorDependencies;
         this.forConstructMethod = forConstructMethod;
-        this.concurrent = builders instanceof ConcurrentHashMap;
+        concurrent = builders instanceof ConcurrentHashMap;
     }
 
     
     public final Map<String, Builder> getBuilders() {
-        return this.builders;
+        return builders;
     }
 
         

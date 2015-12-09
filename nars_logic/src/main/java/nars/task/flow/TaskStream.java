@@ -14,7 +14,7 @@ public class TaskStream implements Input {
     }
     public TaskStream(Iterator<Task> s) {
         super();
-        this.stream = s;
+        stream = s;
     }
 
     @Override

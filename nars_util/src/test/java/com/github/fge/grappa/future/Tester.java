@@ -12,22 +12,22 @@ import static org.objectweb.asm.Opcodes.*;
 public final class Tester
 {
 
-    public static CallSite genCallSite(final MethodHandles.Lookup caller,
-        final String invokedName, final MethodType invokedType,
-        final String methodName)
+    public static CallSite genCallSite(MethodHandles.Lookup caller,
+                                       String invokedName, MethodType invokedType,
+                                       String methodName)
         throws NoSuchMethodException, IllegalAccessException
     {
-        final MethodHandles.Lookup lookup = MethodHandles.lookup();
-        final MethodHandle handle
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle handle
             = lookup.findStatic( Tester.class, methodName, MethodType
 
                 .methodType(void.class, String.class));
         return new ConstantCallSite(handle);
     }
 
-    public static void main(final String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         Label line;
-        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         cw.visit(V1_7, ACC_PUBLIC, "pkg/MyClass", null, "java/lang/Object",
             new String[]{ "java/lang/Runnable" });
         cw.visitSource("(generated)", "(generated)");
@@ -46,12 +46,12 @@ public final class Tester
         line = new Label(); visitor.visitLabel(line); visitor.visitLineNumber(1, line);
         visitor.visitLdcInsn("Some argument");
 
-        final String desc1 =
+        String desc1 =
             "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;"
                 + "Ljava/lang/invoke/MethodType;Ljava/lang/String;)"
                 + "Ljava/lang/invoke/CallSite;";
-        final String desc2 = "(Ljava/lang/String;)V";
-        final String owner = "com/github/fge/grappa/future/Tester";
+        String desc2 = "(Ljava/lang/String;)V";
+        String owner = "com/github/fge/grappa/future/Tester";
         visitor.visitInvokeDynamicInsn("call", desc2, new Handle(H_INVOKESTATIC,
             owner, "genCallSite", desc1), "hello");
 
@@ -71,19 +71,19 @@ public final class Tester
         cw.visitEnd();
 
         new ClassLoader(Tester.class.getClassLoader()) {{
-            final byte[] bytes = cw.toByteArray();
-            final Class<?> cl = defineClass(null, bytes, 0, bytes.length);
-            final Runnable r = (Runnable) cl.newInstance();
+            byte[] bytes = cw.toByteArray();
+            Class<?> cl = defineClass(null, bytes, 0, bytes.length);
+            Runnable r = (Runnable) cl.newInstance();
             r.run();
         }};
     }
 
-    private static void hello(final String arg) {
+    private static void hello(String arg) {
         System.err.println("Called hello(): " + arg);
         Thread.dumpStack();
     }
 
-    private static void world(final String arg) {
+    private static void world(String arg) {
         System.err.println("Called world():" + arg);
         Thread.dumpStack();
     }

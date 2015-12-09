@@ -33,7 +33,7 @@ public class BeanPathAdapterTest extends Application {
 
 
 
-    public static ObservableList<PropertySheet.Item> getProperties(final Object bean, Predicate<PropertyDescriptor> test) {
+    public static ObservableList<PropertySheet.Item> getProperties(Object bean, Predicate<PropertyDescriptor> test) {
         ObservableList<PropertySheet.Item> list = FXCollections.observableArrayList();
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass(), Object.class);
@@ -71,7 +71,7 @@ public class BeanPathAdapterTest extends Application {
 
     @Override
     public void start(Stage w) throws Exception {
-        final PropertySheet p = new PropertySheet();
+        PropertySheet p = new PropertySheet();
         p.setMode(PropertySheet.Mode.NAME);
         p.setModeSwitcherVisible(false);
         p.getPropertyEditorFactory().call(new MyItem());
@@ -171,7 +171,7 @@ public class BeanPathAdapterTest extends Application {
         }
 
         public int getAge() {
-            return this.age;
+            return age;
         }
         public void setAge(int age) {
             this.age = age;

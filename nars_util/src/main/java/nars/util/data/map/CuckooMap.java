@@ -145,11 +145,11 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
 
     private V put_internal (K key, V value) {
-        final K[] keyTable = this.keyTable;
-        final V[] vt = valueTable;
+        K[] keyTable = this.keyTable;
+        V[] vt = valueTable;
 
         // Check for existing keys.
-        final int hashCode = key.hashCode();
+        int hashCode = key.hashCode();
 
         int index1 = hashCode & mask;
         K key1 = keyTable[index1];
@@ -176,7 +176,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         }
 
         // Update key in the stash.
-        final int st = stashSize;
+        int st = stashSize;
         for (int i = capacity, n = i + st; i < n; i++) {
             if (key.equals(keyTable[i])) {
                 V oldValue = vt[i];
@@ -326,7 +326,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         putStash(evictedKey, evictedValue);
     }
 
-    private void putStash (final K key, final V value) {
+    private void putStash (K key, V value) {
         if (stashSize == stashCapacity) {
             // Too many pushes occurred and the stash is full, increase the table size.
             resize(capacity << 1);
@@ -342,11 +342,11 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     }
 
     @Override
-    public V get (final Object key) {
+    public V get (Object key) {
         if (key == null) return null;
         if (isEmpty()) return null;
 
-        final K[] keyTable = this.keyTable;
+        K[] keyTable = this.keyTable;
 
         int hashCode = key.hashCode();
         int index;
@@ -364,13 +364,13 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         return valueTable[index];
     }
 
-    private V getStash (final K key) {
-        final K[] keyTable = this.keyTable;
-        final int stashSize = this.stashSize;
+    private V getStash (K key) {
+        K[] keyTable = this.keyTable;
+        int stashSize = this.stashSize;
 
-        final V[] vt = this.valueTable;
+        V[] vt = valueTable;
         for (int i = capacity, n = i + stashSize; i < n; i++) {
-            final K kk = keyTable[i];
+            K kk = keyTable[i];
             if (kk!=null && key.equals(kk)) return vt[i];
         }
         return null;
@@ -378,10 +378,10 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
     /** Returns the value for the specified key, or the default value if the key is not in the map. */
     //TODO optimize like above get(k)
-    public V get(final K key, final V defaultValue) {
+    public V get(K key, V defaultValue) {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
-        final K[] keyTable = this.keyTable;
+        K[] keyTable = this.keyTable;
 
         if (!key.equals(keyTable[index])) {
 
@@ -397,9 +397,9 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     }
 
     //TODO optimize like above getStash(k)
-    private V getStash (final K key, final V defaultValue) {
-        final K[] keyTable = this.keyTable;
-        final int stashSize = this.stashSize;
+    private V getStash (K key, V defaultValue) {
+        K[] keyTable = this.keyTable;
+        int stashSize = this.stashSize;
         for (int i = capacity, n = i + stashSize; i < n; i++)
             if (key.equals(keyTable[i])) return valueTable[i];
         return defaultValue;
@@ -412,8 +412,8 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         if (key == null)
             throw new RuntimeException("can not remover key null");
 
-        final K[] keyTable = this.keyTable;
-        final V[] valueTable = this.valueTable;
+        K[] keyTable = this.keyTable;
+        V[] valueTable = this.valueTable;
 
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -439,7 +439,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
     private V removeTableEntry(int index) {
         keyTable[index] = null;
-        final V v = valueTable[index];
+        V v = valueTable[index];
         valueTable[index] = null;
         //V oldValue = v;
         //v = null;
@@ -447,13 +447,13 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         return v;
     }
 
-    V removeStash (final K key) {
+    V removeStash (K key) {
         if (key == null)
             throw new RuntimeException("can not remover key null");
 
-        final K[] keyTable = this.keyTable;
-        final V[] valueTable = this.valueTable;
-        final int stashSize = this.stashSize;
+        K[] keyTable = this.keyTable;
+        V[] valueTable = this.valueTable;
+        int stashSize = this.stashSize;
 
         for (int i = capacity, n = i + stashSize; i < n; i++) {
             if (key.equals(keyTable[i])) {
@@ -466,12 +466,12 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         return null;
     }
 
-    void removeStashIndex(final int index) {
+    void removeStashIndex(int index) {
         // If the removed location was not last, move the last tuple to the removed location.
         int lastIndex = capacity + (--stashSize);
 
-        final K[] keyTable = this.keyTable;
-        final V[] valueTable = this.valueTable;
+        K[] keyTable = this.keyTable;
+        V[] valueTable = this.valueTable;
 
         if (index < lastIndex) {
             keyTable[index] = keyTable[lastIndex];
@@ -531,14 +531,14 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
      * an expensive operation.
      * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
      *           {@link #equals(Object)}. */
-    public boolean containsValue(final Object value, final boolean identity) {
-        final V[] valueTable = this.valueTable;
+    public boolean containsValue(Object value, boolean identity) {
+        V[] valueTable = this.valueTable;
 
-        final int capacity = this.capacity;
-        final int stashSize = this.stashSize;
+        int capacity = this.capacity;
+        int stashSize = this.stashSize;
 
         if (value == null) {
-            final K[] keyTable = this.keyTable;
+            K[] keyTable = this.keyTable;
             for (int i = capacity + stashSize; i-- > 0;)
                 if (keyTable[i] != null && valueTable[i] == null) return true;
         } else if (identity) {
@@ -552,8 +552,8 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     }
 
     @Override
-    public boolean containsKey(final Object key) {
-        final K[] keyTable = this.keyTable;
+    public boolean containsKey(Object key) {
+        K[] keyTable = this.keyTable;
 
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -570,10 +570,10 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         return true;
     }
 
-    private boolean containsKeyStash (final K key) {
-        final K[] keyTable = this.keyTable;
+    private boolean containsKeyStash (K key) {
+        K[] keyTable = this.keyTable;
 
-        final int stashSize = this.stashSize;
+        int stashSize = this.stashSize;
 
         for (int i = capacity, n = i + stashSize; i < n; i++)
             if (key.equals(keyTable[i])) return true;
@@ -584,10 +584,10 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
      * every value, which may be an expensive operation.
      * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
      *           {@link #equals(Object)}. */
-    public K findKey (final Object value, final boolean identity) {
+    public K findKey (Object value, boolean identity) {
 
-        final int capacity = this.capacity;
-        final int stashSize = this.stashSize;
+        int capacity = this.capacity;
+        int stashSize = this.stashSize;
 
         V[] valueTable = this.valueTable;
         if (value == null) {

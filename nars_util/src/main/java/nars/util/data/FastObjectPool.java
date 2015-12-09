@@ -123,7 +123,7 @@ public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
 
     static {
         try {
-            final PrivilegedExceptionAction<Unsafe> action = new PrivilegedExceptionAction<Unsafe>() {
+            PrivilegedExceptionAction<Unsafe> action = new PrivilegedExceptionAction<Unsafe>() {
                 public Unsafe run() throws Exception {
                     Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
                     theUnsafe.setAccessible(true);

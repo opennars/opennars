@@ -644,7 +644,7 @@ public class MidiClock extends JPanel implements Clock {
 
             getContentPane().add("North", p2);
 
-            final String[] names = { "Channel #", "Instrument" };
+            String[] names = { "Channel #", "Instrument" };
 
             dataModel = new AbstractTableModel() {
                 public int getColumnCount() { return names.length; }
@@ -802,7 +802,7 @@ public class MidiClock extends JPanel implements Clock {
 
 
     public static void main(String[] args) {
-        final MidiClock midiSynth = new MidiClock();
+        MidiClock midiSynth = new MidiClock();
 
         JFrame f = new JFrame("Midi Synthesizer");
         f.addWindowListener(new WindowAdapter() {

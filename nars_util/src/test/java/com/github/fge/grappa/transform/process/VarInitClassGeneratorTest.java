@@ -51,8 +51,8 @@ public class VarInitClassGeneratorTest extends TransformationTest {
 
         @SuppressWarnings("UnusedDeclaration")
         public Rule A() {
-            final Var<List<String>> list = new Var<>(new ArrayList<>());
-            final Var<Integer> i = new Var<>(26);
+            Var<List<String>> list = new Var<>(new ArrayList<>());
+            Var<Integer> i = new Var<>(26);
             return sequence('a', list.get().add(match()));
         }
 
@@ -65,7 +65,7 @@ public class VarInitClassGeneratorTest extends TransformationTest {
 
     @Test
     public void testVarInitClassGeneration() throws Exception {
-        final RuleMethod method = processMethod("A", processors);
+        RuleMethod method = processMethod("A", processors);
 
         assertEquals(method.getGroups().size(), 3);
 

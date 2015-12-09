@@ -37,15 +37,15 @@ public final class ReturnInstructionUnifier
     implements RuleMethodProcessor
 {
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         return method.getNumberOfReturns() > 1;
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(classNode, "classNode");
@@ -58,7 +58,7 @@ public final class ReturnInstructionUnifier
             current = current.getPrevious();
 
 
-        final LabelNode lastReturnLabel = new LabelNode();
+        LabelNode lastReturnLabel = new LabelNode();
         method.instructions.insertBefore(current, lastReturnLabel);
 
         // iterate backwards up to first instructions
@@ -68,7 +68,7 @@ public final class ReturnInstructionUnifier
             if (current.getOpcode() != ARETURN)
                 continue;
 
-            final JumpInsnNode insn = new JumpInsnNode(GOTO, lastReturnLabel);
+            JumpInsnNode insn = new JumpInsnNode(GOTO, lastReturnLabel);
             method.instructions.set(current, insn);
             current = insn;
         }

@@ -39,8 +39,8 @@ public class AlertHandler extends VBox {
         super(14);
 
         // add controls to the popup.
-        final Label promptMessage = new Label(message);
-        final ImageView alertImage = new ImageView(ResourceUtil.getImage("alert_48.png"));
+        Label promptMessage = new Label(message);
+        ImageView alertImage = new ImageView(ResourceUtil.getImage("alert_48.png"));
         alertImage.setFitHeight(32);
         alertImage.setPreserveRatio(true);
         promptMessage.setGraphic(alertImage);
@@ -49,7 +49,7 @@ public class AlertHandler extends VBox {
 
         // action button text setup.
         HBox buttonBar = new HBox(20);
-        final Button confirmButton = new Button(getString("dialog.continue"));
+        Button confirmButton = new Button(getString("dialog.continue"));
         confirmButton.setDefaultButton(true);
 
         buttonBar.getChildren().addAll(confirmButton);
@@ -59,7 +59,7 @@ public class AlertHandler extends VBox {
         getStyleClass().add("alert-dialog");
         getChildren().addAll(promptMessage, buttonBar);
 
-        final DropShadow dropShadow = new DropShadow();
+        DropShadow dropShadow = new DropShadow();
         setEffect(dropShadow);
 
         // confirm and close the popup.

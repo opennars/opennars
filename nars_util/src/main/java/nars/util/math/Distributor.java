@@ -50,7 +50,7 @@ public final class Distributor {
      * For any number N < range, there is N+1 copies of it in the array, distributed as evenly as possible
      * @param range Range of valid numbers
      */
-    protected Distributor(final int range) {
+    protected Distributor(int range) {
         int index, rank, time;
         capacity = (range * (range + 1)) / 2;
         order = new short[capacity];
@@ -59,7 +59,7 @@ public final class Distributor {
         index = capacity;
         
         for (rank = range; rank > 0; rank--) {
-            final int capDivRank = capacity / rank;
+            int capDivRank = capacity / rank;
             for (time = 0; time < rank; time++) {
                 index = (capDivRank + index) % capacity;
                 while (order[index] >= 0) {
@@ -75,7 +75,7 @@ public final class Distributor {
      * @param index The current index
      * @return the random value
      */
-    public short pick(final int index) {
+    public short pick(int index) {
         return order[index];
     }
 
@@ -84,7 +84,7 @@ public final class Distributor {
      * @param index The current index
      * @return the next index
      */
-    public int next(final int index) {
+    public int next(int index) {
         return (index + 1) % capacity;
     }
 }

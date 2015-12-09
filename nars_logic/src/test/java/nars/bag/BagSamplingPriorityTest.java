@@ -48,7 +48,7 @@ public class BagSamplingPriorityTest {
             removal.clear();
         }
 
-        public int discretize(final float p) {
+        public int discretize(float p) {
             //return (int)Math.floor(p * (bins-1));
             return Util.bin(p, bins);
         }
@@ -65,7 +65,7 @@ public class BagSamplingPriorityTest {
 
         }
 
-        private void record(final Frequency removal, final V p) {
+        private void record(Frequency removal, V p) {
             if (p != null) {
                 removal.addValue(discretize(p.getPriority()));
             } else {

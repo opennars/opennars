@@ -122,8 +122,8 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
       char safeMin, char safeMax) {
 
     checkNotNull(escaperMap);  // GWT specific check (do not optimize)
-    this.replacements = escaperMap.getReplacementArray();
-    this.replacementsLength = replacements.length;
+    replacements = escaperMap.getReplacementArray();
+    replacementsLength = replacements.length;
     if (safeMax < safeMin) {
       // If the safe range is empty, set the range limits to opposite extremes
       // to ensure the first test of either value will (almost certainly) fail.

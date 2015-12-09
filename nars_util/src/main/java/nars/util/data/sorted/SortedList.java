@@ -84,9 +84,9 @@ public class SortedList<E extends Comparable> extends FasterList<E> {
         //binary search
         int high = s - 1;
 
-        final boolean allowDuplicate = this.allowDuplicate;
+        boolean allowDuplicate = this.allowDuplicate;
 
-        final Comparator cmpr = defaultComparator;
+        Comparator cmpr = defaultComparator;
 
         while (low <= high) {
             int mid = (low + high) / 2;

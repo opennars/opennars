@@ -67,7 +67,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
         super(n.task(sentenceTerm + punc));
 
-        this.nar = n;
+        nar = n;
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
@@ -240,11 +240,11 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     }
 
     public void recordSimilar(Task task) {
-        final TreeMap<Float, Task> similar = this.similar;
+        TreeMap<Float, Task> similar = this.similar;
 
 
         //TODO add the levenshtein distance of other task components
-        final float worstDiff;
+        float worstDiff;
         worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
 
         float difference = 0;
@@ -253,21 +253,21 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         if (difference > worstDiff)
             return;
 
-        final float freqDiff = Math.min(
+        float freqDiff = Math.min(
                 Math.abs(task.getFrequency() - freqMin),
                 Math.abs(task.getFrequency() - freqMax));
         difference += 2 * freqDiff;
         if (difference > worstDiff)
             return;
 
-        final float confDiff = Math.min(
+        float confDiff = Math.min(
                 Math.abs(task.getConfidence() - confMin),
                 Math.abs(task.getConfidence() - confMax));
         difference += 1 * confDiff;
         if (difference > worstDiff)
             return;
 
-        final float termDifference =
+        float termDifference =
                 Texts.levenshteinDistancePercent(
                     task.getTerm().toString(),
                     getTerm().toString());

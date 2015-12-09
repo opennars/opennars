@@ -22,20 +22,20 @@ public class ConceptButton extends JButton implements ActionListener {
 
     public ConceptButton(NAR n, Term t) {
         super(t.toString());
-        this.term = t;
-        this.nar = n;
+        term = t;
+        nar = n;
         addActionListener(this);
     }
 
     public ConceptButton(NAR n, Concept c) {
         this(n, c.getTerm());
-        this.concept = c;
+        concept = c;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (this.concept == null) {
-            this.concept = nar.memory.concept(term);
+        if (concept == null) {
+            concept = nar.memory.concept(term);
         }
         //popup(nar, concept);
     }

@@ -38,7 +38,7 @@ public class StringVar
      *
      * @param value the initial value
      */
-    public StringVar(final String value)
+    public StringVar(String value)
     {
         super(value);
     }
@@ -60,7 +60,7 @@ public class StringVar
      * @param text the text to append
      * @return true
      */
-    public boolean append(final String text)
+    public boolean append(String text)
     {
         return set(get() == null ? text : get() + text);
     }
@@ -72,7 +72,7 @@ public class StringVar
      * @param text the text to append
      * @return this instance
      */
-    public StringVar appended(final String text)
+    public StringVar appended(String text)
     {
         append(text);
         return this;
@@ -85,7 +85,7 @@ public class StringVar
      * @param c the char to append
      * @return true
      */
-    public boolean append(final char c)
+    public boolean append(char c)
     {
         return set(get() == null ? String.valueOf(c) : get() + c);
     }
@@ -97,7 +97,7 @@ public class StringVar
      * @param c the char to append
      * @return this instance
      */
-    public StringVar appended(final char c)
+    public StringVar appended(char c)
     {
         append(c);
         return this;

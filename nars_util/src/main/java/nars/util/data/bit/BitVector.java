@@ -391,7 +391,7 @@ public interface BitVector extends RandomAccess {
 	 * @param to the ending bit, not inclusive.
 	 * @return true if this vector and v are equal in the range of positions [<code>from</code>..<code>to</code>).
 	 */
-	boolean equals(final BitVector v, final long from, final long to);
+	boolean equals(BitVector v, long from, long to);
 	
 	/** Returns a copy of a part of this bit vector.
 	 *

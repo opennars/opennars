@@ -62,7 +62,7 @@ public class RouletteSelector extends AbstractSelector {
             throw new IllegalArgumentException("Fitness not supported: " + best.getClass());
         }
 
-        final double[] rr = roulette = new double[population.size()];
+        double[] rr = roulette = new double[population.size()];
         double total = 0.0;
 
         for (int i = 0; i < population.size(); i++) {
@@ -112,7 +112,7 @@ public class RouletteSelector extends AbstractSelector {
 
         double random = rng.nextDouble();
 
-        final double[] rr = this.roulette;
+        double[] rr = roulette;
         if (rr == null) return null;
         int nr = rr.length;
         for (int i = 0; i < nr; i++) {

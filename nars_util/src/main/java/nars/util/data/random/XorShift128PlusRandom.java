@@ -62,14 +62,14 @@ public class XorShift128PlusRandom extends Random {
 	 * 
 	 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 	 */
-	public XorShift128PlusRandom( final long seed ) {
+	public XorShift128PlusRandom( long seed ) {
 		setSeed( seed );
 	}
 
 	@Override
 	public long nextLong() {
-		long s1 = this.s0;
-		final long s0 = this.s1;
+		long s1 = s0;
+		long s0 = this.s1;
 		this.s0 = s0;
 		s1 ^= s1 << 23;
 		return ( this.s1 = ( s1 ^ s0 ^ ( s1 >>> 17 ) ^ ( s0 >>> 26 ) ) ) + s0;
@@ -81,7 +81,7 @@ public class XorShift128PlusRandom extends Random {
 	}
 	
 	@Override
-	public int nextInt( final int n ) {
+	public int nextInt( int n ) {
 		return (int)nextLong( n );
 	}
 		
@@ -94,12 +94,12 @@ public class XorShift128PlusRandom extends Random {
      * @param n the positive bound on the random number to be returned.
      * @return the next pseudorandom {@code long} value between {@code 0} (inclusive) and {@code n} (exclusive).
      */
-	public long nextLong( final long n ) {
+	public long nextLong( long n ) {
         if ( n <= 0 ) throw new IllegalArgumentException();
 		// No special provision for n power of two: all our bits are good.
 		while (true) {
-			final long bits = nextLong() >>> 1;
-			final long value = bits % n;
+			long bits = nextLong() >>> 1;
+			long value = bits % n;
 			if (bits - value + (n - 1) >= 0) return value;
 		}
 	}
@@ -120,7 +120,7 @@ public class XorShift128PlusRandom extends Random {
 	}
 	
 	@Override
-	public void nextBytes( final byte[] bytes ) {
+	public void nextBytes( byte[] bytes ) {
 		int i = bytes.length, n = 0;
 		while( i != 0 ) {
 			n = Math.min( i, 8 );
@@ -137,7 +137,7 @@ public class XorShift128PlusRandom extends Random {
 	 * @param seed a nonzero seed for this generator (if zero, the generator will be seeded with {@link Long#MIN_VALUE}).
 	 */
 	@Override
-	public void setSeed( final long seed ) {
+	public void setSeed( long seed ) {
 		s0 = murmurHash3(seed == 0 ? Long.MIN_VALUE : seed);
 		s1 = murmurHash3(s0);
 	}
@@ -149,7 +149,7 @@ public class XorShift128PlusRandom extends Random {
 	 * 
 	 * @param state an array of 16 longs; at least one must be nonzero.
 	 */
-	public void setState( final long[] state ) {
+	public void setState( long[] state ) {
 		if ( state.length != 2 ) throw new IllegalArgumentException( "The argument array contains " + state.length + " longs instead of " + 2 );
 		s0 = state[ 0 ];
 		s1 = state[ 1 ];

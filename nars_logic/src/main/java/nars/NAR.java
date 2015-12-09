@@ -126,10 +126,10 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     private int concurrency = 1;
 
 
-    public NAR(final Memory m) {
+    public NAR(Memory m) {
         super();
 
-        this.memory = m;
+        memory = m;
 
         m.the(NAR.class, this);
         m.the(ConceptBuilder.class, this);
@@ -176,7 +176,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //
 //    }
 
-    public FileInput input(final File input) throws IOException {
+    public FileInput input(File input) throws IOException {
         FileInput fi = new FileInput(this, input);
         input((Input) fi);
         return fi;
@@ -185,7 +185,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * inputs a task, only if the parsed text is valid; returns null if invalid
      */
-    public Task inputTask(final String taskText) {
+    public Task inputTask(String taskText) {
         //try {
             Task t = task(taskText);
             t.setCreationTime(time());
@@ -205,23 +205,23 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public List<Task> tasks(final String parse) {
+    public List<Task> tasks(String parse) {
         List<Task> result = Global.newArrayList(1);
         Narsese.the().tasks(parse, result, memory);
         return result;
     }
 
-    public TaskQueue inputs(final String parse) {
+    public TaskQueue inputs(String parse) {
         return input(tasks(parse));
     }
 
-    public final TextInput input(final String text) {
-        final TextInput i = new TextInput(this, text);
+    public final TextInput input(String text) {
+        TextInput i = new TextInput(this, text);
         input((Input) i);
         return i;
     }
 
-    public final <S extends Term, T extends S> T term(final String t) throws Narsese.NarseseException {
+    public final <S extends Term, T extends S> T term(String t) throws Narsese.NarseseException {
         T x = Narsese.the().term(t);
         if (x == null) return null;
 
@@ -235,14 +235,14 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return x;
     }
 
-    public final Concept concept(final Term term) {
+    public final Concept concept(Term term) {
         return memory.concept(term);
     }
 
     /**
      * gets a concept if it exists, or returns null if it does not
      */
-    public final Concept concept(final String conceptTerm) throws Narsese.NarseseException {
+    public final Concept concept(String conceptTerm) throws Narsese.NarseseException {
         return concept((Term) term(conceptTerm));
     }
 
@@ -394,7 +394,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
-        final MutableTask<T> t = new MutableTask(term);
+        MutableTask<T> t = new MutableTask(term);
         if (questionOrQuest == QUESTION)
             t.question();
         else if (questionOrQuest == QUEST)
@@ -423,7 +423,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      */
     public final boolean input(Task t) {
 
-        final Memory m = memory;
+        Memory m = memory;
 
 //        if (t == null) {
 //            throw new RuntimeException("null input");
@@ -458,11 +458,11 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return number of invoked handlers
      */
-    public final int execute(final Task goal) {
+    public final int execute(Task goal) {
         Term term = goal.getTerm();
 
         if (Operation.isOperation(term)) {
-            final Compound o = (Compound) term;
+            Compound o = (Compound) term;
 
             //enqueue
             beforeNextFrame(()-> {
@@ -506,13 +506,13 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return memory.getIndex();
     }
 
-    public TaskQueue input(final Collection<Task> t) {
+    public TaskQueue input(Collection<Task> t) {
         TaskQueue tq = new TaskQueue(t);
         input((Input) tq);
         return tq;
     }
 
-    public TaskQueue input(final Task[] t) {
+    public TaskQueue input(Task[] t) {
         TaskQueue tq = new TaskQueue(t);
         input((Input) tq);
         return tq;
@@ -621,7 +621,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * Adds an input channel for input from an external sense / sensor.
      * Will remain added until it closes or it is explicitly removed.
      */
-    public Input input(final Input i) {
+    public Input input(Input i) {
 //        Task t;
 //
 //        while ((t = i.get()) != null) {
@@ -751,7 +751,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * is sufficiently high (ie. dont use this in a loop;
      * instead put the loop inside an AffinityLock)
      */
-    public final NAR frameBatch(final int frames) {
+    public final NAR frameBatch(int frames) {
 
         AffinityLock al = AffinityLock.acquireLock();
         try {
@@ -768,18 +768,18 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return total time in seconds elapsed in realtime
      */
-    public final NAR frame(final int frames) {
+    public final NAR frame(int frames) {
 
 
         if (!running.compareAndSet(false, true)) {
             throw new RuntimeException("already running");
         }
 
-        final Memory memory = this.memory;
+        Memory memory = this.memory;
 
         Topic<NAR> frameStart = memory.eventFrameStart;
 
-        final int cpf = getCyclesPerFrame();
+        int cpf = getCyclesPerFrame();
         for (int f = 0; f < frames; f++) {
 
             frameStart.emit(this);
@@ -813,7 +813,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     public NAR trace(Appendable out, Predicate<String> includeKey, Predicate includeValue) {
 
 
-        final String[] previous = {null};
+        String[] previous = {null};
 
         Topic.all(memory, (k, v) -> {
             if ((includeValue!=null) && (!includeValue.test(v)))
@@ -891,8 +891,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return loop((int) 1000);
     }
 
-    public final NARLoop loop(final float initialFPS) {
-        final float millisecPerFrame = 1000.0f / initialFPS;
+    public final NARLoop loop(float initialFPS) {
+        float millisecPerFrame = 1000.0f / initialFPS;
         return loop((int) millisecPerFrame);
     }
 
@@ -928,7 +928,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * adds a task to the queue of task which will be executed in batch
      * after the end of the current frame before the next frame.
      */
-    public final void beforeNextFrame(final Runnable t) {
+    public final void beforeNextFrame(Runnable t) {
         nextTasks.addLast(t);
     }
 
@@ -947,7 +947,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * runs all the tasks in the 'Next' queue
      */
     protected final void runNextTasks() {
-        final int originalSize = nextTasks.size();
+        int originalSize = nextTasks.size();
         if (originalSize == 0) return;
 
         Util.run(nextTasks, originalSize, concurrency);
@@ -1011,7 +1011,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return running.get();
     }
 
-    public final Concept get(final Term key) {
+    public final Concept get(Term key) {
         return memory.concept(key);
     }
 
@@ -1019,7 +1019,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     public NAR answer(String question, Consumer<Task> recvSolution) {
         //question punctuation optional
         if (!(question.length() > 0 && question.charAt(question.length() - 1) == '?')) question = question + '?';
-        Task qt = this.task(question);
+        Task qt = task(question);
         return answer(qt, recvSolution);
     }
 
@@ -1046,7 +1046,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
 
     public NAR input(String... ss) {
-        for (String s : ss) this.input(s);
+        for (String s : ss) input(s);
         return this;
     }
 
@@ -1127,8 +1127,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //    }
 
     public NAR onEachPeriod(long minPeriodOfCycles, Runnable action) {
-        final long start = this.time();
-        final long[] next = new long[1];
+        long start = time();
+        long[] next = new long[1];
         next[0] = start + minPeriodOfCycles;
         onEachCycle((m) -> {
             long n = m.time();
@@ -1153,7 +1153,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return an existing Concept, or a new one, or null
      */
-    public final Concept conceptualize(Termed termed, final Budget budget) {
+    public final Concept conceptualize(Termed termed, Budget budget) {
         /*if (termed == null)
             return null;*/
 
@@ -1169,7 +1169,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             //return null;
         }
 
-        final Concept c = doConceptualize(term, budget);
+        Concept c = doConceptualize(term, budget);
 //        if (c==null)
 //            throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
 
@@ -1211,12 +1211,12 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
 
     public final NAR onEachCycle(Consumer<Memory> receiver) {
-        regs.add(this.memory.eventCycleEnd.on(receiver));
+        regs.add(memory.eventCycleEnd.on(receiver));
         return this;
     }
 
     public final NAR onEachFrame(Consumer<NAR> receiver) {
-        regs.add(this.memory.eventFrameStart.on(receiver));
+        regs.add(memory.eventFrameStart.on(receiver));
         return this;
     }
 
@@ -1300,7 +1300,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //        return this;
 //    }
 
-    public final void input(final Stream<Task> taskStream) {
+    public final void input(Stream<Task> taskStream) {
         input((Input) new TaskStream(taskStream));
     }
 
@@ -1313,13 +1313,13 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             return null;
         }
 
-        final Budget taskBudget = task.getBudget();
+        Budget taskBudget = task.getBudget();
 
 //        if (inputPriorityFactor != 1f) {
 //            taskBudget.mulPriority(inputPriorityFactor);
 //        }
 
-        final Memory memory = this.memory;
+        Memory memory = this.memory;
 
         if (!taskBudget.summaryGreaterOrEqual(memory.taskProcessThreshold)) {
             memory.remove(task, "Insufficient Budget to TaskProcess");

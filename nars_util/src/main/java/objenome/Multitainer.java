@@ -272,7 +272,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
     
     
     public Objenome solve(Solver solver, Object... keys) throws IncompleteSolutionException {
-        return Multitainer.this.solve(Lists.newArrayList(solver), keys);
+        return solve(Lists.newArrayList(solver), keys);
     }
     
     public Objenome solve(Iterable<Solver> solvers, Object... targets) throws IncompleteSolutionException {

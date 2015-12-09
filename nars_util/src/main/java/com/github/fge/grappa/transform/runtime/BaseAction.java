@@ -35,7 +35,7 @@ public abstract class BaseAction<V>
 {
     private boolean skipInPredicates;
 
-    protected BaseAction(final String name)
+    protected BaseAction(String name)
     {
         super(Objects.requireNonNull(name, "name"));
     }

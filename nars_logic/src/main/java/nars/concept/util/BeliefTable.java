@@ -30,7 +30,7 @@ public interface BeliefTable extends TaskTable {
 
     /** main method */
 
-    Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
+    Task add(Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
 
     /* when does projecting to now not play a role? I guess there is no case,
     //wo we use just one ranker anymore, the normal solution ranker which takes
@@ -170,7 +170,7 @@ public interface BeliefTable extends TaskTable {
 
     static float getConfidenceSum(Iterable<? extends Truthed> beliefs) {
         float t = 0;
-        for (final Truthed s : beliefs)
+        for (Truthed s : beliefs)
             t += s.getTruth().getConfidence();
         return t;
     }
@@ -179,14 +179,14 @@ public interface BeliefTable extends TaskTable {
         if (beliefs.isEmpty()) return 0.5f;
 
         float t = 0;
-        for (final Truthed s : beliefs)
+        for (Truthed s : beliefs)
             t += s.getTruth().getFrequency();
         return t / beliefs.size();
     }
 
-    default Task top(final Task query, final long now) {
+    default Task top(Task query, long now) {
 
-        final Task top = top();
+        Task top = top();
         if (top == null) return null;
 
 //        if (!Tense.matchingOrder(query, top.getTerm())) {
@@ -230,12 +230,12 @@ public interface BeliefTable extends TaskTable {
         public SolutionQualityMatchingOrderRanker(Task query, long now) {
             this.query = query;
             this.now = now;
-            this.hasQueryVar = query.hasQueryVar();
+            hasQueryVar = query.hasQueryVar();
         }
 
         @Override
-        public float rank(final Task t, final float bestToBeat) {
-            Task q = this.query;
+        public float rank(Task t, float bestToBeat) {
+            Task q = query;
 
             if (t.equals(q)) return Float.NaN; //dont compare to self
 
@@ -244,7 +244,7 @@ public interface BeliefTable extends TaskTable {
         }
     }
 
-    default Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
+    default Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
 
         if (isEmpty()) return null;
 
@@ -310,14 +310,14 @@ public interface BeliefTable extends TaskTable {
     /** computes the truth/desire as an aggregate of projections of all
      * beliefs to current time
      */
-    default float getMeanProjectedExpectation(final long time) {
-        final int size = size();
+    default float getMeanProjectedExpectation(long time) {
+        int size = size();
         if (size == 0) return 0;
 
-        final float[] d = {0};
-        this.forEach(t -> d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation());
+        float[] d = {0};
+        forEach(t -> d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation());
 
-        final float dd = d[0];
+        float dd = d[0];
 
         if (dd == 0) return 0;
 

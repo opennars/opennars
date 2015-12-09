@@ -50,13 +50,13 @@ public class Packatainer extends AbstractPrototainer {
     
     public Packatainer(ConfigurationBuilder cb, Class... classes) {
         super(false);
-        this.configuration = cb;
+        configuration = cb;
         this.classes = new HashSet();
         
         for (Class c : classes)
             usable(c);
-        
-        this.classNames = this.classes.stream().map(c -> c.getName()).collect(toSet());
+
+        classNames = this.classes.stream().map(c -> c.getName()).collect(toSet());
     }
 
     @Override

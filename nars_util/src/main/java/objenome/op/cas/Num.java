@@ -56,13 +56,13 @@ public class Num extends Constant implements Comparable<Num> {
     }
     
     public int compareTo(Num number) {
-        return new Double(this.val() - number.val()).intValue();
+        return new Double(val() - number.val()).intValue();
     }
     
     public Num gcd(Num number) {
-        if (!this.isInt() || !number.isInt()) return new Num();
+        if (!isInt() || !number.isInt()) return new Num();
         
-        long val1 = Math.abs(this.val().longValue());
+        long val1 = Math.abs(val().longValue());
         long val2 = Math.abs(number.val().longValue());
         
         long lowestVal = val1 <= val2 ? val1 : val2;

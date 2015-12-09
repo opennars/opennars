@@ -38,7 +38,7 @@ public abstract class ConceptSet<T extends Term> extends MutableConceptMap<T> im
 
 
     @Override
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         if (!values.containsKey(t)) {
             return super.contains(t);
         }

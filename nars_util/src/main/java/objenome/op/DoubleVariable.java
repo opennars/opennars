@@ -20,10 +20,10 @@ public class DoubleVariable extends Variable<Double> {
     }
 
     public void set(double v) {
-        this.value = v;
+        value = v;
     }
     public double get() {
-        return this.value;
+        return value;
     }
 
     public float getFloat() {

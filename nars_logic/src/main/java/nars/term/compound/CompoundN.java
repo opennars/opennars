@@ -35,8 +35,8 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     protected CompoundN(Op op, TermVector subterms) {
-        this.terms = subterms;
-        this.hash = Compound.hash(subterms, op, 0);
+        terms = subterms;
+        hash = Compound.hash(subterms, op, 0);
     }
 
 
@@ -44,10 +44,10 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
      * */
     @SafeVarargs
     protected CompoundN(int hashSalt, T... subterms) {
-        this.terms = isCommutative() ?
+        terms = isCommutative() ?
                         new TermSet(subterms) :
                         new TermVector(subterms);
-        this.hash = Compound.hash(subterms(), op(), hashSalt);
+        hash = Compound.hash(subterms(), op(), hashSalt);
     }
 
     public CompoundN(T t) {
@@ -60,7 +60,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public int compareTo(final Object o) {
+    public int compareTo(Object o) {
         if (this == o) return 0;
 
         Term t = (Term) o;
@@ -83,7 +83,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public boolean equals(final Object that) {
+    public boolean equals(Object that) {
         if (this == that)
             return true;
 
@@ -230,7 +230,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
      * TODO parameter for max (int) level to scan down
      */
     @Override
-    public boolean containsTermRecursively(final Term target) {
+    public boolean containsTermRecursively(Term target) {
 
         if (impossibleSubterm(target)) return false;
 
@@ -252,7 +252,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
     public int bytesLength() {
         int len = /* opener byte */1;
 
-        final int n = size();
+        int n = size();
         for (int i = 0; i < n; i++) {
             len += term(i).bytesLength() + 1 /* separator or closer if end*/;
         }
@@ -292,7 +292,7 @@ public abstract class CompoundN<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final void recurseTerms(final SubtermVisitor v, final Term parent) {
+    public final void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
         terms.visit(v, this);
     }

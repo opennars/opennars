@@ -36,7 +36,7 @@ public class SetDoubleValue extends SetConstantValue<Double> implements SetNumer
     
     @Override
     public void setValue(double d) {
-        this.set(d);
+        set(d);
     }
     
     @Override

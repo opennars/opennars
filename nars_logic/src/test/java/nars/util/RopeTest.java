@@ -121,7 +121,7 @@ public class RopeTest  {
         @Test
 	public void testConcatenationFlatFlat() {
 		Rope r1 = Rope.build("alpha");
-		final Rope r2 = Rope.build("beta");
+		Rope r2 = Rope.build("beta");
 		Rope r3 = r1.append(r2);
 		Assert.assertEquals("alphabeta", r3.toString());
 
@@ -222,21 +222,21 @@ public class RopeTest  {
 	public void testCreation() {
 		try {
 			Rope.build("The quick brown fox jumped over");
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			Assert.fail("Nonempty string: " + e.getMessage());
 		}
 		try {
 			Rope.build("");
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			Assert.fail("Empty string: " + e.getMessage());
 		}
 	}
 
         @Test
 	public void testEquals() {
-		final Rope r1 = Rope.build("alpha");
-		final Rope r2 = Rope.build("beta");
-		final Rope r3 = Rope.build("alpha");
+		Rope r1 = Rope.build("alpha");
+		Rope r2 = Rope.build("beta");
+		Rope r3 = Rope.build("alpha");
 
 		Assert.assertEquals(r1, r3);
 		Assert.assertFalse(r1.equals(r2));
@@ -244,9 +244,9 @@ public class RopeTest  {
 
         @Test
 	public void testHashCode() {
-		final Rope r1 = Rope.build("alpha");
-		final Rope r2 = Rope.build("beta");
-		final Rope r3 = Rope.build("alpha");
+		Rope r1 = Rope.build("alpha");
+		Rope r2 = Rope.build("beta");
+		Rope r3 = Rope.build("alpha");
 
 		Assert.assertEquals(r1.hashCode(), r3.hashCode());
 		Assert.assertFalse(r1.hashCode() == r2.hashCode());
@@ -255,9 +255,9 @@ public class RopeTest  {
 
         @Test
 	public void testIndexOf() {
-		final Rope r1 = Rope.build("alpha");
-		final Rope r2 = Rope.build("beta");
-		final Rope r3 = r1.append(r2);
+		Rope r1 = Rope.build("alpha");
+		Rope r2 = Rope.build("beta");
+		Rope r3 = r1.append(r2);
 		Assert.assertEquals(1, r3.indexOf('l'));
 		Assert.assertEquals(6, r3.indexOf('e'));
 		
@@ -291,7 +291,7 @@ public class RopeTest  {
 
         @Test
 	public void testInsert() {
-		final Rope r1 = Rope.build("alpha");
+		Rope r1 = Rope.build("alpha");
 		Assert.assertEquals("betaalpha", r1.insert(0, "beta").toString());
 		Assert.assertEquals("alphabeta", r1.insert(r1.length(), "beta").toString());
 		Assert.assertEquals("abetalpha", r1.insert(1, "beta").toString());
@@ -309,11 +309,11 @@ public class RopeTest  {
 	
         @Test
 	public void testCompareTo() {
-		final Rope r1 = Rope.build("alpha");
-		final Rope r2 = Rope.build("beta");
-		final Rope r3 = Rope.build("alpha");
-		final Rope r4 = Rope.build("alpha1");
-		final String s2 = "beta"; 
+		Rope r1 = Rope.build("alpha");
+		Rope r2 = Rope.build("beta");
+		Rope r3 = Rope.build("alpha");
+		Rope r4 = Rope.build("alpha1");
+		String s2 = "beta";
 
 		assertTrue(r1.compareTo(r3) == 0);
 		assertTrue(r1.compareTo(r2) < 0);
@@ -327,7 +327,7 @@ public class RopeTest  {
         @Test
 	public void testToString() {
 		String phrase = "The quick brown fox jumped over the lazy brown dog. Boy am I glad the dog was asleep.";
-		final Rope r1 = Rope.build(phrase);
+		Rope r1 = Rope.build(phrase);
 		assertTrue(phrase.equals(r1.toString()));
 		assertTrue(phrase.subSequence(7, 27).equals(r1.subSequence(7, 27).toString()));
 	}
@@ -559,7 +559,7 @@ public class RopeTest  {
 
         @Test
 	public void testStartsEndsWith() {
-		final Rope r = Rope.build("Hello sir, how do you do?");
+		Rope r = Rope.build("Hello sir, how do you do?");
 		assertTrue(r.startsWith(""));
 		assertTrue(r.startsWith("H"));
 		assertTrue(r.startsWith("He"));

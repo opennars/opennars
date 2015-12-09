@@ -20,7 +20,7 @@ public class TemporalMetrics<O> extends Metrics<Double,O> {
 
 
     public List<SignalData> getSignalDatas() {
-        final List<SignalData> l = new ArrayList();
+        List<SignalData> l = new ArrayList();
         
         for (Signal sv : getSignals()) {            
             l.add( newSignalData(sv.id) );

@@ -34,7 +34,7 @@ public class FindZeros<C> extends NumericSolver<C> {
 
             double best = solver.solve(1000, new UnivariateFunction() {
                 @Override
-                public double value(final double d) {
+                public double value(double d) {
                     var.setValue(d);
                     return eval(o);
                 }

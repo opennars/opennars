@@ -65,7 +65,7 @@ public class UserPreferences {
    * @param id
    * @return the file chooser with the given id
    */
-  public static JFileChooser getFileChooser(final String id) {
+  public static JFileChooser getFileChooser(String id) {
     JFileChooser chooser = new JFileChooser();
     track(chooser, "FileChooser." + id + ".path");
     return chooser;
@@ -92,7 +92,7 @@ public class UserPreferences {
     return chooser;
   }
 
-  private static void track(JFileChooser chooser, final String key) {
+  private static void track(JFileChooser chooser, String key) {
     // get the path for the given filechooser
     String path = node().get(key, null);
     if (path != null) {
@@ -115,8 +115,8 @@ public class UserPreferences {
         trackPath);
   }
 
-  public static void track(final JRadioButton button) {
-    final Preferences prefs = node().node("Buttons");
+  public static void track(JRadioButton button) {
+    Preferences prefs = node().node("Buttons");
     boolean selected = prefs.getBoolean(button.getName() + ".selected", button
         .isSelected());
     ((DefaultButtonModel) button.getModel()).getGroup().setSelected(

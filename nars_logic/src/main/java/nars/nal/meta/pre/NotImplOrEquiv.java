@@ -7,12 +7,12 @@ import nars.term.Term;
 
 public final class NotImplOrEquiv extends PreCondition1 {
 
-    public NotImplOrEquiv(final Term arg1) {
+    public NotImplOrEquiv(Term arg1) {
         super(arg1);
     }
 
     @Override
-    public boolean test(final RuleMatch m, final Term arg1) {
+    public boolean test(RuleMatch m, Term arg1) {
 
         if (arg1 == null) return false;
 
@@ -21,7 +21,7 @@ public final class NotImplOrEquiv extends PreCondition1 {
         //  that can be used for allowing (+) or denying (-)
         //  other sets of Ops
 
-        final Op o = arg1.op();
+        Op o = arg1.op();
         switch (o) {
             case IMPLICATION:
             case IMPLICATION_AFTER:

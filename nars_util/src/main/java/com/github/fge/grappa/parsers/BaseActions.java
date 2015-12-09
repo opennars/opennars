@@ -53,7 +53,7 @@ public abstract class BaseActions<V>
      * @param context the context
      */
     @Override
-    public final void setContext(final Context<V> context)
+    public final void setContext(Context<V> context)
     {
         this.context = Objects.requireNonNull(context, "context");
     }
@@ -109,10 +109,10 @@ public abstract class BaseActions<V>
      * @return the input text matched by the immediately preceding subrule or
      * the default string
      */
-    public String matchOrDefault(final String defaultString)
+    public String matchOrDefault(String defaultString)
     {
         //check();
-        final String match = context.getMatch();
+        String match = context.getMatch();
         return match.isEmpty() ? defaultString : match;
     }
 
@@ -199,7 +199,7 @@ public abstract class BaseActions<V>
      * @param value the value to push
      * @return true
      */
-    public boolean push(final V value)
+    public boolean push(V value)
     {
         //check();
         context.getValueStack().push(value);
@@ -218,7 +218,7 @@ public abstract class BaseActions<V>
      * @throws IllegalArgumentException if the stack does not contain enough
      * elements to perform this operation
      */
-    public boolean push(final int down, final V value)
+    public boolean push(int down, V value)
     {
         //check();
         context.getValueStack().push(down, value);
@@ -249,7 +249,7 @@ public abstract class BaseActions<V>
      * @throws IllegalArgumentException if the stack does not contain enough
      * elements to perform this operation
      */
-    public V pop(final int down)
+    public V pop(int down)
     {
         //check();
         return context.getValueStack().pop(down);
@@ -280,7 +280,7 @@ public abstract class BaseActions<V>
      * @throws IllegalArgumentException if the stack does not contain enough
      * elements to perform this operation
      */
-    public boolean drop(final int down)
+    public boolean drop(int down)
     {
         //check();
         context.getValueStack().pop(down);
@@ -310,7 +310,7 @@ public abstract class BaseActions<V>
      * @throws IllegalArgumentException if the stack does not contain enough
      * elements to perform this operation
      */
-    public V peek(final int down)
+    public V peek(int down)
     {
         //check();
         return context.getValueStack().peek(down);
@@ -325,7 +325,7 @@ public abstract class BaseActions<V>
      *
      * @throws IllegalArgumentException if the stack is empty
      */
-    public boolean poke(final V value)
+    public boolean poke(V value)
     {
         //check();
         context.getValueStack().poke(value);
@@ -344,7 +344,7 @@ public abstract class BaseActions<V>
      * @throws IllegalArgumentException if the stack does not contain enough
      * elements to perform this operation
      */
-    public boolean poke(final int down, final V value)
+    public boolean poke(int down, V value)
     {
         //check();
         context.getValueStack().poke(down, value);
@@ -389,7 +389,7 @@ public abstract class BaseActions<V>
      *
      * @see ValueStack#swap(int)
      */
-    public boolean swap(final int n)
+    public boolean swap(int n)
     {
         //check();
         context.getValueStack().swap(n);

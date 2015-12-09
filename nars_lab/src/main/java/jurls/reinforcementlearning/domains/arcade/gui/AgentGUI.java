@@ -39,8 +39,8 @@ public final class AgentGUI extends JFrame implements AbstractUI {
         panel = new ScreenDisplay();
         add(panel);
 
-        this.addKeyListener(keyboard);
-        this.setSize(panel.getPreferredSize());
+        addKeyListener(keyboard);
+        setSize(panel.getPreferredSize());
 
         pack();
         setLocationRelativeTo(null);
@@ -51,7 +51,7 @@ public final class AgentGUI extends JFrame implements AbstractUI {
 
     /** When die() is called, we want to safely close the GUI */
     public void die() {
-        this.dispose();
+        dispose();
     }
 
     public void setImage(BufferedImage img) {
@@ -79,6 +79,6 @@ public final class AgentGUI extends JFrame implements AbstractUI {
     }
 
     public void refresh() {
-        this.repaint();
+        repaint();
     }
 }

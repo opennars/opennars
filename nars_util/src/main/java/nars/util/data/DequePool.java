@@ -22,11 +22,11 @@ public abstract class DequePool<X> implements Pool<X> {
     }
 
     public void setCapacity(int c) {
-        this.capacity = c;
+        capacity = c;
     }
 
     @Override
-    public void put(final X i) {
+    public void put(X i) {
         //synchronized (data) {
 
 
@@ -41,7 +41,7 @@ public abstract class DequePool<X> implements Pool<X> {
     public final X get() {
         //synchronized (data) {
 
-        Deque<X> d = this.data;
+        Deque<X> d = data;
 
         if (d.isEmpty()) return create();
         return d.poll();

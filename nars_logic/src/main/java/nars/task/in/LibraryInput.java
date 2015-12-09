@@ -99,7 +99,7 @@ public class LibraryInput extends TextInput {
             if (ff == null)
                 throw new RuntimeException(se + " not found");
 
-            for (final File file : ff) {
+            for (File file : ff) {
                 if (file.isDirectory() || "README.txt".equals(file.getName()) || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {

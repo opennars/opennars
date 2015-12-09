@@ -43,37 +43,37 @@ public abstract class GroupClassGenerator
     protected ParserClassNode classNode;
     protected RuleMethod method;
 
-    protected GroupClassGenerator(final boolean forceCodeBuilding)
+    protected GroupClassGenerator(boolean forceCodeBuilding)
     {
         this.forceCodeBuilding = forceCodeBuilding;
     }
 
     @Override
-    public final void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public final void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         this.classNode = Objects.requireNonNull(classNode, "classNode");
         this.method = Objects.requireNonNull(method, "method");
 
-        for (final InstructionGroup group: method.getGroups())
+        for (InstructionGroup group: method.getGroups())
             if (appliesTo(group.getRoot()))
                 loadGroupClass(group);
     }
 
     protected abstract boolean appliesTo(InstructionGraphNode group);
 
-    private void loadGroupClass(final InstructionGroup group)
+    private void loadGroupClass(InstructionGroup group)
     {
         createGroupClassType(group);
-        final String className = group.getGroupClassType().getClassName();
-        final ClassLoader classLoader
+        String className = group.getGroupClassType().getClassName();
+        ClassLoader classLoader
             = classNode.getParentClass().getClassLoader();
 
-        final Class<?> groupClass;
+        Class<?> groupClass;
         synchronized (AsmUtils.class) {
             groupClass = AsmUtils.findLoadedClass(className, classLoader);
             if (groupClass == null || forceCodeBuilding) {
-                final byte[] groupClassCode = generateGroupClassCode(group);
+                byte[] groupClassCode = generateGroupClassCode(group);
                 group.setGroupClassCode(groupClassCode);
                 if (groupClass == null)
                     AsmUtils.loadClass(className, groupClassCode, classLoader);
@@ -81,23 +81,23 @@ public abstract class GroupClassGenerator
         }
     }
 
-    private void createGroupClassType(final InstructionGroup group)
+    private void createGroupClassType(InstructionGroup group)
     {
-        final String s = classNode.name;
+        String s = classNode.name;
         /*
          * If the parser has no package, the group will be an embedded class
          * to the parser class
          */
-        final int lastSlash = classNode.name.lastIndexOf('/');
-        final String groupName = group.getName();
-        final String pkg = lastSlash >= 0 ? s.substring(0, lastSlash) : s;
-        final String groupClassInternalName = pkg  + '/' + groupName;
+        int lastSlash = classNode.name.lastIndexOf('/');
+        String groupName = group.getName();
+        String pkg = lastSlash >= 0 ? s.substring(0, lastSlash) : s;
+        String groupClassInternalName = pkg  + '/' + groupName;
         group.setGroupClassType(Type.getObjectType(groupClassInternalName));
     }
 
-    protected final byte[] generateGroupClassCode(final InstructionGroup group)
+    protected final byte[] generateGroupClassCode(InstructionGroup group)
     {
-        final ClassWriter classWriter
+        ClassWriter classWriter
             = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         generateClassBasics(group, classWriter);
         generateFields(group, classWriter);
@@ -106,8 +106,8 @@ public abstract class GroupClassGenerator
         return classWriter.toByteArray();
     }
 
-    private void generateClassBasics(final InstructionGroup group,
-        final ClassWriter cw)
+    private void generateClassBasics(InstructionGroup group,
+                                     ClassWriter cw)
     {
         cw.visit(Opcodes.V1_7, ACC_PUBLIC + ACC_FINAL + ACC_SYNTHETIC,
             group.getGroupClassType().getInternalName(), null,
@@ -117,23 +117,23 @@ public abstract class GroupClassGenerator
 
     protected abstract Type getBaseType();
 
-    private static void generateFields(final InstructionGroup group,
-        final ClassWriter cw)
+    private static void generateFields(InstructionGroup group,
+                                       ClassWriter cw)
     {
         // TODO: fix the below comment; those "two members" should be split
         // CAUTION: the FieldNode has illegal access flags and an illegal
         // value field since these two members are reused for other
         // purposes, so we need to write out the field "manually" here
         // rather than just call "field.accept(cw)"
-        for (final FieldNode field: group.getFields())
+        for (FieldNode field: group.getFields())
             cw.visitField(ACC_PUBLIC + ACC_SYNTHETIC, field.name, field.desc,
                 null, null);
 
     }
 
-    private void generateConstructor(final ClassWriter cw)
+    private void generateConstructor(ClassWriter cw)
     {
-        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>",
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>",
             CodegenUtils.sig(void.class, String.class), null, null);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
@@ -146,21 +146,21 @@ public abstract class GroupClassGenerator
     protected abstract void generateMethod(InstructionGroup group,
         ClassWriter cw);
 
-    protected static void insertSetContextCalls(final InstructionGroup group,
-        int localVarIx)
+    protected static void insertSetContextCalls(InstructionGroup group,
+                                                int localVarIx)
     {
-        final InsnList instructions = group.getInstructions();
-        final CodeBlock block = CodeBlock.newCodeBlock();
+        InsnList instructions = group.getInstructions();
+        CodeBlock block = CodeBlock.newCodeBlock();
 
-        for (final InstructionGraphNode node: group.getNodes()) {
+        for (InstructionGraphNode node: group.getNodes()) {
             if (!node.isCallOnContextAware())
                 continue;
 
-            final AbstractInsnNode insn = node.getInstruction();
+            AbstractInsnNode insn = node.getInstruction();
 
             if (node.getPredecessors().size() > 1) {
                 // store the target of the call in a new local variable
-                final AbstractInsnNode loadTarget = node.getPredecessors()
+                AbstractInsnNode loadTarget = node.getPredecessors()
                     .get(0).getInstruction();
 
                 block.clear().dup().astore(++localVarIx);
@@ -186,19 +186,19 @@ public abstract class GroupClassGenerator
         }
     }
 
-    protected static void convertXLoads(final InstructionGroup group)
+    protected static void convertXLoads(InstructionGroup group)
     {
-        final String owner = group.getGroupClassType().getInternalName();
+        String owner = group.getGroupClassType().getInternalName();
 
         InsnList insnList;
 
-        for (final InstructionGraphNode node : group.getNodes()) {
+        for (InstructionGraphNode node : group.getNodes()) {
             if (!node.isXLoad())
                 continue;
 
-            final VarInsnNode insn = (VarInsnNode) node.getInstruction();
-            final FieldNode field = group.getFields().get(insn.var);
-            final FieldInsnNode fieldNode = new FieldInsnNode(GETFIELD, owner,
+            VarInsnNode insn = (VarInsnNode) node.getInstruction();
+            FieldNode field = group.getFields().get(insn.var);
+            FieldInsnNode fieldNode = new FieldInsnNode(GETFIELD, owner,
                 field.name, field.desc);
 
             insnList = group.getInstructions();

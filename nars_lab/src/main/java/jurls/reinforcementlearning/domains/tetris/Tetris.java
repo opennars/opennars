@@ -35,7 +35,7 @@ public class Tetris implements RLEnvironment {
     private double previousScore;
 
     public Tetris(int width, int height) {
-        this.gameState = new TetrisState(width, height);
+        gameState = new TetrisState(width, height);
         restart();
     }
 

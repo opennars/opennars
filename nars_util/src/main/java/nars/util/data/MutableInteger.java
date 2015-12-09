@@ -77,7 +77,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    */
   @Override
   public Object getValue() {
-    return (double) this.value;
+    return (double) value;
   }
 
   @Override
@@ -216,7 +216,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void add(double operand) {
-    this.value += operand;
+    value += operand;
   }
 
   /**
@@ -230,7 +230,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void add(Number operand) {
-    this.value += operand.doubleValue();
+    value += operand.doubleValue();
   }
 
   /**
@@ -242,7 +242,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void subtract(double operand) {
-    this.value -= operand;
+    value -= operand;
   }
 
   /**
@@ -256,7 +256,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void subtract(Number operand) {
-    this.value -= operand.doubleValue();
+    value -= operand.doubleValue();
   }
 
   // -----------------------------------------------------------------------

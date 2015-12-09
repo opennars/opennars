@@ -21,13 +21,13 @@ public final class BeanCheck {
      * 
      * @param clazz class to check
      */
-    public static void check(final Class<?> clazz) {
+    public static void check(Class<?> clazz) {
         searchSetterForGetters(clazz);
         searchGetterForSetters(clazz);
     }
 
-    private static void searchGetterForSetters(final Class<?> clazz) {
-        for (final Method setter : ObjectUtil.getAllSetters(clazz)) {
+    private static void searchGetterForSetters(Class<?> clazz) {
+        for (Method setter : ObjectUtil.getAllSetters(clazz)) {
             if (ObjectUtil.getGetter(clazz, setter) == null) {
                 throw new IllegalArgumentException("Invalid interface " + clazz.getName() + //$NON-NLS-1$
                         ": No getter found for setter " + setter.getName()); //$NON-NLS-1$
@@ -35,8 +35,8 @@ public final class BeanCheck {
         }
     }
 
-    private static void searchSetterForGetters(final Class<?> clazz) {
-        for (final Method getter : ObjectUtil.getAllGetters(clazz)) {
+    private static void searchSetterForGetters(Class<?> clazz) {
+        for (Method getter : ObjectUtil.getAllGetters(clazz)) {
             if (ObjectUtil.getSetter(clazz, getter) == null) {
                 throw new IllegalArgumentException("Invalid interface " + clazz.getName() + //$NON-NLS-1$
                         ": No setter found for getter " + getter.getName()); //$NON-NLS-1$

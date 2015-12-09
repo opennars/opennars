@@ -87,7 +87,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
         //setTruth(tv);
         return this;
     }*/
-    public MutableTask truth(final Truth tv) {
+    public MutableTask truth(Truth tv) {
         if (tv == null)
             setTruth(null);
         else
@@ -201,7 +201,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
     }
 
     public MutableTask tense(Tense t, Memory memory) {
-        this.occurr(Tense.getOccurrenceTime(memory.time(), t, memory));
+        occurr(Tense.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
 
@@ -232,7 +232,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //    }
 
     public MutableTask budget(float p, float d) {
-        final float q;
+        float q;
         Truth t = getTruth();
         if (!isQuestOrQuestion()) {
             if (t == null)
@@ -281,7 +281,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //    }
 
 
-    public MutableTask<C> punctuation(final char punctuation) {
+    public MutableTask<C> punctuation(char punctuation) {
         setPunctuation(punctuation);
         return this;
     }
@@ -319,7 +319,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //    }
 
 
-    public MutableTask parent(final Task parentTask, final Task parentBelief) {
+    public MutableTask parent(Task parentTask, Task parentBelief) {
         if (parentTask == null)
             throw new RuntimeException("parent task being set to null");
 
@@ -334,7 +334,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //    }
 
     public MutableTask occurr(long occurrenceTime) {
-        this.setOccurrenceTime(occurrenceTime);
+        setOccurrenceTime(occurrenceTime);
         return this;
     }
 
@@ -409,7 +409,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 
     /** flag used for anticipatable derivation */
     public MutableTask anticipate(boolean a) {
-        this.anticipate = a;
+        anticipate = a;
         return this;
     }
 

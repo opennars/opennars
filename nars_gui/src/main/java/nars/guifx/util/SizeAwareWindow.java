@@ -54,9 +54,9 @@ public class SizeAwareWindow extends Scene {
         super(new BorderPane());
 
 
-        this.root = (BorderPane)getRoot();
+        root = (BorderPane)getRoot();
 
-        this.nodes = LMap.newHash(model);
+        nodes = LMap.newHash(model);
 
         //root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
@@ -83,7 +83,7 @@ public class SizeAwareWindow extends Scene {
         if (window == null)
             window = new Stage();
 
-        final Stage finalWindow = this.window = window;
+        Stage finalWindow = this.window = window;
         runLater(() -> {
 
             finalWindow.setAlwaysOnTop(true);
@@ -143,7 +143,7 @@ public class SizeAwareWindow extends Scene {
 
     Parent current;
 
-    public static double[] d2(final double a, final double b) {
+    public static double[] d2(double a, double b) {
         return new double[]{a, b};
     }
 
@@ -160,8 +160,8 @@ public class SizeAwareWindow extends Scene {
 
         if (next == null) {
             setContent(null);
-            this.current.setVisible(false);
-        } else if (next != this.current) {
+            current.setVisible(false);
+        } else if (next != current) {
 
             if (next!=null) {
                 next.setVisible(true);
@@ -170,10 +170,10 @@ public class SizeAwareWindow extends Scene {
                 next.layout();
             }
 
-            Parent old = this.current;
+            Parent old = current;
 
             System.out.println("setting: " + next + ' ' + next.getLayoutBounds());
-            setContent(this.current = next);
+            setContent(current = next);
 
             if (old!=null)
                 old.setVisible(false);

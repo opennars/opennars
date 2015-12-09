@@ -43,9 +43,9 @@ import static org.jewelsea.willow.util.ResourceUtil.getString;
 public class NavTools {
     static final int buttonHeight = 20;
 
-    public static Pane createNavPane(final WebBrowser chrome) {
+    public static Pane createNavPane(WebBrowser chrome) {
         // create a back button.
-        final Button backButton = new Button();
+        Button backButton = new Button();
         backButton.setId("backButton"); // todo I don't like this id set just for lookup - reference would be better
         backButton.setTooltip(new Tooltip(getString("nav-toolbar.back.tooltip")));
                         
@@ -75,7 +75,7 @@ public class NavTools {
         });
 
         // create a forward button.
-        final Button forwardButton = new Button();
+        Button forwardButton = new Button();
         forwardButton.setId("forwardButton"); // todo I don't like this id set just for lookup - reference would be better
         forwardButton.setTranslateX(-2);
         //AwesomeDude.setIcon(forwardButton, AwesomeIcon.FORWARD);
@@ -103,10 +103,10 @@ public class NavTools {
         });
 
         // create a navigate button.
-        final Button navButton = new Button();
+        Button navButton = new Button();
         navButton.setTooltip(new Tooltip(getString("nav-toolbar.go.tooltip")));
-        final ImageView navGraphic = new ImageView(ResourceUtil.getImage("Forward Arrow.png"));
-        final ColorAdjust navColorAdjust = new ColorAdjust();
+        ImageView navGraphic = new ImageView(ResourceUtil.getImage("Forward Arrow.png"));
+        ColorAdjust navColorAdjust = new ColorAdjust();
         navColorAdjust.setContrast(-0.7);
         navGraphic.setEffect(navColorAdjust);
         navGraphic.setPreserveRatio(true);
@@ -117,10 +117,10 @@ public class NavTools {
         );
 
         // create a button to hide and show the sidebar.
-        final Button sidebarButton = new Button();
+        Button sidebarButton = new Button();
         sidebarButton.setId("sidebarButton");
-        final ImageView sidebarGraphic = new ImageView(ResourceUtil.getImage("Down Arrow.png"));
-        final ColorAdjust colorAdjust = new ColorAdjust();
+        ImageView sidebarGraphic = new ImageView(ResourceUtil.getImage("Down Arrow.png"));
+        ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setContrast(-0.7);
         sidebarGraphic.setFitHeight(10);
         sidebarGraphic.setPreserveRatio(true);
@@ -134,9 +134,9 @@ public class NavTools {
                 SlideAnimator.slide(sidebarButton, chrome.getSidebar().getScroll(), Side.LEFT)
         );*/
 
-        final Button fullscreenButton = new Button();
+        Button fullscreenButton = new Button();
         fullscreenButton.setTooltip(new Tooltip(getString("nav-toolbar.fullscreen.tooltip")));
-        final ImageView fullscreenGraphic = new ImageView(
+        ImageView fullscreenGraphic = new ImageView(
                 ResourceUtil.getImage("1325834738_gtk-fullscreen.png")
         );
         fullscreenGraphic.setEffect(colorAdjust);
@@ -144,12 +144,12 @@ public class NavTools {
         fullscreenGraphic.setFitHeight(14);
         fullscreenButton.setGraphic(fullscreenGraphic);
         fullscreenButton.setOnAction(actionEvent -> {
-            final Stage stage = (Stage) fullscreenButton.getScene().getWindow();
+            Stage stage = (Stage) fullscreenButton.getScene().getWindow();
             stage.setFullScreen(!stage.isFullScreen());
         });
 
         // align all of the navigation widgets in a horizontal toolbar.
-        final HBox navPane = new HBox();
+        HBox navPane = new HBox();
         navPane.setAlignment(Pos.CENTER);
         navPane.getStyleClass().add("toolbar");
         navPane.setSpacing(5);

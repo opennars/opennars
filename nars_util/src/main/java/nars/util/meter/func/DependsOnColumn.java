@@ -32,7 +32,7 @@ public abstract class DependsOnColumn<Source,Result> extends FunctionMeter<Resul
             throw new RuntimeException("Missing signal: " + source);
 
         this.metrics = metrics;
-        this.sourceColumn = metrics.indexOf(source);
+        sourceColumn = metrics.indexOf(source);
 
         for (Signal s : getSignals()) {            
             //s.id = getColumnID(m, i++);

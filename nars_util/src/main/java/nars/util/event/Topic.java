@@ -18,11 +18,11 @@ public interface Topic<V> extends Named<String> {
     //List<Consumer<V>> all();
 
 
-    static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f) {
+    static Active all(Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f) {
         return all(obj, f, (key)->true);
     }
 
-    static void each(final Object obj, Consumer<Field /* fieldName*/> f) {
+    static void each(Object obj, Consumer<Field /* fieldName*/> f) {
         /** TODO cache the fields because reflection may be slow */
         for (Field field : obj.getClass().getFields()) {
             Class returnType = field.getType();
@@ -37,12 +37,12 @@ public interface Topic<V> extends Named<String> {
 
 
     /** registers to all public Topic fields in an object */
-    static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f, Predicate<String> includeKey) {
+    static Active all(Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f, Predicate<String> includeKey) {
 
         Active s = new Active();
 
         each(obj, (field) -> {
-            final String fieldName = field.getName();
+            String fieldName = field.getName();
             if (includeKey!=null && !includeKey.test(fieldName))
                 return;
 
@@ -76,10 +76,10 @@ public interface Topic<V> extends Named<String> {
     void off(On<V> reaction);
 
     @SafeVarargs
-    static <V> Active onAll(final Consumer<V> o, final Topic<V>... w) {
+    static <V> Active onAll(Consumer<V> o, Topic<V>... w) {
         Active r = new Active(w.length);
     
-        for (final Topic<V> c : w)
+        for (Topic<V> c : w)
             r.add( c.on(o) );
         
         return r;

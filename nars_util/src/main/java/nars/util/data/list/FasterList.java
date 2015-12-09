@@ -43,14 +43,14 @@ public class FasterList<X> extends FastList<X> {
      * except the array items will not be null
      * */
     public void popTo(int index) {
-        this.size = index+1;
+        size = index+1;
     }
 
 
     @Override
-    public final X get(final int index) {
+    public final X get(int index) {
         //if (index < this.size) {
-        return this.items[index];
+        return items[index];
         //}
     }
 
@@ -97,20 +97,20 @@ public class FasterList<X> extends FastList<X> {
 //    }
 
     public final X[] fillArrayNullPadded(X[] array) {
-        int s = this.size;
+        int s = size;
         int l = array.length;
         if (array == null || array.length < (s+1)) {
             array = (X[]) Array.newInstance(array.getClass().getComponentType(), s+1);
         }
-        System.arraycopy(this.items, 0, array, 0, s);
+        System.arraycopy(items, 0, array, 0, s);
         if (s<l)
             Arrays.fill(array, s, l, null); //pad remainder
         return array;
     }
     public final X[] fillArray(X[] array) {
-        int s = this.size;
+        int s = size;
         int l = array.length;
-        System.arraycopy(this.items, 0, array, 0, s);
+        System.arraycopy(items, 0, array, 0, s);
         if (s<l)
             Arrays.fill(array, s, l, null); //pad remainder
         return array;
@@ -127,7 +127,7 @@ public class FasterList<X> extends FastList<X> {
 //        return array;
 //    }
 
-    public final void forEach(final Consumer c) {
+    public final void forEach(Consumer c) {
         for (Object j : array()) {
             if (j == null) break; //end of list
             c.accept(j);

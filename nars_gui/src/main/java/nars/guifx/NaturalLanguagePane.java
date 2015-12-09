@@ -15,7 +15,7 @@ public class NaturalLanguagePane extends CodeInput {
 
     public NaturalLanguagePane(NAR n) {
         super();
-        this.nar = n;
+        nar = n;
     }
 
     @Override

@@ -7,7 +7,8 @@ public class DDList<E> implements Iterable<E> {
 
 
     static class Sentinel<E> extends DD<E> {
-        public Sentinel(int id) { this.owner = id; }
+        public Sentinel(int id) {
+            owner = id; }
     }
     static class HeadSentinel<E> extends Sentinel<E> {
         public HeadSentinel(int id) { super(id); }
@@ -27,7 +28,7 @@ public class DDList<E> implements Iterable<E> {
 
     public DDList(int id, DDNodePool<E> nodepool) {
         this.id = id;
-        this.pool = nodepool;
+        pool = nodepool;
         pre = new HeadSentinel(id);
         post = new TailSentinel(id);
 
@@ -45,7 +46,7 @@ public class DDList<E> implements Iterable<E> {
             //TODO items may not need to be detached in this iterative loop if the endpoints can be attached to their conclusions
             DD current = getFirstNode();
             do {
-                final DD next = current.next;
+                DD next = current.next;
                 pool.put(detach(current));
                 current = next;
             } while (size > 0);
@@ -94,7 +95,7 @@ public class DDList<E> implements Iterable<E> {
 
     public DD<E> getFirstNode() {
         //if (isEmpty()) return null;
-        final DD<E> x = pre.next;
+        DD<E> x = pre.next;
         if (x instanceof Sentinel) {
             return x.next;
         }
@@ -102,7 +103,7 @@ public class DDList<E> implements Iterable<E> {
     }
     public DD<E> getLastNode() {
         //if (isEmpty()) return null;
-        final DD<E> x = post.prev;
+        DD<E> x = post.prev;
         if (x instanceof Sentinel) return x.prev;
         return x;
     }
@@ -162,7 +163,7 @@ public class DDList<E> implements Iterable<E> {
     }
 
     /** detaches and then returns the node to the pool; a complete removal / deletion */
-    public final E remove(final DD<E> i) {
+    public final E remove(DD<E> i) {
         pool.put(detach(i));
         return i.item;
     }
@@ -189,7 +190,7 @@ public class DDList<E> implements Iterable<E> {
     @Override
     public void forEach(Consumer<? super E> action) {
 
-        final DD<E> postSentinel = post;
+        DD<E> postSentinel = post;
         DD<E> next = getFirstNode();
 
         while ((next!=null) && (next!=postSentinel)) {

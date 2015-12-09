@@ -55,7 +55,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         put(key, val, 0);
     }*/
 
-    public Object put(final V v) {
+    public Object put(V v) {
         return put(v.getTerm().bytes(), v);
     }
 
@@ -71,11 +71,11 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         if (key.length == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.
-            V oldValue = this.value;
+            V oldValue = value;
             value = (V)val; // Note: possibly removes or updates an item.
             return oldValue;
         }
-        final byte c = key[0];
+        byte c = key[0];
         Object cObj = get(c);
         if (cObj == null) { // Unused slot means no collision so just store and return;
             if (val == null) {
@@ -105,13 +105,13 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         TermTrieNode branch = new TermTrieNode();
         branch.put(suffix(key, 1), val); // Store new value in new subtree.
 
-        final byte[] cleafname = cLeaf.getTerm().bytes();
+        byte[] cleafname = cLeaf.getTerm().bytes();
         branch.put(suffix(cleafname, 1), cLeaf); // Plus the one we collided with.
 
         return put(c, branch);
     }
 
-    public static byte[] suffix(final byte[] x, int n) {
+    public static byte[] suffix(byte[] x, int n) {
         return Arrays.copyOfRange(x, 1, x.length);
     }
 

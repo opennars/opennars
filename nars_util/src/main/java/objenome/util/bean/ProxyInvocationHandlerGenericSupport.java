@@ -21,42 +21,42 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
     private final Map<Object, Method> getters, setters;
     private final Set<Object> keys;
 
-    public ProxyInvocationHandlerGenericSupport(final Collection<Class<?>> ifaces,
-            final ProxyInvocationHandler delegate) {
+    public ProxyInvocationHandlerGenericSupport(Collection<Class<?>> ifaces,
+                                                ProxyInvocationHandler delegate) {
         this.delegate = delegate;
-        final Map<Object, Method> localGetters = new HashMap<>();
-        final Map<Object, Method> localSetters = new HashMap<>();
+        Map<Object, Method> localGetters = new HashMap<>();
+        Map<Object, Method> localSetters = new HashMap<>();
         try {
             fillMaps(ifaces, localGetters, localSetters);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.getters = Collections.unmodifiableMap(localGetters);
-        this.setters = Collections.unmodifiableMap(localSetters);
-        this.keys = Collections.unmodifiableSet(determineKeys(localGetters, localSetters));
+        getters = Collections.unmodifiableMap(localGetters);
+        setters = Collections.unmodifiableMap(localSetters);
+        keys = Collections.unmodifiableSet(determineKeys(localGetters, localSetters));
     }
 
-    private static Set<Object> determineKeys(final Map<Object, Method> gm, final Map<Object, Method> sm) {
-        final Set<Object> result = new HashSet<>(gm.keySet().size() + sm.keySet().size());
+    private static Set<Object> determineKeys(Map<Object, Method> gm, Map<Object, Method> sm) {
+        Set<Object> result = new HashSet<>(gm.keySet().size() + sm.keySet().size());
         result.addAll(gm.keySet());
         result.addAll(sm.keySet());
         return result;
     }
 
-    private void fillMaps(final Collection<Class<?>> ifaces, final Map<Object, Method> gm,
-            final Map<Object, Method> sm) throws SecurityException, IllegalArgumentException,
+    private void fillMaps(Collection<Class<?>> ifaces, Map<Object, Method> gm,
+                          Map<Object, Method> sm) throws SecurityException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         // TODO Check all methods to be valid in dependency of their annotations (e.g. if annotated
         // with Type.SETTER it has to have TWO parameters and returntype void)
-        for (final Class<?> iface : ifaces) {
-            final List<Method> getters = Arrays.asList(ObjectUtil.getAllGetters(iface));
-            final List<Method> setters = Arrays.asList(ObjectUtil.getAllSetters(iface));
-            for (final Method method : iface.getMethods()) {
-                for (final Annotation annotation : method.getAnnotations()) {
-                    final GenericBeanKeyProvider beanKeyAnno = annotation.annotationType().getAnnotation(
+        for (Class<?> iface : ifaces) {
+            List<Method> getters = Arrays.asList(ObjectUtil.getAllGetters(iface));
+            List<Method> setters = Arrays.asList(ObjectUtil.getAllSetters(iface));
+            for (Method method : iface.getMethods()) {
+                for (Annotation annotation : method.getAnnotations()) {
+                    GenericBeanKeyProvider beanKeyAnno = annotation.annotationType().getAnnotation(
                             GenericBeanKeyProvider.class);
                     if (beanKeyAnno != null) {
-                        final Object value = getGetAttributeMethod(annotation).invoke(annotation);
+                        Object value = getGetAttributeMethod(annotation).invoke(annotation);
                         if (getters.contains(method)) {
                             gm.put(value, method);
                         } else if (setters.contains(method)) {
@@ -72,10 +72,10 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
         }
     }
 
-    private Method getGetAttributeMethod(final Annotation annotation) throws SecurityException,
+    private Method getGetAttributeMethod(Annotation annotation) throws SecurityException,
             NoSuchMethodException {
-        final Class<? extends Annotation> annotationType = annotation.annotationType();
-        for (final Method method : annotationType.getDeclaredMethods()) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        for (Method method : annotationType.getDeclaredMethods()) {
             if (method.isAnnotationPresent(GenericBeanKeyMethod.class)) {
                 return method;
             }
@@ -83,18 +83,18 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
         return annotationType.getMethod("value"); //$NON-NLS-1$
     }
 
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //noinspection IfStatementWithTooManyBranches
         if (isAnnotated(method, GENERIC_GET)) {
-            return this.getters.get(args[0]).invoke(proxy);
+            return getters.get(args[0]).invoke(proxy);
         } else if (isAnnotated(method, GENERIC_SET)) {
-            return this.setters.get(args[0]).invoke(proxy, args[1]);
+            return setters.get(args[0]).invoke(proxy, args[1]);
         } else if (isAnnotated(method, KEYS)) {
-            return this.keys;
+            return keys;
         } else if (isAnnotated(method, IS_SET)) {
-            return this.delegate.isSet(proxy, this.getters.get(args[0]));
+            return delegate.isSet(proxy, getters.get(args[0]));
         } else {
-            return this.delegate.invoke(proxy, method, args);
+            return delegate.invoke(proxy, method, args);
         }
     }
 

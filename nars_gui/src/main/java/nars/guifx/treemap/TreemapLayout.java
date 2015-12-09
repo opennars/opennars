@@ -37,7 +37,7 @@ class TreemapLayout extends Parent {
     public TreemapLayout(double width, double height, SortedSet<Item> children, ColorGroup colorGroup, TreemapElementFactory elementFactory) {
         this.colorGroup = colorGroup;
         this.elementFactory = elementFactory;
-        this.getChildren().add(anchorPane);
+        getChildren().add(anchorPane);
         update(width, height, children);
 
     }
@@ -46,8 +46,8 @@ class TreemapLayout extends Parent {
     public void update(double width, double height, SortedSet<Item> children) {
         this.width = width;
         this.height = height;
-        this.left = 0.0;
-        this.top = 0.0;
+        left = 0.0;
+        top = 0.0;
 
         this.children.clear();
         for (Item item : children) {
@@ -63,18 +63,18 @@ class TreemapLayout extends Parent {
 
 
     private void doLayout() {
-        heightLeft = this.height;
-        widthLeft = this.width;
+        heightLeft = height;
+        widthLeft = width;
         AnchorPane.clearConstraints(anchorPane);
         anchorPane.getChildren().clear();
         squarify(new ArrayDeque<>(children), new ArrayDeque<>(), minimumSide());
         for (TreemapDtoElement child : children) {
             Node treeElementItem = elementFactory.createElement(child, colorGroup);
             anchorPane.getChildren().add(treeElementItem);
-            if (child.getTop() > this.height) {
+            if (child.getTop() > height) {
                 throw new IllegalStateException("Top is bigger than height");
             }
-            if (child.getLeft() > this.width) {
+            if (child.getLeft() > width) {
                 throw new IllegalStateException("Left is bigger than width");
             }
             AnchorPane.setTopAnchor(treeElementItem, child.getTop());
@@ -91,8 +91,8 @@ class TreemapLayout extends Parent {
         Deque<TreemapDtoElement> remaining = new ArrayDeque<>(remainPoped);
 
 
-        final double worstConcat = worst(concatRow, w);
-        final double worstRow = worst(row, w);
+        double worstConcat = worst(concatRow, w);
+        double worstRow = worst(row, w);
 
         if (row.isEmpty() || (worstRow > worstConcat || isDoubleEqual(worstRow, worstConcat))) {
             if (remaining.isEmpty()) {
@@ -147,9 +147,9 @@ class TreemapLayout extends Parent {
 
                 topItem += h;
             }
-            this.widthLeft -= rowWidth;
+            widthLeft -= rowWidth;
             //this.heightLeft -= w;
-            this.left += rowWidth;
+            left += rowWidth;
             double minimumSide = minimumSide();
             if (!isDoubleEqual(minimumSide, heightLeft)) {
                 changeLayout();
@@ -170,8 +170,8 @@ class TreemapLayout extends Parent {
                 rowLeft += wi;
             }
             //this.widthLeft -= rowHeight;
-            this.heightLeft -= rowHeight;
-            this.top += rowHeight;
+            heightLeft -= rowHeight;
+            top += rowHeight;
 
             double minimumSide = minimumSide();
             if (!isDoubleEqual(minimumSide, widthLeft)) {

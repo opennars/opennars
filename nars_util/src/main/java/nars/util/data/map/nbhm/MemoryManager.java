@@ -348,18 +348,18 @@ public abstract class MemoryManager {
                     } while(!m.isCollectionUsageThresholdSupported());
                 } while(!m.isUsageThresholdSupported());
 
-                this._oldGenBean = m;
-                this._gc_callback = MemoryManager.MEM_MAX;
+                _oldGenBean = m;
+                _gc_callback = MemoryManager.MEM_MAX;
 
                 while(true) {
                     try {
-                        m.setCollectionUsageThreshold(this._gc_callback);
+                        m.setCollectionUsageThreshold(_gc_callback);
                     } catch (IllegalArgumentException var5) {
-                        this._gc_callback -= this._gc_callback >> 3;
+                        _gc_callback -= _gc_callback >> 3;
                         continue;
                     }
 
-                    NotificationEmitter emitter = (NotificationEmitter)this._allMemBean;
+                    NotificationEmitter emitter = (NotificationEmitter) _allMemBean;
                     emitter.addNotificationListener(this, (NotificationFilter)null, m);
                     ++c;
                     break;

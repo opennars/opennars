@@ -59,7 +59,7 @@ public abstract class TermFunction<O> extends SyncOperator {
     public abstract O function(Operation x);
 
 
-    protected List<Task> result(final Task opTask, Term y, Term[] x0, Term lastTerm) {
+    protected List<Task> result(Task opTask, Term y, Term[] x0, Term lastTerm) {
 
         Compound operation = opTask.getTerm();
 
@@ -182,14 +182,14 @@ public abstract class TermFunction<O> extends SyncOperator {
 //    }
 
     @Override
-    public List<Task> apply(final Task opTask) {
+    public List<Task> apply(Task opTask) {
 
         Compound operation = opTask.getTerm();
 
         Term opTerm = Operation.opTerm(operation);
         Term[] x = Operation.args(operation).terms();
 
-        final Memory memory = nar.memory;
+        Memory memory = nar.memory;
 
         int numInputs = x.length;
         if (x[numInputs - 1].equals(memory.self()))

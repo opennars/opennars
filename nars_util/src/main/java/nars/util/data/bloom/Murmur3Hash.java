@@ -61,7 +61,7 @@ public class Murmur3Hash {
      */
     public static int hash32(byte[] data, int length, int seed) {
         int hash = seed;
-        final int nblocks = length >> 2;
+        int nblocks = length >> 2;
 
         // body
         for (int i = 0; i < nblocks; i++) {
@@ -126,13 +126,13 @@ public class Murmur3Hash {
      * @param seed   - seed. (default is 0)
      * @return - hashcode
      */
-    public static long hash64(final byte[] data, final int length, final int seed) {
+    public static long hash64(byte[] data, int length, int seed) {
         long hash = seed;
-        final int nblocks = length >> 3;
+        int nblocks = length >> 3;
 
         // body
         for (int i = 0; i < nblocks; i++) {
-            final int i8 = i << 3;
+            int i8 = i << 3;
             long k = ((long) data[i8] & 0xff)
                     | (((long) data[i8 + 1] & 0xff) << 8)
                     | (((long) data[i8 + 2] & 0xff) << 16)
@@ -202,11 +202,11 @@ public class Murmur3Hash {
     public static long[] hash128(byte[] data, int length, int seed) {
         long h1 = seed;
         long h2 = seed;
-        final int nblocks = length >> 4;
+        int nblocks = length >> 4;
 
         // body
         for (int i = 0; i < nblocks; i++) {
-            final int i16 = i << 4;
+            int i16 = i << 4;
             long k1 = ((long) data[i16] & 0xff)
                     | (((long) data[i16 + 1] & 0xff) << 8)
                     | (((long) data[i16 + 2] & 0xff) << 16)

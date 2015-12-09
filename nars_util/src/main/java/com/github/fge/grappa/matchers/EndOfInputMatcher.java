@@ -34,9 +34,9 @@ public final class EndOfInputMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final int index = context.getCurrentIndex();
+        int index = context.getCurrentIndex();
         return context.getInputBuffer().codePointAt(index) == -1;
     }
 }

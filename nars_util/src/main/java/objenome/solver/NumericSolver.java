@@ -36,7 +36,7 @@ public abstract class NumericSolver<C> implements Solver  {
 
     @Override
     public void solve(Multitainer g, Map<Problem, Solution> p, Object[] targets) {
-        final List<SetNumericValue> variables = new ArrayList();
+        List<SetNumericValue> variables = new ArrayList();
         
         //store backup in case it needs restored
         Map originalProblems = new HashMap(p);

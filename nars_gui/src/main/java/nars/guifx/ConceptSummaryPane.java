@@ -33,7 +33,7 @@ public class ConceptSummaryPane extends Text {
         super(c.getTerm().toStringCompact());
 
 
-        this.concept = c;
+        concept = c;
 
         //label.getStylesheets().clear();
         setTextAlignment(TextAlignment.LEFT);
@@ -42,7 +42,7 @@ public class ConceptSummaryPane extends Text {
 
             if (getParent()!=null) {
                 if (icon==null) {
-                    final double iconWidth = 48.0f;
+                    double iconWidth = 48.0f;
                     //setGraphic(icon = new ConceptSummaryPaneIcon());
                     //icon.size(iconWidth, iconWidth);
                 }
@@ -87,7 +87,7 @@ public class ConceptSummaryPane extends Text {
             runLater(() -> {
                 pendingUpdate.set(false);
 
-                this.lastPri = pri;
+                lastPri = pri;
                 setStyle(JFX.fontSize(((1.0f + pri) * 100.0f)));
 
                 setFill(color);
@@ -125,9 +125,9 @@ public class ConceptSummaryPane extends Text {
             double m = 2;
 
             double W = getWidth();
-            final double Wm = W -m*2;
+            double Wm = W -m*2;
             double H = getHeight();
-            final double Hm = H -m*2;
+            double Hm = H -m*2;
             if (W*H == 0) return;
 
             GraphicsContext g = getGraphicsContext2D();
@@ -154,7 +154,7 @@ public class ConceptSummaryPane extends Text {
 
         ColorMatrix ca = type ? red: blue;
 
-        final double w = 12;
+        double w = 12;
 
 
         float freq = t.getFrequency();

@@ -23,7 +23,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
 
 
     public BagForgetting() {
-        this.forgetCycles = Float.NaN;
+        forgetCycles = Float.NaN;
     }
 
 
@@ -38,7 +38,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
 
     @Override
     public void updateItem(V v, Budget result) {
-        this.current = v;
+        current = v;
 
         //final float priorityStart = v.getPriority();
 

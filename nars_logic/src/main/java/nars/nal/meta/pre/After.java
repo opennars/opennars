@@ -25,7 +25,7 @@ public class After extends PreCondition {
 
     @Override
     public final boolean test(RuleMatch m) {
-        final Premise premise = m.premise;
+        Premise premise = m.premise;
 
         if (!premise.isEvent())
             return false;

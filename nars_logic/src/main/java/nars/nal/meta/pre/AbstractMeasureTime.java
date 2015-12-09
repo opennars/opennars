@@ -16,7 +16,7 @@ public abstract class AbstractMeasureTime extends PreCondition1Output {
 
     @Override
     public boolean test(RuleMatch m, Term target) {
-        final Premise premise = m.premise;
+        Premise premise = m.premise;
 
         if (!premise.isEvent())
             return false;

@@ -74,7 +74,7 @@ public class LevelEditor extends JFrame implements ActionListener
             panel.add(bitmapCheckboxes[i]);
             if (Level.BIT_DESCRIPTIONS[i].startsWith("- ")) bitmapCheckboxes[i].setEnabled(false);
             
-            final int id = i;
+            int id = i;
             bitmapCheckboxes[i].addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent arg0)

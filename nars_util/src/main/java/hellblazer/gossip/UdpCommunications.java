@@ -88,7 +88,7 @@ public class UdpCommunications implements GossipCommunications {
 
             buffer.order(ByteOrder.BIG_ENDIAN);
 
-            final InetSocketAddress gossipper = this.gossipper;
+            InetSocketAddress gossipper = this.gossipper;
 
             int n = deltaState.size();
             for (int i = 0; i < n; i++) {
@@ -142,9 +142,9 @@ public class UdpCommunications implements GossipCommunications {
 
             buffer.order(ByteOrder.BIG_ENDIAN);
 
-            final InetSocketAddress gossipper = this.gossipper;
-            final int max = maxDigests;
-            final int size = digests.size();
+            InetSocketAddress gossipper = this.gossipper;
+            int max = maxDigests;
+            int size = digests.size();
 
             for (int i = 0; i < size;) {
 
@@ -213,7 +213,7 @@ public class UdpCommunications implements GossipCommunications {
     public static String prettyPrint(SocketAddress sender,
                                      SocketAddress target, byte[] bytes,
                                      int length) {
-        final StringBuilder sb = new StringBuilder(length * 2);
+        StringBuilder sb = new StringBuilder(length * 2);
         sb.append('\n');
         sb.append(new SimpleDateFormat().format(new Date()));
         sb.append(" sender: ");
@@ -386,7 +386,7 @@ public class UdpCommunications implements GossipCommunications {
      */
     private TreeSet<Digest> extractDigests(SocketAddress sender, ByteBuffer msg) {
         int count = msg.get();
-        final TreeSet<Digest> digests = new TreeSet<>();
+        TreeSet<Digest> digests = new TreeSet<>();
         for (int i = 0; i < count; i++) {
             Digest digest;
             try {
@@ -406,7 +406,7 @@ public class UdpCommunications implements GossipCommunications {
         return digests;
     }
 
-    private final void handleGossip(final InetSocketAddress gossiper, ByteBuffer msg) {
+    private final void handleGossip(InetSocketAddress gossiper, ByteBuffer msg) {
         TreeSet<Digest> digests = extractDigests(gossiper, msg);
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Gossip from %s is %s", gossiper,
@@ -415,7 +415,7 @@ public class UdpCommunications implements GossipCommunications {
         gossip.gossip(digests, new GossipHandler(gossiper));
     }
 
-    private final void handleReply(final InetSocketAddress gossiper, ByteBuffer msg) {
+    private final void handleReply(InetSocketAddress gossiper, ByteBuffer msg) {
         TreeSet<Digest> digests = extractDigests(gossiper, msg);
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Reply from %s is %s", gossiper,
@@ -428,7 +428,7 @@ public class UdpCommunications implements GossipCommunications {
      * @param msg
      */
     private void handleRing(InetSocketAddress gossiper, ByteBuffer msg) {
-        final Update state;
+        Update state;
         try {
             state = new Update(msg);
         } catch (Throwable e) {
@@ -442,7 +442,7 @@ public class UdpCommunications implements GossipCommunications {
     }
 
     private void handleUpdate(InetSocketAddress gossiper, ByteBuffer msg) {
-        final Update state;
+        Update state;
         try {
             state = new Update(msg);
         } catch (Throwable e) {
@@ -546,9 +546,9 @@ public class UdpCommunications implements GossipCommunications {
      * @throws IOException
      */
     private void service() throws IOException {
-        final ByteBuffer buffer = bufferPool.allocate(GossipMessages.MAX_SEG_SIZE);
+        ByteBuffer buffer = bufferPool.allocate(GossipMessages.MAX_SEG_SIZE);
         buffer.order(ByteOrder.BIG_ENDIAN);
-        final DatagramPacket packet = new DatagramPacket(buffer.array(),
+        DatagramPacket packet = new DatagramPacket(buffer.array(),
                                                          buffer.array().length);
 
         //log.fine(() -> String.format("listening for packet on %s", localAddress));

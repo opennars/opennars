@@ -83,7 +83,7 @@ public class History {
      */
     public String requestNav(Integer index) {
         if (index >= 0 && index <= items.size()) {
-            this.navPointer = index;
+            navPointer = index;
         }
 
         return items.get(navPointer);
@@ -139,7 +139,7 @@ public class History {
      * @param displayNode the node under which the history menu is to be displayed.
      * @return a right click mouse button event handler which will show a history context menu.
      */
-    public EventHandler<MouseEvent> createShowHistoryMouseEvent(final Node displayNode) {
+    public EventHandler<MouseEvent> createShowHistoryMouseEvent(Node displayNode) {
         return mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 showMenu(displayNode);
@@ -153,7 +153,7 @@ public class History {
      * @param displayNode the node under which the history menu is to be displayed.
      * @return an action event handler which will show a history context menu.
      */
-    public EventHandler<ActionEvent> createShowHistoryActionEvent(final Node displayNode) {
+    public EventHandler<ActionEvent> createShowHistoryActionEvent(Node displayNode) {
         return actionEvent -> showMenu(displayNode);
     }
 
@@ -171,7 +171,7 @@ public class History {
      */
     private ContextMenu createMenu() {
         // a menu of history items.
-        final ContextMenu historyMenu = new ContextMenu();
+        ContextMenu historyMenu = new ContextMenu();
 
         // determine an appropriate subset range of the history list to display.
         int minIdx = Math.max(0, pointer - 8); // min range (inclusive) of history items to show.
@@ -179,7 +179,7 @@ public class History {
 
         // add menu items to the history list.
         for (int i = maxIdx - 1; i >= minIdx; i--) {
-            final MenuItem nextMenu = createMenuItem(items.get(i), i);
+            MenuItem nextMenu = createMenuItem(items.get(i), i);
             historyMenu.getItems().add(nextMenu);
             if (i == pointer) {
                 nextMenu.getStyleClass().add("current-menu");
@@ -196,8 +196,8 @@ public class History {
      * @param navPointer the index in the history list at which the location is located.
      * @return a menu item.
      */
-    private MenuItem createMenuItem(final String loc, final int navPointer) {
-        final MenuItem nextMenuItem = new MenuItem(loc);
+    private MenuItem createMenuItem(String loc, int navPointer) {
+        MenuItem nextMenuItem = new MenuItem(loc);
 
         nextMenuItem.setOnAction(
                 actionEvent -> browser.go(requestNav(navPointer))

@@ -43,7 +43,7 @@ public class Conditional extends Operation {
     
     public String pretty() {
 
-        Integer thisClassOrder = this.classOrder();
+        Integer thisClassOrder = classOrder();
         
         boolean thenParens = false;
         if (thisClassOrder > then.printLevelRight()) thenParens = true;

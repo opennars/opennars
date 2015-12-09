@@ -41,7 +41,7 @@ public class SetIntegerValue extends SetConstantValue<Integer> implements SetNum
     
     @Override
     public void setValue(double d) {
-        this.set(d);
+        set(d);
     }
 
     

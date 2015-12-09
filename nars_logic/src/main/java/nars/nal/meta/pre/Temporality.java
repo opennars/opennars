@@ -13,7 +13,7 @@ public abstract class Temporality extends PreCondition {
         }
 
         @Override
-        public boolean test(final RuleMatch m) {
+        public boolean test(RuleMatch m) {
             return m.premise.isEvent();
         }
 
@@ -27,7 +27,7 @@ public abstract class Temporality extends PreCondition {
         }
 
         @Override
-        public boolean test(final RuleMatch m) {
+        public boolean test(RuleMatch m) {
             return m.premise.isTemporal();
         }
 

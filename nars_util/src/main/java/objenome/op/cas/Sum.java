@@ -54,7 +54,7 @@ public class Sum extends Operation {
         if (exprs.size() == 2 && exprs.get(0) instanceof Product && ((Operation) exprs.get(0)).getExprs().size() == 2
                 && ((Operation) exprs.get(0)).getExpr(0).equalsExpr(Num.make(-1))
                 && exprs.get(1).equalsExpr(Num.make(1))) return new Not(((Operation) exprs.get(0)).getExpr(1));
-        this.printSimplified = true;
+        printSimplified = true;
         return this;
     }
     
@@ -64,7 +64,7 @@ public class Sum extends Operation {
         if (exprs.size() == 1) return exprs.get(0).pretty();
         
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);

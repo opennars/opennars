@@ -81,17 +81,17 @@ public final class Trie
      * @param needle the string to search
      * @return the length of the match (ie, the string) or -1 if not found
      */
-    public int search(final String needle, final boolean ignoreCase)
+    public int search(String needle, boolean ignoreCase)
     {
         return node.search(needle, ignoreCase);
     }
 
-    public int search(final char[] needle, final boolean ignoreCase)
+    public int search(char[] needle, boolean ignoreCase)
     {
         return node.search(needle, ignoreCase);
     }
 
-    Trie(final TrieBuilder builder)
+    Trie(TrieBuilder builder)
     {
         nrWords = builder.nrWords;
         maxLength = builder.maxLength;

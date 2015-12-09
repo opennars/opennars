@@ -13,7 +13,7 @@ public class TaskLinkBuilder extends BagActivator<Task,TaskLink> {
 
     public TaskLinkBuilder(Memory m) {
         super();
-        this.memory = m;
+        memory = m;
     }
 
     public void setTask(Task t) {
@@ -21,12 +21,12 @@ public class TaskLinkBuilder extends BagActivator<Task,TaskLink> {
         setKey(t);
         setBudget(t.getBudget());
 
-        final Memory m = this.memory;
+        Memory m = memory;
 
-        this.forgetCycles = m.duration() *
+        forgetCycles = m.duration() *
                 m.taskLinkForgetDurations.floatValue();
 
-        this.now = m.time();
+        now = m.time();
     }
 
     @Override

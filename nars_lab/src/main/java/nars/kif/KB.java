@@ -207,8 +207,8 @@ public class KB {
      * @return An ArrayList of relation names (Strings).
      */
     private ArrayList getCachedRelationNames() {
-        ArrayList relationNames = new ArrayList(this.cachedTransitiveRelationNames);
-        relationNames.addAll(this.cachedRelationNames);
+        ArrayList relationNames = new ArrayList(cachedTransitiveRelationNames);
+        relationNames.addAll(cachedRelationNames);
         return relationNames;
     }
 
@@ -219,7 +219,7 @@ public class KB {
      * @return An ArrayList of RelationCache objects.
      */
     protected ArrayList getRelationCaches() {
-        return this.relationCaches;
+        return relationCaches;
     }
 
     /**
@@ -1896,7 +1896,7 @@ public class KB {
             // System.out.println("INFO in KB.reloadFormatMaps(): Reading the format maps for " + lang);
             lingua = lang == null ? language : lang;
             long t1 = System.currentTimeMillis();
-            ArrayList col = this.ask("arg", 0, "format");
+            ArrayList col = ask("arg", 0, "format");
             if ((col == null) || col.isEmpty()) {
                 // System.out.println("Error in KB.reloadFormatMaps(): No relation formatting file loaded for language " + lang);
                 return;
@@ -1930,7 +1930,7 @@ public class KB {
                     + " seconds to build KB.formatMap");
 
             t1 = System.currentTimeMillis();
-            col = this.ask("arg", 0, "termFormat");
+            col = ask("arg", 0, "termFormat");
             if ((col == null) || col.isEmpty()) {
                 // System.out.println("Error in KB.reloadFormatMaps(): No term formatting file loaded for language: " + lang);
                 return;
@@ -2147,7 +2147,7 @@ public class KB {
             }
             System.out.println("x");
 
-            this.terms.addAll(file.terms);
+            terms.addAll(file.terms);
 
             if (!constituents.contains(canonicalPath)) {
                 constituents.add(canonicalPath);
@@ -2966,7 +2966,7 @@ public class KB {
                 executable = new File(inferenceEngine);
                 if (DEBUG || executable.exists()) {
                     File dir = executable.getParentFile();
-                    File file = new File(dir, (this.name + "-v.kif"));
+                    File file = new File(dir, (name + "-v.kif"));
                     filename = file.getCanonicalPath();
 
                     // System.out.println("filename == " + filename);

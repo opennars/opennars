@@ -44,7 +44,7 @@ public abstract class WikiBrowser extends BorderPane {
     public WikiBrowser(String startWikiPage) {
         super();
 
-        this.wikiOntology = new WikiOntology();
+        wikiOntology = new WikiOntology();
 
         webview = new WebView();
         webEngine = webview.getEngine();
@@ -295,7 +295,7 @@ public abstract class WikiBrowser extends BorderPane {
 
     public void tagAdd(String url) {
 
-        final String wikiPrefix = "/wiki/";
+        String wikiPrefix = "/wiki/";
         String tag;
         if (url.startsWith(wikiPrefix)) {
             //ordinary wikilink

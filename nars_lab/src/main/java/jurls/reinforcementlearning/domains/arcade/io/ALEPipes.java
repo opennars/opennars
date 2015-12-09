@@ -103,7 +103,7 @@ public class ALEPipes {
     }
 
     public void setUpdateRL(boolean updateRL) {
-        this.updateRLData = updateRL;
+        updateRLData = updateRL;
     }
     
     /** A blocking method that sends initial information to ALE. See the

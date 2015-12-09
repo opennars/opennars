@@ -30,16 +30,16 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         setData(d);
     }
 
-    protected void setData(final byte[] d) {
+    protected void setData(byte[] d) {
         setBytes(d);
-        this.hash = makeHash();
+        hash = makeHash();
     }
 
     public void rehash() {
-        this.hash = makeHash();
+        hash = makeHash();
     }
 
-    public LiteralUTF8Identifier(final byte[] prefix, final byte[] suffix) {
+    public LiteralUTF8Identifier(byte[] prefix, byte[] suffix) {
         int plen = prefix.length;
         int slen = suffix.length;
         int len = plen + slen;
@@ -48,11 +48,11 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         System.arraycopy(suffix, 0, d, plen, slen);
         setData(d);
     }
-    public LiteralUTF8Identifier(final byte[] prefix, byte separator, final byte[] suffix) {
+    public LiteralUTF8Identifier(byte[] prefix, byte separator, byte[] suffix) {
         int plen = prefix.length;
         int slen = suffix.length;
         int len = plen + slen + 1;
-        final byte[] d = new byte[len];
+        byte[] d = new byte[len];
         System.arraycopy(prefix, 0, d, 0, plen);
         d[plen] = separator;
         System.arraycopy(suffix, 0, d, plen+1, slen);
@@ -91,7 +91,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
     }
 
     @Override
-    public char[] chars(final boolean pretty) {
+    public char[] chars(boolean pretty) {
         return charsByName();
     }
 
@@ -118,17 +118,17 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
 
     @Override
-    public boolean equals(final Object x) {
+    public boolean equals(Object x) {
         if (this == x) return true;
         if (!(x instanceof LiteralUTF8Identifier)) return false;
         return Byted.equals(this, (Byted)x);
     }
 
     @Override
-    public int compareTo(final Object o) {
+    public int compareTo(Object o) {
         if (this == o ) return 0;
-        final Class oc = o.getClass();
-        final Class c = getClass();
+        Class oc = o.getClass();
+        Class c = getClass();
         if (o.getClass() == getClass()) {
             return Byted.compare(this, (Byted)o);
         }
@@ -185,6 +185,6 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
      * for all other purposes, use setData() which will do a complete update
      */
     @Override public final void setBytes(byte[] b) {
-        this.data = b;
+        data = b;
     }
 }

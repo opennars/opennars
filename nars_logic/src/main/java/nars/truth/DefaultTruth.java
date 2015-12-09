@@ -39,7 +39,7 @@ public class DefaultTruth extends AbstractScalarTruth {
 
     //public final float epsilon;
 
-    public DefaultTruth(final float f, final float c) {
+    public DefaultTruth(float f, float c) {
         super();
         set(f,c);
 
@@ -49,7 +49,7 @@ public class DefaultTruth extends AbstractScalarTruth {
 //        super(v);
 //    }
 
-    public DefaultTruth(final char punctuation, Memory m) {
+    public DefaultTruth(char punctuation, Memory m) {
         super();
         set(1.0f, m.getDefaultConfidence(punctuation));
     }

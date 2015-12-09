@@ -250,7 +250,7 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
    
     public void run()   
     {   
-        final long cycleDelay = 30L;
+        long cycleDelay = 30L;
         try   
         {   
             double d = 0.0D;

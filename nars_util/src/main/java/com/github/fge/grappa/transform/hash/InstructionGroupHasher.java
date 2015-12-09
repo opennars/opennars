@@ -63,17 +63,17 @@ public final class InstructionGroupHasher
      * @param group the instruction group
      * @param className this group's parent class name
      */
-    public static void hash(@Nonnull final InstructionGroup group,
-        @Nonnull final String className)
+    public static void hash(@Nonnull InstructionGroup group,
+        @Nonnull String className)
     {
-        final InstructionGroupHasher groupHasher
+        InstructionGroupHasher groupHasher
             = new InstructionGroupHasher(group, className);
-        final String name = groupHasher.hashAndGetName();
+        String name = groupHasher.hashAndGetName();
         group.setName(name);
     }
 
-    private InstructionGroupHasher(@Nonnull final InstructionGroup group,
-        @Nonnull final String className)
+    private InstructionGroupHasher(@Nonnull InstructionGroup group,
+        @Nonnull String className)
     {
         super(Opcodes.ASM5);
         this.group = Objects.requireNonNull(group);
@@ -85,29 +85,29 @@ public final class InstructionGroupHasher
     private String hashAndGetName()
     {
         group.getInstructions().accept(this);
-        for (final FieldNode node: group.getFields())
+        for (FieldNode node: group.getFields())
             hasher.putObject(node, FieldNodeFunnel.INSTANCE);
-        final byte[] hash = new byte[10];
+        byte[] hash = new byte[10];
         hasher.hash().writeBytesTo(hash, 0, 10);
-        final String prefix = group.getRoot().isActionRoot()
+        String prefix = group.getRoot().isActionRoot()
             ? "Action$" : "VarInit$";
         return prefix + BASE_ENCODING.encode(hash);
     }
 
     @Override
-    public void visitInsn(final int opcode)
+    public void visitInsn(int opcode)
     {
         hasher.putInt(opcode);
     }
 
     @Override
-    public void visitIntInsn(final int opcode, final int operand)
+    public void visitIntInsn(int opcode, int operand)
     {
         hasher.putInt(opcode).putInt(operand);
     }
 
     @Override
-    public void visitVarInsn(final int opcode, final int var)
+    public void visitVarInsn(int opcode, int var)
     {
         hasher.putInt(opcode).putInt(var);
         /*
@@ -121,63 +121,63 @@ public final class InstructionGroupHasher
     }
 
     @Override
-    public void visitTypeInsn(final int opcode, final String type)
+    public void visitTypeInsn(int opcode, String type)
     {
         hasher.putInt(opcode).putUnencodedChars(type);
     }
 
     @Override
-    public void visitFieldInsn(final int opcode, final String owner,
-        final String name, final String desc)
+    public void visitFieldInsn(int opcode, String owner,
+                               String name, String desc)
     {
         hasher.putInt(opcode).putUnencodedChars(owner)
             .putUnencodedChars(name).putUnencodedChars(desc);
     }
 
     @Override
-    public void visitMethodInsn(final int opcode, final String owner,
-        final String name, final String desc, final boolean itf)
+    public void visitMethodInsn(int opcode, String owner,
+                                String name, String desc, boolean itf)
     {
         hasher.putInt(opcode).putUnencodedChars(owner)
             .putUnencodedChars(name).putUnencodedChars(desc);
     }
 
     @Override
-    public void visitJumpInsn(final int opcode, final Label label)
+    public void visitJumpInsn(int opcode, Label label)
     {
         hasher.putInt(opcode).putObject(label, labelFunnel);
     }
 
     @Override
-    public void visitLabel(final Label label)
+    public void visitLabel(Label label)
     {
         hasher.putObject(label, labelFunnel);
     }
 
     @Override
-    public void visitLdcInsn(final Object cst)
+    public void visitLdcInsn(Object cst)
     {
         hasher.putObject(cst, LdcInsnFunnel.INSTANCE);
     }
 
     @Override
-    public void visitIincInsn(final int var, final int increment)
+    public void visitIincInsn(int var, int increment)
     {
         hasher.putInt(var).putInt(increment);
     }
 
     @Override
-    public void visitTableSwitchInsn(final int min, final int max,
-        final Label dflt, final Label... labels)
+    public void visitTableSwitchInsn(int min, int max,
+                                     Label dflt, Label... labels)
     {
         hasher.putInt(min).putInt(max).putObject(dflt, labelFunnel);
-        for (final Label label: labels)
+        for (Label label: labels)
             hasher.putObject(label, labelFunnel);
     }
 
     @Override
-    public void visitLookupSwitchInsn(final Label dflt, final int[] keys,
-        final Label[] labels)
+    public void visitLookupSwitchInsn(Label dflt, int[] keys,
+                                      Label[] labels)
     {
         hasher.putObject(dflt, labelFunnel);
         for (int i = 0; i < keys.length; i++)
@@ -185,14 +185,14 @@ public final class InstructionGroupHasher
     }
 
     @Override
-    public void visitMultiANewArrayInsn(final String desc, final int dims)
+    public void visitMultiANewArrayInsn(String desc, int dims)
     {
         hasher.putUnencodedChars(desc).putInt(dims);
     }
 
     @Override
-    public void visitTryCatchBlock(final Label start, final Label end,
-        final Label handler, final String type)
+    public void visitTryCatchBlock(Label start, Label end,
+                                   Label handler, String type)
     {
         hasher.putObject(start, labelFunnel).putObject(end, labelFunnel)
             .putObject(handler, labelFunnel).putUnencodedChars(type);

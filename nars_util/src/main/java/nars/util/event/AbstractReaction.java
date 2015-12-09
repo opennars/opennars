@@ -39,7 +39,7 @@ public abstract class AbstractReaction<K,V> implements Reaction<K,V> {
     }
 
     public K[] getEvents() {
-        return this.events;
+        return events;
     }
 
 
@@ -47,12 +47,12 @@ public abstract class AbstractReaction<K,V> implements Reaction<K,V> {
 
         EventEmitter s = getSource();
 
-        if (b && (this.active==null)) {
-            this.active = s.on(this, getEvents());
+        if (b && (active ==null)) {
+            active = s.on(this, getEvents());
         }
-        else if (!b && (this.active!=null)) {
-            this.active.off();
-            this.active = null;
+        else if (!b && (active !=null)) {
+            active.off();
+            active = null;
         }
 
     }

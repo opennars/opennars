@@ -174,7 +174,7 @@ public class PointCloud
 
     for(double i = 0.0; i < pointCount; i += step)
     {
-      double d1 = this.cloudDistance(reference, i);
+      double d1 = cloudDistance(reference, i);
       double d2 = reference.cloudDistance(this, i);
       min = Math.min(min, Math.min(d1, d2)); // min3
     }

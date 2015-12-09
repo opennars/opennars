@@ -52,7 +52,7 @@ public class RLAgent extends LearnerAndActor {
             RLParameters rLParameters,
             int memorySize
     ) {
-        this.parameterizedFunction = parameterizedFunctionGenerator.generate(s0.length + 1);
+        parameterizedFunction = parameterizedFunctionGenerator.generate(s0.length + 1);
         this.updateProcedure = updateProcedure;
         this.actionSelector = actionSelector;
         this.numActions = numActions;
@@ -77,7 +77,7 @@ public class RLAgent extends LearnerAndActor {
 
     @Override
     public int learnAndAction(double[] state, double reward, double[] previousState, int previousAction) {
-        final double U = 0.01; //prevents divison by zero
+        double U = 0.01; //prevents divison by zero
 
         for (int i = 0; i < state.length; ++i) {
             if (state[i] > stateMax[i]) {

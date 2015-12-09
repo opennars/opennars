@@ -31,7 +31,7 @@ public class NALObjectsTest  {
 
         public double the() {
             double v = (64 * Math.random());
-            this.val = (int)v;
+            val = (int)v;
             return v;
         }
 
@@ -91,8 +91,8 @@ public class NALObjectsTest  {
 
         NALObjects no = new NALObjects(n);
 
-        final TestClass wrapper;
-        final TestClass wrapped = new TestClass();
+        TestClass wrapper;
+        TestClass wrapped = new TestClass();
 
         wrapper = no.wrap(instance, wrapped);
 

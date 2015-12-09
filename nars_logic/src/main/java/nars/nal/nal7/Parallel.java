@@ -42,7 +42,7 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         return Tense.ORDER_CONCURRENT;
     }
 
-    @Deprecated public static final Term make(final Term[] argList) {
+    @Deprecated public static final Term make(Term[] argList) {
         throw new RuntimeException("Use Parallel.makeParallel");
     }
 
@@ -82,17 +82,17 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
     @Override
     public void setDuration(int duration) {
         super.setDuration(duration);
-        if (duration!=this.eventDuration) {
-            this.eventDuration = duration;
-            this.totalDuration = -1; //force recalc
+        if (duration!= eventDuration) {
+            eventDuration = duration;
+            totalDuration = -1; //force recalc
         }
     }
 
     @Override
     public final int duration() {
-        final int totalDuration = this.totalDuration;
+        int totalDuration = this.totalDuration;
         if (totalDuration == -1) {
-            return this.totalDuration = calculateTotalDuration(this.eventDuration);
+            return this.totalDuration = calculateTotalDuration(eventDuration);
         }
         return totalDuration;
     }
@@ -124,11 +124,11 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         return totalDuration;
     }
 
-    public static Term makeParallel(final Term[] a) {
+    public static Term makeParallel(Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
-        final int intervalsPresent = Interval.intervalCount(a);
-        final int subterms = a.length - intervalsPresent;
+        int intervalsPresent = Interval.intervalCount(a);
+        int subterms = a.length - intervalsPresent;
 
         if (subterms == 0)
             return null;
@@ -144,7 +144,7 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         Term[] b = new Term[subterms];
 
         int p = 0;
-        for (final Term x : a) {
+        for (Term x : a) {
             if (!(x instanceof CyclesInterval))
                 b[p++] = x;
         }

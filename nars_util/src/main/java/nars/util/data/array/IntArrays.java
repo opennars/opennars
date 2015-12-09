@@ -94,9 +94,9 @@ public class IntArrays {
 	 * @param length the new minimum length for this array.
 	 * @return <code>array</code>, if it contains <code>length</code> entries or more; otherwise, an array with <code>length</code> entries whose first <code>array.length</code> entries are the same
 	 * as those of <code>array</code>. */
-	public static int[] ensureCapacity( final int[] array, final int length ) {
+	public static int[] ensureCapacity( int[] array, int length ) {
 		if ( length > array.length ) {
-			final int[] t =
+			int[] t =
 					new int[length];
 			System.arraycopy( array, 0, t, 0, array.length );
 			return t;
@@ -111,9 +111,9 @@ public class IntArrays {
 	 * @param preserve the number of elements of the array that must be preserved in case a new allocation is necessary.
 	 * @return <code>array</code>, if it can contain <code>length</code> entries or more; otherwise, an array with <code>length</code> entries whose first <code>preserve</code> entries are the same as
 	 * those of <code>array</code>. */
-	public static int[] ensureCapacity( final int[] array, final int length, final int preserve ) {
+	public static int[] ensureCapacity( int[] array, int length, int preserve ) {
 		if ( length > array.length ) {
-			final int[] t =
+			int[] t =
 					new int[length];
 			System.arraycopy( array, 0, t, 0, preserve );
 			return t;
@@ -129,11 +129,11 @@ public class IntArrays {
 	 * @param length the new minimum length for this array.
 	 * @return <code>array</code>, if it can contain <code>length</code> entries; otherwise, an array with max(<code>length</code>,<code>array.length</code>/&phi;) entries whose first
 	 * <code>array.length</code> entries are the same as those of <code>array</code>. */
-	public static int[] grow( final int[] array, final int length ) {
+	public static int[] grow( int[] array, int length ) {
 		if ( length > array.length ) {
 			//final int newLength = (int)Math.max( Math.min( 2L * array.length, Arrays.MAX_ARRAY_SIZE ), length );
-			final int newLength = (int)Math.max( 2L * array.length, length );
-			final int[] t =
+			int newLength = (int)Math.max( 2L * array.length, length );
+			int[] t =
 					new int[newLength];
 			System.arraycopy( array, 0, t, 0, array.length );
 			return t;
@@ -151,10 +151,10 @@ public class IntArrays {
 	 * @param preserve the number of elements of the array that must be preserved in case a new allocation is necessary.
 	 * @return <code>array</code>, if it can contain <code>length</code> entries; otherwise, an array with max(<code>length</code>,<code>array.length</code>/&phi;) entries whose first
 	 * <code>preserve</code> entries are the same as those of <code>array</code>. */
-	public static int[] grow( final int[] array, final int length, final int preserve ) {
+	public static int[] grow( int[] array, int length, int preserve ) {
 		if ( length > array.length ) {
-			final int newLength = (int)Math.max(  2L * array.length, length );
-			final int[] t =
+			int newLength = (int)Math.max(  2L * array.length, length );
+			int[] t =
 					new int[newLength];
 			System.arraycopy( array, 0, t, 0, preserve );
 			return t;
@@ -168,9 +168,9 @@ public class IntArrays {
 	 * @param length the new maximum length for the array.
 	 * @return <code>array</code>, if it contains <code>length</code> entries or less; otherwise, an array with <code>length</code> entries whose entries are the same as the first <code>length</code>
 	 * entries of <code>array</code>. */
-	public static int[] trim( final int[] array, final int length ) {
+	public static int[] trim( int[] array, int length ) {
 		if ( length >= array.length ) return array;
-		final int[] t =
+		int[] t =
 				length == 0 ? EMPTY_ARRAY : new int[length];
 		System.arraycopy( array, 0, t, 0, length );
 		return t;
@@ -183,7 +183,7 @@ public class IntArrays {
 	 * @return <code>array</code>, if it contains exactly <code>length</code> entries; otherwise, if it contains <em>more</em> than <code>length</code> entries, an array with <code>length</code>
 	 * entries whose entries are the same as the first <code>length</code> entries of <code>array</code>; otherwise, an array with <code>length</code> entries whose first <code>array.length</code>
 	 * entries are the same as those of <code>array</code>. */
-	public static int[] setLength( final int[] array, final int length ) {
+	public static int[] setLength( int[] array, int length ) {
 		if ( length == array.length ) return array;
 		if ( length < array.length ) return trim( array, length );
 		return ensureCapacity( array, length );
@@ -195,9 +195,9 @@ public class IntArrays {
 	 * @param offset the first element to copy.
 	 * @param length the number of elements to copy.
 	 * @return a new array containing <code>length</code> elements of <code>array</code> starting at <code>offset</code>. */
-	public static int[] copy( final int[] array, final int offset, final int length ) {
+	public static int[] copy( int[] array, int offset, int length ) {
 		ensureOffsetLength( array, offset, length );
-		final int[] a =
+		int[] a =
 				length == 0 ? EMPTY_ARRAY : new int[ length ];
 		System.arraycopy( array, offset, a, 0, length );
 		return a;
@@ -207,7 +207,7 @@ public class IntArrays {
 	 *
 	 * @param array an array.
 	 * @return a copy of <code>array</code>. */
-	public static int[] copy( final int[] array ) {
+	public static int[] copy( int[] array ) {
 		return array.clone();
 	}
 
@@ -217,7 +217,7 @@ public class IntArrays {
 	 * @param value the new value for all elements of the array.
 	 * @deprecated Please use the corresponding {@link java.util.Arrays} method. */
 	@Deprecated
-	public static void fill( final int[] array, final int value ) {
+	public static void fill( int[] array, int value ) {
 		int i = array.length;
 		while ( i-- != 0 )
 			array[ i ] = value;
@@ -231,7 +231,7 @@ public class IntArrays {
 	 * @param value the new value for all elements of the specified portion of the array.
 	 * @deprecated Please use the corresponding {@link java.util.Arrays} method. */
 	@Deprecated
-	public static void fill( final int[] array, final int from, int to, final int value ) {
+	public static void fill( int[] array, int from, int to, int value ) {
 		ensureFromTo( array, from, to );
 		if ( from == 0 ) while ( to-- != 0 )
 			array[ to ] = value;
@@ -246,7 +246,7 @@ public class IntArrays {
 	 * @return true if the two arrays are of the same length, and their elements are equal.
 	 * @deprecated Please use the corresponding {@link java.util.Arrays} method, which is intrinsified in recent JVMs. */
 	@Deprecated
-	public static boolean equals( final int[] a1, final int[] a2 ) {
+	public static boolean equals( int[] a1, int[] a2 ) {
 		int i = a1.length;
 		if ( i != a2.length ) return false;
 		while ( i-- != 0 )
@@ -263,7 +263,7 @@ public class IntArrays {
 	 * @param to an end index (exclusive).
 	 * @throws IllegalArgumentException if <code>from</code> is greater than <code>to</code>.
 	 * @throws ArrayIndexOutOfBoundsException if <code>from</code> or <code>to</code> are greater than the array length or negative. */
-	public static void ensureFromTo( final int[] a, final int from, final int to ) {
+	public static void ensureFromTo( int[] a, int from, int to ) {
 		Arrays.ensureFromTo( a.length, from, to );
 	}
 
@@ -276,7 +276,7 @@ public class IntArrays {
 	 * @param length a length (the number of elements in the range).
 	 * @throws IllegalArgumentException if <code>length</code> is negative.
 	 * @throws ArrayIndexOutOfBoundsException if <code>offset</code> is negative or <code>offset</code>+<code>length</code> is greater than the array length. */
-	public static void ensureOffsetLength( final int[] a, final int offset, final int length ) {
+	public static void ensureOffsetLength( int[] a, int offset, int length ) {
 		Arrays.ensureOffsetLength( a.length, offset, length );
 	}
 
@@ -285,7 +285,7 @@ public class IntArrays {
 	 * @param a an array.
 	 * @param b another array.
 	 * @throws IllegalArgumentException if the two argument arrays are not of the same length. */
-	public static void ensureSameLength( final int[] a, final int[] b ) {
+	public static void ensureSameLength( int[] a, int[] b ) {
 		if ( a.length != b.length ) throw new IllegalArgumentException( "Array size mismatch: " + a.length + " != " + b.length );
 	}
 
@@ -299,8 +299,8 @@ public class IntArrays {
 	 * @param x an array.
 	 * @param a a position in {@code x}.
 	 * @param b another position in {@code x}. */
-	public static void swap(final int[] x, final int a, final int b ) {
-		final int t = x[ a ];
+	public static void swap(int[] x, int a, int b ) {
+		int t = x[ a ];
 		x[ a ] = x[ b ];
 		x[ b ] = t;
 	}
@@ -311,34 +311,34 @@ public class IntArrays {
 	 * @param a a position in {@code x}.
 	 * @param b another position in {@code x}.
 	 * @param n the number of elements to exchange starting at {@code a} and {@code b}. */
-	public static void swap( final int[] x, int a, int b, final int n ) {
+	public static void swap( int[] x, int a, int b, int n ) {
 		for ( int i = 0; i < n; i++, a++, b++ )
 			swap( x, a, b );
 	}
 
-	private static int med3(final int[] x, final int a, final int b, final int c, IntComparator comp ) {
-		final int ab = comp.compare( x[ a ], x[ b ] );
-		final int ac = comp.compare( x[ a ], x[ c ] );
-		final int bc = comp.compare( x[ b ], x[ c ] );
+	private static int med3(int[] x, int a, int b, int c, IntComparator comp ) {
+		int ab = comp.compare( x[ a ], x[ b ] );
+		int ac = comp.compare( x[ a ], x[ c ] );
+		int bc = comp.compare( x[ b ], x[ c ] );
 		return ( ab < 0 ?
 				( bc < 0 ? b : ac < 0 ? c : a ) :
 				( bc > 0 ? b : ac > 0 ? c : a ) );
 	}
 
-	private static void selectionSort( final int[] a, final int from, final int to, final IntComparator comp ) {
+	private static void selectionSort( int[] a, int from, int to, IntComparator comp ) {
 		for ( int i = from; i < to - 1; i++ ) {
 			int m = i;
 			for ( int j = i + 1; j < to; j++ )
 				if ( comp.compare( a[ j ], a[ m ] ) < 0 ) m = j;
 			if ( m != i ) {
-				final int u = a[ i ];
+				int u = a[ i ];
 				a[ i ] = a[ m ];
 				a[ m ] = u;
 			}
 		}
 	}
 
-	private static void insertionSort( final int[] a, final int from, final int to, final IntComparator comp ) {
+	private static void insertionSort( int[] a, int from, int to, IntComparator comp ) {
 		for ( int i = from; ++i < to; ) {
 			int t = a[ i ];
 			int j = i;
@@ -365,8 +365,8 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void quickSort( final int[] x, final int from, final int to, final IntComparator comp ) {
-		final int len = to - from;
+	public static void quickSort( int[] x, int from, int to, IntComparator comp ) {
+		int len = to - from;
 		// Selection sort on smallest arrays
 		if ( len < QUICKSORT_NO_REC ) {
 			selectionSort( x, from, to, comp );
@@ -383,7 +383,7 @@ public class IntArrays {
 			n = med3( x, n - 2 * s, n - s, n, comp );
 		}
 		m = med3( x, l, m, n, comp ); // Mid-size, med of 3
-		final int v = x[ m ];
+		int v = x[ m ];
 		// Establish Invariant: v* (<v)* (>v)* v*
 		int a = from, b = a, c = to - 1, d = c;
 		while ( true ) {
@@ -420,7 +420,7 @@ public class IntArrays {
 	 * 
 	 * @param x the array to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void quickSort( final int[] x, final IntComparator comp ) {
+	public static void quickSort( int[] x, IntComparator comp ) {
 		quickSort( x, 0, x.length, comp );
 	}
 
@@ -431,7 +431,7 @@ public class IntArrays {
 		private final int[] x;
 		private final IntComparator comp;
 
-		public ForkJoinQuickSortComp( final int[] x, final int from, final int to, final IntComparator comp ) {
+		public ForkJoinQuickSortComp( int[] x, int from, int to, IntComparator comp ) {
 			this.from = from;
 			this.to = to;
 			this.x = x;
@@ -440,8 +440,8 @@ public class IntArrays {
 
 		@Override
 		protected void compute() {
-			final int[] x = this.x;
-			final int len = to - from;
+			int[] x = this.x;
+			int len = to - from;
 			if ( len < PARALLEL_QUICKSORT_NO_FORK ) {
 				quickSort( x, from, to, comp );
 				return;
@@ -455,7 +455,7 @@ public class IntArrays {
 			m = med3( x, m - s, m, m + s );
 			n = med3( x, n - 2 * s, n - s, n );
 			m = med3( x, l, m, n );
-			final int v = x[ m ];
+			int v = x[ m ];
 			// Establish Invariant: v* (<v)* (>v)* v*
 			int a = from, b = a, c = to - 1, d = c;
 			while ( true ) {
@@ -497,8 +497,8 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void parallelQuickSort( final int[] x, final int from, final int to, final IntComparator comp ) {
-		final ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
+	public static void parallelQuickSort( int[] x, int from, int to, IntComparator comp ) {
+		ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
 		pool.invoke( new ForkJoinQuickSortComp( x, from, to, comp ) );
 		pool.shutdown();
 	}
@@ -512,33 +512,33 @@ public class IntArrays {
 	 * 
 	 * @param x the array to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void parallelQuickSort( final int[] x, final IntComparator comp ) {
+	public static void parallelQuickSort( int[] x, IntComparator comp ) {
 		parallelQuickSort( x, 0, x.length, comp );
 	}
 
-	private static int med3(final int[] x, final int a, final int b, final int c ) {
-		final int ab = ( Integer.compare( ( x[ a ] ), ( x[ b ] ) ) );
-		final int ac = ( Integer.compare( ( x[ a ] ), ( x[ c ] ) ) );
-		final int bc = ( Integer.compare( ( x[ b ] ), ( x[ c ] ) ) );
+	private static int med3(int[] x, int a, int b, int c ) {
+		int ab = ( Integer.compare( ( x[ a ] ), ( x[ b ] ) ) );
+		int ac = ( Integer.compare( ( x[ a ] ), ( x[ c ] ) ) );
+		int bc = ( Integer.compare( ( x[ b ] ), ( x[ c ] ) ) );
 		return ( ab < 0 ?
 				( bc < 0 ? b : ac < 0 ? c : a ) :
 				( bc > 0 ? b : ac > 0 ? c : a ) );
 	}
 
-	private static void selectionSort( final int[] a, final int from, final int to ) {
+	private static void selectionSort( int[] a, int from, int to ) {
 		for ( int i = from; i < to - 1; i++ ) {
 			int m = i;
 			for ( int j = i + 1; j < to; j++ )
 				if ( ( ( a[ j ] ) < ( a[ m ] ) ) ) m = j;
 			if ( m != i ) {
-				final int u = a[ i ];
+				int u = a[ i ];
 				a[ i ] = a[ m ];
 				a[ m ] = u;
 			}
 		}
 	}
 
-	private static void insertionSort( final int[] a, final int from, final int to ) {
+	private static void insertionSort( int[] a, int from, int to ) {
 		for ( int i = from; ++i < to; ) {
 			int t = a[ i ];
 			int j = i;
@@ -565,8 +565,8 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
 
-	public static void quickSort( final int[] x, final int from, final int to ) {
-		final int len = to - from;
+	public static void quickSort( int[] x, int from, int to ) {
+		int len = to - from;
 		// Selection sort on smallest arrays
 		if ( len < QUICKSORT_NO_REC ) {
 			selectionSort( x, from, to );
@@ -583,7 +583,7 @@ public class IntArrays {
 			n = med3( x, n - 2 * s, n - s, n );
 		}
 		m = med3( x, l, m, n ); // Mid-size, med of 3
-		final int v = x[ m ];
+		int v = x[ m ];
 		// Establish Invariant: v* (<v)* (>v)* v*
 		int a = from, b = a, c = to - 1, d = c;
 		while ( true ) {
@@ -619,7 +619,7 @@ public class IntArrays {
 	 * inputs.
 	 * 
 	 * @param x the array to be sorted. */
-	public static void quickSort( final int[] x ) {
+	public static void quickSort( int[] x ) {
 		quickSort( x, 0, x.length );
 	}
 
@@ -629,7 +629,7 @@ public class IntArrays {
 		private final int to;
 		private final int[] x;
 
-		public ForkJoinQuickSort( final int[] x, final int from, final int to ) {
+		public ForkJoinQuickSort( int[] x, int from, int to ) {
 			this.from = from;
 			this.to = to;
 			this.x = x;
@@ -637,8 +637,8 @@ public class IntArrays {
 
 		@Override
 		protected void compute() {
-			final int[] x = this.x;
-			final int len = to - from;
+			int[] x = this.x;
+			int len = to - from;
 			if ( len < PARALLEL_QUICKSORT_NO_FORK ) {
 				quickSort( x, from, to );
 				return;
@@ -652,7 +652,7 @@ public class IntArrays {
 			m = med3( x, m - s, m, m + s );
 			n = med3( x, n - 2 * s, n - s, n );
 			m = med3( x, l, m, n );
-			final int v = x[ m ];
+			int v = x[ m ];
 			// Establish Invariant: v* (<v)* (>v)* v*
 			int a = from, b = a, c = to - 1, d = c;
 			while ( true ) {
@@ -693,8 +693,8 @@ public class IntArrays {
 	 * @param x the array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void parallelQuickSort( final int[] x, final int from, final int to ) {
-		final ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
+	public static void parallelQuickSort( int[] x, int from, int to ) {
+		ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
 		pool.invoke( new ForkJoinQuickSort( x, from, to ) );
 		pool.shutdown();
 	}
@@ -707,23 +707,23 @@ public class IntArrays {
 	 * <p>This implementation uses a {@link ForkJoinPool} executor service with {@link Runtime#availableProcessors()} parallel threads.
 	 * 
 	 * @param x the array to be sorted. */
-	public static void parallelQuickSort( final int[] x ) {
+	public static void parallelQuickSort( int[] x ) {
 		parallelQuickSort( x, 0, x.length );
 	}
 
-	private static int med3Indirect(final int[] perm, final int[] x, final int a, final int b, final int c ) {
-		final int aa = x[ perm[ a ] ];
-		final int bb = x[ perm[ b ] ];
-		final int cc = x[ perm[ c ] ];
-		final int ab = ( Integer.compare( ( aa ), ( bb ) ) );
-		final int ac = ( Integer.compare( ( aa ), ( cc ) ) );
-		final int bc = ( Integer.compare( ( bb ), ( cc ) ) );
+	private static int med3Indirect(int[] perm, int[] x, int a, int b, int c ) {
+		int aa = x[ perm[ a ] ];
+		int bb = x[ perm[ b ] ];
+		int cc = x[ perm[ c ] ];
+		int ab = ( Integer.compare( ( aa ), ( bb ) ) );
+		int ac = ( Integer.compare( ( aa ), ( cc ) ) );
+		int bc = ( Integer.compare( ( bb ), ( cc ) ) );
 		return ( ab < 0 ?
 				( bc < 0 ? b : ac < 0 ? c : a ) :
 				( bc > 0 ? b : ac > 0 ? c : a ) );
 	}
 
-	private static void insertionSortIndirect( final int[] perm, final int[] a, final int from, final int to ) {
+	private static void insertionSortIndirect( int[] perm, int[] a, int from, int to ) {
 		for ( int i = from; ++i < to; ) {
 			int t = perm[ i ];
 			int j = i;
@@ -754,8 +754,8 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
 
-	public static void quickSortIndirect( final int[] perm, final int[] x, final int from, final int to ) {
-		final int len = to - from;
+	public static void quickSortIndirect( int[] perm, int[] x, int from, int to ) {
+		int len = to - from;
 		// Selection sort on smallest arrays
 		if ( len < QUICKSORT_NO_REC ) {
 			insertionSortIndirect( perm, x, from, to );
@@ -772,7 +772,7 @@ public class IntArrays {
 			n = med3Indirect( perm, x, n - 2 * s, n - s, n );
 		}
 		m = med3Indirect( perm, x, l, m, n ); // Mid-size, med of 3
-		final int v = x[ perm[ m ] ];
+		int v = x[ perm[ m ] ];
 		// Establish Invariant: v* (<v)* (>v)* v*
 		int a = from, b = a, c = to - 1, d = c;
 		while ( true ) {
@@ -812,7 +812,7 @@ public class IntArrays {
 	 * 
 	 * @param perm a permutation array indexing {@code x}.
 	 * @param x the array to be sorted. */
-	public static void quickSortIndirect(final int[] perm, final int[] x ) {
+	public static void quickSortIndirect(int[] perm, int[] x ) {
 		quickSortIndirect( perm, x, 0, x.length );
 	}
 
@@ -823,7 +823,7 @@ public class IntArrays {
 		private final int[] perm;
 		private final int[] x;
 
-		public ForkJoinQuickSortIndirect(final int[] perm, final int[] x, final int from, final int to ) {
+		public ForkJoinQuickSortIndirect(int[] perm, int[] x, int from, int to ) {
 			this.from = from;
 			this.to = to;
 			this.x = x;
@@ -832,8 +832,8 @@ public class IntArrays {
 
 		@Override
 		protected void compute() {
-			final int[] x = this.x;
-			final int len = to - from;
+			int[] x = this.x;
+			int len = to - from;
 			if ( len < PARALLEL_QUICKSORT_NO_FORK ) {
 				quickSortIndirect( perm, x, from, to );
 				return;
@@ -847,7 +847,7 @@ public class IntArrays {
 			m = med3Indirect( perm, x, m - s, m, m + s );
 			n = med3Indirect( perm, x, n - 2 * s, n - s, n );
 			m = med3Indirect( perm, x, l, m, n );
-			final int v = x[ perm[ m ] ];
+			int v = x[ perm[ m ] ];
 			// Establish Invariant: v* (<v)* (>v)* v*
 			int a = from, b = a, c = to - 1, d = c;
 			while ( true ) {
@@ -892,8 +892,8 @@ public class IntArrays {
 	 * @param x the array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void parallelQuickSortIndirect( final int[] perm, final int[] x, final int from, final int to ) {
-		final ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
+	public static void parallelQuickSortIndirect( int[] perm, int[] x, int from, int to ) {
+		ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
 		pool.invoke( new ForkJoinQuickSortIndirect( perm, x, from, to ) );
 		pool.shutdown();
 	}
@@ -910,7 +910,7 @@ public class IntArrays {
 	 * 
 	 * @param perm a permutation array indexing {@code x}.
 	 * @param x the array to be sorted. */
-	public static void parallelQuickSortIndirect(final int[] perm, final int[] x ) {
+	public static void parallelQuickSortIndirect(int[] perm, int[] x ) {
 		parallelQuickSortIndirect( perm, x, 0, x.length );
 	}
 
@@ -927,7 +927,7 @@ public class IntArrays {
 	 *
 	 * @param perm a permutation array indexing {@code x} so that it is sorted.
 	 * @param x the sorted array to be stabilized. */
-	public static void stabilize(final int[] perm, final int[] x, final int from, final int to ) {
+	public static void stabilize(int[] perm, int[] x, int from, int to ) {
 		int curr = from;
 		for ( int i = from + 1; i < to; i++ ) {
 			if ( x[ perm[ i ] ] != x[ perm[ curr ] ] ) {
@@ -951,35 +951,35 @@ public class IntArrays {
 	 *
 	 * @param perm a permutation array indexing {@code x} so that it is sorted.
 	 * @param x the sorted array to be stabilized. */
-	public static void stabilize(final int[] perm, final int[] x ) {
+	public static void stabilize(int[] perm, int[] x ) {
 		stabilize( perm, x, 0, perm.length );
 	}
 
-	private static int med3(final int[] x, final int[] y, final int a, final int b, final int c ) {
+	private static int med3(int[] x, int[] y, int a, int b, int c ) {
 		int t;
-		final int ab = ( t = ( Integer.compare( ( x[ a ] ), ( x[ b ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ a ] ), ( y[ b ] ) ) ) : t;
-		final int ac = ( t = ( Integer.compare( ( x[ a ] ), ( x[ c ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ a ] ), ( y[ c ] ) ) ) : t;
-		final int bc = ( t = ( Integer.compare( ( x[ b ] ), ( x[ c ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ b ] ), ( y[ c ] ) ) ) : t;
+		int ab = ( t = ( Integer.compare( ( x[ a ] ), ( x[ b ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ a ] ), ( y[ b ] ) ) ) : t;
+		int ac = ( t = ( Integer.compare( ( x[ a ] ), ( x[ c ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ a ] ), ( y[ c ] ) ) ) : t;
+		int bc = ( t = ( Integer.compare( ( x[ b ] ), ( x[ c ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ b ] ), ( y[ c ] ) ) ) : t;
 		return ( ab < 0 ?
 				( bc < 0 ? b : ac < 0 ? c : a ) :
 				( bc > 0 ? b : ac > 0 ? c : a ) );
 	}
 
-	private static void swap(final int[] x, final int[] y, final int a, final int b ) {
-		final int t = x[ a ];
-		final int u = y[ a ];
+	private static void swap(int[] x, int[] y, int a, int b ) {
+		int t = x[ a ];
+		int u = y[ a ];
 		x[ a ] = x[ b ];
 		y[ a ] = y[ b ];
 		x[ b ] = t;
 		y[ b ] = u;
 	}
 
-	private static void swap( final int[] x, final int[] y, int a, int b, final int n ) {
+	private static void swap( int[] x, int[] y, int a, int b, int n ) {
 		for ( int i = 0; i < n; i++, a++, b++ )
 			swap( x, y, a, b );
 	}
 
-	private static void selectionSort( final int[] a, final int[] b, final int from, final int to ) {
+	private static void selectionSort( int[] a, int[] b, int from, int to ) {
 		for ( int i = from; i < to - 1; i++ ) {
 			int m = i, u;
 			for ( int j = i + 1; j < to; j++ )
@@ -1008,8 +1008,8 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
 
-	public static void quickSort( final int[] x, final int[] y, final int from, final int to ) {
-		final int len = to - from;
+	public static void quickSort( int[] x, int[] y, int from, int to ) {
+		int len = to - from;
 		if ( len < QUICKSORT_NO_REC ) {
 			selectionSort( x, y, from, to );
 			return;
@@ -1025,7 +1025,7 @@ public class IntArrays {
 			n = med3( x, y, n - 2 * s, n - s, n );
 		}
 		m = med3( x, y, l, m, n ); // Mid-size, med of 3
-		final int v = x[ m ], w = y[ m ];
+		int v = x[ m ], w = y[ m ];
 		// Establish Invariant: v* (<v)* (>v)* v*
 		int a = from, b = a, c = to - 1, d = c;
 		while ( true ) {
@@ -1062,7 +1062,7 @@ public class IntArrays {
 	 *
 	 * @param x the first array to be sorted.
 	 * @param y the second array to be sorted. */
-	public static void quickSort( final int[] x, final int[] y ) {
+	public static void quickSort( int[] x, int[] y ) {
 		ensureSameLength( x, y );
 		quickSort( x, y, 0, x.length );
 	}
@@ -1073,7 +1073,7 @@ public class IntArrays {
 		private final int to;
 		private final int[] x, y;
 
-		public ForkJoinQuickSort2( final int[] x, final int[] y, final int from, final int to ) {
+		public ForkJoinQuickSort2( int[] x, int[] y, int from, int to ) {
 			this.from = from;
 			this.to = to;
 			this.x = x;
@@ -1082,9 +1082,9 @@ public class IntArrays {
 
 		@Override
 		protected void compute() {
-			final int[] x = this.x;
-			final int[] y = this.y;
-			final int len = to - from;
+			int[] x = this.x;
+			int[] y = this.y;
+			int len = to - from;
 			if ( len < PARALLEL_QUICKSORT_NO_FORK ) {
 				quickSort( x, y, from, to );
 				return;
@@ -1098,7 +1098,7 @@ public class IntArrays {
 			m = med3( x, y, m - s, m, m + s );
 			n = med3( x, y, n - 2 * s, n - s, n );
 			m = med3( x, y, l, m, n );
-			final int v = x[ m ], w = y[ m ];
+			int v = x[ m ], w = y[ m ];
 			// Establish Invariant: v* (<v)* (>v)* v*
 			int a = from, b = a, c = to - 1, d = c;
 			while ( true ) {
@@ -1143,8 +1143,8 @@ public class IntArrays {
 	 * @param y the second array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void parallelQuickSort( final int[] x, final int[] y, final int from, final int to ) {
-		final ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
+	public static void parallelQuickSort( int[] x, int[] y, int from, int to ) {
+		ForkJoinPool pool = new ForkJoinPool( Runtime.getRuntime().availableProcessors() );
 		pool.invoke( new ForkJoinQuickSort2( x, y, from, to ) );
 		pool.shutdown();
 	}
@@ -1161,7 +1161,7 @@ public class IntArrays {
 	 * 
 	 * @param x the first array to be sorted.
 	 * @param y the second array to be sorted. */
-	public static void parallelQuickSort( final int[] x, final int[] y ) {
+	public static void parallelQuickSort( int[] x, int[] y ) {
 		ensureSameLength( x, y );
 		parallelQuickSort( x, y, 0, x.length );
 	}
@@ -1175,7 +1175,7 @@ public class IntArrays {
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param supp a support array containing at least <code>to</code> elements, and whose entries are identical to those of {@code a} in the specified range. */
 
-	public static void mergeSort(final int[] a, final int from, final int to, final int[] supp ) {
+	public static void mergeSort(int[] a, int from, int to, int[] supp ) {
 		int len = to - from;
 		// Insertion sort on smallest arrays
 		if ( len < MERGESORT_NO_REC ) {
@@ -1183,7 +1183,7 @@ public class IntArrays {
 			return;
 		}
 		// Recursively sort halves of a into supp
-		final int mid = ( from + to ) >>> 1;
+		int mid = ( from + to ) >>> 1;
 		mergeSort( supp, from, mid, a );
 		mergeSort( supp, mid, to, a );
 		// If list is already sorted, just copy from supp to a. This is an
@@ -1205,7 +1205,7 @@ public class IntArrays {
 	 * @param a the array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void mergeSort(final int[] a, final int from, final int to ) {
+	public static void mergeSort(int[] a, int from, int to ) {
 		mergeSort( a, from, to, a.clone() );
 	}
 
@@ -1214,7 +1214,7 @@ public class IntArrays {
 	 * <p>This sort is guaranteed to be <i>stable</i>: equal elements will not be reordered as a result of the sort. An array as large as <code>a</code> will be allocated by this method.
 	 * 
 	 * @param a the array to be sorted. */
-	public static void mergeSort(final int[] a ) {
+	public static void mergeSort(int[] a ) {
 		mergeSort( a, 0, a.length );
 	}
 
@@ -1227,7 +1227,7 @@ public class IntArrays {
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param comp the comparator to determine the sorting order.
 	 * @param supp a support array containing at least <code>to</code> elements, and whose entries are identical to those of {@code a} in the specified range. */
-	public static void mergeSort(final int[] a, final int from, final int to, IntComparator comp, final int[] supp ) {
+	public static void mergeSort(int[] a, int from, int to, IntComparator comp, int[] supp ) {
 		int len = to - from;
 		// Insertion sort on smallest arrays
 		if ( len < MERGESORT_NO_REC ) {
@@ -1235,7 +1235,7 @@ public class IntArrays {
 			return;
 		}
 		// Recursively sort halves of a into supp
-		final int mid = ( from + to ) >>> 1;
+		int mid = ( from + to ) >>> 1;
 		mergeSort( supp, from, mid, comp, a );
 		mergeSort( supp, mid, to, comp, a );
 		// If list is already sorted, just copy from supp to a. This is an
@@ -1258,7 +1258,7 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void mergeSort(final int[] a, final int from, final int to, IntComparator comp ) {
+	public static void mergeSort(int[] a, int from, int to, IntComparator comp ) {
 		mergeSort( a, from, to, comp, a.clone() );
 	}
 
@@ -1268,7 +1268,7 @@ public class IntArrays {
 	 * 
 	 * @param a the array to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void mergeSort(final int[] a, IntComparator comp ) {
+	public static void mergeSort(int[] a, IntComparator comp ) {
 		mergeSort( a, 0, a.length, comp );
 	}
 
@@ -1284,11 +1284,11 @@ public class IntArrays {
 	 * this guarantees that the return value will be &ge; 0 if and only if the key is found.
 	 * @see java.util.Arrays */
 
-	public static int binarySearch( final int[] a, int from, int to, final int key ) {
+	public static int binarySearch( int[] a, int from, int to, int key ) {
 		int midVal;
 		to--;
 		while ( from <= to ) {
-			final int mid = ( from + to ) >>> 1;
+			int mid = ( from + to ) >>> 1;
 			midVal = a[ mid ];
 			if ( midVal < key ) from = mid + 1;
 			else if ( midVal > key ) to = mid - 1;
@@ -1306,7 +1306,7 @@ public class IntArrays {
 	 * value would be inserted into the array: the index of the first element greater than the key, or the length of the array, if all elements in the array are less than the specified key. Note that
 	 * this guarantees that the return value will be &ge; 0 if and only if the key is found.
 	 * @see java.util.Arrays */
-	public static int binarySearch( final int[] a, final int key ) {
+	public static int binarySearch( int[] a, int key ) {
 		return binarySearch( a, 0, a.length, key );
 	}
 
@@ -1322,13 +1322,13 @@ public class IntArrays {
 	 * value would be inserted into the array: the index of the first element greater than the key, or the length of the array, if all elements in the array are less than the specified key. Note that
 	 * this guarantees that the return value will be &ge; 0 if and only if the key is found.
 	 * @see java.util.Arrays */
-	public static int binarySearch( final int[] a, int from, int to, final int key, final IntComparator c ) {
+	public static int binarySearch( int[] a, int from, int to, int key, IntComparator c ) {
 		int midVal;
 		to--;
 		while ( from <= to ) {
-			final int mid = ( from + to ) >>> 1;
+			int mid = ( from + to ) >>> 1;
 			midVal = a[ mid ];
-			final int cmp = c.compare( midVal, key );
+			int cmp = c.compare( midVal, key );
 			if ( cmp < 0 ) from = mid + 1;
 			else if ( cmp > 0 ) to = mid - 1;
 			else return mid; // key found
@@ -1346,7 +1346,7 @@ public class IntArrays {
 	 * value would be inserted into the array: the index of the first element greater than the key, or the length of the array, if all elements in the array are less than the specified key. Note that
 	 * this guarantees that the return value will be &ge; 0 if and only if the key is found.
 	 * @see java.util.Arrays */
-	public static int binarySearch( final int[] a, final int key, final IntComparator c ) {
+	public static int binarySearch( int[] a, int key, IntComparator c ) {
 		return binarySearch( a, 0, a.length, key, c );
 	}
 
@@ -1368,7 +1368,7 @@ public class IntArrays {
 	 * <p>This implementation is significantly faster than quicksort already at small sizes (say, more than 10000 elements), but it can only sort in ascending order.
 	 * 
 	 * @param a the array to be sorted. */
-	public static void radixSort( final int[] a ) {
+	public static void radixSort( int[] a ) {
 		radixSort( a, 0, a.length );
 	}
 
@@ -1382,30 +1382,30 @@ public class IntArrays {
 	 * @param a the array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void radixSort( final int[] a, final int from, final int to ) {
+	public static void radixSort( int[] a, int from, int to ) {
 		if ( to - from < RADIXSORT_NO_REC ) {
 			quickSort( a, from, to );
 			return;
 		}
-		final int maxLevel = DIGITS_PER_ELEMENT - 1;
-		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( DIGITS_PER_ELEMENT - 1 ) + 1;
-		final int[] offsetStack = new int[ stackSize ];
+		int maxLevel = DIGITS_PER_ELEMENT - 1;
+		int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( DIGITS_PER_ELEMENT - 1 ) + 1;
+		int[] offsetStack = new int[ stackSize ];
 		int offsetPos = 0;
-		final int[] lengthStack = new int[ stackSize ];
+		int[] lengthStack = new int[ stackSize ];
 		int lengthPos = 0;
-		final int[] levelStack = new int[ stackSize ];
+		int[] levelStack = new int[ stackSize ];
 		int levelPos = 0;
 		offsetStack[ offsetPos++ ] = from;
 		lengthStack[ lengthPos++ ] = to - from;
 		levelStack[ levelPos++ ] = 0;
-		final int[] count = new int[ 1 << DIGIT_BITS ];
-		final int[] pos = new int[ 1 << DIGIT_BITS ];
+		int[] count = new int[ 1 << DIGIT_BITS ];
+		int[] pos = new int[ 1 << DIGIT_BITS ];
 		while ( offsetPos > 0 ) {
-			final int first = offsetStack[ --offsetPos ];
-			final int length = lengthStack[ --lengthPos ];
-			final int level = levelStack[ --levelPos ];
-			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+			int first = offsetStack[ --offsetPos ];
+			int length = lengthStack[ --lengthPos ];
+			int level = levelStack[ --levelPos ];
+			int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+			int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 			// Count keys.
 			for ( int i = first + length; i-- != first; )
 				count[ ( ( a[ i ] ) >>> shift & DIGIT_MASK ^ signMask ) ]++;
@@ -1415,14 +1415,14 @@ public class IntArrays {
 				if ( count[ i ] != 0 ) lastUsed = i;
 				pos[ i ] = ( p += count[ i ] );
 			}
-			final int end = first + length - count[ lastUsed ];
+			int end = first + length - count[ lastUsed ];
 			// i moves through the start of each block
 			for ( int i = first, c = -1, d; i <= end; i += count[ c ], count[ c ] = 0 ) {
 				int t = a[ i ];
 				c = ( ( t ) >>> shift & DIGIT_MASK ^ signMask );
 				if ( i < end ) { // When all slots are OK, the last slot is necessarily OK.
 					while ( ( d = --pos[ c ] ) > i ) {
-						final int z = t;
+						int z = t;
 						t = a[ d ];
 						a[ d ] = z;
 						c = ( ( t ) >>> shift & DIGIT_MASK ^ signMask );
@@ -1444,7 +1444,7 @@ public class IntArrays {
 	protected static final class Segment {
 		protected final int offset, length, level;
 
-		protected Segment( final int offset, final int length, final int level ) {
+		protected Segment( int offset, int length, int level ) {
 			this.offset = offset;
 			this.length = length;
 			this.level = level;
@@ -1468,33 +1468,33 @@ public class IntArrays {
 	 * @param a the array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void parallelRadixSort( final int[] a, final int from, final int to ) {
+	public static void parallelRadixSort( int[] a, int from, int to ) {
 		if ( to - from < PARALLEL_RADIXSORT_NO_FORK ) {
 			quickSort( a, from, to );
 			return;
 		}
-		final int maxLevel = DIGITS_PER_ELEMENT - 1;
-		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
+		int maxLevel = DIGITS_PER_ELEMENT - 1;
+		LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
 		queue.add( new Segment( from, to - from, 0 ) );
-		final AtomicInteger queueSize = new AtomicInteger( 1 );
-		final int numberOfThreads = Runtime.getRuntime().availableProcessors();
-		final ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
-		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
+		AtomicInteger queueSize = new AtomicInteger( 1 );
+		int numberOfThreads = Runtime.getRuntime().availableProcessors();
+		ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
+		ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		for ( int i = numberOfThreads; i-- != 0; )
 			executorCompletionService.submit( new Callable<Void>() {
 				public Void call() throws Exception {
-					final int[] count = new int[ 1 << DIGIT_BITS ];
-					final int[] pos = new int[ 1 << DIGIT_BITS ];
+					int[] count = new int[ 1 << DIGIT_BITS ];
+					int[] pos = new int[ 1 << DIGIT_BITS ];
 					while (true) {
 						if (queueSize.get() == 0) for (int i = numberOfThreads; i-- != 0; )
 							queue.add(POISON_PILL);
-						final Segment segment = queue.take();
+						Segment segment = queue.take();
 						if (segment == POISON_PILL) return null;
-						final int first = segment.offset;
-						final int length = segment.length;
-						final int level = segment.level;
-						final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-						final int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+						int first = segment.offset;
+						int length = segment.length;
+						int level = segment.level;
+						int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+						int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 						// Count keys.
 						for (int i = first + length; i-- != first; )
 							count[((a[i]) >>> shift & DIGIT_MASK ^ signMask)]++;
@@ -1504,14 +1504,14 @@ public class IntArrays {
 							if (count[i] != 0) lastUsed = i;
 							pos[i] = (p += count[i]);
 						}
-						final int end = first + length - count[lastUsed];
+						int end = first + length - count[lastUsed];
 						// i moves through the start of each block
 						for (int i = first, c = -1, d; i <= end; i += count[c], count[c] = 0) {
 							int t = a[i];
 							c = ((t) >>> shift & DIGIT_MASK ^ signMask);
 							if (i < end) {
 								while ((d = --pos[c]) > i) {
-									final int z = t;
+									int z = t;
 									t = a[d];
 									a[d] = z;
 									c = ((t) >>> shift & DIGIT_MASK ^ signMask);
@@ -1550,7 +1550,7 @@ public class IntArrays {
 	 * <p>This implementation uses a pool of {@link Runtime#availableProcessors()} threads.
 	 * 
 	 * @param a the array to be sorted. */
-	public static void parallelRadixSort( final int[] a ) {
+	public static void parallelRadixSort( int[] a ) {
 		parallelRadixSort( a, 0, a.length );
 	}
 
@@ -1567,7 +1567,7 @@ public class IntArrays {
 	 * @param perm a permutation array indexing <code>a</code>.
 	 * @param a the array to be sorted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void radixSortIndirect( final int[] perm, final int[] a, final boolean stable ) {
+	public static void radixSortIndirect( int[] perm, int[] a, boolean stable ) {
 		radixSortIndirect( perm, a, 0, perm.length, stable );
 	}
 
@@ -1586,31 +1586,31 @@ public class IntArrays {
 	 * @param from the index of the first element of <code>perm</code> (inclusive) to be permuted.
 	 * @param to the index of the last element of <code>perm</code> (exclusive) to be permuted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void radixSortIndirect( final int[] perm, final int[] a, final int from, final int to, final boolean stable ) {
+	public static void radixSortIndirect( int[] perm, int[] a, int from, int to, boolean stable ) {
 		if ( to - from < RADIXSORT_NO_REC ) {
 			insertionSortIndirect( perm, a, from, to );
 			return;
 		}
-		final int maxLevel = DIGITS_PER_ELEMENT - 1;
-		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( DIGITS_PER_ELEMENT - 1 ) + 1;
-		final int[] offsetStack = new int[ stackSize ];
+		int maxLevel = DIGITS_PER_ELEMENT - 1;
+		int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( DIGITS_PER_ELEMENT - 1 ) + 1;
+		int[] offsetStack = new int[ stackSize ];
 		int offsetPos = 0;
-		final int[] lengthStack = new int[ stackSize ];
+		int[] lengthStack = new int[ stackSize ];
 		int lengthPos = 0;
-		final int[] levelStack = new int[ stackSize ];
+		int[] levelStack = new int[ stackSize ];
 		int levelPos = 0;
 		offsetStack[ offsetPos++ ] = from;
 		lengthStack[ lengthPos++ ] = to - from;
 		levelStack[ levelPos++ ] = 0;
-		final int[] count = new int[ 1 << DIGIT_BITS ];
-		final int[] pos = new int[ 1 << DIGIT_BITS ];
-		final int[] support = stable ? new int[ perm.length ] : null;
+		int[] count = new int[ 1 << DIGIT_BITS ];
+		int[] pos = new int[ 1 << DIGIT_BITS ];
+		int[] support = stable ? new int[ perm.length ] : null;
 		while ( offsetPos > 0 ) {
-			final int first = offsetStack[ --offsetPos ];
-			final int length = lengthStack[ --lengthPos ];
-			final int level = levelStack[ --levelPos ];
-			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+			int first = offsetStack[ --offsetPos ];
+			int length = lengthStack[ --lengthPos ];
+			int level = levelStack[ --levelPos ];
+			int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+			int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 			// Count keys.
 			for ( int i = first + length; i-- != first; )
 				count[ ( ( a[ perm[ i ] ] ) >>> shift & DIGIT_MASK ^ signMask ) ]++;
@@ -1638,14 +1638,14 @@ public class IntArrays {
 				java.util.Arrays.fill( count, 0 );
 			}
 			else {
-				final int end = first + length - count[ lastUsed ];
+				int end = first + length - count[ lastUsed ];
 				// i moves through the start of each block
 				for ( int i = first, c = -1, d; i <= end; i += count[ c ], count[ c ] = 0 ) {
 					int t = perm[ i ];
 					c = ( ( a[ t ] ) >>> shift & DIGIT_MASK ^ signMask );
 					if ( i < end ) { // When all slots are OK, the last slot is necessarily OK.
 						while ( ( d = --pos[ c ] ) > i ) {
-							final int z = t;
+							int z = t;
 							t = perm[ d ];
 							perm[ d ] = z;
 							c = ( ( a[ t ] ) >>> shift & DIGIT_MASK ^ signMask );
@@ -1680,34 +1680,34 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void parallelRadixSortIndirect(final int[] perm, final int[] a, final int from, final int to, final boolean stable ) {
+	public static void parallelRadixSortIndirect(int[] perm, int[] a, int from, int to, boolean stable ) {
 		if ( to - from < PARALLEL_RADIXSORT_NO_FORK ) {
 			radixSortIndirect( perm, a, from, to, stable );
 			return;
 		}
-		final int maxLevel = DIGITS_PER_ELEMENT - 1;
-		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
+		int maxLevel = DIGITS_PER_ELEMENT - 1;
+		LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
 		queue.add( new Segment( from, to - from, 0 ) );
-		final AtomicInteger queueSize = new AtomicInteger( 1 );
-		final int numberOfThreads = Runtime.getRuntime().availableProcessors();
-		final ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
-		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
-		final int[] support = stable ? new int[ perm.length ] : null;
+		AtomicInteger queueSize = new AtomicInteger( 1 );
+		int numberOfThreads = Runtime.getRuntime().availableProcessors();
+		ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
+		ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
+		int[] support = stable ? new int[ perm.length ] : null;
 		for ( int i = numberOfThreads; i-- != 0; )
 			executorCompletionService.submit( new Callable<Void>() {
 				public Void call() throws Exception {
-					final int[] count = new int[ 1 << DIGIT_BITS ];
-					final int[] pos = new int[ 1 << DIGIT_BITS ];
+					int[] count = new int[ 1 << DIGIT_BITS ];
+					int[] pos = new int[ 1 << DIGIT_BITS ];
 					while (true) {
 						if (queueSize.get() == 0) for (int i = numberOfThreads; i-- != 0; )
 							queue.add(POISON_PILL);
-						final Segment segment = queue.take();
+						Segment segment = queue.take();
 						if (segment == POISON_PILL) return null;
-						final int first = segment.offset;
-						final int length = segment.length;
-						final int level = segment.level;
-						final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-						final int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+						int first = segment.offset;
+						int length = segment.length;
+						int level = segment.level;
+						int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+						int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 						// Count keys.
 						for (int i = first + length; i-- != first; )
 							count[((a[perm[i]]) >>> shift & DIGIT_MASK ^ signMask)]++;
@@ -1734,14 +1734,14 @@ public class IntArrays {
 							}
 							java.util.Arrays.fill(count, 0);
 						} else {
-							final int end = first + length - count[lastUsed];
+							int end = first + length - count[lastUsed];
 							// i moves through the start of each block
 							for (int i = first, c = -1, d; i <= end; i += count[c], count[c] = 0) {
 								int t = perm[i];
 								c = ((a[t]) >>> shift & DIGIT_MASK ^ signMask);
 								if (i < end) { // When all slots are OK, the last slot is necessarily OK.
 									while ((d = --pos[c]) > i) {
-										final int z = t;
+										int z = t;
 										t = perm[d];
 										perm[d] = z;
 										c = ((a[t]) >>> shift & DIGIT_MASK ^ signMask);
@@ -1787,7 +1787,7 @@ public class IntArrays {
 	 * @param perm a permutation array indexing <code>a</code>.
 	 * @param a the array to be sorted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void parallelRadixSortIndirect(final int[] perm, final int[] a, final boolean stable ) {
+	public static void parallelRadixSortIndirect(int[] perm, int[] a, boolean stable ) {
 		parallelRadixSortIndirect( perm, a, 0, a.length, stable );
 	}
 
@@ -1799,7 +1799,7 @@ public class IntArrays {
 	 *
 	 * @param a the first array to be sorted.
 	 * @param b the second array to be sorted. */
-	public static void radixSort( final int[] a, final int[] b ) {
+	public static void radixSort( int[] a, int[] b ) {
 		ensureSameLength( a, b );
 		radixSort( a, b, 0, a.length );
 	}
@@ -1816,32 +1816,32 @@ public class IntArrays {
 	 * @param b the second array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void radixSort( final int[] a, final int[] b, final int from, final int to ) {
+	public static void radixSort( int[] a, int[] b, int from, int to ) {
 		if ( to - from < RADIXSORT_NO_REC ) {
 			selectionSort( a, b, from, to );
 			return;
 		}
-		final int layers = 2;
-		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
-		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
-		final int[] offsetStack = new int[ stackSize ];
+		int layers = 2;
+		int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
+		int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
+		int[] offsetStack = new int[ stackSize ];
 		int offsetPos = 0;
-		final int[] lengthStack = new int[ stackSize ];
+		int[] lengthStack = new int[ stackSize ];
 		int lengthPos = 0;
-		final int[] levelStack = new int[ stackSize ];
+		int[] levelStack = new int[ stackSize ];
 		int levelPos = 0;
 		offsetStack[ offsetPos++ ] = from;
 		lengthStack[ lengthPos++ ] = to - from;
 		levelStack[ levelPos++ ] = 0;
-		final int[] count = new int[ 1 << DIGIT_BITS ];
-		final int[] pos = new int[ 1 << DIGIT_BITS ];
+		int[] count = new int[ 1 << DIGIT_BITS ];
+		int[] pos = new int[ 1 << DIGIT_BITS ];
 		while ( offsetPos > 0 ) {
-			final int first = offsetStack[ --offsetPos ];
-			final int length = lengthStack[ --lengthPos ];
-			final int level = levelStack[ --levelPos ];
-			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-			final int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
-			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+			int first = offsetStack[ --offsetPos ];
+			int length = lengthStack[ --lengthPos ];
+			int level = levelStack[ --levelPos ];
+			int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+			int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
+			int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 			// Count keys.
 			for ( int i = first + length; i-- != first; )
 				count[ ( ( k[ i ] ) >>> shift & DIGIT_MASK ^ signMask ) ]++;
@@ -1851,7 +1851,7 @@ public class IntArrays {
 				if ( count[ i ] != 0 ) lastUsed = i;
 				pos[ i ] = ( p += count[ i ] );
 			}
-			final int end = first + length - count[ lastUsed ];
+			int end = first + length - count[ lastUsed ];
 			// i moves through the start of each block
 			for ( int i = first, c = -1, d; i <= end; i += count[ c ], count[ c ] = 0 ) {
 				int t = a[ i ];
@@ -1896,36 +1896,36 @@ public class IntArrays {
 	 * @param b the second array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void parallelRadixSort( final int[] a, final int[] b, final int from, final int to ) {
+	public static void parallelRadixSort( int[] a, int[] b, int from, int to ) {
 		if ( to - from < PARALLEL_RADIXSORT_NO_FORK ) {
 			quickSort( a, b, from, to );
 			return;
 		}
-		final int layers = 2;
+		int layers = 2;
 		if ( a.length != b.length ) throw new IllegalArgumentException( "Array size mismatch." );
-		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
-		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
+		int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
+		LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
 		queue.add( new Segment( from, to - from, 0 ) );
-		final AtomicInteger queueSize = new AtomicInteger( 1 );
-		final int numberOfThreads = Runtime.getRuntime().availableProcessors();
-		final ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
-		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
+		AtomicInteger queueSize = new AtomicInteger( 1 );
+		int numberOfThreads = Runtime.getRuntime().availableProcessors();
+		ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
+		ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		for ( int i = numberOfThreads; i-- != 0; )
 			executorCompletionService.submit( new Callable<Void>() {
 				public Void call() throws Exception {
-					final int[] count = new int[ 1 << DIGIT_BITS ];
-					final int[] pos = new int[ 1 << DIGIT_BITS ];
+					int[] count = new int[ 1 << DIGIT_BITS ];
+					int[] pos = new int[ 1 << DIGIT_BITS ];
 					while (true) {
 						if (queueSize.get() == 0) for (int i = numberOfThreads; i-- != 0; )
 							queue.add(POISON_PILL);
-						final Segment segment = queue.take();
+						Segment segment = queue.take();
 						if (segment == POISON_PILL) return null;
-						final int first = segment.offset;
-						final int length = segment.length;
-						final int level = segment.level;
-						final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-						final int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
-						final int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS;
+						int first = segment.offset;
+						int length = segment.length;
+						int level = segment.level;
+						int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+						int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
+						int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS;
 						// Count keys.
 						for (int i = first + length; i-- != first; )
 							count[((k[i]) >>> shift & DIGIT_MASK ^ signMask)]++;
@@ -1935,7 +1935,7 @@ public class IntArrays {
 							if (count[i] != 0) lastUsed = i;
 							pos[i] = (p += count[i]);
 						}
-						final int end = first + length - count[lastUsed];
+						int end = first + length - count[lastUsed];
 						for (int i = first, c = -1, d; i <= end; i += count[c], count[c] = 0) {
 							int t = a[i];
 							int u = b[i];
@@ -1943,8 +1943,8 @@ public class IntArrays {
 							if (i < end) { // When all slots are OK, the last slot is necessarily OK.
 								while ((d = --pos[c]) > i) {
 									c = ((k[d]) >>> shift & DIGIT_MASK ^ signMask);
-									final int z = t;
-									final int w = u;
+									int z = t;
+									int w = u;
 									t = a[d];
 									u = b[d];
 									a[d] = z;
@@ -1989,12 +1989,12 @@ public class IntArrays {
 	 * 
 	 * @param a the first array to be sorted.
 	 * @param b the second array to be sorted. */
-	public static void parallelRadixSort( final int[] a, final int[] b ) {
+	public static void parallelRadixSort( int[] a, int[] b ) {
 		ensureSameLength( a, b );
 		parallelRadixSort( a, b, 0, a.length );
 	}
 
-	private static void insertionSortIndirect( final int[] perm, final int[] a, final int[] b, final int from, final int to ) {
+	private static void insertionSortIndirect( int[] perm, int[] a, int[] b, int from, int to ) {
 		for ( int i = from; ++i < to; ) {
 			int t = perm[ i ];
 			int j = i;
@@ -2023,7 +2023,7 @@ public class IntArrays {
 	 * @param a the array to be sorted.
 	 * @param b the second array to be sorted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void radixSortIndirect( final int[] perm, final int[] a, final int[] b, final boolean stable ) {
+	public static void radixSortIndirect( int[] perm, int[] a, int[] b, boolean stable ) {
 		ensureSameLength( a, b );
 		radixSortIndirect( perm, a, b, 0, a.length, stable );
 	}
@@ -2044,33 +2044,33 @@ public class IntArrays {
 	 * @param from the index of the first element of <code>perm</code> (inclusive) to be permuted.
 	 * @param to the index of the last element of <code>perm</code> (exclusive) to be permuted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void radixSortIndirect( final int[] perm, final int[] a, final int[] b, final int from, final int to, final boolean stable ) {
+	public static void radixSortIndirect( int[] perm, int[] a, int[] b, int from, int to, boolean stable ) {
 		if ( to - from < RADIXSORT_NO_REC ) {
 			insertionSortIndirect( perm, a, b, from, to );
 			return;
 		}
-		final int layers = 2;
-		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
-		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
-		final int[] offsetStack = new int[ stackSize ];
+		int layers = 2;
+		int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
+		int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
+		int[] offsetStack = new int[ stackSize ];
 		int offsetPos = 0;
-		final int[] lengthStack = new int[ stackSize ];
+		int[] lengthStack = new int[ stackSize ];
 		int lengthPos = 0;
-		final int[] levelStack = new int[ stackSize ];
+		int[] levelStack = new int[ stackSize ];
 		int levelPos = 0;
 		offsetStack[ offsetPos++ ] = from;
 		lengthStack[ lengthPos++ ] = to - from;
 		levelStack[ levelPos++ ] = 0;
-		final int[] count = new int[ 1 << DIGIT_BITS ];
-		final int[] pos = new int[ 1 << DIGIT_BITS ];
-		final int[] support = stable ? new int[ perm.length ] : null;
+		int[] count = new int[ 1 << DIGIT_BITS ];
+		int[] pos = new int[ 1 << DIGIT_BITS ];
+		int[] support = stable ? new int[ perm.length ] : null;
 		while ( offsetPos > 0 ) {
-			final int first = offsetStack[ --offsetPos ];
-			final int length = lengthStack[ --lengthPos ];
-			final int level = levelStack[ --levelPos ];
-			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-			final int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
-			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+			int first = offsetStack[ --offsetPos ];
+			int length = lengthStack[ --lengthPos ];
+			int level = levelStack[ --levelPos ];
+			int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+			int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
+			int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 			// Count keys.
 			for ( int i = first + length; i-- != first; )
 				count[ ( ( k[ perm[ i ] ] ) >>> shift & DIGIT_MASK ^ signMask ) ]++;
@@ -2098,14 +2098,14 @@ public class IntArrays {
 				java.util.Arrays.fill( count, 0 );
 			}
 			else {
-				final int end = first + length - count[ lastUsed ];
+				int end = first + length - count[ lastUsed ];
 				// i moves through the start of each block
 				for ( int i = first, c = -1, d; i <= end; i += count[ c ], count[ c ] = 0 ) {
 					int t = perm[ i ];
 					c = ( ( k[ t ] ) >>> shift & DIGIT_MASK ^ signMask );
 					if ( i < end ) { // When all slots are OK, the last slot is necessarily OK.
 						while ( ( d = --pos[ c ] ) > i ) {
-							final int z = t;
+							int z = t;
 							t = perm[ d ];
 							perm[ d ] = z;
 							c = ( ( k[ t ] ) >>> shift & DIGIT_MASK ^ signMask );
@@ -2125,9 +2125,9 @@ public class IntArrays {
 		}
 	}
 
-	private static void selectionSort( final int[][] a, final int from, final int to, final int level ) {
-		final int layers = a.length;
-		final int firstLayer = level / DIGITS_PER_ELEMENT;
+	private static void selectionSort( int[][] a, int from, int to, int level ) {
+		int layers = a.length;
+		int firstLayer = level / DIGITS_PER_ELEMENT;
 		for ( int i = from; i < to - 1; i++ ) {
 			int m = i;
 			for ( int j = i + 1; j < to; j++ ) {
@@ -2141,7 +2141,7 @@ public class IntArrays {
 			}
 			if ( m != i ) {
 				for ( int p = layers; p-- != 0; ) {
-					final int u = a[ p ][ i ];
+					int u = a[ p ][ i ];
 					a[ p ][ i ] = a[ p ][ m ];
 					a[ p ][ m ] = u;
 				}
@@ -2157,7 +2157,7 @@ public class IntArrays {
 	 * <p>This method implements a <em>lexicographical</em> sorting of the provided arrays. Tuples of elements in the same position will be considered a single key, and permuted accordingly.
 	 *
 	 * @param a an array containing arrays of equal length to be sorted lexicographically in parallel. */
-	public static void radixSort( final int[][] a ) {
+	public static void radixSort( int[][] a ) {
 		radixSort( a, 0, a[ 0 ].length );
 	}
 
@@ -2171,35 +2171,35 @@ public class IntArrays {
 	 * @param a an array containing arrays of equal length to be sorted lexicographically in parallel.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void radixSort( final int[][] a, final int from, final int to ) {
+	public static void radixSort( int[][] a, int from, int to ) {
 		if ( to - from < RADIXSORT_NO_REC ) {
 			selectionSort( a, from, to, 0 );
 			return;
 		}
-		final int layers = a.length;
-		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
+		int layers = a.length;
+		int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
 		for ( int p = layers, l = a[ 0 ].length; p-- != 0; )
 			if ( a[ p ].length != l ) throw new IllegalArgumentException( "The array of index " + p + " has not the same length of the array of index 0." );
-		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
-		final int[] offsetStack = new int[ stackSize ];
+		int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
+		int[] offsetStack = new int[ stackSize ];
 		int offsetPos = 0;
-		final int[] lengthStack = new int[ stackSize ];
+		int[] lengthStack = new int[ stackSize ];
 		int lengthPos = 0;
-		final int[] levelStack = new int[ stackSize ];
+		int[] levelStack = new int[ stackSize ];
 		int levelPos = 0;
 		offsetStack[ offsetPos++ ] = from;
 		lengthStack[ lengthPos++ ] = to - from;
 		levelStack[ levelPos++ ] = 0;
-		final int[] count = new int[ 1 << DIGIT_BITS ];
-		final int[] pos = new int[ 1 << DIGIT_BITS ];
-		final int[] t = new int[ layers ];
+		int[] count = new int[ 1 << DIGIT_BITS ];
+		int[] pos = new int[ 1 << DIGIT_BITS ];
+		int[] t = new int[ layers ];
 		while ( offsetPos > 0 ) {
-			final int first = offsetStack[ --offsetPos ];
-			final int length = lengthStack[ --lengthPos ];
-			final int level = levelStack[ --levelPos ];
-			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-			final int[] k = a[ level / DIGITS_PER_ELEMENT ]; // This is the key array
-			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+			int first = offsetStack[ --offsetPos ];
+			int length = lengthStack[ --lengthPos ];
+			int level = levelStack[ --levelPos ];
+			int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+			int[] k = a[ level / DIGITS_PER_ELEMENT ]; // This is the key array
+			int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
 			// Count keys.
 			for ( int i = first + length; i-- != first; )
 				count[ ( ( k[ i ] ) >>> shift & DIGIT_MASK ^ signMask ) ]++;
@@ -2209,7 +2209,7 @@ public class IntArrays {
 				if ( count[ i ] != 0 ) lastUsed = i;
 				pos[ i ] = ( p += count[ i ] );
 			}
-			final int end = first + length - count[ lastUsed ];
+			int end = first + length - count[ lastUsed ];
 			// i moves through the start of each block
 			for ( int i = first, c = -1, d; i <= end; i += count[ c ], count[ c ] = 0 ) {
 				for ( int p = layers; p-- != 0; )
@@ -2219,7 +2219,7 @@ public class IntArrays {
 					while ( ( d = --pos[ c ] ) > i ) {
 						c = ( ( k[ d ] ) >>> shift & DIGIT_MASK ^ signMask );
 						for ( int p = layers; p-- != 0; ) {
-							final int u = t[ p ];
+							int u = t[ p ];
 							t[ p ] = a[ p ][ d ];
 							a[ p ][ d ] = u;
 						}
@@ -2246,10 +2246,10 @@ public class IntArrays {
 	 * @param to the index of the last element (exclusive) to be shuffled.
 	 * @param random a pseudorandom number generator (please use a <a href="http://dsiutils.dsi.unimi.it/docs/it/unimi/dsi/util/XorShiftStarRandom.html">XorShift*</a> generator).
 	 * @return <code>a</code>. */
-	public static int[] shuffle( final int[] a, final int from, final int to, final Random random ) {
+	public static int[] shuffle( int[] a, int from, int to, Random random ) {
 		for ( int i = to - from; i-- != 0; ) {
-			final int p = random.nextInt( i + 1 );
-			final int t = a[ from + i ];
+			int p = random.nextInt( i + 1 );
+			int t = a[ from + i ];
 			a[ from + i ] = a[ from + p ];
 			a[ from + p ] = t;
 		}
@@ -2261,10 +2261,10 @@ public class IntArrays {
 	 * @param a the array to be shuffled.
 	 * @param random a pseudorandom number generator (please use a <a href="http://dsiutils.dsi.unimi.it/docs/it/unimi/dsi/util/XorShiftStarRandom.html">XorShift*</a> generator).
 	 * @return <code>a</code>. */
-	public static int[] shuffle( final int[] a, final Random random ) {
+	public static int[] shuffle( int[] a, Random random ) {
 		for ( int i = a.length; i-- != 0; ) {
-			final int p = random.nextInt( i + 1 );
-			final int t = a[ i ];
+			int p = random.nextInt( i + 1 );
+			int t = a[ i ];
 			a[ i ] = a[ p ];
 			a[ p ] = t;
 		}
@@ -2275,10 +2275,10 @@ public class IntArrays {
 	 * 
 	 * @param a the array to be reversed.
 	 * @return <code>a</code>. */
-	public static int[] reverse( final int[] a ) {
-		final int length = a.length;
+	public static int[] reverse( int[] a ) {
+		int length = a.length;
 		for ( int i = length / 2; i-- != 0; ) {
-			final int t = a[ length - i - 1 ];
+			int t = a[ length - i - 1 ];
 			a[ length - i - 1 ] = a[ i ];
 			a[ i ] = t;
 		}
@@ -2291,10 +2291,10 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be reversed.
 	 * @param to the index of the last element (exclusive) to be reversed.
 	 * @return <code>a</code>. */
-	public static int[] reverse( final int[] a, final int from, final int to ) {
-		final int length = to - from;
+	public static int[] reverse( int[] a, int from, int to ) {
+		int length = to - from;
 		for ( int i = length / 2; i-- != 0; ) {
-			final int t = a[ from + length - i - 1 ];
+			int t = a[ from + length - i - 1 ];
 			a[ from + length - i - 1 ] = a[ from + i ];
 			a[ from + i ] = t;
 		}

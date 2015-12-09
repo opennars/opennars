@@ -16,7 +16,7 @@ public abstract class Linear<V extends TermNode<?>> implements IterativeLayout<V
 
     @Override
     public void run(SpaceGrapher graph, int iterations) {
-        final TermNode[] verts = graph.displayed;
+        TermNode[] verts = graph.displayed;
 
         int i = 0;
 

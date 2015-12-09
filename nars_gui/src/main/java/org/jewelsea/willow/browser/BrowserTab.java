@@ -54,7 +54,7 @@ public class BrowserTab extends UITab<WebView> {
     public BrowserTab(TabManager tabManager) {
         super(new WebView());
 
-        this.view = content();
+        view = content();
         this.tabManager = tabManager;
         
 
@@ -71,13 +71,13 @@ public class BrowserTab extends UITab<WebView> {
         
         browser = new BrowserWindow(view);
         
-        final WebView view = browser.getView();
+        WebView view = browser.getView();
         view.setFontSmoothingType(FontSmoothingType.GRAY);
         
         
         // set the new browser to open any pop-up windows in a new tab.
         view.getEngine().setCreatePopupHandler(popupFeatures -> {
-            final BrowserTab browserTab = new BrowserTab(tabManager);
+            BrowserTab browserTab = new BrowserTab(tabManager);
             tabManager.addTab(browserTab);
             return browserTab.browser.getView().getEngine();
         });

@@ -32,18 +32,18 @@ public abstract class AbstractMatcher
 {
     private String label;
 
-    protected AbstractMatcher(final String label)
+    protected AbstractMatcher(String label)
     {
         this(new Rule[0], label);
     }
 
-    protected AbstractMatcher(final Rule subRule, final String label)
+    protected AbstractMatcher(Rule subRule, String label)
     {
         this(new Rule[]{ Objects.requireNonNull(subRule, "subRule") },
             label);
     }
 
-    protected AbstractMatcher(final Rule[] subRules, final String label)
+    protected AbstractMatcher(Rule[] subRules, String label)
     {
         super(/*ImmutableList.copyOf*/ FastList.newListWith(
                 toMatchers(Objects.requireNonNull(subRules))
@@ -52,9 +52,9 @@ public abstract class AbstractMatcher
         this.label = label;
     }
 
-    private static Matcher[] toMatchers(final Rule... subRules)
+    private static Matcher[] toMatchers(Rule... subRules)
     {
-        final Matcher[] matchers = new Matcher[subRules.length];
+        Matcher[] matchers = new Matcher[subRules.length];
         for (int i = 0; i < subRules.length; i++)
             matchers[i] = (Matcher) subRules[i];
         return matchers;
@@ -80,18 +80,18 @@ public abstract class AbstractMatcher
     }
 
     @Override
-    public final AbstractMatcher label(final String label)
+    public final AbstractMatcher label(String label)
     {
         if (Objects.equals(label, this.label))
             return this;
-        final AbstractMatcher clone = createClone();
+        AbstractMatcher clone = createClone();
         clone.label = label;
         return clone;
     }
 
     // default implementation is to simply delegate to the context
     @Override
-    public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public <V> MatcherContext<V> getSubContext(MatcherContext<V> context)
     {
         return context.getSubContext(this);
     }

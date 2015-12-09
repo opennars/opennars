@@ -44,7 +44,7 @@ public class LoopPane extends VBox {
 
         this.loop = loop;
 
-        final NAR n = loop.nar;
+        NAR n = loop.nar;
         runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
         stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
         cpuLabel = new SimpleStringProperty("CPU");
@@ -97,7 +97,7 @@ public class LoopPane extends VBox {
         //-2 here is a magic number to indicate that nothing is pending and can be changed now
         cpuSlider.value[0].addListener(updateLoopOnChange);
 
-        this.multiplier = new ComboBox<>();
+        multiplier = new ComboBox<>();
         multiplier.getItems().addAll( 1, 4, 16, 64, 128, 512);
         multiplier.setValue(1);
         multiplier.valueProperty().addListener(updateLoopOnChange);
@@ -135,7 +135,7 @@ public class LoopPane extends VBox {
 
             //new delay set:
 
-            final int MS = nMS;
+            int MS = nMS;
 
             runLater(() -> {
                 unpause();

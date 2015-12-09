@@ -33,7 +33,7 @@ public final class SgArgument extends SgVariable {
      * @param argument
      *            Argument to copy type and name from - Cannot be null.
      */
-    public SgArgument(final SgBehavior owner, final SgArgument argument) {
+    public SgArgument(SgBehavior owner, SgArgument argument) {
         this(owner, argument.getModifiers(), argument.getType(), argument.getName());
     }
 
@@ -48,7 +48,7 @@ public final class SgArgument extends SgVariable {
      * @param name
      *            Name - Cannot be null and cannot be empty.
      */
-    public SgArgument(final SgBehavior owner, final SgClass type, final String name) {
+    public SgArgument(SgBehavior owner, SgClass type, String name) {
         this(owner, "", type, name);
     }
 
@@ -65,8 +65,8 @@ public final class SgArgument extends SgVariable {
      * @param name
      *            Name - Cannot be null and cannot be empty.
      */
-    public SgArgument(final SgBehavior owner, final String modifiers, final SgClass type,
-            final String name) {
+    public SgArgument(SgBehavior owner, String modifiers, SgClass type,
+                      String name) {
         super(modifiers, type, name);
 
         if (owner == null) {
@@ -91,7 +91,7 @@ public final class SgArgument extends SgVariable {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getAnnotations().size(); i++) {
             sb.append(getAnnotations().get(i));
             sb.append(' ');

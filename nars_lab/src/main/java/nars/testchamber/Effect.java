@@ -12,16 +12,16 @@ public class Effect {
     
     public Effect(Action a, boolean success, long when, String description) {
         this.when = when;
-        this.action = a;
+        action = a;
         this.success = success;
         this.description = description;        
     }
 
     public Effect(Action a, boolean success, long when) {
-        this.action = a;
+        action = a;
         this.when = when;
         this.success = success;
-        this.description = null;
+        description = null;
     }
 
     @Override

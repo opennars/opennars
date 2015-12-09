@@ -18,9 +18,9 @@ public class Token<T> {
     
     public Token(T tokenValue, Token fromStrOffsetToken, Token fromStrEndToken) {
         this.tokenValue = tokenValue;
-        this.fromStr = fromStrOffsetToken.fromStr;
-        this.fromStrBegin = fromStrOffsetToken.fromStrBegin;
-        this.fromStrEnd = fromStrEndToken.fromStrEnd;
+        fromStr = fromStrOffsetToken.fromStr;
+        fromStrBegin = fromStrOffsetToken.fromStrBegin;
+        fromStrEnd = fromStrEndToken.fromStrEnd;
     }
     
     public Token(T tokenValue) {
@@ -54,7 +54,7 @@ public class Token<T> {
         if (o == this) return true;
         if (!(o instanceof Token)) return false;
         
-        return ((Token) o).tokenValue.equals(this.tokenValue);
+        return ((Token) o).tokenValue.equals(tokenValue);
     }
     
     public Token expandIndices(int left, int right) {

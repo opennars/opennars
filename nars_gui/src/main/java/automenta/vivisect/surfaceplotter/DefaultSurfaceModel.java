@@ -31,12 +31,12 @@ public class DefaultSurfaceModel extends AbstractSurfaceModel implements Surface
 			throw new NumberFormatException();
 		setDataAvailable(false); // clean space
 		// reads the calcDivision that will be used
-		final float stepx = (xMax - xMin) / calcDivisions;
-		final float stepy = (yMax - yMin) / calcDivisions;
-		final float xfactor = 20 / (xMax - xMin); // 20 aint magic: surface vertex requires a value in [-10 ; 10]
-		final float yfactor = 20 / (yMax - yMin);
+		float stepx = (xMax - xMin) / calcDivisions;
+		float stepy = (yMax - yMin) / calcDivisions;
+		float xfactor = 20 / (xMax - xMin); // 20 aint magic: surface vertex requires a value in [-10 ; 10]
+		float yfactor = 20 / (yMax - yMin);
 		
-		final int total = (calcDivisions + 1) * (calcDivisions + 1); // compute total size
+		int total = (calcDivisions + 1) * (calcDivisions + 1); // compute total size
                 
                 if ((surfaceVertex==null) || (surfaceVertex[0].length < total))
                     surfaceVertex = allocateMemory(hasFunction1,hasFunction2,  total); // allocate surfaceVertex

@@ -32,8 +32,8 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	 */
 	public Board(Player player1, Player player2, Game game)
 	{
-		final int WIDTH = game.WIDTH;
-		final int HEIGHT = game.HEIGHT;
+		int WIDTH = game.WIDTH;
+		int HEIGHT = game.HEIGHT;
 
 		// set players
 		this.player1 = player1;
@@ -121,7 +121,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	 */
 	public void setContext(Game context)
 	{
-		this.game = context;
+		game = context;
 		setPieces();
 	}
 

@@ -6,17 +6,17 @@ package com.github.fge.grappa.exceptions;
 public class GrappaException
     extends RuntimeException
 {
-    public GrappaException(final Throwable cause)
+    public GrappaException(Throwable cause)
     {
         super(cause);
     }
 
-    public GrappaException(final String message, final Throwable cause)
+    public GrappaException(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public GrappaException(final String message)
+    public GrappaException(String message)
     {
         super(message);
     }

@@ -131,7 +131,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
     }
 
     public static int numEllipsis(TermContainer x) {
-        final int xs = x.size();
+        int xs = x.size();
         int n = 0;
         for (int i = 0; i < xs; i++) {
             if (x.term(i) instanceof Ellipsis)
@@ -141,7 +141,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
     }
 
     public static int numNonEllipsisSubterms(Compound x) {
-        final int xs = x.size();
+        int xs = x.size();
         int n = xs;
         for (int i = 0; i < xs; i++) {
             Term xt = x.term(i);
@@ -213,7 +213,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
     public abstract boolean valid(int collectable);
 
     public static Ellipsis getFirstEllipsis(Compound X) {
-        final int xsize = X.size();
+        int xsize = X.size();
         for (int i = 0; i < xsize; i++) {
             Term xi = X.term(i);
             if (xi instanceof Ellipsis) {
@@ -238,7 +238,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 //        return null;
 //    }
     public static Term getFirstNonEllipsis(Compound X) {
-        final int xsize = X.size();
+        int xsize = X.size();
         for (int i = 0; i < xsize; i++) {
             Term xi = X.term(i);
             if (!(xi instanceof Ellipsis)) {

@@ -26,7 +26,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof ArraySortedIndex)) return false;
         ArraySortedIndex o = (ArraySortedIndex) obj;
@@ -76,7 +76,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     public boolean isSorted() {
         if (size() < 2) return true;
 
-        Iterator<E> ii = this.iterator();
+        Iterator<E> ii = iterator();
         float pp = Float.MAX_VALUE;
 
         while (ii.hasNext()) {
@@ -91,7 +91,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public final void setCapacity(final int capacity) {
+    public final void setCapacity(int capacity) {
 
         if (this.capacity==capacity) {
             return;
@@ -99,7 +99,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
         this.capacity = capacity;
 
-        final List<E> l = this.list;
+        List<E> l = list;
 
             int n = l.size();
             //remove elements from end
@@ -111,7 +111,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
 
-    public final int pos(final E o) {
+    public final int pos(E o) {
         return pos(score(o));
     }
 
@@ -120,8 +120,8 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         int lowerBound = size()-1;
 
         while (upperBound <= lowerBound) {
-            final int mid = (upperBound + lowerBound) /2; // >>> 1;
-            final float mp = score(get(mid));
+            int mid = (upperBound + lowerBound) /2; // >>> 1;
+            float mp = score(get(mid));
 
 //            System.err.println(upperBound + "(" + score(get(upperBound)) +
 //                    " " + mid + "(" + mp + " " + lowerBound + "(" + score(get(lowerBound))  );
@@ -137,16 +137,16 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public final E get(final int i) {
+    public final E get(int i) {
         return list.get(i);
     }
 
     @Override
-    public E insert(final E incoming) {
+    public E insert(E incoming) {
 
         E removed = null;
 
-        final int s = size();
+        int s = size();
 
         int insertPos;
         if (s == 0) {
@@ -187,9 +187,9 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
     //TODO use last known position, stored in the Map
     //it could be a better predictor of where it was
-    @Override public boolean remove(final Object o) {
+    @Override public boolean remove(Object o) {
 
-        final int s = size();
+        int s = size();
         if (s == 0) return false;
 
         //final E o = (E)_o;
@@ -227,7 +227,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
             if (phase)
                 r++;
 
-            final int u;
+            int u;
             if (phase) {
                 u = p + r;
                 if (u >= s) continue;
@@ -255,8 +255,8 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         //return false;
     }
 
-    private final boolean attemptRemoval(final Object o, /*final Object oName, */final int i) {
-        final List<E> l = this.list;
+    private final boolean attemptRemoval(Object o, /*final Object oName, */ int i) {
+        List<E> l = list;
         if (o == l.get( i ) /*|| (r.name().equals(oName))*/) {
             return l.remove(i)!=null; //shouldnt actually ever return false here
         }

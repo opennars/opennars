@@ -40,8 +40,8 @@ public class Objenome {
                 
         for (Solution o : parameters)
             genes.put(o.key(), o);
-        
-        this.parentContext = context;
+
+        parentContext = context;
     }
     
     public int getSolutionSize() { return genes.size(); }

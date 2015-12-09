@@ -32,8 +32,8 @@ public abstract class Operation extends Expr {
     }
     
     public boolean firstParenPrint() {
-        Integer exprLevelRight = this.getExpr(0).printLevelRight();
-        return (exprLevelRight != null && this.classOrder() > exprLevelRight) || this.getExpr(0).firstParenPrint();
+        Integer exprLevelRight = getExpr(0).printLevelRight();
+        return (exprLevelRight != null && classOrder() > exprLevelRight) || getExpr(0).firstParenPrint();
     }
     
     public boolean hasUndef() {
@@ -86,10 +86,10 @@ public abstract class Operation extends Expr {
                 ArrayList<Expr> defineds = defineds();
                 if (defineds == null) return new Undef();
                 return Conditional.make(conditions,
-                        (Expr) this.getClass().getMethod("makeDefined", ArrayList.class).invoke(null, defineds()));
+                        (Expr) getClass().getMethod("makeDefined", ArrayList.class).invoke(null, defineds()));
             }
         } catch(Exception e) {
-            throw new RuntimeException(e + "\nmake(ArrayList) failed on " + this.getClass().getSimpleName());
+            throw new RuntimeException(e + "\nmake(ArrayList) failed on " + getClass().getSimpleName());
         }
         return null;
     }
@@ -97,18 +97,18 @@ public abstract class Operation extends Expr {
     public boolean equalsExpr(Expr expr) {
         if (expr == null) return false;
         if (expr == this) return true;
-        if (!this.getClass().isAssignableFrom(expr.getClass())) return false;
+        if (!getClass().isAssignableFrom(expr.getClass())) return false;
 
-        return ArrayLists.elemExprsEqual(this.getExprs(), ((Operation) expr).getExprs());
+        return ArrayLists.elemExprsEqual(getExprs(), ((Operation) expr).getExprs());
 
     }
     
     public boolean notEqualsExpr(Expr expr) {
         if (expr == null) return false;
         if (expr == this) return false;
-        if (!this.getClass().isAssignableFrom(expr.getClass())) return false;
+        if (!getClass().isAssignableFrom(expr.getClass())) return false;
         
-        ArrayList<Expr> al1 = this.getExprs();
+        ArrayList<Expr> al1 = getExprs();
         ArrayList<Expr> al2 = ((Operation) expr).getExprs();
         if (al1.size() != al2.size()) return false;
         

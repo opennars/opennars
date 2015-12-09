@@ -21,7 +21,7 @@ public abstract class MathNode extends Node<Node, Double> {
     /** returns the constant (literal) double value
      * return Double.NaN if the child is not a literal
      */
-    public double getChildConstantValue(final int childNum) {
+    public double getChildConstantValue(int childNum) {
         Node c = getChild(childNum);
         if (c instanceof Literal) {
             Object o = c.evaluate();
@@ -32,7 +32,7 @@ public abstract class MathNode extends Node<Node, Double> {
         return Double.NaN;
     }
 
-    public double getChildEvaluated(final int childNum) {
+    public double getChildEvaluated(int childNum) {
         return getChild(childNum).asDouble();
     }
 

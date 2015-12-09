@@ -33,7 +33,7 @@ public class PathFieldConverter extends StandardTextFieldConverter {
         }
 
         VBox vbox = new VBox();
-        final TextField path = new TextField(); path.setText(object); //TextFieldBuilder.create().text(object).build();
+        TextField path = new TextField(); path.setText(object); //TextFieldBuilder.create().text(object).build();
         path.getStyleClass().add("actual-path");
         Button button = new Button("Browse");
         button.setOnAction(new EventHandler<ActionEvent>() {

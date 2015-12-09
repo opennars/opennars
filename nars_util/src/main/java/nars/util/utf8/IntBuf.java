@@ -38,13 +38,13 @@ public class IntBuf {
     public static final void p(int[] x, int i, int v) {
         p(x, i , (byte)v);
     }
-    static final void p(final int[] x, final int i, final byte v) {
-        final int e = i / 4; //>> 2
-        final int o = i % 4;
-        final int b = 8 * o;
+    static final void p(int[] x, int i, byte v) {
+        int e = i / 4; //>> 2
+        int o = i % 4;
+        int b = 8 * o;
         p(x, e, b, v);
     }
-    static final void p(final int[] x, final int e, final int b, final byte v) {
+    static final void p(int[] x, int e, int b, byte v) {
         int c = x[e] & ~(((int)0xff) << b);
         x[e] = c | (v << b);
     }
@@ -64,7 +64,7 @@ public class IntBuf {
         return (int) FastMath.ceil(bytes / 4.0f);
     }
 
-    public static int encode(char[] sa, final int spCurr, int sl, int[] da,
+    public static int encode(char[] sa, int spCurr, int sl, int[] da,
                                int dp, int dl) {
         int lastSp = spCurr;
         int lastDp = dp;
@@ -659,11 +659,11 @@ public class IntBuf {
 
         for (i=0; i<maxOrg; i++){
             // Copia o int, byte a byte.
-            final int I = arrayOrg[i];
-            final byte a = (byte)(I);
-            final byte b = (byte)(I >>> 8);
-            final byte c = (byte)(I >>> 16);
-            final byte d = (byte)(I >>> 24);
+            int I = arrayOrg[i];
+            byte a = (byte)(I);
+            byte b = (byte)(I >>> 8);
+            byte c = (byte)(I >>> 16);
+            byte d = (byte)(I >>> 24);
 
             if (d == 0) {
                 bTrim++;
@@ -730,22 +730,22 @@ public class IntBuf {
     }
 
     public int[] toInts() {
-        return slc(this.buffer, 0, length);
+        return slc(buffer, 0, length);
     }
     public int[] toInts(int start) {
-        return slc(this.buffer, start, length - start + 1);
+        return slc(buffer, start, length - start + 1);
     }
 
 
     public int[] slc( int startIndex, int endIndex ) {
-        return slc(this.buffer, startIndex, endIndex);
+        return slc(buffer, startIndex, endIndex);
     }
 
     public static int[] slc( int[] array, int startIndex, int endIndex ) {
 
-        final int start = calculateIndex( array, startIndex );
-        final int end = calculateEndIndex(array, endIndex);
-        final int newLength = end - start;
+        int start = calculateIndex( array, startIndex );
+        int end = calculateEndIndex(array, endIndex);
+        int newLength = end - start;
 
         if ( newLength < 0 ) {
             throw new ArrayIndexOutOfBoundsException(
@@ -759,8 +759,8 @@ public class IntBuf {
         return newArray;
     }
 
-    private static int calculateIndex( final int[] array, final int originalIndex ) {
-        final int length = array.length;
+    private static int calculateIndex( int[] array, int originalIndex ) {
+        int length = array.length;
 
 
 
@@ -792,8 +792,8 @@ public class IntBuf {
 
 
     /* End universal methods. */
-    private static int calculateEndIndex( final int[] array, final int originalIndex ) {
-        final int length = array.length;
+    private static int calculateEndIndex( int[] array, int originalIndex ) {
+        int length = array.length;
 
 
 

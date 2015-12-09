@@ -51,8 +51,8 @@ public final class RuleMethodRewriter
     private int varInitNr = 0;
 
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -60,20 +60,20 @@ public final class RuleMethodRewriter
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         this.method = Objects.requireNonNull(method, "method");
         actionNr = 0;
         varInitNr = 0;
 
-        for (final InstructionGroup group: method.getGroups()) {
+        for (InstructionGroup group: method.getGroups()) {
             createNewGroupClassInstance(group);
             initializeFields(group);
 
-            final InstructionGraphNode root = group.getRoot();
-            final AbstractInsnNode rootInsn = root.getInstruction();
+            InstructionGraphNode root = group.getRoot();
+            AbstractInsnNode rootInsn = root.getInstruction();
 
             if (root.isActionRoot())
                 method.instructions.remove(rootInsn);
@@ -86,17 +86,17 @@ public final class RuleMethodRewriter
         method.setBodyRewritten();
     }
 
-    private void createNewGroupClassInstance(final InstructionGroup group)
+    private void createNewGroupClassInstance(InstructionGroup group)
     {
-        final String internalName
+        String internalName
             = group.getGroupClassType().getInternalName();
-        final InstructionGraphNode root = group.getRoot();
-        final AbstractInsnNode rootInsn = root.getInstruction();
-        final InsnList insnList = method.instructions;
-        final String constant = method.name + (root.isActionRoot() ? "_Action"
+        InstructionGraphNode root = group.getRoot();
+        AbstractInsnNode rootInsn = root.getInstruction();
+        InsnList insnList = method.instructions;
+        String constant = method.name + (root.isActionRoot() ? "_Action"
             + ++actionNr : "_VarInit" + ++varInitNr);
 
-        final CodeBlock block = CodeBlock.newCodeBlock();
+        CodeBlock block = CodeBlock.newCodeBlock();
 
         block.newobj(internalName)
             .dup()
@@ -112,9 +112,9 @@ public final class RuleMethodRewriter
         insnList.insertBefore(rootInsn, block.getInstructionList());
     }
 
-    private void initializeFields(final InstructionGroup group)
+    private void initializeFields(InstructionGroup group)
     {
-        final String internalName
+        String internalName
             = group.getGroupClassType().getInternalName();
 
         InsnList insnList;
@@ -123,7 +123,7 @@ public final class RuleMethodRewriter
         VarInsnNode varNode;
         FieldInsnNode fieldNode;
 
-        for (final FieldNode field: group.getFields()) {
+        for (FieldNode field: group.getFields()) {
             insnList = method.instructions;
             rootInsn = group.getRoot().getInstruction();
             // TODO: replace with method in CodeBlock?

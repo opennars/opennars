@@ -28,7 +28,7 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
 //    }
 
     /** apply Atom.quoteI */
-    static Compound termizedProduct(final Object... args) {
+    static Compound termizedProduct(Object... args) {
         if (args.length == 0) return Product.Empty;
         return $.p(termized(args));
     }
@@ -36,8 +36,8 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
     static Term[] termized(Object... args) {
         Term[] x = new Term[args.length];
         for (int i = 0; i < args.length; i++) {
-            final Term y;
-            final Term xx = x[i];
+            Term y;
+            Term xx = x[i];
             y = !(args[i] instanceof Term) ? Atom.quote(args[i].toString()) : xx;
             x[i] = y;
         }

@@ -67,7 +67,7 @@ public abstract class DefaultProblemSTGP extends ProblemSTGP {
         the(RandomSequence.RANDOM_SEQUENCE, randomSequence);
 
 
-        final ArrayList syntax = new ArrayList();
+        ArrayList syntax = new ArrayList();
 
         //+2.0 allows it to grow
         syntax.add( new DoubleERC(randomSequence, -1.0, 2.0, 2));

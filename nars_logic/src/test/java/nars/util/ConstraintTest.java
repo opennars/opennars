@@ -120,7 +120,7 @@ public class ConstraintTest {
         }
 
         public SATNetwork(NAR n, Set<Compound> concepts) {
-            this.nar = n;
+            nar = n;
             this.concepts = concepts;
         }
 

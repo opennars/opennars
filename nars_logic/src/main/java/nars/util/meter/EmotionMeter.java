@@ -67,12 +67,12 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     }
 
 
-    public void happy(final float delta) {
-        this.happy += delta;
+    public void happy(float delta) {
+        happy += delta;
     }
 
-    public void happy(final float solution, final Task task, @Deprecated final Premise p) {
-        this.happy += ( task.getBudget().summary() * solution );
+    public void happy(float solution, Task task, @Deprecated Premise p) {
+        happy += ( task.getBudget().summary() * solution );
     }
 
     protected void commitHappy() {
@@ -163,7 +163,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     }
 
     public void busy(Task cause, Premise p) {
-        this.busy += cause.getPriority();
+        busy += cause.getPriority();
     }
 
 
@@ -195,9 +195,9 @@ public class EmotionMeter extends FrameReaction implements Serializable {
             */
         }
 
-        busyMeter.set(lastbusy = this.busy);
+        busyMeter.set(lastbusy = busy);
 
-        this.busy = 0;
+        busy = 0;
 
 
     }

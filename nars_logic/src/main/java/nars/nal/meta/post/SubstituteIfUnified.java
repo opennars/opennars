@@ -39,7 +39,7 @@ public class SubstituteIfUnified extends Substitute {
             throw new RuntimeException("invalid variable type: " + varType);
         }
 
-        this.id = getClass().getSimpleName() + ":(" +
+        id = getClass().getSimpleName() + ":(" +
                 type + "_," + x + ',' + y + ')';
     }
 
@@ -56,7 +56,7 @@ public class SubstituteIfUnified extends Substitute {
 
         FindSubst sub = new FindSubst(type, m.premise.getRandom());
 
-        final boolean result;
+        boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
             m.secondary.putAll(sub.xy);
             result = true;

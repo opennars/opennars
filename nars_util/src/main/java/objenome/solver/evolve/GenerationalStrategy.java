@@ -83,7 +83,7 @@ public class GenerationalStrategy extends Pipeline implements EvolutionaryStrate
      */
     @Override
     public Population process(Population population) {
-        this.config = population.getConfig();
+        config = population.getConfig();
 
         setup();
 

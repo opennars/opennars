@@ -17,8 +17,8 @@ public abstract class CogExample extends IOMatrixExample  {
     
     public CogExample(Cog z) {
         super();
-        
-        this.cog = z;
+
+        cog = z;
     }
 
     @Override

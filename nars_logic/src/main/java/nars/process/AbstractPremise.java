@@ -17,7 +17,7 @@ public abstract class AbstractPremise implements Premise {
     public final NAR nar;
 
     public AbstractPremise(NAR m) {
-        this.nar = m;
+        nar = m;
     }
 
     @Override

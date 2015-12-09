@@ -50,14 +50,14 @@ final class StringEncoder {
         encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
     }
 
-    private void readInputChunk(final String source) {
+    private void readInputChunk(String source) {
         //assert inBuffer.remaining() <= 1;
         //assert readOffset < source.length();
 
-        final CharBuffer inBuffer = this.inBuffer;
-        final char[] inChars = inBuffer.array();
+        CharBuffer inBuffer = this.inBuffer;
+        char[] inChars = inBuffer.array();
 
-        final int readOffset = this.readOffset;
+        int readOffset = this.readOffset;
         // We need to get a chunk from the string: Compute the chunk length
         int readLength = source.length() - readOffset;
         int inCharsLen = inChars.length;
@@ -80,7 +80,7 @@ final class StringEncoder {
 
     @param destination a ByteBuffer that will be filled with data.
     @return false if more output buffer space is needed, true if encoding is complete. */
-    public boolean encode(final String source, ByteBuffer destination) {
+    public boolean encode(String source, ByteBuffer destination) {
         // We need to special case the empty string
         if (source.isEmpty()) {
             return true;
@@ -91,10 +91,10 @@ final class StringEncoder {
             readInputChunk(source);
         }
 
-        final int slen = source.length();
+        int slen = source.length();
 
-        final CharBuffer inBuffer = this.inBuffer;
-        final CharsetEncoder encoder = this.encoder;
+        CharBuffer inBuffer = this.inBuffer;
+        CharsetEncoder encoder = this.encoder;
         // if flush() overflows the destination, skip the encode loop and re-try the flush()
         if (inBuffer.hasRemaining()) {
             while (true) {
@@ -183,7 +183,7 @@ final class StringEncoder {
     public byte[] toNewArray(String source) {
         reset();
 
-        final ByteBuffer byteTemp = this.byteTemp;
+        ByteBuffer byteTemp = this.byteTemp;
 
 
         // Optimized for short strings

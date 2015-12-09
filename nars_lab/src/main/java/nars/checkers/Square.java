@@ -80,7 +80,7 @@ public class Square extends JComponent
 		else
 			g.setColor(color);						// regular color
 		
-		g.fillRect(0, 0, this.getPreferredSize().width, this.getPreferredSize().height);
+		g.fillRect(0, 0, getPreferredSize().width, getPreferredSize().height);
 		
         if(piece != null)
             piece.draw(g);

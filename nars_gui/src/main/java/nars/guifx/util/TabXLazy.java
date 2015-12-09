@@ -31,7 +31,7 @@ public class TabXLazy extends TabX implements Runnable {
 
                 exe.submit(() -> {
 
-                    final Node g = contentBuilder.get();
+                    Node g = contentBuilder.get();
                     map = g;
 
                     runLater(TabXLazy.this);

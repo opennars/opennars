@@ -145,7 +145,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
         long currents = Math.round(value(xs) * ((1L << numOutputBits) - 1));
         long targets = Math.round(y * ((1L << numOutputBits) - 1));
 
-        final ArrayList<Integer> ps = new ArrayList<>(numOutputBits);
+        ArrayList<Integer> ps = new ArrayList<>(numOutputBits);
         for (int i = 0; i < numOutputBits; ++i) {
             boolean target = ((targets >> i) & 1) == 1;
             boolean current = ((currents >> i) & 1) == 1;

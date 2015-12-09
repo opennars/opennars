@@ -29,9 +29,9 @@ public class Physics2D {
     public void step(double delta) {
 
 
-        final int numConnections = connections.size();
+        int numConnections = connections.size();
         for (int i = 0; i < numConnections; i++) {
-            final Connection c = connections.get(i);
+            Connection c = connections.get(i);
             double dx = c.p1.x - c.p2.x;
             double dy = c.p1.y - c.p2.y;
             double l = Math.sqrt(dx * dx + dy * dy);
@@ -42,9 +42,9 @@ public class Physics2D {
             c.p2.vy -= delta * w * dl * dy / l;
         }
 
-        final int numPoints = points.size();
+        int numPoints = points.size();
         for (int i = 0; i < numPoints; i++) {
-            final Point p = points.get(i);
+            Point p = points.get(i);
 
             p.vy += delta * gravity;
 

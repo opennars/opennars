@@ -39,7 +39,7 @@ public class Equals extends Comparison {
     
     public String pretty() {
 
-        Integer thisClassOrder = this.classOrder();
+        Integer thisClassOrder = classOrder();
         
         boolean expr1Parens = false;
         if (thisClassOrder > expr1.printLevelRight()) expr1Parens = true;

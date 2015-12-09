@@ -11,7 +11,7 @@ package nars.util.data.rope.impl;
  */
 public class FastCharSequenceRope extends FlatCharSequenceRope {
 
-    public FastCharSequenceRope(final CharSequence c) {
+    public FastCharSequenceRope(CharSequence c) {
         super(c);
     }
 

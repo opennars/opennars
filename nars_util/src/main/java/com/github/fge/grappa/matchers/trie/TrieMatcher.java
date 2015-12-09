@@ -36,7 +36,7 @@ public final class TrieMatcher
 {
     private final Trie trie;
 
-    public TrieMatcher(final Trie trie)
+    public TrieMatcher(Trie trie)
     {
         super("trie(" + Objects.requireNonNull(trie).getNrWords()
             + " strings)");
@@ -56,22 +56,22 @@ public final class TrieMatcher
      * @return true if the match was successful
      */
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         /*
          * Since the trie knows about the length of its possible longest match,
          * extract that many characters from the buffer. Remind that .extract()
          * will adjust illegal indices automatically.
          */
-        final int maxLength = trie.getMaxLength();
-        final int index = context.getCurrentIndex();
-        final String input = context.getInputBuffer()
+        int maxLength = trie.getMaxLength();
+        int index = context.getCurrentIndex();
+        String input = context.getInputBuffer()
             .extract(index, index + maxLength);
 
         /*
          * We now just have to trie and search... (pun intended)
          */
-        final int ret = trie.search(input, false);
+        int ret = trie.search(input, false);
         if (ret == -1)
             return false;
 

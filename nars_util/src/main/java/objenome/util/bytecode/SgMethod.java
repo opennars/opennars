@@ -49,8 +49,8 @@ public final class SgMethod extends SgBehavior {
      * @param name
      *            Name of the method.
      */
-    public SgMethod(final SgClass owner, final String modifiers, final SgClass returnType,
-            final String name) {
+    public SgMethod(SgClass owner, String modifiers, SgClass returnType,
+                    String name) {
         super(owner, modifiers);
         if (returnType == null) {
             throw new IllegalArgumentException("The argument 'returnType' cannot be NULL!");
@@ -105,7 +105,7 @@ public final class SgMethod extends SgBehavior {
      * @param line
      *            Line to add - Cannot be null (but empty).
      */
-    public void addBodyLine(final String line) {
+    public void addBodyLine(String line) {
         if (line == null) {
             throw new IllegalArgumentException("The argument 'line' cannot be NULL!");
         }
@@ -137,7 +137,7 @@ public final class SgMethod extends SgBehavior {
      * @return Modifiers, return type, name and arguments - Always non-null.
      */
     public String getSignature() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (!getModifiers().isEmpty()) {
             sb.append(getModifiers());
             sb.append(' ');
@@ -171,14 +171,14 @@ public final class SgMethod extends SgBehavior {
      * @return Method name and argument names (like "methodXY(a, b, c)").
      */
     public String getCallSignature() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(getName());
         sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
             }
-            final SgArgument arg = getArguments().get(i);
+            SgArgument arg = getArguments().get(i);
             sb.append(arg.getName());
         }
         sb.append(')');
@@ -192,14 +192,14 @@ public final class SgMethod extends SgBehavior {
      *         "methodXY(String, int, boolean)").
      */
     public String getTypeSignature() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(getName());
         sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
             }
-            final SgArgument arg = getArguments().get(i);
+            SgArgument arg = getArguments().get(i);
             sb.append(arg.getType().getSimpleName());
         }
         sb.append(')');
@@ -214,15 +214,15 @@ public final class SgMethod extends SgBehavior {
      *         "MethodXY_String_int_boolean").
      */
     public String getUnderscoredNameAndTypes() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(SgUtils.firstCharUpper(getName()));
         sb.append('_');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append('_');
             }
-            final SgArgument arg = getArguments().get(i);
-            final String typeName = arg.getType().getSimpleName();
+            SgArgument arg = getArguments().get(i);
+            String typeName = arg.getType().getSimpleName();
             sb.append(SgUtils.replace(typeName, "[]", "ARRAY", -1));
         }
         return sb.toString();
@@ -245,8 +245,8 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Source code of the method.
      */
-    public String toString(final boolean showAnnotations) {
-        final StringBuilder sb = new StringBuilder();
+    public String toString(boolean showAnnotations) {
+        StringBuilder sb = new StringBuilder();
         if (showAnnotations && (!getAnnotations().isEmpty())) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {

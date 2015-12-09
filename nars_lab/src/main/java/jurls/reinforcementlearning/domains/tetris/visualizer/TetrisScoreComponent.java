@@ -28,7 +28,7 @@ public class TetrisScoreComponent {
 	int lastScore=0;
 
 	public TetrisScoreComponent(TetrisVisualizer ev){
-		this.tetVis = ev;
+		tetVis = ev;
 		lastScore=-1;
 	}
 

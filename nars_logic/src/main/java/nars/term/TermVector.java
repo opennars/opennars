@@ -71,7 +71,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     @SafeVarargs
     public TermVector(T... t) {
         super();
-        this.term = t;
+        term = t;
         init();
     }
 
@@ -87,7 +87,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public final Term termOr(int index, Term resultIfInvalidIndex) {
-        final Term[] term = this.term;
+        Term[] term = this.term;
         if (term.length <= index)
             return resultIfInvalidIndex;
         return term[index];
@@ -129,7 +129,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public void setNormalized(boolean b) {
-        this.normalized = true;
+        normalized = true;
     }
 
     @Override
@@ -159,7 +159,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return varTotal;
     }
 
-    public Term[] cloneTermsReplacing(int index, final Term replaced) {
+    public Term[] cloneTermsReplacing(int index, Term replaced) {
         Term[] y = termsCopy();
         y[index] = replaced;
         return y;
@@ -188,16 +188,16 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
 
     public final void forEach(Consumer<? super T> action, int start, int stop) {
-        final T[] tt = this.term;
+        T[] tt = term;
         for (int i = start; i < stop; i++) {
             action.accept(tt[i]);
         }
     }
 
     @Override
-    public final void forEach(final Consumer<? super T> action) {
-        final T[] tt = this.term;
-        for (final T t : tt)
+    public final void forEach(Consumer<? super T> action) {
+        T[] tt = term;
+        for (T t : tt)
             action.accept(t);
     }
 
@@ -208,7 +208,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
      * @return Whether the target is in the current term
      */
     @Override
-    public final boolean containsTerm(final Term t) {
+    public final boolean containsTerm(Term t) {
         if (impossibleSubterm(t))
             return false;
         return Terms.contains(term, t);
@@ -231,7 +231,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         int subt = 0;
         int contentHash = 1;
 
-        for (final Term t : term) {
+        for (Term t : term) {
 
             if (t == this)
                 throw new RuntimeException("term can not contain itself");
@@ -250,16 +250,16 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
         Compound.ensureFeasibleVolume(vol);
 
-        this.hasVarDeps = (byte) deps;
-        this.hasVarIndeps = (byte) indeps;
-        this.hasVarQueries = (byte) queries;
-        this.varTotal = (short) (deps + indeps + queries);
-        this.structureHash = subt;
+        hasVarDeps = (byte) deps;
+        hasVarIndeps = (byte) indeps;
+        hasVarQueries = (byte) queries;
+        varTotal = (short) (deps + indeps + queries);
+        structureHash = subt;
 
-        this.complexity = (short) compl;
-        this.volume = (short) vol;
+        complexity = (short) compl;
+        volume = (short) vol;
 
-        this.normalized = varTotal == 0;
+        normalized = varTotal == 0;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
         this.contentHash = contentHash;
@@ -295,7 +295,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             volume != c.volume)
                 return false;
 
-        final int s = this.size();
+        int s = size();
         if (s!=c.size())
             return false;
 
@@ -319,20 +319,20 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             return diff;
 
         //TODO dont assume it's a TermVector
-        final TermVector c = (TermVector) o;
+        TermVector c = (TermVector) o;
         if ((diff = Integer.compare(structure(), c.structure())) != 0)
             return diff;
 
 
-        final int s = this.size();
+        int s = size();
         if ((diff = Integer.compare(s, c.size())) != 0)
             return diff;
 
 
         for (int i = 0; i < s; i++) {
-            final Term a = term(i);
-            final Term b = c.term(i);
-            final int d = a.compareTo(b);
+            Term a = term(i);
+            Term b = c.term(i);
+            int d = a.compareTo(b);
 
         /*
         if (Global.DEBUG) {

@@ -46,9 +46,9 @@ public class DemoPanel extends TitledPane {
 //    "http://mugtug.com/sketchpad/",                 sketchpad gives ES2 Vram Pool errors, so disabled it.
     };
 
-    public DemoPanel(final WebBrowser chrome) {
+    public DemoPanel(WebBrowser chrome) {
         // create a canvas demos button.
-        final Button canvasButton = new IconButton(
+        Button canvasButton = new IconButton(
                 getString("demo-panel.canvas-demos"),
                 "canvas.jpg",
                 getString("demo-panel.canvas-demos.tooltip"),

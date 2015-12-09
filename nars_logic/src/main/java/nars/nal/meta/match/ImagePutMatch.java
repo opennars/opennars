@@ -18,18 +18,18 @@ public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
 
     public ImagePutMatch(Term[] t, Term relationTerm, Image y) {
         super(t);
-        this.to = relationTerm;
-        this.origin = y;
+        to = relationTerm;
+        origin = y;
     }
 
     @Override
     public boolean applyTo(Subst substitution, Collection<Term> target, boolean fullMatch) {
-        Term relation = substitution.getXY(this.to);
+        Term relation = substitution.getXY(to);
         if (relation == null) {
             if (fullMatch)
                 return false;
             else
-                relation = this.to;
+                relation = to;
         }
 
         Term[] t = origin.terms();

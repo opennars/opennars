@@ -42,8 +42,8 @@ public final class SgField extends SgVariable {
      *            Initializer for the field - Can be null but should normally be
      *            set to an empty String instead.
      */
-    public SgField(final SgClass owner, final String modifiers, final SgClass type,
-            final String name, final String initializer) {
+    public SgField(SgClass owner, String modifiers, SgClass type,
+                   String name, String initializer) {
 
         super(modifiers, type, name);
 
@@ -86,7 +86,7 @@ public final class SgField extends SgVariable {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (!getAnnotations().isEmpty()) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {

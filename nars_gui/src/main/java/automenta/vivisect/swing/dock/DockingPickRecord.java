@@ -24,7 +24,7 @@ public class DockingPickRecord {
     private final DockingChild child;
     private final int direction;
 
-    public DockingPickRecord(final DockingChild child, final int direction) {
+    public DockingPickRecord(DockingChild child, int direction) {
         this.child = child;
         this.direction = direction;
     }

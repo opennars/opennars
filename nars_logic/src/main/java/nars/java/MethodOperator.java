@@ -39,8 +39,8 @@ public class MethodOperator extends TermFunction {
         super(getParentMethodName(m));
 
         this.context = context;
-        this.method = m;
-        this.params = method.getParameters();
+        method = m;
+        params = method.getParameters();
         this.enable = enable;
     }
 
@@ -56,11 +56,11 @@ public class MethodOperator extends TermFunction {
     @Override
     public synchronized List<Task> apply(Task opTask) {
 
-        this.currentTask = opTask; //HACK
+        currentTask = opTask; //HACK
 
         List result = super.apply(opTask);
 
-        this.currentTask = null;
+        currentTask = null;
 
         return result;
     }
@@ -75,7 +75,7 @@ public class MethodOperator extends TermFunction {
             return null;
 
         int pc = method.getParameterCount();
-        final int requires, paramOffset;
+        int requires, paramOffset;
         if (Modifier.isStatic(method.getModifiers())) {
             requires = 1;
             paramOffset = 0;
@@ -88,10 +88,10 @@ public class MethodOperator extends TermFunction {
         if (x.length < requires)
             throw new RuntimeException("invalid argument count: needs " + requires + " but has " + Arrays.toString(x));
 
-        final Object instance;
+        Object instance;
         instance = paramOffset == 0 ? null : context.object(x[0]);
 
-        final Object[] args;
+        Object[] args;
         if (pc == 0) {
             args = empty;
         }
@@ -124,7 +124,7 @@ public class MethodOperator extends TermFunction {
             //Object result = Invoker.invoke(instance, method.getName(), args); /** from Boon library */
 
 
-            final Object result;
+            Object result;
             Object ll = currentTask.getLogLast();
             result = ll instanceof NALObjects.InvocationResult ? ((NALObjects.InvocationResult) ll).value : context.invokeVolition(currentTask, method, instance, args);
 

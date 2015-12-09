@@ -18,7 +18,7 @@ public class NotEqual extends PreCondition2 {
     }
 
     @Override
-    public final boolean test(final RuleMatch m, final Term a, final Term b) {
+    public final boolean test(RuleMatch m, Term a, Term b) {
         if ((a == null) || (b == null)) return false;
         return !a.equals(b);
     }

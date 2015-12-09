@@ -63,22 +63,22 @@ public class XorShift1024StarRandom extends Random {
 	 * 
 	 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 	 */
-	public XorShift1024StarRandom( final long seed ) {
+	public XorShift1024StarRandom( long seed ) {
 		super(  );
         setSeed(seed);
 	}
 
 	@Override
-	protected int next( final int bits ) {
+	protected int next( int bits ) {
 		return (int)( nextLong() >>> 64 - bits );
 	}
 	
 	@Override
 	public final long nextLong() {
-		final long[] s = this.s;
+		long[] s = this.s;
         int p = this.p;
 
-		final long s0 = s[ p ];
+		long s0 = s[ p ];
 		long s1 = s[ p = ( p + 1 ) & 15 ];
 		s1 ^= s1 << 31;
 
@@ -91,7 +91,7 @@ public class XorShift1024StarRandom extends Random {
 	}
 	
 	@Override
-	public int nextInt( final int n ) {
+	public int nextInt( int n ) {
 		return (int)nextLong( n );
 	}
 	
@@ -104,12 +104,12 @@ public class XorShift1024StarRandom extends Random {
      * @param n the positive bound on the random number to be returned.
      * @return the next pseudorandom {@code long} value between {@code 0} (inclusive) and {@code n} (exclusive).
      */
-	public final long nextLong( final long n ) {
+	public final long nextLong( long n ) {
         if ( n <= 0 ) throw new IllegalArgumentException();
 		// No special provision for n power of two: all our bits are good.
 		while (true) {
-			final long bits = nextLong() >>> 1;
-			final long value = bits % n;
+			long bits = nextLong() >>> 1;
+			long value = bits % n;
 			if (bits - value + (n - 1) >= 0) return value;
 		}
 	}
@@ -130,7 +130,7 @@ public class XorShift1024StarRandom extends Random {
 	}
 	
 	@Override
-	public void nextBytes( final byte[] bytes ) {
+	public void nextBytes( byte[] bytes ) {
 		int i = bytes.length;
 		while( i != 0 ) {
 			int n = Math.min(i, 8);
@@ -148,11 +148,11 @@ public class XorShift1024StarRandom extends Random {
 	 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 	 */
 	@Override
-	public void setSeed( final long seed ) {
+	public void setSeed( long seed ) {
 		long[] s = this.s;
         if (this.s == null) s = this.s = new long[16];
 		p = 0;
-		final SplitMix64RandomGenerator r = new SplitMix64RandomGenerator( seed );
+		SplitMix64RandomGenerator r = new SplitMix64RandomGenerator( seed );
 		for( int i = s.length; i-- != 0; ) s[ i ] = r.nextLong();
 	}
 
@@ -163,7 +163,7 @@ public class XorShift1024StarRandom extends Random {
 	 * @param state an array of 16 longs; at least one must be nonzero.
 	 * @param p the internal index. 
 	 */
-	public void setState( final long[] state, final int p ) {
+	public void setState( long[] state, int p ) {
 		if ( state.length != s.length ) throw new IllegalArgumentException( "The argument array contains " + state.length + " longs instead of " + s.length );
 		System.arraycopy( state, 0, s, 0, s.length );
 		this.p = p;
@@ -193,7 +193,7 @@ public class XorShift1024StarRandom extends Random {
 		 *
 		 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 		 */
-		public SplitMix64RandomGenerator( final long seed ) {
+		public SplitMix64RandomGenerator( long seed ) {
 			setSeed( seed );
 		}
 
@@ -240,7 +240,7 @@ public class XorShift1024StarRandom extends Random {
 		 * @return the next pseudorandom {@code int} value between {@code 0} (inclusive) and {@code n} (exclusive).
 		 */
 		@Override
-		public int nextInt( final int n ) {
+		public int nextInt( int n ) {
 			if ( n <= 0 ) throw new IllegalArgumentException();
 			return (int)( ( staffordMix13( x += PHI ) >>> 1 ) % n );
 		}
@@ -254,12 +254,12 @@ public class XorShift1024StarRandom extends Random {
 		 * @param n the positive bound on the random number to be returned.
 		 * @return the next pseudorandom {@code long} value between {@code 0} (inclusive) and {@code n} (exclusive).
 		 */
-		public long nextLong( final long n ) {
+		public long nextLong( long n ) {
 			if ( n <= 0 ) throw new IllegalArgumentException();
 			// No special provision for n power of two: all our bits are good.
 			while (true) {
-				final long bits = staffordMix13(x += PHI) >>> 1;
-				final long value = bits % n;
+				long bits = staffordMix13(x += PHI) >>> 1;
+				long value = bits % n;
 				if (bits - value + (n - 1) >= 0) return value;
 			}
 		}
@@ -280,7 +280,7 @@ public class XorShift1024StarRandom extends Random {
 		}
 
 		@Override
-		public void nextBytes( final byte[] bytes ) {
+		public void nextBytes( byte[] bytes ) {
 			int i = bytes.length, n;
 			while( i != 0 ) {
 				n = Math.min( i, 8 );
@@ -296,7 +296,7 @@ public class XorShift1024StarRandom extends Random {
 		 * @param seed a seed for this generator.
 		 */
 		@Override
-		public void setSeed( final long seed ) {
+		public void setSeed( long seed ) {
 			x = murmurHash3(seed);
 		}
 
@@ -305,7 +305,7 @@ public class XorShift1024StarRandom extends Random {
 		 *
 		 * @param state the new state for this generator (must be nonzero).
 		 */
-		public void setState( final long state ) {
+		public void setState( long state ) {
 			x = state;
 		}
 	}

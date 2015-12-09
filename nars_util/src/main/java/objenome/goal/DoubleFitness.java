@@ -97,10 +97,10 @@ public abstract class DoubleFitness implements Fitness {
      */
     @Override
     public int compareTo(Fitness o) {
-        if (this.getClass().isAssignableFrom(o.getClass())) {
+        if (getClass().isAssignableFrom(o.getClass())) {
             return comparator().compare(fitness, ((DoubleFitness) o).fitness);
         } else {
-            throw new IllegalArgumentException("Expected " + this.getClass() + ", found " + o.getClass());
+            throw new IllegalArgumentException("Expected " + getClass() + ", found " + o.getClass());
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class DoubleFitness implements Fitness {
         if (obj instanceof DoubleFitness) {
             DoubleFitness fitnessObj = (DoubleFitness) obj;
 
-            return fitnessObj.fitness == this.fitness;
+            return fitnessObj.fitness == fitness;
         }
 
         return false;

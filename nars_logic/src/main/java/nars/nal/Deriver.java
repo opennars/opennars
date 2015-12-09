@@ -66,7 +66,7 @@ public abstract class Deriver  {
     }
 
     /** run an initialized rule matcher */
-    protected abstract void run(final RuleMatch matcher);
+    protected abstract void run(RuleMatch matcher);
 
 
     /** initialize a rule matcher with a Premise to supply

@@ -42,7 +42,7 @@ public abstract class ObjIntConceptMap<T extends Term> extends MutableConceptMap
 
 
     @Override
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         if (!values.containsKey(t)) {
             return super.contains(t);
         }

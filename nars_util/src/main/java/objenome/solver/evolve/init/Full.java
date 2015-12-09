@@ -89,7 +89,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      */
     public Full(boolean autoConfig) {
         // Default config values
-        this.allowDuplicates = false;
+        allowDuplicates = false;
 
         this.autoConfig = autoConfig;
     }
@@ -342,9 +342,9 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      * sense to do so if we allow the update of the data-types table to be
      * overridden too.
      */
-    private List<Node> listValidNodes(final int remainingDepth, final Class<?> requiredType, List<Node> validNodeTemporary) {
+    private List<Node> listValidNodes(int remainingDepth, Class<?> requiredType, List<Node> validNodeTemporary) {
 
-        final List<Node> nonTerminals = this.nonTerminals;
+        List<Node> nonTerminals = this.nonTerminals;
 
         validNodeTemporary.clear();
 
@@ -508,7 +508,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      *
      * @param returnType the data-type of the generated programs
      */
-    public void setReturnType(final Class<?> returnType) {
+    public void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
 
         // Lookup table will need regenerating
@@ -534,7 +534,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      * @param size the size of the populations generated
      */
     public void setPopulationSize(int size) {
-        this.populationSize = size;
+        populationSize = size;
     }
 
     /**

@@ -478,14 +478,14 @@ public class JCollapsiblePane extends JPanel {
           if (finalHeight > 0) {
             wrapper.showContent();   
             validate();
-            JCollapsiblePane.this.firePropertyChange(ANIMATION_STATE_KEY, null,
+            firePropertyChange(ANIMATION_STATE_KEY, null,
               "expanded");
             return;
           }
         }
 
-        final boolean contracting = startHeight > finalHeight;
-        final int delta_y = contracting?-1 * animationParams.deltaY
+        boolean contracting = startHeight > finalHeight;
+        int delta_y = contracting?-1 * animationParams.deltaY
           :animationParams.deltaY;
         int newHeight = wrapper.getHeight() + delta_y;
         if (contracting) {
@@ -562,10 +562,10 @@ public class JCollapsiblePane extends JPanel {
      */
     public void reinit(int startHeight, int stopHeight) {
       synchronized (ANIMATION_MUTEX) {
-        JCollapsiblePane.this.firePropertyChange(ANIMATION_STATE_KEY, null,
+        firePropertyChange(ANIMATION_STATE_KEY, null,
           "reinit");
         this.startHeight = startHeight;
-        this.finalHeight = stopHeight;
+        finalHeight = stopHeight;
         animateAlpha = animationParams.alphaStart;
         currentHeight = -1;
         wrapper.showImage();

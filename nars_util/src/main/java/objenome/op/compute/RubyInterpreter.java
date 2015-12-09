@@ -79,14 +79,14 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
 
         Object[] result = new Object[noParamSets];
 
-        final Invocable invocableEngine = (Invocable) getEngine();
+        Invocable invocableEngine = (Invocable) getEngine();
         try {
             getEngine().eval(code);
 
             for (int i = 0; i < noParamSets; i++) {
                 result[i] = invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (final ScriptException | NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             throw new MalformedProgramException();
         }
 
@@ -154,7 +154,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
      * method containing the given program.
      */
     private String getExecCode(String program, String[] argNames) {
-        final StringBuilder code = new StringBuilder();
+        StringBuilder code = new StringBuilder();
 
         // code.append("class Evaluation\n");
         code.append("def expr(");

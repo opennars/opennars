@@ -36,7 +36,7 @@ public class SortedTaskPerception extends TaskPerception {
     @Override
     public final void send() {
         //ItemAccumulator<> b = this.buffer;
-        final TaskAccumulator buffer = this.buffer;
+        TaskAccumulator buffer = this.buffer;
         int available = size();
         if (available > 0) {
             buffer.pop(receiver, Math.min(available, inputPerCycle.intValue()));

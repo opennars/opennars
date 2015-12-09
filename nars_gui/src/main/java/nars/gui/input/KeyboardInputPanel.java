@@ -40,8 +40,8 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
         text = new JTextArea();
         text.setFont(Video.fontMono(16.0f).deriveFont(Font.BOLD));
         add(text, CENTER);
-        
-        this.nar = n;
+
+        nar = n;
         
         
         text.addKeyListener(this);

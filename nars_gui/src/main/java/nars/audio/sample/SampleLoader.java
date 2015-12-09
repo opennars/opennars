@@ -124,8 +124,8 @@ public class SampleLoader
     public static SonarSample digitize(FloatToFloatFunction f, int sampleRate, float duration) {
 
         int samples = (int)(duration * sampleRate);
-        final SonarSample ss = new SonarSample(new float[samples], sampleRate);
-        final float[] b = ss.buf;
+        SonarSample ss = new SonarSample(new float[samples], sampleRate);
+        float[] b = ss.buf;
         float t = 0, dt = 1.0f / sampleRate;
         for (int i = 0; i < samples; i++) {
             b[i] = f.valueOf(t);

@@ -22,7 +22,7 @@ public class Substitute extends PreCondition {
     public Substitute(Term x, Term y) {
         this.x = x;
         this.y = y;
-        this.id = getClass().getSimpleName() + ":(" + x + ',' + y + ')';
+        id = getClass().getSimpleName() + ":(" + x + ',' + y + ')';
     }
 
     @Override
@@ -32,11 +32,11 @@ public class Substitute extends PreCondition {
 
     @Override public final boolean test(RuleMatch m) {
 
-        Term a = m.apply(this.x, false);
+        Term a = m.apply(x, false);
         if (a == null)
             return false;
 
-        Term b = m.apply(this.y, false);
+        Term b = m.apply(y, false);
         if (b == null)
             return false;
 

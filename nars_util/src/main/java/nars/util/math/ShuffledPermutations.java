@@ -39,7 +39,7 @@ public class ShuffledPermutations extends Permutations {
 
     public int[] nextShuffled(int[] target) {
         next();
-        final int l = this.size;
+        int l = size;
         for (int i = 0; i < l; i++)
             target[i] = get(i);
         return target;

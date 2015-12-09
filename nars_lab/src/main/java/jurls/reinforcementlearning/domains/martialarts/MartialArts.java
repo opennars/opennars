@@ -38,12 +38,12 @@ public class MartialArts implements RLEnvironment {
     private PseudoAIState pseudoAIState = PseudoAIState.START;
 
     public MartialArts() {
-        final JFrame f = new JFrame();
+        JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.setSize(200, 100);
         f.setLayout(new GridLayout(0, 1));
-        final JLabel l = new JLabel();
-        final JProgressBar pb = new JProgressBar();
+        JLabel l = new JLabel();
+        JProgressBar pb = new JProgressBar();
         f.add(l);
         f.add(pb);
         f.setVisible(true);

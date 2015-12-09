@@ -72,7 +72,7 @@ import java.util.regex.Pattern;
      * @param sequence a character array
      * @return a rope representing the underlying character array.
      */
-    static Rope build(final char[] sequence) {
+    static Rope build(char[] sequence) {
         return new CharArrayRope(sequence);
     }
 
@@ -82,7 +82,7 @@ import java.util.regex.Pattern;
      * @param sequence the underlying character sequence.
      * @return a rope representing the underlying character sequnce.
      */
-    static Rope build(final CharSequence sequence) {
+    static Rope build(CharSequence sequence) {
         if (sequence instanceof Rope) {
             return (Rope) sequence;
         }
@@ -92,7 +92,7 @@ import java.util.regex.Pattern;
     /**
      * Builds a FastCharSequenceRope instead of FlatCharSequenceRope
      */
-    static CharSequence rope(final CharSequence sequence) {
+    static CharSequence rope(CharSequence sequence) {
         if (sequence instanceof Rope) {
             return sequence;
         }
@@ -489,7 +489,7 @@ import java.util.regex.Pattern;
      * @param r the rope to rebalance.
      * @return a rebalanced copy of the specified rope.
      */
-    static Rope autoRebalance(final Rope r) {
+    static Rope autoRebalance(Rope r) {
         return r instanceof AbstractRope && ((AbstractRope) r).depth() > MAX_ROPE_DEPTH ? rebalance(r) : r;
     }
 
@@ -497,7 +497,7 @@ import java.util.regex.Pattern;
      * @param c array of terms to concatenate; if an item is null it will be
      * ignored
      */
-    static Rope cat(final CharSequence... c) {
+    static Rope cat(CharSequence... c) {
         Rope r = null;
         for (CharSequence a : c) {
             if (a == null) {
@@ -520,7 +520,7 @@ import java.util.regex.Pattern;
      * @param c array of terms to concatenate; if an item is null it will be
      * ignored
      */
-    static Rope catFast(final CharSequence... c) {
+    static Rope catFast(CharSequence... c) {
         Rope r = null;
         for (CharSequence a : c) {
             if (a == null) {
@@ -544,7 +544,7 @@ import java.util.regex.Pattern;
      * @param right the second rope.
      * @return the concatenation of the specified ropes.
      */
-    static Rope cat(final Rope left, final Rope right) {
+    static Rope cat(Rope left, Rope right) {
         if (left.length() == 0) {
             return right;
         }
@@ -556,13 +556,13 @@ import java.util.regex.Pattern;
                     "Left length=" + left.length() + ", right length=" + right.length()
                     + ". Concatenation would overflow length field.");
         }
-        final int combineLength = 17;
+        int combineLength = 17;
         if (left.length() + right.length() < combineLength) {
             return new FlatCharSequenceRope(left.toString() + right.toString());
         }
         if (!(left instanceof ConcatenationRope)) {
             if (right instanceof ConcatenationRope) {
-                final ConcatenationRope cRight = (ConcatenationRope) right;
+                ConcatenationRope cRight = (ConcatenationRope) right;
                 if (left.length() + cRight.getLeft().length() < combineLength) {
                     return autoRebalance(new ConcatenationRope(new FlatCharSequenceRope(left.toString() + cRight.getLeft().toString()), cRight.getRight()));
                 }
@@ -570,7 +570,7 @@ import java.util.regex.Pattern;
         }
         if (!(right instanceof ConcatenationRope)) {
             if (left instanceof ConcatenationRope) {
-                final ConcatenationRope cLeft = (ConcatenationRope) left;
+                ConcatenationRope cLeft = (ConcatenationRope) left;
                 if (right.length() + cLeft.getRight().length() < combineLength) {
                     return autoRebalance(new ConcatenationRope(cLeft.getLeft(), new FlatCharSequenceRope(cLeft.getRight().toString() + right.toString())));
                 }
@@ -586,27 +586,27 @@ import java.util.regex.Pattern;
      * @param r the rope.
      * @return the depth of the specified rope.
      */
-    static byte depth(final Rope r) {
+    static byte depth(Rope r) {
         return r instanceof AbstractRope ? ((AbstractRope) r).depth() : 0;
     }
 
-    static boolean isBalanced(final Rope r) {
-        final byte depth = depth(r);
+    static boolean isBalanced(Rope r) {
+        byte depth = depth(r);
         if (depth >= FIBONACCI.length - 2) {
             return false;
         }
         return (FIBONACCI[depth + 2] <= r.length());	// TODO: not necessarily valid w/e.g. padding char sequences.	
     }
 
-    static Rope rebalance(final Rope r) {
+    static Rope rebalance(Rope r) {
         // get all the nodes into a list
 
-        final ArrayList<Rope> leafNodes = new ArrayList<>();
-        final ArrayDeque<Rope> toExamine = new ArrayDeque<>();
+        ArrayList<Rope> leafNodes = new ArrayList<>();
+        ArrayDeque<Rope> toExamine = new ArrayDeque<>();
         // begin a depth first loop.
         toExamine.add(r);
         while (!toExamine.isEmpty()) {
-            final Rope x = toExamine.pop();
+            Rope x = toExamine.pop();
             if (x instanceof ConcatenationRope) {
                 toExamine.push(((ConcatenationRope) x).getRight());
                 toExamine.push(((ConcatenationRope) x).getLeft());
@@ -637,11 +637,11 @@ import java.util.regex.Pattern;
      * @param r
      * @param out
      */
-    static void visualize(final Rope r, final PrintStream out) {
+    static void visualize(Rope r, PrintStream out) {
         visualize(r, out, 0);
     }
 
-    static void visualize(final Rope r, final PrintStream out, final int depth) {
+    static void visualize(Rope r, PrintStream out, int depth) {
         if (r instanceof FlatCharSequenceRope) {
             out.print(SPACES.substring(0, depth * 2));
             CharSequence seq = ((FlatCharSequenceRope) r).sequence;
@@ -674,14 +674,14 @@ import java.util.regex.Pattern;
         }
     }
 
-    static void stats(final Rope r, final PrintStream out) {
+    static void stats(Rope r, PrintStream out) {
         int nonLeaf = 0;
-        final ArrayList<Rope> leafNodes = new ArrayList<>();
-        final ArrayDeque<Rope> toExamine = new ArrayDeque<>();
+        ArrayList<Rope> leafNodes = new ArrayList<>();
+        ArrayDeque<Rope> toExamine = new ArrayDeque<>();
         // begin a depth first loop.
         toExamine.add(r);
         while (!toExamine.isEmpty()) {
-            final Rope x = toExamine.pop();
+            Rope x = toExamine.pop();
             if (x instanceof ConcatenationRope) {
                 ++nonLeaf;
                 toExamine.push(((ConcatenationRope) x).getRight());

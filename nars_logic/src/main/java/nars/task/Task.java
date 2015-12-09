@@ -154,10 +154,10 @@ public interface Task extends Sentence,
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    boolean equivalentTo(final Task that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime);
+    boolean equivalentTo(Task that, boolean punctuation, boolean term, boolean truth, boolean stamp, boolean creationTime);
 
     /** called when a Concept processes this Task */
-    void onConcept(final Concept/*<T>*/ equivalentInstance);
+    void onConcept(Concept/*<T>*/ equivalentInstance);
 
     default <X extends Compound> MutableTask<X> solution(X t, char newPunc, Truth newTruth, long newOcc, Task question, Memory memory) {
 
@@ -205,8 +205,8 @@ public interface Task extends Sentence,
     }
 
     @Override @Deprecated
-    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ final Memory memory, final boolean showStamp) {
-        final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
+    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean showStamp) {
+        boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return appendTo(buffer, memory, true, showStamp && notCommand,
                 notCommand, //budget
                 showStamp //log
@@ -214,13 +214,13 @@ public interface Task extends Sentence,
     }
 
     @Override
-    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
+    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean term, boolean showStamp, boolean showBudget, boolean showLog) {
 
 
         String contentName;
         contentName = term && getTerm() != null ? getTerm().toString() : "";
 
-        final CharSequence tenseString;
+        CharSequence tenseString;
         if (memory!=null) {
             tenseString = getTense(memory.time(), memory.duration());
         }
@@ -290,7 +290,7 @@ public interface Task extends Sentence,
     }
 
     default Object getLogLast() {
-        final List<String> log = getLog();
+        List<String> log = getLog();
         if (log ==null || log.isEmpty()) return null;
         return log.get(log.size()-1);
     }
@@ -437,7 +437,7 @@ public interface Task extends Sentence,
     /** if unnormalized, returns a normalized version of the task,
      *  null if not normalizable
      */
-    Task normalize(final Memory memory);
+    Task normalize(Memory memory);
 
 
     default void ensureValidParentTaskRef() {
@@ -481,11 +481,11 @@ public interface Task extends Sentence,
      * @param premisePriority the total value that the derivation group should reach, effectively a final scalar factor determined by premise parent and possibly existing belief tasks
      * @return the input collection, unmodified (elements may be adjusted individually)
      */
-    static void normalizeCombined(final Iterable<Task> derived, final float premisePriority) {
+    static void normalizeCombined(Iterable<Task> derived, float premisePriority) {
 
 
-        final float totalDerivedPriority = Budget.prioritySum(derived);
-        final float factor = Math.min(
+        float totalDerivedPriority = Budget.prioritySum(derived);
+        float factor = Math.min(
                     premisePriority/totalDerivedPriority,
                     1.0f //limit to only diminish
                 );
@@ -496,7 +496,7 @@ public interface Task extends Sentence,
         derived.forEach(t -> t.getBudget().mulPriority(factor));
     }
 
-    static void normalize(final Iterable<Task> derived, final float premisePriority) {
+    static void normalize(Iterable<Task> derived, float premisePriority) {
         derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
     }
 
@@ -510,9 +510,9 @@ public interface Task extends Sentence,
     }
 
 
-    default StringBuilder appendOccurrenceTime(final StringBuilder sb) {
-        final long oc = getOccurrenceTime();
-        final long ct = getCreationTime();
+    default StringBuilder appendOccurrenceTime(StringBuilder sb) {
+        long oc = getOccurrenceTime();
+        long ct = getCreationTime();
 
         /*if (oc == Stamp.TIMELESS)
             throw new RuntimeException("invalid occurrence time");*/
@@ -547,7 +547,7 @@ public interface Task extends Sentence,
         return sb;
     }
 
-    default String getTense(final long currentTime, final int duration) {
+    default String getTense(long currentTime, int duration) {
 
         if (Tense.isEternal(getOccurrenceTime())) {
             return "";
@@ -565,11 +565,11 @@ public interface Task extends Sentence,
 
     default CharSequence stampAsStringBuilder() {
 
-        final long[] ev = getEvidence();
-        final int len = ev != null ? ev.length : 0;
-        final int estimatedInitialSize = 8 + (len * 3);
+        long[] ev = getEvidence();
+        int len = ev != null ? ev.length : 0;
+        int estimatedInitialSize = 8 + (len * 3);
 
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        StringBuilder buffer = new StringBuilder(estimatedInitialSize);
         buffer.append(Symbols.STAMP_OPENER);
 
         if (getCreationTime() == Tense.TIMELESS) {
@@ -620,9 +620,9 @@ public interface Task extends Sentence,
 
     //projects the truth to a certain time, covering all 4 cases as discussed in
     //https://groups.google.com/forum/#!searchin/open-nars/task$20eteneral/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
-    default DefaultTruth projection(final long targetTime, final long currentTime) {
+    default DefaultTruth projection(long targetTime, long currentTime) {
 
-        final Truth currentTruth = getTruth();
+        Truth currentTruth = getTruth();
         long occurrenceTime = getOccurrenceTime();
 
         boolean eternal = targetTime == Tense.ETERNAL;
@@ -650,7 +650,7 @@ public interface Task extends Sentence,
     }
 
     /** calculates projection truth quality without creating new TruthValue instances */
-    default float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
+    default float projectionTruthQuality(Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
         return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
     }
 

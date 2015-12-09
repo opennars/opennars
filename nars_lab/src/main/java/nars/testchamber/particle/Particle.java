@@ -37,10 +37,10 @@ public class Particle {
     }
 
     public Particle() {
-        this.xPos = 0;
-        this.yPos = 0;
-        this.xVel = 0;
-        this.yVel = 0;
+        xPos = 0;
+        yPos = 0;
+        xVel = 0;
+        yVel = 0;
     }
 
     public void setParticle(float xPos, float yPos, float xVel, float yVel) {

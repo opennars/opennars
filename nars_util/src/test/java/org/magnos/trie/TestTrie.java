@@ -432,7 +432,7 @@ public class TestTrie
    @Test
    public void testIterate()
    {
-      final String LS = System.lineSeparator();
+      String LS = System.lineSeparator();
       
       Trie<String, Boolean> t = Tries.forStrings();
 
@@ -457,7 +457,7 @@ public class TestTrie
 
    public static <T> StringBuilder print( Trie<String, T> trie )
    {
-      final String LS = System.lineSeparator();
+      String LS = System.lineSeparator();
       
       StringBuilder out = new StringBuilder();
       

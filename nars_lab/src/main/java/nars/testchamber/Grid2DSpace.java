@@ -73,7 +73,7 @@ public class Grid2DSpace extends PApplet {
         g.init(this);
     }
     
-    public NWindow newWindow(int width, int height, final boolean exitOnClose) {
+    public NWindow newWindow(int width, int height, boolean exitOnClose) {
         
         NWindow j = new NWindow("") {
             
@@ -122,7 +122,7 @@ public class Grid2DSpace extends PApplet {
         getSurface().setResizable(true);
 
         //System.out.println(getSurface().getClass() + " " + getSurface());
-        Component canvas = (Component) (this.getSurface().getNative());
+        Component canvas = (Component) (getSurface().getNative());
         content.add(canvas, BorderLayout.CENTER);
         
         
@@ -328,7 +328,7 @@ public class Grid2DSpace extends PApplet {
         if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water || to.logic==Logic.BRIDGE || to.logic==Logic.UNCERTAINBRIDGE)
             return "Too solid";
         
-        final float maxTraversableHeight = 8;
+        float maxTraversableHeight = 8;
         float dHeight = to.height - from.height;
         //if (dHeight > maxTraversableHeight)
         //    return "Too high";

@@ -43,7 +43,7 @@ public class TaskQueue extends ArrayDeque<Task> implements Input , Consumer<Task
     }*/
 
     @Override
-    public void accept(final Task task) {
+    public void accept(Task task) {
         if (task==null) return;
 
         add(task);

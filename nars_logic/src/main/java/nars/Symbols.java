@@ -135,7 +135,7 @@ public abstract class Symbols {
 
     static {
         //Setup NativeOperator String index hashtable 
-        for (final Op r : Op.values()) {
+        for (Op r : Op.values()) {
             _stringToOperator.put(r.toString(), r);
 
 
@@ -156,7 +156,7 @@ public abstract class Symbols {
         }
 
         //Setup NativeOperator Character index hashtable 
-        for (final Op r : Op.values()) {
+        for (Op r : Op.values()) {
             char c = r.ch;
             if (c!=0)
                 _charToOperator.put(c, r);
@@ -172,7 +172,7 @@ public abstract class Symbols {
 //        return charToOperator.get(c);
 //    }
     
-    public static Op getOperator(final String s) {
+    public static Op getOperator(String s) {
         return stringToOperator.get(s);
     }
 
@@ -183,7 +183,7 @@ public abstract class Symbols {
     public static final char STAMP_STARTER = ':';
 
 
-    public static boolean isPunctuation(final char c) {
+    public static boolean isPunctuation(char c) {
         switch (c) {
             case Symbols.JUDGMENT:
             case Symbols.GOAL:

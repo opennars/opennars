@@ -28,8 +28,8 @@ public class CivilizationTest extends Civilization {
 
     @Test
     public void testUniqueVariableContext() {
-        final int threads = 2;
-        final int individuals = 64;
+        int threads = 2;
+        int individuals = 64;
 
 
         add(new TestGoal());

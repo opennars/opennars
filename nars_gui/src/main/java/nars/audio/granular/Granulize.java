@@ -41,15 +41,15 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
 	public Granulize(float[] buffer, float sampleRate, float grainSizeSecs, float windowSizeFactor) {
 
-		this.sourceBuffer = buffer;
+		sourceBuffer = buffer;
 
-		this.granulator = new Granulator(buffer, sampleRate, grainSizeSecs, windowSizeFactor);
+		granulator = new Granulator(buffer, sampleRate, grainSizeSecs, windowSizeFactor);
 
 		play();
 	}
 
 	public Granulize at(int pos) {
-		this.playOffset = pos;
+		playOffset = pos;
 		return this;
 	}
 
@@ -57,21 +57,21 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 		if (currentGrain == null && isPlaying) {
 			currentGrain = nextGrain(currentGrain);
 		}
-        final float dNow = ((granulator.sampleRate / readRate)) * pitchFactor.floatValue();
+        float dNow = ((granulator.sampleRate / readRate)) * pitchFactor.floatValue();
 
         float amp = currentAmplitude;
         float dAmp = (amplitude.floatValue() - amp) / output.length;
 
         float n = now;
 
-        final Granulator g = granulator;
+        Granulator g = granulator;
 
 
-        final boolean p = isPlaying;
+        boolean p = isPlaying;
         if (!p)
             dAmp = (0 - amp) / output.length; //fade out smoothly if isPlaying false
 
-        final long samples = output.length;
+        long samples = output.length;
 
         long[] cGrain = currentGrain;
         long[] fGrain = fadingGrain;
@@ -105,7 +105,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
         currentAmplitude = amp;
 	}
 
-    public final void setAmplitude(final float amplitude) {
+    public final void setAmplitude(float amplitude) {
         this.amplitude.set(amplitude);
     }
 

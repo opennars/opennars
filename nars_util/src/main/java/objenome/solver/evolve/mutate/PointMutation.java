@@ -249,7 +249,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      * equals() method because we don't want to compare children if it's a
      * non-terminal node.
      */
-    private static boolean nodesEqual(final Node nodeA, final Node nodeB) {
+    private static boolean nodesEqual(Node nodeA, Node nodeB) {
         boolean equal = false;
         if (nodeA.getClass().equals(nodeB.getClass())) {
             equal = nodeA.getArity() > 0 || nodeA.equals(nodeB);

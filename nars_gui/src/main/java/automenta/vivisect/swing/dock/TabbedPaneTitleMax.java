@@ -46,7 +46,7 @@ import static javax.swing.BorderFactory.createEmptyBorder;
     
     /** called from subclass */
     public TabbedPaneTitleMax(DockingContent content) {
-        this.tabPanel = null;
+        tabPanel = null;
         this.content = content;
         initButtons();
     }

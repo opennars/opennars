@@ -144,7 +144,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 			add("Center", tableScroll);
 		}
 		descriptionButton.setSelected(visible);
-		PropertySheetPanel.this.revalidate();
+		revalidate();
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	 */
 	public void setToolBarVisible(boolean visible) {
 		actionPanel.setVisible(visible);
-		PropertySheetPanel.this.revalidate();
+		revalidate();
 	}
 
 	/**

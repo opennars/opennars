@@ -13,11 +13,11 @@ import java.util.Collection;
  */
 public interface Builder extends Serializable {
 
-    static Class[] the(final Class<?> c) {
+    static Class[] the(Class<?> c) {
         return new Class[] { c };
     }
     
-    static Class[] of(final Class<?>... c) {
+    static Class[] of(Class<?>... c) {
         return c;
     }
     

@@ -37,8 +37,8 @@ public class Active<T extends Topic> extends FasterList<On> {
 //        }
 
     public void off() {
-        for (int i = 0; i < this.size(); i++) {
-            this.get(i).off();
+        for (int i = 0; i < size(); i++) {
+            get(i).off();
         }
         clear();
     }

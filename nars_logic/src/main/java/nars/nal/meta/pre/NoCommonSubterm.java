@@ -26,7 +26,7 @@ public class NoCommonSubterm extends PreCondition2 {
         return !sharedSubterms(a, b, tmpSet );
     }
 
-    static boolean sharedSubterms(final Term a, final Term b, Set<Term> s) {
+    static boolean sharedSubterms(Term a, Term b, Set<Term> s) {
         addSubtermsRecursivelyUntilFirstMatch(a, s, null);
         return !addSubtermsRecursivelyUntilFirstMatch(b, null, s); //we stop early this way (efficiency)
     }

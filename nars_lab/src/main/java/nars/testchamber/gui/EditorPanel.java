@@ -38,7 +38,7 @@ public class EditorPanel extends JPanel {
         public abstract void run();
     }
 
-    public EditorPanel(final Grid2DSpace s) {
+    public EditorPanel(Grid2DSpace s) {
         super(new BorderLayout());
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -396,7 +396,7 @@ public class EditorPanel extends JPanel {
 
         DefaultTreeModel model = new DefaultTreeModel(root);
 
-        final JTree toolTree = new JTree(model);
+        JTree toolTree = new JTree(model);
         toolTree.expandRow(0);
         add(new JScrollPane(toolTree), BorderLayout.CENTER);
 

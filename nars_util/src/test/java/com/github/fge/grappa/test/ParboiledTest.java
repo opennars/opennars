@@ -29,7 +29,7 @@ public abstract class ParboiledTest<V> {
     public static class TestResult<V> {
         public final ParsingResult<V> result;
 
-        public TestResult(final ParsingResult<V> result) {
+        public TestResult(ParsingResult<V> result) {
             this.result = result;
         }
 
@@ -42,13 +42,13 @@ public abstract class ParboiledTest<V> {
         }
     }
 
-    public TestResult<V> test(final Rule rule, final String input) {
-        final ParseRunner<V> runner = new ListeningParseRunner<>(rule);
+    public TestResult<V> test(Rule rule, String input) {
+        ParseRunner<V> runner = new ListeningParseRunner<>(rule);
         return new TestResult<>(runner.run(input));
     }
     
-    public TestResult<V> test(final Rule rule, final InputBuffer inputBuffer) {
-        final ParseRunner<V> runner = new ListeningParseRunner<>(rule);
+    public TestResult<V> test(Rule rule, InputBuffer inputBuffer) {
+        ParseRunner<V> runner = new ListeningParseRunner<>(rule);
         return new TestResult<>(runner.run(inputBuffer));
     }
 }

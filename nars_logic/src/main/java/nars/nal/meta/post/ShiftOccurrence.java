@@ -41,7 +41,7 @@ public class ShiftOccurrence extends PreCondition1 {
 */
         this.positive = positive;
         this.direction = direction;
-        this.id = getClass().getSimpleName() + ":(" + arg1 + ',' +
+        id = getClass().getSimpleName() + ":(" + arg1 + ',' +
                 (positive ? "Pos" : "Neg") +
                 ',' + direction +
                 ')';
@@ -59,7 +59,7 @@ public class ShiftOccurrence extends PreCondition1 {
 //        }
     }
 
-    @Override public boolean test(final RuleMatch m) {
+    @Override public boolean test(RuleMatch m) {
 
         Premise p = m.premise;
 

@@ -37,7 +37,7 @@ public class NAL8Test extends AbstractNALTester {
     public NAR nar() {
         NAR n = super.nar();
 
-        final Term v = $.the("a");
+        Term v = $.the("a");
         exeFunc = n.onExecTerm("exe", (Term[] t) -> {
             exeCount++;
             return v;

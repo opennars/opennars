@@ -120,16 +120,16 @@ public class Spacegraph extends ZoomFX {
             while (x > scale) x-=scale;
             while (y > scale) y-=scale;
 
-            final boolean drawSharpLines = this.drawSharpLines;
+            boolean drawSharpLines = this.drawSharpLines;
 
             for (; y <= h; y += scale) {
-                final double Y;
+                double Y;
                 Y = drawSharpLines ? snap(y) : y;
 
                 gc.strokeLine(0, Y, w, Y);
             }
             for (; x <= w; x += scale) {
-                final double sx;
+                double sx;
                 sx = drawSharpLines ? snap(x) : x;
 
                 gc.strokeLine(sx, 0, sx, h);
@@ -141,7 +141,7 @@ public class Spacegraph extends ZoomFX {
     }
 
 
-    public static Spacegraph getSpace(final Node n) {
+    public static Spacegraph getSpace(Node n) {
         Node p = n;
         while ((p = p.getParent())!=null) {
             if (p instanceof Spacegraph) return ((Spacegraph)p);
@@ -150,7 +150,7 @@ public class Spacegraph extends ZoomFX {
     }
 
 
-    static double snap(final double y) {
+    static double snap(double y) {
         return ((int) y) + 0.5;
     }
 

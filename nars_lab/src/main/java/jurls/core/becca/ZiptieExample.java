@@ -17,8 +17,8 @@ public abstract class ZiptieExample extends IOMatrixExample  {
     
     public ZiptieExample(Ziptie z) {
         super();
-        
-        this.ziptie = z;
+
+        ziptie = z;
     }
 
     @Override

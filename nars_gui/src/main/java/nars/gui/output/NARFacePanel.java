@@ -10,7 +10,7 @@ public class NARFacePanel extends HumanoidFacePanel  {
 
     public NARFacePanel(NAR n) {
         super();
-        this.nar = n;
+        nar = n;
     }
     
     @Override

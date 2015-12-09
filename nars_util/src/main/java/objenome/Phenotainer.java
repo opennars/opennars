@@ -25,9 +25,9 @@ public class Phenotainer extends Container {
     public final Multitainer parent;
 
     public Phenotainer(Objenome o) {
-        super(o.parentContext);        
-        this.objenome = o;
-        this.parent = o.parentContext;
+        super(o.parentContext);
+        objenome = o;
+        parent = o.parentContext;
         
         
         
@@ -40,11 +40,11 @@ public class Phenotainer extends Container {
     public Phenotainer commit() {
         //remove all builders with ambiguosity
         Collection<String> toRemove = new ArrayList();
-        for (Map.Entry<String, Builder> e : this.builders.entrySet()) {
+        for (Map.Entry<String, Builder> e : builders.entrySet()) {
             if (e.getValue() instanceof Problem)
                 toRemove.add(e.getKey());
         }
-        for (String s : toRemove) this.builders.remove(s);
+        for (String s : toRemove) builders.remove(s);
 
         for (Solution g : objenome.genes.values()) {
             g.apply(this);
@@ -67,7 +67,7 @@ public class Phenotainer extends Container {
     
     
    @Override
-    public <T> T get(final Class<? extends T> c) {
+    public <T> T get(Class<? extends T> c) {
         if (Modifier.isAbstract(c.getModifiers())) {
             
             Builder existingBuilder = getBuilder(c);
@@ -91,7 +91,7 @@ public class Phenotainer extends Container {
         return super.get(c);
     }    
     
-    protected <T> Class<? extends T> instance(final Class<? extends T> c) throws CannotCompileException, NotFoundException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    protected <T> Class<? extends T> instance(Class<? extends T> c) throws CannotCompileException, NotFoundException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         
         CtClass parent = ClassPool.getDefault().get(c.getName()); 
         

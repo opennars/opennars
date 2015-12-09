@@ -60,8 +60,8 @@ public class MethodVisitor extends EmptyVisitor {
                 ih != null; ih = ih.getNext()) {
             Instruction i = ih.getInstruction();
 
-            if (this.stack.isEmpty())
-                this.stack.addLast(ih.getInstruction());
+            if (stack.isEmpty())
+                stack.addLast(ih.getInstruction());
 
             //if (!visitInstruction(i)) {
                 i.accept(this);

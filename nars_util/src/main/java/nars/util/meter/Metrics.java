@@ -224,7 +224,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     /** fixed size */
     public Metrics(int historySize) {
         super();
-        this.history = historySize;
+        history = historySize;
         
         add(new RowKeyMeter());
     }
@@ -416,7 +416,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
             c = new Object[ numRows() ];
         
         int r = 0;
-        for (final Object[] row : this) {
+        for (Object[] row : this) {
             c[r++] = row[signal];
         }
         
@@ -445,7 +445,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public Iterator<Object[]> iterator(final int... columns) {
+    public Iterator<Object[]> iterator(int... columns) {
         if (columns.length == 1) {
             //fast 1-argument
             return Iterators.transform(iterator(), new firstColumnIterator(columns));

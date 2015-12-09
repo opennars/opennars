@@ -14,7 +14,7 @@ public class TimeStretchGui extends JPanel {
 	private final Audio player;
 	private final JSlider tempoSlider;
 
-	public TimeStretchGui(final Audio /*AudioPlayer */ player) {
+	public TimeStretchGui(Audio /*AudioPlayer */ player) {
 
 
 		this.player = player;

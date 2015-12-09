@@ -69,7 +69,7 @@ public class LogPane extends BorderPane  {
     public LogPane() {
         super();
 
-        this.content = new VBox(1);
+        content = new VBox(1);
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ((VBox)content).setFillWidth(false);

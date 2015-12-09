@@ -154,7 +154,7 @@ public class HeapBagTest extends AbstractBagTest {
     public void testAveragePriority(int capacity) {
         
         
-        final float priorityEpsilon = 0.01f;
+        float priorityEpsilon = 0.01f;
         
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
         c.mergePlus();

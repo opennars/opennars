@@ -29,7 +29,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
     @Override
     public final Termed get(Term t) {
 
-        Map<Term, Termed> d = this.data;
+        Map<Term, Termed> d = data;
         Termed existing = d.get(t);
         if (existing ==null) {
             return compile(t);
@@ -69,7 +69,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
     protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
         TermContainer subs = c.subterms();
-        Map<TermContainer, TermContainer> st = this.subterms;
+        Map<TermContainer, TermContainer> st = subterms;
         TermContainer existing = st.get(subs);
         if (existing == null) {
             subs = compileSubterms((TermVector) subs);

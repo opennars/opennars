@@ -32,7 +32,7 @@ public final class CodePointMatcher
     private final int codePoint;
     private final int codePointLength;
 
-    public CodePointMatcher(final int codePoint)
+    public CodePointMatcher(int codePoint)
     {
         super(String.format("U+%04X", codePoint));
         this.codePoint = codePoint;
@@ -47,7 +47,7 @@ public final class CodePointMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         if (codePoint != context.getInputBuffer()
             .codePointAt(context.getCurrentIndex()))

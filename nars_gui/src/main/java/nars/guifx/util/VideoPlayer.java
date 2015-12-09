@@ -36,7 +36,7 @@ public class VideoPlayer extends Application {
     mp.setAutoPlay(true);
 
 
-    final MediaView mv = new MediaView(mp);
+    MediaView mv = new MediaView(mp);
 
 //    final DoubleProperty width = mv.fitWidthProperty();
 //    final DoubleProperty height = mv.fitHeightProperty();
@@ -46,7 +46,7 @@ public class VideoPlayer extends Application {
 
     mv.setPreserveRatio(true);
 
-    final Scene scene = new Scene(root, 960, 540);
+    Scene scene = new Scene(root, 960, 540);
     scene.setFill(Color.BLACK);
 
     primaryStage.setScene(scene);

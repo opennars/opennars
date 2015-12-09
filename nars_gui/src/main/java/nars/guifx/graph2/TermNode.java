@@ -54,7 +54,7 @@ public class TermNode<K extends Termed> extends GraphNode {
         edge = new FixedLinkedHashMap<>(maxEdges);
 
 
-        this.term = t;
+        term = t;
 
     }
 
@@ -104,9 +104,9 @@ public class TermNode<K extends Termed> extends GraphNode {
     }
 
     public TermEdge[] updateEdges() {
-        final int s = edge.size();
+        int s = edge.size();
 
-        final TermEdge[] edges = this.edges;
+        TermEdge[] edges = this.edges;
 
         TermEdge[] e;
         e = edges.length != s ? new TermEdge[s] : edges;
@@ -125,7 +125,7 @@ public class TermNode<K extends Termed> extends GraphNode {
 //    }
 
     public final TermEdge[] getEdges() {
-        return this.edges;
+        return edges;
     }
 
 
@@ -180,12 +180,12 @@ public class TermNode<K extends Termed> extends GraphNode {
 
         public FixedLinkedHashMap(int cap) {
             super(cap, 0.75f, true);
-            this.max_cap = cap;
+            max_cap = cap;
         }
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-            return size() > this.max_cap;
+            return size() > max_cap;
         }
     }
 }

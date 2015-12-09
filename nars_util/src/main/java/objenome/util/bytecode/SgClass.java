@@ -97,7 +97,7 @@ public final class SgClass {
      * @param simpleName
      *            Name (without package) of the class - Cannot be null.
      */
-    public SgClass(final String packageName, final String simpleName) {
+    public SgClass(String packageName, String simpleName) {
         this("public", packageName, simpleName, null, false, null);
     }
 
@@ -115,8 +115,8 @@ public final class SgClass {
      * @param enclosingClass
      *            Enclosing class if this is an inner class - Null is allowed.
      */
-    public SgClass(final String modifiers, final String packageName, final String simpleName,
-            final boolean isinterface, final SgClass enclosingClass) {
+    public SgClass(String modifiers, String packageName, String simpleName,
+                   boolean isinterface, SgClass enclosingClass) {
         this(modifiers, packageName, simpleName, null, isinterface, enclosingClass);
     }
 
@@ -136,8 +136,8 @@ public final class SgClass {
      * @param enclosingClass
      *            Enclosing class if this is an inner class - Null is allowed
      */
-    public SgClass(final String modifiers, final String packageName, final String simpleName,
-            final SgClass superClass, final boolean isinterface, final SgClass enclosingClass) {
+    public SgClass(String modifiers, String packageName, String simpleName,
+                   SgClass superClass, boolean isinterface, SgClass enclosingClass) {
         super();
 
         this.modifiers = modifiers;
@@ -151,13 +151,13 @@ public final class SgClass {
                             + "Use 'addInterface(SgClass)' instead!");
         }
 
-        this.constructors = new ArrayList<>();
-        this.methods = new ArrayList<>();
-        this.interfaces = new ArrayList<>();
-        this.fields = new ArrayList<>();
+        constructors = new ArrayList<>();
+        methods = new ArrayList<>();
+        interfaces = new ArrayList<>();
+        fields = new ArrayList<>();
         this.isinterface = isinterface;
-        this.classes = new ArrayList<>();
-        this.annotations = new ArrayList<>();
+        classes = new ArrayList<>();
+        annotations = new ArrayList<>();
 
         this.enclosingClass = enclosingClass;
         if (enclosingClass != null) {
@@ -181,7 +181,7 @@ public final class SgClass {
      * @param annotation
      *            Annotation to add - Cannot be null.
      */
-    public void addAnnotation(final SgAnnotation annotation) {
+    public void addAnnotation(SgAnnotation annotation) {
         if (annotation == null) {
             throw new IllegalArgumentException("The argument 'annotation' cannot be NULL!");
         }
@@ -195,7 +195,7 @@ public final class SgClass {
      * @param annotations
      *            Annotations to add - Cannot be null.
      */
-    public void addAnnotations(final List<SgAnnotation> annotations) {
+    public void addAnnotations(List<SgAnnotation> annotations) {
         if (annotations == null) {
             throw new IllegalArgumentException("The argument 'annotations' cannot be NULL!");
         }
@@ -210,12 +210,12 @@ public final class SgClass {
      * 
      * @return If it's found true else false.
      */
-    public boolean hasAnnotation(final String name) {
+    public boolean hasAnnotation(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be NULL!");
         }
         for (int i = 0; i < annotations.size(); i++) {
-            final SgAnnotation annotation = annotations.get(i);
+            SgAnnotation annotation = annotations.get(i);
             if (annotation.getName().equals(name)) {
                 return true;
             }
@@ -260,7 +260,7 @@ public final class SgClass {
      * @param constructor
      *            Constructor to add - Cannot be null.
      */
-    public void addConstructor(final SgConstructor constructor) {
+    public void addConstructor(SgConstructor constructor) {
         if (constructor == null) {
             throw new IllegalArgumentException("The argument 'constructor' cannot be null!");
         }
@@ -299,7 +299,7 @@ public final class SgClass {
      * @param method
      *            Method to add - Cannot be null.
      */
-    public void addMethod(final SgMethod method) {
+    public void addMethod(SgMethod method) {
         if (method == null) {
             throw new IllegalArgumentException("The argument 'method' cannot be null!");
         }
@@ -356,8 +356,8 @@ public final class SgClass {
         return getNameAsFilename() + ".class";
     }
 
-    private String getEnclosingSimpleNames(final String innerDivider) {
-        final StringBuilder sb = new StringBuilder();
+    private String getEnclosingSimpleNames(String innerDivider) {
+        StringBuilder sb = new StringBuilder();
         SgClass clasz = enclosingClass;
         while (clasz != null) {
             sb.insert(0, innerDivider);
@@ -367,7 +367,7 @@ public final class SgClass {
         return sb.toString();
     }
 
-    private String getName(final String innerDivider) {
+    private String getName(String innerDivider) {
         if (packageName.isEmpty()) {
             return enclosingClass == null ? simpleName : getEnclosingSimpleNames(innerDivider) + simpleName;
         }
@@ -407,7 +407,7 @@ public final class SgClass {
      * @param intf
      *            Interface to add - Cannot be null.
      */
-    public void addInterface(final SgClass intf) {
+    public void addInterface(SgClass intf) {
         if (intf == null) {
             throw new IllegalArgumentException("The argument 'intf' cannot be null!");
         }
@@ -420,7 +420,7 @@ public final class SgClass {
      * @return Names separated by a comma - Always non-null.
      */
     public String getInterfacesCommaSeparated() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (!interfaces.isEmpty()) {
             for (int i = 0; i < interfaces.size(); i++) {
                 if (i > 0) {
@@ -449,7 +449,7 @@ public final class SgClass {
      * @param field
      *            Field to add - Cannot be null.
      */
-    public void addField(final SgField field) {
+    public void addField(SgField field) {
         if (field == null) {
             throw new IllegalArgumentException("The argument 'field' cannot be null!");
         }
@@ -477,7 +477,7 @@ public final class SgClass {
      * @param clasz
      *            Inner class to add - Cannot be null.
      */
-    public void addClass(final SgClass clasz) {
+    public void addClass(SgClass clasz) {
         if (clasz == null) {
             throw new IllegalArgumentException("The argument 'clasz' cannot be null!");
         }
@@ -503,12 +503,12 @@ public final class SgClass {
      * 
      * @return Class or null if it's not found.
      */
-    public SgClass findClassByName(final String name) {
+    public SgClass findClassByName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
         for (int i = 0; i < classes.size(); i++) {
-            final SgClass clasz = classes.get(i);
+            SgClass clasz = classes.get(i);
             if (clasz.getName().equals(name)) {
                 return clasz;
             }
@@ -524,12 +524,12 @@ public final class SgClass {
      * 
      * @return Method or null if it's not found.
      */
-    public SgMethod findMethodByName(final String name) {
+    public SgMethod findMethodByName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
         for (int i = 0; i < methods.size(); i++) {
-            final SgMethod method = methods.get(i);
+            SgMethod method = methods.get(i);
             if (method.getName().equals(name)) {
                 return method;
             }
@@ -537,10 +537,10 @@ public final class SgClass {
         return null;
     }
     
-    public SgMethod findMethod(final CtMethod em) {
+    public SgMethod findMethod(CtMethod em) {
         String key = em.getLongName();
         for (int i = 0; i < methods.size(); i++) {
-            final SgMethod method = methods.get(i);
+            SgMethod method = methods.get(i);
             String key2 = getName() + '.' + method.getTypeSignature();
             //System.out.println(key + "  " + key2);
             if ( key2.equals(key)) {
@@ -558,12 +558,12 @@ public final class SgClass {
      * 
      * @return Field or null if it's not found.
      */
-    public SgField findFieldByName(final String name) {
+    public SgField findFieldByName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
         for (int i = 0; i < fields.size(); i++) {
-            final SgField field = fields.get(i);
+            SgField field = fields.get(i);
             if (field.getName().equals(name)) {
                 return field;
             }
@@ -571,7 +571,7 @@ public final class SgClass {
         return null;
     }
 
-    private void addPackageLine(final StringBuffer sb) {
+    private void addPackageLine(StringBuffer sb) {
         if (enclosingClass == null) {
             if (!packageName.isEmpty()) {
                 sb.append("package ");
@@ -582,7 +582,7 @@ public final class SgClass {
         }
     }
 
-    private void addNameLine(final StringBuffer sb, final boolean showAnnotations) {
+    private void addNameLine(StringBuffer sb, boolean showAnnotations) {
         if (showAnnotations && (!getAnnotations().isEmpty())) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
@@ -620,7 +620,7 @@ public final class SgClass {
         sb.append(" {\n");
     }
 
-    private void addFields(final StringBuffer sb) {
+    private void addFields(StringBuffer sb) {
         for (int i = 0; i < getFields().size(); i++) {
             sb.append(getFields().get(i)).append('\n');
             sb.append('\n');
@@ -628,7 +628,7 @@ public final class SgClass {
         sb.append('\n');
     }
 
-    private void addConstructors(final StringBuffer sb) {
+    private void addConstructors(StringBuffer sb) {
         for (int i = 0; i < constructors.size(); i++) {
             sb.append(constructors.get(i)).append('\n');
             sb.append('\n');
@@ -636,14 +636,14 @@ public final class SgClass {
         sb.append('\n');
     }
 
-    private void addMethods(final StringBuffer sb) {
+    private void addMethods(StringBuffer sb) {
         for (int i = 0; i < methods.size(); i++) {
             sb.append(methods.get(i)).append('\n');
             sb.append('\n');
         }
     }
 
-    private void addInnerClasses(final StringBuffer sb) {
+    private void addInnerClasses(StringBuffer sb) {
         for (int i = 0; i < classes.size(); i++) {
             sb.append(classes.get(i)).append('\n');
         }
@@ -667,9 +667,9 @@ public final class SgClass {
      * @return true if and only if this class represents a primitive type
      */
     public boolean isPrimitive() {
-        return this.equals(VOID) || this.equals(BOOLEAN) || this.equals(BYTE) || this.equals(CHAR)
-                || this.equals(SHORT) || this.equals(INT) || this.equals(LONG)
-                || this.equals(FLOAT) || this.equals(DOUBLE);
+        return equals(VOID) || equals(BOOLEAN) || equals(BYTE) || equals(CHAR)
+                || equals(SHORT) || equals(INT) || equals(LONG)
+                || equals(FLOAT) || equals(DOUBLE);
     }
 
     /**
@@ -683,7 +683,7 @@ public final class SgClass {
      * @return true if and only if this class represents one of those types.
      */
     public boolean isBaseType() {
-        final String name = getName();
+        String name = getName();
         if (name.equals(String.class.getName())) {
             return true;
         }
@@ -726,7 +726,7 @@ public final class SgClass {
      * @return If the class implements the interface <code>true</code> else
      *         <code>false</code>.
      */
-    public boolean hasInterface(final SgClass intf) {
+    public boolean hasInterface(SgClass intf) {
 
         if (intf == null) {
             throw new IllegalArgumentException("The argument 'intf' cannot be null!");
@@ -764,8 +764,8 @@ public final class SgClass {
      * 
      * @return Source code of the class.
      */
-    public String toString(final boolean showAnnotations) {
-        final StringBuffer sb = new StringBuffer();
+    public String toString(boolean showAnnotations) {
+        StringBuffer sb = new StringBuffer();
         addPackageLine(sb);
         addNameLine(sb, showAnnotations);
         addFields(sb);
@@ -788,20 +788,20 @@ public final class SgClass {
      * 
      * @return Class.
      */
-    public static SgClass create(final SgClassPool pool, final String className) {
+    public static SgClass create(SgClassPool pool, String className) {
         if (pool == null) {
             throw new IllegalArgumentException("The argument 'pool' cannot be null!");
         }
         if (className == null) {
             throw new IllegalArgumentException("The argument 'className' cannot be null!");
         }
-        final SgClass cached = pool.get(className);
+        SgClass cached = pool.get(className);
         if (cached != null) {
             return cached;
         }
         try {
             return create(pool, Class.forName(className));
-        } catch (final ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Cannot create '" + className + "'!", e);
         }
     }
@@ -816,7 +816,7 @@ public final class SgClass {
      * 
      * @return Class.
      */
-    public static SgClass create(final SgClassPool pool, final Class<?> clasz) {
+    public static SgClass create(SgClassPool pool, Class<?> clasz) {
         if (pool == null) {
             throw new IllegalArgumentException("The argument 'pool' cannot be null!");
         }
@@ -824,14 +824,14 @@ public final class SgClass {
             throw new IllegalArgumentException("The argument 'clasz' cannot be null!");
         }
 
-        final SgClass cached = pool.get(clasz.getName());
+        SgClass cached = pool.get(clasz.getName());
         if (cached != null) {
             return cached;
         }
 
         try {
 
-            final SgClass cl = createClass(pool, clasz);
+            SgClass cl = createClass(pool, clasz);
             addInterfaces(pool, cl, clasz);
             addFields(pool, cl, clasz);
             addConstructors(pool, cl, clasz);
@@ -839,27 +839,27 @@ public final class SgClass {
             addInnerClasses(pool, cl, clasz);
             return cl;
 
-        } catch (final RuntimeException ex) {
+        } catch (RuntimeException ex) {
             System.out.println("ERROR CLASS: " + clasz);
             throw ex;
         }
 
     }
 
-    private static SgClass createClass(final SgClassPool pool, final Class<?> clasz) {
+    private static SgClass createClass(SgClassPool pool, Class<?> clasz) {
 
-        final SgClass enclosingClass;
+        SgClass enclosingClass;
         enclosingClass = clasz.getEnclosingClass() == null ? null : create(pool, clasz.getEnclosingClass());
-        final String clModifiers = Modifier.toString(clasz.getModifiers());
+        String clModifiers = Modifier.toString(clasz.getModifiers());
 
-        final String packageName;
+        String packageName;
         packageName = clasz.getPackage() == null ? "" : clasz.getPackage().getName();
 
         // Set super class
-        final SgClass superClass;
+        SgClass superClass;
         superClass = clasz.isInterface() ? null : SgClass.create(pool, clasz.getSuperclass());
 
-        final SgClass cl = new SgClass(clModifiers, packageName, clasz.getSimpleName(), superClass,
+        SgClass cl = new SgClass(clModifiers, packageName, clasz.getSimpleName(), superClass,
                 clasz.isInterface(), enclosingClass);
         // Add to cache
         if (clasz.isArray()) {
@@ -871,41 +871,41 @@ public final class SgClass {
         return cl;
     }
 
-    private static void addInterfaces(final SgClassPool pool, final SgClass cl, final Class<?> clasz) {
-        final Class<?>[] interfaces = clasz.getInterfaces();
+    private static void addInterfaces(SgClassPool pool, SgClass cl, Class<?> clasz) {
+        Class<?>[] interfaces = clasz.getInterfaces();
         for (int i = 0; i < interfaces.length; i++) {
             cl.addInterface(SgClass.create(pool, interfaces[i]));
         }
     }
 
-    private static void addFields(final SgClassPool pool, final SgClass cl, final Class<?> clasz) {
-        final Field[] fields = clasz.getDeclaredFields();
+    private static void addFields(SgClassPool pool, SgClass cl, Class<?> clasz) {
+        Field[] fields = clasz.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
-            final SgClass type = SgClass.create(pool, fields[i].getType());
-            final String name = fields[i].getName();
-            final String modifiers = Modifier.toString(fields[i].getModifiers());
+            SgClass type = SgClass.create(pool, fields[i].getType());
+            String name = fields[i].getName();
+            String modifiers = Modifier.toString(fields[i].getModifiers());
             // This implicitly adds the field to the class
-            final SgField field = new SgField(cl, modifiers, type, name, null);
+            SgField field = new SgField(cl, modifiers, type, name, null);
             field.addAnnotations(SgUtils.createAnnotations(fields[i].getAnnotations()));
         }
     }
 
-    private static void addConstructors(final SgClassPool pool, final SgClass cl,
-            final Class<?> clasz) {
+    private static void addConstructors(SgClassPool pool, SgClass cl,
+                                        Class<?> clasz) {
         if (!cl.isInterface()) {
-            final Constructor<?>[] constructors = clasz.getDeclaredConstructors();
+            Constructor<?>[] constructors = clasz.getDeclaredConstructors();
             for (int i = 0; i < constructors.length; i++) {
 
-                final SgConstructor constructor = new SgConstructor(cl,
+                SgConstructor constructor = new SgConstructor(cl,
                         Modifier.toString(constructors[i].getModifiers()));
 
-                final Class<?>[] parameterTypes = constructors[i].getParameterTypes();
+                Class<?>[] parameterTypes = constructors[i].getParameterTypes();
                 for (int j = 0; j < parameterTypes.length; j++) {
                     // This implicitly adds the argument to the constructor
                     new SgArgument(constructor, create(pool, parameterTypes[j]), "p" + j);
                 }
 
-                final Class<?>[] exceptions = constructors[i].getExceptionTypes();
+                Class<?>[] exceptions = constructors[i].getExceptionTypes();
                 for (int j = 0; j < exceptions.length; j++) {
                     constructor.addException(SgClass.create(pool, clasz));
                 }
@@ -915,20 +915,20 @@ public final class SgClass {
         }
     }
 
-    private static void addMethods(final SgClassPool pool, final SgClass cl, final Class<?> clasz) {
-        final Method[] methods = clasz.getDeclaredMethods();
+    private static void addMethods(SgClassPool pool, SgClass cl, Class<?> clasz) {
+        Method[] methods = clasz.getDeclaredMethods();
         for (int i = 0; i < methods.length; i++) {
-            final String mModifiers = Modifier.toString(methods[i].getModifiers());
-            final SgClass returnType = create(pool, methods[i].getReturnType());
-            final SgMethod method = new SgMethod(methods[i], cl, mModifiers, returnType, methods[i].getName());
-            final Class<?>[] parameterTypes = methods[i].getParameterTypes();
+            String mModifiers = Modifier.toString(methods[i].getModifiers());
+            SgClass returnType = create(pool, methods[i].getReturnType());
+            SgMethod method = new SgMethod(methods[i], cl, mModifiers, returnType, methods[i].getName());
+            Class<?>[] parameterTypes = methods[i].getParameterTypes();
             for (int j = 0; j < parameterTypes.length; j++) {
                 // This implicitly adds the argument to the method
                 new SgArgument(method, create(pool, parameterTypes[j]), "p" + j);
             }
             method.addAnnotations(SgUtils.createAnnotations(methods[i].getAnnotations()));
 
-            final Class<?>[] exceptions = methods[i].getExceptionTypes();
+            Class<?>[] exceptions = methods[i].getExceptionTypes();
             for (int j = 0; j < exceptions.length; j++) {
                 method.addException(SgClass.create(pool, clasz));
             }
@@ -937,9 +937,9 @@ public final class SgClass {
         }
     }
 
-    private static void addInnerClasses(final SgClassPool pool, final SgClass cl,
-            final Class<?> clasz) {
-        final Class<?>[] innerClasses = clasz.getClasses();
+    private static void addInnerClasses(SgClassPool pool, SgClass cl,
+                                        Class<?> clasz) {
+        Class<?>[] innerClasses = clasz.getClasses();
         for (int i = 0; i < innerClasses.length; i++) {
             cl.addClass(create(pool, innerClasses[i]));
         }
@@ -958,7 +958,7 @@ public final class SgClass {
      * 
      * @return Non primitive class.
      */
-    public static SgClass getNonPrimitiveClass(final SgClassPool pool, final SgClass primitive) {
+    public static SgClass getNonPrimitiveClass(SgClassPool pool, SgClass primitive) {
         if (primitive.equals(BOOLEAN)) {
             return SgClass.create(pool, Boolean.class);
         }
@@ -1003,8 +1003,8 @@ public final class SgClass {
      *         converting an {@link java.lang.Integer} into an <code>int</code>
      *         ).
      */
-    public static String getToPrimitiveMethod(final SgClass clasz) {
-        final String name = clasz.getName();
+    public static String getToPrimitiveMethod(SgClass clasz) {
+        String name = clasz.getName();
         if (name.equals(Boolean.class.getName())) {
             return "booleanValue";
         }

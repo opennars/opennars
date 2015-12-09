@@ -36,16 +36,16 @@ import javafx.util.Duration;
 public class SlideAnimator {
 
     public static void slide(Button controlButton, Control node, Side direction) {
-        final DoubleProperty startWidth = new SimpleDoubleProperty();
+        DoubleProperty startWidth = new SimpleDoubleProperty();
 
         // hide sidebar.
-        final Animation hideSidebar = new Transition() {
+        Animation hideSidebar = new Transition() {
             {
                 setCycleDuration(Duration.millis(250));
             }
 
             protected void interpolate(double frac) {
-                final double curWidth = startWidth.get() * (1.0 - frac);
+                double curWidth = startWidth.get() * (1.0 - frac);
                 node.setPrefWidth(curWidth);   // todo resize a spacing underlay to allow the scene to adjust.
                 node.setTranslateX(-startWidth.get() + curWidth);
             }
@@ -55,13 +55,13 @@ public class SlideAnimator {
         );
 
         // show node.
-        final Animation showSidebar = new Transition() {
+        Animation showSidebar = new Transition() {
             {
                 setCycleDuration(Duration.millis(250));
             }
 
             protected void interpolate(double frac) {
-                final double curWidth = startWidth.get() * frac;
+                double curWidth = startWidth.get() * frac;
                 node.setPrefWidth(curWidth);
                 node.setTranslateX(-startWidth.get() + curWidth);
             }

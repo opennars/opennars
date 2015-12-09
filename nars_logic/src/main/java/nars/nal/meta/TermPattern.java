@@ -58,7 +58,7 @@ public class TermPattern {
 
     public TermPattern(Op type, Term pattern) {
 
-        this.term = pattern;
+        term = pattern;
         this.type = type;
 
         List<PreCondition> code = Global.newArrayList();

@@ -89,7 +89,7 @@ public class BrowserWindow {
         });
 
         // monitor the web view for when it's location changes, so we can update the history lists and other items correctly.
-        final WebEngine engine = getView().getEngine();
+        WebEngine engine = getView().getEngine();
         engine.locationProperty().addListener((observableValue3, oldLoc1, newLoc) -> {
             getHistory().executeNav(newLoc); // update the history lists.
             getLocField().setText(newLoc);   // update the location field.

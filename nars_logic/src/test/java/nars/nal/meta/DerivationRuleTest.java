@@ -197,7 +197,7 @@ public class DerivationRuleTest extends TestCase {
 
             Compound x = getPattern();
 
-            final Term ellipsisTerm = $(getEllipsis());
+            Term ellipsisTerm = $(getEllipsis());
 
             for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
@@ -256,8 +256,8 @@ public class DerivationRuleTest extends TestCase {
         public CommutiveEllipsisTest(String ellipsisTerm, String prefix, String suffix) {
             this.prefix = prefix;
             this.suffix = suffix;
-            this.ellipsis = ellipsisTerm;
-            this.p = getPattern(prefix, suffix);
+            ellipsis = ellipsisTerm;
+            p = getPattern(prefix, suffix);
         }
 
         protected abstract Compound getPattern(String prefix, String suffix);

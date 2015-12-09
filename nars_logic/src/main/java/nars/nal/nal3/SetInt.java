@@ -12,12 +12,12 @@ import java.util.Collection;
  */
 public interface SetInt  {
 
-    static <T extends Term> Compound<T> make(final Collection<T> c) {
+    static <T extends Term> Compound<T> make(Collection<T> c) {
         return SetInt.make(c.toArray((T[]) new Term[c.size()]));
     }
 
     @SafeVarargs
-    static <T extends Term> Compound<T> make(final T... t) {
+    static <T extends Term> Compound<T> make(T... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");
             default:

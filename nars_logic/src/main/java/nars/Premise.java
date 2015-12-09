@@ -34,7 +34,7 @@ public interface Premise extends Level, Tasked {
      * @param solution The belief
      * @return null if no match
      */
-    static Task match(final Task question, final Task solution, final Premise nal) {
+    static Task match(Task question, Task solution, Premise nal) {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
@@ -57,16 +57,16 @@ public interface Premise extends Level, Tasked {
      * <p>
      * only sets the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
      */
-    static boolean unify(final Op varType, final Term[] t, final Random random) {
+    static boolean unify(Op varType, Term[] t, Random random) {
 
 
-        final FindSubst f = new FindSubst(varType, random);
-        final boolean hasSubs = f.next(t[0], t[1], Global.UNIFICATION_POWER);
+        FindSubst f = new FindSubst(varType, random);
+        boolean hasSubs = f.next(t[0], t[1], Global.UNIFICATION_POWER);
         if (!hasSubs) return false;
 
         //TODO combine these two blocks to use the same sub-method
 
-        final Term a = t[0];
+        Term a = t[0];
         Term aa = a;
 
         //FORWARD
@@ -76,13 +76,13 @@ public interface Premise extends Level, Tasked {
 
             if (aa == null) return false;
 
-            final Op aaop = aa.op();
+            Op aaop = aa.op();
             if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEPENDENT || aaop == Op.VAR_DEPENDENT))
                 return false;
 
         }
 
-        final Term b = t[1];
+        Term b = t[1];
         Term bb = b;
 
         //REVERSE
@@ -94,7 +94,7 @@ public interface Premise extends Level, Tasked {
 
             if (bb == null) return false;
 
-            final Op bbop = bb.op();
+            Op bbop = bb.op();
             if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEPENDENT || bbop == Op.VAR_DEPENDENT))
                 return false;
         }
@@ -105,7 +105,7 @@ public interface Premise extends Level, Tasked {
         return true;
     }
 
-    static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term,Term> subs) {
+    static Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;
@@ -117,7 +117,7 @@ public interface Premise extends Level, Tasked {
      * appliesSubstitute and renameVariables, resulting in a cloned object,
      * will not change this instance
      */
-    static Term applySubstituteAndRenameVariables(final Compound t, final Subst subs) {
+    static Term applySubstituteAndRenameVariables(Compound t, Subst subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;
@@ -386,7 +386,7 @@ public interface Premise extends Level, Tasked {
      */
     default Task removeInvalid(Task task) {
 
-        final Memory memory = nar().memory;
+        Memory memory = nar().memory;
 
         Object invalidationReason = validate(task);
         if (invalidationReason==null) {
@@ -561,13 +561,13 @@ public interface Premise extends Level, Tasked {
     default float getMeanPriority() {
         float total = 0;
         int n = 0;
-        final Task pt = getTask();
+        Task pt = getTask();
         if (pt!=null) {
             if (!pt.isDeleted())
                 total += pt.getPriority();
             n++;
         }
-        final Task pb = getBelief();
+        Task pb = getBelief();
         if (pb!=null) {
             if (!pb.isDeleted())
                 total += pb.getPriority();

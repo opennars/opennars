@@ -148,10 +148,10 @@ public class NarseseTemplatePanel {
     }
     
     
-    public static JPanel newPanel(final NarseseTemplate t) {
-        final JPanel p = new JPanel(new BorderLayout());
+    public static JPanel newPanel(NarseseTemplate t) {
+        JPanel p = new JPanel(new BorderLayout());
         
-        final JComboBox formSelect = new JComboBox();
+        JComboBox formSelect = new JComboBox();
         p.add(formSelect, BorderLayout.WEST);
         
         for (String f : t.forms.keySet())
@@ -191,7 +191,7 @@ public class NarseseTemplatePanel {
         JTree t = new JTree(tree);
         menu.add(t, BorderLayout.CENTER);
         
-        final JComboBox formSelect = new JComboBox();
+        JComboBox formSelect = new JComboBox();
         formSelect.addItem("en");
         formSelect.addItem("narsese");
         menu.add(formSelect, BorderLayout.NORTH);

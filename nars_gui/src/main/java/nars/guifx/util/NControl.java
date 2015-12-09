@@ -24,7 +24,7 @@ public abstract class NControl extends StackPane {
         
         Canvas canvas = this.canvas = new Canvas(w, h);
 
-        final ReadOnlyObjectProperty<Bounds> bp = boundsInParentProperty();
+        ReadOnlyObjectProperty<Bounds> bp = boundsInParentProperty();
 
         //maxWidth(Double.MAX_VALUE);
         //maxHeight(Double.MAX_VALUE);

@@ -29,7 +29,7 @@ public class Civilized<I> extends TypedOrganism implements Runnable {
     public Civilized(TypedOrganism root, Iterable<EGoal> goalSequence, ExecutorService exe) {
         super(root.getRoot());
 
-        this.fitness = root.getFitness();
+        fitness = root.getFitness();
 
         this.goalSequence = goalSequence;
         this.exe = exe;
@@ -86,7 +86,7 @@ public class Civilized<I> extends TypedOrganism implements Runnable {
         Iterator<EGoal> gi = goalSequence.iterator();
         while (gi.hasNext() && running) {
 
-            final EGoal g = gi.next();
+            EGoal g = gi.next();
 
             try {
 

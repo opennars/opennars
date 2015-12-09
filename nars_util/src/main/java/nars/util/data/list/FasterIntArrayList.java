@@ -14,7 +14,7 @@ public class FasterIntArrayList extends IntArrayList {
     /** uses the int as a buffer; additions start at index 0 (unlike superclass's constructor) */
     public FasterIntArrayList(int[] zeroCopyBuffer) {
         super(zeroCopyBuffer);
-        this.size = 0;
+        size = 0;
     }
 
     public final int[] array() {
@@ -23,14 +23,14 @@ public class FasterIntArrayList extends IntArrayList {
 
 
     @Override public final int get(int index) {
-        return this.items[index];
+        return items[index];
     }
 
     /** quickly remove the final elements without nulling them by setting the size pointer */
     public final void popTo(int index) {
         /*if (newSize < 0)
             throw new RuntimeException("negative index");*/
-        this.size = index+1;
+        size = index+1;
     }
 
 }

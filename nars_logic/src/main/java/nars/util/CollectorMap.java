@@ -21,10 +21,10 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     public abstract Procedure2<Budget, Budget> getMerge();
 
     /** implementation for adding the value to another collecton (called internally)  */
-    protected abstract V addItem(final V e);
+    protected abstract V addItem(V e);
 
     /** implementation for removing the value to another collecton (called internally) */
-    protected abstract V removeItem(final V e);
+    protected abstract V removeItem(V e);
 
 
 
@@ -58,7 +58,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
 //    }
 
 
-    public V put(final V value) {
+    public V put(V value) {
 
 
         V removed;
@@ -66,7 +66,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         /*synchronized (nameTable)*/
         {
 
-            final K key = value.name();
+            K key = value.name();
             removed = putKey(key, value);
             if (removed != null) {
 
@@ -92,9 +92,9 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         return removed;
     }
 
-    public V remove(final K key) {
+    public V remove(K key) {
 
-        final V e = removeKey(key);
+        V e = removeKey(key);
         if (e != null) {
             V removed = removeItem(e);
             if (removed == null) {
@@ -111,7 +111,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     }
 
 
-    public final V removeKey(final K key) {
+    public final V removeKey(K key) {
         V e = map.remove(key);
         return e;
     }
@@ -129,7 +129,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         map.clear();
     }
 
-    public final V get(final K key) {
+    public final V get(K key) {
         return map.get(key);
     }
 
@@ -149,7 +149,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     /**
      * put key in index, do not add value
      */
-    public final V putKey(final K key, final V value) {
+    public final V putKey(K key, V value) {
         return map.put(key, value);
     }
 

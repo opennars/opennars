@@ -22,12 +22,12 @@ public class SparkLine {
 	 *            a collection of integers to be rendered
 	 * @return a String containing an ascii graph of the values
 	 */
-	public static String render(final Collection<Integer> values) {
-		final int max = Collections.max(values), min = Collections.min(values);
-		final float scale = (max - min) / 7.0f;
-		final StringBuilder accumulator = new StringBuilder();
-		for (final Integer value : values) {
-			final int index = Math.round((value - min) / scale);
+	public static String render(Collection<Integer> values) {
+		int max = Collections.max(values), min = Collections.min(values);
+		float scale = (max - min) / 7.0f;
+		StringBuilder accumulator = new StringBuilder();
+		for (Integer value : values) {
+			int index = Math.round((value - min) / scale);
 			accumulator.append(ticks.get(index));
 		}
 		return accumulator.toString();
@@ -40,7 +40,7 @@ public class SparkLine {
 	 *            an arrays of integers to be rendered
 	 * @return a String containing an ascii graph of the values
 	 */
-	public static String render(final Integer... values) {
+	public static String render(Integer... values) {
 		return render(asList(values));
 	}
 

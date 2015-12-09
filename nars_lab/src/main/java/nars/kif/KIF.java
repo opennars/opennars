@@ -65,7 +65,7 @@ public class KIF {
      * @return int Returns an integer value denoting the current parse mode.
      */
     public int getParseMode() {
-        return this.parseMode;
+        return parseMode;
     }
 
     /**
@@ -76,7 +76,7 @@ public class KIF {
      * @return void
      */
     public void setParseMode(int mode) {
-        this.parseMode = mode;
+        parseMode = mode;
     }
 
     /**
@@ -170,7 +170,7 @@ public class KIF {
      */
     private void parse(Reader r) {
 
-        int mode = this.getParseMode();
+        int mode = getParseMode();
 
         /*
          System.out.println("INFO in KIF.parse()");
@@ -494,8 +494,8 @@ public class KIF {
         FileReader fr = null;
         Exception exThr = null;
         try {
-            this.file = new File(fname);
-            this.filename = file.getCanonicalPath();
+            file = new File(fname);
+            filename = file.getCanonicalPath();
             fr = new FileReader(file);
             parse(fr);
         } catch (Exception ex) {

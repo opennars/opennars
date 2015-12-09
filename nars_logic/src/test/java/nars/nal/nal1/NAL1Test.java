@@ -59,7 +59,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void revision() throws Narsese.NarseseException {
 
-        final String belief = "<bird --> swimmer>";
+        String belief = "<bird --> swimmer>";
 
         test()
                 .believe(belief)                 //.en("bird is a type of swimmer.");

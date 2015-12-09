@@ -20,7 +20,7 @@ public class SamplePlayer implements SoundProducer {
     {
         float step = (sample.rate*rate)/readRate;
 
-        final float[] sb = sample.buf;
+        float[] sb = sample.buf;
 
         for (int i=0; i<buf.length; i++)
         {
@@ -56,6 +56,6 @@ public class SamplePlayer implements SoundProducer {
     }
 
     public void stop() {
-        this.alive = false;
+        alive = false;
     }
 }

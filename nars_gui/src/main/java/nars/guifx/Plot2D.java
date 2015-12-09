@@ -38,7 +38,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
         public Series(String name) {
             this.name = name;
-            this.color = NARfx.hashColor(name, ca);
+            color = NARfx.hashColor(name, ca);
         }
 
         public abstract void update(int maxHistory);
@@ -63,7 +63,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     public Plot2D(PlotVis p, int history, double w, double h) {
         super(w, h);
 
-        this.maxHistory = history;
+        maxHistory = history;
 
         plotVis.addListener((n) -> update());
 
@@ -107,15 +107,15 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
     public void run() {
 
-        final List<Series> series = this.series;
+        List<Series> series = this.series;
 
         //HACK (not initialized yet but run() called
         if (series == null || series.isEmpty()) return;
 
         GraphicsContext g = graphics();
 
-        final double W = g.getCanvas().getWidth();
-        final double H = g.getCanvas().getHeight();
+        double W = g.getCanvas().getWidth();
+        double H = g.getCanvas().getHeight();
 
         g.clearRect(0, 0, W, H);
 
@@ -135,20 +135,20 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     public static final PlotVis BarWave = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
         if (minValue != maxValue) {
 
-            final double w = g.getCanvas().getWidth();
-            final double h = g.getCanvas().getHeight();
+            double w = g.getCanvas().getWidth();
+            double h = g.getCanvas().getHeight();
 
 
             series.forEach(s -> {
-                final int histSize = s.history.size();
+                int histSize = s.history.size();
 
-                final double dx = (w / histSize);
+                double dx = (w / histSize);
 
                 double x = 0;
                 double prevX = -1;
 
                 for (int i = 0; i < histSize; i++) {
-                    final double v = s.history.get(i);
+                    double v = s.history.get(i);
 
                     double py = (v - minValue) / (maxValue - minValue);
                     if (py < 0) py = 0;
@@ -175,9 +175,9 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
             double m = 10; //margin
 
-            final double w = g.getCanvas().getWidth();
+            double w = g.getCanvas().getWidth();
             double H = g.getCanvas().getHeight();
-            final double h = H - m * 2;
+            double h = H - m * 2;
 
             g.setGlobalBlendMode(BlendMode.DIFFERENCE);
             g.setFill(Color.BLACK);
@@ -209,13 +209,13 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
                 FloatArrayList sh = s.history;
 
-                final int histSize = sh.size();
+                int histSize = sh.size();
 
-                final double dx = (w / histSize);
+                double dx = (w / histSize);
 
                 double x = 0;
                 for (int i = 0; i < sh.size(); i++) { //TODO why does the array change
-                    final double v = sh.get(i);
+                    double v = sh.get(i);
 
                     double y = ypos.valueOf(v);
 
@@ -231,14 +231,14 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     };
 
     protected void updateSeries() {
-        final int mh = maxHistory;
+        int mh = maxHistory;
         series.forEach(s -> s.update(mh));
 
-        this.minValue = Float.POSITIVE_INFINITY;
-        this.maxValue = Float.NEGATIVE_INFINITY;
+        minValue = Float.POSITIVE_INFINITY;
+        maxValue = Float.NEGATIVE_INFINITY;
         series.forEach(s -> {
-            this.minValue = Math.min(this.minValue, s.minValue);
-            this.maxValue = Math.max(this.maxValue, s.maxValue);
+            minValue = Math.min(minValue, s.minValue);
+            maxValue = Math.max(maxValue, s.maxValue);
         });
     }
 

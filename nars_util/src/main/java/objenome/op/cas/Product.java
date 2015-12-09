@@ -187,7 +187,7 @@ public class Product extends Operation {
         if (exprs.size() == 1) return exprs.get(0).pretty();
         
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         boolean nowMinus = false;
         Expr lastExpr = null;
         boolean parens = false;

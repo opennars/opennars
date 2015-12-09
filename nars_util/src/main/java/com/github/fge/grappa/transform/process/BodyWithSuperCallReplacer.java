@@ -33,8 +33,8 @@ public final class BodyWithSuperCallReplacer
     implements RuleMethodProcessor
 {
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -46,16 +46,16 @@ public final class BodyWithSuperCallReplacer
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
         // replace all method code with a simple call to the super method
-        final String parentDesc = classNode.getParentType().getInternalName();
-        final InsnList argumentLoaders = createArgumentLoaders(method.desc);
-        final CodeBlock block = CodeBlock.newCodeBlock()
+        String parentDesc = classNode.getParentType().getInternalName();
+        InsnList argumentLoaders = createArgumentLoaders(method.desc);
+        CodeBlock block = CodeBlock.newCodeBlock()
             .aload(0)
             .addAll(argumentLoaders)
             // TODO: create .invokeSpecial with MethodNode argument?

@@ -24,7 +24,7 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
         super(buffer);
         this.context = context;
         this.value = value;
-        this.id = context.track(this);
+        id = context.track(this);
     }
 
     /** called when this versioned is removed/deleted from a context */
@@ -44,9 +44,9 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 
 
     boolean revertNext(int before) {
-        int p = this.size - 1;
+        int p = size - 1;
         if (p >= 0) {
-            int[] a = this.items;
+            int[] a = items;
             if (a[p--] > before) {
                 popTo(p);
                 value.popTo(p);

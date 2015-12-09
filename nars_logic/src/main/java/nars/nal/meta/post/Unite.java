@@ -41,7 +41,7 @@ public class Unite extends PreCondition3Output {
     }
 
     public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Term[] termsArray) {
-        final Compound res;
+        Compound res;
 
         res = a instanceof SetExt ? SetExt.make(termsArray) : SetInt.make(termsArray);
         /*else {

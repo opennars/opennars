@@ -45,7 +45,7 @@ public class UTF8IdentifierTest {
 
 
 
-    public void testDynamic(final String b) {
+    public void testDynamic(String b) {
         UTF8Identifier x = new LiteralUTF8Identifier(b);
         assertTrue(x.hashCode()!=0);
         assertEquals(b.length(), x.toString().length());

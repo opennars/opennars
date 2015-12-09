@@ -22,7 +22,7 @@ public abstract class MatchContextEvent<V>
 {
     protected final MatcherContext<V> context;
 
-    protected MatchContextEvent(final MatcherContext<V> context)
+    protected MatchContextEvent(MatcherContext<V> context)
     {
         this.context = context;
     }

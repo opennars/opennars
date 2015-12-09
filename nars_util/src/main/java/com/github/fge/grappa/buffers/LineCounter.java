@@ -35,7 +35,7 @@ public final class LineCounter
     private final int nrLines;
     private final int len;
 
-    public LineCounter(final CharSequence input)
+    public LineCounter(CharSequence input)
     {
         int lowerBound = 0;
         int index = 0;
@@ -52,7 +52,7 @@ public final class LineCounter
     }
 
     @VisibleForTesting
-    LineCounter(final List<Range<Integer>> ranges)
+    LineCounter(List<Range<Integer>> ranges)
     {
         lines.addAll(ranges);
         nrLines = ranges.size();
@@ -64,18 +64,18 @@ public final class LineCounter
         return nrLines;
     }
 
-    public Range<Integer> getLineRange(@Tainted final int lineNr)
+    public Range<Integer> getLineRange(@Tainted int lineNr)
     {
         // Edge case: unfortunately, we can get an illegal line number
         return lines.get(Math.min(lineNr, nrLines) - 1);
     }
 
-    public Position toPosition(@Tainted final int index)
+    public Position toPosition(@Tainted int index)
     {
         if (index < 0)
             throw new IllegalStateException();
 
-        final Range<Integer> range;
+        Range<Integer> range;
 
         // Edge case: unfortunately, we can get an illegal index
         if (index >= len) {
@@ -83,26 +83,26 @@ public final class LineCounter
             return new Position(nrLines, len - range.lowerEndpoint() + 1);
         }
 
-        final int lineNr = binarySearch(index);
+        int lineNr = binarySearch(index);
 
         range = lines.get(lineNr);
         return new Position(lineNr + 1, index - range.lowerEndpoint() + 1);
     }
 
     @VisibleForTesting
-    int binarySearch(final int index)
+    int binarySearch(int index)
     {
         return doBinarySearch(0, nrLines - 1, index);
     }
 
-    private int doBinarySearch(final int low, final int high, final int index)
+    private int doBinarySearch(int low, int high, int index)
     {
         // Guaranteed to always succeed at this point
         if (high - low <= 1)
             return lines.get(low).contains(index) ? low : high;
 
-        final int middle = (low + high) / 2;
-        final Range<Integer> range = lines.get(middle);
+        int middle = (low + high) / 2;
+        Range<Integer> range = lines.get(middle);
         if (range.contains(index))
             return middle;
 

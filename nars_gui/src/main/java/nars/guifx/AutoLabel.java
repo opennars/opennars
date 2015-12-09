@@ -19,7 +19,7 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
         super();
 
         this.obj = obj;
-        this.text = null;
+        text = null;
 
 
 

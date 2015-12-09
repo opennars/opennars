@@ -16,7 +16,7 @@ abstract class SourceFunctionMeter<T> extends FunctionMeter<T> {
 
     public SourceFunctionMeter(String id) {
         super(id);
-        this.name = id;
+        name = id;
     }
 
     public String id() { return name; }

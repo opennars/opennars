@@ -250,15 +250,15 @@ public class TestChamber2 extends TestChamber {
                 
                 nar.input("$0.60$ (*,effect," + action + ',' + actionParam + ',' + success + "). :|:");
                 
-                final int SightPeriod = 32;
+                int SightPeriod = 32;
                 if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {
                     String seeing = "(*,";
 
-                    seeing += this.cellOn().material + ",";
-                    seeing += this.cellAbsolute(0).material + ",";
-                    seeing += this.cellAbsolute(90).material + ",";
-                    seeing += this.cellAbsolute(180).material + ",";
-                    seeing += this.cellAbsolute(270).material + ")";
+                    seeing += cellOn().material + ",";
+                    seeing += cellAbsolute(0).material + ",";
+                    seeing += cellAbsolute(90).material + ",";
+                    seeing += cellAbsolute(180).material + ",";
+                    seeing += cellAbsolute(270).material + ")";
 
 
                     nar.input("$0.50$ (*,see," + seeing + "). :|:");

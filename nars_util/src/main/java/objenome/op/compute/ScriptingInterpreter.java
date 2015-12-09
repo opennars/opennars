@@ -127,7 +127,7 @@ public class ScriptingInterpreter<I,T extends Organism,O> implements Computer<I,
                     engine.put(argNames[j], paramSet[j]);
                 }
                 results.set(i, (O)engine.eval(expression));
-            } catch (final ScriptException e) {
+            } catch (ScriptException e) {
                 throw new MalformedProgramException();
             }
         }

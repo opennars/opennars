@@ -196,7 +196,7 @@ public final class NodeUtils {
             throw new IllegalArgumentException("quantity must be 0 or greater");
         }
 
-        final List<Literal> range = new ArrayList<>(quantity);
+        List<Literal> range = new ArrayList<>(quantity);
 
         for (int i = 0; i < quantity; i++) {
             float value = (i * interval) + start;

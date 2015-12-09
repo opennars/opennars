@@ -24,8 +24,8 @@ public class Game {
 	}
 
 	public Game(int width, int height) 	{
-            this.WIDTH = width;
-            this.HEIGHT = height;
+		WIDTH = width;
+		HEIGHT = height;
             pieces = (Piece[][]) Array.newInstance(Piece.class, WIDTH, HEIGHT);
             
 		// create initial context

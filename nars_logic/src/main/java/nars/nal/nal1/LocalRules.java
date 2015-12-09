@@ -71,7 +71,7 @@ public class LocalRules {
      * known to be equal.
      *
      */
-    public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
+    public static boolean revisible(Sentence newBelief, Sentence oldBelief) {
 
         //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
 
@@ -122,7 +122,7 @@ public class LocalRules {
     /** creates a revision task (but does not input it)
      *  if failed, returns null
      * */
-    public static <C extends Compound> Task getRevision(final Task newBelief, final Task oldBelief, final Premise nal, long now) {
+    public static <C extends Compound> Task getRevision(Task newBelief, Task oldBelief, Premise nal, long now) {
 
         if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
             return null;
@@ -154,7 +154,7 @@ public class LocalRules {
      * @param question     The question to be processed
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(final Task question, final Task solution, final Premise nal) {
+    public static Task trySolution(Task question, Task solution, Premise nal) {
 
         if ((solution == null) || (solution.isDeleted()))
             throw new RuntimeException("proposedBelief " + solution + " deleted or null");
@@ -168,18 +168,18 @@ public class LocalRules {
 
         Task sol = solution;
 
-        final Memory memory = nal.memory();
+        Memory memory = nal.memory();
 
 
 
-        final long now = memory.time();
+        long now = memory.time();
 
         /** temporary for comparing the result before unification and after */
         //float newQ0 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
 
         Truth originalTruth = solution.getTruth();
 
-        final Term solTerm = sol.getTerm();
+        Term solTerm = sol.getTerm();
         if (solTerm.hasVarIndep() && !solTerm.equals(question.getTerm())) {
 
             Term[] u = {question.getTerm(), solTerm};
@@ -212,10 +212,10 @@ public class LocalRules {
 //            return null;
 //        }
 
-        final Task oldBest = question.getBestSolution();
+        Task oldBest = question.getBestSolution();
 
         //get the quality of the old solution if it were applied now (when conditions may differ)
-        final float oldQ = (oldBest != null) ? Tense.solutionQuality(question, oldBest, now) : 0;
+        float oldQ = (oldBest != null) ? Tense.solutionQuality(question, oldBest, now) : 0;
 
         if (oldQ >= newQ) {
             //old solution was better:
@@ -274,7 +274,7 @@ public class LocalRules {
             //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
         //}
 
-        final Task finalSol = sol;
+        Task finalSol = sol;
         nal.nar().beforeNextFrame(() -> {
             //defer this event until after frame ends so reasoning in this cycle may continue
             memory.eventAnswer.emit(Tuples.twin(question, finalSol));

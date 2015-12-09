@@ -23,7 +23,7 @@ public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
 
     public AbstractStringAtom(String id, Op specificOp) {
         super(id);
-        this.hash = Atom.hash(
+        hash = Atom.hash(
             id.hashCode(),
             specificOp!=null ? specificOp : op()
         );

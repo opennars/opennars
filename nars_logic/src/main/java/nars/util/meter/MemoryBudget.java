@@ -115,7 +115,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
     public static Signals onConcept(NARMetrics nm, Term termConcept) {
         Memory m = nm.nar.memory;
-        final String prefix = termConcept.toString();
+        String prefix = termConcept.toString();
         Signals s = new Signals() {
 
 
@@ -186,8 +186,8 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
         //termLinkStdDev.clear();
         //taskLinkStdDev.clear();
 
-        final double[] tActiveTaskLinkPriority = {0};
-        final double[] tActiveTermLinkPriority = {0};
+        double[] tActiveTaskLinkPriority = {0};
+        double[] tActiveTermLinkPriority = {0};
 
 
         n.forEachConcept(c -> {

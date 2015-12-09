@@ -57,7 +57,7 @@ public class ReflectPanel<O> extends JPanel {
         } catch (IntrospectionException e) {
             e.printStackTrace();
         }
-        final PropertySheetPanel sheet = new PropertySheetPanel();
+        PropertySheetPanel sheet = new PropertySheetPanel();
         sheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
         sheet.setToolBarVisible(false);
         sheet.setDescriptionVisible(false);

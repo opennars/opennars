@@ -65,7 +65,7 @@ public class DefaultConcept extends AtomConcept {
     /** how incoming budget is merged into its existing duplicate quest/question */
     static final Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
 
-    public DefaultConcept(final Term term, Param p) {
+    public DefaultConcept(Term term, Param p) {
         this(term, new NullBag(), new NullBag(), p);
     }
 
@@ -75,23 +75,23 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(final Term term, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, Param p) {
+    public DefaultConcept(Term term, Bag<Task, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Param p) {
         super(term, termLinks, taskLinks);
 
         //TODO lazy instantiate?
-        this.beliefs = new ArrayListBeliefTable(p.conceptBeliefsMax.intValue());
-        this.goals = new ArrayListBeliefTable(p.conceptGoalsMax.intValue());
+        beliefs = new ArrayListBeliefTable(p.conceptBeliefsMax.intValue());
+        goals = new ArrayListBeliefTable(p.conceptGoalsMax.intValue());
 
-        final int maxQuestions = p.conceptQuestionsMax.intValue();
-        this.questions = new ArrayListTaskTable(maxQuestions);
-        this.quests = new ArrayListTaskTable(maxQuestions);
+        int maxQuestions = p.conceptQuestionsMax.intValue();
+        questions = new ArrayListTaskTable(maxQuestions);
+        quests = new ArrayListTaskTable(maxQuestions);
 
 
     }
 
     @Override
     public TermLinkBuilder getTermLinkBuilder() {
-        final TermLinkBuilder termLinkBuilder = this.termLinkBuilder;
+        TermLinkBuilder termLinkBuilder = this.termLinkBuilder;
         if (termLinkBuilder == null) {
             return this.termLinkBuilder = new TermLinkBuilder(this);
         }
@@ -213,13 +213,13 @@ public class DefaultConcept extends AtomConcept {
      * @return Whether to continue the processing of the task
      */
     @Override
-    public boolean processBelief(final Premise nal) {
+    public boolean processBelief(Premise nal) {
 
-        final Task belief = nal.getTask();
+        Task belief = nal.getTask();
 
         float successBefore = getSuccess();
 
-        final Task strongest = getBeliefs().add( belief, new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nal.time()), this, nal);
+        Task strongest = getBeliefs().add( belief, new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nal.time()), this, nal);
 
         if (strongest == null || strongest.isDeleted()) {
             return false;
@@ -251,12 +251,12 @@ public class DefaultConcept extends AtomConcept {
      * @return Whether to continue the processing of the task
      */
     @Override
-    public boolean processGoal(final Premise nal) {
+    public boolean processGoal(Premise nal) {
 
-        final Task goal = nal.getTask();
-        final float successBefore = getSuccess();
+        Task goal = nal.getTask();
+        float successBefore = getSuccess();
 
-        final Task strongest = getGoals().add( goal, new BeliefTable.SolutionQualityMatchingOrderRanker(goal, nal.time()), this, nal);
+        Task strongest = getGoals().add( goal, new BeliefTable.SolutionQualityMatchingOrderRanker(goal, nal.time()), this, nal);
 
         if (strongest==null) {
             return false;
@@ -376,7 +376,7 @@ public class DefaultConcept extends AtomConcept {
      * @return true if the quest/question table changed
      */
     @Override
-    public boolean processQuestion(final Premise nal) {
+    public boolean processQuestion(Premise nal) {
 
         Task q = nal.getTask();
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
@@ -410,7 +410,7 @@ public class DefaultConcept extends AtomConcept {
 
         //TODO if the table was not affected, does the following still need to happen:
 
-        final long now = getMemory().time();
+        long now = getMemory().time();
 
         Task sol;
         sol = q.isQuest() ? getGoals().top(q, now) : getBeliefs().top(q, now);

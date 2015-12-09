@@ -20,11 +20,11 @@ public class TaskRemovalReasons {
     long processed = 0;
 
     public TaskRemovalReasons(NAR n) {
-        this.nar = n;
+        nar = n;
         all = n.memory.eventTaskProcess.on(t -> processed++);
         removals = n.memory.eventTaskRemoved.on(t -> {
             freq.addValue(t.getLogLast().toString());
-            final long age = ((Temporal)t).getLifespan(nar.memory);
+            long age = ((Temporal)t).getLifespan(nar.memory);
             lifespanOfRemovals.addValue(age);
         });
     }

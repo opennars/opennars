@@ -38,7 +38,7 @@ public class ImageInt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    public ImageInt(final Term[] arg, final int index) {
+    public ImageInt(Term[] arg, int index) {
         super(arg, index);
     }
 
@@ -73,7 +73,7 @@ public class ImageInt extends Image {
      * @param index The index of the place-holder
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Product product, final Term relation, final short index) {
+    public static Term make(Product product, Term relation, short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
@@ -98,7 +98,7 @@ public class ImageInt extends Image {
      * @param index The index of the place-holder in the new Image
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final ImageInt oldImage, final Term component, final short index) {
+    public static Term make(ImageInt oldImage, Term component, short index) {
         Term[] argList = oldImage.termsCopy();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
@@ -113,7 +113,7 @@ public class ImageInt extends Image {
      * @param index The index of the place-holder in the new Image
      * @return the Term generated from the arguments
      */
-    public static ImageInt make(final Term[] argument, final int index) {
+    public static ImageInt make(Term[] argument, int index) {
         return new ImageInt(argument, index);
     }
     

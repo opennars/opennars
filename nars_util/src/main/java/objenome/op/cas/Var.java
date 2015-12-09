@@ -38,7 +38,7 @@ public class Var extends Expr {
     }
     
     public Expr deriv(Var respected) {
-        if (this.equals(respected)) return Num.make(1);
+        if (equals(respected)) return Num.make(1);
         if (derivrespected.containsKey(respected)) return derivrespected.get(respected);
         return Derivative.make(this, respected, false);
     }

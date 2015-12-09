@@ -58,16 +58,15 @@ public final class Grappa
      * @return the ready to use parser instance
      */
     public static <P extends BaseParser<V>, V> P createParser(
-        @Nonnull final Class<P> parserClass, final Object... constructorArgs)
+            @Nonnull Class<P> parserClass, Object... constructorArgs)
     {
         Objects.requireNonNull(parserClass, "parserClass");
         try {
-            final Class<?> extendedClass
+            Class<?> extendedClass
                 = ParserTransformer.transformParser(parserClass);
-            final Constructor<?> constructor
+            Constructor<?> constructor
                 = findConstructor(extendedClass, constructorArgs);
-            @SuppressWarnings("unchecked")
-            final P ret = (P) constructor.newInstance(constructorArgs);
+            @SuppressWarnings("unchecked") P ret = (P) constructor.newInstance(constructorArgs);
             return ret;
         } catch (Exception e) { // TODO: catch better than Exception
             throw new RuntimeException(
@@ -92,7 +91,7 @@ public final class Grappa
      * @see ParserTransformer#getByteCode(Class)
      */
     public static <P extends BaseParser<V>, V> byte[] getByteCode(
-        final Class<P> parserClass)
+        Class<P> parserClass)
     {
         try {
             return ParserTransformer.getByteCode(parserClass);
@@ -101,14 +100,14 @@ public final class Grappa
         }
     }
 
-    private static Constructor<?> findConstructor(final Class<?> c,
-        final Object[] arguments)
+    private static Constructor<?> findConstructor(Class<?> c,
+                                                  Object[] arguments)
     {
         Class<?>[] paramTypes;
         Object argument;
 
 outer:
-        for (final Constructor<?> constructor : c.getConstructors()) {
+        for (Constructor<?> constructor : c.getConstructors()) {
             paramTypes = constructor.getParameterTypes();
             if (paramTypes.length != arguments.length)
                 continue;

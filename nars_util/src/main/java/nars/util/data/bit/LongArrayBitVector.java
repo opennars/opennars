@@ -95,7 +95,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @return the number of words that are necessary to hold the given number of bits.
 	 */
 
-	protected static final int numWords( final long size ) {
+	protected static final int numWords( long size ) {
 		if ( ASSERTS ) assert ( size + WORD_MASK ) >>> LOG2_BITS_PER_WORD <= Integer.MAX_VALUE;
 		return (int)( ( size + WORD_MASK ) >>> LOG2_BITS_PER_WORD );
 	}
@@ -106,7 +106,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @return the index of the word that holds the bit of given index, or -1 
 	 * if <code>index</code> is -1.
 	 */
-	protected static final int word( final long index ) {
+	protected static final int word( long index ) {
 		if ( ASSERTS ) assert index >>> LOG2_BITS_PER_WORD <= Integer.MAX_VALUE;
 		return (int)( index >>> LOG2_BITS_PER_WORD );
 	}
@@ -120,7 +120,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @param index the index of a bit.
 	 * @return the inside-word index of the bit that would hold the bit of specified index.
 	 */
-	protected static final int bit( final long index ) {
+	protected static final int bit( long index ) {
 		return (int)( index & WORD_MASK );
 	}
 
@@ -130,13 +130,13 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @return a mask having a 1 exactly at the bit {@link #bit(long) bit(index)}.
 	 */
 
-	protected static final long mask( final long index ) {
+	protected static final long mask( long index ) {
 		return 1L << index;
 	}
 
-	protected LongArrayBitVector( final long capacity ) {
-		if ( capacity > ( Integer.MAX_VALUE + 1L ) * Long.SIZE ) throw new IndexOutOfBoundsException( "In this implementations bit vectors can be at most 2^37 bits long" ); 
-		this.bits = capacity > 0 ? new long[ numWords( capacity ) ] : EMPTY_ARRAY;
+	protected LongArrayBitVector( long capacity ) {
+		if ( capacity > ( Integer.MAX_VALUE + 1L ) * Long.SIZE ) throw new IndexOutOfBoundsException( "In this implementations bit vectors can be at most 2^37 bits long" );
+		bits = capacity > 0 ? new long[ numWords( capacity ) ] : EMPTY_ARRAY;
 	}
 
 	/** Creates a new empty bit vector of given capacity. The 
@@ -150,7 +150,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @param capacity the capacity (in bits) of the new bit vector.
 	 * @return a new bit vector of given capacity.
 	 */
-	public static LongArrayBitVector getInstance( final long capacity ) {
+	public static LongArrayBitVector getInstance( long capacity ) {
 		return new LongArrayBitVector( capacity );
 	}
 
@@ -165,7 +165,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * 
 	 * @param length the size (in bits) of the new bit vector.
 	 */
-	public static LongArrayBitVector ofLength( final long length ) {
+	public static LongArrayBitVector ofLength( long length ) {
 		return new LongArrayBitVector( length ).length( length );
 	}
 	
@@ -173,8 +173,8 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * 
 	 * @param bit a list of bits that will be set in the newly created bit vector. 
 	 */
-	public static LongArrayBitVector of( final int... bit ) {
-		final LongArrayBitVector bitVector = new LongArrayBitVector( bit.length );
+	public static LongArrayBitVector of( int... bit ) {
+		LongArrayBitVector bitVector = new LongArrayBitVector( bit.length );
 		for( int b : bit ) {
 			if ( b != 0 && b != 1 ) throw new IllegalArgumentException( "Illegal bit value: " + b );
 			bitVector.add( b );
@@ -201,23 +201,23 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @return this bit vector.
 	 */
 	
-	public LongArrayBitVector ensureCapacity( final long numBits ) {
+	public LongArrayBitVector ensureCapacity( long numBits ) {
 		if ( numBits > ( Integer.MAX_VALUE + 1L ) * Long.SIZE ) throw new IndexOutOfBoundsException( "In this implementations bit vectors can be at most 2^37 bits long" ); 
 		bits = LongArrays.grow( bits, numWords( numBits ), numWords( length ) );
 		return this;
 	}
 
-	public LongArrayBitVector length( final long newLength ) {
+	public LongArrayBitVector length( long newLength ) {
 		bits = LongArrays.ensureCapacity(bits, numWords(newLength), numWords(length));
-		final long oldLength = length;
+		long oldLength = length;
 		if ( newLength < oldLength ) fill( newLength, oldLength, false );
 		length = newLength;
 		return this;
 	}
 
 	@Override
-	public void fill( final boolean value ) {
-		final int fullWords = (int)( length / Long.SIZE );
+	public void fill( boolean value ) {
+		int fullWords = (int)( length / Long.SIZE );
 		Arrays.fill( bits, 0, fullWords, value ? 0xFFFFFFFFFFFFFFFFL : 0L );
 		if ( length % Long.SIZE != 0 ) {
 			bits[fullWords] = value ? (1L << length % Long.SIZE) - 1 : 0;
@@ -225,7 +225,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	}
 
 	@Override
-	public void fill( final long from, final long to, final boolean value ) {
+	public void fill( long from, long to, boolean value ) {
 		if ( to / Long.SIZE == from / Long.SIZE ) {
 			if ( value ) bits[ (int)( from / Long.SIZE ) ] |= ( 1L << to - from ) - 1 << from; 
 			else bits[ (int)( from / Long.SIZE ) ] &= ~( ( 1L << to - from ) - 1 << from );
@@ -245,19 +245,19 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 	@Override
 	public void flip() {
-		final int fullWords = (int)( length / Long.SIZE );
+		int fullWords = (int)( length / Long.SIZE );
 		for( int i = fullWords; i-- != 0; ) bits[ i ] ^= 0xFFFFFFFFFFFFFFFFL;
 		if ( length % Long.SIZE != 0 ) bits[ fullWords ] ^= ( 1L << length % Long.SIZE ) - 1;
 	}
 
 	@Override
-	public void flip( final long from, final long to ) {
+	public void flip( long from, long to ) {
 		if ( to / Long.SIZE == from / Long.SIZE ) {
 			bits[ (int)( from / Long.SIZE ) ] ^= ( 1L << to - from ) - 1 << from; 
 			return;
 		}
 		
-		final int start = (int)( ( from + Long.SIZE - 1 ) / Long.SIZE );
+		int start = (int)( ( from + Long.SIZE - 1 ) / Long.SIZE );
 		for( int i = (int)( to / Long.SIZE ); i-- != start; ) bits[ i ] ^= 0xFFFFFFFFFFFFFFFFL;
 		
 		if ( from % Long.SIZE != 0 ) bits[ (int)( from / Long.SIZE ) ] ^= -1L << from % Long.SIZE;
@@ -284,20 +284,20 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		length = 0;
 	}
 
-	public LongArrayBitVector copy( final long from, final long to ) {
+	public LongArrayBitVector copy( long from, long to ) {
 		BitVectors.ensureFromTo( length, from, to );
 
-		final LongArrayBitVector copy = new LongArrayBitVector( to - from );
+		LongArrayBitVector copy = new LongArrayBitVector( to - from );
 		if ( ( copy.length = to - from ) == 0 ) return copy;
 		
-		final int numWords = numWords( to - from );
-		final int startWord = word( from );
-		final int startBit = bit( from );
+		int numWords = numWords( to - from );
+		int startWord = word( from );
+		int startBit = bit( from );
 
 		if ( startBit == 0 ) {
 			// If we're copying from the first bit, we just copy the array. 
 			System.arraycopy( bits, startWord, copy.bits, 0, numWords );
-			final int endBit = bit( to );
+			int endBit = bit( to );
 			if ( endBit > 0 ) copy.bits[ numWords - 1 ] &= ( 1L << endBit ) - 1;
 		}
 		else if ( startWord == word( to - 1 ) ) {
@@ -305,9 +305,9 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 			copy.bits[ 0 ] = bits[ startWord ] >>> startBit & ( ( 1L << to - from ) - 1 );
 		}
 		else {
-			final int bitsPerWordMinusStartBit = BITS_PER_WORD - startBit;
-			final long[] bits = this.bits;
-			final long[] copyBits = copy.bits;
+			int bitsPerWordMinusStartBit = BITS_PER_WORD - startBit;
+			long[] bits = this.bits;
+			long[] copyBits = copy.bits;
 			
 			copyBits[ 0 ] = bits[ startWord ] >>> startBit;
 			
@@ -315,7 +315,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 				copyBits[ word - 1 ] |= bits[ word + startWord ] << bitsPerWordMinusStartBit;
 				copyBits[ word ] = bits[ word + startWord ] >>> startBit;
 			}
-			final int endBit = bit( to - from );
+			int endBit = bit( to - from );
 
 			if ( endBit == 0 ) copyBits[ numWords - 1 ] |= bits[ numWords + startWord ] << bitsPerWordMinusStartBit;
 			else {
@@ -349,41 +349,41 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @param bv a bit vector.
 	 * @return an instance of this class containing a copy of the given vector.
 	 */
-	public static LongArrayBitVector copy( final BitVector bv ) {
-		final long length = bv.length();
-		final LongArrayBitVector copy = new LongArrayBitVector( length );
-		final long fullBits = length - length % Long.SIZE;
+	public static LongArrayBitVector copy( BitVector bv ) {
+		long length = bv.length();
+		LongArrayBitVector copy = new LongArrayBitVector( length );
+		long fullBits = length - length % Long.SIZE;
 		for( long i = 0; i < fullBits; i += Long.SIZE ) copy.bits[ (int)( i / Long.SIZE ) ] = bv.getLong( i, i + Long.SIZE );
 		if ( length % Long.SIZE != 0 ) copy.bits[ (int)( fullBits / Long.SIZE ) ] = bv.getLong( fullBits, length );
 		copy.length = length;
 		return copy;
 	}
 	
-	public boolean getBoolean( final long index ) {
+	public boolean getBoolean( long index ) {
 		if ( CHECKS ) ensureRestrictedIndex( index );
 		return ( bits[ word( index ) ] & mask( index ) ) != 0;  
 	}
 
-	public boolean set( final long index, final boolean value ) {
+	public boolean set( long index, boolean value ) {
 		if ( CHECKS ) ensureRestrictedIndex( index );
-		final int word = word( index );
-		final long mask = mask( index );
-		final boolean oldValue = ( bits[ word ] & mask ) != 0;
+		int word = word( index );
+		long mask = mask( index );
+		boolean oldValue = ( bits[ word ] & mask ) != 0;
 		if ( value != oldValue ) bits[ word ] ^= mask;
 		return oldValue;
 	}
 
-	public void set( final long index ) {
+	public void set( long index ) {
 		if ( CHECKS ) ensureRestrictedIndex( index );
 		bits[ word( index ) ] |= mask( index ); 
 	}
 
-	public void clear( final long index ) {
+	public void clear( long index ) {
 		if ( CHECKS ) ensureRestrictedIndex( index );
 		bits[ word( index ) ] &= ~mask( index ); 
 	}
 	
-	public void add( final long index, final boolean value ) {
+	public void add( long index, boolean value ) {
 		if ( CHECKS ) ensureIndex( index );
 		if ( length == (long)bits.length << LOG2_BITS_PER_WORD ) bits = LongArrays.grow( bits, numWords( length + 1 ) );
 		
@@ -391,15 +391,15 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 		if ( index == length - 1 ) set( index, value );
 		else {
-			final int word = word( index );
-			final int bit = bit( index );
+			int word = word( index );
+			int bit = bit( index );
 			boolean carry = ( bits[ word ] & LAST_BIT_MASK ) != 0, nextCarry;
 			long t = bits[ word ];
 			if ( bit == LAST_BIT ) t &= ~LAST_BIT_MASK;
 			else t = ( t & - ( 1L << bit ) ) << 1 | t & ( 1L << bit ) - 1;
 			if ( value ) t |= 1L << bit;
 			bits[ word ] = t;
-			final int numWords = numWords( length );
+			int numWords = numWords( length );
 			for( int i = word + 1; i < numWords; i++ ) {
 				nextCarry = ( bits[ i ] & LAST_BIT_MASK ) != 0;
 				bits[ i ] <<= 1;
@@ -410,15 +410,15 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 	}
 	
-	public boolean removeBoolean( final long index ) {
+	public boolean removeBoolean( long index ) {
 		if ( CHECKS ) ensureRestrictedIndex( index );
-		final boolean oldValue = getBoolean( index );
-		final long[] bits = this.bits;
+		boolean oldValue = getBoolean( index );
+		long[] bits = this.bits;
 
-		final int word = word( index );
-		final int bit = bit( index );
+		int word = word( index );
+		int bit = bit( index );
 		bits[ word ] = ( bits[ word ] & - ( 1L << bit ) << 1 ) >>> 1 | bits[ word ] & ( 1L << bit ) - 1;
-		final int numWords = numWords( length-- );
+		int numWords = numWords( length-- );
 		for( int i = word + 1; i < numWords; i++ ) {
 			if ( ( bits[ i ] & 1 ) != 0 ) bits[ i - 1 ] |= LAST_BIT_MASK;
 			bits[ i ] >>>= 1;
@@ -430,9 +430,9 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	public LongArrayBitVector append( long value, int width ) {
 		if ( width == 0 ) return this;
 		if (width < Long.SIZE && (value & -1L << width) != 0) throw new IllegalArgumentException( "The specified value (" + value + ") is larger than the maximum value for the given width (" + width + ')');
-		final long length = this.length;
-		final int startWord = word( length );
-		final int startBit = bit( length );
+		long length = this.length;
+		int startWord = word( length );
+		int startBit = bit( length );
 		ensureCapacity( length + width );
 
 		if ( startBit + width <= Long.SIZE ) bits[ startWord ] |= value << startBit;
@@ -447,9 +447,9 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 	public long getLong( long from, long to ) {
 		if ( CHECKS ) BitVectors.ensureFromTo( length, from, to );
-		final long l = Long.SIZE - ( to - from );
-		final int startWord = word( from );
-		final int startBit = bit( from );
+		long l = Long.SIZE - ( to - from );
+		int startWord = word( from );
+		int startBit = bit( from );
 		if ( l == Long.SIZE ) return 0;
 		if ( startBit <= l ) return bits[ startWord ] << l - startBit >>> l;
 		return bits[ startWord ] >>> startBit | bits[ startWord + 1 ] << Long.SIZE + l - startBit >>> l;
@@ -461,12 +461,12 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return c;
 	}
 
-	public long nextOne( final long index ) {
+	public long nextOne( long index ) {
 		if ( index >= length ) return -1; 
-		final long[] bits = this.bits;
-		final long words = numWords( length );
-		final int from = word( index );
-		final long maskedFirstWord = bits[ from ] & -( 1L << index );
+		long[] bits = this.bits;
+		long words = numWords( length );
+		int from = word( index );
+		long maskedFirstWord = bits[ from ] & -( 1L << index );
 		if ( maskedFirstWord != 0 ) return from * BITS_PER_WORD + Long.numberOfTrailingZeros( maskedFirstWord );
 
 		for ( int i = from + 1; i < words; i++ ) 
@@ -474,12 +474,12 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return -1;
 	}
 	
-	public long previousOne( final long index ) {
+	public long previousOne( long index ) {
 		if ( index == 0 ) return -1;
-		final long[] bits = this.bits;
-		final int from = word( index - 1 );
-		final long mask = 1L << index - 1;
-		final long maskedFirstWord = bits[ from ] & ( mask | mask - 1 );
+		long[] bits = this.bits;
+		int from = word( index - 1 );
+		long mask = 1L << index - 1;
+		long maskedFirstWord = bits[ from ] & ( mask | mask - 1 );
 		if ( maskedFirstWord != 0 ) return from * BITS_PER_WORD + Fast.mostSignificantBit( maskedFirstWord );
 
 		for ( int i = from; i-- != 0; ) 
@@ -487,29 +487,29 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return -1;
 	}
 	
-	public long nextZero( final long index ) {
+	public long nextZero( long index ) {
 		if ( index >= length ) return -1; 
-		final long[] bits = this.bits;
-		final long words = numWords( length );
-		final int from = word( index );
+		long[] bits = this.bits;
+		long words = numWords( length );
+		int from = word( index );
 		long maskedFirstWord = bits[ from ] | ( 1L << index ) - 1;
 		if ( maskedFirstWord != 0xFFFFFFFFFFFFFFFFL ) {
-			final long result = from * BITS_PER_WORD + Long.numberOfTrailingZeros( ~maskedFirstWord );
+			long result = from * BITS_PER_WORD + Long.numberOfTrailingZeros( ~maskedFirstWord );
 			return result >= length ? -1 : result;
 		}
 
 		for ( int i = from + 1; i < words; i++ ) 
 			if ( bits[ i ] != 0xFFFFFFFFFFFFFFFFL ) {
-				final long result = i * BITS_PER_WORD + Long.numberOfTrailingZeros( ~bits[ i ] );
+				long result = i * BITS_PER_WORD + Long.numberOfTrailingZeros( ~bits[ i ] );
 				return result >= length ? -1 : result;
 			}
 		return -1;
 	}
 	
-	public long previousZero( final long index ) {
+	public long previousZero( long index ) {
 		if ( index == 0 ) return -1;
-		final long[] bits = this.bits;
-		final int from = word( index - 1 );
+		long[] bits = this.bits;
+		int from = word( index - 1 );
 		long maskedFirstWord = bits[ from ] | -1L << index;
 		if ( from == word( length - 1 ) ) maskedFirstWord |= -1L << length % Long.SIZE;
 		if ( maskedFirstWord != 0xFFFFFFFFFFFFFFFFL )
@@ -521,16 +521,16 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return -1;
 	}
 	
-	public long longestCommonPrefixLength( final BitVector v ) {
+	public long longestCommonPrefixLength( BitVector v ) {
 		if ( v instanceof LongArrayBitVector ) return longestCommonPrefixLength( (LongArrayBitVector)v );
 		return super.longestCommonPrefixLength( v );
 	}
 
-	public long longestCommonPrefixLength( final LongArrayBitVector v ) {
-		final long minLength = Math.min( v.length(), length() );
-		final long words = ( minLength + BITS_PER_WORD - 1 ) >> LOG2_BITS_PER_WORD;
-		final long[] bits = this.bits;
-		final long[] vBits = v.bits;
+	public long longestCommonPrefixLength( LongArrayBitVector v ) {
+		long minLength = Math.min( v.length(), length() );
+		long words = ( minLength + BITS_PER_WORD - 1 ) >> LOG2_BITS_PER_WORD;
+		long[] bits = this.bits;
+		long[] vBits = v.bits;
 		
 		for ( int i = 0; i < words; i++ ) 
 			if ( bits[ i ] != vBits[ i ] ) 
@@ -538,7 +538,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return minLength;
 	}
 
-	public BitVector and( final BitVector v ) {
+	public BitVector and( BitVector v ) {
 		if ( v instanceof LongArrayBitVector ) {
 			LongArrayBitVector l = (LongArrayBitVector)v;
 			int words = Math.min( numWords( length() ), numWords( l.length() ) );
@@ -548,7 +548,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return this;
 	}
 	
-	public BitVector or( final BitVector v ) {
+	public BitVector or( BitVector v ) {
 		if ( v instanceof LongArrayBitVector ) {
 			LongArrayBitVector l = (LongArrayBitVector)v;
 			int words = Math.min( numWords( length() ), numWords( l.length() ) );
@@ -558,7 +558,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return this;
 	}
 
-	public BitVector xor( final BitVector v ) {
+	public BitVector xor( BitVector v ) {
 		if ( v instanceof LongArrayBitVector ) {
 			LongArrayBitVector l = (LongArrayBitVector)v;
 			int words = Math.min( numWords( length() ), numWords( l.length() ) );
@@ -581,14 +581,14 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @param size the number of bits of the newly created bit vector.
 	 * @return a bit vector of size <code>size</code> using <code>array</code> as backing array.
 	 */
-	public static LongArrayBitVector wrap( final long[] array, final long size ) {
+	public static LongArrayBitVector wrap( long[] array, long size ) {
 		if ( size > (long)array.length << LOG2_BITS_PER_WORD ) throw new IllegalArgumentException( "The provided array is too short (" + array.length + " elements) for the given size (" + size + ')');
-		final LongArrayBitVector result = new LongArrayBitVector( 0 );
+		LongArrayBitVector result = new LongArrayBitVector( 0 );
 		result.length = size;
 		result.bits = array;
 		
-		final int arrayLength = array.length;
-		final int lastWord = (int)( size / Long.SIZE ); 
+		int arrayLength = array.length;
+		int lastWord = (int)( size / Long.SIZE );
 		if ( lastWord < arrayLength && ( array[ lastWord ] & ~ ( ( 1L << size % Long.SIZE ) - 1 ) ) != 0 )  throw new IllegalArgumentException( "Garbage beyond size in bit array" );
 		for( int i = lastWord + 1; i < arrayLength; i++ ) if ( array[ i ] != 0 ) throw new IllegalArgumentException( "Garbage beyond size in bit array" );
 		return result;
@@ -599,7 +599,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @param array an array of longs.
 	 * @return a bit vector of size <code>array.length * Long.SIZE</code> using <code>array</code> as backing array.
 	 */
-	public static LongArrayBitVector wrap( final long[] array ) {
+	public static LongArrayBitVector wrap( long[] array ) {
 		return wrap( array, (long)array.length * Long.SIZE );
 	}
 
@@ -616,52 +616,52 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		return copy;
 	}
 
-	public LongArrayBitVector replace( final LongArrayBitVector bv ) {
+	public LongArrayBitVector replace( LongArrayBitVector bv ) {
 		ensureCapacity( bv.length );
-		final long[] bits = this.bits;
-		final long[] bvBits = bv.bits;
-		final int bvFirstFreeWord = word( bv.length - 1 ) + 1;
+		long[] bits = this.bits;
+		long[] bvBits = bv.bits;
+		int bvFirstFreeWord = word( bv.length - 1 ) + 1;
 		for( int i = bvFirstFreeWord; i-- != 0; ) bits[ i ] = bvBits[ i ];
-		final int thisFirstFreeWord = word( length - 1 ) + 1;
+		int thisFirstFreeWord = word( length - 1 ) + 1;
 		if ( bvFirstFreeWord < thisFirstFreeWord ) Arrays.fill( this.bits, bvFirstFreeWord, thisFirstFreeWord, 0 );
-		this.length = bv.length;
+		length = bv.length;
 		return this;
 	}
 
 	@Override
-	public LongArrayBitVector replace( final BitVector bv ) {
-		final long bvLength = bv.length();
+	public LongArrayBitVector replace( BitVector bv ) {
+		long bvLength = bv.length();
 		ensureCapacity( bvLength );
-		final long[] bits = this.bits;
-		final long fullBits = bvLength - bvLength % Long.SIZE;
+		long[] bits = this.bits;
+		long fullBits = bvLength - bvLength % Long.SIZE;
 		for( long i = 0; i < fullBits; i += Long.SIZE ) bits[ (int)( i / Long.SIZE ) ] = bv.getLong( i, i + Long.SIZE );
-		final int bvFirstFreeWord = word( bvLength - 1 ) + 1;
-		final int thisFirstFreeWord = word( length - 1 ) + 1; 
+		int bvFirstFreeWord = word( bvLength - 1 ) + 1;
+		int thisFirstFreeWord = word( length - 1 ) + 1;
 		if ( bvLength % Long.SIZE != 0 ) bits[ (int)( fullBits / Long.SIZE ) ] = bv.getLong( fullBits, bvLength );
 		if ( bvFirstFreeWord < thisFirstFreeWord ) Arrays.fill( this.bits, bvFirstFreeWord, thisFirstFreeWord, 0 );
-		this.length = bvLength;
+		length = bvLength;
 		return this;
 	}
 
-	public boolean equals( final Object o ) {
+	public boolean equals( Object o ) {
 		if ( o instanceof LongArrayBitVector ) return equals( (LongArrayBitVector) o );
 		return super.equals( o );
 	}
 
-	public boolean equals( final LongArrayBitVector v ) {
+	public boolean equals( LongArrayBitVector v ) {
 		if ( length != v.length() ) return false;
 		int i = numWords( length );
 		while( i-- != 0 ) if ( bits[ i ] != v.bits[ i ] ) return false;
 		return true;
 	}
 
-	public boolean equals( final LongArrayBitVector v, final long start, final long end ) {
+	public boolean equals( LongArrayBitVector v, long start, long end ) {
 		int startWord = (int)( start >>> LongArrayBitVector.LOG2_BITS_PER_WORD );
-		final int endWord = (int)( end >>> LongArrayBitVector.LOG2_BITS_PER_WORD );
-		final int startBit = (int)( start & LongArrayBitVector.WORD_MASK );
-		final int endBit = (int)( end & LongArrayBitVector.WORD_MASK );
-		final long[] aBits = bits();
-		final long[] bBits = v.bits();
+		int endWord = (int)( end >>> LongArrayBitVector.LOG2_BITS_PER_WORD );
+		int startBit = (int)( start & LongArrayBitVector.WORD_MASK );
+		int endBit = (int)( end & LongArrayBitVector.WORD_MASK );
+		long[] aBits = bits();
+		long[] bBits = v.bits();
 		
 		if ( startWord == endWord ) return ( ( aBits[ startWord ] ^ bBits[ startWord ] ) & ( ( 1L << ( endBit - startBit ) ) - 1 ) << startBit ) == 0; 
 		
@@ -674,7 +674,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 	public int hashCode() {
 		long h = 0x9e3779b97f4a7c13L ^ length;
-		final int numWords = numWords( length );
+		int numWords = numWords( length );
 		for( int i = 0; i < numWords; i++ ) h ^= ( h << 5 ) + bits[ i ] + ( h >>> 2 );
 		if ( ASSERTS ) assert (int)( ( h >>> 32 ) ^ h ) == super.hashCode();
 		return (int)( ( h >>> 32 ) ^ h );
@@ -749,15 +749,15 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 ////		return new LongBigListView( this, width );
 ////	}
 	
-	private void writeObject( final ObjectOutputStream s ) throws IOException {
+	private void writeObject( ObjectOutputStream s ) throws IOException {
 		s.defaultWriteObject();
-		final int numWords = numWords( length );
+		int numWords = numWords( length );
 		for( int i = 0; i < numWords; i++ ) s.writeLong( bits[ i ] );
 	}
 
-	private void readObject( final ObjectInputStream s ) throws IOException, ClassNotFoundException {
+	private void readObject( ObjectInputStream s ) throws IOException, ClassNotFoundException {
 		s.defaultReadObject();
-		final int numWords = numWords( length );
+		int numWords = numWords( length );
 		bits = new long[ numWords ];
 		for( int i = 0; i < numWords; i++ ) bits[ i ] = s.readLong();
 	}

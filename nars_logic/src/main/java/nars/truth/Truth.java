@@ -83,7 +83,7 @@ public interface Truth extends MetaTruth<Float> {
         return expectation(1.0f -getFrequency(), getConfidence());
     }
 
-    static float expectation(final float frequency, final float confidence) {
+    static float expectation(float frequency, float confidence) {
         return (confidence * (frequency - 0.5f) + 0.5f);
     }
 
@@ -94,7 +94,7 @@ public interface Truth extends MetaTruth<Float> {
      * @param t The given value
      * @return The absolute difference
      */
-    default float getExpDifAbs(final Truth t) {
+    default float getExpDifAbs(Truth t) {
         return Math.abs(getExpectation() - t.getExpectation());
     }
 
@@ -121,11 +121,11 @@ public interface Truth extends MetaTruth<Float> {
      * as well as non-naturally ordered / non-lexicographic
      * but deterministic compareTo() ordering.
      */
-    static int hash(final Truth t) {
+    static int hash(Truth t) {
 
         //assuming epsilon is large enough such that: 0 <= h < 2^15:
-        final int freqHash = Util.hash(t.getFrequency(), hashDiscreteness);
-        final int confHash = Util.hash(t.getConfidence(), hashDiscreteness);
+        int freqHash = Util.hash(t.getFrequency(), hashDiscreteness);
+        int confHash = Util.hash(t.getConfidence(), hashDiscreteness);
 
         return (freqHash << 16) | confHash;
     }
@@ -133,7 +133,7 @@ public interface Truth extends MetaTruth<Float> {
     int hashDiscreteness = (int)(1.0f / DefaultTruth.DEFAULT_TRUTH_EPSILON);
 
     @Override
-    default StringBuilder appendString(final StringBuilder sb) {
+    default StringBuilder appendString(StringBuilder sb) {
         return appendString(sb, 2);
     }
 
@@ -142,7 +142,7 @@ public interface Truth extends MetaTruth<Float> {
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    default StringBuilder appendString(final StringBuilder sb, final int decimals) {
+    default StringBuilder appendString(StringBuilder sb, int decimals) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -190,7 +190,7 @@ public interface Truth extends MetaTruth<Float> {
         return Truth_UNSURE;
     }
 
-    default Truth set(final float frequency, final float confidence) {
+    default Truth set(float frequency, float confidence) {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;

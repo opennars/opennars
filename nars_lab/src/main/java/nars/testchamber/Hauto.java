@@ -523,16 +523,16 @@ public class Hauto {
     }
 
     public void Exec() {
-        this.t++;
-        for (int i = 1; i < this.w - 1; i++) {
-            for (int j = 1; j < this.h - 1; j++) {
-                ExecutionFunction(this.t, i, j, this.writeCells[i][j], this.readCells[i][j], this.readCells[i - 1][j], this.readCells[i + 1][j], this.readCells[i][j + 1], this.readCells[i][j - 1], this.readCells[i - 1][j + 1], this.readCells[i - 1][j - 1], this.readCells[i + 1][j + 1], this.readCells[i + 1][j - 1], this.readCells);
+        t++;
+        for (int i = 1; i < w - 1; i++) {
+            for (int j = 1; j < h - 1; j++) {
+                ExecutionFunction(t, i, j, writeCells[i][j], readCells[i][j], readCells[i - 1][j], readCells[i + 1][j], readCells[i][j + 1], readCells[i][j - 1], readCells[i - 1][j + 1], readCells[i - 1][j - 1], readCells[i + 1][j + 1], readCells[i + 1][j - 1], readCells);
             }
         }
         //change write to read and read to write
-        Cell[][] temp2 = this.readCells;
-        this.readCells = this.writeCells;
-        this.writeCells = temp2;
+        Cell[][] temp2 = readCells;
+        readCells = writeCells;
+        writeCells = temp2;
     }
 
     public Cell FirstNeighbor(int i, int j, Cell[][] readCells, String Condition, float data) {
@@ -609,7 +609,7 @@ public class Hauto {
         private final Cell.Material material;
 
         public SetMaterial(Cell.Material m) {
-            this.material = m;
+            material = m;
         }
         
         @Override

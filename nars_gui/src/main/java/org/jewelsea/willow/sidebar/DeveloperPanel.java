@@ -33,9 +33,9 @@ import static org.jewelsea.willow.util.ResourceUtil.getString;
  * Sidebar panel for development tools
  */
 public class DeveloperPanel extends TitledPane {
-    public DeveloperPanel(final BrowserTab b) {
+    public DeveloperPanel(BrowserTab b) {
         // create a firebug button.
-        final Button firebugButton = new IconButton(
+        Button firebugButton = new IconButton(
                 "Firebug",
                 "firebug.png",
                 getString("developer-panel.firebug.tooltip"),

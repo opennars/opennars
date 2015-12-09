@@ -22,8 +22,8 @@ public class Sparkle extends Sprite
         this.xPic = xPic;
         xPicStart = xPic;
         this.yPic = yPic;
-        this.xPicO = 4;
-        this.yPicO = 4;
+        xPicO = 4;
+        yPicO = 4;
         
         wPic = 8;
         hPic = 8;

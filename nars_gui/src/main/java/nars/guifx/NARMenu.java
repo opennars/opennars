@@ -36,7 +36,7 @@ public class NARMenu extends HBox {
     public NARMenu(NAR n) {
         super();
 
-        this.nar = n;
+        nar = n;
         //Canvas canvas = new NARWindow.ResizableCanvas(this);
         //canvas.maxWidth(Double.MAX_VALUE);
         //canvas.maxHeight(Double.MAX_VALUE);
@@ -237,9 +237,9 @@ public class NARMenu extends HBox {
             setAlignment(Pos.CENTER_LEFT);
             //setColumnHalignment(HPos.RIGHT);
 
-            this.nar = n;
+            nar = n;
 
-            this.regs = new Active().add(
+            regs = new Active().add(
                     n.memory.eventFrameStart.on(nn -> {
                         //System.out.println("frame: " + nn.time());
                         run();
@@ -260,7 +260,7 @@ public class NARMenu extends HBox {
 
         public AsyncMenuItem(NAR n, String label) {
             super(label);
-            this.setOnAction((e) -> run(n));
+            setOnAction((e) -> run(n));
         }
 
         public abstract void run(NAR n);

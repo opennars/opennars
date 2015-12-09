@@ -24,7 +24,7 @@ public class Generator {
             for (int i = 0; i < numFeatures; ++i) {
                 List<DiffableFunctionSource> ys = new ArrayList<>();
 
-                for (final Scalar input : gc.getInputScalars()) {
+                for (Scalar input : gc.getInputScalars()) {
                     DiffableFunctionSource f = new Product(
                             gc.newParameter(1),
                             new Sum(
@@ -69,7 +69,7 @@ public class Generator {
             for (int i = 0; i < numFeatures; ++i) {
                 List<DiffableFunctionSource> ys = new ArrayList<>();
 
-                for (final Scalar input : gc.getInputScalars()) {
+                for (Scalar input : gc.getInputScalars()) {
                     ys.add(
                             new Product(
                                     gc.newParameter(0, 10),
@@ -113,7 +113,7 @@ public class Generator {
             for (int i = 1; i <= numFeatures; ++i) {
                 List<DiffableFunctionSource> ys = new ArrayList<>();
 
-                for (final Scalar input : gc.getInputScalars()) {
+                for (Scalar input : gc.getInputScalars()) {
                     ys.add(
                             new Product(
                                     gc.newParameter(0, 1),

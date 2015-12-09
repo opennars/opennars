@@ -48,8 +48,8 @@ public class ControlFlowGraph {
             ControlFlowGraph initial,
              ClassNode classNode,
              MethodNode method) throws AnalyzerException {
-        final ControlFlowGraph graph = initial != null ? initial : new ControlFlowGraph();
-        final InsnList instructions = method.instructions;
+        ControlFlowGraph graph = initial != null ? initial : new ControlFlowGraph();
+        InsnList instructions = method.instructions;
         graph.mNodeMap = Maps.newHashMapWithExpectedSize(instructions.size());
 
         // Create a flow control graph using ASM4's analyzer. According to the ASM 4 guide

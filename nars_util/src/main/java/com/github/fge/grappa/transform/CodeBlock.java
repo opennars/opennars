@@ -43,13 +43,13 @@ public final class CodeBlock
     {
     }
 
-    public CodeBlock(final CodeBlock block)
+    public CodeBlock(CodeBlock block)
     {
         arity = block.arity();
         prepend(block);
     }
 
-    public CodeBlock(final int arity)
+    public CodeBlock(int arity)
     {
         this.arity = arity;
     }
@@ -59,12 +59,12 @@ public final class CodeBlock
         return new CodeBlock();
     }
 
-    public static CodeBlock newCodeBlock(final int arity)
+    public static CodeBlock newCodeBlock(int arity)
     {
         return new CodeBlock(arity);
     }
 
-    public static CodeBlock newCodeBlock(final CodeBlock block)
+    public static CodeBlock newCodeBlock(CodeBlock block)
     {
         return new CodeBlock(block);
     }
@@ -74,93 +74,93 @@ public final class CodeBlock
      *
      * @param indices list of aloads you want
      */
-    public CodeBlock aloadMany(final int... indices)
+    public CodeBlock aloadMany(int... indices)
     {
-        for (final int index: indices)
+        for (int index: indices)
             aload(index);
 
         return this;
     }
 
-    public CodeBlock aload(final int index)
+    public CodeBlock aload(int index)
     {
         instructionList.add(new VarInsnNode(ALOAD, index));
         return this;
     }
 
-    public CodeBlock iload(final int index)
+    public CodeBlock iload(int index)
     {
         instructionList.add(new VarInsnNode(ILOAD, index));
         return this;
     }
 
-    public CodeBlock lload(final int index)
+    public CodeBlock lload(int index)
     {
         instructionList.add(new VarInsnNode(LLOAD, index));
         return this;
     }
 
-    public CodeBlock fload(final int index)
+    public CodeBlock fload(int index)
     {
         instructionList.add(new VarInsnNode(FLOAD, index));
         return this;
     }
 
-    public CodeBlock dload(final int index)
+    public CodeBlock dload(int index)
     {
         instructionList.add(new VarInsnNode(DLOAD, index));
         return this;
     }
 
-    public CodeBlock astore(final int index)
+    public CodeBlock astore(int index)
     {
         instructionList.add(new VarInsnNode(ASTORE, index));
         return this;
     }
 
-    public CodeBlock istore(final int index)
+    public CodeBlock istore(int index)
     {
         instructionList.add(new VarInsnNode(ISTORE, index));
         return this;
     }
 
-    public CodeBlock lstore(final int index)
+    public CodeBlock lstore(int index)
     {
         instructionList.add(new VarInsnNode(LSTORE, index));
         return this;
     }
 
-    public CodeBlock fstore(final int index)
+    public CodeBlock fstore(int index)
     {
         instructionList.add(new VarInsnNode(FSTORE, index));
         return this;
     }
 
-    public CodeBlock dstore(final int index)
+    public CodeBlock dstore(int index)
     {
         instructionList.add(new VarInsnNode(DSTORE, index));
         return this;
     }
 
-    public CodeBlock ldc(final Object value)
+    public CodeBlock ldc(Object value)
     {
         instructionList.add(new LdcInsnNode(value));
         return this;
     }
 
-    public CodeBlock bipush(final int byteValue)
+    public CodeBlock bipush(int byteValue)
     {
         instructionList.add(new IntInsnNode(BIPUSH, byteValue));
         return this;
     }
 
-    public CodeBlock sipush(final int shortValue)
+    public CodeBlock sipush(int shortValue)
     {
         instructionList.add(new IntInsnNode(SIPUSH, shortValue));
         return this;
     }
 
-    public CodeBlock pushInt(final int value)
+    public CodeBlock pushInt(int value)
     {
         if (value <= Byte.MAX_VALUE && value >= Byte.MIN_VALUE) {
             switch (value) {
@@ -197,7 +197,7 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock pushBoolean(final boolean bool)
+    public CodeBlock pushBoolean(boolean bool)
     {
         if (bool)
             iconst_1();
@@ -207,40 +207,40 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock invokestatic(final String className,
-        final String methodName, final String methodDesc)
+    public CodeBlock invokestatic(String className,
+                                  String methodName, String methodDesc)
     {
         instructionList.add(new MethodInsnNode(INVOKESTATIC, className,
             methodName, methodDesc, false));
         return this;
     }
 
-    public CodeBlock invokespecial(final String className,
-        final String methodName, final String methodDesc)
+    public CodeBlock invokespecial(String className,
+                                   String methodName, String methodDesc)
     {
         instructionList.add(new MethodInsnNode(INVOKESPECIAL, className,
             methodName, methodDesc, false));
         return this;
     }
 
-    public CodeBlock invokevirtual(final String className,
-        final String methodName, final String methodDesc)
+    public CodeBlock invokevirtual(String className,
+                                   String methodName, String methodDesc)
     {
         instructionList.add(new MethodInsnNode(INVOKEVIRTUAL, className,
             methodName, methodDesc, false));
         return this;
     }
 
-    public CodeBlock invokeinterface(final String className,
-        final String methodName, final String methodDesc)
+    public CodeBlock invokeinterface(String className,
+                                     String methodName, String methodDesc)
     {
         instructionList.add(new MethodInsnNode(INVOKEINTERFACE, className,
             methodName, methodDesc, true));
         return this;
     }
 
-    public CodeBlock invokedynamic(final String name, final String descriptor,
-        final Handle bootstrapMethod, final Object... bootstrapArguments)
+    public CodeBlock invokedynamic(String name, String descriptor,
+                                   Handle bootstrapMethod, Object... bootstrapArguments)
     {
         instructionList.add(new InvokeDynamicInsnNode(name, descriptor,
             bootstrapMethod, bootstrapArguments));
@@ -305,7 +305,7 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock newobj(final String desc)
+    public CodeBlock newobj(String desc)
     {
         instructionList.add(new TypeInsnNode(NEW, desc));
         return this;
@@ -330,32 +330,32 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock getstatic(final String className, final String fieldName,
-        final String fieldDesc)
+    public CodeBlock getstatic(String className, String fieldName,
+                               String fieldDesc)
     {
         instructionList.add(new FieldInsnNode(GETSTATIC, className, fieldName,
             fieldDesc));
         return this;
     }
 
-    public CodeBlock putstatic(final String className, final String fieldName,
-        final String fieldDesc)
+    public CodeBlock putstatic(String className, String fieldName,
+                               String fieldDesc)
     {
         instructionList.add(new FieldInsnNode(PUTSTATIC, className, fieldName,
             fieldDesc));
         return this;
     }
 
-    public CodeBlock getfield(final String className, final String fieldName,
-        final String fieldDesc)
+    public CodeBlock getfield(String className, String fieldName,
+                              String fieldDesc)
     {
         instructionList.add(new FieldInsnNode(GETFIELD, className, fieldName,
             fieldDesc));
         return this;
     }
 
-    public CodeBlock putfield(final String className, final String fieldName,
-        final String fieldDesc)
+    public CodeBlock putfield(String className, String fieldName,
+                              String fieldDesc)
     {
         instructionList.add(new FieldInsnNode(PUTFIELD, className, fieldName,
             fieldDesc));
@@ -368,19 +368,19 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock anewarray(final String arrayDesc)
+    public CodeBlock anewarray(String arrayDesc)
     {
         instructionList.add(new TypeInsnNode(ANEWARRAY, arrayDesc));
         return this;
     }
 
-    public CodeBlock multianewarray(final String arrayDesc, final int dims)
+    public CodeBlock multianewarray(String arrayDesc, int dims)
     {
         instructionList.add(new MultiANewArrayInsnNode(arrayDesc, dims));
         return this;
     }
 
-    public CodeBlock newarray(final int size)
+    public CodeBlock newarray(int size)
     {
         instructionList.add(new IntInsnNode(NEWARRAY, size));
         return this;
@@ -440,7 +440,7 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock label(final LabelNode labelNode)
+    public CodeBlock label(LabelNode labelNode)
     {
         instructionList.add(labelNode);
         return this;
@@ -644,22 +644,22 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock trycatch(final LabelNode scopeStart,
-        final LabelNode scopeEnd, final LabelNode handler,
-        @Nullable final String exceptionType)
+    public CodeBlock trycatch(LabelNode scopeStart,
+                              LabelNode scopeEnd, LabelNode handler,
+                              @Nullable String exceptionType)
     {
         tryCatchBlockList.add(new TryCatchBlockNode(scopeStart, scopeEnd,
             handler, exceptionType));
         return this;
     }
 
-    public CodeBlock trycatch(final String exceptionType, final Runnable body,
-        final Runnable catchBody)
+    public CodeBlock trycatch(String exceptionType, Runnable body,
+                              Runnable catchBody)
     {
-        final LabelNode before = new LabelNode();
-        final LabelNode after = new LabelNode();
-        final LabelNode catchStart = new LabelNode();
-        final LabelNode done = new LabelNode();
+        LabelNode before = new LabelNode();
+        LabelNode after = new LabelNode();
+        LabelNode catchStart = new LabelNode();
+        LabelNode done = new LabelNode();
 
         trycatch(before, after, catchStart, exceptionType);
         label(before);
@@ -674,15 +674,15 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock go_to(final LabelNode label)
+    public CodeBlock go_to(LabelNode label)
     {
         instructionList.add(new JumpInsnNode(GOTO, label));
         return this;
     }
 
-    public CodeBlock lookupswitch(final LabelNode defaultHandler,
-        final int[] keys,
-        final LabelNode[] handlers)
+    public CodeBlock lookupswitch(LabelNode defaultHandler,
+                                  int[] keys,
+                                  LabelNode[] handlers)
     {
         instructionList.add(new LookupSwitchInsnNode(defaultHandler, keys,
             handlers));
@@ -695,133 +695,133 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock instance_of(final String typeDesc)
+    public CodeBlock instance_of(String typeDesc)
     {
         instructionList.add(new TypeInsnNode(INSTANCEOF, typeDesc));
         return this;
     }
 
-    public CodeBlock ifeq(final LabelNode jumpLabel)
+    public CodeBlock ifeq(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFEQ, jumpLabel));
         return this;
     }
 
-    public CodeBlock iffalse(final LabelNode jumpLabel)
+    public CodeBlock iffalse(LabelNode jumpLabel)
     {
         ifeq(jumpLabel);
         return this;
     }
 
-    public CodeBlock ifne(final LabelNode jumpLabel)
+    public CodeBlock ifne(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFNE, jumpLabel));
         return this;
     }
 
-    public CodeBlock iftrue(final LabelNode jumpLabel)
+    public CodeBlock iftrue(LabelNode jumpLabel)
     {
         ifne(jumpLabel);
         return this;
     }
 
-    public CodeBlock if_acmpne(final LabelNode jumpLabel)
+    public CodeBlock if_acmpne(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ACMPNE, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_acmpeq(final LabelNode jumpLabel)
+    public CodeBlock if_acmpeq(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ACMPEQ, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_icmple(final LabelNode jumpLabel)
+    public CodeBlock if_icmple(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ICMPLE, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_icmpgt(final LabelNode jumpLabel)
+    public CodeBlock if_icmpgt(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ICMPGT, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_icmplt(final LabelNode jumpLabel)
+    public CodeBlock if_icmplt(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ICMPLT, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_icmpne(final LabelNode jumpLabel)
+    public CodeBlock if_icmpne(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ICMPNE, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_icmpeq(final LabelNode jumpLabel)
+    public CodeBlock if_icmpeq(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ICMPEQ, jumpLabel));
         return this;
     }
 
-    public CodeBlock if_icmpge(final LabelNode jumpLabel)
+    public CodeBlock if_icmpge(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IF_ICMPGE, jumpLabel));
         return this;
     }
 
-    public CodeBlock checkcast(final String typeDesc)
+    public CodeBlock checkcast(String typeDesc)
     {
         instructionList.add(new TypeInsnNode(CHECKCAST, typeDesc));
         return this;
     }
 
-    public CodeBlock line(final int line)
+    public CodeBlock line(int line)
     {
         visitLineNumber(line, new LabelNode());
         return this;
     }
 
-    public CodeBlock line(final int line, final LabelNode label)
+    public CodeBlock line(int line, LabelNode label)
     {
         visitLineNumber(line, label);
         return this;
     }
 
-    public CodeBlock ifnonnull(final LabelNode jumpLabel)
+    public CodeBlock ifnonnull(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFNONNULL, jumpLabel));
         return this;
     }
 
-    public CodeBlock ifnull(final LabelNode jumpLabel)
+    public CodeBlock ifnull(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFNULL, jumpLabel));
         return this;
     }
 
-    public CodeBlock iflt(final LabelNode jumpLabel)
+    public CodeBlock iflt(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFLT, jumpLabel));
         return this;
     }
 
-    public CodeBlock ifle(final LabelNode jumpLabel)
+    public CodeBlock ifle(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFLE, jumpLabel));
         return this;
     }
 
-    public CodeBlock ifgt(final LabelNode jumpLabel)
+    public CodeBlock ifgt(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFGT, jumpLabel));
         return this;
     }
 
-    public CodeBlock ifge(final LabelNode jumpLabel)
+    public CodeBlock ifge(LabelNode jumpLabel)
     {
         instructionList.add(new JumpInsnNode(IFGE, jumpLabel));
         return this;
@@ -1145,7 +1145,7 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock iinc(final int varIndex, final int increment)
+    public CodeBlock iinc(int varIndex, int increment)
     {
         instructionList.add(new IincInsnNode(varIndex, increment));
         return this;
@@ -1163,151 +1163,151 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock jsr(final LabelNode branch)
+    public CodeBlock jsr(LabelNode branch)
     {
         instructionList.add(new JumpInsnNode(JSR, branch));
         return this;
     }
 
-    public CodeBlock ret(final int value)
+    public CodeBlock ret(int value)
     {
         instructionList.add(new IntInsnNode(RET, value));
         return this;
     }
 
-    public CodeBlock visitInsn(final int opcode)
+    public CodeBlock visitInsn(int opcode)
     {
         instructionList.add(new InsnNode(opcode));
         return this;
     }
 
-    public CodeBlock visitIntInsn(final int opcode, final int operand)
+    public CodeBlock visitIntInsn(int opcode, int operand)
     {
         instructionList.add(new IntInsnNode(opcode, operand));
         return this;
     }
 
-    public CodeBlock visitInsnNode(final int opcode, final int operand)
+    public CodeBlock visitInsnNode(int opcode, int operand)
     {
         instructionList.add(new IntInsnNode(opcode, operand));
         return this;
     }
 
-    public CodeBlock visitTypeInsn(final int opcode, final String desc)
+    public CodeBlock visitTypeInsn(int opcode, String desc)
     {
         instructionList.add(new TypeInsnNode(opcode, desc));
         return this;
     }
 
-    public CodeBlock visitFieldInsn(final int opcode, final String className,
-        final String fieldName, final String fieldDesc)
+    public CodeBlock visitFieldInsn(int opcode, String className,
+                                    String fieldName, String fieldDesc)
     {
         instructionList.add(new FieldInsnNode(opcode, className, fieldName,
             fieldDesc));
         return this;
     }
 
-    public CodeBlock visitMethodInsn(final int opcode, final String className,
-        final String methodName, final String methodDesc)
+    public CodeBlock visitMethodInsn(int opcode, String className,
+                                     String methodName, String methodDesc)
     {
-        final boolean intf = opcode == INVOKEINTERFACE;
+        boolean intf = opcode == INVOKEINTERFACE;
         instructionList.add(new MethodInsnNode(opcode, className, methodName,
             methodDesc, intf));
         return this;
     }
 
-    public CodeBlock visitInvokeDynamicInsn(final String name,
-        final String desc, final Handle bootstrapMethod,
-        final Object... bootstrapArguments)
+    public CodeBlock visitInvokeDynamicInsn(String name,
+                                            String desc, Handle bootstrapMethod,
+                                            Object... bootstrapArguments)
     {
         instructionList.add(new InvokeDynamicInsnNode(name, desc,
             bootstrapMethod, bootstrapArguments));
         return this;
     }
 
-    public CodeBlock visitJumpInsn(final int opcode, final LabelNode node)
+    public CodeBlock visitJumpInsn(int opcode, LabelNode node)
     {
         instructionList.add(new JumpInsnNode(opcode, node));
         return this;
     }
 
-    public CodeBlock visitLabel(final Label label)
+    public CodeBlock visitLabel(Label label)
     {
         instructionList.add(new LabelNode(label));
         return this;
     }
 
-    public CodeBlock visitLdcInsn(final Object value)
+    public CodeBlock visitLdcInsn(Object value)
     {
         instructionList.add(new LdcInsnNode(value));
         return this;
     }
 
-    public CodeBlock visitIincInsn(final int varIndex, final int increment)
+    public CodeBlock visitIincInsn(int varIndex, int increment)
     {
         instructionList.add(new IincInsnNode(varIndex, increment));
         return this;
     }
 
-    public CodeBlock visitTableSwitchInsn(final int min, final int max,
-        final LabelNode defaultHandler, final LabelNode[] handlers)
+    public CodeBlock visitTableSwitchInsn(int min, int max,
+                                          LabelNode defaultHandler, LabelNode[] handlers)
     {
         instructionList.add(new TableSwitchInsnNode(min, max, defaultHandler,
             handlers));
         return this;
     }
 
-    public CodeBlock visitLookupSwitchInsn(final LabelNode defaultHandler,
-        final int[] keys, final LabelNode[] handlers)
+    public CodeBlock visitLookupSwitchInsn(LabelNode defaultHandler,
+                                           int[] keys, LabelNode[] handlers)
     {
         instructionList.add(new LookupSwitchInsnNode(defaultHandler, keys,
             handlers));
         return this;
     }
 
-    public CodeBlock visitMultiANewArrayInsn(final String desc, final int dims)
+    public CodeBlock visitMultiANewArrayInsn(String desc, int dims)
     {
         instructionList.add(new MultiANewArrayInsnNode(desc, dims));
         return this;
     }
 
-    public CodeBlock visitTryCatchBlock(final LabelNode scopeStart,
-        final LabelNode scopeEnd, final LabelNode handler,
-        @Nullable final String exceptionType)
+    public CodeBlock visitTryCatchBlock(LabelNode scopeStart,
+                                        LabelNode scopeEnd, LabelNode handler,
+                                        @Nullable String exceptionType)
     {
         tryCatchBlockList.add(new TryCatchBlockNode(scopeStart, scopeEnd,
             handler, exceptionType));
         return this;
     }
 
-    public CodeBlock visitLocalVariable(final String varName,
-        final String varDesc, @Nullable final String signature,
-        final LabelNode scopeStart, final LabelNode scopeEnd,
-        final int varIndex)
+    public CodeBlock visitLocalVariable(String varName,
+                                        String varDesc, @Nullable String signature,
+                                        LabelNode scopeStart, LabelNode scopeEnd,
+                                        int varIndex)
     {
         localVariableList.add(new LocalVariableNode(varName, varDesc, signature,
             scopeStart, scopeEnd, varIndex));
         return this;
     }
 
-    public CodeBlock visitLineNumber(final int lineNumber,
-        final LabelNode start)
+    public CodeBlock visitLineNumber(int lineNumber,
+                                     LabelNode start)
     {
         instructionList.add(new LineNumberNode(lineNumber, start));
         return this;
     }
 
-    public CodeBlock tableswitch(final int min, final int max,
-        final LabelNode defaultLabel, final LabelNode[] cases)
+    public CodeBlock tableswitch(int min, int max,
+                                 LabelNode defaultLabel, LabelNode[] cases)
     {
         instructionList.add(new TableSwitchInsnNode(min, max, defaultLabel,
             cases));
         return this;
     }
 
-    public CodeBlock visitFrame(final int opcode, final int nrLocals,
-        final Object[] localTypes, final int nrStackElements,
-        final Object[] stackElements)
+    public CodeBlock visitFrame(int opcode, int nrLocals,
+                                Object[] localTypes, int nrStackElements,
+                                Object[] stackElements)
     {
         instructionList.add(new FrameNode(opcode, nrLocals, localTypes,
             nrStackElements, stackElements));
@@ -1340,9 +1340,9 @@ public final class CodeBlock
      * @param stackArguments the argument types on the stack, represented as
      * "class path names" e.g java/lang/RuntimeException
      */
-    public CodeBlock frame_same(final Object... stackArguments)
+    public CodeBlock frame_same(Object... stackArguments)
     {
-        final int type;
+        int type;
 
         switch (stackArguments.length) {
             case 0:
@@ -1361,7 +1361,7 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock prepend(final CodeBlock codeBlock)
+    public CodeBlock prepend(CodeBlock codeBlock)
     {
         if (codeBlock.returns())
             returns = true;
@@ -1371,7 +1371,7 @@ public final class CodeBlock
         return this;
     }
 
-    public CodeBlock append(final CodeBlock codeBlock)
+    public CodeBlock append(CodeBlock codeBlock)
     {
         if (codeBlock.returns())
             returns = true;
@@ -1382,20 +1382,20 @@ public final class CodeBlock
         return this;
     }
 
-    public VisibleAnnotation annotation(final Class<?> type)
+    public VisibleAnnotation annotation(Class<?> type)
     {
-        final VisibleAnnotation annotation = new VisibleAnnotation(ci(type));
+        VisibleAnnotation annotation = new VisibleAnnotation(ci(type));
         addAnnotation(annotation);
         return annotation;
     }
 
-    public CodeBlock addAnnotation(final VisibleAnnotation annotation)
+    public CodeBlock addAnnotation(VisibleAnnotation annotation)
     {
         annotations.add(annotation);
         return this;
     }
 
-    public CodeBlock addAll(final InsnList insnList)
+    public CodeBlock addAll(InsnList insnList)
     {
         instructionList.add(insnList);
         return this;

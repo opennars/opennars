@@ -307,9 +307,9 @@ public class NARfx  {
         //[Dialog, SansSerif, Serif, Monospaced, DialogInput]
         if (v < 1) v = 1;
 
-        final int i = (int)Math.round(v * fontPrecision);
+        int i = (int)Math.round(v * fontPrecision);
 
-        final double finalV = v;
+        double finalV = v;
 
         return monoFonts.getIfAbsentPut(i, () -> {
             return Font.font("Monospaced", finalV);
@@ -379,7 +379,7 @@ public class NARfx  {
     }
 
     public static void popup(Parent n) {
-        final Stage dialog = new Stage(StageStyle.UNDECORATED);
+        Stage dialog = new Stage(StageStyle.UNDECORATED);
         dialog.initModality(Modality.APPLICATION_MODAL);
         //dialog.initOwner(n.
         Scene dialogScene = new Scene(n, 500, 500);

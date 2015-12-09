@@ -33,7 +33,7 @@ public class PluginPanel extends VBox {
         setSpacing(itemSpacing);
 
         this.ide = ide;
-        this.nar = ide.nar;
+        nar = ide.nar;
 
 
         nar.onEachFrame((n) -> {
@@ -47,7 +47,7 @@ public class PluginPanel extends VBox {
 
     protected void update() {
 
-        final List<Node> toAdd = Global.newArrayList();
+        List<Node> toAdd = Global.newArrayList();
         nar.memory.getSingletons().forEach((k, v) -> {
             toAdd.add(node(k, v));
         });

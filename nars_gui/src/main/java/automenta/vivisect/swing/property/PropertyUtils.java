@@ -274,9 +274,9 @@ public class PropertyUtils {
 	public static void editProperties(Window parent, Object obj,
 			boolean editable) {
 
-		final PropertySheetPanel psp = getPropsPanel(obj, editable);
+		PropertySheetPanel psp = getPropsPanel(obj, editable);
 
-		final PropertySheetDialog propertySheetDialog = createWindow(parent,
+		PropertySheetDialog propertySheetDialog = createWindow(parent,
 				editable, psp, "Properties of "
 						+ obj.getClass().getSimpleName());
 
@@ -294,8 +294,8 @@ public class PropertyUtils {
 	}
 
 	public static PropertySheetDialog createWindow(Window parent,
-			boolean editable, final PropertySheetPanel psp, String title) {
-		final PropertySheetDialog propertySheetDialog;
+			boolean editable, PropertySheetPanel psp, String title) {
+		PropertySheetDialog propertySheetDialog;
 		if (parent instanceof Dialog) {
 			Dialog pDialog = (Dialog) parent;
 			propertySheetDialog = new PropertySheetDialog(pDialog);

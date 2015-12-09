@@ -31,7 +31,7 @@ import java.util.Objects;
 public class FirstOfMatcher
     extends CustomDefaultLabelMatcher<FirstOfMatcher>
 {
-    public FirstOfMatcher(final Rule[] subRules)
+    public FirstOfMatcher(Rule[] subRules)
     {
         super(Objects.requireNonNull(subRules, "subRules"), "firstOf");
     }
@@ -43,13 +43,13 @@ public class FirstOfMatcher
     }
 
     @Override
-    public final <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(MatcherContext<V> context)
     {
 
 
-        final List<Matcher> children = getChildren();
+        List<Matcher> children = getChildren();
         for (int i = 0; i < children.size(); i++) {
-            final Matcher matcher = children.get(i);
+            Matcher matcher = children.get(i);
             if (matcher.getSubContext(context).runMatcher())
                 return true;
         }

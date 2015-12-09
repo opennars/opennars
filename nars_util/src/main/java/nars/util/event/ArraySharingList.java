@@ -120,7 +120,7 @@ public class ArraySharingList<C> implements Iterable<C> {
     public final C[] getCachedNullTerminatedArray() {
         if (change.compareAndSet(true,false))
             updateArray();
-        return this.array;
+        return array;
     }
 
     /** for thread-safe mode */
@@ -133,11 +133,11 @@ public class ArraySharingList<C> implements Iterable<C> {
         //TODO for safe atomicity while the events are populated, buffer additions to a sub-list,
         //and apply them if a flag is set on the next read
 
-        final FasterList<C> d = this.data;
+        FasterList<C> d = data;
 
         C[] a;
         if (!d.isEmpty()) {
-            if ((a = this.array) == null)
+            if ((a = array) == null)
                 a = arrayBuilder.apply(d.size()+1);  //+1 for padding
             a = d.fillArrayNullPadded(a);
         }
@@ -145,7 +145,7 @@ public class ArraySharingList<C> implements Iterable<C> {
             a = null;
         }
 
-        return this.array = a;
+        return array = a;
     }
 
     @Override

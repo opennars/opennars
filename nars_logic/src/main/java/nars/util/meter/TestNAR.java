@@ -277,11 +277,11 @@ public class TestNAR  {
         Task t = nar.task(task);
         //TODO avoid reparsing term from string
 
-        final long now = time();
-        final String termString = t.getTerm().toString();
+        long now = time();
+        String termString = t.getTerm().toString();
         if (t.getTruth()!=null) {
-            final float freq = t.getFrequency();
-            final float conf = t.getConfidence();
+            float freq = t.getFrequency();
+            float conf = t.getConfidence();
             long occurrence = t.getOccurrenceTime();
             return mustEmit(c, now, now + withinCycles, termString, t.getPunctuation(), freq, freq, conf, conf, occurrence);
         }
@@ -382,16 +382,16 @@ public class TestNAR  {
         final transient int stackElements = 4;
 
         public Report(TestNAR n) {
-            this.time = n.time();
+            time = n.time();
 
-            this.inputs = n.inputs.toArray(new Task[n.inputs.size()]);
+            inputs = n.inputs.toArray(new Task[n.inputs.size()]);
             Collection<HitMeter> var = n.eventMeters.values();
-            this.eventMeters = var.toArray(new HitMeter[var.size()]);
+            eventMeters = var.toArray(new HitMeter[var.size()]);
         }
 
         public void setError(Exception e) {
             if (e!=null) {
-                this.error = new Object[]{e.toString(), Arrays.copyOf(e.getStackTrace(), stackElements)};
+                error = new Object[]{e.toString(), Arrays.copyOf(e.getStackTrace(), stackElements)};
             }
         }
 

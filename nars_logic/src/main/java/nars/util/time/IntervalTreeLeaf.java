@@ -81,7 +81,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	}
 
 	@Override
-	public final V getEqual(final Between<K> range) {
+	public final V getEqual(Between<K> range) {
 		if (getLow().equals(range.getLow()) && getHigh().equals(range.getHigh())) {
 			return getValue();
 		}

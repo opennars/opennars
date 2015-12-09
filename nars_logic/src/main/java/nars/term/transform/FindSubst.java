@@ -143,7 +143,7 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         public Term getXY(Term t) {
-            Versioned<Term> v = this.map.get(t);
+            Versioned<Term> v = map.get(t);
             if (v == null) return null;
             return v.get();
         }
@@ -282,7 +282,7 @@ public class FindSubst extends Versioning implements Subst {
                 bits &= (~matchingType.bit());
 
             this.bits = bits;
-            this.id = "t" + subterm + ':' +
+            id = "t" + subterm + ':' +
                     Integer.toString(bits, 16);
         }
 
@@ -312,7 +312,7 @@ public class FindSubst extends Versioning implements Subst {
         public SubTermOp(int subterm, Op op) {
             this.subterm = subterm;
             this.op = op;
-            this.id = "t" + subterm + ':' + op;
+            id = "t" + subterm + ':' + op;
         }
 
         @Override
@@ -403,7 +403,7 @@ public class FindSubst extends Versioning implements Subst {
         public final Term x;
 
         public MatchTerm(Term c) {
-            this.x = c;
+            x = c;
         }
 
         @Override
@@ -511,7 +511,7 @@ public class FindSubst extends Versioning implements Subst {
         @Override
         public boolean run(FindSubst f) {
             f.term.set(f.parent.get());
-            f.parent.set(this.parent);
+            f.parent.set(parent);
 
             return true;
         }
@@ -571,7 +571,7 @@ public class FindSubst extends Versioning implements Subst {
     /**
      * find substitutions, returning the success state.
      */
-    public final boolean next(final Term x, final Term y, int startPower) {
+    public final boolean next(Term x, Term y, int startPower) {
 
         setPower(startPower);
 
@@ -586,9 +586,9 @@ public class FindSubst extends Versioning implements Subst {
      * find substitutions using a pre-compiled term pattern
      */
     @Deprecated
-    public final boolean next(final TermPattern x, final Term y, int startPower) {
+    public final boolean next(TermPattern x, Term y, int startPower) {
 
-        this.term.set(y);
+        term.set(y);
 
         setPower(startPower);
 
@@ -618,7 +618,7 @@ public class FindSubst extends Versioning implements Subst {
      * *
      * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
      */
-    public final boolean match(final Term x, final Term y) {
+    public final boolean match(Term x, Term y) {
 
         if (x.equals(y)) {
             return true;
@@ -627,9 +627,9 @@ public class FindSubst extends Versioning implements Subst {
         /*if ((--power) < 0)
             return false;*/
 
-        final Op t = this.type;
-        final Op xOp = x.op();
-        final Op yOp = y.op();
+        Op t = type;
+        Op xOp = x.op();
+        Op yOp = y.op();
 
         if ((xOp == yOp) && (x instanceof Compound)) {
             return ((Compound)x).match((Compound)y, this);
@@ -652,7 +652,7 @@ public class FindSubst extends Versioning implements Subst {
     }
 
     private boolean matchYvar(Term x, Term y) {
-        final Term ySubst = getYX(y);
+        Term ySubst = getYX(y);
 
         if (ySubst != null) {
             return match(x, ySubst); //loop
@@ -666,7 +666,7 @@ public class FindSubst extends Versioning implements Subst {
     }
 
     public boolean matchXvar(Variable x, Term y) {
-        final Term xSubst = getXY(x);
+        Term xSubst = getXY(x);
 
         if (xSubst != null) {
             return match(xSubst, y);
@@ -684,13 +684,13 @@ public class FindSubst extends Versioning implements Subst {
 //    }
 
 
-    private final void nextVarX(final Variable xVar, final Term y) {
-        final Op xOp = xVar.op();
+    private final void nextVarX(Variable xVar, Term y) {
+        Op xOp = xVar.op();
 
         if (xOp == type) {
             putVarX(xVar, y);
         } else {
-            final Op yOp = y.op();
+            Op yOp = y.op();
             if (yOp == xOp) {
                 putCommon(xVar, (Variable) y);
             }
@@ -704,7 +704,7 @@ public class FindSubst extends Versioning implements Subst {
         return xy.isEmpty();
     }
 
-    public final boolean matchCompoundWithEllipsis(Compound X, final Compound Y) {
+    public final boolean matchCompoundWithEllipsis(Compound X, Compound Y) {
 
         int xsize = X.size();
 
@@ -733,7 +733,7 @@ public class FindSubst extends Versioning implements Subst {
 
         Ellipsis e = Ellipsis.getFirstEllipsis(X);
 
-        final int ysize = Y.size();
+        int ysize = Y.size();
 
 //        if (!e.valid(numNonpatternVars, ysize)) {
 //            return false;
@@ -832,13 +832,13 @@ public class FindSubst extends Versioning implements Subst {
      */
     public final boolean matchPermute(TermContainer x, Compound y) {
 
-        final int len = x.size();
+        int len = x.size();
 
         /* heuristic: use the term size as the subset # of permutations to try */
 
-        int startDivisor = this.powerDivisor;
+        int startDivisor = powerDivisor;
 
-        final Termutator perm = new Termutator(random, x);
+        Termutator perm = new Termutator(random, x);
         int attempts = Math.min(perm.total(), powerDivided(len));
 
 
@@ -1012,10 +1012,10 @@ public class FindSubst extends Versioning implements Subst {
      */
     private boolean matchChoose1(Term X, Set<Term> Yfree) {
 
-        final int ysize = Yfree.size();
+        int ysize = Yfree.size();
         int shuffle = random.nextInt(ysize); //randomize starting offset
 
-        final int prePermute = now();
+        int prePermute = now();
 
         int iterations = Math.min(ysize, (powerAvailable()));
 
@@ -1112,7 +1112,7 @@ public class FindSubst extends Versioning implements Subst {
     /**
      * elimination
      */
-    private final void putVarX(final Variable x, final Term y) {
+    private final void putVarX(Variable x, Term y) {
         putXY(x, y);
         if (x instanceof CommonVariable) {
             putYX(x, y);
@@ -1120,21 +1120,21 @@ public class FindSubst extends Versioning implements Subst {
     }
 
 
-    private void putCommon(final Variable x, final Variable y) {
-        final Variable commonVar = CommonVariable.make(x, y);
+    private void putCommon(Variable x, Variable y) {
+        Variable commonVar = CommonVariable.make(x, y);
         putXY(x, commonVar);
         putYX(y, commonVar);
         //return true;
     }
 
-    public boolean matchLinear(final TermContainer X, final TermContainer Y) {
+    public boolean matchLinear(TermContainer X, TermContainer Y) {
         return matchLinear(X, Y, 0, X.size());
     }
 
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    public boolean matchLinear(final TermContainer X, final TermContainer Y, int start, int stop) {
+    public boolean matchLinear(TermContainer X, TermContainer Y, int start, int stop) {
 
         int startDivisor = powerDivisor;
         if (!powerDividable(stop-start))
@@ -1168,7 +1168,7 @@ public class FindSubst extends Versioning implements Subst {
     private void powerDivide(int factor) {
         if (factor <= 0)
             factor = 1; //HACK
-        this.powerDivisor = Math.max(1, this.powerDivisor * factor);
+        powerDivisor = Math.max(1, powerDivisor * factor);
     }
 
     private int powerDivided(int factor) {

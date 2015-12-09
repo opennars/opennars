@@ -261,7 +261,7 @@ public class IndexedTreeMap<K, V>
      *                              does not permit null keys
      */
     @Override
-    public V get(final Object key) {
+    public V get(Object key) {
         Entry<K, V> p = getEntry(key);
         return (p == null ? null : p.value);
     }
@@ -546,7 +546,7 @@ public class IndexedTreeMap<K, V>
      *                              does not permit null keys
      */
     @Override
-    public V put(final K key, final V value) {
+    public V put(K key, V value) {
         Entry<K, V> t = root;
         if (t == null) {
             // TBD:
@@ -619,7 +619,7 @@ public class IndexedTreeMap<K, V>
      *                              does not permit null keys
      */
     @Override
-    public V remove(final Object key) {
+    public V remove(Object key) {
         Entry<K, V> p = getEntry(key);
         if (p == null)
             return null;
@@ -628,7 +628,7 @@ public class IndexedTreeMap<K, V>
         deleteEntry(p);
         return oldValue;
     }
-    public void removeEntry(final Entry p) {
+    public void removeEntry(Entry p) {
         deleteEntry(p);
     }
 
@@ -809,12 +809,12 @@ public class IndexedTreeMap<K, V>
      * @since 1.6
      */
     @Override
-    public K higherKey(final K key) {
+    public K higherKey(K key) {
         return keyOrNull(getHigherEntry(key));
     }
 
     @Override
-    public K exactKey(final int index) {
+    public K exactKey(int index) {
         if (index < 0 || index > size() - 1) {
             throw new ArrayIndexOutOfBoundsException();
         }
@@ -846,7 +846,7 @@ public class IndexedTreeMap<K, V>
     }
 
     @Override
-    public int keyIndex(final K key) {
+    public int keyIndex(K key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -885,11 +885,11 @@ public class IndexedTreeMap<K, V>
 
 
     @Override
-    public Entry<K, V> exactEntry(final int index) {
+    public Entry<K, V> exactEntry(int index) {
         return getExactEntry(root, index);
     }
 
-    private Entry<K, V> getExactEntry(final Entry<K, V> e, final int index) {     
+    private Entry<K, V> getExactEntry(Entry<K, V> e, int index) {
         boolean eleftNull = e.left == null;
         if (eleftNull) {
             if ((index == 0) || (e.right == null)) {
@@ -1109,7 +1109,7 @@ public class IndexedTreeMap<K, V>
 
         @Override
         public boolean contains(Object o) {
-            return IndexedTreeMap.this.containsValue(o);
+            return containsValue(o);
         }
 
         @Override
@@ -2434,35 +2434,35 @@ public class IndexedTreeMap<K, V>
      * algorithms.
      */
 
-    private static <K, V> boolean colorOf(final Entry<K, V> p) {
+    private static <K, V> boolean colorOf(Entry<K, V> p) {
         return (p == null ? BLACK : p.color);
     }
 
-    private static <K, V> Entry<K, V> parentOf(final Entry<K, V> p) {
+    private static <K, V> Entry<K, V> parentOf(Entry<K, V> p) {
         return (p == null ? null : p.parent);
     }
 
-    private static <K, V> void setColor(final Entry<K, V> p, final boolean c) {
+    private static <K, V> void setColor(Entry<K, V> p, boolean c) {
         if (p != null)
             p.color = c;
     }
 
-    private static <K, V> Entry<K, V> leftOf(final Entry<K, V> p) {
+    private static <K, V> Entry<K, V> leftOf(Entry<K, V> p) {
         return (p == null) ? null : p.left;
     }
 
-    private static <K, V> Entry<K, V> rightOf(final Entry<K, V> p) {
+    private static <K, V> Entry<K, V> rightOf(Entry<K, V> p) {
         return (p == null) ? null : p.right;
     }
 
-    private static <K, V> int getWeight(final Entry<K, V> p) {
+    private static <K, V> int getWeight(Entry<K, V> p) {
         return (p == null) ? 0 : p.weight;
     }
 
     /**
      * From CLR
      */
-    private void rotateLeft(final Entry<K, V> p) {
+    private void rotateLeft(Entry<K, V> p) {
         if (p != null) {
             Entry<K, V> r = p.right;
 
@@ -2742,7 +2742,7 @@ public class IndexedTreeMap<K, V>
      * Reconstitute the <tt>IndexedTreeMap</tt> instance from a stream (i.e.,
      * deserialize it).
      */
-    private void readObject(final java.io.ObjectInputStream s)
+    private void readObject(java.io.ObjectInputStream s)
             throws java.io.IOException, ClassNotFoundException {
         // Read in the Comparator and any hidden stuff
         s.defaultReadObject();
@@ -2910,7 +2910,7 @@ public class IndexedTreeMap<K, V>
      * node.  (The answer is ~lg(N), but in any case must be computed by same
      * quick O(lg(N)) loop.)
      */
-    private static int computeRedLevel(final int sz) {
+    private static int computeRedLevel(int sz) {
         int level = 0;
         for (int m = sz - 1; m >= 0; m = m / 2 - 1)
             level++;

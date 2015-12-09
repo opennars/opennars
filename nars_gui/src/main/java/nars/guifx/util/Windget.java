@@ -112,7 +112,7 @@ public class Windget extends DefaultWindow  {
                     Node target = pr.getIntersectedNode();
                     if (target instanceof Port) {
                         Port tp = (Port)target;
-                        if (tp.acceptIn(this) && this.acceptOut(tp)) {
+                        if (tp.acceptIn(this) && acceptOut(tp)) {
                             //System.out.println(this + " -> " + dragging + " -> " + tp);
                             addOutgoing(dragging);
                             tp.addIncoming(dragging);
@@ -276,14 +276,14 @@ public class Windget extends DefaultWindow  {
         }
 
         public void setTarget(Port p) {
-            if (this.target == p) return;
+            if (target == p) return;
 
 
-            if (this.target!=null) {
-                listen(this.target.getWindow(), false);
+            if (target !=null) {
+                listen(target.getWindow(), false);
             }
 
-            this.target = p;
+            target = p;
 
             if (p!=null) {
                 listen(p.getWindow(), true);
@@ -374,16 +374,16 @@ public class Windget extends DefaultWindow  {
         autosize();
     }
 
-    public final Windget move(final double x, final double y) {
+    public final Windget move(double x, double y) {
         setLayoutX(x);
         setLayoutY(y);
         return this;
     }
-    public final boolean move(final double[] v, final double threshold) {
-        final double x = getLayoutX();
-        final double y = getLayoutY();
-        final double nx = v[0];
-        final double ny = v[1];
+    public final boolean move(double[] v, double threshold) {
+        double x = getLayoutX();
+        double y = getLayoutY();
+        double nx = v[0];
+        double ny = v[1];
         if (!((Math.abs(x-nx) < threshold) && (Math.abs(y-ny) < threshold))) {
             move(nx, ny);
             return true;
@@ -406,7 +406,7 @@ public class Windget extends DefaultWindow  {
     public final double getCenterY() {
         return getLayoutY() + content.getHeight()/ 2.0d;
     }
-    public final void move(final ArrayRealVector centerPosition) {
+    public final void move(ArrayRealVector centerPosition) {
         double x = centerPosition.getEntry(0);
         double y = centerPosition.getEntry(1);
         move( x, y );

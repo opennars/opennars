@@ -60,7 +60,7 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
      * @param index     The index of the place-holder in the new Image -- optional parameter
      * @return A compound generated or a term it reduced to
      */
-    static Term make(final Compound<Term> image, final Term component, final int index) {
+    static Term make(Compound<Term> image, Term component, int index) {
         Term[] argument = image.termsCopy();
         argument[index] = component;
         return $.p(argument);
@@ -75,26 +75,26 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
 //        return make(x);
 //    }
 
-    static <T extends Term> Compound<T> make(final Collection<T> t) {
+    static <T extends Term> Compound<T> make(Collection<T> t) {
         return $.p(t.toArray((T[]) new Term[t.size()]));
     }
 //    static Product makeFromIterable(final Iterable<Term> t) {
 //        return make(Iterables.toArray(t, Term.class));
 //    }
 
-    static <T extends Term> Compound<T> only(final T the) {
+    static <T extends Term> Compound<T> only(T the) {
         return $.p(the);
     }
 
     /**
      * 2 term constructor
      */
-    static <T extends Term> Compound<T> make(final T a, final T b) {
+    static <T extends Term> Compound<T> make(T a, T b) {
         return $.p(new Term[]{a, b});
     }
 
 
-    static Compound<Atom> make(final String... argAtoms) {
+    static Compound<Atom> make(String... argAtoms) {
         return $.p(argAtoms);
     }
 

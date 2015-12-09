@@ -30,17 +30,17 @@ public class Grid1DRelative implements World {
     private final double noise;
 
     public Grid1DRelative(int size, int totalTime, double noise, double focusVelocity) {
-        this.time = 1;
+        time = 1;
         this.size = size;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.ENERGY_COST_FACTOR = 0.01;
-        this.MATCH_REWARD_FACTOR = 1.0;
-        this.REWARD_MAGNITUDE = 1;
-        this.JUMP_FRACTION = 0.002;
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        ENERGY_COST_FACTOR = 0.01;
+        MATCH_REWARD_FACTOR = 1.0;
+        REWARD_MAGNITUDE = 1;
+        JUMP_FRACTION = 0.002;
         this.noise = noise;
         this.focusVelocity = focusVelocity;
-        
-        this.focusPosition = size/2;
+
+        focusPosition = size/2;
         this.totalTime = totalTime;
     }
 
@@ -114,7 +114,7 @@ public class Grid1DRelative implements World {
         
         double min=0, max=0;
         for (int i = 0; i < size; i++) {
-            final double exp = 2.0; //sharpen
+            double exp = 2.0; //sharpen
             sensor[i] = Math.pow(1.0 / (1.0 + Math.abs( (i)-focusPosition)),exp) + (Math.random()*noise);
             if (sensor[i] < 0.2)
                 sensor[i] = 0;

@@ -54,8 +54,8 @@ public final class InstructionGraphNode
     private InstructionGroup group;
     private boolean isActionRoot;
 
-    public InstructionGraphNode(final AbstractInsnNode instruction,
-        final BasicValue resultValue)
+    public InstructionGraphNode(AbstractInsnNode instruction,
+                                BasicValue resultValue)
     {
         super(null);
         this.instruction = instruction;
@@ -74,7 +74,7 @@ public final class InstructionGraphNode
         return instruction;
     }
 
-    public void setInstruction(final AbstractInsnNode instruction)
+    public void setInstruction(AbstractInsnNode instruction)
     {
         this.instruction = instruction;
     }
@@ -94,7 +94,7 @@ public final class InstructionGraphNode
         return group;
     }
 
-    public void setGroup(@Nullable final InstructionGroup newGroup)
+    public void setGroup(@Nullable InstructionGroup newGroup)
     {
         if (newGroup == group)
             return;
@@ -137,22 +137,22 @@ public final class InstructionGraphNode
         return ISTORE_INSN_RANGE.contains(instruction.getOpcode());
     }
 
-    public void addPredecessors(@Nonnull final Collection<BasicValue> preds)
+    public void addPredecessors(@Nonnull Collection<BasicValue> preds)
     {
         Objects.requireNonNull(preds, "preds");
-        for (final BasicValue pred: preds)
+        for (BasicValue pred: preds)
             if (pred instanceof InstructionGraphNode)
                 addPredecessor((InstructionGraphNode) pred);
     }
 
-    public void addPredecessor(final InstructionGraphNode node)
+    public void addPredecessor(InstructionGraphNode node)
     {
         if (!predecessors.contains(node))
             predecessors.add(node);
     }
 
     @Override
-    public boolean equals(@Nullable final Object value)
+    public boolean equals(@Nullable Object value)
     {
         // TODO: what the...
         return value == this;

@@ -331,7 +331,7 @@ public class PortableConcurrentDirectDeque<E>
      */
     private Node linkFirst(E e) {
         checkNotNull(e);
-        final Node<E> newNode = new Node<>(e);
+        Node<E> newNode = new Node<>(e);
 
         restartFromHead:
         while (true) for (Node<E> h = head, p = h, q; ; ) {
@@ -363,7 +363,7 @@ public class PortableConcurrentDirectDeque<E>
      */
     private Node linkLast(E e) {
         checkNotNull(e);
-        final Node<E> newNode = new Node<>(e);
+        Node<E> newNode = new Node<>(e);
 
         restartFromTail:
         while (true) for (Node<E> t = tail, p = t, q; ; ) {
@@ -401,8 +401,8 @@ public class PortableConcurrentDirectDeque<E>
         // assert x != PREV_TERMINATOR;
         // assert x != NEXT_TERMINATOR;
 
-        final Node<E> prev = x.prev;
-        final Node<E> next = x.next;
+        Node<E> prev = x.prev;
+        Node<E> next = x.next;
         if (prev == null) {
             unlinkFirst(x, next);
         } else if (next == null) {

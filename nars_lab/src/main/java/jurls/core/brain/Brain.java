@@ -30,11 +30,11 @@ public class Brain extends LearnerAndActor {
     private final double[] action = new double[1];
 
     public Brain(
-            final int numStateElements,
-            final int numActions,
-            final RLParameters rLParameters,
-            final ParameterizedFunctionGenerator parameterizedFunctionGenerator,
-            final LearnerAndActor soul
+            int numStateElements,
+            int numActions,
+            RLParameters rLParameters,
+            ParameterizedFunctionGenerator parameterizedFunctionGenerator,
+            LearnerAndActor soul
     ) {
         this.numActions = numActions;
 

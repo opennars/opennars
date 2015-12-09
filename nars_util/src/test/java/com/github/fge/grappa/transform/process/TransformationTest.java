@@ -27,14 +27,14 @@ public abstract class TransformationTest {
 
     protected ParserClassNode classNode;
 
-    public void setup(final Class<?> parserClass) throws IOException {
+    public void setup(Class<?> parserClass) throws IOException {
         classNode = new ParserClassNode(parserClass);
         new ClassNodeInitializer().process(classNode);
     }
 
-    public RuleMethod processMethod(final String methodName, final List<RuleMethodProcessor> methodProcessors) throws Exception {
-        final RuleMethod method = method(methodName);
-        for (final RuleMethodProcessor processor : methodProcessors) {
+    public RuleMethod processMethod(String methodName, List<RuleMethodProcessor> methodProcessors) throws Exception {
+        RuleMethod method = method(methodName);
+        for (RuleMethodProcessor processor : methodProcessors) {
             if (processor.appliesTo(classNode, method)) {
                 processor.process(classNode, method);
             }
@@ -42,8 +42,8 @@ public abstract class TransformationTest {
         return method;
     }
 
-    public RuleMethod method(final String name) {
-        for (final RuleMethod method : classNode.getRuleMethods().values()) {
+    public RuleMethod method(String name) {
+        for (RuleMethod method : classNode.getRuleMethods().values()) {
             if (name.equals(method.name)) return method;
         }
         throw new IllegalArgumentException("Method '" + name + "' not found");

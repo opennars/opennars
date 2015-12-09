@@ -46,14 +46,14 @@ public class ClassNodeInializerTest extends TransformationTest
         assertEquals(join(classNode.getConstructors(), null), "<init>");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
-            public boolean apply(final RuleMethod method) {
+            public boolean apply(RuleMethod method) {
                 return method.containsExplicitActions();
             }
         }), "RuleWithDirectExplicitAction,RuleWithIndirectExplicitAction,RuleWithIndirectExplicitDownAction," +
                 "RuleWithIndirectExplicit2ParamAction,RuleWith2Returns,RuleWithCaptureInAction");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
-            public boolean apply(final RuleMethod method) {
+            public boolean apply(RuleMethod method) {
                 return method.containsImplicitActions();
             }
         }), "RuleWithDirectImplicitAction,RuleWithIndirectImplicitAction,RuleWithDirectImplicitUpAction," +
@@ -62,7 +62,7 @@ public class ClassNodeInializerTest extends TransformationTest
                 "RuleWithActionAccessingPrivateField,RuleWithActionAccessingPrivateMethod");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
-            public boolean apply(final RuleMethod method) {
+            public boolean apply(RuleMethod method) {
                 return method.hasCachedAnnotation();
             }
         }), "RuleWithoutAction,RuleWithLabel,RuleWithNamedLabel,RuleWithLeaf,RuleWithDirectImplicitAction," +
@@ -73,7 +73,7 @@ public class ClassNodeInializerTest extends TransformationTest
                 "FirstOf,OneOrMore,Optional,Sequence,Test,TestNot,ZeroOrMore,Eoi,Any,Empty");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
-            public boolean apply(final RuleMethod method) {
+            public boolean apply(RuleMethod method) {
                 return method.hasDontLabelAnnotation();
             }
         }), "RuleWithoutAction,RuleWithLabel,RuleWithNamedLabel,RuleWithLeaf,RuleWithDirectImplicitAction," +
@@ -83,9 +83,9 @@ public class ClassNodeInializerTest extends TransformationTest
                 "Eoi,Any,Empty");
     }
 
-    private <T extends MethodNode> String join(final Collection<T> methods, final Predicate<T> predicate) {
-        final StringBuilder sb = new StringBuilder();
-        for (final T method : methods) {
+    private <T extends MethodNode> String join(Collection<T> methods, Predicate<T> predicate) {
+        StringBuilder sb = new StringBuilder();
+        for (T method : methods) {
             if (predicate == null || predicate.apply(method)) {
                 if (sb.length() > 0) sb.append(',');
                 sb.append(method.name);

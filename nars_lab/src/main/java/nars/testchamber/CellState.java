@@ -16,7 +16,7 @@ public class CellState {
         this.x = x;
         this.y = y;
 
-        this.light = 0;
+        light = 0;
     }
     
 }

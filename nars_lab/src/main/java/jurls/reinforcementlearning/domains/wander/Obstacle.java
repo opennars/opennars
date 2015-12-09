@@ -37,13 +37,13 @@ public class Obstacle {
 		return circleCollides(x2, y2, 0);
 	}
 
-	private double getDistanceSq(final double x2, final double y2) {
+	private double getDistanceSq(double x2, double y2) {
 		double xd = (x2-x);
 		double yd = (y2-y);
 		double dist = (xd*xd + yd*yd);
 		return dist;
 	}
-	private double getDistance(final double x2, final double y2) {
+	private double getDistance(double x2, double y2) {
 		return Math.sqrt( getDistanceSq(x2, y2) );
 	}
 	

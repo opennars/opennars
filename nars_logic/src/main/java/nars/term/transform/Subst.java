@@ -16,7 +16,7 @@ public interface Subst  {
 
     /** match a range of subterms of Y */
     static Term[] collect(Compound y, int from, int to) {
-        final int s = to-from;
+        int s = to-from;
         Term[] m = new Term[s];
         for (int i = 0; i < s; i++) {
             int k = i+from;

@@ -44,7 +44,7 @@ public abstract class TimeControl extends NPanel implements ActionListener {
     protected NSliderSwing newSpeedSlider() {
             //final StringBuilder sb = new StringBuilder(32);
 
-        final NSliderSwing s = new NSliderSwing(0.0f, 0.0f, 1.0f) {
+        NSliderSwing s = new NSliderSwing(0.0f, 0.0f, 1.0f) {
 
 
             @Override
@@ -62,7 +62,7 @@ public abstract class TimeControl extends NPanel implements ActionListener {
             }
 
         };
-        this.speedSlider = s;
+        speedSlider = s;
 
         return s;
     }

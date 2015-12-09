@@ -114,7 +114,7 @@ public class ExampleFeatureSurf {
 		public final double angle;
 
 		public SURFPoint(ScalePoint p, double angle, SurfFeature desc) {
-			this.point = p;
+			point = p;
 			this.angle = angle;
 			this.desc = desc;
 		}

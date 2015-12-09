@@ -23,7 +23,7 @@ public class TaskBeliefPair extends GenericCompound {
     public TaskBeliefPair(Term a, Term b) {
         super(Op.PRODUCT, a, b);
 
-        t = this.terms();
+        t = terms();
 
 
         volA = a.volume();
@@ -35,7 +35,7 @@ public class TaskBeliefPair extends GenericCompound {
 
 
 
-    public final void set(final Term a, final Term b) {
+    public final void set(Term a, Term b) {
         Term[] t = this.t;
         t[0] = a;
         t[1] = b;

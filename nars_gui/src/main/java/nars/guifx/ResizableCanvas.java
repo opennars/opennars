@@ -43,7 +43,7 @@ public class ResizableCanvas extends Canvas {
 
     private void init() {
 
-        final boolean bindRedraw = true; //TODO parameter to make this optional to avoid unnecessary event being attached
+        boolean bindRedraw = true; //TODO parameter to make this optional to avoid unnecessary event being attached
         if (bindRedraw) {
             // Redraw canvas when size changes.
             widthProperty().addListener(evt -> draw());

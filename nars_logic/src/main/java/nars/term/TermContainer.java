@@ -126,7 +126,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     /** writes subterm bytes, including any attached metadata preceding or following it */
     default void appendSubtermBytes(ByteBuf b) {
 
-        final int n = size();
+        int n = size();
 
         for (int i = 0; i < n; i++) {
             Term t = term(i);
@@ -151,7 +151,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     @Override
     default boolean containsTermRecursively(Term target) {
 
-        for (final Term x : terms()) {
+        for (Term x : terms()) {
             if (impossibleSubTermOrEquality(target))
                 continue;
             if (x.equals(target)) return true;
@@ -166,7 +166,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     }
 
     default boolean equivalent(List<Term> sub) {
-        final int s = size();
+        int s = size();
         if (s!=sub.size()) return false;
         for (int i = 0; i < size(); i++) {
             if (!term(i).equals(sub.get(i))) return false;

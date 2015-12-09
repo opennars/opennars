@@ -14,7 +14,7 @@ public class IntSet extends PreCondition1 {
     }
 
     @Override
-    public final boolean test(final RuleMatch m, final Term a) {
+    public final boolean test(RuleMatch m, Term a) {
         return (a instanceof SetInt);
     }
 

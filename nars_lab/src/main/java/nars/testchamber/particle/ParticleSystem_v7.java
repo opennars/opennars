@@ -16,14 +16,14 @@ public class ParticleSystem_v7 extends Canvas {
 
 	{
 
-		final JFrame frame = new JFrame("");
+		JFrame frame = new JFrame("");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setUndecorated(false);
 		frame.setResizable(false);
 		frame.setFocusable(true);
 
-		final RenderClass_v7 ren = new RenderClass_v7(WIDTH, HEIGHT);
+		RenderClass_v7 ren = new RenderClass_v7(WIDTH, HEIGHT);
 		frame.add(ren);
 
 		frame.setVisible(true);

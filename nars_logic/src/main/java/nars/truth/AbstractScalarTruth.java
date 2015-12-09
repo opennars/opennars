@@ -19,9 +19,9 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     }
 
     @Override
-    public void setConfidence(final float b) {
-        final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();
-        this.confidence = Util.round(b, e);
+    public void setConfidence(float b) {
+        float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();
+        confidence = Util.round(b, e);
     }
 
 
@@ -38,9 +38,9 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
 
     @Override
-    public Truth setFrequency(final float f) {
-        final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();
-        this.frequency = Util.round(f, e);
+    public Truth setFrequency(float f) {
+        float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();
+        frequency = Util.round(f, e);
         return this;
     }
 

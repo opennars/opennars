@@ -23,7 +23,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     //@Deprecated final static Variable how = new Variable("?how");
 
-    public AbstractConcept(final Term term) {
+    public AbstractConcept(Term term) {
         super(Budget.zero);
         this.term = term;
     }
@@ -58,8 +58,8 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     public final void setMemory(Memory memory) {
         this.memory = memory;
         if (memory!=null) {
-            if (this.creationTime == Tense.TIMELESS) {
-                this.creationTime = memory.time();
+            if (creationTime == Tense.TIMELESS) {
+                creationTime = memory.time();
             }
         }
     }
@@ -78,7 +78,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
         return ((Concept) obj).getTerm().equals(getTerm());
@@ -162,7 +162,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     @Override
     public final boolean setConstant(boolean b) {
-        this.constant = b;
+        constant = b;
         return constant;
     }
 }

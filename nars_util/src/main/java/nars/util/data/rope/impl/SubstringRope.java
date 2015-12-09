@@ -40,7 +40,7 @@ public class SubstringRope extends AbstractRope {
     private final int offset;
     private final int length;
 
-    public SubstringRope(final FlatRope rope, final int offset, final int length) {
+    public SubstringRope(FlatRope rope, int offset, int length) {
         if (length < 0 || offset < 0 || offset + length > rope.length()) {
             throw new IndexOutOfBoundsException("Invalid substring offset (" + offset + ") and length (" + length + ") for underlying rope with length " + rope.length());
         }
@@ -51,12 +51,12 @@ public class SubstringRope extends AbstractRope {
     }
 
     @Override
-    public char charAt(final int index) {
-        if (index >= this.length()) {
+    public char charAt(int index) {
+        if (index >= length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + index);
         }
 
-        return this.rope.charAt(this.offset + index);
+        return rope.charAt(offset + index);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SubstringRope extends AbstractRope {
     }
 
     int getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**
@@ -74,33 +74,33 @@ public class SubstringRope extends AbstractRope {
      * @return the rope underlying this one.
      */
     public Rope getRope() {
-        return this.rope;
+        return rope;
     }
 
     @Override
-    public Iterator<Character> iterator(final int start) {
-        if (start < 0 || start > this.length()) {
+    public Iterator<Character> iterator(int start) {
+        if (start < 0 || start > length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
         return new Iterator<Character>() {
 
-            final Iterator<Character> u = SubstringRope.this.getRope().iterator(SubstringRope.this.getOffset() + start);
+            final Iterator<Character> u = getRope().iterator(getOffset() + start);
             int position = start;
 
             @Override
             public boolean hasNext() {
-                return this.position < SubstringRope.this.length();
+                return position < length();
             }
 
             @Override
             public Character next() {
-                ++this.position;
-                return this.u.next();
+                ++position;
+                return u.next();
             }
 
             @Override
             public void remove() {
-                this.u.remove();
+                u.remove();
             }
 
         };
@@ -108,7 +108,7 @@ public class SubstringRope extends AbstractRope {
 
     @Override
     public int length() {
-        return this.length;
+        return length;
     }
 
     @Override
@@ -117,52 +117,52 @@ public class SubstringRope extends AbstractRope {
     }
 
     @Override
-    public Iterator<Character> reverseIterator(final int start) {
-        if (start < 0 || start > this.length()) {
+    public Iterator<Character> reverseIterator(int start) {
+        if (start < 0 || start > length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
         return new Iterator<Character>() {
-            final Iterator<Character> u = SubstringRope.this.getRope().reverseIterator(SubstringRope.this.getRope().length() - SubstringRope.this.getOffset() - SubstringRope.this.length() + start);
-            int position = SubstringRope.this.length() - start;
+            final Iterator<Character> u = getRope().reverseIterator(getRope().length() - getOffset() - length() + start);
+            int position = length() - start;
 
             @Override
             public boolean hasNext() {
-                return this.position > 0;
+                return position > 0;
             }
 
             @Override
             public Character next() {
-                --this.position;
-                return this.u.next();
+                --position;
+                return u.next();
             }
 
             @Override
             public void remove() {
-                this.u.remove();
+                u.remove();
             }
         };
     }
 
     @Override
-    public Rope subSequence(final int start, final int end) {
-        if (start == 0 && end == this.length()) {
+    public Rope subSequence(int start, int end) {
+        if (start == 0 && end == length()) {
             return this;
         }
-        return new SubstringRope(this.rope, this.offset + start, end - start);
+        return new SubstringRope(rope, offset + start, end - start);
     }
 
     @Override
     public String toString() {
-        return this.rope.toString(this.offset, this.length);
+        return rope.toString(offset, length);
     }
 
     @Override
-    public void write(final Writer out) throws IOException {
-        this.rope.write(out, this.offset, this.length);
+    public void write(Writer out) throws IOException {
+        rope.write(out, offset, length);
     }
 
     @Override
-    public void write(final Writer out, final int offset, final int length) throws IOException {
-        this.rope.write(out, this.offset + offset, length);
+    public void write(Writer out, int offset, int length) throws IOException {
+        rope.write(out, this.offset + offset, length);
     }
 }

@@ -38,7 +38,7 @@ public final class EmptyMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         return true;
     }

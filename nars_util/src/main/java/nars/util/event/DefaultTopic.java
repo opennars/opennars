@@ -54,12 +54,12 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
     }
 
     @Override
-    public final void emit(final V arg) {
-        final Consumer[] vv = getCachedNullTerminatedArray();
+    public final void emit(V arg) {
+        Consumer[] vv = getCachedNullTerminatedArray();
         if (vv == null) return;
 
         for (int i = 0; ; ) {
-            final Consumer c = vv[i++];
+            Consumer c = vv[i++];
             if (c == null)
                 break; //null terminator hit
             c.accept(arg);

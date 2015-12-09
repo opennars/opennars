@@ -52,7 +52,7 @@ public final class SgClassPool {
      * 
      * @return Class or null if it's not found.
      */
-    public SgClass get(final String className) {
+    public SgClass get(String className) {
         if (className == null) {
             throw new IllegalArgumentException("The argument 'className' cannot be null!");
         }
@@ -65,7 +65,7 @@ public final class SgClassPool {
      * @param clasz
      *            Class to add - Cannot be null.
      */
-    public void put(final SgClass clasz) {
+    public void put(SgClass clasz) {
         if (clasz == null) {
             throw new IllegalArgumentException("The argument 'clasz' cannot be null!");
         }
@@ -82,7 +82,7 @@ public final class SgClassPool {
      * @param clasz
      *            Class to add - Cannot be null.
      */
-    void put(final String className, final SgClass clasz) {
+    void put(String className, SgClass clasz) {
         if (className == null) {
             throw new IllegalArgumentException("The argument 'className' cannot be null!");
         }

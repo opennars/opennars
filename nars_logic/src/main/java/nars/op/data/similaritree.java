@@ -13,7 +13,7 @@ public class similaritree extends TermFunction<Float> {
 
     @Override
     public Float function(Operation o) {
-        final Term[] x = o.args();
+        Term[] x = o.args();
         if (x.length!=2) return Float.NaN;
 
         String a = x[0].toString();

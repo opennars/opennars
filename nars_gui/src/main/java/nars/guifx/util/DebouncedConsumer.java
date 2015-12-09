@@ -16,15 +16,15 @@ public interface DebouncedConsumer extends Consumer<NAR> {
     default void accept(NAR n) {
         if (canQueue().compareAndSet(true, false)) {
 
-            final long now = System.currentTimeMillis();
-            final long prev = lastInvocation().getAndSet(now);
-            final long delta = now - prev;
+            long now = System.currentTimeMillis();
+            long prev = lastInvocation().getAndSet(now);
+            long delta = now - prev;
 
             update(delta);
 
             boolean fx = Platform.isFxApplicationThread();
 
-            final Runnable upd = () -> {
+            Runnable upd = () -> {
 
                 run(delta);
 

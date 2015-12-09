@@ -62,8 +62,8 @@ public class TetrisState {
 
 
     public TetrisState(int width, int height) {
-        this.worldWidth = width;
-        this.worldHeight = height;
+        worldWidth = width;
+        worldHeight = height;
         possibleBlocks.add(TetrisPiece.makeLine());
         possibleBlocks.add(TetrisPiece.makeSquare());
         possibleBlocks.add(TetrisPiece.makeTri());
@@ -538,23 +538,23 @@ public class TetrisState {
     /*End of Tetris Helper Functions*/
 
     public TetrisState(TetrisState stateToCopy) {
-        this.blockMobile = stateToCopy.blockMobile;
-        this.currentBlockId = stateToCopy.currentBlockId;
-        this.currentRotation = stateToCopy.currentRotation;
-        this.currentX = stateToCopy.currentX;
-        this.currentY = stateToCopy.currentY;
-        this.score = stateToCopy.score;
-        this.is_game_over = stateToCopy.is_game_over;
-        this.worldWidth = stateToCopy.worldWidth;
-        this.worldHeight = stateToCopy.worldHeight;
+        blockMobile = stateToCopy.blockMobile;
+        currentBlockId = stateToCopy.currentBlockId;
+        currentRotation = stateToCopy.currentRotation;
+        currentX = stateToCopy.currentX;
+        currentY = stateToCopy.currentY;
+        score = stateToCopy.score;
+        is_game_over = stateToCopy.is_game_over;
+        worldWidth = stateToCopy.worldWidth;
+        worldHeight = stateToCopy.worldHeight;
 
-        this.worldState = new double[stateToCopy.worldState.length];
-        System.arraycopy(stateToCopy.worldState, 0, this.worldState, 0, this.worldState.length);
+        worldState = new double[stateToCopy.worldState.length];
+        System.arraycopy(stateToCopy.worldState, 0, worldState, 0, worldState.length);
 
-        this.possibleBlocks = new Vector<>();
+        possibleBlocks = new Vector<>();
         //hopefully nobody modifies the pieces as they go
         for (TetrisPiece thisPiece : stateToCopy.possibleBlocks) {
-            this.possibleBlocks.add(thisPiece);
+            possibleBlocks.add(thisPiece);
         }
 
     }

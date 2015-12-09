@@ -15,7 +15,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
 
 
     public ArrayArrayList(E[] init) {
-        this.array = init;
+        array = init;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     public boolean add(E e) {
-        this.array = ArrayUtils.add(array, e);
+        array = ArrayUtils.add(array, e);
         return true;
     }
 
@@ -46,7 +46,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     @Override
-    public E get(final int i) {
+    public E get(int i) {
         //same as the original function below but avoid another function call to help guarante inlining
         //int m = ;
         //if (m < 0) m += n;
@@ -56,12 +56,12 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
         //return buf[wrapIndex(head + i)];
     }
 
-    public void setFast(final int i, final E e) {
+    public void setFast(int i, E e) {
         array[i] = e;
     }
 
     @Override
-    public E set(final int m, final E e) {
+    public E set(int m, E e) {
 
         E existing = array[m];
         array[m] = e;
@@ -69,15 +69,15 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     @Override
-    public void add(final int i, final E e) {
+    public void add(int i, E e) {
         throw new RuntimeException("unsupported");
     }
 
 
     @Override
-    public E remove(final int i) {
+    public E remove(int i) {
         E e = get(i);
-        this.array = (E[]) ArrayUtils.remove(array, i);
+        array = (E[]) ArrayUtils.remove(array, i);
         return e;
     }
 
@@ -87,7 +87,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
 
 
     @Override
-    public void addFirst(final E e) {
+    public void addFirst(E e) {
         add(0, e);
     }
 
@@ -98,8 +98,8 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
 
 
     @Override
-    public void addLast(final E e) {
-        this.array = (E[]) ArrayUtils.add(array, e);
+    public void addLast(E e) {
+        array = (E[]) ArrayUtils.add(array, e);
     }
 
 

@@ -50,7 +50,7 @@ public class FindConstructor {
 
         public NoDeterministicConstruction(List<Constructor<?>> partiallyApplicableMethods, String s) {
             super(s);
-            this.possibleConstructors = partiallyApplicableMethods;
+            possibleConstructors = partiallyApplicableMethods;
         }
 
         @Override

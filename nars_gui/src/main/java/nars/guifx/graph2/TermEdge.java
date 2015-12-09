@@ -112,7 +112,7 @@ public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/
 //            return a.update() || b.update();
 //        }
 
-    public final TermNode otherNode(final TermNode x) {
+    public final TermNode otherNode(TermNode x) {
         if (aSrc == x) return bSrc;
         return aSrc;
     }

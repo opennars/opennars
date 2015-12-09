@@ -201,10 +201,10 @@ public final class Anticipate {
             super();
             this.task = task;
             this.creationTime = task.getCreationTime();
-            this.occurrTime = task.getOccurrenceTime();
-            this.hash = (int)(31 * creationTime + occurrTime);
+            occurrTime = task.getOccurrenceTime();
+            hash = (int)(31 * creationTime + occurrTime);
             //expiredate in relation how long we predicted forward
-            long prediction_time = this.occurrTime - this.creationTime;
+            long prediction_time = occurrTime - this.creationTime;
             tolerance = prediction_time/TOLERANCE_DIV;
         }
 

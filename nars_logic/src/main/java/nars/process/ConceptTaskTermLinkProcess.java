@@ -26,10 +26,10 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
         this.termLink = termLink;
 
-        final Task task = taskLink.getTask();
+        Task task = taskLink.getTask();
 
         if (belief == null) {
-            final Concept beliefConcept = nar.concept(termLink.target);
+            Concept beliefConcept = nar.concept(termLink.target);
             if (beliefConcept != null) {
 
                 belief = beliefConcept.getBeliefs().top(task, nar.time());
@@ -56,7 +56,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
 
     @Override
-    public final void derive(final Deriver p, Consumer<Task> t) {
+    public final void derive(Deriver p, Consumer<Task> t) {
         p.run(this, t);
     }
 

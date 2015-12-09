@@ -94,16 +94,16 @@ public class FavIconHandler {
      * @param browserLoc the location of a browser for which a favicon is to be fetched.
      * @return the favicon for the browser location or null if no such favicon could be determined.
      */
-    public ImageView fetchFavIcon(final String browserLoc) {
+    public ImageView fetchFavIcon(String browserLoc) {
         // fetch the favicon from cache if it is there.
-        final String serverRoot = findRootLoc(browserLoc);
+        String serverRoot = findRootLoc(browserLoc);
         
         
         ImageView cachedFavicon = faviconCache.get(serverRoot);
         if (cachedFavicon != null) return cachedFavicon;
 
         // ok, it wasn't in the cache, create a placeholder, to be used if the site doesn't have a favicon.
-        final ImageView favicon = new ImageView();
+        ImageView favicon = new ImageView();
 
         // if the serverRoot of the location cannot be determined, just return the placeholder.
         if (serverRoot == null) return favicon;
@@ -112,7 +112,7 @@ public class FavIconHandler {
         faviconCache.put(serverRoot, favicon);
 
         // lazily fetch the real favicon.
-        final Task<Image> task = new Task<Image>() {
+        Task<Image> task = new Task<Image>() {
             @Override
             protected Image call() throws Exception {
                 // fetch the favicon from the server if we can.
@@ -150,10 +150,10 @@ public class FavIconHandler {
      * @return the computed server root url or null if the browser location does not represent a server.
      */
     private String findRootLoc(String browserLoc) {
-        final int protocolSepLoc = browserLoc.indexOf("://");
+        int protocolSepLoc = browserLoc.indexOf("://");
         if (protocolSepLoc > 0) {
             // workout the location of the favicon.
-            final int pathSepLoc = browserLoc.indexOf('/', protocolSepLoc + 3);
+            int pathSepLoc = browserLoc.indexOf('/', protocolSepLoc + 3);
             return (pathSepLoc > 0) ? browserLoc.substring(0, pathSepLoc) : browserLoc;
         }
 

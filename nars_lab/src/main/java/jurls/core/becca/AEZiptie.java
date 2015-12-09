@@ -21,8 +21,8 @@ public class AEZiptie extends Ziptie {
     protected final int numBundles;
 
     public AEZiptie(int numInputs, int numOutputs) {
-        this.numCables = numInputs;
-        this.numBundles = numOutputs;
+        numCables = numInputs;
+        numBundles = numOutputs;
         a = new Autoencoder(numInputs, numOutputs);
     }
     

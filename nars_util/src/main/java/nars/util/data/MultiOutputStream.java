@@ -30,7 +30,7 @@ public class MultiOutputStream extends OutputStream {
     
     public MultiOutputStream(Collection<OutputStream> outStreams) {
 
-        this.out = new ArrayList<>();
+        out = new ArrayList<>();
 
         for (Iterator<OutputStream> i = outStreams.iterator(); i.hasNext();) {
             OutputStream outputStream = i.next();
@@ -38,11 +38,11 @@ public class MultiOutputStream extends OutputStream {
             if (outputStream == null) {
                 throw new NullPointerException();
             }
-            this.out.add(outputStream);
+            out.add(outputStream);
         }
     }
 
-    @Override public void write(final int arg0) throws IOException {
+    @Override public void write(int arg0) throws IOException {
         for (int i=0; i < out.size(); i++) {            
             out.get(i).write(arg0);
         }

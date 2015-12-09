@@ -209,7 +209,7 @@ public class ConcurrentAutoTable implements Serializable {
     // sum is only locally accurate.
     public long sum( long mask ) {
       long sum = _next == null ? 0 : _next.sum(mask); // Recursively get cached sum
-      final long[] t = _t;
+      long[] t = _t;
       for( int i=0; i<t.length; i++ )
         sum += t[i]&(~mask);
       return sum;

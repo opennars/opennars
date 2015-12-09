@@ -435,7 +435,7 @@ public class Twokenize {
      * the tokens you get back may not exactly correspond to substrings of the
      * original text.
      */
-    public static List<Span> twokenize(final String text) {
+    public static List<Span> twokenize(String text) {
         List<Span> sp = tokenize(normalizeTextForTagger(text));
         sort(sp);
         return sp;

@@ -18,7 +18,7 @@ public interface TermLinkKey extends Termed /* byte[] holds the prefix part */ {
 //        return Objects.hash(getPrefix(), getTarget());
 //    }
 
-    static boolean termLinkEquals(final TermLinkKey a, final Termed b) {
+    static boolean termLinkEquals(TermLinkKey a, Termed b) {
         if (a == b) return true;
         //if (!(b instanceof TermLinkKey)) return false;
 

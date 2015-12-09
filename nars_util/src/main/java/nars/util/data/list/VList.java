@@ -244,7 +244,7 @@ public final class VList<T> extends AbstractList<T> {
      * @return The element at that position.
      */
     @Override
-    public T get(final int index) {
+    public T get(int index) {
         return indexFunction(index, getValueFunction);
     }
 

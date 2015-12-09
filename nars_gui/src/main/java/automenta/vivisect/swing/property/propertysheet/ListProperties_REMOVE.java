@@ -66,10 +66,10 @@ public class ListProperties_REMOVE {
 	}
 
 	public static void main(String[] args) {
-		final JFrame frame = new JFrame("List Properties");
+		JFrame frame = new JFrame("List Properties");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		final CustomTableModel model = new CustomTableModel();
+		CustomTableModel model = new CustomTableModel();
 		model.uiDefaultsUpdate(UIManager.getDefaults());
 		TableSorter sorter = new TableSorter(model);
 
@@ -85,7 +85,7 @@ public class ListProperties_REMOVE {
 
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				final String lafClassName = actionEvent.getActionCommand();
+				String lafClassName = actionEvent.getActionCommand();
 				Runnable runnable = new Runnable() {
 
 					@Override

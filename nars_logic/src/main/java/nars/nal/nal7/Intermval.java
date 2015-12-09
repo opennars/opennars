@@ -21,15 +21,15 @@ interface Intermval extends Interval, TermMetadata {
     /** l1 distance: sum absolute differnce of items normalized to total length
      *  distance = 0: equal
      * */
-    default long distance1(final Intermval other) {
+    default long distance1(Intermval other) {
         return distance1(other, Long.MAX_VALUE);
     }
 
     /** return distance1 but as soon as distance exceeds 'onlyIfLessThan'
      *  threshold. otherwise returns Long.MAX_VALUE */
-    default long distance1(final Intermval other, final long onlyIfLessthan) {
-        final int[] a = intervals();
-        final int[] b = other.intervals();
+    default long distance1(Intermval other, long onlyIfLessthan) {
+        int[] a = intervals();
+        int[] b = other.intervals();
 
         int alength = a.length;
         if (alength !=b.length)

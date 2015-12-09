@@ -128,7 +128,7 @@ public class BigArrays {
 	 * @param index an index into a big array.
 	 * @return the associated segment.
 	 */
-	public static int segment( final long index ) {
+	public static int segment( long index ) {
 		return (int)( index >>> SEGMENT_SHIFT );
 	}
 	
@@ -137,7 +137,7 @@ public class BigArrays {
 	 * @param index an index into a big array.
 	 * @return the associated displacement (in the associated {@linkplain #segment(long) segment}).
 	 */
-	public static int displacement( final long index ) {
+	public static int displacement( long index ) {
 		return (int)( index & SEGMENT_MASK );
 	}
 	
@@ -146,7 +146,7 @@ public class BigArrays {
 	 * @param segment the segment of a big array.
 	 * @return the starting index of the segment.
 	 */
-	public static long start( final int segment ) {
+	public static long start( int segment ) {
 		return (long)segment << SEGMENT_SHIFT;
 	}
 	
@@ -157,7 +157,7 @@ public class BigArrays {
 	 * @return the associated index: that is, {@link #segment(long) segment(index(segment, displacement)) == segment} and
 	 * {@link #displacement(long) displacement(index(segment, displacement)) == displacement}.
 	 */
-	public static long index( final int segment, final int displacement ) {
+	public static long index( int segment, int displacement ) {
 		return start( segment ) + displacement;
 	}
 	
@@ -171,7 +171,7 @@ public class BigArrays {
 	 * @throws IllegalArgumentException if <code>from</code> is greater than <code>to</code>.
 	 * @throws ArrayIndexOutOfBoundsException if <code>from</code> or <code>to</code> are greater than <code>bigArrayLength</code> or negative.
 	 */
-	public static void ensureFromTo( final long bigArrayLength, final long from, final long to ) {
+	public static void ensureFromTo( long bigArrayLength, long from, long to ) {
 		if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
 		if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
 		if ( to > bigArrayLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than big-array length (" + bigArrayLength + ')');
@@ -187,7 +187,7 @@ public class BigArrays {
 	 * @throws IllegalArgumentException if <code>length</code> is negative.
 	 * @throws ArrayIndexOutOfBoundsException if <code>offset</code> is negative or <code>offset</code>+<code>length</code> is greater than <code>bigArrayLength</code>.
 	 */
-	public static void ensureOffsetLength( final long bigArrayLength, final long offset, final long length ) {
+	public static void ensureOffsetLength( long bigArrayLength, long offset, long length ) {
 		if ( offset < 0 ) throw new ArrayIndexOutOfBoundsException( "Offset (" + offset + ") is negative" );
 		if ( length < 0 ) throw new IllegalArgumentException( "Length (" + length + ") is negative" );
 		if ( offset + length > bigArrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than big-array length (" + bigArrayLength + ')');
@@ -203,7 +203,7 @@ public class BigArrays {
 	 * <code>[first, last)</code>. Elements in the first input range will precede equal elements in
 	 * the second.
 	 */
-	private static void inPlaceMerge( final long from, long mid, final long to, final LongComparator comp, final BigSwapper swapper ) {
+	private static void inPlaceMerge( long from, long mid, long to, LongComparator comp, BigSwapper swapper ) {
 		if ( from >= mid || mid >= to ) return;
 		if ( to - from == 2 ) {
 			if ( comp.compare( mid, from ) < 0 ) {
@@ -257,7 +257,7 @@ public class BigArrays {
 	 * @return The largest index i such that, for every j in the range <code>[first, i)</code>,
 	 * <code>comp.apply(array[j], x)</code> is <code>true</code>.
 	 */
-	private static long lowerBound( long mid, final long to, final long firstCut, final LongComparator comp ) {
+	private static long lowerBound( long mid, long to, long firstCut, LongComparator comp ) {
 		long len = to - mid;
 		while ( len > 0 ) {
 			long half = len / 2;
@@ -274,10 +274,10 @@ public class BigArrays {
 	}
 
 	/** Returns the index of the median of three elements. */
-	private static long med3( final long a, final long b, final long c, final LongComparator comp ) {
-		final int ab = comp.compare( a, b );
-		final int ac = comp.compare( a, c );
-		final int bc = comp.compare( b, c );
+	private static long med3( long a, long b, long c, LongComparator comp ) {
+		int ab = comp.compare( a, b );
+		int ac = comp.compare( a, c );
+		int bc = comp.compare( b, c );
 		return ( ab < 0 ?
 				( bc < 0 ? b : ac < 0 ? c : a ) :
 				( bc > 0 ? b : ac > 0 ? c : a ) );
@@ -295,8 +295,8 @@ public class BigArrays {
 	 * @param comp the comparator to determine the order of the generic data (arguments are positions).
 	 * @param swapper an object that knows how to swap the elements at any two positions.
 	 */
-	public static void mergeSort( final long from, final long to, final LongComparator comp, final BigSwapper swapper ) {
-		final long length = to - from;
+	public static void mergeSort( long from, long to, LongComparator comp, BigSwapper swapper ) {
+		long length = to - from;
 
 		// Insertion sort on smallest arrays
 		if ( length < SMALL ) {
@@ -334,8 +334,8 @@ public class BigArrays {
 	 * @param swapper an object that knows how to swap the elements at any two positions.
 	 * 
 	 */
-	public static void quickSort( final long from, final long to, final LongComparator comp, final BigSwapper swapper ) {
-		final long len = to - from;
+	public static void quickSort( long from, long to, LongComparator comp, BigSwapper swapper ) {
+		long len = to - from;
 		// Insertion sort on smallest arrays
 		if ( len < SMALL ) {
 			for ( long i = from; i < to; i++ )
@@ -410,7 +410,7 @@ public class BigArrays {
 	 * @return The largest index i such that, for every j in the range <code>[first, i)</code>,
 	 * <code>comp.apply(x, array[j])</code> is <code>false</code>.
 	 */
-	private static long upperBound( long from, final long mid, final long secondCut, final LongComparator comp ) {
+	private static long upperBound( long from, long mid, long secondCut, LongComparator comp ) {
 		long len = mid - from;
 		while ( len > 0 ) {
 			long half = len / 2;
@@ -429,7 +429,7 @@ public class BigArrays {
 	/**
 	 * Swaps x[a .. (a+n-1)] with x[b .. (b+n-1)].
 	 */
-	private static void vecSwap( final BigSwapper swapper, long from, long l, final long s ) {
+	private static void vecSwap( BigSwapper swapper, long from, long l, long s ) {
 		for ( int i = 0; i < s; i++, from++, l++ ) swapper.swap( from, l );
 	}
 }

@@ -136,7 +136,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     };
 
     final ChangeListener changes = (c, p, v) -> {
-        if (this.selected == null) return;
+        if (selected == null) return;
         updateSelection();
     };
 
@@ -145,7 +145,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         Node s = selected.get();
         if (s == null) return;
 
-        final Rectangle hp = this.hoverPanel;
+        Rectangle hp = hoverPanel;
         //System.out.print("hoverpanel -> " + v);
 
         Bounds v = s.localToScene(s.getLayoutBounds());
@@ -215,10 +215,10 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 
     @Override
     public void start(SpaceGrapher g) {
-        if (this.graph != null)
+        if (graph != null)
             throw new RuntimeException("already running this vis");
 
-        this.graph = g;
+        graph = g;
         hoverPanel.setVisible(false);
         hoverPanel.setMouseTransparent(true);
 
@@ -226,7 +226,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         //TODO see if this is destructive
         g.setOnMouseMoved((MouseEvent e) -> {
             //System.out.println("mouse moved: " + e.getTarget());
-            if (this.selected == null) return;
+            if (selected == null) return;
             updateSelection();
         });
 
@@ -239,7 +239,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     public void stop(SpaceGrapher g) {
         g.getChildren().remove(hoverPanel);
         g.setOnMouseMoved(null); //TODO see if this is destructive
-        this.graph = null;
+        graph = null;
     }
 
 public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {

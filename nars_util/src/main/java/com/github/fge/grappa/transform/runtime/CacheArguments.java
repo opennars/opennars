@@ -19,13 +19,13 @@ public final class CacheArguments
 {
     private final Object[] params;
 
-    public CacheArguments(final Object... params)
+    public CacheArguments(Object... params)
     {
         this.params = Arrays.copyOf(params, params.length);
     }
 
     @Override
-    public boolean equals(final Object obj)
+    public boolean equals(Object obj)
     {
         if (obj == null)
             return false;
@@ -33,7 +33,7 @@ public final class CacheArguments
             return true;
         if (getClass() != obj.getClass())
             return false;
-        final CacheArguments other = (CacheArguments) obj;
+        CacheArguments other = (CacheArguments) obj;
         return Arrays.deepEquals(params, other.params);
     }
 

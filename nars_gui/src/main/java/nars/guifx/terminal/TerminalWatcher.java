@@ -60,8 +60,8 @@ public class TerminalWatcher implements Runnable {
                 String res = removeEscapes(s);
 
                 if (!res.isEmpty()) {
-                    final boolean finalMiddleErase = middleErase;
-                    final int finalNumBacks = numBacks;
+                    boolean finalMiddleErase = middleErase;
+                    int finalNumBacks = numBacks;
                     Platform.runLater(() -> {
                         if (finalMiddleErase) {
                             textArea.insertText(textArea.getCaretPosition(), res);

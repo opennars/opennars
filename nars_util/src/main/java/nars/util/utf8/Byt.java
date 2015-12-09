@@ -37,7 +37,7 @@ import java.util.Arrays;
 public class Byt {
 
 
-    public static byte[] grow( byte[] array, final int size ) {
+    public static byte[] grow( byte[] array, int size ) {
 
         byte[] newArray = new byte[ array.length + size ];
         System.arraycopy( array, 0, newArray, 0, array.length );
@@ -45,14 +45,14 @@ public class Byt {
     }
 
 
-    public static byte[] grow( final byte[] array ) {
+    public static byte[] grow( byte[] array ) {
         return grow( array, array.length );
     }
 
 
-    public static byte[] shrink( final byte[] array, final int size ) {
+    public static byte[] shrink( byte[] array, int size ) {
 
-        final int al = array.length - size;
+        int al = array.length - size;
         byte[] newArray = new byte[ al ];
 
         System.arraycopy( array, 0, newArray, 0, al );
@@ -94,7 +94,7 @@ public class Byt {
      * @param size size of the array you want to make
      * @return array of bytes
      */
-    public static byte[] arrayOfByte( final int size ) {
+    public static byte[] arrayOfByte( int size ) {
         return new byte[ size ];
     }
 
@@ -117,38 +117,38 @@ public class Byt {
 //    }
 
 
-    public static final int len(final byte[] array ) {
+    public static final int len(byte[] array ) {
         return array.length;
     }
 
 
 
-    public static final int lengthOf(final byte[] array ) {
+    public static final int lengthOf(byte[] array ) {
         return array.length;
     }
 
 
-    public static byte atIndex( final byte[] array, final int index ) {
+    public static byte atIndex( byte[] array, int index ) {
         return idx(array, index);
     }
 
 
-    public static byte idx( final byte[] array, final int index ) {
-        final int i = i(array, index);
+    public static byte idx( byte[] array, int index ) {
+        int i = i(array, index);
 
         return array[ i ];
     }
 
 
 
-    public static void atIndex( final byte[] array, int index, byte value ) {
+    public static void atIndex( byte[] array, int index, byte value ) {
         idx(array, index, value);
     }
 
 
 
-    public static void idx( final byte[] array, int index, byte value ) {
-        final int i = i(array, index);
+    public static void idx( byte[] array, int index, byte value ) {
+        int i = i(array, index);
 
         array[ i ] = value;
     }
@@ -160,12 +160,12 @@ public class Byt {
     }
 
 
-    public static byte[] slc( final byte[] array, final int startIndex, final int endIndex ) {
+    public static byte[] slc( byte[] array, int startIndex, int endIndex ) {
 
-        final int al = array.length;
-        final int start = i(al, startIndex);
-        final int end = e(al, endIndex);
-        final int newLength = end - start;
+        int al = array.length;
+        int start = i(al, startIndex);
+        int end = e(al, endIndex);
+        int newLength = end - start;
 
         /** if the actual length will be the same as the input array, it
          * means the entire string will be necessary and we are just going
@@ -193,12 +193,12 @@ public class Byt {
     }
 
 
-    public static byte[] slc( final byte[] array, final int startIndex ) {
+    public static byte[] slc( byte[] array, int startIndex ) {
 
-        final int al = array.length;
+        int al = array.length;
 
-        final int start = i(al, startIndex);
-        final int newLength = al - start;
+        int start = i(al, startIndex);
+        int newLength = al - start;
 
         if ( newLength < 0 ) {
             throw new ArrayIndexOutOfBoundsException(
@@ -221,8 +221,8 @@ public class Byt {
 
     public static byte[] slcEnd( byte[] array, int endIndex ) {
 
-        final int end = e(array, endIndex);
-        final int newLength = end; // +    (endIndex < 0 ? 1 : 0);
+        int end = e(array, endIndex);
+        int newLength = end; // +    (endIndex < 0 ? 1 : 0);
 
         if ( newLength < 0 ) {
             throw new ArrayIndexOutOfBoundsException(
@@ -259,7 +259,7 @@ public class Byt {
 
 
 
-    public static boolean in( final int value, final int offset, final byte[] array ) {
+    public static boolean in( int value, int offset, byte[] array ) {
         for ( int index = offset; index < array.length; index++ ) {
             if (array[ index ] == value)
                 return true;
@@ -268,7 +268,7 @@ public class Byt {
     }
 
 
-    public static boolean in( final int value, final int offset, final int end, final byte[] array ) {
+    public static boolean in( int value, int offset, int end, byte[] array ) {
         for ( int index = offset; index < end; index++ ) {
             if ( array[ index ] == value ) {
                 return true;
@@ -298,8 +298,8 @@ public class Byt {
 
 
 
-    public static byte[] add( final byte[] array, final byte v ) {
-        final int al = array.length;
+    public static byte[] add( byte[] array, byte v ) {
+        int al = array.length;
         byte[] newArray = new byte[ al + 1 ];
         System.arraycopy( array, 0, newArray, 0, al);
         newArray[al] = v;
@@ -307,10 +307,10 @@ public class Byt {
     }
 
 
-    public static byte[] add( final byte[] a, final byte[] b ) {
-        final int al = a.length;
-        final int bl = b.length;
-        final byte[] newArray = new byte[ al + bl];
+    public static byte[] add( byte[] a, byte[] b ) {
+        int al = a.length;
+        int bl = b.length;
+        byte[] newArray = new byte[ al + bl];
         System.arraycopy( a, 0, newArray, 0, al);
         System.arraycopy( b, 0, newArray, al, bl);
         return newArray;
@@ -318,13 +318,13 @@ public class Byt {
 
 
 
-    public static byte[] insert( final byte[] array, final int idx, final byte v ) {
+    public static byte[] insert( byte[] array, int idx, byte v ) {
 
         if ( idx >= array.length ) {
             return add( array, v );
         }
 
-        final int index = i(array, idx);
+        int index = i(array, idx);
 
         //Object newArray = Array.newInstance(array.getClass().getComponentType(), array.length+1);
         byte[] newArray = new byte[ array.length + 1 ];
@@ -347,13 +347,13 @@ public class Byt {
 
 
 
-    public static byte[] insert( final byte[] array, final int fromIndex, final byte[] values ) {
+    public static byte[] insert( byte[] array, int fromIndex, byte[] values ) {
 
         if ( fromIndex >= array.length ) {
             return add( array, values );
         }
 
-        final int index = i(array, fromIndex);
+        int index = i(array, fromIndex);
 
         //Object newArray = Array.newInstance(array.getClass().getComponentType(), array.length+1);
         byte[] newArray = new byte[ array.length + values.length ];
@@ -380,11 +380,11 @@ public class Byt {
 
 
     /* normalizes an index if it is negative, or greater than the length */
-    private static int i(final byte[] array, final int index) {
+    private static int i(byte[] array, int index) {
         return i(array.length, index);
     }
 
-    private static int i(final int length, int index) {
+    private static int i(int length, int index) {
 
         /* Adjust for reading from the right as in
         -1 reads the 4th element if the length is 5
@@ -405,12 +405,12 @@ public class Byt {
 
 
     /* calculates ending index */
-    private static int e(final byte[] array, final int index) {
+    private static int e(byte[] array, int index) {
         return e(array.length, index);
     }
 
     /* calculates ending index */
-    private static int e(final int length, int index) {
+    private static int e(int length, int index) {
 
 
         /* Adjust for reading from the right as in
@@ -430,7 +430,7 @@ public class Byt {
         return index;
     }
 
-    public static int idxInt( final byte[] bytes, final int off ) {
+    public static int idxInt( byte[] bytes, int off ) {
         return ( ( bytes[ off + 3 ] & 0xFF ) ) +
                 ( ( bytes[ off + 2 ] & 0xFF ) << 8 ) +
                 ( ( bytes[ off + 1 ] & 0xFF ) << 16 ) +
@@ -438,7 +438,7 @@ public class Byt {
     }
 
 
-    public static byte[] addInt( final byte[] array, final int v ) {
+    public static byte[] addInt( byte[] array, int v ) {
 
         byte[] arrayToHoldInt = new byte[ 4 ];
         intTo( arrayToHoldInt, 0, v );
@@ -530,7 +530,7 @@ public class Byt {
     }
 
 
-    public static char idxChar( final byte[] b, int off ) {
+    public static char idxChar( byte[] b, int off ) {
         return ( char )  (( b[ off++ ] << 8 )  + ( b[ off  ] & 0xFF ));
     }
 
@@ -712,37 +712,37 @@ public class Byt {
 
 
 
-    public static int _idx( final byte[] output, final int outputOffset, final byte[] input ) {
+    public static int _idx( byte[] output, int outputOffset, byte[] input ) {
         return _idx(output, outputOffset, input, input.length);
     }
 
-    public static int _idx( final byte[] output, final int outputOffset, final byte[] input, final int length ) {
+    public static int _idx( byte[] output, int outputOffset, byte[] input, int length ) {
         return _idx(output, outputOffset, input, 0, length);
     }
 
 
-    public static int _idx( final byte[] output, final int outputOffset, final byte[] input, final int inputOffset, final int length ) {
+    public static int _idx( byte[] output, int outputOffset, byte[] input, int inputOffset, int length ) {
         System.arraycopy( input, inputOffset, output, outputOffset, length );
         return length;
     }
 
 
-    public static int idxUnsignedShort( final byte[] buffer, int off ) {
+    public static int idxUnsignedShort( byte[] buffer, int off ) {
 
-        final int ch1 = buffer[ off++ ] & 0xFF;
-        final int ch2 = buffer[ off ] & 0xFF;
+        int ch1 = buffer[ off++ ] & 0xFF;
+        int ch2 = buffer[ off ] & 0xFF;
 
         return ( ch1 << 8 ) + ( ch2  );
 
 
     }
 
-    public static short idxUnsignedByte( final byte[] array, final int location ) {
+    public static short idxUnsignedByte( byte[] array, int location ) {
         return ( short ) ( array[ location ] & 0xFF );
     }
 
 
-    public static void unsignedIntTo( final byte[] b, int off, final long val ) {
+    public static void unsignedIntTo( byte[] b, int off, long val ) {
         b[ off++ ] = ( byte ) ( val >>> 24 );
         b[ off++ ] = ( byte ) ( val >>> 16 );
         b[ off++ ] = ( byte ) ( val >>> 8 );

@@ -25,7 +25,7 @@ public class SCanvas extends Canvas {
     }
     
     
-    protected final void showBuffer(final Graphics2D g) {
+    protected final void showBuffer(Graphics2D g) {
         Graphics localGraphics = getGraphics();
         localGraphics.drawImage(image, 0, 0, null);
         

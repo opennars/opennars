@@ -41,7 +41,7 @@ public final class ParserClassNode
     private byte[] classCode;
     private Class<?> extendedClass;
 
-    public ParserClassNode(final Class<?> parentClass)
+    public ParserClassNode(Class<?> parentClass)
     {
         super(Opcodes.ASM5);
         this.parentClass = Objects.requireNonNull(parentClass);
@@ -73,7 +73,7 @@ public final class ParserClassNode
         return classCode;
     }
 
-    public void setClassCode(final byte[] classCode)
+    public void setClassCode(byte[] classCode)
     {
         this.classCode = classCode;
     }
@@ -83,7 +83,7 @@ public final class ParserClassNode
         return extendedClass;
     }
 
-    public void setExtendedClass(final Class<?> extendedClass)
+    public void setExtendedClass(Class<?> extendedClass)
     {
         this.extendedClass = extendedClass;
     }

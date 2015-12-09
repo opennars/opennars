@@ -17,7 +17,7 @@ public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, T
 
 
     public JGraphSource(DirectedGraph<V, E> initialGraph) {
-        this.graph = initialGraph;
+        graph = initialGraph;
     }
 
 
@@ -29,7 +29,7 @@ public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, T
 
 
     public void setGraph(DirectedGraph<V, E> initialGraph) {
-        this.graph = initialGraph;
+        graph = initialGraph;
         updateGraph();
     }
 
@@ -42,7 +42,7 @@ public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, T
 
         if (graph == null) return;
 
-        if (this.canUpdate()) {
+        if (canUpdate()) {
 
 //            if (graph == null) {
 //                //setvertices empty array?

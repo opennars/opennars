@@ -349,7 +349,7 @@ public abstract class AbstractNAR extends NAR {
     }
 
     /** ConceptBuilder: */
-    public Concept apply(final Term t) {
+    public Concept apply(Term t) {
 
         Bag<Task, TaskLink> taskLinks =
                 new CurveBag<>(taskLinkBagSize, rng).mergeAverage();
@@ -401,7 +401,7 @@ public abstract class AbstractNAR extends NAR {
     }
 
     public NAR forEachConcept(Consumer<Concept> recip) {
-        this.core.active.forEach(recip);
+        core.active.forEach(recip);
         return this;
     }
 
@@ -467,14 +467,14 @@ public abstract class AbstractNAR extends NAR {
             super();
 
             this.nar = nar;
-            this.conceptActivator = ca;
+            conceptActivator = ca;
 
             this.deriver = deriver;
 
-            this.conceptForget = nar.memory.conceptForgetDurations;
+            conceptForget = nar.memory.conceptForgetDurations;
 
-            this.conceptsFiredPerCycle = new MutableInteger(1);
-            this.active = concepts;
+            conceptsFiredPerCycle = new MutableInteger(1);
+            active = concepts;
 
             handlers.add(
                 nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue())),
@@ -503,7 +503,7 @@ public abstract class AbstractNAR extends NAR {
             //1 concept if (memory.newTasks.isEmpty())*/
             if (conceptsToFire == 0) return;
 
-            final float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
+            float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
 
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
 
@@ -555,11 +555,11 @@ public abstract class AbstractNAR extends NAR {
         }
 
 
-        public final Concept activate(final Term term, final Budget b) {
-            final Bag<Term, Concept> active = this.active;
+        public final Concept activate(Term term, Budget b) {
+            Bag<Term, Concept> active = this.active;
             active.setCapacity(capacity.intValue());
 
-            final ConceptActivator ca = this.conceptActivator;
+            ConceptActivator ca = conceptActivator;
             ca.setActivationFactor( activationFactor.floatValue() );
             return ca.update(term, b, nar.time(), 1.0f, active);
         }

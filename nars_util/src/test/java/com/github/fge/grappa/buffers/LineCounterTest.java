@@ -30,7 +30,7 @@ public final class LineCounterTest
     @Test
     public void emptyInputIsCorrectlyHandled()
     {
-        final LineCounter lineCounter = new LineCounter("");
+        LineCounter lineCounter = new LineCounter("");
         assertThat(lineCounter.getLineRange(1)).as("range is correct")
             .isEqualTo(Range.closedOpen(0, 0));
     }
@@ -39,7 +39,7 @@ public final class LineCounterTest
     @Test
     public void singleLineInputIsCorrectlyHandled()
     {
-        final LineCounter lineCounter = new LineCounter("hello");
+        LineCounter lineCounter = new LineCounter("hello");
         assertThat(lineCounter.getLineRange(1)).as("range is correct")
             .isEqualTo(Range.closedOpen(0, 5));
         assertThat(lineCounter.toPosition(3)).as("position is correct")
@@ -49,7 +49,7 @@ public final class LineCounterTest
     @Test
     public void emptyLinesAreCorrectlyDetected()
     {
-        final LineCounter lineCounter = new LineCounter("hello\r\n\n");
+        LineCounter lineCounter = new LineCounter("hello\r\n\n");
         assertThat(lineCounter.getLineRange(2)).as("range is correct")
             .isEqualTo(Range.closedOpen(7, 8));
         assertThat(lineCounter.getLineRange(3)).as("range is correct")
@@ -59,7 +59,7 @@ public final class LineCounterTest
     @Test
     public void nonNewlineLastLineIsCorrectlyDetected()
     {
-        final LineCounter lineCounter = new LineCounter("hello\nworld");
+        LineCounter lineCounter = new LineCounter("hello\nworld");
         assertThat(lineCounter.getLineRange(2)).as("range is correct")
             .isEqualTo(Range.closedOpen(6, 11));
     }
@@ -68,9 +68,9 @@ public final class LineCounterTest
     @Test(timeOut = 2000L)
     public void frontierIndexDoesNotCauseEndlessLoop()
     {
-        final int expected = 4;
+        int expected = 4;
 
-        final List<Range<Integer>> ranges = new Builder<Range<Integer>>()
+        List<Range<Integer>> ranges = new Builder<Range<Integer>>()
             .add(Range.closedOpen(0, 3))
             .add(Range.closedOpen(3, 7))
             .add(Range.closedOpen(7, 16))
@@ -78,7 +78,7 @@ public final class LineCounterTest
             .add(Range.closedOpen(18, 20))
             .build();
 
-        final LineCounter lineCounter = new LineCounter(ranges);
+        LineCounter lineCounter = new LineCounter(ranges);
 
         assertThat(lineCounter.binarySearch(18)).isEqualTo(expected);
     }

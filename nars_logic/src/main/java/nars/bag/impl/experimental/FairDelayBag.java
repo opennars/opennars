@@ -34,10 +34,10 @@ public class FairDelayBag<E extends Item<K>, K> extends DelayBag<K, E> {
     
     
     @Override
-    protected boolean fireable(final E c) {    
+    protected boolean fireable(E c) {
         /** since distributor has a min value of 1, 
             subtract one so that items with low priority can be selected */
-        final int currentLevel = distributor[reloadIteration % levels] - 1;
+        int currentLevel = distributor[reloadIteration % levels] - 1;
         return c.getPriority() * levels >= currentLevel;
     }
 

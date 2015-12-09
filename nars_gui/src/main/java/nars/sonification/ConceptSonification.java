@@ -50,7 +50,7 @@ public class ConceptSonification extends FrameReaction {
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
         super(nar);
 
-        this.polyphony = sound.maxChannels;
+        polyphony = sound.maxChannels;
 
         playing = Collections.synchronizedMap(
                 new PlayingMap(polyphony)
@@ -143,8 +143,8 @@ public class ConceptSonification extends FrameReaction {
     /**
      * returns file path to load sample
      */
-    final SonarSample getSample(final Concept c) {
-        final List<SonarSample> samples = this.samples;
+    final SonarSample getSample(Concept c) {
+        List<SonarSample> samples = this.samples;
         int s = samples.size();
         if (s == 1)
             return samples.get(0);
@@ -154,8 +154,8 @@ public class ConceptSonification extends FrameReaction {
             return samples.get(Math.abs(c.getTerm().hashCode() % s));
     }
 
-    public void update(final Concept c) {
-        final boolean audible = audible(c);
+    public void update(Concept c) {
+        boolean audible = audible(c);
         if (!audible) return;
 
         // = playing.get(c);
@@ -246,7 +246,7 @@ public class ConceptSonification extends FrameReaction {
         while (ie.hasNext()) {
             Map.Entry<Concept, SoundProducer> e = ie.next();
 
-            final Concept c = e.getKey();
+            Concept c = e.getKey();
             boolean cont = update(c, e.getValue());
             if (!cont) {
                 ie.remove();

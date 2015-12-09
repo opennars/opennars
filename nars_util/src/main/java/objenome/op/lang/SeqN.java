@@ -67,7 +67,7 @@ public class SeqN extends Node {
      */
     @Override
     public Void evaluate() {
-        final int arity = getArity();
+        int arity = getArity();
         for (int i = 0; i < arity; i++) {
             getChild(i).evaluate();
         }

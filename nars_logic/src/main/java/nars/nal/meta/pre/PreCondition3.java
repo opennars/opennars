@@ -14,9 +14,9 @@ public abstract class PreCondition3 extends PreCondition {
     /** no arguments should be null */
     public PreCondition3(Term var1, Term var2, Term var3) {
         super();
-        this.arg1 = var1;
-        this.arg2 = var2;
-        this.arg3 = var3;
+        arg1 = var1;
+        arg2 = var2;
+        arg3 = var3;
     }
 
     @Override

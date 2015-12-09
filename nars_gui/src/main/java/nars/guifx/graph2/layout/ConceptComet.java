@@ -26,7 +26,7 @@ public class ConceptComet extends HyperassociativeMap2D {
     public ConceptComet(NAR nar /* TODO take any clock */) {
         this.nar = nar;
         nar.onEachFrame(n -> {
-            this.now = nar.time();
+            now = nar.time();
 
             //reset? update?
         });

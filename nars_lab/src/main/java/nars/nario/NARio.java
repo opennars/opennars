@@ -77,7 +77,7 @@ public class NARio extends Run implements RLEnvironment {
 
     public NARio(NAR n) {
         super();
-        this.nar = n;
+        nar = n;
         //start();
         run();
     }
@@ -87,7 +87,7 @@ public class NARio extends Run implements RLEnvironment {
      * should not be used if RL has its own keyboard operation that calls takeAction
      */
     protected void initKeyboardOperators() {
-        for (final int kk : keys) {
+        for (int kk : keys) {
             String ko = "^keyboard" + kk;
 
 //            nar.on(new SynchOperator("keyboard" + kk) {

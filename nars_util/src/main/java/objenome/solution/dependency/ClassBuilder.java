@@ -88,7 +88,7 @@ public class ClassBuilder implements ConfigurableBuilder {
     @Override
     public ConfigurableBuilder useZeroArgumentConstructor() {
 
-        this.useZeroArgumentsConstructor = true;
+        useZeroArgumentsConstructor = true;
 
         return this;
     }
@@ -386,8 +386,8 @@ public class ClassBuilder implements ConfigurableBuilder {
 
                     if (simulateAndAddExtraProblemsHere != null) {
                         //reset
-                        this.initTypes = null;                        
-                        this.initValues = null;
+                        initTypes = null;
+                        initValues = null;
                     }
                     
                     updateConstructorDependencies();
@@ -547,13 +547,13 @@ public class ClassBuilder implements ConfigurableBuilder {
             if (constructorParams == null || constructorParams.length == 0) {
                 //Default constructor
                 if (!specificInitValue) {
-                    this.initTypes = newInitTypes; //use empty lists to indicate this
-                    this.initValues = newInitValues;
-                    this.initPrimitives = newInitPrimitives;
+                    initTypes = newInitTypes; //use empty lists to indicate this
+                    initValues = newInitValues;
+                    initPrimitives = newInitPrimitives;
                 }
                 continue; 
             }
-            for (final Parameter p : constructorParams) {
+            for (Parameter p : constructorParams) {
                 Class<?> pc = p.getType();
 
                 // first see if it was provided...
@@ -662,9 +662,9 @@ public class ClassBuilder implements ConfigurableBuilder {
                     
             if (constructorParams.length == capableSize && providedInitTypes.isEmpty()) {
 
-                this.initTypes = newInitTypes;
-                this.initPrimitives = newInitPrimitives;
-                this.initValues = newInitValues;
+                initTypes = newInitTypes;
+                initPrimitives = newInitPrimitives;
+                initValues = newInitValues;
             }
         }
         

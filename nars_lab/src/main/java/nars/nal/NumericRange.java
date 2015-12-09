@@ -36,7 +36,7 @@ public class NumericRange {
     /** proportional value normalized to 0..1 then divided into uniform discrete steps */
     /** shrinks the distance between min and max around a target value to increase the 'contrast' gradually over time as seen by whatever uses this result */
 
-    public void set(final double value) {
+    public void set(double value) {
         this.value = value;
         if (autoRange) {
             if ((Double.isNaN(min)) && !(Double.isNaN(value))) {
@@ -73,7 +73,7 @@ public class NumericRange {
     }
 
     /** normalize to proportional value in range 0..1 */
-    public double proportion(final double v) {
+    public double proportion(double v) {
         if (max == min) {
             return 0.5;
         }
@@ -84,28 +84,28 @@ public class NumericRange {
     }
 
     /** denormalize to range */
-    public double unproportion(final double p) {
+    public double unproportion(double p) {
         return (p * (max - min)) + min;
     }
 
     /** proportional value normalized to 0..1 then divided into uniform discrete steps */
-    public int proportionDiscrete(final double v, final int steps) {
+    public int proportionDiscrete(double v, int steps) {
         double p = proportion(v);
         //hard limit to range
         p = Math.min(Math.max(p, 0), 1.0);
         return (int) (Math.round(p * (steps - 1)));
     }
 
-    public void vectorize(double[] target, int index, final int steps) {
+    public void vectorize(double[] target, int index, int steps) {
         vectorize(target, index, get(), steps);
     }
 
-    public void vectorize(double[] target, int index, final double v, final int steps) {
+    public void vectorize(double[] target, int index, double v, int steps) {
         int p = proportionDiscrete(v, steps);
         target[index + p] = 1;
     }
 
-    public void vectorizeSmooth(double[] target, int index, double v, final int steps) {
+    public void vectorizeSmooth(double[] target, int index, double v, int steps) {
         set(v);
         v = proportion(v);
         if (Double.isNaN(v)) {
@@ -114,7 +114,7 @@ public class NumericRange {
             v = Math.min(1, v);
             v = Math.max(0, v);
         }
-        final double stepScale = 1.0 / (steps - 1);
+        double stepScale = 1.0 / (steps - 1);
         for (int p = 0; p < steps; p++) {
             double pp = (p) * stepScale;
             double d = 1.0 - Math.abs(pp - v) / stepScale;

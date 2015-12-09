@@ -323,7 +323,7 @@ public class Division extends Operation {
         if (isSec()) return "sec" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
         if (isCsc()) return "csc" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
 
-        Integer thisClassOrder = this.classOrder();
+        Integer thisClassOrder = classOrder();
         
         boolean numeratorParens = false;
         if (thisClassOrder > numerator.printLevelRight()) numeratorParens = true;

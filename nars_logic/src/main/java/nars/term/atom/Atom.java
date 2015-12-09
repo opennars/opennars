@@ -97,7 +97,7 @@ public class Atom extends StringAtom {
 //        return atoms.computeIfAbsent(name, AtomInterner);
 //    }
 
-    public static final Atom the(final String name, boolean quoteIfNecessary) {
+    public static final Atom the(String name, boolean quoteIfNecessary) {
         if (quoteIfNecessary && quoteNecessary(name))
             return quote(name);
 
@@ -122,12 +122,12 @@ public class Atom extends StringAtom {
     }
 
     /** gets the atomic term of an integer */
-    public static final Atom the(final int i) {
+    public static final Atom the(int i) {
         return the(i, 10);
     }
 
     /** gets the atomic term of an integer, with specific radix (up to 36) */
-    public static final Atom the(final int i, int radix) {
+    public static final Atom the(int i, int radix) {
         //fast lookup for single digits
         if ((i >= 0) && (i <= 9)) {
             Atom a = digits[i];
@@ -138,7 +138,7 @@ public class Atom extends StringAtom {
         return the(Integer.toString(i, radix));
     }
 
-    public static final Atom the(final float v) {
+    public static final Atom the(float v) {
         if (Util.equal( (float)Math.floor(v), v, Float.MIN_VALUE*2 )) {
             //close enough to be an int, so it doesnt need to be quoted
             return the((int)v);
@@ -147,7 +147,7 @@ public class Atom extends StringAtom {
     }
 
     /** gets the atomic term given a name */
-    public static final Atom the(final String name) {
+    public static final Atom the(String name) {
         //return Atom.the(Utf8.toUtf8(name));
         return new Atom(name);
 
@@ -177,7 +177,7 @@ public class Atom extends StringAtom {
         return Atom.the(new byte[] { c });
     }
 
-    public static String unquote(final Term s) {
+    public static String unquote(Term s) {
         return toUnquoted(s.toString());
     }
 
@@ -197,7 +197,7 @@ public class Atom extends StringAtom {
     }
     */
 
-    public static Term the(final Object o) {
+    public static Term the(Object o) {
 
         if (o instanceof Term) return ((Term)o);
         if (o instanceof String)

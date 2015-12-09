@@ -25,15 +25,15 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
     private final Class<?> proxiedIface;
     private FixedMap<String, Object> data;
 
-    public ProxyInvocationHandler(Class<?> proxiedIface, final Collection<Class<?>> beanClasses) {
+    public ProxyInvocationHandler(Class<?> proxiedIface, Collection<Class<?>> beanClasses) {
         this.proxiedIface = proxiedIface;
-        this.data = new FixedMap<>(countAttributes(beanClasses));
+        data = new FixedMap<>(countAttributes(beanClasses));
     }
 
-    private static Set<String> countAttributes(final Collection<Class<?>> beanClasses) {
-        final Set<String> names = new HashSet<>();
-        for (final Class<?> clazz : beanClasses) {
-            for (final PropertyDescriptor propertyDescriptor : ObjectUtil.getBeanInfo(clazz)
+    private static Set<String> countAttributes(Collection<Class<?>> beanClasses) {
+        Set<String> names = new HashSet<>();
+        for (Class<?> clazz : beanClasses) {
+            for (PropertyDescriptor propertyDescriptor : ObjectUtil.getBeanInfo(clazz)
                     .getPropertyDescriptors()) {
                 names.add(propertyDescriptor.getName());
             }
@@ -42,17 +42,17 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
     }
 
     public Class<?> getProxiedIface() {
-        return this.proxiedIface;
+        return proxiedIface;
     }
 
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        final String methodName = method.getName();
-        final String returnTypeName = method.getReturnType().getName();
-        final int paramCount = method.getParameterTypes().length;
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        String methodName = method.getName();
+        String returnTypeName = method.getReturnType().getName();
+        int paramCount = method.getParameterTypes().length;
 
         // hashCode
         if ("hashCode".equals(methodName) && paramCount == 0 && "int".equals(returnTypeName)) { //$NON-NLS-1$ //$NON-NLS-2$
-            return this.data.hashCode();
+            return data.hashCode();
         }
 
         // equals
@@ -60,17 +60,17 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
             return proxy == args[0] || args[0] != null
                     && Proxy.isProxyClass(args[0].getClass())
                     && Proxy.getInvocationHandler(args[0]).getClass() == getClass()
-                    && this.data.equals(((ProxyInvocationHandler) Proxy.getInvocationHandler(args[0])).data);
+                    && data.equals(((ProxyInvocationHandler) Proxy.getInvocationHandler(args[0])).data);
         }
 
         // toString
         if ("toString".equals(methodName) && paramCount == 0 && "java.lang.String".equals(returnTypeName)) { //$NON-NLS-1$ //$NON-NLS-2$
-            return "BeanProxy@" + System.identityHashCode(this) + ' ' + this.data.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+            return "BeanProxy@" + System.identityHashCode(this) + ' ' + data.toString(); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // clone
         if ("clone".equals(methodName) && paramCount == 0 && method.getReturnType().isAssignableFrom(method.getDeclaringClass())) { //$NON-NLS-1$
-            final Collection<Class<?>> collectInterfaces = ObjectUtil.collectInterfaces(proxy.getClass());
+            Collection<Class<?>> collectInterfaces = ObjectUtil.collectInterfaces(proxy.getClass());
             return Proxy.newProxyInstance(proxy.getClass().getClassLoader(),
                     collectInterfaces.toArray(new Class<?>[collectInterfaces.size()]), clone());
         }
@@ -81,7 +81,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
 
         // setter
         if ("void".equals(returnTypeName) && paramCount == 1) { //$NON-NLS-1$
-            for (final PropertyDescriptor descriptor : ObjectUtil.getBeanInfo(method.getDeclaringClass())
+            for (PropertyDescriptor descriptor : ObjectUtil.getBeanInfo(method.getDeclaringClass())
                     .getPropertyDescriptors()) {
                 if (method.equals(descriptor.getWriteMethod())) {
                     return handleSetter(proxy, descriptor, args);
@@ -91,7 +91,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
 
         // getter
         if (paramCount == 0) {
-            final PropertyDescriptor descriptor = getDescriptor(method);
+            PropertyDescriptor descriptor = getDescriptor(method);
             if (descriptor != null) {
                 return handleGetter(proxy, descriptor);
             }
@@ -101,8 +101,8 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
                 + Arrays.toString(method.getParameterTypes()) + ") not supported"); //$NON-NLS-1$
     }
 
-    private static PropertyDescriptor getDescriptor(final Method method) {
-        for (final PropertyDescriptor descriptor : ObjectUtil.getBeanInfo(method.getDeclaringClass())
+    private static PropertyDescriptor getDescriptor(Method method) {
+        for (PropertyDescriptor descriptor : ObjectUtil.getBeanInfo(method.getDeclaringClass())
                 .getPropertyDescriptors()) {
             if (method.equals(descriptor.getReadMethod()) || method.equals(descriptor.getWriteMethod())) {
                 return descriptor;
@@ -111,26 +111,26 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
         return null;
     }
 
-    protected Object handleGetter(final Object proxy, final PropertyDescriptor descriptor) {
-        final Object val = this.data.get(descriptor.getName());
+    protected Object handleGetter(Object proxy, PropertyDescriptor descriptor) {
+        Object val = data.get(descriptor.getName());
         // fix null object for primitive types
-        final Class<?> returnType = descriptor.getReadMethod().getReturnType();
+        Class<?> returnType = descriptor.getReadMethod().getReturnType();
         return val == null && returnType.isPrimitive() ? WrapperMapper.getNullObject(returnType) : val;
     }
 
-    protected Object handleSetter(final Object proxy, final PropertyDescriptor descriptor, final Object[] args) {
-        this.data.put(descriptor.getName(), args[0]);
+    protected Object handleSetter(Object proxy, PropertyDescriptor descriptor, Object[] args) {
+        data.put(descriptor.getName(), args[0]);
         return null; // void
     }
 
-    public boolean isSet(final Object proxy, final Method method) {
-        final PropertyDescriptor descriptor = getDescriptor(method);
-        return descriptor != null && this.data.get(descriptor.getName()) != null;
+    public boolean isSet(Object proxy, Method method) {
+        PropertyDescriptor descriptor = getDescriptor(method);
+        return descriptor != null && data.get(descriptor.getName()) != null;
     }
 
     protected ProxyInvocationHandler clone() throws CloneNotSupportedException {
-        final ProxyInvocationHandler result = (ProxyInvocationHandler) super.clone();
-        result.data = new FixedMap<>(this.data);
+        ProxyInvocationHandler result = (ProxyInvocationHandler) super.clone();
+        result.data = new FixedMap<>(data);
         return result;
     }
 

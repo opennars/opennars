@@ -18,7 +18,7 @@ public class Scalar implements DiffableFunctionSource {
     private double value;
 
     public Scalar() {
-        this.index = -1;
+        index = -1;
     }
     public Scalar(int index) {
         this.index = index;
@@ -26,7 +26,7 @@ public class Scalar implements DiffableFunctionSource {
 
     public void setValue(double v) {
         if (index != -1) throw new RuntimeException("Array must be used with " + this);
-        this.value = v;
+        value = v;
     }
 
     public void setValue(double[] xs, double v) {

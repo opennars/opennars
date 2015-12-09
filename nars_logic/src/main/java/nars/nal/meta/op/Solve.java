@@ -31,12 +31,12 @@ public final class Solve extends PreCondition {
         this.term = term;
         this.rule = rule;
         this.continueIfIncomplete = continueIfIncomplete;
-        id = this.getClass().getSimpleName() + ':' + term;
+        id = getClass().getSimpleName() + ':' + term;
     }
 
     @Override
     public String toString() {
-        return this.id;
+        return id;
     }
 
     @Override
@@ -47,28 +47,28 @@ public final class Solve extends PreCondition {
         if(null==(derivedTerm=match.apply(term, !continueIfIncomplete)))
             return false;
 
-        if (!this.continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {
+        if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {
             return false;
         }
 
         match.derived.set(derivedTerm);
 
 
-        Compound pattern = (Compound) this.rule.term(0);
+        Compound pattern = (Compound) rule.term(0);
         Term taskpart = pattern.term(0);
         Term beliefpart = pattern.term(1);
 
         Term possibleSequenceHolder = null;
 
-        if (this.rule.sequenceIntervalsFromBelief) {
+        if (rule.sequenceIntervalsFromBelief) {
             possibleSequenceHolder = beliefpart;
         }
-        if (this.rule.sequenceIntervalsFromTask) {
+        if (rule.sequenceIntervalsFromTask) {
             possibleSequenceHolder = taskpart;
         }
 
         if (possibleSequenceHolder!=null && possibleSequenceHolder.hasAny(Op.SEQUENCE)) {
-            this.processSequence(match, derivedTerm, possibleSequenceHolder);
+            processSequence(match, derivedTerm, possibleSequenceHolder);
 
         }
 
@@ -84,7 +84,7 @@ public final class Solve extends PreCondition {
         //int sequence_term_amount = 0;
 
 
-        if (this.rule.sequenceIntervalsFromBelief || this.rule.sequenceIntervalsFromTask) {
+        if (rule.sequenceIntervalsFromBelief || rule.sequenceIntervalsFromTask) {
             if (toInvestigate instanceof Sequence) {
                 //sequence_term_amount = ((Sequence) toInvestigate).terms().length;
                 mode = TermIsSequence;
@@ -118,9 +118,9 @@ public final class Solve extends PreCondition {
             Term lookat = null;
             Premise premise = match.premise;
 
-            if (this.rule.sequenceIntervalsFromTask) {
+            if (rule.sequenceIntervalsFromTask) {
                 lookat = premise.getTask().getTerm();
-            } else if (this.rule.sequenceIntervalsFromBelief) {
+            } else if (rule.sequenceIntervalsFromBelief) {
                 lookat = premise.getBelief()!=null ?
                         premise.getBelief().getTerm() : null;
             }
@@ -152,7 +152,7 @@ public final class Solve extends PreCondition {
                     boolean OneLess = a - 1 == b;
 
                     if (!sameLength && !OneLess) {
-                        System.err.println("result Sequence insufficient elements; rule:" + this.rule);
+                        System.err.println("result Sequence insufficient elements; rule:" + rule);
                     }
 
                     int[] pasteIntervals = paste.intervals();
@@ -197,13 +197,13 @@ public final class Solve extends PreCondition {
                     desireTerm.toString();
 
             id = puncOverride == 0 ?
-                    this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ')' :
-                    this.getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
+                    getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ')' :
+                    getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
         }
 
         @Override
         public String toString() {
-            return this.id;
+            return id;
         }
 
         TruthOperator getTruth(char punc) {
@@ -211,10 +211,10 @@ public final class Solve extends PreCondition {
             switch (punc) {
 
                 case Symbols.JUDGMENT:
-                    return this.belief;
+                    return belief;
 
                 case Symbols.GOAL:
-                    return this.desire;
+                    return desire;
 
             /*case Symbols.QUEST:
             case Symbols.QUESTION:
@@ -244,7 +244,7 @@ public final class Solve extends PreCondition {
 
 
             /** calculate derived task punctuation */
-            char punct = this.puncOverride;
+            char punct = puncOverride;
             if (punct == 0) {
                 /** use the default policy determined by parent task */
                 punct = task.getPunctuation();
@@ -255,7 +255,7 @@ public final class Solve extends PreCondition {
             TruthOperator tf;
 
             if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
-                tf = this.getTruth(punct);
+                tf = getTruth(punct);
                 if (tf == null)
                     return false;
 

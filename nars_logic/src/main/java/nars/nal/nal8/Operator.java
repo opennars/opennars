@@ -23,7 +23,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     public Operator(T the) {
         super();
 
-        this.term = the;
+        term = the;
     }
 
     @Override
@@ -114,10 +114,10 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
 //        this.complexity = 1;
 //    }
 
-    public static Operator the(final String name) {
+    public static Operator the(String name) {
         return the(Atom.the(name));
     }
-    public static Operator the(final Term x) {
+    public static Operator the(Term x) {
         return new Operator(x);
     }
 

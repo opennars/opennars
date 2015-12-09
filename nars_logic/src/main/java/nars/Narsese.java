@@ -72,7 +72,7 @@ public class Narsese extends BaseParser<Object>  {
         return parsers.get();
     }
 
-    public static Task makeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+    public static Task makeTask(Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 
 //        if (p == null)
 //            throw new RuntimeException("character is null");
@@ -339,7 +339,7 @@ public class Narsese extends BaseParser<Object>  {
         );
     }
 
-    Rule TruthTenseSeparator(char defaultChar, final Var<Tense> tense) {
+    Rule TruthTenseSeparator(char defaultChar, Var<Tense> tense) {
         return firstOf(
                 defaultChar,
                 sequence('|', tense.set(Tense.Present)),
@@ -504,8 +504,8 @@ public class Narsese extends BaseParser<Object>  {
         );
     }
 
-    public Rule seq(final Object rule, final Object rule2,
-                         final Object... moreRules) {
+    public Rule seq(Object rule, Object rule2,
+                    Object... moreRules) {
         return sequence(rule, rule2, moreRules);
     }
 
@@ -564,7 +564,7 @@ public class Narsese extends BaseParser<Object>  {
         }
     }
 
-    public static boolean isValidAtomChar(final char c) {
+    public static boolean isValidAtomChar(char c) {
         //TODO replace these with Symbols. constants
         switch((byte)c) {
             case ' ':
@@ -866,7 +866,7 @@ public class Narsese extends BaseParser<Object>  {
         return o;
     }
 
-    static Object the(final Object o) {
+    static Object the(Object o) {
         if (o == null) return null; //pass through
         if (o instanceof Term) return o;
         if (o instanceof String) {
@@ -879,7 +879,7 @@ public class Narsese extends BaseParser<Object>  {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    final Term popTerm(Op op /*default */, @Deprecated final boolean allowInternalOp) {
+    final Term popTerm(Op op /*default */, @Deprecated boolean allowInternalOp) {
 
 
 
@@ -888,7 +888,7 @@ public class Narsese extends BaseParser<Object>  {
         ValueStack<Object> stack = getContext().getValueStack();
 
 
-        final List<Term> vectorterms = Global.newArrayList(2); //stack.size() + 1);
+        List<Term> vectorterms = Global.newArrayList(2); //stack.size() + 1);
 
         while (!stack.isEmpty()) {
             Object p = pop();
@@ -994,7 +994,7 @@ public class Narsese extends BaseParser<Object>  {
 
     /** returns number of tasks created */
     public static int tasks(String input, Collection<Task> c, Memory m) {
-        final int[] i = new int[1];
+        int[] i = new int[1];
         tasks(input, t -> {
             c.add(t);
             i[0]++;
@@ -1007,7 +1007,7 @@ public class Narsese extends BaseParser<Object>  {
      * which can be re-used because a Memory can generate them
      * ondemand
      */
-    public static void tasks(String input, Consumer<Task> c, final Memory m) {
+    public static void tasks(String input, Consumer<Task> c, Memory m) {
         tasksRaw(input, o -> c.accept(decodeTask(input, m, o)));
     }
 
@@ -1053,7 +1053,7 @@ public class Narsese extends BaseParser<Object>  {
     /**
      * parse one task
      */
-    public Task task(final String input, final Memory memory) throws NarseseException {
+    public Task task(String input, Memory memory) throws NarseseException {
         ParsingResult r;
         try {
             r = singleTaskParser.run(input);
@@ -1075,7 +1075,7 @@ public class Narsese extends BaseParser<Object>  {
         }
     }
 
-    public static Task decodeTask(String input, final Memory m, Object[] x) {
+    public static Task decodeTask(String input, Memory m, Object[] x) {
         if (x.length == 1 && x[0] instanceof Task)
             return (Task)x[0];
         Task y = makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);

@@ -16,8 +16,8 @@ public class FixedSoundSource implements SoundSource
 
 	public FixedSoundSource(SoundSource soundSource)
 	{
-		this.x = soundSource.getX(1);
-		this.y = soundSource.getY(1);
+		x = soundSource.getX(1);
+		y = soundSource.getY(1);
 	}
 
     public float getX(float alpha)

@@ -33,7 +33,7 @@ public interface Item extends Comparable<Item> {
         private final Object id;
 
         public DefaultItem(Object o, double size) {
-            this.id = o;
+            id = o;
             this.size = size;
         }
 

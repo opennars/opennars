@@ -61,30 +61,30 @@ public class TestParser extends BaseParser<Integer> {
         return sequence('a', 'b', ACTION(integer < 0 && action()));
     }
 
-    public Rule RuleWithIndirectImplicitParamAction(final int param) {
+    public Rule RuleWithIndirectImplicitParamAction(int param) {
         return sequence('a', 'b', integer == param);
     }
 
-    public Rule RuleWithComplexActionSetup(final int param) {
+    public Rule RuleWithComplexActionSetup(int param) {
         int i = 26, j = 18;
-        final Var<String> string = new Var<>("text");
+        Var<String> string = new Var<>("text");
         i += param;
         j -= i;
         return sequence('a' + i, i > param + j, string, ACTION(integer + param < string.get().length() - i - j));
     }
 
     public Rule BugIn0990() {
-        final Var<Integer> var = new Var<>();
+        Var<Integer> var = new Var<>();
         return firstOf("10", "2");
     }
 
     @DontLabel
-    public Rule RuleWith2Returns(final int param) {
+    public Rule RuleWith2Returns(int param) {
         return param == integer ? sequence('a', ACTION(action())) : eof();
     }
 
     @DontLabel
-    public Rule RuleWithSwitchAndAction(final int param) {
+    public Rule RuleWithSwitchAndAction(int param) {
         switch (param) {
             case 0: return sequence(EMPTY, push(1));
         }
@@ -92,18 +92,18 @@ public class TestParser extends BaseParser<Integer> {
     }
 
     @ExplicitActionsOnly
-    public Rule RuleWithExplicitActionsOnly(final int param) {
-        final Boolean b = integer == param;
+    public Rule RuleWithExplicitActionsOnly(int param) {
+        Boolean b = integer == param;
         return sequence('a', 'b', b);
     }
 
     @Cached
-    public Rule RuleWithCachedAnd2Params(final String string, final long aLong) {
+    public Rule RuleWithCachedAnd2Params(String string, long aLong) {
         return sequence(string, aLong == integer);
     }
 
-    public Rule RuleWithFakeImplicitAction(final int param) {
-        final Boolean b = integer == param;
+    public Rule RuleWithFakeImplicitAction(int param) {
+        Boolean b = integer == param;
         return sequence('a', 'b', b);
     }
 

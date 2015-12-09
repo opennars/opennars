@@ -45,8 +45,8 @@ public interface TaskTable extends Iterable<Task> {
     /**
      * @return null if no duplicate was discovered, or the first Task that matched if one was
      */
-    default Task getFirstEquivalent(final Task t, final Equality<Task> e) {
-        for (final Task a : this) {
+    default Task getFirstEquivalent(Task t, Equality<Task> e) {
+        for (Task a : this) {
             if (e.areEqual(a, t))
                 return a;
         }
@@ -69,7 +69,7 @@ public interface TaskTable extends Iterable<Task> {
     default void top(int maxPerConcept, Consumer<Task> recip) {
         int s = size();
         if (s < maxPerConcept) maxPerConcept = s;
-        for (final Task t : this) {
+        for (Task t : this) {
             recip.accept(t);
             if (--maxPerConcept == 0) break;
         }

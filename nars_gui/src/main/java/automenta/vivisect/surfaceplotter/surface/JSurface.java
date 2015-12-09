@@ -391,7 +391,7 @@ public class JSurface extends javax.swing.JComponent {
 	 */
 
 	public void setValuesArray(SurfaceVertex[][] vertex) {
-		this.surfaceVertex = vertex;
+		surfaceVertex = vertex;
 	}
 
 	/**

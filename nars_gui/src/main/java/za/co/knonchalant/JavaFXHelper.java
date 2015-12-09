@@ -14,7 +14,7 @@ public class JavaFXHelper {
      *
      * @param field the text field to restrict
      */
-    public static void numericOnly(final TextField field) {
+    public static void numericOnly(TextField field) {
         field.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

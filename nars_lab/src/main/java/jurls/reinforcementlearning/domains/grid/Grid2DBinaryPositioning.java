@@ -26,16 +26,16 @@ public class Grid2DBinaryPositioning implements World {
     public Grid2DBinaryPositioning(int x, int y, int b, int totalTime, double noise, double focusVelocity) {
         //TODO calcuate min B necessary from X and Y, log2
         this.b = b;
-        
-        
-        this.time = 1;
-        this.w = x;
-        this.h = y;
-        this.size = x * y;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.MATCH_REWARD_FACTOR = size*1.0;
-        this.REWARD_MAGNITUDE = 5.0;
-        this.JUMP_FRACTION = 0.01;        
+
+
+        time = 1;
+        w = x;
+        h = y;
+        size = x * y;
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        MATCH_REWARD_FACTOR = size*1.0;
+        REWARD_MAGNITUDE = 5.0;
+        JUMP_FRACTION = 0.01;
         this.noise = noise;
         
         this.totalTime = totalTime;
@@ -93,7 +93,7 @@ public class Grid2DBinaryPositioning implements World {
         
         
         
-        final double exp = 2.0; //sharpen
+        double exp = 2.0; //sharpen
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
                 double dx = Math.abs(x - focusPositionW);

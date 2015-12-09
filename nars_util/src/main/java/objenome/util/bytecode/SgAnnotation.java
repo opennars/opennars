@@ -44,7 +44,7 @@ public final class SgAnnotation {
      * @param simpleName
      *            Name (without package) - Cannot be null.
      */
-    public SgAnnotation(final String packageName, final String simpleName) {
+    public SgAnnotation(String packageName, String simpleName) {
         super();
         if (packageName == null) {
             throw new IllegalArgumentException("The argument 'packageName' cannot be null!");
@@ -54,14 +54,14 @@ public final class SgAnnotation {
         if (simpleName == null) {
             throw new IllegalArgumentException("The argument 'simpleName' cannot be null!");
         }
-        final String trimmed = simpleName.trim();
+        String trimmed = simpleName.trim();
         if (trimmed.isEmpty()) {
             throw new IllegalArgumentException(
                     "The argument 'simpleName' cannot be an empty string!");
         }
         this.simpleName = trimmed;
 
-        this.arguments = new HashMap<>();
+        arguments = new HashMap<>();
     }
 
     /**
@@ -111,7 +111,7 @@ public final class SgAnnotation {
      * @param value
      *            Value of the argument - Cannot be null.
      */
-    public void addArgument(final String name, final Object value) {
+    public void addArgument(String name, Object value) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
@@ -126,16 +126,16 @@ public final class SgAnnotation {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append('@');
         sb.append(getName());
         if (!arguments.isEmpty()) {
             sb.append('(');
             if (arguments.size() == 1) {
-                final Iterator<String> it = arguments.keySet().iterator();
+                Iterator<String> it = arguments.keySet().iterator();
                 while (it.hasNext()) {
-                    final String name = it.next();
-                    final Object value = arguments.get(name);
+                    String name = it.next();
+                    Object value = arguments.get(name);
                     if (!"value".equals(name)) {
                         sb.append(name);
                         sb.append('=');
@@ -144,10 +144,10 @@ public final class SgAnnotation {
                 }
             } else {
                 int count = 0;
-                final Iterator<String> it = arguments.keySet().iterator();
+                Iterator<String> it = arguments.keySet().iterator();
                 while (it.hasNext()) {
-                    final String name = it.next();
-                    final Object value = arguments.get(name);
+                    String name = it.next();
+                    Object value = arguments.get(name);
                     if (count > 0) {
                         sb.append(", ");
                     }

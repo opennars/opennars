@@ -24,8 +24,8 @@ public class Pair implements IPair {
      * Build a pair from two components. *
      */
     public Pair(Object first, Object rest) {
-        this.setFirst(first);
-        this.setRest(rest);
+        setFirst(first);
+        setRest(rest);
     }
 
 

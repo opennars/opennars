@@ -299,7 +299,7 @@ public class Cell {
     static long rseed = System.nanoTime();
     
     public static int nextInt()  {
-        final int nbits = 32;
+        int nbits = 32;
         long x = rseed;
         x ^= (x << 21);
         x ^= (x >>> 35);
@@ -314,24 +314,24 @@ public class Cell {
     }
 
     void copyFrom(Cell c) {
-        this.material = c.material;
-        this.height = c.height;
-        this.machine = c.machine;
-        this.charge = c.charge;
-        this.chargeFront = c.chargeFront;  
-        this.light=c.light;
-        this.name=c.name+"";
+        material = c.material;
+        height = c.height;
+        machine = c.machine;
+        charge = c.charge;
+        chargeFront = c.chargeFront;
+        light =c.light;
+        name =c.name+"";
     }
 
     public void setHeight(int h) {
-        this.height = h;
+        height = h;
     }
             
     void setLogic(Logic logic, float initialCharge) {
-        this.material = Material.Machine;
+        material = Material.Machine;
         this.logic = logic;
-        this.charge = initialCharge;
-        this.is_solid=false;
+        charge = initialCharge;
+        is_solid =false;
     }
     
     

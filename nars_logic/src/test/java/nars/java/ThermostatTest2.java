@@ -40,7 +40,7 @@ public class ThermostatTest2 {
 //        public boolean below() { return target > current+tolerance; }
 
         public int go(/*int speed,*/ boolean upOrDown) {
-            final int speed = 1;
+            int speed = 1;
 
             if (log) System.out.println("\tgo @ " + current + " (" + speed + ',' + upOrDown + ") TO " + target + " (" + (Math.abs(target-current)) + " dist)\n");
 
@@ -78,7 +78,7 @@ public class ThermostatTest2 {
         Global.DEBUG = false;
         Global.EXIT_ON_EXCEPTION = true;
 
-        final int dur = 5;
+        int dur = 5;
 
         Default n = new Default(1024, 8, 2, 3);
         n.memory.duration.set(dur);

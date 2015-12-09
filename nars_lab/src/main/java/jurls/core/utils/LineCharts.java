@@ -30,7 +30,7 @@ public class LineCharts extends JFXPanel {
         super();
         this.numSeries = numSeries;
         this.historyLength = historyLength;
-        this.yAxisLabel = yAxis;
+        yAxisLabel = yAxis;
 
         if (numSeries != -1) {
             update();

@@ -52,7 +52,7 @@ public final class ProxyMatcher
         return target.getChildren();
     }
 
-    public void setLabel(final String label)
+    public void setLabel(String label)
     {
         this.label = label;
         updateDirtyFlag();
@@ -69,7 +69,7 @@ public final class ProxyMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         if (dirty)
             apply();
@@ -109,7 +109,7 @@ public final class ProxyMatcher
     }
 
     @Override
-    public Rule label(final String label)
+    public Rule label(String label)
     {
         if (target == null) {
             // if we have no target yet we need to save the label and "apply" it later
@@ -120,14 +120,14 @@ public final class ProxyMatcher
 
             // this proxy matcher is already waiting for its label application opportunity,
             // so we need to create another proxy level
-            final ProxyMatcher anotherProxy = createClone();
+            ProxyMatcher anotherProxy = createClone();
             anotherProxy.setLabel(label);
             anotherProxy.arm(this);
             return anotherProxy;
         }
 
         // we already have a target to which we can directly apply the label
-        final Rule inner = unwrap(target);
+        Rule inner = unwrap(target);
         // since relabelling might change the instance we have to update it
         target = (Matcher) inner.label(label);
         setLabel(null);
@@ -139,7 +139,7 @@ public final class ProxyMatcher
      *
      * @param target the Matcher to delegate to
      */
-    public void arm(final Matcher target)
+    public void arm(Matcher target)
     {
         this.target = Objects.requireNonNull(target, "target");
     }
@@ -150,10 +150,10 @@ public final class ProxyMatcher
      * @param matcher the matcher to unwrap
      * @return the given instance if it is not a ProxyMatcher, otherwise the innermost non-proxy Matcher
      */
-    public static Matcher unwrap(final Matcher matcher)
+    public static Matcher unwrap(Matcher matcher)
     {
         if (matcher instanceof ProxyMatcher) {
-            final ProxyMatcher proxyMatcher = (ProxyMatcher) matcher;
+            ProxyMatcher proxyMatcher = (ProxyMatcher) matcher;
             if (proxyMatcher.dirty)
                 proxyMatcher.apply();
             return proxyMatcher.target == null ? proxyMatcher
@@ -163,7 +163,7 @@ public final class ProxyMatcher
     }
 
     @Override
-    public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public <V> MatcherContext<V> getSubContext(MatcherContext<V> context)
     {
         if (dirty)
             apply();

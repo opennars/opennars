@@ -159,8 +159,8 @@ public final class TrieSet<E> implements Set<E> {
    }
 
    public TrieSet<E> retainsAll( Collection<?> collection ) {
-      final int previousSize = trie.size();
-      final Trie<E, Object> newTrie = trie.newEmptyClone();
+      int previousSize = trie.size();
+      Trie<E, Object> newTrie = trie.newEmptyClone();
 
       for (Object element : collection)
       {

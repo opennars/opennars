@@ -26,7 +26,7 @@ public class FilterDuplicateExistingBelief { //implements DerivationFilter {
 
     public static boolean isUniqueBelief(Premise nal, Task t) {
 
-        final Concept c = nal.concept(t.getTerm());
+        Concept c = nal.concept(t.getTerm());
 
         if (c == null) {
             //concept doesnt even exist so this is not a duplciate of anything

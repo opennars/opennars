@@ -38,7 +38,7 @@ public final class InstructionGroup
     private Type groupClassType;
     private byte[] groupClassCode;
 
-    public InstructionGroup(final InstructionGraphNode root)
+    public InstructionGroup(InstructionGraphNode root)
     {
         this.root = root;
     }
@@ -68,7 +68,7 @@ public final class InstructionGroup
         return name;
     }
 
-    public void setName(final String name)
+    public void setName(String name)
     {
         this.name = name;
     }
@@ -78,7 +78,7 @@ public final class InstructionGroup
         return groupClassType;
     }
 
-    public void setGroupClassType(final Type groupClassType)
+    public void setGroupClassType(Type groupClassType)
     {
         this.groupClassType = groupClassType;
     }
@@ -88,7 +88,7 @@ public final class InstructionGroup
         return groupClassCode;
     }
 
-    public void setGroupClassCode(final byte[] groupClassCode)
+    public void setGroupClassCode(byte[] groupClassCode)
     {
         this.groupClassCode = groupClassCode;
     }

@@ -28,7 +28,7 @@ public class TetrisBlocksComponent {
 
     public TetrisBlocksComponent(TetrisVisualizer ev) {
         // TODO Write Constructor
-        this.tetVis = ev;
+        tetVis = ev;
     }
 
     float motionBlur = 0.6f;

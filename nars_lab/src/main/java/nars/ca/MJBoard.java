@@ -469,8 +469,8 @@ class MJBoard extends Panel implements Runnable {
 	public boolean RecalcLayout() {
 		boolean retVal = true;
 		int wdt, hgt, iTmp;
-		wdt = this.getSize().width; // panel size, in pixels
-		hgt = this.getSize().height;
+		wdt = getSize().width; // panel size, in pixels
+		hgt = getSize().height;
 		LastPanelSize.x = wdt;
 		LastPanelSize.y = hgt;
 
@@ -790,8 +790,8 @@ class MJBoard extends Panel implements Runnable {
 	// ----------------------------------------------------------------
 	// put the pixel buffer to the screen
 	public void paint(Graphics g) {
-		if ((LastPanelSize.x != this.getSize().width)
-				|| (LastPanelSize.y != this.getSize().height)) {
+		if ((LastPanelSize.x != getSize().width)
+				|| (LastPanelSize.y != getSize().height)) {
 			InitBoard(UnivSize.x, UnivSize.y, CellSize); // resized, update
 			// board parameters
 		}

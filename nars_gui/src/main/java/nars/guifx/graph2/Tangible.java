@@ -73,7 +73,7 @@ public class Tangible {
     }
 
     public Tangible(Node n) {
-        this.node = n;
+        node = n;
         n.setOnMouseEntered(e -> {
             hover(true);
         });
@@ -126,7 +126,7 @@ public class Tangible {
             p = p.getParent();
         }
 
-        this.parent = (p!=null) ? (Spacegraph)p : null;
+        parent = (p!=null) ? (Spacegraph)p : null;
     }
 
 

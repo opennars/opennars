@@ -31,7 +31,7 @@ public class Scalar extends Literal<Double> implements DiffableFunction {
     }
 
 
-    public void setValue(final double v) {
+    public void setValue(double v) {
         if (v < lowerBound)
             value = lowerBound;
         else if (v > upperBound)

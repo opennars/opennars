@@ -15,9 +15,9 @@ public class SineWave implements SoundProducer, SoundProducer.Amplifiable {
 
     public SineWave(float freq) {
         this.freq = freq;
-        this.x = 0;
-        this.playing = true;
-        this.amp = 1.0f;
+        x = 0;
+        playing = true;
+        amp = 1.0f;
     }
 
 
@@ -25,8 +25,8 @@ public class SineWave implements SoundProducer, SoundProducer.Amplifiable {
         float dt = 1.0f / readRate;
 
 
-        final float r = (freq ) * (float)(Math.PI* 2.0f);
-        final float A = amp;
+        float r = (freq ) * (float)(Math.PI* 2.0f);
+        float A = amp;
         float X = x;
         for (int i = 0; i < buf.length;) {
             buf[i++] = (float) FastMath.sin(X * r) * A;
@@ -55,6 +55,6 @@ public class SineWave implements SoundProducer, SoundProducer.Amplifiable {
 
     @Override
     public void setAmplitude(float a) {
-        this.amp = a;
+        amp = a;
     }
 }

@@ -32,7 +32,7 @@ public final class AnyOfMatcher
 {
     private final Characters characters;
 
-    public AnyOfMatcher(final Characters characters)
+    public AnyOfMatcher(Characters characters)
     {
         super(Objects.requireNonNull(characters, "characters").toString());
         Preconditions.checkArgument(!characters.equals(Characters.NONE));
@@ -51,7 +51,7 @@ public final class AnyOfMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         if (!characters.contains(context.getCurrentChar()))
             return false;

@@ -33,7 +33,7 @@ public class IntersectionInt extends Intersect {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private IntersectionInt(final Term[] arg) {
+    private IntersectionInt(Term[] arg) {
         super(arg);
     }
 

@@ -40,7 +40,7 @@ public class GossipTest extends TestCase {
         Random random = mock(Random.class);
         InetSocketAddress localAddress = new InetSocketAddress("127.0.0.1", 0);
         when(communications.getLocalAddress()).thenReturn(localAddress);
-        final GossipListener receiver = mock(GossipListener.class);
+        GossipListener receiver = mock(GossipListener.class);
 
         InetSocketAddress address1 = new InetSocketAddress("127.0.0.1", 1);
         InetSocketAddress address2 = new InetSocketAddress("127.0.0.1", 2);
@@ -136,7 +136,7 @@ public class GossipTest extends TestCase {
         InetSocketAddress localAddress = new InetSocketAddress("127.0.0.1", 0);
         when(communications.getLocalAddress()).thenReturn(localAddress);
         when(communications.handlerFor(isA(InetSocketAddress.class))).thenReturn(handler);
-        final GossipListener receiver = mock(GossipListener.class);
+        GossipListener receiver = mock(GossipListener.class);
 
         InetSocketAddress address1 = new InetSocketAddress("127.0.0.1", 1);
         InetSocketAddress address2 = new InetSocketAddress("127.0.0.1", 2);
@@ -209,7 +209,7 @@ public class GossipTest extends TestCase {
     public void testApplyUpdate() throws Exception {
         FailureDetectorFactory fdFactory = mock(FailureDetectorFactory.class);
         GossipCommunications communications = mock(GossipCommunications.class);
-        final GossipListener receiver = mock(GossipListener.class);
+        GossipListener receiver = mock(GossipListener.class);
         SystemView view = mock(SystemView.class);
         Random random = mock(Random.class);
         InetSocketAddress localAddress = new InetSocketAddress("127.0.0.1", 0);

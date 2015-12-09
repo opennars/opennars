@@ -9,13 +9,13 @@ public class Doubliteral extends Literal<Double> {
 
     public Doubliteral(double x) {
         super(x);
-        this.v = x;
+        v = x;
     }
 
     @Override
     protected void setValue(Double value) {
         super.setValue(value);
-        this.v = value;
+        v = value;
     }
 
     @Override
