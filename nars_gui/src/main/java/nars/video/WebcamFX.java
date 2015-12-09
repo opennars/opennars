@@ -97,9 +97,7 @@ public class WebcamFX extends StackPane implements Runnable {
                 image = SwingFXUtils.toFXImage(bimage, image);
 
                 WritableImage finalImage = process(image);
-                runLater(() -> {
-                    view.setImage(finalImage);
-                });
+                runLater(() -> view.setImage(finalImage));
             }
 
             try {

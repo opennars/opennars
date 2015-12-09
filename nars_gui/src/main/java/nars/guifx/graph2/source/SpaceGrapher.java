@@ -215,9 +215,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     }
 
     public final N getOrNewTermNode(K t/*, boolean createIfMissing*/) {
-        return terms.computeIfAbsent(t.getTerm(), k -> {
-            return newNode(t);
-        });
+        return terms.computeIfAbsent(t.getTerm(), k -> newNode(t));
     }
 
 

@@ -259,9 +259,7 @@ public class LevelScene extends Scene implements SpriteContext
 
             for (Fireball fireball : fireballsToCheck)
             {
-                sprites.stream().filter(sprite -> sprite != fireball && !fireball.dead).filter(sprite -> sprite.fireballCollideCheck(fireball)).forEach(sprite -> {
-                    fireball.die();
-                });
+                sprites.stream().filter(sprite -> sprite != fireball && !fireball.dead).filter(sprite -> sprite.fireballCollideCheck(fireball)).forEach(sprite -> fireball.die());
             }
             fireballsToCheck.clear();
         }

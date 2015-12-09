@@ -224,9 +224,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         public void frame() {
             synchronized (pending) {
                 pending.clear();
-                bag.forEach(b -> {
-                    pending.add(getNode(b));
-                });
+                bag.forEach(b -> pending.add(getNode(b)));
             }
 
             if (!getChildren().equals(pending) && queued.compareAndSet(false, true)) {

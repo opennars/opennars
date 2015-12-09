@@ -86,9 +86,7 @@ public class NARide extends BorderPane {
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
                 });*/
-                ni.addIcon(() -> {
-                    return new ConceptSonificationPanel(nar);
-                });
+                ni.addIcon(() -> new ConceptSonificationPanel(nar));
                 //ni.addView(additional components);
             }
 
@@ -168,9 +166,7 @@ public class NARide extends BorderPane {
             if (ide != null)
                 ide.accept(ni);
 
-            b.setOnCloseRequest((e) -> {
-                System.exit(0);
-            });
+            b.setOnCloseRequest((e) -> System.exit(0));
         });
 //        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 //
@@ -280,9 +276,7 @@ public class NARide extends BorderPane {
 
     public void addTool(String name, Supplier<? extends Node> builder) {
         MenuItem mi = new MenuItem(name);
-        mi.setOnAction((e) -> {
-            addView(builder.get());
-        });
+        mi.setOnAction((e) -> addView(builder.get()));
         /* depr */
         controlPane.tool.getItems().add(mi);
         tools.put(Atom.the(name, true), builder);

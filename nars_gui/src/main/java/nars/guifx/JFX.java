@@ -77,9 +77,7 @@ public class JFX {
 
 
     public static String fontSize(float pct) {
-        return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(pct, 1), _v -> {
-            return "-fx-font-size: " + pct + '%';
-        });
+        return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(pct, 1), _v -> "-fx-font-size: " + pct + '%');
     }
 
     public static Polygon newPoly(int sides, double d) {

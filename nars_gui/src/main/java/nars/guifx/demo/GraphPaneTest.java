@@ -70,14 +70,11 @@ public class GraphPaneTest {
                     }
                 },
 
-                (TermNode<Term> S, TermNode<Term> T) -> {
-
-                    return new TermEdge(S, T) {
-                        @Override
-                        public double getWeight() {
-                            return Math.random() * 0.75;
-                        }
-                    };
+                (TermNode<Term> S, TermNode<Term> T) -> new TermEdge(S, T) {
+                    @Override
+                    public double getWeight() {
+                        return Math.random() * 0.75;
+                    }
                 },
 
                 new BlurCanvasEdgeRenderer()

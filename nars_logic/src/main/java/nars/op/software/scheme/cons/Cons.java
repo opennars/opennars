@@ -133,9 +133,7 @@ public class Cons<T> implements Iterable<T> {
                     a.append(b);
                     return a;
                 },
-                (accumulator) -> {
-                    return accumulator.car() == null ? empty() : accumulator;
-                });
+                (accumulator) -> accumulator.car() == null ? empty() : accumulator);
 
     }
 

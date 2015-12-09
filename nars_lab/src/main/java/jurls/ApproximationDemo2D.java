@@ -78,9 +78,7 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
         });
         approximatorMenu.notifyListeners();
 
-        iterationsMenu.addActionListener((ActionEvent e) -> {
-            numIterationsPerLoop = (int) iterationsMenu.getObject();
-        });
+        iterationsMenu.addActionListener((ActionEvent e) -> numIterationsPerLoop = (int) iterationsMenu.getObject());
         iterationsMenu.notifyListeners();
 
         int width = 5;

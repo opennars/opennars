@@ -102,11 +102,9 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     static final Font mono = NARfx.mono(8);
 
     public static final ColorMatrix colors = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
-            (op, activation) -> {
-                return Color.hsb(op * 360.0,
-                        0.35 + 0.64 * activation,
-                        0.25 + activation * 0.74);
-            });
+            (op, activation) -> Color.hsb(op * 360.0,
+                    0.35 + 0.64 * activation,
+                    0.25 + activation * 0.74));
 
 
     private final AtomicReference<Node> selected = new AtomicReference();

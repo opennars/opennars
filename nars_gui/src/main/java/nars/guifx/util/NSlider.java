@@ -137,9 +137,7 @@ public class NSlider extends NControl {
     }
 
     public NSlider valueLater(double... v) {
-        runLater(() -> {
-            value(v);
-        });
+        runLater(() -> value(v));
         return this;
     }
 
@@ -387,9 +385,7 @@ public class NSlider extends NControl {
                 new NSlider("Notch--", 64, 25, NSlider.NotchSlider, 0.75),
                 new NSlider("Knob", 256, 256, NSlider.CircleKnob, 0.5),
                 new NSlider("Ranged", 256, 256, NSlider.BarSlider, 75)
-                    .range(0, 100).on(0, c -> {
-                        System.out.println(Arrays.toString(c.normalized()));
-                    })
+                    .range(0, 100).on(0, c -> System.out.println(Arrays.toString(c.normalized())))
             );
 
 

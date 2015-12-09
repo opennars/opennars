@@ -29,9 +29,7 @@ public class TaskLabel extends AutoLabel<Task> {
 
         setOnMouseClicked(onMouseClick);
 
-        runLater(() -> {
-            changed(null, null, null);
-        });
+        runLater(() -> changed(null, null, null));
 
     }
 
@@ -146,9 +144,7 @@ public class TaskLabel extends AutoLabel<Task> {
         };
 
 
-        setOnDragOver((e) -> {
-            onDrag.handle(null);
-        });
+        setOnDragOver((e) -> onDrag.handle(null));
         setOnDragDetected(e -> {
             clearDrag.handle(null);
             startFullDrag();

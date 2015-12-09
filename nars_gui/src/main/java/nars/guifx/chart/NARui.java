@@ -83,11 +83,7 @@ public class NARui {
 
             VBox v = new VBox();
 
-            metrics.forEach(meter -> {
-
-                v.getChildren().add(linePlot(meter));
-
-            });
+            metrics.forEach(meter -> v.getChildren().add(linePlot(meter)));
 
             v.layout();
 

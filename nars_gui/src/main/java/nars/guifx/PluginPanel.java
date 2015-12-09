@@ -35,9 +35,7 @@ public class PluginPanel extends VBox {
         nar = ide.nar;
 
 
-        nar.onEachFrame((n) -> {
-            update();
-        });
+        nar.onEachFrame((n) -> update());
         update();
 
 
@@ -47,9 +45,7 @@ public class PluginPanel extends VBox {
     protected void update() {
 
         List<Node> toAdd = Global.newArrayList();
-        nar.memory.getSingletons().forEach((k, v) -> {
-            toAdd.add(node(k, v));
-        });
+        nar.memory.getSingletons().forEach((k, v) -> toAdd.add(node(k, v)));
 
         //TODO use faster comparison method
 

@@ -777,9 +777,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             mouseY = event.getSceneY();
         });
 
-        onMouseClickedProperty().set((MouseEvent event) -> {
-            dragging = false;
-        });
+        onMouseClickedProperty().set((MouseEvent event) -> dragging = false);
 
         onMouseMovedProperty().set((MouseEvent t) -> {
             if (isMinimized() || !isResizableWindow()) {

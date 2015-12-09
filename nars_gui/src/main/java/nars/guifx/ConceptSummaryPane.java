@@ -23,11 +23,9 @@ public class ConceptSummaryPane extends Text {
     final AtomicBoolean pendingUpdate = new AtomicBoolean(false);
     private ConceptSummaryPaneIcon icon;
     private float lastPri = -1.0f;
-    private ColorMatrix truthColors = new ColorMatrix(11,11,(freq,conf)->{
-        return Color.hsb(360.0 * (freq * 0.3 + 0.25),
-                conf, //all the way down to gray
-                0.1 + 0.9f * conf);
-    });
+    private ColorMatrix truthColors = new ColorMatrix(11,11,(freq,conf)-> Color.hsb(360.0 * (freq * 0.3 + 0.25),
+            conf, //all the way down to gray
+            0.1 + 0.9f * conf));
 
     public ConceptSummaryPane(Concept c) {
         super(c.getTerm().toStringCompact());
@@ -137,12 +135,8 @@ public class ConceptSummaryPane extends Text {
             g.setLineWidth(m);
             g.strokeRect(m/2, m/2, W-m, H-m);
 
-            concept.getBeliefs().forEach(t-> {
-                plot(m, Wm, Hm, g, t, false);
-            });
-            concept.getGoals().forEach(t-> {
-                plot(m, Wm, Hm, g, t, true);
-            });
+            concept.getBeliefs().forEach(t-> plot(m, Wm, Hm, g, t, false));
+            concept.getGoals().forEach(t-> plot(m, Wm, Hm, g, t, true));
 
         }
 
@@ -177,11 +171,7 @@ public class ConceptSummaryPane extends Text {
             g.strokeLine(cx+w/2, cy-w/2, cx-w/2, cy+w/2);
     }
 
-    static final ColorMatrix red  = new ColorMatrix(8,8,(x, y) -> {
-        return Color.hsb(360 * (x * 0.25 + 0.25), 0.67, 0.5 + 0.5 * y);
-    });
-    static final ColorMatrix blue = new ColorMatrix(8,8,(x, y) -> {
-        return Color.hsb(360 * (x * 0.25 + 0.65), 0.67, 0.5 + 0.5 * y);
-    });
+    static final ColorMatrix red  = new ColorMatrix(8,8,(x, y) -> Color.hsb(360 * (x * 0.25 + 0.25), 0.67, 0.5 + 0.5 * y));
+    static final ColorMatrix blue = new ColorMatrix(8,8,(x, y) -> Color.hsb(360 * (x * 0.25 + 0.65), 0.67, 0.5 + 0.5 * y));
 
 }

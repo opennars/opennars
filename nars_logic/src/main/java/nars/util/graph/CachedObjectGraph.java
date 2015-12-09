@@ -35,9 +35,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
         in.clear();
         out.clear();
 
-        items.stream().filter(i -> i instanceof Concept).forEach(i -> {
-            addConceptTermLinks((Concept) i);
-        });
+        items.stream().filter(i -> i instanceof Concept).forEach(i -> addConceptTermLinks((Concept) i));
 
     }
 

@@ -24,9 +24,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
     //public static final ColorArray BlueRed = new ColorArray(128, Color.BLUE, Color.RED);
 
-    static final ColorMatrix ca = new ColorMatrix(17, 1, (x, y) -> {
-        return Color.hsb(x * 360.0, 0.6f, y * 0.5 + 0.5);
-    });
+    static final ColorMatrix ca = new ColorMatrix(17, 1, (x, y) -> Color.hsb(x * 360.0, 0.6f, y * 0.5 + 0.5));
 
     public abstract static class Series {
         public final FloatArrayList history = new FloatArrayList(); //TODO make Float

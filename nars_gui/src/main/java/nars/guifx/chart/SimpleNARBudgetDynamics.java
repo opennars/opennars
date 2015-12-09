@@ -52,9 +52,7 @@ public class SimpleNARBudgetDynamics {
 //            .then(n -> {
 //                //n.frame(preCycles);
 //            })
-            .meter( (metrics, nar) -> {
-                metrics.set("# concepts", nar.index().size());
-            })
+            .meter( (metrics, nar) -> metrics.set("# concepts", nar.index().size()))
             .meter( (metrics, nar) -> {
 
                 mb.clear();

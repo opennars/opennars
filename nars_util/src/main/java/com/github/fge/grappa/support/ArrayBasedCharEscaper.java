@@ -50,9 +50,7 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
     }
     char max = map.keysView().max();// Collections.max(map.keySet());
     char[][] replacements = new char[max + 1][];
-    map.forEachKeyValue((c,v) -> {
-        replacements[c] = v.toCharArray();
-    });
+    map.forEachKeyValue((c,v) -> replacements[c] = v.toCharArray());
     return replacements;
   }
 

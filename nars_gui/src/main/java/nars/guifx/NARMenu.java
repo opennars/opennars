@@ -242,9 +242,7 @@ public class NARMenu extends HBox {
                         //System.out.println("frame: " + nn.time());
                         run();
                     }),
-                    n.memory.eventReset.on(nn -> {
-                        run();
-                    })
+                    n.memory.eventReset.on(nn -> run())
             );
 
 

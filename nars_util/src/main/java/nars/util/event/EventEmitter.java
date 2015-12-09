@@ -167,7 +167,7 @@ public abstract class EventEmitter<K,V>  {
 
         final Map<K,ArraySharingList<Reaction<K,V>>> reactions = new HashMap(64);
 
-        final Function<K, ArraySharingList<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
+        final Function<K, ArraySharingList<Reaction<K,V>>> getNewChannel = k -> newChannelList();
 
 
 //        @Override

@@ -102,9 +102,7 @@ public abstract class HyperassociativeMap<K,V>  {
 
     @Deprecated public ArrayRealVector getPosition(V node) {
         ArrayRealVector location = coordinates.computeIfAbsent(node,
-                (n) -> {
-                    return newVector();
-                });
+                (n) -> newVector());
         getPosition(node, location.getDataRef());
         return location;
     }

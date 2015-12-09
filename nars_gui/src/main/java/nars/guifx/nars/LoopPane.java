@@ -35,9 +35,7 @@ public class LoopPane extends VBox {
 
     boolean running = false;
 
-    final ChangeListener<Number> updateLoopOnChange = (s, p, c) -> {
-        updateLoop();
-    };
+    final ChangeListener<Number> updateLoopOnChange = (s, p, c) -> updateLoop();
 
     public LoopPane(NARLoop loop) {
 

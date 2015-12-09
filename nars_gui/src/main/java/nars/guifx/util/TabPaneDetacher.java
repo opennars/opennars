@@ -83,9 +83,7 @@ public class TabPaneDetacher {
             if (change.next()) {
                 change.getAddedSubList().forEach(x -> {
                     Button p = new Button("^");
-                    p.setOnMouseClicked(en -> {
-                        popout(x);
-                    });
+                    p.setOnMouseClicked(en -> popout(x));
                     x.setGraphic(p);
                 });
             }
@@ -188,9 +186,7 @@ public class TabPaneDetacher {
             }
             tabPane.getSelectionModel().select(tab);
         });
-        stage.setOnShown((WindowEvent t) -> {
-            tab.getTabPane().getTabs().remove(tab);
-        });
+        stage.setOnShown((WindowEvent t) -> tab.getTabPane().getTabs().remove(tab));
         stage.show();
     }
 

@@ -129,9 +129,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     }
 
     public final void setUpdateable() {
-        runLater(() -> {
-            refresh.set(true);
-        });
+        runLater(() -> refresh.set(true));
     }
 
     public void stop(SpaceGrapher<V,? super N> g) {

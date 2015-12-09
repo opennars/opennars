@@ -189,9 +189,7 @@ public class Evaluator {
     }
 
     private static Function<SchemeClosure, Expression> makeIf(Function<SchemeClosure, Expression> condition, Function<SchemeClosure, Expression> consequent, Optional<Function<SchemeClosure, Expression>> alternative) {
-        return env -> {
-            return isTruthy(condition.apply(env)) ? consequent.apply(env) : alternative.map(a -> a.apply(env)).orElse(Expression.none());
-        };
+        return env -> isTruthy(condition.apply(env)) ? consequent.apply(env) : alternative.map(a -> a.apply(env)).orElse(Expression.none());
     }
 
     private static Function<SchemeClosure, Expression> analyzeIf(Cons<Expression> exps) {

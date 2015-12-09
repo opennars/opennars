@@ -71,9 +71,7 @@ public class TerminalWatcher implements Runnable {
                         }
                     });
                 } else if (eraseLine) {
-                    Platform.runLater(() -> {
-                        textArea.deleteText(textArea.getCaretPosition(), textArea.getLength());
-                    });
+                    Platform.runLater(() -> textArea.deleteText(textArea.getCaretPosition(), textArea.getLength()));
                 }
             }
         } catch (InterruptedIOException e) {

@@ -529,9 +529,7 @@ public class NARio extends Run implements RLEnvironment {
 
             NARio nario = new NARio(nar);
 
-            nar.onEachFrame(n -> {
-                nario.cycle(1.0/fps);
-            });
+            nar.onEachFrame(n -> nario.cycle(1.0/fps));
 
 
             NALObjects objs = new NALObjects(nar);

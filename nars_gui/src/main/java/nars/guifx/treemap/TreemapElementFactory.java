@@ -31,9 +31,7 @@ class TreemapElementFactory {
     }
 
     private Color getColor(TreemapDtoElement dtoElement, ColorGroup realColorGroup) {
-        return colorCache.computeIfAbsent(dtoElement, c -> {
-           return realColorGroup.fetchColor();
-        });
+        return colorCache.computeIfAbsent(dtoElement, c -> realColorGroup.fetchColor());
         /*
         if (colorCache.containsKey(dtoElement)) {
             return colorCache.get(dtoElement);

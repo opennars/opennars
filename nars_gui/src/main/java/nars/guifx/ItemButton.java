@@ -29,9 +29,7 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
             t = ((TaskLink)i).getTask();
 
         if (clicked!=null) {
-            setOnMouseClicked(e -> {
-                clicked.accept(i);
-            });
+            setOnMouseClicked(e -> clicked.accept(i));
         }
         if (t!=null)
             setGraphic(new TaskSummaryIcon( t, this));

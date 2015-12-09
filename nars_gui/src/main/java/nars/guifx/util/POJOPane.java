@@ -48,9 +48,7 @@ public class POJOPane<X> extends BorderPane {
             });
             setTop(toggle);
 
-            runLater(()->{
-                toggle.setSelected(true);
-            });
+            runLater(()-> toggle.setSelected(true));
         }
         else {
             setCenter(new Label(obj.toString()));

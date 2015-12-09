@@ -77,9 +77,7 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
         });
         approximatorMenu.notifyListeners();
 
-        iterationsMenu.addActionListener((ActionEvent e) -> {
-            numIterationsPerLoop = (int) iterationsMenu.getObject();
-        });
+        iterationsMenu.addActionListener((ActionEvent e) -> numIterationsPerLoop = (int) iterationsMenu.getObject());
         iterationsMenu.notifyListeners();
 
         double[] ys = new double[components];

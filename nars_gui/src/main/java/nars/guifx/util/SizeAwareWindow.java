@@ -195,23 +195,17 @@ public class SizeAwareWindow extends Scene {
 //        return node;
 //    }
 
-    private static Supplier<Parent> Icon = () -> {
-        return new Button(":D");
-    };
+    private static Supplier<Parent> Icon = () -> new Button(":D");
 
-    private static Supplier<Parent> DefaultNAR = () -> {
-        return new NARide(new Default().loop());
-    };
+    private static Supplier<Parent> DefaultNAR = () -> new NARide(new Default().loop());
 
-    private static Supplier<Parent> Row = () -> {
-        return new HBox(2,
-                new NSlider(100, 25),
-                new NSlider(100, 25),
-                new NSlider(100, 25),
-                new NSlider(100, 25)
+    private static Supplier<Parent> Row = () -> new HBox(2,
+            new NSlider(100, 25),
+            new NSlider(100, 25),
+            new NSlider(100, 25),
+            new NSlider(100, 25)
 
-        );
-    };
+    );
     private static Supplier<Parent> Column = () -> {
         Pane vb = new VBox(
                 new TextArea("wtf"),
