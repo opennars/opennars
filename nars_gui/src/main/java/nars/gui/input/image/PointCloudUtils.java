@@ -108,8 +108,8 @@ public class PointCloudUtils
       y += p.getY();
     }
 
-    x /= (double) points.size();
-    y /= (double) points.size();
+    x /= points.size();
+    y /= points.size();
 
     return new PointCloudPoint(x, y, 0);
   }
@@ -219,7 +219,7 @@ public class PointCloudUtils
       d += distance(pts1.get(i), pts2.get(i));
     }
 
-    return d / (double) pts1.size();
+    return d / pts1.size();
   }
 
   public static double distance(PointCloudPoint p1, PointCloudPoint p2) // Euclidean distance between two points

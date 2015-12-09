@@ -111,14 +111,14 @@ public class SequenceParallelTest {
         assertEquals(e, f); //commutative
         assertEquals(fs, e.toString()); //interval at end
 
-        assertEquals(DURATION * 1, e.duration());
+        assertEquals(DURATION, e.duration());
 
 
         String ts = "(&|, a, " + fs + ")";
         Parallel s = t.term(ts);
 
         assertEquals(ts, s.toString());
-        assertEquals(DURATION * 1, s.duration()); //maximum contained duration = 10
+        assertEquals(DURATION, s.duration()); //maximum contained duration = 10
 
     }
 

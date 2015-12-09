@@ -312,10 +312,10 @@ public class Util {
 
 
     public static long PJWHash(String str) {
-        long BitsInUnsignedInt = (long) (4 * 8);
+        long BitsInUnsignedInt = (4 * 8);
         long ThreeQuarters = (long) ((BitsInUnsignedInt * 3) / 4);
         long OneEighth = (long) (BitsInUnsignedInt / 8);
-        long HighBits = (long) (0xFFFFFFFF) << (BitsInUnsignedInt - OneEighth);
+        long HighBits = (0xFFFFFFFFL) << (BitsInUnsignedInt - OneEighth);
         long hash = 0;
         long test = 0;
 
@@ -516,10 +516,10 @@ public class Util {
      * linear interpolate between target & current, factor is between 0 and 1.0
      */
     public static float lerp(final float target, final float current, final float factor) {
-        return target * factor + current * (1f - factor);
+        return target * factor + current * (1.0f - factor);
     }
     public static double lerp(final double target, final double current, double factor) {
-        return target * factor + current * (1f - factor);
+        return target * factor + current * (1.0f - factor);
     }
     /**
      * maximum, simpler and faster than Math.max without its additional tests
@@ -607,10 +607,10 @@ public class Util {
      * clamps a value to 0..1 range
      */
     public static float clamp(final float p) {
-        if (p > 1f)
-            return 1f;
-        else if (p < 0f)
-            return 0f;
+        if (p > 1.0f)
+            return 1.0f;
+        else if (p < 0.0f)
+            return 0.0f;
         return p;
     }
 

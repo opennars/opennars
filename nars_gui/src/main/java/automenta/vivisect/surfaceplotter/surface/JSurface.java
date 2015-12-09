@@ -169,7 +169,7 @@ public class JSurface extends javax.swing.JComponent {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			float new_value = 0.0f;
 			float old_value = projector.get2DScaling();
-			new_value = old_value * (1 - e.getScrollAmount() * e.getWheelRotation() / 10f);
+			new_value = old_value * (1 - e.getScrollAmount() * e.getWheelRotation() / 10.0f);
 			if (new_value > 60.0f)
 				new_value = 60.0f;
 			if (new_value < 2.0f)
@@ -1549,7 +1549,7 @@ public class JSurface extends javax.swing.JComponent {
 		Thread.yield();
 		zmin = zi;
 		zmax = zx;
-		color_factor = 1f / (zmax - zmin);
+		color_factor = 1.0f / (zmax - zmin);
 
 		if (!printing) {
 			graphics.setColor(colors.getBackgroundColor());
@@ -2159,7 +2159,7 @@ public class JSurface extends javax.swing.JComponent {
 		// Thread.yield();
 		// model.setMessage("regenerating ...");
 
-		color_factor = 1f / (zx - zi); // convert every z in a [0;1] float
+		color_factor = 1.0f / (zx - zi); // convert every z in a [0;1] float
 		// 0.8 is for red to blue : 0.8 leads to reddish blue and red
 
 		if (!printing) {

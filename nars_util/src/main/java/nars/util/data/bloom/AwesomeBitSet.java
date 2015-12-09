@@ -10,7 +10,7 @@ public class AwesomeBitSet {
     final long[] data;
 
     public AwesomeBitSet(long bits) {
-        this(new long[(int) Math.ceil((double) bits / (double) Long.SIZE)]);
+        this(new long[(int) Math.ceil((double) bits / Long.SIZE)]);
     }
 
     /**

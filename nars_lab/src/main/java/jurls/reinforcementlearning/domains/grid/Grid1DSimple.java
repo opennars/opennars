@@ -96,7 +96,7 @@ public class Grid1DSimple implements World {
         double min=0, max=0;
         for (int i = 0; i < size; i++) {
             final double exp = 3.0; //sharpen
-            sensor[i] = Math.pow(1.0 / (1.0 + Math.abs( ((double)i)-focusPosition)),exp) + (Math.random()*noise);
+            sensor[i] = Math.pow(1.0 / (1.0 + Math.abs( (i)-focusPosition)),exp) + (Math.random()*noise);
             if (sensor[i] < 0)
                 sensor[i] = 0;
             if (i == 0) {

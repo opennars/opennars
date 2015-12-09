@@ -10,7 +10,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     protected final char FA_StopCharacter = '\uf04c';
     protected final char FA_FocusCharacter = '\uf11e';
     protected final char FA_ControlCharacter = '\uf085';
-    protected final float defaultSpeed = 0f; //0.5f;
+    protected final float defaultSpeed = 0.0f; //0.5f;
     //http://astronautweb.co/snippet/font-awesome/
     protected final char FA_PlayCharacter = '\uf04b';
     /**
@@ -31,7 +31,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
 
 
 
-    protected float currentSpeed = 0f;
+    protected float currentSpeed = 0.0f;
     //protected float lastSpeed = 0f;
 
     public TimeControl(LayoutManager l) {
@@ -44,7 +44,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     protected NSliderSwing newSpeedSlider() {
             //final StringBuilder sb = new StringBuilder(32);
 
-        final NSliderSwing s = new NSliderSwing(0f, 0f, 1.0f) {
+        final NSliderSwing s = new NSliderSwing(0.0f, 0.0f, 1.0f) {
 
 
             @Override

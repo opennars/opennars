@@ -18,7 +18,7 @@ public class Num extends Constant implements Comparable<Num> {
     private Double val;
     
     private Num() {
-        this(0d);
+        this(0.0d);
     }
     
     private Num(double val) {

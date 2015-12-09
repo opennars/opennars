@@ -24,7 +24,7 @@ public class SparkLine {
 	 */
 	public static String render(final Collection<Integer> values) {
 		final int max = Collections.max(values), min = Collections.min(values);
-		final float scale = (max - min) / 7f;
+		final float scale = (max - min) / 7.0f;
 		final StringBuilder accumulator = new StringBuilder();
 		for (final Integer value : values) {
 			final int index = Math.round((value - min) / scale);

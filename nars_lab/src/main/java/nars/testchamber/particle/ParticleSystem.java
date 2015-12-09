@@ -73,7 +73,7 @@ public class ParticleSystem  {
                 //do nothing
             } else {
 
-                float lightAttenuation = .8f;
+                float lightAttenuation = 0.8f;
 
                 if (light > lightCutoff + blockArray[x + 1][y].state.light) {
                     glow((int) (light * lightAttenuation), x + 1, y);
@@ -98,7 +98,7 @@ public class ParticleSystem  {
                 //do nothing
             } else {
 
-                float lightAttenuation = .3f;
+                float lightAttenuation = 0.3f;
 
                 if (light > lightCutoff + blockArray[x + 1][y].state.light) {
                     glow((int) (light * lightAttenuation), x + 1, y);
@@ -223,7 +223,7 @@ public class ParticleSystem  {
             for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //clear lightArray
                 for (int y_I = 0, lightHeight = (HEIGHT); y_I < lightHeight; y_I++) {
 
-                    blockArray[x_I][y_I].state.light = ( .9f * blockArray[x_I][y_I].state.light );
+                    blockArray[x_I][y_I].state.light = (0.9f * blockArray[x_I][y_I].state.light );
                 }
             }
 
@@ -233,7 +233,7 @@ public class ParticleSystem  {
                 xPos = p.xPos;
                 yPos = p.yPos;
 
-                float rand = r.nextFloat() * .5f + .5f;
+                float rand = r.nextFloat() * 0.5f + 0.5f;
 
                 xVel = p.xVel * (1 - rand) + p.pxVel * rand;
                 yVel = p.yVel * (1 - rand) + p.pyVel * rand;
@@ -244,8 +244,8 @@ public class ParticleSystem  {
                 p.pyVel = yVel;
 
                 if (gravitonAL.isEmpty()) { // if not pulling, slow the particle down
-                    xVel = .97f * xVel;
-                    yVel = .97f * yVel;
+                    xVel = 0.97f * xVel;
+                    yVel = 0.97f * yVel;
                 } else {
 
                     for (int gi = 0; gi < gravitonAL.size(); gi++) { // for every graviton
@@ -285,9 +285,9 @@ public class ParticleSystem  {
 
                     } else { // if collision
                         
-                        if (r.nextFloat() <= .1f) {
-                            xPos += .5 * xVel;
-                            yPos += .5 * yVel;
+                        if (r.nextFloat() <= 0.1f) {
+                            xPos += 0.5 * xVel;
+                            yPos += 0.5 * yVel;
                         }
 
                         float Vel = (float) Math.sqrt(xVel * xVel + yVel * yVel);
@@ -298,14 +298,14 @@ public class ParticleSystem  {
 
                         if (blockArray[ (int) (xPos)][ty].isSolid()) {
                             xVel = xVel > 0 ? Vel : -Vel;
-                            yVel = r.nextFloat() - .5f;
+                            yVel = r.nextFloat() - 0.5f;
                         } else {
                             yPos += yVel;
                         }
 
                         if (blockArray[tx][(int) (yPos)].isSolid()) {
                             yVel = yVel > 0 ? Vel : -Vel;
-                            xVel = r.nextFloat() - .5f;
+                            xVel = r.nextFloat() - 0.5f;
                         } else {
                             xPos += xVel;
                         }
@@ -319,7 +319,7 @@ public class ParticleSystem  {
                 final float axVel = Math.abs(xVel);
                 final float ayVel = Math.abs(yVel);
                 
-                if ((axVel + ayVel) <= .3) {
+                if ((axVel + ayVel) <= 0.3) {
                     life -= 10 / (axVel + ayVel);
                 }
 

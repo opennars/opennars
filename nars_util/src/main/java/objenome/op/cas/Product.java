@@ -110,9 +110,9 @@ public class Product extends Operation {
                 }
             }
 
-            while (numbers.remove(1d)) {
+            while (numbers.remove(1.0d)) {
             }
-            if (numbers.isEmpty()) numbers.add(1d);
+            if (numbers.isEmpty()) numbers.add(1.0d);
 
             if (other.exprs.isEmpty() && numbers.size() == 1) return Num.make(numbers.get(0));
 

@@ -106,7 +106,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
                 //do nothing
             } else {
 
-                float lightAttenuation = .8f;
+                float lightAttenuation = 0.8f;
 
                 if (light > lightCutoff + blockArray[x + 1][y].light) {
                     glow((int) (light * lightAttenuation), x + 1, y);
@@ -131,7 +131,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
                 //do nothing
             } else {
 
-                float lightAttenuation = .3f;
+                float lightAttenuation = 0.3f;
 
                 if (light > lightCutoff + blockArray[x + 1][y].light) {
                     glow((int) (light * lightAttenuation), x + 1, y);
@@ -190,7 +190,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
     }
 
     public void paintBlock(int x, int y) {
-        int light = (int) (.1 * blockArray[x][y].light);
+        int light = (int) (0.1 * blockArray[x][y].light);
         if (light > 200) {
             light = 200;
         }
@@ -208,10 +208,10 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
             }
         } else if (blockArray[x][y].type == Block.GRYSTONE) {
 
-            float leftBright = blockArray[x - 1][y].light + .5f * blockArray[x - 2][y].light + .25f * blockArray[x - 3][y].light + .125f * blockArray[x - 1][y - 1].light + .125f * blockArray[x - 1][y + 1].light;
-            float rightBright = blockArray[x + 1][y].light + .5f * blockArray[x + 2][y].light + .25f * blockArray[x + 3][y].light + .125f * blockArray[x + 1][y - 1].light + .125f * blockArray[x + 1][y + 1].light;
-            float upBright = blockArray[x][y - 1].light + .5f * blockArray[x][y - 2].light + .25f * blockArray[x][y - 3].light + .125f * blockArray[x - 1][y - 1].light + .125f * blockArray[x + 1][y - 1].light;
-            float downBright = blockArray[x][y + 1].light + .5f * blockArray[x][y + 2].light + .25f * blockArray[x][y + 3].light + .125f * blockArray[x - 1][y + 1].light + .125f * blockArray[x - 1][y + 1].light;
+            float leftBright = blockArray[x - 1][y].light + 0.5f * blockArray[x - 2][y].light + 0.25f * blockArray[x - 3][y].light + 0.125f * blockArray[x - 1][y - 1].light + 0.125f * blockArray[x - 1][y + 1].light;
+            float rightBright = blockArray[x + 1][y].light + 0.5f * blockArray[x + 2][y].light + 0.25f * blockArray[x + 3][y].light + 0.125f * blockArray[x + 1][y - 1].light + 0.125f * blockArray[x + 1][y + 1].light;
+            float upBright = blockArray[x][y - 1].light + 0.5f * blockArray[x][y - 2].light + 0.25f * blockArray[x][y - 3].light + 0.125f * blockArray[x - 1][y - 1].light + 0.125f * blockArray[x + 1][y - 1].light;
+            float downBright = blockArray[x][y + 1].light + 0.5f * blockArray[x][y + 2].light + 0.25f * blockArray[x][y + 3].light + 0.125f * blockArray[x - 1][y + 1].light + 0.125f * blockArray[x - 1][y + 1].light;
 
             for (int x_I = 0; x_I < 8; x_I++) {
                 for (int y_I = 0; y_I < 8; y_I++) {
@@ -253,7 +253,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
             for (int x_I = 0, lightWidth = (WIDTH / 32) + 1; x_I < lightWidth; x_I++) {  //clear lightArray
                 for (int y_I = 0, lightHeight = (HEIGHT / 32) + 1; y_I < lightHeight; y_I++) {
 
-                    blockArray[x_I][y_I].light = (int) (.9 * blockArray[x_I][y_I].light);
+                    blockArray[x_I][y_I].light = (int) (0.9 * blockArray[x_I][y_I].light);
 
                 }
             }
@@ -268,7 +268,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
                 xPos = p.xPos;
                 yPos = p.yPos;
 
-                float rand = r.nextFloat() * .5f + .5f;
+                float rand = r.nextFloat() * 0.5f + 0.5f;
 
                 xVel = p.xVel * (1 - rand) + p.pxVel * rand;
                 yVel = p.yVel * (1 - rand) + p.pyVel * rand;
@@ -279,8 +279,8 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
                 p.pyVel = yVel;
 
                 if (gravitonAL.isEmpty()) { // if not pulling, slow the particle down
-                    xVel = .97f * xVel;
-                    yVel = .97f * yVel;
+                    xVel = 0.97f * xVel;
+                    yVel = 0.97f * yVel;
                 } else {
 
                     for (int gi = 0; gi < gravitonAL.size(); gi++) { // for every graviton
@@ -316,9 +316,9 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
 
                     } else { // if collision
 
-                        if (r.nextFloat() <= .1f) {
-                            xPos += .5 * xVel;
-                            yPos += .5 * yVel;
+                        if (r.nextFloat() <= 0.1f) {
+                            xPos += 0.5 * xVel;
+                            yPos += 0.5 * yVel;
                         }
 
                         float Vel = (float) Math.sqrt(xVel * xVel + yVel * yVel);
@@ -329,14 +329,14 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
 
                         if (blockArray[ (int) (xPos / 32)][(int) ((yPos + yVel) / 32)].type != 0) {
                             xVel = xVel > 0 ? Vel : -Vel;
-                            yVel = r.nextFloat() - .5f;
+                            yVel = r.nextFloat() - 0.5f;
                         } else {
                             yPos += yVel;
                         }
 
                         if (blockArray[ (int) ((xPos + xVel) / 32)][(int) (yPos / 32)].type != 0) {
                             yVel = yVel > 0 ? Vel : -Vel;
-                            xVel = r.nextFloat() - .5f;
+                            xVel = r.nextFloat() - 0.5f;
                         } else {
                             xPos += xVel;
                         }
@@ -348,7 +348,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
 
                 age += 10;
                 
-                if ((Math.abs(xVel) + Math.abs(yVel)) <= .3) {
+                if ((Math.abs(xVel) + Math.abs(yVel)) <= 0.3) {
                     age += 100 / (Math.abs(xVel) + Math.abs(yVel));
                 }
 
@@ -433,7 +433,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
 
             Graviton v = new Graviton();
 
-            v.setGraviton(mouseX, mouseY, .5f, .5f);
+            v.setGraviton(mouseX, mouseY, 0.5f, 0.5f);
             gravitonAL.add(v);
         }
 

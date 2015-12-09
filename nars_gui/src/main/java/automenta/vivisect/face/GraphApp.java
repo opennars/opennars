@@ -78,7 +78,7 @@ public class GraphApp extends JPanel
         timemult = 0.5D;   
         timediv = 1.0D / timemult;   
         if(faceApplet != null)   
-            snapwidth = (int)(((float)faceApplet.bounds().width * 40F) / (float)faceApplet.bounds().height);   
+            snapwidth = (int)((faceApplet.bounds().width * 40.0F) / faceApplet.bounds().height);
         else   
             snapwidth = 25;   
         scrPos = 0;   
@@ -256,8 +256,8 @@ public class GraphApp extends JPanel
         int l = 40;
         int[] ai = new int[i * j];
         int[] ai1 = new int[k * l];
-        double d = (double)i / (double)k;   
-        double d1 = (double)j / (double)l;   
+        double d = (double)i / k;
+        double d1 = (double)j / l;
         PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, i, j, ai, 0, i);   
         try   
         {   
@@ -280,22 +280,22 @@ public class GraphApp extends JPanel
                 double d2 = 0.0D;   
                 double d3 = 0.0D;   
                 double d4 = 0.0D;   
-                for(int k1 = (int)Math.floor((double)i1 * d1); k1 < (int)Math.ceil((double)(i1 + 1) * d1); k1++)   
+                for(int k1 = (int)Math.floor(i1 * d1); k1 < (int)Math.ceil((i1 + 1) * d1); k1++)
                 {   
-                    for(int l1 = (int)Math.floor((double)j1 * d); l1 < (int)Math.ceil((double)(j1 + 1) * d); l1++)   
+                    for(int l1 = (int)Math.floor(j1 * d); l1 < (int)Math.ceil((j1 + 1) * d); l1++)
                     {   
-                        double d6 = Math.max(l1, (double)j1 * d);   
-                        double d7 = Math.min(l1 + 1, (double)(j1 + 1) * d);   
-                        double d8 = Math.max(k1, (double)i1 * d1);   
-                        double d9 = Math.min(k1 + 1, (double)(i1 + 1) * d1);   
+                        double d6 = Math.max(l1, j1 * d);
+                        double d7 = Math.min(l1 + 1, (j1 + 1) * d);
+                        double d8 = Math.max(k1, i1 * d1);
+                        double d9 = Math.min(k1 + 1, (i1 + 1) * d1);
                         double d10 = (d7 - d6) * (d9 - d8);   
                         int i2 = k1 * i + l1;   
                         int j2 = (ai[i2] & 0xff0000) >> 16;   
                     int k2 = (ai[i2] & 0xff00) >> 8;   
             int l2 = ai[i2] & 0xff;   
-            d2 += (double)j2 * d10;   
-            d3 += (double)k2 * d10;   
-            d4 += (double)l2 * d10;   
+            d2 += j2 * d10;
+            d3 += k2 * d10;
+            d4 += l2 * d10;
                     }   
    
                 }   

@@ -296,7 +296,7 @@ public class NARio extends Run implements RLEnvironment {
 
                     if ((i == 0) && (j == 0)) continue;
 
-                    int block = level.level.getBlock(x + i * 16f - 8, y + j * 16f - 8);
+                    int block = level.level.getBlock(x + i * 16.0f - 8, y + j * 16.0f - 8);
                     int data = level.level.getData(x + i * 16 - 8, y + j * 16 - 8);
 
                     boolean blocked
@@ -363,8 +363,8 @@ public class NARio extends Run implements RLEnvironment {
                         type = s.toString();
                     }
 
-                    int dx = Math.round((s.x - x) / 16f);
-                    int dy = Math.round((s.y - y) / 16f);
+                    int dx = Math.round((s.x - x) / 16.0f);
+                    int dy = Math.round((s.y - y) / 16.0f);
 
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
 
@@ -520,7 +520,7 @@ public class NARio extends Run implements RLEnvironment {
         //nar.memory.executionThreshold.set(0.75);
         nar.memory.shortTermMemoryHistory.set(5);
 
-        float fps = 70f;
+        float fps = 70.0f;
         gameRate = 1.0f / fps;
 
 
@@ -740,7 +740,7 @@ public class NARio extends Run implements RLEnvironment {
 
     protected void updateMovement(float cx, float cy, int tx, int ty) {
         double f = cosineSimilarityScaled(new double[]{cx, cy}, new double[]{tx, ty});
-        float ff = (float) (f / 2f + 0.5f);
+        float ff = (float) (f / 2.0f + 0.5f);
         double precision = 0.25; //reduction to discretized scale
         //updateMovement(direction((int)(-tx * ff * precision),  (int)(-ty* ff * precision)), 1.0f); //for some reason the sign needs negated
         updateMovement(direction((int) (-tx), (int) (-ty)), ff); //for some reason the sign needs negated

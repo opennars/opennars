@@ -192,51 +192,51 @@ public abstract class MemoryManager {
     }
 
     public static byte[] malloc1(int size, boolean force) {
-        return (byte[])((byte[])malloc(size, (long)(size * 1), 1, (Object)null, 0, force));
+        return (byte[])((byte[])malloc(size, (size * 1), 1, (Object)null, 0, force));
     }
 
     public static short[] malloc2(int size) {
-        return (short[])((short[])malloc(size, (long)(size * 2), 2, (Object)null, 0));
+        return (short[])((short[])malloc(size, (size * 2), 2, (Object)null, 0));
     }
 
     public static int[] malloc4(int size) {
-        return (int[])((int[])malloc(size, (long)(size * 4), 4, (Object)null, 0));
+        return (int[])((int[])malloc(size, (size * 4), 4, (Object)null, 0));
     }
 
     public static long[] malloc8(int size) {
-        return (long[])((long[])malloc(size, (long)(size * 8), 8, (Object)null, 0));
+        return (long[])((long[])malloc(size, (size * 8), 8, (Object)null, 0));
     }
 
     public static float[] malloc4f(int size) {
-        return (float[])((float[])malloc(size, (long)(size * 4), 5, (Object)null, 0));
+        return (float[])((float[])malloc(size, (size * 4), 5, (Object)null, 0));
     }
 
     public static double[] malloc8d(int size) {
-        return (double[])((double[])malloc(size, (long)(size * 8), 9, (Object)null, 0));
+        return (double[])((double[])malloc(size, (size * 8), 9, (Object)null, 0));
     }
 
     public static boolean[] mallocZ(int size) {
-        return (boolean[])((boolean[])malloc(size, (long)size, 0, (Object)null, 0));
+        return (boolean[])((boolean[])malloc(size, size, 0, (Object)null, 0));
     }
 
     public static Object[] mallocObj(int size) {
-        return (Object[])((Object[])malloc(size, (long)(size * 8), 10, (Object)null, 0, false));
+        return (Object[])((Object[])malloc(size, (size * 8), 10, (Object)null, 0, false));
     }
 
     public static byte[] arrayCopyOfRange(byte[] orig, int from, int sz) {
-        return (byte[])((byte[])malloc(sz, (long)(sz - from), -1, orig, from));
+        return (byte[])((byte[])malloc(sz, (sz - from), -1, orig, from));
     }
 
     public static int[] arrayCopyOfRange(int[] orig, int from, int sz) {
-        return (int[])((int[])malloc(sz, (long)((sz - from) * 4), -4, orig, from));
+        return (int[])((int[])malloc(sz, ((sz - from) * 4), -4, orig, from));
     }
 
     public static long[] arrayCopyOfRange(long[] orig, int from, int sz) {
-        return (long[])((long[])malloc(sz, (long)((sz - from) * 8), -8, orig, from));
+        return (long[])((long[])malloc(sz, ((sz - from) * 8), -8, orig, from));
     }
 
     public static double[] arrayCopyOfRange(double[] orig, int from, int sz) {
-        return (double[])((double[])malloc(sz, (long)((sz - from) * 8), -9, orig, from));
+        return (double[])((double[])malloc(sz, ((sz - from) * 8), -9, orig, from));
     }
 
     public static byte[] arrayCopyOf(byte[] orig, int sz) {

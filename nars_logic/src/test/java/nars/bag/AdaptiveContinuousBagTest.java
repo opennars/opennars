@@ -21,7 +21,7 @@ public class AdaptiveContinuousBagTest {
         assertEquals(10, Util.bin(1.0f, 10));
         
         
-        assertEquals(0, Util.bin(0f, 9));
+        assertEquals(0, Util.bin(0.0f, 9));
         assertEquals(1, Util.bin(0.1f, 9));
         assertEquals(8, Util.bin(0.9f, 9));
         assertEquals(9, Util.bin(1.0f, 9));

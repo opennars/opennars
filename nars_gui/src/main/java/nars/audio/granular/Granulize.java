@@ -32,7 +32,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
 
 	public Granulize(SonarSample s, float grainSizeSecs) {
-		this(s, grainSizeSecs, 1f);
+		this(s, grainSizeSecs, 1.0f);
 	}
 
     public Granulize(SonarSample s, float grainSizeSecs, float windowSizeFactor) {
@@ -57,7 +57,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 		if (currentGrain == null && isPlaying) {
 			currentGrain = nextGrain(currentGrain);
 		}
-        final float dNow = ((granulator.sampleRate / (float)readRate)) * pitchFactor.floatValue();
+        final float dNow = ((granulator.sampleRate / readRate)) * pitchFactor.floatValue();
 
         float amp = currentAmplitude;
         float dAmp = (amplitude.floatValue() - amp) / output.length;
@@ -156,7 +156,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
     @Override
     public float read(float[] buf, int readRate) {
         process(buf, readRate);
-        return 0f;
+        return 0.0f;
     }
 
     @Override

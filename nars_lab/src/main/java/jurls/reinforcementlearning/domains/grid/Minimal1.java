@@ -29,7 +29,7 @@ public class Minimal1 implements World {
 
     @Override
     public double step(double[] action, double[] sensor) {
-        sensor[0] = Math.sin(  ((double)time) * frequency/3.14159)*0.5 + 0.5;
+        sensor[0] = Math.sin(  (time) * frequency/3.14159)*0.5 + 0.5;
         if (sensor[0] > 0.75) sensor[0] = 1.0;
         if (sensor[0] < 0.25) sensor[0] = 0;
         time++;

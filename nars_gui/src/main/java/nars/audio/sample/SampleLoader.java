@@ -114,7 +114,7 @@ public class SampleLoader
             {
                 // Nasty.. check this.
                 for (int i = 0; i < s; i++)
-                    buf[i] = ((bb.getInt()&0xFFFFFFFFl)-0x80000000l) / (float)0x80000000;
+                    buf[i] = ((bb.getInt()& 0xFFFFFFFFL)- 0x80000000L) / (float)0x80000000;
             }
         }
         

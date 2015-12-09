@@ -56,7 +56,7 @@ public class Division extends Operation {
     }
     
     public Expr deriv(Var respected) {
-        return make(Sum.make(Product.make(denom, numerator.deriv(respected)), Product.make(Num.make(-1d), Product.make(numerator, denom.deriv(respected)))), Exponent.make(denom, Num.make(2d)));
+        return make(Sum.make(Product.make(denom, numerator.deriv(respected)), Product.make(Num.make(-1.0d), Product.make(numerator, denom.deriv(respected)))), Exponent.make(denom, Num.make(2.0d)));
     }
     
     public ArrayList<Expr> getExprs() {

@@ -61,7 +61,7 @@ public class IntBuf {
         int bytes = encode(src.toCharArray(), spCurr, sl, dst, dp, dl);
 
         // only move the position if we fit the whole thing in.
-        return (int) FastMath.ceil(bytes / 4f);
+        return (int) FastMath.ceil(bytes / 4.0f);
     }
 
     public static int encode(char[] sa, final int spCurr, int sl, int[] da,

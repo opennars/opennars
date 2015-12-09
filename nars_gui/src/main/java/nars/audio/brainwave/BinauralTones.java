@@ -24,10 +24,10 @@ public class BinauralTones implements SoundProducer {
 
 
     @Override public float read(float[] buf, int readRate) {
-        float dt = 1f / readRate;
+        float dt = 1.0f / readRate;
 
-        final float leftRate = (carrier - (beat / 2f)) * (float)(Math.PI*2f);
-        final float rigtRate = (carrier + (beat / 2f)) * (float)(Math.PI*2f);
+        final float leftRate = (carrier - (beat / 2.0f)) * (float)(Math.PI* 2.0f);
+        final float rigtRate = (carrier + (beat / 2.0f)) * (float)(Math.PI* 2.0f);
         for (int i = 0; i < buf.length-1; /*stereo*/) {
             buf[i++] = (float)FastMath.sin( x * leftRate );
             buf[i++] = (float)FastMath.sin( x * rigtRate );
@@ -39,7 +39,7 @@ public class BinauralTones implements SoundProducer {
 
     @Override
     public void skip(int samplesToSkip, int readRate) {
-        float dt = 1f / readRate;
+        float dt = 1.0f / readRate;
         x += dt * samplesToSkip;
     }
 

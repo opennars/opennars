@@ -144,7 +144,7 @@ public class Shell extends Sprite
 
         if (facing != 0) anim++;
 
-        float sideWaysSpeed = 11f;
+        float sideWaysSpeed = 11.0f;
         //        float sideWaysSpeed = onGround ? 2.5f : 1.2f;
 
         if (xa > 2)

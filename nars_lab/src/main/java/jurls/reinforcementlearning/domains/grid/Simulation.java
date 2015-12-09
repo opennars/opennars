@@ -149,7 +149,7 @@ public class Simulation {
 
                 long n = System.nanoTime();
                 
-                double cycleTime = ((((double)n) - ((double)lastCycleTime))/1000000000.0);
+                double cycleTime = ((((double)n) - (lastCycleTime))/1000000000.0);
                 double fps = cycles/cycleTime;
                 System.out.println(time + " (" + fps + " cycles/sec)" + " " + cycleTime + "s");
 //                if (agent instanceof BeccaAgent) {

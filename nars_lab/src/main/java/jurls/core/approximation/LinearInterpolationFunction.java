@@ -57,7 +57,7 @@ public class LinearInterpolationFunction implements ParameterizedFunction, Funct
         else if (eHigh==null) {
             return eLow.getValue();
         }
-        return 0d;
+        return 0.0d;
         
     }
 

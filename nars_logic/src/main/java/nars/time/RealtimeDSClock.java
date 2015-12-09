@@ -10,7 +10,7 @@ public class RealtimeDSClock extends RealtimeClock {
 
     @Override
     protected float unitsToSeconds(final long l) {
-        return (l / 10f);
+        return (l / 10.0f);
     }
 
 }

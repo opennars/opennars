@@ -430,7 +430,7 @@ abstract public class AbstractNAR extends NAR {
         public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
         public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
 
-        public final MutableFloat activationFactor = new MutableFloat(1f);
+        public final MutableFloat activationFactor = new MutableFloat(1.0f);
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
 //            return LimitDerivationPriority.limitDerivation(d);
@@ -565,7 +565,7 @@ abstract public class AbstractNAR extends NAR {
 
             final ConceptActivator ca = this.conceptActivator;
             ca.setActivationFactor( activationFactor.floatValue() );
-            return ca.update(term, b, nar.time(), 1f, active);
+            return ca.update(term, b, nar.time(), 1.0f, active);
         }
 
         public final Bag<Term,Concept> concepts() {

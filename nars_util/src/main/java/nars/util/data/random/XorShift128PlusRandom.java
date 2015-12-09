@@ -49,9 +49,9 @@ public class XorShift128PlusRandom extends Random {
 	private static final long serialVersionUID = 1L;
 
 	/** 2<sup>-53</sup>. */
-	private static final double NORM_53 = 1. / ( 1L << 53 );
+	private static final double NORM_53 = 1.0 / ( 1L << 53 );
 	/** 2<sup>-24</sup>. */
-	private static final double NORM_24 = 1. / ( 1L << 24 );
+	private static final double NORM_24 = 1.0 / ( 1L << 24 );
 
 	/** The internal state of the algorithm. */
 	private long s0, s1;

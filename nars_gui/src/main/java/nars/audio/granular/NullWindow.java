@@ -19,6 +19,6 @@ public class NullWindow implements GrainWindow {
 
     @Override
     public float getFactor(int offset) {
-        return 1f;
+        return 1.0f;
     }
 }

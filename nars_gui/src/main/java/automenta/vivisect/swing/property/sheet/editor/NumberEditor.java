@@ -94,9 +94,9 @@ public class NumberEditor extends AbstractPropertyEditor {
         Object before = lastGoodValue;
         try {        	
         	lastGoodValue = Double.parseDouble(number.toString());
-        	if ((double)lastGoodValue > maxVal)
+        	if ((Double)lastGoodValue > maxVal)
         		throw new Exception(lastGoodValue + " is too large");
-        	if ((double)lastGoodValue < minVal)
+        	if ((Double)lastGoodValue < minVal)
         		throw new Exception(lastGoodValue + " is too small");
         }
         catch (Exception e) {
@@ -118,7 +118,7 @@ public class NumberEditor extends AbstractPropertyEditor {
     }
 
     private Object getDefaultValue() {
-       return 0d;
+       return 0.0d;
     }
     
     public static class IntegerEditor extends NumberEditor {

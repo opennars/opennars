@@ -186,7 +186,7 @@ public enum Tense  {
     }
 
     public static int order(final float timeDiff, final int durationCycles) {
-        final float halfDuration = durationCycles / 2f;
+        final float halfDuration = durationCycles / 2.0f;
         if (timeDiff >= halfDuration) {
             return ORDER_FORWARD;
         } else if (timeDiff <= -halfDuration) {

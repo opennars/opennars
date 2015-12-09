@@ -225,7 +225,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * quality: max(this, b)    (similar to merge)
      */
     public final Budget mergePlus(final Budget b) {
-        return mergePlus(b, 1f);
+        return mergePlus(b, 1.0f);
     }
 
     public final Budget mergePlus(final Budget b, float factor) {
@@ -233,7 +233,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     public final Budget mergePlus(float addPriority, final float otherDurability, final float otherQuality) {
-        return mergePlus(addPriority, otherDurability, otherQuality, 1f);
+        return mergePlus(addPriority, otherDurability, otherQuality, 1.0f);
     }
 
     /** linearly interpolates the change affected to determine dur, qua */
@@ -250,7 +250,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         /* current proportion */ final float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
                 0.5f : /* both are zero so they have equal infleunce */
                 (currentPriority / currentNextPrioritySum);
-        /* next proportion */ final float np = 1f - cp;
+        /* next proportion */ final float np = 1.0f - cp;
 
 
         float D = getDurability();
@@ -280,7 +280,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
                 (currentPriority / prisum);
 
         /* next proportion */
-        final float np = 1f - cp;
+        final float np = 1.0f - cp;
 
         budget(
                 cp * getPriority() + np * that.getPriority(),
@@ -309,7 +309,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * set all quantities to zero
      */
     public final Budget zero() {
-        this.priority = this.durability = this.quality = 0f;
+        this.priority = this.durability = this.quality = 0.0f;
         return this;
     }
 

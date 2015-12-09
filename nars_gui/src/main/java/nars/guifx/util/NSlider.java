@@ -254,7 +254,7 @@ public class NSlider extends NControl {
 
         g1.setLineWidth(0);
         double hp = 0.5 + 0.5 * p;
-        g1.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g1.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1.0f));
         g1.fillRect(mh, mh, barSize - mh * 2, H - mh * 2);
     };
 
@@ -274,7 +274,7 @@ public class NSlider extends NControl {
         //TODO use a x,w calculation that keeps the notch within bounds that none if it goes invisible at the extremes
 
         double hp = 0.5 + 0.5 * p;
-        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1.0f));
         g.fillRect(mh + barSize - notchRadius, mh, notchRadius * 2, H - mh * 2);
     };
 
@@ -311,7 +311,7 @@ public class NSlider extends NControl {
         g.fillOval(ul, ut, ew, eh);
 
         double hp = 0.5 + 0.5 * p;
-        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1.0f));
 
 
         final double atheta = theta * 180.0 / Math.PI; //radian to degree

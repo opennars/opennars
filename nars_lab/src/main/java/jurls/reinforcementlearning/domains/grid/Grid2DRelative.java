@@ -139,8 +139,8 @@ public class Grid2DRelative implements World {
         this.action = action;
         
         double speed = 0.001;
-        focusPositionX = speed * ((double)nextFocusPositionX) + (1.0 - speed) * focusPositionX;
-        focusPositionY = speed * ((double)nextFocusPositionY) + (1.0 - speed) * focusPositionY;
+        focusPositionX = speed * (nextFocusPositionX) + (1.0 - speed) * focusPositionX;
+        focusPositionY = speed * (nextFocusPositionY) + (1.0 - speed) * focusPositionY;
 
         //# At random intervals, jump to a random position in the world
         if (Math.random() < JUMP_FRACTION) {

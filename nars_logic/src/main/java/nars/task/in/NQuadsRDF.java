@@ -332,7 +332,7 @@ abstract public class NQuadsRDF {
 
         if (belief!=null) {
             return new MutableTask().term(belief).
-                    belief().truth(1f,0.9f)
+                    belief().truth(1.0f,0.9f)
                     .time(nar.time(),
                     Tense.ETERNAL //TODO Tense parameter
                     );

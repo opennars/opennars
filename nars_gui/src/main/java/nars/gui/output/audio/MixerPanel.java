@@ -22,7 +22,7 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
     private final JTable playingTable;
     boolean running = false;
     final long updatePeriodMS = 512;
-    final AtomicDouble pan = new AtomicDouble(0f);
+    final AtomicDouble pan = new AtomicDouble(0.0f);
 
     public MixerPanel(Audio sound) {
         super(new BorderLayout());

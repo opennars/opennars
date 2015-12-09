@@ -34,7 +34,7 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
 
     public float getActivationFactor() {
-        return 1f;
+        return 1.0f;
     }
 
     abstract public long time();

@@ -38,7 +38,7 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
         this.prefix = prefix;
 
         text = new JTextArea();
-        text.setFont(Video.fontMono(16f).deriveFont(Font.BOLD));
+        text.setFont(Video.fontMono(16.0f).deriveFont(Font.BOLD));
         add(text, CENTER);
         
         this.nar = n;
@@ -84,12 +84,12 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
 
     @Override
     public void focusGained(FocusEvent e) {        
-        setFocus(1f, 0.9f);
+        setFocus(1.0f, 0.9f);
     }
 
     @Override
     public void focusLost(FocusEvent e) {        
-        setFocus(0f, 0.9f);
+        setFocus(0.0f, 0.9f);
     }
     
             

@@ -186,7 +186,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeEdgeDistance</code> must be true for edge to nodes
 	 * distances to be taken into account.
 	 */
-	protected float edgeDistanceCostFactor = 3000f;
+	protected float edgeDistanceCostFactor = 3000.0f;
 
 	/**
 	 * Cost factor applied to energy calculations involving edges that cross
@@ -195,7 +195,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeEdgeCrossing</code> must be true for edge crossings
 	 * to be taken into account.
 	 */
-	protected float edgeCrossingCostFactor = 6000f;
+	protected float edgeCrossingCostFactor = 6000.0f;
 
 	/**
 	 * Cost factor applied to energy calculations involving the general node
@@ -205,7 +205,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeNodeDistribution</code> must be true for this general
 	 * distribution to be applied.
 	 */
-	protected float nodeDistributionCostFactor = 30000f;
+	protected float nodeDistributionCostFactor = 30000.0f;
 
 	/**
 	 * Cost factor applied to energy calculations for node promixity to the
@@ -215,7 +215,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeBorderLine</code> must be true for border
 	 * repulsion to be applied.
 	 */
-	protected float borderLineCostFactor = 5f;
+	protected float borderLineCostFactor = 5.0f;
 
 	/**
 	 * Cost factor applied to energy calculations for the edge lengths.
@@ -286,7 +286,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	@Range(min = 0, max = 0.2)
 	public final SimpleDoubleProperty vertexSpeed = new SimpleDoubleProperty(0.04);
 
-	float vertexMotionThreshold = 0f;
+	float vertexMotionThreshold = 0.0f;
 
 
 	/**
@@ -604,8 +604,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			vertices[i] = vi.cell;
 			bounds = getVertexBounds(vertices[i]);
 
-			result[i][0] = vi.x - bounds.width / 2f;
-			result[i][1] = vi.y - bounds.height / 2f;
+			result[i][0] = vi.x - bounds.width / 2.0f;
+			result[i][1] = vi.y - bounds.height / 2.0f;
 		}
 
 		final float vertexSpeed = this.vertexSpeed.floatValue();
@@ -628,7 +628,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		//}
 	}
 
-	Rectangle2D.Float unit = new Rectangle2D.Float(-32f, -32f, 32f, 32f);
+	Rectangle2D.Float unit = new Rectangle2D.Float(-32.0f, -32.0f, 32.0f, 32.0f);
 
 	private Rectangle2D.Float getVertexBounds(GraphNode vertice) {
 		return unit;
@@ -1067,16 +1067,16 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			var8 = var4 - var8;
 			var10 = var6 - var10;
 			var12 = var8 * var4 + var10 * var6;
-			if (var12 <= 0f) {
-				var14 = 0f;
+			if (var12 <= 0.0f) {
+				var14 = 0.0f;
 			} else {
 				var14 = var12 * var12 / (var4 * var4 + var6 * var6);
 			}
 		}
 
 		float var16 = var8 * var8 + var10 * var10 - var14;
-		if (var16 < 0f) {
-			var16 = 0f;
+		if (var16 < 0.0f) {
+			var16 = 0.0f;
 		}
 
 		return var16;

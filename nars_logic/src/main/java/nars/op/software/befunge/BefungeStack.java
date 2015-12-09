@@ -19,10 +19,10 @@ public class BefungeStack {
     }
 
     Long pop(){
-        return stack.isEmpty() ? (long) 0 : stack.pop();
+        return stack.isEmpty() ? 0L : stack.pop();
     }
 
     Long peek(){
-        return stack.isEmpty() ? (long) 0 : stack.peek();
+        return stack.isEmpty() ? 0L : stack.peek();
     }
 }

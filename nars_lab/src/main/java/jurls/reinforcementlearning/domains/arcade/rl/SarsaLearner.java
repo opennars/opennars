@@ -150,7 +150,7 @@ public class SarsaLearner {
         double oldValue = valueFunction[lastAction].predict(lastFeatures);
 
         // Early exit for diverging agents
-        if (Double.isNaN(oldValue) || oldValue >= 10E7)
+        if (Double.isNaN(oldValue) || oldValue >= 10.0E7)
             throw new RuntimeException("Diverged.");
 
         // Compute Q(s',a')

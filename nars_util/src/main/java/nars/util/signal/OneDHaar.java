@@ -245,7 +245,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -254,7 +254,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = (signal[i] + signal[i + 1]) / 2.0;
                 ccoeffs[ci++] = (signal[i] - signal[i + 1]) / 2.0;
@@ -322,7 +322,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -331,7 +331,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = FSNORM * (sample[i] + sample[i + 1])/2.0;
                 ccoeffs[ci++] = FDNORM * (sample[i] - sample[i + 1]);
@@ -397,7 +397,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -406,7 +406,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = (signal[i] + signal[i + 1]) / 2.0;
                 ccoeffs[ci++] = (signal[i] - signal[i + 1]) / 2.0;
@@ -449,7 +449,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -458,7 +458,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = FSNORM * (sample[i] + sample[i + 1])/2.0;
                 ccoeffs[ci++] = FDNORM * (sample[i] - sample[i + 1]);

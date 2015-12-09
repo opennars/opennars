@@ -602,7 +602,7 @@ public class FindSubst extends Versioning implements Subst {
             }
         }
 
-        if (powerDivisor != 1f)
+        if (powerDivisor != 1.0f)
             throw new RuntimeException("power divisor not restored");
 
         return match;

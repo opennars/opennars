@@ -123,7 +123,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
             return false;
 
         //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-        final float factor = 1f / (tl.size());
+        final float factor = 1.0f / (tl.size());
         Budget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
 
         if (subBudget.summaryLessThan(nar.memory.termLinkThreshold.floatValue()))
@@ -245,7 +245,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
 
 
-        final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1f / numTemplates);
+        final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
         if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
             return false;
 

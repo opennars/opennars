@@ -19,7 +19,7 @@ public class ConceptComet extends HyperassociativeMap2D {
     double axisTheta = 0;
 
     final double thickness = 250;
-    double timeScale = 10f;
+    double timeScale = 10.0f;
     double now = 0; /* center of view */
     double cutoff = 50;
 

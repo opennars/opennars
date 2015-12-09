@@ -60,7 +60,7 @@ public class Logarithm extends Function {
         
         if (base.sign() <= 0 || (base instanceof Num && ((Num) base).val() == 1)) return new Undef();
         if (ofExpr.sign() <= 0) return new Undef();
-        if (base.equalsExpr(ofExpr)) return Num.make(1d);
+        if (base.equalsExpr(ofExpr)) return Num.make(1.0d);
         if (ofExpr instanceof Exponent && base.equals(((Operation) ofExpr).getExprs().get(0))) return ((Operation) ofExpr).getExprs().get(0);
         
         return this;

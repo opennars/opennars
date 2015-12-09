@@ -1,6 +1,5 @@
 package nars.guifx.graph2;
 
-import com.google.common.collect.Iterables;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import nars.NAR;
@@ -15,6 +14,8 @@ import nars.util.event.Active;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Example Concept supplier with some filters
@@ -143,7 +144,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
             double minPri = this.minPri.get();
             double maxPri = this.maxPri.get();
 
-            final Iterable<Concept> ii = Iterables.filter(x, cc -> {
+            final Iterable<Concept> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
 
                 float p = cc.getPriority();
                 if ((p < minPri) || (p > maxPri))
@@ -157,7 +158,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
                 return true;
 
-            });
+            }).collect(Collectors.toList());
 
             commit(ii);
         }

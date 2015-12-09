@@ -67,14 +67,14 @@ public class SimpleNARBudgetDynamics {
                 if (numConcepts == 0) numConcepts = 1;
 
                 metrics
-                        .set("a pri", nar.memory.conceptPriority(term("a"), 0f))
-                        .set("b pri", nar.memory.conceptPriority(term("b"), 0f))
-                        .set("c pri", nar.memory.conceptPriority(term("c"), 0f))
-                        .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>"), 0f))
+                        .set("a pri", nar.memory.conceptPriority(term("a"), 0.0f))
+                        .set("b pri", nar.memory.conceptPriority(term("b"), 0.0f))
+                        .set("c pri", nar.memory.conceptPriority(term("c"), 0.0f))
+                        .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>"), 0.0f))
                         //.set("<b-->a> pri", nar.memory.conceptPriority(term("<b-->a>")))
-                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>"), 0f))
-                        .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>"), 0f))
-                        .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>"), 0f))
+                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>"), 0.0f))
+                        .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>"), 0.0f))
+                        .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>"), 0.0f))
                         .set("mean(concept pri)", conPriSum / numConcepts) // .getActivePriorityPerConcept(true, false, false)
                 ;
             })

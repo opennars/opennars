@@ -58,7 +58,7 @@ public class CurveBagBatchUpdateTest {
 
 
         int[] x = BagGenerators.testRemovalPriorityDistribution(
-                loops, insertsPerLoop, 1f , cb
+                loops, insertsPerLoop, 1.0f, cb
         );
         System.out.println(Arrays.toString(x));
 

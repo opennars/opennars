@@ -212,7 +212,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
             //TODO test and if possible use more fair policy that accounts for clipping
             if (istart-r < 0) {
-                istart += -(istart-r); //start further below
+                istart -= (istart - r); //start further below
             }
             if (istart >= siz)
                 istart = siz-1;
@@ -394,7 +394,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         @Override
         public final float valueOf(final float x) {
-            return (float) (1f - Math.exp(-5f * x));
+            return (float) (1.0f - Math.exp(-5.0f * x));
         }
 
         @Override
@@ -412,8 +412,8 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
-            float nx = 1f - x;
-            return 1f - (nx * nx);
+            float nx = 1.0f - x;
+            return 1.0f - (nx * nx);
         }
 
         @Override

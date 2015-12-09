@@ -88,7 +88,7 @@ public class NarseseTest {
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
-        assertEquals(1f, t.getTruth().getFrequency(), 0.001);
+        assertEquals(1.0f, t.getTruth().getFrequency(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.getTruth().getConfidence(), 0.001);
     }
 
@@ -109,7 +109,7 @@ public class NarseseTest {
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
-        assertEquals(0f, t.getFrequency(), 0.001);
+        assertEquals(0.0f, t.getFrequency(), 0.001);
         assertEquals(0.93f, t.getConfidence(), 0.001);
     }
 

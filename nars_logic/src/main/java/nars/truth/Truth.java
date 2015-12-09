@@ -80,7 +80,7 @@ public interface Truth extends MetaTruth<Float> {
 
     /** expectation inverse, ie. the expectation of freq=0  */
     default float getExpectationNegative() {
-        return expectation(1f-getFrequency(), getConfidence());
+        return expectation(1.0f -getFrequency(), getConfidence());
     }
 
     static float expectation(final float frequency, final float confidence) {
@@ -199,7 +199,7 @@ public interface Truth extends MetaTruth<Float> {
     /** negation that modifies the truth instance itself */
     default Truth negate() {
         //final float f = 1 - getFrequency();
-        return setFrequency(1f - getFrequency());
+        return setFrequency(1.0f - getFrequency());
     }
 
     default float projectionQuality(Task s, long targetTime, long currentTime, boolean problemHasQueryVar) {

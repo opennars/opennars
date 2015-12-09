@@ -11,6 +11,6 @@ public class RealtimeMSClock extends RealtimeClock {
 
     @Override
     protected final float unitsToSeconds(final long l) {
-        return (l / 1000f);
+        return (l / 1000.0f);
     }
 }

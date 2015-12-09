@@ -118,15 +118,15 @@ public class Level
     }
 
     public byte getBlock(float _x, float _y) {
-        int x = Math.round(_x / 16f);
-        int y = Math.round(_y / 16f);
+        int x = Math.round(_x / 16.0f);
+        int y = Math.round(_y / 16.0f);
         if ((x < 0) || (y < 0) || (x >= width) || (y >= height))  return -1;
         return map[x][y];
     }
     
     public byte getData(float _x, float _y) {
-        int x = Math.round(_x / 16f);
-        int y = Math.round(_y / 16f);
+        int x = Math.round(_x / 16.0f);
+        int y = Math.round(_y / 16.0f);
         if ((x < 0) || (y < 0) || (x >= width) || (y >= height))  return -1;
         return data[x][y];
     }

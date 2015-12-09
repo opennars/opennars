@@ -170,7 +170,7 @@ public class ConceptSonification extends FrameReaction {
 
         SoundProducer g = playing.computeIfAbsent(c, cc -> {
             SoundProducer sp = sound(cc);
-            sound.play(sp, 1f, 1f);
+            sound.play(sp, 1.0f, 1.0f);
             playing.put(cc, sp);
             return sp;
         });
@@ -188,7 +188,7 @@ public class ConceptSonification extends FrameReaction {
 
         Granulize g = new Granulize(sp,
                 /* grain size */
-                0.3f * (1 + c.getTerm().volume()/2f),
+                0.3f * (1 + c.getTerm().volume()/ 2.0f),
                 1.0f
             ).at(
                 //terms get positoined according to their hash
@@ -205,7 +205,7 @@ public class ConceptSonification extends FrameReaction {
         return c.getPriority() > audiblePriorityThreshold;
     }
 
-    final static double twoTo12 = Math.pow((2),1/12.);
+    final static double twoTo12 = Math.pow((2),1/ 12.0);
 
     /** return if it should continue */
     private boolean update(Concept c, SoundProducer g) {
@@ -221,10 +221,10 @@ public class ConceptSonification extends FrameReaction {
             if (g instanceof Granulize) {
                 Granulize gg = ((Granulize) g);
                 gg.setStretchFactor(
-                        0.85f + c.getDurability()/3f );// + 4f * (1f - c.getQuality()));
+                        0.85f + c.getDurability()/ 3.0f);// + 4f * (1f - c.getQuality()));
 
 
-                float pitch = 1f;
+                float pitch = 1.0f;
                 //        0.5f + 0.5f * c.getQuality();
 
                 /*

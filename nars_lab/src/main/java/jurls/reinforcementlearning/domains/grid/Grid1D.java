@@ -92,7 +92,7 @@ public class Grid1D implements World {
         }
         
         //# Ensure that the world state falls between 0 and 9
-        worldState -= size * Math.floor( ((double)worldState) / ((double)size) );
+        worldState -= size * Math.floor( ((double)worldState) / (size) );
         simpleState = (int)Math.floor(worldState);
         if (simpleState == 9) simpleState = 0;
         
@@ -113,7 +113,7 @@ public class Grid1D implements World {
     
     public double getReward(double[] sensor) {
         
-        double reward = 0.;
+        double reward = 0.0;
         reward -= sensor[8] * REWARD_MAGNITUDE;
         reward += sensor[3] * REWARD_MAGNITUDE;
         

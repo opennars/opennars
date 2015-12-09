@@ -216,7 +216,7 @@ public final class Fast {
 	 */
 	public static double pow2( final int exponent ) {
 		//return fixedValues[ approximate + ( 1 << EXPONENT_BITS ) - ADJUSTMENT - 1 ];
-		if ( exponent < 0 ) return 1. / ( 1L  << -exponent );
+		if ( exponent < 0 ) return 1.0 / ( 1L  << -exponent );
 		return 1L << exponent;
 	}
 

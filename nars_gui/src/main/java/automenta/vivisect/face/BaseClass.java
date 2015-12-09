@@ -52,9 +52,9 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     
     Kernel kernel = new Kernel(3, 3,
     new float[] {
-  1f/9f, 1f/9f, 1f/9f,
-  1f/9f, 1f/9f, 1f/9f,
-  1f/9f, 1f/9f, 1f/9f});
+            1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f,
+            1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f,
+            1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f});
     BufferedImageOp op = new ConvolveOp(kernel);
     
     public BaseClass()   
@@ -89,7 +89,7 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     {   
         int j1 = k - i;   
         int k1 = l - j;   
-        int l1 = (int)Math.sqrt((double)(j1 * j1 + k1 * k1) + 0.5D);   
+        int l1 = (int)Math.sqrt((j1 * j1 + k1 * k1) + 0.5D);
         if(l1 > 0)   
         {   
             int i2 = (-k1 * i1) / l1 / 2;   
@@ -110,7 +110,7 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     {   
         int j1 = k - i;   
         int k1 = l - j;   
-        int l1 = (int)Math.sqrt((double)(j1 * j1 + k1 * k1) + 0.5D);   
+        int l1 = (int)Math.sqrt((j1 * j1 + k1 * k1) + 0.5D);
         if(l1 > 0)   
         {   
             int i2 = (-k1 * i1) / l1 / 2;   

@@ -46,7 +46,7 @@ public class WaveCapture implements Runnable {
 
         if (FRAME_RATE > 0) {
             exec = new ScheduledThreadPoolExecutor(1);
-            exec.scheduleAtFixedRate(this, 0, (long) (1000f / FRAME_RATE),
+            exec.scheduleAtFixedRate(this, 0, (long) (1000.0f / FRAME_RATE),
                     TimeUnit.MILLISECONDS);
 
         }
@@ -134,8 +134,8 @@ public class WaveCapture implements Runnable {
 //                while (history.size() > maxHistory)
 //                    history.removeAtIndex(0);
 
-                minValue = -1f; //Short.MIN_VALUE;
-                maxValue = 1f;  //Short.MAX_VALUE;
+                minValue = -1.0f; //Short.MIN_VALUE;
+                maxValue = 1.0f;  //Short.MAX_VALUE;
 //                                        minValue = Float.POSITIVE_INFINITY;
 //                                        maxValue = Float.NEGATIVE_INFINITY;
 //

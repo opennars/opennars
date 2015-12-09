@@ -177,7 +177,7 @@ public abstract class FastByteComparisons {
                 final Unsafe tu = theUnsafe;
                 final boolean e = littleEndian;
                 for (int i = 0; i < minWords * Longs.BYTES; i += Longs.BYTES) {
-                    final long li = (long)i;
+                    final long li = i;
                     long lw = tu.getLong(buffer1, offset1Adj + li);
                     long rw = tu.getLong(buffer2, offset2Adj + li);
                     long diff = lw ^ rw;

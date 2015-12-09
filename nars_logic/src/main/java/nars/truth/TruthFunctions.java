@@ -51,7 +51,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final Truth negation(final Truth v1) {
-        final float f = 1f - v1.getFrequency();
+        final float f = 1.0f - v1.getFrequency();
         final float c = v1.getConfidence();
         return new DefaultTruth(f, c);
 
@@ -351,7 +351,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final Truth reduceDisjunction(final Truth a, final Truth b) {
-        return deduction(intersection(a, negation(b)), 1f);
+        return deduction(intersection(a, negation(b)), 1.0f);
     }
 
     /**
@@ -362,7 +362,7 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final Truth reduceConjunction(final Truth v1, final Truth v2) {
         final Truth v0 = intersection(negation(v1), v2);
-        return negation(deduction(v0, 1f));
+        return negation(deduction(v0, 1.0f));
 
 //        AnalyticTruth x = deduction(
 //                intersection(negation(a), b),

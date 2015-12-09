@@ -12,7 +12,7 @@ public class PeriodicForgettingTest {
         int forgetCycles = 5;
         int maxTime = 100;
 
-        float initPriority = 1f;
+        float initPriority = 1.0f;
         float durability = 0.5f;
         float quality = 0.5f;
         float budgetThreshold = 0.01f;

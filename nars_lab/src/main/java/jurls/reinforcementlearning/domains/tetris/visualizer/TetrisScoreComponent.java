@@ -40,7 +40,7 @@ public class TetrisScoreComponent {
 	    g.setColor(Color.BLACK);
 	    //DRAW STRING
 	    AffineTransform saveAT = g.getTransform();
-   	    g.scale(.01, .01);
+   	    g.scale(0.01, 0.01);
 //	    g.drawString("Lines: " +tetVis.getScore(),0.0f, 10.0f);
 //	    g.drawString("E/S/T: " +tetVis.getEpisodeNumber()+"/"+tetVis.getTimeStep()+"/"+tetVis.getTotalSteps(),0.0f, 20.0f);
 //	    g.drawString("CurrentPiece: " + tetVis.getCurrentPiece(), 0.0f, 30.0f);

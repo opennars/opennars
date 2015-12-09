@@ -36,10 +36,10 @@ public class ColorModelSet implements SurfaceColor
 	protected ColorModel alt_opaque;
 	
 	protected Color lineColor=Color.DARK_GRAY;
-	protected  Color lineboxColor=Color.getHSBColor(0f,0f,0.5f);
+	protected  Color lineboxColor=Color.getHSBColor(0.0f, 0.0f,0.5f);
 	protected  Color lightColor=Color.WHITE;
 	// Color(192,220,192); existing
-	protected  Color boxColor=Color.getHSBColor(0f,0f,0.95f);//Color.getHSBColor(226f/240f,145f/240f,1f);
+	protected  Color boxColor=Color.getHSBColor(0.0f, 0.0f,0.95f);//Color.getHSBColor(226f/240f,145f/240f,1f);
 	
 	public ColorModelSet()
 	{
@@ -49,19 +49,19 @@ public class ColorModelSet implements SurfaceColor
 		for (int i=0;i<3;i++) { System.out.println((i==0?"":",")+f[i]);}
 		*/
 		
-		dualshade= new ColorModel(		ColorModel.DUALSHADE,	RED_H	,	RED_S	,	RED_B	,	0.4f	,	1f		);
-		grayscale= new ColorModel(		ColorModel.DUALSHADE,	0f		,	0f		,	0f		,	0f		,	1f		);
-		spectrum= new ColorModel(		ColorModel.SPECTRUM	,	0f		,	1f		,	1f		,	0f		,	.6666f	);
-		fog= new ColorModel(			ColorModel.FOG		,	RED_H	,	RED_S	,	RED_B	,	0f		,	1f		);
-		opaque= new ColorModel(			ColorModel.OPAQUE	,	RED_H	,	0.1f	,	1f		,	0f		,	0f		);
+		dualshade= new ColorModel(		ColorModel.DUALSHADE,	RED_H	,	RED_S	,	RED_B	,	0.4f	, 1.0f);
+		grayscale= new ColorModel(		ColorModel.DUALSHADE, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+		spectrum= new ColorModel(		ColorModel.SPECTRUM	, 0.0f, 1.0f, 1.0f, 0.0f, 0.6666f);
+		fog= new ColorModel(			ColorModel.FOG		,	RED_H	,	RED_S	,	RED_B	, 0.0f, 1.0f);
+		opaque= new ColorModel(			ColorModel.OPAQUE	,	RED_H	,	0.1f	, 1.0f, 0.0f, 0.0f);
 
 		
 		
-		alt_dualshade= new ColorModel(	ColorModel.DUALSHADE,	GOLD_H	,	GOLD_S	,	GOLD_B	,	0.4f	,	1f		);
-		alt_grayscale= new ColorModel(	ColorModel.DUALSHADE,	0f		,	0f		,	0f		,	0f		,	1f		);
-		alt_spectrum= new ColorModel(	ColorModel.SPECTRUM	,	0f		,	1f		,	0.8f	,	0f		,	.6666f	);
-		alt_fog= new ColorModel(		ColorModel.FOG		,	GOLD_H	,	0f		,	GOLD_B	,	0f		,	1f		);
-		alt_opaque= new ColorModel(		ColorModel.OPAQUE	,	GOLD_H	,	0.1f	,	1f		,	0f		,	0f		);
+		alt_dualshade= new ColorModel(	ColorModel.DUALSHADE,	GOLD_H	,	GOLD_S	,	GOLD_B	,	0.4f	, 1.0f);
+		alt_grayscale= new ColorModel(	ColorModel.DUALSHADE, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+		alt_spectrum= new ColorModel(	ColorModel.SPECTRUM	, 0.0f, 1.0f,	0.8f	, 0.0f, 0.6666f);
+		alt_fog= new ColorModel(		ColorModel.FOG		,	GOLD_H	, 0.0f,	GOLD_B	, 0.0f, 1.0f);
+		alt_opaque= new ColorModel(		ColorModel.OPAQUE	,	GOLD_H	,	0.1f	, 1.0f, 0.0f, 0.0f);
 		
 	}
 	

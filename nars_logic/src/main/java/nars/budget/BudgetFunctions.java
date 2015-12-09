@@ -54,7 +54,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 //        if (t == null)
 //            throw new RuntimeException("truth null");
         final float exp = t.getExpectation();
-        return Math.max(exp, (1f - exp) * 0.75f);
+        return Math.max(exp, (1.0f - exp) * 0.75f);
     }
 
 
@@ -73,18 +73,18 @@ public final class BudgetFunctions extends UtilityFunctions {
         final float difT = truth.getExpDifAbs(tTruth);
 
         final Budget tb = task.getBudget();
-        tb.andPriority(1f - difT);
-        tb.andDurability(1f - difT);
+        tb.andPriority(1.0f - difT);
+        tb.andDurability(1.0f - difT);
 
         boolean feedbackToLinks = (p instanceof ConceptProcess);
         if (feedbackToLinks) {
             TaskLink tLink = ((ConceptProcess) p).getTaskLink();
-            tLink.andPriority(1f - difT);
-            tLink.andDurability(1f - difT);
+            tLink.andPriority(1.0f - difT);
+            tLink.andDurability(1.0f - difT);
             TermLink bLink = p.getTermLink();
             final float difB = truth.getExpDifAbs(bTruth);
-            bLink.andPriority(1f - difB);
-            bLink.andDurability(1f - difB);
+            bLink.andPriority(1.0f - difB);
+            bLink.andDurability(1.0f - difB);
         }
 
         float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
@@ -246,7 +246,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         final long t = budget.setLastForgetTime(currentTime);
 
-        final float lambda = (1f - budget.getDurability()) / forgetPeriod;
+        final float lambda = (1.0f - budget.getDurability()) / forgetPeriod;
 
         final float relativeThreshold = 0.1f;
 
@@ -374,7 +374,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackward(final Term content, final Premise nal) {
-        return budgetInference(1f, content.complexity(), nal);
+        return budgetInference(1.0f, content.complexity(), nal);
     }
 
     /**
@@ -407,9 +407,9 @@ public final class BudgetFunctions extends UtilityFunctions {
                 // (float) (1f / Math.sqrt(Math.max(1, complexity))) //experimental, reduces dur and qua by sqrt of complexity (more slowly)
 
                 // linear factor (original)
-                (1f / Math.max(1, complexity))
+                (1.0f / Math.max(1, complexity))
 
-                : 1f;
+                : 1.0f;
 
         return budgetInference(target, qual, complexityFactor, nal);
     }

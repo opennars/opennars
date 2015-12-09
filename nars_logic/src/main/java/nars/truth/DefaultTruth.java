@@ -51,7 +51,7 @@ public class DefaultTruth extends AbstractScalarTruth {
 
     public DefaultTruth(final char punctuation, Memory m) {
         super();
-        set(1f, m.getDefaultConfidence(punctuation));
+        set(1.0f, m.getDefaultConfidence(punctuation));
     }
 
     /** 0, 0 default */

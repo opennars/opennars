@@ -84,7 +84,7 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
 
         double[] ys = new double[components];
         for (int i = 0; i < ys.length; ++i) {
-            ys[i] = 2f * (Math.random() - 0.5);
+            ys[i] = 2.0f * (Math.random() - 0.5);
         }
         f = new RenderArrayFunction1D(Color.blue, ys);
 

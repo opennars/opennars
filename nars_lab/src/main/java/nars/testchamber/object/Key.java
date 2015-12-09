@@ -26,7 +26,7 @@ public class Key extends LocalGridObject {
 
     @Override
     public void draw() {
-        float scale = (float)Math.sin(space.getTime()/7f)*0.05f + 1.0f;
+        float scale = (float)Math.sin(space.getTime()/ 7.0f)*0.05f + 1.0f;
         float a = space.getTime()/10;
         
         space.pushMatrix();

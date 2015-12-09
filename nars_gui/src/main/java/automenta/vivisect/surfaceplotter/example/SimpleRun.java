@@ -48,7 +48,7 @@ public class SimpleRun {
                         }
                     }
                     
-                     sm.setValues(0f, 200f, 0f, 200f, max, z1, null);
+                     sm.setValues(0.0f, 200.0f, 0.0f, 200.0f, max, z1, null);
 
                     try {
                         Thread.sleep(1);

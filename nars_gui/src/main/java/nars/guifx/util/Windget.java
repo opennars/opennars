@@ -288,7 +288,7 @@ public class Windget extends DefaultWindow  {
             if (p!=null) {
                 listen(p.getWindow(), true);
                 setMouseTransparent(false);
-                setOpacity(1f);
+                setOpacity(1.0f);
             }
             else {
                 setMouseTransparent(true);
@@ -401,10 +401,10 @@ public class Windget extends DefaultWindow  {
     }
 
     public final double getCenterX() {
-        return getLayoutX() + content.getWidth()/2d;
+        return getLayoutX() + content.getWidth()/ 2.0d;
     }
     public final double getCenterY() {
-        return getLayoutY() + content.getHeight()/2d;
+        return getLayoutY() + content.getHeight()/ 2.0d;
     }
     public final void move(final ArrayRealVector centerPosition) {
         double x = centerPosition.getEntry(0);

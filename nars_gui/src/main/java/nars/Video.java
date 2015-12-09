@@ -112,7 +112,7 @@ public class Video {
     static {
         InputStream is = FontAwesomeIconView.class.getResourceAsStream("/de/jensd/fx/glyphs/fontawesome/fontawesome-webfont.ttf");
         try {
-            FontAwesome = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(18f);
+            FontAwesome = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(18.0f);
         } catch (Exception e) {
             e.printStackTrace();
             FontAwesome = monofont;
@@ -148,12 +148,12 @@ public class Video {
     public static int getColor(final Class c) {            
         //float hue = (((float)c.hashCode()) / Integer.MAX_VALUE);
         float hue = hashFloat(c.hashCode());
-        return color(hue,0.8f,0.9f,1f);
+        return color(hue,0.8f,0.9f, 1.0f);
     }
     
     public static int getColor(final String s) {
         float hue = hashFloat(s.hashCode()); //(((float)s.hashCode()) / Integer.MAX_VALUE);
-        return color(hue,0.8f,0.9f,1f);
+        return color(hue,0.8f,0.9f, 1.0f);
     }
 
     public static Font fontMono(float size) {
@@ -203,7 +203,7 @@ public class Video {
     //    }
 
     public static int colorHSB(float hue, float saturation, float brightness, float alpha) {
-        return Color.HSBtoRGB(hue, saturation, brightness) & 0x00ffffff | ((int)(255f*alpha) << 24);
+        return Color.HSBtoRGB(hue, saturation, brightness) & 0x00ffffff | ((int)(255.0f *alpha) << 24);
     }
     public static int colorHSB(float hue, float saturation, float brightness) {
         return Color.HSBtoRGB(hue, saturation, brightness);

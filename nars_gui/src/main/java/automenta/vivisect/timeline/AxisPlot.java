@@ -25,7 +25,7 @@ public abstract class AxisPlot {
     }
     
     public AxisPlot() {
-        plotHeight = 1f;
+        plotHeight = 1.0f;
     }
 
     public AxisPlot pos(float x, float y) {

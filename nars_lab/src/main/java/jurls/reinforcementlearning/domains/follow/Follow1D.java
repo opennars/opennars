@@ -187,8 +187,8 @@ public class Follow1D implements RLEnvironment {
     }
 
     protected boolean takeActionVelocity3(int action) {
-        double a = Math.round(action - (numActions/2d));
-        double direction = (a)/(numActions/2d);
+        double a = Math.round(action - (numActions/ 2.0d));
+        double direction = (a)/(numActions/ 2.0d);
 
         if (direction==0) {
             //decelerate on zero
@@ -205,8 +205,8 @@ public class Follow1D implements RLEnvironment {
 
     }
     protected void takeActionAccelerate(int action) {
-        double a = Math.round(action - (numActions/2d));
-        double direction = (a)/(numActions/2d);
+        double a = Math.round(action - (numActions/ 2.0d));
+        double direction = (a)/(numActions/ 2.0d);
 
         if (direction==0) {
             //decelerate on zero

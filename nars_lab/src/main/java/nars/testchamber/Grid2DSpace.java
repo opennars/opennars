@@ -36,10 +36,10 @@ public class Grid2DSpace extends PApplet {
     Hnav hnav = new Hnav();
     //Object
     float selection_distance = 10;
-    public float maxNodeSize = 40f;
+    public float maxNodeSize = 40.0f;
     
     /** timing */
-    float FrameRate = 50f;    
+    float FrameRate = 50.0f;
     int automataPeriod = 1; //how many cycles between each automata update
     int agentPeriod = 1;  //how many cycles between each agent update
     
@@ -353,7 +353,7 @@ public class Grid2DSpace extends PApplet {
         pushMatrix();
         
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
-        translate(rendersize/4f, rendersize/4f);
+        translate(rendersize/ 4.0f, rendersize/ 4.0f);
                 
         for (int i = 0; i < objects.size(); i++)
             objects.get(i).draw();

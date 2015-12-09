@@ -158,7 +158,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
                     g.setFill(s.color);
 
-                    g.fillRect(prevX + 1, (h / 2f - y / 2), FastMath.ceil(x - prevX), y);
+                    g.fillRect(prevX + 1, (h / 2.0f - y / 2), FastMath.ceil(x - prevX), y);
 
                     prevX = x;
                     x += dx;

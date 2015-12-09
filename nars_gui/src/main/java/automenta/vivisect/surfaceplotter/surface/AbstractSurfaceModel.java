@@ -160,10 +160,10 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 
 	protected boolean scaleBox;
 
-	protected float xMax = 1f;
+	protected float xMax = 1.0f;
 
 	protected float xMin;
-	protected float yMax = 1f;
+	protected float yMax = 1.0f;
 
 	protected float yMin;
 	protected float z1Max;// the max computed

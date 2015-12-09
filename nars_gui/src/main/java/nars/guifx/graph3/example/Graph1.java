@@ -144,8 +144,8 @@ public class Graph1 extends SpacenetApp {
         Pane jps = POJONode.build(g);
         jps.setStyle("-fx-background: #421");
         jps.setOpacity(0.8);
-        jps.setMaxWidth(350f);
-        jps.setMaxHeight(400f);
+        jps.setMaxWidth(350.0f);
+        jps.setMaxHeight(400.0f);
 
         BorderPane screen = new BorderPane();
         screen.setLeft(jps);

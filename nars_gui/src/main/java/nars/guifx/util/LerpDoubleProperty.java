@@ -41,7 +41,7 @@ public class LerpDoubleProperty extends SimpleDoubleProperty {
     public void update() {
         if (stable) return;
 
-        double v = getValue() * (1d - rate) + target * rate;
+        double v = getValue() * (1.0d - rate) + target * rate;
         super.set(v);
         updateStability();
     }

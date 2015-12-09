@@ -213,7 +213,7 @@ public abstract class Param extends Container implements Level {
     public final Truth newDefaultTruth(char p) {
         switch (p) {
             case GOAL:
-            case JUDGMENT: return new DefaultTruth(1f, getDefaultConfidence(p));
+            case JUDGMENT: return new DefaultTruth(1.0f, getDefaultConfidence(p));
             default:
                 return null;
         }

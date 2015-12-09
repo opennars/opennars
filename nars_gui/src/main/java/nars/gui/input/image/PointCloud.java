@@ -166,7 +166,7 @@ public class PointCloud
   
   double greedyMatch(PointCloud reference)
   {
-    double pointCount = (double) _points.size();
+    double pointCount = _points.size();
     double e = 0.50;
     double step = Math.floor(Math.pow(pointCount, 1.0 - e));
 
@@ -192,7 +192,7 @@ public class PointCloud
       throw new IllegalArgumentException("Both point clouds must contain the same number of points");
     }
 
-    double pointCount = (double) pts1.size();
+    double pointCount = pts1.size();
     boolean[] matched = new boolean[(int) pointCount];
 
     for(int k = 0; k < pointCount; k++)

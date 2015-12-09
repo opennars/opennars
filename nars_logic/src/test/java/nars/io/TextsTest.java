@@ -22,7 +22,7 @@ public class TextsTest {
         assertEquals("0.01", Texts.n2(0.009f).toString());
         assertEquals("0.00", Texts.n2(0.001f).toString());
         assertEquals("0.01", Texts.n2(0.01f).toString());
-        assertEquals("0.00", Texts.n2(0f).toString());
+        assertEquals("0.00", Texts.n2(0.0f).toString());
         
         
     }

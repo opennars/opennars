@@ -109,7 +109,7 @@ public class Spacegraph extends ZoomFX {
             gc.strokeRect(0, 0, w, h);
 
             double x = panX.doubleValue(), y = panY.doubleValue();
-            double scale = getZoomFactor() * 10f;
+            double scale = getZoomFactor() * 10.0f;
 
             while (scale < minScale)
                 scale *= 2;
@@ -157,7 +157,7 @@ public class Spacegraph extends ZoomFX {
 
 
     static double snap(final double y) {
-        return ((int) y) + .5;
+        return ((int) y) + 0.5;
     }
 
     public final Group bg = new Group();

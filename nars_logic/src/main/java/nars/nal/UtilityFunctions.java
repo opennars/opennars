@@ -66,11 +66,11 @@ public class UtilityFunctions extends Util {
         for (final float f : arr) {
             product *= (1 - f);
         }
-        return 1f - product;
+        return 1.0f - product;
     }
     
     public final static float or(final float a, final float b) {
-        return 1f-((1f-a)*(1f-b));
+        return 1.0f -((1.0f -a)*(1.0f -b));
     }
     
     /**
@@ -88,7 +88,7 @@ public class UtilityFunctions extends Util {
     
     //may be more efficient than the for-loop version above, for 2 params
     public final static float aveAri(final float a, final float b) {
-        return (a + b)/2f;
+        return (a + b)/ 2.0f;
     }
 
     /**

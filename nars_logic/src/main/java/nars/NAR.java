@@ -894,7 +894,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     final public NARLoop loop(final float initialFPS) {
-        final float millisecPerFrame = 1000f / initialFPS;
+        final float millisecPerFrame = 1000.0f / initialFPS;
         return loop((int) millisecPerFrame);
     }
 

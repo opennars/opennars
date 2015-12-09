@@ -76,7 +76,7 @@ public class VectorMapTest {
 
 
                 for (int i = 0; i < v.input.data.length; i++)
-                    v.input.data[i] = 0.5 * (1.0 + Math.sin((t+i)/20f));
+                    v.input.data[i] = 0.5 * (1.0 + Math.sin((t+i)/ 20.0f));
                 v.update();
             }
         };

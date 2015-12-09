@@ -349,8 +349,8 @@ public class Sokoban extends Applet {
                     try { tracker.waitForAll(); } catch (InterruptedException e) {}
                     String tile = "# @$.&*";
                     for (int i = 0; i < tile.length(); i++) {
-                            tiles[(int) tile.charAt(i)] = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
-                            Graphics g = tiles[(int) tile.charAt(i)].getGraphics();
+                            tiles[tile.charAt(i)] = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
+                            Graphics g = tiles[tile.charAt(i)].getGraphics();
                             g.drawImage(j, -i*16, 0, this);
                     }
                     j.flush();
@@ -398,7 +398,7 @@ public class Sokoban extends Applet {
 				x += 16;
 				if (level[i] == blank) continue;
 				if (r.inside(x,y)) // only draw the images necessary for move!
-					g.drawImage(tiles[(int) level[i]], x, y, this);
+					g.drawImage(tiles[level[i]], x, y, this);
 			}
 	}
 	

@@ -220,7 +220,7 @@ public class OperatorTest {
                         $.$("add(" + a + "," + b + "," +
                             Integer.toString(a+b) + ")", '.')
                             .eternal()
-                            .truth(1f, 0.99f)
+                            .truth(1.0f, 0.99f)
                             .parent(question)
                             .budget((Budget)question)
                             .because("Addition")
@@ -233,8 +233,8 @@ public class OperatorTest {
         TestNAR t = new TestNAR(n);
         n.input("add(1,2,#x)?");
         n.input("add(1,1,#x)?");
-        t.mustBelieve(8, "add(1, 1, 2)", 1f, 0.99f);
-        t.mustBelieve(8, "add(1, 2, 3)", 1f, 0.99f);
+        t.mustBelieve(8, "add(1, 1, 2)", 1.0f, 0.99f);
+        t.mustBelieve(8, "add(1, 2, 3)", 1.0f, 0.99f);
         t.run2();
 
         assertEquals(1, n.concept("add(1, 1, 2)").getBeliefs().size());

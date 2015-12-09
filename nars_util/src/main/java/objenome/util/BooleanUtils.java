@@ -79,7 +79,7 @@ public final class BooleanUtils {
             int rep = (int) Math.pow(2, i + 1);
 
             for (int j = 0; j < noInputs; j++) {
-                inputs[j][i] = (j % rep) > Math.floor(rep / 2f) - 1;
+                inputs[j][i] = (j % rep) > Math.floor(rep / 2.0f) - 1;
             }
         }
 
@@ -113,7 +113,7 @@ public final class BooleanUtils {
         for (int i = 0; i < noBits; i++) {
             int rep = (int) Math.pow(2, i + 1);
 
-            inputs[i] = (index % rep) > Math.floor(rep / 2f) - 1;
+            inputs[i] = (index % rep) > Math.floor(rep / 2.0f) - 1;
         }
 
         return inputs;

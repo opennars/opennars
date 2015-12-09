@@ -40,8 +40,8 @@ public interface RLEnvironment {
     }
 
 
-    default float getMaxReward() { return 1f; }
-    default float getMinReward() { return -1f; }
+    default float getMaxReward() { return 1.0f; }
+    default float getMinReward() { return -1.0f; }
 
 
 

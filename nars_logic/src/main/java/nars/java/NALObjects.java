@@ -62,7 +62,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     private final AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
     /** for externally-puppeted method invocation goals */
-    private float invocationGoalFreq = 1f;
+    private float invocationGoalFreq = 1.0f;
     private float invocationGoalConf = 0.9f;
 
 //    /** for method invocation result beliefs  */
@@ -70,7 +70,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 //    private float invocationResultConf = 0.9f;
 
     /** for meta-data beliefs about (classes, objects, packages, etc..) */
-    private float metadataBeliefFreq = 1f;
+    private float metadataBeliefFreq = 1.0f;
     private float metadataBeliefConf = 0.99f;
     private float metadataPriority = 0.1f;
 

@@ -8,8 +8,8 @@ import static jurls.reinforcementlearning.domains.wander.Obstacle.d;
 
 public class Player {
 
-    public static final double TURNING_ANGLE = MyPerception.RADAR_R/16f; //velocity actually
-    public static final double STEP_SIZE = MyPerception.RADAR_D/4d;
+    public static final double TURNING_ANGLE = MyPerception.RADAR_R/ 16.0f; //velocity actually
+    public static final double STEP_SIZE = MyPerception.RADAR_D/ 4.0d;
     double acceleration = 0.05;
     private static final int MOVE_FORWARD = 0;
     private static final int MOVE_BACKWARD = 1;

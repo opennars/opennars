@@ -22,7 +22,7 @@ public class ConceptSummaryPane extends Text {
     //final Label subLabel = new Label();
     final AtomicBoolean pendingUpdate = new AtomicBoolean(false);
     private ConceptSummaryPaneIcon icon;
-    private float lastPri = -1f;
+    private float lastPri = -1.0f;
     private ColorMatrix truthColors = new ColorMatrix(11,11,(freq,conf)->{
         return Color.hsb(360.0 * (freq * 0.3 + 0.25),
                 conf, //all the way down to gray
@@ -42,7 +42,7 @@ public class ConceptSummaryPane extends Text {
 
             if (getParent()!=null) {
                 if (icon==null) {
-                    final double iconWidth = 48f;
+                    final double iconWidth = 48.0f;
                     //setGraphic(icon = new ConceptSummaryPaneIcon());
                     //icon.size(iconWidth, iconWidth);
                 }
@@ -133,7 +133,7 @@ public class ConceptSummaryPane extends Text {
             GraphicsContext g = getGraphicsContext2D();
 
             Color c = NARfx.hashColor(concept.getTerm().hashCode(),
-                    1f, Plot2D.ca);
+                    1.0f, Plot2D.ca);
             g.setStroke(Color.GRAY);
             g.setLineWidth(m);
             g.strokeRect(m/2, m/2, W-m, H-m);
@@ -158,7 +158,7 @@ public class ConceptSummaryPane extends Text {
 
 
         float freq = t.getFrequency();
-        double y = (1f - freq) * Wm;
+        double y = (1.0f - freq) * Wm;
         float cnf = t.getConfidence();
         double x = cnf * hm;
 

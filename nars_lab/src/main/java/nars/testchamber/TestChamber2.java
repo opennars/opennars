@@ -66,7 +66,7 @@ public class TestChamber2 extends TestChamber {
             @Override
             public void update(Cell c) {
 ///c.setHeight((int)(Math.random() * 12 + 1));
-                float smoothness = 20f;
+                float smoothness = 20.0f;
                 c.material = Material.GrassFloor;
                 double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
                 if ((n * 64) > water_threshold) {

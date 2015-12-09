@@ -72,12 +72,12 @@ public class HeapBagTest extends AbstractBagTest {
     public void testHeapBag(int items) {
         HeapBag<CharSequence, NullItem> f = new HeapBag(rng, items, curve);
         
-        f.put(new NullItem(.25f));
+        f.put(new NullItem(0.25f));
         assert(f.size() == 1);
         assert(f.getPrioritySum() > 0);
         
-        f.put(new NullItem(.9f));
-        f.put(new NullItem(.75f));
+        f.put(new NullItem(0.9f));
+        f.put(new NullItem(0.75f));
         
         //System.out.println(f);
         

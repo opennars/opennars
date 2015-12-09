@@ -355,7 +355,7 @@ public class Narsese extends BaseParser<Object>  {
                         optional(digit()),
                         optional('.', oneOrMore(digit()))
                 ),
-                push(Texts.f(matchOrDefault("NaN"), 0, 1f))
+                push(Texts.f(matchOrDefault("NaN"), 0, 1.0f))
         );
     }
 

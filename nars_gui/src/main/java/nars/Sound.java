@@ -55,7 +55,7 @@ public class Sound implements SoundSource, Comparable
         if (p>1) p = 1;
 
         pan = p;
-        amplitude = volume / (1f + dist); //TODO i added /dist divisor
+        amplitude = volume / (1.0f + dist); //TODO i added /dist divisor
     }
 
     public void read(float[] buf, int readRate)

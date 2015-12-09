@@ -61,7 +61,7 @@ public class GraphNode extends Group {
 	final public void move(final double v0, final double v1, final double speed) {
 		final double px = tx;
 		final double py = ty;
-		final double momentum = 1f - speed;
+		final double momentum = 1.0f - speed;
 		final double nx = v0 * speed + px * momentum;
 		final double ny = v1 * speed + py * momentum;
 		move(nx, ny);
@@ -70,7 +70,7 @@ public class GraphNode extends Group {
 	final public void move(final double v0, final double v1, final double speed, final double threshold) {
 		final double px = tx;
 		final double py = ty;
-		final double momentum = 1f - speed;
+		final double momentum = 1.0f - speed;
 		final double nx = v0 * speed + px * momentum;
 		final double ny = v1 * speed + py * momentum;
 		final double dx = Math.abs(px - nx);

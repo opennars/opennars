@@ -341,7 +341,7 @@ public class TestNAR  {
 
 
     public TestNAR mustExecute(long start, long end, String term) {
-        return mustExecute(start, end, term, 0, 1f);
+        return mustExecute(start, end, term, 0, 1.0f);
     }
 
     public TestNAR mustExecute(long start, long end, String term, float minExpect, float maxExpect) {

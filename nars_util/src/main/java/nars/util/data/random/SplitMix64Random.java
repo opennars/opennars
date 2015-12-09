@@ -40,11 +40,11 @@ public class SplitMix64Random extends Random {
 	/** 2<sup>53</sup> &minus; 1. */
 	private static final long DOUBLE_MASK = ( 1L << 53 ) - 1;
 	/** 2<sup>-53</sup>. */
-	private static final double NORM_53 = 1. / ( 1L << 53 );
+	private static final double NORM_53 = 1.0 / ( 1L << 53 );
 	/** 2<sup>24</sup> &minus; 1. */
 	private static final long FLOAT_MASK = ( 1L << 24 ) - 1;
 	/** 2<sup>-24</sup>. */
-	private static final double NORM_24 = 1. / ( 1L << 24 );
+	private static final double NORM_24 = 1.0 / ( 1L << 24 );
 
 	/** The internal state of the algorithm (a Weyl generator using the {@link #PHI} as increment). */
 	private long x;

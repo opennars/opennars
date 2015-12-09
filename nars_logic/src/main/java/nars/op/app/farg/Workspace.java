@@ -56,6 +56,6 @@ public class Workspace extends CycleReaction {
             }
             n_concepts++;
         });
-        return s[0] /((double) n_concepts);
+        return s[0] /(n_concepts);
     }
 }

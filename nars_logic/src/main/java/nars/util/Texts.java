@@ -522,9 +522,9 @@ abstract public class Texts {
             case "0.00":
                 return 0;
             case "1":
-                return 1f;
+                return 1.0f;
             case "1.00":
-                return 1f;
+                return 1.0f;
             case "0.90":
                 return 0.9f;
             case "0.9":

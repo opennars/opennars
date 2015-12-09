@@ -24,12 +24,12 @@ public class SetBooleanValue extends SetConstantValue<Boolean> implements SetNum
 
     @Override
     public Double getMin() {
-        return 0d;
+        return 0.0d;
     }
 
     @Override
     public Double getMax() {
-        return 1d;
+        return 1.0d;
     }
 
     @Override

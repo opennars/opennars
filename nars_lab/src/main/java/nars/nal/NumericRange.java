@@ -116,7 +116,7 @@ public class NumericRange {
         }
         final double stepScale = 1.0 / (steps - 1);
         for (int p = 0; p < steps; p++) {
-            double pp = ((double) p) * stepScale;
+            double pp = (p) * stepScale;
             double d = 1.0 - Math.abs(pp - v) / stepScale;
             d = Math.max(d, 0);
             //d = Math.min(d, 1.0);

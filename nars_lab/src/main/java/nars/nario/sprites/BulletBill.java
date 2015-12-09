@@ -91,7 +91,7 @@ public class BulletBill extends Sprite
             return;
         }
 
-        float sideWaysSpeed = 4f;
+        float sideWaysSpeed = 4.0f;
 
         xa = facing * sideWaysSpeed;
         xFlipPic = facing == -1;

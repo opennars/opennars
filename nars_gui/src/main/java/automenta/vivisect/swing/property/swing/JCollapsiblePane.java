@@ -502,7 +502,7 @@ public class JCollapsiblePane extends JPanel {
           }
         }
         animateAlpha = (float)newHeight
-          / (float)wrapper.c.getPreferredSize().height;
+          / wrapper.c.getPreferredSize().height;
 
         Rectangle bounds = wrapper.getBounds();
         int oldHeight = bounds.height;

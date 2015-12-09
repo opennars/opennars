@@ -6,7 +6,7 @@ public interface SoundProducer {
     public void skip(int samplesToSkip, int readRate);
     public boolean isLive();
 
-    default float getAmplitude() { return 1f; }
+    default float getAmplitude() { return 1.0f; }
 
     abstract public void stop();
 

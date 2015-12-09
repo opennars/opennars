@@ -47,7 +47,7 @@ public class NARMenu extends HBox {
 
         //b.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        NSlider fontSlider = new NSlider(25f, 25f, 0.5);
+        NSlider fontSlider = new NSlider(25.0f, 25.0f, 0.5);
         {
             //getChildren().add(0, fontSlider);
             fontSlider.value[0].addListener((a, b, c) -> {
