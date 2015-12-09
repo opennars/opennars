@@ -7,7 +7,6 @@ import nars.Narsese;
 import nars.Op;
 import nars.nal.TaskRule;
 import nars.nal.meta.match.*;
-import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -95,8 +94,7 @@ public class DerivationRuleTest extends TestCase {
         //tests an exceptional case that should now be fixed
 
         String l = "<((B,P) --> ?X) ,(B --> A), task(\"?\") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)>";
-        TaskRule x = p.term(l);
-        x = x.normalizeRule();
+        Compound x = ((TaskRule)p.term(l)).normalizeRule();
         assertTrue(!x.toString().contains("%B"));
     }
 
@@ -112,8 +110,8 @@ public class DerivationRuleTest extends TestCase {
 
 
 
-        TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
-        y = y.normalizeRule();
+        Compound y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
+        y = ((TaskRule)y).normalizeRule();
         Terms.printRecursive(y);
 
         assertEquals("((<%1 --> %2>, (--,%1)), (<%2 --> %1>, (<Conversion --> Truth>)))", y.toString());
@@ -125,7 +123,7 @@ public class DerivationRuleTest extends TestCase {
 
 
     @Test public void printTermRecursive() {
-        TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
+        Compound y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
         Terms.printRecursive(y);
     }
 
@@ -158,7 +156,7 @@ public class DerivationRuleTest extends TestCase {
         assertEquals($("C"), t.to);
 
         Term u = new TaskRule.TaskRuleVariableNormalization($.p(t)).get();
-        t = (EllipsisTransform)((Product)u).term(0);
+        t = (EllipsisTransform)((Compound)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);
         assertEquals($("C"), t.to);
@@ -171,9 +169,9 @@ public class DerivationRuleTest extends TestCase {
     @Test public void testVarArg0() {
         //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
         String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
-        TaskRule x = p.term("<" + rule + ">");
+        Compound x = p.term("<" + rule + ">");
         //System.out.println(x);
-        x = x.normalizeRule();
+        x = ((TaskRule)x).normalizeRule();
         //System.out.println(x);
 
         assertEquals(

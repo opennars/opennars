@@ -10,7 +10,7 @@ import nars.term.atom.Atom;
 public interface Termizer {
 
     Atom TRUE = $.the("true");
-    Atom FALSE = $.not(TRUE);
+    Term FALSE = $.not(TRUE);
     Atom VOID = $.the("void");
     Atom EMPTY = $.the("empty");
     Atom NULL = $.the("null");

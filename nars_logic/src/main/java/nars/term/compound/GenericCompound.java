@@ -103,7 +103,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final Term clone(Term[] replaced) {
+    public Term clone(Term[] replaced) {
         return new GenericCompound(op(), replaced, relation);
     }
 

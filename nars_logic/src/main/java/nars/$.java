@@ -148,8 +148,6 @@ abstract public class $  {
         return $.p($.the(t));
     }
 
-
-
     public static Variable v(Op type, String s) {
         return v(type.ch, s);
     }
@@ -242,6 +240,11 @@ abstract public class $  {
 
     public static Compound extset(Term... t) {
         return SetExt.make(t);
+    }
+
+    /** shorthand for extensional set */
+    public static Compound s(Term... t) {
+        return extset(t);
     }
 
     public static Compound intset(Term... t) {

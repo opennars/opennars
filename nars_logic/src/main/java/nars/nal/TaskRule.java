@@ -113,8 +113,8 @@ public class TaskRule extends GenericCompound implements Level {
 
 
     @Override
-    public final TaskRule normalized() {
-        return (TaskRule) this.transform(uppercaseAtomsToPatternVariables);
+    public final Compound normalized() {
+        return this.transform(uppercaseAtomsToPatternVariables);
     }
 
 //    @Override
@@ -617,6 +617,13 @@ public class TaskRule extends GenericCompound implements Level {
         w.accept(clone2, "C,T,[pre],question |- B,[post]");
 
     }
+
+
+//    @Override
+//    public Term clone(Term[] x) {
+//        return new TaskRule((Compound)x[0], (Compound)x[1]);
+//    }
+
 
     /**
      * for each calculable "question reverse" rule,

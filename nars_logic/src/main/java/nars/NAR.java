@@ -429,14 +429,6 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
 //            throw new RuntimeException("null input");
 //        }
 
-        Task tNorm = t.normalize(m);
-        if (tNorm==null) {
-            m.remove(t, "Garbage");
-            return false;
-        } else {
-            t = tNorm;
-        }
-
         if (t.isCommand()) {
             //direct execution pathway for commands
             int n = execute(t);
@@ -445,6 +437,16 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
             }
             return false;
         }
+
+        Task tNorm = t.normalize(m);
+        if (tNorm==null) {
+            m.remove(t, "Garbage");
+            return false;
+        } else {
+            t = tNorm;
+        }
+
+
 
         m.eventInput.emit(t);
 

@@ -195,12 +195,12 @@ public interface Operation  {
 
 
 
-    /** predicate term */
+
     static Compound args(Compound operation) {
-        return (Compound) operation.term(1);
+        return (Compound) operation.term(0);
     }
     static Term opTerm(Compound operation) {
-        return ((Operator)((Compound)operation).term(0)).getTerm();
+        return ((Operator)((Compound)operation).term(1)).identifier();
     }
 
 
@@ -283,7 +283,7 @@ public interface Operation  {
 
     public static void appendOperation(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
 
-        Term predTerm = operator.getTerm(); //getOperatorTerm();
+        Term predTerm = operator.identifier(); //getOperatorTerm();
 
         if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format

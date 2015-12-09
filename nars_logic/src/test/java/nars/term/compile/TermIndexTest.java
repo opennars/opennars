@@ -2,7 +2,6 @@ package nars.term.compile;
 
 import nars.MapIndex;
 import nars.NAR;
-import nars.nal.nal4.Product;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -51,10 +50,14 @@ public class TermIndexTest {
         tt.print(System.out);
         System.out.println();
 
+    }
 
+    @Test public void testSequenceNotShared() {
+        NAR n = new Terminal();
         testNotShared(n, "(&/, 1, 2, /2, 3, /4)");
 
     }
+
     private void testNotShared(NAR n, String s) {
         Term t1 = n.term(s); //create by parsing
         Term t2 = n.term(s); //create by parsing again
@@ -68,7 +71,7 @@ public class TermIndexTest {
         testShared(a, a2);
 
         //create by composition
-        Product b = n.term("(" + s + ")");
+        Compound b = n.term("(" + s + ")");
         testShared(a, b.term(0));
 
         //create by transformation (substitution)

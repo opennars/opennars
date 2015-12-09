@@ -24,6 +24,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.testchamber.TestChamber;
 
 import java.util.List;
@@ -41,13 +42,13 @@ public class Deactivate extends SyncOperator {
     }
 
     @Override public List<Task> apply(Task task) {
-        Operation operation = task.getTerm();
+        Compound operation = task.getTerm();
 
 
 
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
-        for (Term t : operation.args()) {
+        for (Term t : Operation.argTerms(operation)) {
             System.out.println(" --- " + t);
             TestChamber.operateObj(t.toString(), "deactivate");
             break;

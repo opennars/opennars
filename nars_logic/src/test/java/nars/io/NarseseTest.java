@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
@@ -180,7 +179,7 @@ public class NarseseTest {
 
     @Test
     public void testInfix2() throws Narsese.NarseseException {
-        Intersect t = term("(x & y)");
+        Compound t = term("(x & y)");
         assertEquals(Op.INTERSECTION_EXT, t.op());
         assertEquals(2, t.size());
         assertEquals("x", t.term(0).toString());
