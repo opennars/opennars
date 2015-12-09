@@ -44,7 +44,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
 
         ArrayList<List<Integer>> cnf2 = new ArrayList<>();
 
-        int[] indices = new int[]{1, 2, 3};
+        int[] indices = {1, 2, 3};
         do {
             List<List<Integer>> clauses = new ArrayList<>();
             clauses.add(new ArrayList<>());

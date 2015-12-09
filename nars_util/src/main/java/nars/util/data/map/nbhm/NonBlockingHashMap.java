@@ -465,14 +465,14 @@ public class NonBlockingHashMap<TypeK, TypeV>
 
     StringBuilder sb = new StringBuilder();
     sb.append('{');
-    for (;;) {
-      Entry<TypeK,TypeV> e = i.next();
+    while (true) {
+      Entry<TypeK, TypeV> e = i.next();
       TypeK key = e.getKey();
       TypeV value = e.getValue();
-      sb.append(key   == this ? "(this Map)" : key);
+      sb.append(key == this ? "(this Map)" : key);
       sb.append('=');
       sb.append(value == this ? "(this Map)" : value);
-      if( !i.hasNext())
+      if (!i.hasNext())
         return sb.append('}').toString();
       sb.append(", ");
     }
@@ -1457,11 +1457,11 @@ public class NonBlockingHashMap<TypeK, TypeV>
   private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
     s.defaultReadObject();      // Read nothing
     initialize(MIN_SIZE);
-    for(;;) {
+    while (true) {
       final TypeK K = (TypeK) s.readObject();
       final TypeV V = (TypeV) s.readObject();
-      if( K == null ) break;
-      put(K,V);                 // Insert with an offical put
+      if (K == null) break;
+      put(K, V);                 // Insert with an offical put
     }
   }
 

@@ -28,9 +28,9 @@ import static nars.guifx.NARfx.scrolled;
  */
 public class SimpleNARBudgetDynamics {
 
-    static String[] abFwdClosed = new String[] { "<a-->b>." };
-    static String[] abBidiClosed = new String[] { "<a-->b>.", "<b-->a>." };
-    static String[] abcClosed = new String[] { "<a-->b>.", "<b-->c>." };
+    static String[] abFwdClosed =    { "<a-->b>." };
+    static String[] abBidiClosed =   { "<a-->b>.", "<b-->a>." };
+    static String[] abcClosed =      { "<a-->b>.", "<b-->c>." };
 
     static final Map<String,Term> terms = new HashMap();
 

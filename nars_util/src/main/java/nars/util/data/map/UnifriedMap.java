@@ -369,7 +369,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             }
             return null;
         }
-        Object[] newChain = new Object[] {
+        Object[] newChain =  {
             /*newChain[0] = */t[index],
             /*newChain[1] = */t[index + 1],
             /*newChain[2] = */UnifriedMap.toSentinelIfNull(key),
@@ -581,7 +581,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         } else {
             result = function.value();
 
-            Object[] newChain = new Object[] {
+            Object[] newChain =  {
                 /*newChain[0] =*/ t[index],
                 /*newChain[1] =*/ t[index + 1],
                 /*newChain[2] =*/ UnifriedMap.toSentinelIfNull(key),

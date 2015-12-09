@@ -97,10 +97,10 @@ public class XorShift128PlusRandom extends Random {
 	public long nextLong( final long n ) {
         if ( n <= 0 ) throw new IllegalArgumentException();
 		// No special provision for n power of two: all our bits are good.
-		for(;;) {
+		while (true) {
 			final long bits = nextLong() >>> 1;
 			final long value = bits % n;
-			if ( bits - value + ( n - 1 ) >= 0 ) return value;
+			if (bits - value + (n - 1) >= 0) return value;
 		}
 	}
 	

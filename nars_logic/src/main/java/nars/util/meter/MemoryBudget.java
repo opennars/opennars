@@ -221,8 +221,8 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
         StringBuilder sb = new StringBuilder();
         sb.append('{');
-        for (;;) {
-            Entry<Budgeted,Object> e = i.next();
+        while (true) {
+            Entry<Budgeted, Object> e = i.next();
             Budgeted key = e.getKey();
             Object value = e.getValue();
             if (value instanceof Number)
@@ -230,7 +230,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
             sb.append(key);
             sb.append('=');
             sb.append(value);
-            if (! i.hasNext())
+            if (!i.hasNext())
                 return sb.append('}').toString();
             sb.append(',').append(' ');
         }

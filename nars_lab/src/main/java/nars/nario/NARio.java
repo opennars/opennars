@@ -709,7 +709,7 @@ public class NARio extends Run implements RLEnvironment {
         };
     }
 
-    final int[] keys = new int[]{Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
+    final int[] keys =  {Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
 
     @Override
     public void ready() {

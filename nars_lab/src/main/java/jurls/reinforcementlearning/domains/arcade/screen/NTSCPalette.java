@@ -27,7 +27,7 @@ import java.awt.*;
 public class NTSCPalette extends ColorPalette {
     // 128 unique colors, with odd indices being mapped to the color below
 
-    protected int[] colorData = new int[]{
+    protected int[] colorData =  {
         0x000000, 0, 0x4a4a4a, 0, 0x6f6f6f, 0, 0x8e8e8e, 0,
         0xaaaaaa, 0, 0xc0c0c0, 0, 0xd6d6d6, 0, 0xececec, 0,
         0x484800, 0, 0x69690f, 0, 0x86861d, 0, 0xa2a22a, 0,

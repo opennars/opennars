@@ -334,29 +334,28 @@ public class PortableConcurrentDirectDeque<E>
         final Node<E> newNode = new Node<>(e);
 
         restartFromHead:
-        for (;;)
-            for (Node<E> h = head, p = h, q;;) {
-                if ((q = p.prev) != null &&
+        while (true) for (Node<E> h = head, p = h, q; ; ) {
+            if ((q = p.prev) != null &&
                     (q = (p = q).prev) != null)
-                    // Check for head updates every other hop.
-                    // If p == q, we are sure to follow head instead.
-                    p = (h != (h = head)) ? h : q;
-                else if (p.next == p) // PREV_TERMINATOR
-                    continue restartFromHead;
-                else {
-                    // p is first node
-                    newNode.lazySetNext(p); // CAS piggyback
-                    if (p.casPrev(null, newNode)) {
-                        // Successful CAS is the linearization point
-                        // for e to become an element of this deque,
-                        // and for newNode to become "live".
-                        if (p != h) // hop two nodes at a time
-                            casHead(h, newNode);  // Failure is OK.
-                        return newNode;
-                    }
-                    // Lost CAS race to another thread; re-read prev
+                // Check for head updates every other hop.
+                // If p == q, we are sure to follow head instead.
+                p = (h != (h = head)) ? h : q;
+            else if (p.next == p) // PREV_TERMINATOR
+                continue restartFromHead;
+            else {
+                // p is first node
+                newNode.lazySetNext(p); // CAS piggyback
+                if (p.casPrev(null, newNode)) {
+                    // Successful CAS is the linearization point
+                    // for e to become an element of this deque,
+                    // and for newNode to become "live".
+                    if (p != h) // hop two nodes at a time
+                        casHead(h, newNode);  // Failure is OK.
+                    return newNode;
                 }
+                // Lost CAS race to another thread; re-read prev
             }
+        }
     }
 
     /**
@@ -367,29 +366,28 @@ public class PortableConcurrentDirectDeque<E>
         final Node<E> newNode = new Node<>(e);
 
         restartFromTail:
-        for (;;)
-            for (Node<E> t = tail, p = t, q;;) {
-                if ((q = p.next) != null &&
+        while (true) for (Node<E> t = tail, p = t, q; ; ) {
+            if ((q = p.next) != null &&
                     (q = (p = q).next) != null)
-                    // Check for tail updates every other hop.
-                    // If p == q, we are sure to follow tail instead.
-                    p = (t != (t = tail)) ? t : q;
-                else if (p.prev == p) // NEXT_TERMINATOR
-                    continue restartFromTail;
-                else {
-                    // p is last node
-                    newNode.lazySetPrev(p); // CAS piggyback
-                    if (p.casNext(null, newNode)) {
-                        // Successful CAS is the linearization point
-                        // for e to become an element of this deque,
-                        // and for newNode to become "live".
-                        if (p != t) // hop two nodes at a time
-                            casTail(t, newNode);  // Failure is OK.
-                        return newNode;
-                    }
-                    // Lost CAS race to another thread; re-read next
+                // Check for tail updates every other hop.
+                // If p == q, we are sure to follow tail instead.
+                p = (t != (t = tail)) ? t : q;
+            else if (p.prev == p) // NEXT_TERMINATOR
+                continue restartFromTail;
+            else {
+                // p is last node
+                newNode.lazySetPrev(p); // CAS piggyback
+                if (p.casNext(null, newNode)) {
+                    // Successful CAS is the linearization point
+                    // for e to become an element of this deque,
+                    // and for newNode to become "live".
+                    if (p != t) // hop two nodes at a time
+                        casTail(t, newNode);  // Failure is OK.
+                    return newNode;
                 }
+                // Lost CAS race to another thread; re-read next
             }
+        }
     }
 
     private static final int HOPS = 2;
@@ -585,17 +583,16 @@ public class PortableConcurrentDirectDeque<E>
         Node<E> h, p, q;
         restartFromHead:
         while ((h = head).item == null && (p = h.prev) != null) {
-            for (;;) {
+            while (true) {
                 if ((q = p.prev) == null ||
-                    (q = (p = q).prev) == null) {
+                        (q = (p = q).prev) == null) {
                     // It is possible that p is PREV_TERMINATOR,
                     // but if so, the CAS is guaranteed to fail.
                     if (casHead(h, p))
                         return;
                     else
                         continue restartFromHead;
-                }
-                else if (h != head)
+                } else if (h != head)
                     continue restartFromHead;
                 else
                     p = q;
@@ -615,17 +612,16 @@ public class PortableConcurrentDirectDeque<E>
         Node<E> t, p, q;
         restartFromTail:
         while ((t = tail).item == null && (p = t.next) != null) {
-            for (;;) {
+            while (true) {
                 if ((q = p.next) == null ||
-                    (q = (p = q).next) == null) {
+                        (q = (p = q).next) == null) {
                     // It is possible that p is NEXT_TERMINATOR,
                     // but if so, the CAS is guaranteed to fail.
                     if (casTail(t, p))
                         return;
                     else
                         continue restartFromTail;
-                }
-                else if (t != tail)
+                } else if (t != tail)
                     continue restartFromTail;
                 else
                     p = q;
@@ -642,7 +638,7 @@ public class PortableConcurrentDirectDeque<E>
             // assert x != PREV_TERMINATOR;
             Node<E> p = prev;
             findActive:
-            for (;;) {
+            while (true) {
                 if (p.item != null)
                     break findActive;
                 Node<E> q = p.prev;
@@ -650,8 +646,7 @@ public class PortableConcurrentDirectDeque<E>
                     if (p.next == p)
                         continue whileActive;
                     break findActive;
-                }
-                else if (p == q)
+                } else if (p == q)
                     continue whileActive;
                 else
                     p = q;
@@ -673,7 +668,7 @@ public class PortableConcurrentDirectDeque<E>
             // assert x != PREV_TERMINATOR;
             Node<E> p = next;
             findActive:
-            for (;;) {
+            while (true) {
                 if (p.item != null)
                     break findActive;
                 Node<E> q = p.next;
@@ -681,8 +676,7 @@ public class PortableConcurrentDirectDeque<E>
                     if (p.prev == p)
                         continue whileActive;
                     break findActive;
-                }
-                else if (p == q)
+                } else if (p == q)
                     continue whileActive;
                 else
                     p = q;
@@ -724,21 +718,20 @@ public class PortableConcurrentDirectDeque<E>
      */
     Node<E> first() {
         restartFromHead:
-        for (;;)
-            for (Node<E> h = head, p = h, q;;) {
-                if ((q = p.prev) != null &&
+        while (true) for (Node<E> h = head, p = h, q; ; ) {
+            if ((q = p.prev) != null &&
                     (q = (p = q).prev) != null)
-                    // Check for head updates every other hop.
-                    // If p == q, we are sure to follow head instead.
-                    p = (h != (h = head)) ? h : q;
-                else if (p == h
-                         // It is possible that p is PREV_TERMINATOR,
-                         // but if so, the CAS is guaranteed to fail.
-                         || casHead(h, p))
-                    return p;
-                else
-                    continue restartFromHead;
-            }
+                // Check for head updates every other hop.
+                // If p == q, we are sure to follow head instead.
+                p = (h != (h = head)) ? h : q;
+            else if (p == h
+                    // It is possible that p is PREV_TERMINATOR,
+                    // but if so, the CAS is guaranteed to fail.
+                    || casHead(h, p))
+                return p;
+            else
+                continue restartFromHead;
+        }
     }
 
     /**
@@ -749,21 +742,20 @@ public class PortableConcurrentDirectDeque<E>
      */
     Node<E> last() {
         restartFromTail:
-        for (;;)
-            for (Node<E> t = tail, p = t, q;;) {
-                if ((q = p.next) != null &&
+        while (true) for (Node<E> t = tail, p = t, q; ; ) {
+            if ((q = p.next) != null &&
                     (q = (p = q).next) != null)
-                    // Check for tail updates every other hop.
-                    // If p == q, we are sure to follow tail instead.
-                    p = (t != (t = tail)) ? t : q;
-                else if (p == t
-                         // It is possible that p is NEXT_TERMINATOR,
-                         // but if so, the CAS is guaranteed to fail.
-                         || casTail(t, p))
-                    return p;
-                else
-                    continue restartFromTail;
-            }
+                // Check for tail updates every other hop.
+                // If p == q, we are sure to follow tail instead.
+                p = (t != (t = tail)) ? t : q;
+            else if (p == t
+                    // It is possible that p is NEXT_TERMINATOR,
+                    // but if so, the CAS is guaranteed to fail.
+                    || casTail(t, p))
+                return p;
+            else
+                continue restartFromTail;
+        }
     }
 
     // Minor convenience utilities
@@ -1186,33 +1178,32 @@ public class PortableConcurrentDirectDeque<E>
 
         // Atomically append the chain at the tail of this collection
         restartFromTail:
-        for (;;)
-            for (Node<E> t = tail, p = t, q;;) {
-                if ((q = p.next) != null &&
+        while (true) for (Node<E> t = tail, p = t, q; ; ) {
+            if ((q = p.next) != null &&
                     (q = (p = q).next) != null)
-                    // Check for tail updates every other hop.
-                    // If p == q, we are sure to follow tail instead.
-                    p = (t != (t = tail)) ? t : q;
-                else if (p.prev == p) // NEXT_TERMINATOR
-                    continue restartFromTail;
-                else {
-                    // p is last node
-                    beginningOfTheEnd.lazySetPrev(p); // CAS piggyback
-                    if (p.casNext(null, beginningOfTheEnd)) {
-                        // Successful CAS is the linearization point
-                        // for all elements to be added to this deque.
-                        if (!casTail(t, last)) {
-                            // Try a little harder to update tail,
-                            // since we may be adding many elements.
-                            t = tail;
-                            if (last.next == null)
-                                casTail(t, last);
-                        }
-                        return true;
+                // Check for tail updates every other hop.
+                // If p == q, we are sure to follow tail instead.
+                p = (t != (t = tail)) ? t : q;
+            else if (p.prev == p) // NEXT_TERMINATOR
+                continue restartFromTail;
+            else {
+                // p is last node
+                beginningOfTheEnd.lazySetPrev(p); // CAS piggyback
+                if (p.casNext(null, beginningOfTheEnd)) {
+                    // Successful CAS is the linearization point
+                    // for all elements to be added to this deque.
+                    if (!casTail(t, last)) {
+                        // Try a little harder to update tail,
+                        // since we may be adding many elements.
+                        t = tail;
+                        if (last.next == null)
+                            casTail(t, last);
                     }
-                    // Lost CAS race to another thread; re-read next
+                    return true;
                 }
+                // Lost CAS race to another thread; re-read next
             }
+        }
     }
 
     /**

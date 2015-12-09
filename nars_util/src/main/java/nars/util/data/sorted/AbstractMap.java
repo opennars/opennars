@@ -512,7 +512,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
         StringBuilder sb = new StringBuilder();
         sb.append('{');
-        for (; ; ) {
+        while (true) {
             Entry<K, V> e = i.next();
             K key = e.getKey();
             V value = e.getValue();

@@ -45,23 +45,25 @@ public class Activate extends SyncOperator {
         Compound operation = task.getTerm();
 
         //Operator op = content.getOperator();
-         
+
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
+
         for (Term t : Operation.argTerms(operation)) {
             System.out.println(" --- " + t);
             TestChamber.operateObj(t.toString(), "activate");
+            //todo: flagged as bad news
             break;
         }
-        
-        
+
+
        // if(nars.grid2d.Grid2DSpace.world_used) {
             //ok lets start pathfinding tool
             //nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
        // }
-        
-       
-        
+
+
+
         return null;
     }
 

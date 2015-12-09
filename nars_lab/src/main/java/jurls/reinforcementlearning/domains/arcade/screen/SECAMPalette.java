@@ -27,7 +27,7 @@ import java.awt.*;
 public class SECAMPalette extends ColorPalette {
     // 8 unique colors, with odd indices being mapped to the color below
 
-    protected int[] colorData = new int[]{
+    protected int[] colorData =  {
         0x000000, 0, 0x2121ff, 0, 0xf03c79, 0, 0xff50ff, 0,
         0x7fff00, 0, 0x7fffff, 0, 0xffff3f, 0, 0xffffff, 0,
         0x000000, 0, 0x2121ff, 0, 0xf03c79, 0, 0xff50ff, 0,

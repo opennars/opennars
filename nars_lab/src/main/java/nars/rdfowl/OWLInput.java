@@ -100,7 +100,7 @@ public class OWLInput  {
         XMLStreamReader parser = factory.createXMLStreamReader(
                 new FileInputStream(f));
         int depth = 0;
-        for (;;) {
+        while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.END_DOCUMENT) {
 
@@ -295,7 +295,7 @@ public class OWLInput  {
         int event = parser.getEventType();
         String startTag = formatTag(parser.getName());
         FOR_LOOP:
-        for (;;) {
+        while (true) {
             switch (event) {
                 case XMLStreamConstants.START_ELEMENT:
                     String tagName = formatTag(parser.getName());
