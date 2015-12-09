@@ -83,7 +83,7 @@ abstract public class AbstractNALTester {
         List<Supplier<NAR>> l = Global.newArrayList(2);
 
         final int finalLevel = level;
-/*
+
         if (multi) {
             l.add(supply("Default2[NAL<=" + level + "]",
                     () -> {
@@ -94,7 +94,7 @@ abstract public class AbstractNALTester {
                     }
             ));
         }
-*/
+
         if (single) {
             l.add( supply("SingleStep[NAL<=" + level + "]",
                     () -> new SingleStepNAR().nal(finalLevel) ) );

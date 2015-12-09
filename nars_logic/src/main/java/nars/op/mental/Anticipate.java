@@ -92,7 +92,7 @@ public class Anticipate {
             System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
         TaskTime taskTime = new TaskTime(t, t.getCreationTime());
-        if(testing) {
+        if(true || testing) {
             String s = "anticipating: "+taskTime.task.getTerm().toString();
             System.out.println(s);
             teststring += s + "\n";
@@ -102,7 +102,7 @@ public class Anticipate {
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
-        if(testing) {
+        if(true || testing) {
             String s = "did not happen: " + prediction.toString();
             System.out.println(s);
             teststring += s + "\n";
@@ -149,7 +149,7 @@ public class Anticipate {
                 toRemove.add(tt);
 
                 happeneds++;
-                if(testing) {
+                if(true || testing) {
                     String s = "happened as expected: "+tt.task.getTerm().toString();
                     System.out.println(s);
                     teststring += s + "\n";
