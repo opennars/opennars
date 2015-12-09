@@ -364,7 +364,7 @@ public class Patham9Test extends AbstractNALTester {
     public void repeated_sequence_learn_implication() throws Narsese.NarseseException {
         NAR nar = new Default2(1000, 1, 1, 3);
 
-        for(int i=0;i<1;i++) {
+        for(int i=0;i<1000;i++) {
             nar.input("<a --> A>. :|:");
             nar.frame(20);
             nar.input("<b --> B>. :|:");

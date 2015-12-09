@@ -24,10 +24,7 @@ package nars.op.mental;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal5.Conjunction;
@@ -67,25 +64,29 @@ public class Anticipate {
         this.memory = nar.memory;
 
         nar.memory.eventCycleEnd.on(c -> updateAnticipations());
-        nar.memory.eventInput.on(this::mayHaveHappenedAsExpected);
-        nar.memory.eventDerived.on(this::mayHaveHappenedAsExpected);
+        nar.memory.eventInput.on(this::onInput);
     }
 
+    public void onInput(Task t) {
+        if (t.isInput())
+               mayHaveHappenedAsExpected(t);
+      }
 
     public void anticipate(Task t) {
 
-        if(t.getTruth().getExpectation() < DEFAULT_CONFIRMATION_EXPECTATION || t.getPunctuation() != Symbols.JUDGMENT) {
+        if (t.getTruth().getExpectation() < DEFAULT_CONFIRMATION_EXPECTATION || t.getPunctuation() != Symbols.JUDGMENT) {
             return;
         }
 
         Compound tt = t.getTerm();
-        if(tt instanceof Conjunction || tt instanceof Parallel || tt instanceof Sequence) { //not observable, TODO probably revise
-            return;
+       if(tt instanceof Conjunction || tt instanceof Parallel || tt instanceof Sequence) { //not observable, TODO probably revise
+           return;
         }
 
         long now = memory.time();
 
-        if (now > t.getOccurrenceTime()) //its about the past..
+        long occ = t.getOccurrenceTime();
+        if (now > occ) //its about the past..
             return;
 
         if (debug)

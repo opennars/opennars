@@ -80,6 +80,9 @@ public final class MakeTasks extends PreCondition {
 
         final Task belief = premise.getBelief();
 
+        if(derivedTerm.complexity()>17) {
+            return false;
+        }
 
         final char punct = post.punct;
         /*if (punct == 0)
@@ -103,7 +106,7 @@ public final class MakeTasks extends PreCondition {
                 throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
             }
 
-            final Task derived = premise.validate(deriving
+            Task derived = premise.validate(deriving
                     .punctuation(punct)
                     .truth(truth)
                     .budget(budget)
