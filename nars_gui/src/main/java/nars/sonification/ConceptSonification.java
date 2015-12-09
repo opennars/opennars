@@ -108,7 +108,7 @@ public class ConceptSonification extends FrameReaction {
 
         Files.list(Paths.get("/tmp")). // Paths.get("/home/me/share/wav")).
                 map(p -> p.toAbsolutePath().toString()).filter(x -> x.endsWith(".wav"))
-                .map(s -> SampleLoader.load(s))
+                .map(SampleLoader::load)
                 .forEach(s -> samples.add(s));
 
 //        }

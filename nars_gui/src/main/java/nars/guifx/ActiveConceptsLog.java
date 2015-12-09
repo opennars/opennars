@@ -64,9 +64,7 @@ public class ActiveConceptsLog extends LogPane {
             new WeakHashMap();
 
     ConceptSummaryPane node(Concept cc) {
-        ConceptSummaryPane cp = cache.computeIfAbsent(cc, koncept -> {
-            return new ConceptSummaryPane(koncept);
-        });
+        ConceptSummaryPane cp = cache.computeIfAbsent(cc, ConceptSummaryPane::new);
         cp.update(true,true);
         return cp;
     }

@@ -71,74 +71,34 @@ public enum LdcInsnFunnel
 
     private static Funnel<Object> integerFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(Object from, PrimitiveSink into)
-            {
-                into.putInt((Integer) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putInt((Integer) from);
     }
 
     private static Funnel<Object> floatFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(Object from, PrimitiveSink into)
-            {
-                into.putFloat((Float) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putFloat((Float) from);
     }
 
     private static Funnel<Object> longFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(Object from, PrimitiveSink into)
-            {
-                into.putLong((Long) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putLong((Long) from);
     }
 
     private static Funnel<Object> doubleFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(Object from, PrimitiveSink into)
-            {
-                into.putDouble((Double) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putDouble((Double) from);
     }
 
     private static Funnel<Object> stringFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(Object from, PrimitiveSink into)
-            {
-                into.putUnencodedChars((CharSequence) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putUnencodedChars((CharSequence) from);
     }
 
     private static Funnel<Object> asmTypeFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(Object from, PrimitiveSink into)
-            {
-                Type type = (Type) from;
-                into.putUnencodedChars(type.getInternalName());
-            }
+        return (Funnel<Object>) (from, into) -> {
+            Type type = (Type) from;
+            into.putUnencodedChars(type.getInternalName());
         };
     }
 }

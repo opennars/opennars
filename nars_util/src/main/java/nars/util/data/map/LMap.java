@@ -24,8 +24,7 @@ public class LMap<I,O> implements Function<I, O> {
 
     @Override
     public O apply(I i) {
-        return nodeCache.computeIfAbsent(model.apply(i), b->
-            b.get()
+        return nodeCache.computeIfAbsent(model.apply(i), Supplier::get
         );
     }
 

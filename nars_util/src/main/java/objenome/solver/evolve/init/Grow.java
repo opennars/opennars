@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static objenome.solver.evolve.Population.SIZE;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
@@ -319,12 +321,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      * overridden too.
      */
     private List<Node> listValidNodes(int remainingDepth, Class<?> requiredType) {
-        List<Node> validNodes = new ArrayList<>();
-        for (Node n : terminals) {
-            if (n.dataType().isAssignableFrom(requiredType)) {
-                validNodes.add(n);
-            }
-        }
+        List<Node> validNodes = terminals.stream().filter(n -> n.dataType().isAssignableFrom(requiredType)).collect(Collectors.toList());
 
         if (remainingDepth > 0) {
             for (Node n : nonTerminals) {
@@ -351,10 +348,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
         dataTypesTable = new Class<?>[maxDepth + 1][];
 
         for (int i = 0; i <= maxDepth; i++) {
-            Set<Class<?>> types = new HashSet<>();
-            for (Node n : terminals) {
-                types.add(n.dataType());
-            }
+            Set<Class<?>> types = terminals.stream().map((Function<Node, Class<?>>) Node::dataType).collect(Collectors.toSet());
 
             if (i > 0) {
                 // Also add any valid nonTerminals

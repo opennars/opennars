@@ -404,26 +404,22 @@ public class MidiClock extends JPanel implements Clock {
 
             // Listener for row changes
             ListSelectionModel lsm = table.getSelectionModel();
-            lsm.addListSelectionListener(new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    ListSelectionModel sm = (ListSelectionModel) e.getSource();
-                    if (!sm.isSelectionEmpty()) {
-                        cc.row = sm.getMinSelectionIndex();
-                    }
-                    programChange(cc.col*nRows+cc.row);
+            lsm.addListSelectionListener(e -> {
+                ListSelectionModel sm = (ListSelectionModel) e.getSource();
+                if (!sm.isSelectionEmpty()) {
+                    cc.row = sm.getMinSelectionIndex();
                 }
+                programChange(cc.col*nRows+cc.row);
             });
 
             // Listener for column changes
             lsm = table.getColumnModel().getSelectionModel();
-            lsm.addListSelectionListener(new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    ListSelectionModel sm = (ListSelectionModel) e.getSource();
-                    if (!sm.isSelectionEmpty()) {
-                        cc.col = sm.getMinSelectionIndex();
-                    }
-                    programChange(cc.col*nRows+cc.row);
+            lsm.addListSelectionListener(e -> {
+                ListSelectionModel sm = (ListSelectionModel) e.getSource();
+                if (!sm.isSelectionEmpty()) {
+                    cc.col = sm.getMinSelectionIndex();
                 }
+                programChange(cc.col*nRows+cc.row);
             });
 
             table.setPreferredScrollableViewportSize(new Dimension(nCols*110, 200));

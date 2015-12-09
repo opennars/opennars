@@ -49,23 +49,13 @@ public final class CodePointRangeMatcherTest
 
         index = THE_ANSWER;
 
-        doAnswer(new Answer<Void>()
-        {
-            @Override
-            public Void answer(InvocationOnMock invocation)
-            {
-                index += (Integer) invocation.getArguments()[0];
-                return null;
-            }
+        doAnswer(invocation -> {
+            index += (Integer) invocation.getArguments()[0];
+            return null;
         }).when(context).advanceIndex(anyInt());
-        doAnswer(new Answer<Void>()
-        {
-            @Override
-            public Void answer(InvocationOnMock invocation)
-            {
-                index = (Integer) invocation.getArguments()[0];
-                return null;
-            }
+        doAnswer(invocation -> {
+            index = (Integer) invocation.getArguments()[0];
+            return null;
         }).when(context).setCurrentIndex(anyInt());
         when(context.getInputBuffer()).thenReturn(buffer);
         when(context.getCurrentIndex()).thenReturn(THE_ANSWER);

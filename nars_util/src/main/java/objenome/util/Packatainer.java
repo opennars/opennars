@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -56,7 +57,7 @@ public class Packatainer extends AbstractPrototainer {
         for (Class c : classes)
             usable(c);
 
-        classNames = this.classes.stream().map(c -> c.getName()).collect(toSet());
+        classNames = this.classes.stream().map(Class::getName).collect(toSet());
     }
 
     @Override
@@ -81,9 +82,7 @@ public class Packatainer extends AbstractPrototainer {
         //2. map each ancestor to implementations
         Set<Class> superTypes = new HashSet<>();
         for (Class c : classes) {
-            for (Class supertype : ReflectionUtils.getAllSuperTypes(c)) {
-                superTypes.add(supertype);
-            }
+            superTypes.addAll(ReflectionUtils.getAllSuperTypes(c).stream().collect(Collectors.toList()));
         }
         
         Reflections s = new Reflections(configuration);
@@ -112,12 +111,7 @@ public class Packatainer extends AbstractPrototainer {
 
 
     public Set<Class> getImplementable() {
-        HashSet imp = new HashSet();
-        for (Class c : classes) {
-            if ((!Modifier.isAbstract( c.getModifiers() )) && (!Modifier.isInterface( c.getModifiers() ))) {                
-                imp.add(c);                
-            }
-        }
+        HashSet imp = classes.stream().filter(c -> (!Modifier.isAbstract(c.getModifiers())) && (!Modifier.isInterface(c.getModifiers()))).collect(Collectors.toCollection(HashSet::new));
         return imp;
     }
 

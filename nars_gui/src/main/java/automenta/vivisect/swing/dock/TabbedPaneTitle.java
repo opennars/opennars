@@ -121,12 +121,7 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
         bn_float.setBorderPainted(false);
         bn_float.setContentAreaFilled(false);
         bn_float.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bn_float.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bn_floatActionPerformed(evt);
-            }
-        });
+        bn_float.addActionListener(this::bn_floatActionPerformed);
         add(label_title);
         add(bn_float);
         
@@ -157,12 +152,7 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
         bn_close.setBorderPainted(false);
         bn_close.setContentAreaFilled(false);
         bn_close.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bn_close.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bn_closeActionPerformed(evt);
-            }
-        });
+        bn_close.addActionListener(this::bn_closeActionPerformed);
         add(bn_close);
     } // </editor-fold>//GEN-END:initComponents
 

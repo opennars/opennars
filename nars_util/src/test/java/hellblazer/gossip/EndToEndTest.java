@@ -155,9 +155,7 @@ public class EndToEndTest extends TestCase {
             }
         } finally {
             System.out.println();
-            for (Gossip member : members) {
-                member.stop();
-            }
+            members.forEach(Gossip::stop);
         }
         assertFalse("state was deregistered", deregistered.get());
     }

@@ -108,18 +108,15 @@ public abstract class FastByteComparisons {
 
             static {
                 theUnsafe = (Unsafe) AccessController.doPrivileged(
-                        new PrivilegedAction<Object>() {
-                            @Override
-                            public Object run() {
-                                try {
-                                    Field f = Unsafe.class.getDeclaredField("theUnsafe");
-                                    f.setAccessible(true);
-                                    return f.get(null);
-                                } catch (NoSuchFieldException | IllegalAccessException e) {
-                                    // It doesn't matter what we throw;
-                                    // it's swallowed in getBestComparer().
-                                    throw new Error();
-                                }
+                        (PrivilegedAction<Object>) () -> {
+                            try {
+                                Field f = Unsafe.class.getDeclaredField("theUnsafe");
+                                f.setAccessible(true);
+                                return f.get(null);
+                            } catch (NoSuchFieldException | IllegalAccessException e) {
+                                // It doesn't matter what we throw;
+                                // it's swallowed in getBestComparer().
+                                throw new Error();
                             }
                         });
 

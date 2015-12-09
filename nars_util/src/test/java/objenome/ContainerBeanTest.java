@@ -48,11 +48,7 @@ public interface NiceExample extends DefaultPropertyChangeEventProvider {*/
         AtomicBoolean success = new AtomicBoolean(false);
         
         ObservableInterface s = c.bean(ObservableInterface.class);
-        s.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override public void propertyChange(PropertyChangeEvent pce) {
-                success.set(true);
-            }
-        });
+        s.addPropertyChangeListener(pce -> success.set(true));
         s.setStringValue("x");
         
         assertEquals("x", s.getStringValue());        

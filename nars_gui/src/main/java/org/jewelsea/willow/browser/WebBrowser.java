@@ -328,12 +328,7 @@ public class WebBrowser extends BorderPane {
     private void debug(Scene scene) {
         System.getProperties().list(System.out);
         //ScenicView.show(scene);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                DebugUtil.dump(scene.getRoot());
-            }
-        });
+        Platform.runLater(() -> DebugUtil.dump(scene.getRoot()));
     }
 
     // creates a button to hide and show the navigation pane.

@@ -418,7 +418,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	}
 
 	public void run(ObservableList<Node> c) {
-		GraphNode[] gg = c.stream().filter(nn -> nn instanceof GraphNode).map(nn -> (GraphNode) nn).toArray(ii -> new GraphNode[ii]);
+		GraphNode[] gg = c.stream().filter(nn -> nn instanceof GraphNode).map(nn -> (GraphNode) nn).toArray(GraphNode[]::new);
 		run(gg);
 	}
 

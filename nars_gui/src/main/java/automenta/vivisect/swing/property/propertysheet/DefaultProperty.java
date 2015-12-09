@@ -211,19 +211,13 @@ public class DefaultProperty extends AbstractProperty {
 	}
 
 	public void clearSubProperties() {
-		for (Property subProp : subProperties) {
-			if (subProp instanceof DefaultProperty)
-				((DefaultProperty) subProp).setParentProperty(null);
-		}
+		subProperties.stream().filter(subProp -> subProp instanceof DefaultProperty).forEach(subProp -> ((DefaultProperty) subProp).setParentProperty(null));
 		subProperties.clear();
 	}
 
 	public void addSubProperties(Collection subProperties) {
 		this.subProperties.addAll(subProperties);
-		for (Property subProp : this.subProperties) {
-			if (subProp instanceof DefaultProperty)
-				((DefaultProperty) subProp).setParentProperty(this);
-		}
+		this.subProperties.stream().filter(subProp -> subProp instanceof DefaultProperty).forEach(subProp -> ((DefaultProperty) subProp).setParentProperty(this));
 	}
 
 	public void addSubProperties(Property[] subProperties) {

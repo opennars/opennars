@@ -73,9 +73,7 @@ public final class InstructionGroupCreator
         }
 
         // check all non-group node for illegal accesses
-        for (InstructionGraphNode node : method.getGraphNodes())
-            if (node.getGroup() == null)
-                verifyAccess(node);
+        method.getGraphNodes().stream().filter(node -> node.getGroup() == null).forEach(this::verifyAccess);
     }
 
     private void createGroups()

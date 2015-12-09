@@ -22,6 +22,7 @@ package jurls.reinforcementlearning.domains.tetris;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 
 public class TetrisState {
@@ -553,9 +554,7 @@ public class TetrisState {
 
         possibleBlocks = new Vector<>();
         //hopefully nobody modifies the pieces as they go
-        for (TetrisPiece thisPiece : stateToCopy.possibleBlocks) {
-            possibleBlocks.add(thisPiece);
-        }
+        possibleBlocks.addAll(stateToCopy.possibleBlocks.stream().collect(Collectors.toList()));
 
     }
 }

@@ -91,13 +91,8 @@ public class GossipConfiguration {
                 Thread daemon = new Thread(runnable,
                                            String.format("UDP Comms[%s]", i++));
                 daemon.setDaemon(true);
-                daemon.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(Thread t, Throwable e) {
-                        UdpCommunications.log.severe(String.format("Uncaught exception on dispatcher %s",
-                                                                  t));
-                    }
-                });
+                daemon.setUncaughtExceptionHandler((t, e) -> UdpCommunications.log.severe(String.format("Uncaught exception on dispatcher %s",
+                                                          t)));
                 return daemon;
             }
         };

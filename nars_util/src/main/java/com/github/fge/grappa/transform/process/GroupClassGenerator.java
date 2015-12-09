@@ -55,9 +55,7 @@ public abstract class GroupClassGenerator
         this.classNode = Objects.requireNonNull(classNode, "classNode");
         this.method = Objects.requireNonNull(method, "method");
 
-        for (InstructionGroup group: method.getGroups())
-            if (appliesTo(group.getRoot()))
-                loadGroupClass(group);
+        method.getGroups().stream().filter(group -> appliesTo(group.getRoot())).forEach(this::loadGroupClass);
     }
 
     protected abstract boolean appliesTo(InstructionGraphNode group);

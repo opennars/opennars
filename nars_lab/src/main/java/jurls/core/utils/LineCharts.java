@@ -37,12 +37,7 @@ public class LineCharts extends JFXPanel {
     }
 
     protected void update() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                setScene(scene());
-            }
-        });
+        Platform.runLater(() -> setScene(scene()));
     }
 
     public void setSeries(int numSeries) {

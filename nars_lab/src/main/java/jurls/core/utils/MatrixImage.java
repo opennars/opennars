@@ -130,42 +130,25 @@ public class MatrixImage extends JComponent {
             h = 1;
         }
 
-        draw(new Data2D() {
-            @Override
-            public double getValue(int x, int y) {
-                return v[x + y];
-            }
-        }, w, h, minValue, maxValue);
+        draw((x, y) -> v[x + y], w, h, minValue, maxValue);
     }
 
     public void draw(ParameterizedFunction f) {
         int numParam = f.numberOfParameters();
         int cw = (int) Math.ceil(Math.sqrt(numParam));
         int ch = numParam / cw;
-        draw(new Data2D() {
-
-            @Override
-            public double getValue(int x, int y) {
-                int i = y * ch + x;
-                if (i < numParam) {
-                    return f.getParameter(i);
-                }
-                return 0;
+        draw((x, y) -> {
+            int i = y * ch + x;
+            if (i < numParam) {
+                return f.getParameter(i);
             }
-
+            return 0;
         }, cw, ch, -1.0, 1.0);
 
     }
 
     public void draw(RealMatrix M, double minValue, double maxValue) {
-        draw(new Data2D() {
-
-            @Override
-            public double getValue(int x, int y) {
-                return M.getEntry(x, y);
-            }
-
-        }, M.getColumnDimension(), M.getRowDimension(), minValue, maxValue);
+        draw(M::getEntry, M.getColumnDimension(), M.getRowDimension(), minValue, maxValue);
     }
 
     /* todo move these variables to a subclass specifically for visualizing neuromap */

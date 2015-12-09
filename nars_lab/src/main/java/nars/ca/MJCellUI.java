@@ -1052,11 +1052,7 @@ class MJCellUI extends Frame {
 		btnPnl.add(btnOk);
 		msgDlg.add(ta, BorderLayout.CENTER);
 		msgDlg.add(btnPnl, BorderLayout.SOUTH);
-		btnOk.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				msgDlg.dispose();
-			}
-		});
+		btnOk.addActionListener(e -> msgDlg.dispose());
 		msgDlg.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				msgDlg.dispose();
@@ -1114,13 +1110,11 @@ class MJCellUI extends Frame {
 
 		msgDlg.add(ta, BorderLayout.CENTER);
 		msgDlg.add(btnPnl, BorderLayout.SOUTH);
-		btnOk.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				msgDlg.dispose();
-				if (fOldRun)
-					mjb.start();
-			}
-		});
+		btnOk.addActionListener(e -> {
+            msgDlg.dispose();
+            if (fOldRun)
+                mjb.start();
+        });
 		msgDlg.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				msgDlg.dispose();
@@ -1161,13 +1155,11 @@ class MJCellUI extends Frame {
 
 		msgDlg.add(ta, BorderLayout.CENTER);
 		msgDlg.add(btnPnl, BorderLayout.SOUTH);
-		btnOk.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				msgDlg.dispose();
-				if (fOldRun)
-					mjb.start();
-			}
-		});
+		btnOk.addActionListener(e -> {
+            msgDlg.dispose();
+            if (fOldRun)
+                mjb.start();
+        });
 		msgDlg.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				msgDlg.dispose();

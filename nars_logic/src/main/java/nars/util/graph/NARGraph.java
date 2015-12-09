@@ -28,7 +28,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     public <X> Set<X> vertices(Class<? extends X> type) {
         Set<X> s = Global.newHashSet(vertexSet().size());
-        s.addAll(vertexSet().stream().filter(o -> type.isInstance(o)).map(o -> (X) o).collect(Collectors.toList()));
+        s.addAll(vertexSet().stream().filter(type::isInstance).map(o -> (X) o).collect(Collectors.toList()));
         return s;
     }
     

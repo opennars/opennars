@@ -153,9 +153,8 @@ public class NarseseTemplatePanel {
         
         JComboBox formSelect = new JComboBox();
         p.add(formSelect, BorderLayout.WEST);
-        
-        for (String f : t.forms.keySet())
-            formSelect.addItem(f);
+
+        t.forms.keySet().forEach(formSelect::addItem);
         
         ActionListener change = new ActionListener() {
             JPanel r = null;
@@ -221,14 +220,7 @@ public class NarseseTemplatePanel {
         };
         
         formSelect.addActionListener(change);
-        t.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                change.actionPerformed(null);
-            }
-            
-        });
+        t.getSelectionModel().addTreeSelectionListener(e -> change.actionPerformed(null));
         
         change.actionPerformed(null);
         

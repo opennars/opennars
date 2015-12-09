@@ -86,13 +86,10 @@ public class POJONode {
         }
 
         if (eventHandler != null) {
-            EventHandler<ActionEvent> wrappedHandler = new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    TableButton<T> button = (TableButton<T>) actionEvent.getSource();
-                    T object = button.getTableView().getItems().get(button.getButtonCell().getIndex());
-                    eventHandler.handle(object);
-                }
+            EventHandler<ActionEvent> wrappedHandler = actionEvent -> {
+                TableButton<T> button = (TableButton<T>) actionEvent.getSource();
+                T object = button.getTableView().getItems().get(button.getButtonCell().getIndex());
+                eventHandler.handle(object);
             };
             TableColumn actionColumn = new TableColumn<>("Action");
             table.getColumns().add(actionColumn);
@@ -105,12 +102,7 @@ public class POJONode {
                 }
             });
 
-            actionColumn.setCellFactory(new Callback<TableColumn<?, Boolean>, TableCell<?, Boolean>>() {
-                @Override
-                public TableCell<?, Boolean> call(TableColumn<?, Boolean> p) {
-                    return new ButtonCell<>(wrappedHandler, table, eventHandler.getActionName());
-                }
-            });
+            actionColumn.setCellFactory(p -> new ButtonCell<>(wrappedHandler, table, eventHandler.getActionName()));
         }
 
         table.setItems(FXCollections.observableList(objects));

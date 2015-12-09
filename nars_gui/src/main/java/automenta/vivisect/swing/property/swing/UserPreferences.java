@@ -102,12 +102,10 @@ public class UserPreferences {
       }
     }
 
-    PropertyChangeListener trackPath = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {
-        /* everytime the path change, update the preferences */
-        if (evt.getNewValue() instanceof File) {
-          node().put(key, ((File) evt.getNewValue()).getAbsolutePath());
-        }
+    PropertyChangeListener trackPath = evt -> {
+      /* everytime the path change, update the preferences */
+      if (evt.getNewValue() instanceof File) {
+        node().put(key, ((File) evt.getNewValue()).getAbsolutePath());
       }
     };
 
@@ -121,11 +119,7 @@ public class UserPreferences {
         .isSelected());
     ((DefaultButtonModel) button.getModel()).getGroup().setSelected(
         button.getModel(), selected);// .setSelected(selected);
-    button.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        prefs.putBoolean(button.getName() + ".selected", button.isSelected());
-      }
-    });
+    button.addItemListener(e -> prefs.putBoolean(button.getName() + ".selected", button.isSelected()));
   }
 
   /**
@@ -291,12 +285,10 @@ public class UserPreferences {
         splitPaneListener);
   }
 
-  private static PropertyChangeListener splitPaneListener = new PropertyChangeListener() {
-    public void propertyChange(PropertyChangeEvent evt) {
-      JSplitPane split = (JSplitPane) evt.getSource();
-      node().node("JSplitPane").put(split.getName() + ".dividerLocation",
-          String.valueOf(split.getDividerLocation()));
-    }
+  private static PropertyChangeListener splitPaneListener = evt -> {
+    JSplitPane split = (JSplitPane) evt.getSource();
+    node().node("JSplitPane").put(split.getName() + ".dividerLocation",
+        String.valueOf(split.getDividerLocation()));
   };
 
   /**

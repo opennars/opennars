@@ -91,7 +91,7 @@ public class Console extends BorderPane {
     }
 
     public void clear() {
-        runSafe(() -> textArea.clear());
+        runSafe(textArea::clear);
     }
 
     public void print(String text) {

@@ -86,8 +86,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
 
     public void removeAll(Collection<I> toKill) {
         individuals.removeAll(toKill);
-        for (I i : toKill)
-            onRemoved(i);
+        toKill.forEach(this::onRemoved);
 
     }
 
@@ -237,11 +236,5 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
         return s;
     }
 
-    private static final Comparator<Organism> OrganismComparator = new Comparator<Organism>() {
-
-        @Override
-        public int compare(Organism o1, Organism o2) {
-            return o2.compareTo(o1);
-        }
-    };
+    private static final Comparator<Organism> OrganismComparator = (o1, o2) -> o2.compareTo(o1);
 }

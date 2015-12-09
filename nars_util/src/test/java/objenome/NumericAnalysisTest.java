@@ -81,13 +81,9 @@ public class NumericAnalysisTest {
 
     @Test public void testMultivariate() throws IncompleteSolutionException {
 
-        Objenome o = Objenome.solve(new OptimizeMultivariate(ExampleMultivariateFunction.class, new Function<ExampleMultivariateFunction, Double>() {
-
-            public Double apply(ExampleMultivariateFunction s) {      
-                double v = s.output(0.0) + s.output(0.5) + s.output(1.0);
-                return v;
-            }
-            
+        Objenome o = Objenome.solve(new OptimizeMultivariate(ExampleMultivariateFunction.class, (Function<ExampleMultivariateFunction, Double>) s -> {
+            double v = s.output(0.0) + s.output(0.5) + s.output(1.0);
+            return v;
         }) {
             @Override protected RandomGenerator getRandomGenerator() {
                 JDKRandomGenerator j = new JDKRandomGenerator();  j.setSeed(0); return j;

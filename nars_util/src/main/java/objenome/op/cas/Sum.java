@@ -5,6 +5,7 @@ import objenome.op.cas.util.ArrayLists;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Sum extends Operation {
     
@@ -42,9 +43,7 @@ public class Sum extends Operation {
     public Expr deriv(Var respected) {
         // if (debug) System.err.println("derivative of " + dump());
         ArrayList<Expr> exprsDiffed = new ArrayList<>(exprs.size());
-        for (Expr expr : exprs) {
-            exprsDiffed.add(expr.deriv(respected));
-        }
+        exprsDiffed.addAll(exprs.stream().map(expr -> expr.deriv(respected)).collect(Collectors.toList()));
         // if (debug) System.err.println(dump() + " => ArrayList: " + exprsDiffed);
         // if (debug) System.err.println(dump() + " => " + new Sum(exprsDiffed).toString());
         return Sum.make(exprsDiffed);

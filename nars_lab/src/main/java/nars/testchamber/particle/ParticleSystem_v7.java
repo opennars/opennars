@@ -28,40 +28,37 @@ public class ParticleSystem_v7 extends Canvas {
 
 		frame.setVisible(true);
 
-		Thread runThread = new Thread(new Runnable() {
-                        @Override
-			public void run() {
-							//noinspection InfiniteLoopStatement
-							while (true) {
-					long time = System.currentTimeMillis();
+		Thread runThread = new Thread(() -> {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+    long time = System.currentTimeMillis();
 
-					paused = ren.getPaused();
+    paused = ren.getPaused();
 
-					if( !paused ){
-						//ren.tick();
-						//frame.setOpacity(1f);
-						ren.repaint();
-					} else {
-						//frame.setOpacity(.5f);
-					}
+    if( !paused ){
+        //ren.tick();
+        //frame.setOpacity(1f);
+        ren.repaint();
+    } else {
+        //frame.setOpacity(.5f);
+    }
 
 
-					quit = ren.getQuit();
-					
-					if( quit ){
-						frame.dispose();
-					}
+    quit = ren.getQuit();
+
+    if( quit ){
+        frame.dispose();
+    }
 
 
-					long endtime = System.currentTimeMillis();
-					try {
-						Thread.sleep( - (endtime - time));
-					} catch (Exception e) {
-						// System.out.println("cannot sleep");
-					}
-				}
-			}
-		});
+    long endtime = System.currentTimeMillis();
+    try {
+        Thread.sleep( - (endtime - time));
+    } catch (Exception e) {
+        // System.out.println("cannot sleep");
+    }
+}
+});
 
 		runThread.start();
 

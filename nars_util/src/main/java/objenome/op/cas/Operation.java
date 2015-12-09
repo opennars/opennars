@@ -3,6 +3,7 @@ package objenome.op.cas;
 import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public abstract class Operation extends Expr {
     
@@ -45,10 +46,7 @@ public abstract class Operation extends Expr {
     }
     
     public static Expr conditions(ArrayList<? extends Expr> exprs) {
-        ArrayList<Expr> condsArr = new ArrayList<>();
-        for (Expr expr : exprs) {
-            condsArr.add(expr.condition());
-        }
+        ArrayList<Expr> condsArr = exprs.stream().map(Expr::condition).collect(Collectors.toCollection(ArrayList::new));
         return And.make(condsArr);
     }
     

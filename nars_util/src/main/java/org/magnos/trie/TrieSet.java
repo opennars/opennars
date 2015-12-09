@@ -162,13 +162,9 @@ public final class TrieSet<E> implements Set<E> {
       int previousSize = trie.size();
       Trie<E, Object> newTrie = trie.newEmptyClone();
 
-      for (Object element : collection)
-      {
-         if (trie.containsKey( element ))
-         {
-            newTrie.put( (E)element, FLAG );
-         }
-      }
+      collection.stream().filter(trie::containsKey).forEach(element -> {
+         newTrie.put((E) element, FLAG);
+      });
       if (previousSize!=newTrie.size())
          return new TrieSet(newTrie); //trie = newTrie;
 

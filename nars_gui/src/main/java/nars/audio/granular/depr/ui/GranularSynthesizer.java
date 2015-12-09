@@ -138,18 +138,10 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         defaultValues.setText("Default Values");
         defaultValues.setEnabled(false);
-        defaultValues.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                defaultValuesActionPerformed(evt);
-            }
-        });
+        defaultValues.addActionListener(this::defaultValuesActionPerformed);
 
         openFile.setText("...");
-        openFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openFileActionPerformed(evt);
-            }
-        });
+        openFile.addActionListener(this::openFileActionPerformed);
 
         jLabel13.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(255, 0, 0));
@@ -171,11 +163,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         createGrains.setText("(Re)Create Grains");
         createGrains.setEnabled(false);
-        createGrains.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createGrainsActionPerformed(evt);
-            }
-        });
+        createGrains.addActionListener(this::createGrainsActionPerformed);
 
         jLabel7.setForeground(new java.awt.Color(0, 255, 0));
         jLabel7.setText("Grain Density:");
@@ -188,11 +176,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         granulate.setText("Granulate");
         granulate.setEnabled(false);
-        granulate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                granulateActionPerformed(evt);
-            }
-        });
+        granulate.addActionListener(this::granulateActionPerformed);
 
         maxGrainsLbl.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         maxGrainsLbl.setForeground(new java.awt.Color(255, 0, 0));
@@ -220,16 +204,8 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         grainSizeTxt.setText("44400");
         grainSizeTxt.setEnabled(false);
-        grainSizeTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grainSizeTxtActionPerformed(evt);
-            }
-        });
-        grainSizeTxt.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                grainSizeTxtPropertyChange(evt);
-            }
-        });
+        grainSizeTxt.addActionListener(this::grainSizeTxtActionPerformed);
+        grainSizeTxt.addPropertyChangeListener(this::grainSizeTxtPropertyChange);
 
         modeChoice.add(syncChoice);
         syncChoice.setSelected(true);

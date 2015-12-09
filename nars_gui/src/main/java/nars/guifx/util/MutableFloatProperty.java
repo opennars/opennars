@@ -20,19 +20,19 @@ public class MutableFloatProperty extends SimpleDoubleProperty {
 
 
     public MutableFloatProperty(MutableFloat a) {
-        this( () -> a.getValue(), (v) -> a.setValue((float)v));
+        this(a::getValue, (v) -> a.setValue((float)v));
     }
     public MutableFloatProperty(MutableDouble a) {
-        this( () -> a.doubleValue(), (v) -> a.setValue(v));
+        this(a::doubleValue, a::setValue);
     }
     public MutableFloatProperty(AtomicDouble a) {
-        this( () -> a.doubleValue(), (v) -> a.set(v));
+        this(a::doubleValue, a::set);
     }
     public MutableFloatProperty(AtomicInteger a) {
-        this( () -> a.doubleValue(), (v) -> a.set((int)v));
+        this(a::doubleValue, (v) -> a.set((int)v));
     }
     public MutableFloatProperty(MutableInteger a) {
-        this( () -> a.doubleValue(), (v) -> a.set((int)v));
+        this(a::doubleValue, (v) -> a.set((int)v));
     }
 
     public MutableFloatProperty(DoubleSupplier getter, DoubleProcedure setter) {

@@ -135,13 +135,11 @@ public class Grid2DSpace extends PApplet {
                 frameResized(j.getWidth(), j.getHeight());
             }
         });
-        canvas.addMouseWheelListener(new MouseWheelListener() {
-                    @Override public void mouseWheelMoved(MouseWheelEvent evt) {
-                        mouseScroll = -evt.getWheelRotation();
-                        mouseScrolled();
-                        drawn = false;
-                    }
-                });
+        canvas.addMouseWheelListener(evt -> {
+            mouseScroll = -evt.getWheelRotation();
+            mouseScrolled();
+            drawn = false;
+        });
 
         return j;
     }
@@ -349,7 +347,7 @@ public class Grid2DSpace extends PApplet {
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
         translate(rendersize/ 4.0f, rendersize/ 4.0f);
 
-        for (GridObject object : objects) object.draw();
+        objects.forEach(GridObject::draw);
         popMatrix();
     }
     

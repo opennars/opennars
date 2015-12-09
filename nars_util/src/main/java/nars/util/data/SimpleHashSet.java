@@ -1,6 +1,7 @@
 package nars.util.data;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A simple HashSet, save 25% memory.
@@ -51,9 +52,7 @@ public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneabl
 
     public SimpleHashSet(Collection<? extends T> collection) {
         this(collection.size() < 6 ? 11 : collection.size() * 2);
-        for (T e : collection) {
-            add(e);
-        }
+        addAll(collection.stream().collect(Collectors.toList()));
     }
 
     public static int roundUpToPowerOfTwo(int i) {

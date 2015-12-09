@@ -225,12 +225,10 @@ public class PropertyUtils {
 			boolean triggerEvents) {
 		LinkedHashMap<String, SerializableProperty> props = getProperties(obj,
 				true);
-		for (Entry<Object, Object> entry : p.entrySet()) {
-			if (props.containsKey(entry.getKey())) {
-				SerializableProperty sp = props.get(entry.getKey());
-				sp.fromString("" + entry.getValue());
-			}
-		}
+		p.entrySet().stream().filter(entry -> props.containsKey(entry.getKey())).forEach(entry -> {
+			SerializableProperty sp = props.get(entry.getKey());
+			sp.fromString("" + entry.getValue());
+		});
 		setProperties(obj, props, triggerEvents);
 	}
 

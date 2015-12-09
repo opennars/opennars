@@ -40,7 +40,7 @@ public class ExampleTrackerObjectQuad extends WebcamFX {
     ImageView motionOverlay = new ImageView();
     Canvas raw = new Canvas();
     private ArraySharingList<ExampleFeatureSurf.SURFPoint> desc = new ArraySharingList<>(
-            (i) -> new ExampleFeatureSurf.SURFPoint[i]
+            ExampleFeatureSurf.SURFPoint[]::new
     );
     private ImageUInt8 segmented;
     private BufferedImage bgMotionImage;

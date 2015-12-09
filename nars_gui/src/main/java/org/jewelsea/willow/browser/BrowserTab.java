@@ -101,15 +101,10 @@ public class BrowserTab extends UITab<WebView> {
             }
         });
         
-        engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-
-            @Override
-            public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-                if (newValue == State.SUCCEEDED) {
-                    onPageLoaded();
-                }
+        engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == State.SUCCEEDED) {
+                onPageLoaded();
             }
-            
         });
         
         //System.out.println("BrowserTab finish" + (System.currentTimeMillis() - WebBrowser.start));

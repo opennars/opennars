@@ -29,6 +29,7 @@ import org.objectweb.asm.ClassWriter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.github.fge.grappa.misc.AsmUtils.*;
 
@@ -110,10 +111,7 @@ public final class ParserTransformer
                     methodProcessor.process(classNode, ruleMethod);
         }
 
-        for (RuleMethod ruleMethod: classNode.getRuleMethods().values()) {
-            if (!ruleMethod.isGenerationSkipped())
-                classNode.methods.add(ruleMethod);
-        }
+        classNode.methods.addAll(classNode.getRuleMethods().values().stream().filter(ruleMethod -> !ruleMethod.isGenerationSkipped()).collect(Collectors.toList()));
     }
 
     private static List<RuleMethodProcessor> createRuleMethodProcessors()

@@ -497,11 +497,9 @@ public class NonTerminalSymbol implements Symbol {
         nonTerminals.add(this);
 
         // Add all the non-terminals below each child.
-        for (Symbol child : children) {
-            if (child instanceof NonTerminalSymbol) {
-                nonTerminals.addAll(((NonTerminalSymbol) child).getNonTerminalSymbols());
-            }
-        }
+        children.stream().filter(child -> child instanceof NonTerminalSymbol).forEach(child -> {
+            nonTerminals.addAll(((NonTerminalSymbol) child).getNonTerminalSymbols());
+        });
 
         return nonTerminals;
     }

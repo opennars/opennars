@@ -33,7 +33,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
     private BiFunction<TermNode<Concept>, TermNode<Concept>, TermEdge> edgeBuilder =
-            (S,T) -> new TLinkEdge(S,T);
+            TLinkEdge::new;
 
     public ConceptsSource(NAR nar) {
 

@@ -58,13 +58,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      * This is the stat listener. When the stat is registered, its listener is
      * added to the {@link EventManager}.
      */
-    public Listener<T> listener = new Listener<T>() {
-
-        @Override
-        public void onEvent(T event) {
-            refresh(event);
-        }
-    };
+    public Listener<T> listener = this::refresh;
 
     /**
      * The event that trigger the stat to clear its values.
@@ -166,11 +160,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
             config.get(dependency);
         }
         if (clearOnEvent!=null) {
-            Listener<T> trigger = new Listener<T>() {
-                @Override public void onEvent(T event) {
-                    clear();
-                }            
-            };
+            Listener<T> trigger = event -> clear();
             config.on(clearOnEvent, trigger);
 
             clearOnListener = trigger;

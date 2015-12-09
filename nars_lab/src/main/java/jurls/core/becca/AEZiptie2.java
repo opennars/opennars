@@ -118,24 +118,12 @@ public class AEZiptie2 extends AEZiptie {
         
         public double updateInitialActivity() {            
             return initialActivity = 
-                    getRowGeneralizedMean(new Function<Integer,Double>() {
-
-                        @Override public Double apply(Integer row) {
-                            return cables.get(row).getActivity();
-                        }
-                        
-                    }, meanExponent, 0, numCables, index);
+                    getRowGeneralizedMean(row -> cables.get(row).getActivity(), meanExponent, 0, numCables, index);
         }
         
         public double updateFinalActivity() {
             return activity = 
-                    getRowGeneralizedMean(new Function<Integer,Double>() {
-
-                        @Override public Double apply(Integer row) {
-                            return cables.get(row).getInhibitedActivity(Bundle.this);
-                        }
-                        
-                    }, meanExponent, 0, numCables, index);            
+                    getRowGeneralizedMean(row -> cables.get(row).getInhibitedActivity(Bundle.this), meanExponent, 0, numCables, index);
         }
         
         public double getActivity() {
@@ -162,15 +150,9 @@ public class AEZiptie2 extends AEZiptie {
     
     /** process incoming activity */
     public void in() {
-        for (Bundle b : bundles) {
-            b.updateInitialActivity();
-        }
-        for (Cable c : cables) {
-            c.updateBundleContribution();
-        }
-        for (Bundle b : bundles) {
-            b.updateFinalActivity();
-        }
+        bundles.forEach(Bundle::updateInitialActivity);
+        cables.forEach(Cable::updateBundleContribution);
+        bundles.forEach(Bundle::updateFinalActivity);
     }
     
     /** process outgoing goals */

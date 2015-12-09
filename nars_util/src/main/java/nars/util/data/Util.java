@@ -566,7 +566,7 @@ public class Util {
      * Generic utility method for running a list of tasks in current thread
      */
     public static void run(Deque<Runnable> tasks) {
-        run(tasks, tasks.size(), r -> r.run());
+        run(tasks, tasks.size(), Runnable::run);
     }
 
     public static void run(Deque<Runnable> tasks, int maxTasksToRun, Consumer<Runnable> runner) {
@@ -590,7 +590,7 @@ public class Util {
         ctx.setConcurrency(concurrency);
 
         try {
-            run(tasks, maxTasksToRun, r -> ctx.execute(r));
+            run(tasks, maxTasksToRun, ctx::execute);
         } finally {
             // Waits for all concurrent executions to complete.
             // Re-exports any exception raised during concurrent executions.

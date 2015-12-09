@@ -140,9 +140,7 @@ public final class InstructionGraphNode
     public void addPredecessors(@Nonnull Collection<BasicValue> preds)
     {
         Objects.requireNonNull(preds, "preds");
-        for (BasicValue pred: preds)
-            if (pred instanceof InstructionGraphNode)
-                addPredecessor((InstructionGraphNode) pred);
+        preds.stream().filter(pred -> pred instanceof InstructionGraphNode).forEach(pred -> addPredecessor((InstructionGraphNode) pred));
     }
 
     public void addPredecessor(InstructionGraphNode node)

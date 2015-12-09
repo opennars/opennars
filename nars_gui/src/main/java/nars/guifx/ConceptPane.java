@@ -155,7 +155,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                             linkShape.put(tl, b);
 
                             DataPoint _b = b;
-                            update(tl, d, s, c -> _b.setColor(c));
+                            update(tl, d, s, _b::setColor);
                             b.setTranslateX(d[0] * spaceScale);
                             b.setTranslateY(d[1] * spaceScale);
                             b.setTranslateZ(d[2] * spaceScale);
@@ -241,9 +241,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                 queued.set(false);
             }
 
-            for (Node n : getChildren())
-                if (n instanceof Runnable)
-                    ((Runnable) n).run();
+            getChildren().stream().filter(n -> n instanceof Runnable).forEach(n -> ((Runnable) n).run());
         }
     }
 
@@ -299,7 +297,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label questions = new Label("Questions diagram");
         SplitPane links = new SplitPane(
                 scrolled(termLinkView = new BagView<>(c.getTermLinks(),
-                                (t) -> new ItemButton(t, (i) -> i.toString(),
+                                (t) -> new ItemButton(t, Object::toString,
                                         (i) -> {
 
                                         }

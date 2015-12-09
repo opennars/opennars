@@ -3394,20 +3394,17 @@ public class KB {
             pr.println("% This is a translation to TPTP of KB "
                     + sanitizedKBName + '\n');
 
-            orderedFormulae = new TreeSet(new Comparator() {
-                @Override
-                public int compare(Object o1, Object o2) {
-                    Formula f1 = (Formula) o1;
-                    Formula f2 = (Formula) o2;
-                    int fileCompare = f1.sourceFile.compareTo(f2.sourceFile);
+            orderedFormulae = new TreeSet((o1, o2) -> {
+                Formula f1 = (Formula) o1;
+                Formula f2 = (Formula) o2;
+                int fileCompare = f1.sourceFile.compareTo(f2.sourceFile);
+                if (fileCompare == 0) {
+                    fileCompare = (new Integer(f1.startLine)).compareTo(f2.startLine);
                     if (fileCompare == 0) {
-                        fileCompare = (new Integer(f1.startLine)).compareTo(f2.startLine);
-                        if (fileCompare == 0) {
-                            fileCompare = (new Long(f1.endFilePosition)).compareTo(f2.endFilePosition);
-                        }
+                        fileCompare = (new Long(f1.endFilePosition)).compareTo(f2.endFilePosition);
                     }
-                    return fileCompare;
                 }
+                return fileCompare;
             });
             orderedFormulae.addAll(formulaMap.values());
 

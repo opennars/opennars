@@ -79,11 +79,7 @@ public class CellEditorAdapter
     }
 
     // when the editor notifies a change, commit the changes
-    editor.addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {       
-        stopCellEditing();
-      }
-    });
+    editor.addPropertyChangeListener(evt -> stopCellEditing());
   }
   
   public Component getTreeCellEditorComponent(
@@ -144,11 +140,7 @@ public class CellEditorAdapter
 
     // request focus later so the editor can be used to enter value as soon as
     // made visible
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        cellEditor.requestFocus();
-      }
-    });
+    SwingUtilities.invokeLater(cellEditor::requestFocus);
 
     return cellEditor;
   }

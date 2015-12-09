@@ -281,17 +281,15 @@ public class EditorPanel extends JPanel {
                                         int x = Integer.valueOf(val[5]);
                                         int y = Integer.valueOf(val[6]);
                                         if ("GridAgent".equals(val[0])) {
-                                            for (GridObject z : s.objects) {
-                                                if (z instanceof GridAgent) {
-                                                    ((GridAgent) z).cx = cx;
-                                                    ((GridAgent) z).cy = cy;
-                                                    ((GridAgent) z).x = x;
-                                                    ((GridAgent) z).y = y;
-                                                    newobj.add(z);
-                                                    s.target = new PVector(x, y);
-                                                    s.current = new PVector(x, y);
-                                                }
-                                            }
+                                            s.objects.stream().filter(z -> z instanceof GridAgent).forEach(z -> {
+                                                ((GridAgent) z).cx = cx;
+                                                ((GridAgent) z).cy = cy;
+                                                ((GridAgent) z).x = x;
+                                                ((GridAgent) z).y = y;
+                                                newobj.add(z);
+                                                s.target = new PVector(x, y);
+                                                s.current = new PVector(x, y);
+                                            });
                                         }
                                         if ("Key".equals(val[0])) {
                                             Key addu = new Key(x, y, name);
@@ -400,14 +398,11 @@ public class EditorPanel extends JPanel {
         toolTree.expandRow(0);
         add(new JScrollPane(toolTree), BorderLayout.CENTER);
 
-        toolTree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                Object o = toolTree.getLastSelectedPathComponent();
-                if (o instanceof EditorMode) {
-                    EditorMode m = (EditorMode) o;
-                    m.run();
-                }
+        toolTree.addTreeSelectionListener(e -> {
+            Object o = toolTree.getLastSelectedPathComponent();
+            if (o instanceof EditorMode) {
+                EditorMode m = (EditorMode) o;
+                m.run();
             }
         });
 
@@ -696,14 +691,12 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() { /*s.nar.input("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
 
-                for (GridObject g : s.objects) {
-                    if (g instanceof LocalGridObject) {
-                        LocalGridObject obi = (LocalGridObject) g;
-                        if (obi instanceof Key) {
-                            s.nar.input("<(&/,<" + obi.doorname + " --> [at]>,pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
-                        }
+                s.objects.stream().filter(g -> g instanceof LocalGridObject).forEach(g -> {
+                    LocalGridObject obi = (LocalGridObject) g;
+                    if (obi instanceof Key) {
+                        s.nar.input("<(&/,<" + obi.doorname + " --> [at]>,pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
                     }
-                }
+                });
                 /*s.nar.input("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
                  s.nar.input("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
                  s.nar.input("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");

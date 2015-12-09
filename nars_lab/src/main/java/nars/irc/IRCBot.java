@@ -61,61 +61,57 @@ public abstract class IRCBot {
         writer.write("USER " + login + " 8 * : " + nick + "\r\n");
         writer.flush();
 
-        new Thread(new Runnable() {
+        new Thread(() -> {
 
-            @Override
-            public void run() {
-
-                // Join the channel.
-                try {
-                    // Read lines from the server until it tells us we have connected.
-                    String line = null;
-                    while ((line = reader.readLine( )) != null) {
-                        if (line.contains("004")) {
-                            // We are now logged in.
-                            break;
-                        }
-                        else if (line.contains("433")) {
-                            System.out.println("Nickname is already in use.");
-                            return;
-                        }
+            // Join the channel.
+            try {
+                // Read lines from the server until it tells us we have connected.
+                String line = null;
+                while ((line = reader.readLine( )) != null) {
+                    if (line.contains("004")) {
+                        // We are now logged in.
+                        break;
                     }
-
-
-                    writer.write("JOIN " + channel + "\r\n");
-                    writer.flush();
-                    // Keep reading lines from the server.
-                    while ((line = reader.readLine( )) != null) {
-
-                        try {
-                            Message m = Message.parse(line);
-
-                            System.err.println("in: " + m + " from " + line);
-
-                            switch (m.command) {
-                                case "PING":
-                                    writer.write("PONG " + m.params.get(0) + "\r\n");
-                                    writer.flush();
-                                    break;
-                                case "PRIVMSG":
-                                    System.err.println(line);
-
-                                    onMessage(IRCBot.this, m.params.get(0), m.nick, m.params.get(1));
-                                    break;
-                                default:
-                                    System.err.println("unknown: " + m + " from " + line);
-                            }
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    else if (line.contains("433")) {
+                        System.out.println("Nickname is already in use.");
+                        return;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
 
 
+                writer.write("JOIN " + channel + "\r\n");
+                writer.flush();
+                // Keep reading lines from the server.
+                while ((line = reader.readLine( )) != null) {
+
+                    try {
+                        Message m = Message.parse(line);
+
+                        System.err.println("in: " + m + " from " + line);
+
+                        switch (m.command) {
+                            case "PING":
+                                writer.write("PONG " + m.params.get(0) + "\r\n");
+                                writer.flush();
+                                break;
+                            case "PRIVMSG":
+                                System.err.println(line);
+
+                                onMessage(IRCBot.this, m.params.get(0), m.nick, m.params.get(1));
+                                break;
+                            default:
+                                System.err.println("unknown: " + m + " from " + line);
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+
         }).start();
     }
 

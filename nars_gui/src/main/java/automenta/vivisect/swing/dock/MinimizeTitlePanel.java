@@ -72,23 +72,13 @@ import static javax.swing.BorderFactory.createEmptyBorder;
         bn_maximize.setBorderPainted(false);
         bn_maximize.setContentAreaFilled(false);
         bn_maximize.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bn_maximize.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bn_maximizeActionPerformed(evt);
-            }
-        });
+        bn_maximize.addActionListener(this::bn_maximizeActionPerformed);
         add(bn_maximize);
         bn_close.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/close.png"))); // NOI18N
         bn_close.setBorderPainted(false);
         bn_close.setContentAreaFilled(false);
         bn_close.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bn_close.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bn_closeActionPerformed(evt);
-            }
-        });
+        bn_close.addActionListener(this::bn_closeActionPerformed);
         add(bn_close);
     } // </editor-fold>//GEN-END:initComponents
 

@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -456,10 +457,8 @@ public class ClassBuilder implements ConfigurableBuilder {
                         for (Constructor c : possibleConstructors) {
                             getValues(context, c, initValues, specificParameters, missingDependencies);
                         }
-                    
-                    for (DependencyKey md : missingDependencies) {
-                        simulateAndAddExtraProblemsHere.add(md);
-                    }
+
+                    simulateAndAddExtraProblemsHere.addAll(missingDependencies.stream().collect(Collectors.toList()));
                 }
             }
         }

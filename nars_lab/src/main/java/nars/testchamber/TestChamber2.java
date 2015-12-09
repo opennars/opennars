@@ -45,13 +45,12 @@ public class TestChamber2 extends TestChamber {
             }
         }
         //if("pick".equals(opname)) {
-            for(GridObject gridi : space.objects) {
-                if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
-                    LocalGridObject gridu=(LocalGridObject) gridi;
-                    if("go-to".equals(opname))
-                        space.target = new PVector(gridu.x, gridu.y);
-                }
-            }
+        //Key && ((Key)gridi).doorname.equals(goal)) {
+        space.objects.stream().filter(gridi -> gridi instanceof LocalGridObject && ((LocalGridObject) gridi).doorname.equals(goal)).forEach(gridi -> { //Key && ((Key)gridi).doorname.equals(goal)) {
+            LocalGridObject gridu = (LocalGridObject) gridi;
+            if ("go-to".equals(opname))
+                space.target = new PVector(gridu.x, gridu.y);
+        });
         //}
     }
     
@@ -61,18 +60,15 @@ public class TestChamber2 extends TestChamber {
         int h = 50;
         int water_threshold = 30;
         Hauto cells = new Hauto(w, h, nar);
-        cells.forEach(0, 0, w, h, new CellFunction() {
-            @Override
-            public void update(Cell c) {
+        cells.forEach(0, 0, w, h, c -> {
 ///c.setHeight((int)(Math.random() * 12 + 1));
-                float smoothness = 20.0f;
-                c.material = Material.GrassFloor;
-                double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
-                if ((n * 64) > water_threshold) {
-                    c.material = Material.Water;
-                }
-                c.setHeight((int) (Math.random() * 24 + 1));
+            float smoothness = 20.0f;
+            c.material = Material.GrassFloor;
+            double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
+            if ((n * 64) > water_threshold) {
+                c.material = Material.Water;
             }
+            c.setHeight((int) (Math.random() * 24 + 1));
         });
         
         Maze.buildMaze(cells, 3, 3, 23, 23);

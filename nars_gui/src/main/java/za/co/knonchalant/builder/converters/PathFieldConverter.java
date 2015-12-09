@@ -36,15 +36,12 @@ public class PathFieldConverter extends StandardTextFieldConverter {
         TextField path = new TextField(); path.setText(object); //TextFieldBuilder.create().text(object).build();
         path.getStyleClass().add("actual-path");
         Button button = new Button("Browse");
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                File selectedDirectory = directoryChooser.showDialog(null);
+        button.setOnAction(actionEvent -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(null);
 
-                if (selectedDirectory != null) {
-                    path.setText(selectedDirectory.getAbsolutePath());
-                }
+            if (selectedDirectory != null) {
+                path.setText(selectedDirectory.getAbsolutePath());
             }
         });
         vbox.getChildren().addAll(path, button);

@@ -116,7 +116,7 @@ public class TracePane extends LogPane {
         if (n != null) {
             //synchronized (toShow) {
             if (pending == null)
-                pending = new ArraySharingList((bn)->new Node[bn]); //Global.newArrayList();
+                pending = new ArraySharingList(Node[]::new); //Global.newArrayList();
 
             pending.add(n);
             prev = n;

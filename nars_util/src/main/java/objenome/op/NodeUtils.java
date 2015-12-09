@@ -24,6 +24,7 @@ package objenome.op;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class provides static utility methods for working with Epox nodes
@@ -53,11 +54,7 @@ public final class NodeUtils {
         }
 
         List<Node> terminals = new ArrayList<>(syntax.size());
-        for (Node n : syntax) {
-            if (n.isTerminal()) {
-                terminals.add(n);
-            }
-        }
+        terminals.addAll(syntax.stream().filter(Node::isTerminal).collect(Collectors.toList()));
 
         return terminals;
     }
@@ -77,11 +74,7 @@ public final class NodeUtils {
         }
 
         List<Node> functions = new ArrayList<>(syntax.size());
-        for (Node n : syntax) {
-            if (n.isNonTerminal()) {
-                functions.add(n);
-            }
-        }
+        functions.addAll(syntax.stream().filter(Node::isNonTerminal).collect(Collectors.toList()));
 
         return functions;
     }

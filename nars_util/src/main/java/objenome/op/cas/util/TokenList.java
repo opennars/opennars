@@ -2,6 +2,7 @@ package objenome.op.cas.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class TokenList<T> extends ArrayList<Token<T>> {
     
@@ -22,10 +23,7 @@ public class TokenList<T> extends ArrayList<Token<T>> {
     }
     
     public static <T> ArrayList<TokenList<T>> toArrTokenList(Collection<ArrayList<Token<T>>> tokenArrArr) {
-        ArrayList<TokenList<T>> tokenListList = new ArrayList<>();
-        for (Collection<Token<T>> tokenArr : tokenArrArr) {
-            tokenListList.add(new TokenList<>(tokenArr));
-        }
+        ArrayList<TokenList<T>> tokenListList = tokenArrArr.stream().map(TokenList::new).collect(Collectors.toCollection(ArrayList::new));
         return tokenListList;
     }
     

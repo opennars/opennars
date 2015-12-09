@@ -777,13 +777,9 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
 
-    final Function<Level, Iterator<E>> levelIteratorFunc = new Function<Level,Iterator<E>>() {
-
-        @Override
-        public Iterator<E> apply(Level o) {
-            if (o == null) return Collections.emptyIterator();
-            return o.iterator();
-        }
+    final Function<Level, Iterator<E>> levelIteratorFunc = o -> {
+        if (o == null) return Collections.emptyIterator();
+        return o.iterator();
     };
 
 

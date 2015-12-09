@@ -32,6 +32,7 @@ import objenome.solver.evolve.event.Listener;
 import objenome.util.TypeUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static objenome.solver.evolve.Population.SIZE;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
@@ -363,11 +364,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
             }
         } else {
             int nts = terminals.size();
-            for (Node n : terminals) {
-                if (n.dataType().isAssignableFrom(requiredType)) {
-                    validNodeTemporary.add(n);
-                }
-            }
+            validNodeTemporary.addAll(terminals.stream().filter(n -> n.dataType().isAssignableFrom(requiredType)).collect(Collectors.toList()));
         }
         return validNodeTemporary;
     }

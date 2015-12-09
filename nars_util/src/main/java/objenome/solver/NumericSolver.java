@@ -49,16 +49,12 @@ public abstract class NumericSolver<C> implements Solver  {
                 }
             }
        }
-         
-        for (Map.Entry<Problem, Solution> e : p.entrySet()) {
-            if (e.getValue() == null) {
-                if (e.getKey() instanceof DecideNumericValue) {
-                    SetNumericValue v = ((DecideNumericValue)e.getKey()).newDefaultSetValue();
-                    variables.add(v);
-                    e.setValue(v);
-                }
-            }
-        }
+
+        p.entrySet().stream().filter(e -> e.getValue() == null).filter(e -> e.getKey() instanceof DecideNumericValue).forEach(e -> {
+            SetNumericValue v = ((DecideNumericValue) e.getKey()).newDefaultSetValue();
+            variables.add(v);
+            e.setValue(v);
+        });
         
         if (variables.isEmpty()) {
             return;

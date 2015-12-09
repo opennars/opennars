@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.github.fge.grappa.misc.AsmUtils.isBooleanValueOfZ;
 import static org.objectweb.asm.Opcodes.*;
@@ -86,8 +87,7 @@ public final class ImplicitActionsConverter
         if (node.isActionRoot())
             return;
 
-        for (InstructionGraphNode predecessor: node.getPredecessors())
-            walkNode(predecessor);
+        node.getPredecessors().forEach(this::walkNode);
     }
 
     private void replaceWithActionWrapper(InstructionGraphNode node)
@@ -184,9 +184,7 @@ public final class ImplicitActionsConverter
     {
         List<InstructionGraphNode> dependents = Lists.newArrayList();
 
-        for (InstructionGraphNode node: method.getGraphNodes())
-            if (node.getPredecessors().contains(predecessor))
-                dependents.add(node);
+        dependents.addAll(method.getGraphNodes().stream().filter(node -> node.getPredecessors().contains(predecessor)).collect(Collectors.toList()));
 
         return dependents;
     }

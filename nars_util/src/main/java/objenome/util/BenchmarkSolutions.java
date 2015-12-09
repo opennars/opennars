@@ -51,11 +51,7 @@ public final class BenchmarkSolutions {
         return x + x * x + x * x * x;
     }
 
-    public static final Function<Double,Double> XpXXpXXX = new Function<Double,Double>() {
-        @Override public Double apply(Double x) {
-            return cubicRegression(x);
-        }        
-    };
+    public static final Function<Double,Double> XpXXpXXX = BenchmarkSolutions::cubicRegression;
     
     
     /**

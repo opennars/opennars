@@ -81,30 +81,22 @@ public class ListProperties_REMOVE {
 		UIManager.LookAndFeelInfo[] looks = UIManager
 				.getInstalledLookAndFeels();
 
-		ActionListener actionListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				String lafClassName = actionEvent.getActionCommand();
-				Runnable runnable = new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							UIManager.setLookAndFeel(lafClassName);
-							SwingUtilities.updateComponentTreeUI(frame);
-							// Added
-							model.uiDefaultsUpdate(UIManager.getDefaults());
-						} catch (Exception exception) {
-							JOptionPane.showMessageDialog(frame,
-							"Can't change look and feel",
-							"Invalid PLAF", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				};
-				SwingUtilities.invokeLater(runnable);
-			}
-		};
+		ActionListener actionListener = actionEvent -> {
+            String lafClassName = actionEvent.getActionCommand();
+            Runnable runnable = () -> {
+try {
+UIManager.setLookAndFeel(lafClassName);
+SwingUtilities.updateComponentTreeUI(frame);
+// Added
+model.uiDefaultsUpdate(UIManager.getDefaults());
+} catch (Exception exception) {
+JOptionPane.showMessageDialog(frame,
+"Can't change look and feel",
+"Invalid PLAF", JOptionPane.ERROR_MESSAGE);
+}
+};
+            SwingUtilities.invokeLater(runnable);
+        };
 
 		JToolBar toolbar = new JToolBar();
 		for (UIManager.LookAndFeelInfo look : looks) {

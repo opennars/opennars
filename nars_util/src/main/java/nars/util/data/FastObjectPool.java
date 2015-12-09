@@ -123,12 +123,10 @@ public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
 
     static {
         try {
-            PrivilegedExceptionAction<Unsafe> action = new PrivilegedExceptionAction<Unsafe>() {
-                public Unsafe run() throws Exception {
-                    Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-                    theUnsafe.setAccessible(true);
-                    return (Unsafe) theUnsafe.get(null);
-                }
+            PrivilegedExceptionAction<Unsafe> action = () -> {
+                Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+                theUnsafe.setAccessible(true);
+                return (Unsafe) theUnsafe.get(null);
             };
 
             THE_UNSAFE = AccessController.doPrivileged(action);

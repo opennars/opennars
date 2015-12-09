@@ -20,6 +20,7 @@ package jurls.reinforcementlearning.domains.arcade.rl;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 /** A time-ordered list of frames.
  *
@@ -76,9 +77,7 @@ public class FrameHistory implements Cloneable {
 
             obj.frames = new LinkedList<>();
             // Copy over the frames; we do not clone them
-            for (ScreenMatrix screen : frames) {
-                obj.frames.add(screen);
-            }
+            obj.frames.addAll(frames.stream().collect(Collectors.toList()));
             return obj;
         }
         catch (CloneNotSupportedException e) {

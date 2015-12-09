@@ -82,16 +82,12 @@ public class ReflectPanel<O> extends JPanel {
         }
 
         // everytime a property change, update the button with it
-        PropertyChangeListener listener = new PropertyChangeListener() {
+        PropertyChangeListener listener = evt -> {
+            Property prop = (Property) evt.getSource();
+            prop.writeToObject(instance);
 
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                automenta.vivisect.swing.property.propertysheet.Property prop = (automenta.vivisect.swing.property.propertysheet.Property) evt.getSource();
-                prop.writeToObject(instance);
-                
-                
-                //button.repaint();
-            }
+
+            //button.repaint();
         };
         sheet.addPropertySheetChangeListener(listener);
 

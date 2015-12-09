@@ -56,14 +56,7 @@ public final class JoinMatcherBuildTest<V>
     {
         parser = (BaseParser<V>) mock(BaseParser.class);
         when(parser.toRule(any()))
-            .thenAnswer(new Answer<Object>()
-            {
-                @Override
-                public Object answer(InvocationOnMock invocation)
-                {
-                    return invocation.getArguments()[0];
-                }
-            });
+            .thenAnswer(invocation -> invocation.getArguments()[0]);
         joined = mock(Matcher.class);
         joining = mock(Matcher.class);
     }

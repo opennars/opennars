@@ -119,21 +119,15 @@ public class DockingRegionRoot extends JPanel
     }
 
     void startDragging() {
-        for (DockingRegionContainer cont : containers) {
-            cont.showDragControl();
-        }
+        containers.forEach(DockingRegionContainer::showDragControl);
     }
 
     void stopDragging() {
-        for (DockingRegionContainer cont : containers) {
-            cont.hideDragControl();
-        }
+        containers.forEach(DockingRegionContainer::hideDragControl);
     }
 
     void clearAllOverlays() {
-        for (DockingRegionContainer cont : containers) {
-            cont.clearOverlay();
-        }
+        containers.forEach(DockingRegionContainer::clearOverlay);
     }
 
     public DockingRegionContainer getContainer(int containerIndex) {

@@ -1481,55 +1481,53 @@ public class IntArrays {
 		ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
 		ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		for ( int i = numberOfThreads; i-- != 0; )
-			executorCompletionService.submit( new Callable<Void>() {
-				public Void call() throws Exception {
-					int[] count = new int[ 1 << DIGIT_BITS ];
-					int[] pos = new int[ 1 << DIGIT_BITS ];
-					while (true) {
-						if (queueSize.get() == 0) for (int i = numberOfThreads; i-- != 0; )
-							queue.add(POISON_PILL);
-						Segment segment = queue.take();
-						if (segment == POISON_PILL) return null;
-						int first = segment.offset;
-						int length = segment.length;
-						int level = segment.level;
-						int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-						int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
-						// Count keys.
-						for (int i = first + length; i-- != first; )
-							count[((a[i]) >>> shift & DIGIT_MASK ^ signMask)]++;
-						// Compute cumulative distribution
-						int lastUsed = -1;
-						for (int i = 0, p = first; i < 1 << DIGIT_BITS; i++) {
-							if (count[i] != 0) lastUsed = i;
-							pos[i] = (p += count[i]);
-						}
-						int end = first + length - count[lastUsed];
-						// i moves through the start of each block
-						for (int i = first, c = -1, d; i <= end; i += count[c], count[c] = 0) {
-							int t = a[i];
-							c = ((t) >>> shift & DIGIT_MASK ^ signMask);
-							if (i < end) {
-								while ((d = --pos[c]) > i) {
-									int z = t;
-									t = a[d];
-									a[d] = z;
-									c = ((t) >>> shift & DIGIT_MASK ^ signMask);
-								}
-								a[i] = t;
-							}
-							if (level < maxLevel && count[c] > 1) {
-								if (count[c] < PARALLEL_RADIXSORT_NO_FORK) quickSort(a, i, i + count[c]);
-								else {
-									queueSize.incrementAndGet();
-									queue.add(new Segment(i, count[c], level + 1));
-								}
-							}
-						}
-						queueSize.decrementAndGet();
-					}
-				}
-			} );
+			executorCompletionService.submit((Callable<Void>) () -> {
+                int[] count = new int[ 1 << DIGIT_BITS ];
+                int[] pos = new int[ 1 << DIGIT_BITS ];
+                while (true) {
+                    if (queueSize.get() == 0) for (int i1 = numberOfThreads; i1-- != 0; )
+                        queue.add(POISON_PILL);
+                    Segment segment = queue.take();
+                    if (segment == POISON_PILL) return null;
+                    int first = segment.offset;
+                    int length = segment.length;
+                    int level = segment.level;
+                    int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+                    int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+                    // Count keys.
+                    for (int i1 = first + length; i1-- != first; )
+                        count[((a[i1]) >>> shift & DIGIT_MASK ^ signMask)]++;
+                    // Compute cumulative distribution
+                    int lastUsed = -1;
+                    for (int i1 = 0, p = first; i1 < 1 << DIGIT_BITS; i1++) {
+                        if (count[i1] != 0) lastUsed = i1;
+                        pos[i1] = (p += count[i1]);
+                    }
+                    int end = first + length - count[lastUsed];
+                    // i moves through the start of each block
+                    for (int i1 = first, c = -1, d; i1 <= end; i1 += count[c], count[c] = 0) {
+                        int t = a[i1];
+                        c = ((t) >>> shift & DIGIT_MASK ^ signMask);
+                        if (i1 < end) {
+                            while ((d = --pos[c]) > i1) {
+                                int z = t;
+                                t = a[d];
+                                a[d] = z;
+                                c = ((t) >>> shift & DIGIT_MASK ^ signMask);
+                            }
+                            a[i1] = t;
+                        }
+                        if (level < maxLevel && count[c] > 1) {
+                            if (count[c] < PARALLEL_RADIXSORT_NO_FORK) quickSort(a, i1, i1 + count[c]);
+                            else {
+                                queueSize.incrementAndGet();
+                                queue.add(new Segment(i1, count[c], level + 1));
+                            }
+                        }
+                    }
+                    queueSize.decrementAndGet();
+                }
+            });
 		Throwable problem = null;
 		for ( int i = numberOfThreads; i-- != 0; )
 			try {
@@ -1694,74 +1692,72 @@ public class IntArrays {
 		ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		int[] support = stable ? new int[ perm.length ] : null;
 		for ( int i = numberOfThreads; i-- != 0; )
-			executorCompletionService.submit( new Callable<Void>() {
-				public Void call() throws Exception {
-					int[] count = new int[ 1 << DIGIT_BITS ];
-					int[] pos = new int[ 1 << DIGIT_BITS ];
-					while (true) {
-						if (queueSize.get() == 0) for (int i = numberOfThreads; i-- != 0; )
-							queue.add(POISON_PILL);
-						Segment segment = queue.take();
-						if (segment == POISON_PILL) return null;
-						int first = segment.offset;
-						int length = segment.length;
-						int level = segment.level;
-						int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-						int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
-						// Count keys.
-						for (int i = first + length; i-- != first; )
-							count[((a[perm[i]]) >>> shift & DIGIT_MASK ^ signMask)]++;
-						// Compute cumulative distribution
-						int lastUsed = -1;
-						for (int i = 0, p = first; i < 1 << DIGIT_BITS; i++) {
-							if (count[i] != 0) lastUsed = i;
-							pos[i] = (p += count[i]);
-						}
-						if (stable) {
-							for (int i = first + length; i-- != first; )
-								support[--pos[((a[perm[i]]) >>> shift & DIGIT_MASK ^ signMask)]] = perm[i];
-							System.arraycopy(support, first, perm, first, length);
-							for (int i = 0, p = first; i <= lastUsed; i++) {
-								if (level < maxLevel && count[i] > 1) {
-									if (count[i] < PARALLEL_RADIXSORT_NO_FORK)
-										radixSortIndirect(perm, a, p, p + count[i], stable);
-									else {
-										queueSize.incrementAndGet();
-										queue.add(new Segment(p, count[i], level + 1));
-									}
-								}
-								p += count[i];
-							}
-							java.util.Arrays.fill(count, 0);
-						} else {
-							int end = first + length - count[lastUsed];
-							// i moves through the start of each block
-							for (int i = first, c = -1, d; i <= end; i += count[c], count[c] = 0) {
-								int t = perm[i];
-								c = ((a[t]) >>> shift & DIGIT_MASK ^ signMask);
-								if (i < end) { // When all slots are OK, the last slot is necessarily OK.
-									while ((d = --pos[c]) > i) {
-										int z = t;
-										t = perm[d];
-										perm[d] = z;
-										c = ((a[t]) >>> shift & DIGIT_MASK ^ signMask);
-									}
-									perm[i] = t;
-								}
-								if (level < maxLevel && count[c] > 1) {
-									if (count[c] < PARALLEL_RADIXSORT_NO_FORK)
-										radixSortIndirect(perm, a, i, i + count[c], stable);
-									else {
-										queueSize.incrementAndGet();
-										queue.add(new Segment(i, count[c], level + 1));
-									}
-								}
-							}
-						}
-						queueSize.decrementAndGet();
-					}
-				}
-			} );
+			executorCompletionService.submit((Callable<Void>) () -> {
+                int[] count = new int[ 1 << DIGIT_BITS ];
+                int[] pos = new int[ 1 << DIGIT_BITS ];
+                while (true) {
+                    if (queueSize.get() == 0) for (int i1 = numberOfThreads; i1-- != 0; )
+                        queue.add(POISON_PILL);
+                    Segment segment = queue.take();
+                    if (segment == POISON_PILL) return null;
+                    int first = segment.offset;
+                    int length = segment.length;
+                    int level = segment.level;
+                    int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+                    int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+                    // Count keys.
+                    for (int i1 = first + length; i1-- != first; )
+                        count[((a[perm[i1]]) >>> shift & DIGIT_MASK ^ signMask)]++;
+                    // Compute cumulative distribution
+                    int lastUsed = -1;
+                    for (int i1 = 0, p = first; i1 < 1 << DIGIT_BITS; i1++) {
+                        if (count[i1] != 0) lastUsed = i1;
+                        pos[i1] = (p += count[i1]);
+                    }
+                    if (stable) {
+                        for (int i1 = first + length; i1-- != first; )
+                            support[--pos[((a[perm[i1]]) >>> shift & DIGIT_MASK ^ signMask)]] = perm[i1];
+                        System.arraycopy(support, first, perm, first, length);
+                        for (int i1 = 0, p = first; i1 <= lastUsed; i1++) {
+                            if (level < maxLevel && count[i1] > 1) {
+                                if (count[i1] < PARALLEL_RADIXSORT_NO_FORK)
+                                    radixSortIndirect(perm, a, p, p + count[i1], stable);
+                                else {
+                                    queueSize.incrementAndGet();
+                                    queue.add(new Segment(p, count[i1], level + 1));
+                                }
+                            }
+                            p += count[i1];
+                        }
+                        java.util.Arrays.fill(count, 0);
+                    } else {
+                        int end = first + length - count[lastUsed];
+                        // i moves through the start of each block
+                        for (int i1 = first, c = -1, d; i1 <= end; i1 += count[c], count[c] = 0) {
+                            int t = perm[i1];
+                            c = ((a[t]) >>> shift & DIGIT_MASK ^ signMask);
+                            if (i1 < end) { // When all slots are OK, the last slot is necessarily OK.
+                                while ((d = --pos[c]) > i1) {
+                                    int z = t;
+                                    t = perm[d];
+                                    perm[d] = z;
+                                    c = ((a[t]) >>> shift & DIGIT_MASK ^ signMask);
+                                }
+                                perm[i1] = t;
+                            }
+                            if (level < maxLevel && count[c] > 1) {
+                                if (count[c] < PARALLEL_RADIXSORT_NO_FORK)
+                                    radixSortIndirect(perm, a, i1, i1 + count[c], stable);
+                                else {
+                                    queueSize.incrementAndGet();
+                                    queue.add(new Segment(i1, count[c], level + 1));
+                                }
+                            }
+                        }
+                    }
+                    queueSize.decrementAndGet();
+                }
+            });
 		Throwable problem = null;
 		for ( int i = numberOfThreads; i-- != 0; )
 			try {
@@ -1911,60 +1907,58 @@ public class IntArrays {
 		ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
 		ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		for ( int i = numberOfThreads; i-- != 0; )
-			executorCompletionService.submit( new Callable<Void>() {
-				public Void call() throws Exception {
-					int[] count = new int[ 1 << DIGIT_BITS ];
-					int[] pos = new int[ 1 << DIGIT_BITS ];
-					while (true) {
-						if (queueSize.get() == 0) for (int i = numberOfThreads; i-- != 0; )
-							queue.add(POISON_PILL);
-						Segment segment = queue.take();
-						if (segment == POISON_PILL) return null;
-						int first = segment.offset;
-						int length = segment.length;
-						int level = segment.level;
-						int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
-						int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
-						int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS;
-						// Count keys.
-						for (int i = first + length; i-- != first; )
-							count[((k[i]) >>> shift & DIGIT_MASK ^ signMask)]++;
-						// Compute cumulative distribution
-						int lastUsed = -1;
-						for (int i = 0, p = first; i < 1 << DIGIT_BITS; i++) {
-							if (count[i] != 0) lastUsed = i;
-							pos[i] = (p += count[i]);
-						}
-						int end = first + length - count[lastUsed];
-						for (int i = first, c = -1, d; i <= end; i += count[c], count[c] = 0) {
-							int t = a[i];
-							int u = b[i];
-							c = ((k[i]) >>> shift & DIGIT_MASK ^ signMask);
-							if (i < end) { // When all slots are OK, the last slot is necessarily OK.
-								while ((d = --pos[c]) > i) {
-									c = ((k[d]) >>> shift & DIGIT_MASK ^ signMask);
-									int z = t;
-									int w = u;
-									t = a[d];
-									u = b[d];
-									a[d] = z;
-									b[d] = w;
-								}
-								a[i] = t;
-								b[i] = u;
-							}
-							if (level < maxLevel && count[c] > 1) {
-								if (count[c] < PARALLEL_RADIXSORT_NO_FORK) quickSort(a, b, i, i + count[c]);
-								else {
-									queueSize.incrementAndGet();
-									queue.add(new Segment(i, count[c], level + 1));
-								}
-							}
-						}
-						queueSize.decrementAndGet();
-					}
-				}
-			} );
+			executorCompletionService.submit((Callable<Void>) () -> {
+                int[] count = new int[ 1 << DIGIT_BITS ];
+                int[] pos = new int[ 1 << DIGIT_BITS ];
+                while (true) {
+                    if (queueSize.get() == 0) for (int i1 = numberOfThreads; i1-- != 0; )
+                        queue.add(POISON_PILL);
+                    Segment segment = queue.take();
+                    if (segment == POISON_PILL) return null;
+                    int first = segment.offset;
+                    int length = segment.length;
+                    int level = segment.level;
+                    int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+                    int[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
+                    int shift = (DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT) * DIGIT_BITS;
+                    // Count keys.
+                    for (int i1 = first + length; i1-- != first; )
+                        count[((k[i1]) >>> shift & DIGIT_MASK ^ signMask)]++;
+                    // Compute cumulative distribution
+                    int lastUsed = -1;
+                    for (int i1 = 0, p = first; i1 < 1 << DIGIT_BITS; i1++) {
+                        if (count[i1] != 0) lastUsed = i1;
+                        pos[i1] = (p += count[i1]);
+                    }
+                    int end = first + length - count[lastUsed];
+                    for (int i1 = first, c = -1, d; i1 <= end; i1 += count[c], count[c] = 0) {
+                        int t = a[i1];
+                        int u = b[i1];
+                        c = ((k[i1]) >>> shift & DIGIT_MASK ^ signMask);
+                        if (i1 < end) { // When all slots are OK, the last slot is necessarily OK.
+                            while ((d = --pos[c]) > i1) {
+                                c = ((k[d]) >>> shift & DIGIT_MASK ^ signMask);
+                                int z = t;
+                                int w = u;
+                                t = a[d];
+                                u = b[d];
+                                a[d] = z;
+                                b[d] = w;
+                            }
+                            a[i1] = t;
+                            b[i1] = u;
+                        }
+                        if (level < maxLevel && count[c] > 1) {
+                            if (count[c] < PARALLEL_RADIXSORT_NO_FORK) quickSort(a, b, i1, i1 + count[c]);
+                            else {
+                                queueSize.incrementAndGet();
+                                queue.add(new Segment(i1, count[c], level + 1));
+                            }
+                        }
+                    }
+                    queueSize.decrementAndGet();
+                }
+            });
 		Throwable problem = null;
 		for ( int i = numberOfThreads; i-- != 0; )
 			try {

@@ -11,11 +11,8 @@ import objenome.goal.DecideNumericValue.DecideDoubleValue;
 import objenome.goal.DecideNumericValue.DecideIntegerValue;
 import objenome.goal.DevelopMethod;
 import objenome.problem.Problem;
-import objenome.solution.dependency.Builder;
-import objenome.solution.dependency.ClassBuilder;
+import objenome.solution.dependency.*;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;
-import objenome.solution.dependency.DecideImplementationClass;
-import objenome.solution.dependency.Scope;
 import objenome.solver.IncompleteSolutionException;
 import objenome.solver.RandomSolver;
 import objenome.solver.Solution;
@@ -25,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -123,10 +121,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
         {
             Set<DependencyKey> possibleConstructorDependencies = new HashSet();
             if (cb.getInitValues()!=null) {
-                for (Object o : cb.getInitValues()) {
-                    if (o instanceof DependencyKey)
-                        possibleConstructorDependencies.add((DependencyKey)o);
-                }
+                possibleConstructorDependencies.addAll(cb.getInitValues().stream().filter(o -> o instanceof DependencyKey).map(o -> (DependencyKey) o).collect(Collectors.toList()));
             }
 
             //simultate instancing to find all possible constructor dependencies
@@ -250,7 +245,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
     
     public List<Object> getKeyClasses() {
         //TODO use setter dependencies also?
-        return getConstructorDependencies().stream().map(d -> d.getContainerKey()).filter(k -> k!=null).collect(toList());
+        return getConstructorDependencies().stream().map(ConstructorDependency::getContainerKey).filter(k -> k!=null).collect(toList());
     }
     
     /** creates a new random objosome,
@@ -312,12 +307,8 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
     }
 
     public Objenome solve(Object[] targets, Map<Problem,Solution> problemSolutions) throws IncompleteSolutionException {
-        List<Problem> missing = new ArrayList();
-        for (Map.Entry<Problem, Solution> e : problemSolutions.entrySet()) {
-            if (e.getValue() == null)
-                missing.add(e.getKey());
-        }
-        
+        List<Problem> missing = problemSolutions.entrySet().stream().filter(e -> e.getValue() == null).map(Map.Entry<Problem, Solution>::getKey).collect(Collectors.toList());
+
         if (!missing.isEmpty())
             throw new IncompleteSolutionException(missing, targets, this);
         

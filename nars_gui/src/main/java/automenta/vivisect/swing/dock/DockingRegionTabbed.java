@@ -220,9 +220,7 @@ public class DockingRegionTabbed extends JTabbedPane implements DockingChild {
 
     @Override
     public void closeAll() {
-        for (DockingContent cont : new ArrayList<>(tabs.keySet())) {
-            removeTab(cont);
-        }
+        new ArrayList<>(tabs.keySet()).forEach(this::removeTab);
     }
 
     //---------------------------------

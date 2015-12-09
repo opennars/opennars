@@ -326,9 +326,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 singletonsCache.clear();
             }
             // remove everything inside a non-synchronized block...
-            for (ClearableHolder cp : listToClear) {
-                cp.clear();
-            }
+            listToClear.forEach(ClearableHolder::clear);
         } else if (scope == Scope.THREAD) {
             Collection<ClearableHolder> listToClear = new FasterList<>();
             synchronized (this) {
@@ -347,14 +345,10 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 }
                 // and now we remove all thread locals belonging to this thread...
                 // this will only remove of instances related to this thread...
-                for (ThreadLocal<Object> t : threadLocalsCache.values()) {
-                    t.remove();
-                }
+                threadLocalsCache.values().forEach(ThreadLocal<Object>::remove);
             }
             // remove everything inside a non-synchronized block...
-            for (ClearableHolder cp : listToClear) {
-                cp.clear();
-            }
+            listToClear.forEach(ClearableHolder::clear);
         }
     }
 

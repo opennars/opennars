@@ -3,6 +3,7 @@ package objenome.op.cas;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Not extends Operation {
     
@@ -58,10 +59,7 @@ public class Not extends Operation {
                 if (maybeNot.printSimplify() instanceof Not) aNot = true;
             }
             if (aNot) {
-                ArrayList<Expr> ands = new ArrayList<>();
-                for (Expr expr : ((Operation) notExpr).getExprs()) {
-                    ands.add(Not.make(expr));
-                }
+                ArrayList<Expr> ands = ((Operation) notExpr).getExprs().stream().map(Not::make).collect(Collectors.toCollection(ArrayList::new));
                 return new And(ands);
             }
         }

@@ -5,6 +5,7 @@ import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Product extends Operation {
     
@@ -117,10 +118,7 @@ public class Product extends Operation {
             if (other.exprs.isEmpty() && numbers.size() == 1) return Num.make(numbers.get(0));
 
             if (!(numbers.size() == 1 && numbers.get(0) == 1)) {
-                ArrayList<Expr> tmp = new ArrayList<>();
-                for (Double number : numbers) {
-                    tmp.add(Num.make(number));
-                }
+                ArrayList<Expr> tmp = numbers.stream().map(Num::make).collect(Collectors.toCollection(ArrayList::new));
                 other.exprs.addAll(0, tmp);
             }
 
@@ -167,10 +165,7 @@ public class Product extends Operation {
                             continue simplify;
                         }
                         if (!(expr instanceof Operation) && expr2 instanceof Sum) {
-                            ArrayList<Expr> products = new ArrayList<>();
-                            for (Expr addend : ((Operation) expr2).getExprs()) {
-                                products.add(Product.make(expr, addend));
-                            }
+                            ArrayList<Expr> products = ((Operation) expr2).getExprs().stream().map(addend -> Product.make(expr, addend)).collect(Collectors.toCollection(ArrayList::new));
                             other.exprs.set(j, Sum.make(products));
                             other.exprs.remove(i);
                             continue simplify;

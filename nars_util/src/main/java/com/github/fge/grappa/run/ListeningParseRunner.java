@@ -49,17 +49,11 @@ public class ListeningParseRunner<V>
     // TODO: does it need to be volatile?
     private volatile Throwable throwable = null;
 
-    private final EventBus bus = new EventBus(new SubscriberExceptionHandler()
-    {
-        @Override
-        public void handleException(Throwable exception,
-                                    SubscriberExceptionContext context)
-        {
-            if (throwable == null)
-                throwable = exception;
-            else
-                throwable.addSuppressed(exception);
-        }
+    private final EventBus bus = new EventBus((exception, context) -> {
+        if (throwable == null)
+            throwable = exception;
+        else
+            throwable.addSuppressed(exception);
     });
 
     /**

@@ -481,11 +481,7 @@ public class Gossip {
                 }*/
                 view.markAlive(gossiper);
                 // Endpoint has been connected
-                for (ReplicatedState state : gossipingEndpoint.getStates()) {
-                    if (state.isNotifiable()) {
-                        notifyRegister(state);
-                    }
-                }
+                gossipingEndpoint.getStates().stream().filter(ReplicatedState::isNotifiable).forEach(this::notifyRegister);
                 // We want it all, baby
                 gossipingEndpoint.getHandler().gossip(Iterators.singletonIterator(new Digest(
                         gossiper,
@@ -631,11 +627,7 @@ public class Gossip {
                                             address, me()));
                 }*/
                 // Endpoint has been connected
-                for (ReplicatedState state : endpoint.getStates()) {
-                    if (state.isNotifiable()) {
-                        notifyRegister(state);
-                    }
-                }
+                endpoint.getStates().stream().filter(ReplicatedState::isNotifiable).forEach(this::notifyRegister);
                 // We want it all, baby
                 endpoint.getHandler().gossip(Iterators.singletonIterator(new Digest(
                         address,
@@ -1114,13 +1106,8 @@ public class Gossip {
             Thread daemon = new Thread(r, "Gossip servicing thread "
                                           + count++);
             daemon.setDaemon(true);
-            daemon.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(Thread t, Throwable e) {
-                    log.severe("Uncaught exception on the gossip servicing thread"
-                             );
-                }
-            });
+            daemon.setUncaughtExceptionHandler((t, e) -> log.severe("Uncaught exception on the gossip servicing thread"
+                     ));
             return daemon;
         }
     }
@@ -1133,13 +1120,8 @@ public class Gossip {
             Thread daemon = new Thread(r, "Gossip dispatching thread "
                                           + count++);
             daemon.setDaemon(true);
-            daemon.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(Thread t, Throwable e) {
-                    log.severe("Uncaught exception on the gossip dispatching thread"
-                             );
-                }
-            });
+            daemon.setUncaughtExceptionHandler((t, e) -> log.severe("Uncaught exception on the gossip dispatching thread"
+                     ));
             return daemon;
         }
     }

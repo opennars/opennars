@@ -48,7 +48,7 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
 
 
     DefaultTopic(String id) {
-        super(i -> new Consumer[i]);
+        super(Consumer[]::new);
         this.id = id;
         register(this);
     }

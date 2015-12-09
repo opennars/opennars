@@ -1026,11 +1026,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         } else if (map instanceof UnsortedMapIterable) {
             MapIterable<K, V> mapIterable = (MapIterable<K, V>) map;
-            mapIterable.forEachKeyValue(new Procedure2<K, V>() {
-                public void value(K key, V value) {
-                    put(key, value);
-                }
-            });
+            mapIterable.forEachKeyValue((Procedure2<K, V>) this::put);
         } else {
             for (Entry<? extends K, ? extends V> entry : getEntrySetFrom(map)) {
                 put(entry.getKey(), entry.getValue());
@@ -1667,9 +1663,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         public boolean removeAll(Collection<?> collection) {
             int oldSize = occupied;
-            for (Object object : collection) {
-                UnifriedMap.this.remove(object);
-            }
+            collection.forEach(UnifriedMap.this::remove);
             return oldSize != occupied;
         }
 
@@ -2117,15 +2111,13 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             int retainedSize = collection.size();
             UnifriedMap<K, V> retainedCopy = new UnifriedMap<>(retainedSize, loadFactor);
 
-            for (Object obj : collection) {
-                if (obj instanceof Entry) {
-                    Entry<?, ?> otherEntry = (Entry<?, ?>) obj;
-                    Entry<K, V> thisEntry = getEntry(otherEntry);
-                    if (thisEntry != null) {
-                        retainedCopy.put(thisEntry.getKey(), thisEntry.getValue());
-                    }
+            collection.stream().filter(obj -> obj instanceof Entry).forEach(obj -> {
+                Entry<?, ?> otherEntry = (Entry<?, ?>) obj;
+                Entry<K, V> thisEntry = getEntry(otherEntry);
+                if (thisEntry != null) {
+                    retainedCopy.put(thisEntry.getKey(), thisEntry.getValue());
                 }
-            }
+            });
             if (retainedCopy.size() < size()) {
                 maxSize = retainedCopy.maxSize;
                 occupied = retainedCopy.occupied;

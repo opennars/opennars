@@ -1,6 +1,7 @@
 package objenome.op.cas.util;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Token<T> {
     
@@ -38,10 +39,7 @@ public class Token<T> {
     }
     
     public static <T> ArrayList<T> getValues(ArrayList<Token<T>> tokens) {
-        ArrayList<T> values = new ArrayList<>();
-        for (Token<T> token : tokens) {
-            values.add(token.tokenValue);
-        }
+        ArrayList<T> values = tokens.stream().map(token -> token.tokenValue).collect(Collectors.toCollection(ArrayList::new));
         return values;
     }
     

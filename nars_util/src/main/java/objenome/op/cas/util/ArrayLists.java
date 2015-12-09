@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ArrayLists {
     
@@ -191,9 +192,7 @@ public final class ArrayLists {
     
     public static ArrayList<Expr> copyAll(List<Expr> exprs, HashMap<Expr, Expr> subs) {
         ArrayList<Expr> copies = new ArrayList(exprs.size());
-        for (Expr expr : exprs) {
-            copies.add(expr.copy(subs));
-        }
+        copies.addAll(exprs.stream().map(expr -> expr.copy(subs)).collect(Collectors.toList()));
         return copies;
     }
     

@@ -243,7 +243,7 @@ public abstract class EventEmitter<K,V>  {
 
         protected ArraySharingList<Reaction<K,V>> newChannelList() {
             return new ArraySharingList<>(
-                    r -> new Reaction[r]
+                    Reaction[]::new
             );
         }
 
@@ -330,9 +330,7 @@ public abstract boolean isActive(K event);
 //        }
 
         public synchronized void off() {
-            for (EventRegistration eventRegistration : this) {
-                eventRegistration.off();
-            }
+            this.forEach(EventRegistration::off);
             clear();
         }
         
