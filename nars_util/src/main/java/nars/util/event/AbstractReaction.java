@@ -13,10 +13,12 @@ abstract public class AbstractReaction<K,V> implements Reaction<K,V> {
         this(null);
     }
 
+    @SafeVarargs //todo: "possible heap pollution" hereafter with noted with this annotation to change the type checking behavior.
     public AbstractReaction(EventEmitter<K,V> source, K... events) {
         this(source, true, events);
     }
 
+    @SafeVarargs
     public AbstractReaction(EventEmitter<K,V> source, boolean active, K... events) {
         super();
 

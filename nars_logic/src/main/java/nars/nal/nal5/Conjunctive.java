@@ -18,6 +18,7 @@ import java.util.List;
 public abstract class Conjunctive<T extends Term> extends Junction<T> {
 
 
+    @SafeVarargs
     protected Conjunctive(T... arg) {
         super(arg);
     }

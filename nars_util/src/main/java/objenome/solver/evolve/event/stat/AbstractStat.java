@@ -104,6 +104,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      *
      * @param dependencies the array of dependencies of this stat.
      */
+    @SafeVarargs
     public AbstractStat(Class<? extends AbstractStat<?>>... dependencies) {
         this(Arrays.asList(dependencies));
     }
@@ -137,6 +138,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      * @param clearOn the event that trigger the stat to clear its values.
      * @param dependencies the array of dependencies of this stat.
      */
+    @SafeVarargs
     public <E extends Event> AbstractStat(Class<T> clearOn, Class<? extends AbstractStat<?>>... dependencies) {
         this(clearOn, Arrays.asList(dependencies));
     }

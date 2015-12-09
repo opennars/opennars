@@ -50,6 +50,7 @@ public class SortedList<E extends Comparable> extends FasterList<E> {
     }
 
     /** uses array directly */
+    @SafeVarargs
     public SortedList(E... x) {
         super(x.length);
         for (E e : x)

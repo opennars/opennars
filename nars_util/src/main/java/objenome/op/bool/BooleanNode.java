@@ -11,6 +11,7 @@ abstract public class BooleanNode<N extends Node> extends Node<N, Boolean> {
     public static final Literal False = new Literal(false);
     public static final Literal True = new Literal(true);
 
+    @SafeVarargs
     public BooleanNode(N... n) {
         super(n);
     }

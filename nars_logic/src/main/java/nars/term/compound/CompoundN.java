@@ -28,6 +28,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
     protected transient final int hash;
 
+    @SafeVarargs
     protected CompoundN(T... t) {
         this(0, t);
     }
@@ -40,6 +41,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
     /** if hash salt is non-zero, it will be combined with the default hash value of the compound
      * */
+    @SafeVarargs
     protected CompoundN(int hashSalt, T... subterms) {
         this.terms = isCommutative() ?
                         new TermSet(subterms) :

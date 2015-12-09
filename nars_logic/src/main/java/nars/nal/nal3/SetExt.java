@@ -17,6 +17,7 @@ public interface SetExt {
         return SetExt.make((T[])c.toArray(new Term[c.size()]));
     }
 
+    @SafeVarargs
     static <T extends Term> Compound<T> make(final T... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");

@@ -62,6 +62,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      *
      * @param children child nodes to this node
      */
+    @SafeVarargs
     public Node(X... children) {
         setChildren(children);
     }
@@ -122,7 +123,8 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      *
      * @param children the nodes to set as children in order
      */
-    public void setChildren(X... children) {
+    @SafeVarargs
+    public final void setChildren(X... children) {
         // Must be careful to maintain the integrity of parent
         this.children = Arrays.copyOf(children, children.length);
     }

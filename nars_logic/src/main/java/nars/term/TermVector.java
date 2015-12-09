@@ -69,6 +69,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         this((T[]) t.toArray(new Term[t.size()]));
     }
 
+    @SafeVarargs
     public TermVector(T... t) {
         super();
         this.term = t;

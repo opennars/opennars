@@ -266,6 +266,7 @@ public class Terms {
         return l;
     }
 
+    @SafeVarargs
     public static <T> Set<T> toSortedSet(T... t) {
 
         final int l = t.length;

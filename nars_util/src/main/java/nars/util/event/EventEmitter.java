@@ -298,7 +298,8 @@ abstract public class EventEmitter<K,V>  {
 //
 //
 //    /** for enabling many events at the same time */
-    @Deprecated public void set(final Reaction<K,V> o, final boolean enable, final K... events) {
+    @SafeVarargs
+    @Deprecated public final void set(final Reaction<K, V> o, final boolean enable, final K... events) {
 
         for (final K c : events) {
             if (enable)
@@ -339,7 +340,8 @@ abstract public class EventEmitter<K,V>  {
 
 
     
-    public Registrations on(final Reaction<K,V> o, final K... events) {
+    @SafeVarargs
+    public final Registrations on(final Reaction<K, V> o, final K... events) {
         Registrations r = new Registrations(events.length);
     
         for (final K c : events)

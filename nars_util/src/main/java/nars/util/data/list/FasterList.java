@@ -30,6 +30,7 @@ public class FasterList<X> extends FastList<X> {
     }
 
     /** uses array directly */
+    @SafeVarargs
     public FasterList(X... x) {
         super(x);
     }

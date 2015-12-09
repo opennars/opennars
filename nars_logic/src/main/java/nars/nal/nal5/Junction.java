@@ -8,6 +8,7 @@ import nars.term.compound.CompoundN;
  */
 abstract public class Junction<T extends Term> extends CompoundN<T> {
 
+    @SafeVarargs
     protected Junction(T... arg) {
         super(arg);
     }

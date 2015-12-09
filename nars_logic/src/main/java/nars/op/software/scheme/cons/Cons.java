@@ -20,6 +20,7 @@ public class Cons<T> implements Iterable<T> {
         return new Cons<>(car, cdr);
     }
 
+    @SafeVarargs
     public static <T> Cons<T> copyOf(T... items) {
         return copyOf(Arrays.asList(items));
     }

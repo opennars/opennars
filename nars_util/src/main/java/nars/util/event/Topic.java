@@ -75,6 +75,7 @@ public interface Topic<V> extends Named<String> {
     On on(Consumer<V> o);
     void off(On<V> reaction);
 
+    @SafeVarargs
     static <V> Active onAll(final Consumer<V> o, final Topic<V>... w) {
         Active r = new Active(w.length);
     

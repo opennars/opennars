@@ -145,6 +145,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         this.putAll(map);
     }
 
+    @SafeVarargs
     public UnifriedMap(Pair<K, V>... pairs) {
         this(Math.max(pairs.length, DEFAULT_INITIAL_CAPACITY), DEFAULT_LOAD_FACTOR);
         ArrayIterate.forEach(pairs, new MapCollectProcedure<Pair<K, V>, K, V>(
@@ -169,6 +170,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return new UnifriedMap<K, V>(map);
     }
 
+    @SafeVarargs
     public static <K, V> UnifriedMap<K, V> newMapWith(Pair<K, V>... pairs) {
         return new UnifriedMap<K, V>(pairs);
     }
