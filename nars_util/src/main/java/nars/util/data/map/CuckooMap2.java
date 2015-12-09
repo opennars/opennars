@@ -62,10 +62,10 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
     private static final float kMaxLoadFactor = 0.40f;
 
     /* The two hash arrays. */
-    private Entry<K, V> mArrays[][] = new Entry[2][kStartSize];
+    private Entry<K, V>[][] mArrays = new Entry[2][kStartSize];
 
     /* The two hash functions. */
-    private final HashFunction<? super K> mHashFns[] = new HashFunction[2];
+    private final HashFunction<? super K>[] mHashFns = new HashFunction[2];
 
     /* The family of universal hash functions. */
     private final UniversalHashFunction<? super K> mUniversalHashFunction;
@@ -381,7 +381,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * otherwise have no way of tracking what values got inserted.
          */
         EntrySet var = entrySet();
-        Entry<K, V> values[] = var.toArray(new Entry[var.size()]);
+        Entry<K, V>[] values = var.toArray(new Entry[var.size()]);
 
         /* Continuously spin, trying to add more and more values to the table.
          * If at any point we can't add something, pick new hash functions and
@@ -417,7 +417,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
         /* Hold on to the old arrays; we'll need this so that later on we can
          * scan over and add everything to the new array.
          */
-        Entry<K, V> oldArrays[][] = mArrays;
+        Entry<K, V>[][] oldArrays = mArrays;
 
         /* Reallocate the arrays twice as large as they are now. */
         mArrays = new Entry[2][mArrays[0].length * 2];

@@ -29,8 +29,10 @@ import java.util.Map;
  */
 public final class Distributor {
 
-    /** Shuffled sequence of index numbers */
-    public final short order[];
+    /**
+     * Shuffled sequence of index numbers
+     */
+    public final short[] order;
     /** Capacity of the array */
     public final int capacity;
 

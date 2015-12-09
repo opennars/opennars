@@ -9,8 +9,8 @@ public class RuleGenBin {
 	public int iClo; // actual count of states
 	public boolean isHist; // with history?
 	public int iNgh; // neighborhood type, NGHTYP_MOOR or NGHTYP_NEUM
-	public boolean rulesS[] = new boolean[256];
-	public boolean rulesB[] = new boolean[256];
+	public boolean[] rulesS = new boolean[256];
+	public boolean[] rulesB = new boolean[256];
 
 	// ----------------------------------------------------------------
 	public RuleGenBin() {
@@ -102,7 +102,7 @@ public class RuleGenBin {
 	// ----------------------------------------------------------------
 	// Initialize from separate parameters
 	public void InitFromPrm(int i_Clo, boolean is_Hist, int i_Ngh,
-			boolean rules_S[], boolean rules_B[]) {
+							boolean[] rules_S, boolean[] rules_B) {
 		iClo = i_Clo; // count of colors
 		iNgh = i_Ngh; // neighbourhood
 		isHist = is_Hist; // with history?
@@ -222,11 +222,11 @@ public class RuleGenBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		int modCnt = 0;
 		int i, j, iCnt;
 		short bOldVal, bNewVal; // old and new value of the cell
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells

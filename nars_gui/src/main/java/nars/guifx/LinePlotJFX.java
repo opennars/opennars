@@ -27,7 +27,7 @@ abstract public class LinePlotJFX extends Application {
         final LineChart<Number,Number> lineChart = new LineChart(xAxis,yAxis);
 
         Scene scene  = new Scene(lineChart, 800, 600);
-        XYChart.Series series[] = initChart();
+        XYChart.Series[] series = initChart();
         for (XYChart.Series s : series)
             lineChart.getData().add(s);
        

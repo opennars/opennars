@@ -90,9 +90,9 @@ public class CurveBagTest extends AbstractBagTest {
         
         
         testAveragePriority(4, items);
-        testAveragePriority(8, items);        
-        
-        int d[] = null;
+        testAveragePriority(8, items);
+
+        int[] d = null;
         for (int capacity : new int[] { 10, 51, 100, 256 } ) {
             d = AbstractBagTest.testRemovalPriorityDistribution(items);
         }

@@ -17,23 +17,23 @@ public class FaceGUI extends BaseClass {
     int nVertices;
     int nShapes;
     int nFlexes;
-    int keyFlex[];
-    double keyValue[];
-    double flexValue[][];
-    double flexTarget[][];
-    double jitterAmpl[];
-    double jitterFreq[];
+    int[] keyFlex;
+    double[] keyValue;
+    double[][] flexValue;
+    double[][] flexTarget;
+    double[] jitterAmpl;
+    double[] jitterFreq;
     boolean firstTime;
     boolean kludge;
     final int POLYGON = 0;
     final int POLYLINE = 1;
     final int CIRCLE = 2;
-    double flexData[][][];
-    int flexShape[][];
-    int flexSymmetry[];
-    double pts[][][];
-    int shape[][][];
-    double vertexArray[][];
+    double[][][] flexData;
+    int[][] flexShape;
+    int[] flexSymmetry;
+    double[][][] pts;
+    int[][][] shape;
+    double[][] vertexArray;
     double t;
     double blinkValue;
     double spin;
@@ -321,7 +321,7 @@ public class FaceGUI extends BaseClass {
     }
 
     public double[][] getTargets() {
-        double ad[][] = new double[2][flexTarget[0].length];
+        double[][] ad = new double[2][flexTarget[0].length];
         for (int i = 0; i < 2; i++) {
             System.arraycopy(flexTarget[i], 0, ad[i], 0, flexTarget[0].length);
 
@@ -330,7 +330,7 @@ public class FaceGUI extends BaseClass {
         return ad;
     }
 
-    public void setTargets(double ad[][]) {
+    public void setTargets(double[][] ad) {
         for (int i = 0; i < 2; i++) {
             System.arraycopy(ad[i], 0, flexTarget[i], 0, flexTarget[0].length);
 
@@ -394,9 +394,10 @@ public class FaceGUI extends BaseClass {
                 break;
         }
     }
-    int ai[] = new int[100];
-    int ai1[] = new int[100];
-    int ai2[] = new int[100];
+
+    int[] ai = new int[100];
+    int[] ai1 = new int[100];
+    int[] ai2 = new int[100];
 
     @Override
     public void render(Graphics g) {
@@ -456,11 +457,11 @@ public class FaceGUI extends BaseClass {
                 }
 
                 flexTarget[0][3] = flexTarget[1][3] = -1D;
-                double ad[] = {
-                    0.080000000000000002D, 0.040000000000000001D, 0, 0, 0, 0.10000000000000001D, 0.070000000000000007D, 0.070000000000000007D, 0.14999999999999999D
+                double[] ad = {
+                        0.080000000000000002D, 0.040000000000000001D, 0, 0, 0, 0.10000000000000001D, 0.070000000000000007D, 0.070000000000000007D, 0.14999999999999999D
                 };
-                double ad1[] = {
-                    0.25D, 0.25D, 0, 0, 0, 0.5D, 0.5D, 0.5D, 0.5D
+                double[] ad1 = {
+                        0.25D, 0.25D, 0, 0, 0, 0.5D, 0.5D, 0.5D, 0.5D
                 };
                 jitterAmpl = new double[nFlexes];
                 jitterFreq = new double[nFlexes];
@@ -517,7 +518,7 @@ public class FaceGUI extends BaseClass {
         }
     }
 
-    void doRender(Graphics g, double ad[][], double d, boolean flag, boolean flag1, boolean flag2) {
+    void doRender(Graphics g, double[][] ad, double d, boolean flag, boolean flag1, boolean flag2) {
         try {
             synchronized (pts) {
                 for (int i = 0; i < 2; i++) {
@@ -692,7 +693,7 @@ public class FaceGUI extends BaseClass {
         }
     }
 
-    int area(int ai[], int ai1[], int i) {
+    int area(int[] ai, int[] ai1, int i) {
         int j = 0;
         for (int l = 0; l < i; l++) {
             int k = (l + 1) % i;
@@ -706,7 +707,7 @@ public class FaceGUI extends BaseClass {
         return (double) (d - (double) (int) d >= d1 ? 0 : 1);
     }
 
-    int getShade(int ai[], int ai1[], int ai2[]) {
+    int getShade(int[] ai, int[] ai1, int[] ai2) {
         int i = ai[1] - ai[0];
         int j = ai1[1] - ai1[0];
         int k = ai2[1] - ai2[0];

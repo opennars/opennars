@@ -193,7 +193,7 @@ public class PointCloud
     }
 
     double pointCount = (double) pts1.size();
-    boolean matched[] = new boolean[(int)pointCount];
+    boolean[] matched = new boolean[(int) pointCount];
 
     for(int k = 0; k < pointCount; k++)
     {

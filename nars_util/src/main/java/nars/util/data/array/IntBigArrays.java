@@ -536,7 +536,7 @@ public class IntBigArrays {
      * @param a2 another big array.
      * @return true if the two big arrays are of the same length, and their elements are equal.
      */
-    public static boolean equals(final int[][] a1, final int a2[][]) {
+    public static boolean equals(final int[][] a1, final int[][] a2) {
         if (length(a1) != length(a2)) return false;
         int i = a1.length, j;
         int[] t, u;
@@ -629,7 +629,7 @@ public class IntBigArrays {
         for (int i = 0; i < n; i++, a++, b++) swap(x, a, b);
     }
 
-    private static long med3(final int x[][], final long a, final long b, final long c, IntComparator comp) {
+    private static long med3(final int[][] x, final long a, final long b, final long c, IntComparator comp) {
         int ab = comp.compare(get(x, a), get(x, b));
         int ac = comp.compare(get(x, a), get(x, c));
         int bc = comp.compare(get(x, b), get(x, c));
@@ -700,7 +700,7 @@ public class IntBigArrays {
     }
 
     @SuppressWarnings("unchecked")
-    private static long med3(final int x[][], final long a, final long b, final long c) {
+    private static long med3(final int[][] x, final long a, final long b, final long c) {
         int ab = ((get(x, a)) < (get(x, b)) ? -1 : ((get(x, a)) == (get(x, b)) ? 0 : 1));
         int ac = ((get(x, a)) < (get(x, c)) ? -1 : ((get(x, a)) == (get(x, c)) ? 0 : 1));
         int bc = ((get(x, b)) < (get(x, c)) ? -1 : ((get(x, b)) == (get(x, c)) ? 0 : 1));

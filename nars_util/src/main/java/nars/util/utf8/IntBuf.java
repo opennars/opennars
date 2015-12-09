@@ -636,7 +636,7 @@ public class IntBuf {
         return r;
     }
 
-    public static int convert(byte arrayDst[], int arrayOrg[], int maxOrg){
+    public static int convert(byte[] arrayDst, int[] arrayOrg, int maxOrg){
         int i;
         int idxDst;
         int maxDst;
@@ -687,7 +687,7 @@ public class IntBuf {
         return idxDst - bTrim;
     }
 
-    public static int convert(int arrayDst[], byte arrayOrg[], int maxOrg){
+    public static int convert(int[] arrayDst, byte[] arrayOrg, int maxOrg){
         int i;
         int v;
         int idxOrg;

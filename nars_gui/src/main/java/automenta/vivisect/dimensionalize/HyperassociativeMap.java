@@ -770,9 +770,9 @@ abstract public class HyperassociativeMap<K,V>  {
 
         @Override
         public double subtractIfLessThan(ArrayRealVector aa, ArrayRealVector bb, ArrayRealVector result, double maxDistance) {
-            double a[] = aa.getDataRef();
-            double b[] = bb.getDataRef();
-            double r[] = result.getDataRef();
+            double[] a = aa.getDataRef();
+            double[] b = bb.getDataRef();
+            double[] r = result.getDataRef();
             double maxDistanceSq = maxDistance*maxDistance;
             double d = 0;
             final int l = a.length;
@@ -813,9 +813,9 @@ abstract public class HyperassociativeMap<K,V>  {
         
         @Override
         public double subtractIfLessThan(ArrayRealVector aa, ArrayRealVector bb, ArrayRealVector result, double maxDistance) {
-            double a[] = aa.getDataRef();
-            double b[] = bb.getDataRef();
-            double r[] = result.getDataRef();
+            double[] a = aa.getDataRef();
+            double[] b = bb.getDataRef();
+            double[] r = result.getDataRef();
             double d = 0;
             for (int i = 0; i < a.length; i++) {
                 double ab = a[i] - b[i];

@@ -139,8 +139,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
             n = 0;
 
-            final double d[] = new double[3];
-            final double s[] = new double[3];
+            final double[] d = new double[3];
+            final double[] s = new double[3];
 
             List<DataPoint> toAdd = new ArrayList();
 

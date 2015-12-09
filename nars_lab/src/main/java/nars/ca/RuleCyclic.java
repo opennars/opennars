@@ -126,12 +126,12 @@ public class RuleCyclic {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][]) {
+					   short[][] crrState, short[][] tmpState) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int xVector[] = new int[21]; // 0..9, 10, 11..20
-		int yVector[] = new int[21]; // 0..9, 10, 11..20
+		int[] xVector = new int[21]; // 0..9, 10, 11..20
+		int[] yVector = new int[21]; // 0..9, 10, 11..20
 		int colL, colR, rowT, rowB;
 		int ic, ir, iTmp;
 		short nxtStt;

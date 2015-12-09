@@ -369,7 +369,7 @@ public class InjectionUtils {
     }
 
     public static Field getField(Class<?> target, String name) {
-        Field fields[] = target.getDeclaredFields();
+        Field[] fields = target.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
             if (name.equals(fields[i].getName())) {
                 return fields[i];

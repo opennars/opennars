@@ -60,8 +60,8 @@ public class HeapBagTest extends AbstractBagTest {
         testAveragePriority(32);
         testAveragePriority(4);
         testAveragePriority(8);
-        
-        int d[] = null;
+
+        int[] d = null;
 //        for (int capacity : new int[] { 10, 51, 100, 256 } ) {
 //            d = testRemovalPriorityDistribution(capacity, true);
 //        }
@@ -126,8 +126,8 @@ public class HeapBagTest extends AbstractBagTest {
     
     public static void testRemovalDistribution(int capacity) {
         int samples = 128 * capacity;
-        
-        int count[] = new int[capacity];
+
+        int[] count = new int[capacity];
         
         HeapBag<CharSequence, NullItem> f = new HeapBag(rng, capacity, curve);
         

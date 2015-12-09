@@ -106,7 +106,7 @@ class MatrixN
             s = s + (i != 0 ? "," : "") + get(i);   
    
         return s + "}";   
-    }   
-   
-    private VectorN v[];   
+    }
+
+    private VectorN[] v;
 }  

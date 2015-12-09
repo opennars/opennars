@@ -994,7 +994,7 @@ public class Narsese extends BaseParser<Object>  {
 
     /** returns number of tasks created */
     public static int tasks(String input, Collection<Task> c, Memory m) {
-        final int i[] = new int[1];
+        final int[] i = new int[1];
         tasks(input, t -> {
             c.add(t);
             i[0]++;

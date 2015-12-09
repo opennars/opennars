@@ -233,12 +233,12 @@ public class Rule1DBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i;
-		short OneRow[];
-		int xVector[];
+		short[] OneRow;
+		int[] xVector;
 		int ary1DOfs; // margins, used for wrapping
 		int ic, iPow, iIdx;
 		int iClo = mjb.StatesCount;

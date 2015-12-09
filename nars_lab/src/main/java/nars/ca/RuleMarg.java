@@ -10,7 +10,7 @@ public class RuleMarg {
 	public int iClo; // count of states, not used yet
 	public int iTyp; // Margolus rule type, 1-simple
 	public boolean isHist; // with history?  not used yet
-	public int swapArray[] = new int[16];
+	public int[] swapArray = new int[16];
 
 	// ----------------------------------------------------------------
 	public RuleMarg() {
@@ -62,7 +62,7 @@ public class RuleMarg {
 
 	// ----------------------------------------------------------------
 	// Initialize from separate parameters
-	public void InitFromPrm(int i_Clo, boolean is_Hist, int ary[]) {
+	public void InitFromPrm(int i_Clo, boolean is_Hist, int[] ary) {
 		ResetToDefaults();
 		iClo = i_Clo; // count of colors
 		isHist = is_Hist; // with history?
@@ -103,7 +103,7 @@ public class RuleMarg {
 
 	// ----------------------------------------------------------------
 	// swap four cells according to the rule
-	private void SwapMargCells(int mgCells[]) {
+	private void SwapMargCells(int[] mgCells) {
 		int iCnt, iNewCnt;
 
 		// if at least 1 cell is > 1 than the location is locked
@@ -142,12 +142,12 @@ public class RuleMarg {
     // ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		int modCnt = 0;
 		int i, j, ic;
 		int c1, c2, r1, r2;
-		int mgCells[] = new int[4]; // Margolus neighbourhood 2x2 block
-		int mgCellsOld[] = new int[4]; // a copy for changes detection
+		int[] mgCells = new int[4]; // Margolus neighbourhood 2x2 block
+		int[] mgCellsOld = new int[4]; // a copy for changes detection
 		boolean isOdd; // odd pass?
 
 		isOdd = ((mjb.Cycle % 2) != 0);

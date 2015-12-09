@@ -12,8 +12,8 @@ public class Rule1DTotal {
 	public boolean isCentr; // use the center (middle) cell?
 	public int iClo; // count of states
 	public int iRng; // range, 1..10
-	public boolean rulesS[] = new boolean[MAX_RANGE * 2 + 2]; // rules for surviving
-	public boolean rulesB[] = new boolean[MAX_RANGE * 2 + 2]; // rules for birth
+	public boolean[] rulesS = new boolean[MAX_RANGE * 2 + 2]; // rules for surviving
+	public boolean[] rulesB = new boolean[MAX_RANGE * 2 + 2]; // rules for birth
 
 	// ----------------------------------------------------------------
 	public Rule1DTotal() {
@@ -150,12 +150,12 @@ public class Rule1DTotal {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, iCnt;
-		short OneRow[];
-		int xVector[] = new int[21]; // 0..9, 10, 11..20
+		short[] OneRow;
+		int[] xVector = new int[21]; // 0..9, 10, 11..20
 		int ary1DOfs; // margins, used for wrapping
 		int ic;
 

@@ -57,8 +57,8 @@ public class MidiClock extends JPanel implements Clock {
     Sequencer sequencer;
     Sequence sequence;
     Synthesizer synthesizer;
-    Instrument instruments[];
-    ChannelData channels[];
+    Instrument[] instruments;
+    ChannelData[] channels;
     ChannelData cc;    // current channel
     JCheckBox mouseOverCB = new JCheckBox("mouseOver", true);
     JSlider veloS, presS, bendS, revbS;
@@ -95,7 +95,7 @@ public class MidiClock extends JPanel implements Clock {
             instruments = synthesizer.getDefaultSoundbank().getInstruments();
             synthesizer.loadInstrument(instruments[0]);
         }
-        MidiChannel midiChannels[] = synthesizer.getChannels();
+        MidiChannel[] midiChannels = synthesizer.getChannels();
         channels = new ChannelData[midiChannels.length];
         for (int i = 0; i < channels.length; i++) {
             channels[i] = new ChannelData(midiChannels[i], i);
@@ -222,7 +222,7 @@ public class MidiClock extends JPanel implements Clock {
             setLayout(new BorderLayout());
             setPreferredSize(new Dimension(42*kw, kh+1));
             int transpose = 24;
-            int whiteIDs[] = { 0, 2, 4, 5, 7, 9, 11 };
+            int[] whiteIDs = {0, 2, 4, 5, 7, 9, 11};
 
             for (int i = 0, x = 0; i < 6; i++) {
                 for (int j = 0; j < 7; j++, x += kw) {
@@ -354,8 +354,8 @@ public class MidiClock extends JPanel implements Clock {
             muteCB.setSelected(mute);
             //sustCB.setSelected(sustain);
 
-            JSlider slider[] = { veloS, presS, bendS, revbS };
-            int v[] = { velocity, pressure, bend, reverb };
+            JSlider[] slider = {veloS, presS, bendS, revbS};
+            int[] v = {velocity, pressure, bend, reverb};
             for (int i = 0; i < slider.length; i++) {
                 TitledBorder tb = (TitledBorder) slider[i].getBorder();
                 String s = tb.getTitle();
@@ -372,11 +372,11 @@ public class MidiClock extends JPanel implements Clock {
      */
     class InstrumentsTable extends JPanel {
 
-        private String names[] = {
+        private String[] names = {
                 "Piano", "Chromatic Perc.", "Organ", "Guitar",
                 "Bass", "Strings", "Ensemble", "Brass",
                 "Reed", "Pipe", "Synth Lead", "Synth Pad",
-                "Synth Effects", "Ethnic", "Percussive", "Sound Effects" };
+                "Synth Effects", "Ethnic", "Percussive", "Sound Effects"};
         private int nRows = 8;
         private int nCols = names.length; // just show 128 instruments
 
@@ -812,7 +812,7 @@ public class MidiClock extends JPanel implements Clock {
     } // End class RecordFrame
 
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         final MidiClock midiSynth = new MidiClock();
 
         JFrame f = new JFrame("Midi Synthesizer");

@@ -24,7 +24,7 @@ public class BagGenerators {
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToRemove, Bag<CharSequence, NullItem> f) {
 
         final int levels = 13;
-        final int count[] = new int[levels];
+        final int[] count = new int[levels];
 
         final int[] nRemoved = {0};
 
@@ -139,7 +139,7 @@ public class BagGenerators {
     public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence, NullItem> f) {
 
         int levels = 9;
-        int count[] = new int[levels];
+        int[] count = new int[levels];
 
 
         for (int l = 0; l < loops; l++) {

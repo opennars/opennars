@@ -733,7 +733,9 @@ public class JSurface extends javax.swing.JComponent {
 	private final void drawBoxGridsTicksLabels(Graphics g, boolean draw_axes) {
 		Point projection, tickpos;
 		boolean x_left = false, y_left = false;
-		int x[], y[], i;
+		int[] x;
+		int[] y;
+		int i;
 
 		x = new int[5];
 		y = new int[5];
@@ -1110,8 +1112,8 @@ public class JSurface extends javax.swing.JComponent {
 	private Point projection;
 	private Color line_color;
 
-	private final int poly_x[] = new int[9];
-	private final int poly_y[] = new int[9];
+	private final int[] poly_x = new int[9];
+	private final int[] poly_y = new int[9];
 
 	/**
 	 * Plots a single plane
@@ -1200,8 +1202,8 @@ public class JSurface extends javax.swing.JComponent {
 		}
 	}
 
-	private final SurfaceVertex upperpart[] = new SurfaceVertex[8];
-	private final SurfaceVertex lowerpart[] = new SurfaceVertex[8];
+	private final SurfaceVertex[] upperpart = new SurfaceVertex[8];
+	private final SurfaceVertex[] lowerpart = new SurfaceVertex[8];
 
 	/**
 	 * Given two vertices array of plane, intersects and plots them. Splits one
@@ -1434,8 +1436,8 @@ public class JSurface extends javax.swing.JComponent {
 		return (!values[0].isInvalid() && !values[1].isInvalid() && !values[2].isInvalid() && !values[3].isInvalid());
 	}
 
-	private final SurfaceVertex values1[] = new SurfaceVertex[4];
-	private final SurfaceVertex values2[] = new SurfaceVertex[4];
+	private final SurfaceVertex[] values1 = new SurfaceVertex[4];
+	private final SurfaceVertex[] values2 = new SurfaceVertex[4];
 
 	/**
 	 * Plots an area of group of planes

@@ -94,7 +94,7 @@ public class FeatureMap {
 
                 // Determine which colors are present
                 for (int x = xo; x < xo + blockWidth; x++) {
-                    final int sm[] = matrix[x];
+                    final int[] sm = matrix[x];
                     for (int y = yo; y < yo + blockHeight; y++) {
                         int pixelColor = sm[y];
                         hasColor[encode(pixelColor)] = true;

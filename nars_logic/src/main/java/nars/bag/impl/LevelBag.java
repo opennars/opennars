@@ -337,10 +337,10 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     protected final void nextNonEmptyLevelDefault() {
 
         //cache class fields as local variables for speed in the iteration
-        final short D[] = DISTRIBUTOR;
+        final short[] D = DISTRIBUTOR;
         final int numLevels = D.length;
         int li = levelIndex;
-        final boolean le[] = levelEmpty;
+        final boolean[] le = levelEmpty;
 
         if (li < 0)
             throw new RuntimeException("levelIndex is < 0, may need additional check for overflow");

@@ -23,7 +23,7 @@ public class ListProperties_REMOVE {
 		private List<Object> keys = new ArrayList<Object>();
 		private List<Object> values = new ArrayList<Object>();
 
-		private static final String columnNames[] = { "Property String", "Value" };
+		private static final String[] columnNames = {"Property String", "Value"};
 
 		@Override
 		public int getColumnCount() {
@@ -65,7 +65,7 @@ public class ListProperties_REMOVE {
 		}
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		final JFrame frame = new JFrame("List Properties");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -78,8 +78,8 @@ public class ListProperties_REMOVE {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-		UIManager.LookAndFeelInfo looks[] = UIManager
-		.getInstalledLookAndFeels();
+		UIManager.LookAndFeelInfo[] looks = UIManager
+				.getInstalledLookAndFeels();
 
 		ActionListener actionListener = new ActionListener() {
 
@@ -127,7 +127,7 @@ class TableSorter extends TableMap implements TableModelListener {
 
 	private static final long serialVersionUID = 6627171931468194200L;
 
-	private int indexes[] = new int[0];
+	private int[] indexes = new int[0];
 
 	private List<Object> sortingColumns = new ArrayList<Object>();
 
@@ -269,7 +269,7 @@ class TableSorter extends TableMap implements TableModelListener {
 		fireTableDataChanged();
 	}
 
-	public void shuttlesort(int from[], int to[], int low, int high) {
+	public void shuttlesort(int[] from, int[] to, int low, int high) {
 		if (high - low < 2) {
 			return;
 		}

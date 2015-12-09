@@ -18,7 +18,7 @@ public class AbstractBagTest {
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, NullItem> f, boolean requireOrder) {
 
         int levels = 9;
-        int count[] = new int[levels];
+        int[] count = new int[levels];
 
         float adjustFraction = fractionToAdjust;
         float removeFraction = fractionToRemove;

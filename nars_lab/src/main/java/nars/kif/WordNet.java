@@ -1993,7 +1993,7 @@ public class WordNet {
 
         word = word.replace('_', ',');
         word = word.replace("'", "\\'");
-        String words[] = word.split(",");
+        String[] words = word.split(",");
         word = "";
         for (int i = 0; i < words.length; i++) {
             if (words[i].length() > 0

@@ -75,7 +75,7 @@ public class XorShift1024StarRandom extends Random {
 	
 	@Override
 	public final long nextLong() {
-		final long s[] = this.s;
+		final long[] s = this.s;
         int p = this.p;
 
 		final long s0 = s[ p ];
@@ -149,7 +149,7 @@ public class XorShift1024StarRandom extends Random {
 	 */
 	@Override
 	public void setSeed( final long seed ) {
-        long s[] = this.s;
+		long[] s = this.s;
         if (this.s == null) s = this.s = new long[16];
 		p = 0;
 		final SplitMix64RandomGenerator r = new SplitMix64RandomGenerator( seed );

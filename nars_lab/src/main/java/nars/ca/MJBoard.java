@@ -56,7 +56,7 @@ class MJBoard extends Panel implements Runnable {
 	private final Point LastPanelSize;// last panel size, for resizing handling
 
 	// Graphics
-	private int screen[];
+	private int[] screen;
 	private Image offImg; // the image
 
 	//private Graphics offGrx; // the image's graphics

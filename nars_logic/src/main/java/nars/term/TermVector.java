@@ -87,7 +87,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public final Term termOr(int index, Term resultIfInvalidIndex) {
-        final Term term[] = this.term;
+        final Term[] term = this.term;
         if (term.length <= index)
             return resultIfInvalidIndex;
         return term[index];

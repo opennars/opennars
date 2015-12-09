@@ -59,7 +59,7 @@ public class BeanUtils {
 		Method writeMethod = null;
 		String base = capitalize(propertyName);
 
-		Class<?> params[] = { propertyType };
+		Class<?>[] params = {propertyType};
 		try {
 			writeMethod = clazz.getMethod("set" + base, params);
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class BeanUtils {
 		if (s.length() == 0) {
 			return s;
 		} else {
-			char chars[] = s.toCharArray();
+			char[] chars = s.toCharArray();
 			chars[0] = Character.toUpperCase(chars[0]);
 			return String.valueOf(chars);
 		}

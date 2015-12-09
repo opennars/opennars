@@ -6,7 +6,7 @@ public class World {
 	public static final int SIZE = 300;
 	private static final int OBSTACLES_NO = 20;
 	private Player player;
-	private Obstacle obstacles[];
+	private Obstacle[] obstacles;
 	private int time;
 
 	public World() {

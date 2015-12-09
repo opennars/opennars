@@ -41,9 +41,9 @@ public final class ImprovMath
             return Math.pow(d, Math.log(d1) / LOG_HALF);   
     }   
    
-    public static double[] cross(double ad[], double ad1[])   
-    {   
-        double ad2[] = new double[3];   
+    public static double[] cross(double[] ad, double[] ad1)
+    {
+        double[] ad2 = new double[3];
         ad2[0] = ad[1] * ad1[2] - ad[2] * ad1[1];   
         ad2[1] = ad[2] * ad1[0] - ad[0] * ad1[2];   
         ad2[2] = ad[0] * ad1[1] - ad[1] * ad1[0];   
@@ -66,7 +66,7 @@ public final class ImprovMath
         return d * d3 + d1 * d4 + d2 * d5;   
     }   
    
-    public static double dot(double ad[], double ad1[])   
+    public static double dot(double[] ad, double[] ad1)
     {   
         double d = 0.0D;   
         int i;   
@@ -128,11 +128,11 @@ public final class ImprovMath
             return 1.0D - Math.pow(2D * (1.0D - d), d2) / 2D;   
     }   
    
-    public static double[] getEulers(double ad[], int i)   
-    {   
-        double ad1[] = new double[3];   
-        double ad2[] = new double[4];   
-        double ad3[][] = new double[3][3];   
+    public static double[] getEulers(double[] ad, int i)
+    {
+        double[] ad1 = new double[3];
+        double[] ad2 = new double[4];
+        double[][] ad3 = new double[3][3];
         byte byte0 = 0;   
         byte byte1 = 1;   
         byte byte2 = 2;   
@@ -231,33 +231,33 @@ public final class ImprovMath
         }   
     }   
    
-    public static double[] getEulers(float af[], int i)   
-    {   
-        double ad[] = {   
-            (double)af[0], (double)af[1], (double)af[2], (double)af[3]   
+    public static double[] getEulers(float[] af, int i)
+    {
+        double[] ad = {
+                (double) af[0], (double) af[1], (double) af[2], (double) af[3]
         };   
         return getEulers(ad, i);   
     }   
    
-    public static float[] getQuaternion(double ad[])   
+    public static float[] getQuaternion(double[] ad)
     {   
         return getQuaternion(ad, 0);   
     }   
    
-    public static float[] getQuaternion(double ad[], int i)   
-    {   
-        double ad1[][] = new double[4][4];   
-        float af[] = new float[4];   
+    public static float[] getQuaternion(double[] ad, int i)
+    {
+        double[][] ad1 = new double[4][4];
+        float[] af = new float[4];
         return getQuaternion(ad, i, ad1, af);   
     }   
    
-    public static float[] getQuaternion(double ad[], int i, double ad1[][], float af[])   
-    {   
-        double ad2[][] = ad1;   
-        double ad3[] = ad2[0];   
-        double ad4[] = ad2[1];   
-        double ad5[] = ad2[2];   
-        double ad6[] = ad2[3];   
+    public static float[] getQuaternion(double[] ad, int i, double[][] ad1, float[] af)
+    {
+        double[][] ad2 = ad1;
+        double[] ad3 = ad2[0];
+        double[] ad4 = ad2[1];
+        double[] ad5 = ad2[2];
+        double[] ad6 = ad2[3];
         ad3[0] = 1.0D;   
         ad3[1] = 0.0D;   
         ad3[2] = 0.0D;   
@@ -318,8 +318,8 @@ public final class ImprovMath
         prepAngles(ad2[1]);   
         prepAngles(ad2[2]);   
         mult(ad2[2], ad2[1], ad6);   
-        mult(ad6, ad2[0], ad2[2]);   
-        double ad7[] = ad2[2];   
+        mult(ad6, ad2[0], ad2[2]);
+        double[] ad7 = ad2[2];
         double d = ad7[0];   
         double d1 = ad7[1];   
         double d2 = ad7[2];   
@@ -388,12 +388,12 @@ public final class ImprovMath
         return Math.sqrt(dot(d, d1, d, d1));   
     }   
    
-    public static double magnitude(double ad[])   
+    public static double magnitude(double[] ad)
     {   
         return Math.sqrt(dot(ad, ad));   
     }   
    
-    private static void mult(double ad[], double ad1[], double ad2[])   
+    private static void mult(double[] ad, double[] ad1, double[] ad2)
     {   
         double d = ad[0];   
         double d1 = ad[1];   
@@ -417,9 +417,9 @@ public final class ImprovMath
         ad2[3] = d11;   
     }   
    
-    private static double[] multBy(double ad[], double d)   
-    {   
-        double ad1[] = ad;   
+    private static double[] multBy(double[] ad, double d)
+    {
+        double[] ad1 = ad;
         ad1[0] *= d;   
         ad1[1] *= d;   
         ad1[2] *= d;   
@@ -445,9 +445,9 @@ public final class ImprovMath
         return lerp(d3, d5, d6);   
     }   
    
-    private static double[] norm(double ad[])   
-    {   
-        double ad1[] = new double[4];   
+    private static double[] norm(double[] ad)
+    {
+        double[] ad1 = new double[4];
         ad1[0] = ad[0];   
         ad1[1] = ad[1];   
         ad1[2] = ad[2];   
@@ -467,14 +467,14 @@ public final class ImprovMath
         return ad1;   
     }   
    
-    private static void normalize2(double ad[])   
+    private static void normalize2(double[] ad)
     {   
         double d = Math.sqrt(ad[0] * ad[0] + ad[1] * ad[1]);   
         ad[0] /= d;   
         ad[1] /= d;   
     }   
    
-    private static void normalize3(double ad[])   
+    private static void normalize3(double[] ad)
     {   
         double d = Math.sqrt(ad[0] * ad[0] + ad[1] * ad[1] + ad[2] * ad[2]);   
         ad[0] /= d;   
@@ -482,7 +482,7 @@ public final class ImprovMath
         ad[2] /= d;   
     }   
    
-    private static void prepAngles(double ad[])   
+    private static void prepAngles(double[] ad)
     {   
         norm(ad);   
         multBy(ad, Math.sin(ad[3] / 2D));   
@@ -497,12 +497,12 @@ public final class ImprovMath
     private static double s_curve(double d)   
     {   
         return d * d * (3D - 2D * d);   
-    }   
-   
-    private static int p[] = new int[514];   
-    private static double g3[][] = new double[514][3];   
-    private static double g2[][] = new double[514][2];   
-    private static double g1[] = new double[514];   
+    }
+
+    private static int[] p = new int[514];
+    private static double[][] g3 = new double[514][3];
+    private static double[][] g2 = new double[514][2];
+    private static double[] g1 = new double[514];
     private static int start = 1;   
     private static final double LOG_HALF = Math.log(0.5D);   
     public static final int XYZ = 0;   

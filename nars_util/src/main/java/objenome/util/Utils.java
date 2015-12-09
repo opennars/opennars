@@ -33,8 +33,8 @@ public class Utils {
     public static ArrayRealVector gradient(DiffableFunction f, Scalar[] parameters, ArrayRealVector result) {
         if (result == null)
             result = new ArrayRealVector(parameters.length);
-        
-        double d[] = result.getDataRef();
+
+        double[] d = result.getDataRef();
         for (int i = 0; i < parameters.length; ++i) {
             d[i] = f.partialDerive(parameters[i]);
         }

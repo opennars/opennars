@@ -57,7 +57,7 @@ public class RuleVote {
 
 	// ----------------------------------------------------------------
 	//
-	public void InitFromPrm(boolean rulSB[]) {
+	public void InitFromPrm(boolean[] rulSB) {
         System.arraycopy(rulSB, 0, RulesSB, 0, 10);
 		Validate(); // now correct parameters
 	}
@@ -90,11 +90,11 @@ public class RuleVote {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells

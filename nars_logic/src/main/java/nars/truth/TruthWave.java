@@ -12,7 +12,7 @@ public class TruthWave {
     final long end;
 
     //expect[1][] is the mean positive expectation, expect[0][] is the mean negative expectation
-    float expect[][];
+    float[][] expect;
 
     //TODO total confidence
 

@@ -3148,21 +3148,21 @@ public class Formula implements Comparable {
 
         int translateIndex;
 
-        String kifOps[] = {"forall", "exists", "not", "and", "or", "=>", "<=>"};
-        String tptpOps[] = {"! ", "? ", "~ ", " & ", " | ", " => ", " <=> "};
+        String[] kifOps = {"forall", "exists", "not", "and", "or", "=>", "<=>"};
+        String[] tptpOps = {"! ", "? ", "~ ", " & ", " | ", " => ", " <=> "};
 
-        String kifPredicates[] = {"TRUE", "FALSE",
-            "equal",
-            "<=", "<", ">", ">=",
-            "lessThanOrEqualTo", "lessThan", "greaterThan", "greaterThanOrEqualTo"};
+        String[] kifPredicates = {"TRUE", "FALSE",
+                "equal",
+                "<=", "<", ">", ">=",
+                "lessThanOrEqualTo", "lessThan", "greaterThan", "greaterThanOrEqualTo"};
 
-        String tptpPredicates[] = {"$true", "$false",
-            "equal",
-            "lesseq", "less", "greater", "greatereq",
-            "lesseq", "less", "greater", "greatereq"};
+        String[] tptpPredicates = {"$true", "$false",
+                "equal",
+                "lesseq", "less", "greater", "greatereq",
+                "lesseq", "less", "greater", "greatereq"};
 
-        String kifFunctions[] = {"MultiplicationFn", "DivisionFn", "AdditionFn", "SubtractionFn"};
-        String tptpFunctions[] = {"times", "divide", "plus", "minus"};
+        String[] kifFunctions = {"MultiplicationFn", "DivisionFn", "AdditionFn", "SubtractionFn"};
+        String[] tptpFunctions = {"times", "divide", "plus", "minus"};
 
         List kifRelations = new ArrayList();
         int i = 0;
@@ -3265,7 +3265,7 @@ public class Formula implements Comparable {
     private static int operatorArity(StreamTokenizer_s st) {
 
         int translateIndex;
-        String kifOps[] = {"forall", "exists", "not", "and", "or", "=>", "<=>"};
+        String[] kifOps = {"forall", "exists", "not", "and", "or", "=>", "<=>"};
 
         translateIndex = 0;
         while (translateIndex < kifOps.length

@@ -101,7 +101,7 @@ public class TestAggregator extends RunListener {
         }
 
     }
-    public static void main(String args[])  {
+    public static void main(String[] args)  {
         Default da = new Default(128, 1, 2, 3);
         //da.memory.realTime();
         NAR nar = da;

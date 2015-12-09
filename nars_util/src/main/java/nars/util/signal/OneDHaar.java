@@ -548,7 +548,7 @@ public class OneDHaar {
     
     private static void thresholdSignal(double[] signal, double thresh) {
         final int n = signal.length;
-        double thresholdedSignal[] = new double[n];
+        double[] thresholdedSignal = new double[n];
         //System.out.println("n = " + n);
         for(int t = 0; t < n; t++) {
             if ( Math.abs(signal[t]) > thresh )

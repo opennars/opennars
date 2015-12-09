@@ -95,12 +95,12 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
             int i2 = (-k1 * i1) / l1 / 2;   
             int j2 = (j1 * i1) / l1 / 2;   
             int k2 = k - 3 * j2;   
-            int l2 = l + 3 * i2;   
-            int ai[] = {   
-                i - i2, i + i2, k2 + i2, k2 + 3 * i2, k, k2 - 3 * i2, k2 - i2   
-            };   
-            int ai1[] = {   
-                j - j2, j + j2, l2 + j2, l2 + 3 * j2, l, l2 - 3 * j2, l2 - j2   
+            int l2 = l + 3 * i2;
+            int[] ai = {
+                    i - i2, i + i2, k2 + i2, k2 + 3 * i2, k, k2 - 3 * i2, k2 - i2
+            };
+            int[] ai1 = {
+                    j - j2, j + j2, l2 + j2, l2 + 3 * j2, l, l2 - 3 * j2, l2 - j2
             };   
             g.fillPolygon(ai, ai1, 7);   
         }   
@@ -119,12 +119,12 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
                 if(j1 * j1 > k1 * k1)   
                     j2 = 1;   
                 else   
-                    i2 = 1;   
-            int ai[] = {   
-                i - i2, i + i2, k + i2, k - i2   
-            };   
-            int ai1[] = {   
-                j - j2, j + j2, l + j2, l - j2   
+                    i2 = 1;
+            int[] ai = {
+                    i - i2, i + i2, k + i2, k - i2
+            };
+            int[] ai1 = {
+                    j - j2, j + j2, l + j2, l - j2
             };   
             g.fillPolygon(ai, ai1, 4);   
         }   

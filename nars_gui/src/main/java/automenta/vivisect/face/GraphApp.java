@@ -38,8 +38,8 @@ public class GraphApp extends JPanel
     protected FaceFrame currentFace;   
     protected boolean doRollOver;   
     protected int rollSnap;   
-    protected int rollFrame;   
-    protected double preRollTargets[][];   
+    protected int rollFrame;
+    protected double[][] preRollTargets;
     protected Vector seqnos;   
     protected String codeBase;   
     protected boolean isFrame;   
@@ -253,9 +253,9 @@ public class GraphApp extends JPanel
         int i = image.getWidth(this);   
         int j = image.getHeight(this);   
         int k = snapwidth;   
-        int l = 40;   
-        int ai[] = new int[i * j];   
-        int ai1[] = new int[k * l];   
+        int l = 40;
+        int[] ai = new int[i * j];
+        int[] ai1 = new int[k * l];
         double d = (double)i / (double)k;   
         double d1 = (double)j / (double)l;   
         PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, i, j, ai, 0, i);   
@@ -326,16 +326,16 @@ public class GraphApp extends JPanel
    
     public int[] getLocalCoords(Component component, int i, int j)   
     {   
-        Point point = getLocationGlobal(component);   
-        int ai[] = new int[2];   
+        Point point = getLocationGlobal(component);
+        int[] ai = new int[2];
         ai[0] = i - point.x;   
         ai[1] = j - point.y;   
         return ai;   
     }   
    
     public int[] toSnapGrid(int i)   
-    {   
-        int ai[] = new int[2];   
+    {
+        int[] ai = new int[2];
         ai[0] = (i % snapcols) * snapwidth;   
         ai[1] = (i / snapcols) * 40;   
         return ai;   

@@ -104,7 +104,7 @@ public class Follow1D implements RLEnvironment {
     private final RenderComponent renderComponent = new RenderComponent();
     int time = 0;
 
-    double observation[];
+    double[] observation;
     @Override
     public double[] observe() {
         if (observation == null) {

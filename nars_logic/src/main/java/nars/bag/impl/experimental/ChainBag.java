@@ -100,7 +100,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     private float estimatedMin = 0.5f;
     private float estimatedMean = 0.5f;
 
-    final short d[];
+    final short[] d;
     int dp = 0;
 
     public ChainBag() {

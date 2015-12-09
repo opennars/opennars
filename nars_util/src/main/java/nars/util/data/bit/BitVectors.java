@@ -122,7 +122,7 @@ public class BitVectors {
 	
 	public static LongArrayBitVector readFast( final DataInput dis ) throws IOException {
 		final long length = dis.readLong();
-		final long bits[] = new long[ LongArrayBitVector.numWords( length ) ];
+		final long[] bits = new long[LongArrayBitVector.numWords(length)];
 		final int l = bits.length;
 		for( int i = 0; i < l; i++ ) bits[ i ] = dis.readLong();
 		return LongArrayBitVector.wrap( bits, length );

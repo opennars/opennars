@@ -24,7 +24,7 @@ public class Circle implements IterativeLayout {
                            BiConsumer<TermNode, double[]> setPosition) {
 
 
-        double d[] = new double[2];
+        double[] d = new double[2];
 
         for (TermNode v : verts) {
             if (v == null) continue; //break?

@@ -102,7 +102,7 @@ public class LongArrays {
      */
     public static long[] ensureCapacity(final long[] array, final int length) {
         if (length > array.length) {
-            final long t[] =
+            final long[] t =
                     new long[length];
             System.arraycopy(array, 0, t, 0, array.length);
             return t;
@@ -122,7 +122,7 @@ public class LongArrays {
      */
     public static long[] ensureCapacity(final long[] array, final int length, final int preserve) {
         if (length > array.length) {
-            final long t[] =
+            final long[] t =
                     new long[length];
             System.arraycopy(array, 0, t, 0, preserve);
             return t;
@@ -149,7 +149,7 @@ public class LongArrays {
     public static long[] grow(final long[] array, final int length) {
         if (length > array.length) {
             final int newLength = (int) Math.min(Math.max((ONEOVERPHI * array.length) >>> 16, length), Integer.MAX_VALUE);
-            final long t[] =
+            final long[] t =
                     new long[newLength];
             System.arraycopy(array, 0, t, 0, array.length);
             return t;
@@ -177,7 +177,7 @@ public class LongArrays {
     public static long[] grow(final long[] array, final int length, final int preserve) {
         if (length > array.length) {
             final int newLength = (int) Math.min(Math.max((ONEOVERPHI * array.length) >>> 16, length), Integer.MAX_VALUE);
-            final long t[] =
+            final long[] t =
                     new long[newLength];
             System.arraycopy(array, 0, t, 0, preserve);
             return t;
@@ -197,7 +197,7 @@ public class LongArrays {
      */
     public static long[] trim(final long[] array, final int length) {
         if (length >= array.length) return array;
-        final long t[] =
+        final long[] t =
                 length == 0 ? EMPTY_ARRAY : new long[length];
         System.arraycopy(array, 0, t, 0, length);
         return t;
@@ -290,7 +290,7 @@ public class LongArrays {
      * @param a2 another array.
      * @return true if the two arrays are of the same length, and their elements are equal.
      */
-    public static boolean equals(final long[] a1, final long a2[]) {
+    public static boolean equals(final long[] a1, final long[] a2) {
         int i = a1.length;
         if (i != a2.length) return false;
         while (i-- != 0) if (!((a1[i]) == (a2[i]))) return false;
@@ -333,7 +333,7 @@ public class LongArrays {
     private static final int SMALL = 7;
     private static final int MEDIUM = 40;
 
-    private static void swap(final long x[], final int a, final int b) {
+    private static void swap(final long[] x, final int a, final int b) {
         final long t = x[a];
         x[a] = x[b];
         x[b] = t;
@@ -343,7 +343,7 @@ public class LongArrays {
         for (int i = 0; i < n; i++, a++, b++) swap(x, a, b);
     }
 
-    private static int med3(final long x[], final int a, final int b, final int c, LongComparator comp) {
+    private static int med3(final long[] x, final int a, final int b, final int c, LongComparator comp) {
         int ab = comp.compare(x[a], x[b]);
         int ac = comp.compare(x[a], x[c]);
         int bc = comp.compare(x[b], x[c]);
@@ -429,7 +429,7 @@ public class LongArrays {
     }
 
     @SuppressWarnings("unchecked")
-    private static int med3(final long x[], final int a, final int b, final int c) {
+    private static int med3(final long[] x, final int a, final int b, final int c) {
         int ab = ((x[a]) < (x[b]) ? -1 : ((x[a]) == (x[b]) ? 0 : 1));
         int ac = ((x[a]) < (x[c]) ? -1 : ((x[a]) == (x[c]) ? 0 : 1));
         int bc = ((x[b]) < (x[c]) ? -1 : ((x[b]) == (x[c]) ? 0 : 1));
@@ -523,7 +523,7 @@ public class LongArrays {
      * @param supp a support array, at least as large as <code>a</code>.
      */
     @SuppressWarnings("unchecked")
-    public static void mergeSort(final long a[], final int from, final int to, final long supp[]) {
+    public static void mergeSort(final long[] a, final int from, final int to, final long[] supp) {
         int len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
@@ -559,7 +559,7 @@ public class LongArrays {
      * @param from the index of the first element (inclusive) to be sorted.
      * @param to   the index of the last element (exclusive) to be sorted.
      */
-    public static void mergeSort(final long a[], final int from, final int to) {
+    public static void mergeSort(final long[] a, final int from, final int to) {
         mergeSort(a, from, to, a.clone());
     }
 
@@ -571,7 +571,7 @@ public class LongArrays {
      *
      * @param a the array to be sorted.
      */
-    public static void mergeSort(final long a[]) {
+    public static void mergeSort(final long[] a) {
         mergeSort(a, 0, a.length);
     }
 
@@ -589,7 +589,7 @@ public class LongArrays {
      * @param supp a support array, at least as large as <code>a</code>.
      */
     @SuppressWarnings("unchecked")
-    public static void mergeSort(final long a[], final int from, final int to, LongComparator comp, final long supp[]) {
+    public static void mergeSort(final long[] a, final int from, final int to, LongComparator comp, final long[] supp) {
         int len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
@@ -627,7 +627,7 @@ public class LongArrays {
      * @param to   the index of the last element (exclusive) to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void mergeSort(final long a[], final int from, final int to, LongComparator comp) {
+    public static void mergeSort(final long[] a, final int from, final int to, LongComparator comp) {
         mergeSort(a, from, to, comp, a.clone());
     }
 
@@ -641,7 +641,7 @@ public class LongArrays {
      * @param a    the array to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void mergeSort(final long a[], LongComparator comp) {
+    public static void mergeSort(final long[] a, LongComparator comp) {
         mergeSort(a, 0, a.length, comp);
     }
 

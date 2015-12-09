@@ -168,7 +168,7 @@ public enum Op implements Serializable {
         this.str = string;
         this.commutative = commutative;
 
-        final byte bb[];
+        final byte[] bb;
 
         final boolean hasCompact = (ibytes.length == 1);
         if (!hasCompact) {

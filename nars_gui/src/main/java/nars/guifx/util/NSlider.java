@@ -179,7 +179,7 @@ public class NSlider extends NControl {
     /**
      * cache of the normalized value vector
      */
-    private double normalized[];
+    private double[] normalized;
 
 
     public void denormalized(double... n) {

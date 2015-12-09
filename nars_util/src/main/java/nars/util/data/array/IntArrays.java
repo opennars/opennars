@@ -96,8 +96,8 @@ public class IntArrays {
 	 * as those of <code>array</code>. */
 	public static int[] ensureCapacity( final int[] array, final int length ) {
 		if ( length > array.length ) {
-			final int t[] =
-					new int[ length ];
+			final int[] t =
+					new int[length];
 			System.arraycopy( array, 0, t, 0, array.length );
 			return t;
 		}
@@ -113,8 +113,8 @@ public class IntArrays {
 	 * those of <code>array</code>. */
 	public static int[] ensureCapacity( final int[] array, final int length, final int preserve ) {
 		if ( length > array.length ) {
-			final int t[] =
-					new int[ length ];
+			final int[] t =
+					new int[length];
 			System.arraycopy( array, 0, t, 0, preserve );
 			return t;
 		}
@@ -133,8 +133,8 @@ public class IntArrays {
 		if ( length > array.length ) {
 			//final int newLength = (int)Math.max( Math.min( 2L * array.length, Arrays.MAX_ARRAY_SIZE ), length );
 			final int newLength = (int)Math.max( 2L * array.length, length );
-			final int t[] =
-					new int[ newLength ];
+			final int[] t =
+					new int[newLength];
 			System.arraycopy( array, 0, t, 0, array.length );
 			return t;
 		}
@@ -154,8 +154,8 @@ public class IntArrays {
 	public static int[] grow( final int[] array, final int length, final int preserve ) {
 		if ( length > array.length ) {
 			final int newLength = (int)Math.max(  2L * array.length, length );
-			final int t[] =
-					new int[ newLength ];
+			final int[] t =
+					new int[newLength];
 			System.arraycopy( array, 0, t, 0, preserve );
 			return t;
 		}
@@ -170,8 +170,8 @@ public class IntArrays {
 	 * entries of <code>array</code>. */
 	public static int[] trim( final int[] array, final int length ) {
 		if ( length >= array.length ) return array;
-		final int t[] =
-				length == 0 ? EMPTY_ARRAY : new int[ length ];
+		final int[] t =
+				length == 0 ? EMPTY_ARRAY : new int[length];
 		System.arraycopy( array, 0, t, 0, length );
 		return t;
 	}
@@ -246,7 +246,7 @@ public class IntArrays {
 	 * @return true if the two arrays are of the same length, and their elements are equal.
 	 * @deprecated Please use the corresponding {@link java.util.Arrays} method, which is intrinsified in recent JVMs. */
 	@Deprecated
-	public static boolean equals( final int[] a1, final int a2[] ) {
+	public static boolean equals( final int[] a1, final int[] a2 ) {
 		int i = a1.length;
 		if ( i != a2.length ) return false;
 		while ( i-- != 0 )
@@ -299,7 +299,7 @@ public class IntArrays {
 	 * @param x an array.
 	 * @param a a position in {@code x}.
 	 * @param b another position in {@code x}. */
-	public static void swap( final int x[], final int a, final int b ) {
+	public static void swap(final int[] x, final int a, final int b ) {
 		final int t = x[ a ];
 		x[ a ] = x[ b ];
 		x[ b ] = t;
@@ -316,7 +316,7 @@ public class IntArrays {
 			swap( x, a, b );
 	}
 
-	private static int med3( final int x[], final int a, final int b, final int c, IntComparator comp ) {
+	private static int med3(final int[] x, final int a, final int b, final int c, IntComparator comp ) {
 		final int ab = comp.compare( x[ a ], x[ b ] );
 		final int ac = comp.compare( x[ a ], x[ c ] );
 		final int bc = comp.compare( x[ b ], x[ c ] );
@@ -516,7 +516,7 @@ public class IntArrays {
 		parallelQuickSort( x, 0, x.length, comp );
 	}
 
-	private static int med3( final int x[], final int a, final int b, final int c ) {
+	private static int med3(final int[] x, final int a, final int b, final int c ) {
 		final int ab = ( Integer.compare( ( x[ a ] ), ( x[ b ] ) ) );
 		final int ac = ( Integer.compare( ( x[ a ] ), ( x[ c ] ) ) );
 		final int bc = ( Integer.compare( ( x[ b ] ), ( x[ c ] ) ) );
@@ -711,7 +711,7 @@ public class IntArrays {
 		parallelQuickSort( x, 0, x.length );
 	}
 
-	private static int med3Indirect( final int perm[], final int x[], final int a, final int b, final int c ) {
+	private static int med3Indirect(final int[] perm, final int[] x, final int a, final int b, final int c ) {
 		final int aa = x[ perm[ a ] ];
 		final int bb = x[ perm[ b ] ];
 		final int cc = x[ perm[ c ] ];
@@ -812,7 +812,7 @@ public class IntArrays {
 	 * 
 	 * @param perm a permutation array indexing {@code x}.
 	 * @param x the array to be sorted. */
-	public static void quickSortIndirect( final int perm[], final int[] x ) {
+	public static void quickSortIndirect(final int[] perm, final int[] x ) {
 		quickSortIndirect( perm, x, 0, x.length );
 	}
 
@@ -823,7 +823,7 @@ public class IntArrays {
 		private final int[] perm;
 		private final int[] x;
 
-		public ForkJoinQuickSortIndirect( final int perm[], final int[] x, final int from, final int to ) {
+		public ForkJoinQuickSortIndirect(final int[] perm, final int[] x, final int from, final int to ) {
 			this.from = from;
 			this.to = to;
 			this.x = x;
@@ -910,7 +910,7 @@ public class IntArrays {
 	 * 
 	 * @param perm a permutation array indexing {@code x}.
 	 * @param x the array to be sorted. */
-	public static void parallelQuickSortIndirect( final int perm[], final int[] x ) {
+	public static void parallelQuickSortIndirect(final int[] perm, final int[] x ) {
 		parallelQuickSortIndirect( perm, x, 0, x.length );
 	}
 
@@ -927,7 +927,7 @@ public class IntArrays {
 	 *
 	 * @param perm a permutation array indexing {@code x} so that it is sorted.
 	 * @param x the sorted array to be stabilized. */
-	public static void stabilize( final int perm[], final int[] x, final int from, final int to ) {
+	public static void stabilize(final int[] perm, final int[] x, final int from, final int to ) {
 		int curr = from;
 		for ( int i = from + 1; i < to; i++ ) {
 			if ( x[ perm[ i ] ] != x[ perm[ curr ] ] ) {
@@ -951,11 +951,11 @@ public class IntArrays {
 	 *
 	 * @param perm a permutation array indexing {@code x} so that it is sorted.
 	 * @param x the sorted array to be stabilized. */
-	public static void stabilize( final int perm[], final int[] x ) {
+	public static void stabilize(final int[] perm, final int[] x ) {
 		stabilize( perm, x, 0, perm.length );
 	}
 
-	private static int med3( final int x[], final int[] y, final int a, final int b, final int c ) {
+	private static int med3(final int[] x, final int[] y, final int a, final int b, final int c ) {
 		int t;
 		final int ab = ( t = ( Integer.compare( ( x[ a ] ), ( x[ b ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ a ] ), ( y[ b ] ) ) ) : t;
 		final int ac = ( t = ( Integer.compare( ( x[ a ] ), ( x[ c ] ) ) ) ) == 0 ? ( Integer.compare( ( y[ a ] ), ( y[ c ] ) ) ) : t;
@@ -965,7 +965,7 @@ public class IntArrays {
 				( bc > 0 ? b : ac > 0 ? c : a ) );
 	}
 
-	private static void swap( final int x[], final int[] y, final int a, final int b ) {
+	private static void swap(final int[] x, final int[] y, final int a, final int b ) {
 		final int t = x[ a ];
 		final int u = y[ a ];
 		x[ a ] = x[ b ];
@@ -1175,7 +1175,7 @@ public class IntArrays {
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param supp a support array containing at least <code>to</code> elements, and whose entries are identical to those of {@code a} in the specified range. */
 
-	public static void mergeSort( final int a[], final int from, final int to, final int supp[] ) {
+	public static void mergeSort(final int[] a, final int from, final int to, final int[] supp ) {
 		int len = to - from;
 		// Insertion sort on smallest arrays
 		if ( len < MERGESORT_NO_REC ) {
@@ -1206,7 +1206,7 @@ public class IntArrays {
 	 * @param a the array to be sorted.
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted. */
-	public static void mergeSort( final int a[], final int from, final int to ) {
+	public static void mergeSort(final int[] a, final int from, final int to ) {
 		mergeSort( a, from, to, a.clone() );
 	}
 
@@ -1215,7 +1215,7 @@ public class IntArrays {
 	 * <p>This sort is guaranteed to be <i>stable</i>: equal elements will not be reordered as a result of the sort. An array as large as <code>a</code> will be allocated by this method.
 	 * 
 	 * @param a the array to be sorted. */
-	public static void mergeSort( final int a[] ) {
+	public static void mergeSort(final int[] a ) {
 		mergeSort( a, 0, a.length );
 	}
 
@@ -1228,7 +1228,7 @@ public class IntArrays {
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param comp the comparator to determine the sorting order.
 	 * @param supp a support array containing at least <code>to</code> elements, and whose entries are identical to those of {@code a} in the specified range. */
-	public static void mergeSort( final int a[], final int from, final int to, IntComparator comp, final int supp[] ) {
+	public static void mergeSort(final int[] a, final int from, final int to, IntComparator comp, final int[] supp ) {
 		int len = to - from;
 		// Insertion sort on smallest arrays
 		if ( len < MERGESORT_NO_REC ) {
@@ -1260,7 +1260,7 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void mergeSort( final int a[], final int from, final int to, IntComparator comp ) {
+	public static void mergeSort(final int[] a, final int from, final int to, IntComparator comp ) {
 		mergeSort( a, from, to, comp, a.clone() );
 	}
 
@@ -1270,7 +1270,7 @@ public class IntArrays {
 	 * 
 	 * @param a the array to be sorted.
 	 * @param comp the comparator to determine the sorting order. */
-	public static void mergeSort( final int a[], IntComparator comp ) {
+	public static void mergeSort(final int[] a, IntComparator comp ) {
 		mergeSort( a, 0, a.length, comp );
 	}
 
@@ -1682,7 +1682,7 @@ public class IntArrays {
 	 * @param from the index of the first element (inclusive) to be sorted.
 	 * @param to the index of the last element (exclusive) to be sorted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void parallelRadixSortIndirect( final int perm[], final int[] a, final int from, final int to, final boolean stable ) {
+	public static void parallelRadixSortIndirect(final int[] perm, final int[] a, final int from, final int to, final boolean stable ) {
 		if ( to - from < PARALLEL_RADIXSORT_NO_FORK ) {
 			radixSortIndirect( perm, a, from, to, stable );
 			return;
@@ -1788,7 +1788,7 @@ public class IntArrays {
 	 * @param perm a permutation array indexing <code>a</code>.
 	 * @param a the array to be sorted.
 	 * @param stable whether the sorting algorithm should be stable. */
-	public static void parallelRadixSortIndirect( final int perm[], final int[] a, final boolean stable ) {
+	public static void parallelRadixSortIndirect(final int[] perm, final int[] a, final boolean stable ) {
 		parallelRadixSortIndirect( perm, a, 0, a.length, stable );
 	}
 

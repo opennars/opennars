@@ -147,7 +147,7 @@ public class SizeAwareWindow extends Scene {
         return new double[]{a, b};
     }
 
-    final double _d[] = new double[2];
+    final double[] _d = new double[2];
 
     public void resized(double width, double height) {
 

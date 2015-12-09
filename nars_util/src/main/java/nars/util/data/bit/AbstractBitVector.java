@@ -119,7 +119,7 @@ public abstract class AbstractBitVector implements BitVector {
 		BitVectors.ensureFromTo( length(), from, to );
 		final long length = to - from;
 		final long l = length - length % Long.SIZE;
-		final long bits[] = new long[ (int)( ( length + Long.SIZE - 1 ) / Long.SIZE ) ];
+		final long[] bits = new long[(int) ((length + Long.SIZE - 1) / Long.SIZE)];
 		long i;
 		for( i = 0; i < l; i += Long.SIZE ) bits[ (int)( i / Long.SIZE ) ] = getLong( from + i, from + i + Long.SIZE );
 		if ( i < length ) bits[ (int)( i / Long.SIZE ) ] = getLong( from + i, to );
