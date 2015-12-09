@@ -215,7 +215,7 @@ public class FastBitSet {
      */
     public boolean get(int bitIndex) {
         int i = bitIndex >> 6;
-        return (i >= _length) ? false : (bits[i] & (1L << bitIndex)) != 0;
+        return i < _length && (bits[i] & (1L << bitIndex)) != 0;
     }
 
     /**
@@ -401,11 +401,7 @@ public class FastBitSet {
         boolean e = (existing & mask) > 0;
             
         long nextValue;
-        if (value) {   
-            nextValue = existing | mask;
-        } else {
-            nextValue = existing & ~(mask);
-        }
+        nextValue = value ? existing | mask : existing & ~(mask);
         
         if ((nextValue!=existing) || (resized)) {
             bits[i] = nextValue;

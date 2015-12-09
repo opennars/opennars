@@ -19,11 +19,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
 
     private void updateKeyRange() {
         if (left != null) {
-            if (right == null || left.getHigh().compareTo(right.getHigh()) > 0) {
-                key = new Between<>(left.getLow(), left.getHigh());
-            } else {
-                key = new Between<>(left.getLow(), right.getHigh());
-            }
+            key = right == null || left.getHigh().compareTo(right.getHigh()) > 0 ? new Between<>(left.getLow(), left.getHigh()) : new Between<>(left.getLow(), right.getHigh());
         } else {
             key = new Between<>(right.getLow(), right.getHigh());
         }
@@ -100,11 +96,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
             if (right.getLow().compareTo(key.getLow()) < 0) {
                 right = right.put(key, value);
             } else {
-                if (left == null) {
-                    left = new IntervalTreeLeaf<>(key, value);
-                } else {
-                    left = left.put(key, value);
-                }
+                left = left == null ? new IntervalTreeLeaf<>(key, value) : left.put(key, value);
             }
         }
         updateKeyRange();
@@ -191,12 +183,9 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
 
     private IntervalTreeNode<K, V> removeCleanup() {
         if (left == null) {
-            if (right == null) {
-                return null;
-            } else {
-                return right;
-            }
-        } else if (right == null) {
+            return right == null ? null : right;
+        }
+        if (right == null) {
             return left;
         }
         updateKeyRange();
@@ -251,11 +240,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     @Override
     public int maxHeight() {
         if (left != null) {
-            if (right != null) {
-                return Math.max(left.maxHeight(), right.maxHeight()) + 1;
-            } else {
-                return left.maxHeight() + 1;
-            }
+            return right != null ? Math.max(left.maxHeight(), right.maxHeight()) + 1 : left.maxHeight() + 1;
         } else {
             return right.maxHeight() + 1;
         }

@@ -23,7 +23,7 @@ public abstract class BooleanNode<N extends Node> extends Node<N, Boolean> {
         Node c = getChild(childNum);
         if (c instanceof Literal) {
             boolean b = (Boolean)c.evaluate();
-            if (b) return 1; else return 0;
+            return b ? 1 : 0;
         }
         return -1;
     }

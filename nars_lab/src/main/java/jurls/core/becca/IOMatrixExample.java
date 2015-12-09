@@ -34,6 +34,7 @@ abstract class IOMatrixExample extends JPanel implements Runnable {
     
     @Override public void run() {
         int cycle = 0;
+        //noinspection InfiniteLoopStatement
         while (true) {
             
             output = update(cycle, input = input(cycle));            

@@ -157,10 +157,7 @@ public class SarsaLearner {
         double newValue;
 
         // ... if s' is null (terminal state), then Q(s',a') is assumed to be 0
-        if (features != null)
-            newValue = valueFunction[action].predict(features);
-        else
-            newValue = 0;
+        newValue = features != null ? valueFunction[action].predict(features) : 0;
 
         // Compute the TD error
         double delta = reward + gamma * newValue - oldValue;

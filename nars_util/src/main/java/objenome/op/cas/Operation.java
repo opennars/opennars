@@ -98,10 +98,9 @@ public abstract class Operation extends Expr {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!this.getClass().isAssignableFrom(expr.getClass())) return false;
-        
-        if (ArrayLists.elemExprsEqual(this.getExprs(), ((Operation) expr).getExprs())) return true;
-        
-        return false;
+
+        return ArrayLists.elemExprsEqual(this.getExprs(), ((Operation) expr).getExprs());
+
     }
     
     public boolean notEqualsExpr(Expr expr) {

@@ -357,11 +357,7 @@ public abstract class AbstractNAR extends NAR {
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(termLinkBagSize, rng).mergeAverage();
 
-        if (t instanceof Atom) {
-            return new AtomConcept(t, termLinks, taskLinks);
-        } else {
-            return new DefaultConcept(t, taskLinks, termLinks, memory);
-        }
+        return t instanceof Atom ? new AtomConcept(t, termLinks, taskLinks) : new DefaultConcept(t, taskLinks, termLinks, memory);
 
     }
 

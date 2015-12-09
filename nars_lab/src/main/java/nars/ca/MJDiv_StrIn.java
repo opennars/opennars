@@ -80,6 +80,7 @@ public class MJDiv_StrIn {
 		st = new StringTokenizer(sStr, ",", false);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
+			//noinspection IfStatementWithTooManyBranches
 			if (sTok.startsWith("ACT="))
 				m_Active = Integer.valueOf(sTok.substring(4)) != 0;
 			else if (sTok.startsWith("REP="))

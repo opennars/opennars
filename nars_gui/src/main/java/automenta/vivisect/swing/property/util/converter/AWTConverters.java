@@ -95,6 +95,7 @@ public class AWTConverters implements Converter {
 	@Override
 	public Object convert(Class type, Object value) {
 		if (String.class.equals(type)) {
+			//noinspection IfStatementWithTooManyBranches
 			if (value instanceof Rectangle) {
 				return ((Rectangle) value).x
 						+ " "
@@ -130,6 +131,7 @@ public class AWTConverters implements Converter {
 		}
 
 		if (value instanceof String) {
+			//noinspection IfStatementWithTooManyBranches
 			if (Rectangle.class.equals(type)) {
 				double[] values = convert((String) value, 4, " ");
 				if (values == null) {

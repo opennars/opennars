@@ -369,17 +369,9 @@ public final class SgClass {
 
     private String getName(final String innerDivider) {
         if (packageName.isEmpty()) {
-            if (enclosingClass == null) {
-                return simpleName;
-            } else {
-                return getEnclosingSimpleNames(innerDivider) + simpleName;
-            }
+            return enclosingClass == null ? simpleName : getEnclosingSimpleNames(innerDivider) + simpleName;
         }
-        if (enclosingClass == null) {
-            return packageName + '.' + simpleName;
-        } else {
-            return packageName + '.' + getEnclosingSimpleNames(innerDivider) + simpleName;
-        }
+        return enclosingClass == null ? packageName + '.' + simpleName : packageName + '.' + getEnclosingSimpleNames(innerDivider) + simpleName;
     }
 
     /**
@@ -722,10 +714,7 @@ public final class SgClass {
         if (name.equals(BigDecimal.class.getName())) {
             return true;
         }
-        if (name.equals(BigInteger.class.getName())) {
-            return true;
-        }
-        return false;
+        return name.equals(BigInteger.class.getName());
     }
 
     /**
@@ -860,27 +849,15 @@ public final class SgClass {
     private static SgClass createClass(final SgClassPool pool, final Class<?> clasz) {
 
         final SgClass enclosingClass;
-        if (clasz.getEnclosingClass() == null) {
-            enclosingClass = null;
-        } else {
-            enclosingClass = create(pool, clasz.getEnclosingClass());
-        }
+        enclosingClass = clasz.getEnclosingClass() == null ? null : create(pool, clasz.getEnclosingClass());
         final String clModifiers = Modifier.toString(clasz.getModifiers());
 
         final String packageName;
-        if (clasz.getPackage() == null) {
-            packageName = "";
-        } else {
-            packageName = clasz.getPackage().getName();
-        }
+        packageName = clasz.getPackage() == null ? "" : clasz.getPackage().getName();
 
         // Set super class
         final SgClass superClass;
-        if (clasz.isInterface()) {
-            superClass = null;
-        } else {
-            superClass = SgClass.create(pool, clasz.getSuperclass());
-        }
+        superClass = clasz.isInterface() ? null : SgClass.create(pool, clasz.getSuperclass());
 
         final SgClass cl = new SgClass(clModifiers, packageName, clasz.getSimpleName(), superClass,
                 clasz.isInterface(), enclosingClass);

@@ -76,11 +76,8 @@ public class GraphApp extends JPanel
         standalone = true;   
         
         timemult = 0.5D;   
-        timediv = 1.0D / timemult;   
-        if(faceApplet != null)   
-            snapwidth = (int)((faceApplet.bounds().width * 40.0F) / faceApplet.bounds().height);
-        else   
-            snapwidth = 25;   
+        timediv = 1.0D / timemult;
+        snapwidth = faceApplet != null ? (int) ((faceApplet.bounds().width * 40.0F) / faceApplet.bounds().height) : 25;
         scrPos = 0;   
         currentSnap = -1;   
         rollSnap = -1;   

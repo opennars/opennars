@@ -290,12 +290,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         forgetProportion *= (1.0f - budget.getDurability());
 
         float newPriority;
-        if (forgetProportion > 1.0f) {
-            //forgetProportion = 1.0f;
-            newPriority = minPriorityForgettingCanAffect;
-        } else {
-            newPriority = currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
-        }
+        newPriority = forgetProportion > 1.0f ? minPriorityForgettingCanAffect : currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
 
 
         budget.setPriority(newPriority);

@@ -230,9 +230,11 @@ public class KIF {
                         isEOL = true;                                 // Turn on flag, to watch for a second consecutive one.
                         continue;
                     }
-                } else if (isEOL) {
-                    isEOL = false;                                    // Turn off isEOL if a non-space token encountered                
                 }
+                if (isEOL) {
+                    isEOL = false;                                    // Turn off isEOL if a non-space token encountered
+                }
+                //noinspection IfStatementWithTooManyBranches
                 if (st.ttype == 40) {                                   // open paren
                     if (parenLevel == 0) {
                         lineStart = st.lineno();

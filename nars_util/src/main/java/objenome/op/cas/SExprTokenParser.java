@@ -23,29 +23,30 @@ public class SExprTokenParser extends TokenParser {
         if ("piWord".equals(tokenValue) || "pi".equals(tokenValue)) {
             return new Token<>(new Pi(), origString, begin, end);
         }
-        else if ("e".equals(tokenValue)) {
+        //noinspection IfStatementWithTooManyBranches
+        if ("e".equals(tokenValue)) {
             return new Token<>(new E(), origString, begin, end);
         }
-        else if ("i".equals(tokenValue)) {
+        if ("i".equals(tokenValue)) {
             // if (debug) System.err.println("i am not yet supported");
             throw new ParseException("i am not yet supported", begin);
         }
-        else if ("var".equals(tokenValue)) {
+        if ("var".equals(tokenValue)) {
             return new Token<>(context.getVar(matched.charAt(0)), origString, begin, end);
         }
-        else if ("number".equals(tokenValue)) {
+        if ("number".equals(tokenValue)) {
             return new Token<>(Num.make(Double.parseDouble(matched)), origString, begin, end);
         }
-        else if ("undef".equals(tokenValue)) {
+        if ("undef".equals(tokenValue)) {
             return new Token<>(new Undef(), origString, begin, end);
         }
-        else if ("true".equals(tokenValue)) {
+        if ("true".equals(tokenValue)) {
             return new Token<>(Expr.yep(), origString, begin, end);
         }
-        else if ("false".equals(tokenValue)) {
+        if ("false".equals(tokenValue)) {
             return new Token<>(Expr.nope(), origString, begin, end);
         }
-        
+
         return token.castValueTo(Object.class);
     }
     

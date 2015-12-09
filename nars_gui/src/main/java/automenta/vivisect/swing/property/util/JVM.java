@@ -57,6 +57,7 @@ public class JVM {
    * Constructor for the OS object
    */
   public JVM(String p_JavaVersion) {
+    //noinspection IfStatementWithTooManyBranches
     if (p_JavaVersion.startsWith("1.6.")) {
       jdkVersion = JDK1_6;
     } else if (p_JavaVersion.startsWith("1.5.")) {

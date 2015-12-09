@@ -118,7 +118,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         if (o == this) {
             return true;
         }
-        if ((o == null) || !(o instanceof MersenneTwisterFast)) {
+        if (!(o instanceof MersenneTwisterFast)) {
             return false;
         }
         final MersenneTwisterFast other = (MersenneTwisterFast) o;
@@ -439,7 +439,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         }
         if (probability == 0.0f) {
             return false; // fix half-open issues
-        } else if (probability == 1.0f) {
+        }
+        if (probability == 1.0f) {
             return true; // fix half-open issues
         }
         if (mti >= N) // generate N words at one time
@@ -485,7 +486,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
         }
         if (probability == 0.0) {
             return false; // fix half-open issues
-        } else if (probability == 1.0) {
+        }
+        if (probability == 1.0) {
             return true; // fix half-open issues
         }
         if (mti >= N) // generate N words at one time
@@ -992,7 +994,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
     public final int nextInt(final int n) {
         if (n < 0) {
             throw new IllegalArgumentException("n must be positive or zero");
-        } else if (n == 1) {
+        }
+        if (n == 1) {
             // Will always be the value 0.
             return 0;
         }

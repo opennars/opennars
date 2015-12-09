@@ -188,15 +188,15 @@ public class Grammar {
                 if (i >= grammar.length()) {
                     // Escape sequence as last char is invalid.
                     throw new MalformedGrammarException("Escape sequence as last char is invalid");
-                } else if ((!terminal) && (grammar.charAt(i) != '\n')) {
+                }
+                if ((!terminal) && (grammar.charAt(i) != '\n')) {
                     // Only escaped newline allowed inside non-terminal
                     throw new MalformedGrammarException("Only escaped newline allowed inside non-terminal");
                 }
 
                 boolean skip = false;
-                if (grammar.charAt(i) == '\'') {// Single quote
-                    ch = '\'';
-                } else if (grammar.charAt(i) == '\'') {// Double quote
+                //noinspection IfStatementWithTooManyBranches
+                if (grammar.charAt(i) == '\'' || grammar.charAt(i) == '\'') {// Single quote
                     ch = '\'';
                 } else if (grammar.charAt(i) == '\\') {// Backslash
                     ch = '\\';
@@ -236,6 +236,7 @@ public class Grammar {
 
             switch (state) {
                 case START:
+                    //noinspection IfStatementWithTooManyBranches
                     if (ch == '\r') {
                         // Ignore DOS newline.
                     } else if (ch == '#') {
@@ -254,6 +255,7 @@ public class Grammar {
                     break;
 
                 case START_RULE:
+                    //noinspection IfStatementWithTooManyBranches
                     if (ch == '\r') {
                         // Ignore DOS newline.
                     } else if (ch == '\n') {
@@ -290,10 +292,9 @@ public class Grammar {
                     break;
 
                 case LHS_READ:
-                    if (ch == '\r') {
+                    //noinspection IfStatementWithTooManyBranches
+                    if (ch == '\r' || (ch == ' ') || (ch == '\t') || (ch == '\n')) {
                         // Ignore DOS newline.
-                    } else if ((ch == ' ') || (ch == '\t') || (ch == '\n')) {
-                        // Ignore whitespace, tabs and newlines.
                     } else if (ch == ':') {
                         // Part of ::= token.
                         buffer.append(ch);
@@ -314,6 +315,7 @@ public class Grammar {
                     break;
 
                 case PRODUCTION:
+                    //noinspection IfStatementWithTooManyBranches
                     if (ch == '\r') {
                         // Ignore DOS newline.
                     } else if ((ch == '|') && quoted) {
@@ -382,6 +384,7 @@ public class Grammar {
                              */
                         }
                     } else if (ch == '>') {
+                        //noinspection IfStatementWithTooManyBranches
                         if (quoted) {
                             buffer.append(ch);
                         } else if (special) {
@@ -432,15 +435,14 @@ public class Grammar {
                     break;
 
                 case START_OF_LINE:
+                    //noinspection IfStatementWithTooManyBranches
                     if (ch == '#') {
                         // Comment - skip to end of line.
                         while ((i < grammar.length()) && (grammar.charAt(i) != '\n')) {
                             i++;
                         }
-                    } else if (ch == '\r') {
+                    } else if (ch == '\r' || (ch == ' ') || (ch == '\t') || (ch == '\n')) {
                         // Ignore DOS newline.
-                    } else if ((ch == ' ') || (ch == '\t') || (ch == '\n')) {
-                        // Ignore whitespace, tabs and newlines.
                     } else if (ch == '|') {
                         // Start of new production.
                         state = State.PRODUCTION;
@@ -511,7 +513,6 @@ public class Grammar {
             List<GrammarNode> nodes = p.getGrammarNodes();
 
             if (nodes.contains(rule)) {
-                continue outer;
             } else {
                 for (GrammarNode n : nodes) {
                     if (n instanceof GrammarRule) {
@@ -523,7 +524,7 @@ public class Grammar {
                     }
                 }
                 ref = false;
-                break outer;
+                break;
             }
         }
 

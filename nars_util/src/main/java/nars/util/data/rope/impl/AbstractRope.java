@@ -183,7 +183,8 @@ public abstract class AbstractRope implements Rope {
         }
 
         int x = 0;
-        for (Iterator<Character> i = this.iterator(offset); i.hasNext() && x < prefix.length();) {
+        Iterator<Character> i = this.iterator(offset);
+        while (i.hasNext() && x < prefix.length()) {
             if (i.next() != prefix.charAt(x++)) {
                 return false;
             }
@@ -272,9 +273,11 @@ public abstract class AbstractRope implements Rope {
         final Rope r = (s == null) ? Rope.build("null") : Rope.build(s);
         if (dstOffset == 0) {
             return r.append(this);
-        } else if (dstOffset == this.length()) {
+        }
+        if (dstOffset == this.length()) {
             return this.append(r);
-        } else if (dstOffset < 0 || dstOffset > this.length()) {
+        }
+        if (dstOffset < 0 || dstOffset > this.length()) {
             throw new IndexOutOfBoundsException(dstOffset + " is out of insert range [" + 0 + ':' + this.length() + ']');
         }
         return this.subSequence(0, dstOffset).append(r).append(this.subSequence(dstOffset, this.length()));
@@ -294,11 +297,7 @@ public abstract class AbstractRope implements Rope {
                 break;
             }
         }
-        if (index <= 0) {
-            return this;
-        } else {
-            return this.subSequence(index, this.length());
-        }
+        return index <= 0 ? this : this.subSequence(index, this.length());
     }
 
     @Override
@@ -336,11 +335,7 @@ public abstract class AbstractRope implements Rope {
                 break;
             }
         }
-        if (index >= this.length()) {
-            return this;
-        } else {
-            return this.subSequence(0, index);
-        }
+        return index >= this.length() ? this : this.subSequence(0, index);
     }
 
     @Override

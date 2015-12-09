@@ -65,9 +65,8 @@ public class ConceptComet extends HyperassociativeMap2D {
             if (!ii.hasNext()) {
                 node.setVisible(false);
                 return;
-            } else {
-                node.setVisible(true);
             }
+            node.setVisible(true);
 
             x = Concept.taskCreationTime.max(ii);
         }

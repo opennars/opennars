@@ -34,11 +34,8 @@ public final class ImprovMath
         if(d > 0.999D)   
             return 1.0D;   
         if(d1 < 0.001D)   
-            return 0.0D;   
-        if(d1 > 0.999D)   
-            return 1.0D;   
-        else   
-            return Math.pow(d, Math.log(d1) / LOG_HALF);   
+            return 0.0D;
+        return d1 > 0.999D ? 1.0D : Math.pow(d, Math.log(d1) / LOG_HALF);
     }   
    
     public static double[] cross(double[] ad, double[] ad1)
@@ -69,11 +66,8 @@ public final class ImprovMath
     public static double dot(double[] ad, double[] ad1)
     {   
         double d = 0.0D;   
-        int i;   
-        if(ad.length <= ad1.length)   
-            i = ad.length;   
-        else   
-            i = ad1.length;   
+        int i;
+        i = ad.length <= ad1.length ? ad.length : ad1.length;
         for(int j = 0; j < i; j++)   
             d += ad[j] * ad1[j];   
    
@@ -121,11 +115,8 @@ public final class ImprovMath
         if(d > 0.999D)   
             return 1.0D;   
         d1 = d1 >= 0.001D ? d1 <= 0.999D ? d1 : 0.999D : 0.0001D;   
-        double d2 = Math.log(1.0D - d1) / LOG_HALF;   
-        if(d < 0.5D)   
-            return Math.pow(2.0D * d, d2) / 2.0D;
-        else   
-            return 1.0D - Math.pow(2.0D * (1.0D - d), d2) / 2.0D;
+        double d2 = Math.log(1.0D - d1) / LOG_HALF;
+        return d < 0.5D ? Math.pow(2.0D * d, d2) / 2.0D : 1.0D - Math.pow(2.0D * (1.0D - d), d2) / 2.0D;
     }   
    
     public static double[] getEulers(double[] ad, int i)

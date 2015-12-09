@@ -78,10 +78,7 @@ public class PropertyUtils {
 
 	private static Field[] getFields(Object o) {
 		Class<?> c;
-		if (o instanceof Class<?>)
-			c = (Class<?>) o;
-		else
-			c = o.getClass();
+		c = o instanceof Class<?> ? (Class<?>) o : o.getClass();
 
 		HashSet<Field> fields = new HashSet<>();
 		
@@ -197,7 +194,6 @@ public class PropertyUtils {
 									propertyValue));
 			} catch (Exception e) {
 				e.printStackTrace();
-				continue;
 			}
 		}
 

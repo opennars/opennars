@@ -35,6 +35,7 @@ public class ParticleSystem_v5 extends Canvas {
                         @Override
 			public void run() {
 				if (true) {
+					//noinspection InfiniteLoopStatement
 					while (true) {
 						long time = System.currentTimeMillis();
 						ren.tick();

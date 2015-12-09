@@ -51,10 +51,7 @@ public class RuleRTab {
 					iTmp = Integer.valueOf(sTok);
 					switch (iNum) {
 					case 1: // the neighbourhood type
-						if (iTmp == 2)
-							iNghTyp = MJRules.NGHTYP_NEUM; // Moore neighbourhood
-						else
-							iNghTyp = MJRules.NGHTYP_MOOR; // von Neumann neighbourhood
+						iNghTyp = iTmp == 2 ? MJRules.NGHTYP_NEUM : MJRules.NGHTYP_MOOR;
 						break;
 					case 2: // the center cell flag
 						fCtrCell = (iTmp == 1); // use the center cell
@@ -88,21 +85,11 @@ public class RuleRTab {
 		Validate();
 
 		// make the string
-		if (iNghTyp == MJRules.NGHTYP_NEUM) // von Neumann neighbourhood
-			sBff = "2";
-		else
-			// Moore neighbourhood
-			sBff = "1";
+		sBff = iNghTyp == MJRules.NGHTYP_NEUM ? "2" : "1";
 
-		if (fCtrCell) // include the center cell
-			sBff = sBff + ",1";
-		else
-			sBff = sBff + ",0";
+		sBff = fCtrCell ? sBff + ",1" : sBff + ",0";
 
-		if (fAll1Fire) // all cells from bitplane 1 can fire
-			sBff = sBff + ",1";
-		else
-			sBff = sBff + ",0";
+		sBff = fAll1Fire ? sBff + ",1" : sBff + ",0";
 
 		int i_Stt, i_Ngh, iTmp;
 		for (i_Stt = 0; i_Stt <= MJBoard.MAX_CLO; i_Stt++) // for all states
@@ -149,10 +136,7 @@ public class RuleRTab {
 		int rtMask;
 		boolean fMoore = (iNghTyp == MJRules.NGHTYP_MOOR); // Moore neighbourhood? Else von Neumann.
 
-		if (fAll1Fire) // full bitplane 1 fires
-			rtMask = 1; // any with bit 1 on can do
-		else
-			rtMask = 0xFF; // only state 1
+		rtMask = fAll1Fire ? 1 : 0xFF;
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells

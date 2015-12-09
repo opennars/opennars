@@ -128,6 +128,7 @@ public class TracePane extends LogPane {
     boolean activationTreeMap = false;
 
     private Node getNode(Object channel, Object signal) {
+        //noinspection IfStatementWithTooManyBranches
         if ("eventConceptActivated".equals(channel)) {
             boolean newn = false;
             if (activationSet == null && activationTreeMap) {
@@ -144,11 +145,9 @@ public class TracePane extends LogPane {
                 newn = false;
             }
 
-            if (!newn) return null;
-            else
-                return activationSet;
+            return !newn ? null : activationSet;
         } else if ("eventCycleEnd".equals(channel)) {
-            if (prev != null && (prev instanceof CycleActivationBar)) {
+            if ((prev instanceof CycleActivationBar)) {
                 ((CycleActivationBar) prev).setTo(nar.time());
                 return null;
             } else {
@@ -165,10 +164,7 @@ public class TracePane extends LogPane {
             //
         } else if ("eventInput".equals(channel)) {
             Task t = (Task) signal;
-            if (t.getPriority() >= volume.get())
-                return new TaskLabel(t, nar);
-            else
-                return null;
+            return t.getPriority() >= volume.get() ? new TaskLabel(t, nar) : null;
         } else if (signal instanceof Premise) {
             //return new PremisePane((Premise)signal);
             return null;

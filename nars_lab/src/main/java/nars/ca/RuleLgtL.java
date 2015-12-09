@@ -51,6 +51,7 @@ public class RuleLgtL {
 			sTok = sTok.trim();
 			//System.out.println(sTok);
 
+			//noinspection IfStatementWithTooManyBranches
 			if (sTok.length() > 0 && sTok.charAt(0) == 'R') // range
 			{
 				iRng = Integer.valueOf(sTok.substring(1));
@@ -129,17 +130,11 @@ public class RuleLgtL {
 		sBff = 'R' + String.valueOf(iRng);
 
 		// states
-		if (isHist)
-			ih = iClo;
-		else
-			ih = 0;
+		ih = isHist ? iClo : 0;
 		sBff = sBff + ",C" + String.valueOf(ih);
 
 		// center cell
-		if (isCentr)
-			sBff = sBff + ",M1";
-		else
-			sBff = sBff + ",M0";
+		sBff = isCentr ? sBff + ",M1" : sBff + ",M0";
 
 		// S rules
 		sBff = sBff + ",S" + String.valueOf(iSMin) + ".."
@@ -150,11 +145,7 @@ public class RuleLgtL {
 				+ String.valueOf(iBMax);
 
 		// neighbourhood
-		if (iNgh == MJRules.NGHTYP_NEUM) // von Neumann neighbourhood
-			sBff = sBff + ",NN";
-		else
-			// Moore neighbourhood
-			sBff = sBff + ",NM";
+		sBff = iNgh == MJRules.NGHTYP_NEUM ? sBff + ",NN" : sBff + ",NM";
 
 		return sBff;
 	}
@@ -177,10 +168,7 @@ public class RuleLgtL {
 		if (iNgh != MJRules.NGHTYP_NEUM)
 			iNgh = MJRules.NGHTYP_MOOR; // default - Moore neighbourhood
 
-		if (isCentr)
-			iMax = 1;
-		else
-			iMax = 0;
+		iMax = isCentr ? 1 : 0;
 		for (i = 1; i <= iRng; i++)
 			// calculate the max. threshold
 			iMax = iMax + i * 8;
@@ -224,28 +212,16 @@ public class RuleLgtL {
 				yVector[10] = j;
 				for (iTmp = 1; iTmp <= iRng; iTmp++) {
 					colL = i - iTmp;
-					if (colL >= 0)
-						xVector[10 - iTmp] = colL;
-					else
-						xVector[10 - iTmp] = sizX + colL;
+					xVector[10 - iTmp] = colL >= 0 ? colL : sizX + colL;
 
 					colR = i + iTmp;
-					if (colR < sizX)
-						xVector[10 + iTmp] = colR;
-					else
-						xVector[10 + iTmp] = colR - sizX;
+					xVector[10 + iTmp] = colR < sizX ? colR : colR - sizX;
 
 					rowT = j - iTmp;
-					if (rowT >= 0)
-						yVector[10 - iTmp] = rowT;
-					else
-						yVector[10 - iTmp] = sizY + rowT;
+					yVector[10 - iTmp] = rowT >= 0 ? rowT : sizY + rowT;
 
 					rowB = j + iTmp;
-					if (rowB < sizY)
-						yVector[10 + iTmp] = rowB;
-					else
-						yVector[10 + iTmp] = rowB - sizY;
+					yVector[10 + iTmp] = rowB < sizY ? rowB : rowB - sizY;
 				}
 				bOldVal = crrState[i][j];
 				bNewVal = bOldVal; // default - no change
@@ -281,18 +257,12 @@ public class RuleLgtL {
 								bNewVal = 1;
 							} else // isolation or overpopulation
 							{
-								if (bOldVal < (iClo - 1))
-									bNewVal = (short) (bOldVal + 1); // getting older...
-								else
-									bNewVal = 0; // bye, bye!
+								bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 							}
 						}
 					} else // was older than 1
 					{
-						if (bOldVal < (iClo - 1))
-							bNewVal = (short) (bOldVal + 1); // getting older...
-						else
-							bNewVal = 0; // bye, bye!
+						bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 					}
 				} else // no history
 				{
@@ -313,21 +283,15 @@ public class RuleLgtL {
 					if (bOldVal == 0) // was dead
 					{
 						if ((iCnt >= iBMin) && (iCnt <= iBMax)) // rules for birth
-							if (ColoringMethod == 1) // standard
-								bNewVal = 1; // birth
-							else
-								bNewVal = (short) (mjb.Cycle
-										% (mjb.StatesCount - 1) + 1); // birth
+							bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
+									% (mjb.StatesCount - 1) + 1);
 					} else // was alive
 					{
 						if ((iCnt >= iSMin) && (iCnt <= iSMax)) // rules for surviving
 						{
 							if (ColoringMethod == 1) // standard
 							{
-								if (bOldVal < (mjb.StatesCount - 1))
-									bNewVal = (short) (bOldVal + 1); // getting older...
-								else
-									bNewVal = (short) (mjb.StatesCount - 1);
+								bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
 							} else {
 								// alternate coloring - cells remain not changed
 							}

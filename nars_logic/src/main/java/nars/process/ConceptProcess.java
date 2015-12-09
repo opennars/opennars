@@ -87,9 +87,7 @@ public abstract class ConceptProcess extends AbstractPremise {
     @Override public final void updateBelief(Task nextBelief) {
         if (nextBelief!=currentBelief) {
             this.currentBelief = nextBelief;
-            this.cyclic = (nextBelief != null) ?
-                    Tense.overlapping(getTask(), nextBelief) :
-                    false;
+            this.cyclic = (nextBelief != null) && Tense.overlapping(getTask(), nextBelief);
         }
     }
 

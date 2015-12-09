@@ -181,7 +181,8 @@ public class SystemView {
     public synchronized InetSocketAddress getRandomSeedMember(List<InetSocketAddress> members) {
         if (members.isEmpty()) {
             return getRandomMember(seeds);
-        } else if (seeds.containsAll(members)) {
+        }
+        if (seeds.containsAll(members)) {
             return null;
         }
         if (seeds.isEmpty() || seeds.size() == 1

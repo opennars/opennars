@@ -260,6 +260,7 @@ public abstract class NQuadsRDF {
 
         Compound belief = null;
 
+        //noinspection IfStatementWithTooManyBranches
         if (predicate.equals(parentOf) || predicate.equals(type)
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
 
@@ -357,11 +358,7 @@ public abstract class NQuadsRDF {
 
         suffix = suffix.replace("http://dbpedia.org/ontology/", "");
 
-        if (prefix == null || prefix.isEmpty()) {
-            return suffix;
-        } else {
-            return prefix + ':' + suffix;
-        }
+        return prefix == null || prefix.isEmpty() ? suffix : prefix + ':' + suffix;
     }
 
     /**

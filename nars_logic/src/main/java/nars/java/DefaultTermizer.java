@@ -122,13 +122,16 @@ public class DefaultTermizer implements Termizer {
             return Product.make(
                     arg
             );
-        } else if (o instanceof Object[]) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (o instanceof Object[]) {
             final List<Term> arg = Arrays.stream((Object[]) o).map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
             );
-        } else if (o instanceof List) {
+        }
+        if (o instanceof List) {
             if (((List)o).isEmpty()) return EMPTY;
 
             //TODO can this be done with an array to avoid duplicate collection allocation
@@ -148,7 +151,8 @@ public class DefaultTermizer implements Termizer {
         /*} else if (o instanceof Stream) {
             return Atom.quote(o.toString().substring(17));
         }*/
-        } else if (o instanceof Set) {
+        }
+        if (o instanceof Set) {
             Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return SetExt.make(arg);
@@ -209,10 +213,9 @@ public class DefaultTermizer implements Termizer {
         if (classInPackageExclusions.contains(oc)) return false;
 
         if (Term.class.isAssignableFrom(oc)) return false;
-        if (oc.isPrimitive()) return false;
+        return !oc.isPrimitive();
 
 
-        return true;
     }
 
 
@@ -225,18 +228,14 @@ public class DefaultTermizer implements Termizer {
         int n = m.getParameterCount();
         Compound args = $.p(getArgVariables(varPrefix, n));
 
-        if (m.getReturnType() == void.class) {
-            return new Term[]{
+        return m.getReturnType() == void.class ? new Term[]{
                 INSTANCE_VAR,
                 args
-            };
-        } else {
-            return new Term[]{
+        } : new Term[]{
                 INSTANCE_VAR,
                 args,
                 $.varDep(varPrefix + "_return") //return var
-            };
-        }
+        };
     }
 
     private Term[] getArgVariables(String prefix, int numParams) {

@@ -281,12 +281,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
                 if (tl.isQuestOrQuestion()) {
                     position[0] = -1;
-                    if (tl.getBestSolution()!=null) {
-                        position[1] = tl.getBestSolution().getConfidence();
-                    }
-                    else {
-                        position[1] = 0;
-                    }
+                    position[1] = tl.getBestSolution() != null ? tl.getBestSolution().getConfidence() : 0;
                 }
                 else {
                     Truth t = tl.getTruth();

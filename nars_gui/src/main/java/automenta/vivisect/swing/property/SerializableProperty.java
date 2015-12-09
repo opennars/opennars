@@ -79,7 +79,6 @@ public class SerializableProperty extends DefaultProperty {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return;
 			}
 		}
 		else {
@@ -88,7 +87,6 @@ public class SerializableProperty extends DefaultProperty {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return;
 			}
 		}
 		

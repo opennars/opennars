@@ -183,10 +183,7 @@ public enum Op implements Serializable {
 
         if (hasCompact) {
             int p = bb[0];
-            if (p < 31) //do not assign if it's an ordinary non-control char
-                this.byt = (byte) (p);
-            else
-                this.byt = 0;
+            this.byt = p < 31 ? (byte) (p) : 0;
         } else {
             //multiple ibytes, use the provided array
             this.byt = 0;

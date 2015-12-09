@@ -608,11 +608,7 @@ public class PropertySheetTable extends JTable {
         indent = table.getWantsExtraIndent()?HOTSPOT_SIZE:0;
       } else {
         // it is a property with children
-        if (item.hasToggle()) {
-          indent = item.getDepth() * HOTSPOT_SIZE;
-        } else {          
-          indent = (item.getDepth() + 1) * HOTSPOT_SIZE;
-        }        
+        indent = item.hasToggle() ? item.getDepth() * HOTSPOT_SIZE : (item.getDepth() + 1) * HOTSPOT_SIZE;
       }
       
       if (table.getSheetModel().getMode() == PropertySheet.VIEW_AS_CATEGORIES
@@ -757,7 +753,7 @@ public class PropertySheetTable extends JTable {
       setBackground(getBackground(item.isProperty(), isSelected));
       setForeground(getForeground(item.isProperty(), isSelected));
       
-      setEnabled(isSelected || !item.isProperty() ? true : item.getProperty().isEditable());
+      setEnabled((isSelected || !item.isProperty()) || item.getProperty().isEditable());
       setText(item.getName());
 
       return this;

@@ -146,8 +146,8 @@ public class BrowserTab extends UITab<WebView> {
     
     protected void onPageLoaded() {
         String location = engine.getLocation();
-        if (!(location.startsWith("http://") || location.startsWith("https://")))
-            return;
+        if (!(location.startsWith("http://") || location.startsWith("https://"))) {
+        }
         
 //        String title = engine.getTitle();
 //        String metaKeywords = title + "";

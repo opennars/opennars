@@ -143,10 +143,7 @@ public class Hilbert extends Linear {
             else
             {
                 int  t = power( k, n/2 );
-                if( (n % 2) == 0 )
-                    return t * t;
-                else
-                    return k * t * t;
+                return (n % 2) == 0 ? t * t : k * t * t;
             }
         }
 }

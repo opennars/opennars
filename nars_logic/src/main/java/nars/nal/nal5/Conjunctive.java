@@ -84,10 +84,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
         for (int i = 0; i < args.length; i++) {
             Term a = args[i];
             Conjunctive c = isConjunction(a, order);
-            if (c != null)
-                sz += c.size();
-            else
-                sz += 1;
+            sz += c != null ? c.size() : 1;
         }
         return sz;
     }

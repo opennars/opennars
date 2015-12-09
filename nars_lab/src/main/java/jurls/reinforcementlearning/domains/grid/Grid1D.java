@@ -130,19 +130,13 @@ public class Grid1D implements World {
         String s = "";
         for (int i = 0; i < size; i++) {
             char c;
-            if (i == simpleState)
-                c = 'O';
-            else
-                c = '.';
+            c = i == simpleState ? 'O' : '.';
             s += c;
         }
         s += "\n";
         for (int i = 0; i < size; i++) {
             char c;
-            if (action[i] > 0)
-                c = 'X';
-            else
-                c = '.';
+            c = action[i] > 0 ? 'X' : '.';
             s += c;
         }
         s += "\n";

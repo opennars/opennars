@@ -165,7 +165,8 @@ public class Util {
         if (obj1 == null) {
             return obj2 == null;
 
-        } else if (obj2 == null) {
+        }
+        if (obj2 == null) {
             return false;
         }
 
@@ -464,11 +465,7 @@ public class Util {
         long hash = 0xAAAAAAAA;
 
         for (int i = 0; i < str.length(); i++) {
-            if ((i & 1) == 0) {
-                hash ^= ((hash << 7) ^ str.charAt(i) * (hash >> 3));
-            } else {
-                hash ^= (~((hash << 11) + str.charAt(i) ^ (hash >> 5)));
-            }
+            hash ^= (i & 1) == 0 ? (hash << 7) ^ str.charAt(i) * (hash >> 3) : ~((hash << 11) + str.charAt(i) ^ (hash >> 5));
         }
 
         return hash;
@@ -609,7 +606,7 @@ public class Util {
     public static float clamp(final float p) {
         if (p > 1.0f)
             return 1.0f;
-        else if (p < 0.0f)
+        if (p < 0.0f)
             return 0.0f;
         return p;
     }

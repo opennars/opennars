@@ -140,8 +140,7 @@ public class NARio extends Run implements RLEnvironment {
 
     public static String n(int x) {
         if (x == 0) return "z";
-        if (x < 0) return "n" + (-x);
-        else return "p" + x;
+        return x < 0 ? "n" + (-x) : "p" + x;
     }
 
     public static String direction(int i, int j) {

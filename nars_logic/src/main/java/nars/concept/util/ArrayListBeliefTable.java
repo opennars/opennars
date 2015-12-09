@@ -46,7 +46,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         if (eternal && temporal) {
             return tasks[0];
-        } else if (eternal ^ temporal) {
+        }
+        if (eternal ^ temporal) {
             ///final int n = size();
 
             Task t;

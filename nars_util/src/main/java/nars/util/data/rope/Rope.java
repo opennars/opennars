@@ -490,11 +490,7 @@ import java.util.regex.Pattern;
      * @return a rebalanced copy of the specified rope.
      */
     static Rope autoRebalance(final Rope r) {
-        if (r instanceof AbstractRope && ((AbstractRope) r).depth() > MAX_ROPE_DEPTH) {
-            return rebalance(r);
-        } else {
-            return r;
-        }
+        return r instanceof AbstractRope && ((AbstractRope) r).depth() > MAX_ROPE_DEPTH ? rebalance(r) : r;
     }
 
     /**
@@ -591,12 +587,7 @@ import java.util.regex.Pattern;
      * @return the depth of the specified rope.
      */
     static byte depth(final Rope r) {
-        if (r instanceof AbstractRope) {
-            return ((AbstractRope) r).depth();
-        } else {
-            return 0;
-            //throw new IllegalArgumentException("Bad rope");
-        }
+        return r instanceof AbstractRope ? ((AbstractRope) r).depth() : 0;
     }
 
     static boolean isBalanced(final Rope r) {

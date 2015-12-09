@@ -108,12 +108,8 @@ public class Rule1DBin {
 		sBinStr = LPad(sBinStr, iCnt, '0');
 
 		// set the rule array
-		for (i = 0; i < iCnt; i++) {
-			if (sBinStr.charAt(i) == '1')
-				iAry[iCnt - i - 1] = 1;
-			else
-				iAry[iCnt - i - 1] = 0;
-		}
+		for (i = 0; i < iCnt; i++)
+			iAry[iCnt - i - 1] = (byte) (sBinStr.charAt(i) == '1' ? 1 : 0);
 	}
 
 	// ----------------------------------------------------------------

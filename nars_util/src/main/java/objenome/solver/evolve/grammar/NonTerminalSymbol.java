@@ -611,11 +611,7 @@ public class NonTerminalSymbol implements Symbol {
 
         for (Symbol child : children) {
             int childDepth;
-            if (child instanceof NonTerminalSymbol) {
-                childDepth = ((NonTerminalSymbol) child).getDepth() + 1;
-            } else {
-                childDepth = 1;
-            }
+            childDepth = child instanceof NonTerminalSymbol ? ((NonTerminalSymbol) child).getDepth() + 1 : 1;
 
             if (childDepth > maxChildDepth) {
                 maxChildDepth = childDepth;

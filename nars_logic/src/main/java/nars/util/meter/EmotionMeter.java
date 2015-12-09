@@ -148,7 +148,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
         if (range == 0) return -1;
         if (prev - current > range * proportionChangeThreshold)
             return -1;
-        else if (current - prev > range * proportionChangeThreshold)
+        if (current - prev > range * proportionChangeThreshold)
             return 1;
 
         return -1;

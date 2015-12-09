@@ -70,10 +70,7 @@ public class LibraryInput extends TextInput {
 
     public static String getExamplePath(String path) {
         if (path.length() > 0 && path.charAt(0) == '/') return path; //dont modify, it's already absolute
-        if (cwd.endsWith("nars_logic") || cwd.endsWith("nars_lab"))
-            return "../nal/" + path;
-        else
-            return "nal/" + path;
+        return cwd.endsWith("nars_logic") || cwd.endsWith("nars_lab") ? "../nal/" + path : "nal/" + path;
     }
     
 //    public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {

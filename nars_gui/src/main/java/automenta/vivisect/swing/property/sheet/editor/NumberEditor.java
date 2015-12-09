@@ -84,7 +84,6 @@ public class NumberEditor extends AbstractPropertyEditor {
                 number.append(character);
             }
             else if (' ' == character) {
-                continue;
             }
             else {
                 break;

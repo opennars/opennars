@@ -84,6 +84,7 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
     }
 
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        //noinspection IfStatementWithTooManyBranches
         if (isAnnotated(method, GENERIC_GET)) {
             return this.getters.get(args[0]).invoke(proxy);
         } else if (isAnnotated(method, GENERIC_SET)) {

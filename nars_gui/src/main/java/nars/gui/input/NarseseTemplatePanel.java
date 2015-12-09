@@ -84,6 +84,7 @@ public class NarseseTemplatePanel {
             
             List<TemplateElement> l = new LinkedList();
             for (String a : pieces) {
+                //noinspection IfStatementWithTooManyBranches
                 if ("~t".equals(a))
                     l.add(new Truth());
                 else if ("~b".equals(a))
@@ -127,6 +128,7 @@ public class NarseseTemplatePanel {
         
         List<TemplateElement> l = t.forms.get(form);
         for (TemplateElement e : l) {
+            //noinspection IfStatementWithTooManyBranches
             if (e instanceof Text) {
                 Text text = (Text)e;
                 p.add(new JLabel(text.value));

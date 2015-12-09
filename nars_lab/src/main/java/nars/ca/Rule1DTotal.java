@@ -48,6 +48,7 @@ public class Rule1DTotal {
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
 			//System.out.println(sTok);
+			//noinspection IfStatementWithTooManyBranches
 			if (sTok.length() > 0 && sTok.charAt(0) == 'R')
 				iRng = Integer.valueOf(sTok.substring(1));
 			else if (sTok.length() > 0 && sTok.charAt(0) == 'C') {
@@ -106,17 +107,11 @@ public class Rule1DTotal {
 		sBff = 'R' + String.valueOf(iRng);
 
 		// states
-		if (isHist)
-			ih = iClo;
-		else
-			ih = 0;
+		ih = isHist ? iClo : 0;
 		sBff = sBff + ",C" + String.valueOf(ih);
 
 		// center cell
-		if (isCentr)
-			sBff = sBff + ",M1";
-		else
-			sBff = sBff + ",M0";
+		sBff = isCentr ? sBff + ",M1" : sBff + ",M0";
 
 		// S rules
 		for (i = 0; i <= MAX_RANGE * 2 + 1; i++)
@@ -210,18 +205,12 @@ public class Rule1DTotal {
 							bNewVal = 1;
 						} else // isolation or overpopulation
 						{
-							if (bOldVal < (iClo - 1))
-								bNewVal = (short) (bOldVal + 1); // getting older...
-							else
-								bNewVal = 0; // bye, bye!
+							bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 						}
 					}
 				} else // was older than 1
 				{
-					if (bOldVal < (iClo - 1))
-						bNewVal = (short) (bOldVal + 1); // getting older...
-					else
-						bNewVal = 0; // bye, bye!
+					bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 				}
 			} else // no history
 			{
@@ -242,21 +231,15 @@ public class Rule1DTotal {
 				if (bOldVal == 0) // was dead
 				{
 					if (rulesB[iCnt]) // rules for birth
-						if (ColoringMethod == 1) // standard
-							bNewVal = 1; // birth
-						else
-							bNewVal = (short) (mjb.Cycle
-									% (mjb.StatesCount - 1) + 1); // birth
+						bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
+								% (mjb.StatesCount - 1) + 1);
 				} else // was alive
 				{
 					if (rulesS[iCnt]) // rules for surviving
 					{
 						if (ColoringMethod == 1) // standard
 						{
-							if (bOldVal < (mjb.StatesCount - 1))
-								bNewVal = (short) (bOldVal + 1); // getting older...
-							else
-								bNewVal = (short) (mjb.StatesCount - 1);
+							bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
 						} else {
 							// alternate coloring - cells remain not changed
 						}

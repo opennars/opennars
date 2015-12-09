@@ -66,10 +66,7 @@ public abstract class AbstractNALTester {
     }
 
     @Deprecated public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
-        if (requireMultistep)
-            return nars(level, false, true);
-        else
-            return nars(level, true, true);
+        return requireMultistep ? nars(level, false, true) : nars(level, true, true);
     }
 
     public static Iterable<Supplier<NAR>> nars(int level, boolean single, boolean multi) {

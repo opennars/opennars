@@ -52,11 +52,7 @@ public final class SgField extends SgVariable {
         }
         this.owner = owner;
 
-        if (initializer == null) {
-            this.initializer = initializer;
-        } else {
-            this.initializer = initializer.trim();
-        }
+        this.initializer = initializer == null ? initializer : initializer.trim();
 
         // TODO Does not work when analyzing classes... Check why!
         // if (owner.findFieldByName(name) != null) {

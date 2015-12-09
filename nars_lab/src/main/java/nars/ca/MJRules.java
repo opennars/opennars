@@ -118,6 +118,7 @@ public class MJRules {
 	// Get the index of the given game
 	public int GetGameIndex(String sGameName) {
 		int iGame = -1;
+		//noinspection IfStatementWithTooManyBranches
 		if ((sGameName.compareTo(GAME_GENE_Name) == 0) // Generations
 				|| (sGameName.compareTo(GAME_GENE_Abbr) == 0))
 			iGame = GAME_GENE;

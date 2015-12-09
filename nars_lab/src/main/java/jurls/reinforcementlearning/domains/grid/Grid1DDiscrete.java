@@ -86,10 +86,7 @@ public class Grid1DDiscrete implements World {
         
         for (int i = 0; i < size; i++) {
             final double exp = 3.0; //sharpen
-            if (i == focusPosition)
-                sensor[i] = 1.0;
-            else
-                sensor[i] = 0.0;            
+            sensor[i] = i == focusPosition ? 1.0 : 0.0;
         }
         /*
         //normalize
@@ -107,19 +104,13 @@ public class Grid1DDiscrete implements World {
         String s = "";
         for (int i = 0; i < size; i++) {
             char c;
-            if (i == (int)focusPosition)
-                c = 'O';
-            else
-                c = '.';
+            c = i == (int) focusPosition ? 'O' : '.';
             s += c;
         }
         s += "\n";
         for (int i = 0; i < size; i++) {
             char c;
-            if (action[i] > 0)
-                c = 'X';
-            else
-                c = '.';
+            c = action[i] > 0 ? 'X' : '.';
             s += c;
         }
         s += "\n";

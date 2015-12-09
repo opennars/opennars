@@ -605,11 +605,7 @@ public class PropertySheetTableModel
       if (s1 == null) {
         return s2==null?0:-1;
       } else {
-        if (s2 == null) {
-          return 1;
-        } else {
-          return s1.compareTo(s2);
-        }
+        return s2 == null ? 1 : s1.compareTo(s2);
       }
     }
   }

@@ -126,8 +126,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             if (!t.applyTo(f, sub, fullMatch)) {
                 if (fullMatch)
                     return null;
-                else
-                    continue;
+                else {
+                }
             }
         }
 
@@ -451,10 +451,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         //this may need tested better:
         Pair p = null;
         for (int i = len - 2; i >= 0; i--) {
-            if (p == null)
-                p = new Pair(term(i), term(i + 1));
-            else
-                p = new Pair(term(i), p);
+            p = p == null ? new Pair(term(i), term(i + 1)) : new Pair(term(i), p);
         }
         return p;
     }
@@ -497,11 +494,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         //and since it doesnt equal, there is no match to test
 
         if (!Ellipsis.hasEllipsis(this)) { //PRECOMPUTABLE
-            if (matchCompoundEx(y)) {
-                return matchSubterms(y, subst);
-            } else {
-                return false;
-            }
+            return matchCompoundEx(y) && matchSubterms(y, subst);
         } else {
             return subst.matchCompoundWithEllipsis(this, y);
         }
@@ -521,11 +514,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         if (size == 1) {
             return matchSubterm(0, Y, subst);
         } else {
-            if (isCommutative()) {
-                return subst.matchPermute(this, Y); //commutative, try permutations
-            } else {
-                return matchLinear(Y.subterms(), subst); //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-            }
+            return isCommutative() ? subst.matchPermute(this, Y) : matchLinear(Y.subterms(), subst);
         }
     }
 
@@ -535,13 +524,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             //HACK - match smallest (least specific) first
             int v0 = term(0).volume();
             int v1 = term(1).volume();
-            if (v0 <= v1) {
-                return matchSubterm(0, y, subst)&&
-                       matchSubterm(1, y, subst);
-            } else {
-                return matchSubterm(1, y, subst)&&
-                       matchSubterm(0, y, subst);
-            }
+            return v0 <= v1 ? matchSubterm(0, y, subst) &&
+                    matchSubterm(1, y, subst) : matchSubterm(1, y, subst) &&
+                    matchSubterm(0, y, subst);
         } else {
             return subst.matchLinear(this, y, 0, size());
         }

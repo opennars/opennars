@@ -83,22 +83,12 @@ public class MJOpen {
 				}
 
 				// try to recognize the file type
-				if (sFirstLine.startsWith("#Life 1.05"))
+				if (sFirstLine.startsWith("#Life 1.05") || sFirstLine.startsWith("#Life 1.02") || sFirstLine.startsWith("#P") || sFirstLine.startsWith("#MCLife"))
 					fOk = ReadLife105(vLines);
-				else if (sFirstLine.startsWith("#Life 1.02"))
-					fOk = ReadLife105(vLines);
-				else if (sFirstLine.startsWith("#P"))
-					fOk = ReadLife105(vLines);
-				else if (sFirstLine.startsWith("#MCLife"))
+				else if (sFirstLine.startsWith("#MCell") || sFirstLine.startsWith("#Life 1.06"))
 					fOk = ReadMCL(vLines);
-				else if (sFirstLine.startsWith("#MCell"))
-					fOk = ReadMCL(vLines);
-				else if (sFirstLine.startsWith("#Life 1.06"))
+				else if (sFirstLine.startsWith("#Life 1.05b") || sFirstLine.length() > 0 && sFirstLine.charAt(0) == 'x')
 					fOk = ReadLife106(vLines);
-				else if (sFirstLine.startsWith("#Life 1.05b"))
-					fOk = ReadLife106(vLines);
-				else if (sFirstLine.length() > 0 && sFirstLine.charAt(0) == 'x')
-					fOk = ReadRLE(vLines);
 
 				if (!fOk)
 					fOk = ReadLife105(vLines);
@@ -167,10 +157,7 @@ public class MJOpen {
 		// add all cells
 		mjb.Clear(false);
 		dx = mjb.UnivSize.x / 2 - (m_rectMaxX + m_rectMinX) / 2 - 1;
-		if (mjb.GameType == MJRules.GAMTYP_2D)
-			dy = mjb.UnivSize.y / 2 - (m_rectMaxY + m_rectMinY) / 2 - 1;
-		else
-			dy = 0;
+		dy = mjb.GameType == MJRules.GAMTYP_2D ? mjb.UnivSize.y / 2 - (m_rectMaxY + m_rectMinY) / 2 - 1 : 0;
 		for (i = 0; i < m_vCells.size(); i++) {
 			cell = m_vCells.get(i);
 			x = cell.x + dx;
@@ -269,6 +256,7 @@ public class MJOpen {
 			// special characters?
 			if ((bff.charAt(0) == '#') || (bff.charAt(0) == '!')
 					|| (bff.charAt(0) == '/')) {
+				//noinspection IfStatementWithTooManyBranches
 				if (bff.startsWith("#P")) // the block position
 				{
 					//noinspection UseOfStringTokenizer
@@ -397,6 +385,7 @@ public class MJOpen {
 		bff = bff.trim();
 
 		if (!bff.isEmpty()) {
+			//noinspection IfStatementWithTooManyBranches
 			if (bff.startsWith("#RULE")) // specific rules
 			{
 				sTok = bff.substring(5);
@@ -708,6 +697,7 @@ public class MJOpen {
 			// a keyword or a comment?
 			if ((bff.charAt(0) == '#') || (bff.charAt(0) == '/')
 					|| (bff.charAt(0) == '!')) {
+				//noinspection IfStatementWithTooManyBranches
 				if (bff.startsWith("#N")) // standard rules
 				{
 					m_sRules = "23/3"; // standard Conway's rules

@@ -22,10 +22,7 @@ public class FastConcatenationRope extends ConcatenationRope {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            if (length() > 0)
-                hash = (31 + left.hashCode()) * 31 + right.hashCode();
-            else
-                hash = 1;                    
+            hash = length() > 0 ? (31 + left.hashCode()) * 31 + right.hashCode() : 1;
         }
         return hash;
     }

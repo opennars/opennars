@@ -139,6 +139,7 @@ public class PercentLayout implements LayoutManager2 {
   }
   
   public void setConstraint(Component component, Object constraints) {
+    //noinspection IfStatementWithTooManyBranches
     if (constraints instanceof Constraint) {
       m_ComponentToConstraint.put(component, constraints);
     } else if (constraints instanceof Number) {

@@ -32,10 +32,7 @@ public class Sparkle extends Sprite
 
     public void move()
     {
-        if (life>10)
-            xPic = 7;
-        else
-            xPic = xPicStart+(10-life)*4/10;
+        xPic = life > 10 ? 7 : xPicStart + (10 - life) * 4 / 10;
         
         if (life--<0) Sprite.spriteContext.removeSprite(this);
         

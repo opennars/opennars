@@ -306,9 +306,7 @@ public class Game {
 			{
 				if(pieces[i][j] != null)
 				{
-					if(isTurnLight() && pieces[i][j].isLight() && !pieceCouldJumpToFrom(i, j).isEmpty())
-						return true;
-					else if(isTurnDark() && pieces[i][j].isDark() && !pieceCouldJumpToFrom(i, j).isEmpty())
+					if(isTurnLight() && pieces[i][j].isLight() && !pieceCouldJumpToFrom(i, j).isEmpty() || isTurnDark() && pieces[i][j].isDark() && !pieceCouldJumpToFrom(i, j).isEmpty())
 						return true;
 				}
 			}

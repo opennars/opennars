@@ -187,8 +187,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
             
         //TODO lazily calculate as needed, not immediately because it may not be used
         List<Object> path;
-        if (parentPath == null) path = new ArrayList();
-        else path = new ArrayList(parentPath);
+        path = parentPath == null ? new ArrayList() : new ArrayList(parentPath);
 
         Object previousPathElement = !path.isEmpty() ? path.get(path.size()-1) : null;
 
@@ -278,13 +277,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
     
     public Objenome solve(Iterable<Solver> solvers, Object... targets) throws IncompleteSolutionException {
         List<? extends Object> k;
-        if (targets.length == 0) {
-            //default: use all autowired dependents
-            k = getKeyClasses();
-        }
-        else {
-            k = Lists.newArrayList(targets);
-        }
+        k = targets.length == 0 ? getKeyClasses() : Lists.newArrayList(targets);
         
         List<Problem> p = getProblems(k, null, null);
         

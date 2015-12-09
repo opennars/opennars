@@ -40,13 +40,7 @@ public class ConceptSonification extends FrameReaction {
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<Concept, SoundProducer> eldest) {
-            if (size() > maxSize) {
-                //Concept c = eldest.getKey();
-                //SoundProducer s = eldest.getValue();
-                //s.stop();
-                return true;
-            }
-            return false;
+            return size() > maxSize;
         }
     };
     //Global.newHashMap();

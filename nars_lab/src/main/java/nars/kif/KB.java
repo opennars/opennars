@@ -1060,21 +1060,20 @@ public class KB {
         HashSet childs = (HashSet) children.get(parent);
         if (childs != null && childs.contains(child)) {
             return true;
-        } else {
-            ArrayList al = instancesOf(child);
-            for (Object anAl : al) {
-                Formula form = (Formula) anAl;
-                Formula f = new Formula();
-                f.read(form.theFormula);
-                f.read(f.cdr());
-                f.read(f.cdr());
-                String superTerm = f.car();
-                if (superTerm.equals(parent)) {
-                    return true;
-                }
-                if (childs != null && childs.contains(superTerm)) {
-                    return true;
-                }
+        }
+        ArrayList al = instancesOf(child);
+        for (Object anAl : al) {
+            Formula form = (Formula) anAl;
+            Formula f = new Formula();
+            f.read(form.theFormula);
+            f.read(f.cdr());
+            f.read(f.cdr());
+            String superTerm = f.car();
+            if (superTerm.equals(parent)) {
+                return true;
+            }
+            if (childs != null && childs.contains(superTerm)) {
+                return true;
             }
         }
         return false;
@@ -1385,11 +1384,7 @@ public class KB {
      */
     public ArrayList ask(String kind, int argnum, String term) {
 
-        if (kind.compareTo("arg") == 0) {
-            return (ArrayList) formulas.get(kind + '-' + (new Integer(argnum)).toString() + '-' + term);
-        } else {
-            return (ArrayList) formulas.get(kind + '-' + term);
-        }
+        return kind.compareTo("arg") == 0 ? (ArrayList) formulas.get(kind + '-' + (new Integer(argnum)).toString() + '-' + term) : (ArrayList) formulas.get(kind + '-' + term);
     }
 
     /**
@@ -1899,11 +1894,7 @@ public class KB {
             termFormatMap.clear();
 
             // System.out.println("INFO in KB.reloadFormatMaps(): Reading the format maps for " + lang);
-            if (lang == null) {
-                lingua = language;
-            } else {
-                lingua = lang;
-            }
+            lingua = lang == null ? language : lang;
             long t1 = System.currentTimeMillis();
             ArrayList col = this.ask("arg", 0, "format");
             if ((col == null) || col.isEmpty()) {
@@ -2510,11 +2501,7 @@ public class KB {
                         break;
                     }
                 }
-                if (constant != null) {
-                    ans = askWithRestriction(cidx, constant, 0, pred);
-                } else {
-                    ans = ask("arg", 0, pred);
-                }
+                ans = constant != null ? askWithRestriction(cidx, constant, 0, pred) : ask("arg", 0, pred);
             }
         }
         return ans;

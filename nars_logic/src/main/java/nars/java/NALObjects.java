@@ -169,12 +169,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
 
         Term effect;
-        if (result!=null) {
-            effect = term(result);
-        }
-        else {
-            effect = VOID;
-        }
+        effect = result != null ? term(result) : VOID;
 
         //TODO re-use static copy for 'VOID' instances
         InvocationResult ir = new InvocationResult(effect);

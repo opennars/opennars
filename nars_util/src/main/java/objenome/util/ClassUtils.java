@@ -383,12 +383,7 @@ public class ClassUtils {
                 // ClassName is always complete
                 output[level] = part;
             } else {
-                if (availableSpace > 0) {
-                    output[level] = part;
-                } else {
-                    // if no space is left still the first char is used
-                    output[level] = part.substring(0, 1);
-                }
+                output[level] = availableSpace > 0 ? part : part.substring(0, 1);
             }
             endIndex = startIndex - 1;
         }
@@ -1041,7 +1036,8 @@ public class ClassUtils {
         className = StringUtils.deleteWhitespace(className);
         if (className == null) {
             throw new NullPointerException("className must not be null.");
-        } else if (className.endsWith("[]")) {
+        }
+        if (className.endsWith("[]")) {
             final StringBuilder classNameBuffer = new StringBuilder();
             while (className.endsWith("[]")) {
                 className = className.substring(0, className.length() - 2);
@@ -1071,7 +1067,8 @@ public class ClassUtils {
     public static Class<?>[] toClass(final Object... array) {
         if (array == null) {
             return null;
-        } else if (array.length == 0) {
+        }
+        if (array.length == 0) {
             return ArrayUtils.EMPTY_CLASS_ARRAY;
         }
         final Class<?>[] classes = new Class[array.length];

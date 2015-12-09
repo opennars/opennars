@@ -30,11 +30,7 @@ public class FileTreeModel implements TreeModel {
     @Override
     public int getChildCount(Object parent) {
         File f = (File) parent;
-        if (!f.isDirectory()) {
-            return 0;
-        } else {
-            return f.list().length;
-        }
+        return !f.isDirectory() ? 0 : f.list().length;
     }
 
     @Override

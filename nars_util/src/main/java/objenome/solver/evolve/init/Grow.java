@@ -248,11 +248,14 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
     public Node createTree() {
         if (random == null) {
             throw new IllegalStateException("No random number generator has been set");
-        } else if (returnType == null) {
+        }
+        if (returnType == null) {
             throw new IllegalStateException("No return type has been set");
-        } else if (maxDepth < 0) {
+        }
+        if (maxDepth < 0) {
             throw new IllegalStateException("Depth must be 0 or greater");
-        } else if (terminals.isEmpty()) {
+        }
+        if (terminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of 0");
         }
 

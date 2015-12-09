@@ -83,9 +83,8 @@ public class AbstractBagTest {
                     Assert.assertTrue(sizeAfter == 0);
                     Assert.assertEquals(sizeAfter, sizeBefore);
                     continue;
-                } else {
-                    Assert.assertEquals(sizeAfter, sizeBefore - 1);
                 }
+                Assert.assertEquals(sizeAfter, sizeBefore - 1);
 
                 float p = t.getPriority();
 

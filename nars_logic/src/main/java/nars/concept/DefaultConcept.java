@@ -413,11 +413,7 @@ public class DefaultConcept extends AtomConcept {
         final long now = getMemory().time();
 
         Task sol;
-        if (q.isQuest()) {
-            sol = getGoals().top(q, now);
-        } else {
-            sol = getBeliefs().top(q, now);
-        }
+        sol = q.isQuest() ? getGoals().top(q, now) : getBeliefs().top(q, now);
 
         if (sol!=null) {
             /*Task solUpdated = */LocalRules.trySolution(q, sol, nal);

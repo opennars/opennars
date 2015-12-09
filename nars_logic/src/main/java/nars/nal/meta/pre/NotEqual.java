@@ -10,8 +10,7 @@ public class NotEqual extends PreCondition2 {
 
     /** commutivity: sort the terms */
     public static NotEqual make(Term a, Term b) {
-        if (a.compareTo(b) <= 0) return new NotEqual(a, b);
-        else                     return new NotEqual(b, a);
+        return a.compareTo(b) <= 0 ? new NotEqual(a, b) : new NotEqual(b, a);
     }
 
     NotEqual(Term var1, Term var2) {

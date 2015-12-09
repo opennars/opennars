@@ -392,9 +392,7 @@ public interface Premise extends Level, Tasked {
         if (invalidationReason==null) {
             return task;
         }
-        else {
-            memory.remove(task, invalidationReason);
-        }
+        memory.remove(task, invalidationReason);
 
         return null;
     }
@@ -540,10 +538,8 @@ public interface Premise extends Level, Tasked {
         if (!t.isEternal()) return true;
 
         Task b = getBelief();
-        if ((b != null) && (!b.isEternal()))
-            return true;
+        return (b != null) && (!b.isEternal());
 
-        return false;
     }
 
 

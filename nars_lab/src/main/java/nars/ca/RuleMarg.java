@@ -121,22 +121,10 @@ public class RuleMarg {
 				iCnt += 8;
 			iNewCnt = swapArray[iCnt];
 
-			if ((1 & iNewCnt) > 0)
-				mgCells[0] = 1;
-			else
-				mgCells[0] = 0;
-			if ((2 & iNewCnt) > 0)
-				mgCells[1] = 1;
-			else
-				mgCells[1] = 0;
-			if ((4 & iNewCnt) > 0)
-				mgCells[2] = 1;
-			else
-				mgCells[2] = 0;
-			if ((8 & iNewCnt) > 0)
-				mgCells[3] = 1;
-			else
-				mgCells[3] = 0;
+			mgCells[0] = (1 & iNewCnt) > 0 ? 1 : 0;
+			mgCells[1] = (2 & iNewCnt) > 0 ? 1 : 0;
+			mgCells[2] = (4 & iNewCnt) > 0 ? 1 : 0;
+			mgCells[3] = (8 & iNewCnt) > 0 ? 1 : 0;
 		}
 	}
 

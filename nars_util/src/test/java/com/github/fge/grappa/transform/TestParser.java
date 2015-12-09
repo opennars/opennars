@@ -80,11 +80,7 @@ public class TestParser extends BaseParser<Integer> {
 
     @DontLabel
     public Rule RuleWith2Returns(final int param) {
-        if (param == integer) {
-            return sequence('a', ACTION(action()));
-        } else {
-            return eof();
-        }
+        return param == integer ? sequence('a', ACTION(action())) : eof();
     }
 
     @DontLabel

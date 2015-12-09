@@ -339,17 +339,7 @@ public class Byt {
         boolean lastIndex = index == array.length - 1;
         int remainingIndex = array.length - index;
 
-        if ( lastIndex ) {
-            /* Copy the area after the insert. Make sure we don't write over the end. */
-            /*                 src  sbegin   dst       dbegin     length of copy */
-            System.arraycopy( array, index, newArray, index + 1, remainingIndex );
-
-        } else {
-            /* Copy the area after the insert.  */
-            /*                 src  sbegin   dst       dbegin     length of copy */
-            System.arraycopy( array, index, newArray, index + 1, remainingIndex );
-
-        }
+        System.arraycopy( array, index, newArray, index + 1, remainingIndex );
 
         newArray[ index ] = v;
         return newArray;
@@ -380,17 +370,7 @@ public class Byt {
         int toIndex = index + values.length;
         int remainingIndex = newArray.length - toIndex;
 
-        if ( lastIndex ) {
-            /* Copy the area after the insert. Make sure we don't write over the end. */
-            /*                 src  sbegin   dst       dbegin     length of copy */
-            System.arraycopy( array, index, newArray, index + values.length, remainingIndex );
-
-        } else {
-            /* Copy the area after the insert.  */
-            /*                 src  sbegin   dst       dbegin     length of copy */
-            System.arraycopy( array, index, newArray, index + values.length, remainingIndex );
-
-        }
+        System.arraycopy( array, index, newArray, index + values.length, remainingIndex );
 
         for ( int i = index, j = 0; i < toIndex; i++, j++ ) {
             newArray[ i ] = values[ j ];

@@ -51,7 +51,8 @@ public final class ArrayLists {
         arrayList = Lists.newArrayList(arrayList);
         ArrayList<List<T>> splitted = new ArrayList();
         objectFound.clear();
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if (direction == 0) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexIn(arrayList, splitOn, objectFound));

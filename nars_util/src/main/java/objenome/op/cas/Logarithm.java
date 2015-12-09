@@ -88,10 +88,9 @@ public class Logarithm extends Function {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Logarithm)) return false;
-        
-        if (base.equalsExpr(((Operation) expr).getExprs().get(0)) && ofExpr.equalsExpr(((Operation) expr).getExprs().get(1))) return true;
-        
-        return false;
+
+        return base.equalsExpr(((Operation) expr).getExprs().get(0)) && ofExpr.equalsExpr(((Operation) expr).getExprs().get(1));
+
     }
     
     public Expr copyPass(HashMap<Expr, Expr> subs) {

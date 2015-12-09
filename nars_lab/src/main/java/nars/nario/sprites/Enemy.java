@@ -172,25 +172,11 @@ public class Enemy extends Sprite
         move(0, ya);
 
         ya *= winged ? 0.95f : 0.85f;
-        if (onGround)
-        {
-            xa *= GROUND_INERTIA;
-        }
-        else
-        {
-            xa *= AIR_INERTIA;
-        }
+        xa *= onGround ? GROUND_INERTIA : AIR_INERTIA;
 
         if (!onGround)
         {
-            if (winged)
-            {
-                ya += 0.6f;
-            }
-            else
-            {
-                ya += 2;
-            }
+            ya += winged ? 0.6f : 2;
         }
         else if (winged)
         {
@@ -228,17 +214,11 @@ public class Enemy extends Sprite
         boolean collide = false;
         if (ya > 0)
         {
-            if (isBlocking(x + xa - width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa - width, y + ya + 1, xa, ya)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
+            if (isBlocking(x + xa - width, y + ya, xa, 0) || isBlocking(x + xa + width, y + ya, xa, 0) || isBlocking(x + xa - width, y + ya + 1, xa, ya) || isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
         }
         if (ya < 0)
-        {
-            if (isBlocking(x + xa, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa - width, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
-        }
+            if (isBlocking(x + xa, y + ya - height, xa, ya) || collide || isBlocking(x + xa - width, y + ya - height, xa, ya) || isBlocking(x + xa + width, y + ya - height, xa, ya))
+                collide = true;
         if (xa > 0)
         {
             if (isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;

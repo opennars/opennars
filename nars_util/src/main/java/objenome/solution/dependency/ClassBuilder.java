@@ -310,19 +310,26 @@ public class ClassBuilder implements ConfigurableBuilder {
     private static Class<?> getPrimitiveFrom(Object w) {
         if (w instanceof Boolean) {
             return Boolean.TYPE;
-        } else if (w instanceof Byte) {
+        }
+        if (w instanceof Byte) {
             return Byte.TYPE;
-        } else if (w instanceof Short) {
+        }
+        if (w instanceof Short) {
             return Short.TYPE;
-        } else if (w instanceof Character) {
+        }
+        if (w instanceof Character) {
             return Character.TYPE;
-        } else if (w instanceof Integer) {
+        }
+        if (w instanceof Integer) {
             return Integer.TYPE;
-        } else if (w instanceof Long) {
+        }
+        if (w instanceof Long) {
             return Long.TYPE;
-        } else if (w instanceof Float) {
+        }
+        if (w instanceof Float) {
             return Float.TYPE;
-        } else if (w instanceof Double) {
+        }
+        if (w instanceof Double) {
             return Double.TYPE;
         }
         return null;
@@ -331,19 +338,27 @@ public class ClassBuilder implements ConfigurableBuilder {
     private static Class<?> getPrimitiveFrom(Class<?> klass) {
         if (klass==(Boolean.class)) {
             return Boolean.TYPE;
-        } else if (klass==(Byte.class)) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (klass==(Byte.class)) {
             return Byte.TYPE;
-        } else if (klass==(Short.class)) {
+        }
+        if (klass==(Short.class)) {
             return Short.TYPE;
-        } else if (klass==(Character.class)) {
+        }
+        if (klass==(Character.class)) {
             return Character.TYPE;
-        } else if (klass==(Integer.class)) {
+        }
+        if (klass==(Integer.class)) {
             return Integer.TYPE;
-        } else if (klass==(Long.class)) {
+        }
+        if (klass==(Long.class)) {
             return Long.TYPE;
-        } else if (klass==(Float.class)) {
+        }
+        if (klass==(Float.class)) {
             return Float.TYPE;
-        } else if (klass==(Double.class)) {
+        }
+        if (klass==(Double.class)) {
             return Double.TYPE;
         }
         return null;
@@ -512,25 +527,11 @@ public class ClassBuilder implements ConfigurableBuilder {
 
             LinkedList<Class<?>> providedInitTypes = null;
 
-            if (initTypes != null) {
-
-                providedInitTypes = new LinkedList<>(initTypes);
-
-            } else {
-
-                providedInitTypes = new LinkedList<>();
-            }
+            providedInitTypes = initTypes != null ? new LinkedList<>(initTypes) : new LinkedList<>();
 
             LinkedList<Object> providedInitValues = null;
 
-            if (initValues != null) {
-
-                providedInitValues = new LinkedList<>(initValues);
-
-            } else {
-
-                providedInitValues = new LinkedList<>();
-            }
+            providedInitValues = initValues != null ? new LinkedList<>(initValues) : new LinkedList<>();
 
             List<Class<?>> newInitTypes = new LinkedList();
             List<Object> newInitValues = new LinkedList();
@@ -690,10 +691,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
         @Override
         public String toString() {
-            if (param!=null)
-                return param + " (" + key + ')';
-            else
-                return key;
+            return param != null ? param + " (" + key + ')' : key;
         }
         
         

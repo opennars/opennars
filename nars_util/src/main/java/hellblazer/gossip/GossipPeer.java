@@ -135,7 +135,6 @@ public class GossipPeer implements GossipListener {
             onUpdate(id, x);
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 

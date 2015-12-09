@@ -69,11 +69,7 @@ public class If extends Node {
     public Object evaluate() {
         boolean c1 = (boolean)(getChild(0).evaluate());
 
-        if (c1) {
-            return getChild(1).evaluate();
-        } else {
-            return getChild(2).evaluate();
-        }
+        return c1 ? getChild(1).evaluate() : getChild(2).evaluate();
     }
 
     /**
@@ -99,11 +95,7 @@ public class If extends Node {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 3) && (inputTypes[0] == Boolean.class)) {
-            return TypeUtil.getSuper(inputTypes[1], inputTypes[2]);
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 3) && (inputTypes[0] == Boolean.class) ? TypeUtil.getSuper(inputTypes[1], inputTypes[2]) : null;
     }
 
 

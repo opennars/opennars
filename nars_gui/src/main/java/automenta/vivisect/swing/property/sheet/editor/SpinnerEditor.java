@@ -123,11 +123,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 	@Override
 	public Object getValue() {
 		Object value = spinner.getValue();
-		if (value instanceof ObjectWrapper) {
-			return ((ObjectWrapper) value).value;
-		} else {
-			return value;
-		}
+		return value instanceof ObjectWrapper ? ((ObjectWrapper) value).value : value;
 	}
 
 	@Override
@@ -150,10 +146,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 			if (o == this) {
 				return true;
 			}
-			if (Objects.equals(value, o)) {
-				return true;
-			}
-			return false;
+			return Objects.equals(value, o);
 		}
 
 		@Override

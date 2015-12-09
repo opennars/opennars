@@ -153,11 +153,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
             this.endDepth = (maxDepth == null) ? -1 : maxDepth;
         }
 
-        if (startDepth != null) {
-            this.startDepth = startDepth;
-        } else {
-            this.startDepth = 0;
-        }
+        this.startDepth = startDepth != null ? startDepth : 0;
     }
 
     /**
@@ -236,11 +232,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
 
                 do {
                     method[popIndex] = growNext ? GROW : FULL;
-                    if (growNext) {
-                        program = grow.newOrganism();
-                    } else {
-                        program = full.newOrganism();
-                    }
+                    program = growNext ? grow.newOrganism() : full.newOrganism();
                     /*
                      * The effect is that if it's a duplicate then will use other
                      * method next - this is deliberate because full may have
@@ -335,11 +327,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
      */
     @Override
     public TypedOrganism newOrganism() {
-        if (random.nextBoolean()) {
-            return grow.newOrganism();
-        } else {
-            return full.newOrganism();
-        }
+        return random.nextBoolean() ? grow.newOrganism() : full.newOrganism();
     }
 
     @Override

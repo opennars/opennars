@@ -98,7 +98,7 @@ public final class Characters
      */
     public boolean contains(final char c)
     {
-        return indexOf(chars, c) == -1 ? subtractive : !subtractive;
+        return (indexOf(chars, c) == -1) == subtractive;
     }
 
     /**

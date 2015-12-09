@@ -498,11 +498,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         double pitchDeviation = (double) pitchDeviationSlider.getValue() / 100;//[0:no deviation, 1: max deviation]
 
         Envelope e;
-        if (noneChoice.isSelected()) {
-            e = Envelope.NONE;
-        } else {
-            e = Envelope.TRAPEXIUM;
-        }
+        e = noneChoice.isSelected() ? Envelope.NONE : Envelope.TRAPEXIUM;
         maxGrainsLbl.setText("" + wave.getSampleCount() / grainSize);
 
         wave.createGrains(numberOfGrains, grainSize, sizeDeviation, grainPitch,

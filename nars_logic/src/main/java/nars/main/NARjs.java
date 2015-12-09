@@ -57,11 +57,11 @@ public class NARjs {
             try {
                 if (":q".equals(s))
                     break;
-                else if (s.startsWith(":h")) {
+                if (s.startsWith(":h")) {
                     printHelp();
                     continue;
                 }
-                    
+
                 Object ret = j.eval(s);
                 
                 if (ret != null) {

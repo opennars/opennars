@@ -149,6 +149,7 @@ public class WebcamShapes<T extends ImageBase> extends JPanel
 
         ImageFloat32 inputFloat = new ImageFloat32(actualSize.width, actualSize.height);
 
+        //noinspection InfiniteLoopStatement
         while( true ) {
             BufferedImage buffered = webcam.getImage();
             ConvertBufferedImage.convertFrom(webcam.getImage(), input, true);

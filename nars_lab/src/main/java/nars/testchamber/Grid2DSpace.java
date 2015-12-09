@@ -339,12 +339,7 @@ public class Grid2DSpace extends PApplet {
     
     public Effect getMotionEffect(GridAgent agent, Action a, int x, int y, int tx, int ty) {
         String reason = whyNonTraversible(agent, x, y, tx, ty);
-        if (reason == null) {
-            return new Effect(a, true, getTime(), "Moved");
-        }
-        else {
-            return new Effect(a, false, getTime(), reason);
-        }
+        return reason == null ? new Effect(a, true, getTime(), "Moved") : new Effect(a, false, getTime(), reason);
         
         
     }

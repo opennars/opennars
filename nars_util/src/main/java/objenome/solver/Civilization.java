@@ -248,6 +248,7 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
 
     @Override public void run() {
 
+        //noinspection InfiniteLoopStatement
         while (true) {
 
             updatePopulation();
@@ -369,8 +370,7 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
 
         double agg = x.costRate() / goals.size();
         if (agg < minLifeSpan) return true;
-        else
-            agg = agg*agg*agg; //cube for sharpness
+        agg = agg*agg*agg; //cube for sharpness
 
         return Math.random() > Math.min(agg, 1.0);
 

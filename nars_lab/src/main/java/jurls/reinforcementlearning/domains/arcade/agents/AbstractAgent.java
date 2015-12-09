@@ -104,13 +104,7 @@ public abstract class AbstractAgent {
      * 
      */
     public final void init() {
-        if (useGUI) {
-            // Create the GUI
-            ui = new AgentGUI();
-        }
-        else {
-            ui = new NullUI();
-        }
+        ui = useGUI ? new AgentGUI() : new NullUI();
 
         // Create the relevant I/O objects
         initIO();
@@ -124,10 +118,7 @@ public abstract class AbstractAgent {
 
         try {
             // Initialize the pipes; use named pipes if requested
-            if (namedPipesBasename != null)
-                io = new ALEPipes(namedPipesBasename + "out", namedPipesBasename + "in");
-            else
-                io = new ALEPipes();
+            io = namedPipesBasename != null ? new ALEPipes(namedPipesBasename + "out", namedPipesBasename + "in") : new ALEPipes();
 
             // Determine which information to request from ALE
             io.setUpdateScreen(useGUI || wantsScreenData());

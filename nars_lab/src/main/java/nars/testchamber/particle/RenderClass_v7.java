@@ -98,10 +98,7 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 
 		for(int xi = 0; xi < TILE_COUNT_X; xi++){
 			for(int yi = 0; yi < TILE_COUNT_Y; yi++){
-				traversable[xi][yi] = true;
-				if( (xi == TILE_COUNT_X/3 || xi == TILE_COUNT_X*2/3 || xi == TILE_COUNT_X/2 ) && yi != TILE_COUNT_Y/3 /*&& yi != TILE_COUNT_Y*2/3*/ ){
-					traversable[xi][yi] = false;
-				}
+				traversable[xi][yi] = !((xi == TILE_COUNT_X / 3 || xi == TILE_COUNT_X * 2 / 3 || xi == TILE_COUNT_X / 2) && yi != TILE_COUNT_Y / 3);
 				if(r.nextFloat() < 0.1f && yi != TILE_COUNT_Y/3){
 					traversable[xi][yi] = false;
 				}
@@ -113,10 +110,7 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 		}
                 
                 int numParticles;
-                if (SimpleGUI.particlenumberTF!=null)
-                    numParticles = Integer.parseInt(SimpleGUI.particlenumberTF.getText());
-                else
-                    numParticles = 10000;
+		numParticles = SimpleGUI.particlenumberTF != null ? Integer.parseInt(SimpleGUI.particlenumberTF.getText()) : 10000;
                 
 
 		distance(TILE_COUNT_X/4,TILE_COUNT_Y/4);

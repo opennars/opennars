@@ -544,8 +544,7 @@ public class LongArrays {
         }
         // Merge sorted halves (now in supp) into a
         for (int i = from, p = from, q = mid; i < to; i++) {
-            if (q >= to || p < mid && ((supp[p]) <= (supp[q]))) a[i] = supp[p++];
-            else a[i] = supp[q++];
+            a[i] = q >= to || p < mid && ((supp[p]) <= (supp[q])) ? supp[p++] : supp[q++];
         }
     }
 
@@ -610,8 +609,7 @@ public class LongArrays {
         }
         // Merge sorted halves (now in supp) into a
         for (int i = from, p = from, q = mid; i < to; i++) {
-            if (q >= to || p < mid && comp.compare(supp[p], supp[q]) <= 0) a[i] = supp[p++];
-            else a[i] = supp[q++];
+            a[i] = q >= to || p < mid && comp.compare(supp[p], supp[q]) <= 0 ? supp[p++] : supp[q++];
         }
     }
 

@@ -352,9 +352,7 @@ public abstract class Texts {
         if ((x < 0) || (x > 1)) throw new RuntimeException("values >=0 and <=1");
         int hundreds = (int) hundredths(x);
         if (x == 100) return "aa";
-        if (hundreds < 10) return "0" + hundreds;
-        else
-            return Integer.toString(hundreds);
+        return hundreds < 10 ? "0" + hundreds : Integer.toString(hundreds);
     }
 
     public static final CharSequence n2(final float x) {
@@ -402,7 +400,8 @@ public abstract class Texts {
     public static int compare(final CharSequence s, final CharSequence t) {
         if ((s instanceof String) && (t instanceof String)) {
             return ((String) s).compareTo((String) t);
-        } else if ((s instanceof CharBuffer) && (t instanceof CharBuffer)) {
+        }
+        if ((s instanceof CharBuffer) && (t instanceof CharBuffer)) {
             return ((CharBuffer) s).compareTo((CharBuffer) t);
         }
 
@@ -549,7 +548,7 @@ public abstract class Texts {
         final int slen = signals.length;
         if ((signals != null) && (slen > 1))
             return Arrays.toString(signals);
-        else if (slen > 0)
+        if (slen > 0)
             return signals[0].toString();
         return "";
     }

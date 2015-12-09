@@ -560,7 +560,6 @@ public class JSurface extends javax.swing.JComponent {
 
 		projector.set2DScaling(savedscalingfactor);
 		projector.setProjectionArea(new Rectangle(0, 0, getBounds().width, getBounds().height));
-		return;
 	}
 
 	/**
@@ -841,10 +840,7 @@ public class JSurface extends javax.swing.JComponent {
 						if (isDisplayGrids && (i % t_y == 0))
 							projection = projector.project(-factor_x * 10, i, -10);
 						else {
-							if (i % t_y != 0)
-								projection = projector.project(factor_x * 9.8f, i, -10);
-							else
-								projection = projector.project(factor_x * 9.5f, i, -10);
+							projection = i % t_y != 0 ? projector.project(factor_x * 9.8f, i, -10) : projector.project(factor_x * 9.5f, i, -10);
 						}
 						tickpos = projector.project(factor_x * 10, i, -10);
 						g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
@@ -860,10 +856,7 @@ public class JSurface extends javax.swing.JComponent {
 						if (isDisplayGrids && (i % t_x == 0))
 							projection = projector.project(i, -factor_y * 10, -10);
 						else {
-							if (i % t_x != 0)
-								projection = projector.project(i, factor_y * 9.8f, -10);
-							else
-								projection = projector.project(i, factor_y * 9.5f, -10);
+							projection = i % t_x != 0 ? projector.project(i, factor_y * 9.8f, -10) : projector.project(i, factor_y * 9.5f, -10);
 						}
 						tickpos = projector.project(i, factor_y * 10, -10);
 						g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
@@ -892,10 +885,7 @@ public class JSurface extends javax.swing.JComponent {
 							projection = projector.project(-factor_x * 10, -factor_y * 10, i);
 							tickpos = projector.project(-factor_x * 10, factor_y * 10, i);
 						} else {
-							if (i % t_z == 0)
-								projection = projector.project(-factor_x * 10, factor_y * 9.5f, i);
-							else
-								projection = projector.project(-factor_x * 10, factor_y * 9.8f, i);
+							projection = i % t_z == 0 ? projector.project(-factor_x * 10, factor_y * 9.5f, i) : projector.project(-factor_x * 10, factor_y * 9.8f, i);
 							tickpos = projector.project(-factor_x * 10, factor_y * 10, i);
 						}
 						g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
@@ -912,10 +902,7 @@ public class JSurface extends javax.swing.JComponent {
 							projection = projector.project(-factor_x * 10, -factor_y * 10, i);
 							tickpos = projector.project(factor_x * 10, -factor_y * 10, i);
 						} else {
-							if (i % t_z == 0)
-								projection = projector.project(factor_x * 9.5f, -factor_y * 10, i);
-							else
-								projection = projector.project(factor_x * 9.8f, -factor_y * 10, i);
+							projection = i % t_z == 0 ? projector.project(factor_x * 9.5f, -factor_y * 10, i) : projector.project(factor_x * 9.8f, -factor_y * 10, i);
 							tickpos = projector.project(factor_x * 10, -factor_y * 10, i);
 						}
 						g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
@@ -1028,18 +1015,9 @@ public class JSurface extends javax.swing.JComponent {
 			scale_z = 1.0f;
 		projector.setZScaling(scale_z);
 
-		if (scale_x < 0.5f)
-			t_x = 8;
-		else
-			t_x = 4;
-		if (scale_y < 0.5f)
-			t_y = 8;
-		else
-			t_y = 4;
-		if (scale_z < 0.5f)
-			t_z = 8;
-		else
-			t_z = 4;
+		t_x = scale_x < 0.5f ? 8 : 4;
+		t_y = scale_y < 0.5f ? 8 : 4;
+		t_z = scale_z < 0.5f ? 8 : 4;
 	}
 
 	/**
@@ -1142,17 +1120,11 @@ public class JSurface extends javax.swing.JComponent {
 			valid2 = !low2 && (vertex[index].z <= zmax);
 			if ((valid1 || valid2) || (low1 ^ low2)) {
 				if (!valid1) {
-					if (low1)
-						result = zmin;
-					else
-						result = zmax;
+					result = low1 ? zmin : zmax;
 					float ratio = (result - vertex[index].z) / (vertex[loop].z - vertex[index].z);
 					float new_x = ratio * (vertex[loop].x - vertex[index].x) + vertex[index].x;
 					float new_y = ratio * (vertex[loop].y - vertex[index].y) + vertex[index].y;
-					if (low1)
-						projection = projector.project(new_x, new_y, -10);
-					else
-						projection = projector.project(new_x, new_y, 10);
+					projection = low1 ? projector.project(new_x, new_y, -10) : projector.project(new_x, new_y, 10);
 					poly_x[count] = projection.x;
 					poly_y[count] = projection.y;
 					count++;
@@ -1165,17 +1137,11 @@ public class JSurface extends javax.swing.JComponent {
 					count++;
 					z += vertex[index].z;
 				} else {
-					if (low2)
-						result = zmin;
-					else
-						result = zmax;
+					result = low2 ? zmin : zmax;
 					float ratio = (result - vertex[loop].z) / (vertex[index].z - vertex[loop].z);
 					float new_x = ratio * (vertex[index].x - vertex[loop].x) + vertex[loop].x;
 					float new_y = ratio * (vertex[index].y - vertex[loop].y) + vertex[loop].y;
-					if (low2)
-						projection = projector.project(new_x, new_y, -10);
-					else
-						projection = projector.project(new_x, new_y, 10);
+					projection = low2 ? projector.project(new_x, new_y, -10) : projector.project(new_x, new_y, 10);
 					poly_x[count] = projection.x;
 					poly_y[count] = projection.y;
 					count++;
@@ -1363,11 +1329,7 @@ public class JSurface extends javax.swing.JComponent {
 				 * :)
 				 */
 
-				if (values1[1].x == values1[2].x) {
-					upper_first = (values1[2].z - values1[3].z) * (cop.x - values1[3].x) / (values1[2].x - values1[3].x) + values1[3].z + (values1[2].z - values1[1].z) * (cop.y - values1[1].y) / (values1[2].y - values1[1].y) + values1[1].z - values1[2].z > cop.z;
-				} else {
-					upper_first = (values1[2].z - values1[1].z) * (cop.x - values1[1].x) / (values1[2].x - values1[1].x) + values1[1].z + (values1[2].z - values1[3].z) * (cop.y - values1[3].y) / (values1[2].y - values1[3].y) + values1[3].z - values1[2].z > cop.z;
-				}
+				upper_first = values1[1].x == values1[2].x ? (values1[2].z - values1[3].z) * (cop.x - values1[3].x) / (values1[2].x - values1[3].x) + values1[3].z + (values1[2].z - values1[1].z) * (cop.y - values1[1].y) / (values1[2].y - values1[1].y) + values1[1].z - values1[2].z > cop.z : (values1[2].z - values1[1].z) * (cop.x - values1[1].x) / (values1[2].x - values1[1].x) + values1[1].z + (values1[2].z - values1[3].z) * (cop.y - values1[3].y) / (values1[2].y - values1[3].y) + values1[3].z - values1[2].z > cop.z;
 			}
 
 			// there is a problem in drawing two curves in the same render only
@@ -1812,10 +1774,7 @@ public class JSurface extends javax.swing.JComponent {
 
 		int fontsize = 0;
 
-		if (width < height)
-			fontsize = (int) (width / 48);
-		else
-			fontsize = (int) (height / 48);
+		fontsize = width < height ? (int) (width / 48) : (int) (height / 48);
 		graphics.setFont(new Font("Helvetica", Font.PLAIN, fontsize));
 
 		FontMetrics fm = graphics.getFontMetrics();

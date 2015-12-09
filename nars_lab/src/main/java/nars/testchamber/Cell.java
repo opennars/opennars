@@ -96,8 +96,9 @@ public class Cell {
         
         //draw ground height
         int r=0,g=0,b=0,a=1;
-        a = ambientLight;            
-         
+        a = ambientLight;
+
+        //noinspection IfStatementWithTooManyBranches
         if (material == Material.Empty) {
         }
         else if (material == Material.Machine) {
@@ -108,12 +109,7 @@ public class Cell {
             r = g = b = 255;
         }
         else if (material == Material.DirtFloor || material == Material.GrassFloor || (material==Material.Door && !is_solid)) {
-            if (height == Float.MAX_VALUE) {
-                r = g = b = 255;
-            }
-            else { 
-                r = g = b = (int)(128 + height);
-            }           
+            r = height == Float.MAX_VALUE ? (g = b = 255) : (g = b = (int) (128 + height));
         }
         if(material==Material.Door  && is_solid) {
             b=0;
@@ -181,7 +177,8 @@ public class Cell {
         
         boolean full3d=false;
         double v=full3d? 0.5f : 0.0f;
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if(logic!=Logic.NotALogicBlock)
         {
             s.fill(state.cr/2.0f);
@@ -200,7 +197,7 @@ public class Cell {
             s.rect(add-verschx,add-verschy,1.05f,1.05f);
         }
         else
-        if(material==Material.StoneWall || material==Material.Water)
+        if(material==Material.StoneWall )
         {
             float verschx=(float) Math.max(-0.3f, Math.min(v,0.05*(x-wx)));
             float verschy=(float) Math.max(-0.3f, Math.min(v,0.05*(y-wy)));

@@ -48,7 +48,7 @@ public class Versioning extends FasterList<Versioned> {
     public final void revert(int when) {
         final int was = this.now;
         if (was == when) return; //nothing
-        else if (was < when)
+        if (was < when)
             throw new RuntimeException("reverting to future time");
         now = when;
 

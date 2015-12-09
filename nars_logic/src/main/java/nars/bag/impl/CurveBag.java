@@ -80,8 +80,6 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
             if (!remove)
                 remove(i.name());
 
-            continue;
-
         }
         return null; // empty bag
     }

@@ -112,7 +112,6 @@ public abstract class IRCBot {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return;
                 }
 
 

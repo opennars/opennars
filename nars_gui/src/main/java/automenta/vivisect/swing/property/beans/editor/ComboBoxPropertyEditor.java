@@ -95,11 +95,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 	@Override
 	public Object getValue() {
 		Object selected = ((JComboBox) editor).getSelectedItem();
-		if (selected instanceof Value) {
-			return ((Value) selected).value;
-		} else {
-			return selected;
-		}
+		return selected instanceof Value ? ((Value) selected).value : selected;
 	}
 
 	@Override
@@ -164,9 +160,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 		public boolean equals(Object o) {
 			if (o == this)
 				return true;
-			if (Objects.equals(value, o))
-				return true;
-			return false;
+			return Objects.equals(value, o);
 		}
 
 		@Override

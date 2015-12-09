@@ -37,7 +37,8 @@ public class SchemeClosure {
     public Expression get(final SymbolExpression symbol) {
         if (bindings.containsKey(symbol)) {
             return bindings.get(symbol);
-        } else if (enclosingEnvironment != null) {
+        }
+        if (enclosingEnvironment != null) {
             return enclosingEnvironment.get(symbol);
         }
         throw new VariableNotDefinedException(symbol.toString());

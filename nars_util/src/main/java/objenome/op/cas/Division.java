@@ -344,10 +344,9 @@ public class Division extends Operation {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Division)) return false;
-        
-        if (numerator.equalsExpr(((Operation) expr).getExprs().get(0)) && denom.equalsExpr(((Operation) expr).getExprs().get(1))) return true;
-        
-        return false;
+
+        return numerator.equalsExpr(((Operation) expr).getExprs().get(0)) && denom.equalsExpr(((Operation) expr).getExprs().get(1));
+
     }
     
     public Expr copyPass(HashMap<Expr, Expr> subs) {

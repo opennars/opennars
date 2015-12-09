@@ -175,7 +175,6 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 userDefinedName.setText(DEFAULT_USER_DEFINED_STRING);
             }
 
-            return;
         }
     }
 
@@ -271,7 +270,6 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
             default: {
                 _currentStrokeId++;
-                return;
             }
         }
     }
@@ -290,7 +288,6 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
             default: {
                 _currentStrokeId++;
-                return;
             }
         }
     }
@@ -326,7 +323,6 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             } else {
                 i++;
                 g.setColor(lineColors[++lineColorIndex]);
-                continue;
             }
         }
     }

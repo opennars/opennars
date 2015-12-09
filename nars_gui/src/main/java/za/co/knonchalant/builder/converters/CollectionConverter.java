@@ -20,11 +20,7 @@ public class CollectionConverter extends BaseConverter<String> {
         }
 
         Collection<String> values;
-        if (isTagSet()) {
-            values = (Collection<String>) parameters.get(getTag());
-        } else {
-            values = new ArrayList<>();
-        }
+        values = isTagSet() ? (Collection<String>) parameters.get(getTag()) : new ArrayList<>();
 
         ComboBox<String> box = new ComboBox<>();
         box.getItems().addAll(values);

@@ -36,12 +36,7 @@ public interface Temporal<T extends Compound> extends Tasked<T>, Interval {
     default long getLifespan(Memory memory) {
         final long createdAt = getCreationTime();
 
-        if (createdAt >= Tense.TIMELESS) {
-            return memory.time() - createdAt;
-        }
-        else {
-            return -1;
-        }
+        return createdAt >= Tense.TIMELESS ? memory.time() - createdAt : -1;
 
     }
 

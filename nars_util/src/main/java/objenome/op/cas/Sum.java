@@ -252,7 +252,8 @@ public class Sum extends Operation {
                     
                     // if (debug) System.err.println("Sum.simplify: (2 Constants): constant1: (" + constant1Mult + ")*(" + constant1OtherThing + "); "
                     //                                                             + "constant2: (" + constant2Mult + ")*(" + constant2OtherThing + ")");
-                    
+
+                    //noinspection IfStatementWithTooManyBranches
                     if (number1 != null && number2 != null && number1 + number2 - number1 - number2 == 0 && number2 + number1 - number2 - number1 == 0) {
                         constants.set(i, Num.make(number1 + number2));
                         combined = true;

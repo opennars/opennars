@@ -91,11 +91,7 @@ public class Actions {
         for (int i = 0; i < actionNames.length; i++) {
             int v;
 
-            if (i < numPlayerActions * 2) v = i;
-            // Special actions (not player-related) start at 40
-            else {
-                v = i + 4;
-            }
+            v = i < numPlayerActions * 2 ? i : i + 4;
             actionsMap.put(actionNames[i], v);
         }
     }

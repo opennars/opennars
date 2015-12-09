@@ -524,6 +524,7 @@ class MJCellUI extends Frame {
 	// button / menu item selected
 	public boolean action(Event e, Object arg) {
 		int i, j;
+		//noinspection IfStatementWithTooManyBranches
 		if ((e.target == btnRunStop) || (e.target == itmRunStop)) {
 			if (mjb.caThread != null)
 				mjb.stop();

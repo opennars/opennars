@@ -57,6 +57,7 @@ public class PercentageEditor extends SpinnerEditor {
 		Comparable<?> max = null;
 		Number step = null;
 
+		//noinspection IfStatementWithTooManyBranches
 		if (type == Byte.class || type == byte.class) {
 			start = (byte) pstart;
 			min = (byte) pmin;

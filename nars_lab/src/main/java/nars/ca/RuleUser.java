@@ -43,6 +43,7 @@ public class RuleUser {
 		if (sStr.length() < 3)
 			return;
 
+		//noinspection IfStatementWithTooManyBranches
 		if (sStr.compareTo("Rug") == 0)
 			sStr = "RUG,C64,I1";
 		else if (sStr.compareTo("Digital_Inkblots") == 0)
@@ -52,6 +53,7 @@ public class RuleUser {
 		else if (sStr.compareTo("GreenHast") == 0)
 			sStr = "GRH";
 
+		//noinspection IfStatementWithTooManyBranches
 		if (sStr.startsWith("RUG"))
 			RuleIdx = RIDX_RUG;
 		else if (sStr.startsWith("DIB"))
@@ -165,10 +167,7 @@ public class RuleUser {
 						if (sum8 < Increment) {
 							bNewVal = 0;
 						} else {
-							if (sum8 < 100)
-								bNewVal = 2;
-							else
-								bNewVal = 3;
+							bNewVal = (short) (sum8 < 100 ? 2 : 3);
 						}
 					} else if ((bOldVal > 0) && (bOldVal < (iClo - 1))) {
 						bNewVal = (short) (((sum8 >> 3) + Increment) & 255);

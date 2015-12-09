@@ -140,12 +140,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
         double dist = Math.abs(myPos - targetPos) / maxPos;
 
         double delta;
-        if (!Double.isFinite(lastDist)) {
-            delta = 0;
-        }
-        else {
-            delta = dist - lastDist;
-        }
+        delta = !Double.isFinite(lastDist) ? 0 : dist - lastDist;
 
         lastDist = dist;
 
@@ -163,12 +158,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
     public double getRewardAbsolute() {
 
         double dist = Math.abs(myPos - targetPos) / maxPos;
-        if (dist < closeThresh) {
-            return closeThresh-dist;
-        }
-        else {
-            return -(dist);
-        }
+        return dist < closeThresh ? closeThresh - dist : -(dist);
     }
 
     public void updateTarget(int time) {        
@@ -205,14 +195,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
     protected boolean takeActionVelocity(int direction) {
 
         double myV;
-        if (direction==0) {
-            //decelerate on zero
-            //myV *= decelerationFactor;
-            myV = 0;
-        }
-        else {
-            myV = direction * speed;
-        }
+        myV = direction == 0 ? 0 : direction * speed;
         myPos += myV;
 
         //TODO detect bump and do not report succesful act

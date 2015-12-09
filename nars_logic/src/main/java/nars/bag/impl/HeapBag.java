@@ -173,15 +173,10 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         if (!less(k2 + 1, K) || !less(k2 + 2, K)) {
 
             int t;
-            if (!less(k2 + 1, k2 + 2)) {
-                t = 1;
-            } else {
-                t = 2;
-            }
+            t = !less(k2 + 1, k2 + 2) ? 1 : 2;
 
             swap(k, k2 + t);
             reHeap(k2 + t, maxMoves);
-            return;
         }
     }
 
@@ -199,12 +194,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
 
         final int hc;
-        if ((heapCycle == 0) || (heapCycle > (is-1))) {
-            hc = heapCycle = is -1;
-        }
-        else {
-            hc = 0;
-        }
+        hc = (heapCycle == 0) || (heapCycle > (is - 1)) ? (heapCycle = is - 1) : 0;
         reHeap(hc, maxMoves);
         swap(0, heapCycle);
 
@@ -399,10 +389,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
             if (oldItem == null)
                 throw new RuntimeException("required removal but nothing removed");
-            else {
-                if (oldItem.name().equals(i.name())) {
-                    throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ')');
-                }
+            if (oldItem.name().equals(i.name())) {
+                throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ')');
             }
 
 

@@ -489,7 +489,7 @@ public class FastConcurrentDirectDeque<E>
             // TODO: better HOP heuristics
             if (hops < HOPS
                 // always squeeze out interior deleted nodes
-                && (isFirst | isLast))
+                && (isFirst || isLast))
                 return;
 
             // Squeeze out deleted nodes between activePred and
@@ -498,7 +498,7 @@ public class FastConcurrentDirectDeque<E>
             skipDeletedPredecessors(activeSucc);
 
             // Try to gc-unlink, if possible
-            if ((isFirst | isLast) &&
+            if ((isFirst || isLast) &&
 
                 // Recheck expected state of predecessor and successor
                 (activePred.next == activeSucc) &&
@@ -653,12 +653,12 @@ public class FastConcurrentDirectDeque<E>
             findActive:
             while (true) {
                 if (p.item != null)
-                    break findActive;
+                    break;
                 Node<E> q = p.prev;
                 if (q == null) {
                     if (p.next == p)
                         continue whileActive;
-                    break findActive;
+                    break;
                 } else if (p == q)
                     continue whileActive;
                 else
@@ -683,12 +683,12 @@ public class FastConcurrentDirectDeque<E>
             findActive:
             while (true) {
                 if (p.item != null)
-                    break findActive;
+                    break;
                 Node<E> q = p.next;
                 if (q == null) {
                     if (p.prev == p)
                         continue whileActive;
-                    break findActive;
+                    break;
                 } else if (p == q)
                     continue whileActive;
                 else

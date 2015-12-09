@@ -176,8 +176,7 @@ public class ALEPipes {
         if (hasObserved) {
             throw new RuntimeException("observe() called without subsequent act().");
         }
-        else
-            hasObserved = true;
+        hasObserved = true;
 
         String line = null;
 
@@ -241,8 +240,7 @@ public class ALEPipes {
         if (!hasObserved) {
             throw new RuntimeException("act() called before observe().");
         }
-        else
-            hasObserved = false;
+        hasObserved = false;
 
         sendAction(act);
 
@@ -310,10 +308,8 @@ public class ALEPipes {
         int ld = line.charAt(ptr+1);
         int hd = line.charAt(ptr);
 
-        if (ld >= 'A') ld -= 'A' - 10;
-        else ld -= '0';
-        if (hd >= 'A') hd -= 'A' - 10;
-        else hd -= '0';
+        ld -= ld >= 'A' ? 'A' - 10 : '0';
+        hd -= hd >= 'A' ? 'A' - 10 : '0';
 
         return (hd << 4) + ld;
     }

@@ -48,11 +48,12 @@ public class Goto extends SyncOperator {
         TestChamber.executed=true;
         TestChamber.executed_going=true;
         System.out.println("Executed: " + this);
-        for (Term t : Operation.argTerms(operation)) {
+        Term[] argTerms = Operation.argTerms(operation);
+        for (int i = 0, argTermsLength = argTerms.length; i < 1; i++) {
+            Term t = argTerms[i];
             System.out.println(" --- " + t);
             TestChamber.operateObj(t.toString(), "goto");
-            break;
-        }
+         }
         
         
        // if(nars.grid2d.Grid2DSpace.world_used) {

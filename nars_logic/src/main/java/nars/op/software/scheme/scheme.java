@@ -30,7 +30,7 @@ public class scheme extends TermFunction {
             //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
             return new SchemeProduct((Compound)term);
         }
-        else if (term instanceof Atom) {
+        if (term instanceof Atom) {
 
             String s = term.toString();
 
@@ -83,12 +83,7 @@ public class scheme extends TermFunction {
         Term[] x = o.args();
         Term code = x[0];
 
-        if (code instanceof Compound) {
-            return schemeToNars.apply(eval( ((Compound) code)  ));
-        }
-        else {
-            return schemeToNars.apply(eval( $.p(x) ));
-        }
+        return code instanceof Compound ? schemeToNars.apply(eval(((Compound) code))) : schemeToNars.apply(eval($.p(x)));
         //Set = evaluate as a cond?
 //        else {
 //

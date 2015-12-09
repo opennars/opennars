@@ -228,16 +228,12 @@ public class TestNAR  {
         cycleEnd += tt;
 
         EternalTaskCondition tc;
-        if (occTimeAbsolute== Tense.ETERNAL) {
-            tc = new EternalTaskCondition(nar,
-                    cycleStart, cycleEnd,
-                    sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
-        } else {
-            tc = new TemporalTaskCondition(nar,
-                    cycleStart, cycleEnd,
-                    occTimeAbsolute,occTimeAbsolute,
-                    sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
-        }
+        tc = occTimeAbsolute == Tense.ETERNAL ? new EternalTaskCondition(nar,
+                cycleStart, cycleEnd,
+                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h) : new TemporalTaskCondition(nar,
+                cycleStart, cycleEnd,
+                occTimeAbsolute, occTimeAbsolute,
+                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
 
         for (Topic<Task> cc : c) {
             cc.on(tc);
@@ -457,7 +453,7 @@ public class TestNAR  {
 
             Report r = getReport();
 
-            if (reportPrintIfSuccess || !r.isSuccess())
+            if (!r.isSuccess())
                 report(r, r.isSuccess());
 
         }

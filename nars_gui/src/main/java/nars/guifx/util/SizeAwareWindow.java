@@ -238,9 +238,11 @@ public class SizeAwareWindow extends Scene {
                 double h = d[1];
                 if ((w < 200) && (h < 200)) {
                     return Icon;
-                } else if (w < 200) {
+                }
+                if (w < 200) {
                     return Column;
-                } else if (h < 200) {
+                }
+                if (h < 200) {
                     return Row;
                 }
                 return DefaultNAR;

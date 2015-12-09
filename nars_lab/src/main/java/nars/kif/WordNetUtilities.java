@@ -36,11 +36,7 @@ public class WordNetUtilities {
      */
     public static String getBareSUMOTerm(String term) {
 
-        if (term != null && !"".equals(term)) {
-            return term.substring(2, term.length() - 1);
-        } else {
-            return "";
-        }
+        return term != null && !"".equals(term) ? term.substring(2, term.length() - 1) : "";
     }
 
     /**
@@ -82,11 +78,7 @@ public class WordNetUtilities {
      */
     public static char getSUMOMappingSuffix(String term) {
 
-        if (term != null && !"".equals(term)) {
-            return term.charAt(term.length() - 1);
-        } else {
-            return ' ';
-        }
+        return term != null && !"".equals(term) ? term.charAt(term.length() - 1) : ' ';
     }
 
     /**
@@ -585,11 +577,7 @@ public class WordNetUtilities {
                 AVPair avp = (AVPair) rel;
                 if ("hypernym".equals(avp.attribute) || "instance hypernym".equals(avp.attribute)) {
                     String mappingChar;
-                    if ("instance hypernym".equals(avp.attribute)) {
-                        mappingChar = "@";
-                    } else {
-                        mappingChar = "+";
-                    }
+                    mappingChar = "instance hypernym".equals(avp.attribute) ? "@" : "+";
                     String targetSynset = avp.value;
                     String targetSUMO = WordNet.wn.getSUMOMapping(targetSynset);
                     if (targetSUMO != null && !"".equals(targetSUMO)) {

@@ -60,11 +60,7 @@ public class Autoencoder {
         this.n_visible = n_visible;
         this.n_hidden = n_hidden;
 
-        if (rng == null) {
-            this.rng = new Random(); //XORShiftRandom();
-        } else {
-            this.rng = rng;
-        }
+        this.rng = rng == null ? new Random() : rng;
 
         if (W == null) {
             this.W = new double[this.n_hidden][this.n_visible];

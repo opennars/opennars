@@ -162,11 +162,7 @@ public class ResourceManager {
    */
   public char getChar(String key) {
     String s = getString(key);
-    if (s == null || s.trim().isEmpty()) {
-      return (char)0;
-    } else {
-      return s.charAt(0);
-    }
+    return s == null || s.trim().isEmpty() ? (char) 0 : s.charAt(0);
   }
 
   private String resolve0(String property) {
@@ -196,11 +192,7 @@ public class ResourceManager {
   private static String getPackage(Class clazz) {
     String pck = clazz.getName();
     int index = pck.lastIndexOf('.');
-    if (index != -1) {
-      pck = pck.substring(0, index);
-    } else {
-      pck = "";
-    }
+    pck = index != -1 ? pck.substring(0, index) : "";
     return pck;
   }
 

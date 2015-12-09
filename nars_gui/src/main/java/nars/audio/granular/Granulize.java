@@ -83,10 +83,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 				nextSample = g.getSample(cGrain, lnow);
 				if (g.isFading(cGrain, lnow)) {
 					fGrain = cGrain;
-                    if (p)
-                        cGrain = nextGrain(cGrain);
-                    else
-                        cGrain = null;
+					cGrain = p ? nextGrain(cGrain) : null;
 				}
 			}
 			if (fGrain != null) {

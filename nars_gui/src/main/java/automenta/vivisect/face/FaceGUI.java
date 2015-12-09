@@ -219,7 +219,7 @@ public class FaceGUI extends BaseClass {
     }
 
     public void toggleShade() {
-        doShade = isVectors ? true : !doShade;
+        doShade = isVectors || !doShade;
         if (isVectors) {
             toggleVectors();
         }
@@ -275,11 +275,7 @@ public class FaceGUI extends BaseClass {
     }
 
     Color color(int i, boolean flag) {
-        if (flag) {
-            return Color.black;
-        } else {
-            return colorVector.elementAt(i);
-        }
+        return flag ? Color.black : colorVector.elementAt(i);
     }
 
     Vector shapes(int i) {

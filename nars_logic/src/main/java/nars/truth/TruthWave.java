@@ -85,9 +85,7 @@ public class TruthWave {
             System.out.println();
             return;
         }
-        else {
-            System.out.println(" @ " + start + ".." + end);
-        }
+        System.out.println(" @ " + start + ".." + end);
 
         for (int c = 0; c < 2; c++) {
             for (int i = 0; i < length(); i++) {

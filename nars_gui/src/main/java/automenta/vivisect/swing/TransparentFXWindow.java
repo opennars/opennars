@@ -136,8 +136,9 @@ class ResizeHelper {
                     sceneWidth = scene.getWidth(),
                     sceneHeight = scene.getHeight();
 
-            if (MouseEvent.MOUSE_MOVED.equals(mouseEventType) == true) {
+            if (MouseEvent.MOUSE_MOVED.equals(mouseEventType)) {
                 System.out.println(mouseEventX + " " + mouseEventY);
+                //noinspection IfStatementWithTooManyBranches
                 if (mouseEventX <  sceneHeight - border) {
                     cursorEvent = Cursor.SW_RESIZE;
                 } else if (mouseEventX > sceneWidth - border && mouseEventX < sceneWidth - border && mouseEventY > sceneHeight - border) {
@@ -150,23 +151,23 @@ class ResizeHelper {
                     cursorEvent = Cursor.DEFAULT;
                 }
                 scene.setCursor(cursorEvent);
-            } else if (MouseEvent.MOUSE_PRESSED.equals(mouseEventType) == true) {
+            } else if (MouseEvent.MOUSE_PRESSED.equals(mouseEventType)) {
                 startX = stage.getWidth() - mouseEventX;
                 startY = stage.getHeight() - mouseEventY;
-            } else if (MouseEvent.MOUSE_DRAGGED.equals(mouseEventType) == true) {
-                if (Cursor.DEFAULT.equals(cursorEvent) == false) {
-                    if (Cursor.W_RESIZE.equals(cursorEvent) == false && Cursor.E_RESIZE.equals(cursorEvent) == false) {
+            } else if (MouseEvent.MOUSE_DRAGGED.equals(mouseEventType)) {
+                if (!Cursor.DEFAULT.equals(cursorEvent)) {
+                    if (!Cursor.W_RESIZE.equals(cursorEvent) && !Cursor.E_RESIZE.equals(cursorEvent)) {
                         double minHeight = stage.getMinHeight() > (border*2) ? stage.getMinHeight() : (border*2);
-                        if (Cursor.NW_RESIZE.equals(cursorEvent) == true || Cursor.N_RESIZE.equals(cursorEvent) == true || Cursor.NE_RESIZE.equals(cursorEvent) == true) {
+                        if (Cursor.NW_RESIZE.equals(cursorEvent) || Cursor.N_RESIZE.equals(cursorEvent) || Cursor.NE_RESIZE.equals(cursorEvent)) {
                             if (stage.getHeight() > minHeight || mouseEventY < minHeight || mouseEventY + startY - stage.getHeight() > 0) {
                                 stage.setHeight(mouseEventY + startY);
                             }
                         }
                     }
 
-                    if (Cursor.N_RESIZE.equals(cursorEvent) == false && Cursor.S_RESIZE.equals(cursorEvent) == false) {
+                    if (!Cursor.N_RESIZE.equals(cursorEvent) && !Cursor.S_RESIZE.equals(cursorEvent)) {
                         double minWidth = stage.getMinWidth() > (border*2) ? stage.getMinWidth() : (border*2);
-                        if (Cursor.NW_RESIZE.equals(cursorEvent) == true || Cursor.W_RESIZE.equals(cursorEvent) == true || Cursor.SW_RESIZE.equals(cursorEvent) == true) {
+                        if (Cursor.NW_RESIZE.equals(cursorEvent) || Cursor.W_RESIZE.equals(cursorEvent) || Cursor.SW_RESIZE.equals(cursorEvent)) {
                             if (stage.getWidth() > minWidth || mouseEventX < minWidth || mouseEventX + startX - stage.getWidth() > 0) {
                                 stage.setWidth(mouseEventX + startX);
                             }

@@ -91,8 +91,7 @@ public class Not extends Operation {
     }
     
     public boolean equalsExpr(Expr expr) {
-        if (expr instanceof Not && notExpr.equalsExpr(((Operation) expr).getExpr(0))) return true;
-        return false;
+        return expr instanceof Not && notExpr.equalsExpr(((Operation) expr).getExpr(0));
     }
     
     public Expr deriv(Var respected) {

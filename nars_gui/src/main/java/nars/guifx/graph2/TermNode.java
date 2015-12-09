@@ -109,10 +109,7 @@ public class TermNode<K extends Termed> extends GraphNode {
         final TermEdge[] edges = this.edges;
 
         TermEdge[] e;
-        if (edges.length != s)
-            e = new TermEdge[s];
-        else
-            e = edges; //re-use existing array
+        e = edges.length != s ? new TermEdge[s] : edges;
 
         return this.edges = edge.values().toArray(e);
     }
@@ -171,10 +168,7 @@ public class TermNode<K extends Termed> extends GraphNode {
     public void commitEdges() {
         if (modified) {
             modified = false;
-            if (!edge.isEmpty())
-                edges = updateEdges();
-            else
-                edges = TermEdge.empty;
+            edges = !edge.isEmpty() ? updateEdges() : TermEdge.empty;
 
         }
 

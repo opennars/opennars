@@ -245,10 +245,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
         //TODO add the levenshtein distance of other task components
         final float worstDiff;
-        if (similar!=null && similar.size() >= maxSimilars)
-            worstDiff = similar.lastKey();
-        else
-            worstDiff = Float.POSITIVE_INFINITY;
+        worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
 
         float difference = 0;
         difference +=
@@ -397,10 +394,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
      */
     public static double score(List<EternalTaskCondition> requirements) {
         double cost = cost(requirements);
-        if (Double.isFinite(cost))
-            return 1.0 / (1.0 + cost);
-        else
-            return -1;
+        return Double.isFinite(cost) ? 1.0 / (1.0 + cost) : -1;
 
     }
 

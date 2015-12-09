@@ -24,14 +24,7 @@ public class SpriteTemplate
     {
         if (isDead) return;
 
-        if (type==Enemy.ENEMY_FLOWER)
-        {
-            sprite = new FlowerEnemy(world, x*16+15, y*16+24);
-        }
-        else
-        {
-            sprite = new Enemy(world, x*16+8, y*16+15, dir, type, winged);
-        }
+        sprite = type == Enemy.ENEMY_FLOWER ? new FlowerEnemy(world, x * 16 + 15, y * 16 + 24) : new Enemy(world, x * 16 + 8, y * 16 + 15, dir, type, winged);
         sprite.spriteTemplate = this;
         world.addSprite(sprite);
     }

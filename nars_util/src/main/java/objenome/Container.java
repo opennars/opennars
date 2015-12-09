@@ -79,6 +79,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         try {
 
             Object target = null;
+            //noinspection IfStatementWithTooManyBranches
             if (scope == Scope.SINGLETON) {
 
                 boolean needsToCreate = false;
@@ -377,6 +378,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             return null;
         }
         Scope scope = scopes.get(key);
+        //noinspection IfStatementWithTooManyBranches
         if (scope == Scope.SINGLETON) {
             ClearableHolder cp = null;
             Object value = null;
@@ -431,6 +433,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             return false;
         }
         Scope scope = scopes.get(key);
+        //noinspection IfStatementWithTooManyBranches
         if (scope == Scope.NONE) {
             return false; // always...
         } else if (scope == Scope.SINGLETON) {

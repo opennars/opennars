@@ -85,9 +85,7 @@ public class BagGenerators {
                     //Assert.assertEquals(sizeAfter, sizeBefore);
                     continue;
                 }
-                else {
-                    //Assert.assertEquals(sizeAfter, sizeBefore-1);
-                }
+                //Assert.assertEquals(sizeAfter, sizeBefore-1);
 
                 int sizeAfter = f.size();
 

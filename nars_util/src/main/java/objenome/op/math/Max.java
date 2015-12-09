@@ -77,6 +77,7 @@ public class Max extends Node {
         }
         Class<?> returnType = TypeUtil.widestNumberType(types);
 
+        //noinspection IfStatementWithTooManyBranches
         if (returnType == Double.class) {
             double max = Double.NEGATIVE_INFINITY;
             for (int i = 0; i < arity; i++) {

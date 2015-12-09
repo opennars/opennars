@@ -298,7 +298,7 @@ public class OWLInput  {
         while (true) {
             switch (event) {
                 case XMLStreamConstants.START_ELEMENT:
-                    String tagName = formatTag(parser.getName());
+                    @SuppressWarnings("LocalVariableUsedAndDeclaredInDifferentSwitchBranches") String tagName = formatTag(parser.getName());
                     tagProcessor.execute(parser);
                     depth++;
                     break;
@@ -494,11 +494,7 @@ public class OWLInput  {
 
         suffix = suffix.replace("http://dbpedia.org/ontology/", "");
 
-        if (prefix == null || prefix.isEmpty()) {
-            return suffix;
-        } else {
-            return prefix + ':' + suffix;
-        }
+        return prefix == null || prefix.isEmpty() ? suffix : prefix + ':' + suffix;
     }
 
     /**

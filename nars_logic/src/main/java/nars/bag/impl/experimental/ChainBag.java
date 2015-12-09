@@ -302,12 +302,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
                     considerRemoving(next, percentileEstimate);
                 break;
             }
-            else {
-                if (selectPercentile(percentileEstimate))
-                    break;
+            if (selectPercentile(percentileEstimate))
+                break;
 
-                considerRemoving(next, percentileEstimate);
-            }
+            considerRemoving(next, percentileEstimate);
 
             next = after(next);
 

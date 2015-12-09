@@ -112,24 +112,24 @@ public class EpoxParser {
         // Check the arities match
         if (node == null) {
             throw new MalformedProgramException("unknown node type: " + identifier);
-        } else if (node.getArity() != args.size()) {
+        }
+        if (node.getArity() != args.size()) {
             throw new MalformedProgramException("unexpected arity for node: " + identifier + "(expected: "
                     + node.getArity() + ", found: " + args.size() + ')');
-        } else {
-            node = node.newInstance();
+        }
+        node = node.newInstance();
 
-            // Recursively parse and set each child node
-            for (int i = 0; i < args.size(); i++) {
-                node.setChild(i, parse(args.get(i)));
-            }
+        // Recursively parse and set each child node
+        for (int i = 0; i < args.size(); i++) {
+            node.setChild(i, parse(args.get(i)));
+        }
 
-            // Validate the node's input data-types
-            if (node.dataType() == null) {
-                if (node.isNonTerminal()) {
-                    throw new MalformedProgramException("Input data-types for " + identifier + " are invalid");
-                } else {
-                    throw new MalformedProgramException("Data-type of terminal " + identifier + " is null");
-                }
+        // Validate the node's input data-types
+        if (node.dataType() == null) {
+            if (node.isNonTerminal()) {
+                throw new MalformedProgramException("Input data-types for " + identifier + " are invalid");
+            } else {
+                throw new MalformedProgramException("Data-type of terminal " + identifier + " is null");
             }
         }
 

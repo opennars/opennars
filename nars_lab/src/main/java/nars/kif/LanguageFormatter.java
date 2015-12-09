@@ -228,6 +228,7 @@ public class LanguageFormatter {
                 do {
                     line = br.readLine();
                     if (line != null) {
+                        //noinspection IfStatementWithTooManyBranches
                         if (line.startsWith("en|")) { // The language key line.
                             i = 0;
                             while (line.indexOf('|', i) > 0) {
@@ -235,8 +236,7 @@ public class LanguageFormatter {
                                 i = line.indexOf('|', i) + 1;
                             }
                             languageKeyArray.add(line.substring(i, i + 2));
-                        } else if (line.length() > 0 && line.charAt(0) == ';') {  // ignore comment lines
-                        } else if (line.isEmpty()) {  // ignore blank lines
+                        } else if (line.length() > 0 && line.charAt(0) == ';' || line.isEmpty()) {  // ignore comment lines
                         } else if (line.indexOf('|') > -1) { // Line with phrase alternates in different languages.
                             newLine = new HashMap();
                             key = line.substring(0, line.indexOf('|'));
@@ -360,16 +360,15 @@ public class LanguageFormatter {
              System.out.println( "d:return == " + ans );
              */
             return ans;
-        } else {
-            if (!f.listP()) {
-                System.out.println("Error in LanguageFormatter.nlStmtPara(): Statement is not an atom or a list: " + stmt);
-                /*
-                 System.out.println( "INFO in LanguageFormatter.nlStmtPara( " + depth + " ):" );
-                 printSpaces( depth );
-                 System.out.println( "e:return == \"\"" );
-                 */
-                return "";
-            }
+        }
+        if (!f.listP()) {
+            System.out.println("Error in LanguageFormatter.nlStmtPara(): Statement is not an atom or a list: " + stmt);
+            /*
+             System.out.println( "INFO in LanguageFormatter.nlStmtPara( " + depth + " ):" );
+             printSpaces( depth );
+             System.out.println( "e:return == \"\"" );
+             */
+            return "";
         }
         /*
          if (phraseMap == null) {
@@ -404,26 +403,25 @@ public class LanguageFormatter {
              System.out.println( "h:return == " + ans );
              */
             return ans;
+        }
+        // predicate has no paraphrase
+        if (pred.charAt(0) == '?') {
+            result.append(transliterate(pred, language));
         } else {
-            // predicate has no paraphrase
-            if (pred.charAt(0) == '?') {
-                result.append(transliterate(pred, language));
+            if (termMap.containsKey(pred)) {
+                result.append((String) termMap.get(pred));
             } else {
-                if (termMap.containsKey(pred)) {
-                    result.append((String) termMap.get(pred));
-                } else {
-                    result.append(pred);
-                }
+                result.append(pred);
             }
+        }
+        f.read(f.cdr());
+        while (!f.empty()) {
+            String arg = f.car();
             f.read(f.cdr());
-            while (!f.empty()) {
-                String arg = f.car();
-                f.read(f.cdr());
-                if (!Formula.atom(arg)) {
-                    result.append(' ').append(nlStmtPara(arg, isNegMode, phraseMap, termMap, language, depth + 1));
-                } else {
-                    result.append(' ').append(translateWord(termMap, arg, language));
-                }
+            if (!Formula.atom(arg)) {
+                result.append(' ').append(nlStmtPara(arg, isNegMode, phraseMap, termMap, language, depth + 1));
+            } else {
+                result.append(' ').append(translateWord(termMap, arg, language));
             }
         }
         ans = result.toString();
@@ -444,11 +442,7 @@ public class LanguageFormatter {
         if (termMap != null && termMap.containsKey(word)) {
             return ((String) termMap.get(word));
         } else {
-            if (word.charAt(0) == '?') {
-                return transliterate(word, language);
-            } else {
-                return (word);
-            }
+            return word.charAt(0) == '?' ? transliterate(word, language) : word;
         }
     }
 
@@ -1002,35 +996,27 @@ public class LanguageFormatter {
 
                 start = nlFormat.indexOf("&%", start + 1);
                 int word = nlFormat.indexOf('$', start);
-                if (word == -1) {
-                    end = start + 2;
-                } else {
-                    end = word + 1;
-                }
+                end = word == -1 ? start + 2 : word + 1;
                 while (end < nlFormat.length() && Character.isJavaIdentifierPart(nlFormat.charAt(end))) {
                     end++;
                 }
-                if (word == -1) {
-                    nlFormat = (nlFormat.substring(0, start)
-                            + "<a href=\""
-                            + href
-                            + "&term="
-                            + nlFormat.substring(start + 2, end)
-                            + "\">"
-                            + nlFormat.substring(start + 1, end)
-                            + "</a>"
-                            + nlFormat.substring(end, nlFormat.length()));
-                } else {
-                    nlFormat = (nlFormat.substring(0, start)
-                            + "<a href=\""
-                            + href
-                            + "&term="
-                            + nlFormat.substring(start + 2, word)
-                            + "\">"
-                            + nlFormat.substring(word + 1, end)
-                            + "</a>"
-                            + nlFormat.substring(end, nlFormat.length()));
-                }
+                nlFormat = word == -1 ? nlFormat.substring(0, start)
+                        + "<a href=\""
+                        + href
+                        + "&term="
+                        + nlFormat.substring(start + 2, end)
+                        + "\">"
+                        + nlFormat.substring(start + 1, end)
+                        + "</a>"
+                        + nlFormat.substring(end, nlFormat.length()) : nlFormat.substring(0, start)
+                        + "<a href=\""
+                        + href
+                        + "&term="
+                        + nlFormat.substring(start + 2, word)
+                        + "\">"
+                        + nlFormat.substring(word + 1, end)
+                        + "</a>"
+                        + nlFormat.substring(end, nlFormat.length());
             }
         } else {
             nlFormat = "";

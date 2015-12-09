@@ -147,11 +147,7 @@ public class ImplementationFactory {
             final SgClass clasz, final Class<?> intf, final ImplementationFactoryListener listener) {
 
         final Method[] methods;
-        if (onlyDeclaredMethods) {
-            methods = intf.getDeclaredMethods();
-        } else {
-            methods = intf.getMethods();
-        }
+        methods = onlyDeclaredMethods ? intf.getDeclaredMethods() : intf.getMethods();
         for (int j = 0; j < methods.length; j++) {
 
             // Create method signature
@@ -161,11 +157,7 @@ public class ImplementationFactory {
 
             // Get return type
             final SgClass returnType;
-            if (methods[j].getReturnType() == null) {
-                returnType = SgClass.VOID;
-            } else {
-                returnType = SgClass.create(pool, methods[j].getReturnType());
-            }
+            returnType = methods[j].getReturnType() == null ? SgClass.VOID : SgClass.create(pool, methods[j].getReturnType());
 
             // Check if we already implemented this method
             ImplementedMethod implMethod = implMethods.get(typeSignature);

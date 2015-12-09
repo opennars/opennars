@@ -58,10 +58,9 @@ public class Cos extends Function {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Cos)) return false;
-        
-        if (ofExpr.equalsExpr(((Operation) expr).getExprs().get(0))) return true;
-        
-        return false;
+
+        return ofExpr.equalsExpr(((Operation) expr).getExprs().get(0));
+
     }
     
     public boolean notEqualsExpr(Expr expr) {

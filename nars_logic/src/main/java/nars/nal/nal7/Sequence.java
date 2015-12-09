@@ -186,13 +186,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 //
 //        }
 
-        if (size()!=t.length) {
-            //direct clone, ignoring this instance's intervals which have different dimensions
-            return makeSequence(t);
-        }
-        else {
-            return cloneIntervals(t);
-        }
+        return size() != t.length ? makeSequence(t) : cloneIntervals(t);
     }
 
     /** only works if the # of terms are the same as this */

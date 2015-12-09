@@ -120,7 +120,7 @@ public class TestChamber2 extends TestChamber {
                             inventorybag.cx=(int)current.x;
                             inventorybag.cy=(int)current.y;
                         }
-                        if(inventorybag==null || !(inventorybag instanceof Key)) {
+                        if(!(inventorybag instanceof Key)) {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
@@ -141,7 +141,7 @@ public class TestChamber2 extends TestChamber {
                                 }
                                 if(obi!=null || cells.readCells[(int)current.x][(int)current.y].name.equals(goal)) { //only possible for existing ones
                                     if("pick".equals(opname)) {
-                                        if(inventorybag!=null && inventorybag instanceof LocalGridObject) {
+                                        if(inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
                                             LocalGridObject ob= inventorybag;
                                             ob.x=(int)current.x;

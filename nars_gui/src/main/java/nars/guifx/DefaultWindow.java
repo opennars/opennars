@@ -825,6 +825,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             RESIZE_BOTTOM = false;
             RESIZE_RIGHT = false;
 
+            //noinspection IfStatementWithTooManyBranches
             if (left && !top && !bottom) {
                 n.setCursor(Cursor.W_RESIZE);
                 resizeMode = ResizeMode.LEFT;

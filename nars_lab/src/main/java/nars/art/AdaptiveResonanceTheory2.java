@@ -219,7 +219,6 @@ public class AdaptiveResonanceTheory2
             // is proto[i] among the used ??
             if (usedb)
             {
-                continue;
             }
             else
             {
@@ -483,8 +482,7 @@ public class AdaptiveResonanceTheory2
                         }
                         else
                         {
-                            continue;
-                        } 
+                        }
                     }
                     else
                     {

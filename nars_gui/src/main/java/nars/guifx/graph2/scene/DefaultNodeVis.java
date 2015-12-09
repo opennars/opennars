@@ -84,10 +84,9 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 
         if (t == null) {
             return;
-        } else {
+        }
 //            p = t.term.cgetPriority();
 //            q = t.c.getQuality();
-        }
 
         //            if (c == null) return;
 //

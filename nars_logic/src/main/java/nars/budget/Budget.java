@@ -671,12 +671,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final long period;
 
-        if (this.lastForgetTime == Tense.TIMELESS) {
-            period = 0;
-        }
-        else {
-            period = currentTime - lastForgetTime;
-        }
+        period = this.lastForgetTime == Tense.TIMELESS ? 0 : currentTime - lastForgetTime;
 
         this.lastForgetTime = currentTime;
         return period;

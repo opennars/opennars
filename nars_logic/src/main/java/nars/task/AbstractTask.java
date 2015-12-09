@@ -148,6 +148,7 @@ public abstract class AbstractTask extends Item<Sentence>
             ensureValidParentTaskRef();
         }
 
+        //noinspection IfStatementWithTooManyBranches
         if (isJudgmentOrGoal()) {
 
         } else if (isQuestOrQuestion()) {
@@ -332,12 +333,7 @@ public abstract class AbstractTask extends Item<Sentence>
         term.setDuration(duration); //HACK int<->long stuff
 
         final int d;
-        if (term instanceof Interval) {
-            d = ((Interval) term).duration(); //set the task's duration to the term's actual (expanded) duration
-        }
-        else {
-            d = duration;
-        }
+        d = term instanceof Interval ? ((Interval) term).duration() : duration;
         this.duration = d;
     }
 

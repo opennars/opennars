@@ -57,13 +57,7 @@ public abstract class RealtimeClock implements Clock {
     protected void update() {
         long now = getRealTime();
 
-        if (this.t0 != -1) {
-            this.t0 = t;
-        }
-        else {
-            //on first cycle, set previous time to current time so that delta to previous cycle = 0
-            this.t0 = now;
-        }
+        this.t0 = this.t0 != -1 ? t : now;
 
         this.t = now;
     }

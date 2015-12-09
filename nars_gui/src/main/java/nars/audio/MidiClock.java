@@ -387,11 +387,7 @@ public class MidiClock extends JPanel implements Clock {
                 public int getColumnCount() { return nCols; }
                 public int getRowCount() { return nRows;}
                 public Object getValueAt(int r, int c) {
-                    if (instruments != null) {
-                        return instruments[c*nRows+r].getName();
-                    } else {
-                        return Integer.toString(c*nRows+r);
-                    }
+                    return instruments != null ? instruments[c * nRows + r].getName() : Integer.toString(c * nRows + r);
                 }
                 public String getColumnName(int c) {
                     return names[c];
@@ -559,6 +555,7 @@ public class MidiClock extends JPanel implements Clock {
             TitledBorder tb = (TitledBorder) slider.getBorder();
             String s = tb.getTitle();
             tb.setTitle(s.substring(0, s.indexOf('=')+1) + s.valueOf(value));
+            //noinspection IfStatementWithTooManyBranches
             if (s.startsWith("Velocity")) {
                 cc.velocity = value;
             } else if (s.startsWith("Pressure")) {
@@ -579,6 +576,7 @@ public class MidiClock extends JPanel implements Clock {
             } else {
                 JCheckBox cb = (JCheckBox) e.getSource();
                 String name = cb.getText();
+                //noinspection IfStatementWithTooManyBranches
                 if (name.startsWith("Mute")) {
                     cc.channel.setMute(cc.mute = cb.isSelected());
                 } else if (name.startsWith("Solo")) {
@@ -654,7 +652,8 @@ public class MidiClock extends JPanel implements Clock {
                 public Object getValueAt(int row, int col) {
                     if (col == 0) {
                         return ((TrackData) tracks.get(row)).chanNum;
-                    } else if (col == 1) {
+                    }
+                    if (col == 1) {
                         return ((TrackData) tracks.get(row)).name;
                     }
                     return null;
@@ -722,11 +721,7 @@ public class MidiClock extends JPanel implements Clock {
                     saveB.setEnabled(false);
                 } else {
                     String name = null;
-                    if (instruments != null) {
-                        name = instruments[cc.col*8+cc.row].getName();
-                    } else {
-                        name = Integer.toString(cc.col*8+cc.row);
-                    }
+                    name = instruments != null ? instruments[cc.col * 8 + cc.row].getName() : Integer.toString(cc.col * 8 + cc.row);
                     tracks.add(new TrackData(cc.num+1, name, track));
                     table.tableChanged(new TableModelEvent(dataModel));
                     recordB.setText("Record");
@@ -753,10 +748,7 @@ public class MidiClock extends JPanel implements Clock {
                     JFileChooser fc = new JFileChooser(file);
                     fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
                         public boolean accept(File f) {
-                            if (f.isDirectory()) {
-                                return true;
-                            }
-                            return false;
+                            return f.isDirectory();
                         }
                         public String getDescription() {
                             return "Save as .mid file.";

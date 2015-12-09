@@ -84,11 +84,7 @@ public class Not extends BooleanNode {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.allEqual(inputTypes, Boolean.class)) {
-            return Boolean.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 1) && TypeUtil.allEqual(inputTypes, Boolean.class) ? Boolean.class : null;
     }
 
 
@@ -100,7 +96,7 @@ public class Not extends BooleanNode {
         }
         int n = getChildConstantValue(0);
         if (n == 0) return False;
-        else if (n == 1) return True;
+        if (n == 1) return True;
 
         /*
         if (notExpr.equalsExpr(yep())) return nope();

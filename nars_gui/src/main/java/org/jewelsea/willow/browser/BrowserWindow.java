@@ -162,6 +162,7 @@ public class BrowserWindow {
     public void go(String loc) {
         // modify the request location, to make it easier on the user for typing.
         if (loc == null) loc = "";
+        //noinspection IfStatementWithTooManyBranches
         if (loc.startsWith("google")) { // search google
             loc = "http://www.google.com/search?q=" + loc.substring("google".length()).trim().replaceAll(" ", "+");
         } else if (loc.startsWith("bing")) { // search bing

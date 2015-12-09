@@ -78,6 +78,7 @@ public class IntBuf {
         // performance enhancement.
         while (lastSp < sl) {
             int c = sa[lastSp];
+            //noinspection IfStatementWithTooManyBranches
             if (c < 128) {
                 p(da, dp++, (byte) c);
             } else if (c < 2048) {

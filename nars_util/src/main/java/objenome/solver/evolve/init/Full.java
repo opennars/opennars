@@ -257,13 +257,18 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
     public Node createTree() {
         if (random == null) {
             throw new IllegalStateException("No random number generator has been set");
-        } else if (returnType == null) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (returnType == null) {
             throw new IllegalStateException("No return type has been set");
-        } else if (maxDepth < 0) {
+        }
+        if (maxDepth < 0) {
             throw new IllegalStateException("Depth must be 0 or greater");
-        } else if (terminals.isEmpty()) {
+        }
+        if (terminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of 0");
-        } else if ((maxDepth > 0) && nonTerminals.isEmpty()) {
+        }
+        if ((maxDepth > 0) && nonTerminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of >=1 if a depth >0 is used");
         }
 

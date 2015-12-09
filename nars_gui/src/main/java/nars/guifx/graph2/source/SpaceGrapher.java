@@ -313,19 +313,15 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
                 throw new RuntimeException("null toDisplay");
             }
 
-            if (toDisplay.length == 0) {
-                next = clear; //necessary?
-            } else {
-                next = (() -> {
-                    this.displayed = toDisplay;
-                    getVertices().setAll(
+            next = toDisplay.length == 0 ? clear : () -> {
+                this.displayed = toDisplay;
+                getVertices().setAll(
                         active
                         //toDisplay
-                    );
-                    ready.set(true);
-                    //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
-                });
-            }
+                );
+                ready.set(true);
+                //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
+            };
         }
 
 
@@ -529,11 +525,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
      */
     synchronized void layoutUpdated() {
         int lastAnimPeriodMS;
-        if (this.animator!=null) {
-            lastAnimPeriodMS = animator.getPeriod();
-        }
-        else
-            lastAnimPeriodMS = -1;
+        lastAnimPeriodMS = this.animator != null ? animator.getPeriod() : -1;
 
         stop();
 

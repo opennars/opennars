@@ -442,10 +442,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         if (tNorm==null) {
             m.remove(t, "Garbage");
             return false;
-        } else {
-            t = tNorm;
         }
-
+        t = tNorm;
 
 
         m.eventInput.emit(t);

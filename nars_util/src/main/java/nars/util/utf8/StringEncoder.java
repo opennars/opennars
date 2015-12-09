@@ -157,12 +157,7 @@ final class StringEncoder {
                 // estimate the average bytes per character from the current sample
                 int charsConverted = getCharsConverted();
                 double bytesPerChar;
-                if (charsConverted > 0) {
-                    bytesPerChar = buffer.position() / (double) charsConverted;
-                } else {
-                    // charsConverted can be 0 if the initial buffer is smaller than one character
-                    bytesPerChar = encoder.averageBytesPerChar();
-                }
+                bytesPerChar = charsConverted > 0 ? buffer.position() / (double) charsConverted : encoder.averageBytesPerChar();
 
                 int charsRemaining = source.length() - charsConverted;
                 //assert charsRemaining > 0;

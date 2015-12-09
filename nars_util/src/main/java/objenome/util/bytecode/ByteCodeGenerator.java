@@ -89,11 +89,7 @@ public final class ByteCodeGenerator {
     public ByteCodeGenerator(final ClassPool pool, final ClassLoader classLoader,
             final ProtectionDomain domain) {
         super();
-        if (pool == null) {
-            this.pool = ClassPool.getDefault();
-        } else {
-            this.pool = pool;
-        }
+        this.pool = pool == null ? ClassPool.getDefault() : pool;
         this.classLoader = this.pool.getClassLoader();
         this.domain = null;
     }

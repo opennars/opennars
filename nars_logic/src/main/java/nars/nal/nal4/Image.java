@@ -214,10 +214,7 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
         }
 
         boolean ext = (o == Op.IMAGE_EXT);
-        if (ext)
-            return new ImageExt(res, index);
-        else
-            return new ImageInt(res, index);
+        return ext ? new ImageExt(res, index) : new ImageInt(res, index);
     }
 
     public static boolean hasPlaceHolder(Term[] r) {

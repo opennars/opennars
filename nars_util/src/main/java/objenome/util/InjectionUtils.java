@@ -184,11 +184,7 @@ public class InjectionUtils {
             return true;
         }
 
-        if (target.equals(double.class) && source.equals(Double.class)) {
-            return true;
-        }
-
-        return false;
+        return target.equals(double.class) && source.equals(Double.class);
 
     }
 
@@ -219,6 +215,7 @@ public class InjectionUtils {
         
         //TODO use switch statement
 
+        //noinspection IfStatementWithTooManyBranches
         if ("int".equals(className) || "java.lang.Integer".equals(className)) {
             int x = -1;
             try {
@@ -310,7 +307,8 @@ public class InjectionUtils {
 
             return value;
 
-        } else if (targetType.isPrimitive()) {
+        }
+        if (targetType.isPrimitive()) {
 
             return value;
         }
@@ -321,19 +319,27 @@ public class InjectionUtils {
     public static Class getPrimitiveFrom(Object w) {
         if (w instanceof Boolean) {
             return Boolean.TYPE;
-        } else if (w instanceof Byte) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (w instanceof Byte) {
             return Byte.TYPE;
-        } else if (w instanceof Short) {
+        }
+        if (w instanceof Short) {
             return Short.TYPE;
-        } else if (w instanceof Character) {
+        }
+        if (w instanceof Character) {
             return Character.TYPE;
-        } else if (w instanceof Integer) {
+        }
+        if (w instanceof Integer) {
             return Integer.TYPE;
-        } else if (w instanceof Long) {
+        }
+        if (w instanceof Long) {
             return Long.TYPE;
-        } else if (w instanceof Float) {
+        }
+        if (w instanceof Float) {
             return Float.TYPE;
-        } else if (w instanceof Double) {
+        }
+        if (w instanceof Double) {
             return Double.TYPE;
         }
         return null;

@@ -174,6 +174,7 @@ public class HumanAgent extends AbstractAgent {
         // Loop through the list of arguments
         while (!doneParsing) {
             // -nogui: do not display the Java GUI
+            //noinspection IfStatementWithTooManyBranches
             if ("-nogui".equals(args[argIndex])) {
                 useGUI = false;
                 argIndex++;

@@ -156,11 +156,7 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 			}
 
 			try {
-				if (ctor == null) {
-					editor = (PropertyEditor) cls.newInstance();
-				} else {
-					editor = (PropertyEditor) ctor.newInstance(property);
-				}
+				editor = ctor == null ? (PropertyEditor) cls.newInstance() : (PropertyEditor) ctor.newInstance(property);
 			} catch (Exception e) {
 				throw new RuntimeException("PropertyEditor not instantiated", e);
 			}

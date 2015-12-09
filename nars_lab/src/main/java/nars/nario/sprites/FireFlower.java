@@ -55,7 +55,6 @@ public class FireFlower extends Sprite
             layer = 0;
             y--;
             life++;
-            return;
         }
     }
 }

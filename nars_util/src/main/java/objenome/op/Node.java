@@ -649,12 +649,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * null if the set of input types is invalid.
      */
     public Class dataType(Class... inputTypes) {
-        if (isTerminal()) {
-            return Void.class;
-        } else {
-            // Either the widest type or null if not valid
-            return TypeUtil.getSuper(inputTypes);
-        }
+        return isTerminal() ? Void.class : TypeUtil.getSuper(inputTypes);
     }
 
     /**
@@ -771,17 +766,17 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
 
             if (n.getArity() != getArity()) {
                 return false;
-            } else if (!getIdentifier().equals(n.getIdentifier())) {
+            }
+            if (!getIdentifier().equals(n.getIdentifier())) {
                 return false;
-            } else {
-                final int a = n.getArity();
-                for (int i = 0; i < a; i++) {
-                    Node thatChild = n.getChild(i);
-                    Node thisChild = getChild(i);
+            }
+            final int a = n.getArity();
+            for (int i = 0; i < a; i++) {
+                Node thatChild = n.getChild(i);
+                Node thisChild = getChild(i);
 
-                    if (!Objects.equals(thisChild, thatChild))
-                        return false;
-                }
+                if (!Objects.equals(thisChild, thatChild))
+                    return false;
             }
             return true;
         } else {

@@ -54,11 +54,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
             compileSubterms((TermVector) ((Compound)t).subterms());
             return t;
         }
-        else if (t instanceof Compound) {
-            compiled = (T) compileCompound((Compound)t);
-        } else {
-            compiled = t; //nothing to change
-        }
+        compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
 
         data.put(t, compiled);
         return compiled;
@@ -80,13 +76,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
             st.put(subs, subs);
         }
 
-        if (existing == subs) {
-            // already using the shared subterms
-            return c;
-        } else {
-            // different instance, so clone new compound
-            return (Compound<T>) c.clone(subs);
-        }
+        return existing == subs ? c : (Compound<T>) c.clone(subs);
     }
 
     private TermContainer compileSubterms(TermVector subs) {

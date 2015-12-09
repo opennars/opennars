@@ -31,7 +31,8 @@ public class ParticleSystem_v7 extends Canvas {
 		Thread runThread = new Thread(new Runnable() {
                         @Override
 			public void run() {
-				while (true) {
+							//noinspection InfiniteLoopStatement
+							while (true) {
 					long time = System.currentTimeMillis();
 
 					paused = ren.getPaused();

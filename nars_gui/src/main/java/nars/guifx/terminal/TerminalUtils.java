@@ -15,22 +15,31 @@ public class TerminalUtils {
     public static byte[] getCode(KeyEvent event, TerminalPanel terminalPanel) {
         if (event.getCode() == KeyCode.BACK_SPACE) {
             return keyMap.get(72);
-        } else if (event.isControlDown() && event.getCode() == KeyCode.L) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (event.isControlDown() && event.getCode() == KeyCode.L) {
             terminalPanel.getTextArea().clear();
             return keyMap.get(76);
-        } else if (event.getCode() == KeyCode.SPACE) {
+        }
+        if (event.getCode() == KeyCode.SPACE) {
             return new byte[]{0x20};
-        } else if (event.getCode() == KeyCode.TAB) {
+        }
+        if (event.getCode() == KeyCode.TAB) {
             return keyMap.get(9);
-        } else if (event.getCode() == KeyCode.ESCAPE) {
+        }
+        if (event.getCode() == KeyCode.ESCAPE) {
             return keyMap.get(27);
-        } else if (event.getCode() == KeyCode.UP) {
+        }
+        if (event.getCode() == KeyCode.UP) {
             return keyMap.get(38);
-        } else if (event.getCode() == KeyCode.DOWN) {
+        }
+        if (event.getCode() == KeyCode.DOWN) {
             return keyMap.get(40);
-        } else if (event.getCode() == KeyCode.LEFT) {
+        }
+        if (event.getCode() == KeyCode.LEFT) {
             return keyMap.get(37);
-        } else if (event.getCode() == KeyCode.RIGHT) {
+        }
+        if (event.getCode() == KeyCode.RIGHT) {
             return keyMap.get(39);
         } /*else if (event.getCode() == KeyCode.DELETE) {
             //terminalPanel.getTextArea().positionCaret(terminalPanel.getTextArea().getCaretPosition() + 1);

@@ -38,6 +38,7 @@ public class WebcamTrack {
         ShowImages.showWindow(gui, "KLT Tracker");
 
         int minimumTracks = 100;
+        //noinspection InfiniteLoopStatement
         while( true ) {
             BufferedImage image = webcam.getImage();
             ImageFloat32 gray = ConvertBufferedImage.convertFrom(image, (ImageFloat32) null);

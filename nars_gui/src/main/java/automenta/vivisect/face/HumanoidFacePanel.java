@@ -78,7 +78,8 @@ public class HumanoidFacePanel extends NPanel {
         
         face.setFlex('_'); //neutral brows
         face.setFlex('a');
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if (nod && shake) {
             //confused
             face.setFlex('\'');

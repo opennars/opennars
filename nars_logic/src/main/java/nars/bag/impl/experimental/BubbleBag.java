@@ -233,7 +233,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
             root = queue.getFirst();
             if (!valid(root)) {
                 queue.removeFirstFast();
-                continue;
             } else
                 break;
         }
@@ -245,7 +244,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
             root = queue.getLast();
             if (!valid(root)) {
                 queue.removeLastFast();
-                continue;
             } else
                 break;
         }

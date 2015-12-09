@@ -60,11 +60,7 @@ public class MatrixImage extends JComponent {
         final double mean = (max + min) / 2.0;
         final double n5 = min + 2.0 * (max - min) / 3.0;
         int r;
-        if (n < mean) {
-            r = (int) (255.0 * (min - n) / (mean - min)) + 255;
-        } else {
-            r = 0;
-        }
+        r = n < mean ? (int) (255.0 * (min - n) / (mean - min)) + 255 : 0;
         if (r < 0) {
             r = 0;
         }

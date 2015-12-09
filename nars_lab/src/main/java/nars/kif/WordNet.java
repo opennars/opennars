@@ -315,7 +315,7 @@ public class WordNet {
 
         switch (POS.charAt(0)) {
             case '1':
-                String synsets = (String) nounSynsetHash.get(word);
+                @SuppressWarnings("LocalVariableUsedAndDeclaredInDifferentSwitchBranches") String synsets = (String) nounSynsetHash.get(word);
                 if (synsets == null) {
                     synsets = "";
                 }
@@ -1256,11 +1256,7 @@ public class WordNet {
         for (int i = 0; i < al.size(); i++) {
             String word = (String) al.get(i);
             if (!stopwords.contains(word.toLowerCase())) {
-                if ("".equals(result)) {
-                    result = word;
-                } else {
-                    result = result + ' ' + word;
-                }
+                result = "".equals(result) ? word : result + ' ' + word;
             }
         }
         return result;
@@ -1309,19 +1305,11 @@ public class WordNet {
             String word = (String) al.get(i);
             String SUMO = findSUMOWordSense(word, al);
             if (SUMO != null && !"".equals(SUMO)) {
-                if ("".equals(result)) {
-                    result = SUMO;
-                } else {
-                    result = result + ' ' + SUMO;
-                }
+                result = "".equals(result) ? SUMO : result + ' ' + SUMO;
             } else {                                    // assume it's a noun
                 SUMO = getBestDefaultSense(word);
                 if (SUMO != null && !"".equals(SUMO)) {
-                    if ("".equals(result)) {
-                        result = SUMO;
-                    } else {
-                        result = result + ' ' + SUMO;
-                    }
+                    result = "".equals(result) ? SUMO : result + ' ' + SUMO;
                 }
             }
             /**
@@ -1396,11 +1384,7 @@ public class WordNet {
         int listLength;
         String[] synsetList = splitSynsets(synsetBlock);
 
-        if (synsetList != null) {
-            listLength = synsetList.length;
-        } else {
-            listLength = 0;
-        }
+        listLength = synsetList != null ? synsetList.length : 0;
         result.append("<i>According to WordNet, the ").append(type).append('"').append(word).append("\" has ");
         result.append(String.valueOf(listLength)).append(" sense(s).</i><P>\n\n");
 
@@ -1465,11 +1449,7 @@ public class WordNet {
         //System.out.println("INFO in WordNet.nounRootForm: Checking word : " + mixedCase + " and " + input);
         if ((exceptionNounHash.containsKey(mixedCase))
                 || (exceptionNounHash.containsKey(input))) {
-            if (exceptionNounHash.containsKey(mixedCase)) {
-                result = (String) exceptionNounHash.get(mixedCase);
-            } else {
-                result = (String) exceptionNounHash.get(input);
-            }
+            result = exceptionNounHash.containsKey(mixedCase) ? (String) exceptionNounHash.get(mixedCase) : (String) exceptionNounHash.get(input);
         } else {
             // Test all regular plural forms, and correct to singular.
             if (WordNetUtilities.substTest(input, "s$", "", nounSynsetHash)) {
@@ -1543,11 +1523,7 @@ public class WordNet {
 
         if ((exceptionVerbHash.containsKey(mixedCase))
                 || (exceptionVerbHash.containsKey(input))) {
-            if (exceptionVerbHash.containsKey(mixedCase)) {
-                result = (String) exceptionVerbHash.get(mixedCase);
-            } else {
-                result = (String) exceptionVerbHash.get(input);
-            }
+            result = exceptionVerbHash.containsKey(mixedCase) ? (String) exceptionVerbHash.get(mixedCase) : (String) exceptionVerbHash.get(input);
         } else {
             // Test all regular forms and convert to present tense singular.
             if (WordNetUtilities.substTest(input, "s$", "", verbSynsetHash)) {
@@ -1775,11 +1751,7 @@ public class WordNet {
                 term = (String) adverbSUMOHash.get(synset);
             }
         }
-        if (term != null) {
-            return term.trim().substring(2, term.trim().length() - 1);
-        } else {
-            return null;
-        }
+        return term != null ? term.trim().substring(2, term.trim().length() - 1) : null;
     }
 
     /**
@@ -2193,11 +2165,7 @@ public class WordNet {
                     if (instance && uppercase) {
                         ArrayList al = kb.askWithRestriction(1, bareSumoTerm, 0, "instance");
                         String parentTerm;
-                        if (al != null && !al.isEmpty()) {
-                            parentTerm = ((Formula) al.get(0)).getArgument(2);
-                        } else {
-                            parentTerm = bareSumoTerm;
-                        }
+                        parentTerm = al != null && !al.isEmpty() ? ((Formula) al.get(0)).getArgument(2) : bareSumoTerm;
                         pw.println("proper_noun_in_lexicon(" + word + ',' + type + ", neuter, singular, '"
                                 + parentTerm + "','" + bareSumoTerm + "',1" + synset + ").");
                     } else {
@@ -2316,11 +2284,7 @@ public class WordNet {
             int i;
             i = result.indexOf('\'', start);
             //System.out.println("INFO in WordNet.processPrologString(): index: " + i + " string: " + doc);
-            if (i == 0) {
-                result = "''" + result.substring(i + 1);
-            } else {
-                result = result.substring(0, i) + "\\'" + result.substring(i + 1);
-            }
+            result = i == 0 ? "''" + result.substring(i + 1) : result.substring(0, i) + "\\'" + result.substring(i + 1);
             start = i + 2;
         }
         return result;
@@ -2446,11 +2410,7 @@ public class WordNet {
             int i;
             i = doc.indexOf('\'', start);
             //System.out.println("INFO in WordNet.processPrologString(): index: " + i + " string: " + doc);
-            if (i == 0) {
-                doc = "''" + doc.substring(i + 1);
-            } else {
-                doc = doc.substring(0, i) + "''" + doc.substring(i + 1);
-            }
+            doc = i == 0 ? "''" + doc.substring(i + 1) : doc.substring(0, i) + "''" + doc.substring(i + 1);
             start = i + 2;
         }
         return doc;

@@ -123,6 +123,7 @@ public class ExtendedPropertyDescriptor extends PropertyDescriptor {
 		@Override
 		public int compare(PropertyDescriptor desc1, PropertyDescriptor desc2) {
 
+			//noinspection IfStatementWithTooManyBranches
 			if (desc1 == null && desc2 == null) {
 				return 0;
 			} else if (desc1 != null && desc2 == null) {
@@ -130,6 +131,7 @@ public class ExtendedPropertyDescriptor extends PropertyDescriptor {
 			} else if (desc1 == null && desc2 != null) {
 				return -1;
 			} else {
+				//noinspection IfStatementWithTooManyBranches
 				if (desc1 instanceof ExtendedPropertyDescriptor && !(desc2 instanceof ExtendedPropertyDescriptor)) {
 					return -1;
 				} else if (!(desc1 instanceof ExtendedPropertyDescriptor) && desc2 instanceof ExtendedPropertyDescriptor) {
@@ -146,13 +148,9 @@ public class ExtendedPropertyDescriptor extends PropertyDescriptor {
 					? ""
 					: ((ExtendedPropertyDescriptor) desc2).getCategory());
 
-					if (category == 0) {
-						return String.CASE_INSENSITIVE_ORDER.compare(
-						desc1.getDisplayName(),
-						desc2.getDisplayName());
-					} else {
-						return category;
-					}
+					return category == 0 ? String.CASE_INSENSITIVE_ORDER.compare(
+							desc1.getDisplayName(),
+							desc2.getDisplayName()) : category;
 				}
 			}
 		}

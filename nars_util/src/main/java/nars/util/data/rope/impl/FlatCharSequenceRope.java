@@ -146,11 +146,7 @@ public class FlatCharSequenceRope extends AbstractRope implements FlatRope {
         if (start == 0 && end == this.length()) {
             return this;
         }
-        if (end - start < 8 || this.sequence instanceof String /* special optimization for String */) {
-            return new FlatCharSequenceRope(this.sequence.subSequence(start, end));
-        } else {
-            return new SubstringRope(this, start, end - start);
-        }
+        return end - start < 8 || this.sequence instanceof String ? new FlatCharSequenceRope(this.sequence.subSequence(start, end)) : new SubstringRope(this, start, end - start);
     }
 
     @Override

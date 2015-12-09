@@ -25,26 +25,27 @@ public class ExprTokenParser extends TokenParser {
         if ("piWord".equals(tokenValue) || "pi".equals(tokenValue)) {
             return new Token<>(new Pi(), origString, begin, end);
         }
-        else if ("e".equals(tokenValue)) {
+        //noinspection IfStatementWithTooManyBranches
+        if ("e".equals(tokenValue)) {
             return new Token<>(new E(), origString, begin, end);
         }
-        else if ("lonely-E".equals(tokenValue)) {
+        if ("lonely-E".equals(tokenValue)) {
             throw new ParseException("E is lonely", begin);
         }
-        else if ("lonely-d".equals(tokenValue)) {
+        if ("lonely-d".equals(tokenValue)) {
             throw new ParseException("d is lonely", begin);
         }
-        else if ("i".equals(tokenValue)) {
+        if ("i".equals(tokenValue)) {
             // if (debug) System.err.println("i am not yet supported");
             throw new ParseException("i am not yet supported", begin);
         }
-        else if ("var".equals(tokenValue)) {
+        if ("var".equals(tokenValue)) {
             return new Token<>(context.getVar(matched.charAt(0)), origString, begin, end);
         }
-        else if ("number".equals(tokenValue)) {
+        if ("number".equals(tokenValue)) {
             return new Token<>(Num.make(Double.parseDouble(matched)), origString, begin, end);
         }
-        else if ("derivativeFunc".equals(tokenValue)) {
+        if ("derivativeFunc".equals(tokenValue)) {
             Pattern pattern1 = Pattern.compile("^d(?:\\^(\\d+))?/d([a-zA-Z])(?:\\^(\\d+))?$");
             Matcher matcher1 = pattern1.matcher(matched);
             matcher1.find();
@@ -61,7 +62,7 @@ public class ExprTokenParser extends TokenParser {
             partial.put("degree", Integer.parseInt(firstNum));
             return new Token<>(partial, origString, begin, end);
         }
-        else if ("varDerivative".equals(tokenValue)) {
+        if ("varDerivative".equals(tokenValue)) {
             Pattern pattern1 = Pattern.compile("^d(?:\\^(\\d+))?([a-zA-Z])/d([a-zA-Z])(?:\\^(\\d+))?$");
             Matcher matcher1 = pattern1.matcher(matched);
             matcher1.find();
@@ -76,23 +77,23 @@ public class ExprTokenParser extends TokenParser {
             if (firstNum == null || lastNum == null || Integer.parseInt(firstNum) != Integer.parseInt(lastNum)) throw new ParseException("derivative degrees don't match", begin);
             return new Token<>(Derivative.make(context.getVar(var.charAt(0)), context.getVar(character.charAt(0)), Integer.parseInt(firstNum)), origString, begin, end);
         }
-        else if ("undef".equals(tokenValue)) {
+        if ("undef".equals(tokenValue)) {
             return new Token<>(new Undef(), origString, begin, end);
         }
-        else if ("true".equals(tokenValue)) {
+        if ("true".equals(tokenValue)) {
             return new Token<>(Expr.yep(), origString, begin, end);
         }
-        else if ("false".equals(tokenValue)) {
+        if ("false".equals(tokenValue)) {
             return new Token<>(Expr.nope(), origString, begin, end);
         }
-        else if ("equals".equals(tokenValue) || "notEqual".equals(tokenValue)
+        if ("equals".equals(tokenValue) || "notEqual".equals(tokenValue)
               || "lessThan".equals(tokenValue) || "greaterThan".equals(tokenValue)
               || "lessThanOrEqual".equals(tokenValue) || "greaterThanOrEqual".equals(tokenValue)) {
             PartialParseExpr partial = new PartialParseExpr("comparison");
             partial.put("operation", tokenValue);
             return new Token<>(partial, origString, begin, end);
         }
-        
+
         return token.castValueTo(Object.class);
     }
     

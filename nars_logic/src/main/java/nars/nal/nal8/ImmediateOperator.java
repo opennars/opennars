@@ -38,12 +38,7 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
         for (int i = 0; i < args.length; i++) {
             final Term y;
             final Term xx = x[i];
-            if (!(args[i] instanceof Term)) {
-                y = Atom.quote(args[i].toString());
-            }
-            else {
-                y = xx;
-            }
+            y = !(args[i] instanceof Term) ? Atom.quote(args[i].toString()) : xx;
             x[i] = y;
         }
         return x;

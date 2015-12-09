@@ -1195,18 +1195,12 @@ public class IndexedTreeMap<K, V>
 
         @Override
         public Iterator<E> iterator() {
-            if (m instanceof IndexedTreeMap)
-                return ((IndexedTreeMap<E, Object>) m).keyIterator();
-            else
-                return (Iterator<E>) (((IndexedTreeMap.NavigableSubMap) m).keyIterator());
+            return m instanceof IndexedTreeMap ? ((IndexedTreeMap<E, Object>) m).keyIterator() : (Iterator<E>) (((NavigableSubMap) m).keyIterator());
         }
 
         @Override
         public Iterator<E> descendingIterator() {
-            if (m instanceof IndexedTreeMap)
-                return ((IndexedTreeMap<E, Object>) m).descendingKeyIterator();
-            else
-                return (Iterator<E>) (((IndexedTreeMap.NavigableSubMap) m).descendingKeyIterator());
+            return m instanceof IndexedTreeMap ? ((IndexedTreeMap<E, Object>) m).descendingKeyIterator() : (Iterator<E>) (((NavigableSubMap) m).descendingKeyIterator());
         }
 
         @Override
@@ -2547,10 +2541,10 @@ public class IndexedTreeMap<K, V>
     private void fixAfterInsertion(Entry<K, V> x) {
         x.color = RED;
 
-        while (x != null && x != root && x.parent.color == RED) {
+        while (x != null && x != root && !x.parent.color) {
             if (parentOf(x) == leftOf(parentOf(parentOf(x)))) {
                 Entry<K, V> y = rightOf(parentOf(parentOf(x)));
-                if (colorOf(y) == RED) {
+                if (!colorOf(y)) {
                     setColor(parentOf(x), BLACK);
                     setColor(y, BLACK);
                     setColor(parentOf(parentOf(x)), RED);
@@ -2566,7 +2560,7 @@ public class IndexedTreeMap<K, V>
                 }
             } else {
                 Entry<K, V> y = leftOf(parentOf(parentOf(x)));
-                if (colorOf(y) == RED) {
+                if (!colorOf(y)) {
                     setColor(parentOf(x), BLACK);
                     setColor(y, BLACK);
                     setColor(parentOf(parentOf(x)), RED);
@@ -2623,12 +2617,12 @@ public class IndexedTreeMap<K, V>
             p.left = p.right = p.parent = null;
 
             // Fix replacement
-            if (p.color == BLACK)
+            if (p.color)
                 fixAfterDeletion(replacement);
         } else if (p.parent == null) { // return if we are the only node.
             root = null;
         } else { //  No children. Use self as phantom replacement and unlink.
-            if (p.color == BLACK)
+            if (p.color)
                 fixAfterDeletion(p);
 
             if (p.parent != null) {
@@ -2653,23 +2647,23 @@ public class IndexedTreeMap<K, V>
      * From CLR
      */
     private void fixAfterDeletion(Entry<K, V> x) {
-        while (x != root && colorOf(x) == BLACK) {
+        while (x != root && colorOf(x)) {
             if (x == leftOf(parentOf(x))) {
                 Entry<K, V> sib = rightOf(parentOf(x));
 
-                if (colorOf(sib) == RED) {
+                if (!colorOf(sib)) {
                     setColor(sib, BLACK);
                     setColor(parentOf(x), RED);
                     rotateLeft(parentOf(x));
                     sib = rightOf(parentOf(x));
                 }
 
-                if (colorOf(leftOf(sib)) == BLACK &&
-                        colorOf(rightOf(sib)) == BLACK) {
+                if (colorOf(leftOf(sib)) &&
+                        colorOf(rightOf(sib))) {
                     setColor(sib, RED);
                     x = parentOf(x);
                 } else {
-                    if (colorOf(rightOf(sib)) == BLACK) {
+                    if (colorOf(rightOf(sib))) {
                         setColor(leftOf(sib), BLACK);
                         setColor(sib, RED);
                         rotateRight(sib);
@@ -2684,19 +2678,19 @@ public class IndexedTreeMap<K, V>
             } else { // symmetric
                 Entry<K, V> sib = leftOf(parentOf(x));
 
-                if (colorOf(sib) == RED) {
+                if (!colorOf(sib)) {
                     setColor(sib, BLACK);
                     setColor(parentOf(x), RED);
                     rotateRight(parentOf(x));
                     sib = leftOf(parentOf(x));
                 }
 
-                if (colorOf(rightOf(sib)) == BLACK &&
-                        colorOf(leftOf(sib)) == BLACK) {
+                if (colorOf(rightOf(sib)) &&
+                        colorOf(leftOf(sib))) {
                     setColor(sib, RED);
                     x = parentOf(x);
                 } else {
-                    if (colorOf(leftOf(sib)) == BLACK) {
+                    if (colorOf(leftOf(sib))) {
                         setColor(rightOf(sib), BLACK);
                         setColor(sib, RED);
                         rotateLeft(sib);

@@ -174,6 +174,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
 
                 TypedOrganism[] children = new TypedOrganism[2];
 
+                //noinspection IfStatementWithTooManyBranches
                 if (depth1 <= maxDepth && depth2 <= maxDepth) {
                     children = new TypedOrganism[]{program1, program2};
                 } else if (depth1 <= maxDepth) {
@@ -284,11 +285,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
                 }
             }
 
-            if ((!nonTerminalIndexes.isEmpty()) && (random.nextDouble() >= terminalProbability)) {
-                return nonTerminalIndexes.get(random.nextInt(nonTerminalIndexes.size()));
-            } else {
-                return terminalIndexes.get(random.nextInt(terminalIndexes.size()));
-            }
+            return (!nonTerminalIndexes.isEmpty()) && (random.nextDouble() >= terminalProbability) ? nonTerminalIndexes.get(random.nextInt(nonTerminalIndexes.size())) : terminalIndexes.get(random.nextInt(terminalIndexes.size()));
         }
     }
 

@@ -26,10 +26,7 @@ public class Hauto {
     }
     
     public boolean bridge(Logic c) {
-        if(c==Logic.UNCERTAINBRIDGE || c==Logic.BRIDGE) {
-            return true;
-        }
-        return false;
+        return c == Logic.UNCERTAINBRIDGE || c == Logic.BRIDGE;
     }
     
     //put to beginning because we will need this one most often
@@ -99,12 +96,12 @@ public class Hauto {
                 w.charge=0.0f;
                 w.chargeFront=true;    //it's on the front of the wave of change
             }
-            if(r.chargeFront==false && r.charge==0 && (up.logic==SWITCH || down.logic==SWITCH || (left.logic==SWITCH || (is_logic(left) && left.value==1)) || (right.logic==SWITCH || (is_logic(right) && right.value==1))))
+            if(!r.chargeFront && r.charge==0 && (up.logic==SWITCH || down.logic==SWITCH || (left.logic==SWITCH || (is_logic(left) && left.value==1)) || (right.logic==SWITCH || (is_logic(right) && right.value==1))))
             {
                 w.charge=1.0f;
                 w.chargeFront=true;   //it's on the front of the wave of change
             }
-            if(r.chargeFront==false && r.charge==1 && (up.logic==OFFSWITCH || down.logic==OFFSWITCH || (left.logic==OFFSWITCH || (is_logic(left) && left.value==0)) || (right.logic==OFFSWITCH || (is_logic(right) && right.value==0))))
+            if(!r.chargeFront && r.charge==1 && (up.logic==OFFSWITCH || down.logic==OFFSWITCH || (left.logic==OFFSWITCH || (is_logic(left) && left.value==0)) || (right.logic==OFFSWITCH || (is_logic(right) && right.value==0))))
             {
                 w.charge=0.0f;
                 w.chargeFront=true;    //it's on the front of the wave of change
@@ -507,9 +504,7 @@ public class Hauto {
                 readCells[i][j] = new Cell(s);
                 writeCells[i][j] = new Cell(s);
                 
-                if ((i == 0) || (i == w-1))
-                    readCells[i][j].setBoundary();
-                else if ((j == 0) || (j == h-1))
+                if ((i == 0) || (i == w - 1) || (j == 0) || (j == h - 1))
                     readCells[i][j].setBoundary();
             }
         }

@@ -220,8 +220,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 		final int fullWords = (int)( length / Long.SIZE );
 		Arrays.fill( bits, 0, fullWords, value ? 0xFFFFFFFFFFFFFFFFL : 0L );
 		if ( length % Long.SIZE != 0 ) {
-			if ( value ) bits[ fullWords ] = ( 1L << length % Long.SIZE ) - 1;
-			else bits[ fullWords ] = 0;
+			bits[fullWords] = value ? (1L << length % Long.SIZE) - 1 : 0;
 		}
 	}
 
@@ -408,8 +407,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 				carry = nextCarry;
 			}
 		}
-			
-		return;
+
 	}
 	
 	public boolean removeBoolean( final long index ) {
@@ -431,7 +429,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 	public LongArrayBitVector append( long value, int width ) {
 		if ( width == 0 ) return this;
-		if ( CHECKS && width < Long.SIZE && ( value & -1L << width ) != 0 ) throw new IllegalArgumentException( "The specified value (" + value + ") is larger than the maximum value for the given width (" + width + ')');
+		if (width < Long.SIZE && (value & -1L << width) != 0) throw new IllegalArgumentException( "The specified value (" + value + ") is larger than the maximum value for the given width (" + width + ')');
 		final long length = this.length;
 		final int startWord = word( length );
 		final int startBit = bit( length );

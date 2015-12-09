@@ -37,10 +37,6 @@ public class ConceptButton extends JButton implements ActionListener {
         if (this.concept == null) {
             this.concept = nar.memory.concept(term);
         }
-        if (this.concept == null) {
-            //concept doesnt exist (yet)
-            return;
-        }
         //popup(nar, concept);
     }
 //

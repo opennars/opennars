@@ -27,11 +27,7 @@ public class Scalar extends Literal<Double> implements DiffableFunction {
 
     @Override
     public double partialDerive(Scalar parameter) {
-        if (this == parameter) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return this == parameter ? 1 : 0;
     }
 
 

@@ -119,12 +119,7 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
      * @return true if successful, false if an error occurred
      */
     public final boolean execute(final Task op) {
-        if (async()) {
-            return nar.execAsync(() -> executeSynch(op));
-        }
-        else {
-            return executeSynch(op);
-        }
+        return async() ? nar.execAsync(() -> executeSynch(op)) : executeSynch(op);
     }
 
     final boolean executeSynch(Task op) {
@@ -219,10 +214,7 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
     protected void noticeExecuted(final Task operation) {
 
         Budget b;
-        if (!operation.isDeleted())
-            b = operation.getBudget();
-        else
-            b = Budget.zero;//if operation was cancelled, at least provide some result feedback
+        b = !operation.isDeleted() ? operation.getBudget() : Budget.zero;
 
         final Memory memory = nar().memory;
 

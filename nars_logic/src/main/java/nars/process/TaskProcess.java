@@ -200,18 +200,12 @@ public class TaskProcess extends AbstractPremise implements Serializable {
     final Concept getTermLinkTemplateTarget(TermLinkTemplate t) {
         final Term target = t.getTarget();
         final NAR nar = this.nar;
-        if (activateTermLinkTemplates)
-            return nar.conceptualize(target, t);
-        else
-            return nar.concept(target);
+        return activateTermLinkTemplates ? nar.conceptualize(target, t) : nar.concept(target);
     }
 
     final Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget) {
         Term tt = t.getTerm();
-        if (activateTermLinkTemplateTargetsFromTask)
-            return nar.conceptualize(tt, taskBudget);
-        else
-            return nar.concept(tt);
+        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(tt, taskBudget) : nar.concept(tt);
     }
 
     /**
@@ -389,9 +383,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
             return c;
         }
-        else {
-            memory.remove(task, null /* "Unprocessable" */);
-        }
+        memory.remove(task, null /* "Unprocessable" */);
 
         return null;
 

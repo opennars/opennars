@@ -143,11 +143,7 @@ public class ConcatenationRope extends AbstractRope {
         if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
-        if (start >= this.left.length()) {
-            return this.right.iterator(start - this.left.length());
-        } else {
-            return new ConcatenationRopeIteratorImpl(this, start);
-        }
+        return start >= this.left.length() ? this.right.iterator(start - this.left.length()) : new ConcatenationRopeIteratorImpl(this, start);
     }
 
     @Override
@@ -170,11 +166,7 @@ public class ConcatenationRope extends AbstractRope {
         if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
-        if (start >= this.right.length()) {
-            return this.left.reverseIterator(start - this.right.length());
-        } else {
-            return new ConcatenationRopeReverseIteratorImpl(this, start);
-        }
+        return start >= this.right.length() ? this.left.reverseIterator(start - this.right.length()) : new ConcatenationRopeReverseIteratorImpl(this, start);
     }
 
     @Override

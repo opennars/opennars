@@ -190,14 +190,7 @@ public class Follow1D implements RLEnvironment {
         double a = Math.round(action - (numActions/ 2.0d));
         double direction = (a)/(numActions/ 2.0d);
 
-        if (direction==0) {
-            //decelerate on zero
-            //myV *= decelerationFactor;
-            myV = 0;
-        }
-        else {
-            myV = direction * acceleration;
-        }
+        myV = direction == 0 ? 0 : direction * acceleration;
         myPos += myV;
 
         //TODO detect bump and do not report succesful act

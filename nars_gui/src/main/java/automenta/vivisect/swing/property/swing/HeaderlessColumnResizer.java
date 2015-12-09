@@ -93,11 +93,7 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
       TableColumn resizingColumn = getResizingColumn(p, index);
       if (canResize(resizingColumn)) {
         table.getTableHeader().setResizingColumn(resizingColumn);
-        if (table.getTableHeader().getComponentOrientation().isLeftToRight()) {
-          mouseXOffset = p.x - resizingColumn.getWidth();
-        } else {
-          mouseXOffset = p.x + resizingColumn.getWidth();
-        }
+        mouseXOffset = table.getTableHeader().getComponentOrientation().isLeftToRight() ? p.x - resizingColumn.getWidth() : p.x + resizingColumn.getWidth();
       }
     }
   }
@@ -126,11 +122,7 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
     if (resizingColumn != null) {
       int oldWidth = resizingColumn.getWidth();
       int newWidth;
-      if (headerLeftToRight) {
-        newWidth = mouseX - mouseXOffset;
-      } else {
-        newWidth = mouseXOffset - mouseX;
-      }
+      newWidth = headerLeftToRight ? mouseX - mouseXOffset : mouseXOffset - mouseX;
       resizingColumn.setWidth(newWidth);
 
       Container container;

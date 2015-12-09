@@ -147,10 +147,7 @@ public class POJOPane<X> extends BorderPane {
             if (value == object)
                 return null;
 
-            if (value!=null)
-                valueNode = POJONode.valueToNode(value, field);
-            else
-                valueNode = new Text("null");
+            valueNode = value != null ? POJONode.valueToNode(value, field) : new Text("null");
         } catch (IllegalAccessException e) {
             valueNode =
                     new /*Error*/Label(field.getType().toString() + '\n' + e.toString());

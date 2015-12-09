@@ -75,7 +75,7 @@ public final class AgentGUI extends JFrame implements AbstractUI {
     }
 
     public boolean quitRequested() {
-        return (keyboard.quit == true);
+        return (keyboard.quit);
     }
 
     public void refresh() {

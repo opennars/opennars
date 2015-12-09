@@ -253,8 +253,9 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
         final long cycleDelay = 30L;
         try   
         {   
-            double d = 0.0D;   
-            do   
+            double d = 0.0D;
+            //noinspection InfiniteLoopStatement
+            do
             {   
                 width = getWidth();
                 height = getHeight();
@@ -291,9 +292,8 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
             } while(true);   
         }   
         catch(InterruptedException _ex)   
-        {   
-            return;   
-        }   
+        {
+        }
     }   
    
     public void sleep(int i)   

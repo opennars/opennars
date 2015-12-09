@@ -252,11 +252,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
     private static boolean nodesEqual(final Node nodeA, final Node nodeB) {
         boolean equal = false;
         if (nodeA.getClass().equals(nodeB.getClass())) {
-            if (nodeA.getArity() > 0) {
-                equal = true;
-            } else {
-                equal = nodeA.equals(nodeB);
-            }
+            equal = nodeA.getArity() > 0 || nodeA.equals(nodeB);
         }
 
         return equal;

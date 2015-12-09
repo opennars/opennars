@@ -98,6 +98,7 @@ public class Pair implements IPair {
      */
 
     static void stringify(Object x, boolean quoted, StringBuffer buf) {
+        //noinspection IfStatementWithTooManyBranches
         if (x == null)
             buf.append("()");
         else if (x instanceof Double) {

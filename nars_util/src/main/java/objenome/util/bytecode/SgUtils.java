@@ -157,17 +157,9 @@ public final class SgUtils {
         // Basic checks
         final int type;
         if (isInterface) {
-            if (isInnerClass) {
-                type = INNER_INTERFACE;
-            } else {
-                type = OUTER_INTERFACE;
-            }
+            type = isInnerClass ? INNER_INTERFACE : OUTER_INTERFACE;
         } else {
-            if (isInnerClass) {
-                type = INNER_CLASS;
-            } else {
-                type = OUTER_CLASS;
-            }
+            type = isInnerClass ? INNER_CLASS : OUTER_CLASS;
         }
         checkModifiers(type, modifiers);
 
@@ -328,17 +320,9 @@ public final class SgUtils {
      */
     public static String concatPackages(final String package1, final String package2) {
         if ((package1 == null) || (package1.isEmpty())) {
-            if ((package2 == null) || (package2.isEmpty())) {
-                return "";
-            } else {
-                return package2;
-            }
+            return (package2 == null) || (package2.isEmpty()) ? "" : package2;
         } else {
-            if ((package2 == null) || (package2.isEmpty())) {
-                return package1;
-            } else {
-                return package1 + '.' + package2;
-            }
+            return (package2 == null) || (package2.isEmpty()) ? package1 : package1 + '.' + package2;
         }
     }
 

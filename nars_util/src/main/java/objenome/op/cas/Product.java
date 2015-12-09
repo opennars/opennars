@@ -204,8 +204,7 @@ public class Product extends Operation {
             // if (debug) System.err.println("Product toString(): for expr=" + expr + ", exprLevelLeft=" + exprLevelLeft + ", exprLevelRight=" + exprLevelRight);
 
             boolean lastParens = parens;
-            parens = false;
-            if (i != 0 && exprLevelLeft != null && classOrder > exprLevelLeft) parens = true;
+            parens = i != 0 && exprLevelLeft != null && classOrder > exprLevelLeft;
             if (i != exprs.size() - 1 && exprLevelRight != null && classOrder > exprLevelRight) parens = true;
             
             //if (exprClassOrder != null && (exprClassOrder < classOrder || (i != 0 && exprClassOrder == classOrder))) parens = true;
@@ -214,13 +213,7 @@ public class Product extends Operation {
             String exprString = expr.pretty();
             
             if (i != 0) {
-                if (lastMinus) {}
-                else if (parens || lastParens || exprString.charAt(0) == '(') {}
-                else if (lastExpr.isNumberPrinted() && (expr instanceof Var || expr instanceof Constant || expr.isFunction() || !(expr.firstAtom() instanceof Num)) && !(expr instanceof Num)) {}
-                /*else if ((lastExpr instanceof Var || lastExpr instanceof Constant) && !(lastExpr instanceof Number)
-                      && (    expr instanceof Var ||     expr instanceof Constant) && !(    expr instanceof Number)) {
-                    string = string.concat(" ");
-                }*/
+                if (lastMinus || parens || lastParens || exprString.charAt(0) == '(' || lastExpr.isNumberPrinted() && (expr instanceof Var || expr instanceof Constant || expr.isFunction() || !(expr.firstAtom() instanceof Num)) && !(expr instanceof Num)) {}
                 else {
                     string = string.concat("*");
                 }
@@ -249,19 +242,19 @@ public class Product extends Operation {
         
         // if (debug) System.err.println("Product: equalsExpr: " + dump() + " =? " + expr);
         ArrayList<Expr> otherExprs = ((Operation) expr).getExprs();
-        for (Expr expr2 : exprs) {
-            // if (debug) System.err.println("Product: equalsExpr: expr2: " + expr2);
-            for (Expr otherExpr2 : otherExprs) {
+        // if (debug) System.err.println("Product: equalsExpr: expr2: " + expr2);
+        for (Expr expr2 : exprs)
+            for (int i = 0; i < 1; i++) {
+                Expr otherExpr2 = otherExprs.get(i);
                 // if (debug) System.err.println("Product: equalsExpr: otherExpr2: " + otherExpr2);
                 if (expr2.equalsExpr(otherExpr2)) {
-                // if (debug) System.err.println("Product: equalsExpr: " + expr2 + " == " + otherExpr2);
+                    // if (debug) System.err.println("Product: equalsExpr: " + expr2 + " == " + otherExpr2);
                     otherExprs.remove(otherExpr2);
                     break;
                 }
                 // if (debug) System.err.println("Product: equalsExpr: " + expr2 + " != " + otherExpr2);
                 return false;
             }
-        }
         
         return true;
     }

@@ -102,10 +102,7 @@ public interface Task extends Sentence,
 
         int size;
 
-        if (tasks instanceof Collection)
-            size = ((Collection)tasks).size();
-        else
-            size = 2;
+        size = tasks instanceof Collection ? ((Collection) tasks).size() : 2;
 
         Set<Truthed> s = Global.newHashSet(size);
         for (Task t : tasks)
@@ -221,10 +218,7 @@ public interface Task extends Sentence,
 
 
         String contentName;
-        if (term && getTerm()!=null) {
-            contentName = getTerm().toString();
-        }
-        else contentName = "";
+        contentName = term && getTerm() != null ? getTerm().toString() : "";
 
         final CharSequence tenseString;
         if (memory!=null) {
@@ -633,12 +627,9 @@ public interface Task extends Sentence,
 
         boolean eternal = targetTime == Tense.ETERNAL;
         boolean tenseEternal = Tense.isEternal(occurrenceTime);
-        if (eternal && tenseEternal) {
+        if (eternal ? tenseEternal : tenseEternal) {
             return new DefaultTruth(currentTruth);                 //target and itself is eternal so return the truth of itself
         }
-        else if(!eternal && tenseEternal) {
-            return new DefaultTruth(currentTruth);                 //target is not eternal but itself is,
-        }                                                                        //note: we don't need to project since itself holds for every moment.
         else if (eternal && !tenseEternal) { //target is eternal, but ours isnt, so we need to eternalize it
             return TruthFunctions.eternalize(currentTruth);
         }
@@ -649,12 +640,7 @@ public interface Task extends Sentence,
             float factor = TruthFunctions.temporalProjection(targetTime, occurrenceTime, currentTime);
             float projectedConfidence = factor * currentTruth.getConfidence();
 
-            if(projectedConfidence > eternalTruth.getConfidence()) {
-                return new DefaultTruth(currentTruth.getFrequency(), projectedConfidence);
-            }
-            else {
-                return eternalTruth;
-            }
+            return projectedConfidence > eternalTruth.getConfidence() ? new DefaultTruth(currentTruth.getFrequency(), projectedConfidence) : eternalTruth;
         }
     }
 

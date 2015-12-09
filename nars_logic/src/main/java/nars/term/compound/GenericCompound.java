@@ -62,6 +62,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public String toString(boolean pretty) {
+        //noinspection IfStatementWithTooManyBranches
         if (Operation.isOperation(this)) {
             return Operation.toString((Compound) term(0), term(1), pretty);
         }

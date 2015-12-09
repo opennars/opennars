@@ -28,6 +28,7 @@ public class SubstituteIfUnified extends Substitute {
     public SubstituteIfUnified(Term varType, Term x, Term y) {
         super(x, y);
 
+        //noinspection IfStatementWithTooManyBranches
         if (varType.equals(QUERY_VAR))  {
             type = Op.VAR_QUERY;
         } else if (varType.equals(INDEP_VAR)) {

@@ -48,10 +48,12 @@ public class Deactivate extends SyncOperator {
 
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
-        for (Term t : Operation.argTerms(operation)) {
+        Term[] argTerms = Operation.argTerms(operation);
+        for (int i = 0; i < 1; i++) {
+            Term t = argTerms[i];
             System.out.println(" --- " + t);
             TestChamber.operateObj(t.toString(), "deactivate");
-            break;
+
         }
         
         

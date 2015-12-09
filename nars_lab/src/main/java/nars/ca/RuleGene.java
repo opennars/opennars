@@ -138,10 +138,7 @@ public class RuleGene {
 				bNewVal = bOldVal;
 				if (bOldVal > 1) // decay
 				{
-					if (bOldVal < iClo - 1)
-						bNewVal = (short) (bOldVal + 1);
-					else
-						bNewVal = 0;
+					bNewVal = bOldVal < iClo - 1 ? (short) (bOldVal + 1) : 0;
 				} else // 0, 1
 				{
 					iCnt = 0;

@@ -224,11 +224,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         K key = tx.name();
         V item;
-        if (key != null) {
-            item = get(key);
-        } else {
-            item = peekNext();
-        }
+        item = key != null ? get(key) : peekNext();
 
         return updateItem(tx, item);
     }
@@ -293,16 +289,14 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         if ((nextBudget.isDeleted()) || (nextBudget.equalsByPrecision(sourceBudget)))
             return false;
-        else {
-            //it has changed
+        //it has changed
 
-            //this PUT(TAKE( sequence can be optimized in particular impl
-            //the default is a non-optimal failsafe
-            remove(item.name());
+        //this PUT(TAKE( sequence can be optimized in particular impl
+        //the default is a non-optimal failsafe
+        remove(item.name());
 
-            //apply changed budget after removed and before re-insert
-            sourceBudget.budget(nextBudget);
-        }
+        //apply changed budget after removed and before re-insert
+        sourceBudget.budget(nextBudget);
         return true;
     }
 

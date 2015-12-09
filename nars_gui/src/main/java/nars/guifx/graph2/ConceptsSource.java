@@ -136,10 +136,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
             Bag<Term, Concept> x = ((AbstractNAR) nar).core.concepts();
 
             String keywordFilter, _keywordFilter = includeString.get();
-            if (_keywordFilter != null && _keywordFilter.isEmpty())
-                keywordFilter = null;
-            else
-                keywordFilter = _keywordFilter;
+            keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;
 
             double minPri = this.minPri.get();
             double maxPri = this.maxPri.get();

@@ -74,11 +74,7 @@ public abstract class Numeric1 extends MathNode implements UnivariateFunction, F
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0])) {
-            return inputTypes[0];
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0]) ? inputTypes[0] : null;
     }
 
     /** it's better to use value(x) directly and not this since it involves boxing */

@@ -28,12 +28,7 @@ public interface Subst  {
 
 
     static boolean isSubstitutionComplete(Term a, Op o) {
-        if (o == Op.VAR_PATTERN) {
-            return !Variable.hasPatternVariable(a);
-        }
-        else {
-            return !a.hasAny(o);
-        }
+        return o == Op.VAR_PATTERN ? !Variable.hasPatternVariable(a) : !a.hasAny(o);
     }
 
 

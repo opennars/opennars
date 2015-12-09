@@ -122,68 +122,66 @@ public abstract class MemoryManager {
     }
 
     static Object malloc(int elems, long bytes, int type, Object orig, int from, boolean force) {
-        while(true) {
-            if(!MEM_LOW_CRITICAL && !force && !CAN_ALLOC && bytes > 256L  ) {
-                    //&& !(Thread.currentThread() instanceof Cleaner)) {
-                Object e = _lock;
-                synchronized(_lock) {
-                    try {
-                        _lock.wait(3000L);
-                    } catch (InterruptedException var10) {
-                        ;
-                    }
+        if(!MEM_LOW_CRITICAL && !force && !CAN_ALLOC && bytes > 256L  ) {
+                //&& !(Thread.currentThread() instanceof Cleaner)) {
+            Object e = _lock;
+            synchronized(_lock) {
+                try {
+                    _lock.wait(3000L);
+                } catch (InterruptedException var10) {
+                    ;
                 }
             }
+        }
 
-            MEM_ALLOC.addAndGet(bytes);
+        MEM_ALLOC.addAndGet(bytes);
 
-            try {
-                switch(type) {
-                case -9:
-                    return Arrays.copyOfRange((double[])((double[])orig), from, elems);
-                case -8:
-                    return Arrays.copyOfRange((long[])((long[])orig), from, elems);
-                case -7:
-                case -6:
-                case -5:
-                case -3:
-                case -2:
-                case 3:
-                case 6:
-                case 7:
-                default:
-                    throw new RuntimeException("fail"); //H2O.fail();
-                case -4:
-                    return Arrays.copyOfRange((int[])((int[])orig), from, elems);
-                case -1:
-                    return Arrays.copyOfRange((byte[])((byte[])orig), from, elems);
-                case 0:
-                    return new boolean[elems];
-                case 1:
-                    return new byte[elems];
-                case 2:
-                    return new short[elems];
-                case 4:
-                    return new int[elems];
-                case 5:
-                    return new float[elems];
-                case 8:
-                    return new long[elems];
-                case 9:
-                    return new double[elems];
-                case 10:
-                    return new Object[elems];
-                }
-            } catch (OutOfMemoryError var12) {
-                /*
-                if(Cleaner.isDiskFull()) {
-                    UDPRebooted.suicide(T.oom, H2O.SELF);
-                }
-
-                set_goals("OOM", true, bytes);
-                */
-                throw new RuntimeException(var12);
+        try {
+            switch(type) {
+            case -9:
+                return Arrays.copyOfRange((double[])((double[])orig), from, elems);
+            case -8:
+                return Arrays.copyOfRange((long[])((long[])orig), from, elems);
+            case -7:
+            case -6:
+            case -5:
+            case -3:
+            case -2:
+            case 3:
+            case 6:
+            case 7:
+            default:
+                throw new RuntimeException("fail"); //H2O.fail();
+            case -4:
+                return Arrays.copyOfRange((int[])((int[])orig), from, elems);
+            case -1:
+                return Arrays.copyOfRange((byte[])((byte[])orig), from, elems);
+            case 0:
+                return new boolean[elems];
+            case 1:
+                return new byte[elems];
+            case 2:
+                return new short[elems];
+            case 4:
+                return new int[elems];
+            case 5:
+                return new float[elems];
+            case 8:
+                return new long[elems];
+            case 9:
+                return new double[elems];
+            case 10:
+                return new Object[elems];
             }
+        } catch (OutOfMemoryError var12) {
+            /*
+            if(Cleaner.isDiskFull()) {
+                UDPRebooted.suicide(T.oom, H2O.SELF);
+            }
+
+            set_goals("OOM", true, bytes);
+            */
+            throw new RuntimeException(var12);
         }
     }
 

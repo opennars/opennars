@@ -951,7 +951,8 @@ public class FindSubst extends Versioning implements Subst {
 
             return matchChoose1(x[0], y);
 
-        } else if (xsize == 2) {
+        }
+        if (xsize == 2) {
 
             int prePermute = now();
             MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
@@ -994,7 +995,8 @@ public class FindSubst extends Versioning implements Subst {
             powerDivisor = startDivisor;
             return matched;
 
-        } else if (xsize == 0) {
+        }
+        if (xsize == 0) {
             return true;
         }
 
@@ -1076,12 +1078,8 @@ public class FindSubst extends Versioning implements Subst {
                                 new ArrayEllipsisMatch(
                                         Y, j, j + available
                                 ));
-                    } else if (i == 0) {
-                        //PREFIX the ellipsis occurred at the start and there are additional terms following it
-                        //TODO
-                        return false;
                     } else {
-                        //INNER the ellipsis occurred before the end, we need to handle internal ranges, not just suffix
+                        //PREFIX the ellipsis occurred at the start and there are additional terms following it
                         //TODO
                         return false;
                     }

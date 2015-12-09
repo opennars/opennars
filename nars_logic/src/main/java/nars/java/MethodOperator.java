@@ -89,11 +89,7 @@ public class MethodOperator extends TermFunction {
             throw new RuntimeException("invalid argument count: needs " + requires + " but has " + Arrays.toString(x));
 
         final Object instance;
-        if (paramOffset == 0)
-            instance = null;
-        else {
-            instance = context.object(x[0]);
-        }
+        instance = paramOffset == 0 ? null : context.object(x[0]);
 
         final Object[] args;
         if (pc == 0) {
@@ -130,13 +126,7 @@ public class MethodOperator extends TermFunction {
 
             final Object result;
             Object ll = currentTask.getLogLast();
-            if (ll instanceof NALObjects.InvocationResult) {
-                //it was already invoked and here is the value:
-                result = ((NALObjects.InvocationResult) ll).value;
-            }
-            else {
-                result = context.invokeVolition(currentTask, method, instance, args);
-            }
+            result = ll instanceof NALObjects.InvocationResult ? ((NALObjects.InvocationResult) ll).value : context.invokeVolition(currentTask, method, instance, args);
 
             if (feedback)
                 return context.term(result);

@@ -29,11 +29,7 @@ public class EnumEditor extends ComboBoxPropertyEditor {
 
 		@Override
 		public String toString() {
-			if (value == null) {
-				return I18N.NOT_SET;
-			} else {
-				return value.toString();
-			}
+			return value == null ? I18N.NOT_SET : value.toString();
 		}
 	}
 

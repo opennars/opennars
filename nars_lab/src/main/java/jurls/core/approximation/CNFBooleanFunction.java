@@ -105,11 +105,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
 
         for (int i = 0; i < maxTerm.length; ++i) {
             int literal = maxTerm[i];
-            if (literal > 0) {
-                b |= variables[literal - 1];
-            } else {
-                b |= ~variables[-literal - 1];
-            }
+            b |= literal > 0 ? variables[literal - 1] : ~variables[-literal - 1];
         }
         b |= parameters[clauseIndex];
 
@@ -137,11 +133,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
             long v = Math.round(((1L << numBitsPerVariable[i]) - 1) * xs[i]);
 
             for (int k = 0; k < numBitsPerVariable[i]; ++k, ++j) {
-                if (((v >> k) & 1) == 1) {
-                    variables[j] = ~0L;
-                } else {
-                    variables[j] = 0L;
-                }
+                variables[j] = ((v >> k) & 1) == 1 ? ~0L : 0L;
             }
         }
 

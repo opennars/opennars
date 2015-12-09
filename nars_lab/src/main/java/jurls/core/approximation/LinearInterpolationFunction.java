@@ -35,8 +35,8 @@ public class LinearInterpolationFunction implements ParameterizedFunction, Funct
         Map.Entry<Double, Double> eHigh = evidence.higherEntry(x);
         
         if (eLow == null && eHigh == null)
-            return 0;        
-        else if ((eLow!=null) && (eHigh!=null)) {
+            return 0;
+        if ((eLow!=null) && (eHigh!=null)) {
             double lk = eLow.getKey();
             double hk = eHigh.getKey();
             double l = eLow.getValue();
@@ -44,17 +44,17 @@ public class LinearInterpolationFunction implements ParameterizedFunction, Funct
             if (l == h) return l;
             if (x == lk) return l;
             if (x == hk) return h;
-            
+
             double ld = Math.abs(lk - x);
             double lh = Math.abs(hk - x);
             double pl = ld / (ld + lh);
-            
+
             return l * (1.0 - pl) + h * (pl);
         }
-        else if (eLow==null) {
+        if (eLow==null) {
             return eHigh.getValue();
         }
-        else if (eHigh==null) {
+        if (eHigh==null) {
             return eLow.getValue();
         }
         return 0.0d;

@@ -228,20 +228,9 @@ public class DeepQBrain {
         if (this.forward_passes > this.temporal_window) {
             // we have enough to actually do something reasonable
             net_input = this.getNetInput(input_array);
-            if (this.learning) {
-                // compute epsilon for the epsilon-greedy policy
-                this.epsilon = (float) Math.min(1.0, Math.max(this.epsilon_min, 1.0 - (this.age - this.learning_steps_burnin) / (this.learning_steps_total - this.learning_steps_burnin)));
-            } else {
-                this.epsilon = this.epsilon_test_time; // use test-time value
-            }
+            this.epsilon = this.learning ? (float) Math.min(1.0, Math.max(this.epsilon_min, 1.0 - (this.age - this.learning_steps_burnin) / (this.learning_steps_total - this.learning_steps_burnin))) : this.epsilon_test_time;
             float rf = rng.nextFloat();
-            if (rf < this.epsilon) {
-                // choose a random action with epsilon probability
-                action = this.getActionRandom();
-            } else {
-                // otherwise use our policy to make decision
-                action = this.policy(net_input);
-            }
+            action = rf < this.epsilon ? this.getActionRandom() : this.policy(net_input);
         } else {
             // pathological case that happens first few iterations
             // before we accumulate window_size inputs

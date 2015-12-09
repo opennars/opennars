@@ -48,6 +48,7 @@ public class RuleLife {
 				if (Character.isDigit(cChar)) {
 					iCharVal = cChar - '0';
 					if ((iCharVal >= 0) && (iCharVal <= 8)) {
+						//noinspection IfStatementWithTooManyBranches
 						if ((sTok.charAt(0) == 'S') || (sTok.charAt(0) == 's'))
 							RulesS[iCharVal] = true;
 						else if ((sTok.charAt(0) == 'B')
@@ -147,21 +148,15 @@ public class RuleLife {
 				if (bOldVal == 0) // was dead
 				{
 					if (RulesB[iCnt]) // rules for birth
-						if (ColoringMethod == 1) // standard
-							bNewVal = 1; // birth
-						else
-							bNewVal = (short) (mjb.Cycle
-									% (mjb.StatesCount - 1) + 1); // birth
+						bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
+								% (mjb.StatesCount - 1) + 1);
 				} else // was alive
 				{
 					if (RulesS[iCnt]) // rules for surviving
 					{
 						if (ColoringMethod == 1) // standard
 						{
-							if (bOldVal < (mjb.StatesCount - 1))
-								bNewVal = (short) (bOldVal + 1); // getting older...
-							else
-								bNewVal = (short) (mjb.StatesCount - 1);
+							bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
 						} else {
 							// alternate coloring - cells remain not changed
 						}

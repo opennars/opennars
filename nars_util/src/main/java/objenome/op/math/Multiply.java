@@ -152,13 +152,11 @@ public class Multiply<X extends Node> extends MathNode {
         if (Double.isFinite(an) && Double.isFinite(bn)) {
             return new Doubliteral(an * bn);
         }
-        else {
-            if (an == 1) return b;
-            if (bn == 1) return a;
+        if (an == 1) return b;
+        if (bn == 1) return a;
 
-            //if (an == -1) return negate(b)
-            //if (bn == -1) return negate(a)
-        }
+        //if (an == -1) return negate(b)
+        //if (bn == -1) return negate(a)
 
         return super.normalize();
     }

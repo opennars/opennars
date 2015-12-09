@@ -394,11 +394,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         currentLevel = cl;
 
-        if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
-            currentCounter = 1;
-        } else {                  // for active levels, take all current items
-            currentCounter = getNonEmptyLevelSize(currentLevel);
-        }
+        currentCounter = currentLevel < fireCompleteLevelThreshold ? 1 : getNonEmptyLevelSize(currentLevel);
 
         return true;
     }

@@ -442,15 +442,11 @@ public class Formula implements Comparable {
             if (isNonEmptyString(obj) && isNonEmptyString(fStr)) {
                 String theNewFormula = null;
                 if (this.listP()) {
-                    if (this.empty()) {
-                        theNewFormula = ('(' + obj + ')');
-                    } else {
-                        theNewFormula = ('('
-                                + obj
-                                + ' '
-                                + fStr.substring(1, (fStr.length() - 1))
-                                + ')');
-                    }
+                    theNewFormula = this.empty() ? '(' + obj + ')' : '('
+                            + obj
+                            + ' '
+                            + fStr.substring(1, (fStr.length() - 1))
+                            + ')';
                 } else {
                     // This should never happen during clausification, but
                     // we include it to make this procedure behave
@@ -560,14 +556,10 @@ public class Formula implements Comparable {
         boolean ans = false;
         if (isNonEmptyString(s)) {
             String str = s.trim();
-            if (str.length() > 0 && str.charAt(0) == '\"' && str.length() > 0 && str.charAt(str.length() - 1) == '\"') {
-                ans = true;
-            } else {
-                ans = ((str.indexOf(')') == -1)
-                        && (str.indexOf('\n') == -1)
-                        && (str.indexOf(' ') == -1)
-                        && (str.indexOf('\t') == -1));
-            }
+            ans = str.length() > 0 && str.charAt(0) == '\"' && str.length() > 0 && str.charAt(str.length() - 1) == '\"' || (str.indexOf(')') == -1)
+                    && (str.indexOf('\n') == -1)
+                    && (str.indexOf(' ') == -1)
+                    && (str.indexOf('\t') == -1);
         }
         return ans;
     }
@@ -647,6 +639,7 @@ public class Formula implements Comparable {
             }
             restF.theFormula = restF.cdr();
         }
+        //noinspection IfStatementWithTooManyBranches
         if ("and".equals(pred) || "or".equals(pred)) {
             if (argCount < 2) {
                 return "Too few arguments for 'and' or 'or' in formula: \n" + f.toString() + '\n';
@@ -1031,16 +1024,8 @@ public class Formula implements Comparable {
         int existsIndex = theFormula.indexOf("(exists (?", startIndex);
         int kappaFnIndex = theFormula.indexOf("(KappaFn ?", startIndex);
         while ((forallIndex != -1) || (existsIndex != -1) || (kappaFnIndex != -1)) {
-            if ((forallIndex < existsIndex && forallIndex != -1) || existsIndex == -1) {
-                tmpIndex = forallIndex;
-            } else {
-                tmpIndex = existsIndex;
-            }
-            if ((tmpIndex < kappaFnIndex && tmpIndex != -1) || kappaFnIndex == -1) {
-                startIndex = tmpIndex + 9;
-            } else {
-                startIndex = kappaFnIndex + 9;
-            }
+            tmpIndex = (forallIndex < existsIndex && forallIndex != -1) || existsIndex == -1 ? forallIndex : existsIndex;
+            startIndex = (tmpIndex < kappaFnIndex && tmpIndex != -1) || kappaFnIndex == -1 ? tmpIndex + 9 : kappaFnIndex + 9;
 
             int i = startIndex;
             while ((theFormula.charAt(i) != ')')
@@ -1098,11 +1083,7 @@ public class Formula implements Comparable {
             int spaceIndex = theFormula.indexOf(' ', startIndex);
             int parenIndex = theFormula.indexOf(')', startIndex);
             int i;
-            if ((spaceIndex < parenIndex && spaceIndex != -1) || parenIndex == -1) {
-                i = spaceIndex;
-            } else {
-                i = parenIndex;
-            }
+            i = (spaceIndex < parenIndex && spaceIndex != -1) || parenIndex == -1 ? spaceIndex : parenIndex;
             if (!quantVariables.contains(theFormula.substring(startIndex, i).intern())
                     && !unquantVariables.contains(theFormula.substring(startIndex, i).intern())) {
                 unquantVariables.add(theFormula.substring(startIndex, i).intern());
@@ -2208,11 +2189,7 @@ public class Formula implements Comparable {
                         nextF.computeTypeRestrictions(ios, scs, var, kb);
                     } else if (var.equals(arg)) {
                         String type = null;
-                        if (numarg >= types.size()) {
-                            type = findType(numarg, pred, kb);
-                        } else {
-                            type = (String) types.get(numarg);
-                        }
+                        type = numarg >= types.size() ? findType(numarg, pred, kb) : (String) types.get(numarg);
                         if (type == null) {
                             type = findType(numarg, pred, kb);
                         }
@@ -2554,11 +2531,7 @@ public class Formula implements Comparable {
                 int len = f.listLength();
                 String arg0 = f.car();
                 if (isQuantifier(arg0) && (len == 3)) {
-                    if ("forall".equals(arg0)) {
-                        result += f.insertTypeRestrictionsU(kb);
-                    } else {
-                        result += f.insertTypeRestrictionsE(kb);
-                    }
+                    result += "forall".equals(arg0) ? f.insertTypeRestrictionsU(kb) : f.insertTypeRestrictionsE(kb);
                 } else {
                     result += "(";
                     for (int i = 0; i < len; i++) {
@@ -3010,11 +2983,7 @@ public class Formula implements Comparable {
                 }
                 if (!(Character.isJavaIdentifierPart(theFormula.charAt(i)) || theFormula.charAt(i) == '-') && inToken) {
                     inToken = false;
-                    if (!"".equals(hyperlink)) {
-                        formatted = formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>");
-                    } else {
-                        formatted = formatted.append(token);
-                    }
+                    formatted = !"".equals(hyperlink) ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
                     token = new StringBuilder();
                 }
                 if (!inToken && i > 0 && !(Character.isWhitespace(theFormula.charAt(i)) && theFormula.charAt(i - 1) == '(')) {
@@ -3034,11 +3003,7 @@ public class Formula implements Comparable {
             }
         }
         if (inToken) {    // A term which is outside of parenthesis, typically, a binding.
-            if (!"".equals(hyperlink)) {
-                formatted = formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>");
-            } else {
-                formatted = formatted.append(token);
-            }
+            formatted = !"".equals(hyperlink) ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
         }
         return formatted.toString();
     }
@@ -3275,11 +3240,7 @@ public class Formula implements Comparable {
         if (translateIndex <= 2) {
             return (1);
         } else {
-            if (translateIndex < kifOps.length) {
-                return (2);
-            } else {
-                return (-1);
-            }
+            return translateIndex < kifOps.length ? 2 : -1;
         }
     }
 
@@ -3347,6 +3308,7 @@ public class Formula implements Comparable {
             do {
                 st.nextToken();
                 //----Open bracket
+                //noinspection IfStatementWithTooManyBranches
                 if (st.ttype == 40) {
                     if (lastWasOpen) {    //----Should not have ((in KIF
                         System.out.println("ERROR: Double open bracket at " + tptpFormula);
@@ -3546,11 +3508,7 @@ public class Formula implements Comparable {
         }
 
         List processed;
-        if (preProcessedForms != null) {
-            processed = preProcessedForms;
-        } else {
-            processed = this.preProcess(query, kb);
-        }
+        processed = preProcessedForms != null ? preProcessedForms : this.preProcess(query, kb);
 
         //     System.out.println("INFO in Formula.tptpParse(" + this.theFormula + ")");
         //     System.out.println("  processed == " + processed);
@@ -4003,6 +3961,7 @@ public class Formula implements Comparable {
                         f = (Formula) working.get(i);
                         len = f.listLength();
                         arg0 = f.getArgument(0);
+                        //noinspection IfStatementWithTooManyBranches
                         if (isQuantifier(arg0)
                                 || "holdsDuring".equals(arg0)
                                 || "KappaFn".equals(arg0)) {
@@ -4107,7 +4066,8 @@ public class Formula implements Comparable {
             if (f.listP() && !f.empty()) {
                 StringBuilder litBuf = new StringBuilder();
                 String arg0 = f.car();
-                if (f.isRule() // arg0.equals("<=>") || 
+                //noinspection IfStatementWithTooManyBranches
+                if (f.isRule() // arg0.equals("<=>") ||
                         // arg0.equals("=>") 
                         ) {
                     String arg1 = f.getArgument(1);
@@ -4145,11 +4105,7 @@ public class Formula implements Comparable {
                         argF.read((String) litArr.get(i));
                         args += (' ' + argF.maybeRemoveMatchingLits(litF).theFormula);
                     }
-                    if (len > 2) {
-                        args = ('(' + arg0 + args + ')');
-                    } else {
-                        args = args.trim();
-                    }
+                    args = len > 2 ? '(' + arg0 + args + ')' : args.trim();
                     litBuf.append(args);
                 } else {
                     litBuf.append(f.theFormula);
@@ -4866,6 +4822,7 @@ public class Formula implements Comparable {
         String varIdx = Integer.toString(incVarIndex());
         if (isNonEmptyString(prefix)) {
             List woDigitSuffix = KB.getMatches(prefix, "var_with_digit_suffix");
+            //noinspection IfStatementWithTooManyBranches
             if (woDigitSuffix != null) {
                 base = (String) woDigitSuffix.get(0);
             } else if (prefix.startsWith("@ROW")) {
@@ -5565,11 +5522,7 @@ public class Formula implements Comparable {
         Formula result = this;
         try {
             Map reverseRenames = null;
-            if (renameMap instanceof Map) {
-                reverseRenames = renameMap;
-            } else {
-                reverseRenames = new HashMap();
-            }
+            reverseRenames = renameMap instanceof Map ? renameMap : new HashMap();
 
             // First, break the Formula into separate clauses, if
             // necessary.

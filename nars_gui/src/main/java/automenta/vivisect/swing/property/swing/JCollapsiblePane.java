@@ -361,11 +361,7 @@ public class JCollapsiblePane extends JPanel {
      */
     Dimension dim;
     if (!isAnimated()) {
-      if (getContentPane().isVisible()) {
-        dim = getContentPane().getPreferredSize();
-      } else {
-        dim = super.getPreferredSize();
-      }
+      dim = getContentPane().isVisible() ? getContentPane().getPreferredSize() : super.getPreferredSize();
     } else {
       dim = new Dimension(getContentPane().getPreferredSize());
       if (!getContentPane().isVisible() && currentHeight != -1) {
@@ -543,11 +539,7 @@ public class JCollapsiblePane extends JPanel {
     void validate() {
       Container parent = SwingUtilities.getAncestorOfClass(
         JCollapsiblePaneContainer.class, JCollapsiblePane.this);
-      if (parent != null) {
-        parent = ((JCollapsiblePaneContainer)parent).getValidatingContainer();
-      } else {
-        parent = getParent();
-      }
+      parent = parent != null ? ((JCollapsiblePaneContainer) parent).getValidatingContainer() : getParent();
 
       if (parent != null) {
         if (parent instanceof JComponent) {

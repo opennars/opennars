@@ -121,20 +121,10 @@ public enum Tense  {
 
         Truth truth;
         long poc = problem.getOccurrenceTime();
-        if (poc != solution.getOccurrenceTime()) {
-            //TODO avoid creating new Truth instances
-            truth = solution.projection(poc, time);
-        }
-        else {
-            truth = solution.getTruth();
-        }
+        truth = poc != solution.getOccurrenceTime() ? solution.projection(poc, time) : solution.getTruth();
 
         //if (problem.hasQueryVar()) {
-        if (hasQueryVar) {
-            return truth.getExpectation() / solution.getTerm().complexity();
-        } else {
-            return truth.getConfidence();
-        }
+        return hasQueryVar ? truth.getExpectation() / solution.getTerm().complexity() : truth.getConfidence();
     }
 
     public static float solutionQuality(boolean hasQueryVar, long occTime, final Task solution, final Truth projectedTruth, long time) {
@@ -353,8 +343,7 @@ public enum Tense  {
 
     public static String tenseRelative(long then, long now) {
         long dt = then - now;
-        if (dt < 0) return "[" + dt + ']';
-        else return "[+" + dt + ']';
+        return dt < 0 ? "[" + dt + ']' : "[+" + dt + ']';
     }
 }
 

@@ -133,6 +133,7 @@ public class ControlFlowGraph {
             sb.append(getId(instruction));
             sb.append(':');
 
+            //noinspection IfStatementWithTooManyBranches
             if (instruction instanceof LabelNode) {
                 //LabelNode l = (LabelNode) instruction;
                 //sb.append('L' + l.getLabel().getOffset() + ":");

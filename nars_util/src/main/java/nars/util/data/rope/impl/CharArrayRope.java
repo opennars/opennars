@@ -260,11 +260,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         if (start == 0 && end == this.length()) {
             return this;
         }
-        if (end - start < 16) {
-            return new CharArrayRope(this.sequence, start, end - start);
-        } else {
-            return new SubstringRope(this, start, end - start);
-        }
+        return end - start < 16 ? new CharArrayRope(this.sequence, start, end - start) : new SubstringRope(this, start, end - start);
     }
 
     @Override

@@ -72,6 +72,7 @@ public class RuleGenBin {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
+			//noinspection IfStatementWithTooManyBranches
 			if (sTok.length() > 0 && sTok.charAt(0) == 'S') // survivals
 			{
 				sTok = ExpandIt(sTok.substring(1));
@@ -119,10 +120,7 @@ public class RuleGenBin {
 
 		sRetStr = "";
 		if (iCnt > 0) {
-			if (iVal == 0)
-				sChr = "a";
-			else
-				sChr = "b";
+			sChr = iVal == 0 ? "a" : "b";
 
 			if (iCnt == 1)
 				sRetStr = sChr;
@@ -167,10 +165,7 @@ public class RuleGenBin {
 
 		// make the string
 		// states
-		if (isHist)
-			ih = iClo;
-		else
-			ih = 0;
+		ih = isHist ? iClo : 0;
 		sBff = 'C' + String.valueOf(ih);
 
 		// neighbourhood
@@ -187,20 +182,14 @@ public class RuleGenBin {
 		// survivals
 		sTmp = "";
 		for (i = 0; i < maxIdx; i++) {
-			if (rulesS[i])
-				sTmp = sTmp + '1';
-			else
-				sTmp = sTmp + '0';
+			sTmp = rulesS[i] ? sTmp + '1' : sTmp + '0';
 		}
 		sBff = sBff + ",S" + CompactIt(sTmp);
 
 		// births
 		sTmp = "";
 		for (i = 0; i < maxIdx; i++) {
-			if (rulesB[i])
-				sTmp = sTmp + '1';
-			else
-				sTmp = sTmp + '0';
+			sTmp = rulesB[i] ? sTmp + '1' : sTmp + '0';
 		}
 		sBff = sBff + ",B" + CompactIt(sTmp);
 
@@ -285,18 +274,12 @@ public class RuleGenBin {
 								bNewVal = 1;
 							} else // isolation or overpopulation
 							{
-								if (bOldVal < (iClo - 1))
-									bNewVal = (short) (bOldVal + 1); // getting older...
-								else
-									bNewVal = 0; // bye, bye!
+								bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 							}
                         }
                     } else // was older than 1
 					{
-						if (bOldVal < (iClo - 1))
-							bNewVal = (short) (bOldVal + 1); // getting older...
-						else
-							bNewVal = 0; // bye, bye!
+						bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 					}
                 } else // no history
 				{
@@ -332,21 +315,15 @@ public class RuleGenBin {
 					if (bOldVal == 0) // was dead
 					{
 						if (rulesB[iCnt]) // rules for birth
-							if (ColoringMethod == 1) // standard
-								bNewVal = 1; // birth
-							else
-								bNewVal = (short) (mjb.Cycle
-										% (mjb.StatesCount - 1) + 1); // birth
+							bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
+									% (mjb.StatesCount - 1) + 1);
 					} else // was alive
 					{
 						if (rulesS[iCnt]) // rules for surviving
 						{
 							if (ColoringMethod == 1) // standard
 							{
-								if (bOldVal < (mjb.StatesCount - 1))
-									bNewVal = (short) (bOldVal + 1); // getting older...
-								else
-									bNewVal = (short) (mjb.StatesCount - 1);
+								bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
 							} else {
 								// alternate coloring - cells remain not changed
 							}

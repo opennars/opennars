@@ -197,20 +197,10 @@ public class EditorPanel extends JPanel {
                                         if (s.cells.readCells[i][j].logic == Logic.SWITCH) {
                                             if (TestChamber.staticInformation)
                                                 s.nar.input('<' + c[11] + " --> switch>.");
-                                            if (s.cells.readCells[i][j].light == 1.0f) {
-                                                //s.nar.input("<"+c[11]+" --> on>. :|:");
-                                            } else {
-                                                //s.nar.input("<"+c[11]+" --> off>.");
-                                            }
                                         }
                                         if (s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
                                             if (TestChamber.staticInformation)
                                                 s.nar.input('<' + c[11] + " --> switch>.");
-                                            if (s.cells.readCells[i][j].light == 1.0f) {
-                                                //s.nar.input("<"+c[11]+" --> on>. :|:");
-                                            } else {
-                                                //s.nar.input("<"+c[11]+" --> off>. :|:");
-                                            }
                                         }
 
                                         if (!"".equals(c[9])) {
@@ -219,20 +209,10 @@ public class EditorPanel extends JPanel {
                                             if (s.cells.readCells[i][j].machine == Machine.Turret) {
                                                 if (TestChamber.staticInformation)
                                                     s.nar.input('<' + c[11] + " --> firework>.");
-                                                if (s.cells.readCells[i][j].light == 1.0f) {
-                                                    //s.nar.input("<"+c[11]+" --> on>. :|:");
-                                                } else {
-                                                    //s.nar.input("<"+c[11]+" --> off>. :|:");
-                                                }
                                             }
                                             if (s.cells.readCells[i][j].machine == Machine.Light) {
                                                 if (TestChamber.staticInformation)
                                                     s.nar.input('<' + c[11] + " --> light>.");
-                                                if (s.cells.readCells[i][j].light == 1.0f) {
-                                                    //s.nar.input("<"+c[11]+" --> on>. :|:");
-                                                } else {
-                                                    //s.nar.input("<"+c[11]+" --> off>. :|:");
-                                                }
                                             }
                                         } else {
                                             s.cells.readCells[i][j].machine = null;

@@ -544,10 +544,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
 
         // Create backing IndexedTreeMap
         IndexedTreeMap<E, Object> tm;
-        if (c == null)
-            tm = new IndexedTreeMap<>();
-        else
-            tm = new IndexedTreeMap<>(c);
+        tm = c == null ? new IndexedTreeMap<>() : new IndexedTreeMap<>(c);
         m = tm;
 
         // Read in size

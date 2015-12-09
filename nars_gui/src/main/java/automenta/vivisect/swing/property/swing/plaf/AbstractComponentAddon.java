@@ -128,6 +128,7 @@ public abstract class AbstractComponentAddon implements ComponentAddon {
    */
   private Object[] getDefaults(LookAndFeelAddons addon) {
     List defaults = new ArrayList();
+    //noinspection IfStatementWithTooManyBranches
     if (isWindows(addon)) {
       addWindowsDefaults(addon, defaults);
     } else if (isMetal(addon)) {

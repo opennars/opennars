@@ -99,23 +99,10 @@ public class MNISTWorld extends MNIST implements World {
         double r;
         
         if (i.label == -1) {
-            if (a == -1) r = 1.0;
-            else r = -1.0;
+            r = a == -1 ? 1.0 : -1.0;
         }
         else {
-            if ((a < 0) || (a > 9)) r = -1.0; 
-            else {
-
-                //if (a == i.label) r = 1.0;
-                //else r = 0;                
-
-                
-                r = 1.0 /(1+ Math.abs(a - i.label));
-                //r *= r;
-                
-                //System.out.println(a + " " + i.label + " " + r);
-                
-            }
+            r = (a < 0) || (a > 9) ? -1.0 : 1.0 / (1 + Math.abs(a - i.label));
         }
       
         

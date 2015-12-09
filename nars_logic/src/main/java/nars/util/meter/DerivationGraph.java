@@ -448,10 +448,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         //maybe use a sorted Map so that the longest terms to be replaced are iterated first, so that a shorter subterm will not interfere with subsequent longer replacement
 
         final String[] s = new String[1];
-        if (c instanceof Compound)
-            s[0] = c.toString(false);
-        else
-            s[0] = c.toString();
+        s[0] = c instanceof Compound ? c.toString(false) : c.toString();
 
         unique.forEachKeyValue( (tn, i) -> {
             if (i > 25) throw new RuntimeException("TODO support > 26 different unique atomic terms");
@@ -477,10 +474,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
         if (includeTruth) {
             t += " %";
-            if (s.getTruth() != null)
-                t += Texts.n2(s.getFrequency()) + ";" + Texts.n2(s.getConfidence());
-            else
-                t += "?;?";
+            t += s.getTruth() != null ? Texts.n2(s.getFrequency()) + ";" + Texts.n2(s.getConfidence()) : "?;?";
             t += "%";
         }
 
@@ -494,26 +488,20 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
     public static String genericString(Term t, ObjectIntHashMap<Term> _unique) {
         ObjectIntHashMap<Term> unique;
-        if (_unique == null)
-            unique = new ObjectIntHashMap();
-        else
-            unique = _unique;
+        unique = _unique == null ? new ObjectIntHashMap() : _unique;
 
         if (t.getClass() == Atom.class) {
             //atomic term
             return genericLiteral(t, unique);
         }
-        else if (t instanceof OperatorReaction) {
+        if (t instanceof OperatorReaction) {
             return t.toString();
         }
-        else if (t instanceof Variable) {
+        if (t instanceof Variable || t instanceof Compound) {
             //return t.toString();
             return genericLiteral(t, unique);
         }
-        else if (t instanceof Compound) {
-            return genericLiteral(t, unique);
-        }
-        else if (t instanceof CyclesInterval) {
+        if (t instanceof CyclesInterval) {
             //Interval, etc..
             return t.toString();
         }

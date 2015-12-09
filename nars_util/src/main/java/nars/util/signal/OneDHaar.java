@@ -551,10 +551,7 @@ public class OneDHaar {
         double[] thresholdedSignal = new double[n];
         //System.out.println("n = " + n);
         for(int t = 0; t < n; t++) {
-            if ( Math.abs(signal[t]) > thresh )
-                thresholdedSignal[t] = signal[t];
-            else
-                thresholdedSignal[t] = 0;
+            thresholdedSignal[t] = Math.abs(signal[t]) > thresh ? signal[t] : 0;
         }
         
         arraycopy(thresholdedSignal, 0, signal, 0, n);
@@ -917,10 +914,7 @@ public class OneDHaar {
         double[][] fhw = new double[size][size];
         for(int col_num = 0; col_num < size; col_num++) {
             for(int i = 0; i < size; i++) {
-                if ( i == col_num )
-                    base_vector[i] = 1;
-                else
-                    base_vector[i] = 0;
+                base_vector[i] = i == col_num ? 1 : 0;
             }
             orderedFastHaarWaveletTransform(base_vector);
             for(int row_num = 0; row_num < size; row_num++) {
@@ -938,10 +932,7 @@ public class OneDHaar {
         double[][] ihw = new double[size][size];
         for(int col_num = 0; col_num < size; col_num++) {
             for(int i = 0; i < size; i++) {
-                if ( i == col_num )
-                    base_vector[i] = 1;
-                else
-                    base_vector[i] = 0;
+                base_vector[i] = i == col_num ? 1 : 0;
             }
             orderedFastInverseHaarWaveletTransform(base_vector);
             for(int row_num = 0; row_num < size; row_num++) {

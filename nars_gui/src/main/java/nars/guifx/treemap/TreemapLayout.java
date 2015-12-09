@@ -54,11 +54,7 @@ class TreemapLayout extends Parent {
             TreemapDtoElement treemapElement = new TreemapDtoElement(item);
             this.children.add(treemapElement);
         }
-        if (width > height) {
-            layoutOrient = LayoutOrient.VERTICAL;
-        } else {
-            layoutOrient = LayoutOrient.HORIZONTAL;
-        }
+        layoutOrient = width > height ? LayoutOrient.VERTICAL : LayoutOrient.HORIZONTAL;
         scaleArea(this.children);
 //        Collections.sort(this.children, new ChildComparator());
 //        LOG.log(Level.INFO, "Initial children: {0}", this.children);
@@ -186,11 +182,7 @@ class TreemapLayout extends Parent {
     }
 
     private void changeLayout() {
-        if (layoutOrient.equals(LayoutOrient.HORIZONTAL)) {
-            layoutOrient = LayoutOrient.VERTICAL;
-        } else {
-            layoutOrient = LayoutOrient.HORIZONTAL;
-        }
+        layoutOrient = layoutOrient.equals(LayoutOrient.HORIZONTAL) ? LayoutOrient.VERTICAL : LayoutOrient.HORIZONTAL;
     }
 
     private boolean isDoubleEqual(double one, double two) {

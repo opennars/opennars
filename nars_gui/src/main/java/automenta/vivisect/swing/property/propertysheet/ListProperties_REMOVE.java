@@ -161,12 +161,15 @@ class TableSorter extends TableMap implements TableModelListener {
 		// If both values are null return 0
 		if (o1 == null && o2 == null) {
 			return 0;
-		} else if (o1 == null) { // Define null less than everything.
+		}
+		if (o1 == null) { // Define null less than everything.
 			return -1;
-		} else if (o2 == null) {
+		}
+		if (o2 == null) {
 			return 1;
 		}
 
+		//noinspection IfStatementWithTooManyBranches
 		if (type.getSuperclass() == Number.class) {
 			Number n1 = (Number) data.getValueAt(row1, column);
 			double d1 = n1.doubleValue();
@@ -281,11 +284,7 @@ class TableSorter extends TableMap implements TableModelListener {
 		int q = middle;
 
 		for (int i = low; i < high; i++) {
-			if (q >= high || (p < middle && compare(from[p], from[q]) <= 0)) {
-				to[i] = from[p++];
-			} else {
-				to[i] = from[q++];
-			}
+			to[i] = q >= high || (p < middle && compare(from[p], from[q]) <= 0) ? from[p++] : from[q++];
 		}
 	}
 

@@ -157,11 +157,7 @@ public class DockingRegionSplit extends JSplitPane
         if (subpath instanceof PathRecordSplit) {
             //Path still consitent.  Pass restore down to indicated child
             PathRecordSplit rec = (PathRecordSplit) subpath;
-            if (rec.right) {
-                return right.getDockingChild(subpath.next);
-            } else {
-                return left.getDockingChild(subpath.next);
-            }
+            return rec.right ? right.getDockingChild(subpath.next) : left.getDockingChild(subpath.next);
         } else {
             //We've lost the trail.  Just add in the content here
             return this;

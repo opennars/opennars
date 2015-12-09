@@ -647,11 +647,7 @@ public class TaskRule extends GenericCompound implements Level {
     private final TaskRule clone(final Term newT, final Term newB, final Term newR, boolean question) {
 
         Compound newPremise = null;
-        if(question) {
-            newPremise = $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm));
-        } else {
-            newPremise = $.p(getPremise().terms());
-        }
+        newPremise = question ? $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm)) : $.p(getPremise().terms());
 
         newPremise.terms()[0] = newT;
         newPremise.terms()[1] = newB;

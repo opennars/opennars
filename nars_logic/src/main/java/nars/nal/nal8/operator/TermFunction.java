@@ -80,7 +80,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //final int numArgs = x0.length;
 
         Term inh = Operation.result(operation, y);
-        if (inh == null || (!(inh instanceof Compound))) {
+        if ((!(inh instanceof Compound))) {
             //TODO wrap a non-Compound result as some kind of statement
             return null;
         }
@@ -244,7 +244,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         if (y instanceof Task) {
             return Lists.newArrayList((Task)y);
         }
-        else if (y instanceof Term) {
+        if (y instanceof Term) {
             return result(opTask, (Term) y, x, lastTerm);
         }
 

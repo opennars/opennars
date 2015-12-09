@@ -292,7 +292,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         int s = nameTable.size();
         if (s == 0) 
             return null;
-        else if (s <= flatThreshold) {
+        if (s <= flatThreshold) {
             K nn = nameTable.keySet().iterator().next();
             return remove(nn);
         }
@@ -380,10 +380,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     }
 
     public E take(K key, boolean index) {
-        if (index)
-            return nameTable.remove(key);
-        else
-            return nameTable.get(key);
+        return index ? nameTable.remove(key) : nameTable.get(key);
     }
 
     @Override

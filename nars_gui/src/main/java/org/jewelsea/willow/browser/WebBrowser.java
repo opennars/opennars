@@ -515,6 +515,7 @@ public class WebBrowser extends BorderPane {
             Object r = rr.handle(new HashMap());
             if (r!=null) {
                 Node c;
+                //noinspection IfStatementWithTooManyBranches
                 if (r instanceof String) {
                     //html
                     c = new WebView();

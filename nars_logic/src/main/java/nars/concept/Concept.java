@@ -163,10 +163,7 @@ public interface Concept extends Termed, Itemized<Term> {
             return currMeta.put(key, value);
         }
         else {
-            if (currMeta!=null)
-                return currMeta.remove(key);
-            else
-                return null;
+            return currMeta != null ? currMeta.remove(key) : null;
         }
 
     }
@@ -258,10 +255,10 @@ public interface Concept extends Termed, Itemized<Term> {
                     this.getTermLinks().iterator(), this.getTaskLinks().iterator()
             );
         }
-        else if (termLinks) {
+        if (termLinks) {
             return this.getTermLinks().iterator();
         }
-        else if (taskLinks) {
+        if (taskLinks) {
             return this.getTaskLinks().iterator();
         }
 

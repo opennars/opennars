@@ -292,11 +292,7 @@ public abstract class $  {
         if (counter < Variable.MAX_VARIABLE_CACHED_PER_TYPE) {
             final Variable[] vct = Variable.varCache[Variable.typeIndex(type)];
             Variable existing = vct[counter];
-            if (existing != null)
-                return existing;
-            else {
-                return vct[counter] = Variable._the(type, counter);
-            }
+            return existing != null ? existing : (vct[counter] = Variable._the(type, counter));
         }
 
         return v(type.ch, String.valueOf(counter));

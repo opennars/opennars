@@ -137,13 +137,12 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
 
         if( backingArray == null ) {
             return new ArrayArrayList(empty.clone()); //buffer = new CircularArrayList();
-        } else {
-            // Only keep the array or the buffer but never both at
-            // the same time.  1) it saves space, 2) it keeps the rest
-            // of the code safer.
-            buffer = new ArrayArrayList( backingArray );
-            backingArray = null;
         }
+        // Only keep the array or the buffer but never both at
+        // the same time.  1) it saves space, 2) it keeps the rest
+        // of the code safer.
+        buffer = new ArrayArrayList( backingArray );
+        backingArray = null;
         return buffer;
     }
 

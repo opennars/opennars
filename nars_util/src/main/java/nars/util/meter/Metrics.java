@@ -312,7 +312,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     private void invalidateExtrema(boolean added, Object[] row, boolean[] extremaToInvalidate) {
         for (int i = 0; i < row.length; i++) {
             Object ri = row[i];
-            if (ri == null || !(ri instanceof Number)) continue;
+            if (!(ri instanceof Number)) continue;
             
             double n = ((Number)row[i]).doubleValue();
             if (Double.isNaN(n)) continue;
@@ -335,7 +335,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
             else {
                 //for rows which have been removed
                 if (minNAN || (n == min))  { extremaToInvalidate[i] = true; continue; }
-                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true; continue; }
+                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true;
+                }
             }
                 
         }

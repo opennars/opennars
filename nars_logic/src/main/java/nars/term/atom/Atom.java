@@ -182,7 +182,7 @@ public class Atom extends StringAtom {
     }
 
     public static String toUnquoted(String x) {
-        if (x.length() > 0 && x.charAt(0) == '\"' && x.length() > 0 && x.charAt(x.length() - 1) == '\"') {
+        if (x.length() > 0 && x.charAt(0) == '\"' && x.charAt(x.length() - 1) == '\"') {
             return x.substring(1, x.length() - 1);
         }
         return x;
@@ -200,9 +200,9 @@ public class Atom extends StringAtom {
     public static Term the(final Object o) {
 
         if (o instanceof Term) return ((Term)o);
-        else if (o instanceof String)
+        if (o instanceof String)
             return the((String)o);
-        else if (o instanceof Number)
+        if (o instanceof Number)
             return the((Number)o);
         return null;
     }

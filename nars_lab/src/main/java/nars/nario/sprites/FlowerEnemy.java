@@ -66,14 +66,7 @@ public class FlowerEnemy extends Enemy
 
             int xd = (int)(Math.abs(world.mario.x-x));
             jumpTime++;
-            if (jumpTime>40 && xd>24)
-            {
-                ya = -8;
-            }
-            else
-            {
-                ya = 0;
-            }
+            ya = jumpTime > 40 && xd > 24 ? -8 : 0;
         }
         else
         {

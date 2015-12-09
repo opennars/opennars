@@ -552,18 +552,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 				if (targetCell != null) {
 					target = vertexMap.get(targetCell);
 				}
-				if (source != -1) {
-					w.source = source;
-				} else {
-					// source end is not connected
-					w.source = -1;
-				}
-				if (target != -1) {
-					w.target = target;
-				} else {
-					// target end is not connected
-					w.target = -1;
-				}
+				w.source = source != -1 ? source : -1;
+				w.target = target != -1 ? target : -1;
 			}
 		}
 
@@ -791,49 +781,25 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 		// This check is placed outside of the inner loop for speed, even
 		// though the code then has to be duplicated
-		if (isOptimizeNodeDistribution == true) {
-			if (approxNodeDimensions) {
-				for (int j = 0; j < v.length; j++) {
-					if (i != j) {
-						CellWrapper<TermNode> vi = v[i];
-						CellWrapper<TermNode> vj = v[j];
-						float vx = vi.x - vj.x;
-						float vy = vi.y - vj.y;
-						float distanceSquared = vx * vx + vy * vy;
-						distanceSquared -= vi.radiusSquared;
-						distanceSquared -= vj.radiusSquared;
+		if (true) {
+			for (int j = 0; j < v.length; j++) {
+                if (i != j) {
+                    CellWrapper<TermNode> vi = v[i];
+                    CellWrapper<TermNode> vj = v[j];
+                    float vx = vi.x - vj.x;
+                    float vy = vi.y - vj.y;
+                    float distanceSquared = vx * vx + vy * vy;
+                    distanceSquared -= vi.radiusSquared;
+                    distanceSquared -= vj.radiusSquared;
 
-						// prevents from dividing with Zero.
-						if (distanceSquared < minDistanceLimitSquared) {
-							distanceSquared = minDistanceLimitSquared;
-						}
+                    // prevents from dividing with Zero.
+                    if (distanceSquared < minDistanceLimitSquared) {
+                        distanceSquared = minDistanceLimitSquared;
+                    }
 
-						energy += nodeDistributionCostFactor / distanceSquared;
-					}
-				}
-			} else {
-				for (int j = 0; j < v.length; j++) {
-					if (i != j) {
-						CellWrapper<TermNode> vi = v[i];
-						CellWrapper<TermNode> vj = v[j];
-						float vx = vi.x - vj.x;
-						float vy = vi.y - vj.y;
-						float distanceSquared = vx * vx + vy * vy;
-						distanceSquared -= vi.radiusSquared;
-						distanceSquared -= vj.radiusSquared;
-						// If the height separation indicates overlap, subtract
-						// the widths from the distance. Same for width overlap
-						// TODO						if ()
-
-						// prevents from dividing with Zero.
-						if (distanceSquared < minDistanceLimitSquared) {
-							distanceSquared = minDistanceLimitSquared;
-						}
-
-						energy += nodeDistributionCostFactor / distanceSquared;
-					}
-				}
-			}
+                    energy += nodeDistributionCostFactor / distanceSquared;
+                }
+            }
 		}
 		return energy;
 	}
@@ -1067,11 +1033,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			var8 = var4 - var8;
 			var10 = var6 - var10;
 			var12 = var8 * var4 + var10 * var6;
-			if (var12 <= 0.0f) {
-				var14 = 0.0f;
-			} else {
-				var14 = var12 * var12 / (var4 * var4 + var6 * var6);
-			}
+			var14 = var12 <= 0.0f ? 0.0f : var12 * var12 / (var4 * var4 + var6 * var6);
 		}
 
 		float var16 = var8 * var8 + var10 * var10 - var14;
