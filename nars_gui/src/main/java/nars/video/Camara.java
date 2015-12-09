@@ -60,6 +60,7 @@ public class Camara extends Application {
 
             boolean p = true;
 
+            //noinspection OverlyComplexAnonymousInnerClass
             Task<Void> tarea = new Task<Void>() {
 
                 @Override

@@ -39,6 +39,7 @@ public class ConstraintTest {
     public void testJacop1() {
 
         NAR n = new Default(1000, 1, 1, 3);
+        //noinspection OverlyComplexAnonymousInnerClass
         SATNetwork sat = new SATNetwork(n, "<x-->y>") {
 
 

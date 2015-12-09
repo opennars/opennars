@@ -551,6 +551,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection OverlyComplexAnonymousInnerClass
         EditorMode wu=new EditorMode("try things") {
 
             @Override

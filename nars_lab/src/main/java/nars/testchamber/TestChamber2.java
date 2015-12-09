@@ -81,6 +81,7 @@ public class TestChamber2 extends TestChamber {
         
         
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
+        //noinspection OverlyComplexAnonymousInnerClass
         GridAgent a = new GridAgent(17, 17, nar) {
 
             @Override

@@ -92,9 +92,9 @@ public class MetricsTest {
         for (int i = 0; i < 10; i++) {
             tm.update(0.1 * i);
         }
-        
-        
-        
+
+
+        //noinspection OverlyComplexAnonymousInnerClass
         PrintStream sb = new PrintStream(System.out) {
         
             int line = 0;

@@ -383,6 +383,7 @@ public class MidiClock extends JPanel implements Clock {
         public InstrumentsTable() {
             setLayout(new BorderLayout());
 
+            //noinspection OverlyComplexAnonymousInnerClass
             TableModel dataModel = new AbstractTableModel() {
                 public int getColumnCount() { return nCols; }
                 public int getRowCount() { return nRows;}

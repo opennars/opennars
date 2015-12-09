@@ -197,7 +197,8 @@ public class NarseseTemplatePanel {
         
         
         p.add(menu, BorderLayout.WEST);
-        
+
+        //noinspection OverlyComplexAnonymousInnerClass
         ActionListener change = new ActionListener() {
             JPanel r = null;
             @Override public void actionPerformed(ActionEvent e) {

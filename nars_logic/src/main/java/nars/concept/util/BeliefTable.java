@@ -26,6 +26,7 @@ import static nars.nal.UtilityFunctions.or;
  * A model storing, ranking, and projecting beliefs or goals (tasks with TruthValue).
  * It should iterate in top-down order (highest ranking first)
  */
+@SuppressWarnings("OverlyComplexAnonymousInnerClass")
 public interface BeliefTable extends TaskTable {
 
     /** main method */

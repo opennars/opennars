@@ -74,6 +74,7 @@ public class WaveCapture implements Runnable {
                 audioPlot,
                 audioPlot2);
 
+        //noinspection OverlyComplexAnonymousInnerClass
         ChangeListener onParentChange = new ChangeListener() {
 
             public On observe = null;
