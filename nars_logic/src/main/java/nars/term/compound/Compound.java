@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import static nars.Symbols.*;
 import static nars.util.data.Util.hashCombine;
@@ -234,6 +235,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
     }
 
+
+    default String toString(BiConsumer<Compound, Appendable> a) {
+        StringBuilder sb = new StringBuilder();
+        a.accept(this, sb);
+        return sb.toString();
+    }
 
     @Override
     default StringBuilder toStringBuilder(boolean pretty) {

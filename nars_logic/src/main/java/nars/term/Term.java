@@ -121,7 +121,7 @@ public interface Term extends Termed, Comparable, Termlike {
     default boolean hasAny(Op op) {
 //        if (op == Op.VAR_PATTERN)
 //            return Variable.hasPatternVariable(this);
-        return hasAny((1<<  op.ordinal()));
+        return hasAny(op.bit());
     }
 
 
@@ -135,11 +135,11 @@ public interface Term extends Termed, Comparable, Termlike {
 
     default boolean hasAny(int structuralVector) {
         int s = structure();
-        return (s & structuralVector) != 0;
+        return (s & structuralVector) == s;
     }
     default boolean isAny(int structuralVector) {
         int s = op().bit();
-        return (s & structuralVector) != 0;
+        return (s & structuralVector) == s;
     }
     /** for multiple Op comparsions, use Op.or */
     default boolean isAny(Op op) {

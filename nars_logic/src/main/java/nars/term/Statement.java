@@ -28,7 +28,7 @@ import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.io.StringWriter;
+import java.util.function.BiConsumer;
 
 import static nars.Symbols.STATEMENT_CLOSER;
 import static nars.Symbols.STATEMENT_OPENER;
@@ -38,35 +38,36 @@ import static nars.Symbols.STATEMENT_OPENER;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 @Deprecated
-public abstract class Statement<A extends Term, B extends Term>         {
+public interface Statement {
 
 
-    public static String toString(Term a, Op op, Term b, boolean pretty)  {
+    BiConsumer<Compound,Appendable> Appender = (Compound c, Appendable w) -> {
+
+        Term a = subj(c);
+        Term b = pred(c);
+
+        boolean pretty = false;
+
         try {
-            StringWriter s = new StringWriter();
-            Statement.append(s, a, op, b, pretty);
-            return s.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            w.append(STATEMENT_OPENER);
+            a.append(w, pretty);
+
+            if (pretty) w.append(' ');
+
+            c.op().append(w);
+
+            if (pretty) w.append(' ');
+
+            b.append(w, pretty);
+
+            w.append(STATEMENT_CLOSER);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
         }
-    }
 
-    public static void append(Appendable w, Term a, Op op, Term b, boolean pretty) throws IOException {
-
-        w.append(STATEMENT_OPENER);
-
-        a.append(w, pretty);
-
-        if (pretty) w.append(' ');
-
-        op.append(w);
-
-        if (pretty) w.append(' ');
-
-        b.append(w, pretty);
-
-        w.append(STATEMENT_CLOSER);
-    }
+    };
 
 
 
@@ -201,7 +202,7 @@ public abstract class Statement<A extends Term, B extends Term>         {
 
 
 
-    public static byte[] bytes(Op op, Term subject, Term predicate) {
+    static byte[] bytes(Op op, Term subject, Term predicate) {
         byte[] subjBytes = subject.bytes();
         byte[] predBytes = predicate.bytes();
         byte[] relationBytes = op.bytes;
@@ -220,7 +221,7 @@ public abstract class Statement<A extends Term, B extends Term>         {
 
 
 
-    public static void append(Appendable w, Op op, Term subject, Term predicate, boolean pretty) throws IOException {
+    static void append(Appendable w, Op op, Term subject, Term predicate, boolean pretty) throws IOException {
 
         w.append(STATEMENT_OPENER);
 
@@ -238,7 +239,7 @@ public abstract class Statement<A extends Term, B extends Term>         {
     }
 
 
-    public static final boolean invalidStatement(Compound s) {
+    static boolean invalidStatement(Compound s) {
         return invalidStatement(s.term(0), s.term(1));
     }
 
@@ -251,7 +252,7 @@ public abstract class Statement<A extends Term, B extends Term>         {
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    public static final boolean invalidStatement(Term subject, Term predicate) {
+    static boolean invalidStatement(Term subject, Term predicate) {
         if (subject == null || predicate == null)
             return true;
 
@@ -286,14 +287,14 @@ public abstract class Statement<A extends Term, B extends Term>         {
 
 
 
-    public static boolean is(Term t) {
+    static boolean is(Term t) {
         return t.op().isStatement();
     }
 
-    public static Term subj(Term t) {
+    static Term subj(Term t) {
         return ((Compound)t).term(0);
     }
-    public static Term pred(Term t) {
+    static Term pred(Term t) {
         return ((Compound)t).term(1);
     }
 
@@ -306,7 +307,7 @@ public abstract class Statement<A extends Term, B extends Term>         {
      * @param t2 The second term
      * @return Whether they cannot be related in a statement
      */
-    private static boolean invalidReflexive(Term t1, Term t2) {
+    static boolean invalidReflexive(Term t1, Term t2) {
         if (!(t1 instanceof Compound)) {
             return false;
         }
@@ -325,7 +326,7 @@ public abstract class Statement<A extends Term, B extends Term>         {
 //        return s1Indep ^ s2Indep;
 //    }
 
-    public static boolean subjectOrPredicateIsIndependentVar(Compound t) {
+    static boolean subjectOrPredicateIsIndependentVar(Compound t) {
         if (!t.hasVarIndep()) return false;
 
         Term subj = t.term(0);

@@ -35,22 +35,13 @@ import java.util.Collection;
 /**
  * A Product is a sequence of 1 or more terms.
  */
-public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
+public interface Product<T extends Term> {
 
     /**
      * universal zero-length product
      */
     Compound Empty = (Compound) GenericCompound.COMPOUND(Op.PRODUCT, Terms.Empty);
 
-    /**
-     * Get the operate of the term.
-     *
-     * @return the operate of the term
-     */
-    @Override
-    default Op op() {
-        return Op.PRODUCT;
-    }
 
     /**
      * Try to make a Product from an ImageExt/ImageInt and a component. Called by the logic rules.
@@ -99,24 +90,24 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
     }
 
 
-    /**
-     * returns the first subterm, or null if there are 0
-     */
-    default Object first() {
-        if (size() == 0) return null;
-        return term(0);
-    }
+//    /**
+//     * returns the first subterm, or null if there are 0
+//     */
+//    default Object first() {
+//        if (size() == 0) return null;
+//        return term(0);
+//    }
+//
+//    /**
+//     * returns the last subterm, or null if there are 0
+//     */
+//    default Term last() {
+//        int s = size();
+//        if (s == 0) return null;
+//        return term(s - 1);
+//    }
 
-    /**
-     * returns the last subterm, or null if there are 0
-     */
-    default Term last() {
-        int s = size();
-        if (s == 0) return null;
-        return term(s - 1);
-    }
-
-    static <T extends Term> String toString(Compound product) {
+    static String toString(Compound product) {
         StringBuilder sb = new StringBuilder().append((char)Symbols.COMPOUND_TERM_OPENER);
         int s = product.size();
         for (int i = 0; i < s; i++) {

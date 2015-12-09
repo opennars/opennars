@@ -2,12 +2,13 @@ package nars;
 
 
 import com.gs.collections.api.tuple.primitive.IntIntPair;
-import com.gs.collections.impl.tuple.primitive.PrimitiveTuples;
 import nars.nal.nal7.Order;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 import java.io.Serializable;
+
+import static com.gs.collections.impl.tuple.primitive.PrimitiveTuples.pair;
 
 /**
  * NAL symbol table
@@ -31,52 +32,52 @@ public enum Op implements Serializable {
     VAR_DEP(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
     VAR_QUERY(Symbols.VAR_QUERY, Op.ANY, OpType.Variable),
 
-    OPERATOR("^", 8, Args.OneArg),
+    OPERATOR("^", 8, Args.One),
 
-    NEGATE("--", 5, Args.OneArg) {
+    NEGATE("--", 5, Args.One) {
 
     },
 
     /* Relations */
-    INHERIT("-->", 1, OpType.Relation, Args.TwoArgs),
-    SIMILAR("<->", true, 2, OpType.Relation, Args.TwoArgs),
+    INHERIT("-->", 1, OpType.Relation, Args.Two),
+    SIMILAR("<->", true, 2, OpType.Relation, Args.Two),
 
 
     /* CompountTerm operators */
-    INTERSECT_EXT("&", true, 3, Args.TwoArgs),
-    INTERSECT_INT("|", true, 3, Args.TwoArgs),
+    INTERSECT_EXT("&", true, 3, Args.GTETwo),
+    INTERSECT_INT("|", true, 3, Args.GTETwo),
 
-    DIFF_EXT("-", 3, Args.TwoArgs),
-    DIFF_INT("~", 3, Args.TwoArgs),
+    DIFF_EXT("-", 3, Args.Two),
+    DIFF_INT("~", 3, Args.Two),
 
-    PRODUCT("*", 4, Args.GTEZeroArgs),
+    PRODUCT("*", 4, Args.GTEZero),
 
-    IMAGE_EXT("/", 4, Args.GTEOneArgs),
-    IMAGE_INT("\\", 4, Args.GTEOneArgs),
+    IMAGE_EXT("/", 4, Args.GTEOne),
+    IMAGE_INT("\\", 4, Args.GTEOne),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCT("||", true, 5, Args.GTEOneArgs),
-    CONJUNCT("&&", true, 5, Args.GTEOneArgs),
+    DISJUNCT("||", true, 5, Args.GTEOne),
+    CONJUNCT("&&", true, 5, Args.GTEOne),
 
-    SEQUENCE("&/", 7, Args.GTEOneArgs),
-    PARALLEL("&|", true, 7, Args.GTEOneArgs),
+    SEQUENCE("&/", 7, Args.GTEOne),
+    PARALLEL("&|", true, 7, Args.GTEOne),
 
 
     /* CompountTerm delimiters, must use 4 different pairs */
-    SET_INT_OPENER("[", true, 3, Args.GTEOneArgs), //OPENER also functions as the symbol for the entire compound
-    SET_EXT_OPENER("{", true, 3, Args.GTEOneArgs), //OPENER also functions as the symbol for the entire compound
+    SET_INT_OPENER("[", true, 3, Args.GTEOne), //OPENER also functions as the symbol for the entire compound
+    SET_EXT_OPENER("{", true, 3, Args.GTEOne), //OPENER also functions as the symbol for the entire compound
 
 
-    IMPLICATION("==>", 5, OpType.Relation, Args.TwoArgs),
+    IMPLICATION("==>", 5, OpType.Relation, Args.Two),
 
     /* Temporal Relations */
-    IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.TwoArgs),
-    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, Args.TwoArgs),
-    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.TwoArgs),
+    IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.Two),
+    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, Args.Two),
+    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.Two),
 
-    EQUIV("<=>", true, 5, OpType.Relation, Args.TwoArgs),
-    EQUIV_AFTER("</>", 7, OpType.Relation, Args.TwoArgs),
-    EQUIV_WHEN("<|>", true, 7, OpType.Relation, Args.TwoArgs),
+    EQUIV("<=>", true, 5, OpType.Relation, Args.Two),
+    EQUIV_AFTER("</>", 7, OpType.Relation, Args.Two),
+    EQUIV_WHEN("<|>", true, 7, OpType.Relation, Args.Two),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -90,7 +91,7 @@ public enum Op implements Serializable {
             //TODO decide what this value should be, it overrides with IMAGE_EXT
             //but otherwise it's not used
             String.valueOf(Symbols.INTERVAL_PREFIX) + '/',
-            Op.ANY, Args.NoArgs),
+            Op.ANY, Args.None),
 
     INSTANCE("{--", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
     PROPERTY("--]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
@@ -147,11 +148,11 @@ public enum Op implements Serializable {
 //    }
 
     Op(char c, int minLevel, OpType type) {
-        this(c, minLevel, type, Args.NoArgs);
+        this(c, minLevel, type, Args.None);
     }
 
     Op(String s, boolean commutative, int minLevel) {
-        this(s, minLevel, OpType.Other, Args.NoArgs);
+        this(s, minLevel, OpType.Other, Args.None);
     }
     Op(String s, boolean commutative, int minLevel, IntIntPair size) {
         this(s, commutative, minLevel, OpType.Other, size);
@@ -166,7 +167,7 @@ public enum Op implements Serializable {
     }
 
     Op(String string, int minLevel, OpType type) {
-        this(string, false, minLevel, type, Args.NoArgs);
+        this(string, false, minLevel, type, Args.None);
     }
     Op(String string, int minLevel, OpType type, IntIntPair size) {
         this(string, false, minLevel, type, size);
@@ -259,14 +260,14 @@ public enum Op implements Serializable {
     }
 
     public boolean isImage() {
-        return isA(ordinal(), ImageBits);
+        return isA(bit(), ImageBits);
     }
     public boolean isStatement() {
-        return isA(ordinal(), StatementBits);
+        return isA(bit(), StatementBits);
     }
 
     static boolean isA(int needle, int haystack) {
-        return (needle | haystack) == needle;
+        return (needle & haystack) == needle;
     }
 
     /** top-level Op categories */
@@ -277,7 +278,12 @@ public enum Op implements Serializable {
     }
 
     public static int StatementBits =
-        Op.or(Op.INHERIT, Op.SIMILAR, Op.EQUIV, Op.IMPLICATION);
+        Op.or(Op.INHERIT, Op.SIMILAR,
+              Op.EQUIV,
+                    Op.EQUIV_AFTER, Op.EQUIV_WHEN,
+              Op.IMPLICATION,
+                Op.IMPLICATION_AFTER, Op.IMPLICATION_BEFORE, Op.IMPLICATION_WHEN
+        );
 
     public static final int ImageBits =
         Op.or(Op.IMAGE_EXT,Op.IMAGE_INT);
@@ -286,13 +292,13 @@ public enum Op implements Serializable {
         Op.or(Op.VAR_PATTERN,Op.VAR_INDEP,Op.VAR_DEP,Op.VAR_QUERY);
 
     static class Args {
-        static final IntIntPair NoArgs = PrimitiveTuples.pair(0,0);
-        static final IntIntPair OneArg = PrimitiveTuples.pair(1,1);
-        static final IntIntPair TwoArgs = PrimitiveTuples.pair(2,2);
+        static final IntIntPair None = pair(0,0);
+        static final IntIntPair One = pair(1,1);
+        static final IntIntPair Two = pair(2,2);
 
-        static final IntIntPair GTEZeroArgs = PrimitiveTuples.pair(0,-1);
-        static final IntIntPair GTEOneArgs = PrimitiveTuples.pair(1,-1);
-        static final IntIntPair GTETwoArgs = PrimitiveTuples.pair(2,-1);
+        static final IntIntPair GTEZero = pair(0,-1);
+        static final IntIntPair GTEOne = pair(1,-1);
+        static final IntIntPair GTETwo = pair(2,-1);
 
     }
 

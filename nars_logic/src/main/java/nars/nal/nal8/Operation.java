@@ -24,7 +24,6 @@ import nars.$;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal4.Product;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -234,8 +233,8 @@ public interface Operation  {
      */
     static Term makeImageExt(Compound product, Term relation, short index) {
         int pl = product.size();
-        if (relation instanceof Product) {
-            Product p2 = (Product) relation;
+        if (relation.op(Op.PRODUCT)) {
+            Compound p2 = (Compound) relation;
             if ((pl == 2) && (p2.size() == 2)) {
                 if ((index == 0) && product.term(1).equals(p2.term(1))) { // (/,_,(*,a,b),b) is reduced to a
                     return p2.term(0);

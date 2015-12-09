@@ -163,13 +163,6 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
         throw new RuntimeException("Use Sequence.makeSequence");
     }
 
-
-
-    @Override
-    public Sequence clone() {
-        return new Sequence(terms(), intervals);
-    }
-
     @Override
     public Term clone(Term[] t) {
 

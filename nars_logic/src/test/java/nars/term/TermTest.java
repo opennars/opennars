@@ -18,7 +18,6 @@ package nars.term;
 
 import nars.*;
 import nars.concept.Concept;
-import nars.nal.nal3.Difference;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Image;
@@ -296,7 +295,7 @@ public class TermTest {
 
         Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-        Term d = Difference.diffInt(a, b);
+        Term d = $.diffInt(a, b);
         assertEquals(Op.SET_INT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("[a,c]", d.toString());
@@ -580,6 +579,12 @@ public class TermTest {
         assertEquals("(\\, X, Y, _)", imageInt($("X"), $("Y")).toString());
         assertEquals("(\\, _, X, Y)", imageInt($("_"), $("X"), $("Y")).toString());
 
+    }
+
+    @Test public void testStatemntString() {
+        assertTrue( $.inh("a", "b").op().isStatement() );
+        assertEquals("<a-->b>",
+                     $("<a-->b>").toString());
     }
 
     @Test

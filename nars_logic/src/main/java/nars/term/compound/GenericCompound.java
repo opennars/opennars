@@ -2,14 +2,20 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Order;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.term.*;
 import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.ByteBuf;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -46,35 +52,59 @@ public class GenericCompound<T extends Term> implements Compound<T> {
             return Image.build(op, subterms);
         }
 
-        return COMPOUND(op, subterms, 0);
+        return COMPOUND(op, subterms, -1);
     }
 
-    public static Term COMPOUND(Op op, Term[] subterms, int relation) {
+    public static Term COMPOUND(Op op, Term[] t, int relation) {
 
         if (op.isCommutative()) {
-            subterms = Terms.toSortedSetArray(subterms);
+            t = Terms.toSortedSetArray(t);
         }
 
+        //REDUCTIONS
         if (op.isStatement()) {
-            if (Statement.invalidStatement(subterms[0], subterms[1])) {
+            if ((t.length==2) && (Statement.invalidStatement(t[0], t[1]))) {
                 return null;
             }
-        }
-        if (op == Op.CONJUNCT) {
-            subterms = flattenAndSort(subterms, Order.None);
+        } else {
+            switch (op) {
+                case IMAGE_INT:
+                case IMAGE_EXT:
+                    if ((relation == -1) || (relation > t.length))
+                        throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
+                    break;
+                case CONJUNCT:
+                    t = flattenAndSort(t, Order.None);
+                    break;
+                case DIFF_EXT:
+                    Term t0 = t[0], t1 = t[1];
+                    if ((t0.op(Op.SET_EXT) && t1.op(Op.SET_EXT) )) {
+                        return SetExt.subtractExt((Compound)t0, (Compound)t1);
+                    }
+                    break;
+                case DIFF_INT:
+                    Term it0 = t[0], it1 = t[1];
+                    if ((it0.op(Op.SET_INT) && it1.op(Op.SET_INT) )) {
+                        return SetInt.subtractInt((Compound)it0, (Compound)it1);
+                    }
+                    break;
+                /*case DISJUNCT:
+                    break;*/
+            }
         }
 
 
-        int numSubs = subterms.length;
+
+        int numSubs = t.length;
         if (!op.validSize(numSubs)) {
             if (op.minSize == 2 && numSubs == 1) {
-                return subterms[0]; //reduction
+                return t[0]; //reduction
             }
-            //throw new RuntimeException(Arrays.toString(subterms) + " invalid size for " + op);
+            //throw new RuntimeException(Arrays.toString(t) + " invalid size for " + op);
             return null;
         }
 
-        return new GenericCompound(op, subterms, 0);
+        return new GenericCompound(op, t, relation);
     }
 
     protected GenericCompound(Op op, T... subterms) {
@@ -103,24 +133,33 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return op.isCommutative();
     }
 
+    public void append(Appendable p, boolean pretty) throws IOException {
 
-    @Override
-    public String toString(boolean pretty) {
-        //noinspection IfStatementWithTooManyBranches
-        if (Operation.isOperation(this)) {
-            return Operation.toString((Compound) term(0), term(1), pretty);
-        }
-        else if (op == Op.PRODUCT) {
-            return Product.toString(this);
-        }
-        else if (op.type == Op.OpType.Relation) {
-            return Statement.toString(term(0), op(), term(1), pretty);
+        switch (op) {
+            case SET_INT_OPENER:
+            case SET_EXT_OPENER: SetTensional.Appender.accept(this, p);
+                break;
+            case PRODUCT:
+                p.append(Product.toString(this)); //TODO Appender
+                break;
+            default:
+                if (op.isStatement()) {
+                    if (Operation.isOperation(this)) {
+                        Operation.appendOperation((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
+                    }
+                    else {
+                        Statement.Appender.accept(this, p);
+                    }
+                } else {
+                    Compound.appendCompound(this, p, pretty);
+                }
+                break;
         }
 
-        else {
-            return toStringBuilder(pretty).toString();
-        }
+
+
     }
+
 
     @Override
     public String toStringCompact() {

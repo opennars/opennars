@@ -30,7 +30,11 @@ public class Unite extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        return createSetAndAddToSubstitutes(m, a, c, Terms.concat( A.terms(), B.terms() ));
+        return createSetAndAddToSubstitutes(m, a, c,
+                    Terms.concat(
+                        ((Compound)A).terms(),
+                        ((Compound)B).terms()
+                    ));
     }
 
     public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Set<Term> terms) {

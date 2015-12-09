@@ -8,6 +8,7 @@ import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -103,7 +104,7 @@ public class MethodOperator extends TermFunction {
             if (!(xv instanceof Product))
                 throw new RuntimeException("method parameters must be a product but is " + xv);
 
-            Product pxv = (Product)xv;
+            Compound pxv = (Compound)xv;
             if (pxv.size()!=pc) {
                 throw new RuntimeException("invalid # method parameters; requires " + pc + " but " + pxv.size() + " given");
             }

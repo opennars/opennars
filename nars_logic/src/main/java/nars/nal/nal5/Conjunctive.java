@@ -66,7 +66,9 @@ public interface Conjunctive<T extends Term>  {
         int sz = 0;
         for (Term a : args) {
             if (isConjunction(a, order))
-                sz += a != null ? a.size() : 1;
+                sz += a.size();
+            else
+                sz++;
         }
         return sz;
     }
