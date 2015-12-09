@@ -3,7 +3,7 @@ package nars.nal.meta;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.Level;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nal.meta.op.Solve;
 import nars.term.Term;
 import nars.term.Terms;
@@ -93,7 +93,7 @@ public class PostCondition implements Serializable, Level //since there can be m
      * @param modifiers
      * @throws RuntimeException
      */
-    public static PostCondition make(TaskRule rule, Term term,
+    public static PostCondition make(PremiseRule rule, Term term,
                                      PreCondition[] afterConclusions,
                                      Term... modifiers) throws RuntimeException {
 
@@ -211,7 +211,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
 
-    boolean valid(TaskRule rule) {
+    boolean valid(PremiseRule rule) {
         Term term = this.term;
 
         if (!modifiesPunctuation() && term instanceof Compound) {

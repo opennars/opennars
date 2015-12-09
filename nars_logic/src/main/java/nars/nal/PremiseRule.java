@@ -30,10 +30,10 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
- * A rule which produces a Task
+ * A rule which matches a Premise and produces a Task
  * contains: preconditions, predicates, postconditions, post-evaluations and metainfo
  */
-public class TaskRule extends GenericCompound implements Level {
+public class PremiseRule extends GenericCompound implements Level {
 
     public boolean immediate_eternalize = false;
 
@@ -73,10 +73,10 @@ public class TaskRule extends GenericCompound implements Level {
 
     @Override
     public Term clone(Term[] replaced) {
-        return new TaskRule((Compound)replaced[0], (Compound)replaced[1]);
+        return new PremiseRule((Compound)replaced[0], (Compound)replaced[1]);
     }
 
-    public TaskRule(Compound premises, Compound result) {
+    public PremiseRule(Compound premises, Compound result) {
         super(Op.PRODUCT, premises, result );
         str = super.toString();
     }
@@ -322,13 +322,13 @@ public class TaskRule extends GenericCompound implements Level {
 
 
 
-    public final TaskRule normalizeRule() {
-        return (TaskRule) new TaskRuleVariableNormalization(this).get();
+    public final PremiseRule normalizeRule() {
+        return (PremiseRule) new TaskRuleVariableNormalization(this).get();
     }
 
 
 
-    public final TaskRule setup(TermIndex index) {
+    public final PremiseRule setup(TermIndex index) /* throws PremiseRuleException */ {
 
         compile(index);
 
@@ -575,7 +575,7 @@ public class TaskRule extends GenericCompound implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    public final void forEachQuestionReversal(BiConsumer<TaskRule,String> w) {
+    public final void forEachQuestionReversal(BiConsumer<PremiseRule,String> w) {
 
         //String s = w.toString();
         /*if(s.contains("task(\"?") || s.contains("task(\"@")) { //these are backward inference already
@@ -596,11 +596,11 @@ public class TaskRule extends GenericCompound implements Level {
         Term C = getConclusionTerm();
 
         //      C, B, [pre], task_is_question() |- T, [post]
-        TaskRule clone1 = clone(C, B, T, true);
+        PremiseRule clone1 = clone(C, B, T, true);
         w.accept(clone1, "C,B,[pre],question |- T,[post]");
 
         //      C, T, [pre], task_is_question() |- B, [post]
-        TaskRule clone2 = clone(C, T, B, true);
+        PremiseRule clone2 = clone(C, T, B, true);
         w.accept(clone2, "C,T,[pre],question |- B,[post]");
 
     }
@@ -622,7 +622,7 @@ public class TaskRule extends GenericCompound implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    public final TaskRule forwardPermutation() {
+    public final PremiseRule forwardPermutation() {
 
         // T, B, [pre] |- C, [post] ||--
 
@@ -632,11 +632,11 @@ public class TaskRule extends GenericCompound implements Level {
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
-        TaskRule clone1 = clone(B, T, C, false);
+        PremiseRule clone1 = clone(B, T, C, false);
         return clone1;//.normalizeRule();
     }
 
-    private final TaskRule clone(Term newT, Term newB, Term newR, boolean question) {
+    private final PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {
 
         Compound newPremise = null;
         newPremise = question ? $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm)) : $.p(getPremise().terms());
@@ -647,7 +647,7 @@ public class TaskRule extends GenericCompound implements Level {
         Term[] newConclusion = getConclusion().terms().clone();
         newConclusion[0] = newR;
 
-        return new TaskRule(newPremise, $.p( newConclusion ));
+        return new PremiseRule(newPremise, $.p( newConclusion ));
     }
 
 //    /**

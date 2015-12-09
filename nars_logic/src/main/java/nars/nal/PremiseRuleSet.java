@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Holds an array of derivation rules
  */
-public class DerivationRules extends FastList<TaskRule> {
+public class PremiseRuleSet extends FastList<PremiseRule> {
 
     private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
     private static final Pattern twoSpacePattern = Pattern.compile("  ", Pattern.LITERAL);
@@ -38,35 +38,35 @@ public class DerivationRules extends FastList<TaskRule> {
     //static final Narsese parser = Narsese.the();
 
 
-    public DerivationRules() throws IOException, URISyntaxException {
+    public PremiseRuleSet() throws IOException, URISyntaxException {
         this(Paths.get(Deriver.class.getResource("default.meta.nal").toURI()));
     }
 
-    public DerivationRules(Path path) throws IOException {
+    public PremiseRuleSet(Path path) throws IOException {
         this(Files.readAllLines(path));
     }
 
-    public DerivationRules(String... ruleStrings) {
+    public PremiseRuleSet(String... ruleStrings) {
         this(Lists.newArrayList(ruleStrings));
     }
 
-    public DerivationRules(Collection<String> ruleStrings) {
+    public PremiseRuleSet(Collection<String> ruleStrings) {
         this(parseRules(loadRuleStrings(ruleStrings)));
     }
 
     /** for compiling and de-duplicating pattern term components */
     final MapIndex patterns = new PatternIndex();
 
-    static final Logger logger = LoggerFactory.getLogger(DerivationRules.class);
+    static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
 
-    public DerivationRules(Set<TaskRule> r) {
+    public PremiseRuleSet(Set<PremiseRule> r) {
         final int[] errors = {0};
         r.forEach(t -> {
             try {
-                TaskRule p = t.setup(patterns);
+                PremiseRule p = t.setup(patterns);
                 add( p );
             } catch (RuntimeException e) {
-                logger.warn("rule '{}': {}", t, e.getMessage());
+                logger.warn("PremiseRule '{}': {}", t, e.getMessage());
                 errors[0]++;
             }
         });
@@ -271,7 +271,7 @@ public class DerivationRules extends FastList<TaskRule> {
 //    }
 
 
-    static Set<TaskRule> parseRules(Collection<String> rawRules) {
+    static Set<PremiseRule> parseRules(Collection<String> rawRules) {
 
 
         Set<String> expanded = new HashSet(1000); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
@@ -293,20 +293,20 @@ public class DerivationRules extends FastList<TaskRule> {
         });//.forEachOrdered(s -> expanded.addAll(s));
 
 
-        Set<TaskRule> ur = Global.newHashSet(1024);
+        Set<PremiseRule> ur = Global.newHashSet(1024);
         //ListMultimap<TaskRule, TaskRule> ur = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
         //accumulate these in a set to eliminate duplicates
         expanded.forEach(s -> {
             try {
 
-                TaskRule rUnnorm = $.$(s);
+                PremiseRule rUnnorm = $.$(s);
 
                 Compound r = rUnnorm.normalizeRule();
                 if (r != null) {
                     AcceptRule(ur, rUnnorm, s);
 
-                    TaskRule rFwd = rUnnorm.forwardPermutation();
+                    PremiseRule rFwd = rUnnorm.forwardPermutation();
                     AcceptRule(ur, rFwd, s);
                 }
                 else {
@@ -333,7 +333,7 @@ public class DerivationRules extends FastList<TaskRule> {
         return ur;
     }
 
-    private static void AcceptRule(Collection<TaskRule> c, TaskRule r, String src) {
+    private static void AcceptRule(Collection<PremiseRule> c, PremiseRule r, String src) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //
@@ -355,7 +355,7 @@ public class DerivationRules extends FastList<TaskRule> {
         addRule(c, r.normalizeRule(), src);
     }
 
-    static void addRule(Collection<TaskRule> c, TaskRule q, String src) {
+    static void addRule(Collection<PremiseRule> c, PremiseRule q, String src) {
         if (q!=null) {
             q.setSource(src);
             c.add(q);

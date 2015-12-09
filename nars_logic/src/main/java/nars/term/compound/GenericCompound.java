@@ -2,6 +2,7 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
+import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.term.*;
@@ -22,27 +23,55 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     protected final transient int hash;
     protected final Op op;
-    protected final int relation;
+    public final int relation;
     private boolean normalized = false;
 
-    public GenericCompound(Op op, Term a) {
-        this(op, (T[]) new Term[] { a });
-    }
-    public GenericCompound(Op op, Term a, Term b) {
-        this(op, (T[]) new Term[] { a, b });
-    }
-    public GenericCompound(Op op, Term a, Term b, Term c) {
-        this(op, (T[]) new Term[] { a, b, c });
+    public static Term c(Op op, Term a) {
+        return c(op, new Term[] { a });
     }
 
-    public GenericCompound(Op op, T[] subterms) {
+    public static Term c(Op op, Term a, Term b) {
+        return c(op, new Term[] { a, b });
+    }
+    public static Term c(Op op, Term a, Term b, Term c) {
+        return c(op, new Term[] { a, b, c });
+    }
+
+    public static Term c(Op op, Term[] subterms) {
+        if (op.isImage() && Image.hasPlaceHolder(subterms)) {
+            return Image.build(op, subterms);
+        }
+        return c(op, subterms, 0);
+    }
+
+    public static Term c(Op op, Term[] subterms, int relation) {
+
+        if (op.isCommutative()) {
+            subterms = Terms.toSortedSetArray(subterms);
+        }
+
+        int numSubs = subterms.length;
+        if (!op.validSize(numSubs)) {
+            if (op.minSize == 2 && numSubs == 1) {
+                return subterms[0]; //reduction
+            }
+            //throw new RuntimeException(Arrays.toString(subterms) + " invalid size for " + op);
+            return null;
+        }
+
+        return new GenericCompound(op, subterms, 0);
+    }
+
+    protected GenericCompound(Op op, T... subterms) {
         this(op, subterms, 0);
     }
 
     protected GenericCompound(Op op, T[] subterms, int relation) {
+
         this.op = op;
+
         TermVector<T> terms = this.terms = op.isCommutative() ?
-                new TermSet(subterms) :
+                TermSet.newTermSetPresorted(subterms) :
                 new TermVector(subterms);
         hash = Compound.hash(terms, op, relation);
         this.relation = relation;

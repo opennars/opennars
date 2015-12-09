@@ -1,5 +1,10 @@
 package nars;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
 import nars.nal.meta.match.VarPattern;
 import nars.nal.nal1.Inheritance;
@@ -20,6 +25,7 @@ import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -101,7 +107,7 @@ public abstract class $  {
     }
 
     public static Compound oper(Operator opTerm, Compound arg) {
-        return new GenericCompound(
+        return (Compound)GenericCompound.c(
                 Op.INHERITANCE,
                 arg == null ? Product.Empty : arg,
                 opTerm
@@ -132,7 +138,7 @@ public abstract class $  {
         if (l == 0) //length 0 product are allowd and shared
             return Product.Empty;
 
-        return new GenericCompound(Op.PRODUCT, t);
+        return (Compound)GenericCompound.c(Op.PRODUCT, t);
     }
 
     /** creates from a sublist of a list */
@@ -336,6 +342,33 @@ public abstract class $  {
 //        //loggerContext.stop();
     }
 
+    static {
+        Thread.currentThread().setName("$");
+
+        //http://logback.qos.ch/manual/layouts.html
+
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        LoggerContext loggerContext = rootLogger.getLoggerContext();
+        // we are not interested in auto-configuration
+        loggerContext.reset();
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setContext(loggerContext);
+        encoder.setPattern("%highlight(%-5level) %green(%thread) %message%n");
+        encoder.start();
+
+        ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
+        appender.setContext(loggerContext);
+        appender.setEncoder(encoder);
+        appender.start();
+
+        rootLogger.addAppender(appender);
+
+//        rootLogger.debug("Message 1");
+//        rootLogger.info("Message 1");
+//        rootLogger.warn("Message 2");
+//        rootLogger.error("Message 2");
+    }
     public static void main(String[] args) {
 
     }

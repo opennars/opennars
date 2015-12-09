@@ -12,7 +12,7 @@ import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
 import nars.nal.meta.match.EllipsisTransform;
@@ -134,14 +134,14 @@ public class Narsese extends BaseParser<Object>  {
         //use a var to count how many rule conditions so that they can be pulled off the stack without reallocating an arraylist
         return sequence(
                 STATEMENT_OPENER, s(),
-                push(TaskRule.class),
+                push(PremiseRule.class),
 
                 Term(), //cause
 
                 zeroOrMore( sepArgSep(), Term() ),
                 s(), TASK_RULE_FWD, s(),
 
-                push(TaskRule.class), //stack marker
+                push(PremiseRule.class), //stack marker
 
                 Term(), //effect
 
@@ -153,18 +153,18 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    public TaskRule popTaskRule() {
+    public PremiseRule popTaskRule() {
         //(Term)pop(), (Term)pop()
 
         List<Term> r = Global.newArrayList(1);
         List<Term> l = Global.newArrayList(1);
 
         Object popped;
-        while ( (popped = pop()) != TaskRule.class) { //lets go back till to the start now
+        while ( (popped = pop()) != PremiseRule.class) { //lets go back till to the start now
             r.add((Term)popped);
         }
 
-        while ( (popped = pop()) != TaskRule.class) {
+        while ( (popped = pop()) != PremiseRule.class) {
             l.add((Term)popped);
         }
 
@@ -189,7 +189,7 @@ public class Narsese extends BaseParser<Object>  {
             return null;
         }
 
-        return new TaskRule(premise, conclusion);
+        return new PremiseRule(premise, conclusion);
     }
 
     public Rule LineComment() {
@@ -965,7 +965,7 @@ public class Narsese extends BaseParser<Object>  {
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return new GenericCompound(op, va);
+            return GenericCompound.c(op, va);
         }
     }
 

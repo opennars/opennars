@@ -3,8 +3,8 @@ package nars.nal.meta.op;
 import nars.Op;
 import nars.Premise;
 import nars.Symbols;
+import nars.nal.PremiseRule;
 import nars.nal.RuleMatch;
-import nars.nal.TaskRule;
 import nars.nal.meta.BeliefFunction;
 import nars.nal.meta.CanCycle;
 import nars.nal.meta.PreCondition;
@@ -22,12 +22,12 @@ import nars.term.variable.Variable;
 public final class Solve extends PreCondition {
 
     public final Term term;
-    @Deprecated public final TaskRule rule;
+    @Deprecated public final PremiseRule rule;
 
     private final transient String id;
     private final boolean continueIfIncomplete;
 
-    public Solve(Term term, TaskRule rule, boolean continueIfIncomplete) {
+    public Solve(Term term, PremiseRule rule, boolean continueIfIncomplete) {
         this.term = term;
         this.rule = rule;
         this.continueIfIncomplete = continueIfIncomplete;

@@ -1,7 +1,7 @@
 package nars.util.meter;
 
 import nars.Narsese;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nar.SingleStepNAR;
 import nars.task.Task;
 
@@ -12,7 +12,7 @@ public class RuleTest extends TestNAR {
 
 
 
-    public static RuleTest from(TaskRule r) {
+    public static RuleTest from(PremiseRule r) {
         //TODO eventually make this handle all of r's postconditions and modifiers, etc
         String task = r.task().toString();
         task = task.replace("%", "p"); //TODO do proper term replacement

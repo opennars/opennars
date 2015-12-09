@@ -13,7 +13,7 @@ public class TrieDeriver extends RuleTrie {
         this(Deriver.standard);
     }
 
-    public TrieDeriver(DerivationRules rules) {
+    public TrieDeriver(PremiseRuleSet rules) {
         super(rules);
     }
 

@@ -222,7 +222,6 @@ public class NAL2Test extends AbstractNALTester {
         tester.mustBelieve(100, "<p1 --> p3>",
                 1.0f, 1.0f, 0.81f, 1.0f);
         tester.debug();
-        tester.run(true);
     }
 
 }

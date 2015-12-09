@@ -24,8 +24,6 @@ import nars.Op;
 import nars.Symbols;
 import nars.nal.nal4.Image;
 import nars.term.compound.Compound;
-import nars.term.compound.CompoundN;
-import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
@@ -40,17 +38,8 @@ import static nars.Symbols.STATEMENT_OPENER;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 @Deprecated
-public abstract class Statement<A extends Term, B extends Term>
-        extends CompoundN {
+public abstract class Statement<A extends Term, B extends Term>         {
 
-
-    public Statement(A subject, B predicate) {
-        super(subject, predicate);
-    }
-
-    protected Statement(Op op, TermVector subterms) {
-        super(op, subterms);
-    }
 
     public static String toString(Term a, Op op, Term b, boolean pretty)  {
         try {
@@ -70,7 +59,7 @@ public abstract class Statement<A extends Term, B extends Term>
 
         if (pretty) w.append(' ');
 
-        op.expand(w);
+        op.append(w);
 
         if (pretty) w.append(' ');
 
@@ -80,10 +69,6 @@ public abstract class Statement<A extends Term, B extends Term>
     }
 
 
-    @Override
-    public final Term clone(Term[] replaced) {
-        return new GenericCompound(op(), replaced);
-    }
 
 //    /**
 //     * Make a Statement from String, called by StringParser
@@ -215,11 +200,11 @@ public abstract class Statement<A extends Term, B extends Term>
 //    }
 
 
-    @Override
-    public byte[] bytes() {
-        byte[] subjBytes = getSubject().bytes();
-        byte[] predBytes = getPredicate().bytes();
-        byte[] relationBytes = op().bytes;
+
+    public static byte[] bytes(Op op, Term subject, Term predicate) {
+        byte[] subjBytes = subject.bytes();
+        byte[] predBytes = predicate.bytes();
+        byte[] relationBytes = op.bytes;
 
         ByteBuf b = ByteBuf.create(
                 subjBytes.length + predBytes.length + relationBytes.length +
@@ -228,26 +213,26 @@ public abstract class Statement<A extends Term, B extends Term>
 
         return b.add(relationBytes)
                 .add(subjBytes)
-                .add((byte) Symbols.STAMP_SEPARATOR)
+                .add((byte) Symbols.ARGUMENT_SEPARATOR)
                 .add(predBytes)
                 .add((byte) STATEMENT_CLOSER).toBytes();
     }
 
 
-    @Override
-    public void append(Appendable w, boolean pretty) throws IOException {
+
+    public static void append(Appendable w, Op op, Term subject, Term predicate, boolean pretty) throws IOException {
 
         w.append(STATEMENT_OPENER);
 
-        getSubject().append(w, pretty);
+        subject.append(w, pretty);
 
         if (pretty) w.append(' ');
 
-        op().expand(w);
+        op.append(w);
 
         if (pretty) w.append(' ');
 
-        getPredicate().append(w, pretty);
+        predicate.append(w, pretty);
 
         w.append(STATEMENT_CLOSER);
     }
@@ -281,22 +266,35 @@ public abstract class Statement<A extends Term, B extends Term>
             return true;
 
 
-        if ((subject instanceof Statement) && (predicate instanceof Statement)) {
-            Statement s1 = (Statement) subject;
-            Statement s2 = (Statement) predicate;
+        if ((Statement.is(subject)) && (Statement.is(predicate))) {
+            Compound s1 = (Compound) subject;
+            Compound s2 = (Compound) predicate;
 
-            Term t11 = s1.getSubject();
-            Term t22 = s2.getPredicate();
+            Term t11 = Statement.subj(s1);
+            Term t22 = Statement.pred(s2);
             if (!t11.equals(t22))
                 return false;
 
-            Term t12 = s1.getPredicate();
-            Term t21 = s2.getSubject();
+            Term t12 = Statement.pred(s1);
+            Term t21 = Statement.subj(s2);
             if (t12.equals(t21))
                 return true;
 
         }
         return false;
+    }
+
+
+
+    public static boolean is(Term t) {
+        return t.op().isStatement();
+    }
+
+    public static Term subj(Compound t) {
+        return t.term(0);
+    }
+    public static Term pred(Compound t) {
+        return t.term(1);
     }
 
     /**
@@ -327,56 +325,16 @@ public abstract class Statement<A extends Term, B extends Term>
 //        return s1Indep ^ s2Indep;
 //    }
 
-    public boolean subjectOrPredicateIsIndependentVar() {
-        if (!hasVarIndep()) return false;
+    public static boolean subjectOrPredicateIsIndependentVar(Compound t) {
+        if (!t.hasVarIndep()) return false;
 
-        Term subj = getSubject();
+        Term subj = t.term(0);
         if ((subj instanceof Variable) && (subj.hasVarIndep()))
             return true;
 
-        Term pred = getPredicate();
+        Term pred = t.term(1);
         return (pred instanceof Variable) && (pred.hasVarIndep());
 
     }
 
-
-    /**
-     * Return the first component of the statement
-     *
-     * @return The first component
-     */
-    public A getSubject() {
-        return (A) term(0);
-    }
-
-    /**
-     * Return the second component of the statement
-     *
-     * @return The second component
-     */
-    public B getPredicate() {
-        return (B) term(1);
-    }
-
-
-//    public Term getSubject(boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
-//        return Compound.unwrap(getSubject(), unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
-//    }
-//    public Term getPredicate(boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
-//        return Compound.unwrap(getPredicate(), unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
-//    }
 }
-
-
-//    Should not be necessary since a Statement that would be invalid would never be created:
-//    /**
-//     * Check the validity of a potential Statement. [To be refined]
-//     * <p>
-//     * Minimum requirement: the two terms cannot be the same, or containing each
-//     * other as component
-//     *
-//     * @return Whether The Statement is invalid
-//     */
-//    public boolean invalid() {
-//        return invalidStatement(getSubject(), getPredicate());
-//    }

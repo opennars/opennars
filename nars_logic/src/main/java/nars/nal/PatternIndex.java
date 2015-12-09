@@ -49,12 +49,11 @@ public class PatternIndex extends MapIndex {
         private final Term[] termsCached;
 
         public LinearCompoundPattern(Compound seed) {
-            super(seed.op(), seed.terms(),
-                    (int)((seed instanceof Image) ? (((Image)seed).relation()) : 0)
+            super(seed.op(), seed.terms(), seed.relation()
             );
             op = seed.op();
             structureCachedWithoutVars =
-                seed.structure() & ~(Op.VARIABLE_BITS);
+                seed.structure() & ~(Op.VariableBits);
 
             termsCached = terms();
             sizeCached = seed.size();

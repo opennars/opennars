@@ -10,6 +10,7 @@ import nars.task.Task;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
+import org.slf4j.Logger;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -424,6 +425,27 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         }
         if (similar!=null) {
             similar.values().forEach(s -> printer.accept("SIMILAR", s));
+        }
+    }
+
+    @Override
+    public void toLogger(Logger logger) {
+        String msg = isTrue() ? " OK" : "ERR" + '\t' + toString() + ' ' + toConditionString();
+        if (isTrue())
+            logger.info(msg);
+        else
+            logger.warn(msg);
+
+        BiConsumer<String,Task> printer = (label,s) -> {
+            logger.info("{}: {}", label, s);
+            //logger.debug(s.getExplanation().replace("\n", "\n\t\t"));
+        };
+
+        if (valid!=null) {
+            valid.forEach(s -> printer.accept("\t OK", s));
+        }
+        if (similar!=null) {
+            similar.values().forEach(s -> printer.accept("\tERR", s));
         }
     }
 }

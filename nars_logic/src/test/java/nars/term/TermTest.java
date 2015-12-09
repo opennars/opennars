@@ -19,8 +19,8 @@ package nars.term;
 import nars.*;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.Difference;
 import nars.nal.nal3.DifferenceExt;
-import nars.nal.nal3.DifferenceInt;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Image;
@@ -300,7 +300,7 @@ public class TermTest {
 
         Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-        Term d = DifferenceInt.make(a, b);
+        Term d = Difference.diffInt(a, b);
         assertEquals(Op.SET_INT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("[a,c]", d.toString());

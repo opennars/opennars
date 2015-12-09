@@ -35,7 +35,7 @@ public interface Negation {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return new GenericCompound(Op.NEGATION, t);
+        return GenericCompound.c(Op.NEGATION, t);
     }
 
 }

@@ -563,6 +563,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return term(size()-1);
     }
 
+    default int relation() {
+        return 0;
+    }
+
+
+
 
 //    public int countOccurrences(final Term t) {
 //        final AtomicInteger o = new AtomicInteger(0);

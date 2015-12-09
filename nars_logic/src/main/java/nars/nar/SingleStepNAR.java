@@ -3,7 +3,7 @@ package nars.nar;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.time.FrameClock;
@@ -13,7 +13,7 @@ public class SingleStepNAR extends AbstractNAR {
 
     //static DerivationGraph derivations = new DerivationGraph(false, false);
 
-    static Multimap<TaskRule, DerivationGraph.PremiseKey> ruleDerivations =
+    static Multimap<PremiseRule, DerivationGraph.PremiseKey> ruleDerivations =
             Multimaps.newMultimap(Global.newHashMap(1024),
                     () -> Global.newHashSet(4));
 
