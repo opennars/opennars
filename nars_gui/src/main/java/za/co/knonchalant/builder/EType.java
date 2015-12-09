@@ -17,7 +17,7 @@ public enum EType {
     PATH(String.class, PathFieldConverter.class, false),
     COLLECTION(String.class, CollectionConverter.class, false);
 
-    private static Map<Class<?>, EType> values = new HashMap<>();
+    private static final Map<Class<?>, EType> values = new HashMap<>();
     static {
         for (EType type : EType.values()) {
             if (type.isDefaultForType()) {

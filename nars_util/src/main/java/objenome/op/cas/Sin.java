@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Sin extends Function {
     
-    private static HashMap<Expr, Expr> values = new HashMap<Expr, Expr>();
+    private static final HashMap<Expr, Expr> values = new HashMap<Expr, Expr>();
     static {
         values.put(Num.make(0), Num.make(0)); // 0
         values.put(Num.make(1), Num.make(0)); // pi

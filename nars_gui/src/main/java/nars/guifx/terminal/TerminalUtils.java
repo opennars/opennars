@@ -10,7 +10,7 @@ import javafx.scene.input.KeyEvent;
  * @author sergei.malafeev
  */
 public class TerminalUtils {
-    private static Map<Integer, byte[]> keyMap;
+    private static final Map<Integer, byte[]> keyMap;
 
     public static byte[] getCode(KeyEvent event, TerminalPanel terminalPanel) {
         if (event.getCode() == KeyCode.BACK_SPACE) {
