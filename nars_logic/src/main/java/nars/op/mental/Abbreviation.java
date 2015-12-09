@@ -1,11 +1,11 @@
 package nars.op.mental;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.$;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.concept.Concept;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
@@ -99,7 +99,7 @@ public class Abbreviation implements Consumer<Task> {
 
                 concept.put(Abbreviation.class, atomic);
 
-                Compound c = (Compound) Similarity.make(termAbbreviating, atomic);
+                Compound c = (Compound) $.simi(termAbbreviating, atomic);
                 if (c!=null) {
 
                     Memory m = nar.memory;

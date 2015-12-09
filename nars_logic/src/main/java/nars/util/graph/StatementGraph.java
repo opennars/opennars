@@ -5,6 +5,9 @@ import nars.concept.Concept;
 import nars.term.Statement;
 import nars.term.Term;
 
+import static nars.term.Statement.pred;
+import static nars.term.Statement.subj;
+
 
 public abstract class StatementGraph extends SentenceGraph {
 
@@ -29,12 +32,11 @@ public abstract class StatementGraph extends SentenceGraph {
     @Override
     ConceptRelation[] getRelations(Concept c) {
         Term tt = c.getTerm();
-        if (!(tt instanceof Statement)) return null;
+        if (!(tt.op().isStatement())) return null;
 
-        Statement t = (Statement)tt;
-        Term subj = t.getSubject();
+        Term subj = subj(tt);
         Concept subjTerm = nar.concept(subj);
-        Term pred = t.getPredicate();
+        Term pred = pred(tt);
         Concept predTerm = nar.concept(pred);
 
         if (subjTerm == null || predTerm == null) {

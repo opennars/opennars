@@ -449,7 +449,7 @@ public class Narsese extends BaseParser<Object>  {
 //                        //negation shorthand
                         seq(Op.NEGATION.str, s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
-                            $.not(Atom.the(pop())))),
+                            $.neg(Atom.the(pop())))),
 
 
                         seq(
@@ -965,7 +965,7 @@ public class Narsese extends BaseParser<Object>  {
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return GenericCompound.c(op, va);
+            return GenericCompound.COMPOUND(op, va);
         }
     }
 

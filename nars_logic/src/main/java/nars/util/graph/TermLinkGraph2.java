@@ -9,7 +9,6 @@ import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import org.jgrapht.EdgeFactory;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
 

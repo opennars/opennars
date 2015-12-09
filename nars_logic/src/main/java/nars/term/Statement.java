@@ -290,11 +290,11 @@ public abstract class Statement<A extends Term, B extends Term>         {
         return t.op().isStatement();
     }
 
-    public static Term subj(Compound t) {
-        return t.term(0);
+    public static Term subj(Term t) {
+        return ((Compound)t).term(0);
     }
-    public static Term pred(Compound t) {
-        return t.term(1);
+    public static Term pred(Term t) {
+        return ((Compound)t).term(1);
     }
 
     /**

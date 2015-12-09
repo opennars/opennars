@@ -17,7 +17,6 @@ import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
-import nars.term.visit.SubtermVisitor;
 import nars.util.Texts;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;

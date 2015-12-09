@@ -760,7 +760,7 @@ public class FindSubst extends Versioning implements Subst {
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
                         putXY(e, new ImagePutMatch(
-                                raw.term, et.to, (Image)Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                                raw.term, et.to, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                         return true;
                     }
                 } else {

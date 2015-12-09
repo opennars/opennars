@@ -58,11 +58,11 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
 
     /** only need the positive version of it which calls this */
     @Deprecated static boolean invalidTaskTerm(Term t) {
-        if (t instanceof Statement) {
-            Statement st = (Statement) t;
+        if (t.op().isStatement()) {
+            Compound st = (Compound) t;
 
             /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
-            if (st.subjectOrPredicateIsIndependentVar())
+            if (Statement.subjectOrPredicateIsIndependentVar(st))
                 return true;
 
             return Statement.invalidStatement(st);

@@ -21,11 +21,8 @@
 package nars.nal.nal5;
 
 import nars.Op;
-import nars.nal.nal7.Order;
 import nars.term.Term;
 import nars.term.compound.GenericCompound;
-
-import static nars.nal.nal5.Conjunctive.flattenAndSort;
 
 /**
  * Conjunction (&&)
@@ -33,12 +30,10 @@ import static nars.nal.nal5.Conjunctive.flattenAndSort;
 public interface Conjunction  {
 
     static Term conjunction(Term... a) {
-        a = flattenAndSort(a, Order.None);
 
-        //collapse to a singular term if none and parallel
-        if (a.length < 2) return a[0];
 
-        return new GenericCompound(Op.CONJUNCTION, a);
+
+        return GenericCompound.COMPOUND(Op.CONJUNCTION, a);
     }
 
 }

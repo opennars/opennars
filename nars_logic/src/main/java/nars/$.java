@@ -7,9 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
 import nars.nal.meta.match.VarPattern;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
@@ -22,13 +20,14 @@ import nars.task.MutableTask;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+
+import static nars.term.compound.GenericCompound.COMPOUND;
 
 /**
  * core utility class for:
@@ -80,7 +79,12 @@ public abstract class $  {
      *  returns a Term if the two inputs are equal to each other
      */
     public static <T extends Term> T inh(Term subj, Term pred) {
-        return (T) Inheritance.inheritance(subj, pred);
+
+//        if ((predicate instanceof Operator) && if (subject instanceof Product))
+//            return new GenericCompound(Op.INHERITANCE, (Operator)predicate, (Product)subject);
+//        else
+
+        return (T) COMPOUND(Op.INHERITANCE, subj, pred);
     }
 
 
@@ -90,7 +94,7 @@ public abstract class $  {
 
 
     public static Term simi(Term subj, Term pred) {
-        return Similarity.make(subj, pred);
+        return COMPOUND(Op.SIMILARITY, subj, pred);
     }
 
     public static Compound oper(String operator, String... args) {
@@ -107,7 +111,7 @@ public abstract class $  {
     }
 
     public static Compound oper(Operator opTerm, Compound arg) {
-        return (Compound)GenericCompound.c(
+        return (Compound) COMPOUND(
                 Op.INHERITANCE,
                 arg == null ? Product.Empty : arg,
                 opTerm
@@ -119,7 +123,7 @@ public abstract class $  {
         return Implication.implication(a, b);
     }
 
-    public static <X extends Term> X not(Term x) {
+    public static <X extends Term> X neg(Term x) {
         return (X) Negation.negation(x);
     }
 
@@ -138,7 +142,7 @@ public abstract class $  {
         if (l == 0) //length 0 product are allowd and shared
             return Product.Empty;
 
-        return (Compound)GenericCompound.c(Op.PRODUCT, t);
+        return (Compound) COMPOUND(Op.PRODUCT, t);
     }
 
     /** creates from a sublist of a list */
@@ -237,11 +241,11 @@ public abstract class $  {
         return Implication.implication(condition, consequence, Tense.ORDER_FORWARD);
     }
 
-    public static <T extends Term> Compound<T> extset(Collection<T> t) {
+    public static Compound extset(Collection<Term> t) {
         return SetExt.make(t);
     }
 
-    public static <T extends Term> Compound<T> intset(Collection<T> t) {
+    public static Compound intset(Collection<Term> t) {
         return SetInt.make(t);
     }
 
@@ -372,4 +376,16 @@ public abstract class $  {
     public static void main(String[] args) {
 
     }
+
+    public static Term equiv(Term subject, Term pred) {
+        return COMPOUND(Op.EQUIVALENCE, subject, pred);
+    }
+    public static Term equivAfter(Term subject, Term pred) {
+        return COMPOUND(Op.EQUIVALENCE_AFTER, subject, pred);
+    }
+    public static Term equivWhen(Term subject, Term pred) {
+        return COMPOUND(Op.EQUIVALENCE_WHEN, subject, pred);
+    }
+
+
 }

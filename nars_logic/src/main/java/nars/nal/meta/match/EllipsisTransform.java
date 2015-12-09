@@ -39,8 +39,8 @@ public class EllipsisTransform extends EllipsisOneOrMore {
 
     public ArrayEllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
         if (from.equals(Image.Index) && (y instanceof Image)) {
-            Image ii = (Image)y;
-            int rel = ii.relationIndex;
+
+            int rel = y.relation();
             int n = (b-a)+1;
             int i = 0;
             int ab = 0;

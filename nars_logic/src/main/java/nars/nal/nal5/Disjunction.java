@@ -88,7 +88,7 @@ public interface Disjunction  {
             return t[0];
         }
 
-        return GenericCompound.c(DISJUNCTION, t);
+        return GenericCompound.COMPOUND(DISJUNCTION, t);
     }
 
 

@@ -27,7 +27,7 @@ public interface Intersect {
             //TODO 3: make(t[0], make(t[1], t[2]) ... etc??
 
         }
-        return GenericCompound.c(
+        return GenericCompound.COMPOUND(
                 intOrExt ? Op.INTERSECTION_INT : Op.INTERSECTION_EXT,
                 t);
     }

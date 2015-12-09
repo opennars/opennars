@@ -3,7 +3,6 @@ package nars.nal.meta;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
@@ -96,13 +95,14 @@ public class TermPattern {
             //code.add(new FindSubst.TermVolumeMin(x.volume()-1));
 
             int numEllipsis = Ellipsis.numEllipsis((Compound)x);
-            if (x instanceof Image) {
+            if (x.op().isImage()) {
                 if (numEllipsis == 0) {
                     //TODO implement case for varargs
                     code.add(new FindSubst.ImageIndexEquals(
-                            ((Image) x).relationIndex));
+                            ((Compound) x).relation()
+                    ));
                 } else {
-
+                    //..
                 }
             }
 

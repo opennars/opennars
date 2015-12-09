@@ -2,10 +2,7 @@ package nars.task.in;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal1.Negation;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Equivalence;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -279,11 +276,11 @@ public abstract class NQuadsRDF {
         }
         else if (predicate.equals(equivalentClass)) {
 
-            belief = (Compound) Equivalence.make(subject, object);
+            belief = $.equiv(subject, object);
         }
         else if (predicate.equals(sameAs)) {
 
-            belief = (Compound) Similarity.make(subject, object);
+            belief = $.simi(subject, object);
             //belief = (Equivalence.make(subject, object));
         }
         else if (predicate.equals(domain)) {
@@ -310,7 +307,7 @@ public abstract class NQuadsRDF {
         }
         else if (predicate.equals(equivalentProperty)) {
 
-            belief = (Compound) Equivalence.make(subject, object);
+            belief = $.equiv(subject, object);
         }
         else if (predicate.equals(inverseOf)) {
 
@@ -319,7 +316,7 @@ public abstract class NQuadsRDF {
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
 
-            belief = (Compound) Negation.negation(Similarity.make(subject, object));
+            belief = $.neg($.simi(subject, object));
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);

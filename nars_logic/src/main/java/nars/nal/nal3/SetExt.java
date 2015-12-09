@@ -13,17 +13,13 @@ import java.util.Collection;
 public interface SetExt {
 
 
-    static <T extends Term> Compound<T> make(Collection<T> c) {
-        return SetExt.make((T[])c.toArray(new Term[c.size()]));
+    static Compound make(Term... c) {
+        return (Compound) GenericCompound.COMPOUND(Op.SET_EXT, c);
+
     }
 
-    @SafeVarargs
-    static <T extends Term> Compound<T> make(T... t) {
-        switch (t.length) {
-            case 0: throw new RuntimeException("empty set");
-            default:
-                return new GenericCompound(Op.SET_EXT, t);
-        }
+    static Compound make(Collection<Term> c) {
+        return make(c.toArray(new Term[c.size()]));
     }
 
 

@@ -16,6 +16,9 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
+import static nars.term.Statement.pred;
+import static nars.term.Statement.subj;
+
 /**
  * first resolution of the conclusion's pattern term
  */
@@ -88,12 +91,12 @@ public final class Solve extends PreCondition {
             if (toInvestigate instanceof Sequence) {
                 //sequence_term_amount = ((Sequence) toInvestigate).terms().length;
                 mode = TermIsSequence;
-            } else if (toInvestigate instanceof Statement) {
-                Statement st = (Statement) toInvestigate;
-                if (st.getSubject() instanceof Sequence) {
+            } else if (toInvestigate.op().isStatement()) {
+
+                if (subj(toInvestigate) instanceof Sequence) {
                     //sequence_term_amount = ((Sequence) st.getSubject()).terms().length;
                     mode = TermSubjectIsSequence;
-                } else if (st.getPredicate() instanceof Sequence) {
+                } else if (pred(toInvestigate) instanceof Sequence) {
                     //sequence_term_amount = ((Sequence) st.getPredicate()).terms().length;
                     mode = TermPredicateIsSequence;
                 }
@@ -108,10 +111,10 @@ public final class Solve extends PreCondition {
             //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE1
             if (mode == TermIsSequence && derivedTerm instanceof Sequence) {
                 paste = (Sequence) derivedTerm;
-            } else if (mode == TermSubjectIsSequence && derivedTerm instanceof Statement && ((Statement) derivedTerm).getSubject() instanceof Sequence) {
-                paste = (Sequence) ((Statement) derivedTerm).getSubject();
-            } else if (mode == TermPredicateIsSequence && derivedTerm instanceof Statement && ((Statement) derivedTerm).getPredicate() instanceof Sequence) {
-                paste = (Sequence) ((Statement) derivedTerm).getPredicate();
+            } else if (mode == TermSubjectIsSequence && derivedTerm instanceof Statement && subj(derivedTerm) instanceof Sequence) {
+                paste = (Sequence) subj(derivedTerm);
+            } else if (mode == TermPredicateIsSequence && derivedTerm instanceof Statement && pred(derivedTerm) instanceof Sequence) {
+                paste = (Sequence) pred(derivedTerm);
             }
             //END CODE
 
@@ -129,10 +132,14 @@ public final class Solve extends PreCondition {
             Sequence copy = null; //where to copy the interval data from
             if (mode == TermIsSequence && lookat instanceof Sequence) {
                 copy = (Sequence) lookat;
-            } else if (mode == TermSubjectIsSequence && lookat instanceof Statement && ((Statement) lookat).getSubject() instanceof Sequence) {
-                copy = (Sequence) ((Statement) lookat).getSubject();
-            } else if (mode == TermPredicateIsSequence && lookat instanceof Statement && ((Statement) lookat).getPredicate() instanceof Sequence) {
-                copy = (Sequence) ((Statement) lookat).getPredicate();
+            } else {
+                if (lookat.op().isStatement()) {
+                    if (mode == TermSubjectIsSequence && subj(lookat) instanceof Sequence) {
+                        copy = (Sequence) subj(lookat);
+                    } else if (mode == TermPredicateIsSequence && pred(lookat) instanceof Sequence) {
+                        copy = (Sequence) pred(lookat);
+                    }
+                }
             }
             //END CODE
 

@@ -24,12 +24,12 @@ import nars.$;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 
@@ -252,7 +252,7 @@ public interface Operation  {
         argument[0] = relation;
         System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
-        return new ImageExt(argument, index+1);
+        return GenericCompound.COMPOUND(Op.IMAGE_EXT, argument, index+1);
     }
 
     /** applies certain data to a feedback task relating to its causing operation's task */

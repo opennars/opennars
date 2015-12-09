@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Order;
 import nars.nal.nal8.Operation;
 import nars.term.*;
 import nars.term.visit.SubtermVisitor;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
+import static nars.nal.nal5.Conjunctive.flattenAndSort;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -26,29 +28,42 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final int relation;
     private boolean normalized = false;
 
-    public static Term c(Op op, Term a) {
-        return c(op, new Term[] { a });
+    public static Term COMPOUND(Op op, Term a) {
+        return COMPOUND(op, new Term[] { a });
     }
 
-    public static Term c(Op op, Term a, Term b) {
-        return c(op, new Term[] { a, b });
+    public static Term COMPOUND(Op op, Term a, Term b) {
+        return COMPOUND(op, new Term[] { a, b });
     }
-    public static Term c(Op op, Term a, Term b, Term c) {
-        return c(op, new Term[] { a, b, c });
+    public static Term COMPOUND(Op op, Term a, Term b, Term c) {
+        return COMPOUND(op, new Term[] { a, b, c });
     }
 
-    public static Term c(Op op, Term[] subterms) {
+    public static Term COMPOUND(Op op, Term[] subterms) {
+
+        //if no relation is specified and it's an Image:
         if (op.isImage() && Image.hasPlaceHolder(subterms)) {
             return Image.build(op, subterms);
         }
-        return c(op, subterms, 0);
+
+        return COMPOUND(op, subterms, 0);
     }
 
-    public static Term c(Op op, Term[] subterms, int relation) {
+    public static Term COMPOUND(Op op, Term[] subterms, int relation) {
 
         if (op.isCommutative()) {
             subterms = Terms.toSortedSetArray(subterms);
         }
+
+        if (op.isStatement()) {
+            if (Statement.invalidStatement(subterms[0], subterms[1])) {
+                return null;
+            }
+        }
+        if (op == Op.CONJUNCTION) {
+            subterms = flattenAndSort(subterms, Order.None);
+        }
+
 
         int numSubs = subterms.length;
         if (!op.validSize(numSubs)) {

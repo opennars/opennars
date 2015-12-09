@@ -40,7 +40,7 @@ public interface Product<T extends Term> extends Compound<T>, Iterable<T> {
     /**
      * universal zero-length product
      */
-    Compound Empty = new GenericCompound(Op.PRODUCT, Terms.Empty);
+    Compound Empty = (Compound) GenericCompound.COMPOUND(Op.PRODUCT, Terms.Empty);
 
     /**
      * Get the operate of the term.

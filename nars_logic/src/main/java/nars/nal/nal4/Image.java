@@ -117,7 +117,7 @@ public interface Image {
             res = ser;
         }
 
-        return GenericCompound.c(
+        return GenericCompound.COMPOUND(
                 o,
                 res, index);
     }
