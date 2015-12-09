@@ -39,7 +39,7 @@ public class TetrisVisualizer extends ImagePanel {
     public TetrisVisualizer(Tetris t, int blockSize) {
         super(t.getWidth() * blockSize,t.getHeight() * blockSize);
 
-        this.tetris = t;
+        tetris = t;
         this.blockSize = blockSize;
 
         blocks = new TetrisBlocksComponent(this);

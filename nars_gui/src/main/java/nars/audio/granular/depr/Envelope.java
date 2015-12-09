@@ -13,9 +13,9 @@ public enum Envelope {
     double[][] createTrapexiumEnvelope(int size, int channels) {
         double[][] trapezium = new double[channels][size];
 
-        double attack = .2,
-                sustain = .4,
-                release = .4;
+        double attack = 0.2,
+                sustain = 0.4,
+                release = 0.4;
         double attackIncrement = 1 / (attack * size);
         double sustainIncrement = 1;
         double releaseIncrement = -1 * (1 / (release * size));

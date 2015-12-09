@@ -120,7 +120,7 @@ public class Endpoint implements Comparable<Endpoint> {
      * @param digests
      */
     public void addDigestsTo(List<Digest> digests) {
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
             states.values().stream().map(state -> new Digest(address, state)).collect(
@@ -157,7 +157,7 @@ public class Endpoint implements Comparable<Endpoint> {
     }
 
     ReplicatedState getState(UUID id) {
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
             return states.get(id);
@@ -170,7 +170,7 @@ public class Endpoint implements Comparable<Endpoint> {
      * @return
      */
     public Collection<ReplicatedState> getStates() {
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
             return new ArrayList<>(states.values());
@@ -193,7 +193,7 @@ public class Endpoint implements Comparable<Endpoint> {
     }
 
     public boolean isAlive() {
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
             return state == State.ALIVE;
@@ -203,7 +203,7 @@ public class Endpoint implements Comparable<Endpoint> {
     }
 
     public void markAlive(Runnable action, FailureDetectorFactory fdFactory) {
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
             switch (state) {
@@ -220,7 +220,7 @@ public class Endpoint implements Comparable<Endpoint> {
     }
 
     public void markDead() {
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
             state = State.DEAD;
@@ -260,7 +260,7 @@ public class Endpoint implements Comparable<Endpoint> {
 
     public void updateState(ReplicatedState newState, Gossip gossip) {
         assert newState != null : "updated state cannot be null";
-        final ReentrantLock myLock = synch;
+        ReentrantLock myLock = synch;
         myLock.lock();
         try {
            ReplicatedState prev = states.get(newState.getId());

@@ -74,25 +74,21 @@ public class LevelEditor extends JFrame implements ActionListener
             panel.add(bitmapCheckboxes[i]);
             if (Level.BIT_DESCRIPTIONS[i].startsWith("- ")) bitmapCheckboxes[i].setEnabled(false);
             
-            final int id = i;
-            bitmapCheckboxes[i].addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent arg0)
-                {
-                    int bm = Level.TILE_BEHAVIORS[tilePicker.pickedTile&0xff]&0xff;
-                    bm&=255-(1<<id);
-                    if (bitmapCheckboxes[id].isSelected()) bm|=(1<<id);
-                    Level.TILE_BEHAVIORS[tilePicker.pickedTile&0xff] = (byte)bm;
+            int id = i;
+            bitmapCheckboxes[i].addActionListener(arg0 -> {
+                int bm = Level.TILE_BEHAVIORS[tilePicker.pickedTile&0xff]&0xff;
+                bm&=255-(1<<id);
+                if (bitmapCheckboxes[id].isSelected()) bm|=(1<<id);
+                Level.TILE_BEHAVIORS[tilePicker.pickedTile&0xff] = (byte)bm;
 
-                    try
-                    {
-                        Level.saveBehaviors(new DataOutputStream(new FileOutputStream("tiles.dat")));
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(LevelEditor.this, e.toString(), "Failed to load tile behaviors", JOptionPane.ERROR_MESSAGE);
-                    }
+                try
+                {
+                    Level.saveBehaviors(new DataOutputStream(new FileOutputStream("tiles.dat")));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(LevelEditor.this, e.toString(), "Failed to load tile behaviors", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }

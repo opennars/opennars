@@ -44,7 +44,7 @@ public class ItemAccumulatorTest {
      * */
     @Test public void testAccumulatorBatchDeque() {
 
-        final int capacity = 4;
+        int capacity = 4;
 
         TaskAccumulator ii = new TaskAccumulator(
                 capacity
@@ -89,7 +89,7 @@ public class ItemAccumulatorTest {
 
         //highest first
 
-        final int capacity = 8;
+        int capacity = 8;
 
         TaskAccumulator ii = new TaskAccumulator(capacity);
         assertTrue(ii.isSorted());
@@ -115,7 +115,7 @@ public class ItemAccumulatorTest {
 
     @Test public void testRankDurForEqualPriQua() {
 
-        final int capacity = 8;
+        int capacity = 8;
 
         TaskAccumulator ii = new TaskAccumulator(capacity);
 

@@ -47,10 +47,13 @@ public class Pick extends SyncOperator {
          
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
-        for (Term t : Operation.argTerms(operation)) {
+        Term[] argTerms = Operation.argTerms(operation);
+        //noinspection LoopStatementThatDoesntLoop
+        for (int i = 0; i < 1; i++) {
+            Term t = argTerms[i];
             System.out.print(" --- " + t);
             TestChamber.operateObj(t.toString(), "pick");
-            break;
+
         }
         
         

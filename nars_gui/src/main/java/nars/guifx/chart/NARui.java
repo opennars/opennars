@@ -32,8 +32,7 @@ public class NARui {
 
 
     public NARui(NAR s) {
-        super();
-        this.nar = s;
+        nar = s;
 
     }
 
@@ -44,10 +43,10 @@ public class NARui {
 
 
     @FunctionalInterface public interface MetricsCollector<X> {
-        public MetricsCollector<X> set(String signal, X value);
+        MetricsCollector<X> set(String signal, X value);
     }
     public interface CollectNARMetrics<X> {
-        public void eachFrame(MetricsCollector<X> c, NAR n);
+        void eachFrame(MetricsCollector<X> c, NAR n);
     }
 
     public <X> NARui meter(CollectNARMetrics<X> eachFrame) {
@@ -84,11 +83,7 @@ public class NARui {
 
             VBox v = new VBox();
 
-            metrics.forEach(meter -> {
-
-                v.getChildren().add(linePlot(meter));
-
-            });
+            metrics.forEach(meter -> v.getChildren().add(linePlot(meter)));
 
             v.layout();
 
@@ -133,7 +128,7 @@ public class NARui {
                 .stream().map(s -> s.id).toArray(String[]::new);
 
 
-        final String[] _signals = signals;
+        String[] _signals = signals;
 
         LineChart<Double, Double> bc = new LineChart(xAxis, yAxis);
 

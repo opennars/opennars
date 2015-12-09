@@ -94,7 +94,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule ch(final char c)
+    public Rule ch(char c)
     {
         return new CharMatcher(c);
     }
@@ -107,7 +107,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule ignoreCase(final char c)
+    public Rule ignoreCase(char c)
     {
         return Character.isLowerCase(c) == Character.isUpperCase(c)
             ? ch(c) : new CharIgnoreCaseMatcher(c);
@@ -121,7 +121,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule unicodeChar(final int codePoint)
+    public Rule unicodeChar(int codePoint)
     {
         if (!Character.isValidCodePoint(codePoint))
             throw new InvalidGrammarException("invalid code point "
@@ -142,7 +142,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule unicodeRange(final int low, final int high)
+    public Rule unicodeRange(int low, int high)
     {
         if (!Character.isValidCodePoint(low))
             throw new InvalidGrammarException("invalid code point " + low);
@@ -164,7 +164,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule charRange(final char cLow, final char cHigh)
+    public Rule charRange(char cLow, char cHigh)
     {
         return cLow == cHigh ? ch(cLow) : new CharRangeMatcher(cLow, cHigh);
     }
@@ -180,7 +180,7 @@ public abstract class BaseParser<V>
      * @see #anyOf(Characters)
      */
     @DontLabel
-    public Rule anyOf(final String characters)
+    public Rule anyOf(String characters)
     {
         Objects.requireNonNull(characters);
         // TODO: see in this Characters class whether it is possible to wrap
@@ -198,7 +198,7 @@ public abstract class BaseParser<V>
      * @see #anyOf(Characters)
      */
     @DontLabel
-    public Rule anyOf(final char[] characters)
+    public Rule anyOf(char[] characters)
     {
         Objects.requireNonNull(characters);
         Preconditions.checkArgument(characters.length > 0);
@@ -217,7 +217,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule anyOf(final Characters characters)
+    public Rule anyOf(Characters characters)
     {
         Objects.requireNonNull(characters);
         if (!characters.isSubtractive() && characters.getChars().length == 1)
@@ -234,7 +234,7 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule noneOf(final String characters)
+    public Rule noneOf(String characters)
     {
         Objects.requireNonNull(characters);
         return noneOf(characters.toCharArray());
@@ -255,13 +255,13 @@ public abstract class BaseParser<V>
 
         // make sure to always exclude EOI as well
         boolean containsEOI = false;
-        for (final char c: characters)
+        for (char c: characters)
             if (c == Chars.EOI) {
                 containsEOI = true;
                 break;
             }
         if (!containsEOI) {
-            final char[] withEOI = new char[characters.length + 1];
+            char[] withEOI = new char[characters.length + 1];
             System.arraycopy(characters, 0, withEOI, 0, characters.length);
             withEOI[characters.length] = Chars.EOI;
             characters = withEOI;
@@ -277,7 +277,7 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule string(final String string)
+    public Rule string(String string)
     {
         Objects.requireNonNull(string);
         return string(string.toCharArray());
@@ -291,7 +291,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule string(final char... characters)
+    public Rule string(char... characters)
     {
         if (characters.length == 1)
             return ch(characters[0]); // optimize one-char strings
@@ -305,7 +305,7 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule ignoreCase(final String string)
+    public Rule ignoreCase(String string)
     {
         Objects.requireNonNull(string);
         return ignoreCase(string.toCharArray());
@@ -319,7 +319,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule ignoreCase(final char... characters)
+    public Rule ignoreCase(char... characters)
     {
         if (characters.length == 1)
             return ignoreCase(characters[0]); // optimize one-char strings
@@ -349,14 +349,13 @@ public abstract class BaseParser<V>
     // TODO: potentially a slew of strings in a trie; so maybe it's not a good
     // idea to cache here
     @Cached
-    public Rule trie(final Collection<String> strings)
+    public Rule trie(Collection<String> strings)
     {
-        final List<String> list = /*ImmutableList.copyOf*/new FastList(strings);
+        List<String> list = /*ImmutableList.copyOf*/new FastList(strings);
 
-        final TrieBuilder builder = Trie.newBuilder();
+        TrieBuilder builder = Trie.newBuilder();
 
-        for (final String word: list)
-            builder.addWord(word);
+        list.forEach(builder::addWord);
 
         return new TrieMatcher(builder.build());
     }
@@ -375,10 +374,10 @@ public abstract class BaseParser<V>
      * @see TrieMatcher
      * @see TrieNode
      */
-    public Rule trie(final String first, final String second,
-        final String... others)
+    public Rule trie(String first, String second,
+                     String... others)
     {
-        final List<String> words = ImmutableList.<String>builder().add(first)
+        List<String> words = ImmutableList.<String>builder().add(first)
             .add(second).add(others).build();
 
         return trie(words);
@@ -407,14 +406,13 @@ public abstract class BaseParser<V>
     // TODO: potentially a slew of strings in a trie; so maybe it's not a good
     // idea to cache here
     @Cached
-    public Rule trieIgnoreCase(final Collection<String> strings)
+    public Rule trieIgnoreCase(Collection<String> strings)
     {
-        final List<String> list = ImmutableList.copyOf(strings);
+        List<String> list = ImmutableList.copyOf(strings);
 
-        final TrieBuilder builder = Trie.newBuilder();
+        TrieBuilder builder = Trie.newBuilder();
 
-        for (final String word: list)
-            builder.addWord(word);
+        list.forEach(builder::addWord);
 
         return new CaseInsensitiveTrieMatcher(builder.build());
     }
@@ -433,10 +431,10 @@ public abstract class BaseParser<V>
      *
      * @see CaseInsensitiveTrieMatcher
      */
-    public Rule trieIgnoreCase(final String first, final String second,
-        final String... others)
+    public Rule trieIgnoreCase(String first, String second,
+                               String... others)
     {
-        final List<String> words = ImmutableList.<String>builder().add(first)
+        List<String> words = ImmutableList.<String>builder().add(first)
             .add(second).add(others).build();
 
         return trieIgnoreCase(words);
@@ -464,11 +462,11 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule firstOf(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule firstOf(Object rule, Object rule2,
+                        Object... moreRules)
     {
         Objects.requireNonNull(moreRules);
-        final Object[] rules = ImmutableList.builder().add(rule).add(rule2)
+        Object[] rules = ImmutableList.builder().add(rule).add(rule2)
             .add(moreRules).build().toArray();
         return firstOf(rules);
     }
@@ -483,15 +481,15 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule firstOf(final Object[] rules)
+    public Rule firstOf(Object[] rules)
     {
         Objects.requireNonNull(rules, "rules");
         if (rules.length == 1)
             return toRule(rules[0]);
 
-        final Collection<String> strings = new ArrayList<>();
+        Collection<String> strings = new ArrayList<>();
 
-        for (final Object object: rules) {
+        for (Object object: rules) {
             if (!(object instanceof String))
                 return new FirstOfMatcher(toRules(rules));
             strings.add((String) object);
@@ -508,7 +506,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule oneOrMore(final Object rule)
+    public Rule oneOrMore(Object rule)
     {
         return new OneOrMoreMatcher(toRule(rule));
     }
@@ -522,8 +520,8 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule oneOrMore(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule oneOrMore(Object rule, Object rule2,
+                          Object... moreRules)
     {
         Objects.requireNonNull(moreRules);
         return oneOrMore(sequence(rule, rule2, moreRules));
@@ -539,7 +537,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule optional(final Object rule)
+    public Rule optional(Object rule)
     {
         Objects.requireNonNull(rule);
         return new OptionalMatcher(toRule(rule));
@@ -556,8 +554,8 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule optional(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule optional(Object rule, Object rule2,
+                         Object... moreRules)
     {
         Objects.requireNonNull(moreRules);
         return optional(sequence(rule, rule2, moreRules));
@@ -572,10 +570,10 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule sequence(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule sequence(Object rule, Object rule2,
+                         Object... moreRules)
     {
-        final Object[] rules = ImmutableList.builder().add(rule).add(rule2)
+        Object[] rules = ImmutableList.builder().add(rule).add(rule2)
             .add(moreRules).build().toArray();
         return sequence(rules);
     }
@@ -588,7 +586,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule sequence(final Object[] rules)
+    public Rule sequence(Object[] rules)
     {
         Objects.requireNonNull(rules);
         return rules.length == 1 ? toRule(rules[0])
@@ -612,7 +610,7 @@ public abstract class BaseParser<V>
      *
      * @see JoinMatcherBootstrap#using(Object)
      */
-    public final JoinMatcherBootstrap<V, BaseParser<V>> join(final Object rule)
+    public final JoinMatcherBootstrap<V, BaseParser<V>> join(Object rule)
     {
         return new JoinMatcherBootstrap<>(this, rule);
     }
@@ -638,9 +636,9 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule test(final Object rule)
+    public Rule test(Object rule)
     {
-        final Rule subMatcher = toRule(rule);
+        Rule subMatcher = toRule(rule);
         return new TestMatcher(subMatcher);
     }
 
@@ -655,8 +653,8 @@ public abstract class BaseParser<V>
      * @see #test(Object)
      */
     @DontLabel
-    public Rule test(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule test(Object rule, Object rule2,
+                     Object... moreRules)
     {
         Objects.requireNonNull(moreRules);
         return test(sequence(rule, rule2, moreRules));
@@ -673,7 +671,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule testNot(final Object rule)
+    public Rule testNot(Object rule)
     {
         return new TestNotMatcher(toRule(rule));
     }
@@ -690,8 +688,8 @@ public abstract class BaseParser<V>
      * @see #testNot(Object)
      */
     @DontLabel
-    public Rule testNot(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule testNot(Object rule, Object rule2,
+                        Object... moreRules)
     {
         Objects.requireNonNull(moreRules);
         return testNot(sequence(rule, rule2, moreRules));
@@ -707,7 +705,7 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule zeroOrMore(final Object rule)
+    public Rule zeroOrMore(Object rule)
     {
         return new ZeroOrMoreMatcher(toRule(rule));
     }
@@ -721,8 +719,8 @@ public abstract class BaseParser<V>
      * @return a rule
      */
     @DontLabel
-    public Rule zeroOrMore(final Object rule, final Object rule2,
-        final Object... moreRules)
+    public Rule zeroOrMore(Object rule, Object rule2,
+                           Object... moreRules)
     {
         Objects.requireNonNull(moreRules);
         return zeroOrMore(sequence(rule, rule2, moreRules));
@@ -737,20 +735,20 @@ public abstract class BaseParser<V>
      */
     @Cached
     @DontLabel
-    public Rule nTimes(final int repetitions, final Object rule)
+    public Rule nTimes(int repetitions, Object rule)
     {
         Objects.requireNonNull(rule);
         if (repetitions < 0)
             throw new InvalidGrammarException("illegal repetition count "
                 + repetitions + ": must not be negative");
 
-        final Rule theRule = toRule(rule);
+        Rule theRule = toRule(rule);
         if (repetitions == 0)
             return EMPTY;
         if (repetitions == 1)
             return theRule;
 
-        final Rule[] array = new Rule[repetitions];
+        Rule[] array = new Rule[repetitions];
         Arrays.fill(array, theRule);
         return sequence(array);
     }
@@ -956,7 +954,7 @@ public abstract class BaseParser<V>
      * @param expression the expression to turn into an Action
      * @return the Action wrapping the given expression
      */
-    public static <T> Action<T> ACTION(final boolean expression)
+    public static <T> Action<T> ACTION(boolean expression)
     {
         throw new UnsupportedOperationException("ACTION(...) calls can only be"
             + " used in Rule creating parser methods");
@@ -973,7 +971,7 @@ public abstract class BaseParser<V>
      * @return the rule
      */
     @DontExtend
-    protected Rule fromCharLiteral(final char c)
+    protected Rule fromCharLiteral(char c)
     {
         return ch(c);
     }
@@ -987,7 +985,7 @@ public abstract class BaseParser<V>
      * @return the rule
      */
     @DontExtend
-    protected Rule fromStringLiteral(final String string)
+    protected Rule fromStringLiteral(String string)
     {
         Objects.requireNonNull(string);
         return fromCharArray(string.toCharArray());
@@ -1002,7 +1000,7 @@ public abstract class BaseParser<V>
      * @return the rule
      */
     @DontExtend
-    protected Rule fromCharArray(final char[] array)
+    protected Rule fromCharArray(char[] array)
     {
         Objects.requireNonNull(array);
         return string(array);
@@ -1015,9 +1013,9 @@ public abstract class BaseParser<V>
      * @return the rules corresponding to the given objects
      */
     @DontExtend
-    public Rule[] toRules(final Object... objects)
+    public Rule[] toRules(Object... objects)
     {
-        final Rule[] rules = new Rule[objects.length];
+        Rule[] rules = new Rule[objects.length];
 
         for (int i = 0; i < objects.length; i++)
             rules[i] = toRule(objects[i]);
@@ -1033,7 +1031,7 @@ public abstract class BaseParser<V>
      * @return the rule corresponding to the given object
      */
     @DontExtend
-    public Rule toRule(final Object obj)
+    public Rule toRule(Object obj)
     {
         Objects.requireNonNull(obj);
         if (obj instanceof Rule)
@@ -1045,11 +1043,11 @@ public abstract class BaseParser<V>
         if (obj instanceof char[])
             return fromCharArray((char[]) obj);
         if (obj instanceof Action) {
-            final Action<?> action = (Action<?>) obj;
+            Action<?> action = (Action<?>) obj;
             return new ActionMatcher(action);
         }
 
-        final String errmsg = obj instanceof  Boolean
+        String errmsg = obj instanceof  Boolean
             ? "unwrapped Boolean value in rule (wrap it with ACTION())"
             : "'" + obj + "' cannot be automatically converted to a rule";
         throw new InvalidGrammarException(errmsg);

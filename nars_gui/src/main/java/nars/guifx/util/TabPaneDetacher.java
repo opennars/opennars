@@ -83,9 +83,7 @@ public class TabPaneDetacher {
             if (change.next()) {
                 change.getAddedSubList().forEach(x -> {
                     Button p = new Button("^");
-                    p.setOnMouseClicked(en -> {
-                        popout(x);
-                    });
+                    p.setOnMouseClicked(en -> popout(x));
                     x.setGraphic(p);
                 });
             }
@@ -148,7 +146,7 @@ public class TabPaneDetacher {
      *
      * @param tab The {@link Tab} to get the content from.
      */
-    public void popout(final Tab tab) {
+    public void popout(Tab tab) {
         if(tab == null){
             return;
         }
@@ -162,7 +160,7 @@ public class TabPaneDetacher {
 
         double W = content.getLayoutBounds().getWidth();
         double H = content.getLayoutBounds().getHeight();
-        final Scene scene = new Scene(content, W, H);
+        Scene scene = new Scene(content, W, H);
 
         scene.getStylesheets().addAll(stylesheets);
         Stage stage = new Stage();
@@ -188,9 +186,7 @@ public class TabPaneDetacher {
             }
             tabPane.getSelectionModel().select(tab);
         });
-        stage.setOnShown((WindowEvent t) -> {
-            tab.getTabPane().getTabs().remove(tab);
-        });
+        stage.setOnShown((WindowEvent t) -> tab.getTabPane().getTabs().remove(tab));
         stage.show();
     }
 

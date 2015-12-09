@@ -122,11 +122,12 @@ public class ScriptingInterpreter<I,T extends Organism,O> implements Computer<I,
             Object[] paramSet = argValues[i];
 
             try {
+                //noinspection LoopConditionNotUpdatedInsideLoop,LoopConditionNotUpdatedInsideLoop
                 for (int j = 0; j < noParams; i++) {
                     engine.put(argNames[j], paramSet[j]);
                 }
                 results.set(i, (O)engine.eval(expression));
-            } catch (final ScriptException e) {
+            } catch (ScriptException e) {
                 throw new MalformedProgramException();
             }
         }

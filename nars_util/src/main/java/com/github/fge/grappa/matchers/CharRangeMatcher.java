@@ -33,7 +33,7 @@ public final class CharRangeMatcher
     private final char lowerBound;
     private final char upperBound;
 
-    public CharRangeMatcher(final char lowerBound, final char upperBound)
+    public CharRangeMatcher(char lowerBound, char upperBound)
     {
         super(escape(lowerBound) + ".." + escape(upperBound));
         Preconditions.checkArgument(lowerBound < upperBound);
@@ -48,9 +48,9 @@ public final class CharRangeMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final char c = context.getCurrentChar();
+        char c = context.getCurrentChar();
         if (c < lowerBound || c > upperBound)
             return false;
 

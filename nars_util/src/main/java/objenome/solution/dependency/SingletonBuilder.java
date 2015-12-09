@@ -16,11 +16,11 @@ public class SingletonBuilder implements Builder {
         type = null;
     }
 
-    public SingletonBuilder(final Object instance) {
+    public SingletonBuilder(Object instance) {
 
         this.instance = instance;
 
-        this.type = instance.getClass();
+        type = instance.getClass();
     }
 
     @Override

@@ -84,9 +84,10 @@ public class NarseseTemplatePanel {
             
             List<TemplateElement> l = new LinkedList();
             for (String a : pieces) {
-                if (a.equals("~t"))
+                //noinspection IfStatementWithTooManyBranches
+                if ("~t".equals(a))
                     l.add(new Truth());
-                else if (a.equals("~b"))
+                else if ("~b".equals(a))
                     l.add(new Budget());
                 else if (a.startsWith("~#"))
                     l.add(new Concept(a.substring(2)));
@@ -109,9 +110,9 @@ public class NarseseTemplatePanel {
         private String getSummaryString(String form) {
             StringBuilder s = new StringBuilder();
             for (TemplateElement e : forms.get(form)) {
-                if (!form.equals("narsese") && (!(e instanceof Text) || (e instanceof Concept)))
+                if (!"narsese".equals(form) && (!(e instanceof Text) || (e instanceof Concept)))
                     continue;
-                s.append(e.toString()).append(" ");    
+                s.append(e.toString()).append(' ');
             }
             return s.toString();
         }
@@ -127,6 +128,7 @@ public class NarseseTemplatePanel {
         
         List<TemplateElement> l = t.forms.get(form);
         for (TemplateElement e : l) {
+            //noinspection IfStatementWithTooManyBranches
             if (e instanceof Text) {
                 Text text = (Text)e;
                 p.add(new JLabel(text.value));
@@ -146,14 +148,13 @@ public class NarseseTemplatePanel {
     }
     
     
-    public static JPanel newPanel(final NarseseTemplate t) {
-        final JPanel p = new JPanel(new BorderLayout());
+    public static JPanel newPanel(NarseseTemplate t) {
+        JPanel p = new JPanel(new BorderLayout());
         
-        final JComboBox formSelect = new JComboBox();
+        JComboBox formSelect = new JComboBox();
         p.add(formSelect, BorderLayout.WEST);
-        
-        for (String f : t.forms.keySet())
-            formSelect.addItem(f);
+
+        t.forms.keySet().forEach(formSelect::addItem);
         
         ActionListener change = new ActionListener() {
             JPanel r = null;
@@ -189,14 +190,15 @@ public class NarseseTemplatePanel {
         JTree t = new JTree(tree);
         menu.add(t, BorderLayout.CENTER);
         
-        final JComboBox formSelect = new JComboBox();
+        JComboBox formSelect = new JComboBox();
         formSelect.addItem("en");
         formSelect.addItem("narsese");
         menu.add(formSelect, BorderLayout.NORTH);
         
         
         p.add(menu, BorderLayout.WEST);
-        
+
+        //noinspection OverlyComplexAnonymousInnerClass
         ActionListener change = new ActionListener() {
             JPanel r = null;
             @Override public void actionPerformed(ActionEvent e) {
@@ -219,14 +221,7 @@ public class NarseseTemplatePanel {
         };
         
         formSelect.addActionListener(change);
-        t.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                change.actionPerformed(null);
-            }
-            
-        });
+        t.getSelectionModel().addTreeSelectionListener(e -> change.actionPerformed(null));
         
         change.actionPerformed(null);
         
@@ -237,14 +232,13 @@ public class NarseseTemplatePanel {
     
     
     public static void main(String[] args) {
-        List<NarseseTemplate> templates = new ArrayList();
-        templates.addAll(Arrays.asList(new NarseseTemplate("<~#a--> ~#b>? %~t%",  "Is ~#a is a ~#b? ~t"),
+        List<NarseseTemplate> templates = new ArrayList(Arrays.asList(new NarseseTemplate("<~#a--> ~#b>? %~t%",  "Is ~#a is a ~#b? ~t"),
                 new NarseseTemplate("<~#a--> ~#b>. %~t%",  "~#a is a ~#b. ~t"),
                 new NarseseTemplate("<~#a --> ~#b>. %1.00;0.99%",  "~#a is a ~#b."),
                 new NarseseTemplate("<~#a --> ~#b>. %0.00;0.99%",  "~#a is not a ~#b."),
                 new NarseseTemplate("<~#a --> ~#b>. %1.00;0.50%",  "~#a is possibly a ~#b."),
                 new NarseseTemplate("<~#a --> ~#b>. %0.00;0.50%",  "~#a is possibly not a ~#b.")));
-        
+
         NWindow w = new NWindow("NarseseTemplatePanel test", NarseseTemplatePanel.newPanel(templates) );
         w.setSize(400, 200);
         w.setVisible(true);

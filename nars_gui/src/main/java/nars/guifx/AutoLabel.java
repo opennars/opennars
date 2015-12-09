@@ -16,10 +16,9 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
     protected String text;
 
     public AutoLabel(T obj) {
-        super();
 
         this.obj = obj;
-        this.text = null;
+        text = null;
 
 
 
@@ -33,7 +32,7 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
 
     protected abstract String getText(T t);
 
-    abstract public void update();
+    public abstract void update();
 
     //TODO use a DoubleProperty
     protected abstract float getPriority(T obj);

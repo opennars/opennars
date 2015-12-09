@@ -10,16 +10,14 @@ import nars.util.event.Active;
  * super-classes
  *
  */
-abstract public class MeterTask extends MutableTask {
+public abstract class MeterTask extends MutableTask {
 
     private final Active active = new Active();
 
     @Override
     protected void onNormalized(Memory memory) {
         active.add(
-                memory.eventFrameStart.on((n) -> {
-                    onFrame(memory);
-                })
+                memory.eventFrameStart.on((n) -> onFrame(memory))
         );
     }
 

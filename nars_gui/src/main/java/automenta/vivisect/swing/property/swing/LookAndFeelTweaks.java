@@ -31,13 +31,13 @@ import java.awt.*;
  */
 public class LookAndFeelTweaks {
 
-  public final static Border PANEL_BORDER = BorderFactory.createEmptyBorder(3,
+  public static final Border PANEL_BORDER = BorderFactory.createEmptyBorder(3,
       3, 3, 3);
 
-  public final static Border WINDOW_BORDER = BorderFactory.createEmptyBorder(4,
+  public static final Border WINDOW_BORDER = BorderFactory.createEmptyBorder(4,
       10, 10, 10);
 
-  public final static Border EMPTY_BORDER = BorderFactory.createEmptyBorder();
+  public static final Border EMPTY_BORDER = BorderFactory.createEmptyBorder();
 
   public static void tweak() {
     Object listFont = UIManager.get("List.font");

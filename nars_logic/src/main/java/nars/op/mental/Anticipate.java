@@ -74,7 +74,7 @@ public final class Anticipate {
         nar.memory.eventInput.on(this::onInput);
     }
 
-    public final void onInput(Task t) {
+    public void onInput(Task t) {
         if (((Temporal)t).isAnticipated()) {
             anticipate(t);
             if (t.isInput())
@@ -147,22 +147,11 @@ public final class Anticipate {
 
         long cOccurr = c.getOccurrenceTime();
 
-        for(TaskTime tt : anticipations.get(c.getTerm())) {
-
-            if(tt.inTime(cOccurr) && !c.equals(tt.task) &&
-                    tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
-
-                toRemove.add(tt);
-
-                happeneds++;
-//                if(testing) {
-//                    String s = "happened as expected: "+tt.task.getTerm().toString();
-//                    System.out.println(s);
-//                    teststring += s + "\n";
-//                }
-            }
-
-        }
+        anticipations.get(c.getTerm()).stream().filter(tt -> tt.inTime(cOccurr) && !c.equals(tt.task) &&
+                tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION).forEach(tt -> {
+            toRemove.add(tt);
+            happeneds++;
+        });
 
         toRemove.forEach(tt -> anticipations.remove(c.getTerm(),tt));
     }
@@ -198,10 +187,10 @@ public final class Anticipate {
     public static final class TaskTime {
 
         /** all data is from task */
-        final public Task task;
+        public final Task task;
 
         /** cached locally, same value as in task */
-        final public long occurrTime;
+        public final long occurrTime;
         public long creationTime;
 
         /** cached locally, same value as in task */
@@ -209,13 +198,12 @@ public final class Anticipate {
         public float tolerance = 0;
 
         public TaskTime(Task task, long creationTime) {
-            super();
             this.task = task;
             this.creationTime = task.getCreationTime();
-            this.occurrTime = task.getOccurrenceTime();
-            this.hash = (int)(31 * creationTime + occurrTime);
+            occurrTime = task.getOccurrenceTime();
+            hash = (int)(31 * creationTime + occurrTime);
             //expiredate in relation how long we predicted forward
-            long prediction_time = this.occurrTime - this.creationTime;
+            long prediction_time = occurrTime - this.creationTime;
             tolerance = prediction_time/TOLERANCE_DIV;
         }
 

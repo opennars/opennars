@@ -50,14 +50,12 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
     }
     char max = map.keysView().max();// Collections.max(map.keySet());
     char[][] replacements = new char[max + 1][];
-    map.forEachKeyValue((c,v) -> {
-        replacements[c] = v.toCharArray();
-    });
+    map.forEachKeyValue((c,v) -> replacements[c] = v.toCharArray());
     return replacements;
   }
 
 
-  public final static class ArrayBasedEscaperMap {
+  public static final class ArrayBasedEscaperMap {
     /**
      * Returns a new ArrayBasedEscaperMap for creating ArrayBasedCharEscaper or
      * ArrayBasedUnicodeEscaper instances.
@@ -122,8 +120,8 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
       char safeMin, char safeMax) {
 
     checkNotNull(escaperMap);  // GWT specific check (do not optimize)
-    this.replacements = escaperMap.getReplacementArray();
-    this.replacementsLength = replacements.length;
+    replacements = escaperMap.getReplacementArray();
+    replacementsLength = replacements.length;
     if (safeMax < safeMin) {
       // If the safe range is empty, set the range limits to opposite extremes
       // to ensure the first test of either value will (almost certainly) fail.
@@ -144,7 +142,7 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
     checkNotNull(s);  // GWT specific check (do not optimize).
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if ((c < replacementsLength && replacements[c] != null) ||
+      if (c < replacementsLength && replacements[c] != null ||
           c > safeMax || c < safeMin) {
         return escapeSlow(s, i);
       }

@@ -25,7 +25,7 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch<T> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+":"+Arrays.toString(term);
+        return getClass().getSimpleName()+ ':' +Arrays.toString(term);
     }
 
     @Override

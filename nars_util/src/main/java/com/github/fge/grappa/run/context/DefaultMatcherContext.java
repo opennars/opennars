@@ -94,10 +94,10 @@ public final class DefaultMatcherContext<V>
      * @param matchHandler the MatcherHandler to use for the parsing run
      * @param matcher the root matcher
      */
-    public DefaultMatcherContext(@Nonnull final InputBuffer inputBuffer,
-        @Nonnull final ValueStack<V> valueStack,
-        @Nonnull final MatchHandler matchHandler,
-        @Nonnull final Matcher matcher)
+    public DefaultMatcherContext(@Nonnull InputBuffer inputBuffer,
+        @Nonnull ValueStack<V> valueStack,
+        @Nonnull MatchHandler matchHandler,
+        @Nonnull Matcher matcher)
     {
 
         this(Objects.requireNonNull(inputBuffer, "inputBuffer"),
@@ -108,10 +108,10 @@ public final class DefaultMatcherContext<V>
         setMatcher( ProxyMatcher.unwrap(matcher) );
     }
 
-    private DefaultMatcherContext(final InputBuffer inputBuffer,
-        final ValueStack<V> valueStack, final MatchHandler matchHandler,
-        @Nullable final DefaultMatcherContext<V> parent,
-        final int level)
+    private DefaultMatcherContext(InputBuffer inputBuffer,
+                                  ValueStack<V> valueStack, MatchHandler matchHandler,
+                                  @Nullable DefaultMatcherContext<V> parent,
+                                  int level)
     {
         this.inputBuffer = inputBuffer;
         this.valueStack = valueStack;
@@ -129,56 +129,56 @@ public final class DefaultMatcherContext<V>
     //////////////////////////////// CONTEXT INTERFACE ////////////////////////////////////
 
     @Override
-    public final MatcherContext<V> getParent()
+    public MatcherContext<V> getParent()
     {
         return parent;
     }
 
     @Nonnull
     @Override
-    public final InputBuffer getInputBuffer()
+    public InputBuffer getInputBuffer()
     {
         return inputBuffer;
     }
 
     @Override
-    public final int getStartIndex()
+    public int getStartIndex()
     {
         return startIndex;
     }
 
     @Override
-    public final Matcher getMatcher()
+    public Matcher getMatcher()
     {
         return matcher;
     }
 
     @Override
-    public final char getCurrentChar()
+    public char getCurrentChar()
     {
         return inputBuffer.charAt(currentIndex);
     }
 
     @Override
-    public final int getCurrentCodePoint()
+    public int getCurrentCodePoint()
     {
         return inputBuffer.codePointAt(currentIndex);
     }
 
     @Override
-    public final int getCurrentIndex()
+    public int getCurrentIndex()
     {
         return currentIndex;
     }
 
     @Override
-    public final int getLevel()
+    public int getLevel()
     {
         return level;
     }
 
     @Override
-    public final boolean inPredicate()
+    public boolean inPredicate()
     {
         //noinspection SimplifiableIfStatement
         if (matcher.getType() == MatcherType.PREDICATE)
@@ -197,15 +197,15 @@ public final class DefaultMatcherContext<V>
     @Override
     public String getMatch()
     {
-        final DefaultMatcherContext<V> ctx = subContext;
+        DefaultMatcherContext<V> ctx = subContext;
         return inputBuffer.extract(ctx.startIndex, ctx.currentIndex);
     }
 
     @Override
-    public final char getFirstMatchChar()
+    public char getFirstMatchChar()
     {
-        final DefaultMatcherContext<V> subContext = this.subContext;
-        final int index = subContext.startIndex;
+        DefaultMatcherContext<V> subContext = this.subContext;
+        int index = subContext.startIndex;
         if (subContext.currentIndex > index)
             return inputBuffer.charAt(index);
 
@@ -253,27 +253,27 @@ public final class DefaultMatcherContext<V>
     //////////////////////////////// PUBLIC ////////////////////////////////////
 
     @Override
-    final public void setMatcher(final Matcher matcher)     {
+    public void setMatcher(Matcher matcher)     {
         if ((this.matcher = matcher) == null)
             throw new RuntimeException("null matcher");
     }
 
     @Override
-    public void setStartIndex(final int startIndex)
+    public void setStartIndex(int startIndex)
     {
         Preconditions.checkArgument(startIndex >= 0);
         this.startIndex = startIndex;
     }
 
     @Override
-    public void setCurrentIndex(final int currentIndex)
+    public void setCurrentIndex(int currentIndex)
     {
         Preconditions.checkArgument(currentIndex >= 0);
         this.currentIndex = currentIndex;
     }
 
     @Override
-    final public void advanceIndex(final int delta) {
+    public void advanceIndex(int delta) {
         currentIndex += delta;
     }
 
@@ -292,9 +292,9 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public MatcherContext<V> getSubContext(final Matcher matcher)
+    public MatcherContext<V> getSubContext(Matcher matcher)
     {
-        final DefaultMatcherContext<V> sc
+        DefaultMatcherContext<V> sc
             = (DefaultMatcherContext<V>) getBasicSubContext();
         sc.setMatcher(matcher );
         sc.setStartIndex(currentIndex);
@@ -304,10 +304,10 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    final public boolean runMatcher()
+    public boolean runMatcher()
     {
         try {
-            final boolean ret = matchHandler.match(this);
+            boolean ret = matchHandler.match(this);
             // Retire this context
             // TODO: what does the above really mean?
             matcher = null;
@@ -317,7 +317,7 @@ public final class DefaultMatcherContext<V>
         } catch (GrappaException e) {
             throw e; // don't wrap, just bubble up
         } catch (Throwable e) { // TODO: Throwable? What the...
-            final String msg = String.format(
+            String msg = String.format(
                 "exception thrown when parsing %s '%s' at input position %s",
                 matcher instanceof ActionMatcher ? "action" : "rule", getPath(),
                 inputBuffer.getPosition(currentIndex));
@@ -333,7 +333,7 @@ public final class DefaultMatcherContext<V>
         if (path != null)
             return path;
 
-        final List<String> list = new FasterList();
+        List<String> list = new FasterList();
 
         MatcherContext<V> ctx;
         Matcher matcher;

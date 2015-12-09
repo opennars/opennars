@@ -32,6 +32,7 @@ import objenome.solver.evolve.event.Listener;
 import objenome.util.TypeUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static objenome.solver.evolve.Population.SIZE;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
@@ -89,7 +90,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      */
     public Full(boolean autoConfig) {
         // Default config values
-        this.allowDuplicates = false;
+        allowDuplicates = false;
 
         this.autoConfig = autoConfig;
     }
@@ -257,13 +258,18 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
     public Node createTree() {
         if (random == null) {
             throw new IllegalStateException("No random number generator has been set");
-        } else if (returnType == null) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (returnType == null) {
             throw new IllegalStateException("No return type has been set");
-        } else if (maxDepth < 0) {
+        }
+        if (maxDepth < 0) {
             throw new IllegalStateException("Depth must be 0 or greater");
-        } else if (terminals.isEmpty()) {
+        }
+        if (terminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of 0");
-        } else if ((maxDepth > 0) && nonTerminals.isEmpty()) {
+        }
+        if ((maxDepth > 0) && nonTerminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of >=1 if a depth >0 is used");
         }
 
@@ -337,16 +343,15 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      * sense to do so if we allow the update of the data-types table to be
      * overridden too.
      */
-    private List<Node> listValidNodes(final int remainingDepth, final Class<?> requiredType, List<Node> validNodeTemporary) {
+    private List<Node> listValidNodes(int remainingDepth, Class<?> requiredType, List<Node> validNodeTemporary) {
 
-        final List<Node> nonTerminals = this.nonTerminals;
+        List<Node> nonTerminals = this.nonTerminals;
 
         validNodeTemporary.clear();
 
         if (remainingDepth > 0) {
             int nts = nonTerminals.size();
-            for (int i = 0; i < nts; i++) {
-                Node n = nonTerminals.get(i);
+            for (Node n : nonTerminals) {
                 Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[remainingDepth - 1]);
 
                 for (Class<?>[] argTypes : argTypeSets) {
@@ -359,12 +364,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
             }
         } else {
             int nts = terminals.size();
-            for (int i = 0; i < nts; i++) {
-                Node n = terminals.get(i);
-                if (n.dataType().isAssignableFrom(requiredType)) {
-                    validNodeTemporary.add(n);
-                }
-            }
+            validNodeTemporary.addAll(terminals.stream().filter(n -> n.dataType().isAssignableFrom(requiredType)).collect(Collectors.toList()));
         }
         return validNodeTemporary;
     }
@@ -403,7 +403,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
         }
     }
     
-    final public Table<Integer, List<Class<?>>, Class<?>[][]> combinations = HashBasedTable.create();
+    public final Table<Integer, List<Class<?>>, Class<?>[][]> combinations = HashBasedTable.create();
 
     /*
      * Generates all possible combinations of the given data-types, with arity
@@ -503,7 +503,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      *
      * @param returnType the data-type of the generated programs
      */
-    public void setReturnType(final Class<?> returnType) {
+    public void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
 
         // Lookup table will need regenerating
@@ -529,7 +529,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      * @param size the size of the populations generated
      */
     public void setPopulationSize(int size) {
-        this.populationSize = size;
+        populationSize = size;
     }
 
     /**

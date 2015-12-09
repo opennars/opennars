@@ -12,7 +12,7 @@ public class TruthWave {
     final long end;
 
     //expect[1][] is the mean positive expectation, expect[0][] is the mean negative expectation
-    float expect[][];
+    float[][] expect;
 
     //TODO total confidence
 
@@ -85,9 +85,7 @@ public class TruthWave {
             System.out.println();
             return;
         }
-        else {
-            System.out.println(" @ " + start + ".." + end);
-        }
+        System.out.println(" @ " + start + ".." + end);
 
         for (int c = 0; c < 2; c++) {
             for (int i = 0; i < length(); i++) {

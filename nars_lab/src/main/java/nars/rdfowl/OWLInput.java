@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class OWLInput  {
 
-    private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    private static final String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     private static String parentTagName = null;
 
@@ -43,10 +43,10 @@ public class OWLInput  {
     }
 
     public OWLInput(NAR n) {
-        this.nar = n;
+        nar = n;
     }
 
-    static protected class Entity {
+    protected static class Entity {
 
         public String name;
         public final List<String[]> attributes = new LinkedList();
@@ -100,7 +100,7 @@ public class OWLInput  {
         XMLStreamReader parser = factory.createXMLStreamReader(
                 new FileInputStream(f));
         int depth = 0;
-        for (;;) {
+        while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.END_DOCUMENT) {
 
@@ -111,14 +111,14 @@ public class OWLInput  {
                     depth++;
                     String tagName = formatTag(parser.getName());
 
-                    if (tagName.equalsIgnoreCase("owl:Class")) {
+                    if ("owl:Class".equalsIgnoreCase(tagName)) {
                         processTag(parser, new TagProcessor() {
                             @Override
                             public void execute(XMLStreamReader parser) {
 
                                 String tagName = formatTag(parser.getName());
 
-                                if (tagName.equalsIgnoreCase("owl:Class")) {
+                                if ("owl:Class".equalsIgnoreCase(tagName)) {
                                     //String name = parser.getAttributeValue(RDF_URI, "ID");
                                     String name = parser.getAttributeValue(0);
 
@@ -130,7 +130,7 @@ public class OWLInput  {
 
                                         //saveEntity(classEntity);
                                     }
-                                } else if (tagName.equalsIgnoreCase("rdfs:subClassOf")) {
+                                } else if ("rdfs:subClassOf".equalsIgnoreCase(tagName)) {
                                     //String name = parser.getAttributeValue(RDF_URI, "resource");
                                     String name = parser.getAttributeValue(0);
                                     if (name != null) {
@@ -228,7 +228,7 @@ public class OWLInput  {
                                     String id = parser.getAttributeValue(0);
 
                                     System.out.println("  " + tagName);
-                                    if (id != null && id.length() > 0) {
+                                    if (id != null && !id.isEmpty()) {
                                         // this is the entity
                                         Entity entity = new Entity();
                                         entity.setName(id);
@@ -239,7 +239,7 @@ public class OWLInput  {
                                         String relationName = tagName;
                                         //String targetEntityName = parser.getAttributeValue(RDF_URI, "resource");
                                         String targetEntityName = parser.getAttributeValue(0);
-                                        if (targetEntityName != null && targetEntityName.startsWith("#")) {
+                                        if (targetEntityName != null && targetEntityName.length() > 0 && targetEntityName.charAt(0) == '#') {
                                             targetEntityName = targetEntityName.substring(1);
                                         }
                                         if (targetEntityName != null) {
@@ -257,7 +257,7 @@ public class OWLInput  {
                             String obj = formatTag(new QName(parser.getAttributeValue(0)));
 
                             System.out.println();
-                            System.out.println(tagName + " " + pred + " " + obj + " " +
+                            System.out.println(tagName + ' ' + pred + ' ' + obj + ' ' +
                                     parser.getAttributeValue(0));
                             //(parser.hasText() ? parser.getText() : ""));
                         }
@@ -274,9 +274,9 @@ public class OWLInput  {
         }
     }
 
-    abstract public static class TagProcessor {
+    public abstract static class TagProcessor {
 
-        abstract protected void execute(XMLStreamReader parser);
+        protected abstract void execute(XMLStreamReader parser);
     }
 
     /**
@@ -295,10 +295,10 @@ public class OWLInput  {
         int event = parser.getEventType();
         String startTag = formatTag(parser.getName());
         FOR_LOOP:
-        for (;;) {
+        while (true) {
             switch (event) {
                 case XMLStreamConstants.START_ELEMENT:
-                    String tagName = formatTag(parser.getName());
+                    @SuppressWarnings("LocalVariableUsedAndDeclaredInDifferentSwitchBranches") String tagName = formatTag(parser.getName());
                     tagProcessor.execute(parser);
                     depth++;
                     break;
@@ -316,7 +316,7 @@ public class OWLInput  {
         }
     }
 
-    static public Term atom(String uri) {
+    public static Term atom(String uri) {
         int lastSlash = uri.lastIndexOf('/');
         if (lastSlash!=-1)
             uri = uri.substring(lastSlash + 1);
@@ -335,7 +335,7 @@ public class OWLInput  {
      *
      * @param entity the Entity to save.
      */
-    protected void input(final Entity entity) {
+    protected void input(Entity entity) {
         //entities.put(entity.getName(), entity);
 
         Term clas = atom(entity.getName());
@@ -421,12 +421,12 @@ public class OWLInput  {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    private void input(final String subject, final String object, final String predicate) {
+    private void input(String subject, String object, String predicate) {
 
         if ((subject == null) || (object == null)) {
             return;
         }
-        if (predicate.equals("parentOf")) {
+        if ("parentOf".equals(predicate)) {
             nar.believe((Compound) $.inh(atom(subject), atom(object)));
         }
         else {
@@ -494,11 +494,7 @@ public class OWLInput  {
 
         suffix = suffix.replace("http://dbpedia.org/ontology/", "");
 
-        if (prefix == null || prefix.length() == 0) {
-            return suffix;
-        } else {
-            return prefix + ":" + suffix;
-        }
+        return prefix == null || prefix.isEmpty() ? suffix : prefix + ':' + suffix;
     }
 
     /**

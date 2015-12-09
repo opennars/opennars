@@ -31,7 +31,7 @@ public interface Expression  {
     }
 
     default <T extends Expression> boolean instanceOf(Class<T> type) {
-        return type.isAssignableFrom(this.getClass());
+        return type.isAssignableFrom(getClass());
     }
 
     default ListExpression list() {

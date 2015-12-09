@@ -31,7 +31,7 @@ public class Sample extends JPanel {
 			{
 				float r = x*x+y*y;
 				
-				if (r == 0 ) return 1f;
+				if (r == 0 ) return 1.0f;
 				return (float)( Math.sin(r)/(r));
 			}
 			
@@ -80,7 +80,7 @@ public class Sample extends JPanel {
 		//---- surfacePanel1 ----
 		surfacePanel1.setTitleText("title");
 		surfacePanel1.setBackground(Color.white);
-		surfacePanel1.setTitleFont(surfacePanel1.getTitleFont().deriveFont(surfacePanel1.getTitleFont().getStyle() | Font.BOLD, surfacePanel1.getTitleFont().getSize() + 6f));
+		surfacePanel1.setTitleFont(surfacePanel1.getTitleFont().deriveFont(surfacePanel1.getTitleFont().getStyle() | Font.BOLD, surfacePanel1.getTitleFont().getSize() + 6.0f));
 		surfacePanel1.setConfigurationVisible(false);
 		add(surfacePanel1, BorderLayout.CENTER);
 
@@ -89,11 +89,7 @@ public class Sample extends JPanel {
 
 			//---- button1 ----
 			button1.setText("export SVG");
-			button1.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					button1ActionPerformed();
-				}
-			});
+			button1.addActionListener(e -> button1ActionPerformed());
 			toolBar1.add(button1);
 
 			//---- slider1 ----
@@ -104,11 +100,7 @@ public class Sample extends JPanel {
 			slider1.setMinorTickSpacing(1);
 			slider1.setMajorTickSpacing(1);
 			slider1.setPaintLabels(true);
-			slider1.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					slider1StateChanged(e);
-				}
-			});
+			slider1.addChangeListener(this::slider1StateChanged);
 			toolBar1.add(slider1);
 		}
 		add(toolBar1, BorderLayout.NORTH);

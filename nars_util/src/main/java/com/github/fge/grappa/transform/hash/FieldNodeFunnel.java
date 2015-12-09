@@ -35,7 +35,7 @@ public enum FieldNodeFunnel
     INSTANCE
     {
         @Override
-        public void funnel(final FieldNode from, final PrimitiveSink into)
+        public void funnel(FieldNode from, PrimitiveSink into)
         {
             into.putUnencodedChars(Strings.nullToEmpty(from.name))
                 .putUnencodedChars(Strings.nullToEmpty(from.desc))

@@ -81,7 +81,7 @@ public class Update {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + (node == null ? 0 : node.hashCode());
         result = prime * result + (state == null ? 0 : state.hashCode());

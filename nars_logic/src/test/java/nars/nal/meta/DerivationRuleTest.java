@@ -169,7 +169,7 @@ public class DerivationRuleTest extends TestCase {
     @Test public void testVarArg0() {
         //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
         String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
-        Compound x = p.term("<" + rule + ">");
+        Compound x = p.term('<' + rule + '>');
         //System.out.println(x);
         x = ((TaskRule)x).normalizeRule();
         //System.out.println(x);
@@ -197,7 +197,7 @@ public class DerivationRuleTest extends TestCase {
 
             Compound x = getPattern();
 
-            final Term ellipsisTerm = $(getEllipsis());
+            Term ellipsisTerm = $(getEllipsis());
 
             for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
@@ -247,7 +247,7 @@ public class DerivationRuleTest extends TestCase {
         }
     }
 
-    abstract public static class CommutiveEllipsisTest implements EllipsisTest {
+    public abstract static class CommutiveEllipsisTest implements EllipsisTest {
         protected final String prefix;
         protected final String suffix;
         protected final Compound p;
@@ -256,8 +256,8 @@ public class DerivationRuleTest extends TestCase {
         public CommutiveEllipsisTest(String ellipsisTerm, String prefix, String suffix) {
             this.prefix = prefix;
             this.suffix = suffix;
-            this.ellipsis = ellipsisTerm;
-            this.p = getPattern(prefix, suffix);
+            ellipsis = ellipsisTerm;
+            p = getPattern(prefix, suffix);
         }
 
         protected abstract Compound getPattern(String prefix, String suffix);
@@ -279,7 +279,7 @@ public class DerivationRuleTest extends TestCase {
 
     public static class CommutiveEllipsisTest1 extends CommutiveEllipsisTest {
 
-        final static Term fixedTerm = $("%1");
+        static final Term fixedTerm = $("%1");
 
         public CommutiveEllipsisTest1(String ellipsisTerm, String[] openClose) {
             super(ellipsisTerm, openClose[0], openClose[1]);
@@ -313,7 +313,7 @@ public class DerivationRuleTest extends TestCase {
 
         @Override
         public Compound getResult() {
-            return $("<" + prefix + getEllipsis() + ", .." + suffix + " --> %1>");
+            return $('<' + prefix + getEllipsis() + ", .." + suffix + " --> %1>");
         }
 
     }
@@ -329,7 +329,7 @@ public class DerivationRuleTest extends TestCase {
         public Set<Term> test(int arity, int repeats) {
             Set<Term> s = super.test(arity, repeats);
             Term the = s.iterator().next();
-            assertTrue( the.toString().substring(1).startsWith("Z"));
+            assertTrue(the.toString().substring(1).length() > 0 && the.toString().substring(1).charAt(0) == 'Z');
             return s;
         }
 

@@ -10,9 +10,9 @@ public class SgAnnotationTest {
     @Test
     public void testConstruction() {
 
-        final String packageName = "org.fuin.onthefly";
-        final String simpleName = "MyAnnotation";
-        final SgAnnotation annotation = new SgAnnotation(packageName, simpleName);
+        String packageName = "org.fuin.onthefly";
+        String simpleName = "MyAnnotation";
+        SgAnnotation annotation = new SgAnnotation(packageName, simpleName);
         Assert.assertEquals(annotation.getPackageName(), packageName);
         Assert.assertEquals(annotation.getSimpleName(), simpleName);
         Assert.assertNotNull(annotation.getArguments());
@@ -24,7 +24,7 @@ public class SgAnnotationTest {
         try {
             annotation.getArguments().put("dummy", SgClass.BOOLEAN);
             Assert.fail("The map is excepected to be unmodifiable!");
-        } catch (final UnsupportedOperationException ex) {
+        } catch (UnsupportedOperationException ex) {
             // OK
         }
 

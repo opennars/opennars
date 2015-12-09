@@ -315,41 +315,39 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        if (keySet == null) {
-            keySet = new AbstractSet<K>() {
-                @Override
-                public Iterator<K> iterator() {
-                    return new Iterator<K>() {
-                        private final Iterator<Entry<K, V>> i = entrySet().iterator();
+        if (keySet == null) keySet = new AbstractSet<K>() {
+            @Override
+            public Iterator<K> iterator() {
+                return new Iterator<K>() {
+                    private final Iterator<Entry<K, V>> i = entrySet().iterator();
 
-                        @Override
-                        public boolean hasNext() {
-                            return i.hasNext();
-                        }
+                    @Override
+                    public boolean hasNext() {
+                        return i.hasNext();
+                    }
 
-                        @Override
-                        public K next() {
-                            return i.next().getKey();
-                        }
+                    @Override
+                    public K next() {
+                        return i.next().getKey();
+                    }
 
-                        @Override
-                        public void remove() {
-                            i.remove();
-                        }
-                    };
-                }
+                    @Override
+                    public void remove() {
+                        i.remove();
+                    }
+                };
+            }
 
-                @Override
-                public int size() {
-                    return AbstractMap.this.size();
-                }
+            @Override
+            public int size() {
+                return AbstractMap.this.size();
+            }
 
-                @Override
-                public boolean contains(Object k) {
-                    return AbstractMap.this.containsKey(k);
-                }
-            };
-        }
+            @Override
+            public boolean contains(Object k) {
+                return containsKey(k);
+            }
+        };
         return keySet;
     }
 
@@ -401,7 +399,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
                 @Override
                 public boolean contains(Object v) {
-                    return AbstractMap.this.containsValue(v);
+                    return containsValue(v);
                 }
             };
         }
@@ -446,9 +444,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
             return false;
 
         try {
-            Iterator<Entry<K, V>> i = entrySet().iterator();
-            while (i.hasNext()) {
-                Entry<K, V> e = i.next();
+            for (Entry<K, V> e : entrySet()) {
                 K key = e.getKey();
                 V value = e.getValue();
                 if (value == null) {
@@ -487,9 +483,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     public int hashCode() {
         int h = 0;
-        Iterator<Entry<K, V>> i = entrySet().iterator();
-        while (i.hasNext())
-            h += i.next().hashCode();
+        for (Entry<K, V> kvEntry : entrySet()) h += kvEntry.hashCode();
         return h;
     }
 
@@ -512,7 +506,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
         StringBuilder sb = new StringBuilder();
         sb.append('{');
-        for (; ; ) {
+        while (true) {
             Entry<K, V> e = i.next();
             K key = e.getKey();
             V value = e.getValue();
@@ -591,8 +585,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
          * @param entry the entry to copy
          */
         public SimpleEntry(Entry<? extends K, ? extends V> entry) {
-            this.key = entry.getKey();
-            this.value = entry.getValue();
+            key = entry.getKey();
+            value = entry.getValue();
         }
 
         /**
@@ -723,8 +717,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
          * @param entry the entry to copy
          */
         public SimpleImmutableEntry(Entry<? extends K, ? extends V> entry) {
-            this.key = entry.getKey();
-            this.value = entry.getValue();
+            key = entry.getKey();
+            value = entry.getValue();
         }
 
         /**

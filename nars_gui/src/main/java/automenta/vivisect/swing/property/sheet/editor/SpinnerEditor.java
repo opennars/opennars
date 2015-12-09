@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Objects;
 
 
 /**
@@ -40,7 +41,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 
 			add(component);
 
-			if (getUI().getClass().getSimpleName().equals("SubstancePanelUI")) {
+			if ("SubstancePanelUI".equals(getUI().getClass().getSimpleName())) {
 				setLayout(new ResizeLayout());
 			} else {
 				setLayout(new BorderLayout());
@@ -122,11 +123,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 	@Override
 	public Object getValue() {
 		Object value = spinner.getValue();
-		if (value instanceof ObjectWrapper) {
-			return ((ObjectWrapper) value).value;
-		} else {
-			return value;
-		}
+		return value instanceof ObjectWrapper ? ((ObjectWrapper) value).value : value;
 	}
 
 	@Override
@@ -149,10 +146,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 			if (o == this) {
 				return true;
 			}
-			if (value == o || (value != null && value.equals(o))) {
-				return true;
-			}
-			return false;
+			return Objects.equals(value, o);
 		}
 
 		@Override

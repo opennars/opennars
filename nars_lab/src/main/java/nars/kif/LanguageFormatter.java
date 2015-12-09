@@ -66,7 +66,7 @@ public class LanguageFormatter {
                 result.append(", ").append(transliterate(ar[i], language));
             }
             if (i == ar.length - 1) {
-                result.append(" ").append(getKeyword("and", language)).append(" ").append(transliterate(ar[i], language));
+                result.append(' ').append(getKeyword("and", language)).append(' ').append(transliterate(ar[i], language));
             }
         }
         return result.toString();
@@ -77,11 +77,11 @@ public class LanguageFormatter {
      */
     private static boolean logicalOperator(String word) {
 
-        return word.equals("if") || word.equals("then") || word.equals("=>")
-                || word.equals("and") || word.equals("or")
-                || word.equals("<=>") || word.equals("not")
-                || word.equals("forall") || word.equals("exists")
-                || word.equals("holds");
+        return "if".equals(word) || "then".equals(word) || "=>".equals(word)
+                || "and".equals(word) || "or".equals(word)
+                || "<=>".equals(word) || "not".equals(word)
+                || "forall".equals(word) || "exists".equals(word)
+                || "holds".equals(word);
     }
 
     /**
@@ -91,7 +91,7 @@ public class LanguageFormatter {
 
         if (word.charAt(0) != '?') {
             return word;
-        } else if (language.equals("ar")) {
+        } else if ("ar".equals(language)) {
             StringBuilder result = new StringBuilder();
             result.append('?');
             for (int i = 1; i < word.length(); i++) {
@@ -100,79 +100,79 @@ public class LanguageFormatter {
                         result.append("\u0627\u0654");
                         break;
                     case 'B':
-                        result.append("\uFE8F");
+                        result.append('\uFE8F');
                         break;
                     case 'C':
-                        result.append("\uFED9");
+                        result.append('\uFED9');
                         break;
                     case 'D':
-                        result.append("\uFEA9");
+                        result.append('\uFEA9');
                         break;
                     case 'E':
-                        result.append("\u0650");
+                        result.append('\u0650');
                         break;
                     case 'F':
-                        result.append("\uFED1");
+                        result.append('\uFED1');
                         break;
                     case 'G':
-                        result.append("\uFE9D");
+                        result.append('\uFE9D');
                         break;
                     case 'H':
-                        result.append("\uFEE9");
+                        result.append('\uFEE9');
                         break;
                     case 'I':
-                        result.append("\u0650");
+                        result.append('\u0650');
                         break;
                     case 'J':
-                        result.append("\uFE9D");
+                        result.append('\uFE9D');
                         break;
                     case 'K':
-                        result.append("\uFED9");
+                        result.append('\uFED9');
                         break;
                     case 'L':
-                        result.append("\uFEDD");
+                        result.append('\uFEDD');
                         break;
                     case 'M':
-                        result.append("\uFEE1");
+                        result.append('\uFEE1');
                         break;
                     case 'N':
-                        result.append("\uFEE5");
+                        result.append('\uFEE5');
                         break;
                     case 'O':
-                        result.append("\u064F");
+                        result.append('\u064F');
                         break;
                     case 'P':
-                        result.append("\uFE8F");
+                        result.append('\uFE8F');
                         break;
                     case 'Q':
-                        result.append("\uFED5");
+                        result.append('\uFED5');
                         break;
                     case 'R':
-                        result.append("\uFEAD");
+                        result.append('\uFEAD');
                         break;
                     case 'S':
-                        result.append("\uFEB1");
+                        result.append('\uFEB1');
                         break;
                     case 'T':
-                        result.append("\uFE95");
+                        result.append('\uFE95');
                         break;
                     case 'U':
-                        result.append("\u064F");
+                        result.append('\u064F');
                         break;
                     case 'V':
-                        result.append("\uFE8F");
+                        result.append('\uFE8F');
                         break;
                     case 'W':
-                        result.append("\uFEED");
+                        result.append('\uFEED');
                         break;
                     case 'X':
-                        result.append("\uFEAF");
+                        result.append('\uFEAF');
                         break;
                     case 'Y':
-                        result.append("\uFEF1");
+                        result.append('\uFEF1');
                         break;
                     case 'Z':
-                        result.append("\uFEAF");
+                        result.append('\uFEAF');
                         result.append(word.charAt(i));
                 }
             }
@@ -228,6 +228,7 @@ public class LanguageFormatter {
                 do {
                     line = br.readLine();
                     if (line != null) {
+                        //noinspection IfStatementWithTooManyBranches
                         if (line.startsWith("en|")) { // The language key line.
                             i = 0;
                             while (line.indexOf('|', i) > 0) {
@@ -235,8 +236,7 @@ public class LanguageFormatter {
                                 i = line.indexOf('|', i) + 1;
                             }
                             languageKeyArray.add(line.substring(i, i + 2));
-                        } else if (line.startsWith(";")) {  // ignore comment lines
-                        } else if (line.length() == 0) {  // ignore blank lines
+                        } else if (line.length() > 0 && line.charAt(0) == ';' || line.isEmpty()) {  // ignore comment lines
                         } else if (line.indexOf('|') > -1) { // Line with phrase alternates in different languages.
                             newLine = new HashMap();
                             key = line.substring(0, line.indexOf('|'));
@@ -360,16 +360,15 @@ public class LanguageFormatter {
              System.out.println( "d:return == " + ans );
              */
             return ans;
-        } else {
-            if (!f.listP()) {
-                System.out.println("Error in LanguageFormatter.nlStmtPara(): Statement is not an atom or a list: " + stmt);
-                /*
-                 System.out.println( "INFO in LanguageFormatter.nlStmtPara( " + depth + " ):" );
-                 printSpaces( depth );
-                 System.out.println( "e:return == \"\"" );
-                 */
-                return "";
-            }
+        }
+        if (!f.listP()) {
+            System.out.println("Error in LanguageFormatter.nlStmtPara(): Statement is not an atom or a list: " + stmt);
+            /*
+             System.out.println( "INFO in LanguageFormatter.nlStmtPara( " + depth + " ):" );
+             printSpaces( depth );
+             System.out.println( "e:return == \"\"" );
+             */
+            return "";
         }
         /*
          if (phraseMap == null) {
@@ -404,26 +403,25 @@ public class LanguageFormatter {
              System.out.println( "h:return == " + ans );
              */
             return ans;
+        }
+        // predicate has no paraphrase
+        if (pred.charAt(0) == '?') {
+            result.append(transliterate(pred, language));
         } else {
-            // predicate has no paraphrase
-            if (pred.charAt(0) == '?') {
-                result.append(transliterate(pred, language));
+            if (termMap.containsKey(pred)) {
+                result.append((String) termMap.get(pred));
             } else {
-                if (termMap.containsKey(pred)) {
-                    result.append((String) termMap.get(pred));
-                } else {
-                    result.append(pred);
-                }
+                result.append(pred);
             }
+        }
+        f.read(f.cdr());
+        while (!f.empty()) {
+            String arg = f.car();
             f.read(f.cdr());
-            while (!f.empty()) {
-                String arg = f.car();
-                f.read(f.cdr());
-                if (!Formula.atom(arg)) {
-                    result.append(" ").append(nlStmtPara(arg, isNegMode, phraseMap, termMap, language, depth + 1));
-                } else {
-                    result.append(" ").append(translateWord(termMap, arg, language));
-                }
+            if (!Formula.atom(arg)) {
+                result.append(' ').append(nlStmtPara(arg, isNegMode, phraseMap, termMap, language, depth + 1));
+            } else {
+                result.append(' ').append(translateWord(termMap, arg, language));
             }
         }
         ans = result.toString();
@@ -444,11 +442,7 @@ public class LanguageFormatter {
         if (termMap != null && termMap.containsKey(word)) {
             return ((String) termMap.get(word));
         } else {
-            if (word.charAt(0) == '?') {
-                return transliterate(word, language);
-            } else {
-                return (word);
-            }
+            return word.charAt(0) == '?' ? transliterate(word, language) : word;
         }
     }
 
@@ -492,7 +486,7 @@ public class LanguageFormatter {
         f.read(f.cdr());
 
         String ans = null;
-        if (pred.equals("not")) {
+        if ("not".equals(pred)) {
             ans = nlStmtPara(f.car(), true, phraseMap, termMap, language, depth + 1);
             /*
              System.out.println( "INFO in LanguageFormatter.paraphraseLogicalOperator( " + depth + " ):" );
@@ -506,7 +500,7 @@ public class LanguageFormatter {
             String arg = f.car();
             String result = nlStmtPara(arg, false, phraseMap, termMap, language, depth + 1);
 
-            if (result != null && !"".equals(result) && result.length() > 0) {
+            if (result != null && !"".equals(result) && !result.isEmpty()) {
                 args.add(result);
             } else {
                 System.out.println("INFO in LanguageFormatter.paraphraseLogicalOperators(): bad result for: " + arg);
@@ -536,11 +530,11 @@ public class LanguageFormatter {
 
         StringBuilder sb = new StringBuilder();
 
-        if (pred.equalsIgnoreCase("=>")) {
+        if ("=>".equalsIgnoreCase(pred)) {
             if (isNegMode) {
-                sb.append(args.get(1)).append(" ").append(AND).append(" ").append("~{").append(args.get(0)).append("}");
+                sb.append(args.get(1)).append(' ').append(AND).append(' ').append("~{").append(args.get(0)).append('}');
             } else {
-                sb.append("<ul><li>").append(IF).append(" ").append(args.get(0)).append(",<li>").append(THEN).append(" ").append(args.get(1)).append("</ul>");
+                sb.append("<ul><li>").append(IF).append(' ').append(args.get(0)).append(",<li>").append(THEN).append(' ').append(args.get(1)).append("</ul>");
             }
             ans = sb.toString();
             /*
@@ -550,11 +544,11 @@ public class LanguageFormatter {
              */
             return ans;
         }
-        if (pred.equalsIgnoreCase("and")) {
+        if ("and".equalsIgnoreCase(pred)) {
             if (isNegMode) {
                 for (int i = 0; i < args.size(); i++) {
                     if (i != 0) {
-                        sb.append(" ").append(OR).append(" ");
+                        sb.append(' ').append(OR).append(' ');
                     }
                     sb.append("~{ ");
                     sb.append(translateWord(termMap, (String) args.get(i), language));
@@ -563,7 +557,7 @@ public class LanguageFormatter {
             } else {
                 for (int i = 0; i < args.size(); i++) {
                     if (i != 0) {
-                        sb.append(" ").append(AND).append(" ");
+                        sb.append(' ').append(AND).append(' ');
                     }
                     sb.append(translateWord(termMap, (String) args.get(i), language));
                 }
@@ -576,14 +570,14 @@ public class LanguageFormatter {
              */
             return ans;
         }
-        if (pred.equalsIgnoreCase("holds")) {
+        if ("holds".equalsIgnoreCase(pred)) {
 
             for (int i = 0; i < args.size(); i++) {
                 if (i != 0) {
                     if (isNegMode) {
-                        sb.append(" ").append(NOT);
+                        sb.append(' ').append(NOT);
                     }
-                    sb.append(" ").append(HOLDS).append(" ");
+                    sb.append(' ').append(HOLDS).append(' ');
                 }
                 sb.append(translateWord(termMap, (String) args.get(i), language));
             }
@@ -596,13 +590,13 @@ public class LanguageFormatter {
              */
             return ans;
         }
-        if (pred.equalsIgnoreCase("or")) {
+        if ("or".equalsIgnoreCase(pred)) {
             for (int i = 0; i < args.size(); i++) {
                 if (i != 0) {
                     if (isNegMode) {
-                        sb.append(" ").append(AND).append(" ");
+                        sb.append(' ').append(AND).append(' ');
                     } else {
-                        sb.append(" ").append(OR).append(" ");
+                        sb.append(' ').append(OR).append(' ');
                     }
                 }
                 sb.append(translateWord(termMap, (String) args.get(i), language));
@@ -615,22 +609,22 @@ public class LanguageFormatter {
              */
             return ans;
         }
-        if (pred.equalsIgnoreCase("<=>")) {
+        if ("<=>".equalsIgnoreCase(pred)) {
             if (isNegMode) {
                 sb.append(translateWord(termMap, (String) args.get(1), language));
-                sb.append(" ").append(OR).append(" ");
+                sb.append(' ').append(OR).append(' ');
                 sb.append("~{ ");
                 sb.append(translateWord(termMap, (String) args.get(0), language));
                 sb.append(" }");
-                sb.append(" ").append(OR).append(" ");
+                sb.append(' ').append(OR).append(' ');
                 sb.append(translateWord(termMap, (String) args.get(0), language));
-                sb.append(" ").append(OR).append(" ");
+                sb.append(' ').append(OR).append(' ');
                 sb.append("~{ ");
                 sb.append(translateWord(termMap, (String) args.get(1), language));
                 sb.append(" }");
             } else {
                 sb.append(translateWord(termMap, (String) args.get(0), language));
-                sb.append(" ").append(IFANDONLYIF).append(" ");
+                sb.append(' ').append(IFANDONLYIF).append(' ');
                 sb.append(translateWord(termMap, (String) args.get(1), language));
             }
             ans = sb.toString();
@@ -641,11 +635,11 @@ public class LanguageFormatter {
              */
             return ans;
         }
-        if (pred.equalsIgnoreCase("forall")) {
+        if ("forall".equalsIgnoreCase(pred)) {
             if (isNegMode) {
-                sb.append(" ").append(NOT).append(" ");
+                sb.append(' ').append(NOT).append(' ');
             }
-            sb.append(FORALL).append(" ");
+            sb.append(FORALL).append(' ');
             if (((String) args.get(0)).indexOf(' ') == -1) {
                 // If just one variable ...
                 sb.append(translateWord(termMap, (String) args.get(0), language));
@@ -653,7 +647,7 @@ public class LanguageFormatter {
                 // If more than one variable ...
                 sb.append(translateWord(termMap, formatList((String) args.get(0), language), language));
             }
-            sb.append(" ");
+            sb.append(' ');
             // sb.append(" "+HOLDS+": ");
             sb.append(translateWord(termMap, (String) args.get(1), language));
             ans = sb.toString();
@@ -664,7 +658,7 @@ public class LanguageFormatter {
              */
             return ans;
         }
-        if (pred.equalsIgnoreCase("exists")) {
+        if ("exists".equalsIgnoreCase(pred)) {
             if (((String) args.get(0)).indexOf(' ') == -1) {
 
 		// If just one variable ...
@@ -684,22 +678,22 @@ public class LanguageFormatter {
                  }
                  */
                 if (isNegMode) {
-                    sb.append(NOTEXISTS).append(" ");
+                    sb.append(NOTEXISTS).append(' ');
                 } else {
-                    sb.append(EXISTS).append(" ");
+                    sb.append(EXISTS).append(' ');
                 }
                 sb.append(translateWord(termMap, (String) args.get(0), language));
             } else {
 
                 // If more than one variable ...
                 if (isNegMode) {
-                    sb.append(NOTEXIST).append(" ");
+                    sb.append(NOTEXIST).append(' ');
                 } else {
-                    sb.append(EXIST).append(" ");
+                    sb.append(EXIST).append(' ');
                 }
                 sb.append(translateWord(termMap, formatList((String) args.get(0), language), language));
             }
-            sb.append(" ").append(SUCHTHAT).append(" ");
+            sb.append(' ').append(SUCHTHAT).append(' ');
             sb.append(translateWord(termMap, (String) args.get(1), language));
             ans = sb.toString();
             /*
@@ -741,11 +735,11 @@ public class LanguageFormatter {
         int index;
 
         if (strFormat.contains("&%")) {                   // setup the term hyperlink
-            strFormat = strFormat.replace("&%", "&%" + pred + "$");
+            strFormat = strFormat.replace("&%", "&%" + pred + '$');
         }
         if (isNegMode) {                                    // handle negation
             if (!strFormat.contains("%n")) {
-                strFormat = getKeyword("not", language) + " " + strFormat;
+                strFormat = getKeyword("not", language) + ' ' + strFormat;
             } else {
                 if (!strFormat.contains("%n{")) {
                     strFormat = strFormat.replace("%n", getKeyword("not", language));
@@ -784,7 +778,7 @@ public class LanguageFormatter {
         strFormat = expandStar(f, strFormat, language);
 
         int num = 1;                                          // handle arguments
-        String argPointer = "%" + (new Integer(num)).toString();
+        String argPointer = '%' + (new Integer(num)).toString();
         while (strFormat.contains(argPointer)) {
             // System.out.println("INFO in LanguageFormatter.paraphraseWithFormat(): Statement: " + f.theFormula);
             // System.out.println("arg: " + f.getArgument(num));
@@ -792,7 +786,7 @@ public class LanguageFormatter {
             // System.out.println("str: " + strFormat);
             strFormat = strFormat.replace(argPointer, nlStmtPara(f.getArgument(num), isNegMode, phraseMap, termMap, language, 1));
             num++;
-            argPointer = "%" + (new Integer(num)).toString();
+            argPointer = '%' + (new Integer(num)).toString();
         }
 
         // System.out.println("str: " + strFormat);
@@ -860,31 +854,31 @@ public class LanguageFormatter {
                         if (lbi < slen) {
                             lb = strFormat.substring(lbi, (lbi + 1));
                         }
-                        while ((lb != null) && (lb.equals("{") || lb.equals("["))) {
+                        while ((lb != null) && ("{".equals(lb) || "[".equals(lb))) {
                             rb = "]";
-                            if (lb.equals("{")) {
+                            if ("{".equals(lb)) {
                                 rb = "}";
                             }
                             rbi = strFormat.indexOf(rb, lbi);
                             if (rbi == -1) {
-                                problems.add("Error in format \"" + strFormat + "\": missing \"" + rb + "\"");
+                                problems.add("Error in format \"" + strFormat + "\": missing \"" + rb + '"');
                                 break;
                             }
                             p1 = (rbi + 1);
                             ss = strFormat.substring((lbi + 1), rbi);
-                            if (lb.equals("{")) {
+                            if ("{".equals(lb)) {
                                 range = ss.trim();
                                 rangeArr = range.split(",");
                                 // System.out.println( "INFO in LanguageFormatter.expandStar(): rangeArr == " + rangeArr );
-                                for (int i = 0; i < rangeArr.length; i++) {
-                                    if (Formula.isNonEmptyString(rangeArr[i])) {
-                                        isRange = (rangeArr[i].indexOf('-') != -1);
-                                        rangeArr2 = rangeArr[i].split("-");
+                                for (String aRangeArr : rangeArr) {
+                                    if (Formula.isNonEmptyString(aRangeArr)) {
+                                        isRange = (aRangeArr.indexOf('-') != -1);
+                                        rangeArr2 = aRangeArr.split("-");
                                         lowStr = rangeArr2[0].trim();
                                         try {
                                             low = Integer.parseInt(lowStr);
                                         } catch (Exception e1) {
-                                            problems.add("Error in format \"" + strFormat + "\": bad value in \"" + ss + "\"");
+                                            problems.add("Error in format \"" + strFormat + "\": bad value in \"" + ss + '"');
                                             low = 1;
                                         }
                                         // System.out.println( "INFO in LanguageFormatter.expandStar(): low == " + low );
@@ -895,7 +889,7 @@ public class LanguageFormatter {
                                                 try {
                                                     high = Integer.parseInt(highStr);
                                                 } catch (Exception e2) {
-                                                    problems.add("Error in format \"" + strFormat + "\": bad value in \"" + ss + "\"");
+                                                    problems.add("Error in format \"" + strFormat + "\": bad value in \"" + ss + '"');
                                                     high = (flen - 1);
                                                 }
                                             } else {
@@ -929,15 +923,15 @@ public class LanguageFormatter {
                             if (addAll || (argsToPrint[i])) {
                                 if (nAdded >= 1) {
                                     if (nToAdd == 2) {
-                                        sb.append(" ").append(AND).append(" ");
+                                        sb.append(' ').append(AND).append(' ');
                                     } else {
                                         sb.append(delim);
                                     }
                                     if ((nToAdd > 2) && ((nAdded + 1) == nToAdd)) {
-                                        sb.append(AND).append(" ");
+                                        sb.append(AND).append(' ');
                                     }
                                 }
-                                sb.append("%").append(i);
+                                sb.append('%').append(i);
                                 nAdded++;
                             }
                         }
@@ -1002,35 +996,27 @@ public class LanguageFormatter {
 
                 start = nlFormat.indexOf("&%", start + 1);
                 int word = nlFormat.indexOf('$', start);
-                if (word == -1) {
-                    end = start + 2;
-                } else {
-                    end = word + 1;
-                }
+                end = word == -1 ? start + 2 : word + 1;
                 while (end < nlFormat.length() && Character.isJavaIdentifierPart(nlFormat.charAt(end))) {
                     end++;
                 }
-                if (word == -1) {
-                    nlFormat = (nlFormat.substring(0, start)
-                            + "<a href=\""
-                            + href
-                            + "&term="
-                            + nlFormat.substring(start + 2, end)
-                            + "\">"
-                            + nlFormat.substring(start + 1, end)
-                            + "</a>"
-                            + nlFormat.substring(end, nlFormat.length()));
-                } else {
-                    nlFormat = (nlFormat.substring(0, start)
-                            + "<a href=\""
-                            + href
-                            + "&term="
-                            + nlFormat.substring(start + 2, word)
-                            + "\">"
-                            + nlFormat.substring(word + 1, end)
-                            + "</a>"
-                            + nlFormat.substring(end, nlFormat.length()));
-                }
+                nlFormat = word == -1 ? nlFormat.substring(0, start)
+                        + "<a href=\""
+                        + href
+                        + "&term="
+                        + nlFormat.substring(start + 2, end)
+                        + "\">"
+                        + nlFormat.substring(start + 1, end)
+                        + "</a>"
+                        + nlFormat.substring(end, nlFormat.length()) : nlFormat.substring(0, start)
+                        + "<a href=\""
+                        + href
+                        + "&term="
+                        + nlFormat.substring(start + 2, word)
+                        + "\">"
+                        + nlFormat.substring(word + 1, end)
+                        + "</a>"
+                        + nlFormat.substring(end, nlFormat.length());
             }
         } else {
             nlFormat = "";

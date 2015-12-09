@@ -95,7 +95,7 @@ public class WebcamShapes<T extends ImageBase> extends JPanel
         BufferedImage displayImage = new BufferedImage(input.width,input.height,BufferedImage.TYPE_INT_RGB);
         ImageUInt8 binary = new ImageUInt8(input.width,input.height);
 
-        final int blurRadius = 2;
+        int blurRadius = 2;
 
         // Finds edges inside the image
         CannyEdge<ImageFloat32,ImageFloat32> canny =
@@ -109,7 +109,7 @@ public class WebcamShapes<T extends ImageBase> extends JPanel
         overlay.setStroke(new BasicStroke(4));
 
 
-        final int iterations = 80;
+        int iterations = 80;
         for( Contour c : contours ) {
             // Only the external contours are relevant.
 
@@ -149,6 +149,7 @@ public class WebcamShapes<T extends ImageBase> extends JPanel
 
         ImageFloat32 inputFloat = new ImageFloat32(actualSize.width, actualSize.height);
 
+        //noinspection InfiniteLoopStatement
         while( true ) {
             BufferedImage buffered = webcam.getImage();
             ConvertBufferedImage.convertFrom(webcam.getImage(), input, true);

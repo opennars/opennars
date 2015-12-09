@@ -19,40 +19,40 @@ public class IntervalTreeTest {
 
         @Test
         public void testSinglePut(){
-            IntervalTree<Double, String> t = new IntervalTree<Double, String>();
+            IntervalTree<Double, String> t = new IntervalTree<>();
             t.put(30.0,50.0, "test");
         }
 
         @Test
         public void testSingleContainsValue(){
-            IntervalTree<Double, String> t = new IntervalTree<Double, String>();
+            IntervalTree<Double, String> t = new IntervalTree<>();
             t.put(30.0,50.0, "test");
             t.containsValue("test");
         }
 
         @Test
         public void testSingleKeyContains(){
-            IntervalTree<Double, String> t = new IntervalTree<Double, String>();
+            IntervalTree<Double, String> t = new IntervalTree<>();
             t.put(30.0,50.0, "test");
             assertFalse(t.searchContaining(30.0,45.0).isEmpty());
         }
 
         @Test
         public void testSingleKeyContainsNotOverlap(){
-            IntervalTree<Double, String> t = new IntervalTree<Double, String>();
+            IntervalTree<Double, String> t = new IntervalTree<>();
             t.put(30.0,50.0, "test");
             assertTrue(t.searchContaining(20.0,40.0).isEmpty());
         }
 
         @Test
         public void testSingleKeyOverlapping(){
-            IntervalTree<Double, String> t = new IntervalTree<Double, String>();
+            IntervalTree<Double, String> t = new IntervalTree<>();
             t.put(30.0,50.0, "test");
             assertFalse(t.searchOverlapping(20.0,40.0).isEmpty());
         }
 
         private IntervalTree<Integer, String> makeIntervalTree(){
-            IntervalTree<Integer,String> t = new IntervalTree<Integer, String>();
+            IntervalTree<Integer,String> t = new IntervalTree<>();
             t.put(0, 10, "0-10");
             t.put(5, 15, "5-15");
             t.put(10, 20, "10-20");

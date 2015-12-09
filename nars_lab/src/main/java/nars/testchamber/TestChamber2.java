@@ -39,41 +39,36 @@ public class TestChamber2 extends TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    if(opname.equals("go-to"))
+                    if("go-to".equals(opname))
                         space.target = new PVector(i, j);
                 }
             }
         }
         //if("pick".equals(opname)) {
-            for(GridObject gridi : space.objects) {
-                if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
-                    LocalGridObject gridu=(LocalGridObject) gridi;
-                    if(opname.equals("go-to"))
-                        space.target = new PVector(gridu.x, gridu.y);
-                }
-            }
+        //Key && ((Key)gridi).doorname.equals(goal)) {
+        space.objects.stream().filter(gridi -> gridi instanceof LocalGridObject && ((LocalGridObject) gridi).doorname.equals(goal)).forEach(gridi -> { //Key && ((Key)gridi).doorname.equals(goal)) {
+            LocalGridObject gridu = (LocalGridObject) gridi;
+            if ("go-to".equals(opname))
+                space.target = new PVector(gridu.x, gridu.y);
+        });
         //}
     }
     
 
     public TestChamber2(NAR nar) {
-        super();
         int w = 50;
         int h = 50;
         int water_threshold = 30;
         Hauto cells = new Hauto(w, h, nar);
-        cells.forEach(0, 0, w, h, new CellFunction() {
-            @Override
-            public void update(Cell c) {
+        cells.forEach(0, 0, w, h, c -> {
 ///c.setHeight((int)(Math.random() * 12 + 1));
-                float smoothness = 20f;
-                c.material = Material.GrassFloor;
-                double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
-                if ((n * 64) > water_threshold) {
-                    c.material = Material.Water;
-                }
-                c.setHeight((int) (Math.random() * 24 + 1));
+            float smoothness = 20.0f;
+            c.material = Material.GrassFloor;
+            double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
+            if ((n * 64) > water_threshold) {
+                c.material = Material.Water;
             }
+            c.setHeight((int) (Math.random() * 24 + 1));
         });
         
         Maze.buildMaze(cells, 3, 3, 23, 23);
@@ -86,6 +81,7 @@ public class TestChamber2 extends TestChamber {
         
         
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
+        //noinspection OverlyComplexAnonymousInnerClass
         GridAgent a = new GridAgent(17, 17, nar) {
 
             @Override
@@ -120,7 +116,7 @@ public class TestChamber2 extends TestChamber {
                             inventorybag.cx=(int)current.x;
                             inventorybag.cy=(int)current.y;
                         }
-                        if(inventorybag==null || !(inventorybag instanceof Key)) {
+                        if(!(inventorybag instanceof Key)) {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
@@ -141,7 +137,7 @@ public class TestChamber2 extends TestChamber {
                                 }
                                 if(obi!=null || cells.readCells[(int)current.x][(int)current.y].name.equals(goal)) { //only possible for existing ones
                                     if("pick".equals(opname)) {
-                                        if(inventorybag!=null && inventorybag instanceof LocalGridObject) {
+                                        if(inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
                                             LocalGridObject ob= inventorybag;
                                             ob.x=(int)current.x;
@@ -246,19 +242,19 @@ public class TestChamber2 extends TestChamber {
                 String actionParam = e.action.toParamString();                
                 String success = String.valueOf(e.success);
                 if (actionParam == null) actionParam = "";
-                if (actionParam.length() != 0) actionParam = "(*," + actionParam + ")";
+                if (!actionParam.isEmpty()) actionParam = "(*," + actionParam + ')';
                 
-                nar.input("$0.60$ (*,effect," + action + "," + actionParam + "," + success + "). :|:");
+                nar.input("$0.60$ (*,effect," + action + ',' + actionParam + ',' + success + "). :|:");
                 
-                final int SightPeriod = 32;
+                int SightPeriod = 32;
                 if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {
                     String seeing = "(*,";
 
-                    seeing += this.cellOn().material + ",";
-                    seeing += this.cellAbsolute(0).material + ",";
-                    seeing += this.cellAbsolute(90).material + ",";
-                    seeing += this.cellAbsolute(180).material + ",";
-                    seeing += this.cellAbsolute(270).material + ")";
+                    seeing += cellOn().material + ",";
+                    seeing += cellAbsolute(0).material + ",";
+                    seeing += cellAbsolute(90).material + ",";
+                    seeing += cellAbsolute(180).material + ",";
+                    seeing += cellAbsolute(270).material + ")";
 
 
                     nar.input("$0.50$ (*,see," + seeing + "). :|:");

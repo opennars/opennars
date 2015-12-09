@@ -20,7 +20,7 @@ public interface Temporal<T extends Compound> extends Tasked<T>, Interval {
     void setOccurrenceTime(long t);
 
 
-    default boolean concurrent(final Task s, final int duration) {
+    default boolean concurrent(Task s, int duration) {
         return Tense.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
@@ -34,14 +34,9 @@ public interface Temporal<T extends Compound> extends Tasked<T>, Interval {
     long end();
 
     default long getLifespan(Memory memory) {
-        final long createdAt = getCreationTime();
+        long createdAt = getCreationTime();
 
-        if (createdAt >= Tense.TIMELESS) {
-            return memory.time() - createdAt;
-        }
-        else {
-            return -1;
-        }
+        return createdAt >= Tense.TIMELESS ? memory.time() - createdAt : -1;
 
     }
 

@@ -1,6 +1,7 @@
 package objenome.op.cas.util;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Token<T> {
     
@@ -18,9 +19,9 @@ public class Token<T> {
     
     public Token(T tokenValue, Token fromStrOffsetToken, Token fromStrEndToken) {
         this.tokenValue = tokenValue;
-        this.fromStr = fromStrOffsetToken.fromStr;
-        this.fromStrBegin = fromStrOffsetToken.fromStrBegin;
-        this.fromStrEnd = fromStrEndToken.fromStrEnd;
+        fromStr = fromStrOffsetToken.fromStr;
+        fromStrBegin = fromStrOffsetToken.fromStrBegin;
+        fromStrEnd = fromStrEndToken.fromStrEnd;
     }
     
     public Token(T tokenValue) {
@@ -38,15 +39,12 @@ public class Token<T> {
     }
     
     public static <T> ArrayList<T> getValues(ArrayList<Token<T>> tokens) {
-        ArrayList<T> values = new ArrayList<T>();
-        for (Token<T> token : tokens) {
-            values.add(token.tokenValue);
-        }
+        ArrayList<T> values = tokens.stream().map(token -> token.tokenValue).collect(Collectors.toCollection(ArrayList::new));
         return values;
     }
     
     public <U> Token<U> castValueTo(Class<U> toClass) {
-        return new Token<U>((U) tokenValue, fromStr, fromStrBegin, fromStrEnd);
+        return new Token<>((U) tokenValue, fromStr, fromStrBegin, fromStrEnd);
     }
     
     public boolean equals(Object o) {
@@ -54,7 +52,7 @@ public class Token<T> {
         if (o == this) return true;
         if (!(o instanceof Token)) return false;
         
-        return ((Token) o).tokenValue.equals(this.tokenValue);
+        return ((Token) o).tokenValue.equals(tokenValue);
     }
     
     public Token expandIndices(int left, int right) {

@@ -20,10 +20,10 @@ public class ListProperties_REMOVE {
 
 		private static final long serialVersionUID = -8352295145276923539L;
 
-		private List<Object> keys = new ArrayList<Object>();
-		private List<Object> values = new ArrayList<Object>();
+		private List<Object> keys = new ArrayList<>();
+		private List<Object> values = new ArrayList<>();
 
-		private static final String columnNames[] = { "Property String", "Value" };
+		private static final String[] columnNames = {"Property String", "Value"};
 
 		@Override
 		public int getColumnCount() {
@@ -65,11 +65,11 @@ public class ListProperties_REMOVE {
 		}
 	}
 
-	public static void main(String args[]) {
-		final JFrame frame = new JFrame("List Properties");
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("List Properties");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		final CustomTableModel model = new CustomTableModel();
+		CustomTableModel model = new CustomTableModel();
 		model.uiDefaultsUpdate(UIManager.getDefaults());
 		TableSorter sorter = new TableSorter(model);
 
@@ -78,38 +78,30 @@ public class ListProperties_REMOVE {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-		UIManager.LookAndFeelInfo looks[] = UIManager
-		.getInstalledLookAndFeels();
+		UIManager.LookAndFeelInfo[] looks = UIManager
+				.getInstalledLookAndFeels();
 
-		ActionListener actionListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				final String lafClassName = actionEvent.getActionCommand();
-				Runnable runnable = new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							UIManager.setLookAndFeel(lafClassName);
-							SwingUtilities.updateComponentTreeUI(frame);
-							// Added
-							model.uiDefaultsUpdate(UIManager.getDefaults());
-						} catch (Exception exception) {
-							JOptionPane.showMessageDialog(frame,
-							"Can't change look and feel",
-							"Invalid PLAF", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				};
-				SwingUtilities.invokeLater(runnable);
-			}
-		};
+		ActionListener actionListener = actionEvent -> {
+            String lafClassName = actionEvent.getActionCommand();
+            Runnable runnable = () -> {
+try {
+UIManager.setLookAndFeel(lafClassName);
+SwingUtilities.updateComponentTreeUI(frame);
+// Added
+model.uiDefaultsUpdate(UIManager.getDefaults());
+} catch (Exception exception) {
+JOptionPane.showMessageDialog(frame,
+"Can't change look and feel",
+"Invalid PLAF", JOptionPane.ERROR_MESSAGE);
+}
+};
+            SwingUtilities.invokeLater(runnable);
+        };
 
 		JToolBar toolbar = new JToolBar();
-		for (int i = 0, n = looks.length; i < n; i++) {
-			JButton button = new JButton(looks[i].getName());
-			button.setActionCommand(looks[i].getClassName());
+		for (UIManager.LookAndFeelInfo look : looks) {
+			JButton button = new JButton(look.getName());
+			button.setActionCommand(look.getClassName());
 			button.addActionListener(actionListener);
 			toolbar.add(button);
 		}
@@ -127,9 +119,9 @@ class TableSorter extends TableMap implements TableModelListener {
 
 	private static final long serialVersionUID = 6627171931468194200L;
 
-	private int indexes[] = new int[0];
+	private int[] indexes = new int[0];
 
-	private List<Object> sortingColumns = new ArrayList<Object>();
+	private List<Object> sortingColumns = new ArrayList<>();
 
 	boolean ascending = true;
 
@@ -161,12 +153,15 @@ class TableSorter extends TableMap implements TableModelListener {
 		// If both values are null return 0
 		if (o1 == null && o2 == null) {
 			return 0;
-		} else if (o1 == null) { // Define null less than everything.
+		}
+		if (o1 == null) { // Define null less than everything.
 			return -1;
-		} else if (o2 == null) {
+		}
+		if (o2 == null) {
 			return 1;
 		}
 
+		//noinspection IfStatementWithTooManyBranches
 		if (type.getSuperclass() == Number.class) {
 			Number n1 = (Number) data.getValueAt(row1, column);
 			double d1 = n1.doubleValue();
@@ -204,9 +199,9 @@ class TableSorter extends TableMap implements TableModelListener {
 				return 0;
 		} else if (type == Boolean.class) {
 			Boolean bool1 = (Boolean) data.getValueAt(row1, column);
-			boolean b1 = bool1.booleanValue();
+			boolean b1 = bool1;
 			Boolean bool2 = (Boolean) data.getValueAt(row2, column);
-			boolean b2 = bool2.booleanValue();
+			boolean b2 = bool2;
 
 			if (b1 == b2)
 				return 0;
@@ -231,9 +226,9 @@ class TableSorter extends TableMap implements TableModelListener {
 	}
 
 	public int compare(int row1, int row2) {
-		for (int level = 0, n = sortingColumns.size(); level < n; level++) {
-			Integer column = (Integer) sortingColumns.get(level);
-			int result = compareRowsByColumn(row1, row2, column.intValue());
+		for (Object sortingColumn : sortingColumns) {
+			Integer column = (Integer) sortingColumn;
+			int result = compareRowsByColumn(row1, row2, column);
 			if (result != 0) {
 				return (ascending ? result : -result);
 			}
@@ -269,7 +264,7 @@ class TableSorter extends TableMap implements TableModelListener {
 		fireTableDataChanged();
 	}
 
-	public void shuttlesort(int from[], int to[], int low, int high) {
+	public void shuttlesort(int[] from, int[] to, int low, int high) {
 		if (high - low < 2) {
 			return;
 		}
@@ -281,11 +276,7 @@ class TableSorter extends TableMap implements TableModelListener {
 		int q = middle;
 
 		for (int i = low; i < high; i++) {
-			if (q >= high || (p < middle && compare(from[p], from[q]) <= 0)) {
-				to[i] = from[p++];
-			} else {
-				to[i] = from[q++];
-			}
+			to[i] = q >= high || (p < middle && compare(from[p], from[q]) <= 0) ? from[p++] : from[q++];
 		}
 	}
 
@@ -308,7 +299,7 @@ class TableSorter extends TableMap implements TableModelListener {
 	public void sortByColumn(int column, boolean ascending) {
 		this.ascending = ascending;
 		sortingColumns.clear();
-		sortingColumns.add(new Integer(column));
+		sortingColumns.add(column);
 		sort();
 		super.tableChanged(new TableModelEvent(this));
 	}

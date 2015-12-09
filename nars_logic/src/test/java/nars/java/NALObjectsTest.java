@@ -31,7 +31,7 @@ public class NALObjectsTest  {
 
         public double the() {
             double v = (64 * Math.random());
-            this.val = (int)v;
+            val = (int)v;
             return v;
         }
 
@@ -48,7 +48,7 @@ public class NALObjectsTest  {
 
         @Override
         public String toString() {
-            return "TestClass[" + count + "]";
+            return "TestClass[" + count + ']';
         }
 
         public List<Method> getClassMethods() {
@@ -56,7 +56,7 @@ public class NALObjectsTest  {
             List<Method> l = Global.newArrayList();
             for (Method x : m)
                 if (NALObjects.isMethodVisible(x))
-                    if (!x.getName().equals("getClassMethods"))
+                    if (!"getClassMethods".equals(x.getName()))
                         l.add(x);
             return l;
         }
@@ -91,8 +91,8 @@ public class NALObjectsTest  {
 
         NALObjects no = new NALObjects(n);
 
-        final TestClass wrapper;
-        final TestClass wrapped = new TestClass();
+        TestClass wrapper;
+        TestClass wrapped = new TestClass();
 
         wrapper = no.wrap(instance, wrapped);
 
@@ -211,8 +211,8 @@ public class NALObjectsTest  {
     }
 
     @Test public void testTermizerBoxed() {
-        testTermizer(new Integer(1));
-        testTermizer(new Float(3.14159));
+        testTermizer(1);
+        testTermizer(3.14159f);
     }
     @Test public void testTermizerCollections() {
         testTermizer(Lists.newArrayList("x", "y"));

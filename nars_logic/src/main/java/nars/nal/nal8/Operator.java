@@ -21,13 +21,12 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     private final T term;
 
     public Operator(T the) {
-        super();
 
-        this.term = the;
+        term = the;
     }
 
     @Override
-    public final Op op() {
+    public Op op() {
         return Op.OPERATOR;
     }
 
@@ -38,7 +37,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
 //    }
 
     @Override
-    public final int complexity() {
+    public int complexity() {
         return 1;
     }
 
@@ -64,7 +63,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
 
 
     @Override
-    public final byte[] bytes() {
+    public byte[] bytes() {
         return Compound.newCompound1Key(op(), term);
     }
 
@@ -74,13 +73,13 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     }
 
     @Override
-    public final int structure() {
+    public int structure() {
         return (1 << Op.OPERATOR.ordinal());
     }
 
 
     @Override
-    public final void append(Appendable p, boolean pretty) throws IOException {
+    public void append(Appendable p, boolean pretty) throws IOException {
         p.append(op().ch);
         term.append(p, pretty);
     }
@@ -114,28 +113,28 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
 //        this.complexity = 1;
 //    }
 
-    public static Operator the(final String name) {
+    public static Operator the(String name) {
         return the(Atom.the(name));
     }
-    public static Operator the(final Term x) {
+    public static Operator the(Term x) {
         return new Operator(x);
     }
 
 
 
     @Override
-    public final boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) return true;
         Term t = (Term)obj;
         return (t.op() == Op.OPERATOR) && term.equals(((Operator)t).term);
     }
 
-    public final Term identifier() {
+    public Term identifier() {
         return term;
     }
 
     @Override
-    public final int compareTo(Object that) {
+    public int compareTo(Object that) {
         if (that == this) return 0;
 
 

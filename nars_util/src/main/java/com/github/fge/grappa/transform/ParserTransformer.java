@@ -29,6 +29,7 @@ import org.objectweb.asm.ClassWriter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.github.fge.grappa.misc.AsmUtils.*;
 
@@ -41,17 +42,17 @@ public final class ParserTransformer
     // TODO: remove "synchronized" here
     // TODO: move to Parboiled or the future Grappa class
     public static synchronized <T> Class<? extends T> transformParser(
-        final Class<T> parserClass)
+        Class<T> parserClass)
         throws Exception
     {
         Objects.requireNonNull(parserClass, "parserClass");
         // first check whether we did not already create and load the extension
         // of the given parser class
-        final String name
+        String name
             = getExtendedParserClassName(parserClass.getName());
-        final Class<?> extendedClass
+        Class<?> extendedClass
             = findLoadedClass(name,parserClass.getClassLoader());
-        final Class<?> ret = extendedClass != null
+        Class<?> ret = extendedClass != null
             ? extendedClass
             : extendParserClass(parserClass).getExtendedClass();
         return (Class<? extends T>) ret;
@@ -70,18 +71,18 @@ public final class ParserTransformer
      * @see #extendParserClass(Class)
      */
     // TODO: poor exception specification
-    public static byte[] getByteCode(final Class<?> parserClass)
+    public static byte[] getByteCode(Class<?> parserClass)
         throws Exception
     {
-        final ParserClassNode node = extendParserClass(parserClass);
+        ParserClassNode node = extendParserClass(parserClass);
         return node.getClassCode();
     }
 
     @VisibleForTesting
-    public static ParserClassNode extendParserClass(final Class<?> parserClass)
+    public static ParserClassNode extendParserClass(Class<?> parserClass)
         throws Exception
     {
-        final ParserClassNode classNode = new ParserClassNode(parserClass);
+        ParserClassNode classNode = new ParserClassNode(parserClass);
         new ClassNodeInitializer().process(classNode);
         runMethodTransformers(classNode);
         new ConstructorGenerator().process(classNode);
@@ -90,10 +91,10 @@ public final class ParserTransformer
     }
 
     // TODO: poor exception handling again
-    private static void runMethodTransformers(final ParserClassNode classNode)
+    private static void runMethodTransformers(ParserClassNode classNode)
         throws Exception
     {
-        final List<RuleMethodProcessor> methodProcessors
+        List<RuleMethodProcessor> methodProcessors
             = createRuleMethodProcessors();
 
         // TODO: comment above may be right, but it's still dangerous
@@ -101,19 +102,16 @@ public final class ParserTransformer
         // since the ruleMethods map on the classnode is a treemap we get the
         // methods sorted by name which puts all super methods first (since they
         // are prefixed with one or more '$')
-        for (final RuleMethod ruleMethod: classNode.getRuleMethods().values()) {
+        for (RuleMethod ruleMethod: classNode.getRuleMethods().values()) {
             if (ruleMethod.hasDontExtend())
                 continue;
 
-            for (final RuleMethodProcessor methodProcessor : methodProcessors)
+            for (RuleMethodProcessor methodProcessor : methodProcessors)
                 if (methodProcessor.appliesTo(classNode, ruleMethod))
                     methodProcessor.process(classNode, ruleMethod);
         }
 
-        for (final RuleMethod ruleMethod: classNode.getRuleMethods().values()) {
-            if (!ruleMethod.isGenerationSkipped())
-                classNode.methods.add(ruleMethod);
-        }
+        classNode.methods.addAll(classNode.getRuleMethods().values().stream().filter(ruleMethod -> !ruleMethod.isGenerationSkipped()).collect(Collectors.toList()));
     }
 
     private static List<RuleMethodProcessor> createRuleMethodProcessors()
@@ -136,13 +134,13 @@ public final class ParserTransformer
         );
     }
 
-    private static void defineExtendedParserClass(final ParserClassNode node)
+    private static void defineExtendedParserClass(ParserClassNode node)
     {
-        final ClassWriter classWriter
+        ClassWriter classWriter
             = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         node.accept(classWriter);
         node.setClassCode(classWriter.toByteArray());
-        final Class<?> extendedClass  = loadClass(node.name.replace('/', '.'),
+        Class<?> extendedClass  = loadClass(node.name.replace('/', '.'),
             node.getClassCode(), node.getParentClass().getClassLoader());
         node.setExtendedClass(extendedClass);
     }

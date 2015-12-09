@@ -24,11 +24,9 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
     //public static final ColorArray BlueRed = new ColorArray(128, Color.BLUE, Color.RED);
 
-    final static ColorMatrix ca = new ColorMatrix(17, 1, (x, y) -> {
-        return Color.hsb(x * 360.0, 0.6f, y * 0.5 + 0.5);
-    });
+    static final ColorMatrix ca = new ColorMatrix(17, 1, (x, y) -> Color.hsb(x * 360.0, 0.6f, y * 0.5 + 0.5));
 
-    abstract public static class Series {
+    public abstract static class Series {
         public final FloatArrayList history = new FloatArrayList(); //TODO make Float
         final String name;
         final Color color; //main color
@@ -38,15 +36,15 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
         public Series(String name) {
             this.name = name;
-            this.color = NARfx.hashColor(name, ca);
+            color = NARfx.hashColor(name, ca);
         }
 
-        abstract public void update(int maxHistory);
+        public abstract void update(int maxHistory);
 
     }
 
-    transient private double minValue;
-    transient private double maxValue;
+    private transient double minValue;
+    private transient double maxValue;
 
     public final List<Series> series = Global.newArrayList();
 
@@ -63,7 +61,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     public Plot2D(PlotVis p, int history, double w, double h) {
         super(w, h);
 
-        this.maxHistory = history;
+        maxHistory = history;
 
         plotVis.addListener((n) -> update());
 
@@ -107,15 +105,15 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
     public void run() {
 
-        final List<Series> series = this.series;
+        List<Series> series = this.series;
 
         //HACK (not initialized yet but run() called
         if (series == null || series.isEmpty()) return;
 
         GraphicsContext g = graphics();
 
-        final double W = g.getCanvas().getWidth();
-        final double H = g.getCanvas().getHeight();
+        double W = g.getCanvas().getWidth();
+        double H = g.getCanvas().getHeight();
 
         g.clearRect(0, 0, W, H);
 
@@ -132,23 +130,23 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
         void draw(Collection<Series> series, GraphicsContext g, double minValue, double maxValue);
     }
 
-    public final static PlotVis BarWave = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
+    public static final PlotVis BarWave = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
         if (minValue != maxValue) {
 
-            final double w = g.getCanvas().getWidth();
-            final double h = g.getCanvas().getHeight();
+            double w = g.getCanvas().getWidth();
+            double h = g.getCanvas().getHeight();
 
 
             series.forEach(s -> {
-                final int histSize = s.history.size();
+                int histSize = s.history.size();
 
-                final double dx = (w / histSize);
+                double dx = (w / histSize);
 
                 double x = 0;
                 double prevX = -1;
 
                 for (int i = 0; i < histSize; i++) {
-                    final double v = s.history.get(i);
+                    double v = s.history.get(i);
 
                     double py = (v - minValue) / (maxValue - minValue);
                     if (py < 0) py = 0;
@@ -158,7 +156,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
                     g.setFill(s.color);
 
-                    g.fillRect(prevX + 1, (h / 2f - y / 2), FastMath.ceil(x - prevX), y);
+                    g.fillRect(prevX + 1, (h / 2.0f - y / 2), FastMath.ceil(x - prevX), y);
 
                     prevX = x;
                     x += dx;
@@ -175,9 +173,9 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
             double m = 10; //margin
 
-            final double w = g.getCanvas().getWidth();
+            double w = g.getCanvas().getWidth();
             double H = g.getCanvas().getHeight();
-            final double h = H - m * 2;
+            double h = H - m * 2;
 
             g.setGlobalBlendMode(BlendMode.DIFFERENCE);
             g.setFill(Color.BLACK);
@@ -209,13 +207,13 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
                 FloatArrayList sh = s.history;
 
-                final int histSize = sh.size();
+                int histSize = sh.size();
 
-                final double dx = (w / histSize);
+                double dx = (w / histSize);
 
                 double x = 0;
                 for (int i = 0; i < sh.size(); i++) { //TODO why does the array change
-                    final double v = sh.get(i);
+                    double v = sh.get(i);
 
                     double y = ypos.valueOf(v);
 
@@ -231,14 +229,14 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
     };
 
     protected void updateSeries() {
-        final int mh = maxHistory;
+        int mh = maxHistory;
         series.forEach(s -> s.update(mh));
 
-        this.minValue = Float.POSITIVE_INFINITY;
-        this.maxValue = Float.NEGATIVE_INFINITY;
+        minValue = Float.POSITIVE_INFINITY;
+        maxValue = Float.NEGATIVE_INFINITY;
         series.forEach(s -> {
-            this.minValue = Math.min(this.minValue, s.minValue);
-            this.maxValue = Math.max(this.maxValue, s.maxValue);
+            minValue = Math.min(minValue, s.minValue);
+            maxValue = Math.max(maxValue, s.maxValue);
         });
     }
 

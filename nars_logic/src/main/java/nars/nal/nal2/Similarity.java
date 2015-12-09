@@ -32,7 +32,7 @@ public class Similarity extends Statement {
     /**
      * Constructor with partial values, called by make
      */
-    protected Similarity(final Term subj, final Term pred) {
+    protected Similarity(Term subj, Term pred) {
         super(subj, pred);
     }
 
@@ -43,7 +43,7 @@ public class Similarity extends Statement {
      * @param predicate The second component
      * @return A compound generated or null
      */
-    public static Term make(final Term subject, final Term predicate) {
+    public static Term make(Term subject, Term predicate) {
 
         if (invalidStatement(subject, predicate)) {
             return null;

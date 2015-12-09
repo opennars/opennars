@@ -37,7 +37,7 @@ public class MetalLookAndFeelAddons extends BasicLookAndFeelAddons {
   
   private Object[] getDefaults() {
     Object[] defaults =
-      new Object[] {
+      {
         "DirectoryChooserUI",
         "com.l2fprod.common.swing.plaf.windows.WindowsDirectoryChooserUI",
     };

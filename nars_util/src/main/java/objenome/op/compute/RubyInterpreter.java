@@ -79,16 +79,14 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
 
         Object[] result = new Object[noParamSets];
 
-        final Invocable invocableEngine = (Invocable) getEngine();
+        Invocable invocableEngine = (Invocable) getEngine();
         try {
             getEngine().eval(code);
 
             for (int i = 0; i < noParamSets; i++) {
                 result[i] = invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (final ScriptException ex) {
-            throw new MalformedProgramException();
-        } catch (final NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             throw new MalformedProgramException();
         }
 
@@ -118,12 +116,10 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
         try {
             getEngine().eval(code);
 
-            for (int i = 0; i < noParamSets; i++) {
-                invocableEngine.invokeFunction("expr", argValues[i]);
+            for (Object[] argValue : argValues) {
+                invocableEngine.invokeFunction("expr", argValue);
             }
-        } catch (ScriptException ex) {
-            throw new MalformedProgramException();
-        } catch (NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             throw new MalformedProgramException();
         }
     }
@@ -134,7 +130,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
      * the given expression.
      */
     private String getEvalCode(String expression, String[] argNames) {
-        StringBuffer code = new StringBuffer();
+        StringBuilder code = new StringBuilder();
 
         code.append("def expr(");
         for (int i = 0; i < argNames.length; i++) {
@@ -158,7 +154,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
      * method containing the given program.
      */
     private String getExecCode(String program, String[] argNames) {
-        final StringBuffer code = new StringBuffer();
+        StringBuilder code = new StringBuilder();
 
         // code.append("class Evaluation\n");
         code.append("def expr(");

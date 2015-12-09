@@ -94,14 +94,7 @@ public class Mushroom extends Sprite
         move(0, ya);
 
         ya *= 0.85f;
-        if (onGround)
-        {
-            xa *= GROUND_INERTIA;
-        }
-        else
-        {
-            xa *= AIR_INERTIA;
-        }
+        xa *= onGround ? GROUND_INERTIA : AIR_INERTIA;
 
         if (!onGround)
         {
@@ -135,16 +128,11 @@ public class Mushroom extends Sprite
         boolean collide = false;
         if (ya > 0)
         {
-            if (isBlocking(x + xa - width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa - width, y + ya + 1, xa, ya)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
+            if (isBlocking(x + xa - width, y + ya, xa, 0) || isBlocking(x + xa + width, y + ya, xa, 0) || isBlocking(x + xa - width, y + ya + 1, xa, ya) || isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
         }
         if (ya < 0)
         {
-            if (isBlocking(x + xa, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa - width, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
+            if (isBlocking(x + xa, y + ya - height, xa, ya) || collide || isBlocking(x + xa - width, y + ya - height, xa, ya) || collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
         }
         if (xa > 0)
         {

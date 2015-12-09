@@ -44,8 +44,7 @@ public abstract class SgVariable {
      * @param name
      *            Name of the field - Cannot be null.
      */
-    public SgVariable(final String modifiers, final SgClass type, final String name) {
-        super();
+    public SgVariable(String modifiers, SgClass type, String name) {
 
         if (modifiers == null) {
             throw new IllegalArgumentException("The argument 'modifiers' cannot be null!");
@@ -108,7 +107,7 @@ public abstract class SgVariable {
      * @param annotation
      *            Annotation to add - Cannot be null.
      */
-    public final void addAnnotation(final SgAnnotation annotation) {
+    public final void addAnnotation(SgAnnotation annotation) {
         if (annotation == null) {
             throw new IllegalArgumentException("The argument 'annotation' cannot be NULL!");
         }
@@ -122,7 +121,7 @@ public abstract class SgVariable {
      * @param annotations
      *            Annotations to add - Cannot be null.
      */
-    public final void addAnnotations(final List<SgAnnotation> annotations) {
+    public final void addAnnotations(List<SgAnnotation> annotations) {
         if (annotations == null) {
             throw new IllegalArgumentException("The argument 'annotations' cannot be NULL!");
         }
@@ -137,12 +136,11 @@ public abstract class SgVariable {
      * 
      * @return If it's found true else false.
      */
-    public final boolean hasAnnotation(final String name) {
+    public final boolean hasAnnotation(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be NULL!");
         }
-        for (int i = 0; i < annotations.size(); i++) {
-            final SgAnnotation annotation = annotations.get(i);
+        for (SgAnnotation annotation : annotations) {
             if (annotation.getName().equals(name)) {
                 return true;
             }

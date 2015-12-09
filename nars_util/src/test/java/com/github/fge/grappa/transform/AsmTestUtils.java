@@ -40,29 +40,29 @@ public class AsmTestUtils {
     private static final Joiner NEWLINE = Joiner.on('\n');
     private static final Pattern PATTERN = Pattern.compile("\n");
 
-    public static String getClassDump(final byte[] code) {
-        final StringWriter stringWriter = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(stringWriter);
-        final TraceClassVisitor traceClassVisitor = new TraceClassVisitor(printWriter);
-        final ClassVisitor checkClassAdapter = new ClassVisitor(Opcodes.ASM5, traceClassVisitor) {};
+    public static String getClassDump(byte[] code) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        TraceClassVisitor traceClassVisitor = new TraceClassVisitor(printWriter);
+        ClassVisitor checkClassAdapter = new ClassVisitor(Opcodes.ASM5, traceClassVisitor) {};
         //ClassAdapter checkClassAdapter = new CheckClassAdapter(traceClassVisitor);
-        final ClassReader classReader;
+        ClassReader classReader;
         classReader = new ClassReader(code);
         classReader.accept(checkClassAdapter, 0);
         printWriter.flush();
         return stringWriter.toString();
     }
 
-    public static String getMethodInstructionList(final MethodNode methodNode) {
+    public static String getMethodInstructionList(MethodNode methodNode) {
         Preconditions.checkNotNull(methodNode, "methodNode");
-        final Printer printer = new NonMaxTextifier();
-        final TraceMethodVisitor traceMethodVisitor = new TraceMethodVisitor(printer);
+        Printer printer = new NonMaxTextifier();
+        TraceMethodVisitor traceMethodVisitor = new TraceMethodVisitor(printer);
         methodNode.accept(traceMethodVisitor);
-        final StringWriter stringWriter = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(stringWriter);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
         printer.print(printWriter);
         printWriter.flush();
-        final String[] lines = PATTERN.split(stringWriter.toString());
+        String[] lines = PATTERN.split(stringWriter.toString());
         int lineNr = 0;
         for (int i = 0; i < lines.length; i++) {
             if (!lines[i].startsWith("  @")) {
@@ -74,15 +74,15 @@ public class AsmTestUtils {
     }
 
     public static void assertTraceDumpEquality(
-        final MethodNode method, final String traceDump) throws Exception {
+        MethodNode method, String traceDump) throws Exception {
         Preconditions.checkNotNull(method, "method");
-        final Printer printer = new NonMaxTextifier();
-        final TraceMethodVisitor traceMethodVisitor = new TraceMethodVisitor(printer);
+        Printer printer = new NonMaxTextifier();
+        TraceMethodVisitor traceMethodVisitor = new TraceMethodVisitor(printer);
         // MethodAdapter checkMethodAdapter = new MethodAdapter(traceMethodVisitor);
-        final MethodVisitor checkMethodAdapter = new CheckMethodAdapter(traceMethodVisitor);
+        MethodVisitor checkMethodAdapter = new CheckMethodAdapter(traceMethodVisitor);
         method.accept(checkMethodAdapter);
-        final StringWriter stringWriter = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(stringWriter);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
         printer.print(printWriter);
         printWriter.flush();
 
@@ -90,18 +90,18 @@ public class AsmTestUtils {
     }
 
     public static void verifyIntegrity(
-        final String classInternalName, final byte[] classCode) {
+        String classInternalName, byte[] classCode) {
         Preconditions.checkNotNull(classCode, "classCode");
-        final ClassNode generatedClassNode = new ClassNode();
-        final ClassReader classReader = new ClassReader(classCode);
+        ClassNode generatedClassNode = new ClassNode();
+        ClassReader classReader = new ClassReader(classCode);
         classReader.accept(generatedClassNode, 0);
 
-        for (final Object methodObj : generatedClassNode.methods) {
+        for (Object methodObj : generatedClassNode.methods) {
             verifyMethodIntegrity(classInternalName, (MethodNode) methodObj);
         }
     }
 
-    public static void verifyMethodIntegrity(final String ownerInternalName, final MethodNode method) {
+    public static void verifyMethodIntegrity(String ownerInternalName, MethodNode method) {
         try {
             new Analyzer(new SimpleVerifier()).analyze(ownerInternalName, method);
         } catch (AnalyzerException e) {
@@ -118,7 +118,7 @@ public class AsmTestUtils {
         }
 
         @Override
-        public void visitMaxs(final int maxStack, final int maxLocals) {
+        public void visitMaxs(int maxStack, int maxLocals) {
             // don't include max values
         }
     }

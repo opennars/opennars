@@ -18,6 +18,7 @@ import java.util.List;
 public abstract class Conjunctive<T extends Term> extends Junction<T> {
 
 
+    @SafeVarargs
     protected Conjunctive(T... arg) {
         super(arg);
     }
@@ -60,10 +61,9 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
     }
 
     private static Term[] _flatten(Term[] args, int order, int expandedSize) {
-        final Term[] ret = new Term[expandedSize];
+        Term[] ret = new Term[expandedSize];
         int k = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
+        for (Term a : args) {
             Conjunctive c = isConjunction(a, order);
             if (c != null) {
                 //arraycopy?
@@ -80,13 +80,9 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
 
     protected static int getFlattenedLength(Term[] args, int order) {
         int sz = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
+        for (Term a : args) {
             Conjunctive c = isConjunction(a, order);
-            if (c != null)
-                sz += c.size();
-            else
-                sz += 1;
+            sz += c != null ? c.size() : 1;
         }
         return sz;
     }
@@ -96,7 +92,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
      * @param c a set of Term as term
      * @return the Term generated from the arguments
      */
-    public final static Term make(final Collection<Term> c, int temporalOrder) {
+    public static final Term make(Collection<Term> c, int temporalOrder) {
         Term[] argument = c.toArray(new Term[c.size()]);
         return make(argument, temporalOrder);
     }
@@ -116,10 +112,10 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
             case Tense.ORDER_CONCURRENT:
                 return Parallel.makeParallel(argList);
         }
-        throw new RuntimeException("invalid: " + Arrays.toString(argList) + " " + temporalOrder);
+        throw new RuntimeException("invalid: " + Arrays.toString(argList) + ' ' + temporalOrder);
     }
 
-    final public static Term make(final Term term1, final Term term2, int temporalOrder) {
+    public static final Term make(Term term1, Term term2, int temporalOrder) {
         if (temporalOrder == Tense.ORDER_FORWARD) {
             return Sequence.makeSequence(term1, term2);
         } else if (temporalOrder == Tense.ORDER_BACKWARD) {
@@ -129,7 +125,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
         } else {
             if (term1 instanceof Conjunction) {
                 Compound ct1 = ((Compound) term1);
-                final List<Term> set = Global.newArrayList(ct1.size() + 1);
+                List<Term> set = Global.newArrayList(ct1.size() + 1);
                 ct1.addAllTo(set);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
@@ -141,7 +137,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
                 return make(set, temporalOrder);
             } else if (term2 instanceof Conjunction) {
                 Compound ct2 = ((Compound) term2);
-                final List<Term> set = Global.newArrayList(ct2.size() + 1);
+                List<Term> set = Global.newArrayList(ct2.size() + 1);
                 ct2.addAllTo(set);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
                 return make(set, temporalOrder);

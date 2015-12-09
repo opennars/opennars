@@ -122,68 +122,66 @@ public abstract class MemoryManager {
     }
 
     static Object malloc(int elems, long bytes, int type, Object orig, int from, boolean force) {
-        while(true) {
-            if(!MEM_LOW_CRITICAL && !force && !CAN_ALLOC && bytes > 256L  ) {
-                    //&& !(Thread.currentThread() instanceof Cleaner)) {
-                Object e = _lock;
-                synchronized(_lock) {
-                    try {
-                        _lock.wait(3000L);
-                    } catch (InterruptedException var10) {
-                        ;
-                    }
+        if(!MEM_LOW_CRITICAL && !force && !CAN_ALLOC && bytes > 256L  ) {
+                //&& !(Thread.currentThread() instanceof Cleaner)) {
+            Object e = _lock;
+            synchronized(_lock) {
+                try {
+                    _lock.wait(3000L);
+                } catch (InterruptedException var10) {
+                    ;
                 }
             }
+        }
 
-            MEM_ALLOC.addAndGet(bytes);
+        MEM_ALLOC.addAndGet(bytes);
 
-            try {
-                switch(type) {
-                case -9:
-                    return Arrays.copyOfRange((double[])((double[])orig), from, elems);
-                case -8:
-                    return Arrays.copyOfRange((long[])((long[])orig), from, elems);
-                case -7:
-                case -6:
-                case -5:
-                case -3:
-                case -2:
-                case 3:
-                case 6:
-                case 7:
-                default:
-                    throw new RuntimeException("fail"); //H2O.fail();
-                case -4:
-                    return Arrays.copyOfRange((int[])((int[])orig), from, elems);
-                case -1:
-                    return Arrays.copyOfRange((byte[])((byte[])orig), from, elems);
-                case 0:
-                    return new boolean[elems];
-                case 1:
-                    return new byte[elems];
-                case 2:
-                    return new short[elems];
-                case 4:
-                    return new int[elems];
-                case 5:
-                    return new float[elems];
-                case 8:
-                    return new long[elems];
-                case 9:
-                    return new double[elems];
-                case 10:
-                    return new Object[elems];
-                }
-            } catch (OutOfMemoryError var12) {
-                /*
-                if(Cleaner.isDiskFull()) {
-                    UDPRebooted.suicide(T.oom, H2O.SELF);
-                }
-
-                set_goals("OOM", true, bytes);
-                */
-                throw new RuntimeException(var12);
+        try {
+            switch(type) {
+            case -9:
+                return Arrays.copyOfRange((double[])((double[])orig), from, elems);
+            case -8:
+                return Arrays.copyOfRange((long[])((long[])orig), from, elems);
+            case -7:
+            case -6:
+            case -5:
+            case -3:
+            case -2:
+            case 3:
+            case 6:
+            case 7:
+            default:
+                throw new RuntimeException("fail"); //H2O.fail();
+            case -4:
+                return Arrays.copyOfRange((int[])((int[])orig), from, elems);
+            case -1:
+                return Arrays.copyOfRange((byte[])((byte[])orig), from, elems);
+            case 0:
+                return new boolean[elems];
+            case 1:
+                return new byte[elems];
+            case 2:
+                return new short[elems];
+            case 4:
+                return new int[elems];
+            case 5:
+                return new float[elems];
+            case 8:
+                return new long[elems];
+            case 9:
+                return new double[elems];
+            case 10:
+                return new Object[elems];
             }
+        } catch (OutOfMemoryError var12) {
+            /*
+            if(Cleaner.isDiskFull()) {
+                UDPRebooted.suicide(T.oom, H2O.SELF);
+            }
+
+            set_goals("OOM", true, bytes);
+            */
+            throw new RuntimeException(var12);
         }
     }
 
@@ -192,51 +190,51 @@ public abstract class MemoryManager {
     }
 
     public static byte[] malloc1(int size, boolean force) {
-        return (byte[])((byte[])malloc(size, (long)(size * 1), 1, (Object)null, 0, force));
+        return (byte[])((byte[])malloc(size, (size * 1), 1, (Object)null, 0, force));
     }
 
     public static short[] malloc2(int size) {
-        return (short[])((short[])malloc(size, (long)(size * 2), 2, (Object)null, 0));
+        return (short[])((short[])malloc(size, (size * 2), 2, (Object)null, 0));
     }
 
     public static int[] malloc4(int size) {
-        return (int[])((int[])malloc(size, (long)(size * 4), 4, (Object)null, 0));
+        return (int[])((int[])malloc(size, (size * 4), 4, (Object)null, 0));
     }
 
     public static long[] malloc8(int size) {
-        return (long[])((long[])malloc(size, (long)(size * 8), 8, (Object)null, 0));
+        return (long[])((long[])malloc(size, (size * 8), 8, (Object)null, 0));
     }
 
     public static float[] malloc4f(int size) {
-        return (float[])((float[])malloc(size, (long)(size * 4), 5, (Object)null, 0));
+        return (float[])((float[])malloc(size, (size * 4), 5, (Object)null, 0));
     }
 
     public static double[] malloc8d(int size) {
-        return (double[])((double[])malloc(size, (long)(size * 8), 9, (Object)null, 0));
+        return (double[])((double[])malloc(size, (size * 8), 9, (Object)null, 0));
     }
 
     public static boolean[] mallocZ(int size) {
-        return (boolean[])((boolean[])malloc(size, (long)size, 0, (Object)null, 0));
+        return (boolean[])((boolean[])malloc(size, size, 0, (Object)null, 0));
     }
 
     public static Object[] mallocObj(int size) {
-        return (Object[])((Object[])malloc(size, (long)(size * 8), 10, (Object)null, 0, false));
+        return (Object[])((Object[])malloc(size, (size * 8), 10, (Object)null, 0, false));
     }
 
     public static byte[] arrayCopyOfRange(byte[] orig, int from, int sz) {
-        return (byte[])((byte[])malloc(sz, (long)(sz - from), -1, orig, from));
+        return (byte[])((byte[])malloc(sz, (sz - from), -1, orig, from));
     }
 
     public static int[] arrayCopyOfRange(int[] orig, int from, int sz) {
-        return (int[])((int[])malloc(sz, (long)((sz - from) * 4), -4, orig, from));
+        return (int[])((int[])malloc(sz, ((sz - from) * 4), -4, orig, from));
     }
 
     public static long[] arrayCopyOfRange(long[] orig, int from, int sz) {
-        return (long[])((long[])malloc(sz, (long)((sz - from) * 8), -8, orig, from));
+        return (long[])((long[])malloc(sz, ((sz - from) * 8), -8, orig, from));
     }
 
     public static double[] arrayCopyOfRange(double[] orig, int from, int sz) {
-        return (double[])((double[])malloc(sz, (long)((sz - from) * 8), -9, orig, from));
+        return (double[])((double[])malloc(sz, ((sz - from) * 8), -9, orig, from));
     }
 
     public static byte[] arrayCopyOf(byte[] orig, int sz) {
@@ -350,18 +348,18 @@ public abstract class MemoryManager {
                     } while(!m.isCollectionUsageThresholdSupported());
                 } while(!m.isUsageThresholdSupported());
 
-                this._oldGenBean = m;
-                this._gc_callback = MemoryManager.MEM_MAX;
+                _oldGenBean = m;
+                _gc_callback = MemoryManager.MEM_MAX;
 
                 while(true) {
                     try {
-                        m.setCollectionUsageThreshold(this._gc_callback);
+                        m.setCollectionUsageThreshold(_gc_callback);
                     } catch (IllegalArgumentException var5) {
-                        this._gc_callback -= this._gc_callback >> 3;
+                        _gc_callback -= _gc_callback >> 3;
                         continue;
                     }
 
-                    NotificationEmitter emitter = (NotificationEmitter)this._allMemBean;
+                    NotificationEmitter emitter = (NotificationEmitter) _allMemBean;
                     emitter.addNotificationListener(this, (NotificationFilter)null, m);
                     ++c;
                     break;

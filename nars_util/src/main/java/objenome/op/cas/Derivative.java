@@ -56,7 +56,7 @@ public class Derivative extends Function {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(ofExpr);
         arrayList.add(respected);
         return arrayList;
@@ -66,10 +66,9 @@ public class Derivative extends Function {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Derivative)) return false;
-        
-        if (ofExpr.equalsExpr(((Operation) expr).getExprs().get(0)) && respected.equals(((Derivative) expr).respected())) return true;
-        
-        return false;
+
+        return ofExpr.equalsExpr(((Operation) expr).getExprs().get(0)) && respected.equals(((Derivative) expr).respected());
+
     }
     
     public boolean notEqualsExpr(Expr expr) {

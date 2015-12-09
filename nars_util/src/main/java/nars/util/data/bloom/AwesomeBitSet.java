@@ -10,7 +10,7 @@ public class AwesomeBitSet {
     final long[] data;
 
     public AwesomeBitSet(long bits) {
-        this(new long[(int) Math.ceil((double) bits / (double) Long.SIZE)]);
+        this(new long[(int) Math.ceil((double) bits / Long.SIZE)]);
     }
 
     /**
@@ -62,7 +62,7 @@ public class AwesomeBitSet {
      */
     void putAll(AwesomeBitSet array) {
         assert data.length == array.data.length :
-                "BitArrays must be of equal length (" + data.length + "!= " + array.data.length + ")";
+                "BitArrays must be of equal length (" + data.length + "!= " + array.data.length + ')';
         for (int i = 0; i < data.length; i++) {
             data[i] |= array.data[i];
         }

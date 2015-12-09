@@ -53,18 +53,18 @@ public class Twokenize {
     static Pattern Contractions = compile("(?i)(\\w+)(n['’′]t|['’′]ve|['’′]ll|['’′]d|['’′]re|['’′]s|['’′]m)$");
     static Pattern Whitespace = compile("[\\s\\p{Zs}]+");
 
-    static String punctChars = "['\"“”‘’.?!…,:;]";
+    static final String punctChars = "['\"“”‘’.?!…,:;]";
     //static String punctSeq   = punctChars+"+";	//'anthem'. => ' anthem '.
     static String punctSeq = "['\"“”‘’]+|[.?!,…]+|[:;]+";    //'anthem'. => ' anthem ' .
-    static String entity = "&(?:amp|lt|gt|quot);";
+    static final String entity = "&(?:amp|lt|gt|quot);";
     //  URLs
 
     // BTO 2012-06: everyone thinks the daringfireball regex should be better, but they're wrong.
     // If you actually empirically test it the results are bad.
     // Please see https://github.com/brendano/ark-tweet-nlp/pull/9
-    static String urlStart1 = "(?:https?://|\\bwww\\.)";
-    static String commonTLDs = "(?:com|org|edu|gov|net|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|pro|tel|travel|xxx)";
-    static String ccTLDs = "(?:ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|"
+    static final String urlStart1 = "(?:https?://|\\bwww\\.)";
+    static final String commonTLDs = "(?:com|org|edu|gov|net|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|pro|tel|travel|xxx)";
+    static final String ccTLDs = "(?:ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|"
             + "bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|"
             + "er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|"
             + "hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|"
@@ -72,10 +72,10 @@ public class Twokenize {
             + "nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|"
             + "sl|sm|sn|so|sr|ss|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|"
             + "va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)";    //TODO: remove obscure country domains?
-    static String urlStart2 = "\\b(?:[A-Za-z\\d-])+(?:\\.[A-Za-z0-9]+){0,3}\\." + "(?:" + commonTLDs + '|' + ccTLDs + ')' + "(?:\\." + ccTLDs + ")?(?=\\W|$)";
-    static String urlBody = "(?:[^\\.\\s<>][^\\s<>]*?)?";
-    static String urlExtraCrapBeforeEnd = "(?:" + punctChars + '|' + entity + ")+?";
-    static String urlEnd = "(?:\\.\\.+|[<>]|\\s|$)";
+    static final String urlStart2 = "\\b(?:[A-Za-z\\d-])+(?:\\.[A-Za-z0-9]+){0,3}\\." + "(?:" + commonTLDs + '|' + ccTLDs + ')' + "(?:\\." + ccTLDs + ")?(?=\\W|$)";
+    static final String urlBody = "(?:[^\\.\\s<>][^\\s<>]*?)?";
+    static final String urlExtraCrapBeforeEnd = "(?:" + punctChars + '|' + entity + ")+?";
+    static final String urlEnd = "(?:\\.\\.+|[<>]|\\s|$)";
     public static String url = "(?:" + urlStart1 + '|' + urlStart2 + ')' + urlBody + "(?=(?:" + urlExtraCrapBeforeEnd + ")?" + urlEnd + ')';
 
     // Numeric
@@ -85,10 +85,10 @@ public class Twokenize {
     static String numComb = "\\p{Sc}?\\d+(?:\\.\\d+)+%?";
 
     // Abbreviations
-    static String boundaryNotDot = "(?:$|\\s|[“\\u0022?!,:;]|" + entity + ')';
-    static String aa1 = "(?:[A-Za-z]\\.){2,}(?=" + boundaryNotDot + ')';
-    static String aa2 = "[^A-Za-z](?:[A-Za-z]\\.){1,}[A-Za-z](?=" + boundaryNotDot + ')';
-    static String standardAbbreviations = "\\b(?:[Mm]r|[Mm]rs|[Mm]s|[Dd]r|[Ss]r|[Jj]r|[Rr]ep|[Ss]en|[Ss]t)\\.";
+    static final String boundaryNotDot = "(?:$|\\s|[“\\u0022?!,:;]|" + entity + ')';
+    static final String aa1 = "(?:[A-Za-z]\\.){2,}(?=" + boundaryNotDot + ')';
+    static final String aa2 = "[^A-Za-z](?:[A-Za-z]\\.){1,}[A-Za-z](?=" + boundaryNotDot + ')';
+    static final String standardAbbreviations = "\\b(?:[Mm]r|[Mm]rs|[Mm]s|[Dd]r|[Ss]r|[Jj]r|[Rr]ep|[Ss]en|[Ss]t)\\.";
     static String arbitraryAbbrev = "(?:" + aa1 + '|' + aa2 + '|' + standardAbbreviations + ')';
     static String separators = "(?:--+|―|—|~|–|=)";
     static String decorations = "(?:[♫♪]+|[★☆]+|[♥❤♡]+|[\\u2639-\\u263b]+|[\\ue001-\\uebbb]+)";
@@ -108,29 +108,29 @@ public class Twokenize {
     }
 
     //  Emoticons
-    static String normalEyes = "(?iu)[:=]"; // 8 and x are eyes but cause problems
-    static String wink = "[;]";
-    static String noseArea = "(?:|-|[^a-zA-Z0-9 ])"; // doesn't get :'-(
-    static String happyMouths = "[D\\)\\]\\}]+";
-    static String sadMouths = "[\\(\\[\\{]+";
-    static String tongue = "[pPd3]+";
-    static String otherMouths = "(?:[oO]+|[/\\\\]+|[vV]+|[Ss]+|[|]+)"; // remove forward slash if http://'s aren't cleaned
+    static final String normalEyes = "(?iu)[:=]"; // 8 and x are eyes but cause problems
+    static final String wink = "[;]";
+    static final String noseArea = "(?:|-|[^a-zA-Z0-9 ])"; // doesn't get :'-(
+    static final String happyMouths = "[D\\)\\]\\}]+";
+    static final String sadMouths = "[\\(\\[\\{]+";
+    static final String tongue = "[pPd3]+";
+    static final String otherMouths = "(?:[oO]+|[/\\\\]+|[vV]+|[Ss]+|[|]+)"; // remove forward slash if http://'s aren't cleaned
 
     // mouth repetition examples:
     // @aliciakeys Put it in a love song :-))
     // @hellocalyclops =))=))=)) Oh well
-    static String bfLeft = "(♥|0|o|°|v|\\$|t|x|;|\\u0CA0|@|ʘ|•|・|◕|\\^|¬|\\*)";
-    static String bfCenter = "(?:[\\.]|[_-]+)";
-    static String bfRight = "\\2";
-    static String s3 = "(?:--['\"])";
-    static String s4 = "(?:<|&lt;|>|&gt;)[\\._-]+(?:<|&lt;|>|&gt;)";
-    static String s5 = "(?:[.][_]+[.])";
-    static String basicface = "(?:(?i)" + bfLeft + bfCenter + bfRight + ")|" + s3 + '|' + s4 + '|' + s5;
+    static final String bfLeft = "(♥|0|o|°|v|\\$|t|x|;|\\u0CA0|@|ʘ|•|・|◕|\\^|¬|\\*)";
+    static final String bfCenter = "(?:[\\.]|[_-]+)";
+    static final String bfRight = "\\2";
+    static final String s3 = "(?:--['\"])";
+    static final String s4 = "(?:<|&lt;|>|&gt;)[\\._-]+(?:<|&lt;|>|&gt;)";
+    static final String s5 = "(?:[.][_]+[.])";
+    static final String basicface = "(?:(?i)" + bfLeft + bfCenter + bfRight + ")|" + s3 + '|' + s4 + '|' + s5;
 
-    static String eeLeft = "[＼\\\\ƪԄ\\(（<>;ヽ\\-=~\\*]+";
-    static String eeRight = "[\\-=\\);'\\u0022<>ʃ）/／ノﾉ丿╯σっµ~\\*]+";
-    static String eeSymbol = "[^A-Za-z0-9\\s\\(\\)\\*:=-]";
-    static String eastEmote = eeLeft + "(?:" + basicface + '|' + eeSymbol + ")+" + eeRight;
+    static final String eeLeft = "[＼\\\\ƪԄ\\(（<>;ヽ\\-=~\\*]+";
+    static final String eeRight = "[\\-=\\);'\\u0022<>ʃ）/／ノﾉ丿╯σっµ~\\*]+";
+    static final String eeSymbol = "[^A-Za-z0-9\\s\\(\\)\\*:=-]";
+    static final String eastEmote = eeLeft + "(?:" + basicface + '|' + eeSymbol + ")+" + eeRight;
 
     public static String emoticon = OR(
             // Standard version  :) :( :] :D :P
@@ -165,10 +165,10 @@ public class Twokenize {
     // I was worried this would conflict with at-mentions
     // but seems ok in sample of 5800: 7 changes all email fixes
     // http://www.regular-expressions.info/email.html
-    static String Bound = "(?:\\W|^|$)";
+    static final String Bound = "(?:\\W|^|$)";
     public static String Email = "(?<=" + Bound + ")[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}(?=" + Bound + ')';
 
-    public static String word = "[\\p{Alpha}]+";
+    public static final String word = "[\\p{Alpha}]+";
 
     static String embeddedApostrophe = word + "[''']" + word;
 
@@ -213,10 +213,10 @@ public class Twokenize {
     // BTO (2011-06): the edgepunct system seems to be the #1 source of problems these days.  
     // I remember it causing lots of trouble in the past as well.  Would be good to revisit or eliminate.
     // Note the 'smart quotes' (http://en.wikipedia.org/wiki/Smart_quotes)
-    static String edgePunctChars = "'\"“”‘’«»{}\\(\\)\\[\\]\\*&"; //add \\p{So}? (symbols)
-    static String edgePunct = '[' + edgePunctChars + ']';
-    static String notEdgePunct = "[a-zA-Z0-9]"; // content characters
-    static String offEdge = "(^|$|:|;|\\s|\\.|,)";  // colon here gets "(hello):" ==> "( hello ):"
+    static final String edgePunctChars = "'\"“”‘’«»{}\\(\\)\\[\\]\\*&"; //add \\p{So}? (symbols)
+    static final String edgePunct = '[' + edgePunctChars + ']';
+    static final String notEdgePunct = "[a-zA-Z0-9]"; // content characters
+    static final String offEdge = "(^|$|:|;|\\s|\\.|,)";  // colon here gets "(hello):" ==> "( hello ):"
     static Pattern EdgePunctLeft = compile(offEdge + '(' + edgePunct + "+)(" + notEdgePunct + ')');
     static Pattern EdgePunctRight = compile('(' + notEdgePunct + ")(" + edgePunct + "+)" + offEdge);
 
@@ -364,7 +364,7 @@ public class Twokenize {
     private static List<Pair<String, Object>> addAllnonempty(List<Pair<String, Object>> master, List<Pair<String, Object>> smaller) {
         for (Pair<String, Object> s : smaller) {
             String strim = s.first.trim();
-            if (strim.length() > 0) {
+            if (!strim.isEmpty()) {
                 s.first = strim;
                 master.add(s);
             }
@@ -435,7 +435,7 @@ public class Twokenize {
      * the tokens you get back may not exactly correspond to substrings of the
      * original text.
      */
-    public static List<Span> twokenize(final String text) {
+    public static List<Span> twokenize(String text) {
         List<Span> sp = tokenize(normalizeTextForTagger(text));
         sort(sp);
         return sp;

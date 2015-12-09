@@ -13,7 +13,7 @@ final class MatcherDescriptor
     private final MatcherType type;
     private final String name;
 
-    MatcherDescriptor(final int id, final Matcher matcher)
+    MatcherDescriptor(int id, Matcher matcher)
     {
         this.id = id;
         className = matcher.getClass().getSimpleName();

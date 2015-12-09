@@ -121,7 +121,7 @@ public class KeyboardControl implements KeyListener {
       * -1 indicate an invalid combination, e.g. left/right or up/down. These should
       * be filtered out in toALEAction.
       */
-    private int[] bitKeysMap = new int[] {
+    private int[] bitKeysMap =  {
         0, 1, 2, 10, 3, 11, 6, 14, 4, 12, 7, 15, -1, -1, -1, -1,
         5, 13, -1, -1, 8, 16, -1, -1, 9, 17, -1, -1, -1, -1, -1, -1
     };

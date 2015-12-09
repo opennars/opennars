@@ -28,7 +28,6 @@ import java.awt.*;
 public class PropertySheetDialog extends BaseDialog {
 
   public PropertySheetDialog() throws HeadlessException {
-    super();
   }
 
   public PropertySheetDialog(Dialog owner) throws HeadlessException {

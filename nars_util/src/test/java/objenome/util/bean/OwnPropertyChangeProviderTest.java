@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 public class OwnPropertyChangeProviderTest {
 
-    public static interface ForeignChangeProvider {
+    public interface ForeignChangeProvider {
 
         @PropertyChangeEventMethod(ADD_LISTENER)
         void foo(PropertyChangeListener listener);
@@ -23,7 +23,7 @@ public class OwnPropertyChangeProviderTest {
         void bar(PropertyChangeListener listener);
     }
 
-    public static interface TestBean extends ForeignChangeProvider {
+    public interface TestBean extends ForeignChangeProvider {
 
         float getMe();
 
@@ -54,13 +54,13 @@ public class OwnPropertyChangeProviderTest {
 
         PropertyChangeEvent evt0 = events.get(0);
         assertEquals("me", evt0.getPropertyName()); //$NON-NLS-1$
-        assertEquals(Float.valueOf(0), evt0.getOldValue());
-        assertEquals(Float.valueOf(5), evt0.getNewValue());
+        assertEquals(0f, evt0.getOldValue());
+        assertEquals(5f, evt0.getNewValue());
 
         PropertyChangeEvent evt1 = events.get(1);
         assertEquals("me", evt1.getPropertyName()); //$NON-NLS-1$
-        assertEquals(Float.valueOf(5), evt1.getOldValue());
-        assertEquals(Float.valueOf(12), evt1.getNewValue());
+        assertEquals(5f, evt1.getOldValue());
+        assertEquals(12f, evt1.getNewValue());
     }
 
 }

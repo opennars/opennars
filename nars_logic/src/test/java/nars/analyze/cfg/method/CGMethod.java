@@ -71,7 +71,7 @@ public class CGMethod {
     }
 
     protected void pre() {
-        if (this.ii!=null) {
+        if (ii !=null) {
             ConstantPoolGen cpg = mg.getConstantPool();
             className = ii.getReferenceType(cpg).toString();
             methodName = ii.getMethodName(cpg);
@@ -79,14 +79,14 @@ public class CGMethod {
                 argumentTypes.add(type.toString());
             }
         }
-        else if (this.mg!=null) {
+        else if (mg !=null) {
             className = jc.getClassName();
             methodName = mg.getName();
             for (Type type : mg.getArgumentTypes()) {
                 argumentTypes.add(type.toString());
             }
         }
-        else if (this.m != null) {
+        else if (m != null) {
             className = jc.getClassName();
             methodName = m.getName();
 
@@ -94,22 +94,22 @@ public class CGMethod {
                 argumentTypes.add(type.toString());
             }
         }
-        this.key = className + "#" + methodName + "(" + argumentTypes.toString() + ')';
+        key = className + '#' + methodName + '(' + argumentTypes.toString() + ')';
 
     }
     protected void post() {
 
-        if (this.ii!=null) {
+        if (ii !=null) {
             ConstantPoolGen cpg = mg.getConstantPool();
             returnType = ii.getReturnType(cpg).toString();
             for (Class c : ii.getExceptions())
                 throwing.add(c.getName().toString());
         }
-        else if (this.mg!=null) {
+        else if (mg !=null) {
             returnType = mg.getReturnType().toString();
             throwing.addAll(Arrays.asList(mg.getExceptions()));
         }
-        else if (this.m != null) {
+        else if (m != null) {
             returnType = m.getReturnType().toString();
             throwing.addAll(Arrays.asList(m.getExceptionTable().getExceptionNames()));
         }

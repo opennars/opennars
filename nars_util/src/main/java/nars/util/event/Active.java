@@ -23,22 +23,10 @@ public class Active<T extends Topic> extends FasterList<On> {
         Collections.addAll(this, r);
     }
 
-//        public void resume() {
-//            for (Registration r : this)
-//                r.resume();
-//        }
-//        public void pause() {
-//            for (Registration r : this)
-//                r.pause();
-//        }
-//        public void cancelAfterUse() {
-//            for (Registration r : this)
-//                r.cancelAfterUse();
-//        }
 
     public void off() {
-        for (int i = 0; i < this.size(); i++) {
-            this.get(i).off();
+        for (int i = 0; i < size(); i++) {
+            get(i).off();
         }
         clear();
     }

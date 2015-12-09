@@ -135,7 +135,7 @@ public final class VList<T> extends AbstractList<T> {
     public boolean add(T elem) {
     /* If no free space exists, add a new element to the list. */
         if (mHead == null || mHead.mFreeSpace == 0)
-            mHead = new VListCell<T>(mHead == null ? 1 : mHead.mElems.length * 2, mHead);
+            mHead = new VListCell<>(mHead == null ? 1 : mHead.mElems.length * 2, mHead);
 
     /* Prepend this element to the current cell. */
         mHead.mElems[(mHead.mFreeSpace--) - 1] = elem;
@@ -187,7 +187,7 @@ public final class VList<T> extends AbstractList<T> {
      * we want can be found by indexing the proper amount beyond the free
      * space.
      */
-        return new VListLocation<T>(curr, index + curr.mFreeSpace);
+        return new VListLocation<>(curr, index + curr.mFreeSpace);
     }
 
 
@@ -244,7 +244,7 @@ public final class VList<T> extends AbstractList<T> {
      * @return The element at that position.
      */
     @Override
-    final public T get(final int index) {
+    public T get(int index) {
         return indexFunction(index, getValueFunction);
     }
 
@@ -321,8 +321,7 @@ public final class VList<T> extends AbstractList<T> {
        * necessary, but is harmless and doesn't change the asymptotic
        * runtime (since the last block has size O(n)).
        */
-            for (int i = shuffleTargetPosition - 1; i >= 0; --i)
-                curr.mElems[i + 1] = curr.mElems[i];
+            System.arraycopy(curr.mElems, 0, curr.mElems, 1, shuffleTargetPosition - 1 + 1);
 
       /* Copy the last element of the next array to the top of this array,
        * unless this is the first block (in which case there is no next
@@ -470,7 +469,7 @@ public final class VList<T> extends AbstractList<T> {
          * next element to visit.
          */
                 ++mCurrIndex;
-                removeAtPosition(new VListLocation<T>(mCurrCell, mCurrIndex));
+                removeAtPosition(new VListLocation<>(mCurrCell, mCurrIndex));
             }
       /* Case 3. */
             else {
@@ -483,7 +482,7 @@ public final class VList<T> extends AbstractList<T> {
          */
                 mCurrCell = mCurrCell.mNext;
                 mCurrIndex = 0;
-                removeAtPosition(new VListLocation<T>(mCurrCell, mCurrIndex));
+                removeAtPosition(new VListLocation<>(mCurrCell, mCurrIndex));
             }
         }
     }

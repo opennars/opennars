@@ -61,10 +61,10 @@ public enum ParserAnnotation
     private static final Map<String, ParserAnnotation> REVERSE_MAP;
 
     static {
-        final ImmutableMap.Builder<String, ParserAnnotation> builder
+        ImmutableMap.Builder<String, ParserAnnotation> builder
             = ImmutableMap.builder();
 
-        for (final ParserAnnotation entry: values())
+        for (ParserAnnotation entry: values())
             builder.put(entry.descriptor, entry);
 
         REVERSE_MAP = builder.build();
@@ -73,7 +73,7 @@ public enum ParserAnnotation
 
     private final String descriptor;
 
-    ParserAnnotation(final Class<? extends Annotation> c)
+    ParserAnnotation(Class<? extends Annotation> c)
     {
         descriptor = Type.getType(c).getDescriptor();
     }
@@ -85,10 +85,10 @@ public enum ParserAnnotation
      * @param desc the descriptor
      * @return true if the descriptor is known
      */
-    public static boolean recordAnnotation(final Set<ParserAnnotation> set,
-        final String desc)
+    public static boolean recordAnnotation(Set<ParserAnnotation> set,
+                                           String desc)
     {
-        final ParserAnnotation annotation = REVERSE_MAP.get(desc);
+        ParserAnnotation annotation = REVERSE_MAP.get(desc);
         if (annotation == null)
             return false;
         set.add(annotation);
@@ -101,10 +101,10 @@ public enum ParserAnnotation
      * @param from set to move flags from
      * @param  to set to move flags to
      */
-    public static void moveTo(final Set<ParserAnnotation> from,
-        final Set<ParserAnnotation> to)
+    public static void moveTo(Set<ParserAnnotation> from,
+                              Set<ParserAnnotation> to)
     {
-        final Set<ParserAnnotation> transferred = EnumSet.copyOf(from);
+        Set<ParserAnnotation> transferred = EnumSet.copyOf(from);
         transferred.retainAll(FLAGS_COPY);
         to.addAll(transferred);
         from.addAll(FLAGS_SET);

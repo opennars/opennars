@@ -8,7 +8,6 @@ public class NullWindow implements GrainWindow {
     private int samples;
 
     public NullWindow(int samples) {
-        super();
         this.samples = samples;
     }
 
@@ -19,6 +18,6 @@ public class NullWindow implements GrainWindow {
 
     @Override
     public float getFactor(int offset) {
-        return 1f;
+        return 1.0f;
     }
 }

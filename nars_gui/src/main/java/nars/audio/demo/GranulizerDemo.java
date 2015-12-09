@@ -33,7 +33,7 @@ public class GranulizerDemo {
     public static void main(String[] args) throws IOException, LineUnavailableException, UnsupportedAudioFileException {
 
 
-        final Audio audio = new Audio(4);
+        Audio audio = new Audio(4);
 //        float[] samples = new float[44100];
 //
 //        for (int i = 0; i < samples.length; i++) {

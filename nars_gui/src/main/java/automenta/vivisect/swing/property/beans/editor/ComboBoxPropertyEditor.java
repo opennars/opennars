@@ -24,6 +24,7 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 
 /**
@@ -38,7 +39,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 
 	public ComboBoxPropertyEditor() {
 
-		final JComboBox combo = new JComboBox() {
+		JComboBox combo = new JComboBox() {
 
 			private static final long serialVersionUID = -7048198994640023540L;
 
@@ -68,7 +69,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-				ComboBoxPropertyEditor.this.firePropertyChange(oldValue, combo.getSelectedItem());
+				firePropertyChange(oldValue, combo.getSelectedItem());
 			}
 
 			@Override
@@ -81,7 +82,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					ComboBoxPropertyEditor.this.firePropertyChange(oldValue,
+					firePropertyChange(oldValue,
 					combo.getSelectedItem());
 				}
 			}
@@ -94,11 +95,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 	@Override
 	public Object getValue() {
 		Object selected = ((JComboBox) editor).getSelectedItem();
-		if (selected instanceof Value) {
-			return ((Value) selected).value;
-		} else {
-			return selected;
-		}
+		return selected instanceof Value ? ((Value) selected).value : selected;
 	}
 
 	@Override
@@ -108,7 +105,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 		int index = -1;
 		for (int i = 0, c = combo.getModel().getSize(); i < c; i++) {
 			current = combo.getModel().getElementAt(i);
-			if (value == current || (current != null && current.equals(value))) {
+			if (Objects.equals(current, value)) {
 				index = i;
 				break;
 			}
@@ -163,9 +160,7 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 		public boolean equals(Object o) {
 			if (o == this)
 				return true;
-			if (value == o || (value != null && value.equals(o)))
-				return true;
-			return false;
+			return Objects.equals(value, o);
 		}
 
 		@Override

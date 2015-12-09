@@ -62,7 +62,7 @@ public class DefaultTermizer implements Termizer {
     }
 
     /** dereference a term to an object (but do not un-termize) */
-    @Override public Object object(final Term t) {
+    @Override public Object object(Term t) {
 
         if (t == NULL) return null;
 
@@ -116,19 +116,22 @@ public class DefaultTermizer implements Termizer {
         }
 
         if (o instanceof int[]) {
-            final List<Term> arg = Arrays.stream((int[]) o)
-                    .mapToObj(e -> Atom.the(e)).collect(Collectors.toList());
+            List<Term> arg = Arrays.stream((int[]) o)
+                    .mapToObj(Atom::the).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
             );
-        } else if (o instanceof Object[]) {
-            final List<Term> arg = Arrays.stream((Object[]) o).map(e -> term(e)).collect(Collectors.toList());
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (o instanceof Object[]) {
+            List<Term> arg = Arrays.stream((Object[]) o).map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
             );
-        } else if (o instanceof List) {
+        }
+        if (o instanceof List) {
             if (((List)o).isEmpty()) return EMPTY;
 
             //TODO can this be done with an array to avoid duplicate collection allocation
@@ -148,8 +151,9 @@ public class DefaultTermizer implements Termizer {
         /*} else if (o instanceof Stream) {
             return Atom.quote(o.toString().substring(17));
         }*/
-        } else if (o instanceof Set) {
-            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
+        }
+        if (o instanceof Set) {
+            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return SetExt.make(arg);
         } else if (o instanceof Map) {
@@ -209,10 +213,9 @@ public class DefaultTermizer implements Termizer {
         if (classInPackageExclusions.contains(oc)) return false;
 
         if (Term.class.isAssignableFrom(oc)) return false;
-        if (oc.isPrimitive()) return false;
+        return !oc.isPrimitive();
 
 
-        return true;
     }
 
 
@@ -221,22 +224,18 @@ public class DefaultTermizer implements Termizer {
 
         //TODO handle static methods which will not receive first variable instance
 
-        String varPrefix = m.getName() + "_";
+        String varPrefix = m.getName() + '_';
         int n = m.getParameterCount();
         Compound args = $.p(getArgVariables(varPrefix, n));
 
-        if (m.getReturnType() == void.class) {
-            return new Term[]{
+        return m.getReturnType() == void.class ? new Term[]{
                 INSTANCE_VAR,
                 args
-            };
-        } else {
-            return new Term[]{
+        } : new Term[]{
                 INSTANCE_VAR,
                 args,
                 $.varDep(varPrefix + "_return") //return var
-            };
-        }
+        };
     }
 
     private Term[] getArgVariables(String prefix, int numParams) {
@@ -281,7 +280,7 @@ public class DefaultTermizer implements Termizer {
         return null;
     }
 
-    public Term term(final Object o) {
+    public Term term(Object o) {
         if (o == null) return NULL;
 
         //        String cname = o.getClass().toString().substring(6) /* "class " */;
@@ -333,7 +332,7 @@ public class DefaultTermizer implements Termizer {
 
             Term clas = classes.computeIfAbsent(O.getClass(), this::obj2term);
 
-            final Term finalClas = clas;
+            Term finalClas = clas;
             post[0] = () ->  onInstanceOfClass(O, oterm, finalClas);
 
             //instances.put(oterm, o); //reverse

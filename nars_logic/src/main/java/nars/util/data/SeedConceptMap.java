@@ -7,7 +7,7 @@ import nars.term.Term;
 import java.util.Set;
 
 /** uses a predefined set of terms that will be mapped */
-abstract public class SeedConceptMap extends ConceptMap {
+public abstract class SeedConceptMap extends ConceptMap {
 
     public final Set<Term> terms;
 

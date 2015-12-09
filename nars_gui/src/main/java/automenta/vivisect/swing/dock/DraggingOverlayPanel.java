@@ -54,7 +54,7 @@ public class DraggingOverlayPanel extends javax.swing.JPanel {
                 = new DockingImportTransferHandler(this);
         setTransferHandler(xferHandler);
 
-        transpComposite = AlphaComposite.SrcOver.derive(.5f);
+        transpComposite = AlphaComposite.SrcOver.derive(0.5f);
     }
 
     @Override

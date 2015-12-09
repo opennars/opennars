@@ -45,7 +45,6 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * Constructs a new MutableDouble with the default value of zero.
    */
   public MutableDouble() {
-    super();
   }
 
   /**
@@ -55,7 +54,6 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    *          a value.
    */
   public MutableDouble(double value) {
-    super();
     this.value = value;
   }
 
@@ -68,7 +66,6 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    *           if the object is null
    */
   public MutableDouble(Number value) {
-    super();
     this.value = value.doubleValue();
   }
 
@@ -80,7 +77,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    */
   @Override
   public Object getValue() {
-    return new Double(this.value);
+    return value;
   }
 
   /**
@@ -179,7 +176,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @return a Double instance containing the value from this mutable
    */
   public Double toDouble() {
-    return new Double(doubleValue());
+    return doubleValue();
   }
 
   // -----------------------------------------------------------------------
@@ -211,7 +208,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void add(double operand) {
-    this.value += operand;
+    value += operand;
   }
 
   /**
@@ -225,7 +222,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void add(Number operand) {
-    this.value += operand.doubleValue();
+    value += operand.doubleValue();
   }
 
   /**
@@ -237,7 +234,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void subtract(double operand) {
-    this.value -= operand;
+    value -= operand;
   }
 
   /**
@@ -251,7 +248,7 @@ public class MutableDouble extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void subtract(Number operand) {
-    this.value -= operand.doubleValue();
+    value -= operand.doubleValue();
   }
 
   // -----------------------------------------------------------------------

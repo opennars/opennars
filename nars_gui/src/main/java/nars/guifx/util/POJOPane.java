@@ -30,7 +30,6 @@ public class POJOPane<X> extends BorderPane {
     public final X obj;
 
     public POJOPane(X obj) {
-        super();
         this.obj = obj;
 
         List<Node> pn = propertyNodes(obj);
@@ -49,9 +48,7 @@ public class POJOPane<X> extends BorderPane {
             });
             setTop(toggle);
 
-            runLater(()->{
-                toggle.setSelected(true);
-            });
+            runLater(()-> toggle.setSelected(true));
         }
         else {
             setCenter(new Label(obj.toString()));
@@ -147,13 +144,10 @@ public class POJOPane<X> extends BorderPane {
             if (value == object)
                 return null;
 
-            if (value!=null)
-                valueNode = POJONode.valueToNode(value, field);
-            else
-                valueNode = new Text("null");
+            valueNode = value != null ? POJONode.valueToNode(value, field) : new Text("null");
         } catch (IllegalAccessException e) {
             valueNode =
-                    new /*Error*/Label(field.getType().toString() + "\n" + e.toString());
+                    new /*Error*/Label(field.getType().toString() + '\n' + e.toString());
         }
 
 

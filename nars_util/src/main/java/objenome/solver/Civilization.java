@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  * a solution to a problem characterized by a set of goals defined
  * by the programmer.
  */
-abstract public class Civilization extends GPContainer<Civilized> implements Runnable {
+public abstract class Civilization extends GPContainer<Civilized> implements Runnable {
 
     double minLifeSpan = 0.25;
     double maxSurvivalCostPercentile = 80;
@@ -80,7 +80,6 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     }
 
     public Civilization(int threads, int populationSize, int maximumDepth, Collection<Node> additionalOperators) {
-        super();
         this.threads = threads;
         this.populationSize = populationSize;
 
@@ -90,7 +89,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         the(RandomSequence.RANDOM_SEQUENCE, random);
         the(TypedOrganism.RETURN_TYPE, Double.class);
 
-        final ArrayList<Node> syntax = new ArrayList(getOperators(random));
+        ArrayList<Node> syntax = new ArrayList(getOperators(random));
         if (additionalOperators!=null)
             syntax.addAll(additionalOperators);
 
@@ -151,7 +150,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         return c;
     }
 
-    abstract public List<Node> getOperators(RandomSequence random);
+    public abstract List<Node> getOperators(RandomSequence random);
 
     public void add(EGoal goal) {
         goals.add(goal);
@@ -248,6 +247,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
 
     @Override public void run() {
 
+        //noinspection InfiniteLoopStatement
         while (true) {
 
             updatePopulation();
@@ -319,11 +319,11 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         Collection<Civilized> toKill = new ArrayList();
 
 
-        final Population<Civilized> pop = getPopulation();
+        Population<Civilized> pop = getPopulation();
         synchronized (ds) {
             ds.clear();
 
-            final int ps = pop.size();
+            int ps = pop.size();
             if (ps > 0) {
                 ds.setWindowSize(ps * 2);
 
@@ -356,7 +356,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         }
 
         //if (cycle % 64 == 0)
-            System.err.println( "\n" + pop.size() + " " + pop.size() + " organisms\n");
+            System.err.println( "\n" + pop.size() + ' ' + pop.size() + " organisms\n");
 
         System.err.println(ds.getMin() + ".." + ds.getMean() + ".." + ds.getMax());
 
@@ -369,8 +369,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
 
         double agg = x.costRate() / goals.size();
         if (agg < minLifeSpan) return true;
-        else
-            agg = agg*agg*agg; //cube for sharpness
+        agg = agg*agg*agg; //cube for sharpness
 
         return Math.random() > Math.min(agg, 1.0);
 
@@ -423,9 +422,9 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     }
 
 
-    public static interface GPContainerAware {
+    public interface GPContainerAware {
 
-        public void setConfig(Civilization c);
+        void setConfig(Civilization c);
     }
 
 //    /**

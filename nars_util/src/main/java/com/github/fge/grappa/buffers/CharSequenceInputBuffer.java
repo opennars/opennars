@@ -55,7 +55,7 @@ public final class CharSequenceInputBuffer
     private final CharSequence charSequence;
     private final /*Future<*/LineCounter lineCounter;
 
-    public CharSequenceInputBuffer(@Nonnull final CharSequence charSequence)
+    public CharSequenceInputBuffer(@Nonnull CharSequence charSequence)
     {
         this.charSequence = Objects.requireNonNull(charSequence);
         /*lineCounter = EXECUTOR_SERVICE.submit(new Callable<LineCounter>()
@@ -71,7 +71,7 @@ public final class CharSequenceInputBuffer
     }
 
     @Override
-    final public char charAt(final int index)
+    public char charAt(int index)
     {
         /*if (index < 0)
            throw new IllegalArgumentException("index is negative");*/
@@ -82,28 +82,28 @@ public final class CharSequenceInputBuffer
 
     @SuppressWarnings("ImplicitNumericConversion")
     @Override
-    public int codePointAt(final int index)
+    public int codePointAt(int index)
     {
-        final int length = charSequence.length();
+        int length = charSequence.length();
         if (index >= length)
             return -1;
         if (index < 0)
             throw new IllegalArgumentException("index is negative");
 
-        final char c = charSequence.charAt(index);
+        char c = charSequence.charAt(index);
         if (!Character.isHighSurrogate(c))
             return c;
         if (index == length - 1)
             return c;
-        final char c2 = charSequence.charAt(index + 1);
+        char c2 = charSequence.charAt(index + 1);
         return Character.isLowSurrogate(c2) ? Character.toCodePoint(c, c2) : c;
     }
 
     @Override
-    public char[] extractChars(final int start, final int end)
+    public char[] extractChars(int start, int end)
     {
-        final int realStart = Math.max(start, 0);
-        final int realEnd = Math.min(end, charSequence.length());
+        int realStart = Math.max(start, 0);
+        int realEnd = Math.min(end, charSequence.length());
         char[] x = new char[realEnd - realStart];
         int j = 0;
         for (int i = realStart; i < realEnd; i++)
@@ -112,21 +112,21 @@ public final class CharSequenceInputBuffer
     }
 
     @Override
-    public String extract(final int start, final int end)
+    public String extract(int start, int end)
     {
-        final int realStart = Math.max(start, 0);
-        final int realEnd = Math.min(end, charSequence.length());
+        int realStart = Math.max(start, 0);
+        int realEnd = Math.min(end, charSequence.length());
         return charSequence.subSequence(realStart, realEnd).toString();
     }
 
     @Override
-    public String extract(final IndexRange range)
+    public String extract(IndexRange range)
     {
         return extract(range.start, range.end);
     }
 
     @Override
-    public Position getPosition(final int index)
+    public Position getPosition(int index)
     {
         return lineCounter
         //return Futures.getUnchecked(lineCounter)
@@ -135,12 +135,12 @@ public final class CharSequenceInputBuffer
     }
 
     @Override
-    public String extractLine(final int lineNumber)
+    public String extractLine(int lineNumber)
     {
         Preconditions.checkArgument(lineNumber > 0, "line number is negative");
-        final LineCounter counter = lineCounter; //Futures.getUnchecked(lineCounter);
-        final Range<Integer> range = counter.getLineRange(lineNumber);
-        final int start = range.lowerEndpoint();
+        LineCounter counter = lineCounter; //Futures.getUnchecked(lineCounter);
+        Range<Integer> range = counter.getLineRange(lineNumber);
+        int start = range.lowerEndpoint();
         int end = range.upperEndpoint();
         if (charAt(end - 1) == '\n')
             end--;
@@ -151,9 +151,9 @@ public final class CharSequenceInputBuffer
 
     @SuppressWarnings("AutoUnboxing")
     @Override
-    public IndexRange getLineRange(final int lineNumber)
+    public IndexRange getLineRange(int lineNumber)
     {
-        final Range<Integer> range =
+        Range<Integer> range =
             //= Futures.getUnchecked(lineCounter)
             lineCounter
                 .getLineRange(lineNumber);

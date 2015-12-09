@@ -184,7 +184,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     }
 
     public DerivationGraph(boolean includeDerivedBudget, boolean includeDerivedTruth) {
-        super((a, b) -> Tuples.twin(a,b));
+        super(Tuples::twin);
 
         premiseResult =
                 new TreeMap();
@@ -203,9 +203,9 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 //        print(new PrintStream(new FileOutputStream(new File(filePath))));
 //    }
 
-    abstract public static class Keyed implements Comparable<Keyed> {
+    public abstract static class Keyed implements Comparable<Keyed> {
 
-        abstract public String name();
+        public abstract String name();
 
         @Override
         public String toString() {
@@ -246,16 +246,16 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
         public PremiseKey(Task tasklink, Term termlink, Task belief, ObjectIntHashMap<Term> unique, long now, boolean truth, boolean budget) {
             //this.conceptKey = genericString(concept.getTerm(), unique);
-            this.taskLinkKey = genericString(tasklink, unique, now, truth, budget, false);
-            this.termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
-            this.beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
+            taskLinkKey = genericString(tasklink, unique, now, truth, budget, false);
+            termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
+            beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
 
-            this.taskVolume = tasklink.getTerm().volume();
-            this.termVolume = termlink.getTerm().volume();
-            this.beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
+            taskVolume = tasklink.getTerm().volume();
+            termVolume = termlink.getTerm().volume();
+            beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
 
-            this.key = (taskLinkKey + ":" +
-                    termLinkKey + ":" +
+            key = (taskLinkKey + ':' +
+                    termLinkKey + ':' +
                     beliefKey).trim();
         }
 
@@ -438,22 +438,17 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
 
     public static String genericLiteral(Term c, ObjectIntHashMap<Term> unique) {
-        c.recurseTerms(new SubtermVisitor() {
-            @Override public void accept(Term t, Term superterm) {
-                if ((t instanceof Atom) && (!(t instanceof Variable))) {
-                    unique.getIfAbsentPut(t, unique.size());
-                }
+        c.recurseTerms((t, superterm) -> {
+            if ((t instanceof Atom) && (!(t instanceof Variable))) {
+                unique.getIfAbsentPut(t, unique.size());
             }
         });
 
         //TODO use a better generation method, replacement might cause error if term names contain common subsequences
         //maybe use a sorted Map so that the longest terms to be replaced are iterated first, so that a shorter subterm will not interfere with subsequent longer replacement
 
-        final String[] s = new String[1];
-        if (c instanceof Compound)
-            s[0] = c.toString(false);
-        else
-            s[0] = c.toString();
+        String[] s = new String[1];
+        s[0] = c instanceof Compound ? c.toString(false) : c.toString();
 
         unique.forEachKeyValue( (tn, i) -> {
             if (i > 25) throw new RuntimeException("TODO support > 26 different unique atomic terms");
@@ -479,16 +474,13 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
         if (includeTruth) {
             t += " %";
-            if (s.getTruth() != null)
-                t += Texts.n2(s.getFrequency()) + ";" + Texts.n2(s.getConfidence());
-            else
-                t += "?;?";
+            t += s.getTruth() != null ? Texts.n2(s.getFrequency()) + ";" + Texts.n2(s.getConfidence()) : "?;?";
             t += "%";
         }
 
 
         if (!s.isEternal()) {
-            t += " " + Tense.tenseRelative(s.getOccurrenceTime(), now);
+            t += ' ' + Tense.tenseRelative(s.getOccurrenceTime(), now);
         }
 
         return t;
@@ -496,26 +488,20 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
     public static String genericString(Term t, ObjectIntHashMap<Term> _unique) {
         ObjectIntHashMap<Term> unique;
-        if (_unique == null)
-            unique = new ObjectIntHashMap();
-        else
-            unique = _unique;
+        unique = _unique == null ? new ObjectIntHashMap() : _unique;
 
         if (t.getClass() == Atom.class) {
             //atomic term
             return genericLiteral(t, unique);
         }
-        else if (t instanceof OperatorReaction) {
+        if (t instanceof OperatorReaction) {
             return t.toString();
         }
-        else if (t instanceof Variable) {
+        if (t instanceof Variable || t instanceof Compound) {
             //return t.toString();
             return genericLiteral(t, unique);
         }
-        else if (t instanceof Compound) {
-            return genericLiteral(t, unique);
-        }
-        else if (t instanceof CyclesInterval) {
+        if (t instanceof CyclesInterval) {
             //Interval, etc..
             return t.toString();
         }

@@ -10,8 +10,7 @@ public class Equal extends PreCondition2 {
 
     /** commutivity: sort the terms */
     public static Equal make(Term a, Term b) {
-        if (a.compareTo(b) <= 0) return new Equal(a, b);
-        else                     return new Equal(b, a);
+        return a.compareTo(b) <= 0 ? new Equal(a, b) : new Equal(b, a);
     }
 
     Equal(Term var1, Term var2) {
@@ -19,7 +18,7 @@ public class Equal extends PreCondition2 {
     }
 
     @Override
-    final public boolean test(final RuleMatch m, final Term a, final Term b) {
+    public final boolean test(RuleMatch m, Term a, Term b) {
         if ((a == null) || (b == null)) return false;
         return a.equals(b);
     }

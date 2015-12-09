@@ -25,7 +25,7 @@ public class TaskTest {
         DefaultTruth dt = new DefaultTruth(0, 0.1f);
         assertEquals(9, dt.hashCode());
 
-        DefaultTruth du = new DefaultTruth(1, 1f);
+        DefaultTruth du = new DefaultTruth(1, 1.0f);
         assertEquals(6553700, du.hashCode());
     }
 
@@ -36,8 +36,8 @@ public class TaskTest {
     @Test public void testTaskOrderByTruthViaHash() {
         TreeSet<Task> t = new TreeSet<>();
         int count = 0;
-        for (float f = 0; f < 1f; f += 0.3f)
-            for (float c = 0; c < 1f; c += 0.3f) {
+        for (float f = 0; f < 1.0f; f += 0.3f)
+            for (float c = 0; c < 1.0f; c += 0.3f) {
                 t.add(
                     $.$("a:b", '.').truth(f, c)
                 );

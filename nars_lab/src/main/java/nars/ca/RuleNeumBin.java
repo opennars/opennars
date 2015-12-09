@@ -6,7 +6,7 @@ package nars.ca;// Mirek's Java Cellebration
 public class RuleNeumBin {
 	public static final int MAX_STATES = 3;
 	public int iClo; // actual count of states
-	public int states[][][][][] = new int[MAX_STATES][MAX_STATES][MAX_STATES][MAX_STATES][MAX_STATES];
+	public int[][][][][] states = new int[MAX_STATES][MAX_STATES][MAX_STATES][MAX_STATES][MAX_STATES];
 
 	// ----------------------------------------------------------------
 	public RuleNeumBin() {
@@ -59,7 +59,7 @@ public class RuleNeumBin {
 
 	// ----------------------------------------------------------------
 	//
-	public void InitFromPrm(int i_Clo, int sttAry[][][][][]) {
+	public void InitFromPrm(int i_Clo, int[][][][][] sttAry) {
 		iClo = i_Clo;
 		states = sttAry;
 
@@ -103,12 +103,12 @@ public class RuleNeumBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][]) {
+					   short[][] crrState, short[][] tmpState) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
-		int iCntAry[] = new int[iClo];
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] iCntAry = new int[iClo];
 		int iTmp;
 		int l, u, r, d;
 

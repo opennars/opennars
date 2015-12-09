@@ -10,7 +10,7 @@ public class RuleMarg {
 	public int iClo; // count of states, not used yet
 	public int iTyp; // Margolus rule type, 1-simple
 	public boolean isHist; // with history?  not used yet
-	public int swapArray[] = new int[16];
+	public int[] swapArray = new int[16];
 
 	// ----------------------------------------------------------------
 	public RuleMarg() {
@@ -33,6 +33,7 @@ public class RuleMarg {
 	public void InitFromString(String sStr) {
 		String sTok, sSwaps;
 		int i, iNum, iVal;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st, std;
 
 		ResetToDefaults();
@@ -40,10 +41,10 @@ public class RuleMarg {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
-			if (sTok.startsWith("M")) // Margholus rule type
+			if (sTok.length() > 0 && sTok.charAt(0) == 'M') // Margholus rule type
 			{
 				iTyp = TYPE_MS; // simple - the only one available now
-			} else if (sTok.startsWith("D")) // definition
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'D') // definition
 			{
 				std = new StringTokenizer(sTok.substring(1), ";", false);
 				iNum = 0;
@@ -62,7 +63,7 @@ public class RuleMarg {
 
 	// ----------------------------------------------------------------
 	// Initialize from separate parameters
-	public void InitFromPrm(int i_Clo, boolean is_Hist, int ary[]) {
+	public void InitFromPrm(int i_Clo, boolean is_Hist, int[] ary) {
 		ResetToDefaults();
 		iClo = i_Clo; // count of colors
 		isHist = is_Hist; // with history?
@@ -81,7 +82,7 @@ public class RuleMarg {
 		String sBff = "MS,D";
 
 		for (int i = 0; i <= 14; i++)
-			sBff = sBff + String.valueOf(swapArray[i]) + ";";
+			sBff = sBff + String.valueOf(swapArray[i]) + ';';
 		sBff = sBff + String.valueOf(swapArray[15]);
 
 		return sBff;
@@ -103,7 +104,7 @@ public class RuleMarg {
 
 	// ----------------------------------------------------------------
 	// swap four cells according to the rule
-	private void SwapMargCells(int mgCells[]) {
+	private void SwapMargCells(int[] mgCells) {
 		int iCnt, iNewCnt;
 
 		// if at least 1 cell is > 1 than the location is locked
@@ -120,34 +121,22 @@ public class RuleMarg {
 				iCnt += 8;
 			iNewCnt = swapArray[iCnt];
 
-			if ((1 & iNewCnt) > 0)
-				mgCells[0] = 1;
-			else
-				mgCells[0] = 0;
-			if ((2 & iNewCnt) > 0)
-				mgCells[1] = 1;
-			else
-				mgCells[1] = 0;
-			if ((4 & iNewCnt) > 0)
-				mgCells[2] = 1;
-			else
-				mgCells[2] = 0;
-			if ((8 & iNewCnt) > 0)
-				mgCells[3] = 1;
-			else
-				mgCells[3] = 0;
+			mgCells[0] = (1 & iNewCnt) > 0 ? 1 : 0;
+			mgCells[1] = (2 & iNewCnt) > 0 ? 1 : 0;
+			mgCells[2] = (4 & iNewCnt) > 0 ? 1 : 0;
+			mgCells[3] = (8 & iNewCnt) > 0 ? 1 : 0;
 		}
 	}
 
     // ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		int modCnt = 0;
 		int i, j, ic;
 		int c1, c2, r1, r2;
-		int mgCells[] = new int[4]; // Margolus neighbourhood 2x2 block
-		int mgCellsOld[] = new int[4]; // a copy for changes detection
+		int[] mgCells = new int[4]; // Margolus neighbourhood 2x2 block
+		int[] mgCellsOld = new int[4]; // a copy for changes detection
 		boolean isOdd; // odd pass?
 
 		isOdd = ((mjb.Cycle % 2) != 0);

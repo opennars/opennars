@@ -9,10 +9,10 @@ public interface TableCallback<T> {
      *
      * @param object the object stored in the row
      */
-    public void handle(T object);
+    void handle(T object);
 
     /**
      * @return the name of the action being performed that will appear on the button.
      */
-    public String getActionName();
+    String getActionName();
 }

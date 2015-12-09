@@ -57,8 +57,8 @@ public final class CachingGenerator
     private String cacheFieldName;
 
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -66,8 +66,8 @@ public final class CachingGenerator
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(classNode, "classNode");
@@ -99,11 +99,11 @@ public final class CachingGenerator
     }
 
     // if (<cache> != null) return <cache>;
-    private void generateCacheHitReturn(final CodeBlock block)
+    private void generateCacheHitReturn(CodeBlock block)
     {
         generateGetFromCache(block);
 
-        final LabelNode cacheMiss = new LabelNode();
+        LabelNode cacheMiss = new LabelNode();
 
         block.dup()
             .ifnull(cacheMiss)
@@ -112,17 +112,17 @@ public final class CachingGenerator
             .pop();
     }
 
-    private void generateGetFromCache(final CodeBlock block)
+    private void generateGetFromCache(CodeBlock block)
     {
-        final Type[] paramTypes = Type.getArgumentTypes(method.desc);
+        Type[] paramTypes = Type.getArgumentTypes(method.desc);
         cacheFieldName = findUnusedCacheFieldName();
 
         // if we have no parameters we use a simple Rule field as cache,
         // otherwise a HashMap
-        final String cacheFieldDesc = paramTypes.length == 0
+        String cacheFieldDesc = paramTypes.length == 0
             ? CodegenUtils.ci(Rule.class)
             : CodegenUtils.ci(HashMap.class);
-        final FieldNode field = new FieldNode(ACC_PRIVATE, cacheFieldName,
+        FieldNode field = new FieldNode(ACC_PRIVATE, cacheFieldName,
             cacheFieldDesc, null, null);
 
         classNode.fields.add(field);
@@ -134,7 +134,7 @@ public final class CachingGenerator
 
         // generate: if (<cache> == null) <cache> = new HashMap<Object, Rule>();
 
-        final LabelNode alreadyInitialized = new LabelNode();
+        LabelNode alreadyInitialized = new LabelNode();
 
         block.dup()
             .ifnonnull(alreadyInitialized)
@@ -179,17 +179,17 @@ public final class CachingGenerator
         return name;
     }
 
-    private boolean hasField(final String fieldName)
+    private boolean hasField(String fieldName)
     {
-        for (final Object field : classNode.fields)
+        for (Object field : classNode.fields)
             if (fieldName.equals(((FieldNode) field).name))
                 return true;
 
         return false;
     }
 
-    private void generatePushNewParameterObjectArray(final CodeBlock block,
-        final Type[] paramTypes)
+    private void generatePushNewParameterObjectArray(CodeBlock block,
+                                                     Type[] paramTypes)
     {
         block.bipush(paramTypes.length).anewarray(CodegenUtils.p(Object.class));
 
@@ -200,8 +200,8 @@ public final class CachingGenerator
         }
     }
 
-    private static void generatePushParameterAsObject(final CodeBlock block,
-        final Type[] paramTypes, int parameterNr)
+    private static void generatePushParameterAsObject(CodeBlock block,
+                                                      Type[] paramTypes, int parameterNr)
     {
         switch (paramTypes[parameterNr++].getSort()) {
             case Type.BOOLEAN:
@@ -255,7 +255,7 @@ public final class CachingGenerator
     }
 
     // <cache> = new ProxyMatcher();
-    private void generateStoreNewProxyMatcher(final CodeBlock block)
+    private void generateStoreNewProxyMatcher(CodeBlock block)
     {
         block.newobj(CodegenUtils.p(ProxyMatcher.class))
             .dup()
@@ -266,7 +266,7 @@ public final class CachingGenerator
     }
 
     // <proxyMatcher>.arm(<rule>)
-    private static void generateArmProxyMatcher(final CodeBlock block)
+    private static void generateArmProxyMatcher(CodeBlock block)
     {
         block.dup_x1()
             .checkcast(CodegenUtils.p(Matcher.class))
@@ -274,9 +274,9 @@ public final class CachingGenerator
                 CodegenUtils.sig(void.class, Matcher.class));
     }
 
-    private void generateStoreInCache(final CodeBlock block)
+    private void generateStoreInCache(CodeBlock block)
     {
-        final Type[] paramTypes = Type.getArgumentTypes(method.desc);
+        Type[] paramTypes = Type.getArgumentTypes(method.desc);
 
         block.dup();
 

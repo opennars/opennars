@@ -21,11 +21,11 @@ public abstract class AxisPlot {
     float x = 0;
 
     public interface MultiChart {
-        public List<SignalData> getData();
+        List<SignalData> getData();
     }
     
     public AxisPlot() {
-        plotHeight = 1f;
+        plotHeight = 1.0f;
     }
 
     public AxisPlot pos(float x, float y) {
@@ -34,16 +34,16 @@ public abstract class AxisPlot {
         return this;
     }
     public AxisPlot size(float w , float h) {
-        this.plotWidth = w;
-        this.plotHeight = h;
+        plotWidth = w;
+        plotHeight = h;
         return this;
     }
     public AxisPlot height(float h) {
-        this.plotHeight = h;
+        plotHeight = h;
         return this;
     }
     public AxisPlot width(float w) {
-        this.plotWidth = w;
+        plotWidth = w;
         return this;
     }
     

@@ -36,7 +36,7 @@ public interface OrganismOperator extends GPContainerAware {
      *
      * @return the number of individuals expected by the operator.
      */
-    public int inputSize();
+    int inputSize();
 
     /**
      * Performs the operator on the specified individuals. If the operator is
@@ -48,7 +48,7 @@ public interface OrganismOperator extends GPContainerAware {
      * @return the modified individuals; <code>null</code> when the operator
      * could not be applied.
      */
-    public Organism[] apply(Population population, Organism... individuals);
+    Organism[] apply(Population population, Organism... individuals);
 
     /**
      * Returns the probability of the operator (the higher the value, the more
@@ -56,6 +56,6 @@ public interface OrganismOperator extends GPContainerAware {
      *
      * @return the probability of the operator.
      */
-    public double probability();
+    double probability();
 
 }

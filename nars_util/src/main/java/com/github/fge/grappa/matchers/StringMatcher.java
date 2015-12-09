@@ -32,7 +32,7 @@ public final class StringMatcher
 {
     private final String input;
 
-    public StringMatcher(final String input)
+    public StringMatcher(String input)
     {
         super("string(" + input + ')');
         this.input = Objects.requireNonNull(input);
@@ -45,11 +45,11 @@ public final class StringMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final int len = input.length();
-        final int index = context.getCurrentIndex();
-        final InputBuffer ib = context.getInputBuffer();
+        int len = input.length();
+        int index = context.getCurrentIndex();
+        InputBuffer ib = context.getInputBuffer();
 
 //        final String s = ib.extract(index, index + len);
 //

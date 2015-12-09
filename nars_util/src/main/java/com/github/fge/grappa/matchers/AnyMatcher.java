@@ -38,7 +38,7 @@ public final class AnyMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         if (context.getCurrentCodePoint() == -1)
             return false;

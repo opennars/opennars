@@ -6,7 +6,7 @@ public class World {
 	public static final int SIZE = 300;
 	private static final int OBSTACLES_NO = 20;
 	private Player player;
-	private Obstacle obstacles[];
+	private Obstacle[] obstacles;
 	private int time;
 
 	public World() {
@@ -38,10 +38,10 @@ public class World {
 		if(!inside(player.x, SIZE-player.r) || !inside(player.y, SIZE-player.r)) {
 			return true;
 		}
-            
-		for (int i = 0; i < obstacles.length; i++) {
-			if(obstacles[i].circleCollides(player.x, player.y, player.r)) {
-				obstacles[i].c = Color.gray;
+
+		for (Obstacle obstacle : obstacles) {
+			if (obstacle.circleCollides(player.x, player.y, player.r)) {
+				obstacle.c = Color.gray;
 				return true;
 			}
 		}
@@ -52,8 +52,8 @@ public class World {
 		if(!inside(x, SIZE) || !inside(y, SIZE)) {
 			return true;
 		}
-		for (int i = 0; i < obstacles.length; i++) {
-			if(obstacles[i].pointCollides(x, y)) {
+		for (Obstacle obstacle : obstacles) {
+			if (obstacle.pointCollides(x, y)) {
 				return true;
 			}
 		}

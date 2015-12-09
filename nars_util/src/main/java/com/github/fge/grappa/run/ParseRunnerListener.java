@@ -25,27 +25,27 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class ParseRunnerListener<V>
 {
     @Subscribe
-    public void beforeParse(final PreParseEvent<V> event)
+    public void beforeParse(PreParseEvent<V> event)
     {
     }
 
     @Subscribe
-    public void beforeMatch(final PreMatchEvent<V> event)
+    public void beforeMatch(PreMatchEvent<V> event)
     {
     }
 
     @Subscribe
-    public void matchSuccess(final MatchSuccessEvent<V> event)
+    public void matchSuccess(MatchSuccessEvent<V> event)
     {
     }
 
     @Subscribe
-    public void matchFailure(final MatchFailureEvent<V> event)
+    public void matchFailure(MatchFailureEvent<V> event)
     {
     }
 
     @Subscribe
-    public void afterParse(final PostParseEvent<V> event)
+    public void afterParse(PostParseEvent<V> event)
     {
     }
 }

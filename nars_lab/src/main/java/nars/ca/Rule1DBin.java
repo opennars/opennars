@@ -29,6 +29,7 @@ public class Rule1DBin {
 	// Parse the rule string
 	// Example: "R2,W23AC2"
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int iTmp;
@@ -38,10 +39,10 @@ public class Rule1DBin {
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
 			//System.out.println(sTok);
-			if (sTok.startsWith("R")) // range
+			if (sTok.length() > 0 && sTok.charAt(0) == 'R') // range
 			{
 				iRng = Integer.valueOf(sTok.substring(1));
-			} else if (sTok.startsWith("W")) // Wolfram's code
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'W') // Wolfram's code
 			{
 				sHex = sTok.substring(1);
 			}
@@ -68,7 +69,7 @@ public class Rule1DBin {
 		// correct parameters first
 		Validate();
 		// range
-		sBff = "R" + String.valueOf(iRng);
+		sBff = 'R' + String.valueOf(iRng);
 
 		// rule
 		sBff = sBff + ",R" + sHex;
@@ -86,7 +87,7 @@ public class Rule1DBin {
 			iRng = MAX_RANGE;
 
 		sHex.toUpperCase();
-		if ((sHex.length() > 0) && (sHex.charAt(0) == 'W'))
+		if ((!sHex.isEmpty()) && (sHex.charAt(0) == 'W'))
 			sHex = sHex.substring(1); // skip 'W' prefix
 	}
 
@@ -107,12 +108,8 @@ public class Rule1DBin {
 		sBinStr = LPad(sBinStr, iCnt, '0');
 
 		// set the rule array
-		for (i = 0; i < iCnt; i++) {
-			if (sBinStr.charAt(i) == '1')
-				iAry[iCnt - i - 1] = 1;
-			else
-				iAry[iCnt - i - 1] = 0;
-		}
+		for (i = 0; i < iCnt; i++)
+			iAry[iCnt - i - 1] = (byte) (sBinStr.charAt(i) == '1' ? 1 : 0);
 	}
 
 	// ----------------------------------------------------------------
@@ -224,7 +221,7 @@ public class Rule1DBin {
 	// ----------------------------------------------------------------
 	// Remove all leading characters 'cChar' from the string
 	private String DelLedChr(String sStr, char cChar) {
-		while ((sStr.length() > 0) && (sStr.charAt(0) == cChar))
+		while ((!sStr.isEmpty()) && (sStr.charAt(0) == cChar))
 			sStr = sStr.substring(1);
 
 		return sStr;
@@ -233,12 +230,12 @@ public class Rule1DBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i;
-		short OneRow[];
-		int xVector[];
+		short[] OneRow;
+		int[] xVector;
 		int ary1DOfs; // margins, used for wrapping
 		int ic, iPow, iIdx;
 		int iClo = mjb.StatesCount;

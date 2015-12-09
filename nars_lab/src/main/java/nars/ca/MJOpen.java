@@ -72,9 +72,9 @@ public class MJOpen {
 				String sFirstLine = "";
 				while (i < vLines.size()) {
 					sBff = (String) vLines.elementAt(i);
-					if ((sBff.length() == 0) || (sBff.startsWith("#C"))
+					if ((sBff.isEmpty()) || (sBff.startsWith("#C"))
 							|| (sBff.startsWith("#D"))
-							|| (sBff.startsWith("!"))) {
+							|| (sBff.length() > 0 && sBff.charAt(0) == '!')) {
 						i++; // comment found, go on searching
 					} else {
 						sFirstLine = sBff;
@@ -83,22 +83,12 @@ public class MJOpen {
 				}
 
 				// try to recognize the file type
-				if (sFirstLine.startsWith("#Life 1.05"))
+				if (sFirstLine.startsWith("#Life 1.05") || sFirstLine.startsWith("#Life 1.02") || sFirstLine.startsWith("#P") || sFirstLine.startsWith("#MCLife"))
 					fOk = ReadLife105(vLines);
-				else if (sFirstLine.startsWith("#Life 1.02"))
-					fOk = ReadLife105(vLines);
-				else if (sFirstLine.startsWith("#P"))
-					fOk = ReadLife105(vLines);
-				else if (sFirstLine.startsWith("#MCLife"))
+				else if (sFirstLine.startsWith("#MCell") || sFirstLine.startsWith("#Life 1.06"))
 					fOk = ReadMCL(vLines);
-				else if (sFirstLine.startsWith("#MCell"))
-					fOk = ReadMCL(vLines);
-				else if (sFirstLine.startsWith("#Life 1.06"))
+				else if (sFirstLine.startsWith("#Life 1.05b") || sFirstLine.length() > 0 && sFirstLine.charAt(0) == 'x')
 					fOk = ReadLife106(vLines);
-				else if (sFirstLine.startsWith("#Life 1.05b"))
-					fOk = ReadLife106(vLines);
-				else if (sFirstLine.startsWith("x"))
-					fOk = ReadRLE(vLines);
 
 				if (!fOk)
 					fOk = ReadLife105(vLines);
@@ -111,7 +101,7 @@ public class MJOpen {
 
 				if (fOk) // pattern loaded
 				{
-					if (m_vCells.size() > 0) // any cells found
+					if (!m_vCells.isEmpty()) // any cells found
 						AddPattern();
 				} else {
 					System.out
@@ -167,10 +157,7 @@ public class MJOpen {
 		// add all cells
 		mjb.Clear(false);
 		dx = mjb.UnivSize.x / 2 - (m_rectMaxX + m_rectMinX) / 2 - 1;
-		if (mjb.GameType == MJRules.GAMTYP_2D)
-			dy = mjb.UnivSize.y / 2 - (m_rectMaxY + m_rectMinY) / 2 - 1;
-		else
-			dy = 0;
+		dy = mjb.GameType == MJRules.GAMTYP_2D ? mjb.UnivSize.y / 2 - (m_rectMaxY + m_rectMinY) / 2 - 1 : 0;
 		for (i = 0; i < m_vCells.size(); i++) {
 			cell = m_vCells.get(i);
 			x = cell.x + dx;
@@ -191,11 +178,11 @@ public class MJOpen {
 			mjUI.SetColoringMethod(m_Coloring);
 
 		// color palette
-		if (m_sPalette.length() > 0)
+		if (!m_sPalette.isEmpty())
 			mjUI.SetColorPalette(m_sPalette);
 
 		// set rules
-		if (m_sRules.length() > 0) {
+		if (!m_sRules.isEmpty()) {
 			mjb.SetRule(mjUI.mjr.GetGameIndex(m_sGame), "", m_sRules);
 		}
 
@@ -213,8 +200,8 @@ public class MJOpen {
 		m_rectMinX = m_rectMinY = 999999;
 		m_rectMaxX = m_rectMaxY = -999999;
 
-		for (int i = 0; i < m_vCells.size(); i++) {
-			cell = m_vCells.get(i);
+		for (CACell m_vCell : m_vCells) {
+			cell = m_vCell;
 
 			if (m_rectMinX > cell.x)
 				m_rectMinX = cell.x;
@@ -265,12 +252,14 @@ public class MJOpen {
 
 		bff = bff.trim();
 
-		if (bff.length() > 0) {
+		if (!bff.isEmpty()) {
 			// special characters?
 			if ((bff.charAt(0) == '#') || (bff.charAt(0) == '!')
 					|| (bff.charAt(0) == '/')) {
+				//noinspection IfStatementWithTooManyBranches
 				if (bff.startsWith("#P")) // the block position
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #P
 					iRow105 = 0;
@@ -283,12 +272,14 @@ public class MJOpen {
 					m_sRules = "23/3"; // standard Conway's rules
 				} else if (bff.startsWith("#R")) // specific rules
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #R
 					if (st.hasMoreTokens())
 						m_sRules = st.nextToken();
 				} else if (bff.startsWith("#S")) // speed
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #S
 					if (st.hasMoreTokens())
@@ -296,14 +287,14 @@ public class MJOpen {
 				} else if (bff.startsWith("#D") || bff.startsWith("#C")) // description
 				{
 					sTok = bff.substring(2);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
-				} else if (bff.startsWith("!")) // description
+				} else if (bff.length() > 0 && bff.charAt(0) == '!') // description
 				{
 					sTok = bff.substring(1);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
@@ -393,7 +384,8 @@ public class MJOpen {
 
 		bff = bff.trim();
 
-		if (bff.length() > 0) {
+		if (!bff.isEmpty()) {
+			//noinspection IfStatementWithTooManyBranches
 			if (bff.startsWith("#RULE")) // specific rules
 			{
 				sTok = bff.substring(5);
@@ -411,13 +403,14 @@ public class MJOpen {
 			} else if (bff.startsWith("#D")) // description
 			{
 				sTok = bff.substring(2);
-				if (sTok.length() > 0) // remove one leading blank
+				if (!sTok.isEmpty()) // remove one leading blank
 					if (sTok.charAt(0) == ' ')
 						sTok = sTok.substring(1);
 				m_vDescr.add(sTok); // add the comment line
 			} else if (bff.startsWith("#BOARD")) // board size,  "999x999"
 			{
 				sTok = bff.substring(6).trim();
+				//noinspection UseOfStringTokenizer
 				StringTokenizer st = new StringTokenizer(sTok, "x", false);
 				if (st.hasMoreTokens()) {
 					String sTmp = st.nextToken();
@@ -547,7 +540,7 @@ public class MJOpen {
 		if (bff.startsWith("#D") || bff.startsWith("#C")) // strange description
 		{
 			sTok = bff.substring(2);
-			if (sTok.length() > 0) // remove one leading blank
+			if (!sTok.isEmpty()) // remove one leading blank
 				if (sTok.charAt(0) == ' ')
 					sTok = sTok.substring(1);
 			m_vDescr.add(sTok); // add the comment line
@@ -556,15 +549,17 @@ public class MJOpen {
 			{
 				m_vDescr.add(bff); // add the comment line
 			} else {
-				if (bff.length() > 0) {
-					if ((!fXYFound) && bff.startsWith("x")) // the first line
+				if (!bff.isEmpty()) {
+					if ((!fXYFound) && bff.length() > 0 && bff.charAt(0) == 'x') // the first line
 					{
 						fXYFound = true;
 						fOk = true; // any line processed
 
+						//noinspection UseOfStringTokenizer
 						StringTokenizer stcomma = new StringTokenizer(bff, ",");
 						while (stcomma.hasMoreTokens()) {
 							String t = stcomma.nextToken();
+							//noinspection UseOfStringTokenizer
 							StringTokenizer stequal = new StringTokenizer(t,
 									"= ");
 							String tokenType = stequal.nextToken();
@@ -698,21 +693,24 @@ public class MJOpen {
 
 		bff = bff.trim();
 
-		if (bff.length() > 0) {
+		if (!bff.isEmpty()) {
 			// a keyword or a comment?
 			if ((bff.charAt(0) == '#') || (bff.charAt(0) == '/')
 					|| (bff.charAt(0) == '!')) {
+				//noinspection IfStatementWithTooManyBranches
 				if (bff.startsWith("#N")) // standard rules
 				{
 					m_sRules = "23/3"; // standard Conway's rules
 				} else if (bff.startsWith("#R")) // specific rules
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #R
 					if (st.hasMoreTokens())
 						m_sRules = st.nextToken();
 				} else if (bff.startsWith("#S")) // speed
 				{
+					//noinspection UseOfStringTokenizer
 					StringTokenizer st = new StringTokenizer(bff);
 					st.nextToken(); // #S
 					if (st.hasMoreTokens())
@@ -720,20 +718,21 @@ public class MJOpen {
 				} else if (bff.startsWith("#D") || bff.startsWith("#C")) {
 					// description
 					sTok = bff.substring(2);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
-				} else if (bff.startsWith("!")) {
+				} else if (bff.length() > 0 && bff.charAt(0) == '!') {
 					// description
 					sTok = bff.substring(1);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
 				}
 			} else // a cell
 			{
+				//noinspection UseOfStringTokenizer
 				StringTokenizer st = new StringTokenizer(bff);
 				if (st.hasMoreTokens()) {
 					iCol = Integer.parseInt(st.nextToken());

@@ -41,13 +41,13 @@ public class SgMethodTest extends SgBehaviorTest {
 
     @Test
     public void testGetSignature() {
-        final SgMethod method = new SgMethod(clasz, "public", SgClass.VOID, "setCount");
+        SgMethod method = new SgMethod(clasz, "public", SgClass.VOID, "setCount");
         new SgArgument(method, SgClass.INT, "count");
         Assert.assertEquals(method.getSignature(), "public void setCount(int count)");
         new SgArgument(method, SgClass.BOOLEAN, "ok");
         Assert.assertEquals(method.getSignature(),
                 "public void setCount(int count, boolean ok)");
-        final SgClassPool pool = new SgClassPool();
+        SgClassPool pool = new SgClassPool();
         method.addException(SgClass.create(pool, IOException.class));
         Assert.assertEquals(method.getSignature(),
                 "public void setCount(int count, boolean ok) throws java.io.IOException");
@@ -59,9 +59,9 @@ public class SgMethodTest extends SgBehaviorTest {
 
     @Test
     public void testAddBodyLine() {
-        final SgMethod method = new SgMethod(clasz, "public", SgClass.VOID, "setCount");
+        SgMethod method = new SgMethod(clasz, "public", SgClass.VOID, "setCount");
         new SgArgument(method, SgClass.INT, "count");
-        final String line = "this.count = count;";
+        String line = "this.count = count;";
         Assert.assertEquals(method.getBody().size(), 0);
         method.addBodyLine(line);
         Assert.assertEquals(method.getBody().size(), 1);

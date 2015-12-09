@@ -44,7 +44,7 @@ public class SourceEnvironment {
     }
 
     public void nl() {
-        stringBuilder.append("\n");
+        stringBuilder.append('\n');
     }
 
     @Override

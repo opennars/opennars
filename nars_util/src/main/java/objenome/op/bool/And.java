@@ -97,11 +97,7 @@ public class And extends BooleanNode {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 2) && TypeUtil.allEqual(inputTypes, Boolean.class)) {
-            return Boolean.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 2) && TypeUtil.allEqual(inputTypes, Boolean.class) ? Boolean.class : null;
     }
 
     @Override

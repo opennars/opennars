@@ -32,13 +32,11 @@ public class AquaLookAndFeelAddons extends BasicLookAndFeelAddons {
   }
   
   private Object[] getDefaults() {
-    
-    Object[] defaults =
-      new Object[] {
-      "TaskPaneGroupUI",
-      "com.l2fprod.common.swing.plaf.misc.GlossyTaskPaneGroupUI",
-    };
-    return defaults;
+
+    return new Object[] {
+    "TaskPaneGroupUI",
+    "com.l2fprod.common.swing.plaf.misc.GlossyTaskPaneGroupUI",
+  };
   }
   
 }

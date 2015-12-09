@@ -16,7 +16,7 @@ import static javafx.application.Platform.runLater;
  * @param E edge
  * @param N visualized node
  */
-abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* W? */>  {
+public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* W? */>  {
 
     public final AtomicBoolean refresh = new AtomicBoolean(true);
 
@@ -24,10 +24,10 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     protected SpaceGrapher<V, N> grapher;
 
 
-    abstract public void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget);
+    public abstract void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget);
 
 
-    abstract public V getTargetVertex(E edge);
+    public abstract V getTargetVertex(E edge);
 
     /** if the grapher is ready */
     public final boolean isReady() {
@@ -36,7 +36,7 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
         return grapher.isReady();
     }
 
-    final public void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
+    public final void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
 
 
         forEachOutgoingEdgeOf(s, t -> {
@@ -65,7 +65,7 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
             getEdge(SpaceGrapher<K,V> g, V s, V t, BiFunction<V, V, TermEdge> edgeBuilder) {
 
         //re-order
-        final int i = s.getTerm().compareTo(t.getTerm());
+        int i = s.getTerm().compareTo(t.getTerm());
         if (i == 0) return null;
             /*throw new RuntimeException(
                 "order=0 but must be non-equal: " + s.term + " =?= " + t.term + ", equal:"
@@ -86,7 +86,7 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     }
 
     public void stop() {
-        this.grapher = null;
+        grapher = null;
     }
 
     public void start(SpaceGrapher<V, N> g) {
@@ -97,7 +97,7 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
         updateGraph();
         setUpdateable();
 
-        this.grapher = g;
+        grapher = g;
     }
 
 //    public Animate start(SpaceGrapher<V, N> g, int loopMS) {
@@ -124,14 +124,12 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     }
 
 
-    final public boolean canUpdate() {
+    public final boolean canUpdate() {
         return refresh.compareAndSet(true, false);
     }
 
-    final public void setUpdateable() {
-        runLater(() -> {
-            refresh.set(true);
-        });
+    public final void setUpdateable() {
+        runLater(() -> refresh.set(true));
     }
 
     public void stop(SpaceGrapher<V,? super N> g) {

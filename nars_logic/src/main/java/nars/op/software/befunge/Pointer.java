@@ -76,13 +76,13 @@ public class Pointer {
 
         map.put('`', () -> stack.push((long) (stack.pop() <= stack.pop() ? 1 : 0)));
 
-        map.put('<', () -> left());
+        map.put('<', this::left);
 
-        map.put('>', () -> right());
+        map.put('>', this::right);
 
-        map.put('v', () -> down());
+        map.put('v', this::down);
 
-        map.put('^', () -> up());
+        map.put('^', this::up);
 
         map.put('?', () -> {
             int[] xarray = {-1, 1, 0, 0};
@@ -122,13 +122,13 @@ public class Pointer {
             stack.push(t1);
         });
 
-        map.put('$', () -> stack.pop());
+        map.put('$', stack::pop);
 
         map.put('.', () -> System.out.print(stack.pop()));
 
         map.put(',', () -> System.out.print((char) stack.pop().shortValue()));
 
-        map.put('#', () -> move());
+        map.put('#', this::move);
 
         map.put('p', () -> {
             int y = stack.pop().intValue();

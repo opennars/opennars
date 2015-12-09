@@ -39,7 +39,7 @@ public class ImageExt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    public ImageExt(final Term[] arg, final int index) {
+    public ImageExt(Term[] arg, int index) {
         super(arg, index);
     }
 

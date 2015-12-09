@@ -28,11 +28,11 @@ import java.util.*;
  */
 public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
-    final static int PRECISION = 4;
+    static final int PRECISION = 4;
 
 
 
-    final static ObjectMapper json = new ObjectMapper();
+    static final ObjectMapper json = new ObjectMapper();
 
     public static void printJSONArray(PrintStream out, Object[] row, boolean includeBrackets) {
         try {
@@ -95,14 +95,12 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         double max = Double.NEGATIVE_INFINITY;
 
 
-
-        Iterator<Object[]> ii = iterator(); //signal);
-        while (ii.hasNext()) {
-            Object e = ii.next()[signal];
+        for (Object[] objects : (Iterable<Object[]>) this) {
+            Object e = objects[signal];
             if (e instanceof Number) {
-                double d = ((Number)e).doubleValue();
+                double d = ((Number) e).doubleValue();
                 if (d < min) min = d;
-                if (d > max) max = d;                
+                if (d > max) max = d;
             }
         }
         s.setMin(min);
@@ -208,8 +206,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     private final List<Signals<?>> meters = new ArrayList<>();
     private final ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
-    transient private List<Signal> signalList = new ArrayList<>();
-    transient private Map<String, Integer> signalIndex = new HashMap();
+    private transient List<Signal> signalList = new ArrayList<>();
+    private transient Map<String, Integer> signalIndex = new HashMap();
     
     int numColumns;
     
@@ -223,8 +221,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
     /** fixed size */
     public Metrics(int historySize) {
-        super();
-        this.history = historySize;
+        history = historySize;
         
         add(new RowKeyMeter());
     }
@@ -312,7 +309,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     private void invalidateExtrema(boolean added, Object[] row, boolean[] extremaToInvalidate) {
         for (int i = 0; i < row.length; i++) {
             Object ri = row[i];
-            if (ri == null || !(ri instanceof Number)) continue;
+            if (!(ri instanceof Number)) continue;
             
             double n = ((Number)row[i]).doubleValue();
             if (Double.isNaN(n)) continue;
@@ -335,7 +332,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
             else {
                 //for rows which have been removed
                 if (minNAN || (n == min))  { extremaToInvalidate[i] = true; continue; }
-                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true; continue; }
+                if (maxNAN || (n == max))  { extremaToInvalidate[i] = true;
+                }
             }
                 
         }
@@ -415,7 +413,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
             c = new Object[ numRows() ];
         
         int r = 0;
-        for (final Object[] row : this) {
+        for (Object[] row : this) {
             c[r++] = row[signal];
         }
         
@@ -444,7 +442,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public Iterator<Object[]> iterator(final int... columns) {
+    public Iterator<Object[]> iterator(int... columns) {
         if (columns.length == 1) {
             //fast 1-argument
             return Iterators.transform(iterator(), new firstColumnIterator(columns));
@@ -502,7 +500,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         printJSONArray(out, getSignalIDs(),false );
     }
     public void printCSVLastLine(PrintStream out) {
-        if (rows.size() > 0)
+        if (!rows.isEmpty())
             printJSONArray(out, rowLast(), false);
     }
 

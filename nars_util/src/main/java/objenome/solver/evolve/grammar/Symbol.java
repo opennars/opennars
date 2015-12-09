@@ -32,6 +32,6 @@ public interface Symbol extends Cloneable {
     /**
      *
      */
-    public Symbol clone();
+    Symbol clone();
 
 }

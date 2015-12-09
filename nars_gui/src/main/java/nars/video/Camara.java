@@ -60,23 +60,23 @@ public class Camara extends Application {
 
             boolean p = true;
 
+            //noinspection OverlyComplexAnonymousInnerClass
             Task<Void> tarea = new Task<Void>() {
 
                 @Override
                 protected Void call() throws Exception {
-                    while (p) {
-                        try {
-                            bfi = cam.getImage();
-                            if (bfi != null) {
-                                Platform.runLater(() ->
-                                        img.set(SwingFXUtils.toFXImage(bfi,
-                                                null)));
-                                bfi.flush();
-                            }
-
-                        } catch (Exception e) {
-                            out.println("la excepcion : " + e);
+                    //noinspection LoopConditionNotUpdatedInsideLoop
+                    while (p) try {
+                        bfi = cam.getImage();
+                        if (bfi != null) {
+                            Platform.runLater(() ->
+                                    img.set(SwingFXUtils.toFXImage(bfi,
+                                            null)));
+                            bfi.flush();
                         }
+
+                    } catch (Exception e) {
+                        out.println("la excepcion : " + e);
                     }
                     return null;
                 }

@@ -35,7 +35,6 @@ public class BlueishButtonUI
   private static Color blueishBorderSelected = new Color(49, 106, 197);
 
   public BlueishButtonUI() {
-    super();
   }
 
   public void installUI(JComponent c) {

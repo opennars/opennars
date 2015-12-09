@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BubbleBagTest extends AbstractBagTest {
 
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
     @Test
     public void testSolidBagSetOperations() {

@@ -80,11 +80,7 @@ public class LookAndFeelAddons {
     try {
       setAddon(addonClassname);
       setTrackingLookAndFeelChanges(true);      
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (ClassNotFoundException e) {
+    } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
       e.printStackTrace();
     }
   }
@@ -92,15 +88,15 @@ public class LookAndFeelAddons {
   private static LookAndFeelAddons currentAddon;
 
   public void initialize() {
-    for (Iterator iter = contributedComponents.iterator(); iter.hasNext();) {
-      ComponentAddon addon = (ComponentAddon)iter.next();
+    for (Object contributedComponent : contributedComponents) {
+      ComponentAddon addon = (ComponentAddon) contributedComponent;
       addon.initialize(this);
     }
   }
 
   public void uninitialize() {
-    for (Iterator iter = contributedComponents.iterator(); iter.hasNext();) {
-      ComponentAddon addon = (ComponentAddon)iter.next();
+    for (Object contributedComponent : contributedComponents) {
+      ComponentAddon addon = (ComponentAddon) contributedComponent;
       addon.uninitialize(this);
     }
   }
@@ -169,17 +165,14 @@ public class LookAndFeelAddons {
   public static String getBestMatchAddonClassName() {
     String lnf = UIManager.getLookAndFeel().getClass().getName();
     String addon;
+    //noinspection IfStatementWithTooManyBranches
     if (UIManager.getCrossPlatformLookAndFeelClassName().equals(lnf)) {
       addon = MetalLookAndFeelAddons.class.getName();
     } else if (UIManager.getSystemLookAndFeelClassName().equals(lnf)) {
       addon = getSystemAddonClassName();
     } else if ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel".equals(lnf) ||
       "com.jgoodies.looks.windows.WindowsLookAndFeel".equals(lnf)) {
-      if (OS.isUsingWindowsVisualStyles()) {
-        addon = WindowsLookAndFeelAddons.class.getName();
-      } else {
-        addon = WindowsClassicLookAndFeelAddons.class.getName();
-      }
+      addon = OS.isUsingWindowsVisualStyles() ? WindowsLookAndFeelAddons.class.getName() : WindowsClassicLookAndFeelAddons.class.getName();
     } else if ("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel"
       .equals(lnf)) {
       addon = WindowsClassicLookAndFeelAddons.class.getName();
@@ -205,11 +198,7 @@ public class LookAndFeelAddons {
       addon = AquaLookAndFeelAddons.class.getName();
     } else if (OS.isWindows()) {
       // see whether of not visual styles are used
-      if (OS.isUsingWindowsVisualStyles()) {
-        addon = WindowsLookAndFeelAddons.class.getName();
-      } else {
-        addon = WindowsClassicLookAndFeelAddons.class.getName();
-      }
+      addon = OS.isUsingWindowsVisualStyles() ? WindowsLookAndFeelAddons.class.getName() : WindowsClassicLookAndFeelAddons.class.getName();
     }
 
     return addon;

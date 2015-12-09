@@ -28,9 +28,7 @@ public class SampleLoader
     public static SonarSample load(String path)  {
         try {
             return loadSample(new FileInputStream(path));
-        } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -114,7 +112,7 @@ public class SampleLoader
             {
                 // Nasty.. check this.
                 for (int i = 0; i < s; i++)
-                    buf[i] = ((bb.getInt()&0xFFFFFFFFl)-0x80000000l) / (float)0x80000000;
+                    buf[i] = ((bb.getInt()& 0xFFFFFFFFL)- 0x80000000L) / (float)0x80000000;
             }
         }
         
@@ -126,8 +124,8 @@ public class SampleLoader
     public static SonarSample digitize(FloatToFloatFunction f, int sampleRate, float duration) {
 
         int samples = (int)(duration * sampleRate);
-        final SonarSample ss = new SonarSample(new float[samples], sampleRate);
-        final float[] b = ss.buf;
+        SonarSample ss = new SonarSample(new float[samples], sampleRate);
+        float[] b = ss.buf;
         float t = 0, dt = 1.0f / sampleRate;
         for (int i = 0; i < samples; i++) {
             b[i] = f.valueOf(t);

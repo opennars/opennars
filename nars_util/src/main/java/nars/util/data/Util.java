@@ -42,16 +42,16 @@ public class Util {
     protected Util() {
     }
 
-    public final static int PRIME3 = 524287;
-    public final static int PRIME2 = 92821;
-    public final static int PRIME1 = 31;
+    public static final int PRIME3 = 524287;
+    public static final int PRIME2 = 92821;
+    public static final int PRIME1 = 31;
 
     /**
      * It is basically the same as a lookup table with 2048 entries and linear interpolation between the entries, but all this with IEEE floating point tricks.
      * http://stackoverflow.com/questions/412019/math-optimization-in-c-sharp#412988
      */
-    public static double expFast(final double val) {
-        final long tmp = (long) (1512775 * val + (1072693248 - 60801));
+    public static double expFast(double val) {
+        long tmp = (long) (1512775 * val + (1072693248 - 60801));
         return Double.longBitsToDouble(tmp << 32);
     }
 
@@ -64,7 +64,7 @@ public class Util {
         if (Util.class.getClassLoader() == null)
             return Unsafe.getUnsafe();
         try {
-            final Field fld = Unsafe.class.getDeclaredField("theUnsafe");
+            Field fld = Unsafe.class.getDeclaredField("theUnsafe");
             fld.setAccessible(true);
             return (Unsafe) fld.get(Util.class);
         } catch (Exception e) {
@@ -83,11 +83,11 @@ public class Util {
         ));
     }
 
-    public final static int hash(final int a, final int b) {
+    public static final int hash(int a, int b) {
         return PRIME2 * (PRIME2 + a) + b;
     }
 
-    public final static int hash(int a, int b, int c) {
+    public static final int hash(int a, int b, int c) {
         return PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c;
     }
 
@@ -100,11 +100,11 @@ public class Util {
 //        return (int)x;
 //    }
 
-    public final static int hash(Object a, Object b) {
+    public static final int hash(Object a, Object b) {
         return hash(a.hashCode(), b.hashCode());
     }
 
-    public final static int hash(Object a, Object b, Object c) {
+    public static final int hash(Object a, Object b, Object c) {
         return hash(a.hashCode(), b.hashCode(), c.hashCode());
     }
 
@@ -112,13 +112,13 @@ public class Util {
 //        return hash(a.hashCode(), b.hashCode(), c.hashCode(), d.hashCode());
 //    }
 
-    public static void assertNotNull(final Object test, final String varName) {
+    public static void assertNotNull(Object test, String varName) {
         if (test == null) {
             throw new NullPointerException(varName);
         }
     }
 
-    public static void assertNotEmpty(final Object[] test, final String varName) {
+    public static void assertNotEmpty(Object[] test, String varName) {
         if (test == null) {
             throw new NullPointerException(varName);
         }
@@ -127,7 +127,7 @@ public class Util {
         }
     }
 
-    public static void assertNotEmpty(final CharSequence test, final String varName) {
+    public static void assertNotEmpty(CharSequence test, String varName) {
         if (test == null) {
             throw new NullPointerException(varName);
         }
@@ -136,14 +136,14 @@ public class Util {
         }
     }
 
-    public static void assertNotBlank(CharSequence test, final String varName) {
+    public static void assertNotBlank(CharSequence test, String varName) {
         if (test != null) {
             test = test.toString().trim();
         }
         assertNotEmpty(test, varName);
     }
 
-    public static <E> void assertNotEmpty(final Collection<E> test, final String varName) {
+    public static <E> void assertNotEmpty(Collection<E> test, String varName) {
         if (test == null) {
             throw new NullPointerException(varName);
         }
@@ -152,7 +152,7 @@ public class Util {
         }
     }
 
-    public static <K, V> void assertNotEmpty(final Map<K, V> test, final String varName) {
+    public static <K, V> void assertNotEmpty(Map<K, V> test, String varName) {
         if (test == null) {
             throw new NullPointerException(varName);
         }
@@ -161,11 +161,12 @@ public class Util {
         }
     }
 
-    public static boolean equalsNullAware(final Object obj1, final Object obj2) {
+    public static boolean equalsNullAware(Object obj1, Object obj2) {
         if (obj1 == null) {
             return obj2 == null;
 
-        } else if (obj2 == null) {
+        }
+        if (obj2 == null) {
             return false;
         }
 
@@ -178,11 +179,11 @@ public class Util {
         int strLen = line.length();
         StringBuilder sb = new StringBuilder(strLen);
         // Remove beginning and ending * globs because they're useless
-        if (line.startsWith("*")) {
+        if (line.length() > 0 && line.charAt(0) == '*') {
             line = line.substring(1);
             strLen--;
         }
-        if (line.endsWith("*")) {
+        if (line.length() > 0 && line.charAt(line.length() - 1) == '*') {
             line = line.substring(0, strLen - 1);
             strLen--;
         }
@@ -312,10 +313,10 @@ public class Util {
 
 
     public static long PJWHash(String str) {
-        long BitsInUnsignedInt = (long) (4 * 8);
+        long BitsInUnsignedInt = (4 * 8);
         long ThreeQuarters = (long) ((BitsInUnsignedInt * 3) / 4);
         long OneEighth = (long) (BitsInUnsignedInt / 8);
-        long HighBits = (long) (0xFFFFFFFF) << (BitsInUnsignedInt - OneEighth);
+        long HighBits = (0xFFFFFFFFL) << (BitsInUnsignedInt - OneEighth);
         long hash = 0;
         long test = 0;
 
@@ -332,7 +333,7 @@ public class Util {
    /* End Of  P. J. Weinberger Hash Function */
 
 
-    public static long ELFHash(final String str) {
+    public static long ELFHash(String str) {
         long hash = 0;
         long x = 0;
 
@@ -358,20 +359,20 @@ public class Util {
 
 
 
-    public static int ELFHashNonZero(final byte[] str, final int seed) {
+    public static int ELFHashNonZero(byte[] str, int seed) {
         int i  = (int) ELFHash(str, seed);
         if (i == 0) i = 1;
         return i;
     }
 
-    public static long ELFHash(final byte[] str, final long seed) {
+    public static long ELFHash(byte[] str, long seed) {
 
         long hash = seed;
 
-        final int len = str.length;
+        int len = str.length;
 
-        for (int i = 0; i < len; i++) {
-            hash = (hash << 4) + str[i];
+        for (byte aStr : str) {
+            hash = (hash << 4) + aStr;
 
             long x;
             if ((x = hash & 0xF0000000L) != 0) {
@@ -464,11 +465,7 @@ public class Util {
         long hash = 0xAAAAAAAA;
 
         for (int i = 0; i < str.length(); i++) {
-            if ((i & 1) == 0) {
-                hash ^= ((hash << 7) ^ str.charAt(i) * (hash >> 3));
-            } else {
-                hash ^= (~((hash << 11) + str.charAt(i) ^ (hash >> 5)));
-            }
+            hash ^= (i & 1) == 0 ? (hash << 7) ^ str.charAt(i) * (hash >> 3) : ~((hash << 11) + str.charAt(i) ^ (hash >> 5));
         }
 
         return hash;
@@ -481,7 +478,7 @@ public class Util {
     /**
      * returns the next index
      */
-    public static int long2Bytes(long l, final byte[] target, final int offset) {
+    public static int long2Bytes(long l, byte[] target, int offset) {
         for (int i = offset + 7; i >= offset; i--) {
             target[i] = (byte) (l & 0xFF);
             l >>= 8;
@@ -492,7 +489,7 @@ public class Util {
     /**
      * returns the next index
      */
-    public static int int2Bytes(int l, final byte[] target, final int offset) {
+    public static int int2Bytes(int l, byte[] target, int offset) {
         for (int i = offset + 3; i >= offset; i--) {
             target[i] = (byte) (l & 0xFF);
             l >>= 8;
@@ -503,7 +500,7 @@ public class Util {
     /**
      * http://www.java-gaming.org/index.php?topic=24194.0
      */
-    public static int floorInt(final float x) {
+    public static int floorInt(float x) {
         return (int) (x + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 
@@ -515,20 +512,20 @@ public class Util {
     /**
      * linear interpolate between target & current, factor is between 0 and 1.0
      */
-    public static float lerp(final float target, final float current, final float factor) {
-        return target * factor + current * (1f - factor);
+    public static float lerp(float target, float current, float factor) {
+        return target * factor + current * (1.0f - factor);
     }
-    public static double lerp(final double target, final double current, double factor) {
-        return target * factor + current * (1f - factor);
+    public static double lerp(double target, double current, double factor) {
+        return target * factor + current * (1.0f - factor);
     }
     /**
      * maximum, simpler and faster than Math.max without its additional tests
      */
-    public final static float max(final float a, final float b) {
+    public static final float max(float a, float b) {
         return (a > b) ? a : b;
     }
 
-    public final static float mean(final float a, final float b) {
+    public static final float mean(float a, float b) {
         return (a + b) * 0.5f;
     }
 
@@ -568,11 +565,11 @@ public class Util {
     /**
      * Generic utility method for running a list of tasks in current thread
      */
-    public static void run(final Deque<Runnable> tasks) {
-        run(tasks, tasks.size(), r -> r.run());
+    public static void run(Deque<Runnable> tasks) {
+        run(tasks, tasks.size(), Runnable::run);
     }
 
-    public static void run(final Deque<Runnable> tasks, int maxTasksToRun, Consumer<Runnable> runner) {
+    public static void run(Deque<Runnable> tasks, int maxTasksToRun, Consumer<Runnable> runner) {
         while (!tasks.isEmpty() && maxTasksToRun-- > 0) {
             runner.accept( tasks.removeFirst() );
         }
@@ -581,19 +578,19 @@ public class Util {
     /**
      * Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish)
      */
-    public static void run(final Deque<Runnable> tasks, int maxTasksToRun, int threads) {
+    public static void run(Deque<Runnable> tasks, int maxTasksToRun, int threads) {
 
-        final int concurrency = Math.min(threads, maxTasksToRun);
+        int concurrency = Math.min(threads, maxTasksToRun);
         if (concurrency == 1) {
             tasks.forEach(Runnable::run);
             return;
         }
 
-        final ConcurrentContext ctx = ConcurrentContext.enter();
+        ConcurrentContext ctx = ConcurrentContext.enter();
         ctx.setConcurrency(concurrency);
 
         try {
-            run(tasks, maxTasksToRun, r -> ctx.execute(r));
+            run(tasks, maxTasksToRun, ctx::execute);
         } finally {
             // Waits for all concurrent executions to complete.
             // Re-exports any exception raised during concurrent executions.
@@ -606,11 +603,11 @@ public class Util {
     /**
      * clamps a value to 0..1 range
      */
-    public static float clamp(final float p) {
-        if (p > 1f)
-            return 1f;
-        else if (p < 0f)
-            return 0f;
+    public static float clamp(float p) {
+        if (p > 1.0f)
+            return 1.0f;
+        if (p < 0.0f)
+            return 0.0f;
         return p;
     }
 
@@ -621,7 +618,7 @@ public class Util {
         return clamp(Math.round(value / epsilon) * epsilon);
     }
 
-    public static int hash(final float f, final int discretness) {
+    public static int hash(float f, int discretness) {
         return (int) (f * discretness);
     }
 
@@ -636,21 +633,21 @@ public class Util {
     /**
      * tests equivalence (according to epsilon precision)
      */
-    public static boolean equal(final float a, final float b, final float epsilon) {
+    public static boolean equal(float a, float b, float epsilon) {
         return Math.abs(a - b) < epsilon;
     }
 
     /**
      * tests equivalence (according to epsilon precision)
      */
-    public static boolean equal(final double a, final double b, final double epsilon) {
+    public static boolean equal(double a, double b, double epsilon) {
         return Math.abs(a - b) < epsilon;
     }
 
     /** from boofcv: */
-    public static void pause(final long milli) {
-        final Thread t = Thread.currentThread();
-        final long start = System.currentTimeMillis();
+    public static void pause(long milli) {
+        Thread t = Thread.currentThread();
+        long start = System.currentTimeMillis();
 
         while(System.currentTimeMillis() - start < milli) {
             synchronized(t) {
@@ -670,7 +667,7 @@ public class Util {
     /** applies a quick, non-lexicographic ordering compare
      * by first testing their lengths
      */
-    public final static int compare(long[] x, long[] y) {
+    public static final int compare(long[] x, long[] y) {
         if (x == y) return 0;
 
         int xlen = x.length;
@@ -689,7 +686,7 @@ public class Util {
         }
     }
 
-    public static byte[] intAsByteArray(final int index) {
+    public static byte[] intAsByteArray(int index) {
 
         if (index < 36) {
             byte x = Utf8.base36(index);
@@ -715,7 +712,7 @@ public class Util {
 
     }
 
-    public static int bin(final float x, final int bins) {
+    public static int bin(float x, int bins) {
         return (int) Math.floor((x + (0.5f / bins)) * bins);
     }
 
@@ -725,7 +722,7 @@ public class Util {
     }
 
     /** finds the mean value of a given bin */
-    public static float unbinCenter(final int b, final int bins) {
+    public static float unbinCenter(int b, int bins) {
         return ((float)b)/bins;
     }
 }

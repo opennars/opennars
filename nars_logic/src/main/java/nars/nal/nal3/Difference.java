@@ -6,7 +6,7 @@ import nars.term.compound.CompoundN;
 /**
  * Common parent class for DifferenceInt and DifferenceExt
  */
-abstract public class Difference extends CompoundN {
+public abstract class Difference extends CompoundN {
 
     Difference(Term a, Term b) {
         super(a, b);

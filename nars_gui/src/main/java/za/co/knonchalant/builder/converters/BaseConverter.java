@@ -7,7 +7,7 @@ public abstract class BaseConverter<T> implements IValueFieldConverter<T> {
     private String tag;
 
     protected String getTag() {
-        return this.tag;
+        return tag;
     }
 
     @Override

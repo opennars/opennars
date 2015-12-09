@@ -21,8 +21,8 @@ public abstract class IllegalGrammarTest
     private IllegalGrammarParser parser;
 
     protected IllegalGrammarTest(
-        final Class<? extends IllegalGrammarParser> parserClass,
-        final String errorMessage)
+        Class<? extends IllegalGrammarParser> parserClass,
+        String errorMessage)
     {
         this.parserClass = Objects.requireNonNull(parserClass);
         this.errorMessage = Objects.requireNonNull(errorMessage);

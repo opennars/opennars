@@ -54,7 +54,7 @@ public class BeliefAnalysis extends EnergyAnalysis {
     }
 
     public void print() {
-        System.out.println("Beliefs[@" + nar.time() + "] " + beliefs().size() + "/" + beliefs().getCapacity());
+        System.out.println("Beliefs[@" + nar.time() + "] " + beliefs().size() + '/' + beliefs().getCapacity());
         beliefs().print(System.out);
         System.out.println();
     }

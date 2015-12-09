@@ -13,12 +13,12 @@ import java.util.Random;
  * Created by me on 1/18/15.
  */
 public class AbstractBagTest {
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, NullItem> f, boolean requireOrder) {
 
         int levels = 9;
-        int count[] = new int[levels];
+        int[] count = new int[levels];
 
         float adjustFraction = fractionToAdjust;
         float removeFraction = fractionToRemove;
@@ -83,9 +83,8 @@ public class AbstractBagTest {
                     Assert.assertTrue(sizeAfter == 0);
                     Assert.assertEquals(sizeAfter, sizeBefore);
                     continue;
-                } else {
-                    Assert.assertEquals(sizeAfter, sizeBefore - 1);
                 }
+                Assert.assertEquals(sizeAfter, sizeBefore - 1);
 
                 float p = t.getPriority();
 

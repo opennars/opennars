@@ -38,8 +38,8 @@ public class Hilbert extends Linear {
         super.run(graph, iterations);
     }
 
-    final static int MAX_CACHED_ORDER = 8;
-    final static FloatArrayList[] hilbertOrders = new FloatArrayList[MAX_CACHED_ORDER];
+    static final int MAX_CACHED_ORDER = 8;
+    static final FloatArrayList[] hilbertOrders = new FloatArrayList[MAX_CACHED_ORDER];
 
     private FloatArrayList update(int order, int north, int east, int south, int west) {
 
@@ -61,7 +61,7 @@ public class Hilbert extends Linear {
 
     @Override
     public void setPosition(TermNode v, int i, int max) {
-        final FloatArrayList poly = this.poly;
+        FloatArrayList poly = this.poly;
 
         if ( i*2 >= poly.size() )
             return;
@@ -143,10 +143,7 @@ public class Hilbert extends Linear {
             else
             {
                 int  t = power( k, n/2 );
-                if( (n % 2) == 0 )
-                    return t * t;
-                else
-                    return k * t * t;
+                return (n % 2) == 0 ? t * t : k * t * t;
             }
         }
 }

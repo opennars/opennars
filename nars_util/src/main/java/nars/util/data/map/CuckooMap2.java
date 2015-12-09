@@ -62,10 +62,10 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
     private static final float kMaxLoadFactor = 0.40f;
 
     /* The two hash arrays. */
-    private Entry<K, V> mArrays[][] = new Entry[2][kStartSize];
+    private Entry<K, V>[][] mArrays = new Entry[2][kStartSize];
 
     /* The two hash functions. */
-    private final HashFunction<? super K> mHashFns[] = new HashFunction[2];
+    private final HashFunction<? super K>[] mHashFns = new HashFunction[2];
 
     /* The family of universal hash functions. */
     private final UniversalHashFunction<? super K> mUniversalHashFunction;
@@ -88,7 +88,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * @param obj The object whose hash code should be computed.
          * @return The object's hash code.
          */
-        public int hash(T obj);
+        int hash(T obj);
     }
 
     /***************************************************************************
@@ -114,7 +114,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * @return A random hash function whose distribution satisfies the above
          *         property.
          */
-        public HashFunction<T> randomHashFunction(int buckets);
+        HashFunction<T> randomHashFunction(int buckets);
     }
 
     /**
@@ -150,9 +150,9 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
             if (obj == null) return 0;
 
             /* Otherwise, split its hash code into upper and lower bits. */
-            final int objHash = obj.hashCode();
-            final int upper = objHash >>> 16;
-            final int lower = objHash & (0xFFFF);
+            int objHash = obj.hashCode();
+            int upper = objHash >>> 16;
+            int lower = objHash & (0xFFFF);
 
             /* Return the pairwise product of those bits, shifted down so that
              * only lgSize bits remain in the output.
@@ -192,7 +192,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
             /* Return a default hash function initialized with random values
              * and the log of the number of buckets.
              */
-            return new DefaultHashFunction<T>(mRandom.nextInt(), mRandom.nextInt(),
+            return new DefaultHashFunction<>(mRandom.nextInt(), mRandom.nextInt(),
                     lgBuckets);
         }
     }
@@ -246,8 +246,8 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          */
         for (int i = 0; i < 2; ++i) {
             /* Compute the hash code, then look up the entry there. */
-            final int hash = mHashFns[i].hash(key);
-            final Entry<K, V> entry = mArrays[i][hash];
+            int hash = mHashFns[i].hash(key);
+            Entry<K, V> entry = mArrays[i][hash];
 
             /* If the entry matches, we found what we're looking for. */
             if (entry != null && isEqual(entry.getKey(), key)) {
@@ -273,7 +273,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
         /* Otherwise, continously try to insert the value into the hash table,
          * rehashing whenever that fails.
          */
-        Entry<K, V> toInsert = new SimpleEntry<K, V>(key, value);
+        Entry<K, V> toInsert = new SimpleEntry<>(key, value);
         while (true) {
             /* Add the entry to the table, then see what element was
              * ultimately displaced.
@@ -316,8 +316,8 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          */
         for (int numTries = 0; numTries < size() + 1; ++numTries) {
             /* Compute the hash code and see what's at that position. */
-            final int hash = mHashFns[numTries % 2].hash(toInsert.getKey());
-            final Entry<K, V> entry = mArrays[numTries % 2][hash];
+            int hash = mHashFns[numTries % 2].hash(toInsert.getKey());
+            Entry<K, V> entry = mArrays[numTries % 2][hash];
 
             /* If the entry is null, the slot is open and we just write the
              * element there.
@@ -381,7 +381,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * otherwise have no way of tracking what values got inserted.
          */
         EntrySet var = entrySet();
-        Entry<K, V> values[] = var.toArray(new Entry[var.size()]);
+        Entry<K, V>[] values = var.toArray(new Entry[var.size()]);
 
         /* Continuously spin, trying to add more and more values to the table.
          * If at any point we can't add something, pick new hash functions and
@@ -417,7 +417,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
         /* Hold on to the old arrays; we'll need this so that later on we can
          * scan over and add everything to the new array.
          */
-        Entry<K, V> oldArrays[][] = mArrays;
+        Entry<K, V>[][] oldArrays = mArrays;
 
         /* Reallocate the arrays twice as large as they are now. */
         mArrays = new Entry[2][mArrays[0].length * 2];
@@ -485,7 +485,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
     public boolean containsKey(Object key) {
         /* Check both locations where the object could be. */
         for (int i = 0; i < 2; ++i) {
-            final int hash = mHashFns[i].hash((K)key);
+            int hash = mHashFns[i].hash((K)key);
             if (mArrays[i][hash] != null && isEqual(mArrays[i][hash].getKey(), key))
                 return true;
         }
@@ -507,7 +507,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
     public V get(Object key) {
         /* Check both locations where the object could be. */
         for (int i = 0; i < 2; ++i) {
-            final int hash = mHashFns[i].hash((K)key);
+            int hash = mHashFns[i].hash((K)key);
             if (mArrays[i][hash] != null && isEqual(mArrays[i][hash].getKey(), key))
                 return mArrays[i][hash].getValue();
         }
@@ -527,7 +527,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
     public V remove(Object key) {
         /* Check both locations where the object could be. */
         for (int i = 0; i < 2; ++i) {
-            final int hash = mHashFns[i].hash((K)key);
+            int hash = mHashFns[i].hash((K)key);
             if (mArrays[i][hash] != null && isEqual(mArrays[i][hash].getKey(), key)) {
                 /* Cache the value to return. */
                 V result = mArrays[i][hash].getValue();
@@ -581,11 +581,11 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
 
             /* Cast it to an Entry<?, ?> and see if the key is contained. */
             Entry<?, ?> realEntry = (Entry) entry;
-            if (!CuckooMap2.this.containsKey(realEntry.getKey()))
+            if (!containsKey(realEntry.getKey()))
                 return false;
 
             /* Get the value and check if it matches. */
-            V value = CuckooMap2.this.get(realEntry.getKey());
+            V value = get(realEntry.getKey());
             return CuckooMap2.isEqual(value, realEntry.getValue());
         }
 

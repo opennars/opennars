@@ -19,7 +19,7 @@ public @interface PropertyChangeEventMethod {
      * 
      * @author Peter Fichtner
      */
-    public enum Type {
+    enum Type {
         /** Method accepts a Listener and adds it to the list of listeners */
         ADD_LISTENER,
         /** Method accepts a Listener and removes it from the list of listeners */

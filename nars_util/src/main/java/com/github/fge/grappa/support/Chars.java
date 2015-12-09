@@ -56,14 +56,14 @@ public final class Chars {
         return ESCAPE_MAP;
     }
 
-    public static char escapeChar(final char c) {
+    public static char escapeChar(char c) {
         String s = ESCAPE_MAP.get(c);
         if (s == null) return 0;
 
         return s.charAt(0);
     }
 
-    public static String escape(final char c) {
+    public static String escape(char c) {
         return Optional.fromNullable(ESCAPE_MAP.get(c)).or(String.valueOf(c));
     }
 }

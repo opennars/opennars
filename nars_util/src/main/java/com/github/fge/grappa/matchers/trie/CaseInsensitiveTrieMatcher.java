@@ -32,7 +32,7 @@ public final class CaseInsensitiveTrieMatcher
 {
     private final Trie trie;
 
-    public CaseInsensitiveTrieMatcher(final Trie trie)
+    public CaseInsensitiveTrieMatcher(Trie trie)
     {
         super("trieIgnoreCase(" + Objects.requireNonNull(trie).getNrWords()
             + " strings)");
@@ -52,7 +52,7 @@ public final class CaseInsensitiveTrieMatcher
      * @return true if the match was successful
      */
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         /*
          * Since the trie knows about the length of its possible longest match,
@@ -62,15 +62,15 @@ public final class CaseInsensitiveTrieMatcher
          * Convert the word to lowercase, since all characters are stored as
          * lowercase in the trie.
          */
-        final int maxLength = trie.getMaxLength();
-        final int index = context.getCurrentIndex();
-        final char[] input = context.getInputBuffer()
+        int maxLength = trie.getMaxLength();
+        int index = context.getCurrentIndex();
+        char[] input = context.getInputBuffer()
             .extractChars(index, index + maxLength);
 
         /*
          * We now just have to trie and search... (pun intended)
          */
-        final int ret = trie.search(input, true);
+        int ret = trie.search(input, true);
         if (ret == -1)
             return false;
 

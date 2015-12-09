@@ -20,6 +20,7 @@ package automenta.vivisect.swing.property.propertysheet;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * AbstractProperty. <br>
@@ -50,7 +51,7 @@ public abstract class AbstractProperty implements Property {
   public void setValue(Object value) {
     Object oldValue = this.value;
     this.value = value;
-    if (value != oldValue && (value == null || !value.equals(oldValue)))
+    if (!Objects.equals(value, oldValue))
       firePropertyChange(oldValue, getValue());
   }
 
@@ -62,16 +63,14 @@ public abstract class AbstractProperty implements Property {
     listeners.addPropertyChangeListener(listener);
     Property[] subProperties = getSubProperties();
     if (subProperties != null)
-	  for ( int i = 0; i < subProperties.length; ++i )
-	    subProperties[i].addPropertyChangeListener( listener );
+      for (Property subProperty : subProperties) subProperty.addPropertyChangeListener(listener);
   }
 
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     listeners.removePropertyChangeListener(listener);
     Property[] subProperties = getSubProperties();
     if (subProperties != null)
-	  for ( int i = 0; i < subProperties.length; ++i )
-	    subProperties[i].removePropertyChangeListener( listener );
+      for (Property subProperty : subProperties) subProperty.removePropertyChangeListener(listener);
   }
 
   protected void firePropertyChange(Object oldValue, Object newValue) {

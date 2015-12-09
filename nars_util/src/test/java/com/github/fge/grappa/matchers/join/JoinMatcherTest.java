@@ -43,11 +43,11 @@ public final class JoinMatcherTest
     @Test
     public void joinMatcherYellsIfJoiningRuleMatchesEmpty()
     {
-        final CharSequence input = "aaaabaaaaxaaa";
-        final MyParser parser = Grappa.createParser(MyParser.class);
-        final ParseRunner<Object> runner
+        CharSequence input = "aaaabaaaaxaaa";
+        MyParser parser = Grappa.createParser(MyParser.class);
+        ParseRunner<Object> runner
             = new ListeningParseRunner<>(parser.rule());
-        final String expectedMessage = "joining rule (foo) of a JoinMatcher" +
+        String expectedMessage = "joining rule (foo) of a JoinMatcher" +
             " cannot match an empty character sequence!";
 
         try {

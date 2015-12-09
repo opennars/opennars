@@ -42,7 +42,7 @@ public class IconButton extends Button {
         setMaxWidth(Double.MAX_VALUE);
         setAlignment(Pos.CENTER_LEFT);
 
-        final ImageView imageView = new ImageView(ResourceUtil.getImage(imageLoc));
+        ImageView imageView = new ImageView(ResourceUtil.getImage(imageLoc));
         imageView.setFitHeight(16);
         imageView.setPreserveRatio(true);
         setGraphic(imageView);

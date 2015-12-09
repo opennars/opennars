@@ -33,7 +33,7 @@ public final class ZeroOrMoreMatcher
 {
     private final Matcher subMatcher;
 
-    public ZeroOrMoreMatcher(final Rule subRule)
+    public ZeroOrMoreMatcher(Rule subRule)
     {
         super(Objects.requireNonNull(subRule, "subRule"), "zeroOrMore");
         subMatcher = getChildren().get(0);
@@ -46,7 +46,7 @@ public final class ZeroOrMoreMatcher
     }
 
     @Override
-    public final <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         int beforeMatch = context.getCurrentIndex();
         int afterMatch;

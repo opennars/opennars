@@ -20,7 +20,7 @@ import static nars.util.data.LabeledSupplier.supply;
  * Created by me on 2/10/15.
  */
 @Ignore
-abstract public class AbstractNALTester {
+public abstract class AbstractNALTester {
 
 
     //final ThreadLocal<NAR> nars;
@@ -66,10 +66,7 @@ abstract public class AbstractNALTester {
     }
 
     @Deprecated public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
-        if (requireMultistep)
-            return nars(level, false, true);
-        else
-            return nars(level, true, true);
+        return requireMultistep ? nars(level, false, true) : nars(level, true, true);
     }
 
     public static Iterable<Supplier<NAR>> nars(int level, boolean single, boolean multi) {
@@ -82,10 +79,10 @@ abstract public class AbstractNALTester {
 
         List<Supplier<NAR>> l = Global.newArrayList(2);
 
-        final int finalLevel = level;
+        int finalLevel = level;
 
         if (multi) {
-            l.add(supply("Default2[NAL<=" + level + "]",
+            l.add(supply("Default2[NAL<=" + level + ']',
                     () -> {
                         Default d = new Default(256, 1, 2, 2);
                         d.nal(finalLevel);
@@ -96,7 +93,7 @@ abstract public class AbstractNALTester {
         }
 
         if (single) {
-            l.add( supply("SingleStep[NAL<=" + level + "]",
+            l.add( supply("SingleStep[NAL<=" + level + ']',
                     () -> new SingleStepNAR().nal(finalLevel) ) );
         }
 

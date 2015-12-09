@@ -24,7 +24,7 @@ public class STMTemporalLinkage {
     //int stmSize;
     //public static STMTemporalLinkage I=null;
 
-    final private static String id = STMTemporalLinkage.class.getSimpleName();
+    private static final String id = STMTemporalLinkage.class.getSimpleName();
 
     @Override
     public final String toString() {
@@ -43,13 +43,11 @@ public class STMTemporalLinkage {
             if (!n.getTask().isDeleted())
                 inductionOnSucceedingEvents(n, false);
         });
-        nar.memory.eventReset.on(n -> {
-            stm.clear();
-        });
+        nar.memory.eventReset.on(n -> stm.clear());
 
     }
 
-    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
+    public static boolean isInputOrTriggeredOperation(Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
         //if (Tense.containsMentalOperator(newEvent)) return true;
         return false;
@@ -62,7 +60,7 @@ public class STMTemporalLinkage {
 
     public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
 
-        final Task currentTask = nal.getTask();
+        Task currentTask = nal.getTask();
 
         int stmSize = nal.memory().shortTermMemoryHistory.intValue();
 
@@ -85,8 +83,8 @@ public class STMTemporalLinkage {
         int numToRemoveFromBeginning = Math.max(0, stm.size() - stmSize);
 
         /** current task's... */
-        final Compound term = currentTask.getTerm();
-        final Concept concept = nal.nar.concept(term);
+        Compound term = currentTask.getTerm();
+        Concept concept = nal.nar.concept(term);
         if (concept == null)
             return false;
 

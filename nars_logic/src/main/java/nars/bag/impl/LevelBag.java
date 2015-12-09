@@ -110,19 +110,19 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
 
-    public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
+    public LevelBag(int levels, int capacity, int thresholdLevel) {
         this(Global.newHashMap(capacity*2), levels, capacity, thresholdLevel);
     }
     /**
      * thresholdLevel = 0 disables "fire level completely" threshold effect
      */
-    public LevelBag(Map<K, DD<E>> indexMap, final int levels, final int capacity, final int thresholdLevel) {
+    public LevelBag(Map<K, DD<E>> indexMap, int levels, int capacity, int thresholdLevel) {
         this.levels = levels;
 
-        this.nodePool = new DDNodePool(capacity / 8);
-        this.ownsNodePool = true;
-        
-        this.fireCompleteLevelThreshold = thresholdLevel;
+        nodePool = new DDNodePool(capacity / 8);
+        ownsNodePool = true;
+
+        fireCompleteLevelThreshold = thresholdLevel;
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
 
         this.capacity = capacity;
@@ -155,18 +155,18 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         @Override
         public void changed() {
-            this.levelEmpty[this.getID()] = isEmpty();
+            levelEmpty[getID()] = isEmpty();
         }
 
         public EE removeFirst() {
             DD<EE> first = getFirstNode();
             if (first == null) return null;
-            return this.remove(first);
+            return remove(first);
         }
 
         public void print() {
             System.out.println("head=" + super.getFirst() + ", tail=" + super.getLast() + ", ");
-            System.out.println("  " + Lists.newArrayList(this.iterator()));
+            System.out.println("  " + Lists.newArrayList(iterator()));
         }
 
         /*public E removeFirst() {
@@ -181,7 +181,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         public Iterator<EE> descendingIterator() {
             //order wont matter within the level
-            return this.iterator();
+            return iterator();
             //return items.descendingIterator();
         }
 
@@ -238,7 +238,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
             if (Math.abs(is - in) > 1) {
                 printAll(System.err);
                 System.err.println("index: " + index);
-                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + capacity());
+                throw new RuntimeException(getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + capacity());
 
             }
         }
@@ -266,7 +266,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
     @Override
-    public E remove(final K name) {
+    public E remove(K name) {
         DD<E> t = index.get(name);
         if (t == null) return null;
         return extract(t);
@@ -280,7 +280,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final K key) {
+    public E get(K key) {
         DD<E> b = index.get(key);
         if (b==null) return null;
         return b.item;
@@ -337,10 +337,10 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     protected final void nextNonEmptyLevelDefault() {
 
         //cache class fields as local variables for speed in the iteration
-        final short D[] = DISTRIBUTOR;
-        final int numLevels = D.length;
+        short[] D = DISTRIBUTOR;
+        int numLevels = D.length;
         int li = levelIndex;
-        final boolean le[] = levelEmpty;
+        boolean[] le = levelEmpty;
 
         if (li < 0)
             throw new RuntimeException("levelIndex is < 0, may need additional check for overflow");
@@ -363,8 +363,8 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         if (Global.DEBUG) {
             boolean actuallyAnyNonEmpty = false;
-            for (int i = 0; i < levelEmpty.length; i++) {
-                if (!levelEmpty[i]) {
+            for (boolean aLevelEmpty : levelEmpty) {
+                if (!aLevelEmpty) {
                     actuallyAnyNonEmpty = true;
                     break;
                 }
@@ -394,11 +394,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         currentLevel = cl;
 
-        if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
-            currentCounter = 1;
-        } else {                  // for active levels, take all current items
-            currentCounter = getNonEmptyLevelSize(currentLevel);
-        }
+        currentCounter = currentLevel < fireCompleteLevelThreshold ? 1 : getNonEmptyLevelSize(currentLevel);
 
         return true;
     }
@@ -454,7 +450,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     protected DD<E> rotateNext() {
         if (!nextNonEmptyLevel())
             return null;
-        final Level<K,E> cl = level[currentLevel];
+        Level<K,E> cl = level[currentLevel];
         DD<E> r = cl.peekFirst();
         cl.rotate();
         return r;
@@ -500,12 +496,12 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
 
-    public final int getNonEmptyLevelSize(final int l) {
-        return this.level[l].size();
+    public final int getNonEmptyLevelSize(int l) {
+        return level[l].size();
     }
 
-    public final int getLevelSize(final int l) {
-        return this.level[l].size();
+    public final int getLevelSize(int l) {
+        return level[l].size();
     }
 
 
@@ -518,9 +514,9 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
      * @param item The Item to put in
      * @return The put-in level
      */
-    public int getLevel(final E item) {
-        final float fl = item.getPriority() * levels;
-        final int level = (int)fl; //(int) Math.ceil(fl) - 1;
+    public int getLevel(E item) {
+        float fl = item.getPriority() * levels;
+        int level = (int)fl; //(int) Math.ceil(fl) - 1;
         if (level < 0) return 0;
         if (level >= levels) return levels - 1;
         return level;
@@ -528,13 +524,13 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
     /** removes from existing level and adds to new one */
-    protected DD<E> relevel(final DD<E> x, final E newValue) {
-        final int prevLevel = x.owner();
-        final int nextLevel = getLevel(newValue);
+    protected DD<E> relevel(DD<E> x, E newValue) {
+        int prevLevel = x.owner();
+        int nextLevel = getLevel(newValue);
 
-        final E prevValue = x.item;
+        E prevValue = x.item;
 
-        final boolean keyChange = !newValue.name().equals(prevValue.name());
+        boolean keyChange = !newValue.name().equals(prevValue.name());
 
         if (keyChange) {
             //name changed, must be rehashed
@@ -557,7 +553,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
     /** removal of the bagged item from its level and the index */
-    public E extract(final DD<E> node) {
+    public E extract(DD<E> node) {
         if (node == null)
             throw new RuntimeException("OUT must not be null");
         int lev = node.owner();
@@ -574,7 +570,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
         if (newItem == null)
             throw new RuntimeException("IN must not be null");
         DD<E> dd = ensureLevelExists(inLevel).add(newItem);
-        this.index.put(newItem.name(), dd);
+        index.put(newItem.name(), dd);
         return dd;
     }
 
@@ -584,7 +580,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
     @Override
-    public E put(final E newItem) {
+    public E put(E newItem) {
         if (newItem==null)
             throw new RuntimeException("PUT item muts be non-null");
 
@@ -634,10 +630,10 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
 
-    protected final Level ensureLevelExists(final int l) {
-        final Level existing = this.level(l);
+    protected final Level ensureLevelExists(int l) {
+        Level existing = level(l);
         if (existing == null) {
-            return (this.level[l] = new Level(levelEmpty, nodePool, l));
+            return (level[l] = new Level(levelEmpty, nodePool, l));
         }
         return existing;
     }
@@ -702,7 +698,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
         for (int i = levels; i >= minLevel; i--) {
             if (!levelEmpty[i - 1]) {
                 buf.append("\n --- LEVEL ").append(i).append(":\n ");
-                for (final Object e : level[i - 1]) {
+                for (Object e : level[i - 1]) {
                     buf.append(e).append('\n');
                 }
 
@@ -760,7 +756,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
         return capacity;
     }
 
-    Iterable<E> getLevel(final int i) {
+    Iterable<E> getLevel(int i) {
         if (level[i] == null) {
             return Collections.emptyList();
         }
@@ -769,7 +765,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
     @Override
     public void setCapacity(int c) {
-        this.capacity = c;
+        capacity = c;
     }
 
 
@@ -781,15 +777,9 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
 
-    final Function<Level, Iterator<E>> levelIteratorFunc = new Function<Level,Iterator<E>>() {
-
-        final Iterator<E> empty = Collections.EMPTY_LIST.iterator();
-
-        @Override
-        public Iterator<E> apply(Level o) {
-            if (o == null) return empty;
-            return o.iterator();
-        }
+    final Function<Level, Iterator<E>> levelIteratorFunc = o -> {
+        if (o == null) return Collections.emptyIterator();
+        return o.iterator();
     };
 
 
@@ -803,7 +793,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
     @Override
-    public void forEach(final Consumer<? super E> c) {
+    public void forEach(Consumer<? super E> c) {
         int count = size();
 
         if (count == 0) return;

@@ -18,9 +18,8 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
     private final Function<I, String> labeler;
 
     public ItemButton(I i, Function<I,String> labeler, Consumer<I> clicked) {
-        super();
 
-        this.item = i;
+        item = i;
         this.labeler = labeler;
 
         Task t = null;
@@ -30,9 +29,7 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
             t = ((TaskLink)i).getTask();
 
         if (clicked!=null) {
-            setOnMouseClicked(e -> {
-                clicked.accept(i);
-            });
+            setOnMouseClicked(e -> clicked.accept(i));
         }
         if (t!=null)
             setGraphic(new TaskSummaryIcon( t, this));

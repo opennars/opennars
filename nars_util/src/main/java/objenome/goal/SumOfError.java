@@ -154,7 +154,7 @@ public class SumOfError<I,O> extends TypedFitnessFunction implements Listener<Co
         int i = 0;
         double errorSum = 0.0;
 
-        final Variable[] inputVariables = this.inputVariables;
+        Variable[] inputVariables = this.inputVariables;
         for (Observation<I[], O> o : obs) {
             I[] input = o.input;
             // Update the variable values

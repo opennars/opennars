@@ -18,9 +18,8 @@ public class NARspace extends Spacegraph {
     private final NAR nar;
 
     public NARspace(NAR n) {
-        super();
 
-        this.nar = n;
+        nar = n;
 
         //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
 
@@ -36,16 +35,14 @@ public class NARspace extends Spacegraph {
 
 
 
-        final AbstractNAR b = new Default();
+        AbstractNAR b = new Default();
         IOPane np = new IOPane(b);
 
         Windget nd = new Windget("NAR",
                 np, 200, 200
         ).move(-200, 300);
 
-        Function<Node, Node> wrap = (x) -> {
-            return x;
-        };
+        Function<Node, Node> wrap = (x) -> x;
         //addNodes(wrap, cc, nd);
 
         setNodes(

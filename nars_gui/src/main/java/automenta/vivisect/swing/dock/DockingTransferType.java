@@ -32,7 +32,7 @@ public class DockingTransferType implements Transferable {
     private final DockingPathRecord path;
     private final int windowIndex;
 
-    public DockingTransferType(final DockingPathRecord path, final int windowIndex) {
+    public DockingTransferType(DockingPathRecord path, int windowIndex) {
         this.path = path;
         this.windowIndex = windowIndex;
     }
@@ -48,7 +48,7 @@ public class DockingTransferType implements Transferable {
     }
 
     @Override
-    public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         return this;
     }
 

@@ -58,7 +58,7 @@ public class VariableNormalization extends VariableTransform {
     public static final VariableTransform singleVariableNormalization = new VariableTransform() {
 
         @Override
-        public final Variable apply(Compound containing, Variable current, int depth) {
+        public Variable apply(Compound containing, Variable current, int depth) {
             //      (containing, current, depth) ->
             return $.v(current.op(), 1);
         }
@@ -92,17 +92,16 @@ public class VariableNormalization extends VariableTransform {
         if (tx == null) tx = this;
 
 
-
-        this.result = target.transform(tx);
+        result = target.transform(tx);
 
     }
 
-    public Variable apply(final Variable v) {
+    public Variable apply(Variable v) {
         return apply(null, v, -1);
     }
 
     @Override
-    public Variable apply(final Compound ct, final Variable v, int depth) {
+    public Variable apply(Compound ct, Variable v, int depth) {
 
         Map<Variable, Variable> rename = this.rename;
 
@@ -121,7 +120,7 @@ public class VariableNormalization extends VariableTransform {
     }
 
     /** if already normalized, alreadyNormalized will be non-null with the value */
-    protected Variable newVariable(final Variable v, int serial) {
+    protected Variable newVariable(Variable v, int serial) {
         return $.v(v.op(), serial);  //type + id
     }
 

@@ -38,12 +38,12 @@ public class MartialArts implements RLEnvironment {
     private PseudoAIState pseudoAIState = PseudoAIState.START;
 
     public MartialArts() {
-        final JFrame f = new JFrame();
+        JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.setSize(200, 100);
         f.setLayout(new GridLayout(0, 1));
-        final JLabel l = new JLabel();
-        final JProgressBar pb = new JProgressBar();
+        JLabel l = new JLabel();
+        JProgressBar pb = new JProgressBar();
         f.add(l);
         f.add(pb);
         f.setVisible(true);
@@ -138,6 +138,7 @@ public class MartialArts implements RLEnvironment {
             moves.add(m);
         }
         try {
+            //noinspection InfiniteLoopStatement
             while (true) {
                 Move m = new Move();
                 ArrayList<BufferedImage> ims = new ArrayList<>();
@@ -200,6 +201,7 @@ public class MartialArts implements RLEnvironment {
 
         switch (pseudoAIState) {
             case START:
+                //noinspection IfStatementWithTooManyBranches
                 if (Math.abs(dx) < 50
                         && world.rlPlayer.x < world.width / 2
                         && world.opponentPlayer.mirror) {
@@ -217,9 +219,7 @@ public class MartialArts implements RLEnvironment {
                         && world.opponentPlayer.mirror) {
                     pseudoAIState = PseudoAIState.WALKAWAY;
                 } else if (world.rlPlayer.x < world.opponentPlayer.x
-                        && !world.opponentPlayer.mirror) {
-                    takeAction(0, world.opponentPlayer);
-                } else if (world.rlPlayer.x > world.opponentPlayer.x
+                        && !world.opponentPlayer.mirror || world.rlPlayer.x > world.opponentPlayer.x
                         && world.opponentPlayer.mirror) {
                     takeAction(0, world.opponentPlayer);
                 } else {

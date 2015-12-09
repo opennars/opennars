@@ -98,11 +98,8 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 
 		for(int xi = 0; xi < TILE_COUNT_X; xi++){
 			for(int yi = 0; yi < TILE_COUNT_Y; yi++){
-				traversable[xi][yi] = true;
-				if( (xi == TILE_COUNT_X/3 || xi == TILE_COUNT_X*2/3 || xi == TILE_COUNT_X/2 ) && yi != TILE_COUNT_Y/3 /*&& yi != TILE_COUNT_Y*2/3*/ ){
-					traversable[xi][yi] = false;
-				}
-				if(r.nextFloat() < .1f && yi != TILE_COUNT_Y/3){
+				traversable[xi][yi] = !((xi == TILE_COUNT_X / 3 || xi == TILE_COUNT_X * 2 / 3 || xi == TILE_COUNT_X / 2) && yi != TILE_COUNT_Y / 3);
+				if(r.nextFloat() < 0.1f && yi != TILE_COUNT_Y/3){
 					traversable[xi][yi] = false;
 				}
 				if(xi < 9 && yi < 5){
@@ -113,18 +110,15 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 		}
                 
                 int numParticles;
-                if (SimpleGUI.particlenumberTF!=null)
-                    numParticles = Integer.parseInt(SimpleGUI.particlenumberTF.getText());
-                else
-                    numParticles = 10000;
+		numParticles = SimpleGUI.particlenumberTF != null ? Integer.parseInt(SimpleGUI.particlenumberTF.getText()) : 10000;
                 
 
 		distance(TILE_COUNT_X/4,TILE_COUNT_Y/4);
 
 		// spawn particles
 		for(int i = 0; i < numParticles; i++){
-			float x = 100 + .5f*r.nextFloat()*TILE_SIZE*TILE_COUNT_X;
-			float y = 100 + .5f*r.nextFloat()*TILE_SIZE*TILE_COUNT_Y;
+			float x = 100 + 0.5f *r.nextFloat()*TILE_SIZE*TILE_COUNT_X;
+			float y = 100 + 0.5f *r.nextFloat()*TILE_SIZE*TILE_COUNT_Y;
 
 			if(traversable[(int)(x/TILE_SIZE)][(int)(y/TILE_SIZE)]){
 				particleAL.add( new Particle( x, y , r.nextFloat()*10, r.nextFloat()*10 ));
@@ -151,12 +145,12 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 		//add first node to it.
 		if(traversable[startX][startY]){
 			heap.add( new Node(startX,startY,0) );
-			tempDistance[startX][startY] = .1f;
+			tempDistance[startX][startY] = 0.1f;
 		}else{
 			// startx and starty are outside of acceptable range
 		}
 
-		while( heap.size() > 0 ){
+		while(!heap.isEmpty()){
 
 			Node n = heap.peekFirst();
                         
@@ -276,21 +270,21 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 					xPos += xVel;
 					yPos += yVel;
 
-					xVel += .2 * (densityArray[(int) xPos][(int) yPos] - densityArray[(int) xPos + PARTICLE_SIZE][(int) yPos]);
-					yVel += .2 * (densityArray[(int) xPos][(int) yPos] - densityArray[(int) xPos][(int) yPos + PARTICLE_SIZE]);
+					xVel += 0.2 * (densityArray[(int) xPos][(int) yPos] - densityArray[(int) xPos + PARTICLE_SIZE][(int) yPos]);
+					yVel += 0.2 * (densityArray[(int) xPos][(int) yPos] - densityArray[(int) xPos][(int) yPos + PARTICLE_SIZE]);
 
-					xVel = .9f * xVel;
-					yVel = .9f * yVel;
+					xVel = 0.9f * xVel;
+					yVel = 0.9f * yVel;
 
 				} else /* if collision */{
 
-					float Vel = .5f * sqrt(xVel * xVel + yVel * yVel);
+					float Vel = 0.5f * sqrt(xVel * xVel + yVel * yVel);
 
 					// if x making it collide
 					if (!traversable[ (int) ((xPos + xVel) / TILE_SIZE)][(int) (yPos / TILE_SIZE)]) {
 
 						yVel = yVel > 0 ? Vel : -Vel;
-						xVel = -.5f * xVel;
+						xVel = -0.5f * xVel;
 
 					}else /* if x not making it collide */{
 						xPos += xVel;
@@ -300,7 +294,7 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 					if (!traversable[ (int) (xPos / TILE_SIZE)][(int) ((yPos + yVel) / TILE_SIZE)]) {
 
 						xVel = xVel > 0 ? Vel : -Vel;
-						yVel = -.5f * yVel;
+						yVel = -0.5f * yVel;
 
 					}else /* if y not making it collide */{
 						yPos += yVel;

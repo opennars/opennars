@@ -21,10 +21,10 @@ public class SimulatedClock implements Clock {
     }
 
     public void set(long t) {
-        this.tNext = t;
+        tNext = t;
     }
 
-    public void add(long dt) { set(this.t + dt); }
+    public void add(long dt) { set(t + dt); }
 
     @Override
     public void preFrame(Memory m) {

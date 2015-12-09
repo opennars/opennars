@@ -12,13 +12,12 @@ public final class Animate extends AnimationTimer {
     private long last;
 
     public Animate(int periodMS, Consumer<Animate> r) {
-        super();
         this.periodMS = periodMS;
-        this.run = r;
+        run = r;
     }
 
     @Override
-    public final void handle(final long nowNS) {
+    public void handle(long nowNS) {
         long now = nowNS/1000000L; //ns -> ms
         if (now - last > periodMS) {
             last = now;

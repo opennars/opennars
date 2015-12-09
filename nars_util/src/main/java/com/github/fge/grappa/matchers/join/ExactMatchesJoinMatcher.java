@@ -29,21 +29,21 @@ public final class ExactMatchesJoinMatcher
 {
     private final int nrCycles;
 
-    public ExactMatchesJoinMatcher(final Rule joined, final Rule joining,
-        final int nrCycles)
+    public ExactMatchesJoinMatcher(Rule joined, Rule joining,
+                                   int nrCycles)
     {
         super(joined, joining);
         this.nrCycles = nrCycles;
     }
 
     @Override
-    protected boolean runAgain(final int cycles)
+    protected boolean runAgain(int cycles)
     {
         return cycles < nrCycles;
     }
 
     @Override
-    protected boolean enoughCycles(final int cycles)
+    protected boolean enoughCycles(int cycles)
     {
         return cycles == nrCycles;
     }

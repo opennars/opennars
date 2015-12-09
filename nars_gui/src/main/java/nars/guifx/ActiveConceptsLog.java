@@ -21,7 +21,6 @@ public class ActiveConceptsLog extends LogPane {
     final AtomicBoolean pendingShown = new AtomicBoolean(false);
 
     public ActiveConceptsLog(NAR n) {
-        super();
 
         n.onEachFrame(nn-> {
             if (displayed!=null)
@@ -65,9 +64,7 @@ public class ActiveConceptsLog extends LogPane {
             new WeakHashMap();
 
     ConceptSummaryPane node(Concept cc) {
-        ConceptSummaryPane cp = cache.computeIfAbsent(cc, koncept -> {
-            return new ConceptSummaryPane(koncept);
-        });
+        ConceptSummaryPane cp = cache.computeIfAbsent(cc, ConceptSummaryPane::new);
         cp.update(true,true);
         return cp;
     }

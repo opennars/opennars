@@ -21,7 +21,7 @@ public class DoubleMeter extends SourceFunctionMeter<Double> implements DoubleCo
     
     public DoubleMeter(String id, boolean autoReset) {
         super(id);
-        this.name = id;
+        name = id;
         this.autoReset = autoReset;
     }
     

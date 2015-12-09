@@ -111,16 +111,15 @@ public class Audio implements Runnable
     static class DefaultSource implements SoundSource {
 
         private final SoundProducer producer;
-        final float distanceFactor = 1f;
+        final float distanceFactor = 1.0f;
 
         DefaultSource(SoundProducer p) {
-            super();
-            this.producer = p;
+            producer = p;
         }
 
         @Override
         public float getY(float alpha) {
-            return 0 + (1f - producer.getAmplitude()) * distanceFactor;
+            return 0 + (1.0f - producer.getAmplitude()) * distanceFactor;
         }
 
         @Override
@@ -165,8 +164,8 @@ public class Audio implements Runnable
         }
 
         soundBuffer.clear();
-        final int max16 = 32767;
-        final float gain = max16;
+        int max16 = 32767;
+        float gain = max16;
         for (int i = 0; i < bufferSize; i++)
         {
             //            amplitude += (targetAmplitude - amplitude) / rate;

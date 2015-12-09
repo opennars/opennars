@@ -126,19 +126,18 @@ public class TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    if (opname.equals("goto"))
+                    if ("goto".equals(opname))
                         space.target = new PVector(i, j);
                 }
             }
         }
         //if("pick".equals(opname)) {
-        for (GridObject gridi : space.objects) {
-            if (gridi instanceof LocalGridObject && ((LocalGridObject) gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
-                LocalGridObject gridu = (LocalGridObject) gridi;
-                if (opname.equals("goto"))
-                    space.target = new PVector(gridu.x, gridu.y);
-            }
-        }
+        //Key && ((Key)gridi).doorname.equals(goal)) {
+        space.objects.stream().filter(gridi -> gridi instanceof LocalGridObject && ((LocalGridObject) gridi).doorname.equals(goal)).forEach(gridi -> { //Key && ((Key)gridi).doorname.equals(goal)) {
+            LocalGridObject gridu = (LocalGridObject) gridi;
+            if ("goto".equals(opname))
+                space.target = new PVector(gridu.x, gridu.y);
+        });
         //}
     }
 
@@ -152,7 +151,6 @@ public class TestChamber {
     private long lastDrawn = 0;
 
     public TestChamber() {
-        super();
     }
 
     public TestChamber(NAR nar) {
@@ -160,24 +158,20 @@ public class TestChamber {
     }
 
     public TestChamber(NAR nar, boolean showWindow) {
-        super();
 
         int w = 50;
         int h = 50;
         int water_threshold = 30;
         Hauto cells = new Hauto(w, h, nar);
-        cells.forEach(0, 0, w, h, new CellFunction() {
-            @Override
-            public void update(Cell c) {
+        cells.forEach(0, 0, w, h, c -> {
 ///c.setHeight((int)(Math.random() * 12 + 1));
-                float smoothness = 20f;
-                c.material = Material.GrassFloor;
-                double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
-                if ((n * 64) > water_threshold) {
-                    c.material = Material.Water;
-                }
-                c.setHeight((int) (Math.random() * 24 + 1));
+            float smoothness = 20.0f;
+            c.material = Material.GrassFloor;
+            double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
+            if ((n * 64) > water_threshold) {
+                c.material = Material.Water;
             }
+            c.setHeight((int) (Math.random() * 24 + 1));
         });
 
         Maze.buildMaze(cells, 3, 3, 23, 23);
@@ -192,7 +186,7 @@ public class TestChamber {
                 space.update(into);
 
                 long now = System.nanoTime();
-                if (now - lastDrawn > guiUpdateTime * 1e6) {
+                if (now - lastDrawn > guiUpdateTime * 1.0e6) {
                     space.redraw();
                     lastDrawn = now;
                 }
@@ -203,6 +197,7 @@ public class TestChamber {
         if (showWindow)
             space.newWindow(1000, 800, true);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
+        //noinspection OverlyComplexAnonymousInnerClass
         GridAgent a = new GridAgent(17, 17, nar) {
 
             @Override
@@ -264,7 +259,7 @@ public class TestChamber {
                             inventorybag.cx = (int) space.current.x;
                             inventorybag.cy = (int) space.current.y;
                         }
-                        if (inventorybag == null || !(inventorybag instanceof Key)) {
+                        if (!(inventorybag instanceof Key)) {
                             keyn = -1;
                         }
                         if (path.size() <= 1) {
@@ -286,7 +281,7 @@ public class TestChamber {
                                 }
                                 if (obi != null || cells.readCells[(int) space.current.x][(int) space.current.y].name.equals(goal)) { //only possible for existing ones
                                     if ("pick".equals(opname)) {
-                                        if (inventorybag != null && inventorybag instanceof LocalGridObject) {
+                                        if (inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
                                             LocalGridObject ob = inventorybag;
                                             ob.x = (int) space.current.x;
@@ -341,7 +336,7 @@ public class TestChamber {
                                     }
                                     if ("goto".equals(opname)) {
                                         executed_going = false;
-                                        nar.input("<" + goal + " --> [at]>. :|:");
+                                        nar.input('<' + goal + " --> [at]>. :|:");
                                         if (goal.startsWith("{pizza")) {
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
@@ -357,7 +352,7 @@ public class TestChamber {
                                             }
                                             hungry = 500;
                                             //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
-                                            nar.input("<" + goal + " --> [at]>. :|:");
+                                            nar.input('<' + goal + " --> [at]>. :|:");
                                         }
                                         active = true;
                                     }

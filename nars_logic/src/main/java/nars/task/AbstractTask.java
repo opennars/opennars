@@ -29,7 +29,7 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-abstract public class AbstractTask extends Item<Sentence>
+public abstract class AbstractTask extends Item<Sentence>
         implements Task, Temporal {
 
     /** content term of this task */
@@ -49,20 +49,20 @@ abstract public class AbstractTask extends Item<Sentence>
     /**
      * Task from which the Task is derived, or null if input
      */
-    transient private Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+    private transient Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    transient private Reference<Task> parentBelief;
+    private transient Reference<Task> parentBelief;
 
 
-    transient private int hash;
+    private transient int hash;
 
     /**
      * TODO move to SolutionTask subclass
      * For Question and Goal: best solution found so far
      */
-    transient private Reference<Task> bestSolution;
+    private transient Reference<Task> bestSolution;
 
 
     private List log = null;
@@ -71,7 +71,7 @@ abstract public class AbstractTask extends Item<Sentence>
     protected boolean anticipate = false;
 
 
-    public AbstractTask(Compound term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
+    public AbstractTask(Compound term, char punctuation, Truth truth, Budget bv, Task parentTask, Task parentBelief, Task solution) {
         this(term, punctuation, truth,
                 bv.getPriority(),
                 bv.getDurability(),
@@ -80,11 +80,11 @@ abstract public class AbstractTask extends Item<Sentence>
                 solution);
     }
 
-    public AbstractTask(Compound term, final char punc, final Truth truth, final float p, final float d, final float q) {
+    public AbstractTask(Compound term, char punc, Truth truth, float p, float d, float q) {
         this(term, punc, truth, p, d, q, (Task) null, null, null);
     }
 
-    public AbstractTask(Compound term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Task parentBelief, final Task solution) {
+    public AbstractTask(Compound term, char punc, Truth truth, float p, float d, float q, Task parentTask, Task parentBelief, Task solution) {
         this(term, punc, truth,
                 p, d, q,
                 Global.reference(parentTask),
@@ -105,7 +105,7 @@ abstract public class AbstractTask extends Item<Sentence>
         return this;
     }
 
-    void setTime(final long creation, final long occurrence) {
+    void setTime(long creation, long occurrence) {
         setCreationTime(creation);
         setOccurrenceTime(occurrence);
     }
@@ -118,18 +118,18 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
 
-    public AbstractTask(Compound term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
+    public AbstractTask(Compound term, char punctuation, Truth truth, float p, float d, float q, Reference<Task> parentTask, Reference<Task> parentBelief, Reference<Task> solution) {
         super(p, d, q);
         this.truth = truth;
         this.punctuation = punctuation;
         this.term = term;
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
-        this.bestSolution = solution;
+        bestSolution = solution;
     }
 
     @Override
-    public final Task normalize(final Memory memory) {
+    public final Task normalize(Memory memory) {
 
         if (hash != 0) {
             /* already validated */
@@ -140,7 +140,7 @@ abstract public class AbstractTask extends Item<Sentence>
             return null;
 
 
-        final char punc = getPunctuation();
+        char punc = getPunctuation();
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
@@ -148,6 +148,7 @@ abstract public class AbstractTask extends Item<Sentence>
             ensureValidParentTaskRef();
         }
 
+        //noinspection IfStatementWithTooManyBranches
         if (isJudgmentOrGoal()) {
 
         } else if (isQuestOrQuestion()) {
@@ -185,7 +186,7 @@ abstract public class AbstractTask extends Item<Sentence>
         // and adjust occurenceTime if it's not eternal
 
         if (getCreationTime() <= Tense.TIMELESS) {
-            final long now = memory.time();
+            long now = memory.time();
             long oc = getOccurrenceTime();
             if (oc != Tense.ETERNAL)
                 oc += now;
@@ -234,7 +235,7 @@ abstract public class AbstractTask extends Item<Sentence>
                 log("Input");
         }
 
-        this.hash = rehash();
+        hash = rehash();
 
         onNormalized(memory);
 
@@ -256,7 +257,7 @@ abstract public class AbstractTask extends Item<Sentence>
     /** includes: evidentialset, occurrencetime, truth, term, punctuation */
     private final int rehash() {
 
-        final int h = Objects.hash(
+        int h = Objects.hash(
                 Arrays.hashCode(getEvidence()),
                 getTerm(),
                 getPunctuation(),
@@ -270,15 +271,15 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    public final void onConcept(final Concept c) {
+    public final void onConcept(Concept c) {
 
         //intermval generally contains unique information that should not be replaced
-        if (this.term instanceof TermMetadata)
+        if (term instanceof TermMetadata)
             return;
 
         //if debug, check that they are equal..
 
-        this.term = (Compound) c.getTerm(); //HACK the cast
+        term = (Compound) c.getTerm(); //HACK the cast
     }
 
     @Override
@@ -293,8 +294,8 @@ abstract public class AbstractTask extends Item<Sentence>
 
     @Override
     public void setTruth(Truth t) {
-        if (!Objects.equals(this.truth, t)) {
-            this.truth = t;
+        if (!Objects.equals(truth, t)) {
+            truth = t;
             invalidate();
         }
     }
@@ -305,18 +306,18 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    public Task setEvidence(final long... evidentialSet) {
+    public Task setEvidence(long... evidentialSet) {
         this.evidentialSet = evidentialSet;
         invalidate();
         return this;
     }
 
     @Override
-    final public boolean isDouble() {
+    public final boolean isDouble() {
         return getParentBelief() != null && getParentTask() != null;
     }
     @Override
-    final public boolean isSingle() {
+    public final boolean isSingle() {
         return getParentBelief()==null && getParentTask()!=null ;
     }
 
@@ -327,17 +328,12 @@ abstract public class AbstractTask extends Item<Sentence>
         if (duration < 0)
             throw new RuntimeException(this + " negative duration");
 
-        final Term term = this.term;
+        Term term = this.term;
 
         term.setDuration(duration); //HACK int<->long stuff
 
-        final int d;
-        if (term instanceof Interval) {
-            d = ((Interval) term).duration(); //set the task's duration to the term's actual (expanded) duration
-        }
-        else {
-            d = duration;
-        }
+        int d;
+        d = term instanceof Interval ? ((Interval) term).duration() : duration;
         this.duration = d;
     }
 
@@ -347,7 +343,7 @@ abstract public class AbstractTask extends Item<Sentence>
             return;
 
         if (historyToCopy != null) {
-            if (this.log == null) this.log = Global.newArrayList(historyToCopy.size());
+            if (log == null) log = Global.newArrayList(historyToCopy.size());
             log.addAll(historyToCopy);
         }
     }
@@ -374,7 +370,7 @@ abstract public class AbstractTask extends Item<Sentence>
 
     @Override
     public final int duration() {
-        final Term t = this.term;
+        Term t = term;
         if (t instanceof Interval)
             return ((Interval)t).duration();
         return duration;
@@ -412,10 +408,10 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    public final Sentence setCreationTime(final long creationTime) {
-        if ((this.creationTime <= Tense.TIMELESS) && (this.occurrenceTime > Tense.TIMELESS)) {
+    public final Sentence setCreationTime(long creationTime) {
+        if ((this.creationTime <= Tense.TIMELESS) && (occurrenceTime > Tense.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
-            setOccurrenceTime(this.occurrenceTime + creationTime);
+            setOccurrenceTime(occurrenceTime + creationTime);
         }
         //if (this.creationTime != creationTime) {
         this.creationTime = creationTime;
@@ -439,8 +435,8 @@ abstract public class AbstractTask extends Item<Sentence>
             if (bs == null)
                 throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
 
-            final long[] zipped = Stamp.zip(as, bs);
-            final long[] uniques = Stamp.toSetArray(zipped);
+            long[] zipped = Stamp.zip(as, bs);
+            long[] uniques = Stamp.toSetArray(zipped);
 
             setEvidence(uniques);
 
@@ -477,9 +473,9 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    public void setOccurrenceTime(final long o) {
+    public void setOccurrenceTime(long o) {
         if (o != occurrenceTime) {
-            this.occurrenceTime = o;
+            occurrenceTime = o;
             invalidate();
         }
     }
@@ -503,7 +499,7 @@ abstract public class AbstractTask extends Item<Sentence>
      * @return Whether the two sentences have the same content
      */
     @Override
-    public final boolean equals(final Object that) {
+    public final boolean equals(Object that) {
         if (this == that) return true;
         if (that instanceof Task) {
 
@@ -516,21 +512,21 @@ abstract public class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    public final boolean equivalentTo(final Task that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
+    public final boolean equivalentTo(Task that, boolean punctuation, boolean term, boolean truth, boolean stamp, boolean creationTime) {
 
         if (this == that) return true;
 
-        final char thisPunc = this.getPunctuation();
+        char thisPunc = getPunctuation();
 
         if (stamp) {
             //uniqueness includes every aspect of stamp except creation time
             //<patham9> if they are only different in creation time, then they are the same
-            if (!this.equalStamp(that, true, creationTime, true))
+            if (!equalStamp(that, true, creationTime, true))
                 return false;
         }
 
         if (truth) {
-            Truth thisTruth = this.getTruth();
+            Truth thisTruth = getTruth();
             if (thisTruth == null) {
                 //equal punctuation will ensure thatTruth is also null
             } else {
@@ -562,7 +558,7 @@ abstract public class AbstractTask extends Item<Sentence>
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public final boolean equalStamp(final Task s, final boolean evidentialSet, final boolean creationTime, final boolean occurrenceTime) {
+    public final boolean equalStamp(Task s, boolean evidentialSet, boolean creationTime, boolean occurrenceTime) {
         if (this == s) return true;
 
         /*if (hash && (!occurrenceTime || !evidentialSet))
@@ -615,7 +611,7 @@ abstract public class AbstractTask extends Item<Sentence>
      * @param judg The solution to be remembered
      */
     @Override
-    public final void setBestSolution(final Task judg, final Memory memory) {
+    public final void setBestSolution(Task judg, Memory memory) {
         bestSolution = reference(judg);
         //InternalExperience.experienceFromBelief(memory, this, judg);
     }
@@ -629,15 +625,15 @@ abstract public class AbstractTask extends Item<Sentence>
      * of the Task and the reason for it.
      */
     @Override
-    public final void log(final Object entry) {
+    public final void log(Object entry) {
         if (!Global.DEBUG_TASK_LOG)
             return;
 
         //TODO parameter for max history length, although task history should not grow after they are crystallized with a concept
-        if (this.log == null)
-            this.log = Global.newArrayList(1);
+        if (log == null)
+            log = Global.newArrayList(1);
 
-        this.log.add(entry);
+        log.add(entry);
     }
 
     @Override
@@ -676,14 +672,14 @@ abstract public class AbstractTask extends Item<Sentence>
      * @return The belief from which the task is derived
      */
     @Override
-    final public Task getParentBelief() {
+    public final Task getParentBelief() {
         return dereference(parentBelief);
     }
 
 
 
     @Override
-    final public Sentence name() {
+    public final Sentence name() {
         return this;
     }
 

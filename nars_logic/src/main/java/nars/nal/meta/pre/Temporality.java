@@ -3,17 +3,17 @@ package nars.nal.meta.pre;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 
-abstract public class Temporality extends PreCondition {
+public abstract class Temporality extends PreCondition {
 
     /** both task and belief are temporal (non-eternal) */
     public static final PreCondition both = new Temporality() {
 
-        @Override public final String toString() {
+        @Override public String toString() {
             return "Event";
         }
 
         @Override
-        public final boolean test(final RuleMatch m) {
+        public boolean test(RuleMatch m) {
             return m.premise.isEvent();
         }
 
@@ -22,19 +22,18 @@ abstract public class Temporality extends PreCondition {
     /** either task or belief is temporal (non-eternal) */
     public static final PreCondition either = new Temporality() {
 
-        @Override public final String toString() {
+        @Override public String toString() {
             return "Temporal";
         }
 
         @Override
-        public final boolean test(final RuleMatch m) {
+        public boolean test(RuleMatch m) {
             return m.premise.isTemporal();
         }
 
     };
 
     protected Temporality() {
-        super();
     }
 
 }

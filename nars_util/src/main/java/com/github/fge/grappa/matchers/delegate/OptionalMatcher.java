@@ -32,20 +32,20 @@ public final class OptionalMatcher
 {
     private final Matcher subMatcher;
 
-    public OptionalMatcher(final Rule subRule)
+    public OptionalMatcher(Rule subRule)
     {
         super(Objects.requireNonNull(subRule, "subRule"), "optional");
         subMatcher = getChildren().get(0);
     }
 
     @Override
-    final public MatcherType getType()
+    public MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    final public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         subMatcher.getSubContext(context).runMatcher();
         return true;

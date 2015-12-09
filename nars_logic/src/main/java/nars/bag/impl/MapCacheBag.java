@@ -11,7 +11,6 @@ public class MapCacheBag<K, V, M extends Map<K,V>> extends AbstractCacheBag<K,V>
     public final M data;
 
     public MapCacheBag(M data) {
-        super();
         this.data = data;
     }
 

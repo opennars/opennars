@@ -21,7 +21,6 @@ public class Permutations  {
     //public E[] output;//next() returns this array, make it public
 
     public Permutations() {
-        super();
     }
 
     public Permutations restart(int size) {
@@ -60,14 +59,14 @@ public class Permutations  {
      * @return
      */
     public final int[] next() {
-        final int size = this.size;
+        int size = this.size;
 
-        final int count = (++this.count);
+        int count = (++this.count);
 
         if (count == (num))
             throw new NoSuchElementException();
 
-        final int[] ind = this.ind;
+        int[] ind = this.ind;
 
         if (count == 0) {
             //first access since restart()
@@ -76,9 +75,9 @@ public class Permutations  {
 
         for(int tail = size - 1;tail > 0;tail--){
 
-            final int tailMin1 = tail - 1;
+            int tailMin1 = tail - 1;
 
-            final int itm = ind[tailMin1];
+            int itm = ind[tailMin1];
 
             if (itm < ind[tail]){//still increasing
 

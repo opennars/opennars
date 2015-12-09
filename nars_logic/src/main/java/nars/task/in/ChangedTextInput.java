@@ -13,7 +13,7 @@ public class ChangedTextInput  {
 
 
     public ChangedTextInput(NAR n) {
-        this.nar = n;
+        nar = n;
     }
 
     public boolean set(String s) {
@@ -35,7 +35,7 @@ public class ChangedTextInput  {
     }
 
     public void setAllowRepeatInputs(boolean b) {
-        this.allowRepeats = b;
+        allowRepeats = b;
     }
 }
 

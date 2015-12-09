@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-abstract public class AbstractUtf8Atom extends Atomic implements Byted, Externalizable {
+public abstract class AbstractUtf8Atom extends Atomic implements Byted, Externalizable {
 
     private final byte[] id;
     private final int hash;
@@ -19,21 +19,21 @@ abstract public class AbstractUtf8Atom extends Atomic implements Byted, External
 
     public AbstractUtf8Atom(String id) {
         this.id = Utf8.toUtf8(id);
-        this.hash = Atom.hash(
+        hash = Atom.hash(
             id.hashCode(), op().ordinal()
         );
     }
 
     public AbstractUtf8Atom(byte[] id) {
         this.id = id;
-        this.hash = Atom.hash(
+        hash = Atom.hash(
             id, op().ordinal()
         );
     }
 
     public AbstractUtf8Atom(byte[] id, Op specificOp) {
         this.id = id;
-        this.hash = Atom.hash(id, specificOp.ordinal());
+        hash = Atom.hash(id, specificOp.ordinal());
     }
 
 
@@ -48,7 +48,7 @@ abstract public class AbstractUtf8Atom extends Atomic implements Byted, External
     }
 
     @Override
-    public boolean equals(final Object x) {
+    public boolean equals(Object x) {
         if (this == x) return true;
 
         if (x instanceof Atomic) {
@@ -62,7 +62,7 @@ abstract public class AbstractUtf8Atom extends Atomic implements Byted, External
      * default implementation that uses bytes() as lowest common
      * denominator of comparison
      */
-    @Override public int compareTo(final Object that) {
+    @Override public int compareTo(Object that) {
         if (that==this) return 0;
 
         Term t = (Term)that;

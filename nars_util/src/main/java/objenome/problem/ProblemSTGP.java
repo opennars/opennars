@@ -27,7 +27,6 @@ public abstract class ProblemSTGP extends GPContainer<TypedOrganism> {
      * Constructs a new <code>Template</code>.
      */
     public ProblemSTGP() {
-        super();
 
 
         FitnessEvaluator fe = new FitnessEvaluator();

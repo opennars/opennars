@@ -32,11 +32,11 @@ public abstract class NumericSolver<C> implements Solver  {
         
     }
     
-    abstract public void solve(Objenome o, List<SetNumericValue> variables);
+    public abstract void solve(Objenome o, List<SetNumericValue> variables);
 
     @Override
     public void solve(Multitainer g, Map<Problem, Solution> p, Object[] targets) {
-        final List<SetNumericValue> variables = new ArrayList();
+        List<SetNumericValue> variables = new ArrayList();
         
         //store backup in case it needs restored
         Map originalProblems = new HashMap(p);
@@ -49,16 +49,12 @@ public abstract class NumericSolver<C> implements Solver  {
                 }
             }
        }
-         
-        for (Map.Entry<Problem, Solution> e : p.entrySet()) {
-            if (e.getValue() == null) {
-                if (e.getKey() instanceof DecideNumericValue) {
-                    SetNumericValue v = ((DecideNumericValue)e.getKey()).newDefaultSetValue();
-                    variables.add(v);
-                    e.setValue(v);
-                }
-            }
-        }
+
+        p.entrySet().stream().filter(e -> e.getValue() == null).filter(e -> e.getKey() instanceof DecideNumericValue).forEach(e -> {
+            SetNumericValue v = ((DecideNumericValue) e.getKey()).newDefaultSetValue();
+            variables.add(v);
+            e.setValue(v);
+        });
         
         if (variables.isEmpty()) {
             return;

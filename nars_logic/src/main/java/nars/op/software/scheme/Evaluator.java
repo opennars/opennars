@@ -21,11 +21,14 @@ public class Evaluator {
     public static Function<SchemeClosure, Expression> analyze(Expression exp) {
         if (isSelfEvaluating(exp)) {
             return e -> exp;
-        } else if (exp.isSymbol()) {
+        }
+        if (exp.isSymbol()) {
             return env -> env.get(exp.symbol());
-        } else if (isSpecialForm(exp)) {
+        }
+        if (isSpecialForm(exp)) {
             return analyzeSpecialForm(exp.list());
-        } else if (isFunctionCall(exp)) {
+        }
+        if (isFunctionCall(exp)) {
             return analyzeFunctionCall(exp.list());
         }
 
@@ -42,11 +45,7 @@ public class Evaluator {
             case "set!":
                 return analyzeSet(exps);
             case "define":
-                if (isVarDefinition(exps)) {
-                    return analyzeVarDefinition(exps);
-                } else {
-                    return analyzeFunctionDefinition(exps);
-                }
+                return isVarDefinition(exps) ? analyzeVarDefinition(exps) : analyzeFunctionDefinition(exps);
             case "if":
                 return analyzeIf(exps);
             case "lambda":
@@ -190,13 +189,7 @@ public class Evaluator {
     }
 
     private static Function<SchemeClosure, Expression> makeIf(Function<SchemeClosure, Expression> condition, Function<SchemeClosure, Expression> consequent, Optional<Function<SchemeClosure, Expression>> alternative) {
-        return env -> {
-            if (isTruthy(condition.apply(env))) {
-                return consequent.apply(env);
-            } else {
-                return alternative.map(a -> a.apply(env)).orElse(Expression.none());
-            }
-        };
+        return env -> isTruthy(condition.apply(env)) ? consequent.apply(env) : alternative.map(a -> a.apply(env)).orElse(Expression.none());
     }
 
     private static Function<SchemeClosure, Expression> analyzeIf(Cons<Expression> exps) {

@@ -37,8 +37,8 @@ import java.util.Map;
  */
 public class PropertyRendererRegistry implements PropertyRendererFactory {
 
-	private static final Map<Class<?>, Class<?>> TYPE_TO_CLASS = new HashMap<Class<?>, Class<?>>();
-	private static final Map<Class<?>, TableCellRenderer> TYPE_TO_RENDERER = new HashMap<Class<?>, TableCellRenderer>();
+	private static final Map<Class<?>, Class<?>> TYPE_TO_CLASS = new HashMap<>();
+	private static final Map<Class<?>, TableCellRenderer> TYPE_TO_RENDERER = new HashMap<>();
 
 	private Map typeToRenderer;
 	private Map propertyToRenderer;
@@ -135,11 +135,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 		}
 
 		try {
-			if (ctor == null) {
-				renderer = (TableCellRenderer) clazz.newInstance();
-			} else {
-				renderer = (TableCellRenderer) ctor.newInstance(property);
-			}
+			renderer = ctor == null ? (TableCellRenderer) clazz.newInstance() : (TableCellRenderer) ctor.newInstance(property);
 		} catch (Exception e) {
 			throw new RuntimeException("PropertyEditor not instantiated", e);
 		}
@@ -182,11 +178,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 			}
 
 			try {
-				if (ctor == null) {
-					renderer = (TableCellRenderer) clazz.newInstance();
-				} else {
-					renderer = (TableCellRenderer) ctor.newInstance(property);
-				}
+				renderer = ctor == null ? (TableCellRenderer) clazz.newInstance() : (TableCellRenderer) ctor.newInstance(property);
 			} catch (Exception e) {
 				throw new RuntimeException("PropertyEditor not instantiated", e);
 			}

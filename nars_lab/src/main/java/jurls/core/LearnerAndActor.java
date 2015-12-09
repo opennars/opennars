@@ -41,7 +41,7 @@ public abstract class LearnerAndActor {
     public String getDebugString(int indent) {
         String ind = Utils.makeIndent(indent);
         stringBuilder.setLength(0);
-        stringBuilder.append(ind).append("@").append(numIterations);
+        stringBuilder.append(ind).append('@').append(numIterations);
         stringBuilder.append(" (").append(iterationsPerSecond).append("/s)\n");
         if (parameterizedFunction != null) {
             stringBuilder.append(ind).append(" QMin: ").append(Texts.n4(parameterizedFunction.minOutputDebug())).append('\n');

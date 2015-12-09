@@ -72,7 +72,7 @@ public class CompiledUnificationTest extends UnificationTest {
         int power = 1 + t1.volume() * t2.volume();
         power *= power;
 
-        final XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
+        XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
 
         TermPattern tp = new TermPattern(type, t1);
 
@@ -119,7 +119,7 @@ public class CompiledUnificationTest extends UnificationTest {
 //        nar.believe(s2);
 //        nar.frame(2);
 
-        final XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
+        XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
 
 
 

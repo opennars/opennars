@@ -56,28 +56,28 @@ final class SerializedRope implements Externalizable {
      * @param left the first rope.
      * @param right the second rope.
      */
-    public SerializedRope(final Rope rope) {
+    public SerializedRope(Rope rope) {
         this.rope = rope;
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
+    public void readExternal(ObjectInput in) throws IOException,
             ClassNotFoundException {
         // Read the UTF string and build a rope from it. This should
         // result in a FlatRope.
-        this.rope = Rope.build(in.readUTF());
+        rope = Rope.build(in.readUTF());
     }
 
     private Object readResolve() throws ObjectStreamException {
         // Substitute an instance of this class with the deserialized
         // rope.
-        return this.rope;
+        return rope;
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // Evaluate the rope (toString()) and write as UTF. Unfortunately,
         // this requires O(n) temporarily-allocated heap space.
-        out.writeUTF(this.rope.toString());
+        out.writeUTF(rope.toString());
     }
 }

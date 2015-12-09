@@ -56,13 +56,13 @@ public class FindMethod {
         // First find the applicable methods 
         List<Method> applicableMethods = new LinkedList<>();
 
-        for (int i = 0; i < toTest.length; i++) {
-            // Check the name matches 
-            if (!toTest[i].getName().equals(name)) {
+        for (Method aToTest : toTest) {
+            // Check the name matches
+            if (!aToTest.getName().equals(name)) {
                 continue;
             }
-            // Check the parameters match 
-            Class<?>[] params = toTest[i].getParameterTypes();
+            // Check the parameters match
+            Class<?>[] params = aToTest.getParameterTypes();
 
             if (params.length != l) {
                 continue;
@@ -74,9 +74,9 @@ public class FindMethod {
                     break;
                 }
             }
-            // If so, add it to the list 
+            // If so, add it to the list
             if (j == l) {
-                applicableMethods.add(toTest[i]);
+                applicableMethods.add(aToTest);
             }
         }
 

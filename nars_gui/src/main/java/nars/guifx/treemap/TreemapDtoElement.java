@@ -14,8 +14,8 @@ class TreemapDtoElement {
     private final Item item;
 
     public TreemapDtoElement(Item item) {
-        this.area = item.getSize();
-        this.label = item.getLabel();
+        area = item.getSize();
+        label = item.getLabel();
         this.item = item;
     }
 

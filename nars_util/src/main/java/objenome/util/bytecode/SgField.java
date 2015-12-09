@@ -42,8 +42,8 @@ public final class SgField extends SgVariable {
      *            Initializer for the field - Can be null but should normally be
      *            set to an empty String instead.
      */
-    public SgField(final SgClass owner, final String modifiers, final SgClass type,
-            final String name, final String initializer) {
+    public SgField(SgClass owner, String modifiers, SgClass type,
+                   String name, String initializer) {
 
         super(modifiers, type, name);
 
@@ -52,11 +52,7 @@ public final class SgField extends SgVariable {
         }
         this.owner = owner;
 
-        if (initializer == null) {
-            this.initializer = initializer;
-        } else {
-            this.initializer = initializer.trim();
-        }
+        this.initializer = initializer == null ? initializer : initializer.trim();
 
         // TODO Does not work when analyzing classes... Check why!
         // if (owner.findFieldByName(name) != null) {
@@ -72,7 +68,7 @@ public final class SgField extends SgVariable {
      * 
      * @return Class.
      */
-    public final SgClass getOwner() {
+    public SgClass getOwner() {
         return owner;
     }
 
@@ -81,7 +77,7 @@ public final class SgField extends SgVariable {
      * 
      * @return Initializer for the field - Maybe null.
      */
-    public final String getInitializer() {
+    public String getInitializer() {
         return initializer;
     }
 
@@ -89,9 +85,9 @@ public final class SgField extends SgVariable {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
-        final StringBuffer sb = new StringBuffer();
-        if (getAnnotations().size() > 0) {
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (!getAnnotations().isEmpty()) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
                     sb.append(' ');
@@ -100,7 +96,7 @@ public final class SgField extends SgVariable {
             }
             sb.append('\n');
         }
-        if (getModifiers().length() == 0) {
+        if (getModifiers().isEmpty()) {
             sb.append(getType().getSourceName()).append(' ').append(getName());
         } else {
             sb.append(getModifiers()).append(' ').append(getType().getSourceName()).append(' ').append(getName());
@@ -108,7 +104,7 @@ public final class SgField extends SgVariable {
         if (initializer == null) {
             sb.append(" /** No initializer source available */ ");
         } else {
-            if (initializer.length() > 0) {
+            if (!initializer.isEmpty()) {
                 sb.append(" = ");
                 sb.append(initializer);
             }

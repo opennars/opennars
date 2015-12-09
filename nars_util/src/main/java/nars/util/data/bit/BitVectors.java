@@ -34,20 +34,20 @@ public class BitVectors {
 	private BitVectors() {}	
 	
 
-    public static void ensureFromTo( final long bitVectorLength, final long from, final long to ) {
+    public static void ensureFromTo( long bitVectorLength, long from, long to ) {
         if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
         if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
         if ( to > bitVectorLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than bit vector length (" + bitVectorLength + ')');
     }
  	
-	/** An immutable, singleton empty bit vector. */ 
-	public final static BitVector EMPTY_VECTOR = new AbstractBitVector() {
-		public final long length() { return 0; }
-		public final BitVector copy( final long from, final long to ) { 
+	/** An immutable, singleton empty bit vector. */
+	public static final BitVector EMPTY_VECTOR = new AbstractBitVector() {
+		public long length() { return 0; }
+		public BitVector copy(long from, long to ) {
 			ensureFromTo( 0, from, to );
 			return EMPTY_VECTOR; 
 		}
-		public final boolean getBoolean( final long index ) { throw new IndexOutOfBoundsException(); }
+		public boolean getBoolean(long index ) { throw new IndexOutOfBoundsException(); }
 		public BitVector copy() {
 			return this;
 		}
@@ -56,14 +56,14 @@ public class BitVectors {
 		}
 	};
 
-	/** An immutable bit vector of length one containing a zero. */ 
-	public final static BitVector ZERO = new AbstractBitVector() {
-		public final long length() { return 1; }
-		public final BitVector copy( final long from, final long to ) { 
+	/** An immutable bit vector of length one containing a zero. */
+	public static final BitVector ZERO = new AbstractBitVector() {
+		public long length() { return 1; }
+		public BitVector copy(long from, long to ) {
 			ensureFromTo( 1, from, to );
 			return from == to ? EMPTY_VECTOR : this; 
 		}
-		public final boolean getBoolean( final long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return false; } 
+		public boolean getBoolean(long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return false; }
 		public BitVector copy() {
 			return this;
 		}
@@ -72,14 +72,14 @@ public class BitVectors {
 		}
 	};
 
-	/** An immutable bit vector of length one containing a one. */ 
-	public final static BitVector ONE = new AbstractBitVector() {
-		public final long length() { return 1; }
-		public final BitVector copy( final long from, final long to ) { 
+	/** An immutable bit vector of length one containing a one. */
+	public static final BitVector ONE = new AbstractBitVector() {
+		public long length() { return 1; }
+		public BitVector copy(long from, long to ) {
 			ensureFromTo( 1, from, to );
 			return from == to ? EMPTY_VECTOR : this; 
 		}
-		public final boolean getBoolean( final long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return true; } 
+		public boolean getBoolean(long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return true; }
 		public BitVector copy() {
 			return this;
 		}
@@ -100,9 +100,9 @@ public class BitVectors {
 	 * @param dos a data output stream.
 	 */
 	
-	public static void writeFast( final BitVector v, final DataOutput dos ) throws IOException {
-		final long length = v.length();
-		final long l = length - length % Long.SIZE;
+	public static void writeFast( BitVector v, DataOutput dos ) throws IOException {
+		long length = v.length();
+		long l = length - length % Long.SIZE;
 		dos.writeLong( length );
 		long i;
 		for( i = 0; i < l; i += Long.SIZE ) dos.writeLong( v.getLong( i, i + Long.SIZE ) );
@@ -120,10 +120,10 @@ public class BitVectors {
 	 * @see #readFast(DataInput, LongArrayBitVector)
 	 */
 	
-	public static LongArrayBitVector readFast( final DataInput dis ) throws IOException {
-		final long length = dis.readLong();
-		final long bits[] = new long[ LongArrayBitVector.numWords( length ) ];
-		final int l = bits.length;
+	public static LongArrayBitVector readFast( DataInput dis ) throws IOException {
+		long length = dis.readLong();
+		long[] bits = new long[LongArrayBitVector.numWords(length)];
+		int l = bits.length;
 		for( int i = 0; i < l; i++ ) bits[ i ] = dis.readLong();
 		return LongArrayBitVector.wrap( bits, length );
 	}
@@ -138,10 +138,10 @@ public class BitVectors {
 	 * @see #writeFast(BitVector, DataOutput)
 	 * @see #readFast(DataInput)
 	 */
-	public static LongArrayBitVector readFast( DataInput dis, final LongArrayBitVector bv ) throws IOException {
-		final long length = dis.readLong();
+	public static LongArrayBitVector readFast( DataInput dis, LongArrayBitVector bv ) throws IOException {
+		long length = dis.readLong();
 		bv.ensureCapacity( length );
-		final int l = LongArrayBitVector.numWords( length );
+		int l = LongArrayBitVector.numWords( length );
 		for( int i = 0; i < l; i++ ) bv.bits[ i ] = dis.readLong();
 		bv.length( length );
 		return bv;

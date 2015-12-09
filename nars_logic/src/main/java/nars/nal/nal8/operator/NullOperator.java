@@ -36,7 +36,6 @@ public class NullOperator extends SyncOperator {
 
     /** uses the implementation class's simpleName as the term */
     public NullOperator() {
-        super();
     }
 
     @Override

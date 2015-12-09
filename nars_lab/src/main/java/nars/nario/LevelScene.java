@@ -48,10 +48,10 @@ public class LevelScene extends Scene implements SpriteContext
     public LevelScene(GraphicsConfiguration graphicsConfiguration, MarioComponent renderer, long seed, int levelDifficulty, int type)
     {
         this.graphicsConfiguration = graphicsConfiguration;
-        this.levelSeed = seed;
+        levelSeed = seed;
         this.renderer = renderer;
         this.levelDifficulty = levelDifficulty;
-        this.levelType = type;
+        levelType = type;
     }
 
     public void init()
@@ -160,25 +160,17 @@ public class LevelScene extends Scene implements SpriteContext
         
         fireballsOnScreen = 0;
 
-        for (Sprite sprite : sprites)
-        {
-            if (sprite != mario)
-            {
-                float xd = sprite.x - xCam;
-                float yd = sprite.y - yCam;
-                if (xd < -64 || xd > 320 + 64 || yd < -64 || yd > 240 + 64)
-                {
-                    removeSprite(sprite);
-                }
-                else
-                {
-                    if (sprite instanceof Fireball)
-                    {
-                        fireballsOnScreen++;
-                    }
+        sprites.stream().filter(sprite -> sprite != mario).forEach(sprite -> {
+            float xd = sprite.x - xCam;
+            float yd = sprite.y - yCam;
+            if (xd < -64 || xd > 320 + 64 || yd < -64 || yd > 240 + 64) {
+                removeSprite(sprite);
+            } else {
+                if (sprite instanceof Fireball) {
+                    fireballsOnScreen++;
                 }
             }
-        }
+        });
 
         if (paused)
         {
@@ -252,47 +244,22 @@ public class LevelScene extends Scene implements SpriteContext
                 //sound.play(Art.samples[Art.SAMPLE_CANNON_FIRE], new FixedSoundSource(xCannon * 16, yCam + 120), 1, 1);
             }
 
-            for (Sprite sprite : sprites)
-            {
-                sprite.tick();
-            }
+            sprites.forEach(Sprite::tick);
 
-            for (Sprite sprite : sprites)
-            {
-                sprite.collideCheck();
-            }
+            sprites.forEach(Sprite::collideCheck);
 
             for (Shell shell : shellsToCheck)
             {
-                for (Sprite sprite : sprites)
-                {
-                    if (sprite != shell && !shell.dead)
-                    {
-                        if (sprite.shellCollideCheck(shell))
-                        {
-                            if (mario.carried == shell && !shell.dead)
-                            {
-                                mario.carried = null;
-                                shell.die();
-                            }
-                        }
-                    }
-                }
+                sprites.stream().filter(sprite -> sprite != shell && !shell.dead).filter(sprite -> sprite.shellCollideCheck(shell)).filter(sprite -> mario.carried == shell && !shell.dead).forEach(sprite -> {
+                    mario.carried = null;
+                    shell.die();
+                });
             }
             shellsToCheck.clear();
 
             for (Fireball fireball : fireballsToCheck)
             {
-                for (Sprite sprite : sprites)
-                {
-                    if (sprite != fireball && !fireball.dead)
-                    {
-                        if (sprite.fireballCollideCheck(fireball))
-                        {
-                            fireball.die();
-                        }
-                    }
-                }
+                sprites.stream().filter(sprite -> sprite != fireball && !fireball.dead).filter(sprite -> sprite.fireballCollideCheck(fireball)).forEach(sprite -> fireball.die());
             }
             fireballsToCheck.clear();
         }
@@ -326,10 +293,7 @@ public class LevelScene extends Scene implements SpriteContext
         }
 
         g.translate(-xCam, -yCam);
-        for (Sprite sprite : sprites)
-        {
-            if (sprite.layer == 0) sprite.render(g, alpha);
-        }
+        sprites.stream().filter(sprite -> sprite.layer == 0).forEach(sprite -> sprite.render(g, alpha));
         g.translate(xCam, yCam);
 
         layer.setCam(xCam, yCam);
@@ -337,10 +301,7 @@ public class LevelScene extends Scene implements SpriteContext
         layer.renderExit0(g, tick, paused?0:alpha, mario.winTime==0);
 
         g.translate(-xCam, -yCam);
-        for (Sprite sprite : sprites)
-        {
-            if (sprite.layer == 1) sprite.render(g, alpha);
-        }
+        sprites.stream().filter(sprite -> sprite.layer == 1).forEach(sprite -> sprite.render(g, alpha));
         g.translate(xCam, yCam);
         g.setColor(Color.BLACK);
         layer.renderExit1(g, tick, paused?0:alpha);
@@ -349,15 +310,15 @@ public class LevelScene extends Scene implements SpriteContext
         drawStringDropShadow(g, "00000000", 0, 1, 7);
         
         drawStringDropShadow(g, "COIN", 14, 0, 7);
-        drawStringDropShadow(g, " "+df.format(Mario.coins), 14, 1, 7);
+        drawStringDropShadow(g, ' ' +df.format(Mario.coins), 14, 1, 7);
 
         drawStringDropShadow(g, "WORLD", 24, 0, 7);
-        drawStringDropShadow(g, " "+Mario.levelString, 24, 1, 7);
+        drawStringDropShadow(g, ' ' +Mario.levelString, 24, 1, 7);
 
         drawStringDropShadow(g, "TIME", 35, 0, 7);
         int time = (timeLeft+15-1)/15;
         if (time<0) time = 0;
-        drawStringDropShadow(g, " "+df2.format(time), 35, 1, 7);
+        drawStringDropShadow(g, ' ' +df2.format(time), 35, 1, 7);
 
 
         if (startTime > 0)

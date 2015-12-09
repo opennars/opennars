@@ -38,7 +38,6 @@ public class RunBestFitness extends AbstractStat<EndGeneration> {
      * Constructs a <code>RunBestFitness</code>.
      */
     public RunBestFitness() {
-        super();
     }
 
     /**

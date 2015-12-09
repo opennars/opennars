@@ -66,7 +66,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
     // The root node of the program tree
     private Node<X,Y> root;
     
-    transient private Class dataType; //caches data type
+    private transient Class dataType; //caches data type
     private Map<String, ? extends Variable> vars = null;
 
     /**
@@ -218,11 +218,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
         TypedOrganism clone = (TypedOrganism) super.clone();
 
         // Deep copy node tree
-        if (root == null) {
-            clone.root = null;
-        } else {
-            clone.root = root.clone();
-        }
+        clone.root = root == null ? null : root.clone();
 
         return clone;
     }
@@ -235,11 +231,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
      */
     @Override
     public String toString() {
-        if (root == null) {
-            return null;
-        } else {
-            return getFitness() + " " + root.toString();
-        }
+        return root == null ? null : getFitness() + " " + root.toString();
     }
 
     /**

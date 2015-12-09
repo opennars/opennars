@@ -12,10 +12,7 @@ public class NoCommonSubterm extends PreCondition2 {
 
     /** commutivity: sort the terms */
     public static NoCommonSubterm make(Term a, Term b) {
-        if (a.compareTo(b) <= 0)
-            return new NoCommonSubterm(a, b);
-        else
-            return new NoCommonSubterm(b, a);
+        return a.compareTo(b) <= 0 ? new NoCommonSubterm(a, b) : new NoCommonSubterm(b, a);
     }
 
     NoCommonSubterm(Term arg1, Term arg2) {
@@ -29,7 +26,7 @@ public class NoCommonSubterm extends PreCondition2 {
         return !sharedSubterms(a, b, tmpSet );
     }
 
-    static boolean sharedSubterms(final Term a, final Term b, Set<Term> s) {
+    static boolean sharedSubterms(Term a, Term b, Set<Term> s) {
         addSubtermsRecursivelyUntilFirstMatch(a, s, null);
         return !addSubtermsRecursivelyUntilFirstMatch(b, null, s); //we stop early this way (efficiency)
     }

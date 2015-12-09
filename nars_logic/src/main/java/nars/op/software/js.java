@@ -42,7 +42,7 @@ public class js extends TermFunction implements Mental {
             this.function = function;
 
             try {
-                this.fnCompiled = js.get().eval(function);
+                fnCompiled = js.get().eval(function);
             }
             catch (Throwable ex) {
                 ex.printStackTrace();

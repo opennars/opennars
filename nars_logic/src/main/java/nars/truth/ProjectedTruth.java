@@ -5,7 +5,7 @@ package nars.truth;
 
     private final long target;
 
-    public ProjectedTruth(final float f, final float c, long target) {
+    public ProjectedTruth(float f, float c, long target) {
         super(f, c);
         this.target = target;
     }

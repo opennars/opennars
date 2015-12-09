@@ -35,16 +35,13 @@ public class LoopPane extends VBox {
 
     boolean running = false;
 
-    final ChangeListener<Number> updateLoopOnChange = (s, p, c) -> {
-        updateLoop();
-    };
+    final ChangeListener<Number> updateLoopOnChange = (s, p, c) -> updateLoop();
 
     public LoopPane(NARLoop loop) {
-        super();
 
         this.loop = loop;
 
-        final NAR n = loop.nar;
+        NAR n = loop.nar;
         runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
         stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
         cpuLabel = new SimpleStringProperty("CPU");
@@ -97,7 +94,7 @@ public class LoopPane extends VBox {
         //-2 here is a magic number to indicate that nothing is pending and can be changed now
         cpuSlider.value[0].addListener(updateLoopOnChange);
 
-        this.multiplier = new ComboBox<Integer>();
+        multiplier = new ComboBox<>();
         multiplier.getItems().addAll( 1, 4, 16, 64, 128, 512);
         multiplier.setValue(1);
         multiplier.valueProperty().addListener(updateLoopOnChange);
@@ -126,7 +123,7 @@ public class LoopPane extends VBox {
                 //1000.0 * (1.0 / (0.05 + c.doubleValue()))
                 2000.0 * v // / (1.0 - v)
         );*/
-        float logScale = 50f;
+        float logScale = 50.0f;
         int minDelay = 20; //slightly slower than 60hz, which is what javafx pulse runs at
         int nMS = (int) Math.round((1.0 - Math.log(1 + v * logScale) / Math.log(1 + logScale)) * 1024.0) + minDelay;
 
@@ -135,11 +132,11 @@ public class LoopPane extends VBox {
 
             //new delay set:
 
-            final int MS = nMS;
+            int MS = nMS;
 
             runLater(() -> {
                 unpause();
-                say("cycle period=" + MS + "ms (" + Texts.n4(1000f / MS) + "hz)");
+                say("cycle period=" + MS + "ms (" + Texts.n4(1000.0f / MS) + "hz)");
             });
         }
     }

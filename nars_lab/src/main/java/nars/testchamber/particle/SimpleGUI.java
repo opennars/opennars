@@ -29,21 +29,12 @@ public class SimpleGUI extends JFrame{
 		//Set GUI to look like native OS instead of crappy java default look
 	    try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); //make it look pretty
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
+		} catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
-	    particlenumberL = new JLabel ("Number of Particles?");	    
+
+		particlenumberL = new JLabel ("Number of Particles?");
 	    particlenumberTF = new JTextField();
 	    particlenumberTF.setText("500000");
 	    
@@ -61,13 +52,13 @@ public class SimpleGUI extends JFrame{
 	    runB = new JButton("RUN");
 	    runBHandler = new RunButtonHandler();
 		runB.addActionListener(runBHandler);
-		
-		this.setTitle("Particle Simulation Program");
+
+		setTitle("Particle Simulation Program");
 		
 		versionList.setSelectedItem("v7");
 
 		
-		Container pane = this.getContentPane();
+		Container pane = getContentPane();
 		pane.setLayout(new GridLayout(4,2));
 		
 		pane.add(particlenumberL);
@@ -78,11 +69,11 @@ public class SimpleGUI extends JFrame{
 		pane.add(tileTF);
 		pane.add(versionList);
 		pane.add(runB);
-		
-		this.setSize(WIDTH, HEIGHT);
-		this.setFocusable(true);
-		this.setVisible(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+		setSize(WIDTH, HEIGHT);
+		setFocusable(true);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	    
 	}
 	
@@ -93,12 +84,12 @@ public class SimpleGUI extends JFrame{
 		{
 			System.out.println("Button Registered");
 			
-			if (versionList.getSelectedItem().equals("v5"))
+			if ("v5".equals(versionList.getSelectedItem()))
 			{
 				new ParticleSystem_v5();
 			}
 			
-			else if (versionList.getSelectedItem().equals("v7"))
+			else if ("v7".equals(versionList.getSelectedItem()))
 			{
 				new ParticleSystem_v7();
 			}

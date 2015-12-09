@@ -20,7 +20,7 @@ public class UniformVector  {
     private float priority;
 
     public UniformVector(NAR n, String prefix, double[] data) {
-        this.nar = n;
+        nar = n;
         this.prefix = prefix;
         this.data = data;
         priority = Float.NaN;
@@ -61,12 +61,12 @@ public class UniformVector  {
         
     }
 
-    public boolean different(final double a, final double b) {
+    public boolean different(double a, double b) {
         return Math.abs(a - b) >= epsilon;
     }
     
     public UniformVector setPriority(float p) {
-        this.priority = p;
+        priority = p;
         return this;
     }
     

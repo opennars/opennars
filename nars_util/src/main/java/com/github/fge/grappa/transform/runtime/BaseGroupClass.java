@@ -23,7 +23,7 @@ public abstract class BaseGroupClass
 {
     private final String name;
 
-    protected BaseGroupClass(final String name)
+    protected BaseGroupClass(String name)
     {
         this.name = Objects.requireNonNull(name, "name");
     }

@@ -9,10 +9,9 @@ import java.awt.event.HierarchyListener;
  * JPanel subclass that is aware of when it is shown. This allows event handlers to attach and reattach to NAR's
  * @author SeH
  */
-abstract public class NPanel extends JPanel implements HierarchyListener {
+public abstract class NPanel extends JPanel implements HierarchyListener {
 
     public NPanel() {
-        super();
         initialize();
     }
 
@@ -49,7 +48,7 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
     }    
 
     /** called when visibility changes */
-    abstract protected void visibility(boolean appearedOrDisappeared);
+    protected abstract void visibility(boolean appearedOrDisappeared);
 
 
 }

@@ -59,53 +59,53 @@ public class Memory extends Param {
     public final Random random;
 
     @Deprecated
-    transient public final EventEmitter<Class, Object[]> event;
+    public final transient EventEmitter<Class, Object[]> event;
 
-    transient public final Topic<Task> eventTaskRemoved = new DefaultTopic<>();
-    transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
-    transient public final Topic<Task> eventRevision = new DefaultTopic<>();
+    public final transient Topic<Task> eventTaskRemoved = new DefaultTopic<>();
+    public final transient Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
+    public final transient Topic<Task> eventRevision = new DefaultTopic<>();
 
-    transient public final Topic<Memory> eventReset = new DefaultTopic<>();
+    public final transient Topic<Memory> eventReset = new DefaultTopic<>();
 
-    transient public final Topic<Concept> eventConceptActivated = new DefaultTopic<>();
+    public final transient Topic<Concept> eventConceptActivated = new DefaultTopic<>();
 
-    transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
+    public final transient Topic<NAR> eventFrameStart = new DefaultTopic<>();
 
     /**
      * fired at the end of each memory cycle
      */
-    transient public final Topic<Memory> eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
+    public final transient Topic<Memory> eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
 
-    transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
+    public final transient Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
 
     /**
      * used for reporting or informing outside. consists of additional notes
      * or data which could annotate a log or summary of system activity
      */
-    transient public final Topic<Serializable> eventSpeak = new DefaultTopic<>();
+    public final transient Topic<Serializable> eventSpeak = new DefaultTopic<>();
 
-    transient public final Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
+    public final transient Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
 
-    public transient final Topic<Task> eventInput = new DefaultTopic<>();
-    public transient final Topic<Serializable> eventError = new DefaultTopic<>();
+    public final transient Topic<Task> eventInput = new DefaultTopic<>();
+    public final transient Topic<Serializable> eventError = new DefaultTopic<>();
 
     /** all derivations, even if they do not eventually reach the memory via input;
      *  this generates many events, use with caution
      */
-    public transient final Topic<Task> eventDerived = new DefaultTopic<>();
+    public final transient Topic<Task> eventDerived = new DefaultTopic<>();
 
-    public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
-    public transient final Topic<Concept> eventConceptChange = new DefaultTopic();
+    public final transient Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
+    public final transient Topic<Concept> eventConceptChange = new DefaultTopic();
 
     /** executables (incl. operators) */
-    transient public final EventEmitter<Term, Task> exe;
+    public final transient EventEmitter<Term, Task> exe;
 
 
 
     //TODO move these to separate components, not part of Memory:
-    transient public final EmotionMeter emotion;
-    transient public final LogicMeter logic;
+    public final transient EmotionMeter emotion;
+    public final transient LogicMeter logic;
 
     public final Clock clock;
 
@@ -131,24 +131,24 @@ public class Memory extends Param {
      */
     public Memory(Clock clock, Random rng, TermIndex index) {
 
-        this.random = rng;
+        random = rng;
 
-        this.level = 8;
+        level = 8;
 
         this.clock = clock;
 
         this.index = index;
 
 
-        this.self = Global.DEFAULT_SELF; //default value
+        self = Global.DEFAULT_SELF; //default value
 
-        this.event = new EventEmitter.DefaultEventEmitter();
-        this.exe = new EventEmitter.DefaultEventEmitter();
+        event = new EventEmitter.DefaultEventEmitter();
+        exe = new EventEmitter.DefaultEventEmitter();
 
 
         //temporary
-        this.logic = new LogicMeter(this);
-        this.emotion = new EmotionMeter(this);
+        logic = new LogicMeter(this);
+        emotion = new EmotionMeter(this);
 
 
     }
@@ -161,7 +161,7 @@ public class Memory extends Param {
     }
 
     public final void nal(int newLevel) {
-        this.level = newLevel;
+        level = newLevel;
     }
 
 
@@ -186,7 +186,7 @@ public class Memory extends Param {
     }
 
     public void setSelf(Atom t) {
-        this.self = t;
+        self = t;
     }
 
 
@@ -225,7 +225,7 @@ public class Memory extends Param {
      * by the provided Term
      */
     public final Concept concept(Term t) {
-        final Term u = t.normalized();
+        Term u = t.normalized();
         if (u == null) return null;
 
         Termed tt = index.get(u);
@@ -241,8 +241,8 @@ public class Memory extends Param {
      * @param t The Term naming a concept
      * @return the priority value of the concept
      */
-    public final float conceptPriority(final Term t, float valueIfMissing) {
-        final Concept c = concept(t);
+    public final float conceptPriority(Term t, float valueIfMissing) {
+        Concept c = concept(t);
         return (c == null) ? valueIfMissing : c.getPriority();
     }
 
@@ -254,7 +254,7 @@ public class Memory extends Param {
 
     /** current temporal perception duration of the reasoner */
     public final int duration() {
-        return this.duration.intValue();
+        return duration.intValue();
     }
 
 
@@ -267,9 +267,9 @@ public class Memory extends Param {
     /**
      * called anytime a task has been removed, deleted, discarded, ignored, etc.
      */
-    public final void remove(final Task task, final Object removalReason) {
+    public final void remove(Task task, Object removalReason) {
 
-        final boolean willBeReceived = eventTaskRemoved.size() > 0;
+        boolean willBeReceived = !eventTaskRemoved.isEmpty();
 
         if (willBeReceived && removalReason!=null)
             task.log(removalReason);
@@ -435,7 +435,7 @@ public class Memory extends Param {
     public final void cycle(int num) {
 
         //final Clock clock = this.clock;
-        final Topic<Memory> end = eventCycleEnd;
+        Topic<Memory> end = eventCycleEnd;
 
         //synchronized (clock) {
 
@@ -525,7 +525,7 @@ public class Memory extends Param {
 //    }
 
     public void start() {
-        this.index.start(this);
+        index.start(this);
 
     }
 

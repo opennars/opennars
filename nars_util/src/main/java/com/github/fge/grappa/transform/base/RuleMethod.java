@@ -77,9 +77,9 @@ public class RuleMethod
     private boolean bodyRewritten;
     private boolean skipGeneration;
 
-    public RuleMethod(final Class<?> ownerClass, final int access,
-        final String name, final String desc, final String signature,
-        final String[] exceptions, final Set<ParserAnnotation> classAnnotations)
+    public RuleMethod(Class<?> ownerClass, int access,
+                      String name, String desc, String signature,
+                      String[] exceptions, Set<ParserAnnotation> classAnnotations)
     {
         super(Opcodes.ASM5, access, name, desc, signature, exceptions);
         this.ownerClass = ownerClass;
@@ -87,7 +87,7 @@ public class RuleMethod
 
         if (parameterCount == 0)
             annotations.add(CACHED);
-        final Set<ParserAnnotation> set = EnumSet.copyOf(classAnnotations);
+        Set<ParserAnnotation> set = EnumSet.copyOf(classAnnotations);
         set.retainAll(COPY_FROM_CLASS);
         annotations.addAll(set);
         skipGeneration = isSuperMethod();
@@ -124,7 +124,7 @@ public class RuleMethod
     }
 
     public void setContainsImplicitActions(
-        final boolean containsImplicitActions)
+        boolean containsImplicitActions)
     {
         this.containsImplicitActions = containsImplicitActions;
     }
@@ -135,7 +135,7 @@ public class RuleMethod
     }
 
     public void setContainsExplicitActions(
-        final boolean containsExplicitActions)
+        boolean containsExplicitActions)
     {
         this.containsExplicitActions = containsExplicitActions;
     }
@@ -176,7 +176,7 @@ public class RuleMethod
     }
 
     public void setReturnInstructionNode(
-        final InstructionGraphNode returnInstructionNode)
+        InstructionGraphNode returnInstructionNode)
     {
         this.returnInstructionNode = returnInstructionNode;
     }
@@ -207,15 +207,15 @@ public class RuleMethod
         return name.charAt(0) == '$';
     }
 
-    public InstructionGraphNode setGraphNode(final AbstractInsnNode insn,
-        final BasicValue resultValue, final List<BasicValue> predecessors)
+    public InstructionGraphNode setGraphNode(AbstractInsnNode insn,
+                                             BasicValue resultValue, List<BasicValue> predecessors)
     {
         if (graphNodes == null) {
             // initialize with a list of null values
             graphNodes = Lists
                 .newArrayList(new InstructionGraphNode[instructions.size()]);
         }
-        final int index = instructions.indexOf(insn);
+        int index = instructions.indexOf(insn);
         InstructionGraphNode node = graphNodes.get(index);
         if (node == null) {
             node = new InstructionGraphNode(insn, resultValue);
@@ -226,10 +226,10 @@ public class RuleMethod
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(final String desc,
-        final boolean visible)
+    public AnnotationVisitor visitAnnotation(String desc,
+                                             boolean visible)
     {
-        final  boolean recorded = recordAnnotation(annotations, desc);
+        boolean recorded = recordAnnotation(annotations, desc);
         // FIXME...
         if (annotations.contains(DONT_SKIP_ACTIONS_IN_PREDICATES))
             annotations.remove(SKIP_ACTIONS_IN_PREDICATES);
@@ -240,8 +240,8 @@ public class RuleMethod
     }
 
     @Override
-    public void visitMethodInsn(final int opcode, final String owner,
-        final String name, final String desc, final boolean itf)
+    public void visitMethodInsn(int opcode, String owner,
+                                String name, String desc, boolean itf)
     {
         switch (opcode) {
             case INVOKESTATIC:
@@ -267,7 +267,7 @@ public class RuleMethod
     }
 
     @Override
-    public void visitInsn(final int opcode)
+    public void visitInsn(int opcode)
     {
         if (opcode == ARETURN)
             numberOfReturns++;
@@ -275,45 +275,45 @@ public class RuleMethod
     }
 
     @Override
-    public void visitJumpInsn(final int opcode, final Label label)
+    public void visitJumpInsn(int opcode, Label label)
     {
         usedLabels.add(getLabelNode(label));
         super.visitJumpInsn(opcode, label);
     }
 
     @Override
-    public void visitTableSwitchInsn(final int min, final int max,
-        final Label dflt, final Label[] labels)
+    public void visitTableSwitchInsn(int min, int max,
+                                     Label dflt, Label[] labels)
     {
         usedLabels.add(getLabelNode(dflt));
-        for (final Label label : labels)
+        for (Label label : labels)
             usedLabels.add(getLabelNode(label));
         super.visitTableSwitchInsn(min, max, dflt, labels);
     }
 
     @Override
-    public void visitLookupSwitchInsn(final Label dflt, final int[] keys,
-        final Label[] labels)
+    public void visitLookupSwitchInsn(Label dflt, int[] keys,
+                                      Label[] labels)
     {
         usedLabels.add(getLabelNode(dflt));
-        for (final Label label : labels)
+        for (Label label : labels)
             usedLabels.add(getLabelNode(label));
         super.visitLookupSwitchInsn(dflt, keys, labels);
     }
 
     @Override
-    public void visitLineNumber(final int line, final Label start)
+    public void visitLineNumber(int line, Label start)
     {
         // do not record line numbers
     }
 
     @Override
-    public void visitLocalVariable(final String name, final String desc,
-        final String signature, final Label start, final Label end,
-        final int index)
+    public void visitLocalVariable(String name, String desc,
+                                   String signature, Label start, Label end,
+                                   int index)
     {
         // only remember the local variables of Type com.github.fge.grappa.support.Var that are not parameters
-        final Type type = Type.getType(desc);
+        Type type = Type.getType(desc);
         if (index > parameterCount
             && Var.class.isAssignableFrom(getClassForType(type)))
             localVarVariables.add(new LocalVariableNode(name, desc, null, null,
@@ -326,7 +326,7 @@ public class RuleMethod
         return name;
     }
 
-    public void moveFlagsTo(final RuleMethod method)
+    public void moveFlagsTo(RuleMethod method)
     {
         Objects.requireNonNull(method);
         moveTo(annotations, method.annotations);

@@ -11,6 +11,7 @@ import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.AbstractGraph;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * EXPERIMENTAL
@@ -24,7 +25,6 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     private final Map<Object, Object> out = new HashMap();
 
     public CachedObjectGraph(Collection<Object> items) {
-        super();
 
         this.items = new HashSet(items);
 
@@ -35,11 +35,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
         in.clear();
         out.clear();
 
-        for (Object i : items) {
-            if (i instanceof Concept) {
-                addConceptTermLinks((Concept) i);
-            }
-        }
+        items.stream().filter(i -> i instanceof Concept).forEach(i -> addConceptTermLinks((Concept) i));
 
     }
 
@@ -60,7 +56,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     }
 
     public void addConceptTermLinks(Concept c) {
-        final Term source = c.getTerm();
+        Term source = c.getTerm();
 
         if (!containsVertex(c)) {
             addVertex(c);
@@ -142,14 +138,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Set<Object> getAllEdges(Object source, Object target) {
-        Set<Object> edges = new HashSet();
-        for (final Map.Entry<Object, Object> e : in.entrySet()) {
-            if (e.getValue().equals(source)) {
-                if (out.get(e.getKey()).equals(target)) {
-                    edges.add(e.getKey());
-                }
-            }
-        }
+        Set<Object> edges = in.entrySet().stream().filter(e -> e.getValue().equals(source)).filter(e -> out.get(e.getKey()).equals(target)).map(Map.Entry<Object, Object>::getKey).collect(Collectors.toSet());
         return edges;
     }
 
@@ -208,12 +197,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Set<Object> incomingEdgesOf(Object v) {
-        Set<Object> s = new HashSet();
-        for (final Map.Entry<Object, Object> e : in.entrySet()) {
-            if (e.getValue().equals(v)) {
-                s.add(e.getKey());
-            }
-        }
+        Set<Object> s = in.entrySet().stream().filter(e -> e.getValue().equals(v)).map(Map.Entry<Object, Object>::getKey).collect(Collectors.toSet());
         return s;
     }
 
@@ -224,12 +208,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Set<Object> outgoingEdgesOf(Object v) {
-        Set<Object> s = new HashSet();
-        for (final Map.Entry<Object, Object> e : out.entrySet()) {
-            if (e.getValue().equals(v)) {
-                s.add(e.getKey());
-            }
-        }
+        Set<Object> s = out.entrySet().stream().filter(e -> e.getValue().equals(v)).map(Map.Entry<Object, Object>::getKey).collect(Collectors.toSet());
         return s;
     }
 

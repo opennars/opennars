@@ -27,7 +27,7 @@ public abstract class BaseVarInit<V>
     extends BaseGroupClass
     implements Supplier<V>
 {
-    protected BaseVarInit(final String name)
+    protected BaseVarInit(String name)
     {
         super(Objects.requireNonNull(name, "name"));
     }

@@ -16,10 +16,10 @@ public class CGMethodCall extends CGMethod {
         super(method.jc, method.mg, method.ii);
         this.method = method;
         this.at = at;
-        this.className = method.className;
-        this.methodName = method.methodName;
-        this.argumentTypes = method.argumentTypes;
-        this.key = method.key() + "|" + at.toString();
+        className = method.className;
+        methodName = method.methodName;
+        argumentTypes = method.argumentTypes;
+        key = method.key() + '|' + at.toString();
     }
 
     @Override
@@ -50,8 +50,8 @@ public class CGMethodCall extends CGMethod {
 
     @Override
     protected void post() {
-        this.throwing = method.throwing;
-        this.returnType = method.returnType;
+        throwing = method.throwing;
+        returnType = method.returnType;
     }
 }
 

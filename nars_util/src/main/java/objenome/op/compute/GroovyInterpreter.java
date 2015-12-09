@@ -86,9 +86,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
             for (int i = 0; i < noParamSets; i++) {
                 results[i] = invocableEngine.invokeFunction("expr", argValues[i]);
             }
-        } catch (final ScriptException ex) {
-            ex.printStackTrace();
-        } catch (final NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             ex.printStackTrace();
         }
 
@@ -117,12 +115,10 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
             getEngine().eval(code);
 
             // Evaluate each argument set.
-            for (int i = 0; i < noParamSets; i++) {
-                invocableEngine.invokeFunction("expr", argValues[i]);
+            for (Object[] argValue : argValues) {
+                invocableEngine.invokeFunction("expr", argValue);
             }
-        } catch (ScriptException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             ex.printStackTrace();
         }
     }
@@ -159,7 +155,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
      * method containing the given program.
      */
     private String getExecCode(String program, String[] argNames) {
-        final StringBuffer code = new StringBuffer();
+        StringBuilder code = new StringBuilder();
 
         code.append("public Object expr(");
         for (int i = 0; i < argNames.length; i++) {

@@ -63,7 +63,7 @@ public class NSlider extends NControl {
 
         //label = text.textProperty();
         //final SimpleDoubleProperty fontScale = new SimpleDoubleProperty(0.05);
-        final DoubleBinding wp = widthProperty().multiply(0.01);
+        DoubleBinding wp = widthProperty().multiply(0.01);
         text.scaleXProperty().bind(wp);
         text.scaleYProperty().bind(wp);
 
@@ -99,10 +99,10 @@ public class NSlider extends NControl {
         this.vis = vis;
         this.control = control;
 
-        if ((this.dimensions = vector.length) == 0)
+        if ((dimensions = vector.length) == 0)
             throw new RuntimeException("zero-length vector");
 
-        this.value = new SimpleDoubleProperty[dimensions];
+        value = new SimpleDoubleProperty[dimensions];
         for (int i = 0; i < dimensions; i++) {
             (value[i] = newValueEntry(i))
                     .addListener(redrawOnDoubleChange);
@@ -137,9 +137,7 @@ public class NSlider extends NControl {
     }
 
     public NSlider valueLater(double... v) {
-        runLater(() -> {
-            value(v);
-        });
+        runLater(() -> value(v));
         return this;
     }
 
@@ -179,7 +177,7 @@ public class NSlider extends NControl {
     /**
      * cache of the normalized value vector
      */
-    private double normalized[];
+    private double[] normalized;
 
 
     public void denormalized(double... n) {
@@ -199,7 +197,7 @@ public class NSlider extends NControl {
     public double[] normalized() {
         double[] n = normalized;
         if (n == null) {
-            n = this.normalized = new double[dimensions];
+            n = normalized = new double[dimensions];
         }
 
         //TODO only compute this if invalidated
@@ -213,9 +211,9 @@ public class NSlider extends NControl {
     /**
      * normalizesa a value to the specified numeric bounds
      */
-    public final double p(final double v) {
-        final double min = this.min.get();
-        final double max = this.max.get();
+    public final double p(double v) {
+        double min = this.min.get();
+        double max = this.max.get();
         return (v - min) / (max - min);
     }
 
@@ -254,7 +252,7 @@ public class NSlider extends NControl {
 
         g1.setLineWidth(0);
         double hp = 0.5 + 0.5 * p;
-        g1.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g1.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1.0f));
         g1.fillRect(mh, mh, barSize - mh * 2, H - mh * 2);
     };
 
@@ -274,7 +272,7 @@ public class NSlider extends NControl {
         //TODO use a x,w calculation that keeps the notch within bounds that none if it goes invisible at the extremes
 
         double hp = 0.5 + 0.5 * p;
-        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1.0f));
         g.fillRect(mh + barSize - notchRadius, mh, notchRadius * 2, H - mh * 2);
     };
 
@@ -288,7 +286,7 @@ public class NSlider extends NControl {
         double angleStart = 0;
         double circumferenceActive = 0.5; //how much of the circumference of the interior circle is active as a dial track
 
-        final double theta = angleStart + (1-p) * circumferenceActive * (2 * Math.PI);
+        double theta = angleStart + (1-p) * circumferenceActive * (2 * Math.PI);
 
 
 //        double x = W/2 + (W/2-margin) * Math.cos(theta);
@@ -311,11 +309,11 @@ public class NSlider extends NControl {
         g.fillOval(ul, ut, ew, eh);
 
         double hp = 0.5 + 0.5 * p;
-        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1.0f));
 
 
-        final double atheta = theta * 180.0 / Math.PI; //radian to degree
-        final double knobArc = 60;
+        double atheta = theta * 180.0 / Math.PI; //radian to degree
+        double knobArc = 60;
         g.fillArc(ul, ut, ew, eh,
                 atheta - knobArc / 2, knobArc, ArcType.ROUND);
 
@@ -387,9 +385,7 @@ public class NSlider extends NControl {
                 new NSlider("Notch--", 64, 25, NSlider.NotchSlider, 0.75),
                 new NSlider("Knob", 256, 256, NSlider.CircleKnob, 0.5),
                 new NSlider("Ranged", 256, 256, NSlider.BarSlider, 75)
-                    .range(0, 100).on(0, c -> {
-                        System.out.println(Arrays.toString(c.normalized()));
-                    })
+                    .range(0, 100).on(0, c -> System.out.println(Arrays.toString(c.normalized())))
             );
 
 
@@ -406,7 +402,7 @@ public class NSlider extends NControl {
     private NSlider on(int dimension, Consumer<NSlider> callback) {
 
         //TODO save listener so it can be de-registered
-        this.value[0].addListener(c -> {
+        value[0].addListener(c -> {
            callback.accept(NSlider.this);
         });
 
@@ -420,7 +416,7 @@ public class NSlider extends NControl {
 
         @Override
         public void start(NSlider n) {
-            this.canvas = n.canvas;
+            canvas = n.canvas;
             this.n = n;
 
             canvas.setOnMouseDragged(this);

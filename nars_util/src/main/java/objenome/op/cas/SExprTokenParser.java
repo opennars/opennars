@@ -20,32 +20,33 @@ public class SExprTokenParser extends TokenParser {
         int end = token.fromStrEnd;
         String matched = origString.substring(begin, end);
         
-        if (tokenValue.equals("piWord") || tokenValue.equals("pi")) {
-            return new Token<Object>(new Pi(), origString, begin, end);
+        if ("piWord".equals(tokenValue) || "pi".equals(tokenValue)) {
+            return new Token<>(new Pi(), origString, begin, end);
         }
-        else if (tokenValue.equals("e")) {
-            return new Token<Object>(new E(), origString, begin, end);
+        //noinspection IfStatementWithTooManyBranches
+        if ("e".equals(tokenValue)) {
+            return new Token<>(new E(), origString, begin, end);
         }
-        else if (tokenValue.equals("i")) {
+        if ("i".equals(tokenValue)) {
             // if (debug) System.err.println("i am not yet supported");
             throw new ParseException("i am not yet supported", begin);
         }
-        else if (tokenValue.equals("var")) {
-            return new Token<Object>(context.getVar(matched.charAt(0)), origString, begin, end);
+        if ("var".equals(tokenValue)) {
+            return new Token<>(context.getVar(matched.charAt(0)), origString, begin, end);
         }
-        else if (tokenValue.equals("number")) {
-            return new Token<Object>(Num.make(Double.parseDouble(matched)), origString, begin, end);
+        if ("number".equals(tokenValue)) {
+            return new Token<>(Num.make(Double.parseDouble(matched)), origString, begin, end);
         }
-        else if (tokenValue.equals("undef")) {
-            return new Token<Object>(new Undef(), origString, begin, end);
+        if ("undef".equals(tokenValue)) {
+            return new Token<>(new Undef(), origString, begin, end);
         }
-        else if (tokenValue.equals("true")) {
-            return new Token<Object>(Expr.yep(), origString, begin, end);
+        if ("true".equals(tokenValue)) {
+            return new Token<>(Expr.yep(), origString, begin, end);
         }
-        else if (tokenValue.equals("false")) {
-            return new Token<Object>(Expr.nope(), origString, begin, end);
+        if ("false".equals(tokenValue)) {
+            return new Token<>(Expr.nope(), origString, begin, end);
         }
-        
+
         return token.castValueTo(Object.class);
     }
     

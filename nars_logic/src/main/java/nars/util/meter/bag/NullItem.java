@@ -8,7 +8,7 @@ import java.util.Random;
 /** Empty Item implementation useful for testing */
 public class NullItem extends Item.StringKeyItem {
 
-    final static Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift1024StarRandom(1);
     static int ID = 1;
 
     public final CharSequence key;

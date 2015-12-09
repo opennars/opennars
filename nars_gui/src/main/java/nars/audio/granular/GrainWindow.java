@@ -3,9 +3,9 @@ package nars.audio.granular;
 public interface GrainWindow {
 
 	/** in samples */
-	public int getSize();
+	int getSize();
 
 	/**  amplitude factor */
-	public float getFactor(int offset);
+	float getFactor(int offset);
 
 }

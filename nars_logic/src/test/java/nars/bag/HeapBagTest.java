@@ -26,7 +26,7 @@ public class HeapBagTest extends AbstractBagTest {
     }
 
     Memory p = new Default().memory;
-    final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
+    static final BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 
     public void testBags() {
@@ -60,8 +60,8 @@ public class HeapBagTest extends AbstractBagTest {
         testAveragePriority(32);
         testAveragePriority(4);
         testAveragePriority(8);
-        
-        int d[] = null;
+
+        int[] d = null;
 //        for (int capacity : new int[] { 10, 51, 100, 256 } ) {
 //            d = testRemovalPriorityDistribution(capacity, true);
 //        }
@@ -72,12 +72,12 @@ public class HeapBagTest extends AbstractBagTest {
     public void testHeapBag(int items) {
         HeapBag<CharSequence, NullItem> f = new HeapBag(rng, items, curve);
         
-        f.put(new NullItem(.25f));
+        f.put(new NullItem(0.25f));
         assert(f.size() == 1);
         assert(f.getPrioritySum() > 0);
         
-        f.put(new NullItem(.9f));
-        f.put(new NullItem(.75f));
+        f.put(new NullItem(0.9f));
+        f.put(new NullItem(0.75f));
         
         //System.out.println(f);
         
@@ -126,8 +126,8 @@ public class HeapBagTest extends AbstractBagTest {
     
     public static void testRemovalDistribution(int capacity) {
         int samples = 128 * capacity;
-        
-        int count[] = new int[capacity];
+
+        int[] count = new int[capacity];
         
         HeapBag<CharSequence, NullItem> f = new HeapBag(rng, capacity, curve);
         
@@ -154,7 +154,7 @@ public class HeapBagTest extends AbstractBagTest {
     public void testAveragePriority(int capacity) {
         
         
-        final float priorityEpsilon = 0.01f;
+        float priorityEpsilon = 0.01f;
         
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
         c.mergePlus();

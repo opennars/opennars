@@ -16,7 +16,7 @@ public class Minimal1 implements World {
     
 
     public Minimal1(int totalTime, double frequency) {
-        this.time = 1;
+        time = 1;
         this.totalTime = totalTime;
         this.frequency = frequency;
     }
@@ -29,7 +29,7 @@ public class Minimal1 implements World {
 
     @Override
     public double step(double[] action, double[] sensor) {
-        sensor[0] = Math.sin(  ((double)time) * frequency/3.14159)*0.5 + 0.5;
+        sensor[0] = Math.sin(  (time) * frequency/3.14159)*0.5 + 0.5;
         if (sensor[0] > 0.75) sensor[0] = 1.0;
         if (sensor[0] < 0.25) sensor[0] = 0;
         time++;
@@ -47,16 +47,13 @@ public class Minimal1 implements World {
         
         
         
-        final int duration = 9000000;
-        final double freq = 0.5;
+        int duration = 9000000;
+        double freq = 0.5;
         
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {                
-                    new Simulation(r, new Minimal1(duration, freq));
-                } catch (Exception ex) {                }
-            }        
+        new Thread(() -> {
+            try {
+                new Simulation(r, new Minimal1(duration, freq));
+            } catch (Exception ex) {                }
         }).start();
         /*
         new Thread(new Runnable() {

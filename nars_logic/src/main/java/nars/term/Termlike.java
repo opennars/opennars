@@ -17,7 +17,7 @@ public interface Termlike  {
     boolean containsTerm(Term t);
 
 
-    default boolean impossibleStructureMatch(final int possibleSubtermStructure) {
+    default boolean impossibleStructureMatch(int possibleSubtermStructure) {
         return impossibleStructureMatch(
                 structure(),
                 possibleSubtermStructure
@@ -32,7 +32,7 @@ public interface Termlike  {
         return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
 
-    default boolean impossibleSubterm(final Term target) {
+    default boolean impossibleSubterm(Term target) {
         return ((impossibleStructureMatch(structure(), target.structure()))) ||
                 (impossibleSubTermVolume(target.volume()));
     }
@@ -59,7 +59,7 @@ public interface Termlike  {
     }
 
 
-    default boolean impossibleSubTermOrEquality(final Term target) {
+    default boolean impossibleSubTermOrEquality(Term target) {
         return ((impossibleStructureMatch(target.structure())) ||
                 (impossibleSubTermOrEqualityVolume(target.volume())));
     }

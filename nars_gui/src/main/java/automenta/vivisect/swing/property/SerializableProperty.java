@@ -19,7 +19,6 @@ public class SerializableProperty extends DefaultProperty {
 	private Object editor = null;
 	
 	public SerializableProperty() {
-		super();
 	}
 	
 	public SerializableProperty(Property prop) {
@@ -79,7 +78,6 @@ public class SerializableProperty extends DefaultProperty {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return;
 			}
 		}
 		else {
@@ -88,7 +86,6 @@ public class SerializableProperty extends DefaultProperty {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return;
 			}
 		}
 		

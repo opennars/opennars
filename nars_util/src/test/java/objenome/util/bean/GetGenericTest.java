@@ -125,7 +125,7 @@ public class GetGenericTest {
         assertTrue(user.notNull(MyKeyEnum.ADDRESS));
         // ----------------------------------------------------
 
-        Map<MyKeyEnum, Object> mapWithoutAddress = copyToMap(user, new HashMap<MyKeyEnum, Object>());
+        Map<MyKeyEnum, Object> mapWithoutAddress = copyToMap(user, new HashMap<>());
         // remove the address object (the bean Address) from the map
         mapWithoutAddress.remove(MyKeyEnum.ADDRESS);
 
@@ -147,10 +147,10 @@ public class GetGenericTest {
     }
 
     private Map<MyKeyEnum, Object> getExpected() {
-        Map<MyKeyEnum, Object> map = new HashMap<MyKeyEnum, Object>();
+        Map<MyKeyEnum, Object> map = new HashMap<>();
         map.put(MyKeyEnum.NAME, "Fichtner"); //$NON-NLS-1$
         map.put(MyKeyEnum.PRENAME, "Peter"); //$NON-NLS-1$
-        map.put(MyKeyEnum.YEAR_OF_BIRTH, Integer.valueOf(1974));
+        map.put(MyKeyEnum.YEAR_OF_BIRTH, 1974);
         return map;
     }
 

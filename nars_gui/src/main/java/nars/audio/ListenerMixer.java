@@ -36,7 +36,7 @@ public class ListenerMixer implements StereoSoundProducer
 
     public void update(float alpha)
     {
-        final boolean updating = (soundListener!=null);
+        boolean updating = (soundListener!=null);
 
         for (int i = 0; ; ) {
             if ((i >= 0) && (i < sounds.size())) {
@@ -85,21 +85,21 @@ public class ListenerMixer implements StereoSoundProducer
             Sound sound = sounds.get(i);
 
             if (i < maxChannels) {
-                final float[] buf = this.buf;
+                float[] buf = this.buf;
 
                 sound.read(buf, readRate);
 
                 float pan = sound.pan;
 
-                final float rp = (pan <0?1:1- pan)*sound.amplitude;
-                final float lp = (pan >0?1:1+ pan)*sound.amplitude;
+                float rp = (pan <0?1:1- pan)*sound.amplitude;
+                float lp = (pan >0?1:1+ pan)*sound.amplitude;
 
-                final int l = leftBuf.length;
+                int l = leftBuf.length;
 
                 for (int j = 0; j < l; j++) {
                     float lb = leftBuf[j];
                     float rb = rightBuf[j];
-                    final float bj = buf[j];
+                    float bj = buf[j];
                     lb += bj*lp;
                     rb += bj*rp;
                     if (lb>maxAmplitude) maxAmplitude = lb;
@@ -124,8 +124,7 @@ public class ListenerMixer implements StereoSoundProducer
 
     public void skip(int samplesToSkip, int readRate)
     {
-        for (int i = 0; i < sounds.size(); i++) {
-            Sound sound = sounds.get(i);
+        for (Sound sound : sounds) {
             sound.skip(samplesToSkip, readRate);
         }
     }

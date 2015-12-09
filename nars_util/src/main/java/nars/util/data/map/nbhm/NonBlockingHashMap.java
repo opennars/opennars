@@ -88,7 +88,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
   private static final int _Obase  = _unsafe.arrayBaseOffset(Object[].class);
   private static final int _Oscale = _unsafe.arrayIndexScale(Object[].class);
   private static final int _Olog   = _Oscale==4?2:(_Oscale==8?3:9999);
-  private static long rawIndex(final Object[] ary, final int idx) {
+  private static long rawIndex(Object[] ary, int idx) {
     assert idx >= 0 && idx < ary.length;
     // Note the long-math requirement, to handle arrays of more than 2^31 bytes
     // - or 2^28 - or about 268M - 8-byte pointer elements.
@@ -103,7 +103,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     catch( java.lang.NoSuchFieldException e ) { throw new RuntimeException(e); }
     _kvs_offset = _unsafe.objectFieldOffset(f);
   }
-  private final boolean CAS_kvs( final Object[] oldkvs, final Object[] newkvs ) {
+  private final boolean CAS_kvs( Object[] oldkvs, Object[] newkvs ) {
     return _unsafe.compareAndSwapObject(this, _kvs_offset, oldkvs, newkvs );
   }
 
@@ -116,7 +116,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
 
   // --- hash ----------------------------------------------------------------
   // Helper function to spread lousy hashCodes
-  private static final int hash(final Object key) {
+  private static final int hash(Object key) {
     int h = key.hashCode();     // The real hashCode call
     h ^= (h>>>20) ^ (h>>>12);
     h ^= (h>>> 7) ^ (h>>> 4);
@@ -208,7 +208,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
         Object U = Prime.unbox(V);
         String p = (V==U) ? "" : "prime_";
         String US = (U == TOMBSTONE) ? "tombstone" : U.toString();
-        System.out.println(""+i+" ("+KS+","+p+US+")");
+        System.out.println(""+i+" ("+KS+ ',' +p+US+ ')');
       }
     }
     Object[] newkvs = chm(kvs)._newkvs; // New table, if any
@@ -226,7 +226,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
       if( key != null && key != TOMBSTONE &&  // key is sane
           val != null && U   != TOMBSTONE ) { // val is sane
         String p = (val==U) ? "" : "prime_";
-        System.out.println(""+i+" ("+key+","+p+val+")");
+        System.out.println(""+i+" ("+key+ ',' +p+val+ ')');
       }
     }
     Object[] newkvs = chm(kvs)._newkvs; // New table, if any
@@ -267,7 +267,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
    *  appropriate size.  Large numbers here when used with a small count of
    *  elements will sacrifice space for a small amount of time gained.  The
    *  initial size will be rounded up internally to the next larger power of 2. */
-  public NonBlockingHashMap( final int initial_sz ) { initialize(initial_sz); }
+  public NonBlockingHashMap( int initial_sz ) { initialize(initial_sz); }
   private final void initialize( int initial_sz ) {
     if( initial_sz < 0 ) throw new IllegalArgumentException();
     int i;                      // Convert to next largest power-of-2
@@ -361,7 +361,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
   public final TypeV putIfMatchUnlocked( Object key, Object newVal, Object oldVal ) {
     if( oldVal == null ) oldVal = TOMBSTONE;
     if( newVal == null ) newVal = TOMBSTONE;
-    final TypeV res = (TypeV)putIfMatch( this, _kvs, key, newVal, oldVal );
+    TypeV res = (TypeV)putIfMatch( this, _kvs, key, newVal, oldVal );
     assert !(res instanceof Prime);
     //assert res != null;
     return res == TOMBSTONE ? null : res;
@@ -369,7 +369,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
 
   public final TypeV putIfMatch( Object key, Object newVal, Object oldVal ) {
     if (oldVal == null || newVal == null) throw new NullPointerException();
-    final Object res = putIfMatch( this, _kvs, key, newVal, oldVal );
+    Object res = putIfMatch( this, _kvs, key, newVal, oldVal );
     assert !(res instanceof Prime);
     assert res != null;
     return res == TOMBSTONE ? null : (TypeV)res;
@@ -400,7 +400,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
    *  @return <tt>true</tt> if this map maps one or more keys to the specified value
    *  @throws NullPointerException if the specified value is null */
   @Override
-  public boolean containsValue( final Object val ) {
+  public boolean containsValue( Object val ) {
     if( val == null ) throw new NullPointerException();
     for( TypeV V : values() )
       if( V == val || V.equals(val) )
@@ -435,7 +435,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
       t.clear();
       // Now copy sanely
       for( TypeK K : keySet() ) {
-        final TypeV V = get(K);  // Do an official 'get'
+        TypeV V = get(K);  // Do an official 'get'
         t.put(K,V);
       }
       return t;
@@ -465,14 +465,14 @@ public class NonBlockingHashMap<TypeK, TypeV>
 
     StringBuilder sb = new StringBuilder();
     sb.append('{');
-    for (;;) {
-      Entry<TypeK,TypeV> e = i.next();
+    while (true) {
+      Entry<TypeK, TypeV> e = i.next();
       TypeK key = e.getKey();
       TypeV value = e.getValue();
-      sb.append(key   == this ? "(this Map)" : key);
+      sb.append(key == this ? "(this Map)" : key);
       sb.append('=');
       sb.append(value == this ? "(this Map)" : value);
-      if( !i.hasNext())
+      if (!i.hasNext())
         return sb.append('}').toString();
       sb.append(", ");
     }
@@ -511,18 +511,18 @@ public class NonBlockingHashMap<TypeK, TypeV>
   // Never returns a Prime nor a Tombstone.
   @Override
   public TypeV get( Object key ) {
-    final Object V = get_impl(this,_kvs,key);
+    Object V = get_impl(this,_kvs,key);
     assert !(V instanceof Prime); // Never return a Prime
     assert V != TOMBSTONE;
     assert V != READONLY;
     return (TypeV)V;
   }
 
-  private static final Object get_impl( final NonBlockingHashMap topmap, final Object[] kvs, final Object key ) {
-    final int fullhash= hash (key); // throws NullPointerException if key is null
-    final int len     = len  (kvs); // Count of key/value pairs, reads kvs.length
-    final CHM chm     = chm  (kvs); // The CHM, for a volatile read below; reads slot 0 of kvs
-    final int[] hashes=hashes(kvs); // The memoized hashes; reads slot 1 of kvs
+  private static final Object get_impl( NonBlockingHashMap topmap, Object[] kvs, Object key ) {
+    int fullhash= hash (key); // throws NullPointerException if key is null
+    int len     = len  (kvs); // Count of key/value pairs, reads kvs.length
+    CHM chm     = chm  (kvs); // The CHM, for a volatile read below; reads slot 0 of kvs
+    int[] hashes=hashes(kvs); // The memoized hashes; reads slot 1 of kvs
 
     int idx = fullhash & (len-1); // First key hash
 
@@ -531,8 +531,8 @@ public class NonBlockingHashMap<TypeK, TypeV>
     while( true ) {
       // Probe table.  Each read of 'val' probably misses in cache in a big
       // table; hopefully the read of 'key' then hits in cache.
-      final Object K = key(kvs,idx); // Get key   before volatile read, could be null
-      final Object V = val(kvs,idx); // Get value before volatile read, could be null or Tombstone or Prime
+      Object K = key(kvs,idx); // Get key   before volatile read, could be null
+      Object V = val(kvs,idx); // Get value before volatile read, could be null or Tombstone or Prime
       if( K == null ) return null;   // A clear miss
 
       // We need a volatile-read here to preserve happens-before semantics on
@@ -544,7 +544,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
       // and returning the Value (so the user might end up reading the stale
       // Value contents).  Same problem as with keys - and the one volatile
       // read covers both.
-      final Object[] newkvs = chm._newkvs; // VOLATILE READ before key compare
+      Object[] newkvs = chm._newkvs; // VOLATILE READ before key compare
 
       // Key-compare
       if( keyeq(K,key,hashes,idx,fullhash) ) {
@@ -579,11 +579,11 @@ public class NonBlockingHashMap<TypeK, TypeV>
     return (TypeK)getk_impl(this,_kvs,key);
   }
 
-  private static final Object getk_impl( final NonBlockingHashMap topmap, final Object[] kvs, final Object key ) {
-    final int fullhash= hash (key); // throws NullPointerException if key is null
-    final int len     = len  (kvs); // Count of key/value pairs, reads kvs.length
-    final CHM chm     = chm  (kvs); // The CHM, for a volatile read below; reads slot 0 of kvs
-    final int[] hashes=hashes(kvs); // The memoized hashes; reads slot 1 of kvs
+  private static final Object getk_impl( NonBlockingHashMap topmap, Object[] kvs, Object key ) {
+    int fullhash= hash (key); // throws NullPointerException if key is null
+    int len     = len  (kvs); // Count of key/value pairs, reads kvs.length
+    CHM chm     = chm  (kvs); // The CHM, for a volatile read below; reads slot 0 of kvs
+    int[] hashes=hashes(kvs); // The memoized hashes; reads slot 1 of kvs
 
     int idx = fullhash & (len-1); // First key hash
 
@@ -591,7 +591,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     int reprobe_cnt=0;
     while( true ) {
       // Probe table.
-      final Object K = key(kvs,idx); // Get key before volatile read, could be null
+      Object K = key(kvs,idx); // Get key before volatile read, could be null
       if( K == null ) return null;   // A clear miss
 
       // We need a volatile-read here to preserve happens-before semantics on
@@ -603,7 +603,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
       // and returning the Value (so the user might end up reading the stale
       // Value contents).  Same problem as with keys - and the one volatile
       // read covers both.
-      final Object[] newkvs = chm._newkvs; // VOLATILE READ before key compare
+      Object[] newkvs = chm._newkvs; // VOLATILE READ before key compare
 
       // Key-compare
       if( keyeq(K,key,hashes,idx,fullhash) )
@@ -629,7 +629,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
   // the path through copy_slot passes in an expected value of null, and
   // putIfMatch only returns a null if passed in an expected null.
   static volatile int DUMMY_VOLATILE;
-  private static final Object putIfMatch( final NonBlockingHashMap topmap, final Object[] kvs, final Object key, final Object putval, final Object expVal ) {
+  private static final Object putIfMatch( NonBlockingHashMap topmap, Object[] kvs, Object key, Object putval, Object expVal ) {
     assert putval != null;
     assert !(putval instanceof Prime);
     assert !(expVal instanceof Prime);
@@ -639,10 +639,10 @@ public class NonBlockingHashMap<TypeK, TypeV>
       System.out.println("put denied for readonly");
       return READONLY;      // putIfMatch forced-miss for locked table
     }
-    final int fullhash = hash  (key); // throws NullPointerException if key null
-    final int len      = len   (kvs); // Count of key/value pairs, reads kvs.length
-    final CHM chm      = chm   (kvs); // Reads kvs[0]
-    final int[] hashes = hashes(kvs); // Reads kvs[1], read before kvs[0]
+    int fullhash = hash  (key); // throws NullPointerException if key null
+    int len      = len   (kvs); // Count of key/value pairs, reads kvs.length
+    CHM chm      = chm   (kvs); // Reads kvs[0]
+    int[] hashes = hashes(kvs); // Reads kvs[1], read before kvs[0]
     int idx = fullhash & (len-1);
 
     // ---
@@ -753,7 +753,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
         V != expVal &&            // No instant match already?
         (expVal != MATCH_ANY || V == TOMBSTONE || V == null) &&
         !(V==null && expVal == TOMBSTONE) &&    // Match on null/TOMBSTONE combo
-        (expVal == null || !expVal.equals(V)) ) // Expensive equals check at the last
+        (!Objects.equals(expVal, V)) ) // Expensive equals check at the last
       return V;                                 // Do not update!
 
     // Actually change the Value in the Key,Value pair
@@ -867,7 +867,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // current table, while a 'get' has decided the same key cannot be in this
     // table because of too many reprobes.  The invariant is:
     //   slots.estimate_sum >= max_reprobe_cnt >= reprobe_limit(len)
-    private final boolean tableFull( int reprobe_cnt, int len ) {
+    private boolean tableFull(int reprobe_cnt, int len ) {
       return
         // Do the cheap check first: we allow some number of reprobes always
         reprobe_cnt >= REPROBE_LIMIT &&
@@ -881,7 +881,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // Since this routine has a fast cutout for copy-already-started, callers
     // MUST 'help_copy' lest we have a path which forever runs through
     // 'resize' only to discover a copy-in-progress which never progresses.
-    private final Object[] resize( NonBlockingHashMap topmap, Object[] kvs) {
+    private Object[] resize(NonBlockingHashMap topmap, Object[] kvs) {
       assert chm(kvs) == this;
 
       // Check for resize already in progress, probably triggered by another thread
@@ -981,26 +981,26 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // the counter simply wraps and work is copied duplicately until somebody
     // somewhere completes the count.
     volatile long _copyIdx = 0;
-    static private final AtomicLongFieldUpdater<CHM> _copyIdxUpdater =
+    private static final AtomicLongFieldUpdater<CHM> _copyIdxUpdater =
       AtomicLongFieldUpdater.newUpdater(CHM.class, "_copyIdx");
 
     // Work-done reporting.  Used to efficiently signal when we can move to
     // the new table.  From 0 to len(oldkvs) refers to copying from the old
     // table to the new.
     volatile long _copyDone= 0;
-    static private final AtomicLongFieldUpdater<CHM> _copyDoneUpdater =
+    private static final AtomicLongFieldUpdater<CHM> _copyDoneUpdater =
       AtomicLongFieldUpdater.newUpdater(CHM.class, "_copyDone");
 
     // --- help_copy_impl ----------------------------------------------------
     // Help along an existing resize operation.  We hope its the top-level
     // copy (it was when we started) but this CHM might have been promoted out
     // of the top position.
-    private final void help_copy_impl( NonBlockingHashMap topmap, Object[] oldkvs, boolean copy_all ) {
+    private void help_copy_impl(NonBlockingHashMap topmap, Object[] oldkvs, boolean copy_all ) {
       assert chm(oldkvs) == this;
       Object[] newkvs = _newkvs;
       assert newkvs != null;    // Already checked by caller
       int oldlen = len(oldkvs); // Total amount to copy
-      final int MIN_COPY_WORK = Math.min(oldlen,1024); // Limit per-thread work
+      int MIN_COPY_WORK = Math.min(oldlen,1024); // Limit per-thread work
 
       // ---
       int panic_start = -1;
@@ -1058,7 +1058,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     // before any Prime appears.  So the caller needs to read the _newkvs
     // field to retry his operation in the new table, but probably has not
     // read it yet.
-    private final Object[] copy_slot_and_check( NonBlockingHashMap topmap, Object[] oldkvs, int idx, Object should_help ) {
+    private Object[] copy_slot_and_check(NonBlockingHashMap topmap, Object[] oldkvs, int idx, Object should_help ) {
       assert chm(oldkvs) == this;
       Object[] newkvs = _newkvs; // VOLATILE READ
       // We're only here because the caller saw a Prime, which implies a
@@ -1071,7 +1071,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     }
 
     // --- copy_check_and_promote --------------------------------------------
-    private final void copy_check_and_promote( NonBlockingHashMap topmap, Object[] oldkvs, int workdone ) {
+    private void copy_check_and_promote(NonBlockingHashMap topmap, Object[] oldkvs, int workdone ) {
       assert chm(oldkvs) == this;
       int oldlen = len(oldkvs);
       // We made a slot unusable and so did some of the needed copy work
@@ -1124,7 +1124,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
       // Box what we see in the old table, to prevent further updates.
       Object oldval = val(oldkvs,idx); // Read OLD table
       while( !(oldval instanceof Prime) ) {
-        final Prime box = (oldval == null || oldval == TOMBSTONE) ? TOMBPRIME : new Prime(oldval);
+        Prime box = (oldval == null || oldval == TOMBSTONE) ? TOMBPRIME : new Prime(oldval);
         if( CAS_val(oldkvs,idx,oldval,box) ) { // CAS down a box'd version of oldval
           // If we made the Value slot hold a TOMBPRIME, then we both
           // prevented further updates here but also the (absent)
@@ -1256,7 +1256,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     return new AbstractCollection<TypeV>() {
       @Override public void    clear   (          ) {        NonBlockingHashMap.this.clear        ( ); }
       @Override public int     size    (          ) { return NonBlockingHashMap.this.size         ( ); }
-      @Override public boolean contains( Object v ) { return NonBlockingHashMap.this.containsValue(v); }
+      @Override public boolean contains( Object v ) { return containsValue(v); }
       @Override public Iterator<TypeV> iterator()   { return new SnapshotV(); }
     };
   }
@@ -1295,7 +1295,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
     return new AbstractSet<TypeK> () {
       @Override public void    clear   (          ) {        NonBlockingHashMap.this.clear   ( ); }
       @Override public int     size    (          ) { return NonBlockingHashMap.this.size    ( ); }
-      @Override public boolean contains( Object k ) { return NonBlockingHashMap.this.containsKey(k); }
+      @Override public boolean contains( Object k ) { return containsKey(k); }
       @Override public boolean remove  ( Object k ) { return NonBlockingHashMap.this.remove  (k) != null; }
       @Override public Iterator<TypeK> iterator()   { return new SnapshotK(); }
     };
@@ -1305,8 +1305,8 @@ public class NonBlockingHashMap<TypeK, TypeV>
   // --- entrySet ------------------------------------------------------------
   // Warning: Each call to 'next' in this iterator constructs a new NBHMEntry.
   private class NBHMEntry extends AbstractEntry<TypeK,TypeV> {
-    NBHMEntry( final TypeK k, final TypeV v ) { super(k,v); }
-    public TypeV setValue(final TypeV val) {
+    NBHMEntry( TypeK k, TypeV v ) { super(k,v); }
+    public TypeV setValue(TypeV val) {
       if( val == null ) throw new NullPointerException();
       _val = val;
       return put(_key, val);
@@ -1334,12 +1334,12 @@ public class NonBlockingHashMap<TypeK, TypeV>
      */
     protected TypeV _val;
 
-    public AbstractEntry(final TypeK key, final TypeV val) {
+    public AbstractEntry(TypeK key, TypeV val) {
       _key = key;
       _val = val;
     }
 
-    public AbstractEntry(final Map.Entry<TypeK, TypeV> e) {
+    public AbstractEntry(Map.Entry<TypeK, TypeV> e) {
       _key = e.getKey();
       _val = e.getValue();
     }
@@ -1368,9 +1368,9 @@ public class NonBlockingHashMap<TypeK, TypeV>
     /**
      * Equal if the underlying key & value are equal
      */
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
       //if (!(o instanceof Map.Entry)) return false;
-      final AbstractEntry e = (AbstractEntry) o;
+      AbstractEntry e = (AbstractEntry) o;
       return eq(_key, e._key) && eq(_val, e._val);
     }
 
@@ -1383,7 +1383,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
                             ((_val == null) ? 0 : _val.hashCode());
     }
 
-    private static final boolean eq(final Object o1, final Object o2) {
+    private static final boolean eq(Object o1, Object o2) {
       return o1 == null ? o2 == null : o1.equals(o2);
     }
   }
@@ -1424,14 +1424,14 @@ public class NonBlockingHashMap<TypeK, TypeV>
     return new AbstractSet<Map.Entry<TypeK,TypeV>>() {
       @Override public void    clear   (          ) {        NonBlockingHashMap.this.clear( ); }
       @Override public int     size    (          ) { return NonBlockingHashMap.this.size ( ); }
-      @Override public boolean remove( final Object o ) {
+      @Override public boolean remove( Object o ) {
         if( !(o instanceof Map.Entry)) return false;
-        final Map.Entry<?,?> e = (Map.Entry<?,?>)o;
+        Map.Entry<?,?> e = (Map.Entry<?,?>)o;
         return NonBlockingHashMap.this.remove(e.getKey(), e.getValue());
       }
-      @Override public boolean contains(final Object o) {
+      @Override public boolean contains(Object o) {
         if( !(o instanceof Map.Entry)) return false;
-        final Map.Entry<?,?> e = (Map.Entry<?,?>)o;
+        Map.Entry<?,?> e = (Map.Entry<?,?>)o;
         TypeV v = get(e.getKey());
         return v.equals(e.getValue());
       }
@@ -1444,7 +1444,7 @@ public class NonBlockingHashMap<TypeK, TypeV>
   private void writeObject(java.io.ObjectOutputStream s) throws IOException  {
     s.defaultWriteObject();     // Nothing to write
     for( Object K : keySet() ) {
-      final Object V = get(K);  // Do an official 'get'
+      Object V = get(K);  // Do an official 'get'
       s.writeObject(K);         // Write the <TypeK,TypeV> pair
       s.writeObject(V);
     }
@@ -1457,11 +1457,11 @@ public class NonBlockingHashMap<TypeK, TypeV>
   private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
     s.defaultReadObject();      // Read nothing
     initialize(MIN_SIZE);
-    for(;;) {
-      final TypeK K = (TypeK) s.readObject();
-      final TypeV V = (TypeV) s.readObject();
-      if( K == null ) break;
-      put(K,V);                 // Insert with an offical put
+    while (true) {
+      TypeK K = (TypeK) s.readObject();
+      TypeV V = (TypeV) s.readObject();
+      if (K == null) break;
+      put(K, V);                 // Insert with an offical put
     }
   }
 

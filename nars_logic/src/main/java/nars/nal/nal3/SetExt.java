@@ -13,11 +13,12 @@ import java.util.Collection;
 public interface SetExt {
 
 
-    static <T extends Term> Compound<T> make(final Collection<T> c) {
+    static <T extends Term> Compound<T> make(Collection<T> c) {
         return SetExt.make((T[])c.toArray(new Term[c.size()]));
     }
 
-    static <T extends Term> Compound<T> make(final T... t) {
+    @SafeVarargs
+    static <T extends Term> Compound<T> make(T... t) {
         switch (t.length) {
             case 0: throw new RuntimeException("empty set");
             default:

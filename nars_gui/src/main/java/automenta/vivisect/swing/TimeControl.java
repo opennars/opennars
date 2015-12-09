@@ -4,13 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-abstract public class TimeControl extends NPanel implements ActionListener {
+public abstract class TimeControl extends NPanel implements ActionListener {
 
     protected int GUIUpdatePeriodMS = 75;
     protected final char FA_StopCharacter = '\uf04c';
     protected final char FA_FocusCharacter = '\uf11e';
     protected final char FA_ControlCharacter = '\uf085';
-    protected final float defaultSpeed = 0f; //0.5f;
+    protected final float defaultSpeed = 0.0f; //0.5f;
     //http://astronautweb.co/snippet/font-awesome/
     protected final char FA_PlayCharacter = '\uf04b';
     /**
@@ -31,7 +31,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
 
 
 
-    protected float currentSpeed = 0f;
+    protected float currentSpeed = 0.0f;
     //protected float lastSpeed = 0f;
 
     public TimeControl(LayoutManager l) {
@@ -39,12 +39,12 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     }
 
     /** description of the current time */
-    abstract public String getTimeText();
+    public abstract String getTimeText();
 
     protected NSliderSwing newSpeedSlider() {
             //final StringBuilder sb = new StringBuilder(32);
 
-        final NSliderSwing s = new NSliderSwing(0f, 0f, 1.0f) {
+        NSliderSwing s = new NSliderSwing(0.0f, 0.0f, 1.0f) {
 
 
             @Override
@@ -62,7 +62,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
             }
 
         };
-        this.speedSlider = s;
+        speedSlider = s;
 
         return s;
     }

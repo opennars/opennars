@@ -36,10 +36,10 @@ public class Grid2DSpace extends PApplet {
     Hnav hnav = new Hnav();
     //Object
     float selection_distance = 10;
-    public float maxNodeSize = 40f;
+    public float maxNodeSize = 40.0f;
     
     /** timing */
-    float FrameRate = 50f;    
+    float FrameRate = 50.0f;
     int automataPeriod = 1; //how many cycles between each automata update
     int agentPeriod = 1;  //how many cycles between each agent update
     
@@ -58,7 +58,6 @@ public class Grid2DSpace extends PApplet {
     public NAR nar;
     
     public Grid2DSpace(Hauto cells, NAR nar) {
-        super();
 
         this.cells = cells;
         world_used=true;
@@ -73,7 +72,7 @@ public class Grid2DSpace extends PApplet {
         g.init(this);
     }
     
-    public NWindow newWindow(int width, int height, final boolean exitOnClose) {
+    public NWindow newWindow(int width, int height, boolean exitOnClose) {
         
         NWindow j = new NWindow("") {
             
@@ -122,7 +121,7 @@ public class Grid2DSpace extends PApplet {
         getSurface().setResizable(true);
 
         //System.out.println(getSurface().getClass() + " " + getSurface());
-        Component canvas = (Component) (this.getSurface().getNative());
+        Component canvas = (Component) (getSurface().getNative());
         content.add(canvas, BorderLayout.CENTER);
         
         
@@ -136,13 +135,11 @@ public class Grid2DSpace extends PApplet {
                 frameResized(j.getWidth(), j.getHeight());
             }
         });
-        canvas.addMouseWheelListener(new MouseWheelListener() {
-                    @Override public void mouseWheelMoved(MouseWheelEvent evt) {
-                        mouseScroll = -evt.getWheelRotation();
-                        mouseScrolled();
-                        drawn = false;
-                    }
-                });
+        canvas.addMouseWheelListener(evt -> {
+            mouseScroll = -evt.getWheelRotation();
+            mouseScrolled();
+            drawn = false;
+        });
 
         return j;
     }
@@ -216,7 +213,7 @@ public class Grid2DSpace extends PApplet {
 
                     if (g instanceof GridAgent) {
                         GridAgent b = (GridAgent)g;
-                        if (b.actions.size() > 0) {
+                        if (!b.actions.isEmpty()) {
                             Action a = b.actions.pop();
                             if (a!=null) {
                                 process(b, a);
@@ -319,7 +316,7 @@ public class Grid2DSpace extends PApplet {
             return "Too far";
 
         if ((tx < 0) || (ty < 0) || (tx >= cells.w) || (ty >= cells.h))
-            return "Out of bounds: " + tx + " " + ty;
+            return "Out of bounds: " + tx + ' ' + ty;
             
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);
@@ -328,7 +325,7 @@ public class Grid2DSpace extends PApplet {
         if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water || to.logic==Logic.BRIDGE || to.logic==Logic.UNCERTAINBRIDGE)
             return "Too solid";
         
-        final float maxTraversableHeight = 8;
+        float maxTraversableHeight = 8;
         float dHeight = to.height - from.height;
         //if (dHeight > maxTraversableHeight)
         //    return "Too high";
@@ -339,12 +336,7 @@ public class Grid2DSpace extends PApplet {
     
     public Effect getMotionEffect(GridAgent agent, Action a, int x, int y, int tx, int ty) {
         String reason = whyNonTraversible(agent, x, y, tx, ty);
-        if (reason == null) {
-            return new Effect(a, true, getTime(), "Moved");
-        }
-        else {
-            return new Effect(a, false, getTime(), reason);
-        }
+        return reason == null ? new Effect(a, true, getTime(), "Moved") : new Effect(a, false, getTime(), reason);
         
         
     }
@@ -353,10 +345,9 @@ public class Grid2DSpace extends PApplet {
         pushMatrix();
         
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
-        translate(rendersize/4f, rendersize/4f);
-                
-        for (int i = 0; i < objects.size(); i++)
-            objects.get(i).draw();
+        translate(rendersize/ 4.0f, rendersize/ 4.0f);
+
+        objects.forEach(GridObject::draw);
         popMatrix();
     }
     

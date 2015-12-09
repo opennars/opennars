@@ -15,18 +15,18 @@ public class FlowerEnemy extends Enemy
         
         noFireballDeath = false;
         this.world = world;
-        this.xPic = 0;
-        this.yPic = 6;
-        this.yPicO = 24;
-        this.height = 12;
-        this.width = 2;
+        xPic = 0;
+        yPic = 6;
+        yPicO = 24;
+        height = 12;
+        width = 2;
         
         yStart = y;
         ya = -8;
         
         this.y-=1;
-        
-        this.layer = 0;
+
+        layer = 0;
         
         for (int i=0; i<4; i++)
         {
@@ -66,14 +66,7 @@ public class FlowerEnemy extends Enemy
 
             int xd = (int)(Math.abs(world.mario.x-x));
             jumpTime++;
-            if (jumpTime>40 && xd>24)
-            {
-                ya = -8;
-            }
-            else
-            {
-                ya = 0;
-            }
+            ya = jumpTime > 40 && xd > 24 ? -8 : 0;
         }
         else
         {

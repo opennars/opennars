@@ -10,7 +10,7 @@ public interface Byted {
      * ordinary array equals comparison with some conditions removed
      * instance equality between A and B will most likely already performed prior to calling this, so it is not done in this method
      */
-    static boolean equals(final Byted A, final Byted B) {
+    static boolean equals(Byted A, Byted B) {
         if (A.hashCode() != B.hashCode())
             return false;
 
@@ -18,13 +18,13 @@ public interface Byted {
     }
 
     static boolean equalsExhaustive(Byted A, Byted B) {
-        final byte[] a = A.bytes();
-        final byte[] b = B.bytes();
+        byte[] a = A.bytes();
+        byte[] b = B.bytes();
 
 //        if (a == b)
 //            return true; //if this is false and called from equals(A,B) it would indicate a problem with the hashcode
 
-        final int aLen = a.length;
+        int aLen = a.length;
         if (b.length != aLen)
             return false;
 
@@ -38,7 +38,7 @@ public interface Byted {
         return true;
     }
 
-    static int compare(final Byted A, final Byted B) {
+    static int compare(Byted A, Byted B) {
         //if (A==B) return 0;
 
         int d = Integer.compare(A.hashCode(), B.hashCode());
@@ -49,8 +49,8 @@ public interface Byted {
     }
 
     static int compareExhaustive(Byted A, Byted B) {
-        final byte[] a = A.bytes();
-        final byte[] b = B.bytes();
+        byte[] a = A.bytes();
+        byte[] b = B.bytes();
 
 //        if (a == b)
 //            return true; //if this is false and called from equals(A,B) it would indicate a problem with the hashcode
@@ -76,7 +76,7 @@ public interface Byted {
     }
 
 
-    public byte[] bytes();
+    byte[] bytes();
 
     default void setBytes(byte[] b) {
         throw new RuntimeException("immutable");

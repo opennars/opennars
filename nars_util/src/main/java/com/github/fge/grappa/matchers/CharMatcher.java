@@ -31,19 +31,19 @@ public final class CharMatcher
 {
     private final char character;
 
-    public CharMatcher(final char character)
+    public CharMatcher(char character)
     {
         super(getLabel(character));
         this.character = character;
     }
 
     @Override
-    public final MatcherType getType() {
+    public MatcherType getType() {
         return MatcherType.TERMINAL;
     }
 
     // TODO: remove...
-    private static String getLabel(final char c)
+    private static String getLabel(char c)
     {
         if (c == Chars.EOI) return escape(c);
         //return new String( new char[] { '\'', escapeChar(c), '\'' });
@@ -51,7 +51,7 @@ public final class CharMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         if (context.getCurrentChar() != character)
             return false;

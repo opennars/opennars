@@ -48,7 +48,7 @@ public class NeuroMap {
             ParameterizedFunctionGenerator g,
             int memoryCapacity
     ) {
-        this.memory = new InputOutput[memoryCapacity];
+        memory = new InputOutput[memoryCapacity];
 
         functions = new ParameterizedFunction[numOutputs];
         for (int i = 0; i < numOutputs; ++i) {
@@ -64,7 +64,7 @@ public class NeuroMap {
                         continue;
                     }
 
-                    final InputOutput io = randomMemory();
+                    InputOutput io = randomMemory();
 
                     assert io.output.length == functions.length;
 

@@ -71,7 +71,7 @@ public class Gossip {
     public static final int                                  DEFAULT_CLEANUP_CYCLES  = 4;
     public static final int                                  DEFAULT_HEARTBEAT_CYCLE = 1;
     public static final int                                  DEFAULT_REDUNDANCY      = 3;
-    public final static Logger log                     = Logger.getLogger(Gossip.class.toString());
+    public static final Logger log                     = Logger.getLogger(Gossip.class.toString());
     private static final byte[]                              EMPTY_STATE             = new byte[0];
 
     private final int                                        cleanupCycles;
@@ -300,8 +300,8 @@ public class Gossip {
         boolean wasRunning = running.get();
         if (wasRunning)
             unschedule();
-        this.interval = num;
-        this.intervalUnit = unit;
+        interval = num;
+        intervalUnit = unit;
         if (wasRunning)
             reschedule();
     }
@@ -469,8 +469,8 @@ public class Gossip {
     /**
      * @param gossiper
      */
-    protected void checkConnectionStatus(final InetSocketAddress gossiper) {
-        final Endpoint gossipingEndpoint = endpoints.get(gossiper);
+    protected void checkConnectionStatus(InetSocketAddress gossiper) {
+        Endpoint gossipingEndpoint = endpoints.get(gossiper);
         if (gossipingEndpoint == null) {
             discover(gossiper);
         } else {
@@ -481,11 +481,7 @@ public class Gossip {
                 }*/
                 view.markAlive(gossiper);
                 // Endpoint has been connected
-                for (ReplicatedState state : gossipingEndpoint.getStates()) {
-                    if (state.isNotifiable()) {
-                        notifyRegister(state);
-                    }
-                }
+                gossipingEndpoint.getStates().stream().filter(ReplicatedState::isNotifiable).forEach(this::notifyRegister);
                 // We want it all, baby
                 gossipingEndpoint.getHandler().gossip(Iterators.singletonIterator(new Digest(
                         gossiper,
@@ -583,8 +579,8 @@ public class Gossip {
 //        }
 //    }
 
-    protected void connectAndGossipWith(final InetSocketAddress address,
-                                                    final Iterator<Digest> digests) {
+    protected void connectAndGossipWith(InetSocketAddress address,
+                                        Iterator<Digest> digests) {
 
         gossipWith(digests, address);
 
@@ -609,12 +605,12 @@ public class Gossip {
 //        }
     }
 
-    protected void discover(final InetSocketAddress address) {
+    protected void discover(InetSocketAddress address) {
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("%s discovering %s", me(),
 //                                    address));
 //        }
-        final Endpoint endpoint = new Endpoint(
+        Endpoint endpoint = new Endpoint(
                                                address,
                                                communications.handlerFor(address));
         Endpoint previous = endpoints.putIfAbsent(address, endpoint);
@@ -631,11 +627,7 @@ public class Gossip {
                                             address, me()));
                 }*/
                 // Endpoint has been connected
-                for (ReplicatedState state : endpoint.getStates()) {
-                    if (state.isNotifiable()) {
-                        notifyRegister(state);
-                    }
-                }
+                endpoint.getStates().stream().filter(ReplicatedState::isNotifiable).forEach(this::notifyRegister);
                 // We want it all, baby
                 endpoint.getHandler().gossip(Iterators.singletonIterator(new Digest(
                         address,
@@ -652,8 +644,8 @@ public class Gossip {
      *            - the state from a previously unconnected member of the system
      *            view
      */
-    protected void discover(final Update update) {
-        final InetSocketAddress address = update.node;
+    protected void discover(Update update) {
+        InetSocketAddress address = update.node;
         if (me().equals(address)) {
             return; // it's our state, dummy
         }
@@ -830,7 +822,7 @@ public class Gossip {
 //        }
 //    }
 //
-    protected void gossipWithSeeds(final Iterator<Digest> digests,
+    protected void gossipWithSeeds(Iterator<Digest> digests,
                                    List<InetSocketAddress> members) {
         InetSocketAddress address = view.getRandomSeedMember(members);
         if (address == null) {
@@ -839,11 +831,11 @@ public class Gossip {
         gossipWith(digests, address);
     }
 
-    public void gossipWith(Iterator<Digest> digests, final InetSocketAddress address) {
+    public void gossipWith(Iterator<Digest> digests, InetSocketAddress address) {
         Endpoint endpoint = endpoints.get(address);
 
         if (endpoint == null) {
-            final Endpoint newEndpoint = new Endpoint(
+            Endpoint newEndpoint = new Endpoint(
                     address,
                     communications.handlerFor(address));
             Endpoint previous = endpoints.putIfAbsent(address, newEndpoint);
@@ -913,7 +905,7 @@ public class Gossip {
      * 
      * @param state
      */
-    protected void notifyRemove(final ReplicatedState state) {
+    protected void notifyRemove(ReplicatedState state) {
         assert state != null;
         if (state.isHeartbeat()) {
             return;
@@ -941,7 +933,7 @@ public class Gossip {
      * 
      * @param state
      */
-    protected void notifyRegister(final ReplicatedState state) {
+    protected void notifyRegister(ReplicatedState state) {
         assert state != null : "State cannot be null";
         if (state.isHeartbeat()) {
             return;
@@ -970,7 +962,7 @@ public class Gossip {
      * 
      * @param state
      */
-    protected void notifyUpdate(final ReplicatedState state) {
+    protected void notifyUpdate(ReplicatedState state) {
         assert state != null : "State cannot be null";
         if (state.isHeartbeat()) {
             return;
@@ -1077,7 +1069,7 @@ public class Gossip {
      * @param gossiper
      * @return true if the state was applied, false otherwise
      */
-    protected boolean update(final Update update, InetSocketAddress gossiper) {
+    protected boolean update(Update update, InetSocketAddress gossiper) {
         checkConnectionStatus(gossiper);
 //        if (log.isTraceEnabled()) {
 //            log.trace(String.format("Member: %s receiving update state: %s",
@@ -1093,7 +1085,7 @@ public class Gossip {
 //            }
             return false;
         }
-        final Endpoint endpoint = endpoints.get(update.node);
+        Endpoint endpoint = endpoints.get(update.node);
         if (endpoint != null) {
             endpoint.updateState(update.state, Gossip.this);
         } else {
@@ -1114,13 +1106,8 @@ public class Gossip {
             Thread daemon = new Thread(r, "Gossip servicing thread "
                                           + count++);
             daemon.setDaemon(true);
-            daemon.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(Thread t, Throwable e) {
-                    log.severe("Uncaught exception on the gossip servicing thread"
-                             );
-                }
-            });
+            daemon.setUncaughtExceptionHandler((t, e) -> log.severe("Uncaught exception on the gossip servicing thread"
+                     ));
             return daemon;
         }
     }
@@ -1133,13 +1120,8 @@ public class Gossip {
             Thread daemon = new Thread(r, "Gossip dispatching thread "
                                           + count++);
             daemon.setDaemon(true);
-            daemon.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(Thread t, Throwable e) {
-                    log.severe("Uncaught exception on the gossip dispatching thread"
-                             );
-                }
-            });
+            daemon.setUncaughtExceptionHandler((t, e) -> log.severe("Uncaught exception on the gossip dispatching thread"
+                     ));
             return daemon;
         }
     }

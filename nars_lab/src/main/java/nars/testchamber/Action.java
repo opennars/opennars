@@ -6,7 +6,7 @@ import static nars.testchamber.Hauto.*;
  * Defines an action that may or may not be allowed by the game engine.
  * A corresponding Effect will be returned to the agent's buffer
  */
-abstract public class Action {
+public abstract class Action {
     
     long createdAt; //when created
     int expiresAt = -1; //allows an agent to set a time limit on the action
@@ -15,7 +15,7 @@ abstract public class Action {
     public Effect process(Grid2DSpace p, GridAgent a) { return null; }
 
     //generates a string that can be inserted into a NARS judgment
-    abstract public String toParamString();
+    public abstract String toParamString();
     
     
     

@@ -50,7 +50,7 @@ public class LogPane extends BorderPane  {
         scrollBottom.run();
     }
 
-    final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
+    final Runnable scrollBottom = () -> scrollParent.setVvalue(1.0f);
 
     void updateParent() {
 //        if (content.getParent()!=null) {
@@ -67,9 +67,8 @@ public class LogPane extends BorderPane  {
     }
 
     public LogPane() {
-        super();
 
-        this.content = new VBox(1);
+        content = new VBox(1);
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ((VBox)content).setFillWidth(false);
@@ -113,7 +112,7 @@ public class LogPane extends BorderPane  {
         @Deprecated Set<Concept> concept = new HashSet();
 
         public ActivationTreeMap(Object firstChild, float firstChildSize) {
-            super(Item.get("", 0f, firstChild, firstChildSize));
+            super(Item.get("", 0.0f, firstChild, firstChildSize));
 
             r = (Item.DefaultItem) root;
         }

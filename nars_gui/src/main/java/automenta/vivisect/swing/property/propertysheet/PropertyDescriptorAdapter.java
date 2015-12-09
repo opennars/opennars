@@ -36,7 +36,6 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 	private PropertyDescriptor descriptor;
 
 	public PropertyDescriptorAdapter() {
-		super();
 	}
 
 	public PropertyDescriptorAdapter(PropertyDescriptor descriptor) {
@@ -83,11 +82,7 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 			}
 		} catch (Exception e) {
 			String message = "Got exception when reading property " + getName();
-			if (object == null) {
-				message += ", object was 'null'";
-			} else {
-				message += ", object was " + String.valueOf(object);
-			}
+			message += object == null ? ", object was 'null'" : ", object was " + String.valueOf(object);
 			throw new RuntimeException(message, e);
 		}
 	}
@@ -106,11 +101,7 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 			}
 
 			String message = "Got exception when writing property " + getName();
-			if (object == null) {
-				message += ", object was 'null'";
-			} else {
-				message += ", object was " + String.valueOf(object);
-			}
+			message += object == null ? ", object was 'null'" : ", object was " + String.valueOf(object);
 			throw new RuntimeException(message, e);
 		}
 	}
@@ -120,11 +111,7 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 	}
 
 	public String getCategory() {
-		if (descriptor instanceof ExtendedPropertyDescriptor) {
-			return ((ExtendedPropertyDescriptor) descriptor).getCategory();
-		} else {
-			return null;
-		}
+		return descriptor instanceof ExtendedPropertyDescriptor ? ((ExtendedPropertyDescriptor) descriptor).getCategory() : null;
 	}
 
 }

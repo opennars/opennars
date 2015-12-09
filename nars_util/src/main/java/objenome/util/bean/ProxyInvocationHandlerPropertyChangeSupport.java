@@ -22,17 +22,17 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
     private static final long serialVersionUID = 0L;
 
     // TODO switch Soft/Hard
-    private BeanListenerSupport<PropertyChangeListener> propertyChangeListeners = new BeanListenerSupportSoftRef<PropertyChangeListener>();
-    private BeanListenerSupport<VetoableChangeListener> vetoableChangeListeners = new BeanListenerSupportSoftRef<VetoableChangeListener>();
+    private BeanListenerSupport<PropertyChangeListener> propertyChangeListeners = new BeanListenerSupportSoftRef<>();
+    private BeanListenerSupport<VetoableChangeListener> vetoableChangeListeners = new BeanListenerSupportSoftRef<>();
 
-    public ProxyInvocationHandlerPropertyChangeSupport(final Class<?> proxiedIface, final Collection<Class<?>> ifaces) {
+    public ProxyInvocationHandlerPropertyChangeSupport(Class<?> proxiedIface, Collection<Class<?>> ifaces) {
         super(proxiedIface, ifaces);
         // TODO Check all methods to be valid in dependency of their annotations (e.g. returntypes
         // void, parameters in dependency of type (veto/non-veto)
         // PropertyChangeListener/VetoableChangeListener)
     }
 
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (args != null && args.length == 1) {
             if (isAnnotated(method, Type.ADD_LISTENER)) {
                 addPropertyChangeListener((PropertyChangeListener) args[0]);
@@ -51,31 +51,31 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
         return super.invoke(proxy, method, args);
     }
 
-    private void removePropertyChangeListener(final PropertyChangeListener listener) {
-        this.propertyChangeListeners.remove(listener);
+    private void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeListeners.remove(listener);
     }
 
-    public void addPropertyChangeListener(final PropertyChangeListener listener) {
-        this.propertyChangeListeners.add(listener);
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeListeners.add(listener);
     }
 
-    public void addVetoableChangeListener(final VetoableChangeListener listener) {
-        this.vetoableChangeListeners.add(listener);
+    public void addVetoableChangeListener(VetoableChangeListener listener) {
+        vetoableChangeListeners.add(listener);
     }
 
-    public void removeVetoableChangeListener(final VetoableChangeListener listener) {
-        this.vetoableChangeListeners.remove(listener);
+    public void removeVetoableChangeListener(VetoableChangeListener listener) {
+        vetoableChangeListeners.remove(listener);
     }
 
-    protected Object handleSetter(final Object proxy, final PropertyDescriptor descriptor, final Object[] args) {
-        final PropertyChangeEvent event = new PropertyChangeEvent(proxy, descriptor.getName(), handleGetter(
+    protected Object handleSetter(Object proxy, PropertyDescriptor descriptor, Object[] args) {
+        PropertyChangeEvent event = new PropertyChangeEvent(proxy, descriptor.getName(), handleGetter(
                 proxy, descriptor), args[0]);
-        final boolean announce = !descriptor.getWriteMethod().isAnnotationPresent(Unbound.class);
+        boolean announce = !descriptor.getWriteMethod().isAnnotationPresent(Unbound.class);
         if (announce && checkForVeto(event)
                 && !descriptor.getWriteMethod().isAnnotationPresent(IgnoreVeto.class)) {
             return null;
         }
-        final Object result = super.handleSetter(proxy, descriptor, args);
+        Object result = super.handleSetter(proxy, descriptor, args);
         if (announce) {
             informListeners(event);
         }
@@ -89,13 +89,13 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
      *            {@link VetoableChangeListener#vetoableChange(PropertyChangeEvent)}
      * @return <code>true</code> if there's a veto else <code>false</code>
      */
-    private boolean checkForVeto(final PropertyChangeEvent event) {
+    private boolean checkForVeto(PropertyChangeEvent event) {
         try {
-            for (final VetoableChangeListener listener : this.vetoableChangeListeners) {
+            for (VetoableChangeListener listener : vetoableChangeListeners) {
                 listener.vetoableChange(event);
             }
             return false;
-        } catch (final PropertyVetoException e) {
+        } catch (PropertyVetoException e) {
             return true;
         }
     }
@@ -106,17 +106,17 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
      * @param event the event to pass to
      *            {@link PropertyChangeListener#propertyChange(PropertyChangeEvent)}
      */
-    private void informListeners(final PropertyChangeEvent evt) {
-        for (final PropertyChangeListener listener : this.propertyChangeListeners) {
+    private void informListeners(PropertyChangeEvent evt) {
+        for (PropertyChangeListener listener : propertyChangeListeners) {
             listener.propertyChange(evt);
         }
     }
 
     protected ProxyInvocationHandlerPropertyChangeSupport clone() throws CloneNotSupportedException {
-        final ProxyInvocationHandlerPropertyChangeSupport result = (ProxyInvocationHandlerPropertyChangeSupport) super
+        ProxyInvocationHandlerPropertyChangeSupport result = (ProxyInvocationHandlerPropertyChangeSupport) super
                 .clone();
-        result.propertyChangeListeners = this.propertyChangeListeners.clone();
-        result.vetoableChangeListeners = this.vetoableChangeListeners.clone();
+        result.propertyChangeListeners = propertyChangeListeners.clone();
+        result.vetoableChangeListeners = vetoableChangeListeners.clone();
         return result;
     }
 }

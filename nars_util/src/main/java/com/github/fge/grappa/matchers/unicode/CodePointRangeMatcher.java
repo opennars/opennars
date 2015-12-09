@@ -32,7 +32,7 @@ public final class CodePointRangeMatcher
     private final int low;
     private final int high;
 
-    public CodePointRangeMatcher(final int low, final int high)
+    public CodePointRangeMatcher(int low, int high)
     {
         super(String.format("U+%04X-U+%04X", low, high));
         this.low = low;
@@ -46,9 +46,9 @@ public final class CodePointRangeMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final int codePoint
+        int codePoint
             = context.getInputBuffer().codePointAt(context.getCurrentIndex());
 
         if (codePoint < low || codePoint > high)

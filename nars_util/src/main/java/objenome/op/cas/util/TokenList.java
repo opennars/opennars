@@ -2,13 +2,13 @@ package objenome.op.cas.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class TokenList<T> extends ArrayList<Token<T>> {
     
     public Integer fromStrBegin = null;
     
     public TokenList(int fromStrBegin) {
-        super();
         this.fromStrBegin = fromStrBegin;
     }
     
@@ -23,10 +23,7 @@ public class TokenList<T> extends ArrayList<Token<T>> {
     }
     
     public static <T> ArrayList<TokenList<T>> toArrTokenList(Collection<ArrayList<Token<T>>> tokenArrArr) {
-        ArrayList<TokenList<T>> tokenListList = new ArrayList<TokenList<T>>();
-        for (Collection<Token<T>> tokenArr : tokenArrArr) {
-            tokenListList.add(new TokenList<T>(tokenArr));
-        }
+        ArrayList<TokenList<T>> tokenListList = tokenArrArr.stream().map(TokenList::new).collect(Collectors.toCollection(ArrayList::new));
         return tokenListList;
     }
     

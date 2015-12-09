@@ -14,7 +14,7 @@ import static javafx.application.Platform.runLater;
  */
 public class TabXLazy extends TabX implements Runnable {
 
-    final static ExecutorService exe = Executors.newCachedThreadPool();
+    static final ExecutorService exe = Executors.newCachedThreadPool();
 
     private final Supplier<Node> contentBuilder;
     private Node map = null;
@@ -31,7 +31,7 @@ public class TabXLazy extends TabX implements Runnable {
 
                 exe.submit(() -> {
 
-                    final Node g = contentBuilder.get();
+                    Node g = contentBuilder.get();
                     map = g;
 
                     runLater(TabXLazy.this);

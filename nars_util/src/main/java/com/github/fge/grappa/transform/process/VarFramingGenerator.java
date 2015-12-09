@@ -40,8 +40,8 @@ public final class VarFramingGenerator
     implements RuleMethodProcessor
 {
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -49,19 +49,19 @@ public final class VarFramingGenerator
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
-        final InsnList instructions = method.instructions;
+        InsnList instructions = method.instructions;
 
         AbstractInsnNode ret = instructions.getLast();
         while (ret.getOpcode() != ARETURN)
             ret = ret.getPrevious();
 
-        final CodeBlock block = CodeBlock.newCodeBlock();
+        CodeBlock block = CodeBlock.newCodeBlock();
 
         block.newobj(CodegenUtils.p(VarFramingMatcher.class))
             .dup_x1()
@@ -77,10 +77,10 @@ public final class VarFramingGenerator
         method.setBodyRewritten();
     }
 
-    private static void createVarFieldArray(final CodeBlock block,
-        final RuleMethod method)
+    private static void createVarFieldArray(CodeBlock block,
+                                            RuleMethod method)
     {
-        final int count = method.getLocalVarVariables().size();
+        int count = method.getLocalVarVariables().size();
 
         block.bipush(count).anewarray(CodegenUtils.p(Var.class));
 

@@ -46,13 +46,13 @@ public class MessageDialog extends JDialog implements ActionListener, WindowList
         
         text = new JTextArea(message);
 
-        this.add("Center", text);
+        add("Center", text);
         button = new JButton(" OK ");
         button.addActionListener(this);
         JPanel p = new JPanel();
         p.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         p.add(button);
-        this.add("South", p);
+        add("South", p);
         setModal(true);
         setBounds(200, 250, 400, 180);
         addWindowListener(this);
@@ -71,8 +71,8 @@ public class MessageDialog extends JDialog implements ActionListener, WindowList
     }
 
     private void close() {
-        this.setVisible(false);
-        this.dispose();
+        setVisible(false);
+        dispose();
     }
 
     @Override

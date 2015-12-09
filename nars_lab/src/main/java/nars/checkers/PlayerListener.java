@@ -7,5 +7,5 @@ package nars.checkers;
  */
 public interface PlayerListener
 {
-	public void finishedTurn(Player p);
+	void finishedTurn(Player p);
 }

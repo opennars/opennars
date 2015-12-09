@@ -35,14 +35,11 @@ public final class SgAssert {
                 "It's not allowed to create an instance of this class!");
     }
 
-    private static void writeToFile(final File file, final String src) {
+    private static void writeToFile(File file, String src) {
         try {
             // Write to file
-            final FileWriter writer = new FileWriter(file);
-            try {
+            try (FileWriter writer = new FileWriter(file)) {
                 writer.write(src);
-            } finally {
-                writer.close();
             }
 //            // Format with Jalopy
 //            final Jalopy jalopy = new Jalopy();
@@ -50,26 +47,23 @@ public final class SgAssert {
 //            jalopy.setOutput(file);
 //            jalopy.format();
 
-        } catch (final IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private static String readFromFile(final File file) {
+    private static String readFromFile(File file) {
         try {
-            final LineNumberReader lnr = new LineNumberReader(new FileReader(file));
-            try {
-                final StringBuffer sb = new StringBuffer();
+            try (LineNumberReader lnr = new LineNumberReader(new FileReader(file))) {
+                StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = lnr.readLine()) != null) {
                     sb.append(line);
-                    sb.append("\n");
+                    sb.append('\n');
                 }
                 return sb.toString();
-            } finally {
-                lnr.close();
             }
-        } catch (final IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -82,9 +76,9 @@ public final class SgAssert {
      * @param expectedFile
      *            Excpected file.
      */
-    public static void assertSrcFilesEqual(final File actualFile, final File expectedFile) {
-        final String actualSrc = readFromFile(actualFile);
-        final String expectedSrc = readFromFile(expectedFile);
+    public static void assertSrcFilesEqual(File actualFile, File expectedFile) {
+        String actualSrc = readFromFile(actualFile);
+        String expectedSrc = readFromFile(expectedFile);
         Assert.assertEquals(actualSrc, expectedSrc);
     }
 
@@ -99,9 +93,9 @@ public final class SgAssert {
      * @param clasz
      *            Class to test.
      */
-    public static void assertEqualToFile(final File baseDir, final SgClass clasz) {
-        final File expectedFile = new File(baseDir, clasz.getName() + ".java");
-        final File actualFile = new File(baseDir, clasz.getName() + ".tmp");
+    public static void assertEqualToFile(File baseDir, SgClass clasz) {
+        File expectedFile = new File(baseDir, clasz.getName() + ".java");
+        File actualFile = new File(baseDir, clasz.getName() + ".tmp");
         writeToFile(actualFile, clasz.toString());
         assertSrcFilesEqual(actualFile, expectedFile);
     }

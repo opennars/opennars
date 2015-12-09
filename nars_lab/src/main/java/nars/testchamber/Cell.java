@@ -96,8 +96,9 @@ public class Cell {
         
         //draw ground height
         int r=0,g=0,b=0,a=1;
-        a = ambientLight;            
-         
+        a = ambientLight;
+
+        //noinspection IfStatementWithTooManyBranches
         if (material == Material.Empty) {
         }
         else if (material == Material.Machine) {
@@ -108,12 +109,7 @@ public class Cell {
             r = g = b = 255;
         }
         else if (material == Material.DirtFloor || material == Material.GrassFloor || (material==Material.Door && !is_solid)) {
-            if (height == Float.MAX_VALUE) {
-                r = g = b = 255;
-            }
-            else { 
-                r = g = b = (int)(128 + height);
-            }           
+            r = height == Float.MAX_VALUE ? (g = b = 255) : (g = b = (int) (128 + height));
         }
         if(material==Material.Door  && is_solid) {
             b=0;
@@ -181,7 +177,8 @@ public class Cell {
         
         boolean full3d=false;
         double v=full3d? 0.5f : 0.0f;
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if(logic!=Logic.NotALogicBlock)
         {
             s.fill(state.cr/2.0f);
@@ -200,7 +197,7 @@ public class Cell {
             s.rect(add-verschx,add-verschy,1.05f,1.05f);
         }
         else
-        if(material==Material.StoneWall || material==Material.Water)
+        if(material==Material.StoneWall )
         {
             float verschx=(float) Math.max(-0.3f, Math.min(v,0.05*(x-wx)));
             float verschy=(float) Math.max(-0.3f, Math.min(v,0.05*(y-wy)));
@@ -285,7 +282,7 @@ public class Cell {
                     break;
                 case Turret:            
                     if (charge > 0)
-                        s.particles.emitParticles(0.5f, 0.3f, s.getTime()/40f, 0.07f, state.x+0.5f, state.y+0.5f, 1);
+                        s.particles.emitParticles(0.5f, 0.3f, s.getTime()/ 40.0f, 0.07f, state.x+0.5f, state.y+0.5f, 1);
                     break;
             }
         }
@@ -302,7 +299,7 @@ public class Cell {
     static long rseed = System.nanoTime();
     
     public static int nextInt()  {
-        final int nbits = 32;
+        int nbits = 32;
         long x = rseed;
         x ^= (x << 21);
         x ^= (x >>> 35);
@@ -317,24 +314,24 @@ public class Cell {
     }
 
     void copyFrom(Cell c) {
-        this.material = c.material;
-        this.height = c.height;
-        this.machine = c.machine;
-        this.charge = c.charge;
-        this.chargeFront = c.chargeFront;  
-        this.light=c.light;
-        this.name=c.name+"";
+        material = c.material;
+        height = c.height;
+        machine = c.machine;
+        charge = c.charge;
+        chargeFront = c.chargeFront;
+        light =c.light;
+        name =c.name+"";
     }
 
     public void setHeight(int h) {
-        this.height = h;
+        height = h;
     }
             
     void setLogic(Logic logic, float initialCharge) {
-        this.material = Material.Machine;
+        material = Material.Machine;
         this.logic = logic;
-        this.charge = initialCharge;
-        this.is_solid=false;
+        charge = initialCharge;
+        is_solid =false;
     }
     
     

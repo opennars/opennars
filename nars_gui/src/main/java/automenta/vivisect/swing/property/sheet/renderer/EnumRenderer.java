@@ -15,10 +15,6 @@ public class EnumRenderer extends DefaultCellRenderer {
 
 	@Override
 	protected String convertToString(Object value) {
-		if (value == null) {
-			return I18N.NOT_SET;
-		} else {
-			return value.toString();
-		}
+		return value == null ? I18N.NOT_SET : value.toString();
 	}
 }

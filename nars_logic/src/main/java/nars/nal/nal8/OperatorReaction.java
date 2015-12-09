@@ -45,24 +45,24 @@ import java.util.function.Function;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class OperatorReaction implements Function<Task,List<Task>>, Reaction<Term,Task>, Serializable {
+public abstract class OperatorReaction implements Function<Task,List<Task>>, Reaction<Term,Task>, Serializable {
 
 
     public final Term operatorTerm;
 
-    transient protected NAR nar;
+    protected transient NAR nar;
 
 
     @Override
     public String toString() {
-        return "^" + operatorTerm.toString();
+        return '^' + operatorTerm.toString();
     }
 
     public OperatorReaction(Term term) {
         if (term == null) {
             term = Atom.the(getClass().getSimpleName());
         }
-        this.operatorTerm = term;
+        operatorTerm = term;
     }
 
     public OperatorReaction(String operatorName) {
@@ -74,7 +74,7 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
     }
 
     public boolean setEnabled(NAR n, boolean enabled) {
-        this.nar = enabled ? n : null;
+        nar = enabled ? n : null;
         return enabled;
     }
 
@@ -83,7 +83,7 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
      */
     public OperatorReaction() {
         String className = getClass().getSimpleName();
-        this.operatorTerm = Atom.the(className);
+        operatorTerm = Atom.the(className);
     }
 
 
@@ -97,7 +97,7 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
 
 
     @Override
-    public final void event(final Term event, final Task o) {
+    public final void event(Term event, Task o) {
 
         if (o.isCommand() || decider().test(o)) {
             execute(o);
@@ -118,13 +118,8 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
      * @param op     The operate to be executed
      * @return true if successful, false if an error occurred
      */
-    public final boolean execute(final Task op) {
-        if (async()) {
-            return nar.execAsync(() -> executeSynch(op));
-        }
-        else {
-            return executeSynch(op);
-        }
+    public final boolean execute(Task op) {
+        return async() ? nar.execAsync(() -> executeSynch(op)) : executeSynch(op);
     }
 
     final boolean executeSynch(Task op) {
@@ -175,7 +170,7 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
      */
     protected void executed(Task op, List<Task> feedback) {
 
-        final NAR n = nar();
+        NAR n = nar();
 
         //Display a message in the output stream to indicate the reportExecution of an operation
 
@@ -197,7 +192,7 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
 
             //final Operation t = op.getTerm();
 
-            for (final Task f : feedback) {
+            for (Task f : feedback) {
                 //if (t == null) continue;
 
                 f.log("Feedback");
@@ -216,15 +211,12 @@ abstract public class OperatorReaction implements Function<Task,List<Task>>, Rea
      * internal notice of the execution
      * @param operation
      */
-    protected void noticeExecuted(final Task operation) {
+    protected void noticeExecuted(Task operation) {
 
         Budget b;
-        if (!operation.isDeleted())
-            b = operation.getBudget();
-        else
-            b = Budget.zero;//if operation was cancelled, at least provide some result feedback
+        b = !operation.isDeleted() ? operation.getBudget() : Budget.zero;
 
-        final Memory memory = nar().memory;
+        Memory memory = nar().memory;
 
         nar().input($.belief(operation.getTerm(),
 

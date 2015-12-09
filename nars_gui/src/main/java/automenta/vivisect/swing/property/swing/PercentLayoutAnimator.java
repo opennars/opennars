@@ -67,12 +67,12 @@ public class PercentLayoutAnimator implements ActionListener {
   
   public void actionPerformed(ActionEvent e) {
     boolean allCompleted = true;
-    
-    for (Iterator iter = tasks.iterator(); iter.hasNext();) {
-      PercentTask element = (PercentTask)iter.next();
+
+    for (Object task : tasks) {
+      PercentTask element = (PercentTask) task;
       if (!element.isCompleted()) {
         allCompleted = false;
-        element.execute();        
+        element.execute();
       }
     }
 

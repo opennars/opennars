@@ -48,7 +48,7 @@ public class DistributorTest {
         }
         //System.out.println(probabilityActiveAdjusted);
         DoubleArrayList a = new DoubleArrayList(probabilityActiveAdjusted.size());
-        probabilityActiveAdjusted.forEach(x -> a.add(x));
+        probabilityActiveAdjusted.forEach(a::add);
         double[] aa = a.toArray();
 
         assertArrayEquals(new double[]{

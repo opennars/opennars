@@ -27,22 +27,17 @@ public class PeriodMeter extends FunctionMeter<Double> {
     
     public PeriodMeter(String id, boolean nanoSeconds, double windowSec, boolean asFrequency) {
         super(id, true, ".min", ".max", ".mean", ".stddev");
-        
 
-        this.window = windowSec * 1.0E9;
-        this.stat = new DescriptiveStatistics();
+
+        window = windowSec * 1.0E9;
+        stat = new DescriptiveStatistics();
         this.nanoSeconds = nanoSeconds;
-        this.frequency = asFrequency;
+        frequency = asFrequency;
         reset();
     }
     
      public static double now(boolean nanoSeconds /* TODO use a Resolution enum */) {
-        if (nanoSeconds) {
-            return System.nanoTime();
-        }
-        else {
-            return System.currentTimeMillis() * 1.0E6;
-        }
+         return nanoSeconds ? System.nanoTime() : System.currentTimeMillis() * 1.0E6;
     }
 
     public double sinceStart() {
@@ -51,24 +46,19 @@ public class PeriodMeter extends FunctionMeter<Double> {
     
 
     public double reset() {
-        this.lastReset = now(nanoSeconds);
+        lastReset = now(nanoSeconds);
         stat.clear();
         return lastReset;
     }
     
     public DescriptiveStatistics hit() {
         double now;
-        if (sinceStart() > window) {
-            now = reset();
-        }
-        else {
-            now = now(nanoSeconds);
-        }
-        if (Double.isFinite(this.prev)) {
-            double dt = now - this.prev;
+        now = sinceStart() > window ? reset() : now(nanoSeconds);
+        if (Double.isFinite(prev)) {
+            double dt = now - prev;
             stat.addValue(dt);
         }
-        this.prev = now;
+        prev = now;
         return stat;
     }
     

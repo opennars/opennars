@@ -16,7 +16,7 @@ import java.util.function.Function;
  * subterm collection, and post-filter before
  * forming a resulting substituted term.
  */
-abstract public class EllipsisMatch<T extends Term> extends ShadowAtom {
+public abstract class EllipsisMatch<T extends Term> extends ShadowAtom {
 
     public EllipsisMatch() {
         super("");
@@ -42,8 +42,8 @@ abstract public class EllipsisMatch<T extends Term> extends ShadowAtom {
      *
      * */
     @Override
-    abstract public boolean applyTo(Subst substitution, Collection<Term> target, boolean fullMatch);
+    public abstract boolean applyTo(Subst substitution, Collection<Term> target, boolean fullMatch);
 
     @Override
-    abstract public int size();
+    public abstract int size();
 }

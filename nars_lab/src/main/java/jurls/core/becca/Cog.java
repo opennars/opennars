@@ -15,8 +15,8 @@ public class Cog {
     private double[] bundleActivity;
     
     public Cog(Daisychain d, Ziptie z) {
-        this.daisy = d;
-        this.zip = z;
+        daisy = d;
+        zip = z;
     }
     
     public double[] in(double[] x) {

@@ -51,6 +51,7 @@ public class BgLevelGenerator
                     {
                         int h0 = (oh < h) ? oh : h;
                         int h1 = (oh < h) ? h : oh;
+                        //noinspection IfStatementWithTooManyBranches
                         if (y < h0)
                         {
                             if (distant)
@@ -150,6 +151,7 @@ public class BgLevelGenerator
                             {
                                 yy-=2;
                             }
+                            //noinspection IfStatementWithTooManyBranches
                             if (yy < 0)
                             {
                                 t = 0;

@@ -43,16 +43,15 @@ public class TreePane extends BorderPane {
     final AtomicBoolean ready = new AtomicBoolean(true);
 
     public TreePane(NAR n) {
-        super();
 
-        this.nar = n;
+        nar = n;
 
         newLabel = u -> new TaskLabel(u, nar);
 
         NSlider ns = new NSlider("Min Task Priority", 80, 20, 0); //show everytihng initially
 
 
-        (this.minPriority = ns.value[0]).addListener((v) -> {
+        (minPriority = ns.value[0]).addListener((v) -> {
             update();
         });
 
@@ -87,7 +86,6 @@ public class TreePane extends BorderPane {
     public class TaskCell extends TreeCell<Task> {
 
         public TaskCell() {
-            super();
             setEditable(false);
         }
 
@@ -140,7 +138,7 @@ public class TreePane extends BorderPane {
             return;
 
         synchronized (pendingTasks) {
-            final Set<Task> pendingTasks = this.pendingTasks;
+            Set<Task> pendingTasks = this.pendingTasks;
             pendingTasks.clear();
             nar.forEachConceptTask(true, true, true, true, false, 2, t -> {
                 if (visible(t))
@@ -200,7 +198,7 @@ public class TreePane extends BorderPane {
         }
     }
 
-    protected TaskTreeItem getItem(final Task t) {
+    protected TaskTreeItem getItem(Task t) {
         if (t == null)
             return rootNode;
 
@@ -246,7 +244,7 @@ public class TreePane extends BorderPane {
         return ii;
     }
 
-    private void update(final Task t, final TaskTreeItem i) {
+    private void update(Task t, TaskTreeItem i) {
         if (!visible(t)) {
             if (hide(t))
                 return;

@@ -14,10 +14,10 @@ package jurls.reinforcementlearning.domains.grid;
  */
 public interface Agent {
     
-    public int step(double reward);
-    public double[] getSensor();
-    public double[] getAction();
+    int step(double reward);
+    double[] getSensor();
+    double[] getAction();
 
-    public void init(World world);
+    void init(World world);
     
 }

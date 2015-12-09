@@ -41,7 +41,7 @@ public class DockingRegionContainer extends JPanel implements DockingContainer {
     JComponent oldGlass;
     final DraggingOverlayPanel overlayPanel;
 
-    public DockingRegionContainer(final DockingRegionRoot dockRoot) {
+    public DockingRegionContainer(DockingRegionRoot dockRoot) {
         this.dockRoot = dockRoot;
         setLayout(new BorderLayout());
 

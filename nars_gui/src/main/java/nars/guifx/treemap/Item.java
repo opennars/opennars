@@ -19,21 +19,21 @@ public interface Item extends Comparable<Item> {
 
     SortedSet<Item> getItems();
 
-    public static DefaultItem get(Object o, double size) {
+    static DefaultItem get(Object o, double size) {
         return new DefaultItem(o, size);
     }
-    public static DefaultItem get(Object o, double size, Object firstChild, double firstChildSize) {
+    static DefaultItem get(Object o, double size, Object firstChild, double firstChildSize) {
         DefaultItem i = new DefaultItem(o, size);
         i.add(firstChild,firstChildSize);
         return i;
     }
 
-    static class DefaultItem implements Item {
+    class DefaultItem implements Item {
         private double size;
         private final Object id;
 
         public DefaultItem(Object o, double size) {
-            this.id = o;
+            id = o;
             this.size = size;
         }
 

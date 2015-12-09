@@ -33,9 +33,9 @@ public interface DockingContainer {
      * bottom. Otherwise will divide left and right.
      * @return The newly created region.
      */
-    public DockingRegionSplit split(DockingChild child,
-            DockingContent content,
-            boolean right, boolean vertical);
+    DockingRegionSplit split(DockingChild child,
+                             DockingContent content,
+                             boolean right, boolean vertical);
 
     /**
      * Indicates that oldChild has become invalid and should be replaced with
@@ -45,9 +45,9 @@ public interface DockingContainer {
      * @param newChild Child to replace oldChild with. If null, oldChild is
      * simply removed
      */
-    public void join(DockingChild oldChild, DockingChild newChild);
+    void join(DockingChild oldChild, DockingChild newChild);
 
-    public DockingPathRecord buildPath(DockingChild dockChild, DockingPathRecord childPath);
+    DockingPathRecord buildPath(DockingChild dockChild, DockingPathRecord childPath);
 
-    public DockingRegionContainer getContainerRoot();
+    DockingRegionContainer getContainerRoot();
 }

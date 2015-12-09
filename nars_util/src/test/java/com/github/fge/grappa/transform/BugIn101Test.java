@@ -26,14 +26,14 @@ public class BugIn101Test {
 
     static class Parser extends BaseParser<Object> {
         Rule A() {
-            final Object a = new Object();
+            Object a = new Object();
             return sequence("a", push(a));
         }
         Rule B() {
-            final String b = "b";
+            String b = "b";
             return sequence("b", push(b));
         }
-        Rule Switch(final int i) {
+        Rule Switch(int i) {
             switch (i) {
                 case 0: return sequence(EMPTY, push(1));
             }
@@ -45,7 +45,7 @@ public class BugIn101Test {
     public void test() throws Exception {
         // threw "java.lang.RuntimeException: Error creating extended parser class:
         // Execution can fall off end of the code" in 1.0.1
-        final Parser parser = Grappa.createParser(Parser.class);
+        Parser parser = Grappa.createParser(Parser.class);
 
         // threw "java.lang.NoSuchFieldError: field$1" in 1.0.1
         new ListeningParseRunner<>(parser.B()).run("b");

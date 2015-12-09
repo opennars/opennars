@@ -33,7 +33,7 @@ public interface Inheritance {
 
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */
-    static Term inheritance(final Term subject, final Term predicate) {
+    static Term inheritance(Term subject, Term predicate) {
         if (subject.equals(predicate))
             return subject;
 

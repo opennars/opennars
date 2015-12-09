@@ -23,15 +23,15 @@ public class Grid2DSimple implements World {
     private double focusPositionH;
 
     public Grid2DSimple(int x, int y, int totalTime, double noise, double focusVelocity) {
-        this.time = 1;
-        this.w = x;
-        this.h = y;
-        this.size = x * y;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.ENERGY_COST_FACTOR = 1.0;
-        this.MATCH_REWARD_FACTOR = size*1.0;
-        this.REWARD_MAGNITUDE = 1;
-        this.JUMP_FRACTION = 0.1;        
+        time = 1;
+        w = x;
+        h = y;
+        size = x * y;
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        ENERGY_COST_FACTOR = 1.0;
+        MATCH_REWARD_FACTOR = size*1.0;
+        REWARD_MAGNITUDE = 1;
+        JUMP_FRACTION = 0.1;
         this.noise = noise;
         
         this.totalTime = totalTime;
@@ -90,7 +90,7 @@ public class Grid2DSimple implements World {
         
         
         
-        final double exp = 3.0; //sharpen
+        double exp = 3.0; //sharpen
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
                 double dx = Math.abs(x - focusPositionW);

@@ -32,7 +32,6 @@ import objenome.op.Numeric1d;
 public class Cosine extends Numeric1d  {
 
     public Cosine() {
-        super();
     }
 
     public Cosine(Node child) {

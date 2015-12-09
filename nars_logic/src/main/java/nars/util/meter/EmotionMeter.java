@@ -40,7 +40,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     public final DoubleMeter busyMeter = new DoubleMeter("busy");
 
     public static final Atom satisfied = Atom.the("satisfied");
-    final static Compound satisfiedSetInt = SetInt.make(satisfied);
+    static final Compound satisfiedSetInt = SetInt.make(satisfied);
 
     public EmotionMeter(Memory memory) {
         super(memory);
@@ -67,12 +67,12 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     }
 
 
-    public void happy(final float delta) {
-        this.happy += delta;
+    public void happy(float delta) {
+        happy += delta;
     }
 
-    public void happy(final float solution, final Task task, @Deprecated final Premise p) {
-        this.happy += ( task.getBudget().summary() * solution );
+    public void happy(float solution, Task task, @Deprecated Premise p) {
+        happy += ( task.getBudget().summary() * solution );
     }
 
     protected void commitHappy() {
@@ -148,7 +148,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
         if (range == 0) return -1;
         if (prev - current > range * proportionChangeThreshold)
             return -1;
-        else if (current - prev > range * proportionChangeThreshold)
+        if (current - prev > range * proportionChangeThreshold)
             return 1;
 
         return -1;
@@ -163,7 +163,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     }
 
     public void busy(Task cause, Premise p) {
-        this.busy += cause.getPriority();
+        busy += cause.getPriority();
     }
 
 
@@ -195,9 +195,9 @@ public class EmotionMeter extends FrameReaction implements Serializable {
             */
         }
 
-        busyMeter.set(lastbusy = this.busy);
+        busyMeter.set(lastbusy = busy);
 
-        this.busy = 0;
+        busy = 0;
 
 
     }

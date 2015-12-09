@@ -94,7 +94,6 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      * configuration settings from the config
      */
     public PointMutation(boolean autoConfig) {
-        super();
 
         // Default config values
         pointProbability = 0.01;
@@ -185,7 +184,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
             }
         }
 
-        if (points == null) points = Collections.EMPTY_LIST;
+        if (points == null) points = Collections.emptyList();
 
         ((EndEvent) event).setMutationPoints(points);
 
@@ -249,14 +248,10 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      * equals() method because we don't want to compare children if it's a
      * non-terminal node.
      */
-    private static boolean nodesEqual(final Node nodeA, final Node nodeB) {
+    private static boolean nodesEqual(Node nodeA, Node nodeB) {
         boolean equal = false;
         if (nodeA.getClass().equals(nodeB.getClass())) {
-            if (nodeA.getArity() > 0) {
-                equal = true;
-            } else {
-                equal = nodeA.equals(nodeB);
-            }
+            equal = nodeA.getArity() > 0 || nodeA.equals(nodeB);
         }
 
         return equal;

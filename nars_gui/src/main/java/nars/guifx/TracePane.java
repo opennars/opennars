@@ -35,7 +35,6 @@ public class TracePane extends LogPane {
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
     public TracePane(NAR nar, DoubleProperty volume) {
-        super();
 
         this.volume = volume;
         this.nar = nar;
@@ -107,9 +106,9 @@ public class TracePane extends LogPane {
         //double f = filter.value(channel);
 
         //temporary until filter working
-        if (!trace && (channel.equals("eventDerived")||
-                channel.equals("eventTaskRemoved") ||
-                channel.equals("eventConceptChange")
+        if (!trace && ("eventDerived".equals(channel) ||
+                "eventTaskRemoved".equals(channel) ||
+                "eventConceptChange".equals(channel)
         ) )
             return;
 
@@ -117,7 +116,7 @@ public class TracePane extends LogPane {
         if (n != null) {
             //synchronized (toShow) {
             if (pending == null)
-                pending = new ArraySharingList((bn)->new Node[bn]); //Global.newArrayList();
+                pending = new ArraySharingList(Node[]::new); //Global.newArrayList();
 
             pending.add(n);
             prev = n;
@@ -128,7 +127,8 @@ public class TracePane extends LogPane {
     boolean activationTreeMap = false;
 
     private Node getNode(Object channel, Object signal) {
-        if (channel.equals("eventConceptActivated")) {
+        //noinspection IfStatementWithTooManyBranches
+        if ("eventConceptActivated".equals(channel)) {
             boolean newn = false;
             if (activationSet == null && activationTreeMap) {
                 activationSet =
@@ -144,11 +144,9 @@ public class TracePane extends LogPane {
                 newn = false;
             }
 
-            if (!newn) return null;
-            else
-                return activationSet;
-        } else if (channel.equals("eventCycleEnd")) {
-            if (prev != null && (prev instanceof CycleActivationBar)) {
+            return !newn ? null : activationSet;
+        } else if ("eventCycleEnd".equals(channel)) {
+            if ((prev instanceof CycleActivationBar)) {
                 ((CycleActivationBar) prev).setTo(nar.time());
                 return null;
             } else {
@@ -160,15 +158,12 @@ public class TracePane extends LogPane {
 //            }
             //return null;
             //
-        } else if (channel.equals("eventFrameStart")) {
+        } else if ("eventFrameStart".equals(channel)) {
             return null;
             //
-        } else if (channel.equals("eventInput")) {
+        } else if ("eventInput".equals(channel)) {
             Task t = (Task) signal;
-            if (t.getPriority() >= volume.get())
-                return new TaskLabel(t, nar);
-            else
-                return null;
+            return t.getPriority() >= volume.get() ? new TaskLabel(t, nar) : null;
         } else if (signal instanceof Premise) {
             //return new PremisePane((Premise)signal);
             return null;

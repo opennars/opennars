@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class BagGenerators {
 
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
 
 
@@ -23,10 +23,10 @@ public class BagGenerators {
 
     public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToRemove, Bag<CharSequence, NullItem> f) {
 
-        final int levels = 13;
-        final int count[] = new int[levels];
+        int levels = 13;
+        int[] count = new int[levels];
 
-        final int[] nRemoved = {0};
+        int[] nRemoved = {0};
 
 //        Consumer<NullItem> prevRemoval = f.getOnRemoval();
 //        f.setOnRemoval(r -> {
@@ -78,16 +78,14 @@ public class BagGenerators {
             for (int i= 0; i < insertsPerLoop * accessFraction; i++) {
                 int sizeBefore = f.size();
 
-                final NullItem t = f.peekNext();
+                NullItem t = f.peekNext();
 
                 if (t == null) {
                     //Assert.assertTrue(sizeAfter == 0);
                     //Assert.assertEquals(sizeAfter, sizeBefore);
                     continue;
                 }
-                else {
-                    //Assert.assertEquals(sizeAfter, sizeBefore-1);
-                }
+                //Assert.assertEquals(sizeAfter, sizeBefore-1);
 
                 int sizeAfter = f.size();
 
@@ -139,7 +137,7 @@ public class BagGenerators {
     public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence, NullItem> f) {
 
         int levels = 9;
-        int count[] = new int[levels];
+        int[] count = new int[levels];
 
 
         for (int l = 0; l < loops; l++) {

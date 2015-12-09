@@ -2,15 +2,15 @@ package nars.audio;
 
 /** Monaural sound source */
 public interface SoundProducer {
-    public float read(float[] buf, int readRate);
-    public void skip(int samplesToSkip, int readRate);
-    public boolean isLive();
+    float read(float[] buf, int readRate);
+    void skip(int samplesToSkip, int readRate);
+    boolean isLive();
 
-    default float getAmplitude() { return 1f; }
+    default float getAmplitude() { return 1.0f; }
 
-    abstract public void stop();
+    void stop();
 
-    public static interface Amplifiable {
-        public void setAmplitude(float a);
+    interface Amplifiable {
+        void setAmplitude(float a);
     }
 }

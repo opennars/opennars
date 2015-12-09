@@ -26,31 +26,31 @@ public abstract class Wave {
 
     public Wave(int sc, int bps, int c, int sr, int f, String n) {
         data = new ArrayList();
-        this.sampleCount = sc;
-        this.bitsPerSample = bps;
-        this.channels = c;
-        this.sampleRate = sr;
-        this.frequency = f;
-        this.name = n;
-        this.addHeaders();
+        sampleCount = sc;
+        bitsPerSample = bps;
+        channels = c;
+        sampleRate = sr;
+        frequency = f;
+        name = n;
+        addHeaders();
     }
 
     public void addHeaders() {
         String[] headers = {
-            "SAMPLES:\t" + this.sampleCount,
-            "BITSPERSAMPLE:\t" + this.bitsPerSample,
-            "CHANNELS:\t" + this.channels,
-            "SAMPLERATE:\t" + this.sampleRate,
+            "SAMPLES:\t" + sampleCount,
+            "BITSPERSAMPLE:\t" + bitsPerSample,
+            "CHANNELS:\t" + channels,
+            "SAMPLERATE:\t" + sampleRate,
             "NORMALIZED:\tFALSE"
         };
         for (int i = 0; i < headers.length; i++) {
-            this.data.add(i, headers[i]);
+            data.add(i, headers[i]);
         }
     }
 
     public void stripHeader() {
         for (int i = 0; i < 5; i++) {
-            this.data.remove(0);
+            data.remove(0);
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class Wave {
         int c1, c2;
         int[] m = new int[2];
         for (int i = 0; i < s.length; i++) {
-            for (int j = 0; j < this.getNumChannels(); j++) {
+            for (int j = 0; j < getNumChannels(); j++) {
                 m[0] = s[j][i] < m[0] ? s[j][i] : m[0];
                 m[1] = s[j][i] > m[1] ? s[j][i] : m[1];
             }
@@ -87,7 +87,7 @@ public abstract class Wave {
 
     //return immutable sample table
     public List<String> getData() {
-        return Collections.unmodifiableList(this.data);
+        return Collections.unmodifiableList(data);
     }
 
     //waves will override this method
@@ -99,37 +99,37 @@ public abstract class Wave {
     }
 
     public void addSample(String s) {
-        this.data.add(s);
+        data.add(s);
     }
 
     public int getSampleCount() {
-        return this.data.size();
+        return data.size();
     }
     public void setSampleCount(int count) {
-        this.sampleCount = count;
+        sampleCount = count;
     }
     public int getBitsPerSample() {
-        return this.bitsPerSample;
+        return bitsPerSample;
     }
 
     public int getNumChannels() {
-        return this.channels;
+        return channels;
     }
 
     public int getSampleRate() {
-        return this.sampleRate;
+        return sampleRate;
     }
 
     public int getFrequency() {
-        return this.frequency;
+        return frequency;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void clearData() {
-        this.data = new LinkedList<String>();
+        data = new LinkedList<>();
     }
 
 }

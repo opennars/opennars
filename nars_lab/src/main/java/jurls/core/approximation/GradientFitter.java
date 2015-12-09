@@ -39,8 +39,8 @@ public class GradientFitter implements ParameterizedFunction {
             l = 1;
         }
 
-        final double a = approxParameters.getAlpha();
-        final double m = approxParameters.getMomentum();
+        double a = approxParameters.getAlpha();
+        double m = approxParameters.getMomentum();
         for (int i = 0; i < gradient.length; ++i) {
             previousDeltas[i] = gradient[i] = a * gradient[i] / l + m * previousDeltas[i];
         }

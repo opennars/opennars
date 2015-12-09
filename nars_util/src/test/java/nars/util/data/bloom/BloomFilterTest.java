@@ -72,10 +72,10 @@ public class BloomFilterTest {
     @Test
     public void testBloomFilterBytes() {
         BloomFilter bf = new BloomFilter(10000);
-        byte[] val = new byte[]{1, 2, 3};
-        byte[] val1 = new byte[]{1, 2, 3, 4};
-        byte[] val2 = new byte[]{1, 2, 3, 4, 5};
-        byte[] val3 = new byte[]{1, 2, 3, 4, 5, 6};
+        byte[] val = {1, 2, 3};
+        byte[] val1 = {1, 2, 3, 4};
+        byte[] val2 = {1, 2, 3, 4, 5};
+        byte[] val3 = {1, 2, 3, 4, 5, 6};
 
         assertEquals(false, bf.testBytes(val));
         assertEquals(false, bf.testBytes(val1));

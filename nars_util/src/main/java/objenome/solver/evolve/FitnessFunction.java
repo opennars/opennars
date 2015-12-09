@@ -36,6 +36,6 @@ public interface FitnessFunction<I extends Organism> {
      *
      * @param population the population to be evaluated.
      */
-    public void evaluate(Population<I> population);
+    void evaluate(Population<I> population);
 
 }

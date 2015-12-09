@@ -17,7 +17,8 @@ import java.util.function.Predicate;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-@Deprecated abstract public class CompoundN<T extends Term> implements Compound<T> {
+@Deprecated
+public abstract class CompoundN<T extends Term> implements Compound<T> {
 
     protected final TermVector<T> terms;
 
@@ -26,25 +27,27 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
      * used to prevent repeated normalizations
      */
 
-    protected transient final int hash;
+    protected final transient int hash;
 
+    @SafeVarargs
     protected CompoundN(T... t) {
         this(0, t);
     }
 
     protected CompoundN(Op op, TermVector subterms) {
-        this.terms = subterms;
-        this.hash = Compound.hash(subterms, op, 0);
+        terms = subterms;
+        hash = Compound.hash(subterms, op, 0);
     }
 
 
     /** if hash salt is non-zero, it will be combined with the default hash value of the compound
      * */
+    @SafeVarargs
     protected CompoundN(int hashSalt, T... subterms) {
-        this.terms = isCommutative() ?
+        terms = isCommutative() ?
                         new TermSet(subterms) :
                         new TermVector(subterms);
-        this.hash = Compound.hash(subterms(), op(), hashSalt);
+        hash = Compound.hash(subterms(), op(), hashSalt);
     }
 
     public CompoundN(T t) {
@@ -57,7 +60,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
     @Override
-    public int compareTo(final Object o) {
+    public int compareTo(Object o) {
         if (this == o) return 0;
 
         Term t = (Term) o;
@@ -80,7 +83,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     }
 
     @Override
-    public boolean equals(final Object that) {
+    public boolean equals(Object that) {
         if (this == that)
             return true;
 
@@ -227,7 +230,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
      * TODO parameter for max (int) level to scan down
      */
     @Override
-    public boolean containsTermRecursively(final Term target) {
+    public boolean containsTermRecursively(Term target) {
 
         if (impossibleSubterm(target)) return false;
 
@@ -249,7 +252,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
     public int bytesLength() {
         int len = /* opener byte */1;
 
-        final int n = size();
+        int n = size();
         for (int i = 0; i < n; i++) {
             len += term(i).bytesLength() + 1 /* separator or closer if end*/;
         }
@@ -289,7 +292,7 @@ import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
     @Override
-    public final void recurseTerms(final SubtermVisitor v, final Term parent) {
+    public final void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
         terms.visit(v, this);
     }

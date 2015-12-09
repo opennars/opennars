@@ -49,13 +49,13 @@ public class Workspace extends CycleReaction {
     
     public double calc_temperature() {
         n_concepts=0;
-        final double[] s = {0.0f};
+        double[] s = {0.0f};
         nar.forEachConcept(node -> {
             if(!node.getGoals().isEmpty()) {
                 s[0] +=node.getPriority()* node.getGoals().top().getTruth().getExpectation();
             }
             n_concepts++;
         });
-        return s[0] /((double) n_concepts);
+        return s[0] /(n_concepts);
     }
 }

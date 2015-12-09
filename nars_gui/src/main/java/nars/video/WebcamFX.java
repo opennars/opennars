@@ -30,7 +30,6 @@ public class WebcamFX extends StackPane implements Runnable {
 
 
     public WebcamFX() throws LineUnavailableException {
-        super();
 
         //newAudioCaptureThread(5).start();
 
@@ -97,10 +96,8 @@ public class WebcamFX extends StackPane implements Runnable {
                 //TODO blit the image directly, this is likely not be the most efficient:
                 image = SwingFXUtils.toFXImage(bimage, image);
 
-                final WritableImage finalImage = process(image);
-                runLater(() -> {
-                    view.setImage(finalImage);
-                });
+                WritableImage finalImage = process(image);
+                runLater(() -> view.setImage(finalImage));
             }
 
             try {

@@ -53,19 +53,19 @@ public final class JoinMatcherBootstrap<V, P extends BaseParser<V>>
 
     @VisibleForTesting
     static <T, E extends BaseParser<T>> JoinMatcherBootstrap<T, E> create(
-        final E parser, final Object joined)
+        E parser, Object joined)
     {
         return new JoinMatcherBootstrap<>(parser, joined);
     }
 
-    public JoinMatcherBootstrap(@Nonnull final P parser,
-        @Nonnull final Object joined)
+    public JoinMatcherBootstrap(@Nonnull P parser,
+        @Nonnull Object joined)
     {
         this.parser = Objects.requireNonNull(parser);
         this.joined = parser.toRule(joined);
     }
 
-    public JoinMatcherBuilder using(@Nonnull final Object joining)
+    public JoinMatcherBuilder using(@Nonnull Object joining)
     {
         return new JoinMatcherBuilder(joined, parser.toRule(joining));
     }

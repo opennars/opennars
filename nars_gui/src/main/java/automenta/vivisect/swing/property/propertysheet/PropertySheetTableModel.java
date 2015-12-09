@@ -64,8 +64,8 @@ public class PropertySheetTableModel
    */
   public void setProperties(Property[] newProperties) {
     // unregister the listeners from previous properties
-    for (Iterator iter = properties.iterator(); iter.hasNext();) {
-      Property prop = (Property) iter.next();
+    for (Object property1 : properties) {
+      Property prop = (Property) property1;
       prop.removePropertyChangeListener(this);
     }
 
@@ -74,8 +74,8 @@ public class PropertySheetTableModel
     properties.addAll(Arrays.asList(newProperties));
 
     // add listeners
-    for (Iterator iter = properties.iterator(); iter.hasNext();) {
-      Property prop = (Property) iter.next();
+    for (Object property : properties) {
+      Property prop = (Property) property;
       prop.addPropertyChangeListener(this);
     }
 
@@ -357,27 +357,27 @@ public class PropertySheetTableModel
     listeners.firePropertyChange(evt);
   }
 
-  protected void visibilityChanged(final boolean restoreOldStates) {
+  protected void visibilityChanged(boolean restoreOldStates) {
     // Store the old visibility states
     if (restoreOldStates) {
-      for (Iterator iter=publishedModel.iterator(); iter.hasNext();) {
-        final Item item=(Item)iter.next();
+      for (Object aPublishedModel : publishedModel) {
+        Item item = (Item) aPublishedModel;
         toggleStates.put(item.getKey(), item.isVisible() ? Boolean.TRUE : Boolean.FALSE);
       }
     }
     publishedModel.clear();
-    for (Iterator iter = model.iterator(); iter.hasNext();) {
-      Item item = (Item) iter.next();
+    for (Object aModel : model) {
+      Item item = (Item) aModel;
       Item parent = item.getParent();
       if (restoreOldStates) {
-        Boolean oldState=(Boolean)toggleStates.get(item.getKey());
-        if (oldState!=null) {
-          item.setVisible(oldState.booleanValue());
+        Boolean oldState = (Boolean) toggleStates.get(item.getKey());
+        if (oldState != null) {
+          item.setVisible(oldState);
         }
-        if (parent!=null) {
-          oldState=(Boolean)toggleStates.get(parent.getKey());
-          if (oldState!=null) {
-            parent.setVisible(oldState.booleanValue());
+        if (parent != null) {
+          oldState = (Boolean) toggleStates.get(parent.getKey());
+          if (oldState != null) {
+            parent.setVisible(oldState);
           }
         }
       }
@@ -389,7 +389,7 @@ public class PropertySheetTableModel
   private void buildModel() {
     model.clear();
 
-    if (properties != null && properties.size() > 0) {
+    if (properties != null && !properties.isEmpty()) {
       List sortedProperties = sortProperties(properties);
       
       switch (mode) {
@@ -401,14 +401,14 @@ public class PropertySheetTableModel
         case PropertySheet.VIEW_AS_CATEGORIES: {
           // add properties by category
           List categories = sortCategories(getPropertyCategories(sortedProperties));
-          
-          for (Iterator iter = categories.iterator(); iter.hasNext();) {
-            String category = (String) iter.next();
+
+          for (Object category1 : categories) {
+            String category = (String) category1;
             Item categoryItem = new Item(category, null);
             model.add(categoryItem);
             addPropertiesToModel(
-                sortProperties(getPropertiesForCategory(properties, category)),
-                categoryItem);
+                    sortProperties(getPropertiesForCategory(properties, category)),
+                    categoryItem);
           }
           break;
         }
@@ -448,8 +448,8 @@ public class PropertySheetTableModel
   
   protected List getPropertyCategories(List localProperties) {
     List categories = new ArrayList();
-    for (Iterator iter = localProperties.iterator(); iter.hasNext();) {
-      Property property = (Property) iter.next();
+    for (Object localProperty : localProperties) {
+      Property property = (Property) localProperty;
       if (!categories.contains(property.getCategory()))
         categories.add(property.getCategory());
     }
@@ -463,11 +463,11 @@ public class PropertySheetTableModel
    * @param parent the {@link Item} parent of these properties, null if none
    */
   private void addPropertiesToModel(List localProperties, Item parent) {
-    for (Iterator iter = localProperties.iterator(); iter.hasNext();) {
-      Property property = (Property) iter.next();
+    for (Object localProperty : localProperties) {
+      Property property = (Property) localProperty;
       Item propertyItem = new Item(property, parent);
       model.add(propertyItem);
-      
+
       // add any sub-properties
       Property[] subProperties = property.getSubProperties();
       if (subProperties != null && subProperties.length > 0)
@@ -480,10 +480,10 @@ public class PropertySheetTableModel
    */
   private List getPropertiesForCategory(List localProperties, String category) {
     List categoryProperties = new ArrayList();
-    for (Iterator iter = localProperties.iterator(); iter.hasNext();) {
-      Property property = (Property) iter.next();
+    for (Object localProperty : localProperties) {
+      Property property = (Property) localProperty;
       if ((category == property.getCategory())
-          || (category != null && category.equals(property.getCategory()))) {
+              || (category != null && category.equals(property.getCategory()))) {
         categoryProperties.add(property);
       }
     }
@@ -501,14 +501,14 @@ public class PropertySheetTableModel
       this.name = name;
       this.parent = parent;
       // this is not a property but a category, always has toggle
-      this.hasToggle = true;
+      hasToggle = true;
     }
     
     private Item(Property property, Item parent) {
-      this.name = property.getDisplayName();
+      name = property.getDisplayName();
       this.property = property;
       this.parent = parent;
-      this.visible = (property == null);
+      visible = (property == null);
       
       // properties toggle if there are sub-properties
       Property[] subProperties = property.getSubProperties();
@@ -553,7 +553,7 @@ public class PropertySheetTableModel
       }
     }
 
-    public void setVisible(final boolean visible) {
+    public void setVisible(boolean visible) {
       this.visible = visible;
     }
 
@@ -562,10 +562,10 @@ public class PropertySheetTableModel
     }
     
     public String getKey() {
-      StringBuffer key = new StringBuffer(name);
+      StringBuilder key = new StringBuilder(name);
       Item itemParent = parent;
       while (itemParent != null) {
-        key.append(":");
+        key.append(':');
         key.append(itemParent.getName());
         itemParent = itemParent.getParent();
       }
@@ -605,11 +605,7 @@ public class PropertySheetTableModel
       if (s1 == null) {
         return s2==null?0:-1;
       } else {
-        if (s2 == null) {
-          return 1;
-        } else {
-          return s1.compareTo(s2);
-        }
+        return s2 == null ? 1 : s1.compareTo(s2);
       }
     }
   }

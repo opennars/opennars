@@ -117,7 +117,7 @@ public abstract class ListeningParser<V>
      * @see EventBus#register(Object)
      */
 
-    public final boolean register(@Nonnull final Object listener)
+    public final boolean register(@Nonnull Object listener)
     {
         bus.register(Objects.requireNonNull(listener));
         return true;
@@ -132,7 +132,7 @@ public abstract class ListeningParser<V>
      * @param listener the listener to remove
      * @return always true
      */
-    public final boolean unregister(@Nonnull final Object listener)
+    public final boolean unregister(@Nonnull Object listener)
     {
         bus.unregister(Objects.requireNonNull(listener));
         return true;
@@ -149,11 +149,11 @@ public abstract class ListeningParser<V>
      * @param <T> the value type produced by the builder
      * @return always {@code true}
      */
-    public final <T> boolean post(@Nonnull final ValueBuilder<T> builder)
+    public final <T> boolean post(@Nonnull ValueBuilder<T> builder)
     {
         Objects.requireNonNull(builder);
 
-        final T event = builder.build();
+        T event = builder.build();
         bus.post(event);
         builder.reset();
         return true;
@@ -177,11 +177,10 @@ public abstract class ListeningParser<V>
      * @param <T> value type of the var
      * @return always true
      */
-    public final <T> boolean post(@Nonnull final Var<T> var)
+    public final <T> boolean post(@Nonnull Var<T> var)
     {
         Objects.requireNonNull(var);
-        @SuppressWarnings("ConstantConditions")
-        final T value = Objects.requireNonNull(var.get());
+        @SuppressWarnings("ConstantConditions") T value = Objects.requireNonNull(var.get());
         bus.post(value);
         return true;
     }
@@ -195,7 +194,7 @@ public abstract class ListeningParser<V>
      * @param object the object (must not be null)
      * @return always true
      */
-    public final boolean postRaw(@Nonnull final Object object)
+    public final boolean postRaw(@Nonnull Object object)
     {
         Objects.requireNonNull(object);
         bus.post(object);

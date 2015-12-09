@@ -28,9 +28,9 @@ import static nars.guifx.NARfx.scrolled;
  */
 public class SimpleNARBudgetDynamics {
 
-    static String[] abFwdClosed = new String[] { "<a-->b>." };
-    static String[] abBidiClosed = new String[] { "<a-->b>.", "<b-->a>." };
-    static String[] abcClosed = new String[] { "<a-->b>.", "<b-->c>." };
+    static String[] abFwdClosed =    { "<a-->b>." };
+    static String[] abBidiClosed =   { "<a-->b>.", "<b-->a>." };
+    static String[] abcClosed =      { "<a-->b>.", "<b-->c>." };
 
     static final Map<String,Term> terms = new HashMap();
 
@@ -52,9 +52,7 @@ public class SimpleNARBudgetDynamics {
 //            .then(n -> {
 //                //n.frame(preCycles);
 //            })
-            .meter( (metrics, nar) -> {
-                metrics.set("# concepts", nar.index().size());
-            })
+            .meter( (metrics, nar) -> metrics.set("# concepts", nar.index().size()))
             .meter( (metrics, nar) -> {
 
                 mb.clear();
@@ -67,14 +65,14 @@ public class SimpleNARBudgetDynamics {
                 if (numConcepts == 0) numConcepts = 1;
 
                 metrics
-                        .set("a pri", nar.memory.conceptPriority(term("a"), 0f))
-                        .set("b pri", nar.memory.conceptPriority(term("b"), 0f))
-                        .set("c pri", nar.memory.conceptPriority(term("c"), 0f))
-                        .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>"), 0f))
+                        .set("a pri", nar.memory.conceptPriority(term("a"), 0.0f))
+                        .set("b pri", nar.memory.conceptPriority(term("b"), 0.0f))
+                        .set("c pri", nar.memory.conceptPriority(term("c"), 0.0f))
+                        .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>"), 0.0f))
                         //.set("<b-->a> pri", nar.memory.conceptPriority(term("<b-->a>")))
-                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>"), 0f))
-                        .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>"), 0f))
-                        .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>"), 0f))
+                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>"), 0.0f))
+                        .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>"), 0.0f))
+                        .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>"), 0.0f))
                         .set("mean(concept pri)", conPriSum / numConcepts) // .getActivePriorityPerConcept(true, false, false)
                 ;
             })
@@ -126,7 +124,7 @@ public class SimpleNARBudgetDynamics {
                 System.out.println("done");
             });
 
-    public final static class Variables {
+    public static final class Variables {
         public final StringProperty input = new SimpleStringProperty("");
         public final ObjectProperty<NAR> nar = new SimpleObjectProperty(
                 new Default(1000, 1, 2, 2)
@@ -169,9 +167,9 @@ public class SimpleNARBudgetDynamics {
                     //abFwdClosed;
                     //abBidiClosed;
                     abcClosed;
-            for (int i = 0; i < x.length; i++) {
+            for (String aX : x) {
 
-                Task t = n.task(x[i]);
+                Task t = n.task(aX);
                 t.getBudget().setPriority(pri);
                 t.getBudget().setQuality(qua);
                 t.getBudget().setDurability(dur);

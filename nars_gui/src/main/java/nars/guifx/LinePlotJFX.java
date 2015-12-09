@@ -12,7 +12,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
-abstract public class LinePlotJFX extends Application {
+public abstract class LinePlotJFX extends Application {
 
 
 
@@ -20,14 +20,14 @@ abstract public class LinePlotJFX extends Application {
     @Override public void start(Stage stage) {
         stage.setTitle("?");
 
-        final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();
+        NumberAxis xAxis = new NumberAxis();
+        NumberAxis yAxis = new NumberAxis();
 
         xAxis.setLabel("X");
-        final LineChart<Number,Number> lineChart = new LineChart(xAxis,yAxis);
+        LineChart<Number,Number> lineChart = new LineChart(xAxis,yAxis);
 
         Scene scene  = new Scene(lineChart, 800, 600);
-        XYChart.Series series[] = initChart();
+        XYChart.Series[] series = initChart();
         for (XYChart.Series s : series)
             lineChart.getData().add(s);
        
@@ -35,7 +35,7 @@ abstract public class LinePlotJFX extends Application {
         stage.show();
     }
 
-    abstract public XYChart.Series[] initChart();
+    public abstract XYChart.Series[] initChart();
 
 
     public static void main(String[] args) {

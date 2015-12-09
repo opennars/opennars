@@ -23,7 +23,6 @@ public class RunSpacegraph extends Application {
     public static class DemoSpacegraph extends Spacegraph {
 
         public DemoSpacegraph() {
-            super();
             //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
 
 
@@ -34,7 +33,7 @@ public class RunSpacegraph extends Application {
                             new PieChart.Data("Human", 10),
                             new PieChart.Data("Pear", 22),
                             new PieChart.Data("Apple", 30));
-            final PieChart chart = new PieChart(pieChartData);
+            PieChart chart = new PieChart(pieChartData);
             chart.setTitle("Invasive Species");
             chart.setCacheHint(CacheHint.SPEED);
 
@@ -85,12 +84,12 @@ public class RunSpacegraph extends Application {
                 addNodes( new Windget("x" + i,
                         POJONode.build(
                         //new POJOPane(
-                                $.$("<a --> " + i + ">"))) );
+                                $.$("<a --> " + i + '>'))) );
             }
 
             ground.getChildren().add(new GridCanvas(true));
 
-            new HyperOrganicLayout().run(this.verts, 10);
+            new HyperOrganicLayout().run(verts, 10);
 
 
 

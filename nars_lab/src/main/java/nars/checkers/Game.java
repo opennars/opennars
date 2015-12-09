@@ -24,8 +24,8 @@ public class Game {
 	}
 
 	public Game(int width, int height) 	{
-            this.WIDTH = width;
-            this.HEIGHT = height;
+		WIDTH = width;
+		HEIGHT = height;
             pieces = (Piece[][]) Array.newInstance(Piece.class, WIDTH, HEIGHT);
             
 		// create initial context
@@ -306,9 +306,7 @@ public class Game {
 			{
 				if(pieces[i][j] != null)
 				{
-					if(isTurnLight() && pieces[i][j].isLight() && pieceCouldJumpToFrom(i, j).size() > 0)
-						return true;
-					else if(isTurnDark() && pieces[i][j].isDark() && pieceCouldJumpToFrom(i, j).size() > 0)
+					if(isTurnLight() && pieces[i][j].isLight() && !pieceCouldJumpToFrom(i, j).isEmpty() || isTurnDark() && pieces[i][j].isDark() && !pieceCouldJumpToFrom(i, j).isEmpty())
 						return true;
 				}
 			}

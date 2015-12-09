@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Sin extends Function {
     
-    private static HashMap<Expr, Expr> values = new HashMap<Expr, Expr>();
+    private static final HashMap<Expr, Expr> values = new HashMap<>();
     static {
         values.put(Num.make(0), Num.make(0)); // 0
         values.put(Num.make(1), Num.make(0)); // pi
@@ -58,7 +58,7 @@ public class Sin extends Function {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(ofExpr);
         return arrayList;
     }
@@ -94,10 +94,9 @@ public class Sin extends Function {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Sin)) return false;
-        
-        if (ofExpr.equalsExpr(((Operation) expr).getExprs().get(0))) return true;
-        
-        return false;
+
+        return ofExpr.equalsExpr(((Operation) expr).getExprs().get(0));
+
     }
     
     public boolean notEqualsExpr(Expr expr) {

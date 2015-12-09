@@ -61,7 +61,7 @@ public class VerticalPanel extends NPanel {
 
     public synchronized java.util.List<Component> limit(int maxComponents) {
         int toRemove = content.getComponentCount() - maxComponents;
-        if (toRemove <= 0) return Collections.EMPTY_LIST;
+        if (toRemove <= 0) return Collections.emptyList();
 
         ArrayList<Component> removed = new ArrayList(toRemove);
         for (int i = 0; i < toRemove; i++) {

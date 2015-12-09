@@ -35,7 +35,7 @@ public final class VarFramingMatcher
     private final Matcher inner;
     private final Var<?>[] variables;
 
-    public VarFramingMatcher(final Rule inner, final Var<?>[] variables)
+    public VarFramingMatcher(Rule inner, Var<?>[] variables)
     {
         this.inner = Objects.requireNonNull((Matcher) inner, "inner");
         this.variables = Objects.requireNonNull(variables, "variables");
@@ -48,14 +48,14 @@ public final class VarFramingMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        for (final Var<?> var: variables)
+        for (Var<?> var: variables)
             var.enterFrame();
 
-        final boolean matched = inner.match(context);
+        boolean matched = inner.match(context);
 
-        for (final Var<?> var : variables)
+        for (Var<?> var : variables)
             var.exitFrame();
 
         return matched;
@@ -72,7 +72,7 @@ public final class VarFramingMatcher
     // Rule
 
     @Override
-    public Rule label(final String label)
+    public Rule label(String label)
     {
         return new VarFramingMatcher(inner.label(label), variables);
     }
@@ -92,9 +92,9 @@ public final class VarFramingMatcher
     }
 
     @Override
-    public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public <V> MatcherContext<V> getSubContext(MatcherContext<V> context)
     {
-        final MatcherContext<V> subContext = inner.getSubContext(context);
+        MatcherContext<V> subContext = inner.getSubContext(context);
          // we need to inject ourselves here otherwise we get cut out
         subContext.setMatcher(this);
         return subContext;
@@ -112,7 +112,7 @@ public final class VarFramingMatcher
      * @param matcher the matcher to unwrap
      * @return the given instance if it is not a VarFramingMatcher, otherwise the innermost Matcher
      */
-    public static Matcher unwrap(final Matcher matcher)
+    public static Matcher unwrap(Matcher matcher)
     {
         if (!(matcher instanceof VarFramingMatcher))
             return matcher;

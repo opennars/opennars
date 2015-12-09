@@ -58,7 +58,7 @@ public class ScreenMatrix implements Cloneable {
         width = Integer.parseInt(tokens[0]);
         height = Integer.parseInt(tokens[1]);
 
-        this.matrix = new int[width][height];
+        matrix = new int[width][height];
 
         int rowIndex = 0;
 
@@ -69,7 +69,7 @@ public class ScreenMatrix implements Cloneable {
             assert (tokens.length == width);
 
             for (int x = 0; x < tokens.length; x++) {
-                this.matrix[x][rowIndex] = Integer.parseInt(tokens[x]);
+                matrix[x][rowIndex] = Integer.parseInt(tokens[x]);
             }
 
             rowIndex++;
@@ -110,10 +110,10 @@ public class ScreenMatrix implements Cloneable {
             ScreenMatrix img = (ScreenMatrix)super.clone();
 
             // Create a new matrix which we will fill with the proper data
-            img.matrix = new int[this.width][this.height];
+            img.matrix = new int[width][height];
         
-            for (int x = 0; x < this.width; x++) {
-                System.arraycopy(this.matrix[x], 0, img.matrix[x], 0, this.height);
+            for (int x = 0; x < width; x++) {
+                System.arraycopy(matrix[x], 0, img.matrix[x], 0, height);
             }
             return img;
         }

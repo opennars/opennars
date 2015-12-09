@@ -32,7 +32,7 @@ public abstract class BeliefPrediction extends NARReaction {
     public BeliefPrediction(NAR n, List<Concept> concepts) {
         super(n, true/*, Events.CycleEnd.class*/);
 
-        this.nar = n;
+        nar = n;
         this.concepts = concepts;
         
     }

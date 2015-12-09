@@ -39,6 +39,7 @@ public class ConstraintTest {
     public void testJacop1() {
 
         NAR n = new Default(1000, 1, 1, 3);
+        //noinspection OverlyComplexAnonymousInnerClass
         SATNetwork sat = new SATNetwork(n, "<x-->y>") {
 
 
@@ -107,7 +108,7 @@ public class ConstraintTest {
     }
 
     /** boolean satisfiability among a set of terms */
-    abstract public static class SATNetwork {
+    public abstract static class SATNetwork {
         private final NAR nar;
         protected final Set<Compound> concepts;
         protected Store store;
@@ -120,13 +121,13 @@ public class ConstraintTest {
         }
 
         public SATNetwork(NAR n, Set<Compound> concepts) {
-            this.nar = n;
+            nar = n;
             this.concepts = concepts;
         }
 
         /** handle a related concept by doing nothing, or
          *  creating constraints (in 'store') and variables */
-        abstract public void addConstraintsFor(Concept c);
+        public abstract void addConstraintsFor(Concept c);
 
         void related(Compound t) {
             nar.forEachConcept( c-> {
@@ -165,12 +166,12 @@ public class ConstraintTest {
 
             if (termVars.isEmpty()) return false;
 
-            Search<IntVar> label = new DepthFirstSearch<IntVar>();
+            Search<IntVar> label = new DepthFirstSearch<>();
 
             IntVar[] vars = termVars.values().toArray(new IntVar[termVars.size()]);
             SelectChoicePoint<IntVar> select =
-                    new InputOrderSelect<IntVar>(store,
-                            vars, new IndomainMin<IntVar>());
+                    new InputOrderSelect<>(store,
+                            vars, new IndomainMin<>());
 
             boolean result = label.labeling(store, select);
             System.out.println(result);
@@ -253,12 +254,12 @@ public class ConstraintTest {
         );
 
         boolean Result = true;
-        SelectChoicePoint<IntVar> varSelect = new SimpleSelect<IntVar>(x, null,
-                new IndomainMin<IntVar>());
+        SelectChoicePoint<IntVar> varSelect = new SimpleSelect<>(x, null,
+                new IndomainMin<>());
         // Trace --->
 
-        Search<IntVar> label = new DepthFirstSearch<IntVar>();
-        SelectChoicePoint<IntVar> select = new TraceGenerator<IntVar>(label, varSelect);
+        Search<IntVar> label = new DepthFirstSearch<>();
+        SelectChoicePoint<IntVar> select = new TraceGenerator<>(label, varSelect);
 
 //      SelectChoicePoint<IntVar> select = new TraceGenerator<IntVar>(varSelect, false);
 //      label.setConsistencyListener((ConsistencyListener)select);
@@ -267,7 +268,7 @@ public class ConstraintTest {
         // <---
 
         DepthFirstSearch<IntVar> costSearch = new DepthFirstSearch<>();
-        SelectChoicePoint<IntVar> costSelect = new SimpleSelect<>(new IntVar[]{cost}, null, new IndomainMin<IntVar>());
+        SelectChoicePoint<IntVar> costSelect = new SimpleSelect<>(new IntVar[]{cost}, null, new IndomainMin<>());
         costSearch.setSelectChoicePoint(costSelect);
         costSearch.setPrintInfo(false);
         //costSearch.setSolutionListener(new NetListener<IntVar>());

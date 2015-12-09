@@ -45,26 +45,26 @@ public class TabManager {
     /**
      * representation of the current browser.
      */
-    final private ReadOnlyObjectWrapper<UITab> currentBrowser = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<UITab> currentBrowser = new ReadOnlyObjectWrapper<>();
 
     /**
      * browser tabs.
      */
-    final public TabPane tabPane = new TabPane();
+    public final TabPane tabPane = new TabPane();
 
     /**
      * button to open a new tab
      */
-    final private Button newTabButton = new Button();
+    private final Button newTabButton = new Button();
 
     /**
      * a location field in the chrome representing the location of the current tab
      * (can be null if the location is not represented in the chrome but only in the browser in the tab itself).
      */
-    final private TextField chromeLocField;
+    private final TextField chromeLocField;
 
     public TabManager(TextField locField) {
-        this.chromeLocField = locField;
+        chromeLocField = locField;
 
         // create a browser tab pane with a custom tab closing policy which does not allow the last tab to be closed.        
        
@@ -73,7 +73,7 @@ public class TabManager {
         tabPane.setTabMaxWidth(TAB_PANE_WIDTH);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         tabPane.getTabs().addListener((ListChangeListener<Tab>) change -> {
-            final ObservableList<Tab> tabs = tabPane.getTabs();
+            ObservableList<Tab> tabs = tabPane.getTabs();
             tabs.get(0).setClosable(tabs.size() > 1);
             for (int i = 1; i < tabs.size(); i++) {
                 tabs.get(i).setClosable(true);
@@ -103,12 +103,12 @@ public class TabManager {
         /*final ImageView tabGraphic = new ImageView(ResourceUtil.getImage("Plus.png"));
         newTabButton.setGraphic(tabGraphic);*/
         newTabButton.onActionProperty().set(actionEvent -> {
-            final BrowserTab newTab = new BrowserTab(this);
+            BrowserTab newTab = new BrowserTab(this);
             newTab.setText(getString("newtab.title"));
             addTab(newTab);
         });
         
-        final ColorAdjust tabColorAdjust = new ColorAdjust();
+        ColorAdjust tabColorAdjust = new ColorAdjust();
         tabColorAdjust.setContrast(-0.7);
 //        tabGraphic.setEffect(tabColorAdjust);
 //        tabGraphic.setPreserveRatio(true);

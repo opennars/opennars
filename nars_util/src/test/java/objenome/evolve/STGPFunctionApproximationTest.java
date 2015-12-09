@@ -32,9 +32,9 @@ public class STGPFunctionApproximationTest extends TestCase {
             //setup function
             int j =0;
             for (double x = 0; x < 4.0; x+=0.1) {
-                e.samples.add(new Observation<Double[], Double>( 
-                        new Double[] { x },
-                        /*(j ^ (j+10)) * */ ( Math.sin(x) * Math.tan(x * 0.5))
+                e.samples.add(new Observation<>(
+                        new Double[]{x},
+                        /*(j ^ (j+10)) * */ (Math.sin(x) * Math.tan(x * 0.5))
                 ));
                 j++;
             }

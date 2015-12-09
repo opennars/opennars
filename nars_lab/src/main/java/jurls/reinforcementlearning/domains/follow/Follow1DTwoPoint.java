@@ -43,8 +43,8 @@ public class Follow1DTwoPoint implements RLEnvironment {
 
     private class RenderComponent extends JComponent {
 
-        private final List<Double> _positions = Collections.synchronizedList(new ArrayList<Double>(history));
-        private final List<Double> _targets = Collections.synchronizedList(new ArrayList<Double>(history));
+        private final List<Double> _positions = Collections.synchronizedList(new ArrayList<>(history));
+        private final List<Double> _targets = Collections.synchronizedList(new ArrayList<>(history));
 
         @Override
         protected void paintComponent(Graphics g) {
@@ -61,7 +61,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
 
             int prevY, prevX, i;
 
-            final int margin = 10;
+            int margin = 10;
             
             prevX = 0;
             prevY = 0;
@@ -93,8 +93,8 @@ public class Follow1DTwoPoint implements RLEnvironment {
         }
     }
 
-    private final List<Double> positions = Collections.synchronizedList(new ArrayList<Double>(history));
-    private final List<Double> targets = Collections.synchronizedList(new ArrayList<Double>(history));
+    private final List<Double> positions = Collections.synchronizedList(new ArrayList<>(history));
+    private final List<Double> targets = Collections.synchronizedList(new ArrayList<>(history));
     private final double maxPos = 1.0;
     private double myPos = 0.5;
     private double targetPos = 0.5;
@@ -102,7 +102,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
     private final RenderComponent renderComponent = new RenderComponent();
     int time = 0;
 
-    double observation[];
+    double[] observation;
     @Override
     public double[] observe() {
         if (observation == null) {
@@ -140,12 +140,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
         double dist = Math.abs(myPos - targetPos) / maxPos;
 
         double delta;
-        if (!Double.isFinite(lastDist)) {
-            delta = 0;
-        }
-        else {
-            delta = dist - lastDist;
-        }
+        delta = !Double.isFinite(lastDist) ? 0 : dist - lastDist;
 
         lastDist = dist;
 
@@ -163,12 +158,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
     public double getRewardAbsolute() {
 
         double dist = Math.abs(myPos - targetPos) / maxPos;
-        if (dist < closeThresh) {
-            return closeThresh-dist;
-        }
-        else {
-            return -(dist);
-        }
+        return dist < closeThresh ? closeThresh - dist : -(dist);
     }
 
     public void updateTarget(int time) {        
@@ -179,7 +169,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
 
             
     public void updateTargetRandom(int cycle) {        
-        final double targetAcceleration = 0.002;
+        double targetAcceleration = 0.002;
         targetPos += targetV * speed;
         targetV += (Math.random() - 0.5) * targetAcceleration;        
     }
@@ -205,14 +195,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
     protected boolean takeActionVelocity(int direction) {
 
         double myV;
-        if (direction==0) {
-            //decelerate on zero
-            //myV *= decelerationFactor;
-            myV = 0;
-        }
-        else {
-            myV = direction * speed;
-        }
+        myV = direction == 0 ? 0 : direction * speed;
         myPos += myV;
 
         //TODO detect bump and do not report succesful act

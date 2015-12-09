@@ -38,17 +38,17 @@ public class Between<K extends Comparable<? super K>> {
 		return contains(i.low) && contains(i.high);
 	}
 	
-	final boolean overlaps(final K low, final K high){
+	final boolean overlaps(K low, K high){
 		return  this.low.compareTo(high) <= 0 &&
 				this.high.compareTo(low) > 0;
 	}
 	
-	final boolean overlaps(final Between<K> i){
+	final boolean overlaps(Between<K> i){
 		return overlaps(i.low,i.high);
 	}
 	
 	@Override
-    final public String toString() {
+	public final String toString() {
 		return String.format("[%s..%s]", low, high);
 	}
 

@@ -111,7 +111,7 @@ public class AudioSource implements WaveSource {
         int start = Math.max(0, nSamplesRead - bufferSamples);
         int end = nSamplesRead;
         int j = 0;
-        final float fmax = Short.MAX_VALUE;
+        float fmax = Short.MAX_VALUE;
         for (int i = start; i < end; i++)
             buffer[j++] = samples[i] / fmax;
 

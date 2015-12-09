@@ -39,9 +39,9 @@ public enum LdcInsnFunnel
     INSTANCE
     {
         @Override
-        public void funnel(final Object from, final PrimitiveSink into)
+        public void funnel(Object from, PrimitiveSink into)
         {
-            for (final Map.Entry<Class<?>, Funnel<Object>> entry:
+            for (Map.Entry<Class<?>, Funnel<Object>> entry:
                 FUNNELS.entrySet())
                 if (Predicates.instanceOf(entry.getKey()).apply(from)) {
                     entry.getValue().funnel(from, into);
@@ -56,7 +56,7 @@ public enum LdcInsnFunnel
     private static final Map<Class<?>, Funnel<Object>> FUNNELS;
 
     static {
-        final ImmutableMap.Builder<Class<?>, Funnel<Object>> builder
+        ImmutableMap.Builder<Class<?>, Funnel<Object>> builder
             = ImmutableMap.builder();
 
         builder.put(Integer.class, integerFunnel())
@@ -71,74 +71,34 @@ public enum LdcInsnFunnel
 
     private static Funnel<Object> integerFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(final Object from, final PrimitiveSink into)
-            {
-                into.putInt((Integer) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putInt((Integer) from);
     }
 
     private static Funnel<Object> floatFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(final Object from, final PrimitiveSink into)
-            {
-                into.putFloat((Float) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putFloat((Float) from);
     }
 
     private static Funnel<Object> longFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(final Object from, final PrimitiveSink into)
-            {
-                into.putLong((Long) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putLong((Long) from);
     }
 
     private static Funnel<Object> doubleFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(final Object from, final PrimitiveSink into)
-            {
-                into.putDouble((Double) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putDouble((Double) from);
     }
 
     private static Funnel<Object> stringFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(final Object from, final PrimitiveSink into)
-            {
-                into.putUnencodedChars((CharSequence) from);
-            }
-        };
+        return (Funnel<Object>) (from, into) -> into.putUnencodedChars((CharSequence) from);
     }
 
     private static Funnel<Object> asmTypeFunnel()
     {
-        return new Funnel<Object>()
-        {
-            @Override
-            public void funnel(final Object from, final PrimitiveSink into)
-            {
-                final Type type = (Type) from;
-                into.putUnencodedChars(type.getInternalName());
-            }
+        return (Funnel<Object>) (from, into) -> {
+            Type type = (Type) from;
+            into.putUnencodedChars(type.getInternalName());
         };
     }
 }

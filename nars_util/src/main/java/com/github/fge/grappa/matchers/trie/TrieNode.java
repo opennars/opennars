@@ -48,20 +48,20 @@ public final class TrieNode
     private final TrieNode[] nextNodes;
 
     @SuppressWarnings("MethodCanBeVariableArityMethod")
-    TrieNode(final boolean fullWord, final char[] nextChars,
-        final TrieNode[] nextNodes)
+    TrieNode(boolean fullWord, char[] nextChars,
+             TrieNode[] nextNodes)
     {
         this.fullWord = fullWord;
         this.nextChars = nextChars;
         this.nextNodes = nextNodes;
     }
 
-    public int search(final String needle, final boolean ignoreCase)
+    public int search(String needle, boolean ignoreCase)
     {
         return doSearch(CharBuffer.wrap(needle), fullWord ? 0 : -1, 0,
             ignoreCase);
     }
-    public int search(final char[] needle, final boolean ignoreCase)
+    public int search(char[] needle, boolean ignoreCase)
     {
         return doSearch(CharBuffer.wrap(needle), fullWord ? 0 : -1, 0,
                 ignoreCase);
@@ -81,15 +81,15 @@ public final class TrieNode
      * @param currentLength the current length walked by the trie
      * @return the length of the match found, -1 otherwise
      */
-    private int doSearch(final CharBuffer buffer, final int matchedLength,
-        final int currentLength, final boolean ignoreCase)
+    private int doSearch(CharBuffer buffer, int matchedLength,
+                         int currentLength, boolean ignoreCase)
     {
         /*
          * Try and see if there is a possible match here; there is if "fullword"
          * is true, in this case the next "matchedLength" argument to a possible
          * child call will be the current length.
          */
-        final int nextLength = fullWord ? currentLength : matchedLength;
+        int nextLength = fullWord ? currentLength : matchedLength;
 
 
         /*
@@ -105,8 +105,8 @@ public final class TrieNode
         char c = buffer.get();
         int index = Arrays.binarySearch(nextChars, c);
         if (index < 0 && ignoreCase) {
-            final boolean isUpper = Character.isUpperCase(c);
-            final boolean isLower = Character.isLowerCase(c);
+            boolean isUpper = Character.isUpperCase(c);
+            boolean isLower = Character.isLowerCase(c);
             if (isUpper != isLower) {
                c = isUpper ? Character.toLowerCase(c)
                    : Character.toUpperCase(c);

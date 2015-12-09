@@ -38,16 +38,16 @@ public interface Organism extends Serializable, Cloneable, Comparable<Organism> 
      *
      * @return the fitness of this individual
      */
-    public Fitness getFitness();
+    Fitness getFitness();
 
     /**
      * Returns a copy of this individual.
      *
      * @return a copy of this individual.
      */
-    public Organism clone();
+    Organism clone();
 
-    public void normalize();
+    void normalize();
 
 
 }

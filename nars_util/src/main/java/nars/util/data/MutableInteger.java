@@ -42,7 +42,6 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * Constructs a new MutableDouble with the default value of zero.
    */
   public MutableInteger() {
-    super();
   }
 
   /**
@@ -52,7 +51,6 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *          a value.
    */
   public MutableInteger(int value) {
-    super();
     this.value = value;
   }
 
@@ -65,7 +63,6 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *           if the object is null
    */
   public MutableInteger(Number value) {
-    super();
     this.value = value.intValue();
   }
 
@@ -77,7 +74,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    */
   @Override
   public Object getValue() {
-    return new Double(this.value);
+    return (double) value;
   }
 
   @Override
@@ -184,7 +181,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @return a Double instance containing the value from this mutable
    */
   public Double toDouble() {
-    return new Double(doubleValue());
+    return doubleValue();
   }
 
   // -----------------------------------------------------------------------
@@ -216,7 +213,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void add(double operand) {
-    this.value += operand;
+    value += operand;
   }
 
   /**
@@ -230,7 +227,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void add(Number operand) {
-    this.value += operand.doubleValue();
+    value += operand.doubleValue();
   }
 
   /**
@@ -242,7 +239,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void subtract(double operand) {
-    this.value -= operand;
+    value -= operand;
   }
 
   /**
@@ -256,7 +253,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @since Commons Lang 2.2
    */
   public void subtract(Number operand) {
-    this.value -= operand.doubleValue();
+    value -= operand.doubleValue();
   }
 
   // -----------------------------------------------------------------------

@@ -11,11 +11,11 @@ import nars.task.Task;
  */
 public class TaskSummaryIcon extends SummaryIcon implements Runnable {
 
-    final static int colorLevels = 32;
-    final static double VISIBLE_BUDGET_CHANGE = 0.5 / colorLevels;
-    final static ColorArray grayRange = new ColorArray(colorLevels, Color.DARKGRAY, Color.WHITE);
-    final static ColorArray beliefRange = new ColorArray(colorLevels, Color.RED, Color.ORANGE);
-    final static ColorArray goalRange = new ColorArray(colorLevels, Color.BLUE, Color.GREEN);
+    static final int colorLevels = 32;
+    static final double VISIBLE_BUDGET_CHANGE = 0.5 / colorLevels;
+    static final ColorArray grayRange = new ColorArray(colorLevels, Color.DARKGRAY, Color.WHITE);
+    static final ColorArray beliefRange = new ColorArray(colorLevels, Color.RED, Color.ORANGE);
+    static final ColorArray goalRange = new ColorArray(colorLevels, Color.BLUE, Color.GREEN);
 
     private final Task task;
 
@@ -23,9 +23,8 @@ public class TaskSummaryIcon extends SummaryIcon implements Runnable {
     transient float lastPriority = -1;
 
     public TaskSummaryIcon(Task i, Region parent) {
-        super();
 
-        this.task = i;
+        task = i;
 
 
         parent.heightProperty().addListener(this);
@@ -50,17 +49,14 @@ public class TaskSummaryIcon extends SummaryIcon implements Runnable {
     }
 
     void paintConstants() {
-        final double W = getWidth();
-        final double H = getHeight();
+        double W = getWidth();
+        double H = getHeight();
         if (W*H == 0) return;
 
         GraphicsContext g = getGraphicsContext2D();
 
-        if (task.getTerm() == null) {
+        if (task.getTerm() == null || task.isQuestOrQuestion()) {
             //immediate?
-        }
-        else if (task.isQuestOrQuestion()) {
-            //show solution priority?
         }
         else {
             if (task.isJudgment()) {
@@ -77,8 +73,8 @@ public class TaskSummaryIcon extends SummaryIcon implements Runnable {
     /** paints non-constant changeable aspects */
     @Override public void run() {
         GraphicsContext g = getGraphicsContext2D();
-        final double W = getWidth();
-        final double H = getHeight();
+        double W = getWidth();
+        double H = getHeight();
         if (W*H == 0) return;
 
         //TODO only clear if size changed, because it can just paint on top
@@ -91,7 +87,7 @@ public class TaskSummaryIcon extends SummaryIcon implements Runnable {
             g.setFill(getBudgetColor(p));
             g.fillRect(0, 0, W/3, H);
 
-            this.lastPriority = p;
+            lastPriority = p;
         }
 
     }

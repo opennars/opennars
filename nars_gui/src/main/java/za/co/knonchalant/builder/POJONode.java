@@ -68,8 +68,8 @@ public class POJONode {
      * @param <T>          standard POJO
      * @return a table view containing the objects
      */
-    public static <T> TableView build(List<T> objects, Class<T> clazz, boolean sortable, final TableCallback<T> eventHandler) {
-        final TableView<T> table = new TableView<>();
+    public static <T> TableView build(List<T> objects, Class<T> clazz, boolean sortable, TableCallback<T> eventHandler) {
+        TableView<T> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         List<Method> getterMethods = getValidGetters(clazz);
 
@@ -80,19 +80,16 @@ public class POJONode {
             }
 
             tableColumn.getStyleClass().add("column-header-text");
-            tableColumn.setCellValueFactory(new PropertyValueFactory<T, Boolean>(getFieldName(method)));
+            tableColumn.setCellValueFactory(new PropertyValueFactory<>(getFieldName(method)));
 
             table.getColumns().add(tableColumn);
         }
 
         if (eventHandler != null) {
-            final EventHandler<ActionEvent> wrappedHandler = new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    TableButton<T> button = (TableButton<T>) actionEvent.getSource();
-                    T object = button.getTableView().getItems().get(button.getButtonCell().getIndex());
-                    eventHandler.handle(object);
-                }
+            EventHandler<ActionEvent> wrappedHandler = actionEvent -> {
+                TableButton<T> button = (TableButton<T>) actionEvent.getSource();
+                T object = button.getTableView().getItems().get(button.getButtonCell().getIndex());
+                eventHandler.handle(object);
             };
             TableColumn actionColumn = new TableColumn<>("Action");
             table.getColumns().add(actionColumn);
@@ -105,12 +102,7 @@ public class POJONode {
                 }
             });
 
-            actionColumn.setCellFactory(new Callback<TableColumn<?, Boolean>, TableCell<?, Boolean>>() {
-                @Override
-                public TableCell<?, Boolean> call(TableColumn<?, Boolean> p) {
-                    return new ButtonCell<>(wrappedHandler, table, eventHandler.getActionName());
-                }
-            });
+            actionColumn.setCellFactory(p -> new ButtonCell<>(wrappedHandler, table, eventHandler.getActionName()));
         }
 
         table.setItems(FXCollections.observableList(objects));
@@ -674,7 +666,6 @@ public class POJONode {
     /** //attach listener that updates content inside its own managed wrapper */
     public static class ObjectPropertyNode<O> extends VBox implements ChangeListener<O> {
         public ObjectPropertyNode(ObjectProperty<O> op) {
-            super();
             op.addListener(this);
             changed(op, null, op.get());
         }

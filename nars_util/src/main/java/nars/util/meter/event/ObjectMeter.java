@@ -19,7 +19,7 @@ public class ObjectMeter<X> extends SourceFunctionMeter<X> {
 
     public ObjectMeter(String id, boolean autoReset) {
         super(id);
-        this.name = id;
+        name = id;
         this.autoReset = autoReset;
     }
 

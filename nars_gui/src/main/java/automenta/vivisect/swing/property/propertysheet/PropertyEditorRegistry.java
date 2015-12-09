@@ -46,8 +46,8 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 	private Map<Property, Object> propertyToEditor;
 
 	public PropertyEditorRegistry() {
-		typeToEditor = new HashMap<Class<?>, Object>();
-		propertyToEditor = new HashMap<Property, Object>();
+		typeToEditor = new HashMap<>();
+		propertyToEditor = new HashMap<>();
 		registerDefaults();
 	}
 
@@ -156,11 +156,7 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 			}
 
 			try {
-				if (ctor == null) {
-					editor = (PropertyEditor) cls.newInstance();
-				} else {
-					editor = (PropertyEditor) ctor.newInstance(property);
-				}
+				editor = ctor == null ? (PropertyEditor) cls.newInstance() : (PropertyEditor) ctor.newInstance(property);
 			} catch (Exception e) {
 				throw new RuntimeException("PropertyEditor not instantiated", e);
 			}

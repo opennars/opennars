@@ -16,8 +16,8 @@ public class HumanoidFacePanel extends NPanel {
     double nextNod = 0;
     double momentum = 0.95;
 
-    float shakeFreq = 4f;
-    protected float nodFreq = 6f;
+    float shakeFreq = 4.0f;
+    protected float nodFreq = 6.0f;
 
     public boolean nod = false;
     public boolean shake = false;
@@ -78,7 +78,8 @@ public class HumanoidFacePanel extends NPanel {
         
         face.setFlex('_'); //neutral brows
         face.setFlex('a');
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if (nod && shake) {
             //confused
             face.setFlex('\'');
@@ -87,7 +88,7 @@ public class HumanoidFacePanel extends NPanel {
             nextSpin = 0;
         }
         else if (shake) {
-            nextSpin = Math.sin(t* shakeFreq)*6f;
+            nextSpin = Math.sin(t* shakeFreq)* 6.0f;
         }
         else if (nod) {
             if (Math.sin(t* nodFreq) < 0)

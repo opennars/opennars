@@ -105,7 +105,7 @@ public class STGPMultivarTest {
     static double bestVal = Double.MIN_VALUE;
     static TypedOrganism best = null;
 
-    static protected void evaluated(TypedOrganism i, double score) {
+    protected static void evaluated(TypedOrganism i, double score) {
         if (score > bestVal) {
             bestVal = score;
             best = i;

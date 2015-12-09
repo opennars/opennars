@@ -36,7 +36,6 @@ public class MalformedProgramException extends Exception {
      * Constructs an exception without a message.
      */
     public MalformedProgramException() {
-        super();
     }
 
     /**
@@ -45,7 +44,7 @@ public class MalformedProgramException extends Exception {
      * @param message a message describing the unexpected behaviour that
      * occurred.
      */
-    public MalformedProgramException(final String message) {
+    public MalformedProgramException(String message) {
         super(message);
     }
 

@@ -52,9 +52,9 @@ public class NavigationPanel extends TitledPane {
             { "JavaFX StackOverflow", "http://stackoverflow.com/questions/tagged/javafx+javafx-2" }
     };
 
-    public NavigationPanel(final WebBrowser chrome) {
+    public NavigationPanel(WebBrowser chrome) {
         // create a home button to navigate home.
-        final Button homeButton = new IconButton(
+        Button homeButton = new IconButton(
                 getString("nav-toolbar.home"),
                 "Fairytale_folder_home.png",
                 getString("nav-toolbar.home.tooltip"),
@@ -79,7 +79,7 @@ public class NavigationPanel extends TitledPane {
         });
 
         // create a history button to show the history.
-        final Button historyButton = new IconButton(
+        Button historyButton = new IconButton(
                 getString("nav-panel.history"),
                 "History.png",
                 getString("nav-panel.history.tooltip"),
@@ -90,8 +90,8 @@ public class NavigationPanel extends TitledPane {
         );
 
         // create a bookmarksButton.
-        final ContextMenu bookmarksMenu = new ContextMenu();
-        final Button bookmarksButton = new IconButton(
+        ContextMenu bookmarksMenu = new ContextMenu();
+        Button bookmarksButton = new IconButton(
                 getString("nav-panel.bookmarks"),
                 "1714696718.png",
                 getString("nav-panel.bookmarks.tooltip"),
@@ -112,7 +112,7 @@ public class NavigationPanel extends TitledPane {
             boolean success = false;
             if (db.hasString()) {
                 // add the dragged url to the bookmarks menu (if it wasn't already there).
-                final String bookmarkUrl = db.getString();
+                String bookmarkUrl = db.getString();
                 if (BookmarkHandler.installBookmark(chrome, bookmarksMenu, bookmarkUrl, bookmarkUrl)) {
                     success = true;
                 }
@@ -122,7 +122,7 @@ public class NavigationPanel extends TitledPane {
         });
 
         // create a slider to manage the fontSize
-        final Slider fontSize = new Slider(0.75, 1.515, 1.0);
+        Slider fontSize = new Slider(0.75, 1.515, 1.0);
         fontSize.setTooltip(new Tooltip(getString("nav-panel.fontsize.tooltip")));
         fontSize.setMajorTickUnit(0.25);
         fontSize.setMinorTickCount(0);
@@ -132,13 +132,13 @@ public class NavigationPanel extends TitledPane {
                 //chrome.getBrowser().getView().setFontScale(newValue.doubleValue())
         //);
         
-        final ImageView fontSizeIcon = new ImageView(ResourceUtil.getImage("rsz_2fontsize.png"));
+        ImageView fontSizeIcon = new ImageView(ResourceUtil.getImage("rsz_2fontsize.png"));
         fontSizeIcon.setPreserveRatio(true);
         fontSizeIcon.setFitHeight(32);
         ColorAdjust fontSizeColorAdjust = new ColorAdjust();
         fontSizeColorAdjust.setBrightness(0.25);
         fontSizeIcon.setEffect(fontSizeColorAdjust);
-        final HBox fontsizer = new HBox(
+        HBox fontsizer = new HBox(
                 fontSizeIcon,
                 fontSize
         );
@@ -161,7 +161,7 @@ public class NavigationPanel extends TitledPane {
         navigationBox.setSpacing(5);
         navigationBox.setStyle("-fx-padding: 5");
         navigationBox.getChildren().addAll(homeButton, historyButton, bookmarksButton, /*readerButton,*/ fontsizer);
-        final TitledPane navPanel = new TitledPane(getString("nav-panel.title"), navigationBox);
+        TitledPane navPanel = new TitledPane(getString("nav-panel.title"), navigationBox);
         navPanel.getStyleClass().add("sidebar-panel");
 
         // create an initial set of bookmarks.

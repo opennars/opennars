@@ -33,19 +33,19 @@ public class BrainfuckMachine {
         if (p < 0) {
             p = memory.length - 1;
         }
-        this.pointer = p;
+        pointer = p;
     }
 
     /*
          * Parses and executes the given source string as a Brainfuck program.
          */
-    public void execute(final String source) {
+    public void execute(String source) {
         if (source == null) {
             return;
         }
 
         for (int i = 0; i < source.length(); i++) {
-            final char c = source(source, i);
+            char c = source(source, i);
 
             switch (c) {
                 case '>':
@@ -69,8 +69,8 @@ public class BrainfuckMachine {
 
                     break;
                 case '[':
-                    final int bracketIndex = closingBracket(source.substring(i + 1)) + (i + 1);
-                    final String loopSource = source.substring((i + 1), bracketIndex);
+                    int bracketIndex = closingBracket(source.substring(i + 1)) + (i + 1);
+                    String loopSource = source.substring((i + 1), bracketIndex);
                     while (isEmpty(pointer)) {
                         execute(loopSource);
                     }
@@ -111,10 +111,10 @@ public class BrainfuckMachine {
     /*
          * Locate the matching bracket in the given source.
          */
-    public int closingBracket(final String source) {
+    public int closingBracket(String source) {
         int open = 1;
         for (int i = 0; i < source.length(); i++) {
-            final char c = source(source, i);
+            char c = source(source, i);
 
             if (c == '[') {
                 open++;

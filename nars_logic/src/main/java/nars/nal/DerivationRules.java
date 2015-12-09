@@ -48,20 +48,17 @@ public class DerivationRules extends FastList<TaskRule> {
         this(Lists.newArrayList(ruleStrings));
     }
 
-    public DerivationRules(final Collection<String> ruleStrings) {
+    public DerivationRules(Collection<String> ruleStrings) {
         this(parseRules(loadRuleStrings(ruleStrings)));
     }
 
     /** for compiling and de-duplicating pattern term components */
     final MapIndex patterns = new PatternIndex();
 
-    final static Logger logger = Logger.getLogger(DerivationRules.class.toString());
+    static final Logger logger = Logger.getLogger(DerivationRules.class.toString());
 
     public DerivationRules(Set<TaskRule> r) {
-        super();
-        r.forEach(t -> {
-            add( t.setup(patterns) );
-        });
+        r.forEach(t -> add( t.setup(patterns) ));
 
         logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
     }
@@ -148,10 +145,10 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
 
-    final static String[] equFull = {"<=>", "</>", "<|>"};
-    final static String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
-    final static String[] conjFull = {"&&", "&|", "&/"};
-    final static String[] unchanged = {null};
+    static final String[] equFull = {"<=>", "</>", "<|>"};
+    static final String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
+    static final String[] conjFull = {"&&", "&|", "&/"};
+    static final String[] unchanged = {null};
 
     /**
      * //TODO do this on the parsed rule, because string contents could be unpredictable:
@@ -170,18 +167,18 @@ public class DerivationRules extends FastList<TaskRule> {
             return;
         }
 
-        final String[] equs =
+        String[] equs =
                 ruleString.contains("<=>") ?
                         equFull :
                         unchanged;
 
 
-        final String[] impls =
+        String[] impls =
                 ruleString.contains("==>") ?
                         implFull :
                         unchanged;
 
-        final String[] conjs =
+        String[] conjs =
                 ruleString.contains("&&") ?
                         conjFull :
                         unchanged;
@@ -260,15 +257,15 @@ public class DerivationRules extends FastList<TaskRule> {
 //    }
 
 
-    static Set<TaskRule> parseRules(final Collection<String> rawRules) {
+    static Set<TaskRule> parseRules(Collection<String> rawRules) {
 
 
-        final Set<String> expanded = new HashSet(1000); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
+        Set<String> expanded = new HashSet(1000); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
 
         rawRules/*.parallelStream()*/.forEach(rule -> {
 
-            final String p = preprocess(rule);
+            String p = preprocess(rule);
 
 
             //there might be now be A_1..maxVarArgsToMatch in it, if this is the case we have to add up to maxVarArgsToMatch ur
@@ -289,13 +286,13 @@ public class DerivationRules extends FastList<TaskRule> {
         expanded.forEach(s -> {
             try {
 
-                final TaskRule rUnnorm = $.$(s);
+                TaskRule rUnnorm = $.$(s);
 
-                final TaskRule r = rUnnorm.normalizeRule();
+                TaskRule r = rUnnorm.normalizeRule();
                 if (r != null) {
                     AcceptRule(ur, rUnnorm, s);
 
-                    final TaskRule rFwd = r.forwardPermutation();
+                    TaskRule rFwd = r.forwardPermutation();
                     AcceptRule(ur, rFwd, s);
                 }
                 else {

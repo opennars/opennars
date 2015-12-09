@@ -166,7 +166,7 @@ public class PointCloud
   
   double greedyMatch(PointCloud reference)
   {
-    double pointCount = (double) _points.size();
+    double pointCount = _points.size();
     double e = 0.50;
     double step = Math.floor(Math.pow(pointCount, 1.0 - e));
 
@@ -174,7 +174,7 @@ public class PointCloud
 
     for(double i = 0.0; i < pointCount; i += step)
     {
-      double d1 = this.cloudDistance(reference, i);
+      double d1 = cloudDistance(reference, i);
       double d2 = reference.cloudDistance(this, i);
       min = Math.min(min, Math.min(d1, d2)); // min3
     }
@@ -192,8 +192,8 @@ public class PointCloud
       throw new IllegalArgumentException("Both point clouds must contain the same number of points");
     }
 
-    double pointCount = (double) pts1.size();
-    boolean matched[] = new boolean[(int)pointCount];
+    double pointCount = pts1.size();
+    boolean[] matched = new boolean[(int) pointCount];
 
     for(int k = 0; k < pointCount; k++)
     {

@@ -71,12 +71,12 @@ public class NumberEditor extends AbstractPropertyEditor {
    
     public Object getValue() {
         String text = ((JTextField) editor).getText();
-        if (text == null || text.trim().length() == 0) {
+        if (text == null || text.trim().isEmpty()) {
             return getDefaultValue();
         }
 
         // collect all numbers from this textfield
-        StringBuffer number = new StringBuffer();
+        StringBuilder number = new StringBuilder();
         number.ensureCapacity(text.length());
         for (int i = 0, c = text.length(); i < c; i++) {
             char character = text.charAt(i);
@@ -84,7 +84,6 @@ public class NumberEditor extends AbstractPropertyEditor {
                 number.append(character);
             }
             else if (' ' == character) {
-                continue;
             }
             else {
                 break;
@@ -94,9 +93,9 @@ public class NumberEditor extends AbstractPropertyEditor {
         Object before = lastGoodValue;
         try {        	
         	lastGoodValue = Double.parseDouble(number.toString());
-        	if ((double)lastGoodValue > maxVal)
+        	if ((Double)lastGoodValue > maxVal)
         		throw new Exception(lastGoodValue + " is too large");
-        	if ((double)lastGoodValue < minVal)
+        	if ((Double)lastGoodValue < minVal)
         		throw new Exception(lastGoodValue + " is too small");
         }
         catch (Exception e) {
@@ -118,7 +117,7 @@ public class NumberEditor extends AbstractPropertyEditor {
     }
 
     private Object getDefaultValue() {
-       return 0d;
+       return 0.0d;
     }
     
     public static class IntegerEditor extends NumberEditor {

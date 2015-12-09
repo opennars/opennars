@@ -34,9 +34,8 @@ public class NARMenu extends HBox {
 
 
     public NARMenu(NAR n) {
-        super();
 
-        this.nar = n;
+        nar = n;
         //Canvas canvas = new NARWindow.ResizableCanvas(this);
         //canvas.maxWidth(Double.MAX_VALUE);
         //canvas.maxHeight(Double.MAX_VALUE);
@@ -47,7 +46,7 @@ public class NARMenu extends HBox {
 
         //b.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        NSlider fontSlider = new NSlider(25f, 25f, 0.5);
+        NSlider fontSlider = new NSlider(25.0f, 25.0f, 0.5);
         {
             //getChildren().add(0, fontSlider);
             fontSlider.value[0].addListener((a, b, c) -> {
@@ -230,23 +229,20 @@ public class NARMenu extends HBox {
         }
 
         public CycleClockPane(NAR n) {
-            super();
 
             getStyleClass().add("thread_control");
 
             setAlignment(Pos.CENTER_LEFT);
             //setColumnHalignment(HPos.RIGHT);
 
-            this.nar = n;
+            nar = n;
 
-            this.regs = new Active().add(
+            regs = new Active().add(
                     n.memory.eventFrameStart.on(nn -> {
                         //System.out.println("frame: " + nn.time());
                         run();
                     }),
-                    n.memory.eventReset.on(nn -> {
-                        run();
-                    })
+                    n.memory.eventReset.on(nn -> run())
             );
 
 
@@ -260,9 +256,9 @@ public class NARMenu extends HBox {
 
         public AsyncMenuItem(NAR n, String label) {
             super(label);
-            this.setOnAction((e) -> run(n));
+            setOnAction((e) -> run(n));
         }
 
-        abstract public void run(NAR n);
+        public abstract void run(NAR n);
     }
 }

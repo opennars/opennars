@@ -150,17 +150,14 @@ public class SarsaLearner {
         double oldValue = valueFunction[lastAction].predict(lastFeatures);
 
         // Early exit for diverging agents
-        if (Double.isNaN(oldValue) || oldValue >= 10E7)
+        if (Double.isNaN(oldValue) || oldValue >= 10.0E7)
             throw new RuntimeException("Diverged.");
 
         // Compute Q(s',a')
         double newValue;
 
         // ... if s' is null (terminal state), then Q(s',a') is assumed to be 0
-        if (features != null)
-            newValue = valueFunction[action].predict(features);
-        else
-            newValue = 0;
+        newValue = features != null ? valueFunction[action].predict(features) : 0;
 
         // Compute the TD error
         double delta = reward + gamma * newValue - oldValue;
@@ -242,7 +239,7 @@ public class SarsaLearner {
         double worstValue = Double.POSITIVE_INFINITY;
 
         int bestAction = -1;
-        ArrayList<Integer> ties = new ArrayList<Integer>();
+        ArrayList<Integer> ties = new ArrayList<>();
 
         // E-greedy
         if (Math.random() < epsilon) {

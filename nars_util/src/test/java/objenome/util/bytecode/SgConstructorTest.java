@@ -39,13 +39,13 @@ public class SgConstructorTest extends SgBehaviorTest {
 
     @Test
     public void testGetSignature() {
-        final SgConstructor constructor = new SgConstructor(clasz, "public");
+        SgConstructor constructor = new SgConstructor(clasz, "public");
         new SgArgument(constructor, SgClass.INT, "count");
         Assert.assertEquals(constructor.getSignature(), "public DummyClass(int count)");
         new SgArgument(constructor, SgClass.BOOLEAN, "ok");
         Assert.assertEquals(constructor.getSignature(),
                 "public DummyClass(int count, boolean ok)");
-        final SgClassPool pool = new SgClassPool();
+        SgClassPool pool = new SgClassPool();
         constructor.addException(SgClass.create(pool, IOException.class));
         Assert.assertEquals(constructor.getSignature(),
                 "public DummyClass(int count, boolean ok) throws java.io.IOException");
@@ -57,7 +57,7 @@ public class SgConstructorTest extends SgBehaviorTest {
 
     @Test
     public void testConctructionSgClassString() {
-        final SgConstructor constructor = new SgConstructor(clasz, "private");
+        SgConstructor constructor = new SgConstructor(clasz, "private");
         Assert.assertEquals(constructor.getArguments().size(), 0);
         Assert.assertEquals(constructor.getExceptions().size(), 0);
         Assert.assertEquals(constructor.getBody().size(), 0);

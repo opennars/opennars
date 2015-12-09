@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /** similar to ConceptSet except Concepts are not stored, useful as a pass-through */
-abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
+public abstract class ConceptSetTermsOnly<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
     public final Set<T> values = new HashSet();
 
@@ -38,7 +38,7 @@ abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConcept
 
 
     @Override
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         if (!values.contains(t)) {
             return super.contains(t);
         }

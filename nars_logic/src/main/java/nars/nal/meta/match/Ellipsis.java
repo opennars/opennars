@@ -26,7 +26,7 @@ import java.util.Map;
  *   B..not(first)
  *   B..not(first,last)
  */
-abstract public class Ellipsis extends VarPattern { //TODO use Immutable
+public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 
 
     /** a placeholder that indicates an expansion of one or more terms that will be provided by an Ellipsis match.
@@ -37,7 +37,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
      *
      * IMPORTANT: InvisibleAtom's default compareTo of -1
      * ensures this will appear always at the end of any ordering */
-    public final static ShadowAtom Shim = new ShadowAtom("..") {
+    public static final ShadowAtom Shim = new ShadowAtom("..") {
         @Override public Op op() {
             return Op.INTERVAL;
         }
@@ -131,7 +131,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
     }
 
     public static int numEllipsis(TermContainer x) {
-        final int xs = x.size();
+        int xs = x.size();
         int n = 0;
         for (int i = 0; i < xs; i++) {
             if (x.term(i) instanceof Ellipsis)
@@ -141,7 +141,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
     }
 
     public static int numNonEllipsisSubterms(Compound x) {
-        final int xs = x.size();
+        int xs = x.size();
         int n = xs;
         for (int i = 0; i < xs; i++) {
             Term xt = x.term(i);
@@ -210,10 +210,10 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
     }
 
 
-    abstract public boolean valid(int collectable);
+    public abstract boolean valid(int collectable);
 
     public static Ellipsis getFirstEllipsis(Compound X) {
-        final int xsize = X.size();
+        int xsize = X.size();
         for (int i = 0; i < xsize; i++) {
             Term xi = X.term(i);
             if (xi instanceof Ellipsis) {
@@ -238,7 +238,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
 //        return null;
 //    }
     public static Term getFirstNonEllipsis(Compound X) {
-        final int xsize = X.size();
+        int xsize = X.size();
         for (int i = 0; i < xsize; i++) {
             Term xi = X.term(i);
             if (!(xi instanceof Ellipsis)) {

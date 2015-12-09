@@ -32,8 +32,8 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	 */
 	public Board(Player player1, Player player2, Game game)
 	{
-		final int WIDTH = game.WIDTH;
-		final int HEIGHT = game.HEIGHT;
+		int WIDTH = game.WIDTH;
+		int HEIGHT = game.HEIGHT;
 
 		// set players
 		this.player1 = player1;
@@ -121,7 +121,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	 */
 	public void setContext(Game context)
 	{
-		this.game = context;
+		game = context;
 		setPieces();
 	}
 
@@ -140,11 +140,9 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 		super.repaint();
 
 		if(squares != null)
-		{			
-			for(int i = 0; i < squares.length; i++)
-			{
-				for(int j = 0; j < squares[i].length; j++)
-					squares[i][j].repaint();
+		{
+			for (Square[] square : squares) {
+				for (Square aSquare : square) aSquare.repaint();
 			}
 		}
 	}
@@ -196,7 +194,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 					repaint();
 				}
 				else
-					System.out.println("UNABLE TO MOVE [" + source.getCoordinateX() + ", " + source.getCoordinateY() + "] -> [" + destination.getCoordinateX() + ", " + destination.getCoordinateY() + "]");
+					System.out.println("UNABLE TO MOVE [" + source.getCoordinateX() + ", " + source.getCoordinateY() + "] -> [" + destination.getCoordinateX() + ", " + destination.getCoordinateY() + ']');
 			}
 
 			if(game.isTurnDark() && player2.hasTurn())
@@ -233,10 +231,8 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	 */
 	private void detargetAllSquares()
 	{
-		for(int i = 0; i < squares.length; i++)
-		{
-			for(int j = 0; j < squares[i].length; j++)
-				squares[i][j].detarget();
+		for (Square[] square : squares) {
+			for (Square aSquare : square) aSquare.detarget();
 		}
 	}
 

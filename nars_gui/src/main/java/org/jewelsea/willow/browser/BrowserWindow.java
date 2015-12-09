@@ -89,7 +89,7 @@ public class BrowserWindow {
         });
 
         // monitor the web view for when it's location changes, so we can update the history lists and other items correctly.
-        final WebEngine engine = getView().getEngine();
+        WebEngine engine = getView().getEngine();
         engine.locationProperty().addListener((observableValue3, oldLoc1, newLoc) -> {
             getHistory().executeNav(newLoc); // update the history lists.
             getLocField().setText(newLoc);   // update the location field.
@@ -162,6 +162,7 @@ public class BrowserWindow {
     public void go(String loc) {
         // modify the request location, to make it easier on the user for typing.
         if (loc == null) loc = "";
+        //noinspection IfStatementWithTooManyBranches
         if (loc.startsWith("google")) { // search google
             loc = "http://www.google.com/search?q=" + loc.substring("google".length()).trim().replaceAll(" ", "+");
         } else if (loc.startsWith("bing")) { // search bing

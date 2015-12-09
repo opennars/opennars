@@ -31,25 +31,24 @@ import java.util.Objects;
 public class FirstOfMatcher
     extends CustomDefaultLabelMatcher<FirstOfMatcher>
 {
-    public FirstOfMatcher(final Rule[] subRules)
+    public FirstOfMatcher(Rule[] subRules)
     {
         super(Objects.requireNonNull(subRules, "subRules"), "firstOf");
     }
 
     @Override
-    final public MatcherType getType()
+    public final MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    final public <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(MatcherContext<V> context)
     {
 
 
-        final List<Matcher> children = getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            final Matcher matcher = children.get(i);
+        List<Matcher> children = getChildren();
+        for (Matcher matcher : children) {
             if (matcher.getSubContext(context).runMatcher())
                 return true;
         }

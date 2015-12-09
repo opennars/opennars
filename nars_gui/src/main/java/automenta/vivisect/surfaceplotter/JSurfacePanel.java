@@ -36,7 +36,7 @@ public class JSurfacePanel extends JPanel {
 	 * @return
 	 */
 	private static SurfaceModel createDefaultSurfaceModel() {
-		final DefaultSurfaceModel sm = new DefaultSurfaceModel();
+		DefaultSurfaceModel sm = new DefaultSurfaceModel();
 
 		sm.setPlotFunction2(false);
 		
@@ -70,7 +70,7 @@ public class JSurfacePanel extends JPanel {
 			{
 				float r = x*x+y*y;
 				
-				if (r == 0 ) return 1f;
+				if (r == 0 ) return 1.0f;
 				return (float)( Math.sin(r)/(r));
 			}
 			
@@ -239,7 +239,7 @@ public class JSurfacePanel extends JPanel {
 		title.setHorizontalAlignment(SwingConstants.CENTER);
 		title.setBackground(Color.white);
 		title.setOpaque(true);
-		title.setFont(title.getFont().deriveFont(title.getFont().getSize() + 4f));
+		title.setFont(title.getFont().deriveFont(title.getFont().getSize() + 4.0f));
 		title.setName("title");
 		add(title, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,

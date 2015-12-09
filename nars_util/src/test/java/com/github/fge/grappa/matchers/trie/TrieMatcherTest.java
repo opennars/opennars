@@ -43,8 +43,8 @@ public final class TrieMatcherTest
 
     public TrieMatcherTest()
     {
-        final TrieBuilder builder = Trie.newBuilder();
-        for (final String keyword: KEYWORDS)
+        TrieBuilder builder = Trie.newBuilder();
+        for (String keyword: KEYWORDS)
             builder.addWord(keyword);
         matcher = new TrieMatcher(builder.build());
     }
@@ -52,9 +52,9 @@ public final class TrieMatcherTest
     @DataProvider
     public Iterator<Object[]> getMatchData()
     {
-        final List<Object[]> list = Lists.newArrayList();
+        List<Object[]> list = Lists.newArrayList();
 
-        final MatcherContextBuilder builder = new MatcherContextBuilder()
+        MatcherContextBuilder builder = new MatcherContextBuilder()
             .withMatcher(matcher);
 
         String input;
@@ -108,10 +108,10 @@ public final class TrieMatcherTest
     }
 
     @Test(dataProvider = "getMatchData")
-    public void trieMatchingWorksCorrectly(final MatcherContext<Object> ctx,
-        final boolean matched, final int index)
+    public void trieMatchingWorksCorrectly(MatcherContext<Object> ctx,
+                                           boolean matched, int index)
     {
-        final SoftAssertions soft = new SoftAssertions();
+        SoftAssertions soft = new SoftAssertions();
 
         soft.assertThat(matcher.match(ctx)).as("match/no match")
             .isEqualTo(matched);

@@ -112,7 +112,7 @@ public final class Fast {
 	 * @see #nat2int(int)
 	 */
 
-	public static int int2nat( final int x ) {
+	public static int int2nat( int x ) {
 		return x >= 0 ? x << 1 : -( ( x << 1 ) + 1 );
 	}
 
@@ -125,7 +125,7 @@ public final class Fast {
 	 * @see #int2nat(int)
 	 */
 
-	public static int nat2int( final int x ) {
+	public static int nat2int( int x ) {
 		return x % 2 == 0 ? x >> 1 : -( x >> 1 ) - 1;
 	}
 
@@ -145,7 +145,7 @@ public final class Fast {
 	 * @see #int2nat(int)
 	 */
 
-	public static long int2nat( final long x ) {
+	public static long int2nat( long x ) {
 		return x >= 0 ? x << 1 : -( ( x << 1 ) + 1 );
 	}
 
@@ -158,7 +158,7 @@ public final class Fast {
 	 * @see #nat2int(int)
 	 */
 
-	public static long nat2int( final long x ) {
+	public static long nat2int( long x ) {
 		return x % 2 == 0 ? x >> 1 : -( x >> 1 ) - 1;
 	}
 
@@ -167,7 +167,7 @@ public final class Fast {
 	 * @param x a double.
 	 * @return the base-2 logarithm of <code>x</code>.
 	 */
-	public static double log2( final double x ) {
+	public static double log2( double x ) {
 		return Math.log( x ) / 0.6931471805599453;
 	}
 
@@ -178,7 +178,7 @@ public final class Fast {
 	 * @param x an integer.
 	 * @return the ceiling of the base-two logarithm of the argument, or -1 if <code>x</code> is zero.
 	 */
-	public static int ceilLog2( final int x ) {
+	public static int ceilLog2( int x ) {
 		if ( x <= 2 ) return x - 1;
 		return Integer.SIZE - Integer.numberOfLeadingZeros( x - 1 );
 	}
@@ -190,7 +190,7 @@ public final class Fast {
 	 * @param x an integer.
 	 * @return the ceiling of the base-two logarithm of the argument, or -1 if <code>x</code> is zero.
 	 */
-	public static int ceilLog2( final long x ) {
+	public static int ceilLog2( long x ) {
 		if ( x <= 2 ) return (int)( x - 1 );
 		return Long.SIZE - Long.numberOfLeadingZeros( x - 1 );
 	}
@@ -203,8 +203,8 @@ public final class Fast {
 	 * @param x a double.
 	 * @return an integer approximation of the base-two logarithm of the argument.
 	 */
-	public static int approximateLog2( final double x ) {
-		final long bits = Double.doubleToRawLongBits( x );
+	public static int approximateLog2( double x ) {
+		long bits = Double.doubleToRawLongBits( x );
 		// The exponent is corrected by one if the first significand digits are big enough.
 		return (int)( ( bits >>> 52 ) & 0x7FF ) - 1023 + ( ( bits >>> 48 & 0xF ) > 6 ? 1 : 0 );
 	}
@@ -214,9 +214,9 @@ public final class Fast {
 	 * @param exponent an integer exponent between -62 ad 62.
 	 * @return 2<sup><code>exponent</code></sup>.
 	 */
-	public static double pow2( final int exponent ) {
+	public static double pow2( int exponent ) {
 		//return fixedValues[ approximate + ( 1 << EXPONENT_BITS ) - ADJUSTMENT - 1 ];
-		if ( exponent < 0 ) return 1. / ( 1L  << -exponent );
+		if ( exponent < 0 ) return 1.0 / ( 1L  << -exponent );
 		return 1L << exponent;
 	}
 
@@ -226,7 +226,7 @@ public final class Fast {
 	 * @param x an integer.
 	 * @return the number of bits that are necessary to encode <code>x</code>.
 	 */
-	public static int length( final int x ) {
+	public static int length( int x ) {
 		return x == 0 ? 1 : mostSignificantBit( x ) + 1;
 	}
 
@@ -235,11 +235,11 @@ public final class Fast {
 	 * @param x a long.
 	 * @return the number of bits that are necessary to encode <code>x</code>.
 	 */
-	public static int length( final long x ) {
+	public static int length( long x ) {
 		return x == 0 ? 1 : mostSignificantBit( x ) + 1;
 	}
 
-	private static int selectBroadword( final long x, final int rank ) {
+	private static int selectBroadword( long x, int rank ) {
         // Phase 1: sums by byte
         long byteSums = x - ( ( x & 0xa * ONES_STEP_4 ) >>> 1 );
         byteSums = ( byteSums & 3 * ONES_STEP_4 ) + ( ( byteSums >>> 2 ) & 3 * ONES_STEP_4 );
@@ -247,86 +247,86 @@ public final class Fast {
         byteSums *= ONES_STEP_8;
         
         // Phase 2: compare each byte sum with rank to obtain the relevant byte
-        final long rankStep8 = rank * ONES_STEP_8;
-        final long byteOffset = ( ( ( ( ( rankStep8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 53 ) & ~0x7;
+        long rankStep8 = rank * ONES_STEP_8;
+        long byteOffset = ( ( ( ( ( rankStep8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 53 ) & ~0x7;
 
         // Phase 3: Locate the relevant byte and make 8 copies with incremental masks
-        final int byteRank = (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) );
+        int byteRank = (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) );
 
-        final long spreadBits = ( x >>> byteOffset & 0xFF ) * ONES_STEP_8 & INCR_STEP_8;
-        final long bitSums = ( ( ( spreadBits | ( ( spreadBits | MSBS_STEP_8 ) - ONES_STEP_8 ) ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8;
+        long spreadBits = ( x >>> byteOffset & 0xFF ) * ONES_STEP_8 & INCR_STEP_8;
+        long bitSums = ( ( ( spreadBits | ( ( spreadBits | MSBS_STEP_8 ) - ONES_STEP_8 ) ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8;
 
         // Compute the inside-byte location and return the sum
-        final long byteRankStep8 = byteRank * ONES_STEP_8;
+        long byteRankStep8 = byteRank * ONES_STEP_8;
 
         return (int)( byteOffset + ( ( ( ( ( byteRankStep8 | MSBS_STEP_8 ) - bitSums ) & MSBS_STEP_8 ) >>> 7 ) * ONES_STEP_8 >>> 56 ) );
 	}
 
-	private final static long overflow[] = {
-		0x7f7f7f7f7f7f7f7fL,
-		0x7e7e7e7e7e7e7e7eL,
-		0x7d7d7d7d7d7d7d7dL,
-		0x7c7c7c7c7c7c7c7cL,
-		0x7b7b7b7b7b7b7b7bL,
-		0x7a7a7a7a7a7a7a7aL,
-		0x7979797979797979L,
-		0x7878787878787878L,
-		0x7777777777777777L,
-		0x7676767676767676L,
-		0x7575757575757575L,
-		0x7474747474747474L,
-		0x7373737373737373L,
-		0x7272727272727272L,
-		0x7171717171717171L,
-		0x7070707070707070L,
-		0x6f6f6f6f6f6f6f6fL,
-		0x6e6e6e6e6e6e6e6eL,
-		0x6d6d6d6d6d6d6d6dL,
-		0x6c6c6c6c6c6c6c6cL,
-		0x6b6b6b6b6b6b6b6bL,
-		0x6a6a6a6a6a6a6a6aL,
-		0x6969696969696969L,
-		0x6868686868686868L,
-		0x6767676767676767L,
-		0x6666666666666666L,
-		0x6565656565656565L,
-		0x6464646464646464L,
-		0x6363636363636363L,
-		0x6262626262626262L,
-		0x6161616161616161L,
-		0x6060606060606060L,
-		0x5f5f5f5f5f5f5f5fL,
-		0x5e5e5e5e5e5e5e5eL,
-		0x5d5d5d5d5d5d5d5dL,
-		0x5c5c5c5c5c5c5c5cL,
-		0x5b5b5b5b5b5b5b5bL,
-		0x5a5a5a5a5a5a5a5aL,
-		0x5959595959595959L,
-		0x5858585858585858L,
-		0x5757575757575757L,
-		0x5656565656565656L,
-		0x5555555555555555L,
-		0x5454545454545454L,
-		0x5353535353535353L,
-		0x5252525252525252L,
-		0x5151515151515151L,
-		0x5050505050505050L,
-		0x4f4f4f4f4f4f4f4fL,
-		0x4e4e4e4e4e4e4e4eL,
-		0x4d4d4d4d4d4d4d4dL,
-		0x4c4c4c4c4c4c4c4cL,
-		0x4b4b4b4b4b4b4b4bL,
-		0x4a4a4a4a4a4a4a4aL,
-		0x4949494949494949L,
-		0x4848484848484848L,
-		0x4747474747474747L,
-		0x4646464646464646L,
-		0x4545454545454545L,
-		0x4444444444444444L,
-		0x4343434343434343L,
-		0x4242424242424242L,
-		0x4141414141414141L,
-		0x4040404040404040L
+	private static final long[] overflow = {
+			0x7f7f7f7f7f7f7f7fL,
+			0x7e7e7e7e7e7e7e7eL,
+			0x7d7d7d7d7d7d7d7dL,
+			0x7c7c7c7c7c7c7c7cL,
+			0x7b7b7b7b7b7b7b7bL,
+			0x7a7a7a7a7a7a7a7aL,
+			0x7979797979797979L,
+			0x7878787878787878L,
+			0x7777777777777777L,
+			0x7676767676767676L,
+			0x7575757575757575L,
+			0x7474747474747474L,
+			0x7373737373737373L,
+			0x7272727272727272L,
+			0x7171717171717171L,
+			0x7070707070707070L,
+			0x6f6f6f6f6f6f6f6fL,
+			0x6e6e6e6e6e6e6e6eL,
+			0x6d6d6d6d6d6d6d6dL,
+			0x6c6c6c6c6c6c6c6cL,
+			0x6b6b6b6b6b6b6b6bL,
+			0x6a6a6a6a6a6a6a6aL,
+			0x6969696969696969L,
+			0x6868686868686868L,
+			0x6767676767676767L,
+			0x6666666666666666L,
+			0x6565656565656565L,
+			0x6464646464646464L,
+			0x6363636363636363L,
+			0x6262626262626262L,
+			0x6161616161616161L,
+			0x6060606060606060L,
+			0x5f5f5f5f5f5f5f5fL,
+			0x5e5e5e5e5e5e5e5eL,
+			0x5d5d5d5d5d5d5d5dL,
+			0x5c5c5c5c5c5c5c5cL,
+			0x5b5b5b5b5b5b5b5bL,
+			0x5a5a5a5a5a5a5a5aL,
+			0x5959595959595959L,
+			0x5858585858585858L,
+			0x5757575757575757L,
+			0x5656565656565656L,
+			0x5555555555555555L,
+			0x5454545454545454L,
+			0x5353535353535353L,
+			0x5252525252525252L,
+			0x5151515151515151L,
+			0x5050505050505050L,
+			0x4f4f4f4f4f4f4f4fL,
+			0x4e4e4e4e4e4e4e4eL,
+			0x4d4d4d4d4d4d4d4dL,
+			0x4c4c4c4c4c4c4c4cL,
+			0x4b4b4b4b4b4b4b4bL,
+			0x4a4a4a4a4a4a4a4aL,
+			0x4949494949494949L,
+			0x4848484848484848L,
+			0x4747474747474747L,
+			0x4646464646464646L,
+			0x4545454545454545L,
+			0x4444444444444444L,
+			0x4343434343434343L,
+			0x4242424242424242L,
+			0x4141414141414141L,
+			0x4040404040404040L
 	};
 
 //	private static int selectGogPetri( final long x, final int rank ) {
@@ -351,7 +351,7 @@ public final class Fast {
 	 * results (including exceptions) might happen if this constraint is violated.
 	 * @return the position in <code>x</code> of the bit of given rank.
 	 */
-	public static int select( final long x, final int rank ) {
+	public static int select( long x, int rank ) {
 		assert rank < Long.bitCount( x );
 		// Phase 1: sums by byte
 		long byteSums = x - ( ( x >>> 1 ) & 0x5 * ONES_STEP_4 );
@@ -360,7 +360,7 @@ public final class Fast {
 		byteSums *= ONES_STEP_8;
 
 		// Phase 2: compare each byte sum with rank to obtain the relevant byte
-		final int byteOffset = Long.bitCount( ( ( rank * ONES_STEP_8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) << 3;
+		int byteOffset = Long.bitCount( ( ( rank * ONES_STEP_8 | MSBS_STEP_8 ) - byteSums ) & MSBS_STEP_8 ) << 3;
 
 		return byteOffset + selectInByte[ (int)( x >>> byteOffset & 0xFF ) | (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) ) << 8 ];
 	}
@@ -373,7 +373,7 @@ public final class Fast {
 	 * @param x a long.
 	 * @return the most significant bit of <code>x</code>, of <code>x</code> is nonzero; &minus;1, otherwise.
 	 */
-	public static int mostSignificantBit( final long x ) {
+	public static int mostSignificantBit( long x ) {
 		return 63 - Long.numberOfLeadingZeros( x );
 	}
 
@@ -383,7 +383,7 @@ public final class Fast {
 	 * @return the most significant bit of <code>x</code>, of <code>x</code> is nonzero; &minus;1, otherwise.
 	 * @see #mostSignificantBit(long)
 	 */
-	public static int mostSignificantBit( final int x ) {
+	public static int mostSignificantBit( int x ) {
 		return 31 - Integer.numberOfLeadingZeros( x );
 	}
 	

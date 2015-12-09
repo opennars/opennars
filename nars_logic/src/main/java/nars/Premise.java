@@ -34,11 +34,11 @@ public interface Premise extends Level, Tasked {
      * @param solution The belief
      * @return null if no match
      */
-    static Task match(final Task question, final Task solution, final Premise nal) {
+    static Task match(Task question, Task solution, Premise nal) {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
-                Term[] u = new Term[]{question.getTerm(), solution.getTerm()};
+                Term[] u = {question.getTerm(), solution.getTerm()};
                 if (unify(Op.VAR_QUERY, u, nal.getRandom())) {
                     return LocalRules.trySolution(question, solution, nal);
                 }
@@ -57,16 +57,16 @@ public interface Premise extends Level, Tasked {
      * <p>
      * only sets the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
      */
-    static boolean unify(final Op varType, final Term[] t, final Random random) {
+    static boolean unify(Op varType, Term[] t, Random random) {
 
 
-        final FindSubst f = new FindSubst(varType, random);
-        final boolean hasSubs = f.next(t[0], t[1], Global.UNIFICATION_POWER);
+        FindSubst f = new FindSubst(varType, random);
+        boolean hasSubs = f.next(t[0], t[1], Global.UNIFICATION_POWER);
         if (!hasSubs) return false;
 
         //TODO combine these two blocks to use the same sub-method
 
-        final Term a = t[0];
+        Term a = t[0];
         Term aa = a;
 
         //FORWARD
@@ -76,13 +76,13 @@ public interface Premise extends Level, Tasked {
 
             if (aa == null) return false;
 
-            final Op aaop = aa.op();
+            Op aaop = aa.op();
             if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEPENDENT || aaop == Op.VAR_DEPENDENT))
                 return false;
 
         }
 
-        final Term b = t[1];
+        Term b = t[1];
         Term bb = b;
 
         //REVERSE
@@ -94,7 +94,7 @@ public interface Premise extends Level, Tasked {
 
             if (bb == null) return false;
 
-            final Op bbop = bb.op();
+            Op bbop = bb.op();
             if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEPENDENT || bbop == Op.VAR_DEPENDENT))
                 return false;
         }
@@ -105,7 +105,7 @@ public interface Premise extends Level, Tasked {
         return true;
     }
 
-    static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term,Term> subs) {
+    static Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;
@@ -117,7 +117,7 @@ public interface Premise extends Level, Tasked {
      * appliesSubstitute and renameVariables, resulting in a cloned object,
      * will not change this instance
      */
-    static Term applySubstituteAndRenameVariables(final Compound t, final Subst subs) {
+    static Term applySubstituteAndRenameVariables(Compound t, Subst subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;
@@ -134,18 +134,18 @@ public interface Premise extends Level, Tasked {
 
     Task getBelief();
 
-    default public Term getTerm() {
+    default Term getTerm() {
         return getConcept().getTerm();
     }
 
 
-    public Task getTask();
+    Task getTask();
 
 
-    public NAR nar();
+    NAR nar();
 
 
-    default public long time() {
+    default long time() {
         return nar().time();
     }
 
@@ -158,19 +158,19 @@ public interface Premise extends Level, Tasked {
     /**
      * curent maximum allowed NAL level the reasoner is configured to support
      */
-    default public int nal() {
+    default int nal() {
         return nar().nal();
     }
 
     /**
      * whether at least NAL level N is enabled
      */
-    default public boolean nal(int n) {
+    default boolean nal(int n) {
         return nal() >= n;
     }
 
 
-    default public float conceptPriority(Term target, float valueForMissing) {
+    default float conceptPriority(Term target, float valueForMissing) {
         return memory().conceptPriority(target, valueForMissing);
     }
 
@@ -179,12 +179,12 @@ public interface Premise extends Level, Tasked {
     }
 
 
-    default public Term self() {
+    default Term self() {
         return memory().self();
     }
 
 
-    default public Random getRandom() {
+    default Random getRandom() {
         return memory().random;
     }
 
@@ -192,7 +192,7 @@ public interface Premise extends Level, Tasked {
     /**
      * produces a cropped and filtered stack trace (list of methods called)
      */
-    public static List<String> getStack() {
+    static List<String> getStack() {
         StackTraceElement[] s = Thread.currentThread().getStackTrace();
 
         String prefix = "";
@@ -201,9 +201,7 @@ public interface Premise extends Level, Tasked {
         //String prevMethodID;
 
         List<String> path = new ArrayList();
-        for (int i = 0; i < s.length; i++) {
-            StackTraceElement e = s[i];
-
+        for (StackTraceElement e : s) {
             String className = e.getClassName();
             String methodName = e.getMethodName();
 
@@ -215,10 +213,10 @@ public interface Premise extends Level, Tasked {
                     continue;
                 if (className.contains("EventEmitter"))
                     continue;
-                if ((className.equals("NAL") || className.equals("Memory")) && methodName.equals("emit"))
+                if (("NAL".equals(className) || "Memory".equals(className)) && "emit".equals(methodName))
                     continue;
 
-                int cli = className.lastIndexOf(".") + 1;
+                int cli = className.lastIndexOf('.') + 1;
                 if (cli != -1)
                     className = className.substring(cli, className.length()); //class's simpleName
 
@@ -233,13 +231,13 @@ public interface Premise extends Level, Tasked {
 
 
                 //Termination conditions
-                if (className.contains("ConceptFireTask") && methodName.equals("accept"))
+                if (className.contains("ConceptFireTask") && "accept".equals(methodName))
                     break;
-                if (className.contains("ImmediateProcess") && methodName.equals("rule"))
+                if (className.contains("ImmediateProcess") && "rule".equals(methodName))
                     break;
-                if (className.contains("ConceptFire") && methodName.equals("rule"))
+                if (className.contains("ConceptFire") && "rule".equals(methodName))
                     break;
-            } else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {
+            } else if (className.endsWith(".NAL") && "deriveTask".equals(methodName)) {
                 tracing = true; //begins with next stack element
             }
 
@@ -251,7 +249,7 @@ public interface Premise extends Level, Tasked {
     }
 
 
-    default public int duration() {
+    default int duration() {
         return memory().duration();
     }
 
@@ -386,15 +384,13 @@ public interface Premise extends Level, Tasked {
      */
     default Task removeInvalid(Task task) {
 
-        final Memory memory = nar().memory;
+        Memory memory = nar().memory;
 
         Object invalidationReason = validate(task);
         if (invalidationReason==null) {
             return task;
         }
-        else {
-            memory.remove(task, invalidationReason);
-        }
+        memory.remove(task, invalidationReason);
 
         return null;
     }
@@ -540,10 +536,8 @@ public interface Premise extends Level, Tasked {
         if (!t.isEternal()) return true;
 
         Task b = getBelief();
-        if ((b != null) && (!b.isEternal()))
-            return true;
+        return (b != null) && (!b.isEternal());
 
-        return false;
     }
 
 
@@ -562,16 +556,16 @@ public interface Premise extends Level, Tasked {
     }
 
     /** gets the average summary of one or both task/belief task's */
-    default public float getMeanPriority() {
+    default float getMeanPriority() {
         float total = 0;
         int n = 0;
-        final Task pt = getTask();
+        Task pt = getTask();
         if (pt!=null) {
             if (!pt.isDeleted())
                 total += pt.getPriority();
             n++;
         }
-        final Task pb = getBelief();
+        Task pb = getBelief();
         if (pb!=null) {
             if (!pb.isDeleted())
                 total += pb.getPriority();
@@ -597,7 +591,7 @@ public interface Premise extends Level, Tasked {
      * with a better belief than what it had previously. */
     void updateBelief(Task revised);
 
-    default public boolean validateDerivedBudget(Budget budget) {
+    default boolean validateDerivedBudget(Budget budget) {
         if (budget.isDeleted()) {
             throw new RuntimeException("why is " + budget + " deleted");
 
@@ -607,7 +601,7 @@ public interface Premise extends Level, Tasked {
 
 
 
-    public default Task derive(Task derived) {
+    default Task derive(Task derived) {
         derived = removeInvalid(derived);
         if (derived != null) {
             memory().eventDerived.emit(derived);

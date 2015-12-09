@@ -156,7 +156,6 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
 
     public DefaultWindow(String title) {
-        super();
 
         titleBar = new Label(title);
 
@@ -206,7 +205,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      * @param title the title to set
      */
     public final void setTitle(String title) {
-        this.titleProperty.set(title);
+        titleProperty.set(title);
     }
 
     /**
@@ -398,7 +397,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
 
         // if already closed, we do nothing
-        if (this.getParent() == null) {
+        if (getParent() == null) {
             return;
         }
 
@@ -433,7 +432,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      * @param onClosedAction the action to set
      */
     public void setOnClosedAction(EventHandler<ActionEvent> onClosedAction) {
-        this.onClosedActionProperty.set(onClosedAction);
+        onClosedActionProperty.set(onClosedAction);
     }
 
     /**
@@ -444,7 +443,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      * closed or <code>null</code> if no such action has been defined
      */
     public EventHandler<ActionEvent> getOnClosedAction() {
-        return this.onClosedActionProperty.get();
+        return onClosedActionProperty.get();
     }
 
     /**
@@ -465,7 +464,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      * @param onClosedAction the action to set
      */
     public void setOnCloseAction(EventHandler<ActionEvent> onClosedAction) {
-        this.onCloseActionProperty.set(onClosedAction);
+        onCloseActionProperty.set(onClosedAction);
     }
 
     /**
@@ -476,7 +475,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      * closed or <code>null</code> if no such action has been defined
      */
     public EventHandler<ActionEvent> getOnCloseAction() {
-        return this.onCloseActionProperty.get();
+        return onCloseActionProperty.get();
     }
 
     /**
@@ -614,15 +613,15 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 //            }
 //        });
 
-        this.selectedProperty().addListener(
+        selectedProperty().addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
                 DropShadow shadow = new DropShadow(20, Color.WHITE);
                 Glow effect = new Glow(0.5);
 //                    shadow.setInput(effect);
-                this.setEffect(effect);
+                setEffect(effect);
             } else {
-                this.setEffect(null);
+                setEffect(null);
             }
         });
     }
@@ -630,11 +629,11 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
     private void initMouseEventHandlers() {
 
         onMousePressedProperty().set((MouseEvent event) -> {
-            final Node n = this;
+            Node n = this;
 
-            final double parentScaleX = n.getParent().
+            double parentScaleX = n.getParent().
                     localToSceneTransformProperty().getValue().getMxx();
-            final double parentScaleY = n.getParent().
+            double parentScaleY = n.getParent().
                     localToSceneTransformProperty().getValue().getMyy();
 
             mouseX = event.getSceneX();
@@ -643,11 +642,11 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             nodeX = n.getLayoutX() * parentScaleX;
             nodeY = n.getLayoutY() * parentScaleY;
 
-            if (this.isMoveToFront()) {
-                this.toFront();
+            if (isMoveToFront()) {
+                toFront();
             }
 
-            if (this.isSelected()) {
+            if (isSelected()) {
                 selectedWindowsToFront();
             }
         });
@@ -655,16 +654,16 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
         //Event Listener for MouseDragged
         onMouseDraggedProperty().set((MouseEvent event) -> {
 
-            Transform pp = this.getParent().localToSceneTransformProperty().getValue();
-            final double parentScaleX = pp.getMxx();
-            final double parentScaleY = pp.getMyy();
+            Transform pp = getParent().localToSceneTransformProperty().getValue();
+            double parentScaleX = pp.getMxx();
+            double parentScaleY = pp.getMyy();
 
-            Transform lp = this.localToSceneTransformProperty().getValue();
-            final double scaleX = lp.getMxx();
-            final double scaleY = lp.getMyy();
+            Transform lp = localToSceneTransformProperty().getValue();
+            double scaleX = lp.getMxx();
+            double scaleY = lp.getMyy();
 
-            Bounds bil = this.getBoundsInLocal();
-            Bounds boundsInScene = this.localToScene(bil);
+            Bounds bil = getBoundsInLocal();
+            Bounds boundsInScene = localToScene(bil);
 
             double sceneX = boundsInScene.getMinX();
             double sceneY = boundsInScene.getMinY();
@@ -672,7 +671,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             double offsetX = event.getSceneX() - mouseX;
             double offsetY = event.getSceneY() - mouseY;
 
-            if (resizeMode == ResizeMode.NONE && this.isMovable()) {
+            if (resizeMode == ResizeMode.NONE && isMovable()) {
 
                 nodeX += offsetX;
                 nodeY += offsetY;
@@ -680,16 +679,16 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
                 double scaledX = nodeX * 1 / parentScaleX;
                 double scaledY = nodeY * 1 / parentScaleY;
 
-                double offsetForAllX = scaledX - this.getLayoutX();
-                double offsetForAllY = scaledY - this.getLayoutY();
+                double offsetForAllX = scaledX - getLayoutX();
+                double offsetForAllY = scaledY - getLayoutY();
 
-                this.setLayoutX(scaledX);
-                this.setLayoutY(scaledY);
+                setLayoutX(scaledX);
+                setLayoutY(scaledY);
 
                 dragging = true;
 
                 // move all selected windows
-                if (this.isSelected()) {
+                if (isSelected()) {
                     dragSelectedWindows(offsetForAllX, offsetForAllY);
                 }
 
@@ -711,8 +710,8 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
                     double newHeight = content.getPrefHeight() + yDiff;
 
-                    if (newHeight > this.minHeight(0)) {
-                        content.setLayoutY(this.getLayoutY() - yDiff);
+                    if (newHeight > minHeight(0)) {
+                        content.setLayoutY(getLayoutY() - yDiff);
                         content.setPrefHeight(newHeight);
                     }
                 }
@@ -728,9 +727,9 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
                     double newWidth = content.getPrefWidth() + xDiff;
 
-                    if (newWidth > Math.max(this.minWidth(0),
+                    if (newWidth > Math.max(minWidth(0),
                             cp.minWidth(0))) {
-                        content.setLayoutX(this.getLayoutX() - xDiff);
+                        content.setLayoutX(getLayoutX() - xDiff);
                         content.setPrefWidth(newWidth);
                     } else {
                         //
@@ -748,9 +747,9 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
                     double newHeight = yDiff;
 
                     newHeight = Math.max(
-                            newHeight, this.minHeight(0));
+                            newHeight, minHeight(0));
 
-                    if (newHeight < this.maxHeight(0)) {
+                    if (newHeight < maxHeight(0)) {
                         content.setPrefHeight(newHeight);
                     }
                 }
@@ -768,7 +767,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
                             Math.max(cp.minWidth(0),
                             content.minWidth(0)));
 
-                    if (newWidth < this.maxWidth(0)) {
+                    if (newWidth < maxWidth(0)) {
                         content.setPrefWidth(newWidth);
                     }
                 }
@@ -778,12 +777,10 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             mouseY = event.getSceneY();
         });
 
-        onMouseClickedProperty().set((MouseEvent event) -> {
-            dragging = false;
-        });
+        onMouseClickedProperty().set((MouseEvent event) -> dragging = false);
 
         onMouseMovedProperty().set((MouseEvent t) -> {
-            if (this.isMinimized() || !this.isResizableWindow()) {
+            if (isMinimized() || !isResizableWindow()) {
 
                 RESIZE_TOP = false;
                 RESIZE_LEFT = false;
@@ -795,19 +792,19 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
                 return;
             }
 
-            final Node n = this;
-            final Bounds lb = n.getLayoutBounds();
-            final Insets insets = content.getInsets();
+            Node n = this;
+            Bounds lb = n.getLayoutBounds();
+            Insets insets = content.getInsets();
 
             Transform lp = n.getParent().localToSceneTransformProperty().getValue();
-            final double parentScaleX = lp.getMxx();
-            final double parentScaleY = lp.getMyy();
+            double parentScaleX = lp.getMxx();
+            double parentScaleY = lp.getMyy();
 
             Transform tp = n.localToSceneTransformProperty().getValue();
-            final double scaleX = tp.getMxx();
-            final double scaleY = tp.getMyy();
+            double scaleX = tp.getMxx();
+            double scaleY = tp.getMyy();
 
-            final double border = this.getResizableBorderWidth() * scaleX;
+            double border = getResizableBorderWidth() * scaleX;
 
 
             double diffMinX = Math.abs(lb.getMinX() - t.getX() + insets.getLeft());
@@ -825,6 +822,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             RESIZE_BOTTOM = false;
             RESIZE_RIGHT = false;
 
+            //noinspection IfStatementWithTooManyBranches
             if (left && !top && !bottom) {
                 n.setCursor(Cursor.W_RESIZE);
                 resizeMode = ResizeMode.LEFT;
@@ -866,7 +864,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
                 resizeMode = ResizeMode.NONE;
             }
 
-            this.autosize();
+            autosize();
         });
 
 //        setOnScroll(new EventHandler<ScrollEvent>() {
@@ -903,7 +901,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
             Window selectedWindow = (Window) sN;
 
-            if (this.getParent().
+            if (getParent().
                     equals(selectedWindow.getParent())
                     && selectedWindow.isMoveToFront()) {
 
@@ -923,7 +921,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
             Window selectedWindow = (Window) sN;
 
-            if (this.getParent().
+            if (getParent().
                     equals(selectedWindow.getParent())) {
 
                 selectedWindow.setLayoutX(

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ArrayLists {
     
@@ -51,19 +52,20 @@ public final class ArrayLists {
         arrayList = Lists.newArrayList(arrayList);
         ArrayList<List<T>> splitted = new ArrayList();
         objectFound.clear();
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if (direction == 0) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexIn(arrayList, splitOn, objectFound));
-                List<T> tmp = new ArrayList<T>(subList);
-                if (tmp.size() > 0) {
+                List<T> tmp = new ArrayList<>(subList);
+                if (!tmp.isEmpty()) {
                     splitted.add(tmp);
                 }
                 
                 subList.clear();
                 arrayList.remove(0);
             }
-            if (arrayList.size() > 0) {
+            if (!arrayList.isEmpty()) {
                 splitted.add(arrayList);
             }
         }
@@ -80,7 +82,7 @@ public final class ArrayLists {
         }
         else if (direction == 1) {
             List<T> subList = arrayList.subList(lastIndexIn(arrayList, splitOn, objectFound) + 1, arrayList.size());
-            List<T> tmp = new ArrayList<T>(subList);
+            List<T> tmp = new ArrayList<>(subList);
             
             splitted.add(tmp);
             
@@ -92,8 +94,8 @@ public final class ArrayLists {
         else if (direction == 2) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexInMultFound(arrayList, splitOn, objectFound));
-                List<T> tmp = new ArrayList<T>(subList);
-                if (tmp.size() > 0) {
+                List<T> tmp = new ArrayList<>(subList);
+                if (!tmp.isEmpty()) {
                     splitted.add(tmp);
                 } else {
                     objectFound.remove(objectFound.size() - 1);
@@ -102,7 +104,7 @@ public final class ArrayLists {
                 subList.clear();
                 arrayList.remove(0);
             }
-            if (arrayList.size() > 0) {
+            if (!arrayList.isEmpty()) {
                 splitted.add(arrayList);
             } else {
                 objectFound.remove(objectFound.size() - 1);
@@ -124,7 +126,7 @@ public final class ArrayLists {
             if (indexOf != -1 && (index == -1 || indexOf < index)) {
                 index = indexOf;
                 if (objectFound != null) {
-                    if (objectFound.size() == 0) {
+                    if (objectFound.isEmpty()) {
                         objectFound.add(arrayList.get(indexOf));
                     } else {
                         objectFound.set(0, arrayList.get(indexOf));
@@ -169,7 +171,7 @@ public final class ArrayLists {
             if (lastIndexOf > index) {
                 index = lastIndexOf;
                 if (objectFound != null) {
-                    if (objectFound.size() == 0) {
+                    if (objectFound.isEmpty()) {
                         objectFound.add(arrayList.get(lastIndexOf));
                     } else {
                         objectFound.set(0, arrayList.get(lastIndexOf));
@@ -190,9 +192,7 @@ public final class ArrayLists {
     
     public static ArrayList<Expr> copyAll(List<Expr> exprs, HashMap<Expr, Expr> subs) {
         ArrayList<Expr> copies = new ArrayList(exprs.size());
-        for (Expr expr : exprs) {
-            copies.add(expr.copy(subs));
-        }
+        copies.addAll(exprs.stream().map(expr -> expr.copy(subs)).collect(Collectors.toList()));
         return copies;
     }
     
@@ -207,7 +207,7 @@ public final class ArrayLists {
     }
     
     public static <T> ArrayList<T> castAll(Iterable arrList, Class<T> toClass) {
-        ArrayList<T> newArrList = new ArrayList<T>();
+        ArrayList<T> newArrList = new ArrayList<>();
         for (Object o : arrList) {
             newArrList.add((T) o);
         }
@@ -215,7 +215,7 @@ public final class ArrayLists {
     }
     
     public static String dumpAll(Iterable<Expr> exprs) {
-        ArrayList<String> strs = new ArrayList<String>();
+        ArrayList<String> strs = new ArrayList<>();
         for (Expr expr: exprs) {
             strs.add(expr.toString());
         }

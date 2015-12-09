@@ -184,14 +184,7 @@ public class Mario extends Sprite
 
         if (onGround)
         {
-            if (keys[KEY_DOWN] && large)
-            {
-                ducking = true;
-            }
-            else
-            {
-                ducking = false;
-            }
+            ducking = keys[KEY_DOWN] && large;
         }
 
         if (xa > 2)
@@ -205,6 +198,7 @@ public class Mario extends Sprite
 
         if (keys[KEY_JUMP] || (jumpTime < 0 && !onGround && !sliding))
         {
+            //noinspection IfStatementWithTooManyBranches
             if (jumpTime < 0)
             {
                 xa = xJumpSpeed;
@@ -321,14 +315,7 @@ public class Mario extends Sprite
         }
 
         ya *= 0.85f;
-        if (onGround)
-        {
-            xa *= GROUND_INERTIA;
-        }
-        else
-        {
-            xa *= AIR_INERTIA;
-        }
+        xa *= onGround ? GROUND_INERTIA : AIR_INERTIA;
 
         if (!onGround)
         {
@@ -429,16 +416,11 @@ public class Mario extends Sprite
         boolean collide = false;
         if (ya > 0)
         {
-            if (isBlocking(x + xa - width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa - width, y + ya + 1, xa, ya)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
+            if (isBlocking(x + xa - width, y + ya, xa, 0) || isBlocking(x + xa + width, y + ya, xa, 0) || isBlocking(x + xa - width, y + ya + 1, xa, ya) || isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
         }
         if (ya < 0)
         {
-            if (isBlocking(x + xa, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa - width, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
+            if (isBlocking(x + xa, y + ya - height, xa, ya) || collide || isBlocking(x + xa - width, y + ya - height, xa, ya) || collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
         }
         if (xa > 0)
         {

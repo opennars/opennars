@@ -380,7 +380,7 @@ float zfactor;
 	 * @param z the z coordinate
 	 */
    
-  public final Point project(float x, float y, float z) {
+  public Point project(float x, float y, float z) {
     float temp;
 
     // rotates
@@ -400,7 +400,7 @@ float zfactor;
 	
 	public  void setZRange(float zmin, float zmax) {
 		this.zmin = zmin; this.zmax = zmax;
-		this.zfactor = 20/(zmax-zmin);
+        zfactor = 20/(zmax-zmin);
 	}
 	
 }

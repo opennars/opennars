@@ -9,16 +9,15 @@ package jurls.core.becca;
  *
  * @author me
  */
-abstract public class ZiptieExample extends IOMatrixExample  {
+public abstract class ZiptieExample extends IOMatrixExample  {
 
     int delayMS = 5;
     final Ziptie ziptie;
     double[] output;
     
     public ZiptieExample(Ziptie z) {
-        super();
-        
-        this.ziptie = z;
+
+        ziptie = z;
     }
 
     @Override

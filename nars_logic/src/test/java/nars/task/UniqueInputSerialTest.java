@@ -58,7 +58,7 @@ public class UniqueInputSerialTest {
         AbstractNAR d = new Default(100,1,1,3).nal(2);
         d.input("<a --> b>.", "<b --> c>.");
 
-        final long ev[] = {1 , 2};
+        long[] ev = {1, 2};
         d.memory.eventDerived.on(t -> {
             assertArrayEquals("all derived terms should be double premise: " + t,
                     ev, t.getEvidence());

@@ -3,7 +3,7 @@ package nars.guifx.graph2;
 /**
  * Created by me on 9/5/15.
  */
-abstract public class TermEdge<N extends TermNode> /*implements ChangeListener*/ {
+public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/ {
 
 
     public static final TermEdge[] empty = new TermEdge[0];
@@ -17,7 +17,6 @@ abstract public class TermEdge<N extends TermNode> /*implements ChangeListener*/
 
 
     public TermEdge(N aSrc, N bSrc) {
-        super();
 
 
         //setAutoSizeChildren(true);
@@ -112,12 +111,12 @@ abstract public class TermEdge<N extends TermNode> /*implements ChangeListener*/
 //            return a.update() || b.update();
 //        }
 
-    public final TermNode otherNode(final TermNode x) {
+    public final TermNode otherNode(TermNode x) {
         if (aSrc == x) return bSrc;
         return aSrc;
     }
 
-    abstract public double getWeight();
+    public abstract double getWeight();
 
     @Override
     public boolean equals(Object o) {

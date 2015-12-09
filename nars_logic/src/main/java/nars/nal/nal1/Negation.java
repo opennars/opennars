@@ -30,7 +30,7 @@ import nars.term.compound.GenericCompound;
  */
 public interface Negation {
 
-    static Term negation(final Term t) {
+    static Term negation(Term t) {
         if (t.op() == Op.NEGATION) {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);

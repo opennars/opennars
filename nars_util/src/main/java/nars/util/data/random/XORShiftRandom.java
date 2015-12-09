@@ -11,8 +11,7 @@ public class XORShiftRandom extends Random {
     private long seed;
 
     public XORShiftRandom() {
-        super();
-        this.seed = System.nanoTime();
+        seed = System.nanoTime();
     }
 
     public XORShiftRandom(long seed) {
@@ -21,13 +20,13 @@ public class XORShiftRandom extends Random {
     }
 
 
-    protected long nextLong(final int nbits) {
+    protected long nextLong(int nbits) {
         // TODO Not thread-safe but if this function was synchronized it should be, do that in a subclass
-        long x = this.seed;
+        long x = seed;
         x ^= (x << 21);
         x ^= (x >>> 35);
         x ^= (x << 4);
-        this.seed = x;
+        seed = x;
         x &= ((1L << nbits) - 1);
         return x;
     }
@@ -36,7 +35,7 @@ public class XORShiftRandom extends Random {
 
     @Override
     public void setSeed(long newSeed) {
-        this.seed = newSeed;
+        seed = newSeed;
     }
 
 }

@@ -17,6 +17,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Stores the contents of some, all, or of multiple NAR memory snapshots.
@@ -27,10 +28,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     public <X> Set<X> vertices(Class<? extends X> type) {
         Set<X> s = Global.newHashSet(vertexSet().size());
-        for (Object o : vertexSet()) {
-            if (type.isInstance(o))
-                s.add((X)o);
-        }
+        s.addAll(vertexSet().stream().filter(type::isInstance).map(o -> (X) o).collect(Collectors.toList()));
         return s;
     }
     
@@ -48,7 +46,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         boolean includeConcept(Concept c);
     }
 
-    public final static Filter IncludeEverything = new Filter() {
+    public static final Filter IncludeEverything = new Filter() {
         @Override
         public boolean includePriority(float l) {
             return true;
@@ -60,7 +58,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
     };
 
-    public final static class ExcludeBelowPriority implements Filter {
+    public static final class ExcludeBelowPriority implements Filter {
 
         final float thresh;
 
@@ -71,7 +69,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         public ExcludeBelowPriority(float l) {
-            this.thresh = l;
+            thresh = l;
         }
 
         @Override
@@ -110,19 +108,19 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         void setMinPriority(float minPriority);
     }
 
-    abstract public static class NAREdge<X> extends DefaultEdge implements Named<X> {
+    public abstract static class NAREdge<X> extends DefaultEdge implements Named<X> {
 
         private final X object;
         private final int hash;
 
         public NAREdge(X x) {
-            this.object = x;
-            this.hash = getHash();
+            object = x;
+            hash = getHash();
         }
 
         public NAREdge() {
-            this.object = (X)getClass();
-            this.hash = getHash();
+            object = (X)getClass();
+            hash = getHash();
         }
 
 
@@ -145,7 +143,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(Object obj) {
             if (obj == object) {
                 return true;
             }
@@ -206,12 +204,12 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
         @Override
         public Budget getBudget() {
-            return this.getObject().getBudget();
+            return getObject().getBudget();
         }
 
         @Override
         public Term getTerm() {
-            return this.getObject().getTerm();
+            return getObject().getTerm();
         }
 
     }
@@ -234,12 +232,12 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
         @Override
         public Budget getBudget() {
-            return this.getObject().getBudget();
+            return getObject().getBudget();
         }
 
         @Override
         public Term getTerm() {
-            return this.getObject().getTerm();
+            return getObject().getTerm();
         }
     }
 
@@ -399,7 +397,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         private final long time;
 
         public TimeNode(long t) {
-            this.time = t;
+            time = t;
         }
 
         @Override

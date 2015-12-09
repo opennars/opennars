@@ -37,21 +37,22 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
     @Override
-    public Task top(final boolean eternal, final boolean temporal) {
+    public Task top(boolean eternal, boolean temporal) {
 
-        final Task[] tasks = getCachedNullTerminatedArray();
+        Task[] tasks = getCachedNullTerminatedArray();
 
         if (tasks == null)
             return null;
 
         if (eternal && temporal) {
             return tasks[0];
-        } else if (eternal ^ temporal) {
+        }
+        if (eternal ^ temporal) {
             ///final int n = size();
 
             Task t;
             for (int i = 0; null != (t = tasks[i++]); ) {
-                final boolean tEtern = Tense.isEternal(t.getOccurrenceTime());
+                boolean tEtern = Tense.isEternal(t.getOccurrenceTime());
                 if (eternal && tEtern) return t;
                 if (temporal && !tEtern) return t;
             }
@@ -64,7 +65,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public final Task top(Ranker r) {
 
-        final Task[] tasks = getCachedNullTerminatedArray();
+        Task[] tasks = getCachedNullTerminatedArray();
         //if (tasks == null) return null;
 
 
@@ -101,7 +102,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
      * @return
      */
     @Override
-    public Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
+    public Task add(Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
 
 
         /**
@@ -109,7 +110,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
          * input, strongest, revised (created here and returned)
          */
 
-        final Memory memory = c.getMemory();
+        Memory memory = c.getMemory();
 
 
         //empty (special case)
@@ -182,11 +183,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             checkForDeleted();
         }
 
-        final float rankInput = r.rank(input);    // for the new isBelief
+        float rankInput = r.rank(input);    // for the new isBelief
 
-        final int siz = data.size();
-        final boolean atCapacity = (capacity == siz);
-        final Task[] tasks = getCachedNullTerminatedArray();
+        int siz = data.size();
+        boolean atCapacity = (capacity == siz);
+        Task[] tasks = getCachedNullTerminatedArray();
 
         int i = 0;
 
@@ -205,7 +206,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 float existingRank = r.rank(b, rankInput);
 
-                final boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
+                boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
                 if (inputGreater) {
                     break; //item will be inserted at this index
                 } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {

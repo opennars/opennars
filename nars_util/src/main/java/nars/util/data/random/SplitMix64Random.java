@@ -40,11 +40,11 @@ public class SplitMix64Random extends Random {
 	/** 2<sup>53</sup> &minus; 1. */
 	private static final long DOUBLE_MASK = ( 1L << 53 ) - 1;
 	/** 2<sup>-53</sup>. */
-	private static final double NORM_53 = 1. / ( 1L << 53 );
+	private static final double NORM_53 = 1.0 / ( 1L << 53 );
 	/** 2<sup>24</sup> &minus; 1. */
 	private static final long FLOAT_MASK = ( 1L << 24 ) - 1;
 	/** 2<sup>-24</sup>. */
-	private static final double NORM_24 = 1. / ( 1L << 24 );
+	private static final double NORM_24 = 1.0 / ( 1L << 24 );
 
 	/** The internal state of the algorithm (a Weyl generator using the {@link #PHI} as increment). */
 	private long x;
@@ -58,7 +58,7 @@ public class SplitMix64Random extends Random {
 	 * 
 	 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 	 */
-	public SplitMix64Random( final long seed ) {
+	public SplitMix64Random( long seed ) {
 		setSeed( seed );
 	}
 
@@ -105,7 +105,7 @@ public class SplitMix64Random extends Random {
      * @return the next pseudorandom {@code int} value between {@code 0} (inclusive) and {@code n} (exclusive).
      */
 	@Override
-	public int nextInt( final int n ) {
+	public int nextInt( int n ) {
         if ( n <= 0 ) throw new IllegalArgumentException();
         return (int)( ( staffordMix13( x += PHI ) >>> 1 ) % n );
 	}
@@ -119,13 +119,13 @@ public class SplitMix64Random extends Random {
      * @param n the positive bound on the random number to be returned.
      * @return the next pseudorandom {@code long} value between {@code 0} (inclusive) and {@code n} (exclusive).
      */
-	public long nextLong( final long n ) {
+	public long nextLong( long n ) {
         if ( n <= 0 ) throw new IllegalArgumentException();
 		// No special provision for n power of two: all our bits are good.
-		for(;;) {
-			final long bits = staffordMix13( x += PHI ) >>> 1;
-			final long value = bits % n;
-			if ( bits - value + ( n - 1 ) >= 0 ) return value;
+		while (true) {
+			long bits = staffordMix13(x += PHI) >>> 1;
+			long value = bits % n;
+			if (bits - value + (n - 1) >= 0) return value;
 		}
 	}
 	
@@ -145,7 +145,7 @@ public class SplitMix64Random extends Random {
 	}
 	
 	@Override
-	public void nextBytes( final byte[] bytes ) {
+	public void nextBytes( byte[] bytes ) {
 		int i = bytes.length, n = 0;
 		while( i != 0 ) {
 			n = Math.min( i, 8 );
@@ -166,7 +166,7 @@ public class SplitMix64Random extends Random {
 	 * @param x a long integer.
 	 * @return a hash value with good avalanching properties.
 	 */
-	public final static long murmurHash3( long x ) {
+	public static final long murmurHash3( long x ) {
 		x ^= x >>> 33;
 		x *= 0xff51afd7ed558ccdL;
 		x ^= x >>> 33;
@@ -182,7 +182,7 @@ public class SplitMix64Random extends Random {
 	 * @param seed a seed for this generator.
 	 */
 	@Override
-	public void setSeed( final long seed ) {
+	public void setSeed( long seed ) {
 		x = murmurHash3( seed );
 	}
 
@@ -191,7 +191,7 @@ public class SplitMix64Random extends Random {
 	 * 
 	 * @param state the new state for this generator (must be nonzero).
 	 */
-	public void setState( final long state ) {
+	public void setState( long state ) {
 		x = state;
 	}
 }

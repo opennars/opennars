@@ -67,7 +67,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
         super(n.task(sentenceTerm + punc));
 
-        this.nar = n;
+        nar = n;
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
@@ -240,15 +240,12 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     }
 
     public void recordSimilar(Task task) {
-        final TreeMap<Float, Task> similar = this.similar;
+        TreeMap<Float, Task> similar = this.similar;
 
 
         //TODO add the levenshtein distance of other task components
-        final float worstDiff;
-        if (similar!=null && similar.size() >= maxSimilars)
-            worstDiff = similar.lastKey();
-        else
-            worstDiff = Float.POSITIVE_INFINITY;
+        float worstDiff;
+        worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
 
         float difference = 0;
         difference +=
@@ -256,21 +253,21 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         if (difference > worstDiff)
             return;
 
-        final float freqDiff = Math.min(
+        float freqDiff = Math.min(
                 Math.abs(task.getFrequency() - freqMin),
                 Math.abs(task.getFrequency() - freqMax));
         difference += 2 * freqDiff;
         if (difference > worstDiff)
             return;
 
-        final float confDiff = Math.min(
+        float confDiff = Math.min(
                 Math.abs(task.getConfidence() - confMin),
                 Math.abs(task.getConfidence() - confMax));
         difference += 1 * confDiff;
         if (difference > worstDiff)
             return;
 
-        final float termDifference =
+        float termDifference =
                 Texts.levenshteinDistancePercent(
                     task.getTerm().toString(),
                     getTerm().toString());
@@ -364,10 +361,8 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     @Override
     public void report() {
         if (valid != null) {
-            valid.forEach(t -> {
-                System.out.println(t.getExplanation()
-                );
-            });
+            valid.forEach(t -> System.out.println(t.getExplanation()
+            ));
         }
     }
 
@@ -399,10 +394,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
      */
     public static double score(List<EternalTaskCondition> requirements) {
         double cost = cost(requirements);
-        if (Double.isFinite(cost))
-            return 1.0 / (1.0 + cost);
-        else
-            return -1;
+        return Double.isFinite(cost) ? 1.0 / (1.0 + cost) : -1;
 
     }
 
@@ -413,17 +405,17 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
     @Override
     public String toConditionString() {
-        return  "  freq in(" + freqMin + "," + freqMax +
-                "), conf in(" + confMin + "," + confMax +
-                "), creation in(" + creationStart + "," + creationEnd + ")";
+        return  "  freq in(" + freqMin + ',' + freqMax +
+                "), conf in(" + confMin + ',' + confMax +
+                "), creation in(" + creationStart + ',' + creationEnd + ')';
     }
 
     @Override
     public void toString(PrintStream out) {
-        out.println(isTrue() ? " OK" : "ERR" + "\t" + toString() + " " + toConditionString());
+        out.println(isTrue() ? " OK" : "ERR" + '\t' + toString() + ' ' + toConditionString());
 
         BiConsumer<String,Task> printer = (label,s) -> {
-            out.print("\t" + label + " ");
+            out.print('\t' + label + ' ');
             out.println(s.getExplanation().replace("\n", "\n\t\t"));
         };
 

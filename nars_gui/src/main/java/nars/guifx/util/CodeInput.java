@@ -17,7 +17,6 @@ public class CodeInput extends BorderPane {
     }
 
     public CodeInput(String text) {
-        super();
 
         //StyleClassedTextArea codeArea = new StyleClassedTextArea();
         //codeArea.getStyleClass().add("code-area");

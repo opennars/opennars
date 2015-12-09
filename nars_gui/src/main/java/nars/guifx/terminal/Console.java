@@ -64,7 +64,7 @@ public class Console extends BorderPane {
         setBottom(textField);
     }
 
-    public static void runSafe(final Runnable runnable) {
+    public static void runSafe(Runnable runnable) {
         Objects.requireNonNull(runnable, "runnable");
         if (Platform.isFxApplicationThread()) {
             runnable.run();
@@ -76,7 +76,6 @@ public class Console extends BorderPane {
 
     public static class WordWrapConsole extends Console {
         public WordWrapConsole() {
-            super();
             textArea.setWrapText(true);
         }
     }
@@ -87,20 +86,20 @@ public class Console extends BorderPane {
         textField.requestFocus();
     }
 
-    public void setOnMessageReceivedHandler(final Consumer<String> onMessageReceivedHandler) {
+    public void setOnMessageReceivedHandler(Consumer<String> onMessageReceivedHandler) {
         this.onMessageReceivedHandler = onMessageReceivedHandler;
     }
 
     public void clear() {
-        runSafe(() -> textArea.clear());
+        runSafe(textArea::clear);
     }
 
-    public void print(final String text) {
+    public void print(String text) {
         Objects.requireNonNull(text, "text");
         runSafe(() -> textArea.appendText(text));
     }
 
-    public void println(final String text) {
+    public void println(String text) {
         Objects.requireNonNull(text, "text");
         runSafe(() -> textArea.appendText(text + System.lineSeparator()));
     }

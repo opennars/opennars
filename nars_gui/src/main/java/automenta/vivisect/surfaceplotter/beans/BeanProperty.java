@@ -30,8 +30,8 @@ public abstract class BeanProperty<BEAN, PROP> {
 	 * @param model
 	 */
 	public void setBean(BEAN model) {
-		Object old = this.bean;
-		this.bean = model;
+		Object old = bean;
+		bean = model;
 		bind(old);
 		
 	}
@@ -104,7 +104,7 @@ public abstract class BeanProperty<BEAN, PROP> {
 		eventSetDescriptor = null;
 		propertyDescriptor = null;
 
-		if (this.bean != null) {
+		if (bean != null) {
 			try {
 				// introspect the bean
 				beaninfo = Introspector.getBeanInfo(bean.getClass());
@@ -112,18 +112,18 @@ public abstract class BeanProperty<BEAN, PROP> {
 				// extract the property
 				for (PropertyDescriptor prop : beaninfo.getPropertyDescriptors())
 					if (prop.getName().equals(propertyName)) {
-						this.propertyDescriptor = prop;
+						propertyDescriptor = prop;
 						break;
 					}
 				// extract the events
 				for (EventSetDescriptor ev : beaninfo.getEventSetDescriptors())
 					if (ev.getListenerType() == PropertyChangeListener.class) {
-						this.eventSetDescriptor = ev;
+						eventSetDescriptor = ev;
 						break;
 					}
 				// now I know the event, and the property, I can use it 
 				if (propertyObserver!=null) 
-					eventSetDescriptor.getAddListenerMethod().invoke(this.bean, propertyObserver);
+					eventSetDescriptor.getAddListenerMethod().invoke(bean, propertyObserver);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

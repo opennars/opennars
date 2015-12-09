@@ -62,6 +62,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      *
      * @param children child nodes to this node
      */
+    @SafeVarargs
     public Node(X... children) {
         setChildren(children);
     }
@@ -83,7 +84,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * from <code>0</code> to <code>getArity()-1</code>
      * @return the child node at the specified index
      */
-    public X getChild(final int index) {
+    public X getChild(int index) {
         return children[index];
     }
 
@@ -122,7 +123,8 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      *
      * @param children the nodes to set as children in order
      */
-    public void setChildren(X... children) {
+    @SafeVarargs
+    public final void setChildren(X... children) {
         // Must be careful to maintain the integrity of parent
         this.children = Arrays.copyOf(children, children.length);
     }
@@ -620,7 +622,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      */
     public final Class<?> dataType() {
         Class<?>[] argTypes = new Class<?>[getArity()];
-        final int arity = getArity();
+        int arity = getArity();
         for (int i = 0; i < arity; i++) {
             Node child = getChild(i);
             if (child != null) {
@@ -647,12 +649,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * null if the set of input types is invalid.
      */
     public Class dataType(Class... inputTypes) {
-        if (isTerminal()) {
-            return Void.class;
-        } else {
-            // Either the widest type or null if not valid
-            return TypeUtil.getSuper(inputTypes);
-        }
+        return isTerminal() ? Void.class : TypeUtil.getSuper(inputTypes);
     }
 
     /**
@@ -682,7 +679,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
     @Override
     public int hashCode() {
         int result = getIdentifier().hashCode();
-        for (final Node child : children) {
+        for (Node child : children) {
             if (child != null) {
                 result = 37 * result + child.hashCode();
             }
@@ -712,7 +709,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             }
 
             return clone;
-        } catch (final CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             assert false;
             // This shouldn't ever happen - if it does then everythings going to
             // blow up anyway.
@@ -736,7 +733,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             Node n = (Node) super.clone();
             n.children = new Node[children.length];
             return n;
-        } catch (final CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             assert false;
         }
 
@@ -747,7 +744,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             Node n = (Node) super.clone();
             n.children = newChildren;
             return n;
-        } catch (final CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             assert false;
         }
 
@@ -763,23 +760,23 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * @return {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (obj instanceof Node) {
-            final Node n = (Node) obj;
+            Node n = (Node) obj;
 
             if (n.getArity() != getArity()) {
                 return false;
-            } else if (!getIdentifier().equals(n.getIdentifier())) {
+            }
+            if (!getIdentifier().equals(n.getIdentifier())) {
                 return false;
-            } else {
-                final int a = n.getArity();
-                for (int i = 0; i < a; i++) {
-                    Node thatChild = n.getChild(i);
-                    Node thisChild = getChild(i);
+            }
+            int a = n.getArity();
+            for (int i = 0; i < a; i++) {
+                Node thatChild = n.getChild(i);
+                Node thisChild = getChild(i);
 
-                    if (!Objects.equals(thisChild, thatChild))
-                        return false;
-                }
+                if (!Objects.equals(thisChild, thatChild))
+                    return false;
             }
             return true;
         } else {

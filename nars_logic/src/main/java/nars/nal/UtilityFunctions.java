@@ -31,27 +31,28 @@ import static java.lang.Math.sqrt;
  */
 public class UtilityFunctions extends Util {
 
-    protected UtilityFunctions() { super();    }
+    protected UtilityFunctions() {
+    }
 
     /**
      * A function where the output is conjunctively determined by the inputs
      * @param arr The inputs, each in [0, 1]
      * @return The output that is no larger than each input
      */
-    public final static float and(final float... arr) {        
+    public static final float and(float... arr) {
         float product = 1;
-        for (final float f : arr) {
+        for (float f : arr) {
             product *= f;
         }
         return product;
     }
     
     //may be more efficient than the for-loop version above, for 2 params
-    public final static float and(final float a, final float b) {
+    public static final float and(float a, float b) {
         return a*b;
     }
 
-    public final static float and(final float a, final float b, final float c) {
+    public static final float and(float a, float b, float c) {
         return a*b*c;
     }
 
@@ -61,16 +62,16 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The output that is no smaller than each input
      */
-    public final static float or(final float... arr) {
+    public static final float or(float... arr) {
         float product = 1;
-        for (final float f : arr) {
+        for (float f : arr) {
             product *= (1 - f);
         }
-        return 1f - product;
+        return 1.0f - product;
     }
     
-    public final static float or(final float a, final float b) {
-        return 1f-((1f-a)*(1f-b));
+    public static final float or(float a, float b) {
+        return 1.0f -((1.0f -a)*(1.0f -b));
     }
     
     /**
@@ -78,17 +79,17 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The arithmetic average the inputs
      */
-    public final static float aveAri(final float... arr) {
+    public static final float aveAri(float... arr) {
         float sum = 0;
-        for (final float f : arr) {
+        for (float f : arr) {
             sum += f;
         }
         return sum / arr.length;
     }
     
     //may be more efficient than the for-loop version above, for 2 params
-    public final static float aveAri(final float a, final float b) {
-        return (a + b)/2f;
+    public static final float aveAri(float a, float b) {
+        return (a + b)/ 2.0f;
     }
 
     /**
@@ -96,9 +97,9 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The geometric average the inputs
      */
-    public final static float aveGeo(final float... arr) {
+    public static final float aveGeo(float... arr) {
         float product = 1;
-        for (final float f : arr) {
+        for (float f : arr) {
             if (f == 0) return 0;
             product *= f;
         }
@@ -106,22 +107,22 @@ public class UtilityFunctions extends Util {
     }
 
     //may be more efficient than the for-loop version above, for 2 params
-    public final static float aveGeo(final float a, final float b) {
+    public static final float aveGeo(float a, float b) {
         if ((a == 0)||(b==0)) return 0; //early result avoiding pow()
         return (float)sqrt(a*b);
     }
     
     //may be more efficient than the for-loop version above, for 3 params
-    public final static float aveGeo(final float a, final float b, final float c) {
+    public static final float aveGeo(float a, float b, float c) {
         //final float m = Global.BUDGET_EPSILON
 
-        final float base = a*b*c;
+        float base = a*b*c;
         //if ((a < m)||(b < m)||(c < m)) return 0; //early result avoiding pow()
         return (float)pow(base, 1.0/3.0);
     }
 
-    public final static boolean aveGeoNotLessThan(final float min, final float a, final float b, final float c) {
-        final float minCubed = min*min*min; //cube both sides
+    public static final boolean aveGeoNotLessThan(float min, float a, float b, float c) {
+        float minCubed = min*min*min; //cube both sides
         return (a*b*c) >= minCubed;
     }
     
@@ -130,7 +131,7 @@ public class UtilityFunctions extends Util {
      * @param w Weight of evidence, a non-negative real number
      * @return The corresponding confidence, in [0, 1)
      */
-    public final static float w2c(final float w) {
+    public static final float w2c(float w) {
         return w / (w + Global.HORIZON);
     }
 
@@ -139,7 +140,7 @@ public class UtilityFunctions extends Util {
      * @param c confidence, in [0, 1)
      * @return The corresponding weight of evidence, a non-negative real number
      */
-    public final static float c2w(final float c) {
+    public static final float c2w(float c) {
         return Global.HORIZON * c / (1 - c);
     }
 

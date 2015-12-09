@@ -5,14 +5,14 @@ import nars.nal.meta.PreCondition;
 import nars.term.Term;
 
 /** tests the resolved terms specified by pattern variable terms */
-abstract public class PreCondition2 extends PreCondition {
+public abstract class PreCondition2 extends PreCondition {
     public final Term arg1, arg2;
     private final String str;
 
     public PreCondition2(Term var1, Term var2) {
-        this.arg1 = var1;
-        this.arg2 = var2;
-        this.str = getClass().getSimpleName() + ":(" + arg1 + ',' + arg2 + ')';
+        arg1 = var1;
+        arg2 = var2;
+        str = getClass().getSimpleName() + ":(" + arg1 + ',' + arg2 + ')';
     }
 
     @Override public final boolean test(RuleMatch m) {
@@ -21,7 +21,7 @@ abstract public class PreCondition2 extends PreCondition {
                 m.apply(arg2, false));
     }
 
-    abstract public boolean test(RuleMatch m, Term a, Term b);
+    public abstract boolean test(RuleMatch m, Term a, Term b);
 
     @Override
     public final String toString() {

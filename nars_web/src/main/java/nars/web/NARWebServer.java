@@ -40,7 +40,6 @@ public class NARWebServer extends PathHandler {
         private Active active;
 
         public WebSocketCore() {
-            super();
         }
 
 
@@ -166,7 +165,6 @@ public class NARWebServer extends PathHandler {
     }
 
     public NARWebServer(NAR nar, int httpPort) throws IOException {
-        super();
 
         this.nar = nar;
 
@@ -240,14 +238,7 @@ public class NARWebServer extends PathHandler {
 
         int httpPort;
 
-        if (args.length < 1) {
-            //System.out.println("Usage: NARServer <httpPort>");
-            httpPort = 8080;
-        } else {
-            httpPort = Integer.parseInt(args[0]);
-
-
-        }
+        httpPort = args.length < 1 ? 8080 : Integer.parseInt(args[0]);
 
         NARWebServer s = new NARWebServer(nar, httpPort);
 

@@ -192,7 +192,7 @@ public class TermTest {
         Concept ca = n.concept(a2);
         assertTrue(ca != null);
 
-        assertEquals(true, n.core.active.size() > 0);
+        assertEquals(true, !n.core.active.isEmpty());
 
     }
 
@@ -234,7 +234,7 @@ public class TermTest {
 
 
         try {
-            Task x = n.inputTask(t + ".");
+            Task x = n.inputTask(t + '.');
             assertFalse(t + " is invalid compound term", true);
         } catch (Throwable tt) {
             assertTrue(true);
@@ -403,6 +403,8 @@ public class TermTest {
 
         assertTrue(a!=b);
         assertEquals(a, b);
+
+        //todo: method results ignored ?
         b.equals(a.normalized());
 
         assertEquals("re-normalizing doesn't affect: " + a.normalized(), b,
@@ -633,8 +635,8 @@ public class TermTest {
                 b.hashCode(), a.hashCode());
 
         NAR n = new Terminal();
-        Compound x3 = n.term("<" + i1 + " --> y>");
-        Compound x4 = n.term("<" + i1 + " --> y>");
+        Compound x3 = n.term('<' + i1 + " --> y>");
+        Compound x4 = n.term('<' + i1 + " --> y>");
 
         assertFalse("i2 is a possible subterm of x3, structurally, even if the upper bits differ",
                 x3.impossibleSubTermOrEquality(n.term(i2)));

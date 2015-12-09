@@ -128,6 +128,7 @@ public abstract class AbstractComponentAddon implements ComponentAddon {
    */
   private Object[] getDefaults(LookAndFeelAddons addon) {
     List defaults = new ArrayList();
+    //noinspection IfStatementWithTooManyBranches
     if (isWindows(addon)) {
       addWindowsDefaults(addon, defaults);
     } else if (isMetal(addon)) {
@@ -192,14 +193,14 @@ public abstract class AbstractComponentAddon implements ComponentAddon {
    * @return true if the current look and feel is one of JGoodies Plastic l&fs
    */
   protected boolean isPlastic() {
-    return UIManager.getLookAndFeel().getClass().getName().indexOf("Plastic") != -1;
+    return UIManager.getLookAndFeel().getClass().getName().contains("Plastic");
   }
 
   /**
    * @return true if the current look and feel is Synth l&f
    */
   protected boolean isSynth() {
-    return UIManager.getLookAndFeel().getClass().getName().indexOf("ynth") != -1;    
+    return UIManager.getLookAndFeel().getClass().getName().contains("ynth");
   }
 
   protected Font getFont(String key, Font defaultFont) {

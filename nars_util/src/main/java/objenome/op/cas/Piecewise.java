@@ -4,6 +4,7 @@ import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Piecewise extends Operation {
     
@@ -45,7 +46,7 @@ public class Piecewise extends Operation {
     public String pretty() {
         
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < possibilities.size(); i++) {
             Expr expr = possibilities.get(i);
@@ -80,10 +81,7 @@ public class Piecewise extends Operation {
     }
     
     public Expr deriv(Var respected) {
-        ArrayList<Expr> newpossibilities = new ArrayList<Expr>();
-        for (Expr expr : possibilities) {
-            newpossibilities.add(expr.deriv(respected));
-        }
+        ArrayList<Expr> newpossibilities = possibilities.stream().map(expr -> expr.deriv(respected)).collect(Collectors.toCollection(ArrayList::new));
         return make(newpossibilities);
     }
     

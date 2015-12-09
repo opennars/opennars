@@ -186,7 +186,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeEdgeDistance</code> must be true for edge to nodes
 	 * distances to be taken into account.
 	 */
-	protected float edgeDistanceCostFactor = 3000f;
+	protected float edgeDistanceCostFactor = 3000.0f;
 
 	/**
 	 * Cost factor applied to energy calculations involving edges that cross
@@ -195,7 +195,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeEdgeCrossing</code> must be true for edge crossings
 	 * to be taken into account.
 	 */
-	protected float edgeCrossingCostFactor = 6000f;
+	protected float edgeCrossingCostFactor = 6000.0f;
 
 	/**
 	 * Cost factor applied to energy calculations involving the general node
@@ -205,7 +205,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeNodeDistribution</code> must be true for this general
 	 * distribution to be applied.
 	 */
-	protected float nodeDistributionCostFactor = 30000f;
+	protected float nodeDistributionCostFactor = 30000.0f;
 
 	/**
 	 * Cost factor applied to energy calculations for node promixity to the
@@ -215,7 +215,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>isOptimizeBorderLine</code> must be true for border
 	 * repulsion to be applied.
 	 */
-	protected float borderLineCostFactor = 5f;
+	protected float borderLineCostFactor = 5.0f;
 
 	/**
 	 * Cost factor applied to energy calculations for the edge lengths.
@@ -286,7 +286,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	@Range(min = 0, max = 0.2)
 	public final SimpleDoubleProperty vertexSpeed = new SimpleDoubleProperty(0.04);
 
-	float vertexMotionThreshold = 0f;
+	float vertexMotionThreshold = 0.0f;
 
 
 	/**
@@ -319,7 +319,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * of the combined x and y normals are multipled by the current
 	 * radius to obtain test points for each vector in the array.
 	 */
-	static protected final float[] xNormTry;
+	protected static final float[] xNormTry;
 
 	/**
 	 * Array of the y portion of the normalised test vectors that
@@ -327,7 +327,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * of the combined x and y normals are multipled by the current
 	 * radius to obtain test points for each vector in the array.
 	 */
-	static protected final float[] yNormTry;
+	protected static final float[] yNormTry;
 
 	/**
 	 * determines, in how many segments the circle around cells is divided, to
@@ -336,7 +336,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>performRound</code> method might further improve accuracy for a
 	 * small performance hit. The change is described in the method comment.
 	 */
-	protected final static int circleResolution = 8; //originally 8, lets try an odd or prime #
+	protected static final int circleResolution = 8; //originally 8, lets try an odd or prime #
 
 	static {
 
@@ -389,7 +389,6 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Constructor for HyperOrganicLayout.
 	 */
 	public HyperOrganicLayout(Rectangle2D.Float bounds) {
-		super();
 		boundsX = bounds.x;
 		boundsY = bounds.y;
 		boundsWidth = bounds.width;
@@ -419,7 +418,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	}
 
 	public void run(ObservableList<Node> c) {
-		GraphNode[] gg = c.stream().filter(nn -> nn instanceof GraphNode).map(nn -> (GraphNode) nn).toArray(ii -> new GraphNode[ii]);
+		GraphNode[] gg = c.stream().filter(nn -> nn instanceof GraphNode).map(nn -> (GraphNode) nn).toArray(GraphNode[]::new);
 		run(gg);
 	}
 
@@ -465,7 +464,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 		CellWrapper<TermNode>[] v = this.v = new CellWrapper[vertices.length];
 		for (int i = 0; i < vertices.length; i++) {
-			final CellWrapper vi = v[i] = new CellWrapper(vertices[i]);
+			CellWrapper vi = v[i] = new CellWrapper(vertices[i]);
 
 			vertexMap.put(vertices[i], i); //new Integer(i));
 			bounds = getVertexBounds(vertices[i]);
@@ -528,7 +527,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 		// Form internal model of edges
 
-		final List<CellWrapper<TermEdge>> e = this.e;
+		List<CellWrapper<TermEdge>> e = this.e;
 		e.clear();
 
 		for (GraphNode vi : vertices) {
@@ -552,18 +551,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 				if (targetCell != null) {
 					target = vertexMap.get(targetCell);
 				}
-				if (source != -1) {
-					w.source = source;
-				} else {
-					// source end is not connected
-					w.source = -1;
-				}
-				if (target != -1) {
-					w.target = target;
-				} else {
-					// target end is not connected
-					w.target = -1;
-				}
+				w.source = source != -1 ? source : -1;
+				w.target = target != -1 ? target : -1;
 			}
 		}
 
@@ -584,8 +573,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 
 		moveRadius = initialMoveRadius;
 
-		final float maxDistanceLimit = this.maxDistanceLimit.floatValue();
-		final float minDistanceLimit = this.minDistanceLimit.floatValue();
+		float maxDistanceLimit = this.maxDistanceLimit.floatValue();
+		float minDistanceLimit = this.minDistanceLimit.floatValue();
 		minDistanceLimitSquared = minDistanceLimit * minDistanceLimit;
 		maxDistanceLimitSquared = maxDistanceLimit * maxDistanceLimit;
 
@@ -604,11 +593,11 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			vertices[i] = vi.cell;
 			bounds = getVertexBounds(vertices[i]);
 
-			result[i][0] = vi.x - bounds.width / 2f;
-			result[i][1] = vi.y - bounds.height / 2f;
+			result[i][0] = vi.x - bounds.width / 2.0f;
+			result[i][1] = vi.y - bounds.height / 2.0f;
 		}
 
-		final float vertexSpeed = this.vertexSpeed.floatValue();
+		float vertexSpeed = this.vertexSpeed.floatValue();
 
 		//model.beginUpdate();
 		/*try
@@ -628,7 +617,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		//}
 	}
 
-	Rectangle2D.Float unit = new Rectangle2D.Float(-32f, -32f, 32f, 32f);
+	Rectangle2D.Float unit = new Rectangle2D.Float(-32.0f, -32.0f, 32.0f, 32.0f);
 
 	private Rectangle2D.Float getVertexBounds(GraphNode vertice) {
 		return unit;
@@ -670,8 +659,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			float oldEdgeLength = getEdgeLengthAffectedEdges(index);
 			float oldAdditionFactors = getAdditionFactorsEnergy(index);
 
-			final CellWrapper[] v = this.v;
-			final float moveRadius = this.moveRadius;
+			CellWrapper[] v = this.v;
+			float moveRadius = this.moveRadius;
 			for (int j = 0; j < circleResolution; j++) {
 				float movex = moveRadius * xNormTry[j];
 				float movey = moveRadius * yNormTry[j];
@@ -787,53 +776,29 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	protected float getNodeDistribution(int i) {
 		float energy = 0.0f;
 
-		final float minDistanceLimitSquared = this.minDistanceLimitSquared;
+		float minDistanceLimitSquared = this.minDistanceLimitSquared;
 
 		// This check is placed outside of the inner loop for speed, even
 		// though the code then has to be duplicated
-		if (isOptimizeNodeDistribution == true) {
-			if (approxNodeDimensions) {
-				for (int j = 0; j < v.length; j++) {
-					if (i != j) {
-						CellWrapper<TermNode> vi = v[i];
-						CellWrapper<TermNode> vj = v[j];
-						float vx = vi.x - vj.x;
-						float vy = vi.y - vj.y;
-						float distanceSquared = vx * vx + vy * vy;
-						distanceSquared -= vi.radiusSquared;
-						distanceSquared -= vj.radiusSquared;
+		if (true) {
+			for (int j = 0; j < v.length; j++) {
+                if (i != j) {
+                    CellWrapper<TermNode> vi = v[i];
+                    CellWrapper<TermNode> vj = v[j];
+                    float vx = vi.x - vj.x;
+                    float vy = vi.y - vj.y;
+                    float distanceSquared = vx * vx + vy * vy;
+                    distanceSquared -= vi.radiusSquared;
+                    distanceSquared -= vj.radiusSquared;
 
-						// prevents from dividing with Zero.
-						if (distanceSquared < minDistanceLimitSquared) {
-							distanceSquared = minDistanceLimitSquared;
-						}
+                    // prevents from dividing with Zero.
+                    if (distanceSquared < minDistanceLimitSquared) {
+                        distanceSquared = minDistanceLimitSquared;
+                    }
 
-						energy += nodeDistributionCostFactor / distanceSquared;
-					}
-				}
-			} else {
-				for (int j = 0; j < v.length; j++) {
-					if (i != j) {
-						CellWrapper<TermNode> vi = v[i];
-						CellWrapper<TermNode> vj = v[j];
-						float vx = vi.x - vj.x;
-						float vy = vi.y - vj.y;
-						float distanceSquared = vx * vx + vy * vy;
-						distanceSquared -= vi.radiusSquared;
-						distanceSquared -= vj.radiusSquared;
-						// If the height separation indicates overlap, subtract
-						// the widths from the distance. Same for width overlap
-						// TODO						if ()
-
-						// prevents from dividing with Zero.
-						if (distanceSquared < minDistanceLimitSquared) {
-							distanceSquared = minDistanceLimitSquared;
-						}
-
-						energy += nodeDistributionCostFactor / distanceSquared;
-					}
-				}
-			}
+                    energy += nodeDistributionCostFactor / distanceSquared;
+                }
+            }
 		}
 		return energy;
 	}
@@ -850,7 +815,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	protected float getBorderline(int i) {
 		float energy = 0.0f;
 		if (isOptimizeBorderLine) {
-			final float minDistanceLimit = this.minDistanceLimit.floatValue();
+			float minDistanceLimit = this.minDistanceLimit.floatValue();
 			// Avoid very small distances and convert negative distance (i.e
 			// outside the border to small positive ones )
 			CellWrapper<TermNode> vi = v[i];
@@ -949,10 +914,10 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 		// max and min variable for minimum bounding rectangles overlapping
 		// checks
 
-		final CellWrapper[] v = this.v;
+		CellWrapper[] v = this.v;
 
 		if (isOptimizeEdgeCrossing) {
-			final CellWrapper ei = e.get(i);// e = this.e;
+			CellWrapper ei = e.get(i);// e = this.e;
 			int eis = ei.source;
 			float iP1X = v[eis].x;
 			float iP1Y = v[eis].y;
@@ -961,7 +926,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			float iP2Y = v[eit].y;
 
 			for (int j = 0; j < e.size(); j++) {
-				final CellWrapper ej = e.get(j);// e = this.e;
+				CellWrapper ej = e.get(j);// e = this.e;
 
 				int ejs = ej.source;
 				float jP1X = v[ejs].x;
@@ -1067,16 +1032,12 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 			var8 = var4 - var8;
 			var10 = var6 - var10;
 			var12 = var8 * var4 + var10 * var6;
-			if (var12 <= 0f) {
-				var14 = 0f;
-			} else {
-				var14 = var12 * var12 / (var4 * var4 + var6 * var6);
-			}
+			var14 = var12 <= 0.0f ? 0.0f : var12 * var12 / (var4 * var4 + var6 * var6);
 		}
 
 		float var16 = var8 * var8 + var10 * var10 - var14;
-		if (var16 < 0f) {
-			var16 = 0f;
+		if (var16 < 0.0f) {
+			var16 = 0.0f;
 		}
 
 		return var16;

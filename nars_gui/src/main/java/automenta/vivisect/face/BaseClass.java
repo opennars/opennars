@@ -52,15 +52,14 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     
     Kernel kernel = new Kernel(3, 3,
     new float[] {
-  1f/9f, 1f/9f, 1f/9f,
-  1f/9f, 1f/9f, 1f/9f,
-  1f/9f, 1f/9f, 1f/9f});
+            1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f,
+            1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f,
+            1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f});
     BufferedImageOp op = new ConvolveOp(kernel);
     
     public BaseClass()   
-    {   
-        super();
-        db = null;   
+    {
+        db = null;
         buffer = null;   
         mouseMove = false;   
         mouseDown = false;   
@@ -89,18 +88,18 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     {   
         int j1 = k - i;   
         int k1 = l - j;   
-        int l1 = (int)Math.sqrt((double)(j1 * j1 + k1 * k1) + 0.5D);   
+        int l1 = (int)Math.sqrt((j1 * j1 + k1 * k1) + 0.5D);
         if(l1 > 0)   
         {   
             int i2 = (-k1 * i1) / l1 / 2;   
             int j2 = (j1 * i1) / l1 / 2;   
             int k2 = k - 3 * j2;   
-            int l2 = l + 3 * i2;   
-            int ai[] = {   
-                i - i2, i + i2, k2 + i2, k2 + 3 * i2, k, k2 - 3 * i2, k2 - i2   
-            };   
-            int ai1[] = {   
-                j - j2, j + j2, l2 + j2, l2 + 3 * j2, l, l2 - 3 * j2, l2 - j2   
+            int l2 = l + 3 * i2;
+            int[] ai = {
+                    i - i2, i + i2, k2 + i2, k2 + 3 * i2, k, k2 - 3 * i2, k2 - i2
+            };
+            int[] ai1 = {
+                    j - j2, j + j2, l2 + j2, l2 + 3 * j2, l, l2 - 3 * j2, l2 - j2
             };   
             g.fillPolygon(ai, ai1, 7);   
         }   
@@ -110,7 +109,7 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     {   
         int j1 = k - i;   
         int k1 = l - j;   
-        int l1 = (int)Math.sqrt((double)(j1 * j1 + k1 * k1) + 0.5D);   
+        int l1 = (int)Math.sqrt((j1 * j1 + k1 * k1) + 0.5D);
         if(l1 > 0)   
         {   
             int i2 = (-k1 * i1) / l1 / 2;   
@@ -119,12 +118,12 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
                 if(j1 * j1 > k1 * k1)   
                     j2 = 1;   
                 else   
-                    i2 = 1;   
-            int ai[] = {   
-                i - i2, i + i2, k + i2, k - i2   
-            };   
-            int ai1[] = {   
-                j - j2, j + j2, l + j2, l - j2   
+                    i2 = 1;
+            int[] ai = {
+                    i - i2, i + i2, k + i2, k - i2
+            };
+            int[] ai1 = {
+                    j - j2, j + j2, l + j2, l - j2
             };   
             g.fillPolygon(ai, ai1, 4);   
         }   
@@ -250,11 +249,12 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
    
     public void run()   
     {   
-        final long cycleDelay = 30L;
+        long cycleDelay = 30L;
         try   
         {   
-            double d = 0.0D;   
-            do   
+            double d = 0.0D;
+            //noinspection InfiniteLoopStatement
+            do
             {   
                 width = getWidth();
                 height = getHeight();
@@ -291,9 +291,8 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
             } while(true);   
         }   
         catch(InterruptedException _ex)   
-        {   
-            return;   
-        }   
+        {
+        }
     }   
    
     public void sleep(int i)   

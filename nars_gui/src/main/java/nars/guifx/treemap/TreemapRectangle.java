@@ -16,8 +16,7 @@ class TreemapRectangle extends Parent {
     private final Color rectangleColor;
     private final Rectangle rectangle = new Rectangle();
 
-    public TreemapRectangle(final TreemapDtoElement child, Color color) {
-        super();
+    public TreemapRectangle(TreemapDtoElement child, Color color) {
 
         rectangle.setHeight(child.getHeight());
         rectangle.setWidth(child.getWidth());
@@ -27,7 +26,7 @@ class TreemapRectangle extends Parent {
         rectangleColor = color;
         rectangle.setFill(rectangleColor);
 
-        this.getChildren().setAll(rectangle, new Text(child.getLabel()));
+        getChildren().setAll(rectangle, new Text(child.getLabel()));
 
         /*runLater(() -> {
             //Tooltip.install(rectangle, new NodeTooltip(child));
@@ -37,7 +36,7 @@ class TreemapRectangle extends Parent {
 
     private static class NodeTooltip extends Tooltip {
 
-        public NodeTooltip(final TreemapDtoElement child) {
+        public NodeTooltip(TreemapDtoElement child) {
             super(child.getLabel());
         }
     }

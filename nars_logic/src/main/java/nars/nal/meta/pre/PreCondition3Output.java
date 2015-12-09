@@ -6,7 +6,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/15/15.
  */
-abstract public class PreCondition3Output extends PreCondition3 {
+public abstract class PreCondition3Output extends PreCondition3 {
 
     public PreCondition3Output(Term var1, Term var2, Term var3) {
         super(var1, var2, var3);

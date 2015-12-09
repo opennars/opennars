@@ -54,9 +54,9 @@ public class SizeAwareWindow extends Scene {
         super(new BorderPane());
 
 
-        this.root = (BorderPane)getRoot();
+        root = (BorderPane)getRoot();
 
-        this.nodes = LMap.newHash(model);
+        nodes = LMap.newHash(model);
 
         //root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
@@ -83,7 +83,7 @@ public class SizeAwareWindow extends Scene {
         if (window == null)
             window = new Stage();
 
-        final Stage finalWindow = this.window = window;
+        Stage finalWindow = this.window = window;
         runLater(() -> {
 
             finalWindow.setAlwaysOnTop(true);
@@ -143,11 +143,11 @@ public class SizeAwareWindow extends Scene {
 
     Parent current;
 
-    public static double[] d2(final double a, final double b) {
+    public static double[] d2(double a, double b) {
         return new double[]{a, b};
     }
 
-    final double _d[] = new double[2];
+    final double[] _d = new double[2];
 
     public void resized(double width, double height) {
 
@@ -160,8 +160,8 @@ public class SizeAwareWindow extends Scene {
 
         if (next == null) {
             setContent(null);
-            this.current.setVisible(false);
-        } else if (next != this.current) {
+            current.setVisible(false);
+        } else if (next != current) {
 
             if (next!=null) {
                 next.setVisible(true);
@@ -170,10 +170,10 @@ public class SizeAwareWindow extends Scene {
                 next.layout();
             }
 
-            Parent old = this.current;
+            Parent old = current;
 
             System.out.println("setting: " + next + ' ' + next.getLayoutBounds());
-            setContent(this.current = next);
+            setContent(current = next);
 
             if (old!=null)
                 old.setVisible(false);
@@ -195,23 +195,17 @@ public class SizeAwareWindow extends Scene {
 //        return node;
 //    }
 
-    private static Supplier<Parent> Icon = () -> {
-        return new Button(":D");
-    };
+    private static Supplier<Parent> Icon = () -> new Button(":D");
 
-    private static Supplier<Parent> DefaultNAR = () -> {
-        return new NARide(new Default().loop());
-    };
+    private static Supplier<Parent> DefaultNAR = () -> new NARide(new Default().loop());
 
-    private static Supplier<Parent> Row = () -> {
-        return new HBox(2,
-                new NSlider(100, 25),
-                new NSlider(100, 25),
-                new NSlider(100, 25),
-                new NSlider(100, 25)
+    private static Supplier<Parent> Row = () -> new HBox(2,
+            new NSlider(100, 25),
+            new NSlider(100, 25),
+            new NSlider(100, 25),
+            new NSlider(100, 25)
 
-        );
-    };
+    );
     private static Supplier<Parent> Column = () -> {
         Pane vb = new VBox(
                 new TextArea("wtf"),
@@ -238,9 +232,11 @@ public class SizeAwareWindow extends Scene {
                 double h = d[1];
                 if ((w < 200) && (h < 200)) {
                     return Icon;
-                } else if (w < 200) {
+                }
+                if (w < 200) {
                     return Column;
-                } else if (h < 200) {
+                }
+                if (h < 200) {
                     return Row;
                 }
                 return DefaultNAR;

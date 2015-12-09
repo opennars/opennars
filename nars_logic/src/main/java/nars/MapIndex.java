@@ -29,7 +29,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
     @Override
     public final Termed get(Term t) {
 
-        Map<Term, Termed> d = this.data;
+        Map<Term, Termed> d = data;
         Termed existing = d.get(t);
         if (existing ==null) {
             return compile(t);
@@ -54,20 +54,14 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
             compileSubterms((TermVector) ((Compound)t).subterms());
             return t;
         }
-        else if (t instanceof Compound) {
-            compiled = (T) compileCompound((Compound)t);
-        } else {
-            compiled = t; //nothing to change
-        }
+        compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
 
         data.put(t, compiled);
         return compiled;
     }
 
     public void print(PrintStream out) {
-        BiConsumer itemPrinter = (k, v) -> {
-            System.out.println(v.getClass().getSimpleName() + ": " + v);
-        };
+        BiConsumer itemPrinter = (k, v) -> System.out.println(v.getClass().getSimpleName() + ": " + v);
         data.forEach(itemPrinter);
         System.out.println("--");
         subterms.forEach(itemPrinter);
@@ -75,20 +69,14 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
     protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
         TermContainer subs = c.subterms();
-        Map<TermContainer, TermContainer> st = this.subterms;
+        Map<TermContainer, TermContainer> st = subterms;
         TermContainer existing = st.get(subs);
         if (existing == null) {
             subs = compileSubterms((TermVector) subs);
             st.put(subs, subs);
         }
 
-        if (existing == subs) {
-            // already using the shared subterms
-            return c;
-        } else {
-            // different instance, so clone new compound
-            return (Compound<T>) c.clone(subs);
-        }
+        return existing == subs ? c : (Compound<T>) c.clone(subs);
     }
 
     private TermContainer compileSubterms(TermVector subs) {

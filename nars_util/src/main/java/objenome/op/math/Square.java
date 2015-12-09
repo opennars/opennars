@@ -32,7 +32,7 @@ import objenome.op.Numeric1;
  */
 public class Square extends Numeric1 {
 
-    @Override public double value(final double x) {
+    @Override public double value(double x) {
         return x*x;
     }
 

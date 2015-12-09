@@ -22,18 +22,16 @@ class TreemapElementFactory {
         ColorGroup realColorGroup = getColorGroup(dtoElement, colorGroup);
         Color color = getColor(dtoElement, realColorGroup);
         if (dtoElement.isContainer() && !dtoElement.getItem().getItems().isEmpty()) {
-            final SortedSet<Item> items = dtoElement.getItem().getItems();
-            final double width = dtoElement.getWidth();
-            final double height = dtoElement.getHeight();
+            SortedSet<Item> items = dtoElement.getItem().getItems();
+            double width = dtoElement.getWidth();
+            double height = dtoElement.getHeight();
             return new TreemapLayout(width, height, items, realColorGroup, this);
         }
         return new TreemapRectangle(dtoElement, color);
     }
 
     private Color getColor(TreemapDtoElement dtoElement, ColorGroup realColorGroup) {
-        return colorCache.computeIfAbsent(dtoElement, c -> {
-           return realColorGroup.fetchColor();
-        });
+        return colorCache.computeIfAbsent(dtoElement, c -> realColorGroup.fetchColor());
         /*
         if (colorCache.containsKey(dtoElement)) {
             return colorCache.get(dtoElement);
@@ -48,7 +46,7 @@ class TreemapElementFactory {
         return colorGroupCache.computeIfAbsent(dtoElement, c -> {
             ColorGroup realColorGroup = colorGroup;
             if (dtoElement.isContainer() && !dtoElement.getItem().getItems().isEmpty()) {
-                final SortedSet<Item> items = dtoElement.getItem().getItems();
+                SortedSet<Item> items = dtoElement.getItem().getItems();
                 realColorGroup = colorBucket.fetchColorGroup(items.size());
             }
             return realColorGroup;

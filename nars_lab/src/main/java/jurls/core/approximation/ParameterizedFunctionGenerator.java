@@ -10,5 +10,5 @@ package jurls.core.approximation;
  * @author thorsten
  */
 public interface ParameterizedFunctionGenerator {
-    public ParameterizedFunction generate(int numInputVectorElements);
+    ParameterizedFunction generate(int numInputVectorElements);
 }

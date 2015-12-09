@@ -72,7 +72,7 @@ public class DifferenceExt extends Difference {
      * Try to make a new compound from two term. Called by the logic rules.
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term A, final Term B) {
+    public static Term make(Term A, Term B) {
 
         if (A.equals(B)) return null;
 

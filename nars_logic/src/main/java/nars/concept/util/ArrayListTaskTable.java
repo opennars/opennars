@@ -33,7 +33,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
     }
 
     public ArrayListTaskTable(int capacity) {
-        super(i -> new Task[i]);
+        super(Task[]::new);
         setCapacity(capacity);
     }
 
@@ -76,7 +76,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 
     @Override
     public void setCapacity(int newCapacity) {
-        this.capacity = newCapacity;
+        capacity = newCapacity;
         data.ensureCapacity(newCapacity);
     }
 
@@ -85,10 +85,10 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
      * iterator-less implementation
      */
     @Override
-    public Task getFirstEquivalent(final Task t, final Equality<Task> e) {
+    public Task getFirstEquivalent(Task t, Equality<Task> e) {
         if (isEmpty()) return null;
 
-        final Task[] aa = getCachedNullTerminatedArray();
+        Task[] aa = getCachedNullTerminatedArray();
         Task a;
         for (int i = 0; null != (a = aa[i++]); ) {
             if (e.areEqual(a, t))
@@ -113,7 +113,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         }
 
         //Memory m = c.getMemory();
-        final int siz = size();
+        int siz = size();
         if (siz + 1 > capacity) {
             // FIFO, remove oldest question (last)
             /*Task removed = */remove(siz - 1);
@@ -148,7 +148,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         long taskOccurrrence = t.getOccurrenceTime();
         long[] taskEvidence = t.getEvidence();
 
-        final Task[] aa = getCachedNullTerminatedArray();
+        Task[] aa = getCachedNullTerminatedArray();
         for (Task x : aa) {
 
             if (x == null) return false;

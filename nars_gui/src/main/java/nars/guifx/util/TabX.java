@@ -16,11 +16,11 @@ import java.util.logging.Logger;
 public class TabX extends Tab {
 
 
-    private final static Logger logger = Logger.getLogger(TabX.class.toString());
+    private static final Logger logger = Logger.getLogger(TabX.class.toString());
 
     public static class TabButton extends Tab {
 
-        final static int spacing = 2;
+        static final int spacing = 2;
 
         final Pane buttons = new HBox(spacing);
 
@@ -70,13 +70,13 @@ public class TabX extends Tab {
 
     protected void update() {
 
-        final boolean s = !closed && isSelected();
+        boolean s = !closed && isSelected();
 
         //logger.severe(getText() + " visible=" + s);
 
         update(s);
 
-        final Node c = getContent();
+        Node c = getContent();
         if (c!=null)
             c.setVisible(s);
 

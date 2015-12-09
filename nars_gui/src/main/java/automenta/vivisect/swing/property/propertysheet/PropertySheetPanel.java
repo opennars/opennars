@@ -144,7 +144,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 			add("Center", tableScroll);
 		}
 		descriptionButton.setSelected(visible);
-		PropertySheetPanel.this.revalidate();
+		revalidate();
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	 */
 	public void setToolBarVisible(boolean visible) {
 		actionPanel.setVisible(visible);
-		PropertySheetPanel.this.revalidate();
+		revalidate();
 	}
 
 	/**
@@ -224,8 +224,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		getTable().cancelEditing();
 
 		Property[] properties = model.getProperties();
-		for (int i = 0, c = properties.length; i < c; i++) {
-			properties[i].readFromObject(data);
+		for (Property property : properties) {
+			property.readFromObject(data);
 		}
 		repaint();
 	}
@@ -241,8 +241,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		getTable().commitEditing();
 
 		Property[] properties = getProperties();
-		for (int i = 0, c = properties.length; i < c; i++) {
-			properties[i].writeToObject(data);
+		for (Property property : properties) {
+			property.writeToObject(data);
 		}
 	}
 

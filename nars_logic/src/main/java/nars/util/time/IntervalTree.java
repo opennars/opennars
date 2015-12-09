@@ -17,7 +17,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 		return c;
 	}
 
-	final public V getEqual(K low, K high){
+	public final V getEqual(K low, K high){
 		return getEqual(new Between<>(low, high));
 	}
 
@@ -115,11 +115,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 
 	public void put(Between<K> key, V value) {
-		if(root == null){
-			root = new IntervalTreeLeaf<>(key, value);
-		}else{
-			root = root.put(key,value);
-		}
+		root = root == null ? new IntervalTreeLeaf<>(key, value) : root.put(key, value);
 	}
 	
 	public void put(K low, K high, V value) {

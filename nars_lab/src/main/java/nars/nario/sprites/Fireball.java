@@ -59,7 +59,7 @@ public class Fireball extends Sprite
 
         if (facing != 0) anim++;
 
-        float sideWaysSpeed = 8f;
+        float sideWaysSpeed = 8.0f;
         //        float sideWaysSpeed = onGround ? 2.5f : 1.2f;
 
         if (xa > 2)
@@ -93,14 +93,7 @@ public class Fireball extends Sprite
         if (onGround) ya = -10;
 
         ya *= 0.95f;
-        if (onGround)
-        {
-            xa *= GROUND_INERTIA;
-        }
-        else
-        {
-            xa *= AIR_INERTIA;
-        }
+        xa *= onGround ? GROUND_INERTIA : AIR_INERTIA;
 
         if (!onGround)
         {
@@ -134,16 +127,11 @@ public class Fireball extends Sprite
         boolean collide = false;
         if (ya > 0)
         {
-            if (isBlocking(x + xa - width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya, xa, 0)) collide = true;
-            else if (isBlocking(x + xa - width, y + ya + 1, xa, ya)) collide = true;
-            else if (isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
+            if (isBlocking(x + xa - width, y + ya, xa, 0) || isBlocking(x + xa + width, y + ya, xa, 0) || isBlocking(x + xa - width, y + ya + 1, xa, ya) || isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
         }
         if (ya < 0)
         {
-            if (isBlocking(x + xa, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa - width, y + ya - height, xa, ya)) collide = true;
-            else if (collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
+            if (isBlocking(x + xa, y + ya - height, xa, ya) || collide || isBlocking(x + xa - width, y + ya - height, xa, ya) || collide || isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
         }
         if (xa > 0)
         {

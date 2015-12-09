@@ -44,7 +44,6 @@ public class Commander implements Consumer<NAR> {
     }
 
     public Commander(NAR nar, TaskAccumulator buffer) {
-        super();
 
         //this.nar = nar;
 
@@ -53,11 +52,11 @@ public class Commander implements Consumer<NAR> {
                 nar.memory.eventFrameStart.on(this);
                 //: null;
 
-        this.commands = buffer;
+        commands = buffer;
         commandIterator = Iterators.cycle(commands);
 
 
-        this.maxTemporalBeliefAge = nar.memory.duration() * maxTemporalBeliefDurations;
+        maxTemporalBeliefAge = nar.memory.duration() * maxTemporalBeliefDurations;
 
 
         nar.memory.eventTaskProcess.on((tp) -> {
@@ -94,13 +93,13 @@ public class Commander implements Consumer<NAR> {
         if (cs == 0) return;
 
 
-        final long now = nar.time();
+        long now = nar.time();
         if (now%cycleDivisor!= 0) return;
 
         Iterator<Task> commandIterator = this.commandIterator;
         for (int i = 0; i < inputsPerFrame; i++) {
             if (commandIterator.hasNext()) {
-                final Task next = commandIterator.next();
+                Task next = commandIterator.next();
                 if (valid(now, next))
                     nar.input(next);
                 else
@@ -110,7 +109,7 @@ public class Commander implements Consumer<NAR> {
 
     }
 
-    public final boolean valid(final long now, final Task t) {
+    public final boolean valid(long now, Task t) {
 
         if (t.getBudget().isDeleted())
             return false;

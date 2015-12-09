@@ -42,7 +42,7 @@ public class SynchronizedCurveBag<K, V extends Itemized<K>> extends CurveBag<K, 
     }
 
     @Override
-    public V peekNext(final boolean remove) {
+    public V peekNext(boolean remove) {
         synchronized (lock) {
             return super.peekNext(remove);
         }

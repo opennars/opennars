@@ -32,12 +32,9 @@ public class FindZeros<C> extends NumericSolver<C> {
             
             SetNumericValue var = variables.get(0);
 
-            double best = solver.solve(1000, new UnivariateFunction() {
-                @Override
-                public double value(final double d) {
-                    var.setValue(d);
-                    return eval(o);
-                }
+            double best = solver.solve(1000, d -> {
+                var.setValue(d);
+                return eval(o);
             }, getMin(var, var), getMax(var, var)); //var.getMin().doubleValue(), var.getMax().doubleValue());
             
             var.setValue(best);

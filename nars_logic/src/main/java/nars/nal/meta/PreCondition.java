@@ -14,9 +14,9 @@ import java.util.function.Predicate;
  * WARNING: no preconditions should store any state so that their instances may be used by
  * different contexts (ex: NAR's)
  */
-abstract public class PreCondition implements Predicate<RuleMatch>, Comparable<PreCondition>, Serializable {
+public abstract class PreCondition implements Predicate<RuleMatch>, Comparable<PreCondition>, Serializable {
 
-    abstract public String toString();
+    public abstract String toString();
 
     @Override
     public final int hashCode() {

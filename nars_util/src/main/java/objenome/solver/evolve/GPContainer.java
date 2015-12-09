@@ -73,7 +73,6 @@ import java.util.Map;
      *
      */
     public GPContainer() {
-        super();
 
     }
 
@@ -117,7 +116,7 @@ import java.util.Map;
     }
 
     protected Population<I> newPopulation() {
-        return new Population<I>(this);
+        return new Population<>(this);
     }
 
     public Population<I> getPopulation() {
@@ -128,9 +127,9 @@ import java.util.Map;
         return (I) i;
     }
 
-    public static interface GPContainerAware {
+    public interface GPContainerAware {
 
-        public void setConfig(GPContainer c);
+        void setConfig(GPContainer c);
     }
 
     /**

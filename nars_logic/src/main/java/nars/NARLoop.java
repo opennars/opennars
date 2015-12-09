@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  */
 public class NARLoop implements Runnable {
 
-    final static Logger logger = Logger.getLogger(NARLoop.class.getSimpleName());
+    static final Logger logger = Logger.getLogger(NARLoop.class.getSimpleName());
 
     public final NAR nar;
 
@@ -60,38 +60,34 @@ public class NARLoop implements Runnable {
     public NARLoop(NAR n, int initialPeriod, boolean reserveCPUCore) {
 
 
-        this.nar = n;
-        this.cpuCoreReserve = reserveCPUCore;
+        nar = n;
+        cpuCoreReserve = reserveCPUCore;
 
         n.the("loop", this);
 
         setPeriodMS(initialPeriod);
 
-        this.thread = new Thread(this);
+        thread = new Thread(this);
         thread.start();
         logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
 
     }
 
 
-    public final boolean setPeriodMS(final int period) {
+    public final boolean setPeriodMS(int period) {
         int prevPeriod = getPeriodMS();
 
         if (prevPeriod == period) return false;
 
-        this.periodMS = period;
+        periodMS = period;
 
         //thread priority control
         if (thread != null) {
             int pri = thread.getPriority();
-            final int fullThrottlePri = Thread.MIN_PRIORITY;
+            int fullThrottlePri = Thread.MIN_PRIORITY;
 
-            final int targetPri;
-            if (periodMS == 0) {
-                targetPri = fullThrottlePri;
-            } else {
-                targetPri = Thread.NORM_PRIORITY;
-            }
+            int targetPri;
+            targetPri = periodMS == 0 ? fullThrottlePri : Thread.NORM_PRIORITY;
 
             if (targetPri != pri)
                 thread.setPriority(fullThrottlePri);
@@ -115,7 +111,7 @@ public class NARLoop implements Runnable {
     }
 
     @Override
-    final public void run() {
+    public final void run() {
 
 
 
@@ -132,12 +128,12 @@ public class NARLoop implements Runnable {
         }
 
         try {
-            final NAR nar = this.nar;
+            NAR nar = this.nar;
 
             try {
                 while (!stopped) {
 
-                    final int periodMS = this.periodMS;
+                    int periodMS = this.periodMS;
 
                     if (periodMS < 0) {
                         //        try {
@@ -151,7 +147,7 @@ public class NARLoop implements Runnable {
                     }
 
 
-                    final long start = System.currentTimeMillis();
+                    long start = System.currentTimeMillis();
 
                     if (!nar.running.get()) {
                         nar.frame(cyclesPerFrame);
@@ -160,7 +156,7 @@ public class NARLoop implements Runnable {
                     }
 
 
-                    final long frameTimeMS = System.currentTimeMillis() - start;
+                    long frameTimeMS = System.currentTimeMillis() - start;
 
 
                     throttle(periodMS, frameTimeMS);

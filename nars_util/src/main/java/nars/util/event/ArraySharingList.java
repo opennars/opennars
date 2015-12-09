@@ -30,10 +30,9 @@ public class ArraySharingList<C> implements Iterable<C> {
     protected final FasterList<C> data = new FasterList();
     private final IntFunction<C[]> arrayBuilder;
     protected transient C[] array = null;
-    private transient final AtomicBoolean change = new AtomicBoolean(true);
+    private final transient AtomicBoolean change = new AtomicBoolean(true);
 
     public ArraySharingList(IntFunction<C[]> arrayBuilder) {
-        super();
         this.arrayBuilder = arrayBuilder;
     }
 
@@ -117,14 +116,14 @@ public class ArraySharingList<C> implements Iterable<C> {
     }
 
     /** may be null; ignore its size, it will be at least 1 element larger than the size of the list */
-    final public C[] getCachedNullTerminatedArray() {
+    public final C[] getCachedNullTerminatedArray() {
         if (change.compareAndSet(true,false))
             updateArray();
-        return this.array;
+        return array;
     }
 
     /** for thread-safe mode */
-    final synchronized public C[] getCachedNullTerminatedArraySynch() {
+    public final synchronized C[] getCachedNullTerminatedArraySynch() {
         return getCachedNullTerminatedArray();
     }
 
@@ -133,11 +132,11 @@ public class ArraySharingList<C> implements Iterable<C> {
         //TODO for safe atomicity while the events are populated, buffer additions to a sub-list,
         //and apply them if a flag is set on the next read
 
-        final FasterList<C> d = this.data;
+        FasterList<C> d = data;
 
         C[] a;
         if (!d.isEmpty()) {
-            if ((a = this.array) == null)
+            if ((a = array) == null)
                 a = arrayBuilder.apply(d.size()+1);  //+1 for padding
             a = d.fillArrayNullPadded(a);
         }
@@ -145,7 +144,7 @@ public class ArraySharingList<C> implements Iterable<C> {
             a = null;
         }
 
-        return this.array = a;
+        return array = a;
     }
 
     @Override
@@ -177,12 +176,12 @@ public class ArraySharingList<C> implements Iterable<C> {
             int i = 0;
 
             @Override
-            public final boolean hasNext() {
+            public boolean hasNext() {
                 return (next = array[i]) != null;
             }
 
             @Override
-            public final C next() {
+            public C next() {
                 i++;
                 return next;
             }

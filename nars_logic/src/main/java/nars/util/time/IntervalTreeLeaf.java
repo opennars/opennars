@@ -77,15 +77,11 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	@Override
 	public IntervalTreeNode<K, V> put(Between<K> key, V value) {
 		IntervalTreeNode<K, V> putNode = new IntervalTreeLeaf<>(key, value);
-		if(this.key.getLow().compareTo(key.getLow()) < 0){
-			return new IntervalTreeBranch<>(this, putNode);
-		}else{
-			return new IntervalTreeBranch<>(putNode, this);
-		}
+		return this.key.getLow().compareTo(key.getLow()) < 0 ? new IntervalTreeBranch<>(this, putNode) : new IntervalTreeBranch<>(putNode, this);
 	}
 
 	@Override
-	final public V getEqual(final Between<K> range) {
+	public final V getEqual(Between<K> range) {
 		if (getLow().equals(range.getLow()) && getHigh().equals(range.getHigh())) {
 			return getValue();
 		}
@@ -137,11 +133,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 	@Override
 	public IntervalTreeNode<K, V> remove(V value) {
-		if(value.equals(getValue())){
-			return null;
-		}else{
-			return this;
-		}
+		return value.equals(getValue()) ? null : this;
 	}
 
 	@Override
@@ -195,11 +187,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 	@Override
 	public IntervalTreeNode<K, V> removeAll(Collection<V> values) {
-		if(values.contains(getValue())){
-			return null;
-		}else{
-			return this;
-		}
+		return values.contains(getValue()) ? null : this;
 	}
 
 	@Override

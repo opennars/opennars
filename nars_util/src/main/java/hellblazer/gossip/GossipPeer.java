@@ -20,7 +20,6 @@ public class GossipPeer implements GossipListener {
 
 
     public GossipPeer(int port) throws SocketException {
-        super();
 
         GossipConfiguration config = new GossipConfiguration();
         config.seeds = new FasterList();
@@ -39,7 +38,7 @@ public class GossipPeer implements GossipListener {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+ ":" + gossip.communications.getLocalAddress();
+        return getClass().getSimpleName()+ ':' + gossip.communications.getLocalAddress();
     }
 
     public Logger log() {
@@ -135,7 +134,6 @@ public class GossipPeer implements GossipListener {
             onUpdate(id, x);
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 

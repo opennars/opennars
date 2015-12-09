@@ -52,7 +52,7 @@ public final class JoinMatcherMatchTest
     @DataProvider
     public Iterator<Object[]> getInput1MatchData()
     {
-        final List<Object[]> list = Lists.newArrayList();
+        List<Object[]> list = Lists.newArrayList();
 
         Range<Integer> range;
         int index;
@@ -92,14 +92,14 @@ public final class JoinMatcherMatchTest
     }
 
     @Test(dataProvider = "getInput1MatchData")
-    public void joinMatcherWorksCorrectly(final Range<Integer> range,
-        final int index, final boolean match)
+    public void joinMatcherWorksCorrectly(Range<Integer> range,
+                                          int index, boolean match)
     {
-        final Matcher matcher = (Matcher) parser.builder.range(range);
-        final MatcherContext<Object> context = builder.withInput(INPUT1)
+        Matcher matcher = (Matcher) parser.builder.range(range);
+        MatcherContext<Object> context = builder.withInput(INPUT1)
             .withMatcher(matcher).build();
 
-        final boolean actualMatch
+        boolean actualMatch
             = SimpleMatchHandler.INSTANCE.match(context);
 
         assertThat(actualMatch).as("match/no match is correct")

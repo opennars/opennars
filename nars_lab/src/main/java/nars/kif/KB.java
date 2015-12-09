@@ -170,7 +170,7 @@ public class KB {
         KBmanager mgr = KBmanager.getMgr();
         if (mgr != null) {
             String loadCelt = mgr.getPref("loadCELT");
-            if ((loadCelt != null) && loadCelt.equalsIgnoreCase("yes")) {
+            if ((loadCelt != null) && "yes".equalsIgnoreCase(loadCelt)) {
                 //celt = new CELT();
             }
         }
@@ -207,8 +207,8 @@ public class KB {
      * @return An ArrayList of relation names (Strings).
      */
     private ArrayList getCachedRelationNames() {
-        ArrayList relationNames = new ArrayList(this.cachedTransitiveRelationNames);
-        relationNames.addAll(this.cachedRelationNames);
+        ArrayList relationNames = new ArrayList(cachedTransitiveRelationNames);
+        relationNames.addAll(cachedRelationNames);
         return relationNames;
     }
 
@@ -219,7 +219,7 @@ public class KB {
      * @return An ArrayList of RelationCache objects.
      */
     protected ArrayList getRelationCaches() {
-        return this.relationCaches;
+        return relationCaches;
     }
 
     /**
@@ -244,7 +244,7 @@ public class KB {
                 // binary relations are cached in two RelationCaches,
                 // one that looks "upward" from the keys, and another
                 // that looks "downward" from the keys.
-                if (!relname.equals("disjoint")) {
+                if (!"disjoint".equals(relname)) {
                     relationCaches.add(new RelationCache(relname, 2, 1));
                 }
             }
@@ -473,7 +473,7 @@ public class KB {
      */
     private void computeTransitiveCacheClosure(String relationName) {
 
-        System.out.println("INFO in KB.computeTransitiveCacheClosure(" + relationName + ")");
+        System.out.println("INFO in KB.computeTransitiveCacheClosure(" + relationName + ')');
 
         try {
             long t1 = System.currentTimeMillis();
@@ -483,7 +483,7 @@ public class KB {
                 RelationCache c2 = getRelationCache(relationName, 2, 1);
                 RelationCache inst1 = null;
                 RelationCache inst2 = null;
-                boolean isSubrelationCache = relationName.equals("subrelation");
+                boolean isSubrelationCache = "subrelation".equals(relationName);
                 if (isSubrelationCache) {
                     inst1 = getRelationCache("instance", 1, 2);
                     inst2 = getRelationCache("instance", 2, 1);
@@ -503,13 +503,13 @@ public class KB {
                     while (it1.hasNext()) {
                         keyTerm = (String) it1.next();
                         if ((keyTerm == null) || keyTerm.isEmpty()) {
-                            System.out.println("Error in KB.computeTransitiveCacheClosure(" + relationName + ")");
-                            System.out.println("  keyTerm == " + ((keyTerm == null) ? null : "\"" + keyTerm + "\""));
+                            System.out.println("Error in KB.computeTransitiveCacheClosure(" + relationName + ')');
+                            System.out.println("  keyTerm == " + ((keyTerm == null) ? null : '"' + keyTerm + '"'));
                         } else {
                             valSet = (Set) c1.get(keyTerm);
                             valArr = valSet.toArray();
-                            for (int i = 0; i < valArr.length; i++) {
-                                valTerm = (String) valArr[i];
+                            for (Object aValArr : valArr) {
+                                valTerm = (String) aValArr;
 
                                 valSet2 = (Set) c1.get(valTerm);
                                 if (valSet2 != null) {
@@ -557,7 +557,7 @@ public class KB {
             }
             System.out.println("  "
                     + count
-                    + " "
+                    + ' '
                     + relationName
                     + " entries computed in "
                     + ((System.currentTimeMillis() - t1) / 1000.0)
@@ -605,8 +605,8 @@ public class KB {
                 ic1KeyTerm = (String) it1.next();
                 ic1ValSet = (Set) ic1.get(ic1KeyTerm);
                 ic1ValArr = ic1ValSet.toArray();
-                for (int i = 0; i < ic1ValArr.length; i++) {
-                    ic1ValTerm = (String) ic1ValArr[i];
+                for (Object anIc1ValArr : ic1ValArr) {
+                    ic1ValTerm = (String) anIc1ValArr;
                     if (ic1ValTerm != null) {
                         sc1ValSet = (Set) sc1.get(ic1ValTerm);
                         if (sc1ValSet != null) {
@@ -686,8 +686,8 @@ public class KB {
                 dc1KeyTerm = (String) dc1KeyArr[i];
                 dc1ValSet = (Set) dc1.get(dc1KeyTerm);
                 dc1ValArr = dc1ValSet.toArray();
-                for (int j = 0; j < dc1ValArr.length; j++) {
-                    dc1ValTerm = (String) dc1ValArr[j];
+                for (Object aDc1ValArr : dc1ValArr) {
+                    dc1ValTerm = (String) aDc1ValArr;
                     sc2ValSet = (Set) sc2.get(dc1ValTerm);
                     if (sc2ValSet != null) {
                         if (dc1ValSet.addAll(sc2ValSet)) {
@@ -1060,21 +1060,20 @@ public class KB {
         HashSet childs = (HashSet) children.get(parent);
         if (childs != null && childs.contains(child)) {
             return true;
-        } else {
-            ArrayList al = instancesOf(child);
-            for (Object anAl : al) {
-                Formula form = (Formula) anAl;
-                Formula f = new Formula();
-                f.read(form.theFormula);
-                f.read(f.cdr());
-                f.read(f.cdr());
-                String superTerm = f.car();
-                if (superTerm.equals(parent)) {
-                    return true;
-                }
-                if (childs != null && childs.contains(superTerm)) {
-                    return true;
-                }
+        }
+        ArrayList al = instancesOf(child);
+        for (Object anAl : al) {
+            Formula form = (Formula) anAl;
+            Formula f = new Formula();
+            f.read(form.theFormula);
+            f.read(f.cdr());
+            f.read(f.cdr());
+            String superTerm = f.car();
+            if (superTerm.equals(parent)) {
+                return true;
+            }
+            if (childs != null && childs.contains(superTerm)) {
+                return true;
             }
         }
         return false;
@@ -1189,7 +1188,7 @@ public class KB {
                                     count += addRelationCacheEntry(c1, arg2, arg2);
                                     count += addRelationCacheEntry(c2, arg1, arg1);
                                     count += addRelationCacheEntry(c2, arg2, arg2);
-                                } else if (relation.equals("disjoint")) {
+                                } else if ("disjoint".equals(relation)) {
                                     count += addRelationCacheEntry(c1, arg2, arg1);
                                 }
                             }
@@ -1199,7 +1198,7 @@ public class KB {
 
                 // More ways of collecting implied disjointness
                 // assertions.
-                if (relation.equals("disjoint")) {
+                if ("disjoint".equals(relation)) {
                     List partitions = ask("arg", 0, "partition");
                     List decompositions = ask("arg", 0, "disjointDecomposition");
                     forms = new ArrayList();
@@ -1310,14 +1309,14 @@ public class KB {
         StringBuilder b = new StringBuilder();
         try {
             if (literal instanceof List) {
-                b.append("(");
+                b.append('(');
                 for (int i = 0; i < literal.size(); i++) {
                     if (i > 0) {
-                        b.append(" ");
+                        b.append(' ');
                     }
                     b.append((String) literal.get(i));
                 }
-                b.append(")");
+                b.append(')');
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1361,8 +1360,8 @@ public class KB {
         ArrayList partial = ask("arg", argnum1, term1);
         ArrayList result = new ArrayList();
         if (partial != null) {
-            for (int i = 0; i < partial.size(); i++) {
-                Formula f = (Formula) partial.get(i);
+            for (Object aPartial : partial) {
+                Formula f = (Formula) aPartial;
                 if (f.getArgument(argnum2).equals(term2)) {
                     result.add(f);
                 }
@@ -1385,11 +1384,7 @@ public class KB {
      */
     public ArrayList ask(String kind, int argnum, String term) {
 
-        if (kind.compareTo("arg") == 0) {
-            return (ArrayList) formulas.get(kind + "-" + (new Integer(argnum)).toString() + "-" + term);
-        } else {
-            return (ArrayList) formulas.get(kind + "-" + term);
-        }
+        return kind.compareTo("arg") == 0 ? (ArrayList) formulas.get(kind + '-' + (new Integer(argnum)).toString() + '-' + term) : (ArrayList) formulas.get(kind + '-' + term);
     }
 
     /**
@@ -1417,15 +1412,15 @@ public class KB {
                 ArrayList newFormulas = new ArrayList((Collection) kif.formulas.get(key));
                 if (formulas.containsKey(key)) {
                     ArrayList oldFormulas = (ArrayList) formulas.get(key);
-                    for (int i = 0; i < newFormulas.size(); i++) {
-                        Formula newFormula = (Formula) newFormulas.get(i);
+                    for (Object newFormula1 : newFormulas) {
+                        Formula newFormula = (Formula) newFormula1;
                         if (pathname != null) {
                             newFormula.sourceFile = pathname;
                         }
 
                         boolean found = false;
-                        for (int j = 0; j < oldFormulas.size(); j++) {
-                            Formula oldFormula = (Formula) oldFormulas.get(j);
+                        for (Object oldFormula1 : oldFormulas) {
+                            Formula oldFormula = (Formula) oldFormula1;
                             if (newFormula.theFormula.equals(oldFormula.theFormula)) {
                                 found = true;
                                 formulasPresent.add(oldFormula);
@@ -1789,8 +1784,7 @@ public class KB {
      */
     public TreeSet getFormulas() {
 
-        TreeSet newFormulaSet = new TreeSet();
-        newFormulaSet.addAll(formulaMap.keySet());
+        TreeSet newFormulaSet = new TreeSet(formulaMap.keySet());
         return newFormulaSet;
     }
 
@@ -1900,13 +1894,9 @@ public class KB {
             termFormatMap.clear();
 
             // System.out.println("INFO in KB.reloadFormatMaps(): Reading the format maps for " + lang);
-            if (lang == null) {
-                lingua = language;
-            } else {
-                lingua = lang;
-            }
+            lingua = lang == null ? language : lang;
             long t1 = System.currentTimeMillis();
-            ArrayList col = this.ask("arg", 0, "format");
+            ArrayList col = ask("arg", 0, "format");
             if ((col == null) || col.isEmpty()) {
                 // System.out.println("Error in KB.reloadFormatMaps(): No relation formatting file loaded for language " + lang);
                 return;
@@ -1923,10 +1913,10 @@ public class KB {
                 if (arg1.equalsIgnoreCase(lingua)) {
                     key = f.getArgument(2);
                     format = f.getArgument(3);
-                    if (format.startsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(0) == '\"') {
                         format = format.substring(1);
                     }
-                    if (format.endsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(format.length() - 1) == '\"') {
                         format = format.substring(0, format.length() - 1);
                     }
                     if (format.indexOf('$') < 0) {
@@ -1940,7 +1930,7 @@ public class KB {
                     + " seconds to build KB.formatMap");
 
             t1 = System.currentTimeMillis();
-            col = this.ask("arg", 0, "termFormat");
+            col = ask("arg", 0, "termFormat");
             if ((col == null) || col.isEmpty()) {
                 // System.out.println("Error in KB.reloadFormatMaps(): No term formatting file loaded for language: " + lang);
                 return;
@@ -1953,10 +1943,10 @@ public class KB {
                 if (arg1.equalsIgnoreCase(lingua)) {
                     key = f.getArgument(2);
                     format = f.getArgument(3);
-                    if (format.startsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(0) == '\"') {
                         format = format.substring(1);
                     }
-                    if (format.endsWith("\"")) {
+                    if (format.length() > 0 && format.charAt(format.length() - 1) == '\"') {
                         format = format.substring(0, format.length() - 1);
                     }
                     //if (format.indexOf("$") < 0)
@@ -2069,7 +2059,7 @@ public class KB {
      */
     public String addConstituent(String filename, boolean buildCachesP, boolean loadVampireP) {
 
-        System.out.println("ENTER KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+        System.out.println("ENTER KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
         long t1 = System.currentTimeMillis();
         StringBuilder result = new StringBuilder();
 
@@ -2088,7 +2078,7 @@ public class KB {
             if (constituents.contains(canonicalPath)) {
                 return "Error: " + canonicalPath + " already loaded.";
             }
-            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
             System.out.println("  Adding " + canonicalPath);
             try {
                 file.readFile(canonicalPath);
@@ -2101,7 +2091,7 @@ public class KB {
                 return result.toString();
             }
 
-            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
             System.out.println("  Parsed file "
                     + canonicalPath
                     + " of size "
@@ -2157,13 +2147,13 @@ public class KB {
             }
             System.out.println("x");
 
-            this.terms.addAll(file.terms);
+            terms.addAll(file.terms);
 
             if (!constituents.contains(canonicalPath)) {
                 constituents.add(canonicalPath);
             }
 
-            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+            System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
             System.out.println("  File "
                     + canonicalPath
                     + " loaded in "
@@ -2182,7 +2172,7 @@ public class KB {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
-        System.out.println("EXIT KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
+        System.out.println("EXIT KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ')');
         return result.toString();
     }
 
@@ -2365,10 +2355,10 @@ public class KB {
             Pattern p;
             Integer groupN;
             ArrayList pVal;
-            for (int i = 0; i < patternArray.length; i++) {
-                pName = patternArray[i][0];
-                p = Pattern.compile(patternArray[i][1]);
-                groupN = new Integer(patternArray[i][2]);
+            for (String[] aPatternArray : patternArray) {
+                pName = aPatternArray[0];
+                p = Pattern.compile(aPatternArray[1]);
+                groupN = new Integer(aPatternArray[2]);
                 pVal = new ArrayList();
                 pVal.add(p);
                 pVal.add(groupN);
@@ -2463,7 +2453,7 @@ public class KB {
         ArrayList ans = new ArrayList();
         if ((queryLit instanceof List) && !(queryLit.isEmpty())) {
             String pred = (String) queryLit.get(0);
-            if (pred.equals("instance")
+            if ("instance".equals(pred)
                     && isVariable((String) queryLit.get(1))
                     && !(isVariable((String) queryLit.get(2)))) {
                 String className = (String) queryLit.get(2);
@@ -2473,12 +2463,12 @@ public class KB {
                 Set ai = getAllInstances(className);
                 for (Object anAi : ai) {
                     inst = (String) anAi;
-                    fStr = ("(instance " + inst + " " + className + ")");
+                    fStr = ("(instance " + inst + ' ' + className + ')');
                     f = new Formula();
                     f.read(fStr);
                     ans.add(f);
                 }
-            } else if (pred.equals("valence")
+            } else if ("valence".equals(pred)
                     && isVariable((String) queryLit.get(1))
                     && isVariable((String) queryLit.get(2))) {
                 String inst;
@@ -2491,7 +2481,7 @@ public class KB {
                     inst = (String) it.next();
                     valence = getValence(inst);
                     if (valence > 0) {
-                        fStr = ("(valence " + inst + " " + valence + ")");
+                        fStr = ("(valence " + inst + ' ' + valence + ')');
                         f = new Formula();
                         f.read(fStr);
                         ans.add(f);
@@ -2511,11 +2501,7 @@ public class KB {
                         break;
                     }
                 }
-                if (constant != null) {
-                    ans = askWithRestriction(cidx, constant, 0, pred);
-                } else {
-                    ans = ask("arg", 0, pred);
-                }
+                ans = constant != null ? askWithRestriction(cidx, constant, 0, pred) : ask("arg", 0, pred);
             }
         }
         return ans;
@@ -2860,7 +2846,7 @@ public class KB {
      */
     public static boolean isVariable(String obj) {
         if (Formula.isNonEmptyString(obj)) {
-            return (obj.startsWith("?") || obj.startsWith("@"));
+            return (obj.length() > 0 && obj.charAt(0) == '?' || obj.length() > 0 && obj.charAt(0) == '@');
         }
         return false;
     }
@@ -2980,7 +2966,7 @@ public class KB {
                 executable = new File(inferenceEngine);
                 if (DEBUG || executable.exists()) {
                     File dir = executable.getParentFile();
-                    File file = new File(dir, (this.name + "-v.kif"));
+                    File file = new File(dir, (name + "-v.kif"));
                     filename = file.getCanonicalPath();
 
                     // System.out.println("filename == " + filename);
@@ -3099,7 +3085,7 @@ public class KB {
 
             Formula.resetSortalTypeCache();
 
-            boolean tptpParseP = KBmanager.getMgr().getPref("TPTP").equalsIgnoreCase("yes");
+            boolean tptpParseP = "yes".equalsIgnoreCase(KBmanager.getMgr().getPref("TPTP"));
             long t1 = System.currentTimeMillis();
             String form;
             Formula f;
@@ -3173,9 +3159,8 @@ public class KB {
                 int goodCount = 0;
                 int badCount = 0;
                 List badList = new ArrayList();
-                Iterator it = formulaMap.values().iterator();
-                while (it.hasNext()) {
-                    f = (Formula) it.next();
+                for (Object o : formulaMap.values()) {
+                    f = (Formula) o;
                     if (f.getTheTptpFormulas().isEmpty()) {
                         badCount++;
                         if (badCount < 11) {
@@ -3199,7 +3184,7 @@ public class KB {
                         + ((badCount == 1) ? "" : "s")
                         + (someAreBad ? ":" : ""));
                 if (someAreBad) {
-                    it = badList.iterator();
+                    Iterator it = badList.iterator();
                     for (int i = 1; it.hasNext(); i++) {
                         f = (Formula) it.next();
                         System.out.println("[" + i + "]: " + f);
@@ -3223,8 +3208,7 @@ public class KB {
      */
     private void writePrologFormulas(ArrayList forms, PrintWriter pr) {
 
-        TreeSet ts = new TreeSet();
-        ts.addAll(forms);
+        TreeSet ts = new TreeSet(forms);
         if (forms != null) {
             int i = 0;
             for (Object t : ts) {
@@ -3408,22 +3392,19 @@ public class KB {
             pr.println("% Copyright 2007 Articulate Software Incorporated");
             pr.println("% This software released under the GNU Public License <http://www.gnu.org/copyleft/gpl.html>.");
             pr.println("% This is a translation to TPTP of KB "
-                    + sanitizedKBName + "\n");
+                    + sanitizedKBName + '\n');
 
-            orderedFormulae = new TreeSet(new Comparator() {
-                @Override
-                public int compare(Object o1, Object o2) {
-                    Formula f1 = (Formula) o1;
-                    Formula f2 = (Formula) o2;
-                    int fileCompare = f1.sourceFile.compareTo(f2.sourceFile);
+            orderedFormulae = new TreeSet((o1, o2) -> {
+                Formula f1 = (Formula) o1;
+                Formula f2 = (Formula) o2;
+                int fileCompare = f1.sourceFile.compareTo(f2.sourceFile);
+                if (fileCompare == 0) {
+                    fileCompare = (new Integer(f1.startLine)).compareTo(f2.startLine);
                     if (fileCompare == 0) {
-                        fileCompare = (new Integer(f1.startLine)).compareTo(f2.startLine);
-                        if (fileCompare == 0) {
-                            fileCompare = (new Long(f1.endFilePosition)).compareTo(f2.endFilePosition);
-                        }
+                        fileCompare = (new Long(f1.endFilePosition)).compareTo(f2.endFilePosition);
                     }
-                    return fileCompare;
                 }
+                return fileCompare;
             });
             orderedFormulae.addAll(formulaMap.values());
 
@@ -3447,7 +3428,7 @@ public class KB {
                 //----for some provers, such as E and EP.
                 if (onlyPlainFOL
                         && !tptpFormulas.isEmpty()
-                        && !KBmanager.getMgr().getPref("holdsPrefix").equalsIgnoreCase("yes")
+                        && !"yes".equalsIgnoreCase(KBmanager.getMgr().getPref("holdsPrefix"))
                         && f.containsVariableArityRelation(this)) {
                     Formula tmpF = new Formula();
                     tmpF.read(f.theFormula);
@@ -3484,17 +3465,17 @@ public class KB {
                             pr.print("%FOL ");
                             commentedFormula = true;
                         }
-                        if (reasoner.equals("Equinox---1.0b") && f.theFormula.indexOf("equal") > 2) {
+                        if ("Equinox---1.0b".equals(reasoner) && f.theFormula.indexOf("equal") > 2) {
                             Formula f2 = new Formula();
                             f2.read(f.cdr());
                             f2.read(f.car());
-                            if (f2.theFormula.equals("equals")) {
+                            if ("equals".equals(f2.theFormula)) {
                                 pr.print("%FOL ");
                                 commentedFormula = true;
                             }
                         }
                     }
-                    pr.println("fof(kb_" + sanitizedKBName + "_" + axiomIndex++
+                    pr.println("fof(kb_" + sanitizedKBName + '_' + axiomIndex++
                             + ",axiom,(" + theTPTPFormula + ")).");
                     // if (commentedFormula) {
                     pr.println();
@@ -3548,7 +3529,7 @@ public class KB {
      * caches for subclass and instance.
      *
      */
-    class RelationCache extends HashMap {
+    static class RelationCache extends HashMap {
 
         private String relationName = "";
 

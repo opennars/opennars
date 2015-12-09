@@ -28,7 +28,7 @@ public class QueryVariableTest extends AbstractNALTester {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Supplier[][]{
-                {() -> new Default()},
+                {Default::new},
                 //{() -> new Default().nal(5)}
                 //{new Neuromorphic(4)},
         });

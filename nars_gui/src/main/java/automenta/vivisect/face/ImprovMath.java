@@ -24,7 +24,7 @@ public final class ImprovMath
         double d7 = d3 - d1;   
         double d8 = d4 - d;   
         double d9 = d5 - d1;   
-        return (Math.acos(dot(d6, d7, d8, d9) / (magnitude(d6, d7) * magnitude(d8, d9))) / 3.1415926535897931D) * 180D;   
+        return (Math.acos(dot(d6, d7, d8, d9) / (magnitude(d6, d7) * magnitude(d8, d9))) / 3.1415926535897931D) * 180.0D;
     }   
    
     public static double bias(double d, double d1)   
@@ -34,16 +34,13 @@ public final class ImprovMath
         if(d > 0.999D)   
             return 1.0D;   
         if(d1 < 0.001D)   
-            return 0.0D;   
-        if(d1 > 0.999D)   
-            return 1.0D;   
-        else   
-            return Math.pow(d, Math.log(d1) / LOG_HALF);   
+            return 0.0D;
+        return d1 > 0.999D ? 1.0D : Math.pow(d, Math.log(d1) / LOG_HALF);
     }   
    
-    public static double[] cross(double ad[], double ad1[])   
-    {   
-        double ad2[] = new double[3];   
+    public static double[] cross(double[] ad, double[] ad1)
+    {
+        double[] ad2 = new double[3];
         ad2[0] = ad[1] * ad1[2] - ad[2] * ad1[1];   
         ad2[1] = ad[2] * ad1[0] - ad[0] * ad1[2];   
         ad2[2] = ad[0] * ad1[1] - ad[1] * ad1[0];   
@@ -66,14 +63,11 @@ public final class ImprovMath
         return d * d3 + d1 * d4 + d2 * d5;   
     }   
    
-    public static double dot(double ad[], double ad1[])   
+    public static double dot(double[] ad, double[] ad1)
     {   
         double d = 0.0D;   
-        int i;   
-        if(ad.length <= ad1.length)   
-            i = ad.length;   
-        else   
-            i = ad1.length;   
+        int i;
+        i = ad.length <= ad1.length ? ad.length : ad1.length;
         for(int j = 0; j < i; j++)   
             d += ad[j] * ad1[j];   
    
@@ -82,7 +76,7 @@ public final class ImprovMath
    
     public static String doubleToString(double d, int i)   
     {   
-        double d1 = d - (double)(long)d;   
+        double d1 = d - (long)d;
         if(d1 == 0.0D)   
             return String.valueOf((long)d);   
         boolean flag = false;   
@@ -91,9 +85,9 @@ public final class ImprovMath
             flag = true;   
             d = -d;   
         }   
-        double d2 = Math.pow(10D, i);   
+        double d2 = Math.pow(10.0D, i);
         d *= d2;   
-        if(d - (double)(long)d >= 0.49998999999999999D)   
+        if(d - (long)d >= 0.49998999999999999D)
             d++;   
         d /= d2;   
         String s = String.valueOf(d);   
@@ -121,18 +115,15 @@ public final class ImprovMath
         if(d > 0.999D)   
             return 1.0D;   
         d1 = d1 >= 0.001D ? d1 <= 0.999D ? d1 : 0.999D : 0.0001D;   
-        double d2 = Math.log(1.0D - d1) / LOG_HALF;   
-        if(d < 0.5D)   
-            return Math.pow(2D * d, d2) / 2D;   
-        else   
-            return 1.0D - Math.pow(2D * (1.0D - d), d2) / 2D;   
+        double d2 = Math.log(1.0D - d1) / LOG_HALF;
+        return d < 0.5D ? Math.pow(2.0D * d, d2) / 2.0D : 1.0D - Math.pow(2.0D * (1.0D - d), d2) / 2.0D;
     }   
    
-    public static double[] getEulers(double ad[], int i)   
-    {   
-        double ad1[] = new double[3];   
-        double ad2[] = new double[4];   
-        double ad3[][] = new double[3][3];   
+    public static double[] getEulers(double[] ad, int i)
+    {
+        double[] ad1 = new double[3];
+        double[] ad2 = new double[4];
+        double[][] ad3 = new double[3][3];
         byte byte0 = 0;   
         byte byte1 = 1;   
         byte byte2 = 2;   
@@ -196,7 +187,7 @@ public final class ImprovMath
             ad2[2] *= d;   
             ad2[3] = Math.cos(ad2[3] * 0.5D);   
             double d2 = ad2[0] * ad2[0] + ad2[1] * ad2[1] + ad2[2] * ad2[2] + ad2[3] * ad2[3];   
-            double d4 = 2D / d2;   
+            double d4 = 2.0D / d2;
             double d5 = ad2[0] * d4;   
             double d6 = ad2[1] * d4;   
             double d7 = ad2[2] * d4;   
@@ -221,9 +212,9 @@ public final class ImprovMath
             int j = byte1 % 3 <= byte0 % 3 ? -1 : 1;   
             double d17;   
             double d18;   
-            ad1[byte0] = Math.atan2(d18 = ad3[byte1][byte2] * (double)(-j), d17 = ad3[byte2][byte2]);   
-            ad1[byte1] = Math.atan2(ad3[byte0][byte2] * (double)j, Math.sqrt(d17 * d17 + d18 * d18));   
-            ad1[byte2] = Math.atan2(ad3[byte0][byte1] * (double)(-j), ad3[byte0][byte0]);   
+            ad1[byte0] = Math.atan2(d18 = ad3[byte1][byte2] * (-j), d17 = ad3[byte2][byte2]);
+            ad1[byte1] = Math.atan2(ad3[byte0][byte2] * j, Math.sqrt(d17 * d17 + d18 * d18));
+            ad1[byte2] = Math.atan2(ad3[byte0][byte1] * (-j), ad3[byte0][byte0]);
             ad1[0] /= 0.017453292519943295D;   
             ad1[1] /= 0.017453292519943295D;   
             ad1[2] /= 0.017453292519943295D;   
@@ -231,33 +222,33 @@ public final class ImprovMath
         }   
     }   
    
-    public static double[] getEulers(float af[], int i)   
-    {   
-        double ad[] = {   
-            (double)af[0], (double)af[1], (double)af[2], (double)af[3]   
+    public static double[] getEulers(float[] af, int i)
+    {
+        double[] ad = {
+                af[0], af[1], af[2], af[3]
         };   
         return getEulers(ad, i);   
     }   
    
-    public static float[] getQuaternion(double ad[])   
+    public static float[] getQuaternion(double[] ad)
     {   
         return getQuaternion(ad, 0);   
     }   
    
-    public static float[] getQuaternion(double ad[], int i)   
-    {   
-        double ad1[][] = new double[4][4];   
-        float af[] = new float[4];   
+    public static float[] getQuaternion(double[] ad, int i)
+    {
+        double[][] ad1 = new double[4][4];
+        float[] af = new float[4];
         return getQuaternion(ad, i, ad1, af);   
     }   
    
-    public static float[] getQuaternion(double ad[], int i, double ad1[][], float af[])   
-    {   
-        double ad2[][] = ad1;   
-        double ad3[] = ad2[0];   
-        double ad4[] = ad2[1];   
-        double ad5[] = ad2[2];   
-        double ad6[] = ad2[3];   
+    public static float[] getQuaternion(double[] ad, int i, double[][] ad1, float[] af)
+    {
+        double[][] ad2 = ad1;
+        double[] ad3 = ad2[0];
+        double[] ad4 = ad2[1];
+        double[] ad5 = ad2[2];
+        double[] ad6 = ad2[3];
         ad3[0] = 1.0D;   
         ad3[1] = 0.0D;   
         ad3[2] = 0.0D;   
@@ -318,8 +309,8 @@ public final class ImprovMath
         prepAngles(ad2[1]);   
         prepAngles(ad2[2]);   
         mult(ad2[2], ad2[1], ad6);   
-        mult(ad6, ad2[0], ad2[2]);   
-        double ad7[] = ad2[2];   
+        mult(ad6, ad2[0], ad2[2]);
+        double[] ad7 = ad2[2];
         double d = ad7[0];   
         double d1 = ad7[1];   
         double d2 = ad7[2];   
@@ -348,14 +339,14 @@ public final class ImprovMath
         for(i = 0; i < 256; i++)   
         {   
             p[i] = i;   
-            double d = (double)(random1.nextLong() & 255L) / 256D;   
-            g1[i] = 2D * d - 1.0D;   
+            double d = (random1.nextLong() & 255L) / 256.0D;
+            g1[i] = 2.0D * d - 1.0D;
             for(int k = 0; k < 2; k++)   
-                g2[i][k] = (double)(random1.nextLong() % 512L - 256L) / 256D;   
+                g2[i][k] = (random1.nextLong() % 512L - 256L) / 256.0D;
    
             normalize2(g2[i]);   
             for(int l = 0; l < 3; l++)   
-                g3[i][l] = (double)(random1.nextLong() % 512L - 256L) / 256D;   
+                g3[i][l] = (random1.nextLong() % 512L - 256L) / 256.0D;
    
             normalize3(g3[i]);   
         }   
@@ -388,12 +379,12 @@ public final class ImprovMath
         return Math.sqrt(dot(d, d1, d, d1));   
     }   
    
-    public static double magnitude(double ad[])   
+    public static double magnitude(double[] ad)
     {   
         return Math.sqrt(dot(ad, ad));   
     }   
    
-    private static void mult(double ad[], double ad1[], double ad2[])   
+    private static void mult(double[] ad, double[] ad1, double[] ad2)
     {   
         double d = ad[0];   
         double d1 = ad[1];   
@@ -417,9 +408,9 @@ public final class ImprovMath
         ad2[3] = d11;   
     }   
    
-    private static double[] multBy(double ad[], double d)   
-    {   
-        double ad1[] = ad;   
+    private static double[] multBy(double[] ad, double d)
+    {
+        double[] ad1 = ad;
         ad1[0] *= d;   
         ad1[1] *= d;   
         ad1[2] *= d;   
@@ -434,10 +425,10 @@ public final class ImprovMath
             start = 0;   
             init();   
         }   
-        double d4 = d7 + 4096D;   
+        double d4 = d7 + 4096.0D;
         int i = (int)d4 & 0xff;   
         int j = i + 1 & 0xff;   
-        double d1 = d4 - (double)(int)d4;   
+        double d1 = d4 - (int)d4;
         double d2 = d1 - 1.0D;   
         double d3 = s_curve(d1);   
         double d5 = d1 * g1[p[i]];   
@@ -445,9 +436,9 @@ public final class ImprovMath
         return lerp(d3, d5, d6);   
     }   
    
-    private static double[] norm(double ad[])   
-    {   
-        double ad1[] = new double[4];   
+    private static double[] norm(double[] ad)
+    {
+        double[] ad1 = new double[4];
         ad1[0] = ad[0];   
         ad1[1] = ad[1];   
         ad1[2] = ad[2];   
@@ -467,14 +458,14 @@ public final class ImprovMath
         return ad1;   
     }   
    
-    private static void normalize2(double ad[])   
+    private static void normalize2(double[] ad)
     {   
         double d = Math.sqrt(ad[0] * ad[0] + ad[1] * ad[1]);   
         ad[0] /= d;   
         ad[1] /= d;   
     }   
    
-    private static void normalize3(double ad[])   
+    private static void normalize3(double[] ad)
     {   
         double d = Math.sqrt(ad[0] * ad[0] + ad[1] * ad[1] + ad[2] * ad[2]);   
         ad[0] /= d;   
@@ -482,11 +473,11 @@ public final class ImprovMath
         ad[2] /= d;   
     }   
    
-    private static void prepAngles(double ad[])   
+    private static void prepAngles(double[] ad)
     {   
         norm(ad);   
-        multBy(ad, Math.sin(ad[3] / 2D));   
-        ad[3] = Math.cos(ad[3] / 2D);   
+        multBy(ad, Math.sin(ad[3] / 2.0D));
+        ad[3] = Math.cos(ad[3] / 2.0D);
     }   
    
     public static double random(double d, double d1)   
@@ -496,13 +487,13 @@ public final class ImprovMath
    
     private static double s_curve(double d)   
     {   
-        return d * d * (3D - 2D * d);   
-    }   
-   
-    private static int p[] = new int[514];   
-    private static double g3[][] = new double[514][3];   
-    private static double g2[][] = new double[514][2];   
-    private static double g1[] = new double[514];   
+        return d * d * (3.0D - 2.0D * d);
+    }
+
+    private static int[] p = new int[514];
+    private static double[][] g3 = new double[514][3];
+    private static double[][] g2 = new double[514][2];
+    private static double[] g1 = new double[514];
     private static int start = 1;   
     private static final double LOG_HALF = Math.log(0.5D);   
     public static final int XYZ = 0;   

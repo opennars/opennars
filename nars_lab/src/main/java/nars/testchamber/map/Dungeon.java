@@ -23,7 +23,7 @@ public class Dungeon {
     public int Corridors;
 
     public Dungeon(Hauto a) {
-        this._dungeonMap = a.readCells;
+        _dungeonMap = a.readCells;
         _xsize = xmax = a.w;
         _ysize = ymax = a.h;
     }
@@ -109,7 +109,7 @@ public class Dungeon {
         */
  
         public Material GetCellType(int x, int y)        {
-            return this._dungeonMap[x][y].material;
+            return _dungeonMap[x][y].material;
         }
  
         public int GetRand(int min, int max)        {
@@ -119,7 +119,7 @@ public class Dungeon {
         public boolean MakeCorridor(int x, int y, int length, int direction)
         {
             // define the dimensions of the corridor (er.. only the width and height..)
-            int len = this.GetRand(2, length);
+            int len = GetRand(2, length);
             Material Floor = Material.Corridor;
  
             int xtemp;
@@ -131,13 +131,13 @@ public class Dungeon {
                     // north
                     // check if there's enough space for the corridor
                     // start with checking it's not out of the boundaries
-                    if (x < 0 || x > this._xsize) return false;
+                    if (x < 0 || x > _xsize) return false;
                     xtemp = x;
  
                     // same thing here, to make sure it's not out of the boundaries
                     for (ytemp = y; ytemp > (y - len); ytemp--)
                     {
-                        if (ytemp < 0 || ytemp > this._ysize) return false; // oh boho, it was!
+                        if (ytemp < 0 || ytemp > _ysize) return false; // oh boho, it was!
                         if (GetCellType(xtemp, ytemp) != Material.Empty) return false;
                     }
  
@@ -145,63 +145,63 @@ public class Dungeon {
                     Corridors++;
                     for (ytemp = y; ytemp > (y - len); ytemp--)
                     {
-                        this.SetCell(xtemp, ytemp, Floor);
+                        SetCell(xtemp, ytemp, Floor);
                     }
  
                     break;
  
                 case Hauto.RIGHT:
                     // east
-                    if (y < 0 || y > this._ysize) return false;
+                    if (y < 0 || y > _ysize) return false;
                     ytemp = y;
  
                     for (xtemp = x; xtemp < (x + len); xtemp++)
                     {
-                        if (xtemp < 0 || xtemp > this._xsize) return false;
+                        if (xtemp < 0 || xtemp > _xsize) return false;
                         if (GetCellType(xtemp, ytemp) != Material.Empty) return false;
                     }
  
                     Corridors++;
                     for (xtemp = x; xtemp < (x + len); xtemp++)
                     {
-                        this.SetCell(xtemp, ytemp, Floor);
+                        SetCell(xtemp, ytemp, Floor);
                     }
  
                     break;
  
                 case Hauto.DOWN:
                     // south
-                    if (x < 0 || x > this._xsize) return false;
+                    if (x < 0 || x > _xsize) return false;
                     xtemp = x;
  
                     for (ytemp = y; ytemp < (y + len); ytemp++)
                     {
-                        if (ytemp < 0 || ytemp > this._ysize) return false;
+                        if (ytemp < 0 || ytemp > _ysize) return false;
                         if (GetCellType(xtemp, ytemp) != Material.Empty) return false;
                     }
  
                     Corridors++;
                     for (ytemp = y; ytemp < (y + len); ytemp++)
                     {
-                        this.SetCell(xtemp, ytemp, Floor);
+                        SetCell(xtemp, ytemp, Floor);
                     }
  
                     break;
                 case Hauto.LEFT:
                     // west
-                    if (ytemp < 0 || ytemp > this._ysize) return false;
+                    if (ytemp < 0 || ytemp > _ysize) return false;
                     ytemp = y;
  
                     for (xtemp = x; xtemp > (x - len); xtemp--)
                     {
-                        if (xtemp < 0 || xtemp > this._xsize) return false;
+                        if (xtemp < 0 || xtemp > _xsize) return false;
                         if (GetCellType(xtemp, ytemp) != Material.Empty) return false;
                     }
  
                     Corridors++;
                     for (xtemp = x; xtemp > (x - len); xtemp--)
                     {
-                        this.SetCell(xtemp, ytemp, Floor);
+                        SetCell(xtemp, ytemp, Floor);
                     }
  
                     break;

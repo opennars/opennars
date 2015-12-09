@@ -53,7 +53,7 @@ public class OptimizeMultivariate<C> extends NumericSolver<C> implements Multiva
     public synchronized void solve(Objenome o, List<SetNumericValue> variables) {
         
         this.variables = variables;
-        this.objenome = o;
+        objenome = o;
         
         if (numStarts==-1)
             numStarts = variables.size() * 2;
@@ -88,8 +88,8 @@ public class OptimizeMultivariate<C> extends NumericSolver<C> implements Multiva
                 );        
         
         apply(result.getPointRef());
-                
-        this.bestValue = result.getValue();
+
+        bestValue = result.getValue();
     }
 
     /** the resulting scalar evaluation of the sought maxima/minima */
@@ -126,7 +126,7 @@ public class OptimizeMultivariate<C> extends NumericSolver<C> implements Multiva
 //    }
 
     public Solver minimize() {
-        this.goal = GoalType.MINIMIZE;
+        goal = GoalType.MINIMIZE;
         return this;
     }
 

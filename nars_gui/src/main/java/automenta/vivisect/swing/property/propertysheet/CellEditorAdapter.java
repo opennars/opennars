@@ -45,31 +45,23 @@ public class CellEditorAdapter
 
   class CancelEditing implements ActionListener {
     public void actionPerformed(ActionEvent e) {
-      CellEditorAdapter.this.cancelCellEditing();
+      cancelCellEditing();
     }
   }
 
   /**
    * Select all text when focus gained, deselect when focus lost.
    */
-  class SelectOnFocus implements FocusListener {
-    public void focusGained(final FocusEvent e) {
+  static class SelectOnFocus implements FocusListener {
+    public void focusGained(FocusEvent e) {
       if (! (e.getSource() instanceof JTextField))
         return;
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          ((JTextField) e.getSource()).selectAll();
-        }
-      });
+      SwingUtilities.invokeLater(() -> ((JTextField) e.getSource()).selectAll());
     }
-    public void focusLost(final FocusEvent e) {
+    public void focusLost(FocusEvent e) {
       if (! (e.getSource() instanceof JTextField))
         return;
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          ((JTextField) e.getSource()).select(0, 0);
-        }
-      });
+      SwingUtilities.invokeLater(() -> ((JTextField) e.getSource()).select(0, 0));
     }
   }
   
@@ -87,11 +79,7 @@ public class CellEditorAdapter
     }
 
     // when the editor notifies a change, commit the changes
-    editor.addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {       
-        stopCellEditing();
-      }
-    });
+    editor.addPropertyChangeListener(evt -> stopCellEditing());
   }
   
   public Component getTreeCellEditorComponent(
@@ -148,15 +136,11 @@ public class CellEditorAdapter
   private Component getEditor(Object value) {
     editor.setValue(value);
 
-    final Component cellEditor = editor.getCustomEditor();
+    Component cellEditor = editor.getCustomEditor();
 
     // request focus later so the editor can be used to enter value as soon as
     // made visible
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        cellEditor.requestFocus();
-      }
-    });
+    SwingUtilities.invokeLater(cellEditor::requestFocus);
 
     return cellEditor;
   }

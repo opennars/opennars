@@ -1,6 +1,5 @@
 package nars.term;
 
-import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
@@ -55,9 +54,9 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     /**
      * # variables contained, of each type
      */
-    transient protected byte hasVarQueries;
-    transient protected byte hasVarIndeps;
-    transient protected byte hasVarDeps;
+    protected transient byte hasVarQueries;
+    protected transient byte hasVarIndeps;
+    protected transient byte hasVarDeps;
 
     transient boolean normalized;
 
@@ -69,9 +68,9 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         this((T[]) t.toArray(new Term[t.size()]));
     }
 
+    @SafeVarargs
     public TermVector(T... t) {
-        super();
-        this.term = t;
+        term = t;
         init();
     }
 
@@ -87,7 +86,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public final Term termOr(int index, Term resultIfInvalidIndex) {
-        final Term term[] = this.term;
+        Term[] term = this.term;
         if (term.length <= index)
             return resultIfInvalidIndex;
         return term[index];
@@ -129,7 +128,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public void setNormalized(boolean b) {
-        this.normalized = true;
+        normalized = true;
     }
 
     @Override
@@ -139,96 +138,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public String toString() {
-        return "(" + Arrays.toString(term) + ')';
+        return '(' + Arrays.toString(term) + ')';
     }
-
-    //    /**
-//     * Cloned array of Terms, except for one or more Terms.
-//     *
-//     * @param toRemove
-//     * @return the cloned array with the missing terms removed,
-//     * OR null if no terms were actually removed when requireModification=true
-//     */
-//    public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
-//
-//        final int toRemoveLen = toRemove.length;
-//        if (toRemoveLen == 0)
-//            throw new RuntimeException("no removals specified");
-//        else if (toRemoveLen == 1) {
-//            //use the 1-term optimized version of this method
-//            return cloneTermsExcept(requireModification, toRemove[0]);
-//        }
-//
-//        final int n = length();
-//        final Term[] l = new Term[n];
-//
-//        final Set<Term> toRemoveSet = Terms.toSet(toRemove);
-//
-//
-//        int remain = 0;
-//        for (int i = 0; i < n; i++) {
-//            final Term x = term(i);
-//            if (!toRemoveSet.contains(x))
-//                l[remain++] = x;
-//        }
-//
-//        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
-//    }
-
-//    /**
-//     * Cloned array of Terms, except for a specific Term.
-//     *
-//     * @param toRemove
-//     * @return the cloned array with the missing terms removed,
-//     * OR null if no terms were actually removed when requireModification=true
-//     */
-//    public Term[] cloneTermsExcept(final boolean requireModification, final Term toRemove) {
-//
-//        final int n = length();
-//        final Term[] l = new Term[n];
-//
-//
-//        int remain = 0;
-//        for (int i = 0; i < n; i++) {
-//            final Term x = term(i);
-//            if (!toRemove.equals(x))
-//                l[remain++] = x;
-//        }
-//
-//        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
-//    }
-//
-//    /**
-//     * creates a new ArrayList for terms
-//     */
-//    public List<Term> asTermList() {
-//        List<Term> l = Global.newArrayList(length());
-//        addTermsTo(l);
-//        return l;
-//    }
-
-
-//    /**
-//     * clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step
-//     */
-//    public Compound cloneVariablesDeep() {
-//        return (Compound) clone(cloneTermsDeepIfContainingVariables());
-//    }
-//
-//    public Term[] cloneTermsDeepIfContainingVariables() {
-//        Term[] l = new Term[length()];
-//        for (int i = 0; i < l.length; i++) {
-//            Term t = term[i];
-//
-//            if ((!(t instanceof Variable)) && (t.hasVar())) {
-//                t = t.cloneDeep();
-//            }
-//
-//            //else it is an atomic term or a compoundterm with no variables, so use as-is:
-//            l[i] = t;
-//        }
-//        return l;
-//    }
 
 
     public final int varDep() {
@@ -247,11 +158,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return varTotal;
     }
 
-//    final public void addTermsTo(final Collection<Term> c) {
-//        Collections.addAll(c, term);
-//    }
-
-    public Term[] cloneTermsReplacing(int index, final Term replaced) {
+    public Term[] cloneTermsReplacing(int index, Term replaced) {
         Term[] y = termsCopy();
         y[index] = replaced;
         return y;
@@ -275,21 +182,21 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public final Iterator<T> iterator() {
-        return Iterators.forArray(term);
+        return Arrays.stream(term).iterator();
     }
 
 
     public final void forEach(Consumer<? super T> action, int start, int stop) {
-        final T[] tt = this.term;
+        T[] tt = term;
         for (int i = start; i < stop; i++) {
             action.accept(tt[i]);
         }
     }
 
     @Override
-    public final void forEach(final Consumer<? super T> action) {
-        final T[] tt = this.term;
-        for (final T t : tt)
+    public final void forEach(Consumer<? super T> action) {
+        T[] tt = term;
+        for (T t : tt)
             action.accept(t);
     }
 
@@ -300,7 +207,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
      * @return Whether the target is in the current term
      */
     @Override
-    public final boolean containsTerm(final Term t) {
+    public final boolean containsTerm(Term t) {
         if (impossibleSubterm(t))
             return false;
         return Terms.contains(term, t);
@@ -323,7 +230,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         int subt = 0;
         int contentHash = 1;
 
-        for (final Term t : term) {
+        for (Term t : term) {
 
             if (t == this)
                 throw new RuntimeException("term can not contain itself");
@@ -342,16 +249,16 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
         Compound.ensureFeasibleVolume(vol);
 
-        this.hasVarDeps = (byte) deps;
-        this.hasVarIndeps = (byte) indeps;
-        this.hasVarQueries = (byte) queries;
-        this.varTotal = (short) (deps + indeps + queries);
-        this.structureHash = subt;
+        hasVarDeps = (byte) deps;
+        hasVarIndeps = (byte) indeps;
+        hasVarQueries = (byte) queries;
+        varTotal = (short) (deps + indeps + queries);
+        structureHash = subt;
 
-        this.complexity = (short) compl;
-        this.volume = (short) vol;
+        complexity = (short) compl;
+        volume = (short) vol;
 
-        this.normalized = varTotal == 0;
+        normalized = varTotal == 0;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
         this.contentHash = contentHash;
@@ -387,7 +294,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             volume != c.volume)
                 return false;
 
-        final int s = this.size();
+        int s = size();
         if (s!=c.size())
             return false;
 
@@ -411,20 +318,20 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             return diff;
 
         //TODO dont assume it's a TermVector
-        final TermVector c = (TermVector) o;
+        TermVector c = (TermVector) o;
         if ((diff = Integer.compare(structure(), c.structure())) != 0)
             return diff;
 
 
-        final int s = this.size();
+        int s = size();
         if ((diff = Integer.compare(s, c.size())) != 0)
             return diff;
 
 
         for (int i = 0; i < s; i++) {
-            final Term a = term(i);
-            final Term b = c.term(i);
-            final int d = a.compareTo(b);
+            Term a = term(i);
+            Term b = c.term(i);
+            int d = a.compareTo(b);
 
         /*
         if (Global.DEBUG) {

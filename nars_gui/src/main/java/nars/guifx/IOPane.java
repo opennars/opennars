@@ -20,7 +20,6 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
     private final NAR nar;
 
     public IOPane(NAR nar) {
-        super();
 
 
         this.nar = nar;

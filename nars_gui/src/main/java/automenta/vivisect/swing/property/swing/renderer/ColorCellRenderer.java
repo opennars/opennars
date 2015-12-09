@@ -31,20 +31,20 @@ public class ColorCellRenderer extends DefaultCellRenderer {
     String blue = Integer.toHexString(color.getBlue());
 
     if (red.length() == 1) {
-      red = "0" + red;
+      red = '0' + red;
     }
     if (green.length() == 1) {
-      green = "0" + green;
+      green = '0' + green;
     }
     if (blue.length() == 1) {
-      blue = "0" + blue;
+      blue = '0' + blue;
     }
-    return ("#" + red + green + blue).toUpperCase();
+    return ('#' + red + green + blue).toUpperCase();
   }
 
   protected String convertToString(Object value) {
     if (value instanceof Integer) {
-      value = new Color(((Integer)value).intValue());
+      value = new Color((Integer) value);
     }
     if (!(value instanceof Color)) { return null; }
 
@@ -56,7 +56,7 @@ public class ColorCellRenderer extends DefaultCellRenderer {
   protected Icon convertToIcon(Object value) {
     if (value == null) { return null; }
     if (value instanceof Integer) {
-      value = new Color(((Integer)value).intValue());
+      value = new Color((Integer) value);
     }
     return new PaintIcon((Paint)value);
   }

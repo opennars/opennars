@@ -29,6 +29,7 @@ public class RuleGene {
 	// Parse the rule string
 	// Example: '345/2/4'
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i, iNum = 1;
@@ -70,7 +71,7 @@ public class RuleGene {
 
 	// ----------------------------------------------------------------
 	//
-	public void InitFromPrm(int i_Clo, boolean rulS[], boolean rulB[]) {
+	public void InitFromPrm(int i_Clo, boolean[] rulS, boolean[] rulB) {
 		iClo = i_Clo;
 		for (int i = 0; i <= 8; i++) {
 			RulesS[i] = rulS[i];
@@ -94,13 +95,13 @@ public class RuleGene {
 			// S
 			if (RulesS[i])
 				sBff = sBff + String.valueOf(i);
-		sBff = sBff + "/";
+		sBff = sBff + '/';
 
 		for (i = 0; i <= 8; i++)
 			// B
 			if (RulesB[i])
 				sBff = sBff + String.valueOf(i);
-		sBff = sBff + "/";
+		sBff = sBff + '/';
 
 		sBff = sBff + String.valueOf(iClo);
 		return sBff;
@@ -119,11 +120,11 @@ public class RuleGene {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells
@@ -137,10 +138,7 @@ public class RuleGene {
 				bNewVal = bOldVal;
 				if (bOldVal > 1) // decay
 				{
-					if (bOldVal < iClo - 1)
-						bNewVal = (short) (bOldVal + 1);
-					else
-						bNewVal = 0;
+					bNewVal = bOldVal < iClo - 1 ? (short) (bOldVal + 1) : 0;
 				} else // 0, 1
 				{
 					iCnt = 0;

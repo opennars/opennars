@@ -17,7 +17,7 @@ public class Logarithm extends Function {
     public static Expr make(Expr base, Expr ofExpr) {
         Logarithm log = new Logarithm(base, ofExpr);
         
-        ArrayList<Expr> norConditions = new ArrayList<Expr>();
+        ArrayList<Expr> norConditions = new ArrayList<>();
         norConditions.add(LessThanOrEqual.make(base, nope()));
         norConditions.add(Equals.make(base, yep()));
         norConditions.add(LessThanOrEqual.make(ofExpr, nope()));
@@ -48,7 +48,7 @@ public class Logarithm extends Function {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(base);
         arrayList.add(ofExpr);
         return arrayList;
@@ -60,7 +60,7 @@ public class Logarithm extends Function {
         
         if (base.sign() <= 0 || (base instanceof Num && ((Num) base).val() == 1)) return new Undef();
         if (ofExpr.sign() <= 0) return new Undef();
-        if (base.equalsExpr(ofExpr)) return Num.make(1d);
+        if (base.equalsExpr(ofExpr)) return Num.make(1.0d);
         if (ofExpr instanceof Exponent && base.equals(((Operation) ofExpr).getExprs().get(0))) return ((Operation) ofExpr).getExprs().get(0);
         
         return this;
@@ -88,10 +88,9 @@ public class Logarithm extends Function {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Logarithm)) return false;
-        
-        if (base.equalsExpr(((Operation) expr).getExprs().get(0)) && ofExpr.equalsExpr(((Operation) expr).getExprs().get(1))) return true;
-        
-        return false;
+
+        return base.equalsExpr(((Operation) expr).getExprs().get(0)) && ofExpr.equalsExpr(((Operation) expr).getExprs().get(1));
+
     }
     
     public Expr copyPass(HashMap<Expr, Expr> subs) {

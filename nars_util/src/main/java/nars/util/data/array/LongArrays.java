@@ -86,7 +86,7 @@ public class LongArrays {
     /**
      * A static, final, empty array.
      */
-    public final static long[] EMPTY_ARRAY = {};
+    public static final long[] EMPTY_ARRAY = {};
 
     /**
      * Ensures that an array can contain the given number of entries.
@@ -100,9 +100,9 @@ public class LongArrays {
      * an array with <code>length</code> entries whose first <code>array.length</code>
      * entries are the same as those of <code>array</code>.
      */
-    public static long[] ensureCapacity(final long[] array, final int length) {
+    public static long[] ensureCapacity(long[] array, int length) {
         if (length > array.length) {
-            final long t[] =
+            long[] t =
                     new long[length];
             System.arraycopy(array, 0, t, 0, array.length);
             return t;
@@ -120,9 +120,9 @@ public class LongArrays {
      * an array with <code>length</code> entries whose first <code>preserve</code>
      * entries are the same as those of <code>array</code>.
      */
-    public static long[] ensureCapacity(final long[] array, final int length, final int preserve) {
+    public static long[] ensureCapacity(long[] array, int length, int preserve) {
         if (length > array.length) {
-            final long t[] =
+            long[] t =
                     new long[length];
             System.arraycopy(array, 0, t, 0, preserve);
             return t;
@@ -146,10 +146,10 @@ public class LongArrays {
      * max(<code>length</code>,<code>array.length</code>/&phi;) entries whose first
      * <code>array.length</code> entries are the same as those of <code>array</code>.
      */
-    public static long[] grow(final long[] array, final int length) {
+    public static long[] grow(long[] array, int length) {
         if (length > array.length) {
-            final int newLength = (int) Math.min(Math.max((ONEOVERPHI * array.length) >>> 16, length), Integer.MAX_VALUE);
-            final long t[] =
+            int newLength = (int) Math.min(Math.max((ONEOVERPHI * array.length) >>> 16, length), Integer.MAX_VALUE);
+            long[] t =
                     new long[newLength];
             System.arraycopy(array, 0, t, 0, array.length);
             return t;
@@ -174,10 +174,10 @@ public class LongArrays {
      * max(<code>length</code>,<code>array.length</code>/&phi;) entries whose first
      * <code>preserve</code> entries are the same as those of <code>array</code>.
      */
-    public static long[] grow(final long[] array, final int length, final int preserve) {
+    public static long[] grow(long[] array, int length, int preserve) {
         if (length > array.length) {
-            final int newLength = (int) Math.min(Math.max((ONEOVERPHI * array.length) >>> 16, length), Integer.MAX_VALUE);
-            final long t[] =
+            int newLength = (int) Math.min(Math.max((ONEOVERPHI * array.length) >>> 16, length), Integer.MAX_VALUE);
+            long[] t =
                     new long[newLength];
             System.arraycopy(array, 0, t, 0, preserve);
             return t;
@@ -195,9 +195,9 @@ public class LongArrays {
      * <code>length</code> entries whose entries are the same as
      * the first <code>length</code> entries of <code>array</code>.
      */
-    public static long[] trim(final long[] array, final int length) {
+    public static long[] trim(long[] array, int length) {
         if (length >= array.length) return array;
-        final long t[] =
+        long[] t =
                 length == 0 ? EMPTY_ARRAY : new long[length];
         System.arraycopy(array, 0, t, 0, length);
         return t;
@@ -216,7 +216,7 @@ public class LongArrays {
      * whose first <code>array.length</code> entries are the same as those of
      * <code>array</code>.
      */
-    public static long[] setLength(final long[] array, final int length) {
+    public static long[] setLength(long[] array, int length) {
         if (length == array.length) return array;
         if (length < array.length) return trim(array, length);
         return ensureCapacity(array, length);
@@ -230,9 +230,9 @@ public class LongArrays {
      * @param length the number of elements to copy.
      * @return a new array containing <code>length</code> elements of <code>array</code> starting at <code>offset</code>.
      */
-    public static long[] copy(final long[] array, final int offset, final int length) {
+    public static long[] copy(long[] array, int offset, int length) {
         ensureOffsetLength(array, offset, length);
-        final long[] a =
+        long[] a =
                 length == 0 ? EMPTY_ARRAY : new long[length];
         System.arraycopy(array, offset, a, 0, length);
         return a;
@@ -244,7 +244,7 @@ public class LongArrays {
      * @param array an array.
      * @return a copy of <code>array</code>.
      */
-    public static long[] copy(final long[] array) {
+    public static long[] copy(long[] array) {
         return array.clone();
     }
 
@@ -257,7 +257,7 @@ public class LongArrays {
      * @param array an array.
      * @param value the new value for all elements of the array.
      */
-    public static void fill(final long[] array, final long value) {
+    public static void fill(long[] array, long value) {
         int i = array.length;
         while (i-- != 0) array[i] = value;
     }
@@ -274,7 +274,7 @@ public class LongArrays {
      * @param to    the end index of the portion to fill.
      * @param value the new value for all elements of the specified portion of the array.
      */
-    public static void fill(final long[] array, final int from, int to, final long value) {
+    public static void fill(long[] array, int from, int to, long value) {
         ensureFromTo(array, from, to);
         if (from == 0) while (to-- != 0) array[to] = value;
         else for (int i = from; i < to; i++) array[i] = value;
@@ -290,7 +290,7 @@ public class LongArrays {
      * @param a2 another array.
      * @return true if the two arrays are of the same length, and their elements are equal.
      */
-    public static boolean equals(final long[] a1, final long a2[]) {
+    public static boolean equals(long[] a1, long[] a2) {
         int i = a1.length;
         if (i != a2.length) return false;
         while (i-- != 0) if (!((a1[i]) == (a2[i]))) return false;
@@ -308,7 +308,7 @@ public class LongArrays {
      * @throws IllegalArgumentException       if <code>from</code> is greater than <code>to</code>.
      * @throws ArrayIndexOutOfBoundsException if <code>from</code> or <code>to</code> are greater than the array length or negative.
      */
-    public static void ensureFromTo(final long[] a, final int from, final int to) {
+    public static void ensureFromTo(long[] a, int from, int to) {
         Arrays.ensureFromTo(a.length, from, to);
     }
 
@@ -326,24 +326,24 @@ public class LongArrays {
      * @throws IllegalArgumentException       if <code>length</code> is negative.
      * @throws ArrayIndexOutOfBoundsException if <code>offset</code> is negative or <code>offset</code>+<code>length</code> is greater than the array length.
      */
-    public static void ensureOffsetLength(final long[] a, final int offset, final int length) {
+    public static void ensureOffsetLength(long[] a, int offset, int length) {
         Arrays.ensureOffsetLength(a.length, offset, length);
     }
 
     private static final int SMALL = 7;
     private static final int MEDIUM = 40;
 
-    private static void swap(final long x[], final int a, final int b) {
-        final long t = x[a];
+    private static void swap(long[] x, int a, int b) {
+        long t = x[a];
         x[a] = x[b];
         x[b] = t;
     }
 
-    private static void vecSwap(final long[] x, int a, int b, final int n) {
+    private static void vecSwap(long[] x, int a, int b, int n) {
         for (int i = 0; i < n; i++, a++, b++) swap(x, a, b);
     }
 
-    private static int med3(final long x[], final int a, final int b, final int c, LongComparator comp) {
+    private static int med3(long[] x, int a, int b, int c, LongComparator comp) {
         int ab = comp.compare(x[a], x[b]);
         int ac = comp.compare(x[a], x[c]);
         int bc = comp.compare(x[b], x[c]);
@@ -365,8 +365,8 @@ public class LongArrays {
      * @param to   the index of the last element (exclusive) to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void quickSort(final long[] x, final int from, final int to, final LongComparator comp) {
-        final int len = to - from;
+    public static void quickSort(long[] x, int from, int to, LongComparator comp) {
+        int len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
             for (int i = from; i < to; i++)
@@ -386,7 +386,7 @@ public class LongArrays {
             }
             m = med3(x, l, m, n, comp); // Mid-size, med of 3
         }
-        final long v = x[m];
+        long v = x[m];
         // Establish Invariant: v* (<v)* (>v)* v*
         int a = from, b = a, c = to - 1, d = c;
         while (true) {
@@ -424,12 +424,12 @@ public class LongArrays {
      * @param x    the array to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void quickSort(final long[] x, final LongComparator comp) {
+    public static void quickSort(long[] x, LongComparator comp) {
         quickSort(x, 0, x.length, comp);
     }
 
     @SuppressWarnings("unchecked")
-    private static int med3(final long x[], final int a, final int b, final int c) {
+    private static int med3(long[] x, int a, int b, int c) {
         int ab = ((x[a]) < (x[b]) ? -1 : ((x[a]) == (x[b]) ? 0 : 1));
         int ac = ((x[a]) < (x[c]) ? -1 : ((x[a]) == (x[c]) ? 0 : 1));
         int bc = ((x[b]) < (x[c]) ? -1 : ((x[b]) == (x[c]) ? 0 : 1));
@@ -450,8 +450,8 @@ public class LongArrays {
      * @param to   the index of the last element (exclusive) to be sorted.
      */
     @SuppressWarnings("unchecked")
-    public static void quickSort(final long[] x, final int from, final int to) {
-        final int len = to - from;
+    public static void quickSort(long[] x, int from, int to) {
+        int len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
             for (int i = from; i < to; i++)
@@ -471,7 +471,7 @@ public class LongArrays {
             }
             m = med3(x, l, m, n); // Mid-size, med of 3
         }
-        final long v = x[m];
+        long v = x[m];
         // Establish Invariant: v* (<v)* (>v)* v*
         int a = from, b = a, c = to - 1, d = c;
         while (true) {
@@ -507,7 +507,7 @@ public class LongArrays {
      *
      * @param x the array to be sorted.
      */
-    public static void quickSort(final long[] x) {
+    public static void quickSort(long[] x) {
         quickSort(x, 0, x.length);
     }
 
@@ -523,7 +523,7 @@ public class LongArrays {
      * @param supp a support array, at least as large as <code>a</code>.
      */
     @SuppressWarnings("unchecked")
-    public static void mergeSort(final long a[], final int from, final int to, final long supp[]) {
+    public static void mergeSort(long[] a, int from, int to, long[] supp) {
         int len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
@@ -533,7 +533,7 @@ public class LongArrays {
             return;
         }
         // Recursively sort halves of a into supp
-        final int mid = (from + to) >>> 1;
+        int mid = (from + to) >>> 1;
         mergeSort(supp, from, mid, a);
         mergeSort(supp, mid, to, a);
         // If list is already sorted, just copy from supp to a.  This is an
@@ -544,8 +544,7 @@ public class LongArrays {
         }
         // Merge sorted halves (now in supp) into a
         for (int i = from, p = from, q = mid; i < to; i++) {
-            if (q >= to || p < mid && ((supp[p]) <= (supp[q]))) a[i] = supp[p++];
-            else a[i] = supp[q++];
+            a[i] = q >= to || p < mid && ((supp[p]) <= (supp[q])) ? supp[p++] : supp[q++];
         }
     }
 
@@ -559,7 +558,7 @@ public class LongArrays {
      * @param from the index of the first element (inclusive) to be sorted.
      * @param to   the index of the last element (exclusive) to be sorted.
      */
-    public static void mergeSort(final long a[], final int from, final int to) {
+    public static void mergeSort(long[] a, int from, int to) {
         mergeSort(a, from, to, a.clone());
     }
 
@@ -571,7 +570,7 @@ public class LongArrays {
      *
      * @param a the array to be sorted.
      */
-    public static void mergeSort(final long a[]) {
+    public static void mergeSort(long[] a) {
         mergeSort(a, 0, a.length);
     }
 
@@ -589,7 +588,7 @@ public class LongArrays {
      * @param supp a support array, at least as large as <code>a</code>.
      */
     @SuppressWarnings("unchecked")
-    public static void mergeSort(final long a[], final int from, final int to, LongComparator comp, final long supp[]) {
+    public static void mergeSort(long[] a, int from, int to, LongComparator comp, long[] supp) {
         int len = to - from;
         // Insertion sort on smallest arrays
         if (len < SMALL) {
@@ -599,7 +598,7 @@ public class LongArrays {
             return;
         }
         // Recursively sort halves of a into supp
-        final int mid = (from + to) >>> 1;
+        int mid = (from + to) >>> 1;
         mergeSort(supp, from, mid, comp, a);
         mergeSort(supp, mid, to, comp, a);
         // If list is already sorted, just copy from supp to a.  This is an
@@ -610,8 +609,7 @@ public class LongArrays {
         }
         // Merge sorted halves (now in supp) into a
         for (int i = from, p = from, q = mid; i < to; i++) {
-            if (q >= to || p < mid && comp.compare(supp[p], supp[q]) <= 0) a[i] = supp[p++];
-            else a[i] = supp[q++];
+            a[i] = q >= to || p < mid && comp.compare(supp[p], supp[q]) <= 0 ? supp[p++] : supp[q++];
         }
     }
 
@@ -627,7 +625,7 @@ public class LongArrays {
      * @param to   the index of the last element (exclusive) to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void mergeSort(final long a[], final int from, final int to, LongComparator comp) {
+    public static void mergeSort(long[] a, int from, int to, LongComparator comp) {
         mergeSort(a, from, to, comp, a.clone());
     }
 
@@ -641,7 +639,7 @@ public class LongArrays {
      * @param a    the array to be sorted.
      * @param comp the comparator to determine the sorting order.
      */
-    public static void mergeSort(final long a[], LongComparator comp) {
+    public static void mergeSort(long[] a, LongComparator comp) {
         mergeSort(a, 0, a.length, comp);
     }
 
@@ -666,10 +664,10 @@ public class LongArrays {
      * @see java.util.Arrays
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static int binarySearch(final long[] a, int from, int to, final long key) {
+    public static int binarySearch(long[] a, int from, int to, long key) {
         long midVal;
         while (from <= to) {
-            final int mid = (from + to) >>> 1;
+            int mid = (from + to) >>> 1;
             midVal = a[mid];
             if (midVal < key) from = mid + 1;
             else if (midVal > key) to = mid - 1;
@@ -696,7 +694,7 @@ public class LongArrays {
      * and only if the key is found.
      * @see java.util.Arrays
      */
-    public static int binarySearch(final long[] a, final long key) {
+    public static int binarySearch(long[] a, long key) {
         return binarySearch(a, 0, a.length, key);
     }
 
@@ -721,12 +719,12 @@ public class LongArrays {
      * and only if the key is found.
      * @see java.util.Arrays
      */
-    public static int binarySearch(final long[] a, int from, int to, final long key, final LongComparator c) {
+    public static int binarySearch(long[] a, int from, int to, long key, LongComparator c) {
         long midVal;
         while (from <= to) {
-            final int mid = (from + to) >>> 1;
+            int mid = (from + to) >>> 1;
             midVal = a[mid];
-            final int cmp = c.compare(midVal, key);
+            int cmp = c.compare(midVal, key);
             if (cmp < 0) from = mid + 1;
             else if (cmp > 0) to = mid - 1;
             else return mid; // key found
@@ -753,7 +751,7 @@ public class LongArrays {
      * and only if the key is found.
      * @see java.util.Arrays
      */
-    public static int binarySearch(final long[] a, final long key, final LongComparator c) {
+    public static int binarySearch(long[] a, long key, LongComparator c) {
         return binarySearch(a, 0, a.length, key, c);
     }
 

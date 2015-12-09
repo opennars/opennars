@@ -115,7 +115,6 @@ public class DefaultZiptie extends Ziptie {
         private double activity;
         
         public Bundle(int index) {
-            super();
             this.index = index;
         }
 
@@ -125,24 +124,12 @@ public class DefaultZiptie extends Ziptie {
         
         public double updateInitialActivity() {            
             return initialActivity = 
-                    getRowGeneralizedMean(c, new Function<Integer,Double>() {
-
-                        @Override public Double apply(Integer row) {
-                            return cables.get(row).getActivity();
-                        }
-                        
-                    }, meanExponent, 0, c.getRowDimension(), index);
+                    getRowGeneralizedMean(c, row -> cables.get(row).getActivity(), meanExponent, 0, c.getRowDimension(), index);
         }
         
         public double updateFinalActivity() {
             return activity = 
-                    getRowGeneralizedMean(c, new Function<Integer,Double>() {
-
-                        @Override public Double apply(Integer row) {
-                            return cables.get(row).getInhibitedActivity(Bundle.this);
-                        }
-                        
-                    }, meanExponent, 0, c.getRowDimension(), index);            
+                    getRowGeneralizedMean(c, row -> cables.get(row).getInhibitedActivity(Bundle.this), meanExponent, 0, c.getRowDimension(), index);
         }
         
         public double getActivity() {
@@ -183,15 +170,9 @@ public class DefaultZiptie extends Ziptie {
     
     /** process incoming activity */
     public void in() {
-        for (Bundle b : bundles) {
-            b.updateInitialActivity();
-        }
-        for (Cable c : cables) {
-            c.updateBundleContribution();
-        }
-        for (Bundle b : bundles) {
-            b.updateFinalActivity();
-        }
+        bundles.forEach(Bundle::updateInitialActivity);
+        cables.forEach(Cable::updateBundleContribution);
+        bundles.forEach(Bundle::updateFinalActivity);
     }
     
     /** process outgoing goals */
@@ -205,7 +186,7 @@ public class DefaultZiptie extends Ziptie {
         private final RealMatrix newConnection;
 
         public CopySubmatrix(RealMatrix target) {
-            this.newConnection = target;
+            newConnection = target;
         }
 
         @Override

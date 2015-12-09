@@ -19,7 +19,7 @@ import static nars.truth.TruthFunctions.*;
 public interface BeliefFunction extends TruthOperator {
 
     static Truth JUDGMENT(Memory m) {
-        return new DefaultTruth(1f, m.getDefaultConfidence(Symbols.JUDGMENT));
+        return new DefaultTruth(1.0f, m.getDefaultConfidence(Symbols.JUDGMENT));
     }
 
     BeliefFunction

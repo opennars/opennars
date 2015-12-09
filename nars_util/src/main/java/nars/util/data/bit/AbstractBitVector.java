@@ -50,62 +50,62 @@ package nars.util.data.bit;
  */
 public abstract class AbstractBitVector implements BitVector {
 	
-    protected void ensureRestrictedIndex( final long index ) {
+    protected void ensureRestrictedIndex( long index ) {
         if ( index < 0 )  throw new IndexOutOfBoundsException( "Index (" + index + ") is negative" );
         if ( index >= length() ) throw new IndexOutOfBoundsException( "Index (" + index + ") is greater than or equal to length (" + ( length() ) + ')');
     }
 	
-    protected void ensureIndex( final long index ) {
+    protected void ensureIndex( long index ) {
         if ( index < 0 )  throw new IndexOutOfBoundsException( "Index (" + index + ") is negative" );
         if ( index > length() ) throw new IndexOutOfBoundsException( "Index (" + index + ") is greater than length (" + ( length() ) + ')');
     }
 
-    public void set( final int index ) { set( index, true ); }
-	public void clear( final int index ) { set( index, false ); }
-	public void flip( final int index ) { set( index, ! getBoolean( index ) ); }
+    public void set( int index ) { set( index, true ); }
+	public void clear( int index ) { set( index, false ); }
+	public void flip( int index ) { set( index, ! getBoolean( index ) ); }
 
-	public void set( final long index ) { set( index, true ); }
-	public void clear( final long index ) { set( index, false ); }
-	public void flip( final long index ) { set( index, ! getBoolean( index ) ); }
+	public void set( long index ) { set( index, true ); }
+	public void clear( long index ) { set( index, false ); }
+	public void flip( long index ) { set( index, ! getBoolean( index ) ); }
 	
-	public void fill( final boolean value ) { for( long i = length(); i-- != 0; ) set( i, value ); }
-	public void fill( final int value ) { fill( value != 0 ); }
+	public void fill( boolean value ) { for( long i = length(); i-- != 0; ) set( i, value ); }
+	public void fill( int value ) { fill( value != 0 ); }
 	public void flip() { for( long i = length(); i-- != 0; ) flip( i ); }
 
-	public void fill( final long from, final long to, final boolean value ) { BitVectors.ensureFromTo( length(), from, to ); for( long i = to; i-- != from; ) set( i, value ); }
-	public void fill( final long from, final long to, final int value ) { fill( from, to, value != 0 ); }
-	public void flip( final long from, final long to ) { BitVectors.ensureFromTo( length(), from, to ); for( long i = to; i-- != from; ) flip( i ); }
+	public void fill( long from, long to, boolean value ) { BitVectors.ensureFromTo( length(), from, to ); for( long i = to; i-- != from; ) set( i, value ); }
+	public void fill( long from, long to, int value ) { fill( from, to, value != 0 ); }
+	public void flip( long from, long to ) { BitVectors.ensureFromTo( length(), from, to ); for( long i = to; i-- != from; ) flip( i ); }
 
-	public int getInt( final long index ) { return getBoolean( index ) ? 1 : 0; }
-	public long getLong( final long from, final long to ) {
+	public int getInt( long index ) { return getBoolean( index ) ? 1 : 0; }
+	public long getLong( long from, long to ) {
 		if ( to - from > 64 ) throw new IllegalArgumentException( "Range too large for a long: [" + from + ".." + to + ')');
 		long result = 0;
 		for( long i = from; i < to; i++ ) if ( getBoolean( i ) ) result |= 1L << i - from;
 		return result;
 	}
-	public boolean getBoolean( final int index ) { return getBoolean( (long)index ); }
+	public boolean getBoolean( int index ) { return getBoolean( (long)index ); }
 
-	public boolean removeBoolean( final int index ) { return removeBoolean( (long)index ); }
-	public boolean set( final int index, final boolean value ) { return set( (long)index, value ); }
-	public void add( final int index, final boolean value ) { add( (long)index, value ); }
+	public boolean removeBoolean( int index ) { return removeBoolean( (long)index ); }
+	public boolean set( int index, boolean value ) { return set( (long)index, value ); }
+	public void add( int index, boolean value ) { add( (long)index, value ); }
 
-	public boolean removeBoolean( final long index ) { throw new UnsupportedOperationException(); }
-	public boolean set( final long index, final boolean value ) { throw new UnsupportedOperationException(); }
-	public void add( final long index, final boolean value ) { throw new UnsupportedOperationException(); }
+	public boolean removeBoolean( long index ) { throw new UnsupportedOperationException(); }
+	public boolean set( long index, boolean value ) { throw new UnsupportedOperationException(); }
+	public void add( long index, boolean value ) { throw new UnsupportedOperationException(); }
 	
-	public void set( final long index, final int value ) { set( index, value != 0 ); }
-	public void add( final long index, final int value ) { add( index, value != 0 ); }
-	public boolean add( final boolean value ) { add( length(), value ); return true; }
-	public void add( final int value ) { add( value != 0 ); }
+	public void set( long index, int value ) { set( index, value != 0 ); }
+	public void add( long index, int value ) { add( index, value != 0 ); }
+	public boolean add( boolean value ) { add( length(), value ); return true; }
+	public void add( int value ) { add( value != 0 ); }
 
-	public BitVector append( final long value, final int k ) {
+	public BitVector append( long value, int k ) {
 		for( int i = 0; i < k; i++ ) add( ( value & 1L << i ) != 0 );
 		return this;
 	}
 
-	public BitVector append( final BitVector bv ) {
-		final long length = bv.length();
-		final long l = length - length % Long.SIZE;
+	public BitVector append( BitVector bv ) {
+		long length = bv.length();
+		long l = length - length % Long.SIZE;
 		
 		long i;
 		for( i = 0; i < l; i += Long.SIZE ) append( bv.getLong( i, i + Long.SIZE ), Long.SIZE );
@@ -115,11 +115,11 @@ public abstract class AbstractBitVector implements BitVector {
 
 	public BitVector copy() { return copy( 0, size() ); }
 
-	public BitVector copy( final long from, final long to ) {
+	public BitVector copy( long from, long to ) {
 		BitVectors.ensureFromTo( length(), from, to );
-		final long length = to - from;
-		final long l = length - length % Long.SIZE;
-		final long bits[] = new long[ (int)( ( length + Long.SIZE - 1 ) / Long.SIZE ) ];
+		long length = to - from;
+		long l = length - length % Long.SIZE;
+		long[] bits = new long[(int) ((length + Long.SIZE - 1) / Long.SIZE)];
 		long i;
 		for( i = 0; i < l; i += Long.SIZE ) bits[ (int)( i / Long.SIZE ) ] = getLong( from + i, from + i + Long.SIZE );
 		if ( i < length ) bits[ (int)( i / Long.SIZE ) ] = getLong( from + i, to );
@@ -157,31 +157,31 @@ public abstract class AbstractBitVector implements BitVector {
 		return previousZero( length() );
 	}
 	
-	public long nextOne( final long index ) {
-		final long length = length();
+	public long nextOne( long index ) {
+		long length = length();
 		for( long i = index; i < length; i++ ) if ( getBoolean( i ) ) return i;
 		return -1;
 	}
 	
-	public long previousOne( final long index ) {
+	public long previousOne( long index ) {
 		for ( long i = index; i-- != 0; ) if ( getBoolean( i ) ) return i;
 		return -1;
 	}
 	
-	public long nextZero( final long index ) {
-		final long length = length();
+	public long nextZero( long index ) {
+		long length = length();
 		for( long i = index; i < length; i++ ) if ( ! getBoolean( i ) ) return i;
 		return -1;
 	}
 	
-	public long previousZero( final long index ) {
+	public long previousZero( long index ) {
 		for ( long i = index; i-- != 0; ) if ( ! getBoolean( i ) ) return i;
 		return -1;
 	}
 	
-	public long longestCommonPrefixLength( final BitVector v ) {
-		final long minLength = Math.min( length(), v.length() );
-		final long l = minLength - minLength % Long.SIZE;
+	public long longestCommonPrefixLength( BitVector v ) {
+		long minLength = Math.min( length(), v.length() );
+		long l = minLength - minLength % Long.SIZE;
 		long w0, w1;
 		
 		long i;
@@ -198,37 +198,37 @@ public abstract class AbstractBitVector implements BitVector {
 		return minLength;
 	}	
 	
-	public boolean isPrefix( final BitVector v ) {
+	public boolean isPrefix( BitVector v ) {
 		return longestCommonPrefixLength( v ) == length();
 	}
 	
-	public boolean isProperPrefix( final BitVector v ) {
+	public boolean isProperPrefix( BitVector v ) {
 		return isPrefix( v ) && length() < v.length();
 	}
 	
-	public BitVector and( final BitVector v ) {
+	public BitVector and( BitVector v ) {
 		for( long i = Math.min( size64(), v.size64() ); i-- != 0; ) if ( ! v.getBoolean( i ) ) clear( i );
 		return this;
 	}
 	
-	public BitVector or( final BitVector v ) {
+	public BitVector or( BitVector v ) {
 		for( long i = Math.min( size64(), v.size64() ); i-- != 0; ) if ( v.getBoolean( i ) ) set( i );
 		return this;
 	}
 
-	public BitVector xor( final BitVector v ) {
+	public BitVector xor( BitVector v ) {
 		for( long i = Math.min( size64(), v.size64() ); i-- != 0; ) if ( v.getBoolean( i ) ) flip( i );
 		return this;
 	}
 
 	@Deprecated
 	public int size() {
-		final long length = length();
+		long length = length();
 		if ( length > Integer.MAX_VALUE ) throw new IllegalStateException( "The number of bits of this bit vector (" + length + ") exceeds Integer.MAX_INT" );
 		return (int)length;
 	}
 	
-	public void size( final int newSize ) {
+	public void size( int newSize ) {
 		length( newSize );
 	}
 	
@@ -240,29 +240,29 @@ public abstract class AbstractBitVector implements BitVector {
 		length( 0 );
 	}
 	
-	public BitVector replace( final BitVector bv ) {
+	public BitVector replace( BitVector bv ) {
 		clear();
-		final long fullBits = bv.length() - bv.length() % Long.SIZE;
+		long fullBits = bv.length() - bv.length() % Long.SIZE;
 		for( long i = 0; i < fullBits; i += Long.SIZE ) append( bv.getLong( i, i + Long.SIZE ), Long.SIZE );
 		if ( bv.length() % Long.SIZE != 0 ) append( bv.getLong( fullBits, bv.length() ), (int)( bv.length() - fullBits ) );
 		return this;
 	}
 
-	public boolean equals( final Object o ) {
+	public boolean equals( Object o ) {
 		if ( ! ( o instanceof BitVector ) ) return false;
-		final BitVector v = (BitVector)o;
-		final long length = length();
+		BitVector v = (BitVector)o;
+		long length = length();
 		if ( length != v.length() ) return false;
-		final long fullLength = length - length % Long.SIZE;
+		long fullLength = length - length % Long.SIZE;
 		for( long i = 0; i < fullLength; i += Long.SIZE ) if ( getLong( i, i + Long.SIZE ) != v.getLong( i, i + Long.SIZE ) ) return false;
 		return getLong( fullLength, length ) == v.getLong( fullLength, length );
 	}
 
-	public boolean equals( final BitVector v, final long start, final long end ) {
+	public boolean equals( BitVector v, long start, long end ) {
 		long startFull = start - start % LongArrayBitVector.BITS_PER_WORD;
-		final long endFull = end - end % LongArrayBitVector.BITS_PER_WORD;
-		final int startBit = (int)( start & LongArrayBitVector.WORD_MASK );
-		final int endBit = (int)( end & LongArrayBitVector.WORD_MASK );
+		long endFull = end - end % LongArrayBitVector.BITS_PER_WORD;
+		int startBit = (int)( start & LongArrayBitVector.WORD_MASK );
+		int endBit = (int)( end & LongArrayBitVector.WORD_MASK );
 		
 		if ( startFull == endFull )
 				return ( ( getLong( startFull, Math.min( length(), startFull + Long.SIZE ) ) 
@@ -281,8 +281,8 @@ public abstract class AbstractBitVector implements BitVector {
 
 	
 	public int hashCode() {
-		final long length = length();
-		final long fullLength = length - length % Long.SIZE;
+		long length = length();
+		long fullLength = length - length % Long.SIZE;
 		long h = 0x9e3779b97f4a7c13L ^ length;
 
 		for( long i = 0; i < fullLength; i += Long.SIZE ) h ^= ( h << 5 ) + getLong( i, i + Long.SIZE ) + ( h >>> 2 );
@@ -292,8 +292,8 @@ public abstract class AbstractBitVector implements BitVector {
 	}
 	
 	public long[] bits() {
-		final long[] bits = new long[ (int)( ( length() + LongArrayBitVector.BITS_PER_WORD - 1 ) >> LongArrayBitVector.LOG2_BITS_PER_WORD ) ];
-		final long length = length();
+		long[] bits = new long[ (int)( ( length() + LongArrayBitVector.BITS_PER_WORD - 1 ) >> LongArrayBitVector.LOG2_BITS_PER_WORD ) ];
+		long length = length();
 		for( long i = 0; i < length; i++ ) if ( getBoolean( i ) ) bits[ (int)( i >> LongArrayBitVector.LOG2_BITS_PER_WORD ) ] |= 1L << i; 
 		return bits;
 	}
@@ -549,7 +549,7 @@ public abstract class AbstractBitVector implements BitVector {
 //	}
 		
 	public BitVector length( long newLength ) {
-		final long length = length();
+		long length = length();
 		if ( length < newLength ) for( long i = newLength - length; i-- != 0; ) add( false );
 		else for( long i = length; i-- != newLength; ) removeBoolean( i );
 		return this;
@@ -568,15 +568,15 @@ public abstract class AbstractBitVector implements BitVector {
 	}	
 	*/
 
-	public SubBitVector subList( final int from, final int to ) {
+	public SubBitVector subList( int from, int to ) {
 		return new SubBitVector( this, from, to );
 	}
 
-	public BitVector subVector( final long from, final long to ) {
+	public BitVector subVector( long from, long to ) {
 		return new SubBitVector( this, from, to );
 	}
 
-	public BitVector subVector( final long from ) {
+	public BitVector subVector( long from ) {
 		return subVector( from, length() );
 	}
 
@@ -586,9 +586,9 @@ public abstract class AbstractBitVector implements BitVector {
 //		return super.compareTo( list );
 //	}
 	
-	public int compareTo( final BitVector v ) {
-		final long minLength = Math.min( length(), v.length() );
-		final long l = minLength - minLength % Long.SIZE;
+	public int compareTo( BitVector v ) {
+		long minLength = Math.min( length(), v.length() );
+		long l = minLength - minLength % Long.SIZE;
 		long w0, w1, xor;
 		
 		long i;
@@ -616,8 +616,8 @@ public abstract class AbstractBitVector implements BitVector {
 	 */
 	
 	public String toString() {
-		final StringBuffer s = new StringBuffer();
-		final long size = size64();
+		StringBuilder s = new StringBuilder();
+		long size = size64();
 		for( long i = 0; i < size; i++ ) s.append( getInt( i ) );
 		return s.toString();
 	}
@@ -625,56 +625,56 @@ public abstract class AbstractBitVector implements BitVector {
 	/** A subvector of a given bit vector, specified by an initial and a final bit. */
 	
 	public static class SubBitVector extends AbstractBitVector implements BitVector {
-		final protected BitVector bitVector;		
+		protected final BitVector bitVector;
 		protected long from;
 		protected long to;
 		
-		public SubBitVector( final BitVector l, final long from, final long to ) {
+		public SubBitVector( BitVector l, long from, long to ) {
 			BitVectors.ensureFromTo( l.length(), from, to );
 			this.from = from;
 			this.to = to;
 			bitVector = l;
 		}
 		
-		public boolean getBoolean( final long index ) {
+		public boolean getBoolean( long index ) {
 			ensureIndex( index );
 			return bitVector.getBoolean( from + index ); 
 		}
 		
-		public int getInt( final long index ) { return getBoolean( index ) ? 1 : 0; }
+		public int getInt( long index ) { return getBoolean( index ) ? 1 : 0; }
 		
-		public boolean set( final long index, final boolean value ) {
+		public boolean set( long index, boolean value ) {
 			ensureIndex( index );
 			return bitVector.set( from + index, value ); 
 		}
 		
-		public void set( final long index, final int value ) { set( index, value != 0 ); }
+		public void set( long index, int value ) { set( index, value != 0 ); }
 		
-		public void add( final long index, final boolean value ) {
+		public void add( long index, boolean value ) {
 			ensureIndex( index );
 			bitVector.add( from + index, value ); to++; 
 		}
 		
-		public void add( final long index, final int value ) { add( index, value != 0 ); to++; }
-		public void add( final int value ) { bitVector.add( to++, value ); }
+		public void add( long index, int value ) { add( index, value != 0 ); to++; }
+		public void add( int value ) { bitVector.add( to++, value ); }
 		
-		public boolean removeBoolean( final long index ) {
+		public boolean removeBoolean( long index ) {
 			ensureIndex( index );
 			to--; 
 			return bitVector.removeBoolean( from + index ); 
 		} 
 
-		public BitVector copy( final long from, final long to ) {
+		public BitVector copy( long from, long to ) {
 			BitVectors.ensureFromTo( length(), from, to );
 			return bitVector.copy( this.from + from, this.from + to );
 		}
 		
-		public BitVector subVector( final long from, final long to ) {
+		public BitVector subVector( long from, long to ) {
 			BitVectors.ensureFromTo( length(), from, to );
 			return new SubBitVector( bitVector, this.from + from, this.from + to );
 		}
 		
-		public long getLong( final long from, final long to ) {
+		public long getLong( long from, long to ) {
 			BitVectors.ensureFromTo( length(), from, to );
 			return bitVector.getLong( from + this.from, to + this.from );
 		}

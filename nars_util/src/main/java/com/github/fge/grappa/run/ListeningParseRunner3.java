@@ -57,7 +57,7 @@ public class ListeningParseRunner3<V>
      *
      * @param rule the parser rule
      */
-    public ListeningParseRunner3(final Rule rule)
+    public ListeningParseRunner3(Rule rule)
     {
         super(rule);
     }
@@ -69,14 +69,14 @@ public class ListeningParseRunner3<V>
 //    }
 
     @Override
-    public ParsingResult<V> run(final InputBuffer inputBuffer)
+    public ParsingResult<V> run(InputBuffer inputBuffer)
     {
 
 
         //Objects.requireNonNull(inputBuffer, "inputBuffer");
         resetValueStackDOESNTNEEDTOBEFINALPLEASE();
 
-        final MatcherContext<V> rootContext = createRootContext(inputBuffer, this);
+        MatcherContext<V> rootContext = createRootContext(inputBuffer, this);
 
 //        if (busRun())
 //            bus.post(new PreParseEvent<>(rootContext));
@@ -85,8 +85,8 @@ public class ListeningParseRunner3<V>
             throw new GrappaException("parsing listener error (before parse)",
                     throwable);*/
 
-        final boolean matched = rootContext.runMatcher();
-        final ParsingResult<V> result
+        boolean matched = rootContext.runMatcher();
+        ParsingResult<V> result
                 = createParsingResult(matched, rootContext);
 
 //        if (busRun())
@@ -100,9 +100,9 @@ public class ListeningParseRunner3<V>
     }
 
     @Override
-    public final <T> boolean match(final MatcherContext<T> context)
+    public final <T> boolean match(MatcherContext<T> context)
     {
-        final Matcher matcher = context.getMatcher();
+        Matcher matcher = context.getMatcher();
 
 //        if (busMatch()) {
 //            final PreMatchEvent<T> preMatchEvent = new PreMatchEvent<>(context);
@@ -114,8 +114,7 @@ public class ListeningParseRunner3<V>
                     throwable);*/
 
         // FIXME: is there any case at all where context.getMatcher() is null?
-        @SuppressWarnings("ConstantConditions")
-        final boolean match = matcher.match(context);
+        @SuppressWarnings("ConstantConditions") boolean match = matcher.match(context);
 
 
 //        if (busMatch()) {
@@ -141,9 +140,9 @@ public class ListeningParseRunner3<V>
 
     protected void resetValueStackDOESNTNEEDTOBEFINALPLEASE()     {
         //ONLY CREATE A REPLACEMENT VALUESTACK IF IS EMPTY
-        if (this.valueStack == null || !this.valueStack.isEmpty())
-            this.valueStack = new DefaultValueStack();
-        this.stackSnapshot = null;
+        if (valueStack == null || !valueStack.isEmpty())
+            valueStack = new DefaultValueStack();
+        stackSnapshot = null;
     }
 
 //    public boolean busMatch() { return false; }

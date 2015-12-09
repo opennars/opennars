@@ -19,12 +19,12 @@ public class PeerTest {
     public void testPeers() throws IOException, InterruptedException {
         AtomicBoolean received = new AtomicBoolean(false);
 
-        final GossipPeer a = new GossipPeer(10001) {
+        GossipPeer a = new GossipPeer(10001) {
 
 
         };
 
-        final GossipPeer b = new GossipPeer(10002) {
+        GossipPeer b = new GossipPeer(10002) {
 
             @Override
 
@@ -57,7 +57,7 @@ public class PeerTest {
         private final String value;
 
         public TestBean(String v) {
-            this.value = v;
+            value = v;
         }
 
         public String getValue() {

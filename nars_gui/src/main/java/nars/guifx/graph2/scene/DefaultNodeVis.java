@@ -40,7 +40,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 //        }
 //    }
 
-    final static Font nodeFont = NARfx.mono(0.25);
+    static final Font nodeFont = NARfx.mono(0.25);
 
     protected double minSize = 16;
     protected double maxSize = 64;
@@ -55,7 +55,6 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     final Rectangle hoverPanel = new Rectangle();
 
     public DefaultNodeVis() {
-        super();
         nodeScale.addListener((e) -> {
             nodeScaleCache = nodeScale.get();
         });
@@ -84,10 +83,9 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 
         if (t == null) {
             return;
-        } else {
+        }
 //            p = t.term.cgetPriority();
 //            q = t.c.getQuality();
-        }
 
         //            if (c == null) return;
 //
@@ -101,17 +99,15 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         t.scale( nodeScaleCache * (minSize + (maxSize - minSize) * t.priNorm) );
     }
 
-    final static Font mono = NARfx.mono(8);
+    static final Font mono = NARfx.mono(8);
 
     public static final ColorMatrix colors = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
-            (op, activation) -> {
-                return Color.hsb(op * 360.0,
-                        0.35 + 0.64 * activation,
-                        0.25 + activation * 0.74);
-            });
+            (op, activation) -> Color.hsb(op * 360.0,
+                    0.35 + 0.64 * activation,
+                    0.25 + activation * 0.74));
 
 
-    final private AtomicReference<Node> selected = new AtomicReference();
+    private final AtomicReference<Node> selected = new AtomicReference();
 
     final EventHandler<MouseEvent> mouseActivity = e -> {
         //if (!hoverPanel.isVisible()) {
@@ -137,7 +133,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     };
 
     final ChangeListener changes = (c, p, v) -> {
-        if (this.selected == null) return;
+        if (selected == null) return;
         updateSelection();
     };
 
@@ -146,7 +142,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         Node s = selected.get();
         if (s == null) return;
 
-        final Rectangle hp = this.hoverPanel;
+        Rectangle hp = hoverPanel;
         //System.out.print("hoverpanel -> " + v);
 
         Bounds v = s.localToScene(s.getLayoutBounds());
@@ -216,10 +212,10 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
 
     @Override
     public void start(SpaceGrapher g) {
-        if (this.graph != null)
+        if (graph != null)
             throw new RuntimeException("already running this vis");
 
-        this.graph = g;
+        graph = g;
         hoverPanel.setVisible(false);
         hoverPanel.setMouseTransparent(true);
 
@@ -227,7 +223,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         //TODO see if this is destructive
         g.setOnMouseMoved((MouseEvent e) -> {
             //System.out.println("mouse moved: " + e.getTarget());
-            if (this.selected == null) return;
+            if (selected == null) return;
             updateSelection();
         });
 
@@ -240,7 +236,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     public void stop(SpaceGrapher g) {
         g.getChildren().remove(hoverPanel);
         g.setOnMouseMoved(null); //TODO see if this is destructive
-        this.graph = null;
+        graph = null;
     }
 
 public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {

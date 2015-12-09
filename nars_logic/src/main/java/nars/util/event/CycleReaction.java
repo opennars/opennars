@@ -6,7 +6,7 @@ import nars.NAR;
 import java.util.function.Consumer;
 
 /** default cycle reaction, called at end of cycle */
-abstract public class CycleReaction implements Consumer<Memory> {
+public abstract class CycleReaction implements Consumer<Memory> {
 
     private final On cycleReg;
 
@@ -15,14 +15,13 @@ abstract public class CycleReaction implements Consumer<Memory> {
     }
 
     public CycleReaction(Memory memory) {
-        super();
         cycleReg = memory.eventCycleEnd.on(this);
 
     }
 
     public void off() { cycleReg.off(); }
 
-    abstract public void onCycle();
+    public abstract void onCycle();
 
     @Override
     public void accept(Memory memory) {

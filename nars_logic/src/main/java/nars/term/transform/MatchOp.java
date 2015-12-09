@@ -11,7 +11,7 @@ public abstract class MatchOp extends PatternOp {
      * if match not successful, does not cause the execution to
      * terminate but instead sets the frame's match flag
      */
-    abstract public boolean match(Term f);
+    public abstract boolean match(Term f);
 
     @Override
     public final boolean run(FindSubst ff) {

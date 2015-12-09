@@ -25,11 +25,10 @@ import java.util.List;
  */
 public abstract class TermFunction<O> extends SyncOperator {
 
-    private final float feedbackPriorityMultiplier = 1f;
-    private final float feedbackDurabilityMultiplier = 1f;
+    private final float feedbackPriorityMultiplier = 1.0f;
+    private final float feedbackDurabilityMultiplier = 1.0f;
 
     protected TermFunction() {
-        super();
     }
 
     protected TermFunction(Term name) {
@@ -56,10 +55,10 @@ public abstract class TermFunction<O> extends SyncOperator {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    abstract public O function(Operation x);
+    public abstract O function(Operation x);
 
 
-    protected List<Task> result(final Task opTask, Term y, Term[] x0, Term lastTerm) {
+    protected List<Task> result(Task opTask, Term y, Term[] x0, Term lastTerm) {
 
         Compound operation = opTask.getTerm();
 
@@ -80,7 +79,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //final int numArgs = x0.length;
 
         Term inh = Operation.result(operation, y);
-        if (inh == null || (!(inh instanceof Compound))) {
+        if ((!(inh instanceof Compound))) {
             //TODO wrap a non-Compound result as some kind of statement
             return null;
         }
@@ -125,7 +124,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
     /** default confidence applied to result tasks */
     public float getResultFrequency() {
-        return 1f;
+        return 1.0f;
     }
 
 
@@ -182,14 +181,14 @@ public abstract class TermFunction<O> extends SyncOperator {
 //    }
 
     @Override
-    public List<Task> apply(final Task opTask) {
+    public List<Task> apply(Task opTask) {
 
         Compound operation = opTask.getTerm();
 
         Term opTerm = Operation.opTerm(operation);
         Term[] x = Operation.args(operation).terms();
 
-        final Memory memory = nar.memory;
+        Memory memory = nar.memory;
 
         int numInputs = x.length;
         if (x[numInputs - 1].equals(memory.self()))
@@ -244,7 +243,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         if (y instanceof Task) {
             return Lists.newArrayList((Task)y);
         }
-        else if (y instanceof Term) {
+        if (y instanceof Term) {
             return result(opTask, (Term) y, x, lastTerm);
         }
 

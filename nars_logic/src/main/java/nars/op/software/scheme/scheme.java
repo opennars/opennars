@@ -24,30 +24,26 @@ public class scheme extends TermFunction {
 
     public static final SchemeClosure env = DefaultEnvironment.newInstance();
 
-    final static Function<Term,Expression> narsToScheme = new Function<Term, Expression>() {
+    static final Function<Term,Expression> narsToScheme = term -> {
 
-        @Override
-        public Expression apply(Term term) {
-
-            if (term instanceof Compound) {
-                //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
-                return new SchemeProduct((Compound)term);
-            }
-            else if (term instanceof Atom) {
-
-                String s = term.toString();
-
-                //attempt to parse as number
-                try {
-                    double d = Double.parseDouble(s);
-                    return new NumberExpression((long)d);
-                }
-                catch (NumberFormatException e) { }
-                //atomic symbol
-                return new SymbolExpression(s);
-            }
-            throw new RuntimeException("Invalid term for scheme: " + term);
+        if (term instanceof Compound) {
+            //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
+            return new SchemeProduct((Compound)term);
         }
+        if (term instanceof Atom) {
+
+            String s = term.toString();
+
+            //attempt to parse as number
+            try {
+                double d = Double.parseDouble(s);
+                return new NumberExpression((long)d);
+            }
+            catch (NumberFormatException e) { }
+            //atomic symbol
+            return new SymbolExpression(s);
+        }
+        throw new RuntimeException("Invalid term for scheme: " + term);
     };
 
     /** adapter class for NARS term -> Scheme expression; temporary until the two API are merged better */
@@ -87,12 +83,7 @@ public class scheme extends TermFunction {
         Term[] x = o.args();
         Term code = x[0];
 
-        if (code instanceof Compound) {
-            return schemeToNars.apply(eval( ((Compound) code)  ));
-        }
-        else {
-            return schemeToNars.apply(eval( $.p(x) ));
-        }
+        return code instanceof Compound ? schemeToNars.apply(eval(((Compound) code))) : schemeToNars.apply(eval($.p(x)));
         //Set = evaluate as a cond?
 //        else {
 //

@@ -9,6 +9,6 @@ package nars;
  *
  * @author me
  */
-abstract public class Widget {
+public abstract class Widget {
     
 }

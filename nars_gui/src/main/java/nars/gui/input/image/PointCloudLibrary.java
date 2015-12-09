@@ -70,6 +70,7 @@
 package nars.gui.input.image;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static nars.gui.input.image.PointCloudPoint.pcp;
 
@@ -98,10 +99,8 @@ public class PointCloudLibrary
   // which represent unistroke gestures
   public boolean containsOnlyUnistrokes()
   {
-    for(int i = 0; i < _pointClouds.size(); i++)
-    {
-      if(!_pointClouds.get(i).isUnistroke())
-      {
+    for (PointCloud _pointCloud : _pointClouds) {
+      if (!_pointCloud.isUnistroke()) {
         return false;
       }
     }
@@ -111,27 +110,15 @@ public class PointCloudLibrary
 
   Set<PointCloud> getPointCloud(String name)
   {
-    HashSet<PointCloud> result = new HashSet<>();
-    
-    for(int i = 0; i < _pointClouds.size(); i++)
-    {
-      if(_pointClouds.get(i).getName().equals(name))
-      {
-        result.add(_pointClouds.get(i));
-      }
-    }
-    
+    HashSet<PointCloud> result = _pointClouds.stream().filter(_pointCloud -> _pointCloud.getName().equals(name)).collect(Collectors.toCollection(HashSet::new));
+
     return result;
   }
   
   public Set<String> getNames()
   {
-    HashSet<String> result = new HashSet<>();
-    for(int i = 0; i < _pointClouds.size(); i++)
-    {
-      result.add(_pointClouds.get(i).getName());
-    }
-    
+    HashSet<String> result = _pointClouds.stream().map(PointCloud::getName).collect(Collectors.toCollection(HashSet::new));
+
     return result;
   }
   
@@ -264,22 +251,18 @@ public class PointCloudLibrary
       results[i] = new PointCloudMatchResult(pointCloud.getName(), d);
     }
 
-    Arrays.sort(results, new Comparator<PointCloudMatchResult>()
-    {
-       public int compare(PointCloudMatchResult obj1, PointCloudMatchResult obj2)
-        {
-          if(obj1.getScore() < obj2.getScore())
-          {
-            return -1;
-          }
-  
-          if(obj1.getScore() > obj2.getScore())
-          {
-            return 1;
-          }
-  
-          return 0;
-        }
+    Arrays.sort(results, (obj1, obj2) -> {
+      if(obj1.getScore() < obj2.getScore())
+      {
+        return -1;
+      }
+
+      if(obj1.getScore() > obj2.getScore())
+      {
+        return 1;
+      }
+
+      return 0;
     });
 
     return results;

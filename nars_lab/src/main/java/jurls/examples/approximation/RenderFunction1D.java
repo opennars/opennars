@@ -13,7 +13,7 @@ import java.awt.*;
  */
 public interface RenderFunction1D {
 
-    public double compute(double x);
+    double compute(double x);
 
-    public Color getColor();
+    Color getColor();
 }

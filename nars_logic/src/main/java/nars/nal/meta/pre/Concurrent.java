@@ -14,7 +14,6 @@ public class Concurrent extends PreCondition {
     public static Concurrent the = new Concurrent();
 
     protected Concurrent() {
-        super();
     }
 
     @Override
@@ -24,13 +23,13 @@ public class Concurrent extends PreCondition {
 
     @Override
     public final boolean test(RuleMatch m) {
-        final Premise premise = m.premise;
+        Premise premise = m.premise;
 
         if (!premise.isEvent())
             return false;
 
-        final Task task = premise.getTask();
-        final Task belief = premise.getBelief();
+        Task task = premise.getTask();
+        Task belief = premise.getBelief();
 
         //return task.concurrent(belief, m.premise.duration());
         return Tense.overlaps(task, belief);

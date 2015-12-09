@@ -24,7 +24,7 @@ public class Autoencoder {
     private double[] L_vbias;
     private double[] L_hbias;
 
-    public double uniform(final double min, final double max) {
+    public double uniform(double min, double max) {
         return rng.nextDouble() * (max - min) + min;
     }
 
@@ -48,7 +48,7 @@ public class Autoencoder {
     }
     */
 
-    final public static double sigmoid(final double x) {
+    public static final double sigmoid(double x) {
         return 1.0 / (1.0 + Math.pow(Math.E, -x));
     }
     
@@ -60,14 +60,10 @@ public class Autoencoder {
         this.n_visible = n_visible;
         this.n_hidden = n_hidden;
 
-        if (rng == null) {
-            this.rng = new Random(); //XORShiftRandom();
-        } else {
-            this.rng = rng;
-        }
+        this.rng = rng == null ? new Random() : rng;
 
         if (W == null) {
-            this.W = new double[this.n_hidden][this.n_visible];
+            this.W = new double[n_hidden][n_visible];
             double a = 1.0 / this.n_visible;
 
             for (int i = 0; i < this.n_hidden; i++) {
@@ -80,7 +76,7 @@ public class Autoencoder {
         }
 
         if (hbias == null) {
-            this.hbias = new double[this.n_hidden];
+            this.hbias = new double[n_hidden];
             for (int i = 0; i < this.n_hidden; i++) {
                 this.hbias[i] = 0;
             }
@@ -89,7 +85,7 @@ public class Autoencoder {
         }
 
         if (vbias == null) {
-            this.vbias = new double[this.n_visible];
+            this.vbias = new double[n_visible];
             for (int i = 0; i < this.n_visible; i++) {
                 this.vbias[i] = 0;
             }
@@ -117,19 +113,19 @@ public class Autoencoder {
     // Encode
     public double[] encode(double[] x, double[] y, boolean sigmoid, boolean normalize) {
 
-        final double[][] W = this.W;
+        double[][] W = this.W;
 
         if (y == null)
             y = new double[n_hidden];
 
-        final int nv = n_visible;
-        final int nh = n_hidden;
+        int nv = n_visible;
+        int nh = n_hidden;
         double[] hbias = this.hbias;
 
         double max=0, min=0;
         for (int i = 0; i < nh; i++) {
             double yi = hbias[i];
-            final double[] wi = W[i];
+            double[] wi = W[i];
 
             for (int j = 0; j < nv; j++) {
                 yi += wi[j] * x[j];
@@ -159,12 +155,12 @@ public class Autoencoder {
     }
 
     // Decode
-    public void get_reconstructed_input(final double[] y, final double[] z) {
+    public void get_reconstructed_input(double[] y, double[] z) {
         double[][] w = W;
 
         double[] vbias = this.vbias;
-        final int nv = n_visible;
-        final int nh = n_hidden;
+        int nv = n_visible;
+        int nh = n_hidden;
 
         for (int i = 0; i < nv; i++) {
             double zi = vbias[i];
@@ -195,20 +191,20 @@ public class Autoencoder {
             L_hbias = new double[n_hidden];
         }
 
-        final double[][] W = this.W;
-        final double[] L_hbias = this.L_hbias;
-        final double[] L_vbias = this.L_vbias;
-        final double[] vbias = this.vbias;
+        double[][] W = this.W;
+        double[] L_hbias = this.L_hbias;
+        double[] L_vbias = this.L_vbias;
+        double[] vbias = this.vbias;
 
 
         if (noiseLevel > 0) {        
             addNoise(x, tilde_x, noiseLevel, corruptionRate);
         }
         else {
-            this.tilde_x = x;
+            tilde_x = x;
         }
 
-        final double[] tilde_x = this.tilde_x;
+        double[] tilde_x = this.tilde_x;
 
         encode(tilde_x, y, sigmoid, true);                
         
@@ -231,10 +227,10 @@ public class Autoencoder {
         
         error /= n_visible;
 
-        final int n = n_visible;
-        final double[] y = this.y;
-        final double[] hbias = this.hbias;
-        final int nh = n_hidden;
+        int n = n_visible;
+        double[] y = this.y;
+        double[] hbias = this.hbias;
+        int nh = n_hidden;
 
         // hbias
         for (int i = 0; i < nh; i++) {

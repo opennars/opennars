@@ -158,7 +158,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
         List<Integer> matchingIndexes = new ArrayList<>();
         nodesOfType(program2.getRoot(), subtree1Type, 0, matchingNodes, matchingIndexes);
 
-        if (matchingNodes.size() > 0) {
+        if (!matchingNodes.isEmpty()) {
             // Select second swap point with the same data-type
             int index = selectNodeIndex(matchingNodes);
             Node subtree2 = matchingNodes.get(index);
@@ -174,6 +174,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
 
                 TypedOrganism[] children = new TypedOrganism[2];
 
+                //noinspection IfStatementWithTooManyBranches
                 if (depth1 <= maxDepth && depth2 <= maxDepth) {
                     children = new TypedOrganism[]{program1, program2};
                 } else if (depth1 <= maxDepth) {
@@ -184,8 +185,8 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
                     children  = new TypedOrganism[0];
                 }
 
-                int[] swapPoints = new int[]{swapPoint1, swapPoint2};
-                Node[] subtrees = new Node[]{subtree1, subtree2};
+                int[] swapPoints = {swapPoint1, swapPoint2};
+                Node[] subtrees = {subtree1, subtree2};
 
                 ((EndEvent) event).setCrossoverPoints(swapPoints);
                 ((EndEvent) event).setSubtrees(subtrees);
@@ -284,11 +285,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
                 }
             }
 
-            if ((nonTerminalIndexes.size() > 0) && (random.nextDouble() >= terminalProbability)) {
-                return nonTerminalIndexes.get(random.nextInt(nonTerminalIndexes.size()));
-            } else {
-                return terminalIndexes.get(random.nextInt(terminalIndexes.size()));
-            }
+            return (!nonTerminalIndexes.isEmpty()) && (random.nextDouble() >= terminalProbability) ? nonTerminalIndexes.get(random.nextInt(nonTerminalIndexes.size())) : terminalIndexes.get(random.nextInt(terminalIndexes.size()));
         }
     }
 

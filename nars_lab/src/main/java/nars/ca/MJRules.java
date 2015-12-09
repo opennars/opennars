@@ -91,9 +91,9 @@ public class MJRules {
 		{
 			for (i = 0; i < vLines.size(); i++) {
 				sBff = ((String) vLines.elementAt(i)).trim();
-				if ((sBff.length() > 0)
+				if ((!sBff.isEmpty())
 						&& !((String) vLines.elementAt(i)).startsWith("//")) {
-					if (sBff.startsWith("#")) // next family of rules
+					if (sBff.length() > 0 && sBff.charAt(0) == '#') // next family of rules
 					{
 						iGame = GetGameIndex(sBff.substring(1));
 					} else // next rule
@@ -118,6 +118,7 @@ public class MJRules {
 	// Get the index of the given game
 	public int GetGameIndex(String sGameName) {
 		int iGame = -1;
+		//noinspection IfStatementWithTooManyBranches
 		if ((sGameName.compareTo(GAME_GENE_Name) == 0) // Generations
 				|| (sGameName.compareTo(GAME_GENE_Abbr) == 0))
 			iGame = GAME_GENE;

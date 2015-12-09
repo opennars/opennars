@@ -52,7 +52,7 @@ public class RLAgent extends LearnerAndActor {
             RLParameters rLParameters,
             int memorySize
     ) {
-        this.parameterizedFunction = parameterizedFunctionGenerator.generate(s0.length + 1);
+        parameterizedFunction = parameterizedFunctionGenerator.generate(s0.length + 1);
         this.updateProcedure = updateProcedure;
         this.actionSelector = actionSelector;
         this.numActions = numActions;
@@ -77,7 +77,7 @@ public class RLAgent extends LearnerAndActor {
 
     @Override
     public int learnAndAction(double[] state, double reward, double[] previousState, int previousAction) {
-        final double U = 0.01; //prevents divison by zero
+        double U = 0.01; //prevents divison by zero
 
         for (int i = 0; i < state.length; ++i) {
             if (state[i] > stateMax[i]) {
@@ -99,8 +99,7 @@ public class RLAgent extends LearnerAndActor {
         }
 
         double nextFactor1 = 0;
-        for (int i = 0; i < memory.length; ++i) {
-            double[] m = memory[i];
+        for (double[] m : memory) {
             double sum2 = 0;
             for (int j = 0; j < m.length; ++j) {
                 double d = normalizedState[j] - m[j];
@@ -180,9 +179,9 @@ public class RLAgent extends LearnerAndActor {
     public String getDebugString(int indent) {
         String ind = Utils.makeIndent(indent);
         return ind + "Q/SARSA(lambda)\n"
-                + ind + "factor1 = " + factor1 + "\n"
-                + ind + "factor2 = " + factor2 + "\n"
-                + ind + "epsilon = " + epsilon + "\n"
+                + ind + "factor1 = " + factor1 + '\n'
+                + ind + "factor2 = " + factor2 + '\n'
+                + ind + "epsilon = " + epsilon + '\n'
                 + super.getDebugString(indent);
     }
 

@@ -41,23 +41,22 @@ import java.util.*;
  */
 public class CFGAnalysisExample implements Opcodes {
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         ClassReader cr = new ClassReader("nars.cfg.bytecode.CFGAnalysisExample");
         ClassNode cn = new ClassNode();
         cr.accept(cn, ClassReader.SKIP_DEBUG);
 
         List<MethodNode> methods = cn.methods;
-        for (int i = 0; i < methods.size(); ++i) {
-            MethodNode method = methods.get(i);
+        for (MethodNode method : methods) {
             if (method.instructions.size() > 0) {
                 if (!analyzeUselessStores(cn, method)) {
-                    Analyzer<?> a = new Analyzer<BasicValue>(
+                    Analyzer<?> a = new Analyzer<>(
                             new BasicVerifier());
                     try {
                         a.analyze(cn.name, method);
                     } catch (Exception ignored) {
                     }
-                    final Frame<?>[] frames = a.getFrames();
+                    Frame<?>[] frames = a.getFrames();
 
                     System.out.println(Arrays.toString(frames));
                     /*
@@ -101,16 +100,16 @@ public class CFGAnalysisExample implements Opcodes {
      * least one xLOAD corresponding instruction in their successor instructions
      * (in the control flow graph).
      */
-    public static boolean analyzeUselessStores(final ClassNode c, final MethodNode m)
+    public static boolean analyzeUselessStores(ClassNode c, MethodNode m)
             throws Exception {
-        Analyzer<SourceValue> a = new Analyzer<SourceValue>(
+        Analyzer<SourceValue> a = new Analyzer<>(
                 new SourceInterpreter());
         Frame<SourceValue>[] frames = a.analyze(c.name, m);
 
         // for each xLOAD instruction, we find the xSTORE instructions that can
         // produce the value loaded by this instruction, and we put them in
         // 'stores'
-        Set<AbstractInsnNode> stores = new HashSet<AbstractInsnNode>();
+        Set<AbstractInsnNode> stores = new HashSet<>();
         for (int i = 0; i < m.instructions.size(); ++i) {
             AbstractInsnNode insn = m.instructions.get(i);
             int opcode = insn.getOpcode();
@@ -120,9 +119,8 @@ public class CFGAnalysisExample implements Opcodes {
                 Frame<SourceValue> f = frames[i];
                 if (f != null) {
                     Set<AbstractInsnNode> s = f.getLocal(var).insns;
-                    Iterator<AbstractInsnNode> j = s.iterator();
-                    while (j.hasNext()) {
-                        insn = j.next();
+                    for (AbstractInsnNode value : s) {
+                        insn = value;
                         if (insn instanceof VarInsnNode) {
                             stores.add(insn);
                         }

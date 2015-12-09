@@ -86,10 +86,6 @@ public class Power extends MathNode {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 2) && TypeUtil.isAllNumericType(inputTypes)) {
-            return Double.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 2) && TypeUtil.isAllNumericType(inputTypes) ? Double.class : null;
     }
 }

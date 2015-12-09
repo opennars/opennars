@@ -17,9 +17,9 @@ public class SignalData {
     private Object[] data;
 
     public SignalData(Metrics m, Signal s) {
-        this.metric = m;
-        this.signal = s;
-        this.index = metric.getSignals().indexOf(s);
+        metric = m;
+        signal = s;
+        index = metric.getSignals().indexOf(s);
     }
 
     public Signal getSignal() {
@@ -28,13 +28,13 @@ public class SignalData {
 
     public Object[] getDataCached() {
         if (data == null) {
-            this.data = getData();
+            data = getData();
         }
         return data;
     }
 
     public Object[] getData() {
-        return this.data = metric.getData(index, data);
+        return data = metric.getData(index, data);
     }
 
     public String getID() {

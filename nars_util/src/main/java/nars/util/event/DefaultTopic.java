@@ -48,18 +48,18 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
 
 
     DefaultTopic(String id) {
-        super(i -> new Consumer[i]);
+        super(Consumer[]::new);
         this.id = id;
         register(this);
     }
 
     @Override
-    final public void emit(final V arg) {
-        final Consumer[] vv = getCachedNullTerminatedArray();
+    public final void emit(V arg) {
+        Consumer[] vv = getCachedNullTerminatedArray();
         if (vv == null) return;
 
         for (int i = 0; ; ) {
-            final Consumer c = vv[i++];
+            Consumer c = vv[i++];
             if (c == null)
                 break; //null terminator hit
             c.accept(arg);
@@ -67,7 +67,7 @@ public class DefaultTopic<V> extends ArraySharingList<Consumer<V>> implements To
     }
 
     @Override
-    final public On on(Consumer<V> o) {
+    public final On on(Consumer<V> o) {
         On d = new On(this,o);
         add(o);
         return d;

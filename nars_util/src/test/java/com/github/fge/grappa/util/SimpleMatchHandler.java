@@ -29,7 +29,7 @@ public final class SimpleMatchHandler
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         return context.getMatcher().match(context);
     }

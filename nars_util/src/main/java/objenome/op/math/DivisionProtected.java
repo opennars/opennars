@@ -206,12 +206,10 @@ public class DivisionProtected extends MathNode {
         if (Double.isFinite(an) && Double.isFinite(bn)) {
             return new Doubliteral(asDouble());
         }
-        else {
-            if (bn == 1) return a;
-            if (an == 0) return zero;
+        if (bn == 1) return a;
+        if (an == 0) return zero;
 
-            //if (bn == 0) return new Negate
-        }
+        //if (bn == 0) return new Negate
 
         return super.normalize();
     }

@@ -54,7 +54,7 @@ public final class DefaultValueStack<V>
 
     @Override
     @SuppressWarnings("unchecked")
-    public void restoreSnapshot(final Object snapshot) {
+    public void restoreSnapshot(Object snapshot) {
         if (snapshot==null) {
             stack.clear();
         }
@@ -66,35 +66,35 @@ public final class DefaultValueStack<V>
     }
 
     @Override
-    protected void doPush(final int down, final V value) {
+    protected void doPush(int down, V value) {
         stack.add(down, value);
     }
 
     @Nonnull
     @Override
-    protected V doPop(final int down) {
+    protected V doPop(int down) {
         return stack.remove(down);
     }
 
     @Nonnull
     @Override
-    protected V doPeek(final int down) {
+    protected V doPeek(int down) {
         return stack.get(down);
     }
 
     @Override
-    protected void doPoke(final int down, final V value) {
+    protected void doPoke(int down, V value) {
         stack.set(down, value);
     }
 
     @Override
     protected void doDup() {
-        final V element = stack.get(0);
+        V element = stack.get(0);
         stack.add(0, element);
     }
 
     @Override
-    protected void doSwap(final int n) {
+    protected void doSwap(int n) {
         Collections.reverse(stack.subList(0, n));
     }
 
@@ -110,7 +110,7 @@ public final class DefaultValueStack<V>
     }
 
     @Override
-    protected void checkIndex(final int index) {
+    protected void checkIndex(int index) {
         Preconditions.checkState(index < stack.size(),
                 "not enough elements in stack");
     }

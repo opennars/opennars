@@ -43,11 +43,11 @@ public class ImmutableGraphNode<T extends GraphNode<T>>
 
     public ImmutableGraphNode()
     {
-        this(Collections.EMPTY_LIST/*ImmutableList.<T>of()*/);
+        this(Collections.<T>emptyList()/*ImmutableList.<T>of()*/);
     }
 
     // TODO! Null! Again! I need a gun!
-    public ImmutableGraphNode(@Nonnull final List<T> children)
+    public ImmutableGraphNode(@Nonnull List<T> children)
     {
         //Objects.requireNonNull(children);
         /*
@@ -65,7 +65,7 @@ public class ImmutableGraphNode<T extends GraphNode<T>>
         return children;
     }
 
-    final public void forEach(final Consumer<T> c) {
+    public final void forEach(Consumer<T> c) {
         children.forEach(c);
     }
 }

@@ -7,7 +7,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/15/15.
  */
-abstract public class AbstractMeasureTime extends PreCondition1Output {
+public abstract class AbstractMeasureTime extends PreCondition1Output {
 
 
     public AbstractMeasureTime(Term target) {
@@ -16,7 +16,7 @@ abstract public class AbstractMeasureTime extends PreCondition1Output {
 
     @Override
     public boolean test(RuleMatch m, Term target) {
-        final Premise premise = m.premise;
+        Premise premise = m.premise;
 
         if (!premise.isEvent())
             return false;

@@ -217,13 +217,13 @@ public abstract class Statement<A extends Term, B extends Term>
 
     @Override
     public byte[] bytes() {
-        final byte[] subjBytes = getSubject().bytes();
-        final byte[] predBytes = getPredicate().bytes();
-        final byte[] relationBytes = op().bytes;
+        byte[] subjBytes = getSubject().bytes();
+        byte[] predBytes = getPredicate().bytes();
+        byte[] relationBytes = op().bytes;
 
         ByteBuf b = ByteBuf.create(
                 subjBytes.length + predBytes.length + relationBytes.length +
-                        +1 + 1 //separator and end closers
+                        1 + 1 //separator and end closers
         );
 
         return b.add(relationBytes)
@@ -235,7 +235,7 @@ public abstract class Statement<A extends Term, B extends Term>
 
 
     @Override
-    public void append(final Appendable w, final boolean pretty) throws IOException {
+    public void append(Appendable w, boolean pretty) throws IOException {
 
         w.append(STATEMENT_OPENER);
 
@@ -253,7 +253,7 @@ public abstract class Statement<A extends Term, B extends Term>
     }
 
 
-    final public static boolean invalidStatement(final Compound s) {
+    public static final boolean invalidStatement(Compound s) {
         return invalidStatement(s.term(0), s.term(1));
     }
 
@@ -266,7 +266,7 @@ public abstract class Statement<A extends Term, B extends Term>
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    final public static boolean invalidStatement(final Term subject, final Term predicate) {
+    public static final boolean invalidStatement(Term subject, Term predicate) {
         if (subject == null || predicate == null)
             return true;
 
@@ -282,16 +282,16 @@ public abstract class Statement<A extends Term, B extends Term>
 
 
         if ((subject instanceof Statement) && (predicate instanceof Statement)) {
-            final Statement s1 = (Statement) subject;
-            final Statement s2 = (Statement) predicate;
+            Statement s1 = (Statement) subject;
+            Statement s2 = (Statement) predicate;
 
-            final Term t11 = s1.getSubject();
-            final Term t22 = s2.getPredicate();
+            Term t11 = s1.getSubject();
+            Term t22 = s2.getPredicate();
             if (!t11.equals(t22))
                 return false;
 
-            final Term t12 = s1.getPredicate();
-            final Term t21 = s2.getSubject();
+            Term t12 = s1.getPredicate();
+            Term t21 = s2.getSubject();
             if (t12.equals(t21))
                 return true;
 
@@ -308,14 +308,14 @@ public abstract class Statement<A extends Term, B extends Term>
      * @param t2 The second term
      * @return Whether they cannot be related in a statement
      */
-    private static boolean invalidReflexive(final Term t1, final Term t2) {
+    private static boolean invalidReflexive(Term t1, Term t2) {
         if (!(t1 instanceof Compound)) {
             return false;
         }
         if ((t1 instanceof Image /*Ext) || (t1 instanceof ImageInt*/)) {
             return false;
         }
-        final Compound ct1 = (Compound) t1;
+        Compound ct1 = (Compound) t1;
         return ct1.containsTerm(t2);
     }
 

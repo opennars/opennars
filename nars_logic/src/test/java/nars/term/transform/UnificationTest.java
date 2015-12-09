@@ -53,7 +53,7 @@ public class UnificationTest  {
         boolean subbed = sub.next(t1, t2, power);
 
         System.out.println();
-        System.out.println(t1 + " " + t2 + " " + subbed);
+        System.out.println(t1 + " " + t2 + ' ' + subbed);
         System.out.println(sub);
 
         assertEquals(shouldSub, subbed);
@@ -186,8 +186,8 @@ public class UnificationTest  {
 
         String s1 = "<%A =/> %B>";
         String s2 = "<<a --> A> =/> <b --> B>>";
-        nar.input(s1 + ".");
-        nar.input(s2 + ".");
+        nar.input(s1 + '.');
+        nar.input(s2 + '.');
         nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
@@ -205,8 +205,8 @@ public class UnificationTest  {
 
         String s1 = "<%A =/> %B>";
         String s2 = "<<$1 --> A> =/> <$1 --> B>>";
-        nar.input(s1 + ".");
-        nar.input(s2 + ".");
+        nar.input(s1 + '.');
+        nar.input(s2 + '.');
         nar.frame(1000);
         Term t1 = nar.concept(s1).getTerm();
         Term t2 = nar.concept(s2).getTerm();
@@ -657,8 +657,8 @@ public class UnificationTest  {
 
 
     @Test public void testA() {
-        final String somethingIsBird = "bird:$x";
-        final String somethingIsAnimal = "animal:$x";
+        String somethingIsBird = "bird:$x";
+        String somethingIsAnimal = "animal:$x";
         testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
     }
 
@@ -666,7 +666,7 @@ public class UnificationTest  {
     void testIntroduction(String subj, Op relation, String pred, String belief, String concl) {
 
         new TestNAR(new Default().nal(6))
-                .believe("<" + subj + " " + relation + " " + pred + ">")
+                .believe('<' + subj + ' ' + relation + ' ' + pred + '>')
                 .believe(belief)
                 .mustBelieve(16, concl, 0.81f);
         //.next()

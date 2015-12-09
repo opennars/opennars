@@ -33,7 +33,7 @@ public final class SgArgument extends SgVariable {
      * @param argument
      *            Argument to copy type and name from - Cannot be null.
      */
-    public SgArgument(final SgBehavior owner, final SgArgument argument) {
+    public SgArgument(SgBehavior owner, SgArgument argument) {
         this(owner, argument.getModifiers(), argument.getType(), argument.getName());
     }
 
@@ -48,7 +48,7 @@ public final class SgArgument extends SgVariable {
      * @param name
      *            Name - Cannot be null and cannot be empty.
      */
-    public SgArgument(final SgBehavior owner, final SgClass type, final String name) {
+    public SgArgument(SgBehavior owner, SgClass type, String name) {
         this(owner, "", type, name);
     }
 
@@ -65,8 +65,8 @@ public final class SgArgument extends SgVariable {
      * @param name
      *            Name - Cannot be null and cannot be empty.
      */
-    public SgArgument(final SgBehavior owner, final String modifiers, final SgClass type,
-            final String name) {
+    public SgArgument(SgBehavior owner, String modifiers, SgClass type,
+                      String name) {
         super(modifiers, type, name);
 
         if (owner == null) {
@@ -82,7 +82,7 @@ public final class SgArgument extends SgVariable {
      * 
      * @return Behaviour.
      */
-    public final SgBehavior getOwner() {
+    public SgBehavior getOwner() {
         return owner;
     }
 
@@ -90,13 +90,13 @@ public final class SgArgument extends SgVariable {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
-        final StringBuffer sb = new StringBuffer();
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getAnnotations().size(); i++) {
             sb.append(getAnnotations().get(i));
             sb.append(' ');
         }
-        if (getModifiers().length() == 0) {
+        if (getModifiers().isEmpty()) {
             sb.append(getType().getSourceName()).append(' ').append(getName());
         } else {
             sb.append(getModifiers()).append(' ').append(getType().getSourceName()).append(' ').append(getName());

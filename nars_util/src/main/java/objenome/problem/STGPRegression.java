@@ -87,8 +87,7 @@ public class STGPRegression extends ProblemSTGP {
      * 
      * @param template a map to be filled with the template config
      */    
-    public STGPRegression(int functionPoints, Function<Double,Double> func) {        
-        super();
+    public STGPRegression(int functionPoints, Function<Double,Double> func) {
         this.functionPoints = functionPoints;
         
         the(Population.SIZE, 100);

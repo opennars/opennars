@@ -12,9 +12,9 @@ import nars.term.transform.FindSubst;
  */
 public class SubstituteIfUnified extends Substitute {
 
-    final static Atom INDEP_VAR = Atom.the("$", true);
-    final static Atom QUERY_VAR = Atom.the("?", true);
-    final static Atom DEP_VAR = Atom.the("#", true);
+    static final Atom INDEP_VAR = Atom.the("$", true);
+    static final Atom QUERY_VAR = Atom.the("?", true);
+    static final Atom DEP_VAR = Atom.the("#", true);
 
     private final Op type;
     private final transient String id;
@@ -28,6 +28,7 @@ public class SubstituteIfUnified extends Substitute {
     public SubstituteIfUnified(Term varType, Term x, Term y) {
         super(x, y);
 
+        //noinspection IfStatementWithTooManyBranches
         if (varType.equals(QUERY_VAR))  {
             type = Op.VAR_QUERY;
         } else if (varType.equals(INDEP_VAR)) {
@@ -38,7 +39,7 @@ public class SubstituteIfUnified extends Substitute {
             throw new RuntimeException("invalid variable type: " + varType);
         }
 
-        this.id = getClass().getSimpleName() + ":(" +
+        id = getClass().getSimpleName() + ":(" +
                 type + "_," + x + ',' + y + ')';
     }
 
@@ -55,7 +56,7 @@ public class SubstituteIfUnified extends Substitute {
 
         FindSubst sub = new FindSubst(type, m.premise.getRandom());
 
-        final boolean result;
+        boolean result;
         if (sub.next(a, b, Global.UNIFICATION_POWER)) {
             m.secondary.putAll(sub.xy);
             result = true;

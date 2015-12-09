@@ -39,7 +39,7 @@ public class MJTools {
 
 			// read-in the whole file
 			while ((sBff = br.readLine()) != null) {
-				if (sBff.length() > 0) {
+				if (!sBff.isEmpty()) {
 					vLines.addElement(sBff.trim());
 				}
 			}
@@ -67,7 +67,7 @@ public class MJTools {
 
 				// read-in the whole file
 				while ((sBff = br.readLine()) != null) {
-					if (sBff.length() > 0) {
+					if (!sBff.isEmpty()) {
 						vLines.addElement(sBff.trim());
 					}
 				}

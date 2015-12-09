@@ -48,8 +48,8 @@ public class ControlFlowGraph {
             ControlFlowGraph initial,
              ClassNode classNode,
              MethodNode method) throws AnalyzerException {
-        final ControlFlowGraph graph = initial != null ? initial : new ControlFlowGraph();
-        final InsnList instructions = method.instructions;
+        ControlFlowGraph graph = initial != null ? initial : new ControlFlowGraph();
+        InsnList instructions = method.instructions;
         graph.mNodeMap = Maps.newHashMapWithExpectedSize(instructions.size());
 
         // Create a flow control graph using ASM4's analyzer. According to the ASM 4 guide
@@ -91,9 +91,9 @@ public class ControlFlowGraph {
         /** The instruction */
         public final AbstractInsnNode instruction;
         /** Any normal successors (e.g. following instruction, or goto or conditional flow) */
-        public final List<Node> successors = new ArrayList<Node>(2);
+        public final List<Node> successors = new ArrayList<>(2);
         /** Any abnormal successors (e.g. the handler to go to following an exception) */
-        public final List<Node> exceptions = new ArrayList<Node>(1);
+        public final List<Node> exceptions = new ArrayList<>(1);
 
         /** A tag for use during depth-first-search iteration of the graph etc */
         public int visit;
@@ -133,6 +133,7 @@ public class ControlFlowGraph {
             sb.append(getId(instruction));
             sb.append(':');
 
+            //noinspection IfStatementWithTooManyBranches
             if (instruction instanceof LabelNode) {
                 //LabelNode l = (LabelNode) instruction;
                 //sb.append('L' + l.getLabel().getOffset() + ":");
@@ -154,7 +155,7 @@ public class ControlFlowGraph {
                     if (opcode > 0 && opcode <= OPCODES.length) {
                         sb.append(OPCODES[opcode]);
                         if (instruction.getType() == AbstractInsnNode.METHOD_INSN) {
-                            sb.append("(" + ((MethodInsnNode)instruction).name + ")");
+                            sb.append('(' + ((MethodInsnNode)instruction).name + ')');
                         }
                     }
                 } catch (Throwable t) {

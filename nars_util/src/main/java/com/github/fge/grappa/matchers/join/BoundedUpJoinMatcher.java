@@ -28,21 +28,21 @@ public final class BoundedUpJoinMatcher
 {
     private final int maxCycles;
 
-    public BoundedUpJoinMatcher(final Rule joined, final Rule joining,
-        final int maxCycles)
+    public BoundedUpJoinMatcher(Rule joined, Rule joining,
+                                int maxCycles)
     {
         super(joined, joining);
         this.maxCycles = maxCycles;
     }
 
     @Override
-    protected boolean runAgain(final int cycles)
+    protected boolean runAgain(int cycles)
     {
         return cycles < maxCycles;
     }
 
     @Override
-    protected boolean enoughCycles(final int cycles)
+    protected boolean enoughCycles(int cycles)
     {
         return true;
     }

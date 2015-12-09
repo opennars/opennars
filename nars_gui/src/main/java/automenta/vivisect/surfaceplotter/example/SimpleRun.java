@@ -31,34 +31,25 @@ public class SimpleRun {
 
         jsp.setModel(sm);
 
-        new Thread(new Runnable() {
+        new Thread(() -> {
+            //noinspection InfiniteLoopStatement
+            while (true) {
 
-            @Override
-            public void run() {
-                while (true) {
-
-                    for (int i = 0; i < max; i++) {
-                        for (int j = 0; j < max; j++) {
-                            if (j == 5) {
-                                z1[i][j] = Float.NaN;
-                            } else {
-                                z1[i][j] = (float)(Math.cos(i+t/100.0)+Math.sin(j+t/50.0));
-                                //z2[i][j] = rand.nextFloat() * 20 - 10f;
-                            }
-                        }
+                for (int i = 0; i < max; i++) {
+                    for (int j = 0; j < max; j++) {
+                        z1[i][j] = j == 5 ? Float.NaN : (float) (Math.cos(i + t / 100.0) + Math.sin(j + t / 50.0));
                     }
-                    
-                     sm.setValues(0f, 200f, 0f, 200f, max, z1, null);
-
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException ex) {
-
-                    }
-
-                    t += 0.1;
                 }
 
+                 sm.setValues(0.0f, 200.0f, 0.0f, 200.0f, max, z1, null);
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
+
+                }
+
+                t += 0.1;
             }
 
         }).start();
@@ -80,12 +71,7 @@ public class SimpleRun {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                new SimpleRun().testSomething();
-            }
-        });
+        SwingUtilities.invokeLater(() -> new SimpleRun().testSomething());
 
     }
 

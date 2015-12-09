@@ -36,16 +36,16 @@ public class Windget extends DefaultWindow  {
 
 
     public interface Port {
-        public boolean acceptIn(Port from);
+        boolean acceptIn(Port from);
 
-        public boolean acceptOut(Port to);
+        boolean acceptOut(Port to);
 
-        public void addIncoming(Link l);
+        void addIncoming(Link l);
 
-        public void addOutgoing(Link l);
+        void addOutgoing(Link l);
 
-        public double getX();
-        public double getY();
+        double getX();
+        double getY();
 
         /** the port node */
         Node getNode();
@@ -57,8 +57,8 @@ public class Windget extends DefaultWindow  {
     public interface Link {
 
         //TODO move this directionality-specific functions to DirectedLink
-        public Port getSource();
-        public Port getTarget();
+        Port getSource();
+        Port getTarget();
     }
 
     public interface DirectedLink extends Link {
@@ -112,7 +112,7 @@ public class Windget extends DefaultWindow  {
                     Node target = pr.getIntersectedNode();
                     if (target instanceof Port) {
                         Port tp = (Port)target;
-                        if (tp.acceptIn(this) && this.acceptOut(tp)) {
+                        if (tp.acceptIn(this) && acceptOut(tp)) {
                             //System.out.println(this + " -> " + dragging + " -> " + tp);
                             addOutgoing(dragging);
                             tp.addIncoming(dragging);
@@ -194,7 +194,6 @@ public class Windget extends DefaultWindow  {
         }
 
         public TriangleEdge(RectPort source, RectPort target) {
-            super();
 
             setPickOnBounds(false);
 
@@ -276,19 +275,19 @@ public class Windget extends DefaultWindow  {
         }
 
         public void setTarget(Port p) {
-            if (this.target == p) return;
+            if (target == p) return;
 
 
-            if (this.target!=null) {
-                listen(this.target.getWindow(), false);
+            if (target !=null) {
+                listen(target.getWindow(), false);
             }
 
-            this.target = p;
+            target = p;
 
             if (p!=null) {
                 listen(p.getWindow(), true);
                 setMouseTransparent(false);
-                setOpacity(1f);
+                setOpacity(1.0f);
             }
             else {
                 setMouseTransparent(true);
@@ -374,16 +373,16 @@ public class Windget extends DefaultWindow  {
         autosize();
     }
 
-    final public Windget move(final double x, final double y) {
+    public final Windget move(double x, double y) {
         setLayoutX(x);
         setLayoutY(y);
         return this;
     }
-    final public boolean move(final double[] v, final double threshold) {
-        final double x = getLayoutX();
-        final double y = getLayoutY();
-        final double nx = v[0];
-        final double ny = v[1];
+    public final boolean move(double[] v, double threshold) {
+        double x = getLayoutX();
+        double y = getLayoutY();
+        double nx = v[0];
+        double ny = v[1];
         if (!((Math.abs(x-nx) < threshold) && (Math.abs(y-ny) < threshold))) {
             move(nx, ny);
             return true;
@@ -401,12 +400,12 @@ public class Windget extends DefaultWindow  {
     }
 
     public final double getCenterX() {
-        return getLayoutX() + content.getWidth()/2d;
+        return getLayoutX() + content.getWidth()/ 2.0d;
     }
     public final double getCenterY() {
-        return getLayoutY() + content.getHeight()/2d;
+        return getLayoutY() + content.getHeight()/ 2.0d;
     }
-    public final void move(final ArrayRealVector centerPosition) {
+    public final void move(ArrayRealVector centerPosition) {
         double x = centerPosition.getEntry(0);
         double y = centerPosition.getEntry(1);
         move( x, y );

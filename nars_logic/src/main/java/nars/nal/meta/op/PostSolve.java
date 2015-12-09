@@ -10,10 +10,9 @@ import nars.term.transform.FindSubst;
  */
 public final class PostSolve extends PreCondition {
 
-    public final static PostSolve the = new PostSolve();
+    public static final PostSolve the = new PostSolve();
 
     protected PostSolve() {
-        super();
     }
 
 

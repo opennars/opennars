@@ -36,8 +36,8 @@ public class MaxBeliefConfidence extends CycleReaction implements Signals {
         else {
             float lastConf = conf;
             conf = c.getBeliefs().getConfidenceMax(
-                    freq - DefaultTruth.DEFAULT_TRUTH_EPSILON / 2f,
-                    freq + DefaultTruth.DEFAULT_TRUTH_EPSILON / 2f
+                    freq - DefaultTruth.DEFAULT_TRUTH_EPSILON / 2.0f,
+                    freq + DefaultTruth.DEFAULT_TRUTH_EPSILON / 2.0f
             );
             if (lastConf < conf) {
                 bestAt = nar.time();

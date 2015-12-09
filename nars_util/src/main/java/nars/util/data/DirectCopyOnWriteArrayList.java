@@ -95,10 +95,10 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     private ArrayArrayList<E> buffer;
     private E[] backingArray;
     private int size = 0;
-    final private E[] empty;
+    private final E[] empty;
 
     public DirectCopyOnWriteArrayList(Class c) {
-        this.elementType = c;
+        elementType = c;
         empty = createArray(elementType, 0);
     }
 
@@ -137,13 +137,12 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
 
         if( backingArray == null ) {
             return new ArrayArrayList(empty.clone()); //buffer = new CircularArrayList();
-        } else {
-            // Only keep the array or the buffer but never both at
-            // the same time.  1) it saves space, 2) it keeps the rest
-            // of the code safer.
-            buffer = new ArrayArrayList( backingArray );
-            backingArray = null;
         }
+        // Only keep the array or the buffer but never both at
+        // the same time.  1) it saves space, 2) it keeps the rest
+        // of the code safer.
+        buffer = new ArrayArrayList( backingArray );
+        backingArray = null;
         return buffer;
     }
 
@@ -168,7 +167,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     }
 
 
-    public <T> T[] toArray(final T[] a) {
+    public <T> T[] toArray(T[] a) {
         return (T[]) backingArray;
     }
 
@@ -177,7 +176,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
         if (a.length < array.length) {
             return (T[])Arrays.copyOf(array, array.length, a.getClass());
         }
-
+        //todo: suspicious type of 'a'
         System.arraycopy( array, 0, a, 0, array.length );
 
         if (a.length > array.length) {
@@ -245,7 +244,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
             Object o2 = i2.next();
             if( o1 == o2 )
                 continue;
-            if( o1 == null || !o1.equals(o2) )
+            if(!Objects.equals(o1, o2))
                 return false;
         }
         return !(i1.hasNext() || !i2.hasNext());
@@ -291,7 +290,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
             if( element == o ) {
                 return i;
             }
-            if( element != null && element.equals(o) ) {
+            if(Objects.equals(element, o)) {
                 return i;
             }
         }
@@ -305,7 +304,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
             if( element == o ) {
                 return i;
             }
-            if( element != null && element.equals(o) ) {
+            if(Objects.equals(element, o)) {
                 return i;
             }
         }
@@ -313,11 +312,11 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     }
 
     public ListIterator<E> listIterator() {
-        return new ArrayIterator<E>(getArray(), 0);
+        return new ArrayIterator<>(getArray(), 0);
     }
 
     public ListIterator<E> listIterator(int index) {
-        return new ArrayIterator<E>(getArray(), index);
+        return new ArrayIterator<>(getArray(), index);
     }
 
     public List<E> subList(int fromIndex, int toIndex) {
@@ -353,8 +352,8 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
 
         protected ArrayIterator( E[] array, int index ) {
             this.array = array;
-            this.next = index;
-            this.lastReturned = -1;
+            next = index;
+            lastReturned = -1;
         }
 
         public boolean hasNext() {

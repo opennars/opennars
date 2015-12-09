@@ -36,8 +36,8 @@ public final class SuperCallRewriter
     implements RuleMethodProcessor
 {
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -45,13 +45,13 @@ public final class SuperCallRewriter
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
         throws Exception
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
-        final InsnList instructions = method.instructions;
+        InsnList instructions = method.instructions;
         AbstractInsnNode insn = instructions.getFirst();
         while (insn.getOpcode() != ARETURN) {
             if (insn.getOpcode() == INVOKESPECIAL)
@@ -60,13 +60,13 @@ public final class SuperCallRewriter
         }
     }
 
-    private void process(final ParserClassNode classNode,
-        final RuleMethod method, final MethodInsnNode insn)
+    private void process(ParserClassNode classNode,
+                         RuleMethod method, MethodInsnNode insn)
     {
         if ("<init>".equals(insn.name))
             return;
-        final String superMethodName = getSuperMethodName(method, insn);
-        final RuleMethod superMethod = classNode.getRuleMethods()
+        String superMethodName = getSuperMethodName(method, insn);
+        RuleMethod superMethod = classNode.getRuleMethods()
             .get(superMethodName + insn.desc);
         if (superMethod == null)
             return;
@@ -85,11 +85,11 @@ public final class SuperCallRewriter
         method.setBodyRewritten();
     }
 
-    private static String getSuperMethodName(final RuleMethod method,
-        final MethodInsnNode insn)
+    private static String getSuperMethodName(RuleMethod method,
+                                             MethodInsnNode insn)
     {
         Class<?> c = method.getOwnerClass();
-        final StringBuilder sb = new StringBuilder(method.name);
+        StringBuilder sb = new StringBuilder(method.name);
         do {
             //noinspection ConstantConditions
             c = c.getSuperclass();

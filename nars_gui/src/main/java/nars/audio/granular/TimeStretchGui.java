@@ -14,7 +14,7 @@ public class TimeStretchGui extends JPanel {
 	private final Audio player;
 	private final JSlider tempoSlider;
 
-	public TimeStretchGui(final Audio /*AudioPlayer */ player) {
+	public TimeStretchGui(Audio /*AudioPlayer */ player) {
 
 
 		this.player = player;
@@ -23,18 +23,10 @@ public class TimeStretchGui extends JPanel {
 //		setLayout(new FlowLayout(FlowLayout.LEFT));
 		
 		Button playButton = new Button("Play");
-		playButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				play();
-			}
-		});
+		playButton.addActionListener(e -> play());
 		
 		Button stopButton = new Button("Stop");
-		stopButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				stop();
-			}
-		});
+		stopButton.addActionListener(e -> stop());
 		
 
 //		Button openFileButton = new Button("Open...");
@@ -53,11 +45,7 @@ public class TimeStretchGui extends JPanel {
 		tempoSlider.setMajorTickSpacing(10);
 		tempoSlider.setMinorTickSpacing(1);
 		tempoSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-		tempoSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				updateStretchFactor(1.0F - (tempoSlider.getValue() - 50) / 100.0);
-			}
-		});
+		tempoSlider.addChangeListener(e -> updateStretchFactor(1.0F - (tempoSlider.getValue() - 50) / 100.0));
 
 		// Put everything together.
 //		add(openFileButton);

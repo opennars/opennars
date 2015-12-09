@@ -304,7 +304,7 @@ public class NonTerminalSymbol implements Symbol {
                     // It is this child.
                     return (NonTerminalSymbol) removeChild(i);
                 } else {
-                    final NonTerminalSymbol nth = nt.removeNthNonTerminal(n, (valid ? current + 1 : current), rule);
+                    NonTerminalSymbol nth = nt.removeNthNonTerminal(n, (valid ? current + 1 : current), rule);
 
                     if (nth != null) {
                         return nth;
@@ -389,7 +389,7 @@ public class NonTerminalSymbol implements Symbol {
      * tree.
      */
     public TerminalSymbol getNthTerminal(int n) {
-        final List<TerminalSymbol> terminals = getTerminalSymbols();
+        List<TerminalSymbol> terminals = getTerminalSymbols();
 
         return terminals.get(n);
     }
@@ -497,11 +497,7 @@ public class NonTerminalSymbol implements Symbol {
         nonTerminals.add(this);
 
         // Add all the non-terminals below each child.
-        for (Symbol child : children) {
-            if (child instanceof NonTerminalSymbol) {
-                nonTerminals.addAll(((NonTerminalSymbol) child).getNonTerminalSymbols());
-            }
-        }
+        children.stream().filter(child -> child instanceof NonTerminalSymbol).forEach(child -> nonTerminals.addAll(((NonTerminalSymbol) child).getNonTerminalSymbols()));
 
         return nonTerminals;
     }
@@ -611,11 +607,7 @@ public class NonTerminalSymbol implements Symbol {
 
         for (Symbol child : children) {
             int childDepth;
-            if (child instanceof NonTerminalSymbol) {
-                childDepth = ((NonTerminalSymbol) child).getDepth() + 1;
-            } else {
-                childDepth = 1;
-            }
+            childDepth = child instanceof NonTerminalSymbol ? ((NonTerminalSymbol) child).getDepth() + 1 : 1;
 
             if (childDepth > maxChildDepth) {
                 maxChildDepth = childDepth;

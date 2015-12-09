@@ -61,7 +61,7 @@ public class StreamTokenizer_s {
     private Reader reader = null;
     private InputStream input = null;
 
-    private char buf[] = new char[20];
+    private char[] buf = new char[20];
 
     /**
      * The next character to be considered by the nextToken method. May also be
@@ -86,7 +86,7 @@ public class StreamTokenizer_s {
     private boolean slashSlashCommentsP = false;
     private boolean slashStarCommentsP = false;
 
-    private byte ctype[] = new byte[256];
+    private byte[] ctype = new byte[256];
     private static final byte CT_WHITESPACE = 1;
     private static final byte CT_DIGIT = 2;
     private static final byte CT_ALPHA = 4;
@@ -500,261 +500,263 @@ public class StreamTokenizer_s {
      * of the next token is returned in the <code>ttype</code> field. Additional
      * information about the token may be in the <code>nval</code> field or the
      * <code>sval</code> field of this tokenizer.
-     * <p>
+     * <p/>
      * Typical clients of this class first set up the syntax tables and then sit
      * in a loop calling nextToken to parse successive tokens until TT_EOF is
      * returned.
      *
      * @return the value of the <code>ttype</code> field.
-     * @exception IOException if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      * @see java.io.StreamTokenizer_s#nval
      * @see java.io.StreamTokenizer_s#sval
      * @see java.io.StreamTokenizer_s#ttype
      */
     public int nextToken() throws IOException {
-        if (pushedBack) {
-            pushedBack = false;
-            return ttype;
-        }
-        byte ct[] = ctype;
-        sval = null;
-
-        int c = peekc;
-        if (c < 0) {
-            c = NEED_CHAR;
-        }
-        if (c == SKIP_LF) {
-            c = read();
-            if (c < 0) {
-                return ttype = TT_EOF;
+        while (true) {
+            if (pushedBack) {
+                pushedBack = false;
+                return ttype;
             }
-            if (c == '\n') {
+            byte[] ct = ctype;
+            sval = null;
+
+            int c = peekc;
+            if (c < 0) {
                 c = NEED_CHAR;
             }
-        }
-        if (c == NEED_CHAR) {
-            c = read();
-            if (c < 0) {
-                return ttype = TT_EOF;
+            if (c == SKIP_LF) {
+                c = read();
+                if (c < 0) {
+                    return ttype = TT_EOF;
+                }
+                if (c == '\n') {
+                    c = NEED_CHAR;
+                }
             }
-        }
-        ttype = c;		/* Just to be safe */
+            if (c == NEED_CHAR) {
+                c = read();
+                if (c < 0) {
+                    return ttype = TT_EOF;
+                }
+            }
+            ttype = c;		/* Just to be safe */
 
         /* Set peekc so that the next invocation of nextToken will read
          * another character unless peekc is reset in this invocation
          */
-        peekc = NEED_CHAR;
+            peekc = NEED_CHAR;
 
-        int ctype = c < 256 ? ct[c] : CT_ALPHA;
-        while ((ctype & CT_WHITESPACE) != 0) {
-            if (c == '\r') {
-                LINENO++;
-                if (eolIsSignificantP) {
-                    peekc = SKIP_LF;
-                    return ttype = TT_EOL;
-                }
-                c = read();
-                if (c == '\n') {
-                    c = read();
-                }
-            } else {
-                if (c == '\n') {
+            int ctype = c < 256 ? ct[c] : CT_ALPHA;
+            while ((ctype & CT_WHITESPACE) != 0) {
+                if (c == '\r') {
                     LINENO++;
                     if (eolIsSignificantP) {
+                        peekc = SKIP_LF;
                         return ttype = TT_EOL;
                     }
-                }
-                c = read();
-            }
-            if (c < 0) {
-                return ttype = TT_EOF;
-            }
-            ctype = c < 256 ? ct[c] : CT_ALPHA;
-        }
-
-        if ((ctype & CT_DIGIT) != 0) {
-            boolean neg = false;
-            if (c == '-') {
-                c = read();
-                if (c != '.' && (c < '0' || c > '9')) {
-                    peekc = c;
-                    return ttype = '-';
-                }
-                neg = true;
-            }
-            double v = 0;
-            int decexp = 0;
-            int seendot = 0;
-            while (true) {
-                if (c == '.' && seendot == 0) {
-                    seendot = 1;
-                } else if ('0' <= c && c <= '9') {
-                    v = v * 10 + (c - '0');
-                    decexp += seendot;
+                    c = read();
+                    if (c == '\n') {
+                        c = read();
+                    }
                 } else {
-                    break;
+                    if (c == '\n') {
+                        LINENO++;
+                        if (eolIsSignificantP) {
+                            return ttype = TT_EOL;
+                        }
+                    }
+                    c = read();
                 }
-                c = read();
+                if (c < 0) {
+                    return ttype = TT_EOF;
+                }
+                ctype = c < 256 ? ct[c] : CT_ALPHA;
             }
-            peekc = c;
-            if (decexp != 0) {
-                double denom = 10;
-                decexp--;
-                while (decexp > 0) {
-                    denom *= 10;
+
+            if ((ctype & CT_DIGIT) != 0) {
+                boolean neg = false;
+                if (c == '-') {
+                    c = read();
+                    if (c != '.' && (c < '0' || c > '9')) {
+                        peekc = c;
+                        return ttype = '-';
+                    }
+                    neg = true;
+                }
+                double v = 0;
+                int decexp = 0;
+                int seendot = 0;
+                while (true) {
+                    if (c == '.' && seendot == 0) {
+                        seendot = 1;
+                    } else if ('0' <= c && c <= '9') {
+                        v = v * 10 + (c - '0');
+                        decexp += seendot;
+                    } else {
+                        break;
+                    }
+                    c = read();
+                }
+                peekc = c;
+                if (decexp != 0) {
+                    double denom = 10;
                     decexp--;
-                }
+                    while (decexp > 0) {
+                        denom *= 10;
+                        decexp--;
+                    }
                 /* Do one division of a likely-to-be-more-accurate number */
-                v /= denom;
-            }
-            nval = neg ? -v : v;
-            return ttype = TT_NUMBER;
-        }
-
-        if ((ctype & CT_ALPHA) != 0) {
-            int i = 0;
-            do {
-                if (i >= buf.length) {
-                    char nb[] = new char[buf.length * 2];
-                    System.arraycopy(buf, 0, nb, 0, buf.length);
-                    buf = nb;
+                    v /= denom;
                 }
-                buf[i++] = (char) c;
-                c = read();
-                ctype = c < 0 ? CT_WHITESPACE : c < 256 ? ct[c] : CT_ALPHA;
-            } while ((ctype & (CT_ALPHA | CT_DIGIT)) != 0);
-            peekc = c;
-            sval = String.copyValueOf(buf, 0, i);
-            if (forceLower) {
-                sval = sval.toLowerCase();
+                nval = neg ? -v : v;
+                return ttype = TT_NUMBER;
             }
-            return ttype = TT_WORD;
-        }
 
-        if ((ctype & CT_QUOTE) != 0) {
-            ttype = c;
-            int i = 0;
+            if ((ctype & CT_ALPHA) != 0) {
+                int i = 0;
+                do {
+                    if (i >= buf.length) {
+                        char[] nb = new char[buf.length * 2];
+                        System.arraycopy(buf, 0, nb, 0, buf.length);
+                        buf = nb;
+                    }
+                    buf[i++] = (char) c;
+                    c = read();
+                    ctype = c < 0 ? CT_WHITESPACE : c < 256 ? ct[c] : CT_ALPHA;
+                } while ((ctype & (CT_ALPHA | CT_DIGIT)) != 0);
+                peekc = c;
+                sval = String.copyValueOf(buf, 0, i);
+                if (forceLower) {
+                    sval = sval.toLowerCase();
+                }
+                return ttype = TT_WORD;
+            }
+
+            if ((ctype & CT_QUOTE) != 0) {
+                ttype = c;
+                int i = 0;
             /* Invariants (because \Octal needs a lookahead):
              *   (i)  c contains char value
              *   (ii) d contains the lookahead
              */
-            int d = read();
-            // while (d >= 0 && d != ttype && d != '\n' && d != '\r') {
-            while (d >= 0 && d != ttype) {
-                if (d == '\\') {
-                    c = read();
-                    int first = c;   /* To allow \377, but not \477 */
+                int d = read();
+                // while (d >= 0 && d != ttype && d != '\n' && d != '\r') {
+                while (d >= 0 && d != ttype) {
+                    if (d == '\\') {
+                        c = read();
+                        int first = c;   /* To allow \377, but not \477 */
 
-                    if (c >= '0' && c <= '7') {
-                        c -= '0';
-                        int c2 = read();
-                        if ('0' <= c2 && c2 <= '7') {
-                            c = (c << 3) + (c2 - '0');
-                            c2 = read();
-                            if ('0' <= c2 && c2 <= '7' && first <= '3') {
+                        if (c >= '0' && c <= '7') {
+                            c -= '0';
+                            int c2 = read();
+                            if ('0' <= c2 && c2 <= '7') {
                                 c = (c << 3) + (c2 - '0');
-                                d = read();
+                                c2 = read();
+                                if ('0' <= c2 && c2 <= '7' && first <= '3') {
+                                    c = (c << 3) + (c2 - '0');
+                                    d = read();
+                                } else {
+                                    d = c2;
+                                }
                             } else {
                                 d = c2;
                             }
                         } else {
-                            d = c2;
+                            switch (c) {
+                                case 'a':
+                                    c = 0x7;
+                                    break;
+                                case 'b':
+                                    c = '\b';
+                                    break;
+                                case 'f':
+                                    c = 0xC;
+                                    break;
+                                case 'n':
+                                    c = '\n';
+                                    break;
+                                case 'r':
+                                    c = '\r';
+                                    break;
+                                case 't':
+                                    c = '\t';
+                                    break;
+                                case 'v':
+                                    c = 0xB;
+                                    break;
+                            }
+                            d = read();
                         }
                     } else {
-                        switch (c) {
-                            case 'a':
-                                c = 0x7;
-                                break;
-                            case 'b':
-                                c = '\b';
-                                break;
-                            case 'f':
-                                c = 0xC;
-                                break;
-                            case 'n':
-                                c = '\n';
-                                break;
-                            case 'r':
-                                c = '\r';
-                                break;
-                            case 't':
-                                c = '\t';
-                                break;
-                            case 'v':
-                                c = 0xB;
-                                break;
-                        }
+                        c = d;
                         d = read();
                     }
-                } else {
-                    c = d;
-                    d = read();
+                    if (i >= buf.length) {
+                        char[] nb = new char[buf.length * 2];
+                        System.arraycopy(buf, 0, nb, 0, buf.length);
+                        buf = nb;
+                    }
+                    buf[i++] = (char) c;
                 }
-                if (i >= buf.length) {
-                    char nb[] = new char[buf.length * 2];
-                    System.arraycopy(buf, 0, nb, 0, buf.length);
-                    buf = nb;
-                }
-                buf[i++] = (char) c;
-            }
 
             /* If we broke out of the loop because we found a matching quote
              * character then arrange to read a new character next time
              * around; otherwise, save the character.
              */
-            peekc = (d == ttype) ? NEED_CHAR : d;
+                peekc = (d == ttype) ? NEED_CHAR : d;
 
-            sval = String.copyValueOf(buf, 0, i);
-            return ttype;
-        }
+                sval = String.copyValueOf(buf, 0, i);
+                return ttype;
+            }
 
-        if (c == '/' && (slashSlashCommentsP || slashStarCommentsP)) {
-            c = read();
-            if (c == '*' && slashStarCommentsP) {
-                int prevc = 0;
-                while ((c = read()) != '/' || prevc != '*') {
-                    if (c == '\r') {
-                        LINENO++;
-                        c = read();
-                        if (c == '\n') {
-                            c = read();
-                        }
-                    } else {
-                        if (c == '\n') {
+            if (c == '/' && (slashSlashCommentsP || slashStarCommentsP)) {
+                c = read();
+                if (c == '*' && slashStarCommentsP) {
+                    int prevc = 0;
+                    while ((c = read()) != '/' || prevc != '*') {
+                        if (c == '\r') {
                             LINENO++;
                             c = read();
+                            if (c == '\n') {
+                                c = read();
+                            }
+                        } else {
+                            if (c == '\n') {
+                                LINENO++;
+                                c = read();
+                            }
                         }
+                        if (c < 0) {
+                            return ttype = TT_EOF;
+                        }
+                        prevc = c;
                     }
-                    if (c < 0) {
-                        return ttype = TT_EOF;
-                    }
-                    prevc = c;
-                }
-                return nextToken();
-            } else if (c == '/' && slashSlashCommentsP) {
-                while ((c = read()) != '\n' && c != '\r' && c >= 0);
-                peekc = c;
-                return nextToken();
-            } else {
-                /* Now see if it is still a single line comment */
-                if ((ct['/'] & CT_COMMENT) != 0) {
-                    while ((c = read()) != '\n' && c != '\r' && c >= 0);
+                    continue;
+                } else if (c == '/' && slashSlashCommentsP) {
+                    while ((c = read()) != '\n' && c != '\r' && c >= 0) ;
                     peekc = c;
-                    return nextToken();
+                    continue;
                 } else {
-                    peekc = c;
-                    return ttype = '/';
+                /* Now see if it is still a single line comment */
+                    if ((ct['/'] & CT_COMMENT) != 0) {
+                        while ((c = read()) != '\n' && c != '\r' && c >= 0) ;
+                        peekc = c;
+                        continue;
+                    } else {
+                        peekc = c;
+                        return ttype = '/';
+                    }
                 }
             }
-        }
 
-        if ((ctype & CT_COMMENT) != 0) {
-            while ((c = read()) != '\n' && c != '\r' && c >= 0);
-            peekc = c;
-            return nextToken();
-        }
+            if ((ctype & CT_COMMENT) != 0) {
+                while ((c = read()) != '\n' && c != '\r' && c >= 0) ;
+                peekc = c;
+                continue;
+            }
 
-        return ttype = c;
+            return ttype = c;
+        }
     }
 
     /**
@@ -824,7 +826,7 @@ public class StreamTokenizer_s {
                     break;
                 }
 
-                char s[] = new char[3];
+                char[] s = new char[3];
                 s[0] = s[2] = '\'';
                 s[1] = (char) ttype;
                 ret = new String(s);

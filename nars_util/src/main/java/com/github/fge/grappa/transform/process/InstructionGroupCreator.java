@@ -48,8 +48,8 @@ public final class InstructionGroupCreator
     private RuleMethod method;
 
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -57,8 +57,8 @@ public final class InstructionGroupCreator
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         this.method = Objects.requireNonNull(method, "method");
 
@@ -66,23 +66,21 @@ public final class InstructionGroupCreator
         createGroups();
 
         // prepare groups for later stages
-        for (final InstructionGroup group: method.getGroups()) {
+        for (InstructionGroup group: method.getGroups()) {
             sort(group);
             markUngroupedEnclosedNodes(group);
             verify(group);
         }
 
         // check all non-group node for illegal accesses
-        for (final InstructionGraphNode node : method.getGraphNodes())
-            if (node.getGroup() == null)
-                verifyAccess(node);
+        method.getGraphNodes().stream().filter(node -> node.getGroup() == null).forEach(this::verifyAccess);
     }
 
     private void createGroups()
     {
         InstructionGroup group;
 
-        for (final InstructionGraphNode node: method.getGraphNodes()) {
+        for (InstructionGraphNode node: method.getGraphNodes()) {
             if (!(node.isActionRoot() || node.isVarInitRoot()))
                 continue;
 
@@ -93,9 +91,9 @@ public final class InstructionGroupCreator
     }
 
     private void markGroup(
-        final InstructionGraphNode node, final InstructionGroup group) {
+        InstructionGraphNode node, InstructionGroup group) {
 
-        final boolean condition = node == group.getRoot()
+        boolean condition = node == group.getRoot()
             || !(node.isActionRoot() || node.isVarInitRoot());
 
         if (!condition)
@@ -111,7 +109,7 @@ public final class InstructionGroupCreator
             return;
 
         if (!node.isVarInitRoot()) {
-            for (final InstructionGraphNode pred : node.getPredecessors())
+            for (InstructionGraphNode pred : node.getPredecessors())
                 markGroup(pred, group);
             return;
         }
@@ -123,15 +121,15 @@ public final class InstructionGroupCreator
     }
 
     // sort the group instructions according to their method index
-    private void sort(final InstructionGroup group)
+    private void sort(InstructionGroup group)
     {
-        final Comparator<InstructionGraphNode> comparator
+        Comparator<InstructionGraphNode> comparator
             = new MethodIndexComparator(method.instructions);
         Collections.sort(group.getNodes(), comparator);
     }
 
     // also capture all group nodes "hidden" behind xLoads
-    private void markUngroupedEnclosedNodes(final InstructionGroup group)
+    private void markUngroupedEnclosedNodes(InstructionGroup group)
     {
         InstructionGraphNode node;
         boolean keepGoing;
@@ -156,10 +154,10 @@ public final class InstructionGroupCreator
         } while (keepGoing);
     }
 
-    private void verify(final InstructionGroup group)
+    private void verify(InstructionGroup group)
     {
-        final List<InstructionGraphNode> nodes = group.getNodes();
-        final int sizeMinus1 = nodes.size() - 1;
+        List<InstructionGraphNode> nodes = group.getNodes();
+        int sizeMinus1 = nodes.size() - 1;
 
         // verify all instruction except for the last one (which must be the
         // root)
@@ -178,7 +176,7 @@ public final class InstructionGroupCreator
             verifyAccess(node);
         }
 
-        final int i = getIndexOfLastInsn(group) - getIndexOfFirstInsn(group);
+        int i = getIndexOfLastInsn(group) - getIndexOfFirstInsn(group);
 
         if (i == sizeMinus1)
             return;
@@ -187,12 +185,12 @@ public final class InstructionGroupCreator
             " rule method " + method.name + ": discontinuous group block");
     }
 
-    private void verifyAccess(final InstructionGraphNode node)
+    private void verifyAccess(InstructionGraphNode node)
     {
         switch (node.getInstruction().getOpcode()) {
             case GETFIELD:
             case GETSTATIC:
-                final FieldInsnNode field
+                FieldInsnNode field
                     = (FieldInsnNode) node.getInstruction();
 
                 if (isPrivateField(field.owner, field.name))
@@ -205,7 +203,7 @@ public final class InstructionGroupCreator
             case INVOKESTATIC:
             case INVOKESPECIAL:
             case INVOKEINTERFACE:
-                final MethodInsnNode calledMethod
+                MethodInsnNode calledMethod
                     = (MethodInsnNode) node.getInstruction();
                 if (isPrivate(calledMethod.owner, calledMethod.name,
                     calledMethod.desc))
@@ -217,22 +215,22 @@ public final class InstructionGroupCreator
         }
     }
 
-    private int getIndexOfFirstInsn(final InstructionGroup group)
+    private int getIndexOfFirstInsn(InstructionGroup group)
     {
         return method.instructions
             .indexOf(group.getNodes().get(0).getInstruction());
     }
 
-    private int getIndexOfLastInsn(final InstructionGroup group)
+    private int getIndexOfLastInsn(InstructionGroup group)
     {
-        final List<InstructionGraphNode> graphNodes = group.getNodes();
+        List<InstructionGraphNode> graphNodes = group.getNodes();
         return method.instructions
             .indexOf(graphNodes.get(graphNodes.size() - 1).getInstruction());
     }
 
-    private boolean isPrivateField(final String owner, final String name)
+    private boolean isPrivateField(String owner, String name)
     {
-        final String key = owner + '#' + name;
+        String key = owner + '#' + name;
         Integer modifiers = memberModifiers.get(key);
         if (modifiers == null) {
             modifiers = getClassField(owner, name).getModifiers();
@@ -241,17 +239,17 @@ public final class InstructionGroupCreator
         return Modifier.isPrivate(modifiers);
     }
 
-    private boolean isPrivate(final String owner, final String name,
-        final String desc)
+    private boolean isPrivate(String owner, String name,
+                              String desc)
     {
         return "<init>".equals(name) ? isPrivateInstantiation(owner, desc)
             : isPrivateMethod(owner, name, desc);
     }
 
-    private boolean isPrivateMethod(final String owner, final String name,
-        final String desc)
+    private boolean isPrivateMethod(String owner, String name,
+                                    String desc)
     {
-        final String key = owner + '#' + name + '#' + desc;
+        String key = owner + '#' + name + '#' + desc;
         Integer modifiers = memberModifiers.get(key);
         if (modifiers == null) {
             modifiers = getClassMethod(owner, name, desc).getModifiers();
@@ -260,8 +258,8 @@ public final class InstructionGroupCreator
         return Modifier.isPrivate(modifiers);
     }
 
-    private boolean isPrivateInstantiation(final String owner,
-        final String desc)
+    private boolean isPrivateInstantiation(String owner,
+                                           String desc)
     {
         // first check whether the class is private
         Integer modifiers = memberModifiers.get(owner);
@@ -274,7 +272,7 @@ public final class InstructionGroupCreator
             return true;
 
         // then check whether the selected constructor is private
-        final String key = owner + "#<init>#" + desc;
+        String key = owner + "#<init>#" + desc;
         modifiers = memberModifiers.get(key);
         if (modifiers == null) {
             modifiers = getClassConstructor(owner, desc).getModifiers();
@@ -288,17 +286,17 @@ public final class InstructionGroupCreator
     {
         private final InsnList instructions;
 
-        private MethodIndexComparator(@Nonnull final InsnList instructions)
+        private MethodIndexComparator(@Nonnull InsnList instructions)
         {
             this.instructions = Objects.requireNonNull(instructions);
         }
 
         @Override
-        public int compare(final InstructionGraphNode o1,
-            final InstructionGraphNode o2)
+        public int compare(InstructionGraphNode o1,
+                           InstructionGraphNode o2)
         {
-            final int i1 = instructions.indexOf(o1.getInstruction());
-            final int i2 = instructions.indexOf(o2.getInstruction());
+            int i1 = instructions.indexOf(o1.getInstruction());
+            int i2 = instructions.indexOf(o2.getInstruction());
             return Integer.compare(i1, i2);
         }
     }

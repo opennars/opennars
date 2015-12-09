@@ -29,7 +29,7 @@ public class ThreadCPUTimeTracker extends DoubleMeter {
 
     //private long startCPUTime; // nanos
 
-    public ThreadCPUTimeTracker(final String id) {
+    public ThreadCPUTimeTracker(String id) {
         super(id);
 
         //ensureCPUTimeMonitoringEnabled();

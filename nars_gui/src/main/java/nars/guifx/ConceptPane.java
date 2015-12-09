@@ -48,13 +48,11 @@ public class ConceptPane extends BorderPane implements ChangeListener {
     private final BagView<TermLinkKey, TermLink> termLinkView;
     private FrameReaction reaction;
 
-    abstract public class Scatter3D<X> extends SpaceNet {
+    public abstract static class Scatter3D<X> extends SpaceNet {
 
         final ColorArray ca = new ColorArray(32, Color.BLUE, Color.RED);
 
         public Scatter3D() {
-            super();
-
 
 
             frame();
@@ -77,7 +75,6 @@ public class ConceptPane extends BorderPane implements ChangeListener {
             private Color color = Color.WHITE;
 
             public DataPoint(X tl) {
-                super();
 
                 shape = new Box(0.8, 0.8, 0.8);
                 mat = new PhongMaterial(color);
@@ -86,7 +83,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
                 getChildren().add(shape);
 
-                this.x = tl;
+                x = tl;
 
                 frame();
 
@@ -106,7 +103,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
             }
 
             public void setColor(Color nextColor) {
-                this.color = nextColor;
+                color = nextColor;
             }
 
             public void frame() {
@@ -139,15 +136,15 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
             n = 0;
 
-            final double d[] = new double[3];
-            final double s[] = new double[3];
+            double[] d = new double[3];
+            double[] s = new double[3];
 
             List<DataPoint> toAdd = new ArrayList();
 
 
             Iterable<X>[] collects = get();
             if (collects != null) {
-                for (final Iterable<X> ii : collects) {
+                for (Iterable<X> ii : collects) {
                     ii.forEach(tl -> {
 
                         dead.remove(tl);
@@ -157,8 +154,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                             b = new DataPoint(tl);
                             linkShape.put(tl, b);
 
-                            final DataPoint _b = b;
-                            update(tl, d, s, c -> _b.setColor(c));
+                            DataPoint _b = b;
+                            update(tl, d, s, _b::setColor);
                             b.setTranslateX(d[0] * spaceScale);
                             b.setTranslateY(d[1] * spaceScale);
                             b.setTranslateZ(d[2] * spaceScale);
@@ -176,7 +173,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
             }
 
             linkShape.keySet().removeAll(dead);
-            final Object[] deads = dead.toArray(new Object[dead.size()]);
+            Object[] deads = dead.toArray(new Object[dead.size()]);
 
             dead.clear();
 
@@ -201,7 +198,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     }
 
-    public class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
+    public static class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
 
         final Map<X,Node> componentCache = new WeakHashMap<>();
         private final Bag<X, Y> bag;
@@ -210,14 +207,13 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         final AtomicBoolean queued = new AtomicBoolean();
 
         public BagView(Bag<X, Y> bag, Function<Y,Node> builder) {
-            super();
             this.bag = bag;
             this.builder = builder;
             frame();
         }
 
         Node getNode(Y c) {
-            final X n = c.name();
+            X n = c.name();
             Node existing = componentCache.get(n);
             if (existing == null) {
                 componentCache.put(n, existing = builder.apply(c));
@@ -228,9 +224,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         public void frame() {
             synchronized (pending) {
                 pending.clear();
-                bag.forEach(b -> {
-                    pending.add(getNode(b));
-                });
+                bag.forEach(b -> pending.add(getNode(b)));
             }
 
             if (!getChildren().equals(pending) && queued.compareAndSet(false, true)) {
@@ -245,20 +239,18 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                 queued.set(false);
             }
 
-            for (final Node n : getChildren())
-                if (n instanceof Runnable)
-                    ((Runnable) n).run();
+            getChildren().stream().filter(n -> n instanceof Runnable).forEach(n -> ((Runnable) n).run());
         }
     }
 
     public ConceptPane(Concept c) {
 
-        this.concept = c;
+        concept = c;
 
 
         setTop(new Label(c.toInstanceString()));
 
-        final Iterable<Task>[] taskCollects = new Iterable[] {
+        Iterable<Task>[] taskCollects = new Iterable[] {
                 c.getBeliefs(),
                 c.getGoals(),
                 c.getQuestions(),
@@ -281,19 +273,14 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
                 if (tl.isQuestOrQuestion()) {
                     position[0] = -1;
-                    if (tl.getBestSolution()!=null) {
-                        position[1] = tl.getBestSolution().getConfidence();
-                    }
-                    else {
-                        position[1] = 0;
-                    }
+                    position[1] = tl.getBestSolution() != null ? tl.getBestSolution().getConfidence() : 0;
                 }
                 else {
                     Truth t = tl.getTruth();
                     position[0] = t.getFrequency();
                     position[1] = t.getConfidence();
                 }
-                final float pri = tl.getPriority();
+                float pri = tl.getPriority();
                 position[2] = pri;
 
                 size[0] = size[1] = size[2] = 0.5f + pri;
@@ -307,8 +294,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label goals = new Label("Goals diagram");
 //        Label questions = new Label("Questions diagram");
         SplitPane links = new SplitPane(
-                scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
-                                (t) -> new ItemButton( t, (i) -> i.toString(),
+                scrolled(termLinkView = new BagView<>(c.getTermLinks(),
+                                (t) -> new ItemButton(t, Object::toString,
                                         (i) -> {
 
                                         }

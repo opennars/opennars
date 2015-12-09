@@ -76,8 +76,7 @@ public class NARio extends Run implements RLEnvironment {
 
 
     public NARio(NAR n) {
-        super();
-        this.nar = n;
+        nar = n;
         //start();
         run();
     }
@@ -87,7 +86,7 @@ public class NARio extends Run implements RLEnvironment {
      * should not be used if RL has its own keyboard operation that calls takeAction
      */
     protected void initKeyboardOperators() {
-        for (final int kk : keys) {
+        for (int kk : keys) {
             String ko = "^keyboard" + kk;
 
 //            nar.on(new SynchOperator("keyboard" + kk) {
@@ -140,13 +139,12 @@ public class NARio extends Run implements RLEnvironment {
 
     public static String n(int x) {
         if (x == 0) return "z";
-        if (x < 0) return "n" + (-x);
-        else return "p" + x;
+        return x < 0 ? "n" + (-x) : "p" + x;
     }
 
     public static String direction(int i, int j) {
 
-        return "(*," + n(i) + "," + n(j) + ")";
+        return "(*," + n(i) + ',' + n(j) + ')';
 
     }
 
@@ -296,7 +294,7 @@ public class NARio extends Run implements RLEnvironment {
 
                     if ((i == 0) && (j == 0)) continue;
 
-                    int block = level.level.getBlock(x + i * 16f - 8, y + j * 16f - 8);
+                    int block = level.level.getBlock(x + i * 16.0f - 8, y + j * 16.0f - 8);
                     int data = level.level.getData(x + i * 16 - 8, y + j * 16 - 8);
 
                     boolean blocked
@@ -317,7 +315,7 @@ public class NARio extends Run implements RLEnvironment {
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(i * i + j * j)));
 
                     if (t % radarPeriod == 0) {
-                        String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
+                        String s2 = "$" + sightPriority + '$' + '<' + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
                         //System.out.println(blocked + " " + s2);
                         input(s2);
                     } else {
@@ -363,12 +361,12 @@ public class NARio extends Run implements RLEnvironment {
                         type = s.toString();
                     }
 
-                    int dx = Math.round((s.x - x) / 16f);
-                    int dy = Math.round((s.y - y) / 16f);
+                    int dx = Math.round((s.x - x) / 16.0f);
+                    int dy = Math.round((s.y - y) / 16.0f);
 
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
 
-                    String sees = "$" + sightPriority + "$" +
+                    String sees = "$" + sightPriority + '$' +
                             " <" + direction(dx, dy) + " --> [" + type + "]>. :|:";
                     //System.out.println(sees);
                     input(sees);
@@ -520,7 +518,7 @@ public class NARio extends Run implements RLEnvironment {
         //nar.memory.executionThreshold.set(0.75);
         nar.memory.shortTermMemoryHistory.set(5);
 
-        float fps = 70f;
+        float fps = 70.0f;
         gameRate = 1.0f / fps;
 
 
@@ -531,9 +529,7 @@ public class NARio extends Run implements RLEnvironment {
 
             NARio nario = new NARio(nar);
 
-            nar.onEachFrame(n -> {
-                nario.cycle(1.0/fps);
-            });
+            nar.onEachFrame(n -> nario.cycle(1.0/fps));
 
 
             NALObjects objs = new NALObjects(nar);
@@ -709,7 +705,7 @@ public class NARio extends Run implements RLEnvironment {
         };
     }
 
-    final int[] keys = new int[]{Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
+    final int[] keys =  {Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
 
     @Override
     public void ready() {
@@ -740,7 +736,7 @@ public class NARio extends Run implements RLEnvironment {
 
     protected void updateMovement(float cx, float cy, int tx, int ty) {
         double f = cosineSimilarityScaled(new double[]{cx, cy}, new double[]{tx, ty});
-        float ff = (float) (f / 2f + 0.5f);
+        float ff = (float) (f / 2.0f + 0.5f);
         double precision = 0.25; //reduction to discretized scale
         //updateMovement(direction((int)(-tx * ff * precision),  (int)(-ty* ff * precision)), 1.0f); //for some reason the sign needs negated
         updateMovement(direction((int) (-tx), (int) (-ty)), ff); //for some reason the sign needs negated

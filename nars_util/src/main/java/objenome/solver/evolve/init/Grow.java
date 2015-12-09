@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static objenome.solver.evolve.Population.SIZE;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
@@ -248,11 +250,14 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
     public Node createTree() {
         if (random == null) {
             throw new IllegalStateException("No random number generator has been set");
-        } else if (returnType == null) {
+        }
+        if (returnType == null) {
             throw new IllegalStateException("No return type has been set");
-        } else if (maxDepth < 0) {
+        }
+        if (maxDepth < 0) {
             throw new IllegalStateException("Depth must be 0 or greater");
-        } else if (terminals.isEmpty()) {
+        }
+        if (terminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of 0");
         }
 
@@ -316,12 +321,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      * overridden too.
      */
     private List<Node> listValidNodes(int remainingDepth, Class<?> requiredType) {
-        List<Node> validNodes = new ArrayList<>();
-        for (Node n : terminals) {
-            if (n.dataType().isAssignableFrom(requiredType)) {
-                validNodes.add(n);
-            }
-        }
+        List<Node> validNodes = terminals.stream().filter(n -> n.dataType().isAssignableFrom(requiredType)).collect(Collectors.toList());
 
         if (remainingDepth > 0) {
             for (Node n : nonTerminals) {
@@ -348,19 +348,16 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
         dataTypesTable = new Class<?>[maxDepth + 1][];
 
         for (int i = 0; i <= maxDepth; i++) {
-            final Set<Class<?>> types = new HashSet<>();
-            for (final Node n : terminals) {
-                types.add(n.dataType());
-            }
+            Set<Class<?>> types = terminals.stream().map((Function<Node, Class<?>>) Node::dataType).collect(Collectors.toSet());
 
             if (i > 0) {
                 // Also add any valid nonTerminals
-                for (final Node n : nonTerminals) {
-                    final Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[i - 1]);
+                for (Node n : nonTerminals) {
+                    Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[i - 1]);
 
                     // Test each possible set of arguments
-                    for (final Class<?>[] argTypes : argTypeSets) {
-                        final Class<?> returnType = n.dataType(argTypes);
+                    for (Class<?>[] argTypes : argTypeSets) {
+                        Class<?> returnType = n.dataType(argTypes);
                         if (returnType != null) {
                             types.add(returnType);
                         }
@@ -457,13 +454,13 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
                     }
                 }
 
-                if (valid.size() > 0) {
+                if (!valid.isEmpty()) {
                     BigInteger totalChildVarieties = BigInteger.ONE;
                     for (int i = 0; i < n.getArity(); i++) {
                         // Build list of the valid arg types for this child
                         returnTypes = new ArrayList<>();
-                        for (int j = 0; j < valid.size(); j++) {
-                            returnTypes.add(valid.get(j)[i]);
+                        for (Class<?>[] aValid : valid) {
+                            returnTypes.add(aValid[i]);
                         }
 
                         BigInteger childVarieties = varieties(remainingDepth - 1, returnTypes);
@@ -546,13 +543,13 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
                     }
                 }
 
-                if (valid.size() > 0) {
+                if (!valid.isEmpty()) {
                     BigInteger totalChildVarieties = BigInteger.ONE;
                     for (int i = 0; i < n.getArity(); i++) {
                         // Build list of the valid arg types for this child
                         returnTypes = new ArrayList<>();
-                        for (int j = 0; j < valid.size(); j++) {
-                            returnTypes.add(valid.get(j)[i]);
+                        for (Class<?>[] aValid : valid) {
+                            returnTypes.add(aValid[i]);
                         }
 
                         //TODO This shouldn't be using varieties here - needs to call self
@@ -644,7 +641,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      *
      * @param returnType the data-type of the generated programs
      */
-    public void setReturnType(final Class<?> returnType) {
+    public void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
 
         // Lookup table will need regenerating
@@ -670,7 +667,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      * @param size the size of the populations generated
      */
     public void setPopulationSize(int size) {
-        this.populationSize = size;
+        populationSize = size;
     }
 
     /**

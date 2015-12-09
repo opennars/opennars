@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends AbstractPremise {
+public abstract class ConceptProcess extends AbstractPremise {
 
 
 
@@ -33,7 +33,8 @@ abstract public class ConceptProcess extends AbstractPremise {
     private Task currentBelief = null;
     private transient boolean cyclic;
 
-    @Override final public Task getTask() {
+    @Override
+    public final Task getTask() {
         return getTaskLink().getTask();
     }
 
@@ -85,10 +86,8 @@ abstract public class ConceptProcess extends AbstractPremise {
 
     @Override public final void updateBelief(Task nextBelief) {
         if (nextBelief!=currentBelief) {
-            this.currentBelief = nextBelief;
-            this.cyclic = (nextBelief != null) ?
-                    Tense.overlapping(getTask(), nextBelief) :
-                    false;
+            currentBelief = nextBelief;
+            cyclic = (nextBelief != null) && Tense.overlapping(getTask(), nextBelief);
         }
     }
 
@@ -107,12 +106,12 @@ abstract public class ConceptProcess extends AbstractPremise {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void firePremiseSquare(NAR nar, Consumer<ConceptProcess> proc, final Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
+    public static void firePremiseSquare(NAR nar, Consumer<ConceptProcess> proc, Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
 
         Memory m = nar.memory;
         int dur = m.duration();
 
-        final long now = nar.time();
+        long now = nar.time();
 
         int tasksCount = concept.nextTaskLinks(dur, now,
                 taskLinkForgetDurations * dur,
@@ -133,7 +132,7 @@ abstract public class ConceptProcess extends AbstractPremise {
 
     public static void firePremises(NAR nar, Consumer<ConceptProcess> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
 
-        for (final TaskLink taskLink : tasks) {
+        for (TaskLink taskLink : tasks) {
 
             if (taskLink == null) break;
 

@@ -58,7 +58,7 @@ public interface Input extends Source<Task> {
         /*if (reg!=null)
             throw new RuntimeException("already inputting");*/
 
-        final On[] reg = {null};
+        On[] reg = {null};
         Consumer<NAR> inputNext = nn -> {
             int count = 0;
             Task next = null;

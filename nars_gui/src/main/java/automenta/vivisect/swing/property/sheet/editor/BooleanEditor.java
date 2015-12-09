@@ -67,7 +67,7 @@ public class BooleanEditor extends AbstractPropertyEditor {
 			}
 		});
 
-		this.editor = panel;
+		editor = panel;
 	}
 
 	@Override

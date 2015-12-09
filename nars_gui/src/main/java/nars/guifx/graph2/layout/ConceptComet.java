@@ -19,14 +19,14 @@ public class ConceptComet extends HyperassociativeMap2D {
     double axisTheta = 0;
 
     final double thickness = 250;
-    double timeScale = 10f;
+    double timeScale = 10.0f;
     double now = 0; /* center of view */
     double cutoff = 50;
 
     public ConceptComet(NAR nar /* TODO take any clock */) {
         this.nar = nar;
         nar.onEachFrame(n -> {
-            this.now = nar.time();
+            now = nar.time();
 
             //reset? update?
         });
@@ -65,9 +65,8 @@ public class ConceptComet extends HyperassociativeMap2D {
             if (!ii.hasNext()) {
                 node.setVisible(false);
                 return;
-            } else {
-                node.setVisible(true);
             }
+            node.setVisible(true);
 
             x = Concept.taskCreationTime.max(ii);
         }

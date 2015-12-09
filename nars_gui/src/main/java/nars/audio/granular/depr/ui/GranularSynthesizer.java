@@ -44,16 +44,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GranularSynthesizer.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GranularSynthesizer.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GranularSynthesizer.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(GranularSynthesizer.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -147,18 +138,10 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         defaultValues.setText("Default Values");
         defaultValues.setEnabled(false);
-        defaultValues.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                defaultValuesActionPerformed(evt);
-            }
-        });
+        defaultValues.addActionListener(this::defaultValuesActionPerformed);
 
         openFile.setText("...");
-        openFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openFileActionPerformed(evt);
-            }
-        });
+        openFile.addActionListener(this::openFileActionPerformed);
 
         jLabel13.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(255, 0, 0));
@@ -180,11 +163,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         createGrains.setText("(Re)Create Grains");
         createGrains.setEnabled(false);
-        createGrains.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createGrainsActionPerformed(evt);
-            }
-        });
+        createGrains.addActionListener(this::createGrainsActionPerformed);
 
         jLabel7.setForeground(new java.awt.Color(0, 255, 0));
         jLabel7.setText("Grain Density:");
@@ -197,11 +176,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         granulate.setText("Granulate");
         granulate.setEnabled(false);
-        granulate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                granulateActionPerformed(evt);
-            }
-        });
+        granulate.addActionListener(this::granulateActionPerformed);
 
         maxGrainsLbl.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         maxGrainsLbl.setForeground(new java.awt.Color(255, 0, 0));
@@ -229,16 +204,8 @@ public class GranularSynthesizer extends javax.swing.JFrame {
 
         grainSizeTxt.setText("44400");
         grainSizeTxt.setEnabled(false);
-        grainSizeTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grainSizeTxtActionPerformed(evt);
-            }
-        });
-        grainSizeTxt.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                grainSizeTxtPropertyChange(evt);
-            }
-        });
+        grainSizeTxt.addActionListener(this::grainSizeTxtActionPerformed);
+        grainSizeTxt.addPropertyChangeListener(this::grainSizeTxtPropertyChange);
 
         modeChoice.add(syncChoice);
         syncChoice.setSelected(true);
@@ -507,11 +474,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         double pitchDeviation = (double) pitchDeviationSlider.getValue() / 100;//[0:no deviation, 1: max deviation]
 
         Envelope e;
-        if (noneChoice.isSelected()) {
-            e = Envelope.NONE;
-        } else {
-            e = Envelope.TRAPEXIUM;
-        }
+        e = noneChoice.isSelected() ? Envelope.NONE : Envelope.TRAPEXIUM;
         maxGrainsLbl.setText("" + wave.getSampleCount() / grainSize);
 
         wave.createGrains(numberOfGrains, grainSize, sizeDeviation, grainPitch,

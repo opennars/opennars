@@ -28,11 +28,11 @@ public class ActionVar2Test extends ParboiledTest<Object>
     static class Parser extends BaseParser<Object>
     {
         Rule clause() {
-            final Reference<Integer> count = new Reference<>();
+            Reference<Integer> count = new Reference<>();
             return sequence(charCount(count), chars(count), '\n');
         }
 
-        Rule charCount(final Reference<Integer> count) {
+        Rule charCount(Reference<Integer> count) {
             return sequence(
                 '{',
                 oneOrMore(charRange('0', '9')),
@@ -41,7 +41,7 @@ public class ActionVar2Test extends ParboiledTest<Object>
             );
         }
 
-        Rule chars(final Reference<Integer> count) {
+        Rule chars(Reference<Integer> count) {
             return sequence(
                 zeroOrMore(
                     count.get() > 0,
@@ -55,7 +55,7 @@ public class ActionVar2Test extends ParboiledTest<Object>
 
     @Test
     public void test() {
-        final Parser parser = Grappa.createParser(Parser.class);
+        Parser parser = Grappa.createParser(Parser.class);
         test(parser.clause(), "{12}abcdefghijkl\n")
                 .hasNoErrors();
     }

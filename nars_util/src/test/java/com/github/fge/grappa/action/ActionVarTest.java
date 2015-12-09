@@ -37,7 +37,7 @@ public class ActionVarTest extends ParboiledTest<Integer>
 
         @SuppressWarnings("InfiniteRecursion")
         public Rule A() {
-            final Var<List<String>> list = new Var<List<String>>(new ArrayList<String>());
+            Var<List<String>> list = new Var<>(new ArrayList<>());
             return sequence('a', optional(A(), list.get().add("Text"), push(list.get().size())));
         }
 
@@ -45,8 +45,8 @@ public class ActionVarTest extends ParboiledTest<Integer>
 
     @Test
     public void test() {
-        final Parser parser = Grappa.createParser(Parser.class);
-        final Matcher rule = (Matcher) parser.A();
+        Parser parser = Grappa.createParser(Parser.class);
+        Matcher rule = (Matcher) parser.A();
 
         assertEquals(rule.getClass().getName(), "com.github.fge.grappa.matchers.wrap.VarFramingMatcher");
 

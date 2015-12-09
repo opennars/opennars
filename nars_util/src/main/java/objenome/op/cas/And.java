@@ -5,6 +5,7 @@ import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class And extends Operation {
     
@@ -33,10 +34,7 @@ public class And extends Operation {
         if (exprs.isEmpty()) return yep();
         if (exprs.size() == 1) return exprs.get(0);
         
-        ArrayList<Expr> ors = new ArrayList<Expr>();
-        for (Expr expr : exprs) {
-            ors.add(Not.make(expr));
-        }
+        ArrayList<Expr> ors = exprs.stream().map(Not::make).collect(Collectors.toCollection(ArrayList::new));
         return Not.make(Or.make(ors));
     }
     
@@ -46,7 +44,7 @@ public class And extends Operation {
     
     public String pretty() {
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);

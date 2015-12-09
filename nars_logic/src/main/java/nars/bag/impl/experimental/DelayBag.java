@@ -108,17 +108,17 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
         if (Global.THREADS == 1) {
              //this.items = new LinkedHashMap(capacity);
-             this.nameTable = Global.newHashMap(capacity);
-             this.pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
+            nameTable = Global.newHashMap(capacity);
+            pending = new ArrayDeque((int)(targetPendingBufferSize * capacity));
         }
         else {
             //find a solution to make a concurrent analog of the LinkedHashMap, if cyclical balance of iteration order (reinsertion appends to end) is necessary
-            this.nameTable = new ConcurrentHashMap(capacity);
-            this.pending = new ConcurrentLinkedDeque();
+            nameTable = new ConcurrentHashMap(capacity);
+            pending = new ConcurrentLinkedDeque();
         }
-        
-        this.targetActivations = targetPendingBufferSize;
-        this.toRemove = new ArraySortedIndex(capacity);
+
+        targetActivations = targetPendingBufferSize;
+        toRemove = new ArraySortedIndex(capacity);
         avgPriority = 0.5f;
     }
     
@@ -156,7 +156,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     }
 
 
-    protected E removeItem(final K k) {             
+    protected E removeItem(K k) {
         E x = nameTable.remove(k);
         return x;
     }
@@ -165,10 +165,10 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
         if (memory == null)
             throw new RuntimeException("Memory not set");
-        
-        this.now = memory.time();
 
-        this.latencyMin = memory.durationToCycles(forgetRate.intValue());
+        now = memory.time();
+
+        latencyMin = memory.durationToCycles(forgetRate.intValue());
         float forgetCycles = memory.durationToCycles(forgetRate.intValue());
 
         int originalSize = size();
@@ -187,7 +187,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         float mass = 0;
         float numPriorityThru = 0;
         int j = 0;
-        for (final Map.Entry<K, E> ee : nameTable.entrySet()) {
+        for (Map.Entry<K, E> ee : nameTable.entrySet()) {
         
             e = ee.getValue();
                            
@@ -220,7 +220,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         //remove lowest priority items until the capacity is maintained        
         if (numToRemove > 0) {
             int rj = 0;
-            for (final E r : toRemove) {
+            for (E r : toRemove) {
                 E removed = removeItem(r.name());
                 if (removed == null)
                     throw new RuntimeException("Unable to remove item: " + r);
@@ -247,9 +247,9 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         return overcapacity && (e.getPriority() <= forgetThreshold);
     }
     
-    protected boolean fireable(final E c) {
+    protected boolean fireable(E c) {
         
-        final float firingAge = now - c.getLastForgetTime();
+        float firingAge = now - c.getLastForgetTime();
         
         float activity = c.getPriority();
         
@@ -292,7 +292,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         int s = nameTable.size();
         if (s == 0) 
             return null;
-        else if (s <= flatThreshold) {
+        if (s <= flatThreshold) {
             K nn = nameTable.keySet().iterator().next();
             return remove(nn);
         }
@@ -358,7 +358,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     @Override
     public E put(E newItem) {
 
-        final E existingItemWithSameKey = remove(newItem.name());
+        E existingItemWithSameKey = remove(newItem.name());
 
         E item;
         if (existingItemWithSameKey != null) {
@@ -370,7 +370,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         }
 
         // put the (new or merged) item into itemTable
-        final E overflowItem = addItem(item, true);
+        E overflowItem = addItem(item, true);
 
 
         if (overflowItem!=null)
@@ -380,10 +380,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     }
 
     public E take(K key, boolean index) {
-        if (index)
-            return nameTable.remove(key);
-        else
-            return nameTable.get(key);
+        return index ? nameTable.remove(key) : nameTable.get(key);
     }
 
     @Override
@@ -410,17 +407,17 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
     @Override
     public String toString() {
-        return super.toString() + '[' + size() + '|' + pending.size() + '|' + this.forgetThreshold + ".." + this.activityThreshold + ']';
+        return super.toString() + '[' + size() + '|' + pending.size() + '|' + forgetThreshold + ".." + activityThreshold + ']';
     }
 
     @Override
     public void setCapacity(int c) {
-        this.capacity = c;
+        capacity = c;
     }
 
 
     public void setTargetActivated(float proportion) {
-        this.targetActivations = proportion;
+        targetActivations = proportion;
     }
 
     protected void adjustActivationThreshold() {

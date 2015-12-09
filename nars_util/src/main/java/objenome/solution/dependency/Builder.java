@@ -13,11 +13,11 @@ import java.util.Collection;
  */
 public interface Builder extends Serializable {
 
-    public static Class[] the(final Class<?> c) {
+    static Class[] the(Class<?> c) {
         return new Class[] { c };
     }
     
-    public static Class[] of(final Class<?>... c) {
+    static Class[] of(Class<?>... c) {
         return c;
     }
     
@@ -29,9 +29,9 @@ public interface Builder extends Serializable {
      * supplied collection
      * 
      */
-    public <T> T instance(objenome.Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere);
+    <T> T instance(objenome.Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere);
 
-    public default <T> T instance(AbstractContainer context) {
+    default <T> T instance(AbstractContainer context) {
         return instance(context, null);
     }
     
@@ -41,5 +41,5 @@ public interface Builder extends Serializable {
      *
      * @return of type of objects returned by this factory.
      */
-    public Class type();
+    Class type();
 }

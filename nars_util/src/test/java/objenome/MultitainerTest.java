@@ -24,10 +24,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class MultitainerTest {
 
-    public static interface Part { 
-        public int function();    
+    public interface Part {
+        int function();
     }
-    public static interface SubPart { public int function();    }
+    public interface SubPart { int function();    }
 
     public static class SubPart0 implements SubPart {
         @Override public int function() { return 0; }
@@ -48,7 +48,7 @@ public class MultitainerTest {
         private final int value;
 
         public PartN( @Between(min=1, max=3) int arg0) {
-            this.value = arg0;
+            value = arg0;
         }
         
         @Override public int function() { return value; }
@@ -56,8 +56,8 @@ public class MultitainerTest {
     }
     public static class PartWithSubPart implements Part {
         private final SubPart subcomp;
-        public PartWithSubPart(SubPart subcomponent) {         
-            this.subcomp = subcomponent;                    
+        public PartWithSubPart(SubPart subcomponent) {
+            subcomp = subcomponent;
         }        
         @Override public int function() { return subcomp.function();  }
     }
@@ -66,7 +66,7 @@ public class MultitainerTest {
         public final Part part;
         
         public Machine(Part p) {
-            this.part = p;
+            part = p;
         }
         public int function() {
             return part.function();
@@ -96,7 +96,7 @@ public class MultitainerTest {
         public final PartWithSubPart part;
         
         public MachineWithParametricPart(PartWithSubPart p) {
-            this.part = p;
+            part = p;
         }
         public int function() {
             return part.function();

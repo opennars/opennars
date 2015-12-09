@@ -26,25 +26,26 @@ public class MJPalette {
 	// Activate the given palette with the 'iSttCnt' states
 	public void ActivatePalette(String palNam, int iSttCnt) {
 		int i, j;
-		if (palNam.equalsIgnoreCase("Red & blue")) {
+		//noinspection IfStatementWithTooManyBranches
+		if ("Red & blue".equalsIgnoreCase(palNam)) {
 			GeneratePalette(Color.red, Color.blue, iSttCnt);
 			Palette[0] = Color.white.getRGB();
 			// gray
 			GridColor[0] = MakeRGB(208, 208, 208); // normal
 			GridColor[1] = MakeRGB(160, 160, 160); // bold
-		} else if (palNam.equalsIgnoreCase("Dolphin")) {
+		} else if ("Dolphin".equalsIgnoreCase(palNam)) {
 			GeneratePalette(new Color(0, 0, 255), Color.cyan, iSttCnt);
 			Palette[0] = Color.white.getRGB();
 			// gray
 			GridColor[0] = MakeRGB(208, 208, 208); // normal
 			GridColor[1] = MakeRGB(160, 160, 160); // bold
-		} else if (palNam.equalsIgnoreCase("Milky way")) {
+		} else if ("Milky way".equalsIgnoreCase(palNam)) {
 			GeneratePalette(Color.white, new Color(16, 16, 255), iSttCnt);
 			Palette[0] = MakeRGB(0, 0, 80);
 			// gray
 			GridColor[0] = MakeRGB(0, 0, 128); // normal
 			GridColor[1] = MakeRGB(0, 0, 160); // bold
-		} else if (palNam.equalsIgnoreCase("8 colors")) {
+		} else if ("8 colors".equalsIgnoreCase(palNam)) {
 			GridColor[0] = 4194304 + (0xff << 24); // normal
 			GridColor[1] = 6488833 + (0xff << 24); // bold
 			Palette[0] = 0;
@@ -200,15 +201,8 @@ public class MJPalette {
 
 		//Palette[0] = Color.black;
 		for (i = 1; i < iSttCnt; i++) {
-			if ((i == iSttCnt - 1) && (iSttCnt > 2)) // the last color
-			{
-				Palette[i] = MakeRGB(r2, g2, b2);
-				//Palette[i] = new Color(r2, g2, b2);
-			} else {
-				Palette[i] = MakeRGB(r1 + (i - 1) * dr, g1 + (i - 1) * dg, b1
-						+ (i - 1) * db);
-				//Palette[i] = new Color(r1 + (i-1)*dr, g1 + (i-1)*dg, b1 + (i-1)*db);
-			}
+			Palette[i] = (i == iSttCnt - 1) && (iSttCnt > 2) ? MakeRGB(r2, g2, b2) : MakeRGB(r1 + (i - 1) * dr, g1 + (i - 1) * dg, b1
+					+ (i - 1) * db);
 		}
 	}
 	// ----------------------------------------------------------------

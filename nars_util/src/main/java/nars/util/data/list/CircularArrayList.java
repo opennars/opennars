@@ -64,7 +64,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
-    public void forEach(final Consumer<? super E> action) {
+    public void forEach(Consumer<? super E> action) {
         /** NOTE: uses the descending iterator's semantics */
         for (int i = size-1; i >=0; i--) {
             action.accept(get(i--));
@@ -86,7 +86,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     // This method is O(n) but will never be called if the
     // CircularArrayList is used in its typical/intended role.
     // TODO use array copy
-    private void shiftBlock(final int startIndex, final int endIndex) {
+    private void shiftBlock(int startIndex, int endIndex) {
         //assert (endIndex > startIndex);        
         for (int i = endIndex - 1; i >= startIndex; i--) {
             setFast(i + 1, get(i));
@@ -100,7 +100,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
-    public E get(final int i) {
+    public E get(int i) {
         //same as the original function below but avoid another function call to help guarante inlining
         //int m = ;
         //if (m < 0) m += n;
@@ -110,12 +110,12 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         //return buf[wrapIndex(head + i)];
     }
 
-    public void setFast(final int i, final E e) {
+    public void setFast(int i, E e) {
         array[(head + i) % n] = e;
     }
 
     @Override
-    public E set(final int i, final E e) {
+    public E set(int i, E e) {
         /*if (i < 0 || i >= size()) {
          throw new IndexOutOfBoundsException();
          }*/
@@ -129,8 +129,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
-    public void add(final int i, final E e) {
-        final int s = size;
+    public void add(int i, E e) {
+        int s = size;
         /*
          if (s == n - 1) {
          throw new IllegalStateException("Cannot add element."
@@ -154,7 +154,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
 
-    public void removeFast(final int i) {
+    public void removeFast(int i) {
         if (i > 0) {
             shiftBlock(0, i);
         }
@@ -166,8 +166,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
-    public E remove(final int i) {
-        final int s = size;
+    public E remove(int i) {
+        int s = size;
          if (i < 0 || i >= s) {
          throw new IndexOutOfBoundsException();
          }
@@ -182,7 +182,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         return remove(indexOf(o))!=null;
     }
     public boolean removeIdentity(Object o) {
-        final int s = size();
+        int s = size();
         for (int i = 0; i < s; i++) {
             if (get(i) == o) {
                 removeFast(i);
@@ -193,7 +193,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
-    public void addFirst(final E e) {
+    public void addFirst(E e) {
         add(0, e);
     }
 
@@ -218,7 +218,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     @Override
-    public void addLast(final E e) {
+    public void addLast(E e) {
         add(size, e);
     }
 
@@ -250,7 +250,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
 
     @Override
-    final public boolean isEmpty() {
+    public final boolean isEmpty() {
         return size==0;
     }
 

@@ -27,17 +27,17 @@ public class Grid1DSimple implements World {
     private final double noise;
 
     public Grid1DSimple(int size, int totalTime, double noise, double focusVelocity) {
-        this.time = 1;
+        time = 1;
         this.size = size;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.ENERGY_COST_FACTOR = 0.5;
-        this.MATCH_REWARD_FACTOR = size*1.1;
-        this.REWARD_MAGNITUDE = 1;
-        this.JUMP_FRACTION = 0.0;
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        ENERGY_COST_FACTOR = 0.5;
+        MATCH_REWARD_FACTOR = size*1.1;
+        REWARD_MAGNITUDE = 1;
+        JUMP_FRACTION = 0.0;
         this.noise = noise;
         this.focusVelocity = focusVelocity;
-        
-        this.focusPosition = size/2;
+
+        focusPosition = size/2;
         this.totalTime = totalTime;
     }
 
@@ -95,8 +95,8 @@ public class Grid1DSimple implements World {
         
         double min=0, max=0;
         for (int i = 0; i < size; i++) {
-            final double exp = 3.0; //sharpen
-            sensor[i] = Math.pow(1.0 / (1.0 + Math.abs( ((double)i)-focusPosition)),exp) + (Math.random()*noise);
+            double exp = 3.0; //sharpen
+            sensor[i] = Math.pow(1.0 / (1.0 + Math.abs( (i)-focusPosition)),exp) + (Math.random()*noise);
             if (sensor[i] < 0)
                 sensor[i] = 0;
             if (i == 0) {
@@ -124,19 +124,13 @@ public class Grid1DSimple implements World {
         String s = "";
         for (int i = 0; i < size; i++) {
             char c;
-            if (i == (int)focusPosition)
-                c = 'O';
-            else
-                c = '.';
+            c = i == (int) focusPosition ? 'O' : '.';
             s += c;
         }
         s += "\n";
         for (int i = 0; i < size; i++) {
             char c;
-            if (action[i] > 0)
-                c = 'X';
-            else
-                c = '.';
+            c = action[i] > 0 ? 'X' : '.';
             s += c;
         }
         s += "\n";

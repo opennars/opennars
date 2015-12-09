@@ -23,7 +23,7 @@ public class CommandTest {
     @Test
     public void testEcho() {
         NAR n = new Default();
-        final AtomicBoolean invoked = new AtomicBoolean();
+        AtomicBoolean invoked = new AtomicBoolean();
         n.onExec(new NullOperator("c") {
 
             @Override
@@ -48,9 +48,7 @@ public class CommandTest {
         assertTrue(invoked.get());
 
         //no concepts created because this command bypassed inference
-        n.index().forEach(c -> {
-           assertFalse(c instanceof Concept);
-        });
+        n.index().forEach(c -> assertFalse(c instanceof Concept));
 
     }
 }

@@ -32,6 +32,7 @@ public class RuleCyclic {
 	// ----------------------------------------------------------------
 	// Parse the rule string
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		ResetToDefaults();
@@ -39,11 +40,12 @@ public class RuleCyclic {
 		st = new StringTokenizer(sStr, ",/", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			if (sTok.startsWith("R"))
+			//noinspection IfStatementWithTooManyBranches
+			if (sTok.length() > 0 && sTok.charAt(0) == 'R')
 				iRng = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("T"))
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'T')
 				iThr = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("C"))
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'C')
 				iClo = Integer.valueOf(sTok.substring(1));
 			else if (sTok.startsWith("NM"))
 				iNgh = MJRules.NGHTYP_MOOR;
@@ -78,14 +80,10 @@ public class RuleCyclic {
 		Validate();
 
 		// make the string
-		sBff = "R" + String.valueOf(iRng) + "/T" + String.valueOf(iThr) + "/C"
+		sBff = 'R' + String.valueOf(iRng) + "/T" + String.valueOf(iThr) + "/C"
 				+ String.valueOf(iClo);
 
-		if (iNgh == MJRules.NGHTYP_NEUM) // von Neumann neighbourhood
-			sBff = sBff + "/NN";
-		else
-			// Moore neighbourhood
-			sBff = sBff + "/NM";
+		sBff = iNgh == MJRules.NGHTYP_NEUM ? sBff + "/NN" : sBff + "/NM";
 
 		if (fGH)
 			sBff = sBff + "/GH"; // Greenberg-Hastings Model
@@ -126,12 +124,12 @@ public class RuleCyclic {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][]) {
+					   short[][] crrState, short[][] tmpState) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int xVector[] = new int[21]; // 0..9, 10, 11..20
-		int yVector[] = new int[21]; // 0..9, 10, 11..20
+		int[] xVector = new int[21]; // 0..9, 10, 11..20
+		int[] yVector = new int[21]; // 0..9, 10, 11..20
 		int colL, colR, rowT, rowB;
 		int ic, ir, iTmp;
 		short nxtStt;
@@ -147,34 +145,19 @@ public class RuleCyclic {
 				yVector[10] = j;
 				for (iTmp = 1; iTmp <= iRng; iTmp++) {
 					colL = i - iTmp;
-					if (colL >= 0)
-						xVector[10 - iTmp] = colL;
-					else
-						xVector[10 - iTmp] = sizX + colL;
+					xVector[10 - iTmp] = colL >= 0 ? colL : sizX + colL;
 
 					colR = i + iTmp;
-					if (colR < sizX)
-						xVector[10 + iTmp] = colR;
-					else
-						xVector[10 + iTmp] = colR - sizX;
+					xVector[10 + iTmp] = colR < sizX ? colR : colR - sizX;
 
 					rowT = j - iTmp;
-					if (rowT >= 0)
-						yVector[10 - iTmp] = rowT;
-					else
-						yVector[10 - iTmp] = sizY + rowT;
+					yVector[10 - iTmp] = rowT >= 0 ? rowT : sizY + rowT;
 
 					rowB = j + iTmp;
-					if (rowB < sizY)
-						yVector[10 + iTmp] = rowB;
-					else
-						yVector[10 + iTmp] = rowB - sizY;
+					yVector[10 + iTmp] = rowB < sizY ? rowB : rowB - sizY;
 				}
 				bOldVal = crrState[i][j];
-				if (bOldVal >= (iClo - 1))
-					nxtStt = 0;
-				else
-					nxtStt = (short) (bOldVal + 1);
+				nxtStt = bOldVal >= (iClo - 1) ? 0 : (short) (bOldVal + 1);
 
 				if ((!fGH) || (bOldVal == 0)) {
 					bNewVal = bOldVal; // default - no change

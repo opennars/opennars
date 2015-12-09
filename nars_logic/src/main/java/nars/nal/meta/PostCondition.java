@@ -55,16 +55,16 @@ public class PostCondition implements Serializable, Level //since there can be m
     public final int minNAL;
 
     public static final Set<Atom> reservedMetaInfoCategories = new HashSet<Atom>() {{
-        this.add(the("Truth"));
-        this.add(the("Stamp"));
-        this.add(the("Desire"));
-        this.add(the("Order"));
-        this.add(the("Derive"));
-        this.add(the("Info"));
-        this.add(the("Event"));
-        this.add(the("Punctuation"));
-        this.add(the("SequenceIntervals"));
-        this.add(the("Eternalize"));
+        add(the("Truth"));
+        add(the("Stamp"));
+        add(the("Desire"));
+        add(the("Order"));
+        add(the("Derive"));
+        add(the("Info"));
+        add(the("Event"));
+        add(the("Punctuation"));
+        add(the("SequenceIntervals"));
+        add(the("Eternalize"));
     }};
 
 
@@ -206,7 +206,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
     @Override
     public int nal() {
-        return this.minNAL;
+        return minNAL;
     }
 
 
@@ -214,7 +214,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     boolean valid(TaskRule rule) {
         Term term = this.term;
 
-        if (!this.modifiesPunctuation() && term instanceof Compound) {
+        if (!modifiesPunctuation() && term instanceof Compound) {
             if (rule.getTaskTermPattern().equals(term) ||
                     rule.getBeliefTermPattern().equals(term))
                 return false;
@@ -224,14 +224,14 @@ public class PostCondition implements Serializable, Level //since there can be m
         /*if (rule.minNAL == 0)
             rule.minNAL = minNAL;
         else*/
-        if (this.minNAL != 0)
-            rule.minNAL = Math.min(rule.minNAL, this.minNAL);
+        if (minNAL != 0)
+            rule.minNAL = Math.min(rule.minNAL, minNAL);
 
         return true;
     }
 
     public final boolean modifiesPunctuation() {
-        return this.puncOverride > 0;
+        return puncOverride > 0;
     }
 
 
@@ -243,10 +243,10 @@ public class PostCondition implements Serializable, Level //since there can be m
     @Override
     public String toString() {
         return "PostCondition{" +
-                "term=" + this.term +
-                ", afterConc=" + Arrays.toString(this.afterConclusions) +
+                "term=" + term +
+                ", afterConc=" + Arrays.toString(afterConclusions) +
                 //", modifiers=" + Arrays.toString(modifiers) +
-                ", truth=" + this.truth +
+                ", truth=" + truth +
                 '}';
     }
 

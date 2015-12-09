@@ -22,13 +22,13 @@ package automenta.vivisect.swing.property.util;
  */
 public class JVM {
 
-  public final static int JDK1_0 = 10;
-  public final static int JDK1_1 = 11;
-  public final static int JDK1_2 = 12;
-  public final static int JDK1_3 = 13;
-  public final static int JDK1_4 = 14;
-  public final static int JDK1_5 = 15;
-  public final static int JDK1_6 = 16;
+  public static final int JDK1_0 = 10;
+  public static final int JDK1_1 = 11;
+  public static final int JDK1_2 = 12;
+  public static final int JDK1_3 = 13;
+  public static final int JDK1_4 = 14;
+  public static final int JDK1_5 = 15;
+  public static final int JDK1_6 = 16;
 
   private static JVM current;
   static {
@@ -57,6 +57,7 @@ public class JVM {
    * Constructor for the OS object
    */
   public JVM(String p_JavaVersion) {
+    //noinspection IfStatementWithTooManyBranches
     if (p_JavaVersion.startsWith("1.6.")) {
       jdkVersion = JDK1_6;
     } else if (p_JavaVersion.startsWith("1.5.")) {

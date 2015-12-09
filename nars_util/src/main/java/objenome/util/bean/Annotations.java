@@ -13,21 +13,21 @@ public final class Annotations {
         throw new IllegalStateException();
     }
 
-    public static boolean isAnnotated(final Method method,
-            final objenome.util.bean.anno.GenericBeanMethod.Type type) {
-        final GenericBeanMethod annotation = method.getAnnotation(GenericBeanMethod.class);
+    public static boolean isAnnotated(Method method,
+                                      objenome.util.bean.anno.GenericBeanMethod.Type type) {
+        GenericBeanMethod annotation = method.getAnnotation(GenericBeanMethod.class);
         return annotation != null && annotation.value().equals(type);
     }
 
-    public static boolean isAnnotated(final Method method,
-            final objenome.util.bean.anno.PropertyChangeEventMethod.Type type) {
-        final PropertyChangeEventMethod annotation = method.getAnnotation(PropertyChangeEventMethod.class);
+    public static boolean isAnnotated(Method method,
+                                      objenome.util.bean.anno.PropertyChangeEventMethod.Type type) {
+        PropertyChangeEventMethod annotation = method.getAnnotation(PropertyChangeEventMethod.class);
         return annotation != null && annotation.value().equals(type);
     }
 
-    public static boolean hasMethodWithAnnotation(final Collection<Class<?>> ifaces,
-            final Class<? extends Annotation> anno) {
-        for (final Class<?> iface : ifaces) {
+    public static boolean hasMethodWithAnnotation(Collection<Class<?>> ifaces,
+                                                  Class<? extends Annotation> anno) {
+        for (Class<?> iface : ifaces) {
             if (hasMethodWithAnnotation(iface, anno)) {
                 return true;
             }
@@ -35,8 +35,8 @@ public final class Annotations {
         return false;
     }
 
-    public static boolean hasMethodWithAnnotation(final Class<?> iface, final Class<? extends Annotation> anno) {
-        for (final Method method : iface.getDeclaredMethods()) {
+    public static boolean hasMethodWithAnnotation(Class<?> iface, Class<? extends Annotation> anno) {
+        for (Method method : iface.getDeclaredMethods()) {
             if (method.isAnnotationPresent(anno)) {
                 return true;
             }

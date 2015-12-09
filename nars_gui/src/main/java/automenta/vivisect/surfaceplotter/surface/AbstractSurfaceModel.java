@@ -21,15 +21,15 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	 * @author eric
 	 */
 	public interface Plotter {
-		public int getHeight();
+		int getHeight();
 
-		public int getWidth();
+		int getWidth();
 
-		public float getX(int i);
+		float getX(int i);
 
-		public float getY(int j);
+		float getY(int j);
 
-		public void setValue(int i, int j, float v1, float v2);
+		void setValue(int i, int j, float v1, float v2);
 
 	}
 	/**
@@ -160,10 +160,10 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 
 	protected boolean scaleBox;
 
-	protected float xMax = 1f;
+	protected float xMax = 1.0f;
 
 	protected float xMin;
-	protected float yMax = 1f;
+	protected float yMax = 1.0f;
 
 	protected float yMin;
 	protected float z1Max;// the max computed
@@ -180,7 +180,6 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	 * Empty Surface Model
 	 */
 	public AbstractSurfaceModel() {
-		super();
 		property = new SwingPropertyChangeSupport(this);
 		setColorModel(new ColorModelSet());
 		
@@ -621,13 +620,13 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	}
 
 	public void setPlotFunction12(boolean p1, boolean p2) {
-		boolean o1 = this.plotFunction1;
-		boolean o2 = this.plotFunction2;
+		boolean o1 = plotFunction1;
+		boolean o2 = plotFunction2;
 
-		this.plotFunction1 = hasFunction1 && p1;
+		plotFunction1 = hasFunction1 && p1;
 		property.firePropertyChange("plotFunction1", o1, p1);
 
-		this.plotFunction2 = hasFunction2 && p2;
+		plotFunction2 = hasFunction2 && p2;
 		property.firePropertyChange("plotFunction1", o2, p2);
 		fireAllFunction(o1, o2);
 	}

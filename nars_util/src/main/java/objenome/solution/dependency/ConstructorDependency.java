@@ -46,7 +46,7 @@ public class ConstructorDependency {
 
         ConstructorDependency d = (ConstructorDependency) obj;
 
-        return d.sourceFromContainer.equals(this.sourceFromContainer);
+        return d.sourceFromContainer.equals(sourceFromContainer);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ConstructorDependency {
     }
 
     public void setContainerKey(Object sourceFromContainer) {
-        this.containerKey = sourceFromContainer;
+        containerKey = sourceFromContainer;
     }
 
     public Object getContainerKey() {

@@ -11,7 +11,7 @@ public interface Level {
      */
     int nal();
 
-    static Predicate<Level> max(final int level) {
+    static Predicate<Level> max(int level) {
         return (r -> (r.nal() <= level));
     }
 
@@ -22,14 +22,8 @@ public interface Level {
 
     Predicate<Level> AcceptAnyLevel = x -> true;
 
-    static Predicate<Level> maxFilter(final int maxNALlevel) {
-        if (maxNALlevel < 8) {
-            return max[maxNALlevel];
-        }
-        else {
-            //if nal >= 8, anything will work, so dont bother testing
-            return AcceptAnyLevel;
-        }
+    static Predicate<Level> maxFilter(int maxNALlevel) {
+        return maxNALlevel < 8 ? max[maxNALlevel] : AcceptAnyLevel;
     }
 
 }

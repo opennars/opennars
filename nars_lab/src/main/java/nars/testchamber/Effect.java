@@ -12,21 +12,21 @@ public class Effect {
     
     public Effect(Action a, boolean success, long when, String description) {
         this.when = when;
-        this.action = a;
+        action = a;
         this.success = success;
         this.description = description;        
     }
 
     public Effect(Action a, boolean success, long when) {
-        this.action = a;
+        action = a;
         this.when = when;
         this.success = success;
-        this.description = null;
+        description = null;
     }
 
     @Override
     public String toString() {
-        String a = action.getClass().getSimpleName() + " " + (success ? "SUCCESS" : "FAIL") + " @" + when;
+        String a = action.getClass().getSimpleName() + ' ' + (success ? "SUCCESS" : "FAIL") + " @" + when;
         if (description!=null)
             a += ": " + description;
         return a;

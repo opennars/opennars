@@ -55,7 +55,7 @@ import java.util.function.Consumer;
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
-abstract public class AbstractNAR extends NAR {
+public abstract class AbstractNAR extends NAR {
 
     public final DefaultCycle core;
     public final TaskPerception input;
@@ -99,9 +99,7 @@ abstract public class AbstractNAR extends NAR {
         ));
 
         if (core!=null) {
-            beforeNextFrame(() -> {
-                initTime();
-            });
+            beforeNextFrame(this::initTime);
         }
 
     }
@@ -146,7 +144,7 @@ abstract public class AbstractNAR extends NAR {
     public TaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
-            task -> process(task)
+                this::process
         );
         return input;
     }
@@ -210,7 +208,7 @@ abstract public class AbstractNAR extends NAR {
     }
 
 
-    public static final OperatorReaction[] exampleOperators = new OperatorReaction[]{
+    public static final OperatorReaction[] exampleOperators = {
             //new Wait(),
             new NullOperator("break"),
             new NullOperator("drop"),
@@ -226,7 +224,7 @@ abstract public class AbstractNAR extends NAR {
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng;
 
-    public final OperatorReaction[] defaultOperators = new OperatorReaction[]{
+    public final OperatorReaction[] defaultOperators = {
 
             //system control
             new echo(),
@@ -351,7 +349,7 @@ abstract public class AbstractNAR extends NAR {
     }
 
     /** ConceptBuilder: */
-    public Concept apply(final Term t) {
+    public Concept apply(Term t) {
 
         Bag<Task, TaskLink> taskLinks =
                 new CurveBag<>(taskLinkBagSize, rng).mergeAverage();
@@ -359,11 +357,7 @@ abstract public class AbstractNAR extends NAR {
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(termLinkBagSize, rng).mergeAverage();
 
-        if (t instanceof Atom) {
-            return new AtomConcept(t, termLinks, taskLinks);
-        } else {
-            return new DefaultConcept(t, taskLinks, termLinks, memory);
-        }
+        return t instanceof Atom ? new AtomConcept(t, termLinks, taskLinks) : new DefaultConcept(t, taskLinks, termLinks, memory);
 
     }
 
@@ -407,7 +401,7 @@ abstract public class AbstractNAR extends NAR {
     }
 
     public NAR forEachConcept(Consumer<Concept> recip) {
-        this.core.active.forEach(recip);
+        core.active.forEach(recip);
         return this;
     }
 
@@ -416,7 +410,7 @@ abstract public class AbstractNAR extends NAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static abstract class DefaultCycle implements Serializable {
+    public abstract static class DefaultCycle implements Serializable {
 
         final Active handlers = new Active();
 
@@ -432,7 +426,7 @@ abstract public class AbstractNAR extends NAR {
         public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
         public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
 
-        public final MutableFloat activationFactor = new MutableFloat(1f);
+        public final MutableFloat activationFactor = new MutableFloat(1.0f);
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
 //            return LimitDerivationPriority.limitDerivation(d);
@@ -447,7 +441,7 @@ abstract public class AbstractNAR extends NAR {
 
 
         @Deprecated
-        transient public final NAR nar;
+        public final transient NAR nar;
 
         public final MutableInteger capacity = new MutableInteger();
 
@@ -470,25 +464,20 @@ abstract public class AbstractNAR extends NAR {
         /* ---------- Short-term workspace for a single cycle ------- */
 
         public DefaultCycle(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
-            super();
 
             this.nar = nar;
-            this.conceptActivator = ca;
+            conceptActivator = ca;
 
             this.deriver = deriver;
 
-            this.conceptForget = nar.memory.conceptForgetDurations;
+            conceptForget = nar.memory.conceptForgetDurations;
 
-            this.conceptsFiredPerCycle = new MutableInteger(1);
-            this.active = concepts;
+            conceptsFiredPerCycle = new MutableInteger(1);
+            active = concepts;
 
             handlers.add(
-                nar.memory.eventCycleEnd.on((m) -> {
-                    fireConcepts(conceptsFiredPerCycle.intValue());
-                }),
-                nar.memory.eventReset.on((m) -> {
-                    reset();
-                })
+                nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue())),
+                nar.memory.eventReset.on((m) -> reset())
             );
         }
 
@@ -513,7 +502,7 @@ abstract public class AbstractNAR extends NAR {
             //1 concept if (memory.newTasks.isEmpty())*/
             if (conceptsToFire == 0) return;
 
-            final float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
+            float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
 
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
 
@@ -530,7 +519,7 @@ abstract public class AbstractNAR extends NAR {
             }
         }
 
-        abstract protected void fireConcept(Concept c);
+        protected abstract void fireConcept(Concept c);
         /*{
             fireConcept(c, p -> {
                 //direct: just input to nar
@@ -565,13 +554,13 @@ abstract public class AbstractNAR extends NAR {
         }
 
 
-        public final Concept activate(final Term term, final Budget b) {
-            final Bag<Term, Concept> active = this.active;
+        public final Concept activate(Term term, Budget b) {
+            Bag<Term, Concept> active = this.active;
             active.setCapacity(capacity.intValue());
 
-            final ConceptActivator ca = this.conceptActivator;
+            ConceptActivator ca = conceptActivator;
             ca.setActivationFactor( activationFactor.floatValue() );
-            return ca.update(term, b, nar.time(), 1f, active);
+            return ca.update(term, b, nar.time(), 1.0f, active);
         }
 
         public final Bag<Term,Concept> concepts() {

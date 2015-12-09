@@ -46,7 +46,7 @@ public class WaveCapture implements Runnable {
 
         if (FRAME_RATE > 0) {
             exec = new ScheduledThreadPoolExecutor(1);
-            exec.scheduleAtFixedRate(this, 0, (long) (1000f / FRAME_RATE),
+            exec.scheduleAtFixedRate(this, 0, (long) (1000.0f / FRAME_RATE),
                     TimeUnit.MILLISECONDS);
 
         }
@@ -59,9 +59,9 @@ public class WaveCapture implements Runnable {
     public Pane newMonitorPane() {
 
 
-        final Plot2D audioPlot = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
+        Plot2D audioPlot = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
         audioPlot.add(rawWave);
-        final Plot2D audioPlot2 = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
+        Plot2D audioPlot2 = new Plot2D(Plot2D.Line, bufferSamples, 450, 175);
         audioPlot2.add(wavelet1d);
 
 
@@ -74,6 +74,7 @@ public class WaveCapture implements Runnable {
                 audioPlot,
                 audioPlot2);
 
+        //noinspection OverlyComplexAnonymousInnerClass
         ChangeListener onParentChange = new ChangeListener() {
 
             public On observe = null;
@@ -103,7 +104,6 @@ public class WaveCapture implements Runnable {
     }
 
     public WaveCapture(WaveSource source, float updateFrameRate) {
-        super();
 
         setSource(source);
 
@@ -134,8 +134,8 @@ public class WaveCapture implements Runnable {
 //                while (history.size() > maxHistory)
 //                    history.removeAtIndex(0);
 
-                minValue = -1f; //Short.MIN_VALUE;
-                maxValue = 1f;  //Short.MAX_VALUE;
+                minValue = -1.0f; //Short.MIN_VALUE;
+                maxValue = 1.0f;  //Short.MAX_VALUE;
 //                                        minValue = Float.POSITIVE_INFINITY;
 //                                        maxValue = Float.NEGATIVE_INFINITY;
 //
@@ -157,7 +157,7 @@ public class WaveCapture implements Runnable {
                 if (ss == null) return;
                 //samples[0] = null;
 
-                final FloatArrayList history = this.history;
+                FloatArrayList history = this.history;
 
                 //                        for (short s : ss) {
                 //                            history.add((float)s);
@@ -215,7 +215,7 @@ public class WaveCapture implements Runnable {
 
     }
 
-    public synchronized final void setSource(WaveSource source) {
+    public final synchronized void setSource(WaveSource source) {
         if (this.source != null) {
             this.source.stop();
             this.source = null;
@@ -226,7 +226,7 @@ public class WaveCapture implements Runnable {
         if (this.source != null) {
             int audioBufferSize = this.source.start();
 
-            this.bufferSamples = audioBufferSize;
+            bufferSamples = audioBufferSize;
 
             //System.out.println("bufferSamples=" + bufferSamples + ", sampleRate=" + sampleRate + ", numChannels=" + numChannels);
 

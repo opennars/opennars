@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 /**
  * Created by me on 8/14/15.
  */
-abstract public class SpacenetApp extends Application {
+public abstract class SpacenetApp extends Application {
     SpaceNet root = new SpaceNet() {
         @Override
         public Xform getRoot() {

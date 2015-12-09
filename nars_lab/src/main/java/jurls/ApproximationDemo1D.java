@@ -46,7 +46,7 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
             functionRenderer1.repaint();
 
             jTextArea1.setText(
-                    "Iterations : " + numIterations + "\n"
+                    "Iterations : " + numIterations + '\n'
                     + "No. parameters : "
                     + renderParameterizedFunction.getParameterizedFunction().numberOfParameters()
             );
@@ -77,14 +77,12 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
         });
         approximatorMenu.notifyListeners();
 
-        iterationsMenu.addActionListener((ActionEvent e) -> {
-            numIterationsPerLoop = (int) iterationsMenu.getObject();
-        });
+        iterationsMenu.addActionListener((ActionEvent e) -> numIterationsPerLoop = (int) iterationsMenu.getObject());
         iterationsMenu.notifyListeners();
 
         double[] ys = new double[components];
         for (int i = 0; i < ys.length; ++i) {
-            ys[i] = 2f * (Math.random() - 0.5);
+            ys[i] = 2.0f * (Math.random() - 0.5);
         }
         f = new RenderArrayFunction1D(Color.blue, ys);
 
@@ -161,20 +159,12 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
 
         alphaComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.01", "0.001", "0.0001" }));
         alphaComboBox.setSelectedIndex(1);
-        alphaComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                alphaComboBoxActionPerformed(evt);
-            }
-        });
+        alphaComboBox.addActionListener(this::alphaComboBoxActionPerformed);
         jPanel6.add(alphaComboBox);
 
         momentumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.01", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.99" }));
         momentumComboBox.setSelectedIndex(9);
-        momentumComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                momentumComboBoxActionPerformed(evt);
-            }
-        });
+        momentumComboBox.addActionListener(this::momentumComboBoxActionPerformed);
         jPanel6.add(momentumComboBox);
 
         jPanel5.add(jPanel6, java.awt.BorderLayout.CENTER);
@@ -214,14 +204,10 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ApproximationDemo1D().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new ApproximationDemo1D().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -42,9 +42,9 @@ public final class ValueStackResetTest
     @Test
     public void stackIsClearedBetweenParsingRuns()
     {
-        final TestParser parser = Grappa.createParser(TestParser.class);
+        TestParser parser = Grappa.createParser(TestParser.class);
 
-        final ParseRunner<Object> runner
+        ParseRunner<Object> runner
             = new ListeningParseRunner<>(parser.rule());
 
         ParsingResult<Object> result;

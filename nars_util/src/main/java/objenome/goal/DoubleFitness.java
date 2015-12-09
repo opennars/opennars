@@ -39,25 +39,13 @@ public abstract class DoubleFitness implements Fitness {
      * The comparator used by the {@link Maximise} double fitness
      * implementation.
      */
-    private static final Comparator<Double> MAXIMISE = new Comparator<Double>() {
-
-        @Override
-        public int compare(Double d1, Double d2) {
-            return Double.compare(d1, d2);
-        }
-    };
+    private static final Comparator<Double> MAXIMISE = Double::compare;
 
     /**
      * The comparator used by the {@link Minimize} double fitness
      * implementation.
      */
-    private static final Comparator<Double> MINIMISE = new Comparator<Double>() {
-
-        @Override
-        public int compare(Double d1, Double d2) {
-            return Double.compare(d2, d1);
-        }
-    };
+    private static final Comparator<Double> MINIMISE = (d1, d2) -> Double.compare(d2, d1);
 
     /**
      * The actual double fitness value.
@@ -97,10 +85,10 @@ public abstract class DoubleFitness implements Fitness {
      */
     @Override
     public int compareTo(Fitness o) {
-        if (this.getClass().isAssignableFrom(o.getClass())) {
+        if (getClass().isAssignableFrom(o.getClass())) {
             return comparator().compare(fitness, ((DoubleFitness) o).fitness);
         } else {
-            throw new IllegalArgumentException("Expected " + this.getClass() + ", found " + o.getClass());
+            throw new IllegalArgumentException("Expected " + getClass() + ", found " + o.getClass());
         }
     }
 
@@ -109,7 +97,7 @@ public abstract class DoubleFitness implements Fitness {
         if (obj instanceof DoubleFitness) {
             DoubleFitness fitnessObj = (DoubleFitness) obj;
 
-            return fitnessObj.fitness == this.fitness;
+            return fitnessObj.fitness == fitness;
         }
 
         return false;

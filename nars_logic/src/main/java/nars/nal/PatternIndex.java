@@ -37,7 +37,7 @@ public class PatternIndex extends MapIndex {
     }
 
     /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
-    final static class LinearCompoundPattern extends GenericCompound {
+    static final class LinearCompoundPattern extends GenericCompound {
 
 
         private final Op op;
@@ -52,15 +52,15 @@ public class PatternIndex extends MapIndex {
             super(seed.op(), seed.terms(),
                     (int)((seed instanceof Image) ? (((Image)seed).relation()) : 0)
             );
-            this.op = seed.op();
-            this.structureCachedWithoutVars =
+            op = seed.op();
+            structureCachedWithoutVars =
                 seed.structure() & ~(Op.VARIABLE_BITS);
 
-            this.termsCached = this.terms();
-            this.sizeCached = seed.size();
-            this.volCached = seed.volume();
-            this.heuristicOrder = getSubtermOrder(terms());
-            this.shuffleOrder = heuristicOrder.clone();
+            termsCached = terms();
+            sizeCached = seed.size();
+            volCached = seed.volume();
+            heuristicOrder = getSubtermOrder(terms());
+            shuffleOrder = heuristicOrder.clone();
         }
 
         /** subterm match priority heuristic of
@@ -104,12 +104,12 @@ public class PatternIndex extends MapIndex {
 
 
         @Override
-        public final boolean match(Compound y, FindSubst subst) {
+        public boolean match(Compound y, FindSubst subst) {
             if (y.size() != sizeCached)
                 return false;
             if (y.volume() < volCached)
                 return false;
-            final int yStructure = y.structure();
+            int yStructure = y.structure();
             if ((yStructure | structureCachedWithoutVars) != yStructure)
                 return false;
 
@@ -120,9 +120,9 @@ public class PatternIndex extends MapIndex {
         public boolean matchLinear(TermContainer y, FindSubst subst) {
 
             //int[] o = this.heuristicOrder;
-            int[] o = shuffle(this.shuffleOrder, subst.random);
+            int[] o = shuffle(shuffleOrder, subst.random);
 
-            Term[] x = this.termsCached;
+            Term[] x = termsCached;
             for (int i = 0; i < o.length; i++) {
                 if (!subst.match(x[i], y.term(i)))
                     return false;

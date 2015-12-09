@@ -14,13 +14,13 @@ import jurls.core.approximation.ParameterizedFunction;
  */
 public interface UpdateProcedure {
 
-    public static class Context {
+    class Context {
 
         public double[] e;
         public double[] previousDeltas;
     }
 
-    public void update(
+    void update(
             ApproxParameters approxParameters,
             RLParameters rLParameters,
             Context context,

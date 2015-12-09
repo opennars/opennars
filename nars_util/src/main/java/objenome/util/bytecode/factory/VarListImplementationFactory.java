@@ -35,9 +35,8 @@ public final class VarListImplementationFactory {
      * @param pool
      *            Pool to use.
      */
-    public VarListImplementationFactory(final SgClassPool pool) {
-        super();
-        this.factory = new ImplementationFactory(pool);
+    public VarListImplementationFactory(SgClassPool pool) {
+        factory = new ImplementationFactory(pool);
     }
 
     /**
@@ -63,9 +62,9 @@ public final class VarListImplementationFactory {
      * 
      * @return New object implementing the interface.
      */
-    public final SgClass create(final String implPackageName, final String implClassName,
-            final SgClass superClass, final SgClass enclosingClass, final List<SgVariable> vars,
-            final ImplementationFactoryListener listener, final Class<?>... intf) {
+    public SgClass create(String implPackageName, String implClassName,
+                          SgClass superClass, SgClass enclosingClass, List<SgVariable> vars,
+                          ImplementationFactoryListener listener, Class<?>... intf) {
 
         return factory.create(implPackageName, implClassName, superClass, enclosingClass,
                 new VarListImplFactoryListener(vars, listener), intf);
@@ -90,9 +89,8 @@ public final class VarListImplementationFactory {
          *            Creates the bodies for all methods - Cannot be
          *            <code>null</code>.
          */
-        public VarListImplFactoryListener(final List<SgVariable> vars,
-                final ImplementationFactoryListener listener) {
-            super();
+        public VarListImplFactoryListener(List<SgVariable> vars,
+                                          ImplementationFactoryListener listener) {
 
             if (vars == null) {
                 throw new IllegalArgumentException("The argument 'args' cannot be null!");
@@ -109,14 +107,13 @@ public final class VarListImplementationFactory {
         /**
          * {@inheritDoc}
          */
-        public final void afterClassCreated(final SgClass clasz) {
+        public void afterClassCreated(SgClass clasz) {
 
             // Add all arguments as fields and to the constructor
-            final SgConstructor constructor = new SgConstructor(clasz);
-            for (int i = 0; i < vars.size(); i++) {
-                final SgVariable var = vars.get(i);
+            SgConstructor constructor = new SgConstructor(clasz);
+            for (SgVariable var : vars) {
                 clasz.addField(new SgField(clasz, "private", var.getType(), var.getName(), ""));
-                final SgArgument constructorArg = new SgArgument(constructor, var.getModifiers(),
+                SgArgument constructorArg = new SgArgument(constructor, var.getModifiers(),
                         var.getType(), var.getName());
                 constructor.addArgument(constructorArg);
                 constructor.addBodyLine("this." + var.getName() + '=' + var.getName() + ';');
@@ -130,7 +127,7 @@ public final class VarListImplementationFactory {
         /**
          * {@inheritDoc}
          */
-        public final List<String> createBody(final SgMethod method, final Class<?>... intf) {
+        public List<String> createBody(SgMethod method, Class<?>... intf) {
             // Call user defined listener
             return listener.createBody(method, intf);
         }

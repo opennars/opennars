@@ -11,7 +11,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 /**
  * Abstract graph model of inter-Concept dynamics
  */
-abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<Concept,E> {
+public abstract class ConceptGraph<E> extends ConceptMap implements EdgeFactory<Concept,E> {
 
     public final Graph<Concept,E> graph;
 
@@ -21,17 +21,12 @@ abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<
 
     public ConceptGraph(NAR nar, boolean directed) {
         super(nar);
-        if (directed) {
-            graph = new DefaultDirectedGraph<>(this);
-        }
-        else {
-            graph = new AsUndirectedGraph(new DefaultDirectedGraph<>(this));
-        }
+        graph = directed ? new DefaultDirectedGraph<>(this) : new AsUndirectedGraph(new DefaultDirectedGraph<>(this));
 
     }
 
     @Override
-    abstract public boolean contains(Concept c);
+    public abstract boolean contains(Concept c);
 
     @Override
     protected boolean onConceptForget(Concept c) {

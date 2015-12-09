@@ -29,20 +29,20 @@ public class Grid1D implements World {
     private final double cycleSkew;
 
     public Grid1D(int size, int totalTime, double noise, double cycleSkew) {
-        this.time = 0;
+        time = 0;
         this.size = size;
-        this.VISUALIZE_PERIOD = Math.pow(10, 4);
-        this.REWARD_MAGNITUDE = 100.0;
-        this.ENERGY_COST =  this.REWARD_MAGNITUDE / 100.0;
-        this.JUMP_FRACTION = 0.0;        
+        VISUALIZE_PERIOD = Math.pow(10, 4);
+        REWARD_MAGNITUDE = 100.0;
+        ENERGY_COST = REWARD_MAGNITUDE / 100.0;
+        JUMP_FRACTION = 0.0;
         this.noise = noise;
         this.cycleSkew = cycleSkew;
         
         //this.name_long = 'one dimensional grid world'
-        
-        
-        this.worldState = 0.0;
-        this.simpleState = 0;
+
+
+        worldState = 0.0;
+        simpleState = 0;
         this.totalTime = totalTime;
         /*
         this.display_state = True;
@@ -92,7 +92,7 @@ public class Grid1D implements World {
         }
         
         //# Ensure that the world state falls between 0 and 9
-        worldState -= size * Math.floor( ((double)worldState) / ((double)size) );
+        worldState -= size * Math.floor( ((double)worldState) / (size) );
         simpleState = (int)Math.floor(worldState);
         if (simpleState == 9) simpleState = 0;
         
@@ -113,7 +113,7 @@ public class Grid1D implements World {
     
     public double getReward(double[] sensor) {
         
-        double reward = 0.;
+        double reward = 0.0;
         reward -= sensor[8] * REWARD_MAGNITUDE;
         reward += sensor[3] * REWARD_MAGNITUDE;
         
@@ -130,19 +130,13 @@ public class Grid1D implements World {
         String s = "";
         for (int i = 0; i < size; i++) {
             char c;
-            if (i == simpleState)
-                c = 'O';
-            else
-                c = '.';
+            c = i == simpleState ? 'O' : '.';
             s += c;
         }
         s += "\n";
         for (int i = 0; i < size; i++) {
             char c;
-            if (action[i] > 0)
-                c = 'X';
-            else
-                c = '.';
+            c = action[i] > 0 ? 'X' : '.';
             s += c;
         }
         s += "\n";

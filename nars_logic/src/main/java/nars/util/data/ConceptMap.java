@@ -7,7 +7,7 @@ import nars.util.event.Active;
 /**
  * Created by me on 4/16/15.
  */
-abstract public class ConceptMap  {
+public abstract class ConceptMap  {
 
     public final NAR nar;
 
@@ -22,7 +22,6 @@ abstract public class ConceptMap  {
     public void reset() { }
 
     public ConceptMap(NAR nar) {
-        super();
 
         regs = new Active(
         nar.memory.eventReset.on(n -> {
@@ -55,7 +54,7 @@ abstract public class ConceptMap  {
     protected void onCycle() { }
 
 
-    abstract public boolean contains(Concept c);
+    public abstract boolean contains(Concept c);
 
 
     /** returns true if the concept was successfully removed (ie. it was already present and not permanently included) */

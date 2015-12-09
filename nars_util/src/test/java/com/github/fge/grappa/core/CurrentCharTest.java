@@ -29,7 +29,7 @@ public final class CurrentCharTest
 {
     static class Dummy
     {
-        boolean store(final char ignore)
+        boolean store(char ignore)
         {
             return true;
         }
@@ -40,7 +40,7 @@ public final class CurrentCharTest
     {
         protected final Dummy dummy;
 
-        Parser(final Dummy dummy)
+        Parser(Dummy dummy)
         {
             this.dummy = dummy;
         }
@@ -54,8 +54,8 @@ public final class CurrentCharTest
     @Test
     public void currentCharWorks()
     {
-        final Dummy dummy = spy(new Dummy());
-        final Parser parser = Grappa.createParser(Parser.class, dummy);
+        Dummy dummy = spy(new Dummy());
+        Parser parser = Grappa.createParser(Parser.class, dummy);
         new ListeningParseRunner<>(parser.rule()).run("a");
         verify(dummy).store('a');
     }

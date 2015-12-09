@@ -57,8 +57,8 @@ public class MidiClock extends JPanel implements Clock {
     Sequencer sequencer;
     Sequence sequence;
     Synthesizer synthesizer;
-    Instrument instruments[];
-    ChannelData channels[];
+    Instrument[] instruments;
+    ChannelData[] channels;
     ChannelData cc;    // current channel
     JCheckBox mouseOverCB = new JCheckBox("mouseOver", true);
     JSlider veloS, presS, bendS, revbS;
@@ -95,7 +95,7 @@ public class MidiClock extends JPanel implements Clock {
             instruments = synthesizer.getDefaultSoundbank().getInstruments();
             synthesizer.loadInstrument(instruments[0]);
         }
-        MidiChannel midiChannels[] = synthesizer.getChannels();
+        MidiChannel[] midiChannels = synthesizer.getChannels();
         channels = new ChannelData[midiChannels.length];
         for (int i = 0; i < channels.length; i++) {
             channels[i] = new ChannelData(midiChannels[i], i);
@@ -222,7 +222,7 @@ public class MidiClock extends JPanel implements Clock {
             setLayout(new BorderLayout());
             setPreferredSize(new Dimension(42*kw, kh+1));
             int transpose = 24;
-            int whiteIDs[] = { 0, 2, 4, 5, 7, 9, 11 };
+            int[] whiteIDs = {0, 2, 4, 5, 7, 9, 11};
 
             for (int i = 0, x = 0; i < 6; i++) {
                 for (int j = 0; j < 7; j++, x += kw) {
@@ -285,9 +285,9 @@ public class MidiClock extends JPanel implements Clock {
 
 
         public Key getKey(Point point) {
-            for (int i = 0; i < keys.size(); i++) {
-                if (((Key) keys.get(i)).contains(point)) {
-                    return (Key) keys.get(i);
+            for (Object key : keys) {
+                if (((Key) key).contains(point)) {
+                    return (Key) key;
                 }
             }
             return null;
@@ -303,8 +303,8 @@ public class MidiClock extends JPanel implements Clock {
             g2.setColor(Color.white);
             g2.fillRect(0, 0, 42*kw, kh);
 
-            for (int i = 0; i < whiteKeys.size(); i++) {
-                Key key = (Key) whiteKeys.get(i);
+            for (Object whiteKey : whiteKeys) {
+                Key key = (Key) whiteKey;
                 if (key.isNoteOn()) {
                     g2.setColor(record ? pink : jfcBlue);
                     g2.fill(key);
@@ -312,8 +312,8 @@ public class MidiClock extends JPanel implements Clock {
                 g2.setColor(Color.black);
                 g2.draw(key);
             }
-            for (int i = 0; i < blackKeys.size(); i++) {
-                Key key = (Key) blackKeys.get(i);
+            for (Object blackKey : blackKeys) {
+                Key key = (Key) blackKey;
                 if (key.isNoteOn()) {
                     g2.setColor(record ? pink : jfcBlue);
                     g2.fill(key);
@@ -354,8 +354,8 @@ public class MidiClock extends JPanel implements Clock {
             muteCB.setSelected(mute);
             //sustCB.setSelected(sustain);
 
-            JSlider slider[] = { veloS, presS, bendS, revbS };
-            int v[] = { velocity, pressure, bend, reverb };
+            JSlider[] slider = {veloS, presS, bendS, revbS};
+            int[] v = {velocity, pressure, bend, reverb};
             for (int i = 0; i < slider.length; i++) {
                 TitledBorder tb = (TitledBorder) slider[i].getBorder();
                 String s = tb.getTitle();
@@ -372,26 +372,23 @@ public class MidiClock extends JPanel implements Clock {
      */
     class InstrumentsTable extends JPanel {
 
-        private String names[] = {
+        private String[] names = {
                 "Piano", "Chromatic Perc.", "Organ", "Guitar",
                 "Bass", "Strings", "Ensemble", "Brass",
                 "Reed", "Pipe", "Synth Lead", "Synth Pad",
-                "Synth Effects", "Ethnic", "Percussive", "Sound Effects" };
+                "Synth Effects", "Ethnic", "Percussive", "Sound Effects"};
         private int nRows = 8;
         private int nCols = names.length; // just show 128 instruments
 
         public InstrumentsTable() {
             setLayout(new BorderLayout());
 
+            //noinspection OverlyComplexAnonymousInnerClass
             TableModel dataModel = new AbstractTableModel() {
                 public int getColumnCount() { return nCols; }
                 public int getRowCount() { return nRows;}
                 public Object getValueAt(int r, int c) {
-                    if (instruments != null) {
-                        return instruments[c*nRows+r].getName();
-                    } else {
-                        return Integer.toString(c*nRows+r);
-                    }
+                    return instruments != null ? instruments[c * nRows + r].getName() : Integer.toString(c * nRows + r);
                 }
                 public String getColumnName(int c) {
                     return names[c];
@@ -408,33 +405,29 @@ public class MidiClock extends JPanel implements Clock {
 
             // Listener for row changes
             ListSelectionModel lsm = table.getSelectionModel();
-            lsm.addListSelectionListener(new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    ListSelectionModel sm = (ListSelectionModel) e.getSource();
-                    if (!sm.isSelectionEmpty()) {
-                        cc.row = sm.getMinSelectionIndex();
-                    }
-                    programChange(cc.col*nRows+cc.row);
+            lsm.addListSelectionListener(e -> {
+                ListSelectionModel sm = (ListSelectionModel) e.getSource();
+                if (!sm.isSelectionEmpty()) {
+                    cc.row = sm.getMinSelectionIndex();
                 }
+                programChange(cc.col*nRows+cc.row);
             });
 
             // Listener for column changes
             lsm = table.getColumnModel().getSelectionModel();
-            lsm.addListSelectionListener(new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    ListSelectionModel sm = (ListSelectionModel) e.getSource();
-                    if (!sm.isSelectionEmpty()) {
-                        cc.col = sm.getMinSelectionIndex();
-                    }
-                    programChange(cc.col*nRows+cc.row);
+            lsm.addListSelectionListener(e -> {
+                ListSelectionModel sm = (ListSelectionModel) e.getSource();
+                if (!sm.isSelectionEmpty()) {
+                    cc.col = sm.getMinSelectionIndex();
                 }
+                programChange(cc.col*nRows+cc.row);
             });
 
             table.setPreferredScrollableViewportSize(new Dimension(nCols*110, 200));
             table.setCellSelectionEnabled(true);
             table.setColumnSelectionAllowed(true);
-            for (int i = 0; i < names.length; i++) {
-                TableColumn column = table.getColumn(names[i]);
+            for (String name : names) {
+                TableColumn column = table.getColumn(name);
                 column.setPreferredWidth(110);
             }
             table.setAutoResizeMode(table.AUTO_RESIZE_OFF);
@@ -559,6 +552,7 @@ public class MidiClock extends JPanel implements Clock {
             TitledBorder tb = (TitledBorder) slider.getBorder();
             String s = tb.getTitle();
             tb.setTitle(s.substring(0, s.indexOf('=')+1) + s.valueOf(value));
+            //noinspection IfStatementWithTooManyBranches
             if (s.startsWith("Velocity")) {
                 cc.velocity = value;
             } else if (s.startsWith("Pressure")) {
@@ -579,6 +573,7 @@ public class MidiClock extends JPanel implements Clock {
             } else {
                 JCheckBox cb = (JCheckBox) e.getSource();
                 String name = cb.getText();
+                //noinspection IfStatementWithTooManyBranches
                 if (name.startsWith("Mute")) {
                     cc.channel.setMute(cc.mute = cb.isSelected());
                 } else if (name.startsWith("Solo")) {
@@ -595,11 +590,11 @@ public class MidiClock extends JPanel implements Clock {
         public void actionPerformed(ActionEvent e) {
             JButton button = (JButton) e.getSource();
             if (button.getText().startsWith("All")) {
-                for (int i = 0; i < channels.length; i++) {
-                    channels[i].channel.allNotesOff();
+                for (ChannelData channel : channels) {
+                    channel.channel.allNotesOff();
                 }
-                for (int i = 0; i < keys.size(); i++) {
-                    ((Key) keys.get(i)).setNoteState(OFF);
+                for (Object key : keys) {
+                    ((Key) key).setNoteState(OFF);
                 }
             } else if (button.getText().startsWith("Record")) {
                 if (recordFrame != null) {
@@ -646,7 +641,7 @@ public class MidiClock extends JPanel implements Clock {
 
             getContentPane().add("North", p2);
 
-            final String[] names = { "Channel #", "Instrument" };
+            String[] names = { "Channel #", "Instrument" };
 
             dataModel = new AbstractTableModel() {
                 public int getColumnCount() { return names.length; }
@@ -654,7 +649,8 @@ public class MidiClock extends JPanel implements Clock {
                 public Object getValueAt(int row, int col) {
                     if (col == 0) {
                         return ((TrackData) tracks.get(row)).chanNum;
-                    } else if (col == 1) {
+                    }
+                    if (col == 1) {
                         return ((TrackData) tracks.get(row)).name;
                     }
                     return null;
@@ -722,11 +718,7 @@ public class MidiClock extends JPanel implements Clock {
                     saveB.setEnabled(false);
                 } else {
                     String name = null;
-                    if (instruments != null) {
-                        name = instruments[cc.col*8+cc.row].getName();
-                    } else {
-                        name = Integer.toString(cc.col*8+cc.row);
-                    }
+                    name = instruments != null ? instruments[cc.col * 8 + cc.row].getName() : Integer.toString(cc.col * 8 + cc.row);
                     tracks.add(new TrackData(cc.num+1, name, track));
                     table.tableChanged(new TableModelEvent(dataModel));
                     recordB.setText("Record");
@@ -753,10 +745,7 @@ public class MidiClock extends JPanel implements Clock {
                     JFileChooser fc = new JFileChooser(file);
                     fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
                         public boolean accept(File f) {
-                            if (f.isDirectory()) {
-                                return true;
-                            }
-                            return false;
+                            return f.isDirectory();
                         }
                         public String getDescription() {
                             return "Save as .mid file.";
@@ -765,9 +754,6 @@ public class MidiClock extends JPanel implements Clock {
                     if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
                         saveMidiFile(fc.getSelectedFile());
                     }
-                } catch (SecurityException ex) {
-
-                    ex.printStackTrace();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -804,7 +790,7 @@ public class MidiClock extends JPanel implements Clock {
         class TrackData extends Object {
             Integer chanNum; String name; Track track;
             public TrackData(int chanNum, String name, Track track) {
-                this.chanNum = new Integer(chanNum);
+                this.chanNum = chanNum;
                 this.name = name;
                 this.track = track;
             }
@@ -812,8 +798,8 @@ public class MidiClock extends JPanel implements Clock {
     } // End class RecordFrame
 
 
-    public static void main(String args[]) {
-        final MidiClock midiSynth = new MidiClock();
+    public static void main(String[] args) {
+        MidiClock midiSynth = new MidiClock();
 
         JFrame f = new JFrame("Midi Synthesizer");
         f.addWindowListener(new WindowAdapter() {

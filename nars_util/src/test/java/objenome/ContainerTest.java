@@ -33,9 +33,9 @@ public class ContainerTest {
 
     }
 
-    public static interface UserDAO {
+    public interface UserDAO {
 
-        public String getUsername(int id);
+        String getUsername(int id);
     }
 
     public static class JdbcUserDAO implements UserDAO {
@@ -59,9 +59,9 @@ public class ContainerTest {
         }
     }
 
-    public static interface AccountDAO {
+    public interface AccountDAO {
 
-        public double getBalance(int id);
+        double getBalance(int id);
     }
 
     public static class JdbcAccountDAO implements AccountDAO {
@@ -78,7 +78,7 @@ public class ContainerTest {
             assert conn != null;
 
             // usable the connection to get the balance...
-            return 1000000D;
+            return 1000000.0D;
         }
     }
 
@@ -95,7 +95,7 @@ public class ContainerTest {
         AccountDAO accountDAO = c.get("accountDAO");
         UserDAO userDAO = c.get("userDAO");
 
-        assertEquals(1000000D, accountDAO.getBalance(25), 0.01);
+        assertEquals(1000000.0D, accountDAO.getBalance(25), 0.01);
         assertEquals("saoj", userDAO.getUsername(45));
     }
 

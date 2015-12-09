@@ -110,7 +110,8 @@ public class EpoxInterpreter<T extends Organism> implements Computer<Object,T,Ob
 
         if (expression == null) {
             throw new MalformedProgramException("Source generator returned a null program source");
-        } else if (noParamSets <= 0) {
+        }
+        if (noParamSets <= 0) {
             throw new IllegalArgumentException("Empty argument values input");
         }
 

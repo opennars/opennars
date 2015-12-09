@@ -71,7 +71,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
         return false;
     }
 
-    public static Term makeImplication(final Term subject, final Term predicate) {
+    public static Term makeImplication(Term subject, Term predicate) {
         if (subject.equals(predicate))
             return subject;
         return make(subject, predicate, Tense.ORDER_NONE);
@@ -83,7 +83,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
      * @param predicate The second component
      * @return A compound generated or a term it reduced to
      */
-    public static <A extends Term> Implication<A,A> make(final A subject, final A predicate) {
+    public static <A extends Term> Implication<A,A> make(A subject, A predicate) {
         return make(subject, predicate, Tense.ORDER_NONE);
     }
 
@@ -105,7 +105,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
 //        return makeStatementName(subject, copula, predicate);
 //    }
     
-    public static Implication make(final Term subject, final Term predicate, int temporalOrder) {
+    public static Implication make(Term subject, Term predicate, int temporalOrder) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -116,11 +116,11 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
         }
         
         if (predicate instanceof Implication) {
-            final Term oldCondition = ((Statement) predicate).getSubject();
+            Term oldCondition = ((Statement) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
                 return null;
             }
-            final Term newCondition = Conjunctive.make(subject, oldCondition, temporalOrder);
+            Term newCondition = Conjunctive.make(subject, oldCondition, temporalOrder);
             return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
             return new Implication(subject, predicate, temporalOrder);

@@ -137,19 +137,19 @@ public class PropertySheetTable extends JTable {
    * @see #selectedPropertyBackground
    * @see #selectedPropertyForeground
    */
-  private void initDefaultColors() {    
-    this.categoryBackground = UIManager.getColor(PANEL_BACKGROUND_COLOR_KEY);
-    this.categoryForeground = UIManager.getColor(TABLE_FOREGROUND_COLOR_KEY).darker().darker().darker();
-    
-    this.selectedCategoryBackground = categoryBackground.darker();
-    this.selectedCategoryForeground = categoryForeground;
-    
-    this.propertyBackground = UIManager.getColor(TABLE_BACKGROUND_COLOR_KEY);
-    this.propertyForeground = UIManager.getColor(TABLE_FOREGROUND_COLOR_KEY);
-    
-    this.selectedPropertyBackground = UIManager
+  private void initDefaultColors() {
+    categoryBackground = UIManager.getColor(PANEL_BACKGROUND_COLOR_KEY);
+    categoryForeground = UIManager.getColor(TABLE_FOREGROUND_COLOR_KEY).darker().darker().darker();
+
+    selectedCategoryBackground = categoryBackground.darker();
+    selectedCategoryForeground = categoryForeground;
+
+    propertyBackground = UIManager.getColor(TABLE_BACKGROUND_COLOR_KEY);
+    propertyForeground = UIManager.getColor(TABLE_FOREGROUND_COLOR_KEY);
+
+    selectedPropertyBackground = UIManager
       .getColor(TABLE_SELECTED_BACKGROUND_COLOR_KEY);
-    this.selectedPropertyForeground = UIManager
+    selectedPropertyForeground = UIManager
       .getColor(TABLE_SELECTED_FOREGROUND_COLOR_KEY);
     
     setGridColor(categoryBackground);
@@ -519,9 +519,9 @@ public class PropertySheetTable extends JTable {
       if (e.getType() == TableModelEvent.UPDATE) {
         int first = e.getFirstRow();
         int last = e.getLastRow();
-        int editingRow = PropertySheetTable.this.getEditingRow();
+        int editingRow = getEditingRow();
 
-        TableCellEditor editor = PropertySheetTable.this.getCellEditor();
+        TableCellEditor editor = getCellEditor();
         if (editor != null && first <= editingRow && editingRow <= last) {
           editor.cancelCellEditing();
         }
@@ -558,16 +558,16 @@ public class PropertySheetTable extends JTable {
    */
   private class ToggleAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {      
-      int row = PropertySheetTable.this.getSelectedRow();
-      Item item = PropertySheetTable.this.getSheetModel()
+      int row = getSelectedRow();
+      Item item = getSheetModel()
         .getPropertySheetElement(row);
       item.toggle();
-      PropertySheetTable.this.addRowSelectionInterval(row, row);
+      addRowSelectionInterval(row, row);
     }
     public boolean isEnabled() {
-      int row = PropertySheetTable.this.getSelectedRow();
+      int row = getSelectedRow();
       if (row != -1) {
-        Item item = PropertySheetTable.this.getSheetModel()
+        Item item = getSheetModel()
           .getPropertySheetElement(row);        
         return item.hasToggle();
       } else {
@@ -608,11 +608,7 @@ public class PropertySheetTable extends JTable {
         indent = table.getWantsExtraIndent()?HOTSPOT_SIZE:0;
       } else {
         // it is a property with children
-        if (item.hasToggle()) {
-          indent = item.getDepth() * HOTSPOT_SIZE;
-        } else {          
-          indent = (item.getDepth() + 1) * HOTSPOT_SIZE;
-        }        
+        indent = item.hasToggle() ? item.getDepth() * HOTSPOT_SIZE : (item.getDepth() + 1) * HOTSPOT_SIZE;
       }
       
       if (table.getSheetModel().getMode() == PropertySheet.VIEW_AS_CATEGORIES
@@ -757,7 +753,7 @@ public class PropertySheetTable extends JTable {
       setBackground(getBackground(item.isProperty(), isSelected));
       setForeground(getForeground(item.isProperty(), isSelected));
       
-      setEnabled(isSelected || !item.isProperty() ? true : item.getProperty().isEditable());
+      setEnabled((isSelected || !item.isProperty()) || item.getProperty().isEditable());
       setText(item.getName());
 
       return this;

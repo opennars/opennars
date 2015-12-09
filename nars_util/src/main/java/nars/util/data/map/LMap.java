@@ -24,8 +24,7 @@ public class LMap<I,O> implements Function<I, O> {
 
     @Override
     public O apply(I i) {
-        return nodeCache.computeIfAbsent(model.apply(i), b->
-            b.get()
+        return nodeCache.computeIfAbsent(model.apply(i), Supplier::get
         );
     }
 
@@ -39,10 +38,10 @@ public class LMap<I,O> implements Function<I, O> {
     }
 
     /** for blending in as a Map */
-    final public O get(I i) { return apply(i); }
+    public final O get(I i) { return apply(i); }
 
     /** for resetting or emptying an instance */
-    final public O remove(I i) {
+    public final O remove(I i) {
         return nodeCache.remove(model.apply(i));
     }
 

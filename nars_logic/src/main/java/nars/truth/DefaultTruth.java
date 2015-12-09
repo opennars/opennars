@@ -7,7 +7,7 @@ import nars.Memory;
  */
 public class DefaultTruth extends AbstractScalarTruth {
 
-    public final static float DEFAULT_TRUTH_EPSILON = 0.01f;
+    public static final float DEFAULT_TRUTH_EPSILON = 0.01f;
 
     /** "not a truth" - freq and conf are NaN */
     public static Truth NULL = new DefaultTruth(Float.NaN, Float.NaN) {
@@ -39,8 +39,7 @@ public class DefaultTruth extends AbstractScalarTruth {
 
     //public final float epsilon;
 
-    public DefaultTruth(final float f, final float c) {
-        super();
+    public DefaultTruth(float f, float c) {
         set(f,c);
 
     }
@@ -49,14 +48,12 @@ public class DefaultTruth extends AbstractScalarTruth {
 //        super(v);
 //    }
 
-    public DefaultTruth(final char punctuation, Memory m) {
-        super();
-        set(1f, m.getDefaultConfidence(punctuation));
+    public DefaultTruth(char punctuation, Memory m) {
+        set(1.0f, m.getDefaultConfidence(punctuation));
     }
 
     /** 0, 0 default */
     public DefaultTruth() {
-        super();
     }
 
     public DefaultTruth(AbstractScalarTruth toClone) {

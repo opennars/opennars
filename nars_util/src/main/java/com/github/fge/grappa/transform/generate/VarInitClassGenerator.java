@@ -37,21 +37,21 @@ import static org.objectweb.asm.Opcodes.ARETURN;
 public final class VarInitClassGenerator
     extends GroupClassGenerator
 {
-    public VarInitClassGenerator(final boolean forceCodeBuilding)
+    public VarInitClassGenerator(boolean forceCodeBuilding)
     {
         super(forceCodeBuilding);
     }
 
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(method, "method");
         return method.containsVars();
     }
 
     @Override
-    protected boolean appliesTo(final InstructionGraphNode group)
+    protected boolean appliesTo(InstructionGraphNode group)
     {
         return group.isVarInitRoot();
     }
@@ -63,10 +63,10 @@ public final class VarInitClassGenerator
     }
 
     @Override
-    protected void generateMethod(final InstructionGroup group,
-        final ClassWriter cw)
+    protected void generateMethod(InstructionGroup group,
+                                  ClassWriter cw)
     {
-        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "get",
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "get",
             CodegenUtils.sig(Object.class), null, null);
         convertXLoads(group);
         group.getInstructions().accept(mv);

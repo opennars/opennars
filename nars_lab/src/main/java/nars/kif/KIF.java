@@ -65,7 +65,7 @@ public class KIF {
      * @return int Returns an integer value denoting the current parse mode.
      */
     public int getParseMode() {
-        return this.parseMode;
+        return parseMode;
     }
 
     /**
@@ -76,7 +76,7 @@ public class KIF {
      * @return void
      */
     public void setParseMode(int mode) {
-        this.parseMode = mode;
+        parseMode = mode;
     }
 
     /**
@@ -170,7 +170,7 @@ public class KIF {
      */
     private void parse(Reader r) {
 
-        int mode = this.getParseMode();
+        int mode = getParseMode();
 
         /*
          System.out.println("INFO in KIF.parse()");
@@ -230,9 +230,11 @@ public class KIF {
                         isEOL = true;                                 // Turn on flag, to watch for a second consecutive one.
                         continue;
                     }
-                } else if (isEOL) {
-                    isEOL = false;                                    // Turn off isEOL if a non-space token encountered                
                 }
+                if (isEOL) {
+                    isEOL = false;                                    // Turn off isEOL if a non-space token encountered
+                }
+                //noinspection IfStatementWithTooManyBranches
                 if (st.ttype == 40) {                                   // open paren
                     if (parenLevel == 0) {
                         lineStart = st.lineno();
@@ -250,12 +252,12 @@ public class KIF {
                         }
                     }
                     if ((parenLevel != 0) && (lastVal != 40) && (expression.length() > 0)) { // add back whitespace that ST removes
-                        expression.append(" ");
+                        expression.append(' ');
                     }
-                    expression.append("(");
+                    expression.append('(');
                 } else if (st.ttype == 41) {                                      // )  - close paren
                     parenLevel--;
-                    expression.append(")");
+                    expression.append(')');
                     if (parenLevel == 0) {                                    // The end of the statement...
                         f.theFormula = expression.toString().intern();
                         //if (KBmanager.getMgr().getPref("TPTP").equals("yes"))                       
@@ -281,10 +283,10 @@ public class KIF {
 
                         keySet.add(f.theFormula);           // Make the formula itself a key
                         f.endLine = st.lineno() + totalLinesForComments;
-                        for (int i = 0; i < keySet.size(); i++) {             // Add the expression but ...
-                            if (formulas.containsKey(keySet.get(i))) {
+                        for (Object aKeySet : keySet) {             // Add the expression but ...
+                            if (formulas.containsKey(aKeySet)) {
                                 if (!formulaSet.contains(f.theFormula)) {  // don't add keys if formula is already present
-                                    list = (ArrayList) formulas.get(keySet.get(i));
+                                    list = (ArrayList) formulas.get(aKeySet);
                                     if (!list.contains(f)) {
                                         list.add(f);
                                     }
@@ -292,7 +294,7 @@ public class KIF {
                             } else {
                                 list = new ArrayList();
                                 list.add(f);
-                                formulas.put((String) keySet.get(i), list);
+                                formulas.put((String) aKeySet, list);
                             }
                         }
                         formulaSet.add(f.theFormula);
@@ -309,18 +311,18 @@ public class KIF {
                 } else if (st.ttype == 34) {                                      // " - it's a string
                     if (lastVal != 40) // add back whitespace that ST removes
                     {
-                        expression.append(" ");
+                        expression.append(' ');
                     }
-                    expression.append("\"");
+                    expression.append('"');
                     com = st.sval;
                     totalLinesForComments += countChar(com, (char) 0X0A);
                     expression.append(com);
-                    expression.append("\"");
+                    expression.append('"');
                 } else if ((st.ttype == StreamTokenizer.TT_NUMBER)
                         || (st.sval != null && (Character.isDigit(st.sval.charAt(0))))) {                  // number
                     if (lastVal != 40) // add back whitespace that ST removes
                     {
-                        expression.append(" ");
+                        expression.append(' ');
                     }
                     if (st.nval == 0) {
                         expression.append(st.sval);
@@ -343,7 +345,7 @@ public class KIF {
                     }
                     if (lastVal != 40) // add back whitespace that ST removes
                     {
-                        expression.append(" ");
+                        expression.append(' ');
                     }
                     expression.append(String.valueOf(st.sval));
                     if (expression.length() > 64000) {
@@ -364,8 +366,8 @@ public class KIF {
 
                     // AB: 5/2007
                     // allow '`' in relaxed parse mode.
-                    expression.append(" ");
-                    expression.append("`");
+                    expression.append(' ');
+                    expression.append('`');
                 } else if (st.ttype != StreamTokenizer.TT_EOF) {
                     key = null;
                     // System.out.println( "st.ttype == " + st.ttype );
@@ -394,7 +396,7 @@ public class KIF {
             ex.printStackTrace();
         }
 
-        if (warningSet.size() > 0) {
+        if (!warningSet.isEmpty()) {
             Iterator it = warningSet.iterator();
             StringBuilder warnings = new StringBuilder();
             while (it.hasNext()) {
@@ -473,8 +475,8 @@ public class KIF {
 
         int len = 0;
         char[] cArray = str.toCharArray();
-        for (int i = 0; i < cArray.length; i++) {
-            if (cArray[i] == c) {
+        for (char aCArray : cArray) {
+            if (aCArray == c) {
                 len++;
             }
         }
@@ -492,8 +494,8 @@ public class KIF {
         FileReader fr = null;
         Exception exThr = null;
         try {
-            this.file = new File(fname);
-            this.filename = file.getCanonicalPath();
+            file = new File(fname);
+            filename = file.getCanonicalPath();
             fr = new FileReader(file);
             parse(fr);
         } catch (Exception ex) {

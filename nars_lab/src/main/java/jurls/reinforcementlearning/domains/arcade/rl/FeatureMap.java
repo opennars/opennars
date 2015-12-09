@@ -46,7 +46,7 @@ public class FeatureMap {
         numRows = rows;
         numColors = colors;
         hasColor = new boolean[numColors];
-        this.features = new double[numFeatures()];
+        features = new double[numFeatures()];
         System.out.println(this +  " " + numFeatures());
 
     }
@@ -61,31 +61,31 @@ public class FeatureMap {
      * @param history
      * @return
      */
-    public double[] getFeatures(final FrameHistory history) {
+    public double[] getFeatures(FrameHistory history) {
         // Obtain the last screen
-        final ScreenMatrix screen = history.getLastFrame(0);
+        ScreenMatrix screen = history.getLastFrame(0);
 
-        final int blockWidth = screen.width / numColumns;
-        final int blockHeight = screen.height / numRows;
+        int blockWidth = screen.width / numColumns;
+        int blockHeight = screen.height / numRows;
 
-        final int featuresPerBlock = numColors;
+        int featuresPerBlock = numColors;
 
         int blockIndex = 0;
 
-        final int numColors = this.numColors;
+        int numColors = this.numColors;
 
-        final double[] features = this.features;
-        final int[][] matrix = screen.matrix;
+        double[] features = this.features;
+        int[][] matrix = screen.matrix;
 
         int rr = numRows;
         int cc = numColumns;
 
         // For each pixel block
-        final boolean[] hasColor = this.hasColor;
+        boolean[] hasColor = this.hasColor;
 
         for (int by = 0; by < rr; by++) {
 
-            final int yo = by * blockHeight;
+            int yo = by * blockHeight;
 
             for (int bx = 0; bx < cc; bx++) {
                 Arrays.fill(hasColor, false);
@@ -94,7 +94,7 @@ public class FeatureMap {
 
                 // Determine which colors are present
                 for (int x = xo; x < xo + blockWidth; x++) {
-                    final int sm[] = matrix[x];
+                    int[] sm = matrix[x];
                     for (int y = yo; y < yo + blockHeight; y++) {
                         int pixelColor = sm[y];
                         hasColor[encode(pixelColor)] = true;
@@ -119,7 +119,7 @@ public class FeatureMap {
      * @param color
      * @return
      */
-    protected static int encode(final int color) {
+    protected static int encode(int color) {
         return (color & 0xF) >> 1;
     }
 

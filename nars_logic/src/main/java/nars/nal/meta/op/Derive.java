@@ -34,15 +34,10 @@ public final class Derive extends PreCondition {
         this.rule = rule;
         this.anticipate = anticipate;
         this.eternalize = eternalize;
-        if (!anticipate && !eternalize) {
-            this.id = "Derive";
-        }
-        else {
-            this.id = "Derive:{" +
-                    (anticipate ? "anticipate" : "") +
-                    (anticipate && eternalize ? "," : "") +
-                    (eternalize ? "eternalize" : "") + '}';
-        }
+        id = !anticipate && !eternalize ? "Derive" : "Derive:{" +
+                (anticipate ? "anticipate" : "") +
+                (anticipate && eternalize ? "," : "") +
+                (eternalize ? "eternalize" : "") + '}';
     }
 
     @Override
@@ -54,7 +49,7 @@ public final class Derive extends PreCondition {
     public boolean test(RuleMatch m) {
 
 
-        final Premise premise = m.premise;
+        Premise premise = m.premise;
 
         Term derivedTerm = m.derived.get();
 
@@ -70,17 +65,12 @@ public final class Derive extends PreCondition {
         if (c == null)
             return false;
 
-        final Truth truth = m.truth.get();
-        final Budget budget;
-        if (truth != null) {
-            budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
-            //budget = BudgetFunctions.forward(truth, premise);
-        } else {
-            budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
-        }
+        Truth truth = m.truth.get();
+        Budget budget;
+        budget = truth != null ? BudgetFunctions.compoundForward(truth, derivedTerm, premise) : BudgetFunctions.compoundBackward(derivedTerm, premise);
 
         if (!premise.validateDerivedBudget(budget)) {
-            if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
+            if (false) {
                 RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm,
                         m.punct.get(), truth, budget,
                         m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
@@ -88,24 +78,20 @@ public final class Derive extends PreCondition {
             return false;
         }
 
-        final Task task = premise.getTask();
-        final Task belief = premise.getBelief();
+        Task task = premise.getTask();
+        Task belief = premise.getBelief();
 
 
-        final char punct = m.punct.get();
+        char punct = m.punct.get();
 
         MutableTask deriving = new MutableTask((Compound) derivedTerm);
 
-        final long now = premise.time();
-        final long occ;
+        long now = premise.time();
+        long occ;
 
-        final int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
+        int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
         long taskOcc = task.getOccurrenceTime();
-        if (occurence_shift > Tense.TIMELESS) {
-            occ = taskOcc + occurence_shift;
-        } else {
-            occ = taskOcc; //inherit premise task's
-        }
+        occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
 
         //just not able to measure it, closed world assumption gone wild.
 
@@ -123,7 +109,7 @@ public final class Derive extends PreCondition {
                 .budget(budget)
                 .time(now, occ)
                 .parent(task, belief /* null if single */)
-                .anticipate(occ != Tense.ETERNAL ? anticipate : false);
+                .anticipate(occ != Tense.ETERNAL && anticipate);
 
         if ((derived = m.derive(derived)) == null)
             return false;

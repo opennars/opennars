@@ -37,7 +37,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         threadLocalsCache = concurrent ? new ConcurrentHashMap() : new UnifiedMap(0);
     }
 
-    public Container(final AbstractPrototainer parent) {
+    public Container(AbstractPrototainer parent) {
         super(
                 //TODO clone according to concurrent implementation:                
                 new UnifiedMap(parent.builders),
@@ -79,6 +79,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         try {
 
             Object target = null;
+            //noinspection IfStatementWithTooManyBranches
             if (scope == Scope.SINGLETON) {
 
                 boolean needsToCreate = false;
@@ -228,7 +229,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             usable(key, Scope.SINGLETON, builder);
         return get(key);
     }    
-    public <T> T the(final Class<? extends T> c) {        
+    public <T> T the(Class<? extends T> c) {
         T existing = get((Object)c);
         if (existing == null) {
             return the(c, new ClassBuilder(this, c).instance(this));
@@ -253,7 +254,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
     
     @Override
-    public <T> T get(final Class<? extends T> c) {
+    public <T> T get(Class<? extends T> c) {
         //if c is actually a key and not an arbitrary class this container has never been told about:
         String name = InjectionUtils.getKeyName(c);
         if (builders.containsKey(name)) {
@@ -278,7 +279,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             @Override
             public boolean hasValue(String key) {
 
-                return Container.this.contains(key);
+                return contains(key);
             }
 
         };
@@ -325,9 +326,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 singletonsCache.clear();
             }
             // remove everything inside a non-synchronized block...
-            for (ClearableHolder cp : listToClear) {
-                cp.clear();
-            }
+            listToClear.forEach(ClearableHolder::clear);
         } else if (scope == Scope.THREAD) {
             Collection<ClearableHolder> listToClear = new FasterList<>();
             synchronized (this) {
@@ -346,14 +345,10 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 }
                 // and now we remove all thread locals belonging to this thread...
                 // this will only remove of instances related to this thread...
-                for (ThreadLocal<Object> t : threadLocalsCache.values()) {
-                    t.remove();
-                }
+                threadLocalsCache.values().forEach(ThreadLocal<Object>::remove);
             }
             // remove everything inside a non-synchronized block...
-            for (ClearableHolder cp : listToClear) {
-                cp.clear();
-            }
+            listToClear.forEach(ClearableHolder::clear);
         }
     }
 
@@ -377,6 +372,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             return null;
         }
         Scope scope = scopes.get(key);
+        //noinspection IfStatementWithTooManyBranches
         if (scope == Scope.SINGLETON) {
             ClearableHolder cp = null;
             Object value = null;
@@ -431,6 +427,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
             return false;
         }
         Scope scope = scopes.get(key);
+        //noinspection IfStatementWithTooManyBranches
         if (scope == Scope.NONE) {
             return false; // always...
         } else if (scope == Scope.SINGLETON) {

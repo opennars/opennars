@@ -269,7 +269,7 @@ public class GrammarProduction implements Cloneable {
         }
 
         // Append any attributes.
-        if (attributes.size() > 0) {
+        if (!attributes.isEmpty()) {
             buffer.append("<?");
             Set<String> keys = attributes.keySet();
             int i = 0;

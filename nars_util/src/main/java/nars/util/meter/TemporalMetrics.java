@@ -7,6 +7,7 @@ package nars.util.meter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -20,11 +21,8 @@ public class TemporalMetrics<O> extends Metrics<Double,O> {
 
 
     public List<SignalData> getSignalDatas() {
-        final List<SignalData> l = new ArrayList();
-        
-        for (Signal sv : getSignals()) {            
-            l.add( newSignalData(sv.id) );
-        }
+        List<SignalData> l = getSignals().stream().map(sv -> newSignalData(sv.id)).collect(Collectors.toList());
+
         return l;
     }
 

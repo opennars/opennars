@@ -57,7 +57,7 @@ public class Default extends AbstractNAR {
     @Override
     protected DefaultCycle2 initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
 
-        final int inputCapacity = activeConcepts/8; //HACK heuristic
+        int inputCapacity = activeConcepts/8; //HACK heuristic
 
         return new DefaultCycle2(this, deriver,
                 conceptBag, activator
@@ -95,7 +95,7 @@ public class Default extends AbstractNAR {
         @Override
         protected void fireConcept(Concept c) {
 
-            Collection<Task> buffer = this.derivedTasksBuffer;
+            Collection<Task> buffer = derivedTasksBuffer;
             Consumer<Task> narInput = nar::input;
             Deriver deriver = this.deriver;
 
@@ -144,9 +144,7 @@ public class Default extends AbstractNAR {
 //                    System.err.println("\t\t" + rule );
 //                    System.err.println();
                 });
-                rules.forEachWithOccurrences( (String r, int c) -> {
-                    System.err.println("\t" + c + "\t" + r);
-                });
+                rules.forEachWithOccurrences( (String r, int c) -> System.err.println("\t" + c + '\t' + r));
                 System.err.println("--");
 
             });
@@ -162,7 +160,7 @@ public class Default extends AbstractNAR {
         SortedTaskPerception input = new SortedTaskPerception(
                 this,
                 task -> true /* allow everything */,
-                task -> process(task),
+                this::process,
                 perceptionCapacity,
                 1
         );

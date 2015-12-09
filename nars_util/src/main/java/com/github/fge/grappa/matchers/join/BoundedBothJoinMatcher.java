@@ -29,8 +29,8 @@ public final class BoundedBothJoinMatcher
     private final int minCycles;
     private final int maxCycles;
 
-    public BoundedBothJoinMatcher(final Rule joined, final Rule joining,
-        final int minCycles, final int maxCycles)
+    public BoundedBothJoinMatcher(Rule joined, Rule joining,
+                                  int minCycles, int maxCycles)
     {
         super(joined, joining);
         this.minCycles = minCycles;
@@ -38,13 +38,13 @@ public final class BoundedBothJoinMatcher
     }
 
     @Override
-    protected boolean runAgain(final int cycles)
+    protected boolean runAgain(int cycles)
     {
         return cycles < maxCycles;
     }
 
     @Override
-    protected boolean enoughCycles(final int cycles)
+    protected boolean enoughCycles(int cycles)
     {
         return cycles >= minCycles;
     }

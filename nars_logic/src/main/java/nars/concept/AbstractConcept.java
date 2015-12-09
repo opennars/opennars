@@ -23,7 +23,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     //@Deprecated final static Variable how = new Variable("?how");
 
-    public AbstractConcept(final Term term) {
+    public AbstractConcept(Term term) {
         super(Budget.zero);
         this.term = term;
     }
@@ -37,7 +37,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
      */
     @Override
-    final public Map<Object, Object> getMeta() {
+    public final Map<Object, Object> getMeta() {
         return meta;
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * Reference to the memory to which the Concept belongs
      */
     @Override
-    final public Memory getMemory() {
+    public final Memory getMemory() {
         return memory;
     }
 
@@ -58,8 +58,8 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     public final void setMemory(Memory memory) {
         this.memory = memory;
         if (memory!=null) {
-            if (this.creationTime == Tense.TIMELESS) {
-                this.creationTime = memory.time();
+            if (creationTime == Tense.TIMELESS) {
+                creationTime = memory.time();
             }
         }
     }
@@ -68,29 +68,29 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * The term is the unique ID of the concept
      */
     @Override
-    final public Term getTerm() {
+    public final Term getTerm() {
         return term;
     }
 
     @Override
-    final public long getCreationTime() {
+    public final long getCreationTime() {
         return creationTime;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
         return ((Concept) obj).getTerm().equals(getTerm());
     }
 
     @Override
-    final public int hashCode() {
+    public final int hashCode() {
         return getTerm().hashCode();
     }
 
     @Override
-    final public Term name() {
+    public final Term name() {
         return getTerm();
     }
 
@@ -100,7 +100,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * @return The concept name, with taskBudget in the full version
      */
     @Override
-    final public String toString() {  // called from concept bag
+    public final String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
         //return super.toStringExternal();
         return getTerm().toString();
@@ -156,13 +156,13 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
 
     @Override
-    final public boolean isConstant() {
+    public final boolean isConstant() {
         return constant;
     }
 
     @Override
-    final public boolean setConstant(boolean b) {
-        this.constant = b;
+    public final boolean setConstant(boolean b) {
+        constant = b;
         return constant;
     }
 }

@@ -19,7 +19,7 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image<T extends Term> extends CompoundN<T> {
+public abstract class Image<T extends Term> extends CompoundN<T> {
 
     public static Term makeInt(Term... argList) {
         return make(argList, (a, r) -> new ImageInt(a, (short)r));
@@ -29,7 +29,7 @@ abstract public class Image<T extends Term> extends CompoundN<T> {
     }
 
         /** Image index ("imdex") symbol */
-    public final static Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
+        public static final Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
 
     /**
      * "Imdex": subterm index of relation in the component list
@@ -78,7 +78,7 @@ abstract public class Image<T extends Term> extends CompoundN<T> {
     }
 
     //TODO replace with a special Term type
-    static boolean isPlaceHolder(final Term t) {
+    static boolean isPlaceHolder(Term t) {
 //        if (t instanceof Compound) return false;
 //        byte[] n = t.bytes();
 //        if (n.length != 1) return false;
@@ -116,15 +116,15 @@ abstract public class Image<T extends Term> extends CompoundN<T> {
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
 
-        final int len = this.size();
+        int len = size();
 
         p.append(COMPOUND_TERM_OPENER);
-        p.append(this.op().str);
+        p.append(op().str);
 
-        final int relationIndex = this.relationIndex;
+        int relationIndex = this.relationIndex;
         int i;
         for (i = 0; i < len; i++) {
-            Term tt = this.term(i);
+            Term tt = term(i);
 
             p.append(ARGUMENT_SEPARATOR);
             if (pretty) p.append(' ');
@@ -214,10 +214,7 @@ abstract public class Image<T extends Term> extends CompoundN<T> {
         }
 
         boolean ext = (o == Op.IMAGE_EXT);
-        if (ext)
-            return new ImageExt(res, index);
-        else
-            return new ImageInt(res, index);
+        return ext ? new ImageExt(res, index) : new ImageInt(res, index);
     }
 
     public static boolean hasPlaceHolder(Term[] r) {

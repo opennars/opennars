@@ -28,33 +28,33 @@ import java.io.Serializable;
  */
 public interface Property extends Serializable, Cloneable {
 
-	public String getName();
+	String getName();
 
-	public String getDisplayName();
+	String getDisplayName();
 
-	public String getShortDescription();
+	String getShortDescription();
 
-	public Class<?> getType();
+	Class<?> getType();
 
-	public Object getValue();
+	Object getValue();
 
-	public void setValue(Object value);
+	void setValue(Object value);
 
-	public boolean isEditable();
+	boolean isEditable();
 
-	public String getCategory();
+	String getCategory();
 
-	public void readFromObject(Object object);
+	void readFromObject(Object object);
 
-	public void writeToObject(Object object);
+	void writeToObject(Object object);
 
-	public void addPropertyChangeListener(PropertyChangeListener listener);
+	void addPropertyChangeListener(PropertyChangeListener listener);
 
-	public void removePropertyChangeListener(PropertyChangeListener listener);
+	void removePropertyChangeListener(PropertyChangeListener listener);
 
-	public Object clone();
+	Object clone();
 
-	public Property getParentProperty();
+	Property getParentProperty();
 
-	public Property[] getSubProperties();
+	Property[] getSubProperties();
 }

@@ -17,10 +17,10 @@ public class SgFieldTest extends SgVariableTest {
 
     @Test
     public void testConstruction() {
-        final String modifiers = "public";
-        final SgClass type = SgClass.INT;
-        final String name = "myField";
-        final SgField field = new SgField(getDummyClass(), modifiers, type, name, null);
+        String modifiers = "public";
+        SgClass type = SgClass.INT;
+        String name = "myField";
+        SgField field = new SgField(getDummyClass(), modifiers, type, name, null);
         Assert.assertSame(field.getOwner(), getDummyClass());
         Assert.assertSame(field.getType(), type);
         Assert.assertEquals(field.getName(), name);
@@ -33,7 +33,7 @@ public class SgFieldTest extends SgVariableTest {
 
     @Test
     public void testSetGetInitializer() {
-        final SgField field = new SgField(getDummyClass(), "public", SgClass.INT, "myField", "0");
+        SgField field = new SgField(getDummyClass(), "public", SgClass.INT, "myField", "0");
         Assert.assertEquals(field.getInitializer(), "0");
         Assert.assertEquals(field.toString(), "public int myField = 0;\n");
     }

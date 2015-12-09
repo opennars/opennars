@@ -16,8 +16,7 @@ public class DockDemo extends DockingRegionRoot {
     int index;
 
     public DockDemo() {
-        super();
-        
+
         DockingContent cont = new DockingContent("uid" + index, "Component " + (index++), new JButton("x"));
         
         DockingContent cont2 = new DockingContent("uid" + index, "Component " + (index++), new JButton("y"));

@@ -7,7 +7,7 @@ import objenome.op.Node;
 /**
  * Created by me on 5/6/15.
  */
-abstract public class MathNode extends Node<Node, Double> {
+public abstract class MathNode extends Node<Node, Double> {
 
     public final Literal zero = new Doubliteral(0.0);
     public final Literal one = new Doubliteral(1.0);
@@ -21,7 +21,7 @@ abstract public class MathNode extends Node<Node, Double> {
     /** returns the constant (literal) double value
      * return Double.NaN if the child is not a literal
      */
-    public double getChildConstantValue(final int childNum) {
+    public double getChildConstantValue(int childNum) {
         Node c = getChild(childNum);
         if (c instanceof Literal) {
             Object o = c.evaluate();
@@ -32,15 +32,15 @@ abstract public class MathNode extends Node<Node, Double> {
         return Double.NaN;
     }
 
-    public double getChildEvaluated(final int childNum) {
+    public double getChildEvaluated(int childNum) {
         return getChild(childNum).asDouble();
     }
 
     /** the fast double-only version that should be implemented */
-    abstract public double asDouble();
+    public abstract double asDouble();
 
     @Override
-    final public Double evaluate() {
+    public final Double evaluate() {
         return asDouble();
     }
 }

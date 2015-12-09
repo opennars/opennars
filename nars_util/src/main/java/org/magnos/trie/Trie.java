@@ -76,11 +76,11 @@ public class Trie<S, T> implements Map<S, T>
     */
    public Trie( TrieSequencer<S> sequencer, T defaultValue )
    {
-      this.root = new TrieNode<>(null, defaultValue, null, 0, 0, new PerfectHashMap<>());
-      this.sequences = new SequenceSet( root );
-      this.values = new ValueCollection( root );
-      this.entries = new EntrySet( root );
-      this.nodes = new NodeSet( root );
+      root = new TrieNode<>(null, defaultValue, null, 0, 0, new PerfectHashMap<>());
+      sequences = new SequenceSet( root );
+      values = new ValueCollection( root );
+      entries = new EntrySet( root );
+      nodes = new NodeSet( root );
       this.sequencer = sequencer;
    }
 
@@ -125,7 +125,7 @@ public class Trie<S, T> implements Map<S, T>
    @Override
    public T put(S query, T value )
    {
-      final int queryLength = sequencer.lengthOf( query );
+      int queryLength = sequencer.lengthOf( query );
 
       if (value == null || queryLength == 0)
       {
@@ -144,10 +144,10 @@ public class Trie<S, T> implements Map<S, T>
 
       do
       {
-         final S nodeSequence = node.sequence;
-         final int nodeLength = node.end - node.start;
-         final int max = Math.min( nodeLength, queryLength - queryOffset );
-         final int matches = sequencer.matches( nodeSequence, node.start, query, queryOffset, max );
+         S nodeSequence = node.sequence;
+         int nodeLength = node.end - node.start;
+         int max = Math.min( nodeLength, queryLength - queryOffset );
+         int matches = sequencer.matches( nodeSequence, node.start, query, queryOffset, max );
 
          queryOffset += matches;
 
@@ -632,7 +632,7 @@ public class Trie<S, T> implements Map<S, T>
     */
    private TrieNode<S, T> search( TrieNode<S, T> root, S query, TrieMatch match )
    {
-      final int queryLength = sequencer.lengthOf( query );
+      int queryLength = sequencer.lengthOf( query );
 
       // If the query is empty or matching logic is not given, return null.
       if (queryLength == 0 || match == null || queryLength < root.end)
@@ -661,10 +661,10 @@ public class Trie<S, T> implements Map<S, T>
 
       while (node != null)
       {
-         final S nodeSequence = node.sequence;
-         final int nodeLength = node.end - node.start;
-         final int max = Math.min( nodeLength, queryLength - queryOffset );
-         final int matches = sequencer.matches( nodeSequence, node.start, query, queryOffset, max );
+         S nodeSequence = node.sequence;
+         int nodeLength = node.end - node.start;
+         int max = Math.min( nodeLength, queryLength - queryOffset );
+         int matches = sequencer.matches( nodeSequence, node.start, query, queryOffset, max );
 
          queryOffset += matches;
 
@@ -957,7 +957,7 @@ public class Trie<S, T> implements Map<S, T>
       public AbstractIterator( TrieNode<S, T> root )
       {
          this.root = root;
-         this.reset();
+         reset();
       }
 
       public AbstractIterator<K> reset()
@@ -1020,8 +1020,8 @@ public class Trie<S, T> implements Map<S, T>
          boolean foundValue = false;
          while (!foundValue)
          {
-            final PerfectHashMap<TrieNode<S, T>> children = node.children;
-            final int childCapacity = children.capacity();
+            PerfectHashMap<TrieNode<S, T>> children = node.children;
+            int childCapacity = children.capacity();
             int id = indices[depth] + 1;
 
             while (id < childCapacity && children.valueAt( id ) == null)

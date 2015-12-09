@@ -21,7 +21,7 @@ public class TermNode<K extends Termed> extends GraphNode {
     public static final TermNode[] empty = new TermNode[0];
 
 
-    final public Map<K, TermEdge> edge;
+    public final Map<K, TermEdge> edge;
 
     /**
      * copy of termedge values for fast iteration during rendering
@@ -47,14 +47,13 @@ public class TermNode<K extends Termed> extends GraphNode {
 
 
     public TermNode(K t, int maxEdges) {
-        super();
 
         if (t instanceof Concept) c = (Concept)t; //HACK
 
         edge = new FixedLinkedHashMap<>(maxEdges);
 
 
-        this.term = t;
+        term = t;
 
     }
 
@@ -104,15 +103,12 @@ public class TermNode<K extends Termed> extends GraphNode {
     }
 
     public TermEdge[] updateEdges() {
-        final int s = edge.size();
+        int s = edge.size();
 
-        final TermEdge[] edges = this.edges;
+        TermEdge[] edges = this.edges;
 
         TermEdge[] e;
-        if (edges.length != s)
-            e = new TermEdge[s];
-        else
-            e = edges; //re-use existing array
+        e = edges.length != s ? new TermEdge[s] : edges;
 
         return this.edges = edge.values().toArray(e);
     }
@@ -128,7 +124,7 @@ public class TermNode<K extends Termed> extends GraphNode {
 //    }
 
     public final TermEdge[] getEdges() {
-        return this.edges;
+        return edges;
     }
 
 
@@ -171,10 +167,7 @@ public class TermNode<K extends Termed> extends GraphNode {
     public void commitEdges() {
         if (modified) {
             modified = false;
-            if (edge.size() > 0)
-                edges = updateEdges();
-            else
-                edges = TermEdge.empty;
+            edges = !edge.isEmpty() ? updateEdges() : TermEdge.empty;
 
         }
 
@@ -186,12 +179,12 @@ public class TermNode<K extends Termed> extends GraphNode {
 
         public FixedLinkedHashMap(int cap) {
             super(cap, 0.75f, true);
-            this.max_cap = cap;
+            max_cap = cap;
         }
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-            return size() > this.max_cap;
+            return size() > max_cap;
         }
     }
 }

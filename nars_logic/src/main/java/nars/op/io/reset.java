@@ -9,7 +9,6 @@ import nars.task.Task;
 public class reset extends ImmediateOperator {
 
     public reset() {
-        super();
     }
 
     @Override

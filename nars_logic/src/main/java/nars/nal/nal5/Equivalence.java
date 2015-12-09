@@ -69,7 +69,7 @@ public class Equivalence extends Statement {
 
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */
-    public static Term makeTerm(final Term subject, final Term predicate, int temporalOrder) {
+    public static Term makeTerm(Term subject, Term predicate, int temporalOrder) {
         if (subject.equals(predicate))
             return subject;                
         return make(subject, predicate, temporalOrder);        
@@ -105,7 +105,7 @@ public class Equivalence extends Statement {
         }
 
         //swap terms for commutivity, or to reverse a backward order
-        final boolean reverse;
+        boolean reverse;
         if (temporalOrder == Tense.ORDER_BACKWARD) {
             temporalOrder = Tense.ORDER_FORWARD;
             reverse = true;

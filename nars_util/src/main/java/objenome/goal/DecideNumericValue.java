@@ -18,17 +18,17 @@ import java.util.List;
  *
  * @author me
  */
-abstract public class DecideNumericValue implements Problem {
+public abstract class DecideNumericValue implements Problem {
 
     public final Parameter parameter;
     public final List path;
 
     public DecideNumericValue(Parameter p, List path) {
-        this.parameter = p;
+        parameter = p;
         this.path = path;
     }
 
-    abstract public SetNumericValue newDefaultSetValue();    
+    public abstract SetNumericValue newDefaultSetValue();
     
     public static class DecideBooleanValue extends DecideNumericValue  {
         public DecideBooleanValue(Parameter p, List path) {

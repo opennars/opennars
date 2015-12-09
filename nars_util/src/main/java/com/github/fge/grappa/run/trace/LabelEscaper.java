@@ -59,7 +59,7 @@ public final class LabelEscaper
     }
 
     @Override
-    protected char[] escapeUnsafe(final int cp)
+    protected char[] escapeUnsafe(int cp)
     {
         if (cp <= ASCII_CTL_MAX)
             return ASCII_CTL_ESCAPES[cp].toCharArray();

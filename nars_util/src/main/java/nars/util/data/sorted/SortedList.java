@@ -18,12 +18,7 @@ public class SortedList<E extends Comparable> extends FasterList<E> {
 
     //private static final Comparator comparator = defaultComparator;
 
-    final static Comparator<Comparable> defaultComparator = new Comparator<Comparable>() {
-        @Override
-        public final int compare(Comparable x, Comparable y) {
-            return x.compareTo(y);
-        }
-    };
+    static final Comparator<Comparable> defaultComparator = Comparable::compareTo;
 
     private boolean allowDuplicate = false;
 
@@ -50,6 +45,7 @@ public class SortedList<E extends Comparable> extends FasterList<E> {
     }
 
     /** uses array directly */
+    @SafeVarargs
     public SortedList(E... x) {
         super(x.length);
         for (E e : x)
@@ -83,9 +79,9 @@ public class SortedList<E extends Comparable> extends FasterList<E> {
         //binary search
         int high = s - 1;
 
-        final boolean allowDuplicate = this.allowDuplicate;
+        boolean allowDuplicate = this.allowDuplicate;
 
-        final Comparator cmpr = defaultComparator;
+        Comparator cmpr = defaultComparator;
 
         while (low <= high) {
             int mid = (low + high) / 2;

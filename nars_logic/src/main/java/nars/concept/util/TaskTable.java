@@ -45,8 +45,8 @@ public interface TaskTable extends Iterable<Task> {
     /**
      * @return null if no duplicate was discovered, or the first Task that matched if one was
      */
-    default Task getFirstEquivalent(final Task t, final Equality<Task> e) {
-        for (final Task a : this) {
+    default Task getFirstEquivalent(Task t, Equality<Task> e) {
+        for (Task a : this) {
             if (e.areEqual(a, t))
                 return a;
         }
@@ -69,14 +69,14 @@ public interface TaskTable extends Iterable<Task> {
     default void top(int maxPerConcept, Consumer<Task> recip) {
         int s = size();
         if (s < maxPerConcept) maxPerConcept = s;
-        for (final Task t : this) {
+        for (Task t : this) {
             recip.accept(t);
             if (--maxPerConcept == 0) break;
         }
     }
 
 
-    public default void writeValues(ObjectOutput output) throws IOException {
+    default void writeValues(ObjectOutput output) throws IOException {
         int s = size(), c = getCapacity();
         try {
             output.writeInt(s);
@@ -85,7 +85,7 @@ public interface TaskTable extends Iterable<Task> {
             e.printStackTrace();
             return;
         }
-        int written[] = new int[] { 0 }; //HACK to prevent writing more than the specified
+        int[] written = {0}; //HACK to prevent writing more than the specified
         forEach(t -> {
             if (written[0] < s) {
                 try {
@@ -98,7 +98,7 @@ public interface TaskTable extends Iterable<Task> {
         });
     }
 
-    default public <T> void readValues(ObjectInput input) throws IOException {
+    default <T> void readValues(ObjectInput input) throws IOException {
 
 
         try {

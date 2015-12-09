@@ -40,10 +40,10 @@ public class TestNAR  {
     public final List<NARCondition> requires = new ArrayList();
     //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
-    final transient private boolean exitOnAllSuccess = true;
+    private final transient boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
     private int temporalTolerance = 0;
-    protected final static float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
+    protected static final float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 
     /** enable this to print reports even if the test was successful.
@@ -58,7 +58,6 @@ public class TestNAR  {
 
 
     public TestNAR(NAR nar) {
-        super();
 
         this.nar = nar;
 
@@ -145,8 +144,8 @@ public class TestNAR  {
                 boolean finished = true;
 
                 int nr = requires.size();
-                for (int i = 0; i < nr; i++) {
-                    if (!requires.get(i).isTrue()) {
+                for (NARCondition require : requires) {
+                    if (!require.isTrue()) {
                         finished = false;
                         break;
                     }
@@ -228,16 +227,12 @@ public class TestNAR  {
         cycleEnd += tt;
 
         EternalTaskCondition tc;
-        if (occTimeAbsolute== Tense.ETERNAL) {
-            tc = new EternalTaskCondition(nar,
-                    cycleStart, cycleEnd,
-                    sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
-        } else {
-            tc = new TemporalTaskCondition(nar,
-                    cycleStart, cycleEnd,
-                    occTimeAbsolute,occTimeAbsolute,
-                    sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
-        }
+        tc = occTimeAbsolute == Tense.ETERNAL ? new EternalTaskCondition(nar,
+                cycleStart, cycleEnd,
+                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h) : new TemporalTaskCondition(nar,
+                cycleStart, cycleEnd,
+                occTimeAbsolute, occTimeAbsolute,
+                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
 
         for (Topic<Task> cc : c) {
             cc.on(tc);
@@ -281,11 +276,11 @@ public class TestNAR  {
         Task t = nar.task(task);
         //TODO avoid reparsing term from string
 
-        final long now = time();
-        final String termString = t.getTerm().toString();
+        long now = time();
+        String termString = t.getTerm().toString();
         if (t.getTruth()!=null) {
-            final float freq = t.getFrequency();
-            final float conf = t.getConfidence();
+            float freq = t.getFrequency();
+            float conf = t.getConfidence();
             long occurrence = t.getOccurrenceTime();
             return mustEmit(c, now, now + withinCycles, termString, t.getPunctuation(), freq, freq, conf, conf, occurrence);
         }
@@ -341,7 +336,7 @@ public class TestNAR  {
 
 
     public TestNAR mustExecute(long start, long end, String term) {
-        return mustExecute(start, end, term, 0, 1f);
+        return mustExecute(start, end, term, 0, 1.0f);
     }
 
     public TestNAR mustExecute(long start, long end, String term, float minExpect, float maxExpect) {
@@ -383,19 +378,19 @@ public class TestNAR  {
         protected Serializable error = null;
         protected Task[] inputs;
         protected List<NARCondition> cond = Global.newArrayList(1);
-        transient final int stackElements = 4;
+        final transient int stackElements = 4;
 
         public Report(TestNAR n) {
-            this.time = n.time();
+            time = n.time();
 
-            this.inputs = n.inputs.toArray(new Task[n.inputs.size()]);
+            inputs = n.inputs.toArray(new Task[n.inputs.size()]);
             Collection<HitMeter> var = n.eventMeters.values();
-            this.eventMeters = var.toArray(new HitMeter[var.size()]);
+            eventMeters = var.toArray(new HitMeter[var.size()]);
         }
 
         public void setError(Exception e) {
             if (e!=null) {
-                this.error = new Object[]{e.toString(), Arrays.copyOf(e.getStackTrace(), stackElements)};
+                error = new Object[]{e.toString(), Arrays.copyOf(e.getStackTrace(), stackElements)};
             }
         }
 
@@ -415,8 +410,8 @@ public class TestNAR  {
             if (error!=null) {
                 out.println(error);
             }
-            out.print("@" + time + " ");
-            out.print(Arrays.toString(eventMeters) + "\n");
+            out.print("@" + time + ' ');
+            out.print(Arrays.toString(eventMeters) + '\n');
 
             for (Task t : inputs) {
                 out.println("IN " + t);
@@ -457,7 +452,7 @@ public class TestNAR  {
 
             Report r = getReport();
 
-            if (reportPrintIfSuccess || !r.isSuccess())
+            if (!r.isSuccess())
                 report(r, r.isSuccess());
 
         }
@@ -484,9 +479,7 @@ public class TestNAR  {
 
         //explain all validated conditions
         if (requires!=null) {
-            requires.forEach(c -> {
-                c.report();
-            });
+            requires.forEach(NARCondition::report);
         }
 
 

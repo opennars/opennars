@@ -16,16 +16,16 @@ public class EventValueControlSensor extends ControlSensor {
     public EventValueControlSensor(NAR n, FunctionMeter logicSensor, int quantization, int sampleWindow, double adaptContrast) {
         super(quantization);
         e = new DoubleMeter("_");
-        this.nar = n;
+        nar = n;
         this.logicSensor = logicSensor;
         this.adaptContrast = adaptContrast;
     }
     public EventValueControlSensor(NAR n, DoubleMeter signal, int min, int max, int quantization, int sampleWindow) {
         super(min, max, quantization);
         e = new DoubleMeter("_");
-        this.nar = n;
-        this.logicSensor = signal;
-        this.adaptContrast = 0;
+        nar = n;
+        logicSensor = signal;
+        adaptContrast = 0;
     }
 
     @Override

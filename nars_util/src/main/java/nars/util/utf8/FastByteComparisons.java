@@ -20,7 +20,7 @@ public abstract class FastByteComparisons {
     /**
      * Lexicographically compare two byte arrays.
      */
-    final public static int compareTo(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
+    public static final int compareTo(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
         int x = LexicographicalComparerHolder.PureJavaComparercompareTo(
                 b1, s1, l1, b2, s2, l2);
         if (x > 0) return 1;
@@ -28,14 +28,14 @@ public abstract class FastByteComparisons {
         return 0;
     }
 
-    final public static int compare(final byte[] a, final byte[] b) {
+    public static final int compare(byte[] a, byte[] b) {
         if (a == b) return 0;
         return compareTo(a, 0, a.length, b, 0, b.length);
     }
 
     private interface Comparer<T> {
-        abstract public int compareTo(T buffer1, int offset1, int length1,
-                                      T buffer2, int offset2, int length2);
+        int compareTo(T buffer1, int offset1, int length1,
+                      T buffer2, int offset2, int length2);
     }
 
 
@@ -108,20 +108,15 @@ public abstract class FastByteComparisons {
 
             static {
                 theUnsafe = (Unsafe) AccessController.doPrivileged(
-                        new PrivilegedAction<Object>() {
-                            @Override
-                            public Object run() {
-                                try {
-                                    Field f = Unsafe.class.getDeclaredField("theUnsafe");
-                                    f.setAccessible(true);
-                                    return f.get(null);
-                                } catch (NoSuchFieldException e) {
-                                    // It doesn't matter what we throw;
-                                    // it's swallowed in getBestComparer().
-                                    throw new Error();
-                                } catch (IllegalAccessException e) {
-                                    throw new Error();
-                                }
+                        (PrivilegedAction<Object>) () -> {
+                            try {
+                                Field f = Unsafe.class.getDeclaredField("theUnsafe");
+                                f.setAccessible(true);
+                                return f.get(null);
+                            } catch (NoSuchFieldException | IllegalAccessException e) {
+                                // It doesn't matter what we throw;
+                                // it's swallowed in getBestComparer().
+                                throw new Error();
                             }
                         });
 
@@ -156,8 +151,8 @@ public abstract class FastByteComparisons {
              * @return 0 if equal, < 0 if left is less than right, etc.
              */
             @Override
-            public int compareTo(final byte[] buffer1, final int offset1, final int length1,
-                                 final byte[] buffer2, final int offset2, final int length2) {
+            public int compareTo(byte[] buffer1, int offset1, int length1,
+                                 byte[] buffer2, int offset2, int length2) {
                 // Short circuit equal case
                 if (buffer1 == buffer2 &&
                         offset1 == offset2 &&
@@ -174,10 +169,10 @@ public abstract class FastByteComparisons {
      * time is no slower than comparing 4 bytes at a time even on 32-bit.
      * On the other hand, it is substantially faster on 64-bit.
      */
-                final Unsafe tu = theUnsafe;
-                final boolean e = littleEndian;
+                Unsafe tu = theUnsafe;
+                boolean e = littleEndian;
                 for (int i = 0; i < minWords * Longs.BYTES; i += Longs.BYTES) {
-                    final long li = (long)i;
+                    long li = i;
                     long lw = tu.getLong(buffer1, offset1Adj + li);
                     long rw = tu.getLong(buffer2, offset2Adj + li);
                     long diff = lw ^ rw;

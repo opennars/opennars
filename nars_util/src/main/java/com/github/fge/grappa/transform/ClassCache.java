@@ -57,7 +57,7 @@ public final class ClassCache
      * @return a class
      * @throws UncheckedExecutionException cannot load the class
      */
-    public Class<?> loadClass(final String className)
+    public Class<?> loadClass(String className)
     {
         return cache.getUnchecked(className);
     }
@@ -83,17 +83,17 @@ public final class ClassCache
          * the thread's interrupt status is set
          */
         @Override
-        public Class<?> load(final String key)
+        public Class<?> load(String key)
             throws ClassNotFoundException
         {
             // Array...
-            if (key.startsWith("[")) {
-                final String elementName = key.substring(1);
-                final Type type = Type.getType(elementName);
-                final Class<?> c = AsmUtils.getClassForType(type);
+            if (key.length() > 0 && key.charAt(0) == '[') {
+                String elementName = key.substring(1);
+                Type type = Type.getType(elementName);
+                Class<?> c = AsmUtils.getClassForType(type);
                 return Array.newInstance(c, 0).getClass();
             }
-            final String name = key.replace('/', '.');
+            String name = key.replace('/', '.');
             ClassLoader cl = ClassCacheLoader.class.getClassLoader();
             try {
                 return cl.loadClass(name);

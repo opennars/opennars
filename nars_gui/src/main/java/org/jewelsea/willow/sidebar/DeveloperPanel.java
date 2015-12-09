@@ -33,15 +33,13 @@ import static org.jewelsea.willow.util.ResourceUtil.getString;
  * Sidebar panel for development tools
  */
 public class DeveloperPanel extends TitledPane {
-    public DeveloperPanel(final BrowserTab b) {
+    public DeveloperPanel(BrowserTab b) {
         // create a firebug button.
-        final Button firebugButton = new IconButton(
+        Button firebugButton = new IconButton(
                 "Firebug",
                 "firebug.png",
                 getString("developer-panel.firebug.tooltip"),
-                actionEvent -> {
-                    b.getBrowser().getView().getEngine().executeScript("if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}");
-                }
+                actionEvent -> b.getBrowser().getView().getEngine().executeScript("if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}")
         );
 
         // create a box for development tools.

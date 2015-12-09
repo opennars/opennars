@@ -33,13 +33,12 @@ import java.util.Collection;
 public class TextInput extends TaskQueue {
 
 
-    public TextInput(final NAR n, final String input) {
-        super();
+    public TextInput(NAR n, String input) {
         process(n, input);
     }
 
-    protected int process(final NAR nar, final String input) {
-        final int n = Narsese.the().tasks(process(input),
+    protected int process(NAR nar, String input) {
+        int n = Narsese.the().tasks(process(input),
                 (Collection<Task>)this, nar.memory);
 
         if (n == 0) {
@@ -50,7 +49,7 @@ public class TextInput extends TaskQueue {
     }
 
     /** can be overridden in subclasses to preprocess addInput */
-    public String process(final String input) {
+    public String process(String input) {
         return input;
     }
 

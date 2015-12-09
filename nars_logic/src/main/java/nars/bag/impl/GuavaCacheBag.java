@@ -70,7 +70,7 @@ public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements Remov
 
     @Override
     public V remove(K key) {
-        Cache<K, V> d = this.data;
+        Cache<K, V> d = data;
         V v = d.getIfPresent(key);
         if (v !=null) {
             d.invalidate(v);

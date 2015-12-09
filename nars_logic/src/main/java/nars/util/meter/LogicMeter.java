@@ -140,6 +140,7 @@ public class LogicMeter extends FrameReaction {
             prioritySum += p;
             prioritySumSq += p * p;
 
+            //noinspection IfStatementWithTooManyBranches
             if (p > 0.75) {
                 histogram[0]++;
             } else if (p > 0.5) {

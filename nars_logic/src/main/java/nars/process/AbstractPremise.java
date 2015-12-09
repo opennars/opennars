@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Base class for premises
  */
-abstract public class AbstractPremise implements Premise {
+public abstract class AbstractPremise implements Premise {
 
     /** derivation queue (this might also work as a Set) */
     protected Collection<Task> derived = null;
@@ -17,7 +17,7 @@ abstract public class AbstractPremise implements Premise {
     public final NAR nar;
 
     public AbstractPremise(NAR m) {
-        this.nar = m;
+        nar = m;
     }
 
     @Override

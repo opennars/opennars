@@ -13,10 +13,10 @@ public class DenseTensor /*implements Tensor*/ {
 	private float[] diff;
 
 	public DenseTensor(float[] v) {
-		this.N = 1;
-		this.M = 1;
-		this.P = v.length;
-		this.data = v;
+		N = 1;
+		M = 1;
+		P = v.length;
+		data = v;
 		iter = -1;
 	}
 

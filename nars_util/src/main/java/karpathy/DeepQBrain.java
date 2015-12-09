@@ -36,7 +36,7 @@ public class DeepQBrain {
     int experience_size = 30000;
 
     // number of examples in experience replay memory before we begin learning
-    float start_learn_threshold = (float) Math.floor(Math.min(this.experience_size * 0.1, 1000));
+    float start_learn_threshold = (float) Math.floor(Math.min(experience_size * 0.1, 1000));
 
     // gamma is a crucial parameter that controls how much plan-ahead the agent does. In [0,1]
     float gamma = 0.8f;
@@ -77,12 +77,12 @@ public class DeepQBrain {
         // x0,a0,x1,a1,x2,a2,...xt
         // this variable controls the size of that temporal window. Actions are
         // encoded as 1-of-k hot vectors
-        this.net_inputs = num_states * this.temporal_window + num_actions * this.temporal_window + num_states;
-        this.window_size = Math.max(this.temporal_window, 2); // must be at least 2, but if we want more context even more
-        this.state_window = new float[this.window_size];
-        this.action_window = new float[this.window_size];
-        this.reward_window = new float[this.window_size];
-        this.net_window = new float[this.window_size];
+        net_inputs = num_states * temporal_window + num_actions * temporal_window + num_states;
+        window_size = Math.max(temporal_window, 2); // must be at least 2, but if we want more context even more
+        state_window = new float[window_size];
+        action_window = new float[window_size];
+        reward_window = new float[window_size];
+        net_window = new float[window_size];
 
 //        // create [state -> value of all possible actions] modeling net for the value function
 //        //var layer_defs = [];
@@ -103,7 +103,7 @@ public class DeepQBrain {
 //        } else {
 
         //default architecture
-        this.value_net = new Net();
+        value_net = new Net();
         {
             // create a very simple neural net by default
             value_net.add(new Net.Input(1, 1, net_inputs)); //{type:'input', out_sx:1, out_sy:1, out_depth:this.net_inputs});
@@ -121,7 +121,7 @@ public class DeepQBrain {
         }
 
         // and finally we need a Temporal Difference Learning trainer!
-        this.train = new TrainSGD(value_net);
+        train = new TrainSGD(value_net);
         train.learning_rate = 0.01f;
         train.momentum = 0;
         train.batch_size = 64;
@@ -129,18 +129,18 @@ public class DeepQBrain {
 
 
         // experience replay
-        this.experience = new Object[0];
+        experience = new Object[0];
 
         // various housekeeping variables
-        this.age = 0; // incremented every backward()
-        this.forward_passes = 0; // incremented every forward()
-        this.epsilon = 1.0f; // controls exploration exploitation tradeoff. Should be annealed over time
-        this.latest_reward = 0;
-        this.last_input_array = new float[1];
+        age = 0; // incremented every backward()
+        forward_passes = 0; // incremented every forward()
+        epsilon = 1.0f; // controls exploration exploitation tradeoff. Should be annealed over time
+        latest_reward = 0;
+        last_input_array = new float[1];
 
         //this.average_reward_window = new cnnutil.Window(1000, 10);
         //this.average_loss_window = new cnnutil.Window(1000, 10);
-        this.learning = true;
+        learning = true;
     }
 
     public final Random rng = new XorShift1024StarRandom(1);
@@ -174,11 +174,11 @@ public class DeepQBrain {
         // and return the argmax action and its value
         DenseTensor svol = new DenseTensor(state);
 
-        DenseTensor action_values = this.value_net.forward(svol);
+        DenseTensor action_values = value_net.forward(svol);
         int maxk = 0;
         float[] av = action_values.data;
         float maxval = av[0];
-        for (int k = 1; k < this.num_actions; k++) {
+        for (int k = 1; k < num_actions; k++) {
             float avk = av[k];
             if (avk > maxval) {
                 maxk = k;
@@ -225,23 +225,12 @@ public class DeepQBrain {
         int action;
 
         float[] net_input;
-        if (this.forward_passes > this.temporal_window) {
+        if (forward_passes > temporal_window) {
             // we have enough to actually do something reasonable
-            net_input = this.getNetInput(input_array);
-            if (this.learning) {
-                // compute epsilon for the epsilon-greedy policy
-                this.epsilon = (float) Math.min(1.0, Math.max(this.epsilon_min, 1.0 - (this.age - this.learning_steps_burnin) / (this.learning_steps_total - this.learning_steps_burnin)));
-            } else {
-                this.epsilon = this.epsilon_test_time; // use test-time value
-            }
+            net_input = getNetInput(input_array);
+            epsilon = learning ? (float) Math.min(1.0, Math.max(epsilon_min, 1.0 - (age - learning_steps_burnin) / (learning_steps_total - learning_steps_burnin))) : epsilon_test_time;
             float rf = rng.nextFloat();
-            if (rf < this.epsilon) {
-                // choose a random action with epsilon probability
-                action = this.getActionRandom();
-            } else {
-                // otherwise use our policy to make decision
-                action = this.policy(net_input);
-            }
+            action = rf < epsilon ? getActionRandom() : policy(net_input);
         } else {
             // pathological case that happens first few iterations
             // before we accumulate window_size inputs

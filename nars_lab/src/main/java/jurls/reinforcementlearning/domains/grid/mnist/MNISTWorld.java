@@ -18,7 +18,7 @@ public class MNISTWorld extends MNIST implements World {
 
     int currentImage = 0, currentFrame = -1;
     int cycle = 0;
-    final static int maxDigit = 2;
+    static final int maxDigit = 2;
     
     public MNISTWorld(String path, int maxImages, int maxDigit) throws IOException {
         super("/home/me/Downloads", maxImages, maxDigit);
@@ -99,27 +99,14 @@ public class MNISTWorld extends MNIST implements World {
         double r;
         
         if (i.label == -1) {
-            if (a == -1) r = 1.0;
-            else r = -1.0;
+            r = a == -1 ? 1.0 : -1.0;
         }
         else {
-            if ((a < 0) || (a > 9)) r = -1.0; 
-            else {
-
-                //if (a == i.label) r = 1.0;
-                //else r = 0;                
-
-                
-                r = 1.0 /(1+ Math.abs(a - i.label));
-                //r *= r;
-                
-                //System.out.println(a + " " + i.label + " " + r);
-                
-            }
+            r = (a < 0) || (a > 9) ? -1.0 : 1.0 / (1 + Math.abs(a - i.label));
         }
       
         
-        System.out.print(cycle + " " + currentFrame + " " + currentImage + " label=" + i.label + ": " + a + " " + r + " [");
+        System.out.print(cycle + " " + currentFrame + ' ' + currentImage + " label=" + i.label + ": " + a + ' ' + r + " [");
         //printArray(action);
         
         
@@ -130,7 +117,7 @@ public class MNISTWorld extends MNIST implements World {
     
     //int scrollCycles = 2;
     int maxTrainingCyclesPerImage = 256, trainingCyclesPerImage = 1;
-    final static double noise = 0.01;
+    static final double noise = 0.01;
     
     public static void main(String[] args) throws IOException, Exception {
         

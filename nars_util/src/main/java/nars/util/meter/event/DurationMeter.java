@@ -20,12 +20,12 @@ public class DurationMeter extends DoubleMeter {
     
     public DurationMeter(String id, boolean nanoSeconds, double windowSec, boolean asFrequency) {
         super(id);
-        
-        
-        this.window = windowSec * 1.0E9;
+
+
+        window = windowSec * 1.0E9;
         //this.stat = new DescriptiveStatistics();
         this.nanoSeconds = nanoSeconds;
-        this.frequency = asFrequency;
+        frequency = asFrequency;
         reset();
     }
     

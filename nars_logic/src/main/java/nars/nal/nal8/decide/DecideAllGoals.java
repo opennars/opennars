@@ -8,7 +8,7 @@ import nars.task.Task;
  */
 public class DecideAllGoals implements Decider {
 
-    public final static DecideAllGoals the = new DecideAllGoals();
+    public static final DecideAllGoals the = new DecideAllGoals();
 
     @Override
     public boolean test(Task task) {

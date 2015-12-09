@@ -96,11 +96,7 @@ public class InvertProtected extends Node {
     public Double evaluate() {
         double c = NumericUtils.asDouble(getChild(0).evaluate());
 
-        if (c == 0) {
-            return protectionValue;
-        } else {
-            return 1 / c;
-        }
+        return c == 0 ? protectionValue : 1 / c;
     }
 
     /**
@@ -123,11 +119,7 @@ public class InvertProtected extends Node {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0])) {
-            return Double.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0]) ? Double.class : null;
     }
 
     /**

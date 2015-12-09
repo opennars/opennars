@@ -30,7 +30,7 @@ public class ConceptSonification extends FrameReaction {
     public Map<Concept, SoundProducer> playing;
     private int polyphony;
 
-    class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
+    static class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
         private final int maxSize;
 
         public PlayingMap(int maxSize) {
@@ -40,13 +40,7 @@ public class ConceptSonification extends FrameReaction {
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<Concept, SoundProducer> eldest) {
-            if (size() > maxSize) {
-                //Concept c = eldest.getKey();
-                //SoundProducer s = eldest.getValue();
-                //s.stop();
-                return true;
-            }
-            return false;
+            return size() > maxSize;
         }
     };
     //Global.newHashMap();
@@ -56,7 +50,7 @@ public class ConceptSonification extends FrameReaction {
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
         super(nar);
 
-        this.polyphony = sound.maxChannels;
+        polyphony = sound.maxChannels;
 
         playing = Collections.synchronizedMap(
                 new PlayingMap(polyphony)
@@ -71,9 +65,7 @@ public class ConceptSonification extends FrameReaction {
 
         updateSamples();
 
-        nar.memory.eventConceptProcess.on(c -> {
-            update(c.getConcept());
-        });
+        nar.memory.eventConceptProcess.on(c -> update(c.getConcept()));
         //TODO update all existing concepts on start?
     }
 
@@ -114,7 +106,7 @@ public class ConceptSonification extends FrameReaction {
 
         Files.list(Paths.get("/tmp")). // Paths.get("/home/me/share/wav")).
                 map(p -> p.toAbsolutePath().toString()).filter(x -> x.endsWith(".wav"))
-                .map(s -> SampleLoader.load(s))
+                .map(SampleLoader::load)
                 .forEach(s -> samples.add(s));
 
 //        }
@@ -149,8 +141,8 @@ public class ConceptSonification extends FrameReaction {
     /**
      * returns file path to load sample
      */
-    final SonarSample getSample(final Concept c) {
-        final List<SonarSample> samples = this.samples;
+    final SonarSample getSample(Concept c) {
+        List<SonarSample> samples = this.samples;
         int s = samples.size();
         if (s == 1)
             return samples.get(0);
@@ -160,8 +152,8 @@ public class ConceptSonification extends FrameReaction {
             return samples.get(Math.abs(c.getTerm().hashCode() % s));
     }
 
-    public void update(final Concept c) {
-        final boolean audible = audible(c);
+    public void update(Concept c) {
+        boolean audible = audible(c);
         if (!audible) return;
 
         // = playing.get(c);
@@ -170,7 +162,7 @@ public class ConceptSonification extends FrameReaction {
 
         SoundProducer g = playing.computeIfAbsent(c, cc -> {
             SoundProducer sp = sound(cc);
-            sound.play(sp, 1f, 1f);
+            sound.play(sp, 1.0f, 1.0f);
             playing.put(cc, sp);
             return sp;
         });
@@ -188,7 +180,7 @@ public class ConceptSonification extends FrameReaction {
 
         Granulize g = new Granulize(sp,
                 /* grain size */
-                0.3f * (1 + c.getTerm().volume()/2f),
+                0.3f * (1 + c.getTerm().volume()/ 2.0f),
                 1.0f
             ).at(
                 //terms get positoined according to their hash
@@ -205,7 +197,7 @@ public class ConceptSonification extends FrameReaction {
         return c.getPriority() > audiblePriorityThreshold;
     }
 
-    final static double twoTo12 = Math.pow((2),1/12.);
+    static final double twoTo12 = Math.pow((2),1/ 12.0);
 
     /** return if it should continue */
     private boolean update(Concept c, SoundProducer g) {
@@ -221,10 +213,10 @@ public class ConceptSonification extends FrameReaction {
             if (g instanceof Granulize) {
                 Granulize gg = ((Granulize) g);
                 gg.setStretchFactor(
-                        0.85f + c.getDurability()/3f );// + 4f * (1f - c.getQuality()));
+                        0.85f + c.getDurability()/ 3.0f);// + 4f * (1f - c.getQuality()));
 
 
-                float pitch = 1f;
+                float pitch = 1.0f;
                 //        0.5f + 0.5f * c.getQuality();
 
                 /*
@@ -252,7 +244,7 @@ public class ConceptSonification extends FrameReaction {
         while (ie.hasNext()) {
             Map.Entry<Concept, SoundProducer> e = ie.next();
 
-            final Concept c = e.getKey();
+            Concept c = e.getKey();
             boolean cont = update(c, e.getValue());
             if (!cont) {
                 ie.remove();

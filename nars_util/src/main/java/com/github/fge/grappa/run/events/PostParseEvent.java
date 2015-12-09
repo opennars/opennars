@@ -22,7 +22,7 @@ public final class PostParseEvent<V>
 {
     private final ParsingResult<V> result;
 
-    public PostParseEvent(final ParsingResult<V> result)
+    public PostParseEvent(ParsingResult<V> result)
     {
         this.result = result;
     }

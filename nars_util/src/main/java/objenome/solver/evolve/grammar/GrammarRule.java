@@ -233,7 +233,7 @@ public class GrammarRule implements GrammarNode, Cloneable {
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
         buffer.append('<');
         buffer.append(name);
         buffer.append('>');

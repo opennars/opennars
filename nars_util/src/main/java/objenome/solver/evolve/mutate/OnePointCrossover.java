@@ -205,11 +205,7 @@ public class OnePointCrossover extends AbstractOrganismOperator implements Liste
         points2.add(current2);
 
         boolean valid = false;
-        if (!strict) {
-            valid = (root1.getArity() == root2.getArity()) && (root1.dataType() == root2.dataType());
-        } else {
-            valid = root1.getClass().equals(root2.getClass());
-        }
+        valid = !strict ? (root1.getArity() == root2.getArity()) && (root1.dataType() == root2.dataType()) : root1.getClass().equals(root2.getClass());
 
         if (valid) {
             for (int i = 0; i < root1.getArity(); i++) {

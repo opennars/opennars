@@ -58,7 +58,7 @@ public class ThermostatTest  {
             t.target = rng.nextInt(maxRange);
         } while ( Math.abs(t.current - t.target) < maxRange/3 );
 
-        if (t.log) System.out.println("reset: " + t.current + " " + t.target);
+        if (t.log) System.out.println("reset: " + t.current + ' ' + t.target);
     }
 
     //@Test public void testThermostat1() throws Exception {

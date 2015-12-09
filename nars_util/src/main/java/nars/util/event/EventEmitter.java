@@ -10,13 +10,13 @@ import java.util.function.Function;
 /**
  * TODO separate this into a single-thread and multithread implementation
  */
-abstract public class EventEmitter<K,V>  {
+public abstract class EventEmitter<K,V>  {
 
 
     public abstract int size();
 
     public interface EventRegistration {
-        public void off();
+        void off();
     }
 
 //    /** more sophisticated event emitter which uses reactor.io */
@@ -167,7 +167,7 @@ abstract public class EventEmitter<K,V>  {
 
         final Map<K,ArraySharingList<Reaction<K,V>>> reactions = new HashMap(64);
 
-        final Function<K, ArraySharingList<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
+        final Function<K, ArraySharingList<Reaction<K,V>>> getNewChannel = k -> newChannelList();
 
 
 //        @Override
@@ -196,7 +196,7 @@ abstract public class EventEmitter<K,V>  {
 
             DefaultEventRegistration(K key, Reaction<K,V> o) {
                 this.key= key;
-                this.reaction = o;
+                reaction = o;
             }
 
             @Override
@@ -215,14 +215,14 @@ abstract public class EventEmitter<K,V>  {
 
 
         @Override
-        final public int emit(final K channel, final V arg) {
+        public final int emit(K channel, V arg) {
             ArraySharingList<Reaction<K, V>> r = reactions.get(channel);
             if (r == null) return 0;
-            final Reaction<K, V>[] c = r.getCachedNullTerminatedArray();
+            Reaction<K, V>[] c = r.getCachedNullTerminatedArray();
             if (c == null) return 0;
             int i;
             for (i = 0; ; i++) {
-                final Reaction<K, V> cc = c[i];
+                Reaction<K, V> cc = c[i];
                 if (cc == null) break;
                 cc.event(channel, arg);
             }
@@ -242,8 +242,8 @@ abstract public class EventEmitter<K,V>  {
         }
 
         protected ArraySharingList<Reaction<K,V>> newChannelList() {
-            return new ArraySharingList<Reaction<K,V>>(
-                    r -> new Reaction[r]
+            return new ArraySharingList<>(
+                    Reaction[]::new
             );
         }
 
@@ -292,15 +292,16 @@ abstract public class EventEmitter<K,V>  {
 //
     public abstract int emit(K channel, V arg);
 //
-    abstract public EventRegistration on(K k, Reaction<K,V> o);
+public abstract EventRegistration on(K k, Reaction<K,V> o);
 //
-    abstract public boolean isActive(final K event);
+public abstract boolean isActive(K event);
 //
 //
 //    /** for enabling many events at the same time */
-    @Deprecated public void set(final Reaction<K,V> o, final boolean enable, final K... events) {
+    @SafeVarargs
+    @Deprecated public final void set(Reaction<K, V> o, boolean enable, K... events) {
 
-        for (final K c : events) {
+        for (K c : events) {
             if (enable)
                 on(c, o);
             else
@@ -329,9 +330,7 @@ abstract public class EventEmitter<K,V>  {
 //        }
 
         public synchronized void off() {
-            for (int i = 0; i < this.size(); i++) {
-                this.get(i).off();
-            }
+            this.forEach(EventRegistration::off);
             clear();
         }
         
@@ -339,10 +338,11 @@ abstract public class EventEmitter<K,V>  {
 
 
     
-    public Registrations on(final Reaction<K,V> o, final K... events) {
+    @SafeVarargs
+    public final Registrations on(Reaction<K, V> o, K... events) {
         Registrations r = new Registrations(events.length);
     
-        for (final K c : events)
+        for (K c : events)
             r.add( on(c, o) );
         
         return r;
@@ -359,7 +359,7 @@ abstract public class EventEmitter<K,V>  {
 //    }
 
 
-    public void emit(final K channel) {
+    public void emit(K channel) {
         emit(channel, null);
     }
 
@@ -373,7 +373,7 @@ abstract public class EventEmitter<K,V>  {
      * @param o
      * @return  whether it was removed
      */
-    @Deprecated public void off(final K event, final Reaction<K,V> o) {
+    @Deprecated public void off(K event, Reaction<K,V> o) {
         throw new RuntimeException("off() not supported; use the returned Registration object to .cancel()");
     }
 

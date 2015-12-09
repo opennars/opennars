@@ -23,11 +23,8 @@ import java.util.Set;
 public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
 
     public TermLinkGraph2() {
-        super(new EdgeFactory<Term, Compound>() {
-            @Override
-            public Compound createEdge(Term a, Term b) {
-                return $.p(a,b);
-            }
+        super((a, b) -> {
+            return $.p(a,b);
         });
     }
 
@@ -75,10 +72,10 @@ public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
 
         /** add the termlink templates instead of termlinks */
         @Override protected void addTermLinks(Concept c) {
-            final Term sourceTerm = c.getTerm();
+            Term sourceTerm = c.getTerm();
 
             for (TermLinkTemplate t : c.getTermLinkTemplates()) {
-                final Term targetTerm = t.getTerm().getTerm();
+                Term targetTerm = t.getTerm().getTerm();
                 if (!containsVertex(targetTerm)) {
                     addVertex(targetTerm);
                 }
@@ -89,7 +86,7 @@ public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
     }
 
     public TermLinkGraph2 add(Concept c, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
-        final Term source = c.getTerm();
+        Term source = c.getTerm();
 
         if (!containsVertex(source)) {
             addVertex(source);
@@ -119,13 +116,13 @@ public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
         if (c == null)
             throw new RuntimeException("null concept");
 
-        final Term cterm = c.getTerm();
+        Term cterm = c.getTerm();
 
         Bag<TermLinkKey, TermLink> tl = c.getTermLinks();
         if (tl == null) return;
 
         for (TermLink t : tl.values()) {
-            final Term target = t.getTerm();
+            Term target = t.getTerm();
             if (!containsVertex(target)) {
                 addVertex(target);
             }

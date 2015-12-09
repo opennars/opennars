@@ -45,7 +45,7 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
     protected NumberFormat nf = NumberFormat.getInstance();
     protected String prefix = "";
 
-    final static Font defaultLabelFont = Video.monofont.deriveFont(11f);
+    static final Font defaultLabelFont = Video.monofont.deriveFont(11.0f);
 
     public NSliderSwing() {
         this(0,0,0);
@@ -63,9 +63,8 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
     }
     
     public NSliderSwing(AtomicDouble value, float min, float max) {
-        super();
-        
-        
+
+
         nf.setMaximumFractionDigits(3);
         
         this.value = value;        
@@ -98,7 +97,7 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
         float p = (value.floatValue() - min) / (max-min);
         if (barColor == null) {
             //Green->Yellow->Red
-            g.setColor(Color.getHSBColor( (1f - (float)p) / 2.5f + 0.15f ,
+            g.setColor(Color.getHSBColor( (1.0f - (float)p) / 2.5f + 0.15f ,
                     (0.2f *((float)p)) + 0.7f,
                     (0.2f *((float)p)) + 0.7f));
             // g.setColor(Color.getHSBColor( (1f - p) / 3.0f , 0.2f, 0.8f + 0.15f));
@@ -107,7 +106,7 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
             g.setColor(barColor);
         }
         
-        int wp = (int)(((float) w) * p);
+        int wp = (int)((w) * p);
         g.fillRect(0, 0, wp, h);
 
 
@@ -131,7 +130,7 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
     @Override
     public String getText() {
         if (value!=null)
-            return prefix + " " + nf.format(value.floatValue());
+            return prefix + ' ' + nf.format(value.floatValue());
         return "";
     }
     
@@ -139,7 +138,7 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
     
 
     protected void updatePosition(int x) {
-        float p = ((float)x) / ((float)getWidth());
+        float p = ((float)x) / (getWidth());
         float v = p * (max-min) + min;
         v = Math.max(v, min);
         v = Math.min(v, max);        

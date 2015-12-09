@@ -20,11 +20,11 @@ public class SgArgumentTest extends SgVariableTest {
 
     @Test
     public void testConstruction() {
-        final String modifiers = "final";
-        final SgClass type = SgClass.INT;
-        final String name = "arg";
-        final SgMethod method = new SgMethod(getDummyClass(), "public", SgClass.VOID, "setArg");
-        final SgArgument arg = new SgArgument(method, modifiers, type, name);
+        String modifiers = "final";
+        SgClass type = SgClass.INT;
+        String name = "arg";
+        SgMethod method = new SgMethod(getDummyClass(), "public", SgClass.VOID, "setArg");
+        SgArgument arg = new SgArgument(method, modifiers, type, name);
         Assert.assertSame(arg.getOwner(), method);
         Assert.assertSame(arg.getType(), type);
         Assert.assertEquals(arg.getName(), name);

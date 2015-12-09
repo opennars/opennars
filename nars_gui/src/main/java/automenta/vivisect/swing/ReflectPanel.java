@@ -23,6 +23,7 @@ package automenta.vivisect.swing;
  * the License.
  */
 
+import automenta.vivisect.swing.property.propertysheet.Property;
 import automenta.vivisect.swing.property.propertysheet.PropertySheet;
 import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
 
@@ -57,7 +58,7 @@ public class ReflectPanel<O> extends JPanel {
         } catch (IntrospectionException e) {
             e.printStackTrace();
         }
-        final PropertySheetPanel sheet = new PropertySheetPanel();
+        PropertySheetPanel sheet = new PropertySheetPanel();
         sheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
         sheet.setToolBarVisible(false);
         sheet.setDescriptionVisible(false);
@@ -72,25 +73,21 @@ public class ReflectPanel<O> extends JPanel {
         // does not happen when not using Web Start. Load properties one
         // by one as follow will do the trick
         automenta.vivisect.swing.property.propertysheet.Property[] properties = sheet.getProperties();
-        for (int i = 0, c = properties.length; i < c; i++) {
+        for (Property property : properties) {
             try {
-                properties[i].readFromObject(instance);
+                property.readFromObject(instance);
             } catch (Exception e) {
                 ///e.printStackTrace();
             }
         }
 
         // everytime a property change, update the button with it
-        PropertyChangeListener listener = new PropertyChangeListener() {
+        PropertyChangeListener listener = evt -> {
+            Property prop = (Property) evt.getSource();
+            prop.writeToObject(instance);
 
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                automenta.vivisect.swing.property.propertysheet.Property prop = (automenta.vivisect.swing.property.propertysheet.Property) evt.getSource();
-                prop.writeToObject(instance);
-                
-                
-                //button.repaint();
-            }
+
+            //button.repaint();
         };
         sheet.addPropertySheetChangeListener(listener);
 

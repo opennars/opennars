@@ -41,14 +41,14 @@ public class Versioning extends FasterList<Versioned> {
 
     /** reverts to previous state */
     public final void revert() {
-        revert(this.now-1);
+        revert(now -1);
     }
 
     /** reverts/undo to previous state */
     public final void revert(int when) {
-        final int was = this.now;
+        int was = now;
         if (was == when) return; //nothing
-        else if (was < when)
+        if (was < when)
             throw new RuntimeException("reverting to future time");
         now = when;
 
@@ -71,8 +71,8 @@ public class Versioning extends FasterList<Versioned> {
         return nextID++;
     }
 
-    final static int initiALPOOL_CAPACITY = 16;
-    final static int stackLimit = 16;
+    static final int initiALPOOL_CAPACITY = 16;
+    static final int stackLimit = 16;
 
     final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(initiALPOOL_CAPACITY) {
         @Override public FasterList create() {

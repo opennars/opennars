@@ -34,7 +34,7 @@ public class StatusBar extends JComponent {
   /**
    * The key used to identified the default zone
    */
-  public final static String DEFAULT_ZONE = "default";
+  public static final String DEFAULT_ZONE = "default";
 
   private Hashtable idToZones;
   private Border zoneBorder;

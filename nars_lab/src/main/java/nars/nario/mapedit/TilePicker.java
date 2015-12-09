@@ -111,7 +111,7 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
 
     public void addTilePickChangedListener(LevelEditor editor)
     {
-        this.tilePickChangedListener = editor;
+        tilePickChangedListener = editor;
         if (tilePickChangedListener!=null)
             tilePickChangedListener.setPickedTile(pickedTile);
     }

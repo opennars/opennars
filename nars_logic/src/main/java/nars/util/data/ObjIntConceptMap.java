@@ -8,7 +8,7 @@ import nars.term.Term;
 import java.util.Iterator;
 
 /** uses a predefined set of terms that will be mapped */
-abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
+public abstract class ObjIntConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
 
     public final ObjectIntHashMap<T> values = new ObjectIntHashMap();
@@ -42,7 +42,7 @@ abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap
 
 
     @Override
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         if (!values.containsKey(t)) {
             return super.contains(t);
         }

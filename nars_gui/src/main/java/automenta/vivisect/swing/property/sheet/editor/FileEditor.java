@@ -108,11 +108,7 @@ public class FileEditor extends AbstractPropertyEditor {
 
 		public File getFile() {
 			String file = getText();
-			if ("".equals(file)) {
-				return null;
-			} else {
-				return new File(file);
-			}
+			return "".equals(file) ? null : new File(file);
 		}
 	}
 
@@ -122,8 +118,8 @@ public class FileEditor extends AbstractPropertyEditor {
 
 		@Override
 		public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-			for (int i = 0, c = transferFlavors.length; i < c; i++) {
-				if (transferFlavors[i].equals(DataFlavor.javaFileListFlavor)) {
+			for (DataFlavor transferFlavor : transferFlavors) {
+				if (transferFlavor.equals(DataFlavor.javaFileListFlavor)) {
 					return true;
 				}
 			}
@@ -137,7 +133,7 @@ public class FileEditor extends AbstractPropertyEditor {
 				@SuppressWarnings("unchecked")
 				List<Object> list = (List<Object>) t.getTransferData(DataFlavor.javaFileListFlavor);
 
-				if (list.size() > 0) {
+				if (!list.isEmpty()) {
 
 					File oldFile = (File) getValue();
 					File newFile = (File) list.get(0);

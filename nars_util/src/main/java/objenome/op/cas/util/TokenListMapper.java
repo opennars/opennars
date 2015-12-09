@@ -29,7 +29,7 @@ public class TokenListMapper {
                 String[] replacement = tokenMap.get(tokenValueOn);
                 Token<Object>[] replacementTokens = new Token[replacement.length];
                 for (int i = 0; i < replacement.length; i++) {
-                    replacementTokens[i] = new Token<Object>(replacement[i], tokenOn, tokenOn);
+                    replacementTokens[i] = new Token<>(replacement[i], tokenOn, tokenOn);
                 }
                 
                 subList.clear();

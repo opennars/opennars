@@ -57,7 +57,6 @@ public class ScreenDisplay extends JPanel {
     long maxMessageAge = 3000;
     
     public ScreenDisplay() {
-        super();
 
         messages = new MessageHistory();
     }
@@ -83,7 +82,7 @@ public class ScreenDisplay extends JPanel {
 
     public void setImage(BufferedImage img) {
         synchronized (this) {
-            this.image = img;
+            image = img;
         }
     }
 

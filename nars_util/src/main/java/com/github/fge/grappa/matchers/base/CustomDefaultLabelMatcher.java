@@ -24,28 +24,28 @@ public abstract class CustomDefaultLabelMatcher<T extends CustomDefaultLabelMatc
 {
     private final String defaultLabel;
 
-    protected CustomDefaultLabelMatcher(final Rule subRule,
-        final String defaultLabel)
+    protected CustomDefaultLabelMatcher(Rule subRule,
+                                        String defaultLabel)
     {
         super(subRule, null);
         this.defaultLabel = defaultLabel;
     }
 
-    protected CustomDefaultLabelMatcher(final Rule[] subRules,
-        final String defaultLabel)
+    protected CustomDefaultLabelMatcher(Rule[] subRules,
+                                        String defaultLabel)
     {
         super(subRules, null);
         this.defaultLabel = defaultLabel;
     }
 
     @Override
-    final public String getLabel()
+    public final String getLabel()
     {
         return hasCustomLabel() ? super.getLabel() : defaultLabel;
     }
 
     @Override
-    final public boolean hasCustomLabel()
+    public final boolean hasCustomLabel()
     {
         return super.getLabel() != null;
     }

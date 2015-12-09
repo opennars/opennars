@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
 
 public class NarseseTest {
 
-    final static NAR n = new Terminal();
-    final static Narsese p = Narsese.the();
+    static final NAR n = new Terminal();
+    static final Narsese p = Narsese.the();
 
     static <T extends Term> T term(String s) throws Narsese.NarseseException {
         //TODO n.term(s) when the parser is replaced
@@ -88,7 +88,7 @@ public class NarseseTest {
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
-        assertEquals(1f, t.getTruth().getFrequency(), 0.001);
+        assertEquals(1.0f, t.getTruth().getFrequency(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.getTruth().getConfidence(), 0.001);
     }
 
@@ -109,14 +109,14 @@ public class NarseseTest {
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         //assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
-        assertEquals(0f, t.getFrequency(), 0.001);
+        assertEquals(0.0f, t.getFrequency(), 0.001);
         assertEquals(0.93f, t.getConfidence(), 0.001);
     }
 
     @Test
     public void testMultiCompound() throws Narsese.NarseseException {
         String tt = "<<a <=> b> --> <c ==> d>>";
-        Task t = task(tt + "?");
+        Task t = task(tt + '?');
         assertNotNull(t);
         assertEquals(Op.INHERITANCE, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());
@@ -148,7 +148,7 @@ public class NarseseTest {
     @Test
     public void testQuest() throws Narsese.NarseseException {
         String tt = "(a, b, c)";
-        Task t = task(tt + "@");
+        Task t = task(tt + '@');
         assertNotNull(t);
         assertEquals(Op.PRODUCT, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());

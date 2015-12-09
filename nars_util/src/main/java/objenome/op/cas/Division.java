@@ -56,11 +56,11 @@ public class Division extends Operation {
     }
     
     public Expr deriv(Var respected) {
-        return make(Sum.make(Product.make(denom, numerator.deriv(respected)), Product.make(Num.make(-1d), Product.make(numerator, denom.deriv(respected)))), Exponent.make(denom, Num.make(2d)));
+        return make(Sum.make(Product.make(denom, numerator.deriv(respected)), Product.make(Num.make(-1.0d), Product.make(numerator, denom.deriv(respected)))), Exponent.make(denom, Num.make(2.0d)));
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(numerator);
         arrayList.add(denom);
         return arrayList;
@@ -106,10 +106,10 @@ public class Division extends Operation {
 
             //if (debug) System.err.println("Division simplify: " + dump());
 
-            ArrayList<Expr> numeratorExprs = new ArrayList<Expr>();
+            ArrayList<Expr> numeratorExprs = new ArrayList<>();
             if (other.numerator instanceof Product) numeratorExprs = ((Operation) other.numerator).getExprs();
             else numeratorExprs.add(other.numerator);
-            ArrayList<Expr> denomExprs = new ArrayList<Expr>();
+            ArrayList<Expr> denomExprs = new ArrayList<>();
             if (other.denom instanceof Product) denomExprs = ((Operation) other.denom).getExprs();
             else denomExprs.add(other.denom);
 
@@ -323,7 +323,7 @@ public class Division extends Operation {
         if (isSec()) return "sec" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
         if (isCsc()) return "csc" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
 
-        Integer thisClassOrder = this.classOrder();
+        Integer thisClassOrder = classOrder();
         
         boolean numeratorParens = false;
         if (thisClassOrder > numerator.printLevelRight()) numeratorParens = true;
@@ -344,10 +344,9 @@ public class Division extends Operation {
         if (expr == null) return false;
         if (expr == this) return true;
         if (!(expr instanceof Division)) return false;
-        
-        if (numerator.equalsExpr(((Operation) expr).getExprs().get(0)) && denom.equalsExpr(((Operation) expr).getExprs().get(1))) return true;
-        
-        return false;
+
+        return numerator.equalsExpr(((Operation) expr).getExprs().get(0)) && denom.equalsExpr(((Operation) expr).getExprs().get(1));
+
     }
     
     public Expr copyPass(HashMap<Expr, Expr> subs) {

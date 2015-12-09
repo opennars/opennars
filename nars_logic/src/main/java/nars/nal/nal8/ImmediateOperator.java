@@ -14,12 +14,11 @@ import java.util.function.Consumer;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
-abstract public class ImmediateOperator extends NullOperator implements Consumer<Task> {
+public abstract class ImmediateOperator extends NullOperator implements Consumer<Task> {
 
     public final Operator op;
 
     public ImmediateOperator() {
-        super();
         op = Operator.the(getOperatorTerm());
     }
 
@@ -28,7 +27,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
 //    }
 
     /** apply Atom.quoteI */
-    static Compound termizedProduct(final Object... args) {
+    static Compound termizedProduct(Object... args) {
         if (args.length == 0) return Product.Empty;
         return $.p(termized(args));
     }
@@ -36,14 +35,9 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     static Term[] termized(Object... args) {
         Term[] x = new Term[args.length];
         for (int i = 0; i < args.length; i++) {
-            final Term y;
-            final Term xx = x[i];
-            if (!(args[i] instanceof Term)) {
-                y = Atom.quote(args[i].toString());
-            }
-            else {
-                y = xx;
-            }
+            Term y;
+            Term xx = x[i];
+            y = !(args[i] instanceof Term) ? Atom.quote(args[i].toString()) : xx;
             x[i] = y;
         }
         return x;

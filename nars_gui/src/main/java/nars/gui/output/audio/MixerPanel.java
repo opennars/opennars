@@ -22,7 +22,7 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
     private final JTable playingTable;
     boolean running = false;
     final long updatePeriodMS = 512;
-    final AtomicDouble pan = new AtomicDouble(0f);
+    final AtomicDouble pan = new AtomicDouble(0.0f);
 
     public MixerPanel(Audio sound) {
         super(new BorderLayout());
@@ -30,13 +30,13 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
         this.sound = sound;
         sound.setListener(this);
 
-        this.playing = new DefaultTableModel();
+        playing = new DefaultTableModel();
 
         playing.addColumn("Sound");
         playing.addColumn("Volume");
         playing.addColumn("Pan");
 
-        this.playingTable = new JTable(playing);
+        playingTable = new JTable(playing);
         add(playingTable, BorderLayout.CENTER);
 
     }
@@ -58,7 +58,7 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
             playing.removeRow(0);
         }
 
-        List<Sound> ss = new ArrayList<Sound>( sound.getSounds() );
+        List<Sound> ss = new ArrayList<>(sound.getSounds());
         for (Sound s : ss) {
             playing.addRow(new Object[]{s.toString(), s.amplitude, s.pan});
         }

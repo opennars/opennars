@@ -103,7 +103,7 @@ public class ALEPipes {
     }
 
     public void setUpdateRL(boolean updateRL) {
-        this.updateRLData = updateRL;
+        updateRLData = updateRL;
     }
     
     /** A blocking method that sends initial information to ALE. See the
@@ -120,7 +120,7 @@ public class ALEPipes {
 
         // Do some error checking - our width and height should be positive
         if (width <= 0 || height <= 0) {
-            throw new RuntimeException("Invalid width/height: "+width+"x"+height);
+            throw new RuntimeException("Invalid width/height: "+width+ 'x' +height);
         }
 
         // Create the data structures used to store received information
@@ -176,8 +176,7 @@ public class ALEPipes {
         if (hasObserved) {
             throw new RuntimeException("observe() called without subsequent act().");
         }
-        else
-            hasObserved = true;
+        hasObserved = true;
 
         String line = null;
 
@@ -191,13 +190,13 @@ public class ALEPipes {
         }
 
         // Catch the special keyword 'DIE'
-        if (line.equals("DIE")) {
+        if ("DIE".equals(line)) {
             terminateRequested = true;
             return false;
         }
 
         // Ignore blank lines (still send an action)
-        if (line.length() > 0) {
+        if (!line.isEmpty()) {
             // The data format is:
             // <ram-string>:<screen-string>:<rl-data-string>:\n
             //  Some of these elements may be missing, in which case the separating
@@ -241,8 +240,7 @@ public class ALEPipes {
         if (!hasObserved) {
             throw new RuntimeException("act() called before observe().");
         }
-        else
-            hasObserved = false;
+        hasObserved = false;
 
         sendAction(act);
 
@@ -310,10 +308,8 @@ public class ALEPipes {
         int ld = line.charAt(ptr+1);
         int hd = line.charAt(ptr);
 
-        if (ld >= 'A') ld -= 'A' - 10;
-        else ld -= '0';
-        if (hd >= 'A') hd -= 'A' - 10;
-        else hd -= '0';
+        ld -= ld >= 'A' ? 'A' - 10 : '0';
+        hd -= hd >= 'A' ? 'A' - 10 : '0';
 
         return (hd << 4) + ld;
     }

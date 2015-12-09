@@ -24,10 +24,10 @@ import java.util.stream.StreamSupport;
 /**
  * Created by me on 6/4/15.
  */
-abstract public class NQuadsRDF {
+public abstract class NQuadsRDF {
 
 
-    private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    private static final String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     //private static String parentTagName = null;
 
@@ -207,7 +207,7 @@ abstract public class NQuadsRDF {
 //    }
 
 
-    static public Term atom(String uri) {
+    public static Term atom(String uri) {
         int lastSlash = uri.lastIndexOf('/');
         if (lastSlash!=-1)
             uri = uri.substring(lastSlash + 1);
@@ -252,14 +252,15 @@ abstract public class NQuadsRDF {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    public static Task input(final NAR nar,
-                             final Atom subject,
-                             final Atom predicate, final Term object) {
+    public static Task input(NAR nar,
+                             Atom subject,
+                             Atom predicate, Term object) {
 
         //http://www.w3.org/TR/owl-ref/
 
         Compound belief = null;
 
+        //noinspection IfStatementWithTooManyBranches
         if (predicate.equals(parentOf) || predicate.equals(type)
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
 
@@ -332,7 +333,7 @@ abstract public class NQuadsRDF {
 
         if (belief!=null) {
             return new MutableTask().term(belief).
-                    belief().truth(1f,0.9f)
+                    belief().truth(1.0f,0.9f)
                     .time(nar.time(),
                     Tense.ETERNAL //TODO Tense parameter
                     );
@@ -357,11 +358,7 @@ abstract public class NQuadsRDF {
 
         suffix = suffix.replace("http://dbpedia.org/ontology/", "");
 
-        if (prefix == null || prefix.length() == 0) {
-            return suffix;
-        } else {
-            return prefix + ":" + suffix;
-        }
+        return prefix == null || prefix.isEmpty() ? suffix : prefix + ':' + suffix;
     }
 
     /**

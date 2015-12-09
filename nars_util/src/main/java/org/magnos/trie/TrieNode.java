@@ -98,8 +98,8 @@ public class TrieNode<S, T> implements Entry<S, T>
       this.start = start;
       this.end = end;
       this.children = children;
-      this.size = calculateSize( children );
-      this.setValue( value );
+      size = calculateSize( children );
+      setValue( value );
    }
 
    /**
@@ -296,7 +296,7 @@ public class TrieNode<S, T> implements Entry<S, T>
     */
    public boolean hasChildren()
    {
-      return children != null && children.size() > 0;
+      return children != null && !children.isEmpty();
    }
 
    /**
@@ -436,7 +436,7 @@ public class TrieNode<S, T> implements Entry<S, T>
    {
       T previousValue = value;
 
-      final boolean nulled = (value = newValue) == null;
+      boolean nulled = (value = newValue) == null;
 
       if (previousValue == null && !nulled)
       {
@@ -472,10 +472,10 @@ public class TrieNode<S, T> implements Entry<S, T>
 
       TrieNode node = (TrieNode)o;
 
-      final Object nv = node.value;
-      final Object ns = node.sequence;
-      final S ts = this.sequence;
-      final T tv = this.value;
+      Object nv = node.value;
+      Object ns = node.sequence;
+      S ts = sequence;
+      T tv = value;
       return (ts == ns || ts.equals(ns)) &&
          (tv == nv || (tv != null && nv != null && tv.equals(nv)));
    }

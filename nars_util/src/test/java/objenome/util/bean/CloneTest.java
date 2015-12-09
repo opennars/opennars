@@ -49,15 +49,15 @@ public class CloneTest {
         C orig = BeanProxyBuilder.on(C.class).check(false).build();
         orig.setA("a"); //$NON-NLS-1$
         orig.setB(7);
-        Map<Float, Boolean> map = Collections.singletonMap(Float.valueOf(4), Boolean.TRUE);
+        Map<Float, Boolean> map = Collections.singletonMap(4f, Boolean.TRUE);
         orig.setMap(map);
         C clone = orig.clone();
 
         // check implemented interfaces
         // 10: A, B1, B2, B, C, List, Collection, Iterable, Cloneable, Serializable
         assertEquals(Integer.valueOf(10), Integer.valueOf(clone.getClass().getInterfaces().length));
-        assertEquals(new HashSet<Class<?>>(Arrays.asList(orig.getClass().getInterfaces())),
-                new HashSet<Class<?>>(Arrays.asList(clone.getClass().getInterfaces())));
+        assertEquals(new HashSet<>(Arrays.asList(orig.getClass().getInterfaces())),
+                new HashSet<>(Arrays.asList(clone.getClass().getInterfaces())));
 
         // check equals
         assertNotSame(orig, clone);

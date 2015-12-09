@@ -17,23 +17,23 @@ public class FaceGUI extends BaseClass {
     int nVertices;
     int nShapes;
     int nFlexes;
-    int keyFlex[];
-    double keyValue[];
-    double flexValue[][];
-    double flexTarget[][];
-    double jitterAmpl[];
-    double jitterFreq[];
+    int[] keyFlex;
+    double[] keyValue;
+    double[][] flexValue;
+    double[][] flexTarget;
+    double[] jitterAmpl;
+    double[] jitterFreq;
     boolean firstTime;
     boolean kludge;
     final int POLYGON = 0;
     final int POLYLINE = 1;
     final int CIRCLE = 2;
-    double flexData[][][];
-    int flexShape[][];
-    int flexSymmetry[];
-    double pts[][][];
-    int shape[][][];
-    double vertexArray[][];
+    double[][][] flexData;
+    int[][] flexShape;
+    int[] flexSymmetry;
+    double[][][] pts;
+    int[][][] shape;
+    double[][] vertexArray;
     double t;
     double blinkValue;
     double spin;
@@ -62,7 +62,6 @@ public class FaceGUI extends BaseClass {
 
     
     public FaceGUI() {
-        super();
         firstVertices = true;
         isVectors = false;
         doShade = false;
@@ -110,31 +109,31 @@ public class FaceGUI extends BaseClass {
         noRotate();
         vertices("13,50,0      16,16,0 40,7,0 40,0,0"); // 58-61 neck,shoulders
 
-        polygons(.1, 0, 0, "58,59 59,60 60,61");
+        polygons(0.1, 0, 0, "58,59 59,60 60,61");
         polygons(0, 0, 0, "15,16,17");
         polygons(0, 0, 0, "39,41");
-        polygons(.56, .56, .56, "11,29,36");
-        polygons(.5, .5, .5, "15,29,16");
+        polygons(0.56, 0.56, 0.56, "11,29,36");
+        polygons(0.5, 0.5, 0.5, "15,29,16");
         polygons(0, 0, 0, "3,49 49,48 48,47 47,46 46,45 1,45,46 1,46,47 50,47,48 48,49,3 30,3,4");
         polygons(0, 0, 0, "34,32 34,1,33,32 1,30,33 45,34 34,45,1 50,1,47 50,48,3 50,3,30 50,30,1");
         polygons(0, 0, 0, "32,51 51,42 32,33,51 51,33,42");
-        circles(.56, .56, .56, "53,54");
-        polygons(.56, .56, .56, "54,53,55,56,57");
-        polygons(.50, .50, .50, "54,53,55,57");
+        circles(0.56, 0.56, 0.56, "53,54");
+        polygons(0.56, 0.56, 0.56, "54,53,55,56,57");
+        polygons(0.50, 0.50, 0.50, "54,53,55,57");
         polygons(0, 0, 0, "18,27 28,20");
         polygons(0, 0, 0, "11,12,13,14");
-        eyeBall = circles(.9, .9, .9, "24,25");
+        eyeBall = circles(0.9, 0.9, 0.9, "24,25");
         pupil = circles(0, 0, 0, "24,26");
-        polygons(.56, .56, .56, "16,29,11");
-        polygons(.50, .50, .50, "13,12,9,8 12,11,10,9 5,43 5,4,43");
+        polygons(0.56, 0.56, 0.56, "16,29,11");
+        polygons(0.50, 0.50, 0.50, "13,12,9,8 12,11,10,9 5,43 5,4,43");
         polygons(0, 0, 0, "6,7,9,10 7,8,9");
-        polygons(.56, .56, .56, "39,40,41 4,41,40 4,5,41 5,37,41 37,19,41 19,39,41 19,37,38,20");
-        polygons(.56, .56, .56, "6,10 10,11 11,36 36,15 17,18 20,38 38,37 37,5");
-        polygons(.56, .56, .56, "17,16,18 29,15,36");
-        polygons(.56, .56, .56, "42,6 42,7,6 42,33,8,7");
-        polygons(.56, .56, .56, "30,4,40 30,40,8 13,8,40 8,33,30 11,14,16");
-        polygons(.56, .56, .56, "40,16,14 13,40,14 40,39,16 16,39,18 18,39,19");
-        polygons(.4, .4, .45, "15,17 18,21 23,20 18,19,22,21 23,22,19,20");
+        polygons(0.56, 0.56, 0.56, "39,40,41 4,41,40 4,5,41 5,37,41 37,19,41 19,39,41 19,37,38,20");
+        polygons(0.56, 0.56, 0.56, "6,10 10,11 11,36 36,15 17,18 20,38 38,37 37,5");
+        polygons(0.56, 0.56, 0.56, "17,16,18 29,15,36");
+        polygons(0.56, 0.56, 0.56, "42,6 42,7,6 42,33,8,7");
+        polygons(0.56, 0.56, 0.56, "30,4,40 30,40,8 13,8,40 8,33,30 11,14,16");
+        polygons(0.56, 0.56, 0.56, "40,16,14 13,40,14 40,39,16 16,39,18 18,39,19");
+        polygons(0.4, 0.4, 0.45, "15,17 18,21 23,20 18,19,22,21 23,22,19,20");
         polylines(0, 0, 0, "11,12,13,14,11");
 
         flex("sayAh", "19 20 21 22 23 4 5 28 16 37 38 39 41",
@@ -153,9 +152,9 @@ public class FaceGUI extends BaseClass {
         map("'", "brows", 1);
         map("_", "brows", 0);
         map("`", "brows", -1);
-        map("@", "blink", -.9);
+        map("@", "blink", -0.9);
         map("+", "blink", 0);
-        map("=", "blink", .5);
+        map("=", "blink", 0.5);
         map("-", "blink", 1);
         map("t", "lids", 1);
         map("c", "lids", 0);
@@ -178,21 +177,21 @@ public class FaceGUI extends BaseClass {
         map("/", "tilt", 1);
 
         map("m", "sayAh", -1);
-        map("e", "sayAh", -.5);
+        map("e", "sayAh", -0.5);
         map("o", "sayAh", 0);
-        map("O", "sayAh", .5);
-        map("P", "sayOo", .8);
-        map("p", "sayOo", .4);
+        map("O", "sayAh", 0.5);
+        map("P", "sayOo", 0.8);
+        map("p", "sayOo", 0.4);
         map("a", "sayOo", 0);
-        map("w", "sayOo", -.4);
-        map("W", "sayOo", -.7);
+        map("w", "sayOo", -0.4);
+        map("W", "sayOo", -0.7);
         map("S", "smile", 1.5);
         map("s", "smile", 1);
         map("n", "smile", 0);
-        map("f", "smile", -.7);
-        map("i", "sneer", -.5);
+        map("f", "smile", -0.7);
+        map("i", "sneer", -0.5);
         map("x", "sneer", 0);
-        map("h", "sneer", .5);
+        map("h", "sneer", 0.5);
         map("z", "sneer", 1);
 
     }
@@ -219,7 +218,7 @@ public class FaceGUI extends BaseClass {
     }
 
     public void toggleShade() {
-        doShade = isVectors ? true : !doShade;
+        doShade = isVectors || !doShade;
         if (isVectors) {
             toggleVectors();
         }
@@ -257,8 +256,10 @@ public class FaceGUI extends BaseClass {
             flex("tilt", "", "");
         }
         if (s != null) {
+            //noinspection UseOfStringTokenizer
             StringTokenizer stringtokenizer1;
-            for (StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();
+            for (//noinspection UseOfStringTokenizer
+                    StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();
                     vertexVector.addElement(new Double(stringtokenizer1.nextToken()))) {
                 stringtokenizer1 = new StringTokenizer(stringtokenizer.nextToken(), ",");
                 vertexVector.addElement(new Double(stringtokenizer1.nextToken()));
@@ -269,15 +270,11 @@ public class FaceGUI extends BaseClass {
     }
 
     int type(int i) {
-        return ((Integer) typeVector.elementAt(i)).intValue();
+        return (Integer) typeVector.elementAt(i);
     }
 
     Color color(int i, boolean flag) {
-        if (flag) {
-            return Color.black;
-        } else {
-            return colorVector.elementAt(i);
-        }
+        return flag ? Color.black : colorVector.elementAt(i);
     }
 
     Vector shapes(int i) {
@@ -286,13 +283,15 @@ public class FaceGUI extends BaseClass {
 
     public int addFaces(int i, double d, double d1, double d2, String s) {
         int index = typeVector.size();
-        typeVector.addElement(new Integer(i));
+        typeVector.addElement(i);
         colorVector.addElement(new Color((float) d1, (float) d1, (float) d1));
         shapesVector.addElement(shapeVector = new Vector());
         if (s != null) {
-            for (StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();) {
+            for (//noinspection UseOfStringTokenizer
+                    StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();) {
                 shapeVector.addElement(face = new Vector());
-                for (StringTokenizer stringtokenizer1 = new StringTokenizer(stringtokenizer.nextToken(), ","); stringtokenizer1.hasMoreTokens(); face.addElement(new Integer(stringtokenizer1.nextToken())));
+                for (//noinspection UseOfStringTokenizer
+                        StringTokenizer stringtokenizer1 = new StringTokenizer(stringtokenizer.nextToken(), ","); stringtokenizer1.hasMoreTokens(); face.addElement(new Integer(stringtokenizer1.nextToken())));
             }
 
         }
@@ -301,27 +300,30 @@ public class FaceGUI extends BaseClass {
 
     public void assymetric() {
         int i = flexVector.size() - 1;
-        flexSymmetryVector.setElementAt(new Integer(1), i);
+        flexSymmetryVector.setElementAt(1, i);
     }
 
     public void flex(String s, String s1, String s2) {
         flexNamesVector.addElement(s);
-        flexSymmetryVector.addElement(new Integer(-1));
+        flexSymmetryVector.addElement(-1);
         flexVector.addElement(flx = new Vector());
-        for (StringTokenizer stringtokenizer = new StringTokenizer(s1); stringtokenizer.hasMoreTokens(); ixyz.addElement(new Integer(stringtokenizer.nextToken()))) {
+        for (//noinspection UseOfStringTokenizer
+                StringTokenizer stringtokenizer = new StringTokenizer(s1); stringtokenizer.hasMoreTokens(); ixyz.addElement(new Integer(stringtokenizer.nextToken()))) {
             flx.addElement(ixyz = new Vector());
         }
 
         int i = 0;
-        for (StringTokenizer stringtokenizer1 = new StringTokenizer(s2); stringtokenizer1.hasMoreTokens();) {
+        for (//noinspection UseOfStringTokenizer
+                StringTokenizer stringtokenizer1 = new StringTokenizer(s2); stringtokenizer1.hasMoreTokens();) {
             ixyz = (Vector) flx.elementAt(i++);
-            for (StringTokenizer stringtokenizer2 = new StringTokenizer(stringtokenizer1.nextToken(), ","); stringtokenizer2.hasMoreTokens(); ixyz.addElement(new Double(stringtokenizer2.nextToken())));
+            for (//noinspection UseOfStringTokenizer
+                    StringTokenizer stringtokenizer2 = new StringTokenizer(stringtokenizer1.nextToken(), ","); stringtokenizer2.hasMoreTokens(); ixyz.addElement(new Double(stringtokenizer2.nextToken())));
         }
 
     }
 
     public double[][] getTargets() {
-        double ad[][] = new double[2][flexTarget[0].length];
+        double[][] ad = new double[2][flexTarget[0].length];
         for (int i = 0; i < 2; i++) {
             System.arraycopy(flexTarget[i], 0, ad[i], 0, flexTarget[0].length);
 
@@ -330,7 +332,7 @@ public class FaceGUI extends BaseClass {
         return ad;
     }
 
-    public void setTargets(double ad[][]) {
+    public void setTargets(double[][] ad) {
         for (int i = 0; i < 2; i++) {
             System.arraycopy(ad[i], 0, flexTarget[i], 0, flexTarget[0].length);
 
@@ -394,9 +396,10 @@ public class FaceGUI extends BaseClass {
                 break;
         }
     }
-    int ai[] = new int[100];
-    int ai1[] = new int[100];
-    int ai2[] = new int[100];
+
+    int[] ai = new int[100];
+    int[] ai1 = new int[100];
+    int[] ai2 = new int[100];
 
     @Override
     public void render(Graphics g) {
@@ -411,7 +414,7 @@ public class FaceGUI extends BaseClass {
                 vertexArray = new double[nVertices][3];
                 for (int i = 0; i < nVertices; i++) {
                     for (int k = 0; k < 3; k++) {
-                        vertexArray[i][k] = ((Double) vertexVector.elementAt(3 * i + k)).doubleValue();
+                        vertexArray[i][k] = (Double) vertexVector.elementAt(3 * i + k);
                     }
 
                 }
@@ -425,7 +428,7 @@ public class FaceGUI extends BaseClass {
                         face = (Vector) shapeVector.elementAt(j1);
                         shape[l][j1] = new int[face.size()];
                         for (int i2 = 0; i2 < shape[l][j1].length; i2++) {
-                            shape[l][j1][i2] = ((Integer) face.elementAt(i2)).intValue();
+                            shape[l][j1][i2] = (Integer) face.elementAt(i2);
                         }
 
                     }
@@ -442,25 +445,25 @@ public class FaceGUI extends BaseClass {
                     flx = (Vector) flexVector.elementAt(k1);
                     flexData[k1] = new double[flx.size()][];
                     flexShape[k1] = new int[flx.size()];
-                    flexSymmetry[k1] = ((Integer) flexSymmetryVector.elementAt(k1)).intValue();
+                    flexSymmetry[k1] = (Integer) flexSymmetryVector.elementAt(k1);
                     for (int j2 = 0; j2 < flexShape[k1].length; j2++) {
                         ixyz = (Vector) flx.elementAt(j2);
-                        flexShape[k1][j2] = ((Integer) ixyz.elementAt(0)).intValue();
+                        flexShape[k1][j2] = (Integer) ixyz.elementAt(0);
                         flexData[k1][j2] = new double[3];
                         for (int k2 = 1; k2 < ixyz.size(); k2++) {
-                            flexData[k1][j2][k2 - 1] = ((Double) ixyz.elementAt(k2)).doubleValue();
+                            flexData[k1][j2][k2 - 1] = (Double) ixyz.elementAt(k2);
                         }
 
                     }
 
                 }
 
-                flexTarget[0][3] = flexTarget[1][3] = -1D;
-                double ad[] = {
-                    0.080000000000000002D, 0.040000000000000001D, 0, 0, 0, 0.10000000000000001D, 0.070000000000000007D, 0.070000000000000007D, 0.14999999999999999D
+                flexTarget[0][3] = flexTarget[1][3] = -1.0D;
+                double[] ad = {
+                        0.080000000000000002D, 0.040000000000000001D, 0, 0, 0, 0.10000000000000001D, 0.070000000000000007D, 0.070000000000000007D, 0.14999999999999999D
                 };
-                double ad1[] = {
-                    0.25D, 0.25D, 0, 0, 0, 0.5D, 0.5D, 0.5D, 0.5D
+                double[] ad1 = {
+                        0.25D, 0.25D, 0, 0, 0, 0.5D, 0.5D, 0.5D, 0.5D
                 };
                 jitterAmpl = new double[nFlexes];
                 jitterFreq = new double[nFlexes];
@@ -489,12 +492,12 @@ public class FaceGUI extends BaseClass {
             double d1 = 1.0D;
             long l3 = System.currentTimeMillis();
             long l4 = l3 - lastTime;
-            double d2 = (d1 * 1000D) / (double) l4;
+            double d2 = (d1 * 1000.0D) / l4;
             double d3 = 1.0D - Math.pow(1.0D - d, 1.0D / d2);
             frameCount++;
             long l5 = l3 / 1000L - lastTime / 1000L;
             if (l5 > 0L) {
-                dispCount = (int) ((long) frameCount / l5);
+                dispCount = (int) (frameCount / l5);
                 frameCount = 0;
             }
             lastTime = l3;
@@ -502,14 +505,14 @@ public class FaceGUI extends BaseClass {
                 for (int j3 = 0; j3 < j; j3++) {
                     flexValue[i3][j3] += d3 * (flexTarget[i3][j3] - flexValue[i3][j3]);
                     if (addNoise && jitterAmpl[j3] != 0.0D) {
-                        flexValue[i3][j3] += jitterAmpl[j3] * ImprovMath.noise(jitterFreq[j3] * t + (double) (10 * j3));
+                        flexValue[i3][j3] += jitterAmpl[j3] * ImprovMath.noise(jitterFreq[j3] * t + (10 * j3));
                     }
                     t += 0.0050000000000000001D;
                 }
 
             }
 
-            blinkValue = addNoise ? pulse(t / 2D + ImprovMath.noise(t / 1.5D) + 0.5D * ImprovMath.noise(t / 3D), 0.050000000000000003D) : 0.0D;
+            blinkValue = addNoise ? pulse(t / 2.0D + ImprovMath.noise(t / 1.5D) + 0.5D * ImprovMath.noise(t / 3.0D), 0.050000000000000003D) : 0.0D;
             doRender(g, flexValue, blinkValue, isVectors, doShade, shiftAxis);
         } catch (Exception e) {
             System.err.println(e);
@@ -517,7 +520,7 @@ public class FaceGUI extends BaseClass {
         }
     }
 
-    void doRender(Graphics g, double ad[][], double d, boolean flag, boolean flag1, boolean flag2) {
+    void doRender(Graphics g, double[][] ad, double d, boolean flag, boolean flag1, boolean flag2) {
         try {
             synchronized (pts) {
                 for (int i = 0; i < 2; i++) {
@@ -540,7 +543,7 @@ public class FaceGUI extends BaseClass {
                         if (k == 4 && d == 1.0D) {
                             d2 = d4 = 1.0D;
                         }
-                        pts[0][i1][0] += d2 * flexData[k][l][0] * (double) flexSymmetry[k];
+                        pts[0][i1][0] += d2 * flexData[k][l][0] * flexSymmetry[k];
                         pts[1][i1][0] += d4 * flexData[k][l][0];
                         pts[0][i1][1] += d2 * flexData[k][l][1];
                         pts[1][i1][1] += d4 * flexData[k][l][1];
@@ -559,15 +562,15 @@ public class FaceGUI extends BaseClass {
                 double d6 = -0.20000000000000001D * d1 - 0.10000000000000001D * spin;
                 d6 = (d6 + 3.1415926535897931D + 3141.5926535897929D) % 6.2831853071795862D - 3.1415926535897931D;
                 Matrix3D matrix3d = new Matrix3D();
-                matrix3d.scale((double) super.height / 110D, (double) (-super.height) / 110D, (double) super.height / 110D);
-                matrix3d.translate(35D, -80D, flag2 ? 20 : 5);
+                matrix3d.scale(super.height / 110.0D, (-super.height) / 110.0D, super.height / 110.0D);
+                matrix3d.translate(35.0D, -80.0D, flag2 ? 20 : 5);
                 matrix3d.rotateX(-0.20000000000000001D * d3);
                 matrix3d.rotateY(d6);
                 matrix3d.rotateZ(-0.20000000000000001D * d5);
-                matrix3d.translate(0.0D, -30D, flag2 ? -20 : -5);
+                matrix3d.translate(0.0D, -30.0D, flag2 ? -20 : -5);
                 Matrix3D matrix3d1 = new Matrix3D();
-                matrix3d1.scale((double) super.height / 110D, (double) (-super.height) / 110D, (double) super.height / 110D);
-                matrix3d1.translate(35D, -110D, 0.0D);
+                matrix3d1.scale(super.height / 110.0D, (-super.height) / 110.0D, super.height / 110.0D);
+                matrix3d1.translate(35.0D, -110.0D, 0.0D);
                 Vector3D vector3d = new Vector3D();
                 int j1 = d6 >= 0.0D ? 0 : 1;
                 for (int k1 = 0; k1 <= 1;) {
@@ -621,7 +624,7 @@ public class FaceGUI extends BaseClass {
                                         float radius = l1 == 14 ? pupilSize : eyeballSize;
                                         
                                         
-                                        float rscale = super.height/220f;
+                                        float rscale = super.height/ 220.0f;
                                         int cr = (int)(radius * rscale);
                                                          
                                         int cx = ai[0] - cr/2;
@@ -634,7 +637,7 @@ public class FaceGUI extends BaseClass {
                                         break;
 
                                     case 1: // '\001'   
-                                        if (!flag && Math.abs(d6) <= 2D && (d6 <= 1.1000000000000001D || j1 != 0) && (d6 >= -1.1000000000000001D || j1 != 1)) {
+                                        if (!flag && Math.abs(d6) <= 2.0D && (d6 <= 1.1000000000000001D || j1 != 0) && (d6 >= -1.1000000000000001D || j1 != 1)) {
                                             g.drawPolygon(ai, ai1, k2);
                                         }
                                         break;
@@ -692,7 +695,7 @@ public class FaceGUI extends BaseClass {
         }
     }
 
-    int area(int ai[], int ai1[], int i) {
+    int area(int[] ai, int[] ai1, int i) {
         int j = 0;
         for (int l = 0; l < i; l++) {
             int k = (l + 1) % i;
@@ -703,10 +706,10 @@ public class FaceGUI extends BaseClass {
     }
 
     double pulse(double d, double d1) {
-        return (double) (d - (double) (int) d >= d1 ? 0 : 1);
+        return (d - (int) d >= d1 ? 0 : 1);
     }
 
-    int getShade(int ai[], int ai1[], int ai2[]) {
+    int getShade(int[] ai, int[] ai1, int[] ai2) {
         int i = ai[1] - ai[0];
         int j = ai1[1] - ai1[0];
         int k = ai2[1] - ai2[0];

@@ -5,6 +5,7 @@ import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Product extends Operation {
     
@@ -48,7 +49,7 @@ public class Product extends Operation {
             return Sum.make(Product.make(exprs.get(0), exprs.get(1).deriv(respected)), Product.make(exprs.get(0).deriv(respected), exprs.get(1)));
         }
         // if (debug) System.err.println(ArrayLists.dumpAll(exprs));
-        return Product.make(new Product(new ArrayList<Expr>(exprs.subList(0, exprs.size() - 1))), exprs.get(exprs.size() - 1), false).deriv(respected);
+        return Product.make(new Product(new ArrayList<>(exprs.subList(0, exprs.size() - 1))), exprs.get(exprs.size() - 1), false).deriv(respected);
     }
     
     public ArrayList<Expr> getExprs() {
@@ -62,7 +63,7 @@ public class Product extends Operation {
             Expr conditioned = other.conditioned();
             if (conditioned != null) return conditioned;
 
-            ArrayList<Expr> bottoms = new ArrayList<Expr>();
+            ArrayList<Expr> bottoms = new ArrayList<>();
             for (int i = 0; i < other.exprs.size(); i++) {
                 Expr expr = other.exprs.get(i);
                 if (expr instanceof Division) {
@@ -73,8 +74,8 @@ public class Product extends Operation {
             if (!bottoms.isEmpty()) return Division.make(Product.make(other.exprs), Product.make(bottoms));
 
 
-            ArrayList<Double> numbers = new ArrayList<Double>();
-            ArrayList<Expr> constants = new ArrayList<Expr>();
+            ArrayList<Double> numbers = new ArrayList<>();
+            ArrayList<Expr> constants = new ArrayList<>();
             for (int i = 0; i < other.exprs.size(); i++) {
                 Expr expr = other.exprs.get(i);
                 // if (debug) System.err.println("simplify: on expr: " + expr);
@@ -110,17 +111,14 @@ public class Product extends Operation {
                 }
             }
 
-            while (numbers.remove(1d)) {
+            while (numbers.remove(1.0d)) {
             }
-            if (numbers.isEmpty()) numbers.add(1d);
+            if (numbers.isEmpty()) numbers.add(1.0d);
 
             if (other.exprs.isEmpty() && numbers.size() == 1) return Num.make(numbers.get(0));
 
             if (!(numbers.size() == 1 && numbers.get(0) == 1)) {
-                ArrayList<Expr> tmp = new ArrayList<Expr>();
-                for (Double number : numbers) {
-                    tmp.add(Num.make(number));
-                }
+                ArrayList<Expr> tmp = numbers.stream().map(Num::make).collect(Collectors.toCollection(ArrayList::new));
                 other.exprs.addAll(0, tmp);
             }
 
@@ -167,10 +165,7 @@ public class Product extends Operation {
                             continue simplify;
                         }
                         if (!(expr instanceof Operation) && expr2 instanceof Sum) {
-                            ArrayList<Expr> products = new ArrayList<Expr>();
-                            for (Expr addend : ((Operation) expr2).getExprs()) {
-                                products.add(Product.make(expr, addend));
-                            }
+                            ArrayList<Expr> products = ((Operation) expr2).getExprs().stream().map(addend -> Product.make(expr, addend)).collect(Collectors.toCollection(ArrayList::new));
                             other.exprs.set(j, Sum.make(products));
                             other.exprs.remove(i);
                             continue simplify;
@@ -187,7 +182,7 @@ public class Product extends Operation {
         if (exprs.size() == 1) return exprs.get(0).pretty();
         
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         boolean nowMinus = false;
         Expr lastExpr = null;
         boolean parens = false;
@@ -204,8 +199,7 @@ public class Product extends Operation {
             // if (debug) System.err.println("Product toString(): for expr=" + expr + ", exprLevelLeft=" + exprLevelLeft + ", exprLevelRight=" + exprLevelRight);
 
             boolean lastParens = parens;
-            parens = false;
-            if (i != 0 && exprLevelLeft != null && classOrder > exprLevelLeft) parens = true;
+            parens = i != 0 && exprLevelLeft != null && classOrder > exprLevelLeft;
             if (i != exprs.size() - 1 && exprLevelRight != null && classOrder > exprLevelRight) parens = true;
             
             //if (exprClassOrder != null && (exprClassOrder < classOrder || (i != 0 && exprClassOrder == classOrder))) parens = true;
@@ -214,13 +208,7 @@ public class Product extends Operation {
             String exprString = expr.pretty();
             
             if (i != 0) {
-                if (lastMinus) {}
-                else if (parens || lastParens || exprString.charAt(0) == '(') {}
-                else if (lastExpr.isNumberPrinted() && (expr instanceof Var || expr instanceof Constant || expr.isFunction() || !(expr.firstAtom() instanceof Num)) && !(expr instanceof Num)) {}
-                /*else if ((lastExpr instanceof Var || lastExpr instanceof Constant) && !(lastExpr instanceof Number)
-                      && (    expr instanceof Var ||     expr instanceof Constant) && !(    expr instanceof Number)) {
-                    string = string.concat(" ");
-                }*/
+                if (lastMinus || parens || lastParens || exprString.charAt(0) == '(' || lastExpr.isNumberPrinted() && (expr instanceof Var || expr instanceof Constant || expr.isFunction() || !(expr.firstAtom() instanceof Num)) && !(expr instanceof Num)) {}
                 else {
                     string = string.concat("*");
                 }
@@ -249,19 +237,19 @@ public class Product extends Operation {
         
         // if (debug) System.err.println("Product: equalsExpr: " + dump() + " =? " + expr);
         ArrayList<Expr> otherExprs = ((Operation) expr).getExprs();
-        for (Expr expr2 : exprs) {
-            // if (debug) System.err.println("Product: equalsExpr: expr2: " + expr2);
-            for (Expr otherExpr2 : otherExprs) {
+        // if (debug) System.err.println("Product: equalsExpr: expr2: " + expr2);
+        for (Expr expr2 : exprs)
+            for (int i = 0; i < 1; i++) {
+                Expr otherExpr2 = otherExprs.get(i);
                 // if (debug) System.err.println("Product: equalsExpr: otherExpr2: " + otherExpr2);
                 if (expr2.equalsExpr(otherExpr2)) {
-                // if (debug) System.err.println("Product: equalsExpr: " + expr2 + " == " + otherExpr2);
+                    // if (debug) System.err.println("Product: equalsExpr: " + expr2 + " == " + otherExpr2);
                     otherExprs.remove(otherExpr2);
                     break;
                 }
                 // if (debug) System.err.println("Product: equalsExpr: " + expr2 + " != " + otherExpr2);
                 return false;
             }
-        }
         
         return true;
     }

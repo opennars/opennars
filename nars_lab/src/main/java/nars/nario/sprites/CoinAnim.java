@@ -15,7 +15,7 @@ public class CoinAnim extends Sprite
         x = xTile * 16;
         y = yTile * 16 - 16;
         xa = 0;
-        ya = -6f;
+        ya = -6.0f;
         xPic = 0;
         yPic = 2;
     }

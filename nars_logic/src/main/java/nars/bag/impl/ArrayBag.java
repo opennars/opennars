@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  */
 public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> implements Iterable<V> {
 
-    public final static Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.average;
+    public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.average;
 
     /**
      * mapping from key to item
@@ -37,12 +37,11 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     public ArrayBag(SortedIndex<V> items, Map<K,V> map) {
-        super();
 
         items.clear();
 
         this.items = items;
-        this.index = new ArrayMapping(map, items);
+        index = new ArrayMapping(map, items);
     }
 
 //    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
@@ -91,7 +90,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The number of items
      */
     @Override
-    final public int size() {
+    public final int size() {
         /*if (Global.DEBUG)
             validate();*/
         return items.size();
@@ -150,7 +149,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return Whether the Item is in the Bag
      */
     @Override
-    public boolean contains(final V it) {
+    public boolean contains(V it) {
         return index.containsValue(it);
     }
 
@@ -161,7 +160,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The Item with the given key
      */
     @Override
-    public V get(final K key) {
+    public V get(K key) {
         //TODO combine into one Map operation
         V v = index.get(key);
         if (v!=null && v.getBudget().isDeleted()) {
@@ -172,7 +171,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    public V remove(final K key) {
+    public V remove(K key) {
         return index.remove(key);
     }
 
@@ -183,11 +182,11 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    final public V pop() {
+    public final V pop() {
         return peekNext(true);
     }
 
-    abstract public V peekNext(final boolean remove);
+    public abstract V peekNext(boolean remove);
 
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -196,12 +195,12 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The overflow Item, or null if nothing displaced
      */
     @Override
-    public V put(final V i) {
+    public V put(V i) {
 
 
-        final ArrayMapping<K, V> index = this.index;
+        ArrayMapping<K, V> index = this.index;
 
-        final V overflow = index.putKey(i.name(), i);
+        V overflow = index.putKey(i.name(), i);
 
 
         if (overflow!=null) {
@@ -255,25 +254,25 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         return (size() >= capacity());
     }
 
-    final protected V removeLowest() {
+    protected final V removeLowest() {
         if (isEmpty()) return null;
         return removeItem(size()-1);
     }
-    final protected V removeHighest() {
+    protected final V removeHighest() {
         if (isEmpty()) return null;
         return removeItem(0);
     }
 
-    final public V highest() {
+    public final V highest() {
         if (isEmpty()) return null;
         return getItem(0);
     }
-    final public V lowest() {
+    public final V lowest() {
         if (isEmpty()) return null;
         return getItem(size()-1);
     }
 
-    final V getItem(final int index) {
+    final V getItem(int index) {
         return items.get(index);
     }
 
@@ -282,9 +281,9 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      *
      * @return The first Item
      */
-    final V removeItem(final int index) {
+    final V removeItem(int index) {
 
-        final V ii = getItem(index);
+        V ii = getItem(index);
         /*if (ii == null)
             throw new RuntimeException("invalid index: " + index + ", size=" + size());*/
 
@@ -296,7 +295,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    final public int capacity() {
+    public final int capacity() {
         return items.capacity();
     }
 
@@ -306,22 +305,22 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     @Override
-    final public Set<K> keySet() {
+    public final Set<K> keySet() {
         return index.keySet();
     }
 
     @Override
-    final public Collection<V> values() {
+    public final Collection<V> values() {
         return items; //index.values();
     }
 
     @Override
-    final public Iterator<V> iterator() {
+    public final Iterator<V> iterator() {
         return items.iterator();
     }
 
     @Override
-    public final void forEach(final Consumer<? super V> action) {
+    public final void forEach(Consumer<? super V> action) {
 
         items.forEach(action);
 //
@@ -336,9 +335,9 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
 
     /** default implementation; more optimal implementations will avoid instancing an iterator */
     @Override
-    public void forEach(final int max, final Consumer<? super V> action) {
-        final List<V> l = items.getList();
-        final int n = Math.min(l.size(), max);
+    public void forEach(int max, Consumer<? super V> action) {
+        List<V> l = items.getList();
+        int n = Math.min(l.size(), max);
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex
         for (int i = 0; i < n; i++){
             action.accept(l.get(i));
@@ -390,7 +389,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         }
 
         @Override
-        protected V removeItem(final V removed) {
+        protected V removeItem(V removed) {
 
             if (items.remove(removed)) {
                 return removed;
@@ -400,7 +399,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         }
 
         @Override
-        protected V addItem(final V i) {
+        protected V addItem(V i) {
 
             return items.insert(i);
         }

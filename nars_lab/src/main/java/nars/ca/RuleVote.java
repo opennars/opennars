@@ -25,6 +25,7 @@ public class RuleVote {
 	// Parse the rule string
 	// Example: '46789'
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i, iNum = 1;
@@ -57,7 +58,7 @@ public class RuleVote {
 
 	// ----------------------------------------------------------------
 	//
-	public void InitFromPrm(boolean rulSB[]) {
+	public void InitFromPrm(boolean[] rulSB) {
         System.arraycopy(rulSB, 0, RulesSB, 0, 10);
 		Validate(); // now correct parameters
 	}
@@ -90,11 +91,11 @@ public class RuleVote {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells
@@ -130,21 +131,15 @@ public class RuleVote {
 				if (bOldVal == 0) // was dead
 				{
 					if (RulesSB[iCnt]) // rules for birth
-						if (ColoringMethod == 1) // standard
-							bNewVal = 1; // birth
-						else
-							bNewVal = (short) (mjb.Cycle
-									% (mjb.StatesCount - 1) + 1); // birth
+						bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
+								% (mjb.StatesCount - 1) + 1);
 				} else // was alive
 				{
 					if (RulesSB[iCnt]) // rules for surviving
 					{
 						if (ColoringMethod == 1) // standard
 						{
-							if (bOldVal < (mjb.StatesCount - 1))
-								bNewVal = (short) (bOldVal + 1); // getting older...
-							else
-								bNewVal = (short) (mjb.StatesCount - 1);
+							bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
 						} else {
 							// alternate coloring - cells remain not changed
 						}

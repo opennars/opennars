@@ -33,10 +33,10 @@ public class PropertyUtils {
 			Class<? extends PropertyEditor> editClass = null;
 			String category = a.category();
 
-			if (a.name().length() == 0)
+			if (a.name().isEmpty())
 				displayName = f.getName();
 
-			if (a.description().length() == 0) {
+			if (a.description().isEmpty()) {
 				desc = displayName;
 			}
 
@@ -44,7 +44,7 @@ public class PropertyUtils {
 				editClass = a.editorClass();
 			}
 
-			if (category == null || category.length() == 0) {
+			if (category == null || category.isEmpty()) {
 				category = "Base";
 			}
 
@@ -68,7 +68,7 @@ public class PropertyUtils {
 			pp.setEditable(a.editable());
 			pp.setDisplayName(displayName);
 			pp.setEditor(editClass);
-			if (category != null && category.length() > 0) {
+			if (category != null && !category.isEmpty()) {
 				pp.setCategory(category);
 			}
 			return pp;
@@ -78,16 +78,12 @@ public class PropertyUtils {
 
 	private static Field[] getFields(Object o) {
 		Class<?> c;
-		if (o instanceof Class<?>)
-			c = (Class<?>) o;
-		else
-			c = o.getClass();
+		c = o instanceof Class<?> ? (Class<?>) o : o.getClass();
 
 		HashSet<Field> fields = new HashSet<>();
 		
 		while (c != Object.class) {
-			for (Field f : c.getFields())
-				fields.add(f);
+			Collections.addAll(fields, c.getFields());
 			for (Field f : c.getDeclaredFields()) {
 				f.setAccessible(true);
 				fields.add(f);
@@ -100,7 +96,7 @@ public class PropertyUtils {
 
 	public static LinkedHashMap<String, SerializableProperty> getProperties(
 			Object obj, boolean editable) {
-		LinkedHashMap<String, SerializableProperty> props = new LinkedHashMap<String, SerializableProperty>();
+		LinkedHashMap<String, SerializableProperty> props = new LinkedHashMap<>();
 
 		for (Field f : getFields(obj)) {
 			SerializableProperty pp = createProperty(obj, f, editable);
@@ -198,7 +194,6 @@ public class PropertyUtils {
 									propertyValue));
 			} catch (Exception e) {
 				e.printStackTrace();
-				continue;
 			}
 		}
 
@@ -223,19 +218,17 @@ public class PropertyUtils {
 
 		StringWriter writer = new StringWriter();
 		p.store(writer, null);
-		return writer.toString().replaceAll("^\\#.*", "").trim()+"\n";
+		return writer.toString().replaceAll("^\\#.*", "").trim()+ '\n';
 	}
 	
 	public static void setProperties(Object obj, Properties p,
 			boolean triggerEvents) {
 		LinkedHashMap<String, SerializableProperty> props = getProperties(obj,
 				true);
-		for (Entry<Object, Object> entry : p.entrySet()) {
-			if (props.containsKey(entry.getKey())) {
-				SerializableProperty sp = props.get(entry.getKey());
-				sp.fromString("" + entry.getValue());
-			}
-		}
+		p.entrySet().stream().filter(entry -> props.containsKey(entry.getKey())).forEach(entry -> {
+			SerializableProperty sp = props.get(entry.getKey());
+			sp.fromString("" + entry.getValue());
+		});
 		setProperties(obj, props, triggerEvents);
 	}
 
@@ -279,9 +272,9 @@ public class PropertyUtils {
 	public static void editProperties(Window parent, Object obj,
 			boolean editable) {
 
-		final PropertySheetPanel psp = getPropsPanel(obj, editable);
+		PropertySheetPanel psp = getPropsPanel(obj, editable);
 
-		final PropertySheetDialog propertySheetDialog = createWindow(parent,
+		PropertySheetDialog propertySheetDialog = createWindow(parent,
 				editable, psp, "Properties of "
 						+ obj.getClass().getSimpleName());
 
@@ -299,8 +292,8 @@ public class PropertyUtils {
 	}
 
 	public static PropertySheetDialog createWindow(Window parent,
-			boolean editable, final PropertySheetPanel psp, String title) {
-		final PropertySheetDialog propertySheetDialog;
+			boolean editable, PropertySheetPanel psp, String title) {
+		PropertySheetDialog propertySheetDialog;
 		if (parent instanceof Dialog) {
 			Dialog pDialog = (Dialog) parent;
 			propertySheetDialog = new PropertySheetDialog(pDialog);

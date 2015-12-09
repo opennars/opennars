@@ -53,12 +53,9 @@ public class VarPattern extends Variable {
     }
 
     public Term apply(Subst f, boolean fullMatch) {
-        final Term y = f.getXY(this);
+        Term y = f.getXY(this);
         if (y == null) {
-            if (fullMatch)
-                return null;
-            else
-                return this;
+            return fullMatch ? null : this;
         }
         return y;
     }

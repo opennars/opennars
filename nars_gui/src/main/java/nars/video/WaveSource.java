@@ -8,9 +8,9 @@ public interface WaveSource {
     /**
      * returns the buffer size, in samples
      */
-    public int start();
+    int start();
 
-    public void stop();
+    void stop();
 
-    public int next(float[] buffer);
+    int next(float[] buffer);
 }

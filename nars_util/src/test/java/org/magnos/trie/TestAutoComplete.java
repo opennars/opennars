@@ -12,7 +12,7 @@ public class TestAutoComplete
    public static void main(String[] args)
    {
       Scanner dictionaryInput = new Scanner( TestAutoComplete.class.getResourceAsStream( "dictionary.txt" ) );
-      List<String> dictionary = new ArrayList<String>();
+      List<String> dictionary = new ArrayList<>();
 
       long t0 = System.nanoTime();
       

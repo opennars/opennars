@@ -45,7 +45,8 @@ public class PoleBalancing2D implements RLEnvironment {
 
     @Override
     public double[] observe() {
-        double[] o = new double[]{
+        //System.out.println(Arrays.toString(o));
+        return new double[]{
             (agentPoint.x)/(maxX),
             //agentPoint.y/600.0,
             (pendulumPoint.x)/(maxX),
@@ -57,8 +58,6 @@ public class PoleBalancing2D implements RLEnvironment {
             //pendulumPoint.vx*dt,
             //pendulumPoint.vy*dt
         };
-        //System.out.println(Arrays.toString(o));
-        return o;
     }
 
     @Override

@@ -28,21 +28,21 @@ public final class BoundedDownJoinMatcher
 {
     private final int minCycles;
 
-    public BoundedDownJoinMatcher(final Rule joined, final Rule joining,
-        final int minCycles)
+    public BoundedDownJoinMatcher(Rule joined, Rule joining,
+                                  int minCycles)
     {
         super(joined, joining);
         this.minCycles = minCycles;
     }
 
     @Override
-    protected boolean runAgain(final int cycles)
+    protected boolean runAgain(int cycles)
     {
         return true;
     }
 
     @Override
-    protected boolean enoughCycles(final int cycles)
+    protected boolean enoughCycles(int cycles)
     {
         return cycles >= minCycles;
     }

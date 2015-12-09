@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
 
-    private ConcurrentLinkedQueue<Reference<T>> propertyChangeListeners = new ConcurrentLinkedQueue<Reference<T>>();
+    private ConcurrentLinkedQueue<Reference<T>> propertyChangeListeners = new ConcurrentLinkedQueue<>();
 
     private class Itr implements Iterator<T> {
 
@@ -17,45 +17,45 @@ public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
 
         @SuppressWarnings("synthetic-access")
         public Itr() {
-            this.iterator = BeanListenerSupportSoftRef.this.propertyChangeListeners.iterator();
+            iterator = propertyChangeListeners.iterator();
             prefetch();
         }
 
         private void prefetch() {
-            while (this.iterator.hasNext()) {
-                this.prefetched = this.iterator.next().get();
-                if (this.prefetched == null) {
-                    this.iterator.remove();
+            while (iterator.hasNext()) {
+                prefetched = iterator.next().get();
+                if (prefetched == null) {
+                    iterator.remove();
                 } else {
                     return;
                 }
             }
-            this.prefetched = null;
+            prefetched = null;
         }
 
         public boolean hasNext() {
-            return this.prefetched != null;
+            return prefetched != null;
         }
 
         public T next() {
-            final T next = this.prefetched;
+            T next = prefetched;
             prefetch();
             return next;
         }
 
         public void remove() {
-            this.iterator.remove();
+            iterator.remove();
         }
 
     }
 
-    public void add(final T t) {
-        this.propertyChangeListeners.add(new WeakReference<T>(t));
+    public void add(T t) {
+        propertyChangeListeners.add(new WeakReference<>(t));
     }
 
-    public void remove(final T object) {
-        for (final Iterator<T> it = iterator(); it.hasNext();) {
-            final T listener = it.next();
+    public void remove(T object) {
+        for (Iterator<T> it = iterator(); it.hasNext();) {
+            T listener = it.next();
             // yes! we do want to check reference equality here
             if (listener == object) {
                 it.remove();
@@ -69,9 +69,8 @@ public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
 
     @Override
     public BeanListenerSupportSoftRef<T> clone() throws CloneNotSupportedException {
-        @SuppressWarnings("unchecked")
-        final BeanListenerSupportSoftRef<T> clone = (BeanListenerSupportSoftRef<T>) super.clone();
-        clone.propertyChangeListeners = new ConcurrentLinkedQueue<Reference<T>>(this.propertyChangeListeners);
+        @SuppressWarnings("unchecked") BeanListenerSupportSoftRef<T> clone = (BeanListenerSupportSoftRef<T>) super.clone();
+        clone.propertyChangeListeners = new ConcurrentLinkedQueue<>(propertyChangeListeners);
         return clone;
     }
 

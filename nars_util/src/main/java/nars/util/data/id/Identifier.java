@@ -22,7 +22,7 @@ import static nars.util.utf8.Utf8.trim;
  * memory but it is faster to compare and hash, and may hash with
  * better entropy.
  */
-abstract public class Identifier<E extends Identifier> implements Comparable, Serializable {
+public abstract class Identifier<E extends Identifier> implements Comparable, Serializable {
 
     /** produces the character array by invoking the append()
      *  method that certain subclasses use to form their
@@ -54,7 +54,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
     /** use this when this class must generate an output by a writer
      *  this is the default general implementation.  */
-    public char[] chars(final boolean pretty) {
+    public char[] chars(boolean pretty) {
         return charsFromWriter(pretty);
     }
 
@@ -71,7 +71,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
 
     @Override
-    abstract public boolean equals(final Object x);
+    public abstract boolean equals(Object x);
 
 //    public void share(Identifier ix) {
 //        Identified localHost = host;
@@ -142,18 +142,18 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 //    }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    public String toString(final boolean pretty) {
+    public String toString(boolean pretty) {
         char[] c = chars(pretty);
         return new String(c);
     }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    public StringBuilder toStringBuilder(final boolean pretty) {
+    public StringBuilder toStringBuilder(boolean pretty) {
         char[] c = chars(pretty);
         return new StringBuilder(c.length).append(c);
     }
 
-    public CharSequence toCharSequence(final boolean pretty) {
+    public CharSequence toCharSequence(boolean pretty) {
         char[] c = chars(pretty, true);
         return new CharArrayRope(c);
     }
@@ -172,7 +172,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
         return Utf8.toUtf8(chars(false));
     }
 
-    public byte byteAt(final int i) {
+    public byte byteAt(int i) {
         byte[] b = bytes();
         if (b == null) return 0;
         if (b.length <= i) return 0;
@@ -189,7 +189,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     abstract int charsEstimated();
 
     /** frees all associated memory */
-    abstract public void delete();
+    public abstract void delete();
 
     /** WARNING the toCharArray() result may need trimmed for trailing zero's */
     private static class EfficientCharArrayWriter extends CharArrayWriter {

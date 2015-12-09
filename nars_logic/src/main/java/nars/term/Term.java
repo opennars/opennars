@@ -63,23 +63,23 @@ public interface Term extends Termed, Comparable, Termlike {
     <T extends Term> T normalized();
 
 
-    default void recurseTerms(final SubtermVisitor v) {
+    default void recurseTerms(SubtermVisitor v) {
         recurseTerms(v, null);
     }
 
-    void recurseTerms(final SubtermVisitor v, Term parent);
+    void recurseTerms(SubtermVisitor v, Term parent);
 
 
 
     /** recurses all subterms while the result of the predicate is true;
      *  returns true if all true
      *  */
-    boolean and(final Predicate<Term> v);
+    boolean and(Predicate<Term> v);
 
     /** recurses all subterms until the result of the predicate becomes true;
      *  returns true if any true
      * */
-    boolean or(final Predicate<Term> v);
+    boolean or(Predicate<Term> v);
 
 
     /**
@@ -113,7 +113,7 @@ public interface Term extends Termed, Comparable, Termlike {
     /** tests if contains a term in the structural hash
      *  WARNING currently this does not detect presence of pattern variables
      * */
-    default boolean hasAny(final Op op) {
+    default boolean hasAny(Op op) {
 //        if (op == Op.VAR_PATTERN)
 //            return Variable.hasPatternVariable(this);
         return hasAny((1<<op.ordinal()));
@@ -125,8 +125,8 @@ public interface Term extends Termed, Comparable, Termlike {
 //    }
 //
 
-    default boolean hasAny(final int structuralVector) {
-        final int s = structure();
+    default boolean hasAny(int structuralVector) {
+        int s = structure();
         return (s & structuralVector) != 0;
     }
 
@@ -249,7 +249,7 @@ public interface Term extends Termed, Comparable, Termlike {
 
 
 
-    default boolean levelValid(final int nal) {
+    default boolean levelValid(int nal) {
         return op().levelValid(nal);
     }
 
@@ -277,7 +277,7 @@ public interface Term extends Termed, Comparable, Termlike {
 
 
     static Term apply(Term x, Subst f) {
-        final Term y = f.getXY(x);
+        Term y = f.getXY(x);
 
         //attempt 1: apply known substitution
         //containsTerm prevents infinite recursion
@@ -296,7 +296,7 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
     default Term applyOrSelf(FindSubst f) {
-        final Term y = f.getXY(this);
+        Term y = f.getXY(this);
         if (y == null)
             return this;
         return y;

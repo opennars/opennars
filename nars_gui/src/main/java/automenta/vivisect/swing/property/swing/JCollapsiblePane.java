@@ -97,26 +97,26 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Used when generating PropertyChangeEvents for the "animationState" property
    */
-  public final static String ANIMATION_STATE_KEY = "animationState";
+  public static final String ANIMATION_STATE_KEY = "animationState";
   
   /**
    * JCollapsible has a built-in toggle action which can be bound to buttons.
    * Accesses the action through
    * <code>collapsiblePane.getActionMap().get(JCollapsiblePane.TOGGLE_ACTION)</code>.
    */
-  public final static String TOGGLE_ACTION = "toggle";
+  public static final String TOGGLE_ACTION = "toggle";
   
   /**
    * The icon used by the "toggle" action when the JCollapsiblePane is
    * expanded, i.e the icon which indicates the pane can be collapsed.
    */
-  public final static String COLLAPSE_ICON = "collapseIcon";
+  public static final String COLLAPSE_ICON = "collapseIcon";
   
   /**
    * The icon used by the "toggle" action when the JCollapsiblePane is
    * collapsed, i.e the icon which indicates the pane can be expanded.
    */
-  public final static String EXPAND_ICON = "expandIcon";
+  public static final String EXPAND_ICON = "expandIcon";
 
   /**
    * Indicates whether the component is collapsed or expanded
@@ -361,11 +361,7 @@ public class JCollapsiblePane extends JPanel {
      */
     Dimension dim;
     if (!isAnimated()) {
-      if (getContentPane().isVisible()) {
-        dim = getContentPane().getPreferredSize();
-      } else {
-        dim = super.getPreferredSize();
-      }
+      dim = getContentPane().isVisible() ? getContentPane().getPreferredSize() : super.getPreferredSize();
     } else {
       dim = new Dimension(getContentPane().getPreferredSize());
       if (!getContentPane().isVisible() && currentHeight != -1) {
@@ -400,7 +396,7 @@ public class JCollapsiblePane extends JPanel {
    * is enough but there might be cases where the parent parent must be
    * validated.
    */
-  public static interface JCollapsiblePaneContainer {
+  public interface JCollapsiblePaneContainer {
     Container getValidatingContainer();
   }
 
@@ -482,14 +478,14 @@ public class JCollapsiblePane extends JPanel {
           if (finalHeight > 0) {
             wrapper.showContent();   
             validate();
-            JCollapsiblePane.this.firePropertyChange(ANIMATION_STATE_KEY, null,
+            firePropertyChange(ANIMATION_STATE_KEY, null,
               "expanded");
             return;
           }
         }
 
-        final boolean contracting = startHeight > finalHeight;
-        final int delta_y = contracting?-1 * animationParams.deltaY
+        boolean contracting = startHeight > finalHeight;
+        int delta_y = contracting?-1 * animationParams.deltaY
           :animationParams.deltaY;
         int newHeight = wrapper.getHeight() + delta_y;
         if (contracting) {
@@ -502,7 +498,7 @@ public class JCollapsiblePane extends JPanel {
           }
         }
         animateAlpha = (float)newHeight
-          / (float)wrapper.c.getPreferredSize().height;
+          / wrapper.c.getPreferredSize().height;
 
         Rectangle bounds = wrapper.getBounds();
         int oldHeight = bounds.height;
@@ -543,11 +539,7 @@ public class JCollapsiblePane extends JPanel {
     void validate() {
       Container parent = SwingUtilities.getAncestorOfClass(
         JCollapsiblePaneContainer.class, JCollapsiblePane.this);
-      if (parent != null) {
-        parent = ((JCollapsiblePaneContainer)parent).getValidatingContainer();
-      } else {
-        parent = getParent();
-      }
+      parent = parent != null ? ((JCollapsiblePaneContainer) parent).getValidatingContainer() : getParent();
 
       if (parent != null) {
         if (parent instanceof JComponent) {
@@ -570,10 +562,10 @@ public class JCollapsiblePane extends JPanel {
      */
     public void reinit(int startHeight, int stopHeight) {
       synchronized (ANIMATION_MUTEX) {
-        JCollapsiblePane.this.firePropertyChange(ANIMATION_STATE_KEY, null,
+        firePropertyChange(ANIMATION_STATE_KEY, null,
           "reinit");
         this.startHeight = startHeight;
-        this.finalHeight = stopHeight;
+        finalHeight = stopHeight;
         animateAlpha = animationParams.alphaStart;
         currentHeight = -1;
         wrapper.showImage();

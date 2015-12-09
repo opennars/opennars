@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * from: https://github.com/ashkrit/blog/blob/master/src/main/java/objectpool/FastObjectPool.java
  */
-abstract public class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>> {
+public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>> {
 
     private Holder<T>[] objects;
 
@@ -29,10 +29,10 @@ abstract public class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
 
     @Override
     public Holder<T> create() {
-        return new Holder<T>(creation());
+        return new Holder<>(creation());
     }
 
-    abstract public T creation();
+    public abstract T creation();
 
     @SuppressWarnings("unchecked")
     public FastObjectPool(int size) {
@@ -123,12 +123,10 @@ abstract public class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
 
     static {
         try {
-            final PrivilegedExceptionAction<Unsafe> action = new PrivilegedExceptionAction<Unsafe>() {
-                public Unsafe run() throws Exception {
-                    Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-                    theUnsafe.setAccessible(true);
-                    return (Unsafe) theUnsafe.get(null);
-                }
+            PrivilegedExceptionAction<Unsafe> action = () -> {
+                Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+                theUnsafe.setAccessible(true);
+                return (Unsafe) theUnsafe.get(null);
             };
 
             THE_UNSAFE = AccessController.doPrivileged(action);

@@ -38,10 +38,10 @@ public class BookmarkHandler {
      * @return true if the bookmark was not already installed in the chrome, otherwise false.
      */
     public static boolean installBookmark(
-            final WebBrowser chrome,
-            final ContextMenu bookmarksMenu,
-            final String bookmarkName,
-            final String bookmarkUrl
+            WebBrowser chrome,
+            ContextMenu bookmarksMenu,
+            String bookmarkName,
+            String bookmarkUrl
     ) {
         for (MenuItem item : bookmarksMenu.getItems()) {
             if (item.getText().equals(bookmarkName)) {
@@ -49,7 +49,7 @@ public class BookmarkHandler {
             }
         }
 
-        final MenuItem menuItem = new MenuItem(bookmarkName);
+        MenuItem menuItem = new MenuItem(bookmarkName);
         menuItem.setOnAction(actionEvent -> chrome.getBrowser().go(bookmarkUrl));
         bookmarksMenu.getItems().add(menuItem);
 

@@ -62,9 +62,9 @@ public class MJPatternsList extends Dialog implements ActionListener {
 		{
 			for (i = 0; i < vLines.size(); i++) {
 				sBff = ((String) vLines.elementAt(i)).trim();
-				if ((sBff.length() > 0)
+				if ((!sBff.isEmpty())
 						&& !((String) vLines.elementAt(i)).startsWith("//")) {
-					if (sBff.startsWith("#")) // next family of rules
+					if (sBff.length() > 0 && sBff.charAt(0) == '#') // next family of rules
 					{
 						iGame = mjUI.mjr.GetGameIndex(sBff.substring(1));
 					} else // next pattern
@@ -89,7 +89,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 		if (mjUI.mjr.IsGameIdxValid(iGame))
 			for (i = 0; i < vPatterns[iGame].size(); i++)
 				if (((String) vPatterns[iGame].elementAt(i))
-						.startsWith(sRuleName + "/"))
+						.startsWith(sRuleName + '/'))
 					LstFiles.add(((String) vPatterns[iGame].elementAt(i))
 							.substring(sRuleName.length() + 1));
 	}
@@ -101,7 +101,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 			String sItem = LstFiles.getSelectedItem();
 			lblPrompt.setText("Please wait...");
 			try {
-				mjUI.mjo.OpenFile(sGameName + "/" + sRuleName + "/" + sItem);
+				mjUI.mjo.OpenFile(sGameName + '/' + sRuleName + '/' + sItem);
 				lblPrompt.setText("Select the pattern:");
 			} catch (Exception exc) {
 				lblPrompt.setText("Error loading pattern!");

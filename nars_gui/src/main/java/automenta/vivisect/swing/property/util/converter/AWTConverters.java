@@ -67,7 +67,6 @@ import java.util.StringTokenizer;
 public class AWTConverters implements Converter {
 
 	public AWTConverters() {
-		super();
 	}
 
 	public void register(ConverterRegistry registry) {
@@ -95,21 +94,22 @@ public class AWTConverters implements Converter {
 	@Override
 	public Object convert(Class type, Object value) {
 		if (String.class.equals(type)) {
+			//noinspection IfStatementWithTooManyBranches
 			if (value instanceof Rectangle) {
 				return ((Rectangle) value).x
 						+ " "
 						+ ((Rectangle) value).y
-						+ " "
+						+ ' '
 						+ ((Rectangle) value).width
-						+ " "
+						+ ' '
 						+ ((Rectangle) value).height;
 			} else if (value instanceof Insets) {
 				return ((Insets) value).top
 						+ " "
 						+ ((Insets) value).left
-						+ " "
+						+ ' '
 						+ ((Insets) value).bottom
-						+ " "
+						+ ' '
 						+ ((Insets) value).right;
 			} else if (value instanceof Dimension) {
 				return ((Dimension) value).width
@@ -130,6 +130,7 @@ public class AWTConverters implements Converter {
 		}
 
 		if (value instanceof String) {
+			//noinspection IfStatementWithTooManyBranches
 			if (Rectangle.class.equals(type)) {
 				double[] values = convert((String) value, 4, " ");
 				if (values == null) {
@@ -173,6 +174,7 @@ public class AWTConverters implements Converter {
 	}
 
 	private double[] convert(String text, int tokenCount, String delimiters) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer tokenizer = new StringTokenizer(text, delimiters);
 		if (tokenizer.countTokens() != tokenCount) {
 			return null;

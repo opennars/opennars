@@ -76,12 +76,14 @@ public class MJDiversities {
 	// Initialize the specified item from the string
 	public void ItemFromString(String sStr, int sizX, int sizY) {
 		int itm = DIV_NONE;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		String sBff;
 		int iTmp;
 
 		try {
+			//noinspection IfStatementWithTooManyBranches
 			if (sStr.startsWith("#SYSTEM"))
 				itm = DIV_SYSTEM;
 			else if (sStr.startsWith("#NOISE"))
@@ -104,6 +106,7 @@ public class MJDiversities {
 							m_Enabled = Integer.valueOf(sTok.substring(4)) != 0;
 						break;
 					case DIV_NOISE:
+						//noinspection IfStatementWithTooManyBranches
 						if (sTok.startsWith("ACT="))
 							m_NoiseActive = Integer.valueOf(sTok.substring(4)) != 0;
 						else if (sTok.startsWith("CYCL="))
@@ -114,6 +117,7 @@ public class MJDiversities {
 							m_NoiseState = Integer.valueOf(sTok.substring(4));
 						break;
 					case DIV_BHOLE:
+						//noinspection IfStatementWithTooManyBranches
 						if (sTok.startsWith("ACT="))
 							m_BHoleActive = Integer.valueOf(sTok.substring(4)) != 0;
 						else if (sTok.startsWith("X=")) {
@@ -126,6 +130,7 @@ public class MJDiversities {
 							m_BHoleSize = Integer.valueOf(sTok.substring(5));
 						break;
 					case DIV_SNOVA:
+						//noinspection IfStatementWithTooManyBranches
 						if (sTok.startsWith("ACT="))
 							m_SNovaActive = Integer.valueOf(sTok.substring(4)) != 0;
 						else if (sTok.startsWith("X=")) {

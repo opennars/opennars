@@ -19,7 +19,7 @@ public class Tokenizer {
     public TokenList<Object> tokenize(String string) throws ParseException {
         if (debug) System.err.println("tokenizing \"" + string + '"');
         String string2 = string;
-        TokenList<Object> tokened = new TokenList<Object>(0);
+        TokenList<Object> tokened = new TokenList<>(0);
         int indexAt = 0;
         
         while (indexAt < string.length()) {
@@ -35,7 +35,7 @@ public class Tokenizer {
                     String matched = matcher.group();
                     String token = tokens[tokenOnIndex][1];
                     
-                    tokened.add(new Token<Object>(token, string, indexAt, indexAt + matcher.end()));
+                    tokened.add(new Token<>(token, string, indexAt, indexAt + matcher.end()));
                     
                     keepGoing = false;
                     

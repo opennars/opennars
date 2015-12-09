@@ -32,8 +32,7 @@ public class RuleDerivationGraphTest {
 
 
         Frequency f = new Frequency();
-        for (TaskRule t : R)
-            f.addValue(t);
+        R.forEach(f::addValue);
         Iterator<Map.Entry<Comparable<?>, Long>> ii = f.entrySetIterator();
         while (ii.hasNext()) {
             Map.Entry<Comparable<?>, Long> e = ii.next();

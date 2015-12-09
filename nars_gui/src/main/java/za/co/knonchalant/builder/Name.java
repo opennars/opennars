@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Name {
-    public String value();
+    String value();
 
-    public String prompt() default "";
+    String prompt() default "";
 }

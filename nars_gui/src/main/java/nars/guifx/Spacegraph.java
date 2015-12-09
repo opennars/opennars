@@ -109,7 +109,7 @@ public class Spacegraph extends ZoomFX {
             gc.strokeRect(0, 0, w, h);
 
             double x = panX.doubleValue(), y = panY.doubleValue();
-            double scale = getZoomFactor() * 10f;
+            double scale = getZoomFactor() * 10.0f;
 
             while (scale < minScale)
                 scale *= 2;
@@ -120,23 +120,17 @@ public class Spacegraph extends ZoomFX {
             while (x > scale) x-=scale;
             while (y > scale) y-=scale;
 
-            final boolean drawSharpLines = this.drawSharpLines;
+            boolean drawSharpLines = this.drawSharpLines;
 
             for (; y <= h; y += scale) {
-                final double Y;
-                if (drawSharpLines)
-                    Y = snap(y);
-                else
-                    Y = y;
+                double Y;
+                Y = drawSharpLines ? snap(y) : y;
 
                 gc.strokeLine(0, Y, w, Y);
             }
             for (; x <= w; x += scale) {
-                final double sx;
-                if (drawSharpLines)
-                    sx = snap(x);
-                else
-                    sx = x;
+                double sx;
+                sx = drawSharpLines ? snap(x) : x;
 
                 gc.strokeLine(sx, 0, sx, h);
             }
@@ -147,7 +141,7 @@ public class Spacegraph extends ZoomFX {
     }
 
 
-    public static Spacegraph getSpace(final Node n) {
+    public static Spacegraph getSpace(Node n) {
         Node p = n;
         while ((p = p.getParent())!=null) {
             if (p instanceof Spacegraph) return ((Spacegraph)p);
@@ -156,8 +150,8 @@ public class Spacegraph extends ZoomFX {
     }
 
 
-    static double snap(final double y) {
-        return ((int) y) + .5;
+    static double snap(double y) {
+        return ((int) y) + 0.5;
     }
 
     public final Group bg = new Group();
@@ -174,7 +168,6 @@ public class Spacegraph extends ZoomFX {
 
 
     public Spacegraph() {
-        super();
 
         //setCacheShape(false);
         //getChildren().add(0, new GridCanvas(true));

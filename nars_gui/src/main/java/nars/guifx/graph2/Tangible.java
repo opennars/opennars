@@ -28,7 +28,6 @@ public class Tangible {
         private final Animate boundsTracker;
 
         public Overlay(Node target) {
-            super();
 
             this.target = target;
             setMouseTransparent(true);
@@ -45,9 +44,7 @@ public class Tangible {
 
             getChildren().add(c);
 
-            boundsTracker = new Animate(30, (a)-> {
-                trackBounds();
-            });
+            boundsTracker = new Animate(30, (a)-> trackBounds());
             boundsTracker.start();
 
 //            parentProperty().addListener((c) -> {
@@ -73,13 +70,9 @@ public class Tangible {
     }
 
     public Tangible(Node n) {
-        this.node = n;
-        n.setOnMouseEntered(e -> {
-            hover(true);
-        });
-        n.setOnMouseExited(e -> {
-            hover(false);
-        });
+        node = n;
+        n.setOnMouseEntered(e -> hover(true));
+        n.setOnMouseExited(e -> hover(false));
         n.setOnMousePressed( e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 e.consume();
@@ -126,7 +119,7 @@ public class Tangible {
             p = p.getParent();
         }
 
-        this.parent = (p!=null) ? (Spacegraph)p : null;
+        parent = (p!=null) ? (Spacegraph)p : null;
     }
 
 

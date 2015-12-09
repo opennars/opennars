@@ -13,9 +13,9 @@ public interface MetaTruth<T> extends Cloneable, Serializable {
     void setValue(T v);
 
     //TODO add appendString(sb, decimals)
-    default StringBuilder appendString(final StringBuilder sb) {
+    default StringBuilder appendString(StringBuilder sb) {
         String vs = value().toString();
-        final int decimals = 2;
+        int decimals = 2;
         sb.ensureCapacity(3 + (2 + decimals) + vs.length() );
         return sb
                 .append(Symbols.TRUTH_VALUE_MARK)

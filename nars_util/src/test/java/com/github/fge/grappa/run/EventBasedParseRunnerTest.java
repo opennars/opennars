@@ -52,19 +52,19 @@ public final class EventBasedParseRunnerTest
     @Test
     public void parsingRunTriggersPreAndPostParse()
     {
-        final InputBuffer buffer = mock(InputBuffer.class);
-        final ParsingResult<Object> result = mock(ParsingResult.class);
+        InputBuffer buffer = mock(InputBuffer.class);
+        ParsingResult<Object> result = mock(ParsingResult.class);
 
         doReturn(context)
             .when(parseRunner).createRootContext(buffer, parseRunner);
         doReturn(result)
             .when(parseRunner).createParsingResult(anyBoolean(), same(context));
 
-        final InOrder inOrder = inOrder(listener);
+        InOrder inOrder = inOrder(listener);
 
-        final ArgumentCaptor<PreParseEvent> preParse
+        ArgumentCaptor<PreParseEvent> preParse
             = ArgumentCaptor.forClass(PreParseEvent.class);
-        final ArgumentCaptor<PostParseEvent> postParse
+        ArgumentCaptor<PostParseEvent> postParse
             = ArgumentCaptor.forClass(PostParseEvent.class);
 
         parseRunner.run(buffer);
@@ -87,11 +87,11 @@ public final class EventBasedParseRunnerTest
 
         assertThat(parseRunner.match(context)).isFalse();
 
-        final InOrder inOrder = inOrder(listener);
+        InOrder inOrder = inOrder(listener);
 
-        final ArgumentCaptor<PreMatchEvent> preMatch
+        ArgumentCaptor<PreMatchEvent> preMatch
             = ArgumentCaptor.forClass(PreMatchEvent.class);
-        final ArgumentCaptor<MatchFailureEvent> postMatch
+        ArgumentCaptor<MatchFailureEvent> postMatch
             = ArgumentCaptor.forClass(MatchFailureEvent.class);
 
 
@@ -111,11 +111,11 @@ public final class EventBasedParseRunnerTest
 
         assertThat(parseRunner.match(context)).isTrue();
 
-        final InOrder inOrder = inOrder(listener);
+        InOrder inOrder = inOrder(listener);
 
-        final ArgumentCaptor<PreMatchEvent> preMatch
+        ArgumentCaptor<PreMatchEvent> preMatch
             = ArgumentCaptor.forClass(PreMatchEvent.class);
-        final ArgumentCaptor<MatchSuccessEvent> postMatch
+        ArgumentCaptor<MatchSuccessEvent> postMatch
             = ArgumentCaptor.forClass(MatchSuccessEvent.class);
 
 

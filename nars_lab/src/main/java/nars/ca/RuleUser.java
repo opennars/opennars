@@ -35,6 +35,7 @@ public class RuleUser {
 	// Parse the rule string
 	// Example: RUG,C128,I1
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i;
@@ -42,6 +43,7 @@ public class RuleUser {
 		if (sStr.length() < 3)
 			return;
 
+		//noinspection IfStatementWithTooManyBranches
 		if (sStr.compareTo("Rug") == 0)
 			sStr = "RUG,C64,I1";
 		else if (sStr.compareTo("Digital_Inkblots") == 0)
@@ -51,6 +53,7 @@ public class RuleUser {
 		else if (sStr.compareTo("GreenHast") == 0)
 			sStr = "GRH";
 
+		//noinspection IfStatementWithTooManyBranches
 		if (sStr.startsWith("RUG"))
 			RuleIdx = RIDX_RUG;
 		else if (sStr.startsWith("DIB"))
@@ -63,9 +66,9 @@ public class RuleUser {
 		st = new StringTokenizer(sStr, " ,", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			if (sTok.startsWith("I"))
+			if (sTok.length() > 0 && sTok.charAt(0) == 'I')
 				Increment = Integer.valueOf(sTok.substring(1));
-			else if (sTok.startsWith("C"))
+			else if (sTok.length() > 0 && sTok.charAt(0) == 'C')
 				iClo = Integer.valueOf(sTok.substring(1));
 		}
 
@@ -113,11 +116,11 @@ public class RuleUser {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][]) {
+					   short[][] crrState, short[][] tmpState) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells
@@ -125,7 +128,7 @@ public class RuleUser {
 			lurd[2] = (i < sizX - 1) ? i + 1 : (isWrap) ? 0 : sizX;
 			for (j = 0; j < sizY; ++j) {
 				// determine up and down cells
-				lurd[1] = (j > 0) ? j - 1 : (isWrap) ? sizY - 1 : sizY;
+				lurd[1] = j > 0 ? j - 1 : (isWrap) ? sizY - 1 : sizY;
 				lurd[3] = (j < sizY - 1) ? j + 1 : (isWrap) ? 0 : sizY;
 				bOldVal = crrState[i][j];
 
@@ -163,12 +166,7 @@ public class RuleUser {
 					if (bOldVal == 0) {
 						if (sum8 < Increment) {
 							bNewVal = 0;
-						} else {
-							if (sum8 < 100)
-								bNewVal = 2;
-							else
-								bNewVal = 3;
-						}
+						} else bNewVal = (short) (sum8 < 100 ? 2 : 3);
 					} else if ((bOldVal > 0) && (bOldVal < (iClo - 1))) {
 						bNewVal = (short) (((sum8 >> 3) + Increment) & 255);
 					}

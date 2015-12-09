@@ -23,8 +23,8 @@ package automenta.vivisect.swing.property.model;
  */
 public interface HasId {
 	
-	public void setId(Object id);
+	void setId(Object id);
   
-	public Object getId();
+	Object getId();
 
 }

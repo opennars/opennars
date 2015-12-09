@@ -7,12 +7,12 @@ public abstract class ControlSensor {
     public final int quantization;
 
     public ControlSensor(int quantization) {
-        this.range = new NumericRange();
+        range = new NumericRange();
         this.quantization = quantization;
     }
 
     public ControlSensor(double min, double max, int quantization) {
-        this.range = new NumericRange((min + max) / 2, (max - min) / 2);
+        range = new NumericRange((min + max) / 2, (max - min) / 2);
         this.quantization = quantization;
     }
     //called each cycle

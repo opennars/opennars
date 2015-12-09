@@ -52,7 +52,7 @@ public class TournamentSelector implements IndividualSelector {
      */
     public TournamentSelector(int size) {
         this.size = size;
-        this.randomSelector = new RandomSelector();
+        randomSelector = new RandomSelector();
     }
 
     @Override

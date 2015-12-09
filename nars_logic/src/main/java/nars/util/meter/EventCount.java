@@ -26,7 +26,7 @@ public class EventCount {
             eventMeters.put(nn, new HitMeter(nn));
         });
 
-        this.sub = Topic.all(n.memory, (event,value) ->
+        sub = Topic.all(n.memory, (event, value) ->
             eventMeters.get(event).hit());
     }
 

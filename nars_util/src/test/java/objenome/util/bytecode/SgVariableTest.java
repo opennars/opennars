@@ -24,20 +24,20 @@ public abstract class SgVariableTest {
 
     @Test
     public final void testAddGetAnnotation() {
-        final SgField field = new SgField(dummyClass, "public", SgClass.INT, "myField", "0");
-        final SgAnnotation annotation = new SgAnnotation(this.getClass().getPackage()
-                .getName(), this.getClass().getSimpleName() + "DummyAnnotation");
+        SgField field = new SgField(dummyClass, "public", SgClass.INT, "myField", "0");
+        SgAnnotation annotation = new SgAnnotation(getClass().getPackage()
+                .getName(), getClass().getSimpleName() + "DummyAnnotation");
         field.addAnnotation(annotation);
         Assert.assertEquals(field.getAnnotations().size(), 1);
         Assert.assertSame(field.getAnnotations().get(0), annotation);
         Assert.assertTrue(field.hasAnnotation(annotation.getName()));
-        Assert.assertFalse(field.hasAnnotation(this.getClass().getSimpleName()
+        Assert.assertFalse(field.hasAnnotation(getClass().getSimpleName()
                 + "DummyAnnotation2"));
         
         try {
             field.getAnnotations().add(new SgAnnotation("foo", "bar"));
             Assert.fail("The list is excepected to be unmodifiable!");
-        } catch (final UnsupportedOperationException ex) {
+        } catch (UnsupportedOperationException ex) {
             // OK
         }
         
@@ -45,19 +45,19 @@ public abstract class SgVariableTest {
 
     @Test
     public final void testAddAnnotations() {
-        final SgField field = new SgField(dummyClass, "public", SgClass.INT, "myField", "0");
-        final SgAnnotation annotation1 = new SgAnnotation(this.getClass().getPackage()
-                .getName(), this.getClass().getSimpleName() + "DummyAnnotation1");
+        SgField field = new SgField(dummyClass, "public", SgClass.INT, "myField", "0");
+        SgAnnotation annotation1 = new SgAnnotation(getClass().getPackage()
+                .getName(), getClass().getSimpleName() + "DummyAnnotation1");
         field.addAnnotation(annotation1);
-        final SgAnnotation annotation2 = new SgAnnotation(this.getClass().getPackage()
-                .getName(), this.getClass().getSimpleName() + "DummyAnnotation2");
+        SgAnnotation annotation2 = new SgAnnotation(getClass().getPackage()
+                .getName(), getClass().getSimpleName() + "DummyAnnotation2");
         field.addAnnotation(annotation2);
         Assert.assertEquals(field.getAnnotations().size(), 2);
         Assert.assertSame(field.getAnnotations().get(0), annotation1);
         Assert.assertSame(field.getAnnotations().get(1), annotation2);
         Assert.assertTrue(field.hasAnnotation(annotation1.getName()));
         Assert.assertTrue(field.hasAnnotation(annotation2.getName()));
-        Assert.assertFalse(field.hasAnnotation(this.getClass().getSimpleName()
+        Assert.assertFalse(field.hasAnnotation(getClass().getSimpleName()
                 + "DummyAnnotation3"));
     }
 

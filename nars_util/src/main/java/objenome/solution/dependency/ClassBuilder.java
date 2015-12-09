@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -88,7 +89,7 @@ public class ClassBuilder implements ConfigurableBuilder {
     @Override
     public ConfigurableBuilder useZeroArgumentConstructor() {
 
-        this.useZeroArgumentsConstructor = true;
+        useZeroArgumentsConstructor = true;
 
         return this;
     }
@@ -310,19 +311,26 @@ public class ClassBuilder implements ConfigurableBuilder {
     private static Class<?> getPrimitiveFrom(Object w) {
         if (w instanceof Boolean) {
             return Boolean.TYPE;
-        } else if (w instanceof Byte) {
+        }
+        if (w instanceof Byte) {
             return Byte.TYPE;
-        } else if (w instanceof Short) {
+        }
+        if (w instanceof Short) {
             return Short.TYPE;
-        } else if (w instanceof Character) {
+        }
+        if (w instanceof Character) {
             return Character.TYPE;
-        } else if (w instanceof Integer) {
+        }
+        if (w instanceof Integer) {
             return Integer.TYPE;
-        } else if (w instanceof Long) {
+        }
+        if (w instanceof Long) {
             return Long.TYPE;
-        } else if (w instanceof Float) {
+        }
+        if (w instanceof Float) {
             return Float.TYPE;
-        } else if (w instanceof Double) {
+        }
+        if (w instanceof Double) {
             return Double.TYPE;
         }
         return null;
@@ -331,19 +339,27 @@ public class ClassBuilder implements ConfigurableBuilder {
     private static Class<?> getPrimitiveFrom(Class<?> klass) {
         if (klass==(Boolean.class)) {
             return Boolean.TYPE;
-        } else if (klass==(Byte.class)) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (klass==(Byte.class)) {
             return Byte.TYPE;
-        } else if (klass==(Short.class)) {
+        }
+        if (klass==(Short.class)) {
             return Short.TYPE;
-        } else if (klass==(Character.class)) {
+        }
+        if (klass==(Character.class)) {
             return Character.TYPE;
-        } else if (klass==(Integer.class)) {
+        }
+        if (klass==(Integer.class)) {
             return Integer.TYPE;
-        } else if (klass==(Long.class)) {
+        }
+        if (klass==(Long.class)) {
             return Long.TYPE;
-        } else if (klass==(Float.class)) {
+        }
+        if (klass==(Float.class)) {
             return Float.TYPE;
-        } else if (klass==(Double.class)) {
+        }
+        if (klass==(Double.class)) {
             return Double.TYPE;
         }
         return null;
@@ -353,7 +369,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         if (container instanceof Phenotainer) {
             return ((Phenotainer)container).parameterValues;
         }
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
     
     @Override
@@ -371,8 +387,8 @@ public class ClassBuilder implements ConfigurableBuilder {
 
                     if (simulateAndAddExtraProblemsHere != null) {
                         //reset
-                        this.initTypes = null;                        
-                        this.initValues = null;
+                        initTypes = null;
+                        initValues = null;
                     }
                     
                     updateConstructorDependencies();
@@ -441,10 +457,8 @@ public class ClassBuilder implements ConfigurableBuilder {
                         for (Constructor c : possibleConstructors) {
                             getValues(context, c, initValues, specificParameters, missingDependencies);
                         }
-                    
-                    for (DependencyKey md : missingDependencies) {
-                        simulateAndAddExtraProblemsHere.add(md);
-                    }
+
+                    simulateAndAddExtraProblemsHere.addAll(missingDependencies.stream().collect(Collectors.toList()));
                 }
             }
         }
@@ -465,7 +479,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         }
 
         //set Bean properties
-        if (props != null && props.size() > 0) {
+        if (props != null && !props.isEmpty()) {
 
             //TODO use entrySet
             for (Map.Entry<String, Object> stringObjectEntry : props.entrySet()) {
@@ -512,25 +526,11 @@ public class ClassBuilder implements ConfigurableBuilder {
 
             LinkedList<Class<?>> providedInitTypes = null;
 
-            if (initTypes != null) {
-
-                providedInitTypes = new LinkedList<>(initTypes);
-
-            } else {
-
-                providedInitTypes = new LinkedList<>();
-            }
+            providedInitTypes = initTypes != null ? new LinkedList<>(initTypes) : new LinkedList<>();
 
             LinkedList<Object> providedInitValues = null;
 
-            if (initValues != null) {
-
-                providedInitValues = new LinkedList<>(initValues);
-
-            } else {
-
-                providedInitValues = new LinkedList<>();
-            }
+            providedInitValues = initValues != null ? new LinkedList<>(initValues) : new LinkedList<>();
 
             List<Class<?>> newInitTypes = new LinkedList();
             List<Object> newInitValues = new LinkedList();
@@ -546,13 +546,13 @@ public class ClassBuilder implements ConfigurableBuilder {
             if (constructorParams == null || constructorParams.length == 0) {
                 //Default constructor
                 if (!specificInitValue) {
-                    this.initTypes = newInitTypes; //use empty lists to indicate this
-                    this.initValues = newInitValues;
-                    this.initPrimitives = newInitPrimitives;
+                    initTypes = newInitTypes; //use empty lists to indicate this
+                    initValues = newInitValues;
+                    initPrimitives = newInitPrimitives;
                 }
                 continue; 
             }
-            for (final Parameter p : constructorParams) {
+            for (Parameter p : constructorParams) {
                 Class<?> pc = p.getType();
 
                 // first see if it was provided...
@@ -661,16 +661,16 @@ public class ClassBuilder implements ConfigurableBuilder {
                     
             if (constructorParams.length == capableSize && providedInitTypes.isEmpty()) {
 
-                this.initTypes = newInitTypes;
-                this.initPrimitives = newInitPrimitives;
-                this.initValues = newInitValues;
+                initTypes = newInitTypes;
+                initPrimitives = newInitPrimitives;
+                initValues = newInitValues;
             }
         }
         
         //return missing;
     }
 
-    public final static class DependencyKey {
+    public static final class DependencyKey {
 
         public final String key;
         public final Parameter param;
@@ -690,10 +690,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
         @Override
         public String toString() {
-            if (param!=null)
-                return param + " (" + key + ')';
-            else
-                return key;
+            return param != null ? param + " (" + key + ')' : key;
         }
         
         

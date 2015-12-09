@@ -46,8 +46,8 @@ public abstract class feel extends SyncOperator implements Mental {
 
         Term predicate = SetInt.make(feelingTerm);
 
-        final Term self = memory.self();
-        final Term selfSubject = SetExt.make(self);
+        Term self = memory.self();
+        Term selfSubject = SetExt.make(self);
         Term content = $.inh(selfSubject, predicate);
 
         throw new RuntimeException("unimpl TODO");

@@ -14,8 +14,8 @@ public interface Controls {
 
 
     /** adds all meters which exist as fields of a given object (via reflection) */
-    public static List<Variable> reflect(Class c, Object obj) {
-        final List<Variable> variables = new ArrayList();
+    static List<Variable> reflect(Class c, Object obj) {
+        List<Variable> variables = new ArrayList();
 
         Class variable = Variable.class;
         for (Field f : c.getFields()) {

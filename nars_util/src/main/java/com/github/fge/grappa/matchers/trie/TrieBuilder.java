@@ -44,11 +44,11 @@ public final class TrieBuilder
      * @return this
      * @throws IllegalArgumentException word is less than two characters long
      */
-    public TrieBuilder addWord(@Nonnull final String word)
+    public TrieBuilder addWord(@Nonnull String word)
     {
 
 
-        final int length;
+        int length;
 
         if (word == null || (length = word.length()) == 0)
             throw new IllegalArgumentException("a trie cannot have empty "

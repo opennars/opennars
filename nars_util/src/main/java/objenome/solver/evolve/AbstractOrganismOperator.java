@@ -64,7 +64,7 @@ public abstract class AbstractOrganismOperator implements OrganismOperator {
     
     @Override
     public final Organism[] apply(Population population, Organism... individuals) {
-        this.config = population.getConfig();
+        config = population.getConfig();
         setConfig(population.getConfig());
 
         // fires the start event

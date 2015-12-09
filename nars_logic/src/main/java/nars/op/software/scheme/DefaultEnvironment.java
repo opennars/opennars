@@ -39,9 +39,9 @@ public class DefaultEnvironment {
             .put(symbol("*"),
                     procedure(args -> longFunction(args, (a, b) -> a * b)))
             .put(symbol("="),
-                    procedure(args -> bool(satisfiesTransitivePredicateGeneric(args, (a, b) -> a.equals(b)))))
+                    procedure(args -> bool(satisfiesTransitivePredicateGeneric(args, Object::equals))))
             .put(symbol("eq?"),
-                    procedure(args -> bool(satisfiesTransitivePredicateGeneric(args, (a, b) -> a.equals(b)))))
+                    procedure(args -> bool(satisfiesTransitivePredicateGeneric(args, Object::equals))))
             .put(symbol(">"),
                     procedure(args -> bool(satisfiesTransitivePredicate(args, (a, b) -> a > b))))
             .put(symbol("<"),

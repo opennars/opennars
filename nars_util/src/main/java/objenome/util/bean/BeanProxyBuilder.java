@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class BeanProxyBuilder<T> {
 
     /** Check each class only once so cache the check classes. */
-    private static final Set<Class<?>> CHECKED_CLASSES = new CopyOnWriteArraySet<Class<?>>();
+    private static final Set<Class<?>> CHECKED_CLASSES = new CopyOnWriteArraySet<>();
 
     private final Class<T> iface;
 
@@ -43,10 +43,10 @@ public class BeanProxyBuilder<T> {
 
     // -----------------------------------------------------
 
-    private static boolean checkForGenericSupport(final Collection<Class<?>> ifaces) {
-        for (final Class<?> iface : ifaces) {
-            for (final Method method : iface.getDeclaredMethods()) {
-                for (final Annotation annotation : method.getAnnotations()) {
+    private static boolean checkForGenericSupport(Collection<Class<?>> ifaces) {
+        for (Class<?> iface : ifaces) {
+            for (Method method : iface.getDeclaredMethods()) {
+                for (Annotation annotation : method.getAnnotations()) {
                     if (annotation.annotationType().isAnnotationPresent(GenericBeanKeyProvider.class)) {
                         return true;
                     }
@@ -56,7 +56,7 @@ public class BeanProxyBuilder<T> {
         return false;
     }
 
-    private static void checkIFace(final Class<?> clazz) {
+    private static void checkIFace(Class<?> clazz) {
         // No synchronization needed because it's no problem to check a class concurrent (and
         // CHECKED_CLASSES is thread-safe)
         // TODO use WeakReferences?
@@ -66,11 +66,11 @@ public class BeanProxyBuilder<T> {
         }
     }
 
-    public static <T> BeanProxyBuilder<T> on(final Class<T> iface) {
-        return new BeanProxyBuilder<T>(iface);
+    public static <T> BeanProxyBuilder<T> on(Class<T> iface) {
+        return new BeanProxyBuilder<>(iface);
     }
 
-    private BeanProxyBuilder(final Class<T> iface) {
+    private BeanProxyBuilder(Class<T> iface) {
         if (iface == null) {
             throw new IllegalArgumentException("Iface must not be null"); //$NON-NLS-1$
         }
@@ -78,10 +78,10 @@ public class BeanProxyBuilder<T> {
             throw new IllegalArgumentException(iface + " must be an interface"); //$NON-NLS-1$
         }
         this.iface = iface;
-        this.allIfaces = new HashSet<Class<?>>(ObjectUtil.collectInterfaces(this.iface));
-        this.propertyChangeSupport = Annotations.hasMethodWithAnnotation(this.allIfaces,
+        allIfaces = new HashSet<>(ObjectUtil.collectInterfaces(this.iface));
+        propertyChangeSupport = Annotations.hasMethodWithAnnotation(allIfaces,
                 PropertyChangeEventMethod.class);
-        this.genericSupport = checkForGenericSupport(this.allIfaces);
+        genericSupport = checkForGenericSupport(allIfaces);
     }
 
     /**
@@ -90,7 +90,7 @@ public class BeanProxyBuilder<T> {
      * @param check boolean whether to check the classes (interfaces) or not
      * @return the Builder instance
      */
-    public BeanProxyBuilder<T> check(final boolean check) {
+    public BeanProxyBuilder<T> check(boolean check) {
         this.check = check;
         return this;
     }
@@ -104,7 +104,7 @@ public class BeanProxyBuilder<T> {
      * @return the Builder instance
      * @see Initializer
      */
-    public BeanProxyBuilder<T> init(final boolean init) {
+    public BeanProxyBuilder<T> init(boolean init) {
         this.init = init;
         return this;
     }
@@ -115,30 +115,30 @@ public class BeanProxyBuilder<T> {
      * @return newly created bean
      */
     public T build() {
-        if (this.check) {
-            checkIFace(this.iface);
+        if (check) {
+            checkIFace(iface);
         }
-        Class<?>[] array = this.allIfaces.toArray(new Class<?>[this.allIfaces.size()]);
-        final T proxy = this.iface.cast(Proxy.newProxyInstance(this.iface.getClassLoader(), array,
-                create(this.iface)));
-        if (this.init) {
-            for (final Class<?> iface1 : array) {
+        Class<?>[] array = allIfaces.toArray(new Class<?>[allIfaces.size()]);
+        T proxy = iface.cast(Proxy.newProxyInstance(iface.getClassLoader(), array,
+                create(iface)));
+        if (init) {
+            for (Class<?> iface1 : array) {
                 BeanInitializer.initialize(iface1, proxy);
             }
         }
         return proxy;
     }
 
-    private InvocationHandler create(final Class<T> proxiedIface) {
-        final ProxyInvocationHandler invocationHandler = this.propertyChangeSupport ? new ProxyInvocationHandlerPropertyChangeSupport(
-                proxiedIface, this.allIfaces) : new ProxyInvocationHandler(proxiedIface, this.allIfaces);
-        return this.genericSupport ? new ProxyInvocationHandlerGenericSupport(this.allIfaces,
+    private InvocationHandler create(Class<T> proxiedIface) {
+        ProxyInvocationHandler invocationHandler = propertyChangeSupport ? new ProxyInvocationHandlerPropertyChangeSupport(
+                proxiedIface, allIfaces) : new ProxyInvocationHandler(proxiedIface, allIfaces);
+        return genericSupport ? new ProxyInvocationHandlerGenericSupport(allIfaces,
                 invocationHandler) : invocationHandler;
     }
 
     public BeanProxyBuilder<T> add(Class<?> class1) {
-        this.allIfaces.add(class1);
-        this.propertyChangeSupport = Annotations.hasMethodWithAnnotation(this.allIfaces,
+        allIfaces.add(class1);
+        propertyChangeSupport = Annotations.hasMethodWithAnnotation(allIfaces,
                 PropertyChangeEventMethod.class);
         return this;
     }

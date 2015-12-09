@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 public class Context implements ParseContext {
     
-    public HashMap<Character, Var> vars = new HashMap<Character, Var>();
+    public HashMap<Character, Var> vars = new HashMap<>();
     
-    public HashMap<Expr, Expr> subs = new HashMap<Expr, Expr>();
+    public HashMap<Expr, Expr> subs = new HashMap<>();
     
     public Context() {
     }

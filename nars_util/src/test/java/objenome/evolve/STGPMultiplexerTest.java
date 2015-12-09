@@ -11,8 +11,8 @@ public class STGPMultiplexerTest extends TestCase {
 
 	@Test public void testSTGPMultiplexer() {                                   
 
-        final int popSize = 100;
-        final int generations = 50;
+        int popSize = 100;
+        int generations = 50;
             STGPBoolean e = new STGPBoolean(BenchmarkSolutions.multiplexerProblem(6), popSize, generations);
             
             Population<TypedOrganism> p = e.cycle();

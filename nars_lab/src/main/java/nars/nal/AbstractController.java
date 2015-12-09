@@ -15,7 +15,7 @@ public abstract class AbstractController extends CycleReaction {
     /** how many cycles to wait before action, then wait again.. */
     public AbstractController(NAR n, int period) {
         super(n);
-        this.nar = n;
+        nar = n;
         this.period = period;
         start();
     }

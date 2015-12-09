@@ -52,7 +52,7 @@ public class ActionClassGeneratorTest extends TransformationTest {
 
     @Test
     public void testActionClassGeneration() throws Exception {
-        final RuleMethod method = processMethod("RuleWithComplexActionSetup", processors);
+        RuleMethod method = processMethod("RuleWithComplexActionSetup", processors);
 
         assertEquals(method.getGroups().size(), 3);
 
@@ -62,8 +62,8 @@ public class ActionClassGeneratorTest extends TransformationTest {
                 "// class version 51.0 (51)\n" +
                 "// access flags 0x1011\n" +
                 "public final synthetic class com/github/fge/grappa/transform/VarInit$XXXXXXXXXXXXXXXX extends com/github/fge/grappa/transform/runtime/BaseVarInit  {\n" +
-                "\n" +
-                "\n" +
+                '\n' +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public <init>(Ljava/lang/String;)V\n" +
                 "    ALOAD 0\n" +
@@ -72,7 +72,7 @@ public class ActionClassGeneratorTest extends TransformationTest {
                 "    RETURN\n" +
                 "    MAXSTACK = 2\n" +
                 "    MAXLOCALS = 2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public get()Ljava/lang/Object;\n" +
                 "    LDC \"text\"\n" +
@@ -87,17 +87,17 @@ public class ActionClassGeneratorTest extends TransformationTest {
                 "// class version 51.0 (51)\n" +
                 "// access flags 0x1011\n" +
                 "public final synthetic class com/github/fge/grappa/transform/Action$XXXXXXXXXXXXXXXX extends com/github/fge/grappa/transform/runtime/BaseAction  {\n" +
-                "\n" +
-                "\n" +
+                '\n' +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic I field$0\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic I field$1\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic I field$2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public <init>(Ljava/lang/String;)V\n" +
                 "    ALOAD 0\n" +
@@ -106,7 +106,7 @@ public class ActionClassGeneratorTest extends TransformationTest {
                 "    RETURN\n" +
                 "    MAXSTACK = 2\n" +
                 "    MAXLOCALS = 2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public run(Lcom/github/fge/grappa/run/context/Context;)Z\n" +
                 "    ALOAD 0\n" +
@@ -135,23 +135,23 @@ public class ActionClassGeneratorTest extends TransformationTest {
                 "// class version 51.0 (51)\n" +
                 "// access flags 0x1011\n" +
                 "public final synthetic class com/github/fge/grappa/transform/Action$XXXXXXXXXXXXXXXX extends com/github/fge/grappa/transform/runtime/BaseAction  {\n" +
-                "\n" +
-                "\n" +
+                '\n' +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic Lcom/github/fge/grappa/transform/TestParser$$grappa; field$0\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic I field$1\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic Lcom/github/fge/grappa/support/Var; field$2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic I field$3\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1001\n" +
                 "  public synthetic I field$4\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public <init>(Ljava/lang/String;)V\n" +
                 "    ALOAD 0\n" +
@@ -160,7 +160,7 @@ public class ActionClassGeneratorTest extends TransformationTest {
                 "    RETURN\n" +
                 "    MAXSTACK = 2\n" +
                 "    MAXLOCALS = 2\n" +
-                "\n" +
+                '\n' +
                 "  // access flags 0x1\n" +
                 "  public run(Lcom/github/fge/grappa/run/context/Context;)Z\n" +
                 "    ALOAD 0\n" +

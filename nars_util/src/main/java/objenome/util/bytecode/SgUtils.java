@@ -51,7 +51,7 @@ public final class SgUtils {
     private static final int OUTER_INTERFACE = 5;
     private static final int INNER_INTERFACE = 6;
 
-    private static final String[] TYPE_NAMES = new String[] { "Field", "Method", "Constructor",
+    private static final String[] TYPE_NAMES = { "Field", "Method", "Constructor",
             "Outer Class", "Inner Class", "Outer Interface", "Inner Interface" };
 
     // Modifiers
@@ -67,16 +67,16 @@ public final class SgUtils {
     private static final int VOLATILE = 9;
     private static final int STRICTFP = 10;
 
-    private static final String[] MODIFIER_NAMES = new String[] { "abstract", "final", "native",
+    private static final String[] MODIFIER_NAMES = { "abstract", "final", "native",
             "private", "protected", "public", "static", "synchronized", "transient", "volatile",
             "strictfp" };
 
-    private static final int[] MODIFIER_VALUES = new int[] { Modifier.ABSTRACT, Modifier.FINAL,
+    private static final int[] MODIFIER_VALUES = { Modifier.ABSTRACT, Modifier.FINAL,
             Modifier.NATIVE, Modifier.PRIVATE, Modifier.PROTECTED, Modifier.PUBLIC,
             Modifier.STATIC, Modifier.SYNCHRONIZED, Modifier.TRANSIENT, Modifier.VOLATILE,
             Modifier.STRICT };
 
-    private static final boolean[][] MODIFIERS_MATRIX = new boolean[][] {
+    private static final boolean[][] MODIFIERS_MATRIX = {
             { false, true, false, true, true, true, true },
             { true, true, false, true, true, false, false },
             { false, true, false, false, false, false, false },
@@ -94,13 +94,13 @@ public final class SgUtils {
                 "It's not allowed to create an instance of this class!");
     }
 
-    private static void throwIllegalArgument(final int type, final int modifier) {
+    private static void throwIllegalArgument(int type, int modifier) {
         throw new IllegalArgumentException("The modifier '" + MODIFIER_NAMES[modifier]
                 + "' is not allowed for '" + TYPE_NAMES[type] + "'!");
     }
 
     // CHECKSTYLE:OFF Cyclomatic complexity is OK here
-    private static void checkModifiers(final int type, final int modifiers) {
+    private static void checkModifiers(int type, int modifiers) {
         for (int modifier = ABSTRACT; modifier <= STRICTFP; modifier++) {
             if (Modifier.isPrivate(modifiers) && !MODIFIERS_MATRIX[PRIVATE][type]) {
                 throwIllegalArgument(type, PRIVATE);
@@ -151,23 +151,15 @@ public final class SgUtils {
      * @param isInnerClass
      *            Is it an inner class?
      */
-    public static void checkClassModifiers(final int modifiers, final boolean isInterface,
-            final boolean isInnerClass) {
+    public static void checkClassModifiers(int modifiers, boolean isInterface,
+                                           boolean isInnerClass) {
 
         // Basic checks
-        final int type;
+        int type;
         if (isInterface) {
-            if (isInnerClass) {
-                type = INNER_INTERFACE;
-            } else {
-                type = OUTER_INTERFACE;
-            }
+            type = isInnerClass ? INNER_INTERFACE : OUTER_INTERFACE;
         } else {
-            if (isInnerClass) {
-                type = INNER_CLASS;
-            } else {
-                type = OUTER_CLASS;
-            }
+            type = isInnerClass ? INNER_CLASS : OUTER_CLASS;
         }
         checkModifiers(type, modifiers);
 
@@ -186,7 +178,7 @@ public final class SgUtils {
      * @param modifiers
      *            Modifiers.
      */
-    public static void checkFieldModifiers(final int modifiers) {
+    public static void checkFieldModifiers(int modifiers) {
 
         // Basic checks
         checkModifiers(FIELD, modifiers);
@@ -207,7 +199,7 @@ public final class SgUtils {
      *            Modifiers.
      */
     // CHECKSTYLE:OFF Cyclomatic complexity is OK
-    public static void checkMethodModifiers(final int modifiers) {
+    public static void checkMethodModifiers(int modifiers) {
 
         // Base check
         checkModifiers(METHOD, modifiers);
@@ -260,7 +252,7 @@ public final class SgUtils {
      * @param modifiers
      *            Modifiers.
      */
-    public static void checkConstructorModifiers(final int modifiers) {
+    public static void checkConstructorModifiers(int modifiers) {
         checkModifiers(CONSTRUCTOR, modifiers);
     }
 
@@ -274,13 +266,13 @@ public final class SgUtils {
      * 
      * @return Lower case + underscored text.
      */
-    public static String uppercaseToUnderscore(final String str) {
+    public static String uppercaseToUnderscore(String str) {
         if (str == null) {
             return null;
         }
-        final StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
-            final char ch = str.charAt(i);
+            char ch = str.charAt(i);
             if (Character.isUpperCase(ch)) {
                 if (i > 0) {
                     sb.append('_');
@@ -302,11 +294,11 @@ public final class SgUtils {
      * 
      * @return Same string but first character upper case-
      */
-    public static String firstCharUpper(final String str) {
+    public static String firstCharUpper(String str) {
         if (str == null) {
             return null;
         }
-        if (str.length() == 0) {
+        if (str.isEmpty()) {
             return str;
         }
         if (str.length() == 1) {
@@ -326,19 +318,11 @@ public final class SgUtils {
      * 
      * @return Both packages added with ".".
      */
-    public static String concatPackages(final String package1, final String package2) {
-        if ((package1 == null) || (package1.length() == 0)) {
-            if ((package2 == null) || (package2.length() == 0)) {
-                return "";
-            } else {
-                return package2;
-            }
+    public static String concatPackages(String package1, String package2) {
+        if ((package1 == null) || (package1.isEmpty())) {
+            return (package2 == null) || (package2.isEmpty()) ? "" : package2;
         } else {
-            if ((package2 == null) || (package2.length() == 0)) {
-                return package1;
-            } else {
-                return package1 + '.' + package2;
-            }
+            return (package2 == null) || (package2.isEmpty()) ? package1 : package1 + '.' + package2;
         }
     }
 
@@ -352,14 +336,14 @@ public final class SgUtils {
      * @param fields
      *            List of fields to output.
      */
-    public static void addToStringMethod(final SgClassPool pool, final SgClass clasz,
-            final List<SgField> fields) {
-        final SgMethod m = new SgMethod(clasz, "public", SgClass.create(pool, String.class),
+    public static void addToStringMethod(SgClassPool pool, SgClass clasz,
+                                         List<SgField> fields) {
+        SgMethod m = new SgMethod(clasz, "public", SgClass.create(pool, String.class),
                 "toString");
         m.addBodyLine("return getClass().getSimpleName() + \"{\"");
         for (int i = 0; i < fields.size(); i++) {
-            final SgField field = fields.get(i);
-            final String nameValue = " + \"" + field.getName() + "=\" + " + field.getName();
+            SgField field = fields.get(i);
+            String nameValue = " + \"" + field.getName() + "=\" + " + field.getName();
             if (i < fields.size() - 1) {
                 m.addBodyLine(nameValue + " + \", \"");
             } else {
@@ -377,7 +361,7 @@ public final class SgUtils {
      * @return Modifier matrix HTML table.
      */
     public static String modifierMatrixToHtml() {
-        final StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<table border=\"1\">\n");
 
         // Header
@@ -407,7 +391,7 @@ public final class SgUtils {
         return sb.toString();
     }
 
-    private static int modifierValueForName(final String name) {
+    private static int modifierValueForName(String name) {
         for (int i = 0; i < MODIFIER_NAMES.length; i++) {
             if (name.equals(MODIFIER_NAMES[i])) {
                 return MODIFIER_VALUES[i];
@@ -424,15 +408,16 @@ public final class SgUtils {
      * 
      * @return Modifiers.
      */
-    public static int toModifiers(final String modifiers) {
+    public static int toModifiers(String modifiers) {
         if (modifiers == null) {
             return 0;
         }
-        final String trimmedModifiers = modifiers.trim();
+        String trimmedModifiers = modifiers.trim();
         int modifier = 0;
-        final StringTokenizer tok = new StringTokenizer(trimmedModifiers, " ");
+        //noinspection UseOfStringTokenizer
+        StringTokenizer tok = new StringTokenizer(trimmedModifiers, " ");
         while (tok.hasMoreTokens()) {
-            final String mod = tok.nextToken();
+            String mod = tok.nextToken();
             modifier = modifier | modifierValueForName(mod);
         }
         return modifier;
@@ -477,8 +462,8 @@ public final class SgUtils {
      * 
      * @author See org.apache.commons.lang.StringUtils
      */
-    public static String replace(final String text, final String searchString,
-            final String replacement, final int max) {
+    public static String replace(String text, String searchString,
+                                 String replacement, int max) {
         if (isEmpty(text) || isEmpty(searchString) || replacement == null || max == 0) {
             return text;
         }
@@ -488,11 +473,11 @@ public final class SgUtils {
         if (end == -1) {
             return text;
         }
-        final int replLength = searchString.length();
+        int replLength = searchString.length();
         int increase = replacement.length() - replLength;
         increase = (increase < 0 ? 0 : increase);
         increase *= (maxx < 0 ? 16 : (maxx > 64 ? 64 : maxx));
-        final StringBuffer buf = new StringBuffer(text.length() + increase);
+        StringBuilder buf = new StringBuilder(text.length() + increase);
         while (end != -1) {
             buf.append(text.substring(start, end)).append(replacement);
             start = end + replLength;
@@ -529,8 +514,8 @@ public final class SgUtils {
      * 
      * @author See org.apache.commons.lang.StringUtils
      */
-    public static boolean isEmpty(final String str) {
-        return str == null || str.length() == 0;
+    public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
     }
 
     /**
@@ -544,8 +529,8 @@ public final class SgUtils {
      * @return Method name and argument types (like
      *         "methodXY(String, int, boolean)").
      */
-    public static String createTypeSignature(final String methodName, final Class<?>[] paramTypes) {
-        final StringBuffer sb = new StringBuffer();
+    public static String createTypeSignature(String methodName, Class<?>[] paramTypes) {
+        StringBuilder sb = new StringBuilder();
         sb.append(methodName);
         sb.append('(');
         for (int i = 0; i < paramTypes.length; i++) {
@@ -566,12 +551,12 @@ public final class SgUtils {
      * 
      * @return List of annotations.
      */
-    public static List<SgAnnotation> createAnnotations(final Annotation[] ann) {
-        final List<SgAnnotation> list = new ArrayList<>();
+    public static List<SgAnnotation> createAnnotations(Annotation[] ann) {
+        List<SgAnnotation> list = new ArrayList<>();
         if ((ann != null) && (ann.length > 0)) {
-            for (int i = 0; i < ann.length; i++) {
-                final SgAnnotation annotation = new SgAnnotation(ann[i].annotationType()
-                        .getPackage().getName(), ann[i].annotationType().getSimpleName());
+            for (Annotation anAnn : ann) {
+                SgAnnotation annotation = new SgAnnotation(anAnn.annotationType()
+                        .getPackage().getName(), anAnn.annotationType().getSimpleName());
                 // TODO Handle annotation arguments
                 list.add(annotation);
             }

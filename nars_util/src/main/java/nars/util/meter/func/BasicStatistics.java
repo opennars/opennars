@@ -31,10 +31,7 @@ public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     }
     
     public void setWindowSize(int w) {
-        if (w == 0)
-            stat = new SummaryStatistics();
-        else
-            stat = new DescriptiveStatistics(w);
+        stat = w == 0 ? new SummaryStatistics() : new DescriptiveStatistics(w);
     }
 
     

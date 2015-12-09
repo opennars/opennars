@@ -30,9 +30,7 @@ public class InjectionUtils {
 
         Method[] methods = klass.getMethods();
 
-        for (int i = 0; i < methods.length; i++) {
-
-            Method m = methods[i];
+        for (Method m : methods) {
 
             String name = m.getName();
 
@@ -95,9 +93,7 @@ public class InjectionUtils {
 
         Field[] f = klass.getDeclaredFields();
 
-        for (int i = 0; i < f.length; i++) {
-
-            Field field = f[i];
+        for (Field field : f) {
 
             field.setAccessible(true);
 
@@ -184,11 +180,7 @@ public class InjectionUtils {
             return true;
         }
 
-        if (target.equals(double.class) && source.equals(Double.class)) {
-            return true;
-        }
-
-        return false;
+        return target.equals(double.class) && source.equals(Double.class);
 
     }
 
@@ -219,7 +211,8 @@ public class InjectionUtils {
         
         //TODO use switch statement
 
-        if (className.equals("int") || className.equals("java.lang.Integer")) {
+        //noinspection IfStatementWithTooManyBranches
+        if ("int".equals(className) || "java.lang.Integer".equals(className)) {
             int x = -1;
             try {
                 x = Integer.parseInt(value);
@@ -227,7 +220,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("short") || className.equals("java.lang.Short")) {
+        } else if ("short".equals(className) || "java.lang.Short".equals(className)) {
             short x = -1;
             try {
                 x = Short.parseShort(value);
@@ -236,7 +229,7 @@ public class InjectionUtils {
             }
             newValue = x;
 
-        } else if (className.equals("char") || className.equals("java.lang.Character")) {
+        } else if ("char".equals(className) || "java.lang.Character".equals(className)) {
 
             if (value.length() != 1) {
                 return null;
@@ -244,7 +237,7 @@ public class InjectionUtils {
 
             newValue = value.charAt(0);
 
-        } else if (className.equals("long") || className.equals("java.lang.Long")) {
+        } else if ("long".equals(className) || "java.lang.Long".equals(className)) {
             long x = -1;
             try {
                 x = Long.parseLong(value);
@@ -252,7 +245,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("float") || className.equals("java.lang.Float")) {
+        } else if ("float".equals(className) || "java.lang.Float".equals(className)) {
             float x = -1;
             try {
                 x = Float.parseFloat(value);
@@ -260,7 +253,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("double") || className.equals("java.lang.Double")) {
+        } else if ("double".equals(className) || "java.lang.Double".equals(className)) {
             double x = -1;
             try {
                 x = Double.parseDouble(value);
@@ -268,7 +261,7 @@ public class InjectionUtils {
                 return null;
             }
             newValue = x;
-        } else if (className.equals("boolean") || className.equals("java.lang.Boolean")) {
+        } else if ("boolean".equals(className) || "java.lang.Boolean".equals(className)) {
             try {
                 int x = Integer.parseInt(value);
                 if (x == 1) {
@@ -279,9 +272,9 @@ public class InjectionUtils {
                     return null;
                 }
             } catch (Exception e) {
-                if (value.equalsIgnoreCase("true") || value.equals("on")) {
+                if ("true".equalsIgnoreCase(value) || "on".equals(value)) {
                     newValue = Boolean.TRUE;
-                } else if (value.equalsIgnoreCase("false")) {
+                } else if ("false".equalsIgnoreCase(value)) {
                     newValue = Boolean.FALSE;
                 } else {
                     return null;
@@ -310,7 +303,8 @@ public class InjectionUtils {
 
             return value;
 
-        } else if (targetType.isPrimitive()) {
+        }
+        if (targetType.isPrimitive()) {
 
             return value;
         }
@@ -321,19 +315,27 @@ public class InjectionUtils {
     public static Class getPrimitiveFrom(Object w) {
         if (w instanceof Boolean) {
             return Boolean.TYPE;
-        } else if (w instanceof Byte) {
+        }
+        //noinspection IfStatementWithTooManyBranches
+        if (w instanceof Byte) {
             return Byte.TYPE;
-        } else if (w instanceof Short) {
+        }
+        if (w instanceof Short) {
             return Short.TYPE;
-        } else if (w instanceof Character) {
+        }
+        if (w instanceof Character) {
             return Character.TYPE;
-        } else if (w instanceof Integer) {
+        }
+        if (w instanceof Integer) {
             return Integer.TYPE;
-        } else if (w instanceof Long) {
+        }
+        if (w instanceof Long) {
             return Long.TYPE;
-        } else if (w instanceof Float) {
+        }
+        if (w instanceof Float) {
             return Float.TYPE;
-        } else if (w instanceof Double) {
+        }
+        if (w instanceof Double) {
             return Double.TYPE;
         }
         return null;
@@ -369,10 +371,10 @@ public class InjectionUtils {
     }
 
     public static Field getField(Class<?> target, String name) {
-        Field fields[] = target.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            if (name.equals(fields[i].getName())) {
-                return fields[i];
+        Field[] fields = target.getDeclaredFields();
+        for (Field field : fields) {
+            if (name.equals(field.getName())) {
+                return field;
             }
         }
         return null;
@@ -501,7 +503,7 @@ public class InjectionUtils {
 
             String s = ((String) value).trim();
 
-            if (s.length() == 0) {
+            if (s.isEmpty()) {
                 return true;
             }
         }
@@ -626,7 +628,7 @@ public class InjectionUtils {
             for (Method method : bean.getClass().getMethods()) {
                 String name = method.getName();
 
-                if (name.length() > 3 && name.startsWith("get") && !name.equals("getClass") && method.getParameterTypes().length == 0) {
+                if (name.length() > 3 && name.startsWith("get") && !"getClass".equals(name) && method.getParameterTypes().length == 0) {
 
                     method.setAccessible(true);
                     Object value = method.invoke(bean);
@@ -636,11 +638,11 @@ public class InjectionUtils {
         }
     }
 
-    public static interface Provider {
+    public interface Provider {
 
-        public Object get(String key);
+        Object get(String key);
 
-        public boolean hasValue(String key);
+        boolean hasValue(String key);
     }
 
     public static void getObject(Object target, Provider provider, boolean tryField, String prefix, boolean tryToConvert, boolean convertBoolean, boolean allowRecursion)
@@ -683,11 +685,8 @@ public class InjectionUtils {
             }
         }
 
-        Iterator<Map.Entry<String, Object>> iter = setters.entrySet().iterator();
+        for (Map.Entry<String, Object> evar : setters.entrySet()) {
 
-        while (iter.hasNext()) {
-
-            Map.Entry<String, Object> evar = iter.next();
             String var = evar.getKey();
 
             boolean hasValue = provider.hasValue(var);
@@ -795,11 +794,8 @@ public class InjectionUtils {
 
         if (fields != null) {
 
-            Iterator<Map.Entry<String, Object>> x = fields.entrySet().iterator();
+            for (Map.Entry<String, Object> evar : fields.entrySet()) {
 
-            while (x.hasNext()) {
-
-                Map.Entry<String, Object> evar = x.next();
                 String var = evar.getKey();
 
                 boolean hasValue = provider.hasValue(var);
@@ -830,7 +826,7 @@ public class InjectionUtils {
                 // if (value == null) continue;
                 if (value == null
                         || (type.isAssignableFrom(value.getClass()) || checkPrimitives(type, value.getClass()) || (tryToConvert && ((isBlank(value) && (value = shouldConvertToNull(
-                                value, type)) == null) || (value = tryToConvert(value, type)) != null)))) {
+                        value, type)) == null) || (value = tryToConvert(value, type)) != null)))) {
 
                     try {
 

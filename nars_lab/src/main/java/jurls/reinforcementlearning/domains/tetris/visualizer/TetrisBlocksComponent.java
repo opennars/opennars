@@ -28,12 +28,12 @@ public class TetrisBlocksComponent {
 
     public TetrisBlocksComponent(TetrisVisualizer ev) {
         // TODO Write Constructor
-        this.tetVis = ev;
+        tetVis = ev;
     }
 
     float motionBlur = 0.6f;
     final Color alphaBlack = new Color(0,0,0,1.0f-motionBlur);
-    final Color alphaWhite = new Color(1f,1f,1f,1.0f - motionBlur);
+    final Color alphaWhite = new Color(1.0f, 1.0f, 1.0f,1.0f - motionBlur);
 
     public void render(Graphics2D g, int DABS) {
 

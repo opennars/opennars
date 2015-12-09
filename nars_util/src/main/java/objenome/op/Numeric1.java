@@ -16,10 +16,9 @@ import java.util.function.Function;
  * Takes all numeric inputs
  * Produces numeric output of the same type as input
  */
-abstract public class Numeric1 extends MathNode implements UnivariateFunction, Function<Double,Number> {
+public abstract class Numeric1 extends MathNode implements UnivariateFunction, Function<Double,Number> {
     
     protected Numeric1() {
-        super();
     }
     
     protected Numeric1(Node child) {
@@ -32,7 +31,7 @@ abstract public class Numeric1 extends MathNode implements UnivariateFunction, F
     }
     
     @Override
-    abstract public double value(double x);
+    public abstract double value(double x);
     
     /** returns the one scalar input */
     public Node input() {
@@ -74,11 +73,7 @@ abstract public class Numeric1 extends MathNode implements UnivariateFunction, F
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0])) {
-            return inputTypes[0];
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0]) ? inputTypes[0] : null;
     }
 
     /** it's better to use value(x) directly and not this since it involves boxing */

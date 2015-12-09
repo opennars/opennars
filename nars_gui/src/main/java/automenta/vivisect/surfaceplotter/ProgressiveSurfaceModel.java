@@ -33,7 +33,6 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 	 * Empty Surface Model
 	 */
 	public ProgressiveSurfaceModel() {
-		super();
 	}
 
 	public void setMapper(Mapper mapper) {
@@ -45,7 +44,7 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 		return plot(null);
 	}
 	
-	public SwingWorker<Void, Void> plot(final Runnable callback) {
+	public SwingWorker<Void, Void> plot(Runnable callback) {
 		highDefinitionVertex = allocateMemory(hasFunction1, hasFunction2, maxDefinition);
 		currentDefinition = -1;
 		availableDefinition = -1;

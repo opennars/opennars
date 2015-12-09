@@ -29,16 +29,16 @@ import java.util.List;
        (which can be constructed in a static context)
     --??
  */
-abstract public class $  {
+public abstract class $  {
 
 
-    public static final <T extends Term> T $(final String term) {
+    public static final <T extends Term> T $(String term) {
         return (T)Narsese.the().term(term);
         //        try { }
         //        catch (InvalidInputException e) { }
     }
 
-    public static final <C extends Compound> MutableTask $(final String term, char punc) {
+    public static final <C extends Compound> MutableTask $(String term, char punc) {
         C t = Narsese.the().term(term);
         if (t == null) return null;
         return new MutableTask(t)
@@ -47,7 +47,7 @@ abstract public class $  {
                 //.normalized();
     }
 
-    public static <O> AtomObject<O> ref(final String term, O instance) {
+    public static <O> AtomObject<O> ref(String term, O instance) {
         return new AtomObject(term, instance);
     }
 
@@ -56,8 +56,8 @@ abstract public class $  {
     }
 
     public static Atom[] the(String... id) {
-        final int l = id.length;
-        final Atom[] x = new Atom[l];
+        int l = id.length;
+        Atom[] x = new Atom[l];
         for (int i = 0; i < l; i++)
             x[i] = Atom.the(id[i]);
         return x;
@@ -135,7 +135,7 @@ abstract public class $  {
     }
 
     /** creates from a sublist of a list */
-    static Compound p(final List<Term> l, int from, int to) {
+    static Compound p(List<Term> l, int from, int to) {
         Term[] x = new Term[to - from];
 
         for (int j = 0, i = from; i < to; i++)
@@ -206,7 +206,7 @@ abstract public class $  {
      * @param predicate The second component
      * @return A compound generated or null
      */
-    final public static Compound instprop(final Term subject, final Term predicate) {
+    public static final Compound instprop(Term subject, Term predicate) {
         return (Compound) $.inh(SetExt.make(subject), SetInt.make(predicate));
     }
 
@@ -290,13 +290,9 @@ abstract public class $  {
 
     public static Variable v(Op type, int counter) {
         if (counter < Variable.MAX_VARIABLE_CACHED_PER_TYPE) {
-            final Variable[] vct = Variable.varCache[Variable.typeIndex(type)];
+            Variable[] vct = Variable.varCache[Variable.typeIndex(type)];
             Variable existing = vct[counter];
-            if (existing != null)
-                return existing;
-            else {
-                return vct[counter] = Variable._the(type, counter);
-            }
+            return existing != null ? existing : (vct[counter] = Variable._the(type, counter));
         }
 
         return v(type.ch, String.valueOf(counter));

@@ -44,8 +44,7 @@ public final class SgAnnotation {
      * @param simpleName
      *            Name (without package) - Cannot be null.
      */
-    public SgAnnotation(final String packageName, final String simpleName) {
-        super();
+    public SgAnnotation(String packageName, String simpleName) {
         if (packageName == null) {
             throw new IllegalArgumentException("The argument 'packageName' cannot be null!");
         }
@@ -54,14 +53,14 @@ public final class SgAnnotation {
         if (simpleName == null) {
             throw new IllegalArgumentException("The argument 'simpleName' cannot be null!");
         }
-        final String trimmed = simpleName.trim();
-        if (trimmed.length() == 0) {
+        String trimmed = simpleName.trim();
+        if (trimmed.isEmpty()) {
             throw new IllegalArgumentException(
                     "The argument 'simpleName' cannot be an empty string!");
         }
         this.simpleName = trimmed;
 
-        this.arguments = new HashMap<>();
+        arguments = new HashMap<>();
     }
 
     /**
@@ -69,8 +68,8 @@ public final class SgAnnotation {
      * 
      * @return Name including package - Always non-null.
      */
-    public final String getName() {
-        if (packageName.length() == 0) {
+    public String getName() {
+        if (packageName.isEmpty()) {
             return simpleName;
         }
         return packageName + '.' + simpleName;
@@ -81,7 +80,7 @@ public final class SgAnnotation {
      * 
      * @return Package name - Always non-null.
      */
-    public final String getPackageName() {
+    public String getPackageName() {
         return packageName;
     }
 
@@ -90,7 +89,7 @@ public final class SgAnnotation {
      * 
      * @return Name (without package) - Always non-null.
      */
-    public final String getSimpleName() {
+    public String getSimpleName() {
         return simpleName;
     }
 
@@ -99,7 +98,7 @@ public final class SgAnnotation {
      * 
      * @return Arguments - Always non-null, maybe empty and is unmodifiable.
      */
-    public final Map<String, Object> getArguments() {
+    public Map<String, Object> getArguments() {
         return Collections.unmodifiableMap(arguments);
     }
 
@@ -111,7 +110,7 @@ public final class SgAnnotation {
      * @param value
      *            Value of the argument - Cannot be null.
      */
-    public final void addArgument(final String name, final Object value) {
+    public void addArgument(String name, Object value) {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be null!");
         }
@@ -125,18 +124,16 @@ public final class SgAnnotation {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
-        final StringBuffer sb = new StringBuffer();
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
         sb.append('@');
         sb.append(getName());
-        if (arguments.size() > 0) {
+        if (!arguments.isEmpty()) {
             sb.append('(');
             if (arguments.size() == 1) {
-                final Iterator<String> it = arguments.keySet().iterator();
-                while (it.hasNext()) {
-                    final String name = it.next();
-                    final Object value = arguments.get(name);
-                    if (!name.equals("value")) {
+                for (String name : arguments.keySet()) {
+                    Object value = arguments.get(name);
+                    if (!"value".equals(name)) {
                         sb.append(name);
                         sb.append('=');
                     }
@@ -144,10 +141,8 @@ public final class SgAnnotation {
                 }
             } else {
                 int count = 0;
-                final Iterator<String> it = arguments.keySet().iterator();
-                while (it.hasNext()) {
-                    final String name = it.next();
-                    final Object value = arguments.get(name);
+                for (String name : arguments.keySet()) {
+                    Object value = arguments.get(name);
                     if (count > 0) {
                         sb.append(", ");
                     }

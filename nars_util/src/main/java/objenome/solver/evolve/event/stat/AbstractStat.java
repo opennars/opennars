@@ -58,13 +58,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      * This is the stat listener. When the stat is registered, its listener is
      * added to the {@link EventManager}.
      */
-    public Listener<T> listener = new Listener<T>() {
-
-        @Override
-        public void onEvent(T event) {
-            AbstractStat.this.refresh(event);
-        }
-    };
+    public Listener<T> listener = this::refresh;
 
     /**
      * The event that trigger the stat to clear its values.
@@ -104,6 +98,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      *
      * @param dependencies the array of dependencies of this stat.
      */
+    @SafeVarargs
     public AbstractStat(Class<? extends AbstractStat<?>>... dependencies) {
         this(Arrays.asList(dependencies));
     }
@@ -137,6 +132,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      * @param clearOn the event that trigger the stat to clear its values.
      * @param dependencies the array of dependencies of this stat.
      */
+    @SafeVarargs
     public <E extends Event> AbstractStat(Class<T> clearOn, Class<? extends AbstractStat<?>>... dependencies) {
         this(clearOn, Arrays.asList(dependencies));
     }
@@ -152,23 +148,19 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
     public <E extends Event> AbstractStat(Class<T> clearOn, List<Class<? extends AbstractStat<?>>> dependencies) {
         
         this.dependencies = dependencies;
-        this.clearOnEvent = clearOn;
+        clearOnEvent = clearOn;
 
     }
 
 
     @Override
     public void setConfig(GPContainer c) {
-        this.config = c;
+        config = c;
         for (Class<? extends AbstractStat<?>> dependency : dependencies) {
             config.get(dependency);
         }
         if (clearOnEvent!=null) {
-            Listener<T> trigger = new Listener<T>() {
-                @Override public void onEvent(T event) {
-                    clear();
-                }            
-            };
+            Listener<T> trigger = event -> clear();
             config.on(clearOnEvent, trigger);
 
             clearOnListener = trigger;

@@ -50,7 +50,6 @@ public class ZoomFX extends AnchorPane {
     private Animate positionAnimation;
 
     public ZoomFX() {
-        super();
 
 
         //setupScrollbar(hscroll, Orientation.HORIZONTAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
@@ -177,10 +176,10 @@ public class ZoomFX extends AnchorPane {
         if (panStart == null) {
             //startPan(sceneX, sceneY);
         } else {
-            final ArrayRealVector panStart = this.panStart;
+            ArrayRealVector panStart = this.panStart;
 
-            final double dX = (sceneX - panStart.getEntry(0)) / 1f; //(pivotLogicalExtent.widthProperty().get() * zoomFactor.get());
-            final double dY = (sceneY - panStart.getEntry(1)) / 1f; //(pivotLogicalExtent.heightProperty().get() * zoomFactor.get());
+            double dX = (sceneX - panStart.getEntry(0)) / 1.0f; //(pivotLogicalExtent.widthProperty().get() * zoomFactor.get());
+            double dY = (sceneY - panStart.getEntry(1)) / 1.0f; //(pivotLogicalExtent.heightProperty().get() * zoomFactor.get());
 
 
             panStart.setEntry(0, sceneX);
@@ -235,7 +234,7 @@ public class ZoomFX extends AnchorPane {
 
     private void setupStyle() {
         //contentPane.setStyle("-fx-background-color: GREY");
-        this.setStyle("-fx-border-width: 0px");
+        setStyle("-fx-border-width: 0px");
     }
 
 

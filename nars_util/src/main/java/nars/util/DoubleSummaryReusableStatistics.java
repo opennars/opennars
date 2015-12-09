@@ -168,7 +168,7 @@ public class DoubleSummaryReusableStatistics implements DoubleConsumer {
     public String toString() {
         return String.format(
                 "%s{n=%d, sum=%f, min=%f, avg=%f, max=%f}",
-                this.getClass().getSimpleName(),
+                getClass().getSimpleName(),
                 getCount(),
                 getSum(),
                 getMin(),

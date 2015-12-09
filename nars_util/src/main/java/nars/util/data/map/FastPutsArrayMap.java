@@ -22,11 +22,11 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         this(4);
     }
 
-    public FastPutsArrayMap(final int initialCapacity) {
+    public FastPutsArrayMap(int initialCapacity) {
         entries = new ArrayList<>(initialCapacity);
     }
 
-    public FastPutsArrayMap(final Map<K, V> map) {
+    public FastPutsArrayMap(Map<K, V> map) {
         this(map.size());
         putAll(map);
     }
@@ -36,7 +36,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         // Iterate forwards looking for duplicate entries and deleting the old ones
         Entry<K, V> e;
         Entry<K, V> possibleDup;
-        for (final Iterator<Entry<K, V>> itr = entries.iterator(); itr.hasNext();) {
+        for (Iterator<Entry<K, V>> itr = entries.iterator(); itr.hasNext();) {
             e = itr.next();
             possibleDup = getEntry(e.getKey()); // Returns the newest entry
             if (possibleDup != null && e != possibleDup) {
@@ -70,7 +70,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
     }
 
     @Override
-    public boolean containsValue(final Object aValue) {
+    public boolean containsValue(Object aValue) {
         V value;
         if (aValue == null) {
             for (int i = entries.size() - 1; i >= 0; i--) {
@@ -91,12 +91,12 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
     }
 
     @Override
-    public boolean containsKey(final Object key) {
+    public boolean containsKey(Object key) {
         return getEntry(key) != null;
     }
 
     @Override
-    public V get(final Object key) {
+    public V get(Object key) {
         Entry<K, V> e = getEntry(key);
         if (e != null) {
             return e.getValue();
@@ -104,7 +104,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         return null;
     }
 
-    protected Entry<K, V> getEntry(final Object key) {
+    protected Entry<K, V> getEntry(Object key) {
         Entry<K, V> e;
 
         // Search in reverse so we find the most up to date value in the event of duplicates
@@ -121,7 +121,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
      * Note: contract broken! Always returns null.
      */
     @Override
-    public V put(final K key, final V value) {
+    public V put(K key, V value) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -131,14 +131,14 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
     }
 
     @Override
-    public void putAll(final Map<? extends K, ? extends V> map) {
+    public void putAll(Map<? extends K, ? extends V> map) {
         for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
 
     @Override
-    public V remove(final Object key) {
+    public V remove(Object key) {
         if (key == null) {
             return null;
         }

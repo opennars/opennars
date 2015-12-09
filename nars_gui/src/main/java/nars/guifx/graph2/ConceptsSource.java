@@ -1,6 +1,5 @@
 package nars.guifx.graph2;
 
-import com.google.common.collect.Iterables;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import nars.NAR;
@@ -15,6 +14,8 @@ import nars.util.event.Active;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Example Concept supplier with some filters
@@ -32,10 +33,9 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
     private BiFunction<TermNode<Concept>, TermNode<Concept>, TermEdge> edgeBuilder =
-            (S,T) -> new TLinkEdge(S,T);
+            TLinkEdge::new;
 
     public ConceptsSource(NAR nar) {
-        super();
 
         this.nar = nar;
 
@@ -51,7 +51,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
                                       Consumer<Concept> eachTarget) {
 
 
-        SpaceGrapher<Concept, TermNode<Concept>> sg = this.grapher;
+        SpaceGrapher<Concept, TermNode<Concept>> sg = grapher;
         if (sg == null) return; //???
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
@@ -130,20 +130,17 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
         if (!isReady())
             return;
 
-        if (this.canUpdate()) {
+        if (canUpdate()) {
 
             Bag<Term, Concept> x = ((AbstractNAR) nar).core.concepts();
 
             String keywordFilter, _keywordFilter = includeString.get();
-            if (_keywordFilter != null && _keywordFilter.isEmpty())
-                keywordFilter = null;
-            else
-                keywordFilter = _keywordFilter;
+            keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;
 
             double minPri = this.minPri.get();
             double maxPri = this.maxPri.get();
 
-            final Iterable<Concept> ii = Iterables.filter(x, cc -> {
+            Iterable<Concept> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
 
                 float p = cc.getPriority();
                 if ((p < minPri) || (p > maxPri))
@@ -157,7 +154,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
                 return true;
 
-            });
+            }).collect(Collectors.toList());
 
             commit(ii);
         }

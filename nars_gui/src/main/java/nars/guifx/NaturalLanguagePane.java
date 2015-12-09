@@ -14,8 +14,7 @@ public class NaturalLanguagePane extends CodeInput {
     float sentenceBudget = 0.5f;
 
     public NaturalLanguagePane(NAR n) {
-        super();
-        this.nar = n;
+        nar = n;
     }
 
     @Override

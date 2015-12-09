@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author nmalik
@@ -35,12 +36,7 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
     }
 
     public MethodCallGraph(boolean includeMethodCalls) {
-        super(new EdgeFactory<CGMethod, Object>() {
-            @Override
-            public Object createEdge(CGMethod cgMethod, CGMethod v1) {
-                return null;
-            }
-        });
+        super((cgMethod, v1) -> null);
         this.includeMethodCalls = includeMethodCalls;
     }
 
@@ -123,13 +119,13 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
             addEdge(methodCall, targetMethod, ii.toString());
 
             addVertex(callingMethod);
-            addEdge(callingMethod, methodCall, callingMethod.key() + "@" + ii);
+            addEdge(callingMethod, methodCall, callingMethod.key() + '@' + ii);
         }
         else {
             addVertex(callingMethod);
             if (!callingMethod.equals(targetMethod)) {
                 addVertex(targetMethod);
-                addEdge(callingMethod, targetMethod, methodCall.key() + "@" + ii);
+                addEdge(callingMethod, targetMethod, methodCall.key() + '@' + ii);
             }
         }
     }
@@ -168,15 +164,10 @@ public class MethodCallGraph extends DirectedMultigraph<CGMethod, Object> {
     }
 
     public List<CGClass> getClasses(String rootRegex) {
-        List<CGClass> output = new ArrayList<>();
+        List<CGClass> output = new ArrayList<>(cacheClass.values().stream().filter(root -> root.className.matches(rootRegex)).collect(Collectors.toList()));
 
         // find root classes
         CGClass current;
-        for (CGClass root : cacheClass.values()) {
-            if (root.className.matches(rootRegex)) {
-                output.add(root);
-            }
-        }
 
         return output;
     }

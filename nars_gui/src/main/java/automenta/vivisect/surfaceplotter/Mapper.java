@@ -7,8 +7,8 @@ package automenta.vivisect.surfaceplotter;
  */
 public interface Mapper {
 
-	public float f1(float x, float y);
+	float f1(float x, float y);
 
-	public float f2(float x, float y);
+	float f2(float x, float y);
 
 }

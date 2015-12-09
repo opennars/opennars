@@ -48,7 +48,7 @@ public class OpTest extends TestCase {
 
 			assertEquals(Doubliteral.class, nn.getClass());
 
-			double d = ((Double)(nn.evaluate())).doubleValue();
+			double d = (Double) (nn.evaluate());
 			assertEquals(d, v, 0.001);
 
 		}

@@ -6,7 +6,6 @@ import java.awt.*;
 public class Run extends MarioComponent {
     
     public Run() {
-        super();
 
         JFrame frame = new JFrame("Super NARio");
         

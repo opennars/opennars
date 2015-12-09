@@ -20,7 +20,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     protected final TermVector<T> terms;
 
-    protected transient final int hash;
+    protected final transient int hash;
     protected final Op op;
     protected final int relation;
     private boolean normalized = false;
@@ -44,7 +44,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         TermVector<T> terms = this.terms = op.isCommutative() ?
                 new TermSet(subterms) :
                 new TermVector(subterms);
-        this.hash = Compound.hash(terms, op, relation);
+        hash = Compound.hash(terms, op, relation);
         this.relation = relation;
     }
 
@@ -62,6 +62,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public String toString(boolean pretty) {
+        //noinspection IfStatementWithTooManyBranches
         if (Operation.isOperation(this)) {
             return Operation.toString((Compound) term(0), term(1), pretty);
         }
@@ -85,7 +86,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final int compareTo(final Object o) {
+    public final int compareTo(Object o) {
         if (this == o) return 0;
 
         Term t = (Term) o;
@@ -113,7 +114,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final boolean equals(final Object that) {
+    public final boolean equals(Object that) {
         if (this == that)
             return true;
 
@@ -256,7 +257,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
      * TODO parameter for max (int) level to scan down
      */
     @Override
-    public final boolean containsTermRecursively(final Term target) {
+    public final boolean containsTermRecursively(Term target) {
 
         if (impossibleSubterm(target)) return false;
 
@@ -272,14 +273,14 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public final void setNormalized(boolean b) {
-        this.normalized = b;
+        normalized = b;
     }
 
     @Override
     public final int bytesLength() {
         int len = /* opener byte */1 + 1;
 
-        final int n = size();
+        int n = size();
         for (int i = 0; i < n; i++) {
             len += term(i).bytesLength() + 1 /* separator or closer if end*/;
         }
@@ -325,7 +326,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final void recurseTerms(final SubtermVisitor v, final Term parent) {
+    public final void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
         terms.visit(v, this);
     }

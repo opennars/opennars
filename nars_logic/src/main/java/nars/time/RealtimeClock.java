@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by me on 7/2/15.
  */
-abstract public class RealtimeClock implements Clock {
+public abstract class RealtimeClock implements Clock {
 
     long t, t0 = -1;
     private long start;
@@ -43,7 +43,7 @@ abstract public class RealtimeClock implements Clock {
         private final int dur;
 
         public Lag(int duration, double frameTime) {
-            this.dur= duration;
+            dur = duration;
             this.frameTime = frameTime;
         }
 
@@ -57,15 +57,9 @@ abstract public class RealtimeClock implements Clock {
     protected void update() {
         long now = getRealTime();
 
-        if (this.t0 != -1) {
-            this.t0 = t;
-        }
-        else {
-            //on first cycle, set previous time to current time so that delta to previous cycle = 0
-            this.t0 = now;
-        }
+        t0 = t0 != -1 ? t : now;
 
-        this.t = now;
+        t = now;
     }
 
 

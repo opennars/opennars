@@ -15,8 +15,8 @@ import nars.term.atom.Atom;
  */
 public class ShiftOccurrence extends PreCondition1 {
 
-    final public boolean positive;
-    final public int direction;
+    public final boolean positive;
+    public final int direction;
     private final String id;
 
     public static ShiftOccurrence make(Term arg1, Term operator, boolean positive) {
@@ -41,7 +41,7 @@ public class ShiftOccurrence extends PreCondition1 {
 */
         this.positive = positive;
         this.direction = direction;
-        this.id = getClass().getSimpleName() + ":(" + arg1 + ',' +
+        id = getClass().getSimpleName() + ":(" + arg1 + ',' +
                 (positive ? "Pos" : "Neg") +
                 ',' + direction +
                 ')';
@@ -59,7 +59,7 @@ public class ShiftOccurrence extends PreCondition1 {
 //        }
     }
 
-    @Override public boolean test(final RuleMatch m) {
+    @Override public boolean test(RuleMatch m) {
 
         Premise p = m.premise;
 

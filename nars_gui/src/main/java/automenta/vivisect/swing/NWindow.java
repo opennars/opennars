@@ -93,9 +93,9 @@ public class NWindow extends JFrame {
          * usually provided by a compositing engine like Compiz or xcompmgr */
         void setTransparent(boolean b) {
 
-            if (this.transparent == b) return;
+            if (transparent == b) return;
 
-            this.transparent = b;
+            transparent = b;
 
             if (b) {
                 setDefaultLookAndFeelDecorated(false);

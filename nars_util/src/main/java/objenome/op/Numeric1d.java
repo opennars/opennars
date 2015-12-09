@@ -10,10 +10,9 @@ import objenome.util.TypeUtil;
 /**
  * Returns Double, specifically
  */
-abstract public class Numeric1d<Y extends Number> extends Numeric1 {
+public abstract class Numeric1d<Y extends Number> extends Numeric1 {
 
     public Numeric1d() {
-        super();
     }
 
     
@@ -32,11 +31,7 @@ abstract public class Numeric1d<Y extends Number> extends Numeric1 {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0])) {
-            return Double.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0]) ? Double.class : null;
     }
     
 

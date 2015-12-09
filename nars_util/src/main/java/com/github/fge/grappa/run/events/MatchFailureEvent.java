@@ -21,7 +21,7 @@ import com.github.fge.grappa.run.context.MatcherContext;
 public final class MatchFailureEvent<V>
     extends MatchContextEvent<V>
 {
-    public MatchFailureEvent(final MatcherContext<V> context)
+    public MatchFailureEvent(MatcherContext<V> context)
     {
         super(context);
     }

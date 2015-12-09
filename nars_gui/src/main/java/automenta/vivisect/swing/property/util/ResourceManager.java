@@ -162,11 +162,7 @@ public class ResourceManager {
    */
   public char getChar(String key) {
     String s = getString(key);
-    if (s == null || s.trim().length() == 0) {
-      return (char)0;
-    } else {
-      return s.charAt(0);
-    }
+    return s == null || s.trim().isEmpty() ? (char) 0 : s.charAt(0);
   }
 
   private String resolve0(String property) {
@@ -174,10 +170,10 @@ public class ResourceManager {
     if (property != null) {
       int index = property.indexOf("${");
       if (index != -1) {
-        int endIndex = property.indexOf("}", index);
+        int endIndex = property.indexOf('}', index);
         String sub = property.substring(index + 2, endIndex);
         // check if sub contains a reference to another RB, key
-        int colon = sub.indexOf(":");
+        int colon = sub.indexOf(':');
         if (colon != -1) {
           String rbName = sub.substring(0, colon);
           String keyName = sub.substring(colon + 1);
@@ -196,11 +192,7 @@ public class ResourceManager {
   private static String getPackage(Class clazz) {
     String pck = clazz.getName();
     int index = pck.lastIndexOf('.');
-    if (index != -1) {
-      pck = pck.substring(0, index);
-    } else {
-      pck = "";
-    }
+    pck = index != -1 ? pck.substring(0, index) : "";
     return pck;
   }
 

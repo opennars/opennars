@@ -24,8 +24,8 @@ public class PermutationsTest {
         String x = "";
         while(perm.hasNext()){
             String aa = Arrays.toString(perm.next());
-            System.out.println(aa + " "+perm.hasNext());
-            x += aa + " ";
+            System.out.println(aa + ' ' +perm.hasNext());
+            x += aa + ' ';
             count++;
         }
         System.out.println("total: " + count);

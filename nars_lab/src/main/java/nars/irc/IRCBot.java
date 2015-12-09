@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class IRCBot {
+public abstract class IRCBot {
 
     private final String server;
     public final String nick;
@@ -14,7 +14,7 @@ abstract public class IRCBot {
     protected final String channel;
     boolean outputting = false;
 
-    final static String pingHead = "PING ";
+    static final String pingHead = "PING ";
 
     protected BufferedWriter writer = null;
 
@@ -61,62 +61,57 @@ abstract public class IRCBot {
         writer.write("USER " + login + " 8 * : " + nick + "\r\n");
         writer.flush();
 
-        new Thread(new Runnable() {
+        new Thread(() -> {
 
-            @Override
-            public void run() {
-
-                // Join the channel.
-                try {
-                    // Read lines from the server until it tells us we have connected.
-                    String line = null;
-                    while ((line = reader.readLine( )) != null) {
-                        if (line.indexOf("004") >= 0) {
-                            // We are now logged in.
-                            break;
-                        }
-                        else if (line.indexOf("433") >= 0) {
-                            System.out.println("Nickname is already in use.");
-                            return;
-                        }
+            // Join the channel.
+            try {
+                // Read lines from the server until it tells us we have connected.
+                String line = null;
+                while ((line = reader.readLine( )) != null) {
+                    if (line.contains("004")) {
+                        // We are now logged in.
+                        break;
                     }
-
-
-                    writer.write("JOIN " + channel + "\r\n");
-                    writer.flush();
-                    // Keep reading lines from the server.
-                    while ((line = reader.readLine( )) != null) {
-
-                        try {
-                            Message m = Message.parse(line);
-
-                            System.err.println("in: " + m + " from " + line);
-
-                            switch (m.command) {
-                                case "PING":
-                                    writer.write("PONG " + m.params.get(0) + "\r\n");
-                                    writer.flush();
-                                    break;
-                                case "PRIVMSG":
-                                    System.err.println(line);
-
-                                    onMessage(IRCBot.this, m.params.get(0), m.nick, m.params.get(1));
-                                    break;
-                                default:
-                                    System.err.println("unknown: " + m + " from " + line);
-                            }
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    else if (line.contains("433")) {
+                        System.out.println("Nickname is already in use.");
+                        return;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
                 }
 
 
+                writer.write("JOIN " + channel + "\r\n");
+                writer.flush();
+                // Keep reading lines from the server.
+                while ((line = reader.readLine( )) != null) {
+
+                    try {
+                        Message m = Message.parse(line);
+
+                        System.err.println("in: " + m + " from " + line);
+
+                        switch (m.command) {
+                            case "PING":
+                                writer.write("PONG " + m.params.get(0) + "\r\n");
+                                writer.flush();
+                                break;
+                            case "PRIVMSG":
+                                System.err.println(line);
+
+                                onMessage(IRCBot.this, m.params.get(0), m.nick, m.params.get(1));
+                                break;
+                            default:
+                                System.err.println("unknown: " + m + " from " + line);
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+
         }).start();
     }
 
@@ -146,7 +141,7 @@ abstract public class IRCBot {
         String prefix;
         String nick;
         String command;
-        ArrayList<String> params = new ArrayList<String>();
+        ArrayList<String> params = new ArrayList<>();
 
         @Override
         public String toString() {
@@ -161,7 +156,7 @@ abstract public class IRCBot {
             if (line.charAt(0) == '@') {
                 String[] rawTags;
 
-                nextspace = line.indexOf(" ");
+                nextspace = line.indexOf(' ');
                 System.out.println(nextspace);
                 if (nextspace == -1) {
                     return null;
@@ -169,8 +164,7 @@ abstract public class IRCBot {
 
                 rawTags = line.substring(1, nextspace).split(";");
 
-                for (int i = 0; i < rawTags.length; i++) {
-                    String tag = rawTags[i];
+                for (String tag : rawTags) {
                     String[] pair = tag.split("=");
 
                     if (pair.length == 2) {
@@ -187,7 +181,7 @@ abstract public class IRCBot {
             }
 
             if (line.charAt(position) == ':') {
-                nextspace = line.indexOf(" ", position);
+                nextspace = line.indexOf(' ', position);
                 if (nextspace == -1) {
                     return null;
                 }
@@ -202,7 +196,7 @@ abstract public class IRCBot {
                     message.nick = message.prefix.substring(0, message.prefix.indexOf('!'));
             }
 
-            nextspace = line.indexOf(" ", position);
+            nextspace = line.indexOf(' ', position);
 
             if (nextspace == -1) {
                 if (line.length() > position) {
@@ -220,7 +214,7 @@ abstract public class IRCBot {
             }
 
             while (position < line.length()) {
-                nextspace = line.indexOf(" ", position);
+                nextspace = line.indexOf(' ', position);
 
                 if (line.charAt(position) == ':') {
                     String param = line.substring(position + 1);

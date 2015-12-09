@@ -34,9 +34,9 @@ public interface Stamp  {
     /***
      * zips two evidentialBase arrays into a new one
      */
-    static long[] zip(final long[] a, final long[] b) {
+    static long[] zip(long[] a, long[] b) {
 
-        final int baseLength = Math.min(a.length + b.length, Global.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+        int baseLength = Math.min(a.length + b.length, Global.MAXIMUM_EVIDENTAL_BASE_LENGTH);
 
         long[] c = new long[baseLength];
 
@@ -55,8 +55,8 @@ public interface Stamp  {
         return c;
     }
 
-    static long[] toSetArray(final long[] x) {
-        final int l = x.length;
+    static long[] toSetArray(long[] x) {
+        int l = x.length;
 
         if (l < 2)
             return x;
@@ -69,10 +69,9 @@ public interface Stamp  {
         //2. count unique elements
         long lastValue = -1;
         int uniques = 0; //# of unique items
-        final int sLen = sorted.length;
+        int sLen = sorted.length;
 
-        for (int i = 0; i < sLen; i++) {
-            long v = sorted[i];
+        for (long v : sorted) {
             if (lastValue != v)
                 uniques++;
             lastValue = v;
@@ -87,8 +86,7 @@ public interface Stamp  {
         lastValue = -1;
         long[] deduplicated = new long[uniques];
         uniques = 0;
-        for (int i = 0; i < sLen; i++) {
-            long v = sorted[i];
+        for (long v : sorted) {
             if (lastValue != v)
                 deduplicated[uniques++] = v;
             lastValue = v;

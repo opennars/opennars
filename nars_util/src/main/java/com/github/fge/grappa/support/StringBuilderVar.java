@@ -36,7 +36,7 @@ public class StringBuilderVar
      *
      * @param value the initial value
      */
-    public StringBuilderVar(final StringBuilder value)
+    public StringBuilderVar(StringBuilder value)
     {
         super(value);
     }
@@ -66,8 +66,8 @@ public class StringBuilderVar
     {
         if (get() == null)
             return new char[0];
-        final StringBuilder sb = get();
-        final char[] buf = new char[sb.length()];
+        StringBuilder sb = get();
+        char[] buf = new char[sb.length()];
         sb.getChars(0, buf.length, buf, 0);
         return buf;
     }
@@ -79,7 +79,7 @@ public class StringBuilderVar
      * @param text the text to append
      * @return true
      */
-    public boolean append(final String text)
+    public boolean append(String text)
     {
         if (get() == null)
             return set(new StringBuilder(text));
@@ -94,7 +94,7 @@ public class StringBuilderVar
      * @param text the text to append
      * @return this instance
      */
-    public StringBuilderVar appended(final String text)
+    public StringBuilderVar appended(String text)
     {
         append(text);
         return this;
@@ -107,7 +107,7 @@ public class StringBuilderVar
      * @param c the char to append
      * @return true
      */
-    public boolean append(final char c)
+    public boolean append(char c)
     {
         if (get() == null)
             return set(new StringBuilder().append(c));
@@ -122,7 +122,7 @@ public class StringBuilderVar
      * @param c the char to append
      * @return this instance
      */
-    public StringBuilderVar appended(final char c)
+    public StringBuilderVar appended(char c)
     {
         append(c);
         return this;

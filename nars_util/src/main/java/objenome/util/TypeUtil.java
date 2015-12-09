@@ -230,7 +230,7 @@ public final class TypeUtil {
         if (classes.length == 1) {
             return classes[0];
         }
-        else if (classes.length == 2) {
+        if (classes.length == 2) {
             Class c = classes[0];
             if (c == classes[1]) {
                 if (c == Double.class) return Double.class;
@@ -239,7 +239,7 @@ public final class TypeUtil {
                 if (c == Integer.class) return Integer.class;
             }
         }
-        
+
         if (!isAllNumericType(classes)) {
             return null;
         }
@@ -263,7 +263,7 @@ public final class TypeUtil {
      * @return <code>true</code> if it is a primitive integer type,
      * <code>false</code> otherwise
      */
-    public static boolean isIntegerType(final Class<?> type) {        
+    public static boolean isIntegerType(Class<?> type) {
         return ((type == Integer.class) || (type == Long.class) || (type == Byte.class) || (type == Short.class));
     }
 
@@ -275,7 +275,7 @@ public final class TypeUtil {
      * @return <code>true</code> if it is a numeric type, <code>false</code>
      * otherwise
      */
-    public static final boolean isNumericType(final Class<?> type) {
+    public static boolean isNumericType(Class<?> type) {
         return Number.class.isAssignableFrom(type);
         /*
         return ((type == Byte.class) || (type == Short.class) || (type == Integer.class) || (type == Long.class)
@@ -291,7 +291,7 @@ public final class TypeUtil {
      * @return <code>true</code> if all given classes are for numeric types,
      * <code>false</code> otherwise
      */
-    public static boolean isAllNumericType(final Class<?>... classes) {
+    public static boolean isAllNumericType(Class<?>... classes) {
         for (Class<?> c : classes) {
             if (!TypeUtil.isNumericType(c)) {
                 return false;
@@ -310,7 +310,8 @@ public final class TypeUtil {
      * @return the equivalent primitive class type
      */
     public static Class<?> getPrimitiveType(Class<?> type) {
-        
+
+        //noinspection IfStatementWithTooManyBranches
         if (type.isPrimitive()) {
             return type;
         } else if (Integer.class.equals(type)) {

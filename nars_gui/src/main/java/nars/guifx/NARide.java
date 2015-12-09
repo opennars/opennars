@@ -86,9 +86,7 @@ public class NARide extends BorderPane {
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
                 });*/
-                ni.addIcon(() -> {
-                    return new ConceptSonificationPanel(nar);
-                });
+                ni.addIcon(() -> new ConceptSonificationPanel(nar));
                 //ni.addView(additional components);
             }
 
@@ -168,9 +166,7 @@ public class NARide extends BorderPane {
             if (ide != null)
                 ide.accept(ni);
 
-            b.setOnCloseRequest((e) -> {
-                System.exit(0);
-            });
+            b.setOnCloseRequest((e) -> System.exit(0));
         });
 //        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 //
@@ -280,9 +276,7 @@ public class NARide extends BorderPane {
 
     public void addTool(String name, Supplier<? extends Node> builder) {
         MenuItem mi = new MenuItem(name);
-        mi.setOnAction((e) -> {
-            addView(builder.get());
-        });
+        mi.setOnAction((e) -> addView(builder.get()));
         /* depr */
         controlPane.tool.getItems().add(mi);
         tools.put(Atom.the(name, true), builder);
@@ -298,10 +292,9 @@ public class NARide extends BorderPane {
 
 
     public NARide(NARLoop l) {
-        super();
 
 
-        this.nar = l.nar;
+        nar = l.nar;
 
 
         //default node builders
@@ -310,7 +303,7 @@ public class NARide extends BorderPane {
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
         icon(NARLoop.class, (ll) -> new LoopPane(l));
         icon(AbstractNAR.DefaultCycle.class, (c) ->
-                new DefaultCyclePane((AbstractNAR.DefaultCycle)c) //cast is hack
+                new DefaultCyclePane((AbstractNAR.DefaultCycle) c) //cast is hack
         );
 
 
@@ -326,7 +319,7 @@ public class NARide extends BorderPane {
 //        controlPane.getChildren().add(addIcon);
 
 
-        final BorderPane f = new BorderPane();
+        BorderPane f = new BorderPane();
 
 
         /*LinePlot lp = new LinePlot(
@@ -445,15 +438,15 @@ public class NARide extends BorderPane {
 
     }
 
-    private class DefaultCyclePane extends BorderPane {
+    private static class DefaultCyclePane extends BorderPane {
 
         private final NAR nar;
         private final AbstractNAR.DefaultCycle cycle;
         //final NSlider activation;
 
         public DefaultCyclePane(AbstractNAR.DefaultCycle l) {
-            this.cycle = l;
-            this.nar = l.nar;
+            cycle = l;
+            nar = l.nar;
 
             setCenter(new POJOPane(l));
         }
@@ -526,8 +519,8 @@ public class NARide extends BorderPane {
             double w = canvas.getWidth(), h = canvas.getHeight();
             g.clearRect(0, 0, w, h);
 
-            final double iw = 6;
-            final double ih = 6;
+            double iw = 6;
+            double ih = 6;
 
             if (source!=null) {
                 Iterable<X> si = source.get();

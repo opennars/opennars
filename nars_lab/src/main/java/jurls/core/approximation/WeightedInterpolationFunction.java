@@ -47,7 +47,6 @@ public class WeightedInterpolationFunction implements ParameterizedFunction {
     }
 
     public WeightedInterpolationFunction(int numInputs, int numPoints, double power) {
-        super();
         this.numPoints = numPoints;
         this.power = power;
         minInput.set(Double.POSITIVE_INFINITY);

@@ -14,9 +14,9 @@ import java.io.IOException;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-final public class CyclesInterval extends ShadowAtom implements Interval {
+public final class CyclesInterval extends ShadowAtom implements Interval {
 
-    final static CyclesInterval zero = new CyclesInterval(0);
+    static final CyclesInterval zero = new CyclesInterval(0);
 
     final int cyc;
 
@@ -31,7 +31,7 @@ final public class CyclesInterval extends ShadowAtom implements Interval {
         if (numCycles < 0)
             throw new RuntimeException("cycles must be >= 0");
 
-        this.cyc = numCycles;
+        cyc = numCycles;
 
     }
 
@@ -44,12 +44,12 @@ final public class CyclesInterval extends ShadowAtom implements Interval {
 
 
     @Override
-    public final void append(Appendable output, boolean pretty) throws IOException {
+    public void append(Appendable output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc));//.append('/');
     }
 
     @Override
-    public final int duration() {
+    public int duration() {
         return cyc;
     }
 

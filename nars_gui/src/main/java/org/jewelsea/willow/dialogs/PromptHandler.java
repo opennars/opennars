@@ -47,22 +47,22 @@ public class PromptHandler extends VBox {
         super(14);
 
         // add controls to the popup.
-        final Label promptMessage = new Label(message);
+        Label promptMessage = new Label(message);
         promptMessage.setWrapText(true);
-        final ImageView promptImage = new ImageView(ResourceUtil.getImage("help_64.png"));
+        ImageView promptImage = new ImageView(ResourceUtil.getImage("help_64.png"));
         promptImage.setFitHeight(32);
         promptImage.setPreserveRatio(true);
         promptMessage.setGraphic(promptImage);
         promptMessage.setPrefWidth(350);
-        final TextField inputField = new TextField(defaultValue);
+        TextField inputField = new TextField(defaultValue);
         inputField.setTranslateY(-5);
         Platform.runLater(inputField::selectAll);
 
         // action button text setup.
         HBox buttonBar = new HBox(20);
-        final Button submitButton = new Button(getString("dialog.submit"));
+        Button submitButton = new Button(getString("dialog.submit"));
         submitButton.setDefaultButton(true);
-        final Button cancelButton = new Button(getString("dialog.cancel"));
+        Button cancelButton = new Button(getString("dialog.cancel"));
         cancelButton.setCancelButton(true);
         ColorAdjust bleach = new ColorAdjust();
         bleach.setSaturation(-0.6);
@@ -74,7 +74,7 @@ public class PromptHandler extends VBox {
         getStyleClass().add("alert-dialog");
         getChildren().addAll(promptMessage, inputField, buttonBar);
 
-        final DropShadow dropShadow = new DropShadow();
+        DropShadow dropShadow = new DropShadow();
         setEffect(dropShadow);
 
         // submit and close the popup.

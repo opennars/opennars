@@ -81,22 +81,18 @@ public class Actions {
     public static int map(String actionName) {
         if (actionsMap == null) makeMap();
 
-        return actionsMap.get(actionName).intValue();
+        return actionsMap.get(actionName);
     }
 
     /** Construct the map from names to actions */
     public static void makeMap() {
-        actionsMap = new HashMap<String,Integer>();
+        actionsMap = new HashMap<>();
         
         for (int i = 0; i < actionNames.length; i++) {
             int v;
 
-            if (i < numPlayerActions * 2) v = i;
-            // Special actions (not player-related) start at 40
-            else {
-                v = i + 4;
-            }
-            actionsMap.put(actionNames[i], new Integer(v));
+            v = i < numPlayerActions * 2 ? i : i + 4;
+            actionsMap.put(actionNames[i], v);
         }
     }
 }

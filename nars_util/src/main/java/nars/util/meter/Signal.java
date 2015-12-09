@@ -55,11 +55,11 @@ public class Signal implements Comparable<Signal> {
     }
 
     void setMin(double newMin) {
-        this.min = newMin;
+        min = newMin;
     }
 
     void setMax(double newMax) {
-        this.max = newMax;
+        max = newMax;
     }
 
     void resetBounds() {

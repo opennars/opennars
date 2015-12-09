@@ -50,7 +50,7 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
      * returns the compound valid for a Task if so,
      * otherwise returns null
      * */
-    static Compound validTaskTerm(final Term t) {
+    static Compound validTaskTerm(Term t) {
         if (invalidTaskTerm(t))
             return null;
         return ((Compound)t);
@@ -351,13 +351,14 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
         return toString(nar.memory, showStamp);
     }
 
-    default CharSequence toString(final Memory memory, final boolean showStamp) {
+    default CharSequence toString(Memory memory, boolean showStamp) {
         return appendTo(new StringBuilder(), memory, showStamp);
     }
 
-    default @Deprecated
-    StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
-        final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
+    @Deprecated
+    default
+    StringBuilder appendTo(StringBuilder buffer, @Nullable Memory memory, boolean showStamp) {
+        boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return appendTo(buffer, memory, true, notCommand, notCommand, true);
     }
 
@@ -369,7 +370,7 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
      * @param showBudget
      * @return The String
      */
-    StringBuilder appendTo(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
+    StringBuilder appendTo(StringBuilder buffer, @Nullable Memory memory, boolean term, boolean showStamp, boolean showBudget, boolean showLog);
 
 
 
@@ -405,15 +406,15 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
     }
 
     final class ExpectationComparator implements Comparator<Sentence>, Serializable {
-        final static Comparator the = new ExpectationComparator();
-        @Override public int compare(final Sentence b, final Sentence a) {
+        static final Comparator the = new ExpectationComparator();
+        @Override public int compare(Sentence b, Sentence a) {
             return Float.compare(a.getExpectation(), b.getExpectation());
         }
     }
 
     final class ConfidenceComparator implements Comparator<Sentence>, Serializable {
-        final static Comparator the = new ExpectationComparator();
-        @Override public int compare(final Sentence b, final Sentence a) {
+        static final Comparator the = new ExpectationComparator();
+        @Override public int compare(Sentence b, Sentence a) {
             return Float.compare(a.getConfidence(), b.getConfidence());
         }
     }

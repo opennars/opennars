@@ -18,7 +18,7 @@ public class TaskPunctuation extends PreCondition {
     public static final TaskPunctuation TaskJudgment = new TaskPunctuation('.');
 
     public static final TaskPunctuation TaskQuestion = new TaskPunctuation('?') {
-        @Override protected final boolean test(char taskPunc) {
+        @Override protected boolean test(char taskPunc) {
             return taskPunc == Symbols.QUESTION || taskPunc == Symbols.QUEST;
         }
     };
@@ -40,8 +40,7 @@ public class TaskPunctuation extends PreCondition {
     }
 
     TaskPunctuation(char p, String id) {
-        super();
-        this.punc = p;
+        punc = p;
         this.id = id;
     }
 
@@ -51,8 +50,8 @@ public class TaskPunctuation extends PreCondition {
     }
 
     @Override
-    public final boolean test(final RuleMatch r) {
-        final char taskPunc = r.premise.getTask().getPunctuation();
+    public final boolean test(RuleMatch r) {
+        char taskPunc = r.premise.getTask().getPunctuation();
         return test(taskPunc);
     }
 

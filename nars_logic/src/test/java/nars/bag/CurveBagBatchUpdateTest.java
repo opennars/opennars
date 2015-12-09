@@ -50,7 +50,7 @@ public class CurveBagBatchUpdateTest {
 
         Global.DEBUG = true;
 
-        final int cap = cb.capacity();
+        int cap = cb.capacity();
         int batch = 2;
         NullItem[] b = new NullItem[batch];
         int loops = 256;
@@ -58,7 +58,7 @@ public class CurveBagBatchUpdateTest {
 
 
         int[] x = BagGenerators.testRemovalPriorityDistribution(
-                loops, insertsPerLoop, 1f , cb
+                loops, insertsPerLoop, 1.0f, cb
         );
         System.out.println(Arrays.toString(x));
 

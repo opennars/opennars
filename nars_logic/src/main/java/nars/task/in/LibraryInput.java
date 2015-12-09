@@ -27,7 +27,7 @@ public class LibraryInput extends TextInput {
     private String input;
 
     public static final String[] directories =
-            new String[] {
+            {
                     "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8",
                     "other",
                     "app/testchamber", "app/pattern_matching1", "app/metacat"
@@ -61,7 +61,7 @@ public class LibraryInput extends TextInput {
         return new LibraryInput(n, path);
     }
 
-    final static String cwd;
+    static final String cwd;
 
     static {
         Path currentRelativePath = Paths.get("");
@@ -69,11 +69,8 @@ public class LibraryInput extends TextInput {
     }
 
     public static String getExamplePath(String path) {
-        if (path.startsWith("/")) return path; //dont modify, it's already absolute
-        if (cwd.endsWith("nars_logic") || cwd.endsWith("nars_lab"))
-            return "../nal/" + path;
-        else
-            return "nal/" + path;
+        if (path.length() > 0 && path.charAt(0) == '/') return path; //dont modify, it's already absolute
+        return cwd.endsWith("nars_logic") || cwd.endsWith("nars_lab") ? "../nal/" + path : "nal/" + path;
     }
     
 //    public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
@@ -102,8 +99,8 @@ public class LibraryInput extends TextInput {
             if (ff == null)
                 throw new RuntimeException(se + " not found");
 
-            for (final File file : ff) {
-                if (file.isDirectory() || file.getName().equals("README.txt") || file.getName().contains(".png"))
+            for (File file : ff) {
+                if (file.isDirectory() || "README.txt".equals(file.getName()) || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {
                     l.put(file.getName(), file.getAbsolutePath() );
@@ -128,7 +125,7 @@ public class LibraryInput extends TextInput {
 
     protected static Map<String, String> examples = new HashMap(); //path -> script data
 
-    final static Function<? super String, CharSequence> lineFilter = _line -> {
+    static final Function<? super String, CharSequence> lineFilter = _line -> {
         String line = _line.trim();
         if (line.startsWith("IN:"))
             line = line.replace("IN:", "");
@@ -183,7 +180,7 @@ public class LibraryInput extends TextInput {
 
         List<Object[]> rr = Global.newArrayList();
 
-        Narsese.tasksRaw(script, x -> rr.add(x));
+        Narsese.tasksRaw(script, rr::add);
 
         return rr;
     }

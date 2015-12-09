@@ -23,6 +23,6 @@ package automenta.vivisect.swing.property.model;
  */
 public interface ObjectRenderer {
 
-	public String getText(Object object);
+	String getText(Object object);
 	
 }

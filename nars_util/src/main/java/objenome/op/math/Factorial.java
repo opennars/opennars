@@ -74,11 +74,7 @@ public class Factorial extends Node {
             factorial = factorial * i;
         }
 
-        if (c instanceof Long) {
-            return factorial;
-        } else {
-            return (int) factorial;
-        }
+        return c instanceof Long ? factorial : (int) factorial;
     }
 
     /**

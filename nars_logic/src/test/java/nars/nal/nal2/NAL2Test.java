@@ -16,7 +16,7 @@ public class NAL2Test extends AbstractNALTester {
 
     public NAL2Test(Supplier<NAR> b) { super(b); }
 
-    final static int cycles = 60;
+    static final int cycles = 60;
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
@@ -220,7 +220,7 @@ public class NAL2Test extends AbstractNALTester {
         tester.believe("<p1 --> p2>");
         tester.believe("<p2 <-> p3>");
         tester.mustBelieve(100, "<p1 --> p3>",
-                1f, 1f, 0.81f, 1f);
+                1.0f, 1.0f, 0.81f, 1.0f);
         tester.debug();
         tester.run(true);
     }

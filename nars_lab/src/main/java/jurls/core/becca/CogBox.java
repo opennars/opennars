@@ -24,8 +24,8 @@ public class CogBox {
             throw new RuntimeException("# outputs must be a multiple of # cogs");
         
         this.inputs = inputs;
-        this.output = new double[outputs];
-        this.cogInputs = (int)Math.ceil(((double)inputs) / ncogs);
+        output = new double[outputs];
+        cogInputs = (int)Math.ceil(((double)inputs) / ncogs);
         
         cogs = new ArrayList(ncogs);
         for (int c = 0; c < ncogs; c++) {

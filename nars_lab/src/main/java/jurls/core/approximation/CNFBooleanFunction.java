@@ -44,7 +44,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
 
         ArrayList<List<Integer>> cnf2 = new ArrayList<>();
 
-        int[] indices = new int[]{1, 2, 3};
+        int[] indices = {1, 2, 3};
         do {
             List<List<Integer>> clauses = new ArrayList<>();
             clauses.add(new ArrayList<>());
@@ -64,7 +64,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
         }
 
         parameters = new long[cnf.length];
-        Arrays.fill(parameters, ~0l);
+        Arrays.fill(parameters, ~0L);
         intermediates = new long[cnf.length];
     }
 
@@ -86,12 +86,12 @@ public class CNFBooleanFunction implements ParameterizedFunction {
     private static List<List<Integer>> extend(List<List<Integer>> xs, int k) {
         List<List<Integer>> ys = new ArrayList<>();
 
-        for (int i = 0; i < xs.size(); ++i) {
+        for (List<Integer> x : xs) {
             List<Integer> is;
-            is = new ArrayList<>(xs.get(i));
+            is = new ArrayList<>(x);
             is.add(-k);
             ys.add(is);
-            is = new ArrayList<>(xs.get(i));
+            is = new ArrayList<>(x);
             is.add(k);
             ys.add(is);
         }
@@ -103,13 +103,8 @@ public class CNFBooleanFunction implements ParameterizedFunction {
         long b = 0;
         int[] maxTerm = cnf[clauseIndex];
 
-        for (int i = 0; i < maxTerm.length; ++i) {
-            int literal = maxTerm[i];
-            if (literal > 0) {
-                b |= variables[literal - 1];
-            } else {
-                b |= ~variables[-literal - 1];
-            }
+        for (int literal : maxTerm) {
+            b |= literal > 0 ? variables[literal - 1] : ~variables[-literal - 1];
         }
         b |= parameters[clauseIndex];
 
@@ -117,7 +112,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
     }
 
     private long compute() {
-        long a = ~0l;
+        long a = ~0L;
 
         for (int j = 0; j < cnf.length; ++j) {
             long b = compute(j);
@@ -125,7 +120,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
             a &= b;
         }
 
-        a &= (1l << numOutputBits) - 1l;
+        a &= (1L << numOutputBits) - 1L;
         return a;
     }
 
@@ -134,26 +129,22 @@ public class CNFBooleanFunction implements ParameterizedFunction {
         int j = 0;
 
         for (int i = 0; i < xs.length; ++i) {
-            long v = Math.round(((1l << numBitsPerVariable[i]) - 1) * xs[i]);
+            long v = Math.round(((1L << numBitsPerVariable[i]) - 1) * xs[i]);
 
             for (int k = 0; k < numBitsPerVariable[i]; ++k, ++j) {
-                if (((v >> k) & 1) == 1) {
-                    variables[j] = ~0l;
-                } else {
-                    variables[j] = 0l;
-                }
+                variables[j] = ((v >> k) & 1) == 1 ? ~0L : 0L;
             }
         }
 
-        return (double) compute() / (double) ((1l << numOutputBits) - 1);
+        return (double) compute() / ((1L << numOutputBits) - 1);
     }
 
     @Override
     public void learn(double[] xs, double y) {
-        long currents = Math.round(value(xs) * ((1l << numOutputBits) - 1));
-        long targets = Math.round(y * ((1l << numOutputBits) - 1));
+        long currents = Math.round(value(xs) * ((1L << numOutputBits) - 1));
+        long targets = Math.round(y * ((1L << numOutputBits) - 1));
 
-        final ArrayList<Integer> ps = new ArrayList<>(numOutputBits);
+        ArrayList<Integer> ps = new ArrayList<>(numOutputBits);
         for (int i = 0; i < numOutputBits; ++i) {
             boolean target = ((targets >> i) & 1) == 1;
             boolean current = ((currents >> i) & 1) == 1;
@@ -166,18 +157,18 @@ public class CNFBooleanFunction implements ParameterizedFunction {
                 }
             } else if (!target && current) {
                 for (int j = 0; j < parameters.length; ++j) {
-                    parameters[j] ^= 1l << i;
+                    parameters[j] ^= 1L << i;
                     if (((compute(j) >> i) & 1) == 0) {
                         ps.add(j);
                     }
-                    parameters[j] ^= 1l << i;
+                    parameters[j] ^= 1L << i;
                 }
             }
 
             // ps is the "LOGIC GRADIENT" (my invention)
             if (!ps.isEmpty()) {
                 int p = ps.get(random.nextInt(ps.size()));
-                parameters[p] ^= 1l << i;
+                parameters[p] ^= 1L << i;
             }
         }
     }

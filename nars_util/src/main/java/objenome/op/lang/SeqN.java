@@ -67,7 +67,7 @@ public class SeqN extends Node {
      */
     @Override
     public Void evaluate() {
-        final int arity = getArity();
+        int arity = getArity();
         for (int i = 0; i < arity; i++) {
             getChild(i).evaluate();
         }
@@ -96,10 +96,6 @@ public class SeqN extends Node {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == getArity()) && TypeUtil.allEqual(inputTypes, Void.class)) {
-            return Void.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == getArity()) && TypeUtil.allEqual(inputTypes, Void.class) ? Void.class : null;
     }
 }

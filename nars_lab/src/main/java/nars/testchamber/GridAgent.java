@@ -11,7 +11,7 @@ import java.util.Set;
 
 
 
-abstract public class GridAgent extends LocalGridObject {
+public abstract class GridAgent extends LocalGridObject {
     
     public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
     public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
@@ -44,15 +44,15 @@ abstract public class GridAgent extends LocalGridObject {
     public void turn(int angle) {   act(new Turn(angle(angle)));  }
 
     @Override
-    abstract public void update(Effect nextEffect);
+    public abstract void update(Effect nextEffect);
     
     @Override
     public void draw() {
         cx = (cx * (1.0f - animationLerpRate)) + (x * animationLerpRate);
         cy = (cy * (1.0f - animationLerpRate)) + (y * animationLerpRate);
-        cheading = (cheading * (1.0f - animationLerpRate/2.0f)) + (heading * animationLerpRate/2.0f);
+        cheading = cheading * (1.0f - animationLerpRate/2.0f) + (heading * animationLerpRate/2.0f);
         
-        float scale = (float)Math.sin(space.getTime()/7f)*0.05f + 1.0f;
+        float scale = (float)Math.sin(space.getTime()/ 7.0f)*0.05f + 1.0f;
         
         space.pushMatrix();
         space.translate(cx, cy);
@@ -68,7 +68,7 @@ abstract public class GridAgent extends LocalGridObject {
         
         //eyes
         space.fill(Color.BLUE.getRGB(), 255);
-        space.rotate((float)(Math.PI/180f * cheading));
+        space.rotate((float)(Math.PI/ 180.0f * cheading));
         space.translate(-0.15f, 0.4f);
         space.ellipse(0,0,0.2f,0.2f);
         space.translate(0.3f, 0.0f);

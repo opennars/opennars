@@ -18,15 +18,15 @@ public class DDNodePool<E> extends DequePool<DD<E>> {
     }
 
     @Override
-    public void put(final DD<E> i) {
+    public void put(DD<E> i) {
         i.owner = -1;
         i.next = i.prev = null;
         i.item = null;
         super.put(i);
     }
 
-    public DD<E> get(final E item, final int owner) {
-        final DD<E> x = get();
+    public DD<E> get(E item, int owner) {
+        DD<E> x = get();
         x.item = item;
         x.owner = owner;
         return x;

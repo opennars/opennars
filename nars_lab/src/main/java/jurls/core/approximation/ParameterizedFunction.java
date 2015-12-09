@@ -11,21 +11,21 @@ package jurls.core.approximation;
  */
 public interface ParameterizedFunction {
 
-    public double value(double[] xs);
+    double value(double[] xs);
 
-    public void parameterGradient(double[] output, double... xs);
+    void parameterGradient(double[] output, double... xs);
 
-    public void addToParameters(double[] deltas);
+    void addToParameters(double[] deltas);
 
-    public void learn(double[] xs, double y);
+    void learn(double[] xs, double y);
 
-    public int numberOfParameters();
+    int numberOfParameters();
 
-    public int numberOfInputs();
+    int numberOfInputs();
 
-    public double minOutputDebug();
+    double minOutputDebug();
 
-    public double maxOutputDebug();
+    double maxOutputDebug();
 
     default double getParameter(int i) {
         return 0;

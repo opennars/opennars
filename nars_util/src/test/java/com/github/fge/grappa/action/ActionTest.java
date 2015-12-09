@@ -33,7 +33,7 @@ public class ActionTest extends ParboiledTest<Integer>
     {
 
         public boolean addOne() {
-            final Integer i = getContext().getValueStack().pop();
+            Integer i = getContext().getValueStack().pop();
             getContext().getValueStack().push(i + 1);
             return true;
         }
@@ -53,8 +53,8 @@ public class ActionTest extends ParboiledTest<Integer>
             );
         }
 
-        public Rule B(final int i) {
-            final int j = i + 1;
+        public Rule B(int i) {
+            int j = i + 1;
             return sequence(
                     'b',
                     push(timesTwo(i + j)),
@@ -68,7 +68,7 @@ public class ActionTest extends ParboiledTest<Integer>
                     'c',
                     push(pop()), // no effect
                     new Action() {
-                        public boolean run(final Context context) {
+                        public boolean run(Context context) {
                             return getContext() == context;
                         }
                     },
@@ -77,7 +77,7 @@ public class ActionTest extends ParboiledTest<Integer>
         }
 
         @Label("Last")
-        public Rule D(final int i) {
+        public Rule D(int i) {
             return sequence(
                     'd', dup(),
                     push(i),
@@ -85,13 +85,13 @@ public class ActionTest extends ParboiledTest<Integer>
             );
         }
 
-        public boolean stringAction(final String string) {
+        public boolean stringAction(String string) {
             return "lastText:bcd".equals(string);
         }
 
         // ************* ACTIONS **************
 
-        public int timesTwo(final int i) {
+        public int timesTwo(int i) {
             return i * 2;
         }
 
@@ -99,7 +99,7 @@ public class ActionTest extends ParboiledTest<Integer>
 
     @Test
     public void test() {
-        final Parser parser = Grappa.createParser(Parser.class);
+        Parser parser = Grappa.createParser(Parser.class);
         test(parser.A(), "abcd").hasNoErrors();
     }
 

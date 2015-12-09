@@ -27,15 +27,11 @@ public class Scalar extends Literal<Double> implements DiffableFunction {
 
     @Override
     public double partialDerive(Scalar parameter) {
-        if (this == parameter) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return this == parameter ? 1 : 0;
     }
 
 
-    public void setValue(final double v) {
+    public void setValue(double v) {
         if (v < lowerBound)
             value = lowerBound;
         else if (v > upperBound)

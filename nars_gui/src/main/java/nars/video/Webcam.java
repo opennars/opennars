@@ -20,6 +20,7 @@ public class Webcam {
 
         ShowImages.showWindow(gui, "CAM");
 
+        //noinspection InfiniteLoopStatement
         while( true ) {
             if (webcam.isOpen() && webcam.isImageNew()) {
                 BufferedImage image = webcam.getImage();

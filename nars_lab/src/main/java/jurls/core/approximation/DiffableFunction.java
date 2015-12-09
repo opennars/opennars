@@ -11,7 +11,7 @@ package jurls.core.approximation;
  */
 public interface DiffableFunction {
 
-    public double value(double[] xValues);
+    double value(double[] xValues);
 
-    public double partialDerive(double[] xValues, int parameterIndex);
+    double partialDerive(double[] xValues, int parameterIndex);
 }

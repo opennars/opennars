@@ -11,13 +11,13 @@ import java.util.List;
 public interface Signals<M> {
 
     
-    public default void setActive(boolean active) {
+    default void setActive(boolean active) {
     }
 
     /** the list of signals produced by this meter; this should not change
      * in quantity during operation
      */
-    public List<Signal> getSignals();
+    List<Signal> getSignals();
     
     default Signal signal(int i) {
         return getSignals().get(i);
@@ -38,9 +38,9 @@ public interface Signals<M> {
      * or null (no data). if any of the elements are null, that column's data 
      * point is not recorded (ie. NaN).
      */
-    public M[] sample(Object key);
+    M[] sample(Object key);
     
-    default public int numSignals() { return getSignals().size(); }
+    default int numSignals() { return getSignals().size(); }
     
     
 }

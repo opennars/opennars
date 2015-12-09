@@ -100,21 +100,21 @@ public class MoleculeSampleApp extends Application {
 
     private void buildAxes() {
         System.out.println("buildAxes()");
-        final PhongMaterial redMaterial = new PhongMaterial();
+        PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);
         redMaterial.setSpecularColor(Color.RED);
 
-        final PhongMaterial greenMaterial = new PhongMaterial();
+        PhongMaterial greenMaterial = new PhongMaterial();
         greenMaterial.setDiffuseColor(Color.DARKGREEN);
         greenMaterial.setSpecularColor(Color.GREEN);
 
-        final PhongMaterial blueMaterial = new PhongMaterial();
+        PhongMaterial blueMaterial = new PhongMaterial();
         blueMaterial.setDiffuseColor(Color.DARKBLUE);
         blueMaterial.setSpecularColor(Color.BLUE);
 
-        final Box xAxis = new Box(AXIS_LENGTH, 1, 1);
-        final Box yAxis = new Box(1, AXIS_LENGTH, 1);
-        final Box zAxis = new Box(1, 1, AXIS_LENGTH);
+        Box xAxis = new Box(AXIS_LENGTH, 1, 1);
+        Box yAxis = new Box(1, AXIS_LENGTH, 1);
+        Box zAxis = new Box(1, 1, AXIS_LENGTH);
 
         xAxis.setMaterial(redMaterial);
         yAxis.setMaterial(greenMaterial);
@@ -125,68 +125,61 @@ public class MoleculeSampleApp extends Application {
         world.getChildren().addAll(axisGroup);
     }
 
-    private void handleMouse(Scene scene, final Node root) {
-        scene.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent me) {
-                mousePosX = me.getSceneX();
-                mousePosY = me.getSceneY();
-                mouseOldX = me.getSceneX();
-                mouseOldY = me.getSceneY();
-            }
+    private void handleMouse(Scene scene, Node root) {
+        scene.setOnMousePressed(me -> {
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            mouseOldX = me.getSceneX();
+            mouseOldY = me.getSceneY();
         });
-        scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent me) {
-                mouseOldX = mousePosX;
-                mouseOldY = mousePosY;
-                mousePosX = me.getSceneX();
-                mousePosY = me.getSceneY();
-                mouseDeltaX = (mousePosX - mouseOldX); 
-                mouseDeltaY = (mousePosY - mouseOldY); 
-                
-                double modifier = 1.0;
-                
-                if (me.isControlDown()) {
-                    modifier = CONTROL_MULTIPLIER;
-                } 
-                if (me.isShiftDown()) {
-                    modifier = SHIFT_MULTIPLIER;
-                }     
-                if (me.isPrimaryButtonDown()) {
-                    cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX*MOUSE_SPEED*modifier*ROTATION_SPEED);  
-                    cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY*MOUSE_SPEED*modifier*ROTATION_SPEED);  
-                }
-                else if (me.isSecondaryButtonDown()) {
-                    double z = camera.getTranslateZ();
-                    double newZ = z + mouseDeltaX*MOUSE_SPEED*modifier;
-                    camera.setTranslateZ(newZ);
-                }
-                else if (me.isMiddleButtonDown()) {
-                    cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX*MOUSE_SPEED*modifier*TRACK_SPEED);  
-                    cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY*MOUSE_SPEED*modifier*TRACK_SPEED);  
-                }
+        scene.setOnMouseDragged(me -> {
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            mouseDeltaX = (mousePosX - mouseOldX);
+            mouseDeltaY = (mousePosY - mouseOldY);
+
+            double modifier = 1.0;
+
+            if (me.isControlDown()) {
+                modifier = CONTROL_MULTIPLIER;
+            }
+            if (me.isShiftDown()) {
+                modifier = SHIFT_MULTIPLIER;
+            }
+            if (me.isPrimaryButtonDown()) {
+                cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX*MOUSE_SPEED*modifier*ROTATION_SPEED);
+                cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY*MOUSE_SPEED*modifier*ROTATION_SPEED);
+            }
+            else if (me.isSecondaryButtonDown()) {
+                double z = camera.getTranslateZ();
+                double newZ = z + mouseDeltaX*MOUSE_SPEED*modifier;
+                camera.setTranslateZ(newZ);
+            }
+            else if (me.isMiddleButtonDown()) {
+                cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX*MOUSE_SPEED*modifier*TRACK_SPEED);
+                cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY*MOUSE_SPEED*modifier*TRACK_SPEED);
             }
         });
     }
     
-    private void handleKeyboard(Scene scene, final Node root) {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case Z:
-                        cameraXform2.t.setX(0.0);
-                        cameraXform2.t.setY(0.0);
-                        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-                        cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
-                        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
-                        break;
-                    case X:
-                        axisGroup.setVisible(!axisGroup.isVisible());
-                        break;
-                    case V:
-                        moleculeGroup.setVisible(!moleculeGroup.isVisible());
-                        break;
-                }
+    private void handleKeyboard(Scene scene, Node root) {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case Z:
+                    cameraXform2.t.setX(0.0);
+                    cameraXform2.t.setY(0.0);
+                    camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+                    cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
+                    cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+                    break;
+                case X:
+                    axisGroup.setVisible(!axisGroup.isVisible());
+                    break;
+                case V:
+                    moleculeGroup.setVisible(!moleculeGroup.isVisible());
+                    break;
             }
         });
     }
@@ -196,15 +189,15 @@ public class MoleculeSampleApp extends Application {
         // THIS IS THE IMPORTANT MATERIAL FOR THE TUTORIAL
         //======================================================================
 
-        final PhongMaterial redMaterial = new PhongMaterial();
+        PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);
         redMaterial.setSpecularColor(Color.RED);
 
-        final PhongMaterial whiteMaterial = new PhongMaterial();
+        PhongMaterial whiteMaterial = new PhongMaterial();
         whiteMaterial.setDiffuseColor(Color.WHITE);
         whiteMaterial.setSpecularColor(Color.LIGHTBLUE);
 
-        final PhongMaterial greyMaterial = new PhongMaterial();
+        PhongMaterial greyMaterial = new PhongMaterial();
         greyMaterial.setDiffuseColor(Color.DARKGREY);
         greyMaterial.setSpecularColor(Color.GREY);
 

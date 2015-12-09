@@ -49,7 +49,7 @@ public class MethodCFG {
         //list(fromFireConcept.getPaths(addTask));
 
         //new NWindow("methods", new JGraphXGraphPanel(g)).show(500,500,true);
-        System.out.println(g.vertexSet().size() + "V|" + g.edgeSet().size() + "E");
+        System.out.println(g.vertexSet().size() + "V|" + g.edgeSet().size() + 'E');
     }
 
     public static void list(String prefix, Iterable x) {

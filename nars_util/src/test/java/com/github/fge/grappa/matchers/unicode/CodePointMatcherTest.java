@@ -49,23 +49,13 @@ public final class CodePointMatcherTest
 
         index = THE_ANSWER;
 
-        doAnswer(new Answer<Void>()
-        {
-            @Override
-            public Void answer(final InvocationOnMock invocation)
-            {
-                index += (Integer) invocation.getArguments()[0];
-                return null;
-            }
+        doAnswer(invocation -> {
+            index += (Integer) invocation.getArguments()[0];
+            return null;
         }).when(context).advanceIndex(anyInt());
-        doAnswer(new Answer<Void>()
-        {
-            @Override
-            public Void answer(final InvocationOnMock invocation)
-            {
-                index = (Integer) invocation.getArguments()[0];
-                return null;
-            }
+        doAnswer(invocation -> {
+            index = (Integer) invocation.getArguments()[0];
+            return null;
         }).when(context).setCurrentIndex(anyInt());
         when(context.getInputBuffer()).thenReturn(buffer);
         when(context.getCurrentIndex()).thenReturn(THE_ANSWER);
@@ -76,7 +66,7 @@ public final class CodePointMatcherTest
     @DataProvider
     public Iterator<Object[]> testData()
     {
-        final List<Object[]> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
 
         list.add(new Object[] { 232, -1, false, 0 });
         list.add(new Object[] { 232, 232, true, 1 });
@@ -87,10 +77,10 @@ public final class CodePointMatcherTest
     }
 
     @Test(dataProvider = "testData")
-    public void matchingWorks(final int wanted, final int obtained,
-        final boolean success, final int delta)
+    public void matchingWorks(int wanted, int obtained,
+                              boolean success, int delta)
     {
-        final CodePointMatcher matcher = new CodePointMatcher(wanted);
+        CodePointMatcher matcher = new CodePointMatcher(wanted);
         when(buffer.codePointAt(THE_ANSWER)).thenReturn(obtained);
 
         assertThat(matcher.match(context)).isEqualTo(success);

@@ -22,7 +22,7 @@ abstract class IOMatrixExample extends JPanel implements Runnable {
     private double[] input;
     private double[] output;
     
-    final static int padding = 4;
+    static final int padding = 4;
     public IOMatrixExample() {
         super(new GridLayout(0, 1, padding, padding));
         
@@ -34,6 +34,7 @@ abstract class IOMatrixExample extends JPanel implements Runnable {
     
     @Override public void run() {
         int cycle = 0;
+        //noinspection InfiniteLoopStatement
         while (true) {
             
             output = update(cycle, input = input(cycle));            
@@ -50,10 +51,10 @@ abstract class IOMatrixExample extends JPanel implements Runnable {
     }
 
     
-    abstract public long getDelayMS();
+    public abstract long getDelayMS();
     
-    abstract public double[] input(int cycle);
-    abstract public double[] update(int cycle, double[] i);
+    public abstract double[] input(int cycle);
+    public abstract double[] update(int cycle, double[] i);
 
     
 

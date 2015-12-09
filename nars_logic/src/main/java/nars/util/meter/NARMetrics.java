@@ -14,7 +14,7 @@ public class NARMetrics extends FrameReaction {
     public NARMetrics(NAR n, int historySize) {
         super(n);
 
-        this.nar = n;
+        nar = n;
 
         metrics = new TemporalMetrics(historySize);
 

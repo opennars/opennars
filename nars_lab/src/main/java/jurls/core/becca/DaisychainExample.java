@@ -9,16 +9,15 @@ package jurls.core.becca;
  *
  * @author me
  */
-abstract public class DaisychainExample extends IOMatrixExample  {
+public abstract class DaisychainExample extends IOMatrixExample  {
 
     int delayMS = 5;
     final Daisychain daisy;
     double[] output;
     
     public DaisychainExample(Daisychain z) {
-        super();
-        
-        this.daisy = z;
+
+        daisy = z;
     }
 
     @Override

@@ -21,7 +21,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
     public FastPutsLinkedMap() {
     }
 
-    public FastPutsLinkedMap(final Map<? extends K, ? extends V> map) {
+    public FastPutsLinkedMap(Map<? extends K, ? extends V> map) {
         putAll(map);
     }
 
@@ -72,7 +72,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
     }
 
     @Override
-    public V get(final Object key) {
+    public V get(Object key) {
         LinkedEntry<K, V> entry = getEntry(key);
         if (entry != null) {
             return entry.getValue();
@@ -81,7 +81,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
     }
 
     @Override
-    public V put(final K key, final V value) {
+    public V put(K key, V value) {
         size = 0; // reset
         LinkedEntry<K, V> newEntry = new LinkedEntry<>(key, value, header, header.prev);
         newEntry.prev.next = newEntry;
@@ -97,11 +97,11 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
     }
 
     @Override
-    public V remove(final Object key) {
+    public V remove(Object key) {
         LinkedEntry<K, V> entry = getEntry(key);
         if (entry != null) {
             size = 0; // reset
-            final V value = entry.getValue();
+            V value = entry.getValue();
             do {
                 remove(entry);
                 entry = getEntry(key);
@@ -111,7 +111,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
         return null;
     }
 
-    protected LinkedEntry<K, V> getEntry(final Object key) {
+    protected LinkedEntry<K, V> getEntry(Object key) {
         LinkedEntry<K, V> entry = header.prev;
         while (entry != header) {
             if (entry.getKey().equals(key)) {
@@ -123,7 +123,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
         return null;
     }
 
-    private void remove(final LinkedEntry<K, V> e) {
+    private void remove(LinkedEntry<K, V> e) {
         if (e == header) {
             throw new NoSuchElementException();
         }
@@ -140,7 +140,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
                 public Iterator<Map.Entry<K, V>> iterator() {
                     compact();
 
-                    final List<Map.Entry<K, V>> list = new ArrayList<>(size());
+                    List<Map.Entry<K, V>> list = new ArrayList<>(size());
                     for (LinkedEntry<K, V> entry = header.next; entry != null && entry != header; entry = entry.next) {
                         list.add(entry);
                     }
@@ -163,7 +163,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
         private transient LinkedEntry<K, V> next;
         private transient LinkedEntry<K, V> prev;
 
-        private LinkedEntry(final K key, final V value, final LinkedEntry<K, V> next, final LinkedEntry<K, V> prev) {
+        private LinkedEntry(K key, V value, LinkedEntry<K, V> next, LinkedEntry<K, V> prev) {
             super(key, value);
             this.next = next;
             this.prev = prev;

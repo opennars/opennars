@@ -8,10 +8,10 @@ public class Graviton {
     public float xPos = 0, yPos = 0, xPull = 0, yPull = 0;
     
     public Graviton(){
-        this.xPos = 0;
-        this.yPos = 0;
-        this.xPull = 0;
-        this.yPull = 0;
+        xPos = 0;
+        yPos = 0;
+        xPull = 0;
+        yPull = 0;
     }
     
     public void setGraviton(float xPos, float yPos, float xPull, float yPull){

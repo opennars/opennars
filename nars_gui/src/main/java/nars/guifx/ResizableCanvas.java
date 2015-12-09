@@ -13,7 +13,6 @@ public class ResizableCanvas extends Canvas {
 
 
     public ResizableCanvas() {
-        super();
 
         parentProperty().addListener((z,p,n) -> {
             if (n==null) return;
@@ -32,7 +31,6 @@ public class ResizableCanvas extends Canvas {
     }
 
     public ResizableCanvas(ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height) {
-        super();
 
         // Bind canvas size to stack pane size.
         widthProperty().bind(width);
@@ -43,7 +41,7 @@ public class ResizableCanvas extends Canvas {
 
     private void init() {
 
-        final boolean bindRedraw = true; //TODO parameter to make this optional to avoid unnecessary event being attached
+        boolean bindRedraw = true; //TODO parameter to make this optional to avoid unnecessary event being attached
         if (bindRedraw) {
             // Redraw canvas when size changes.
             widthProperty().addListener(evt -> draw());

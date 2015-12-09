@@ -84,7 +84,7 @@ public final class SurfaceVertex {
    * @return <code>true</code> if this surfaceVertex is invalid
    */
    
-  public final boolean isInvalid() {
+  public boolean isInvalid() {
     return Float.isNaN(z); 
   }
 
@@ -94,7 +94,7 @@ public final class SurfaceVertex {
    * @return the 2D projection
    */
    
-  public final Point projection(Projector projector) {
+  public Point projection(Projector projector) {
     /*if (project_index != master_project_index)*/ {
       projection = projector.project(x,y,(z-projector.zmin)*projector.zfactor-10);
       project_index = master_project_index;
@@ -108,7 +108,7 @@ public final class SurfaceVertex {
    * in Surface Plotter.
    */
      
-  public final void transform(Projector projector) {
+  public void transform(Projector projector) {
     x = x / projector.getXScaling();
     y = y / projector.getYScaling();
     z = (projector.zmax-projector.zmin)*(z/projector.getZScaling()+10)/20 + projector.zmin;

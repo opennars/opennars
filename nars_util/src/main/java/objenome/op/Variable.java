@@ -31,7 +31,7 @@ package objenome.op;
  *
  * @since 2.0
  */
-abstract public class Variable<X> {
+public abstract class Variable<X> {
 
     public final Class datatype;
     public final String name;
@@ -139,7 +139,7 @@ abstract public class Variable<X> {
      *
      * @param value the value to set for the variable
      */
-    abstract public void setValue(X value);
+    public abstract void setValue(X value);
 
     /**
      * Returns the data-type of this variable
@@ -155,7 +155,7 @@ abstract public class Variable<X> {
      *
      * @return this variable's value
      */
-    abstract public X getValue();
+    public abstract X getValue();
 
 
     /**

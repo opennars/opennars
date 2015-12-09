@@ -66,7 +66,6 @@ public abstract class AbstractAgent {
         init(useGUI, namedPipesBasename);
     }
     public AbstractAgent() {
-        super();
     }
 
     protected void init(boolean useGUI, String namedPipesBasename) {
@@ -90,25 +89,21 @@ public abstract class AbstractAgent {
      * @return
      */
     protected final ColorPalette makePalette(String paletteName) {
-        if (paletteName.equals("NTSC"))
-            return new NTSCPalette();
-        else if (paletteName.equals("SECAM"))
-            return new SECAMPalette();
-        else
-            throw new IllegalArgumentException("Invalid palette: "+paletteName);
+        switch (paletteName) {
+            case "NTSC":
+                return new NTSCPalette();
+            case "SECAM":
+                return new SECAMPalette();
+            default:
+                throw new IllegalArgumentException("Invalid palette: " + paletteName);
+        }
     }
 
     /** Initialize relevant bits of the agent
      * 
      */
     public final void init() {
-        if (useGUI) {
-            // Create the GUI
-            ui = new AgentGUI();
-        }
-        else {
-            ui = new NullUI();
-        }
+        ui = useGUI ? new AgentGUI() : new NullUI();
 
         // Create the relevant I/O objects
         initIO();
@@ -122,10 +117,7 @@ public abstract class AbstractAgent {
 
         try {
             // Initialize the pipes; use named pipes if requested
-            if (namedPipesBasename != null)
-                io = new ALEPipes(namedPipesBasename + "out", namedPipesBasename + "in");
-            else
-                io = new ALEPipes();
+            io = namedPipesBasename != null ? new ALEPipes(namedPipesBasename + "out", namedPipesBasename + "in") : new ALEPipes();
 
             // Determine which information to request from ALE
             io.setUpdateScreen(useGUI || wantsScreenData());

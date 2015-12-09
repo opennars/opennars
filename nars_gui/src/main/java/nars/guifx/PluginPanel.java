@@ -28,17 +28,14 @@ public class PluginPanel extends VBox {
     double itemSpacing = 8.0;
 
     public PluginPanel(NARide ide) {
-        super();
 
         setSpacing(itemSpacing);
 
         this.ide = ide;
-        this.nar = ide.nar;
+        nar = ide.nar;
 
 
-        nar.onEachFrame((n) -> {
-            update();
-        });
+        nar.onEachFrame((n) -> update());
         update();
 
 
@@ -47,10 +44,8 @@ public class PluginPanel extends VBox {
 
     protected void update() {
 
-        final List<Node> toAdd = Global.newArrayList();
-        nar.memory.getSingletons().forEach((k, v) -> {
-            toAdd.add(node(k, v));
-        });
+        List<Node> toAdd = Global.newArrayList();
+        nar.memory.getSingletons().forEach((k, v) -> toAdd.add(node(k, v)));
 
         //TODO use faster comparison method
 

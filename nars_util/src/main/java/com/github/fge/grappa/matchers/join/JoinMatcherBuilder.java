@@ -67,7 +67,7 @@ public final class JoinMatcherBuilder
     private final Rule joined;
     private final Rule joining;
 
-    JoinMatcherBuilder(final Rule joined, final Rule joining)
+    JoinMatcherBuilder(Rule joined, Rule joining)
     {
         this.joined = joined;
         this.joining = joining;
@@ -82,7 +82,7 @@ public final class JoinMatcherBuilder
      *
      * @see Range#atLeast(Comparable)
      */
-    public Rule min(final int nrCycles)
+    public Rule min(int nrCycles)
     {
         Preconditions.checkArgument(nrCycles >= 0,
             "illegal repetition number specified (" + nrCycles
@@ -99,7 +99,7 @@ public final class JoinMatcherBuilder
      *
      * @see Range#atMost(Comparable)
      */
-    public Rule max(final int nrCycles)
+    public Rule max(int nrCycles)
     {
         Preconditions.checkArgument(nrCycles >= 0,
             "illegal repetition number specified (" + nrCycles
@@ -116,7 +116,7 @@ public final class JoinMatcherBuilder
      *
      * @see Range#singleton(Comparable)
      */
-    public Rule times(final int nrCycles)
+    public Rule times(int nrCycles)
     {
         Preconditions.checkArgument(nrCycles >= 0,
             "illegal repetition number specified (" + nrCycles
@@ -142,7 +142,7 @@ public final class JoinMatcherBuilder
      *
      * @see Range#closed(Comparable, Comparable)
      */
-    public Rule times(final int minCycles, final int maxCycles)
+    public Rule times(int minCycles, int maxCycles)
     {
         Preconditions.checkArgument(minCycles >= 0,
             "illegal repetition number specified (" + minCycles
@@ -172,13 +172,13 @@ public final class JoinMatcherBuilder
      */
     // TODO: check that it actually has an effect
     @Cached
-    public Rule range(@Nonnull final Range<Integer> range)
+    public Rule range(@Nonnull Range<Integer> range)
     {
         Objects.requireNonNull(range, "range must not be null");
         /*
          * We always intersect with that range...
          */
-        final Range<Integer> realRange = AT_LEAST_ZERO.intersection(range);
+        Range<Integer> realRange = AT_LEAST_ZERO.intersection(range);
 
         /*
          * Empty ranges not allowed (what are we supposed to do with that
@@ -193,12 +193,12 @@ public final class JoinMatcherBuilder
          * the range will always have a lower bound. We want a closed range
          * internally, therefore change it if it is open.
          */
-        final Range<Integer> closedRange = toClosedRange(realRange);
+        Range<Integer> closedRange = toClosedRange(realRange);
 
         /*
          * We always have a lower bound
          */
-        final int lowerBound = closedRange.lowerEndpoint();
+        int lowerBound = closedRange.lowerEndpoint();
 
         /*
          * Handle the case where there is no upper bound
@@ -211,7 +211,7 @@ public final class JoinMatcherBuilder
          * the range is legal, we know that if it is 0, so is the lowerbound;
          * and if it is one, the lower bound is either 0 or 1.
          */
-        final int upperBound = closedRange.upperEndpoint();
+        int upperBound = closedRange.upperEndpoint();
         if (upperBound == 0)
             return new EmptyMatcher();
         if (upperBound == 1)
@@ -233,7 +233,7 @@ public final class JoinMatcherBuilder
                 upperBound);
     }
 
-    private static Range<Integer> toClosedRange(final Range<Integer> range)
+    private static Range<Integer> toClosedRange(Range<Integer> range)
     {
         /*
          * The canonical form will always be the same: closed on the lower bound
@@ -244,9 +244,9 @@ public final class JoinMatcherBuilder
          * pick the lower bound, and if it has an upper bound, pick it and
          * substract 1.
          */
-        final Range<Integer> canonical
+        Range<Integer> canonical
             = range.canonical(DiscreteDomain.integers());
-        final int lowerBound = canonical.lowerEndpoint();
+        int lowerBound = canonical.lowerEndpoint();
         return canonical.hasUpperBound()
             ? Range.closed(lowerBound, canonical.upperEndpoint() - 1)
             : Range.atLeast(lowerBound);

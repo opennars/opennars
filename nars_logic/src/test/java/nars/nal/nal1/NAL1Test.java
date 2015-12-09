@@ -59,7 +59,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void revision() throws Narsese.NarseseException {
 
-        final String belief = "<bird --> swimmer>";
+        String belief = "<bird --> swimmer>";
 
         test()
                 .believe(belief)                 //.en("bird is a type of swimmer.");
@@ -105,7 +105,7 @@ public class NAL1Test extends AbstractNALTester {
 
                 .mustBelieve(withinCycles, "<bird --> swimmer>", 0.90f, 0.45f)
                         //.en("I guess bird is a type of swimmer.");
-                .mustBelieve(withinCycles, "<swimmer --> bird>", 1f, 0.42f);
+                .mustBelieve(withinCycles, "<swimmer --> bird>", 1.0f, 0.42f);
     }
 
     @Test

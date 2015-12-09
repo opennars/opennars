@@ -29,8 +29,8 @@ import java.util.Random;
  */
 public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
-    public final static BagCurve power4BagCurve = new Power4BagCurve();
-    public final static BagCurve power6BagCurve = new Power6BagCurve();
+    public static final BagCurve power4BagCurve = new Power4BagCurve();
+    public static final BagCurve power6BagCurve = new Power6BagCurve();
 
     //TODO move sampler features to subclass of CurveBag which specifically provides sampling
     public final BagCurve curve;
@@ -58,17 +58,17 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         super(items);
 
         this.curve = curve;
-        this.random = rng;
+        random = rng;
     }
 
     @Override
-    public V peekNext(final boolean remove) {
+    public V peekNext(boolean remove) {
 
         while (!isEmpty()) {
 
-            final int index = sample();
+            int index = sample();
 
-            final V i = remove ?
+            V i = remove ?
                     removeItem(index) : items.get(index);
 
             if (!i.getBudget().isDeleted()) {
@@ -79,8 +79,6 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
             //if it wasnt already removed above
             if (!remove)
                 remove(i.name());
-
-            continue;
 
         }
         return null; // empty bag
@@ -101,7 +99,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     @Override
-    final public V peekNext() {
+    public final V peekNext() {
         return peekNext(false);
     }
 
@@ -195,10 +193,10 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int bstart, int len, int maxAttempts) {
 
 
-        final int siz = size();
+        int siz = size();
         len = Math.min(siz, len);
 
-        final List<V> a = items.getList();
+        List<V> a = items.getList();
 
         int istart;
 
@@ -212,7 +210,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
             //TODO test and if possible use more fair policy that accounts for clipping
             if (istart-r < 0) {
-                istart += -(istart-r); //start further below
+                istart -= (istart - r); //start further below
             }
             if (istart >= siz)
                 istart = siz-1;
@@ -286,7 +284,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     /**
      * maps y in 0..1.0 to an index in 0..size
      */
-    static final int index(float y, final int size) {
+    static final int index(float y, int size) {
 
         if (y <= 0) return 0;
 
@@ -310,26 +308,26 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     public final int sample() {
-        final int s = size();
+        int s = size();
         if (s == 1) return 0;
 
         float x = random.nextFloat();
 
         //TODO cache these curvepoints when min/max dont change
-        final float min = getPriorityMin();
-        final float max = getPriorityMax();
-        final boolean normalizing = (min != max);
+        float min = getPriorityMin();
+        float max = getPriorityMax();
+        boolean normalizing = (min != max);
         if (normalizing) {
             //rescale to dynamic range
             x = min + (x * (max - min));
         }
 
-        final BagCurve curve = this.curve;
+        BagCurve curve = this.curve;
         float y = curve.valueOf(x);
 
         if (normalizing) {
-            final float yMin = curve.valueOf(min);
-            final float yMax = curve.valueOf(max);
+            float yMin = curve.valueOf(min);
+            float yMax = curve.valueOf(max);
             y = (y - yMin) / (yMax - yMin);
         }
 
@@ -340,7 +338,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     public static class CubicBagCurve implements BagCurve {
 
         @Override
-        public final float valueOf(final float x) {
+        public final float valueOf(float x) {
             //1.0 - ((1.0-x)^2)
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:
@@ -358,7 +356,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     public static class Power4BagCurve implements BagCurve {
 
         @Override
-        public final float valueOf(final float x) {
+        public final float valueOf(float x) {
             float nx = 1 - x;
             float nnx = nx * nx;
             return 1 - (nnx * nnx);
@@ -373,7 +371,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     public static class Power6BagCurve implements BagCurve {
 
         @Override
-        public final float valueOf(final float x) {
+        public final float valueOf(float x) {
             /** x=0, y=0 ... x=1, y=1 */
             float nx = 1 - x;
             float nnx = nx * nx;
@@ -393,8 +391,8 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     public static class FairPriorityProbabilityCurve implements BagCurve {
 
         @Override
-        public final float valueOf(final float x) {
-            return (float) (1f - Math.exp(-5f * x));
+        public final float valueOf(float x) {
+            return (float) (1.0f - Math.exp(-5.0f * x));
         }
 
         @Override
@@ -407,13 +405,13 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     public static class QuadraticBagCurve implements BagCurve {
 
         @Override
-        public final float valueOf(final float x) {
+        public final float valueOf(float x) {
             //1.0 - ((1.0-x)^2)
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
-            float nx = 1f - x;
-            return 1f - (nx * nx);
+            float nx = 1.0f - x;
+            return 1.0f - (nx * nx);
         }
 
         @Override

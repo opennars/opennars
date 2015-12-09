@@ -24,9 +24,8 @@ public class InputPane extends TabPane {
     private final NAR nar;
 
     public InputPane(NAR n) {
-        super();
 
-        this.nar = n;
+        nar = n;
 
         setSide(Side.BOTTOM);
         setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
@@ -76,7 +75,6 @@ public class InputPane extends TabPane {
         final Map<String, String> absPath;
 
         public LibraryInputPane() {
-            super();
 
             GridPane buttons = new GridPane();
             buttons.setMaxHeight(Double.MAX_VALUE);
@@ -109,7 +107,7 @@ public class InputPane extends TabPane {
         public void run() {
 
             StringBuilder sb = new StringBuilder();
-            for (final String file : index.getSelectionModel().getSelectedItems()) {
+            for (String file : index.getSelectionModel().getSelectedItems()) {
 
                 try {
                     LibraryInput x = LibraryInput.get(nar, absPath.get(file));

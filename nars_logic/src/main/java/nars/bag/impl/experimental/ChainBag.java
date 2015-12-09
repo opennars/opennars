@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externalizable {
 
 
-    transient private final Mean mean; //priority mean, continuously calculated
+    private final transient Mean mean; //priority mean, continuously calculated
     private Random rng;
 
     private boolean ownsNodePool = false;
@@ -48,11 +48,11 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     transient DD<V> current = null;
 
-    transient public Frequency removal = new Frequency();
+    public transient Frequency removal = new Frequency();
 
     float minMaxMomentum = 0.98f;
 
-    transient private final DDNodePool<? extends Item> nodePool;
+    private final transient DDNodePool<? extends Item> nodePool;
 
     V nextRemoval = null;
 
@@ -100,34 +100,33 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     private float estimatedMin = 0.5f;
     private float estimatedMean = 0.5f;
 
-    final short d[];
+    final short[] d;
     int dp = 0;
 
     public ChainBag() {
         this(null, 0);
     }
 
-    public ChainBag(final Random rng, final DDNodePool<V> nodePool, int capacity) {
-        super();
+    public ChainBag(Random rng, DDNodePool<V> nodePool, int capacity) {
 
         d = Distributor.get((int)(Math.sqrt(capacity))).order;
 
         this.rng = rng;
         this.capacity = capacity;
         //this.index = new CuckooMap(rng, (capacity/2));
-        this.index = Global.newHashMap(capacity);
+        index = Global.newHashMap(capacity);
 
 
         this.nodePool = nodePool;
 
-        this.chain = new DDList(0, nodePool);
-        this.mean = new Mean();
+        chain = new DDList(0, nodePool);
+        mean = new Mean();
     }
 
 
-    public ChainBag(final Random rng, int capacity) {
+    public ChainBag(Random rng, int capacity) {
         this(rng, new DDNodePool(4), capacity);
-        this.ownsNodePool = true;
+        ownsNodePool = true;
     }
 
 
@@ -248,7 +247,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     protected void getNextRemoval() {
-        final int size = size();
+        int size = size();
         if (size == 0) return;
 
         int loops = 0;
@@ -272,7 +271,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
      * @return
      */
     protected DD<V> next(boolean byPriority) {
-        final int s = size();
+        int s = size();
         if (s == 0) return null;
         //final boolean atCapacity = s >= capacity();
 
@@ -288,13 +287,13 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
                 throw new RuntimeException("size = " + size() + " yet there is no first node in chain");
             }*/
 
-            final V ni = next.item;
+            V ni = next.item;
 
             /*if (ni == null) {
                 throw new RuntimeException("size = " + size() + " yet iterated cell with null item");
             }*/
 
-            final double percentileEstimate = getPercentile(ni.getPriority());
+            double percentileEstimate = getPercentile(ni.getPriority());
 
 
             if (!byPriority) {
@@ -302,12 +301,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
                     considerRemoving(next, percentileEstimate);
                 break;
             }
-            else {
-                if (selectPercentile(percentileEstimate))
-                    break;
+            if (selectPercentile(percentileEstimate))
+                break;
 
-                considerRemoving(next, percentileEstimate);
-            }
+            considerRemoving(next, percentileEstimate);
 
             next = after(next);
 
@@ -318,21 +315,21 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     @Override
     public void setCapacity(int c) {
-        this.capacity = c;
+        capacity = c;
     }
 
 
 
     /** updates the adaptive percentile measurement; should be called on put and when budgets update  */
-    private void updatePercentile(final float priority) {
+    private void updatePercentile(float priority) {
         //DescriptiveStatistics percentile is extremely slow
         //contentStats.getPercentile(ni.getPriority())
         //approximate percentile using max/mean/min
 
-        this.mean.increment(priority);
-        final float  mean = (float)this.mean.getResult();
+        mean.increment(priority);
+        float  mean = (float)this.mean.getResult();
 
-        final float momentum = minMaxMomentum;
+        float momentum = minMaxMomentum;
 
 
         estimatedMax = (estimatedMax < priority) ? priority : (1.0f - momentum) * mean + (momentum) * estimatedMax;
@@ -341,11 +338,11 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     /** uses the adaptive percentile data to estimate a percentile of a given priority */
-    private double getPercentile(final float priority) {
+    private double getPercentile(float priority) {
 
-        final float mean = this.estimatedMean;
+        float mean = estimatedMean;
 
-        final float upper, lower;
+        float upper, lower;
         if (priority < mean) {
             lower = estimatedMin;
             upper = mean;
@@ -358,20 +355,20 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
             lower = mean;
         }
 
-        final float perc = (priority - lower) / (upper-lower);
+        float perc = (priority - lower) / (upper-lower);
 
-        final float minPerc = 1.0f / size();
+        float minPerc = 1.0f / size();
 
         if (perc < minPerc) return minPerc;
 
         return perc;
     }
 
-    protected boolean considerRemoving(final DD<V> d, final double percentileEstimate) {
+    protected boolean considerRemoving(DD<V> d, double percentileEstimate) {
         //TODO improve this based on adaptive statistics measurement
-        final V item = d.item;
-        final float p = item.getPriority();
-        final V nr = nextRemoval;
+        V item = d.item;
+        float p = item.getPriority();
+        V nr = nextRemoval;
         if (nr==null) {
             if (percentileEstimate <= PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL) {
                 nextRemoval = item;
@@ -388,17 +385,17 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         return false;
     }
 
-    protected boolean selectPercentile(final double percentileEstimate) {
+    protected boolean selectPercentile(double percentileEstimate) {
         //return selectPercentileRandom(percentileEstimate);
         return selectPercentileDistributor(percentileEstimate);
     }
 
-    protected boolean selectPercentileDistributor(final double percentileEstimate) {
-        final int dLen = d.length;
+    protected boolean selectPercentileDistributor(double percentileEstimate) {
+        int dLen = d.length;
         return d[ (dp++)%dLen ]/((double)dLen) < (percentileEstimate);
     }
 
-    protected boolean selectPercentileRandom(final double percentileEstimate) {
+    protected boolean selectPercentileRandom(double percentileEstimate) {
         return rng.nextFloat() < percentileEstimate;
     }
 
@@ -406,8 +403,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         return rng.nextFloat() < v.getPriority();
     }
 
-    protected DD<V> after(final DD<V> d) {
-        final DD<V> n = d!=null ? d.next : null;
+    protected DD<V> after(DD<V> d) {
+        DD<V> n = d!=null ? d.next : null;
         if ((n == null) || (n.item == null))
             return chain.getFirstNode();
         return n;
@@ -419,9 +416,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     public void validate() {
-        final int s1 = index.size();
+        int s1 = index.size();
         if (Global.DEBUG) {
-            final int s2 = chain.size();
+            int s2 = chain.size();
             if (s1 != s2)
                 throw new RuntimeException(this + " bag fault; inconsistent index (" + s1 + " index != " + s2 + " chain)");
             if (s1 > capacity()+2)
@@ -459,7 +456,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     @Override
-    public V remove(final K key) {
+    public V remove(K key) {
         DD<V> d = index.remove(key);
         if (d!=null) {
             V v = d.item; //save it here because chain.remove will nullify .item field
@@ -479,8 +476,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
 
     @Override
-    public V get(final K key) {
-        final DD<V> d = index.get(key);
+    public V get(K key) {
+        DD<V> d = index.get(key);
         return (d!=null) ? d.item : null;
     }
 
@@ -490,7 +487,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     @Override
-    public void forEach(final Consumer<? super V> value) {
+    public void forEach(Consumer<? super V> value) {
         chain.forEach(value);
     }
 }

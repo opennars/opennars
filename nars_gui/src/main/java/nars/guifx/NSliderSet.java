@@ -16,7 +16,6 @@ public class NSliderSet<K> extends FlowPane {
 
 
     public NSliderSet() {
-        super();
     }
 
     public final double normalized(K k, int dimension) {

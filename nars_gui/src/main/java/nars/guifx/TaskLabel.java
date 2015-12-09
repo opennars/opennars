@@ -21,7 +21,7 @@ public class TaskLabel extends AutoLabel<Task> {
 
     public TaskLabel(Task task, NAR n) {
         super(task);
-        this.nar = n;
+        nar = n;
 
         int iconWidth = 30;
         summary = new TaskSummaryIcon(obj, this);
@@ -29,13 +29,11 @@ public class TaskLabel extends AutoLabel<Task> {
 
         setOnMouseClicked(onMouseClick);
 
-        runLater(() -> {
-            changed(null, null, null);
-        });
+        runLater(() -> changed(null, null, null));
 
     }
 
-    static private final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
+    private static final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
         nars.guifx.TaskLabel a = (nars.guifx.TaskLabel) e.getSource();
         Task t = a.obj;
         NARfx.newWindow(a.nar, t);
@@ -146,9 +144,7 @@ public class TaskLabel extends AutoLabel<Task> {
         };
 
 
-        setOnDragOver((e) -> {
-            onDrag.handle(null);
-        });
+        setOnDragOver((e) -> onDrag.handle(null));
         setOnDragDetected(e -> {
             clearDrag.handle(null);
             startFullDrag();
@@ -157,7 +153,7 @@ public class TaskLabel extends AutoLabel<Task> {
         setOnMouseReleased(clearDrag);
 
 
-        final String selectedClass = "selected";
+        String selectedClass = "selected";
         selected.addListener((c, p, v) -> {
             if (v) {
                 getStyleClass().add(selectedClass);

@@ -16,7 +16,7 @@ public class LerpDoubleProperty extends SimpleDoubleProperty {
 
     public LerpDoubleProperty(double v) {
         super(v);
-        this.target = v;
+        target = v;
         stable = true;
     }
 
@@ -31,7 +31,7 @@ public class LerpDoubleProperty extends SimpleDoubleProperty {
 
     @Override
     public void set(double v) {
-        this.target = v;
+        target = v;
         updateStability();
     }
 
@@ -41,7 +41,7 @@ public class LerpDoubleProperty extends SimpleDoubleProperty {
     public void update() {
         if (stable) return;
 
-        double v = getValue() * (1d - rate) + target * rate;
+        double v = getValue() * (1.0d - rate) + target * rate;
         super.set(v);
         updateStability();
     }

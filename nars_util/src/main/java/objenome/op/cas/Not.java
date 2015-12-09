@@ -3,6 +3,7 @@ package objenome.op.cas;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Not extends Operation {
     
@@ -44,7 +45,7 @@ public class Not extends Operation {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(notExpr);
         return arrayList;
     }
@@ -58,14 +59,11 @@ public class Not extends Operation {
                 if (maybeNot.printSimplify() instanceof Not) aNot = true;
             }
             if (aNot) {
-                ArrayList<Expr> ands = new ArrayList<Expr>();
-                for (Expr expr : ((Operation) notExpr).getExprs()) {
-                    ands.add(Not.make(expr));
-                }
+                ArrayList<Expr> ands = ((Operation) notExpr).getExprs().stream().map(Not::make).collect(Collectors.toCollection(ArrayList::new));
                 return new And(ands);
             }
         }
-        this.printSimplified = true;
+        printSimplified = true;
         return this;
     }
     
@@ -91,8 +89,7 @@ public class Not extends Operation {
     }
     
     public boolean equalsExpr(Expr expr) {
-        if (expr instanceof Not && notExpr.equalsExpr(((Operation) expr).getExpr(0))) return true;
-        return false;
+        return expr instanceof Not && notExpr.equalsExpr(((Operation) expr).getExpr(0));
     }
     
     public Expr deriv(Var respected) {

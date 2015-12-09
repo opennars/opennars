@@ -3,22 +3,23 @@ package nars.util.event;
 /**
  * Reaction that manages its registration state
  */
-abstract public class AbstractReaction<K,V> implements Reaction<K,V> {
+public abstract class AbstractReaction<K,V> implements Reaction<K,V> {
 
-    transient protected EventEmitter<K,V> source;
-    transient protected EventEmitter.Registrations active;
+    protected transient EventEmitter<K,V> source;
+    protected transient EventEmitter.Registrations active;
     protected final K[] events;
 
     public AbstractReaction() {
         this(null);
     }
 
+    @SafeVarargs //todo: "possible heap pollution" hereafter with noted with this annotation to change the type checking behavior.
     public AbstractReaction(EventEmitter<K,V> source, K... events) {
         this(source, true, events);
     }
 
+    @SafeVarargs
     public AbstractReaction(EventEmitter<K,V> source, boolean active, K... events) {
-        super();
 
         this.events = events;
         this.source = source;
@@ -37,7 +38,7 @@ abstract public class AbstractReaction<K,V> implements Reaction<K,V> {
     }
 
     public K[] getEvents() {
-        return this.events;
+        return events;
     }
 
 
@@ -45,12 +46,12 @@ abstract public class AbstractReaction<K,V> implements Reaction<K,V> {
 
         EventEmitter s = getSource();
 
-        if (b && (this.active==null)) {
-            this.active = s.on(this, getEvents());
+        if (b && (active ==null)) {
+            active = s.on(this, getEvents());
         }
-        else if (!b && (this.active!=null)) {
-            this.active.off();
-            this.active = null;
+        else if (!b && (active !=null)) {
+            active.off();
+            active = null;
         }
 
     }

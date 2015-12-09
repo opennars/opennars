@@ -179,14 +179,7 @@ public class MapScene extends Scene
         {
             if (data[x][y] > 0)
             {
-                if (levelId != 0 && random.nextInt(4) == 0)
-                {
-                    data[x][y] = -3;
-                }
-                else
-                {
-                    data[x][y] = ++levelId;
-                }
+                data[x][y] = levelId != 0 && random.nextInt(4) == 0 ? -3 : ++levelId;
             }
             else if (depth > 0)
             {
@@ -290,7 +283,6 @@ public class MapScene extends Scene
         drawRoad(xSource, ySource, xTarget, yTarget);
         level[xSource][ySource] = TILE_LEVEL;
         data[xSource][ySource] = -2;
-        return;
     }
 
     private void drawRoad(int x0, int y0, int x1, int y1)
@@ -347,6 +339,7 @@ public class MapScene extends Scene
                 if (level[x][y] == TILE_LEVEL)
                 {
                     int type = data[x][y];
+                    //noinspection IfStatementWithTooManyBranches
                     if (type == 0)
                     {
                         g.drawImage(map[0][7], x * 16, y * 16, null);
@@ -479,8 +472,7 @@ public class MapScene extends Scene
         if (x < 0) x = 0;
         if (y < 0) y = 0;
         if (level[x][y] == TILE_ROAD) return true;
-        if (level[x][y] == TILE_LEVEL) return true;
-        return false;
+        return level[x][y] == TILE_LEVEL;
     }
 
     private boolean isWater(int x, int y)
@@ -645,8 +637,7 @@ public class MapScene extends Scene
             nextWorld();
             return;
         }
-        if (data[x][y] != -3) data[x][y] = 0;
-        else data[x][y] = -10;
+        data[x][y] = data[x][y] != -3 ? 0 : -10;
         renderStatic(staticGr);
     }
 }

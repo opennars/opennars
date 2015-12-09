@@ -17,7 +17,7 @@ public class DevelopMethod implements Problem {
     public final Method method;
 
     public DevelopMethod(Method unimplementedAbstractMethod) {
-        this.method = unimplementedAbstractMethod;
+        method = unimplementedAbstractMethod;
     }
     
 }

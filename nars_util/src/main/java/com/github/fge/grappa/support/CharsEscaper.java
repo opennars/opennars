@@ -14,7 +14,7 @@ public final class CharsEscaper
             Character.MAX_VALUE)
     {
         @Override
-        protected char[] escapeUnsafe(final char c)
+        protected char[] escapeUnsafe(char c)
         {
             return new char[] { c };
         }
@@ -27,7 +27,7 @@ public final class CharsEscaper
     }
 
     @Override
-    public String escape(final String string)
+    public String escape(String string)
     {
         return DELEGATE.escape(string.replace("\r\n", "\n"));
     }

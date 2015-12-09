@@ -3,6 +3,7 @@ package objenome.op.cas;
 import objenome.op.cas.util.ArrayLists;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public abstract class Operation extends Expr {
     
@@ -32,8 +33,8 @@ public abstract class Operation extends Expr {
     }
     
     public boolean firstParenPrint() {
-        Integer exprLevelRight = this.getExpr(0).printLevelRight();
-        return (exprLevelRight != null && this.classOrder() > exprLevelRight) || this.getExpr(0).firstParenPrint();
+        Integer exprLevelRight = getExpr(0).printLevelRight();
+        return (exprLevelRight != null && classOrder() > exprLevelRight) || getExpr(0).firstParenPrint();
     }
     
     public boolean hasUndef() {
@@ -45,10 +46,7 @@ public abstract class Operation extends Expr {
     }
     
     public static Expr conditions(ArrayList<? extends Expr> exprs) {
-        ArrayList<Expr> condsArr = new ArrayList<Expr>();
-        for (Expr expr : exprs) {
-            condsArr.add(expr.condition());
-        }
+        ArrayList<Expr> condsArr = exprs.stream().map(Expr::condition).collect(Collectors.toCollection(ArrayList::new));
         return And.make(condsArr);
     }
     
@@ -57,7 +55,7 @@ public abstract class Operation extends Expr {
     }
     
     public static ArrayList<Expr> defineds(ArrayList<? extends Expr> exprsOrig) {
-        ArrayList<Expr> exprs = new ArrayList<Expr>(exprsOrig);
+        ArrayList<Expr> exprs = new ArrayList<>(exprsOrig);
         for (int i = 0; i < exprs.size(); i++) {
             Expr exprOn = exprs.get(i);
             if (exprOn instanceof Undef) {
@@ -86,10 +84,10 @@ public abstract class Operation extends Expr {
                 ArrayList<Expr> defineds = defineds();
                 if (defineds == null) return new Undef();
                 return Conditional.make(conditions,
-                        (Expr) this.getClass().getMethod("makeDefined", ArrayList.class).invoke(null, defineds()));
+                        (Expr) getClass().getMethod("makeDefined", ArrayList.class).invoke(null, defineds()));
             }
         } catch(Exception e) {
-            throw new RuntimeException(e + "\nmake(ArrayList) failed on " + this.getClass().getSimpleName());
+            throw new RuntimeException(e + "\nmake(ArrayList) failed on " + getClass().getSimpleName());
         }
         return null;
     }
@@ -97,19 +95,18 @@ public abstract class Operation extends Expr {
     public boolean equalsExpr(Expr expr) {
         if (expr == null) return false;
         if (expr == this) return true;
-        if (!this.getClass().isAssignableFrom(expr.getClass())) return false;
-        
-        if (ArrayLists.elemExprsEqual(this.getExprs(), ((Operation) expr).getExprs())) return true;
-        
-        return false;
+        if (!getClass().isAssignableFrom(expr.getClass())) return false;
+
+        return ArrayLists.elemExprsEqual(getExprs(), ((Operation) expr).getExprs());
+
     }
     
     public boolean notEqualsExpr(Expr expr) {
         if (expr == null) return false;
         if (expr == this) return false;
-        if (!this.getClass().isAssignableFrom(expr.getClass())) return false;
+        if (!getClass().isAssignableFrom(expr.getClass())) return false;
         
-        ArrayList<Expr> al1 = this.getExprs();
+        ArrayList<Expr> al1 = getExprs();
         ArrayList<Expr> al2 = ((Operation) expr).getExprs();
         if (al1.size() != al2.size()) return false;
         

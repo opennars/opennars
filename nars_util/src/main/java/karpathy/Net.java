@@ -70,7 +70,7 @@ public class Net extends FasterList<Net.Layer> {
 
         @Override
         public DenseTensor forward(DenseTensor V) {
-            this.in_act = V;
+            in_act = V;
             //this.out_act = V;
             return V;
         }
@@ -85,7 +85,7 @@ public class Net extends FasterList<Net.Layer> {
 
 
               // compute and accumulate gradient wrt weights and bias of this layer
-              DenseTensor x = this.in_act;
+              DenseTensor x = in_act;
 
               float[] dw = x.diffable();
 

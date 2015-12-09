@@ -25,30 +25,27 @@ public class ParticleSystem_v5 extends Canvas {
 		frame.setResizable(false);
 		frame.setFocusable(true);
 
-		final RenderClass_v5 ren = new RenderClass_v5(WIDTH, HEIGHT);
+		RenderClass_v5 ren = new RenderClass_v5(WIDTH, HEIGHT);
 		frame.add(ren);
 
 		frame.setVisible(true);
 
-		Thread runThread = new Thread(new Runnable() {
-
-                        @Override
-			public void run() {
-				if (true) {
-					while (true) {
-						long time = System.currentTimeMillis();
-						ren.tick();
-						ren.repaint();
-						long endtime = System.currentTimeMillis();
-						try {
-							Thread.sleep(TICK - (endtime - time));
-						} catch (Exception e) {
-							System.out.println("Exception e at Thread.sleep");
-						}
-					}
-				}
-			}
-		});
+		Thread runThread = new Thread(() -> {
+if (true) {
+    //noinspection InfiniteLoopStatement
+    while (true) {
+        long time = System.currentTimeMillis();
+        ren.tick();
+        ren.repaint();
+        long endtime = System.currentTimeMillis();
+        try {
+            Thread.sleep(TICK - (endtime - time));
+        } catch (Exception e) {
+            System.out.println("Exception e at Thread.sleep");
+        }
+    }
+}
+});
 
 		runThread.start();
 	}

@@ -76,7 +76,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
 
         @Override
-        public E remove(final K key) {
+        public E remove(K key) {
             E e = super.remove(key);
 
             if (Global.DEBUG)
@@ -86,7 +86,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
 
         @Override
-        protected E removeItem(final E removed) {
+        protected E removeItem(E removed) {
             if (items.remove(removed)) {
                 return removed;
             }
@@ -120,15 +120,15 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * true if: item(a) "<" item(b)
      */
-    public boolean less(final int a, final int b) {
-        final E B = items.get(b);
+    public boolean less(int a, int b) {
+        E B = items.get(b);
         return less(a, B);
     }
 
-    public boolean less(final int a, final E B) {
+    public boolean less(int a, E B) {
         cmps++;
 
-        final E A = items.get(a);
+        E A = items.get(a);
 
         if (A == null)
             throw new RuntimeException("null");
@@ -149,14 +149,14 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
     }
 
-    public void reHeap(final int k, final int maxMoves) {
+    public void reHeap(int k, int maxMoves) {
 
         if (movs >= maxMoves)
             return;
 
         int k2 = 2 * k;
 
-        final int limit = size() - 1;
+        int limit = size() - 1;
 
         if (k2 + 1 > limit)
             return;
@@ -173,15 +173,10 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         if (!less(k2 + 1, K) || !less(k2 + 2, K)) {
 
             int t;
-            if (!less(k2 + 1, k2 + 2)) {
-                t = 1;
-            } else {
-                t = 2;
-            }
+            t = !less(k2 + 1, k2 + 2) ? 1 : 2;
 
             swap(k, k2 + t);
             reHeap(k2 + t, maxMoves);
-            return;
         }
     }
 
@@ -192,19 +187,14 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
     /** perform the next partial sorting iteration */
     public void sortNext(int maxMoves) {
-        final int is = items.size();
+        int is = items.size();
         if (is < 2) {
             heapCycle = 0;
             return;
         }
 
-        final int hc;
-        if ((heapCycle == 0) || (heapCycle > (is-1))) {
-            hc = heapCycle = is -1;
-        }
-        else {
-            hc = 0;
-        }
+        int hc;
+        hc = (heapCycle == 0) || (heapCycle > (is - 1)) ? (heapCycle = is - 1) : 0;
         reHeap(hc, maxMoves);
         swap(0, heapCycle);
 
@@ -218,7 +208,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
     public HeapBag(Random rng, int capacity, CurveBag.BagCurve curve) {
-        super();
         this.rng = rng;
         this.capacity = capacity;
         this.curve = curve;
@@ -242,7 +231,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The number of items
      */
     @Override
-    final public int size() {
+    public final int size() {
 
         int in = index.size();
 
@@ -251,7 +240,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
             //test for a discrepency of +1/-1 difference between name and items
             if ((is - in > 2) || (is - in < -2)) {
-                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+                System.err.println(getClass() + " inconsistent index: items=" + is + " names=" + in);
                 /*System.out.println(nameTable);
                 System.out.println(items);
                 if (is > in) {
@@ -260,7 +249,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
                         e.remove(f);
                     System.out.println("difference: " + e);
                 }*/
-                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+                throw new RuntimeException(getClass() + " inconsistent index: items=" + is + " names=" + in);
             }
         }
 
@@ -285,7 +274,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return Whether the Item is in the Bag
      */
     @Override
-    public boolean contains(final E it) {
+    public boolean contains(E it) {
         return index.containsValue(it);
     }
 
@@ -296,12 +285,12 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final K key) {
+    public E get(K key) {
         return index.get(key);
     }
 
     @Override
-    public E remove(final K key) {
+    public E remove(K key) {
         return index.remove(key);
     }
 
@@ -313,7 +302,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    final public E pop() {
+    public final E pop() {
 
         if (isEmpty()) return null; // empty bag
         return removeItem(nextRemovalIndex());
@@ -322,7 +311,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
     @Override
-    final public E peekNext() {
+    public final E peekNext() {
 
         if (isEmpty()) return null; // empty bag
         return items.get(nextRemovalIndex());
@@ -334,9 +323,9 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * distributor function
      */
     public int nextRemovalIndex() {
-        final int s = items.size();
+        int s = items.size();
 
-        final float x = rng.nextFloat();
+        float x = rng.nextFloat();
 
         float y = curve.valueOf(x);
 
@@ -399,10 +388,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
             if (oldItem == null)
                 throw new RuntimeException("required removal but nothing removed");
-            else {
-                if (oldItem.name().equals(i.name())) {
-                    throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
-                }
+            if (oldItem.name().equals(i.name())) {
+                throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ')');
             }
 
 
@@ -460,9 +447,9 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @param level The current level
      * @return The first Item
      */
-    protected E removeItem(final int index) {
+    protected E removeItem(int index) {
 
-        final E selected;
+        E selected;
 
         /*synchronized (nameTable)*/
         {
@@ -546,13 +533,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     @Override
-    public void forEach(final Consumer<? super E> action) {
+    public void forEach(Consumer<? super E> action) {
         items.forEach(action);
     }
 
     @Override
     public void setCapacity(int c) {
-        this.capacity = c;
+        capacity = c;
     }
 
 }

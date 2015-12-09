@@ -40,7 +40,7 @@ public final class TrieNodeBuilder
 
     private final Map<Character, TrieNodeBuilder> subnodes = new TreeMap<>();
 
-    public TrieNodeBuilder addWord(final String word)
+    public TrieNodeBuilder addWord(String word)
     {
         doAddWord(CharBuffer.wrap(word));
         return this;
@@ -58,14 +58,14 @@ public final class TrieNodeBuilder
      *
      * @param buffer the buffer (never null)
      */
-    private void doAddWord(final CharBuffer buffer)
+    private void doAddWord(CharBuffer buffer)
     {
         if (!buffer.hasRemaining()) {
             fullWord = true;
             return;
         }
 
-        final char c = buffer.get();
+        char c = buffer.get();
         TrieNodeBuilder builder = subnodes.get(c);
         if (builder == null) {
             builder = new TrieNodeBuilder();
@@ -76,11 +76,11 @@ public final class TrieNodeBuilder
 
     public TrieNode build()
     {
-        final char[] nextChars = new char[subnodes.size()];
-        final TrieNode[] nextNodes = new TrieNode[subnodes.size()];
+        char[] nextChars = new char[subnodes.size()];
+        TrieNode[] nextNodes = new TrieNode[subnodes.size()];
 
         int index = 0;
-        for (final Map.Entry<Character, TrieNodeBuilder> entry:
+        for (Map.Entry<Character, TrieNodeBuilder> entry:
             subnodes.entrySet()) {
             nextChars[index] = entry.getKey();
             nextNodes[index] = entry.getValue().build();

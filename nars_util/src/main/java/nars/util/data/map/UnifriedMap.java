@@ -117,7 +117,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     protected int maxSize;
 
     public UnifriedMap() {
-        this.allocate(DEFAULT_INITIAL_CAPACITY << 1);
+        allocate(DEFAULT_INITIAL_CAPACITY << 1);
     }
 
     public UnifriedMap(int initialCapacity) {
@@ -136,15 +136,16 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         this.loadFactor = loadFactor;
-        this.init(this.fastCeil(initialCapacity / loadFactor));
+        init(fastCeil(initialCapacity / loadFactor));
     }
 
     public UnifriedMap(Map<? extends K, ? extends V> map) {
         this(Math.max(map.size(), DEFAULT_INITIAL_CAPACITY), DEFAULT_LOAD_FACTOR);
 
-        this.putAll(map);
+        putAll(map);
     }
 
+    @SafeVarargs
     public UnifriedMap(Pair<K, V>... pairs) {
         this(Math.max(pairs.length, DEFAULT_INITIAL_CAPACITY), DEFAULT_LOAD_FACTOR);
         ArrayIterate.forEach(pairs, new MapCollectProcedure<Pair<K, V>, K, V>(
@@ -154,23 +155,24 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public static <K, V> UnifriedMap<K, V> newMap() {
-        return new UnifriedMap<K, V>();
+        return new UnifriedMap<>();
     }
 
     public static <K, V> UnifriedMap<K, V> newMap(int size) {
-        return new UnifriedMap<K, V>(size);
+        return new UnifriedMap<>(size);
     }
 
     public static <K, V> UnifriedMap<K, V> newMap(int size, float loadFactor) {
-        return new UnifriedMap<K, V>(size, loadFactor);
+        return new UnifriedMap<>(size, loadFactor);
     }
 
     public static <K, V> UnifriedMap<K, V> newMap(Map<? extends K, ? extends V> map) {
-        return new UnifriedMap<K, V>(map);
+        return new UnifriedMap<>(map);
     }
 
+    @SafeVarargs
     public static <K, V> UnifriedMap<K, V> newMapWith(Pair<K, V>... pairs) {
-        return new UnifriedMap<K, V>(pairs);
+        return new UnifriedMap<>(pairs);
     }
 
     public static <K, V> UnifriedMap<K, V> newMapWith(Iterable<Pair<K, V>> inputIterable) {
@@ -202,38 +204,38 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public UnifriedMap<K, V> withKeysValues(K key, V value) {
-        this.putFast(key, value);
+        putFast(key, value);
         return this;
     }
 
     public UnifriedMap<K, V> withKeysValues(K key1, V value1, K key2, V value2) {
-        this.putFast(key1, value1);
-        this.putFast(key2, value2);
+        putFast(key1, value1);
+        putFast(key2, value2);
         return this;
     }
 
     public UnifriedMap<K, V> withKeysValues(K key1, V value1, K key2, V value2, K key3, V value3) {
-        this.putFast(key1, value1);
-        this.putFast(key2, value2);
-        this.putFast(key3, value3);
+        putFast(key1, value1);
+        putFast(key2, value2);
+        putFast(key3, value3);
         return this;
     }
 
     public UnifriedMap<K, V> withKeysValues(K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4) {
-        this.putFast(key1, value1);
-        this.putFast(key2, value2);
-        this.putFast(key3, value3);
-        this.putFast(key4, value4);
+        putFast(key1, value1);
+        putFast(key2, value2);
+        putFast(key3, value3);
+        putFast(key4, value4);
         return this;
     }
 
     @Override
     public UnifriedMap<K, V> clone() {
-        return new UnifriedMap<K, V>(this);
+        return new UnifriedMap<>(this);
     }
 
     public MutableMap<K, V> newEmpty() {
-        return new UnifriedMap<K, V>();
+        return new UnifriedMap<>();
     }
 
     @Override
@@ -255,19 +257,19 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             capacity <<= 1;
         }
 
-        return this.allocate(capacity);
+        return allocate(capacity);
     }
 
     protected final int allocate(int capacity) {
-        this.allocateTable(capacity << 1); // the table size is twice the capacity to handle both keys and values
-        this.computeMaxSize(capacity);
+        allocateTable(capacity << 1); // the table size is twice the capacity to handle both keys and values
+        computeMaxSize(capacity);
 
         return capacity;
     }
 
     protected final Object[] allocateTable(int sizeToAllocate) {
         //if (this.table==null || this.table.length!=sizeToAllocate)
-            return this.table = new Object[sizeToAllocate];
+            return table = new Object[sizeToAllocate];
         /*else {
             Arrays.fill(table, null);
         }*/
@@ -275,14 +277,14 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     protected final void computeMaxSize(int capacity) {
         // need at least one free slot for open addressing
-        this.maxSize = Math.min(capacity - 1, (int) (capacity * this.loadFactor));
+        maxSize = Math.min(capacity - 1, (int) (capacity * loadFactor));
     }
 
     protected final int index(Object key) {
-        return index(key, this.table.length);
+        return index(key, table.length);
     }
 
-    protected final static int index(Object key, int tl) {
+    protected static final int index(Object key, int tl) {
         // This function ensures that hashCodes that differ only by
         // constant multiples at each bit position have a bounded
         // number of collisions (approximately 8 at default load factor).
@@ -294,11 +296,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     public final void clear() {
 
-        if (this.occupied == 0)
+        if (occupied == 0)
             return;
 
-        this.occupied = 0;
-        Arrays.fill(this.table, null);
+        occupied = 0;
+        Arrays.fill(table, null);
 
         /*Object[] set = this.table;
         for (int i = set.length; i-- > 0; ) {
@@ -316,43 +318,43 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
      * make sure value is of type V
      */
     public final Object putFast(Object key, Object value) {
-        int index = this.index(key);
-        Object[] t = this.table;
+        int index = index(key);
+        Object[] t = table;
         Object cur = t[index];
         if (cur == null) {
             t[index++] = UnifriedMap.toSentinelIfNull(key);
             t[index] = value;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(t.length);
+            if (++occupied > maxSize) {
+                rehash(t.length);
             }
             return null;
         }
-        if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
+        if (cur != CHAINED_KEY && nonNullTableObjectEquals(cur, key)) {
             Object result = t[++index];
             t[index] = value;
             return result;
         }
-        return this.chainedPut(key, index, value);
+        return chainedPut(key, index, value);
     }
 
     private Object chainedPut(Object key, int index, Object value) {
-        final Object[] t = this.table;
+        Object[] t = table;
         int tl = t.length;
 
         if (t[index] == CHAINED_KEY) {
             Object[] chain = (Object[]) t[index + 1];
             int cl = chain.length;
-            final int ms = this.maxSize;
+            int ms = maxSize;
             for (int i = 0; i < cl; i += 2) {
                 if (chain[i] == null) {
                     chain[i++] = UnifriedMap.toSentinelIfNull(key);
                     chain[i] = value;
-                    if (++this.occupied > ms) {
-                        this.rehash(tl);
+                    if (++occupied > ms) {
+                        rehash(tl);
                     }
                     return null;
                 }
-                if (this.nonNullTableObjectEquals(chain[i], key)) {
+                if (nonNullTableObjectEquals(chain[i], key)) {
                     i++;
                     Object result = chain[i];
                     chain[i] = value;
@@ -364,12 +366,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             t[index + 1] = newChain;
             newChain[cl] = UnifriedMap.toSentinelIfNull(key);
             newChain[cl + 1] = value;
-            if (++this.occupied > ms) {
-                this.rehash(tl);
+            if (++occupied > ms) {
+                rehash(tl);
             }
             return null;
         }
-        Object[] newChain = new Object[] {
+        Object[] newChain =  {
             /*newChain[0] = */t[index],
             /*newChain[1] = */t[index + 1],
             /*newChain[2] = */UnifriedMap.toSentinelIfNull(key),
@@ -377,35 +379,35 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         };
         t[index++] = CHAINED_KEY;
         t[index] = newChain;
-        if (++this.occupied > this.maxSize) {
-            this.rehash(tl);
+        if (++occupied > maxSize) {
+            rehash(tl);
         }
         return null;
     }
 
     @Override
     public V updateValue(K key, Function0<? extends V> factory, Function<? super V, ? extends V> function) {
-        int index = this.index(key);
-        final Object[] t = this.table;
+        int index = index(key);
+        Object[] t = table;
         Object cur = t[index];
         if (cur == null) {
             t[index] = UnifriedMap.toSentinelIfNull(key);
             V result = function.valueOf(factory.value());
             t[index + 1] = result;
-            ++this.occupied;
+            ++occupied;
             return result;
         }
-        if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
+        if (cur != CHAINED_KEY && nonNullTableObjectEquals(cur, key)) {
             V oldValue = (V) t[index + 1];
             V newValue = function.valueOf(oldValue);
             t[index + 1] = newValue;
             return newValue;
         }
-        return this.chainedUpdateValue(key, index, factory, function);
+        return chainedUpdateValue(key, index, factory, function);
     }
 
     private V chainedUpdateValue(K key, int index, Function0<? extends V> factory, Function<? super V, ? extends V> function) {
-        final Object[] t = this.table;
+        Object[] t = table;
         if (t[index] == CHAINED_KEY) {
             Object[] chain = (Object[]) t[index + 1];
             for (int i = 0; i < chain.length; i += 2) {
@@ -413,12 +415,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                     chain[i] = UnifriedMap.toSentinelIfNull(key);
                     V result = function.valueOf(factory.value());
                     chain[i + 1] = result;
-                    if (++this.occupied > this.maxSize) {
-                        this.rehash(t.length);
+                    if (++occupied > maxSize) {
+                        rehash(t.length);
                     }
                     return result;
                 }
-                if (this.nonNullTableObjectEquals(chain[i], key)) {
+                if (nonNullTableObjectEquals(chain[i], key)) {
                     V oldValue = (V) chain[i + 1];
                     V result = function.valueOf(oldValue);
                     chain[i + 1] = result;
@@ -431,8 +433,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             newChain[chain.length] = UnifriedMap.toSentinelIfNull(key);
             V result = function.valueOf(factory.value());
             newChain[chain.length + 1] = result;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(t.length);
+            if (++occupied > maxSize) {
+                rehash(t.length);
             }
             return result;
         }
@@ -444,30 +446,30 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         newChain[3] = result;
         t[index] = CHAINED_KEY;
         t[index + 1] = newChain;
-        if (++this.occupied > this.maxSize) {
-            this.rehash(t.length);
+        if (++occupied > maxSize) {
+            rehash(t.length);
         }
         return result;
     }
 
     @Override
     public <P> V updateValueWith(K key, Function0<? extends V> factory, Function2<? super V, ? super P, ? extends V> function, P parameter) {
-        int index = this.index(key);
-        Object cur = this.table[index];
+        int index = index(key);
+        Object cur = table[index];
         if (cur == null) {
-            this.table[index] = UnifriedMap.toSentinelIfNull(key);
+            table[index] = UnifriedMap.toSentinelIfNull(key);
             V result = function.value(factory.value(), parameter);
-            this.table[index + 1] = result;
-            ++this.occupied;
+            table[index + 1] = result;
+            ++occupied;
             return result;
         }
-        if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
-            V oldValue = (V) this.table[index + 1];
+        if (cur != CHAINED_KEY && nonNullTableObjectEquals(cur, key)) {
+            V oldValue = (V) table[index + 1];
             V newValue = function.value(oldValue, parameter);
-            this.table[index + 1] = newValue;
+            table[index + 1] = newValue;
             return newValue;
         }
-        return this.chainedUpdateValueWith(key, index, factory, function, parameter);
+        return chainedUpdateValueWith(key, index, factory, function, parameter);
     }
 
     private <P> V chainedUpdateValueWith(
@@ -476,19 +478,19 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             Function0<? extends V> factory,
             Function2<? super V, ? super P, ? extends V> function,
             P parameter) {
-        if (this.table[index] == CHAINED_KEY) {
-            Object[] chain = (Object[]) this.table[index + 1];
+        if (table[index] == CHAINED_KEY) {
+            Object[] chain = (Object[]) table[index + 1];
             for (int i = 0; i < chain.length; i += 2) {
                 if (chain[i] == null) {
                     chain[i] = UnifriedMap.toSentinelIfNull(key);
                     V result = function.value(factory.value(), parameter);
                     chain[i + 1] = result;
-                    if (++this.occupied > this.maxSize) {
-                        this.rehash(this.table.length);
+                    if (++occupied > maxSize) {
+                        rehash(table.length);
                     }
                     return result;
                 }
-                if (this.nonNullTableObjectEquals(chain[i], key)) {
+                if (nonNullTableObjectEquals(chain[i], key)) {
                     V oldValue = (V) chain[i + 1];
                     V result = function.value(oldValue, parameter);
                     chain[i + 1] = result;
@@ -497,34 +499,34 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             }
             Object[] newChain = new Object[chain.length + 4];
             System.arraycopy(chain, 0, newChain, 0, chain.length);
-            this.table[index + 1] = newChain;
+            table[index + 1] = newChain;
             newChain[chain.length] = UnifriedMap.toSentinelIfNull(key);
             V result = function.value(factory.value(), parameter);
             newChain[chain.length + 1] = result;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(this.table.length);
+            if (++occupied > maxSize) {
+                rehash(table.length);
             }
             return result;
         }
         Object[] newChain = new Object[4];
-        newChain[0] = this.table[index];
-        newChain[1] = this.table[index + 1];
+        newChain[0] = table[index];
+        newChain[1] = table[index + 1];
         newChain[2] = UnifriedMap.toSentinelIfNull(key);
         V result = function.value(factory.value(), parameter);
         newChain[3] = result;
-        this.table[index] = CHAINED_KEY;
-        this.table[index + 1] = newChain;
-        if (++this.occupied > this.maxSize) {
-            this.rehash(this.table.length);
+        table[index] = CHAINED_KEY;
+        table[index + 1] = newChain;
+        if (++occupied > maxSize) {
+            rehash(table.length);
         }
         return result;
     }
 
     @Override
     public V getIfAbsentPut(K key, Function0<? extends V> function) {
-        final Object[] t = this.table;
+        Object[] t = table;
 
-        int index = this.index(key, t.length);
+        int index = index(key, t.length);
 
         Object cur = t[index];
 
@@ -532,37 +534,37 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             V result = function.value();
             t[index] = UnifriedMap.toSentinelIfNull(key);
             t[index + 1] = result;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(t.length);
+            if (++occupied > maxSize) {
+                rehash(t.length);
             }
             return result;
         }
-        if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
+        if (cur != CHAINED_KEY && nonNullTableObjectEquals(cur, key)) {
             return (V) t[index + 1];
         }
-        return this.chainedGetIfAbsentPut(key, index, function);
+        return chainedGetIfAbsentPut(key, index, function);
     }
 
     private V chainedGetIfAbsentPut(K key, int index, Function0<? extends V> function) {
         V result = null;
-        final Object[] t = this.table;
+        Object[] t = table;
         if (t[index] == CHAINED_KEY) {
             Object[] chain = (Object[]) t[index + 1];
             int i = 0;
             int cl = chain.length;
             for (; i < cl; i += 2) {
-                final Object c = chain[i];
+                Object c = chain[i];
                 if (c == null) {
                     result = function.value();
                     chain[i] = UnifriedMap.toSentinelIfNull(key);
                     chain[i + 1] = result;
-                    if (++this.occupied > this.maxSize) {
-                        this.rehash(t.length);
+                    if (++occupied > maxSize) {
+                        rehash(t.length);
                     }
                     break;
                 }
                 else /* this else and others like it may prevent null keys, dunno */
-                    if (this.nonNullTableObjectEquals(c, key)) {
+                    if (nonNullTableObjectEquals(c, key)) {
                     result = (V) chain[i + 1];
                     break;
                 }
@@ -574,14 +576,14 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 newChain[i] = UnifriedMap.toSentinelIfNull(key);
                 newChain[i + 1] = result;
                 t[index + 1] = newChain;
-                if (++this.occupied > this.maxSize) {
-                    this.rehash(t.length);
+                if (++occupied > maxSize) {
+                    rehash(t.length);
                 }
             }
         } else {
             result = function.value();
 
-            Object[] newChain = new Object[] {
+            Object[] newChain =  {
                 /*newChain[0] =*/ t[index],
                 /*newChain[1] =*/ t[index + 1],
                 /*newChain[2] =*/ UnifriedMap.toSentinelIfNull(key),
@@ -590,8 +592,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
             t[index++] = CHAINED_KEY;
             t[index] = newChain;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(t.length);
+            if (++occupied > maxSize) {
+                rehash(t.length);
             }
         }
         return result;
@@ -599,27 +601,27 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public V getIfAbsentPut(K key, V value) {
-        int index = this.index(key);
-        final Object[] t = this.table;
+        int index = index(key);
+        Object[] t = table;
         Object cur = t[index];
 
         if (cur == null) {
             t[index] = UnifriedMap.toSentinelIfNull(key);
             t[index + 1] = value;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(t.length);
+            if (++occupied > maxSize) {
+                rehash(t.length);
             }
             return value;
         }
-        if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
+        if (cur != CHAINED_KEY && nonNullTableObjectEquals(cur, key)) {
             return (V) t[index + 1];
         }
-        return this.chainedGetIfAbsentPut(key, index, value);
+        return chainedGetIfAbsentPut(key, index, value);
     }
 
     private V chainedGetIfAbsentPut(K key, int index, V value) {
         V result = value;
-        Object[] t = this.table;
+        Object[] t = table;
         int tl = t.length;
         if (t[index] == CHAINED_KEY) {
             Object[] chain = (Object[]) t[index + 1];
@@ -629,12 +631,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 if (chain[i] == null) {
                     chain[i] = UnifriedMap.toSentinelIfNull(key);
                     chain[i + 1] = value;
-                    if (++this.occupied > this.maxSize) {
-                        this.rehash(tl);
+                    if (++occupied > maxSize) {
+                        rehash(tl);
                     }
                     break;
                 }
-                if (this.nonNullTableObjectEquals(chain[i], key)) {
+                if (nonNullTableObjectEquals(chain[i], key)) {
                     result = (V) chain[i + 1];
                     break;
                 }
@@ -645,8 +647,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 newChain[i] = UnifriedMap.toSentinelIfNull(key);
                 newChain[i + 1] = value;
                 t[index + 1] = newChain;
-                if (++this.occupied > this.maxSize) {
-                    this.rehash(tl);
+                if (++occupied > maxSize) {
+                    rehash(tl);
                 }
             }
         } else {
@@ -657,8 +659,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             newChain[3] = value;
             t[index] = CHAINED_KEY;
             t[index + 1] = newChain;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(tl);
+            if (++occupied > maxSize) {
+                rehash(tl);
             }
         }
         return result;
@@ -666,40 +668,40 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public <P> V getIfAbsentPutWith(K key, Function<? super P, ? extends V> function, P parameter) {
-        int index = this.index(key);
-        Object cur = this.table[index];
+        int index = index(key);
+        Object cur = table[index];
 
         if (cur == null) {
             V result = function.valueOf(parameter);
-            this.table[index] = UnifriedMap.toSentinelIfNull(key);
-            this.table[index + 1] = result;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(this.table.length);
+            table[index] = UnifriedMap.toSentinelIfNull(key);
+            table[index + 1] = result;
+            if (++occupied > maxSize) {
+                rehash(table.length);
             }
             return result;
         }
-        if (cur != CHAINED_KEY && this.nonNullTableObjectEquals(cur, key)) {
-            return (V) this.table[index + 1];
+        if (cur != CHAINED_KEY && nonNullTableObjectEquals(cur, key)) {
+            return (V) table[index + 1];
         }
-        return this.chainedGetIfAbsentPutWith(key, index, function, parameter);
+        return chainedGetIfAbsentPutWith(key, index, function, parameter);
     }
 
     private <P> V chainedGetIfAbsentPutWith(K key, int index, Function<? super P, ? extends V> function, P parameter) {
         V result = null;
-        if (this.table[index] == CHAINED_KEY) {
-            Object[] chain = (Object[]) this.table[index + 1];
+        if (table[index] == CHAINED_KEY) {
+            Object[] chain = (Object[]) table[index + 1];
             int i = 0;
             for (; i < chain.length; i += 2) {
                 if (chain[i] == null) {
                     result = function.valueOf(parameter);
                     chain[i] = UnifriedMap.toSentinelIfNull(key);
                     chain[i + 1] = result;
-                    if (++this.occupied > this.maxSize) {
-                        this.rehash(this.table.length);
+                    if (++occupied > maxSize) {
+                        rehash(table.length);
                     }
                     break;
                 }
-                if (this.nonNullTableObjectEquals(chain[i], key)) {
+                if (nonNullTableObjectEquals(chain[i], key)) {
                     result = (V) chain[i + 1];
                     break;
                 }
@@ -710,22 +712,22 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 System.arraycopy(chain, 0, newChain, 0, chain.length);
                 newChain[i] = UnifriedMap.toSentinelIfNull(key);
                 newChain[i + 1] = result;
-                this.table[index + 1] = newChain;
-                if (++this.occupied > this.maxSize) {
-                    this.rehash(this.table.length);
+                table[index + 1] = newChain;
+                if (++occupied > maxSize) {
+                    rehash(table.length);
                 }
             }
         } else {
             result = function.valueOf(parameter);
             Object[] newChain = new Object[4];
-            newChain[0] = this.table[index];
-            newChain[1] = this.table[index + 1];
+            newChain[0] = table[index];
+            newChain[1] = table[index + 1];
             newChain[2] = UnifriedMap.toSentinelIfNull(key);
             newChain[3] = result;
-            this.table[index] = CHAINED_KEY;
-            this.table[index + 1] = newChain;
-            if (++this.occupied > this.maxSize) {
-                this.rehash(this.table.length);
+            table[index] = CHAINED_KEY;
+            table[index + 1] = newChain;
+            if (++occupied > maxSize) {
+                rehash(table.length);
             }
         }
         return result;
@@ -733,8 +735,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     public int getCollidingBuckets() {
         int count = 0;
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
                 count++;
             }
         }
@@ -750,44 +752,44 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
      */
     public int getMapMemoryUsedInWords() {
         int headerSize = 2;
-        int sizeInWords = this.table.length + headerSize;
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                sizeInWords += headerSize + ((Object[]) this.table[i + 1]).length;
+        int sizeInWords = table.length + headerSize;
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                sizeInWords += headerSize + ((Object[]) table[i + 1]).length;
             }
         }
         return sizeInWords;
     }
 
     protected void rehash(int newCapacity) {
-        Object[] old = this.table;
+        Object[] old = table;
         int oldLength = old.length;
 
-        this.allocate(newCapacity);
-        this.occupied = 0;
+        allocate(newCapacity);
+        occupied = 0;
 
         for (int i = 0; i < oldLength; i += 2) {
             Object cur = old[i];
             if (cur == CHAINED_KEY) {
                 Object[] chain = (Object[]) old[i + 1];
-                final int clen = chain.length;
+                int clen = chain.length;
                 for (int j = 0; j < clen; ) {
                     Object cj = chain[j++];
                     if (cj != null) {
-                        this.putFast(this.nonSentinel(cj), chain[j]);
+                        putFast(nonSentinel(cj), chain[j]);
                     }
                     j++;
                 }
             } else if (cur != null) {
-                this.putFast(this.nonSentinel(cur), old[i + 1]);
+                putFast(nonSentinel(cur), old[i + 1]);
             }
         }
     }
 
     public final V get(Object key) {
 
-        final Object[] t = this.table;
-        int index = this.index(key, t.length);
+        Object[] t = table;
+        int index = index(key, t.length);
         Object cur = t[index];
 
         Object v = null;
@@ -799,7 +801,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                  v = getFromChain((Object[]) val, key);
             }
 
-            else if (this.nonNullTableObjectEquals(cur, key)) {
+            else if (nonNullTableObjectEquals(cur, key)) {
                 v =  val;
             }
 
@@ -823,8 +825,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public boolean containsKey(Object key) {
-        Object[] t = this.table;
-        int index = this.index(key, t.length);
+        Object[] t = table;
+        int index = index(key, t.length);
         Object cur = t[index];
 
         if (cur == null) {
@@ -832,11 +834,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         boolean curIsChain = cur == CHAINED_KEY;
-        if ((!curIsChain) && this.nonNullTableObjectEquals(cur, key)) {
+        if ((!curIsChain) && nonNullTableObjectEquals(cur, key)) {
             return true;
         }
 
-        return curIsChain && this.chainContainsKey((Object[]) t[index + 1], key);
+        return curIsChain && chainContainsKey((Object[]) t[index + 1], key);
     }
 
     private static boolean chainContainsKey(Object[] chain, Object key) {
@@ -854,11 +856,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public boolean containsValue(Object value) {
-        Object[] t = this.table;
+        Object[] t = table;
         int tl = t.length;
         for (int i = 0; i < tl; i += 2) {
             if (t[i] == CHAINED_KEY) {
-                if (this.chainedContainsValue((Object[]) t[i + 1], value)) {
+                if (chainedContainsValue((Object[]) t[i + 1], value)) {
                     return true;
                 }
             } else if (t[i] != null) {
@@ -899,13 +901,13 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public void forEachKeyValue(Procedure2<? super K, ? super V> procedure) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            final Object[] t = this.table;
+        for (int i = 0; i < table.length; i += 2) {
+            Object[] t = table;
             Object cur = t[i];
             if (cur == CHAINED_KEY) {
-                this.chainedForEachEntry((Object[]) t[i + 1], procedure);
+                chainedForEachEntry((Object[]) t[i + 1], procedure);
             } else if (cur != null) {
-                procedure.value((K)this.nonSentinel(cur), (V) t[i + 1]);
+                procedure.value((K) nonSentinel(cur), (V) t[i + 1]);
             }
         }
     }
@@ -914,12 +916,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             Iterable<E> iterable,
             Function<? super E, ? extends K> keyFunction,
             Function<? super E, ? extends V> valueFunction) {
-        Iterate.forEach(iterable, new MapCollectProcedure<E, K, V>(this, keyFunction, valueFunction));
+        Iterate.forEach(iterable, new MapCollectProcedure<>(this, keyFunction, valueFunction));
         return this;
     }
 
     public final V removeKey(K key) {
-        return this.remove(key);
+        return remove(key);
     }
 
     private void chainedForEachEntry(Object[] chain, Procedure2<? super K, ? super V> procedure) {
@@ -928,16 +930,16 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (cur == null) {
                 return;
             }
-            procedure.value((K)this.nonSentinel(cur), (V) chain[i + 1]);
+            procedure.value((K) nonSentinel(cur), (V) chain[i + 1]);
         }
     }
 
     public final int getBatchCount(int batchSize) {
-        return Math.max(1, this.table.length / 2 / batchSize);
+        return Math.max(1, table.length / 2 / batchSize);
     }
 
     public void batchForEach(Procedure<? super V> procedure, int sectionIndex, int sectionCount) {
-        Object[] t = this.table;
+        Object[] t = table;
         int tl = t.length;
         int sectionSize = tl / sectionCount;
         int start = sectionIndex * sectionSize;
@@ -948,7 +950,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         for (int i = start; i < end; i += 2) {
             Object value = t[i];
             if (value instanceof Object[]) {
-                this.chainedForEachValue((Object[]) value, procedure);
+                chainedForEachValue((Object[]) value, procedure);
             } else if (value == null && t[i - 1] != null || value != null) {
                 procedure.value((V) value);
             }
@@ -957,14 +959,14 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public final void forEachKey(Procedure<? super K> procedure) {
-        final Object[] t = this.table;
+        Object[] t = table;
         int l = t.length;
         for (int i = 0; i < l; i += 2) {
             Object cur = t[i];
             if (cur == CHAINED_KEY) {
-                this.chainedForEachKey((Object[]) t[i + 1], procedure);
+                chainedForEachKey((Object[]) t[i + 1], procedure);
             } else if (cur != null) {
-                procedure.value((K)this.nonSentinel(cur));
+                procedure.value((K) nonSentinel(cur));
             }
         }
     }
@@ -976,20 +978,20 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (cur == null) {
                 return;
             }
-            procedure.value((K)this.nonSentinel(cur));
+            procedure.value((K) nonSentinel(cur));
         }
     }
 
     @Override
     public void forEachValue(Procedure<? super V> procedure) {
-        final Object[] t = this.table;
+        Object[] t = table;
 
         int l = t.length;
 
         for (int i = 0; i < l; i += 2) {
             Object cur = t[i];
             if (cur == CHAINED_KEY) {
-                this.chainedForEachValue((Object[]) t[i + 1], procedure);
+                chainedForEachValue((Object[]) t[i + 1], procedure);
             } else if (cur != null) {
                 procedure.value((V) t[i + 1]);
             }
@@ -1009,7 +1011,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public final boolean isEmpty() {
-        return this.occupied == 0;
+        return occupied == 0;
     }
 
     public final void putAll(Map<? extends K, ? extends V> map) {
@@ -1018,22 +1020,16 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             UnifriedMap<K, V> umap = (UnifriedMap<K, V>) map;
 
             if (isEmpty())
-                this.copyMapToEmpty(umap);
+                copyMapToEmpty(umap);
             else
-                this.copyMap(umap);
+                copyMap(umap);
 
         } else if (map instanceof UnsortedMapIterable) {
             MapIterable<K, V> mapIterable = (MapIterable<K, V>) map;
-            mapIterable.forEachKeyValue(new Procedure2<K, V>() {
-                public void value(K key, V value) {
-                    UnifriedMap.this.put(key, value);
-                }
-            });
+            mapIterable.forEachKeyValue((Procedure2<K, V>) this::put);
         } else {
-            Iterator<? extends Entry<? extends K, ? extends V>> iterator = this.getEntrySetFrom(map).iterator();
-            while (iterator.hasNext()) {
-                Entry<? extends K, ? extends V> entry = iterator.next();
-                this.put(entry.getKey(), entry.getValue());
+            for (Entry<? extends K, ? extends V> entry : getEntrySetFrom(map)) {
+                put(entry.getKey(), entry.getValue());
             }
         }
     }
@@ -1055,18 +1051,18 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         Object[] st = unifiedMap.table; //src
         int nextLen = st.length;
 
-        Object[] tt = this.table; //target (this)
+        Object[] tt = table; //target (this)
         if (tt.length!= nextLen)
             tt = allocateTable(nextLen);
 
-        if ((this.occupied = unifiedMap.occupied) > 0)
+        if ((occupied = unifiedMap.occupied) > 0)
             System.arraycopy(st, 0, tt, 0, nextLen);
         //else it should remain all null
 
     }
 
     protected final void copyMap(UnifriedMap<K, V> unifiedMap) {
-        final Object[] ut = unifiedMap.table;
+        Object[] ut = unifiedMap.table;
 
         int l = ut.length;
 
@@ -1074,9 +1070,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             Object cur = ut[i++];
             Object uu = ut[i++];
             if (cur == CHAINED_KEY) {
-                this.copyChain((Object[]) uu);
+                copyChain((Object[]) uu);
             } else if (cur != null) {
-                this.putFast(this.nonSentinel(cur), uu);
+                putFast(nonSentinel(cur), uu);
             }
         }
     }
@@ -1088,23 +1084,23 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (cur == null) {
                 break;
             }
-            this.putFast(this.nonSentinel(cur), chain[j++]);
+            putFast(nonSentinel(cur), chain[j++]);
         }
     }
 
     public V remove(Object key) {
-        int index = this.index(key);
-        final Object[] t = this.table;
+        int index = index(key);
+        Object[] t = table;
         Object cur = t[index];
         if (cur != null) {
             Object val = t[index + 1];
             if (cur == CHAINED_KEY) {
-                return this.removeFromChain((Object[]) val, key, index);
+                return removeFromChain((Object[]) val, key, index);
             }
-            if (this.nonNullTableObjectEquals(cur, key)) {
+            if (nonNullTableObjectEquals(cur, key)) {
                 t[index++] = null;
                 t[index] = null;
-                this.occupied--;
+                occupied--;
                 return (V) val;
             }
         }
@@ -1118,9 +1114,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (k == null) {
                 return null;
             }
-            if (this.nonNullTableObjectEquals(k, key)) {
+            if (nonNullTableObjectEquals(k, key)) {
                 V val = (V) chain[i + 1];
-                this.overwriteWithLastElementFromChain(chain, index, i);
+                overwriteWithLastElementFromChain(chain, index, i);
                 return val;
             }
         }
@@ -1139,15 +1135,15 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         chain[j] = null;
         chain[j + 1] = null;
         if (j == 0) {
-            Object[] t = this.table;
+            Object[] t = table;
             t[index++] = null;
             t[index] = null;
         }
-        this.occupied--;
+        occupied--;
     }
 
     public final int size() {
-        return this.occupied;
+        return occupied;
     }
 
     public final Set<Entry<K, V>> entrySet() {
@@ -1173,11 +1169,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         Map<?, ?> other = (Map<?, ?>) object;
-        if (this.size() != other.size()) {
+        if (size() != other.size()) {
             return false;
         }
 
-        final Object[] table = this.table;
+        Object[] table = this.table;
 
         int l = table.length;
 
@@ -1185,11 +1181,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
             Object cur = table[i];
             if (cur == CHAINED_KEY) {
-                if (!this.chainedEquals((Object[]) table[i + 1], other)) {
+                if (!chainedEquals((Object[]) table[i + 1], other)) {
                     return false;
                 }
             } else if (cur != null) {
-                Object key = this.nonSentinel(cur);
+                Object key = nonSentinel(cur);
                 Object value = table[i + 1];
                 Object otherValue = other.get(key);
                 //        if (value == null) {
@@ -1216,7 +1212,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (cur == null) {
                 return true;
             }
-            Object key = this.nonSentinel(cur);
+            Object key = nonSentinel(cur);
             Object value = chain[i + 1];
             Object otherValue = other.get(key);
             //        if (value == null) {
@@ -1237,7 +1233,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     @Override
     public final int hashCode() {
         int hashCode = 0;
-        final Object[] t = this.table;
+        Object[] t = table;
         int tl = t.length;
         for (int i = 0; i < tl; ) {
             Object cur = t[i];
@@ -1269,15 +1265,15 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         builder.append('{');
 
-        this.forEachKeyValue(new Procedure2<K, V>() {
+        forEachKeyValue(new Procedure2<K, V>() {
             private boolean first = true;
 
             public void value(K key, V value) {
-                if (this.first) {
-                    this.first = false;
+                if (first) {
+                    first = false;
                 } else {
                     builder.append(", ");
                 }
@@ -1294,25 +1290,25 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int size = in.readInt();
-        this.loadFactor = in.readFloat();
-        this.init(Math.max((int) (size / this.loadFactor) + 1,
+        loadFactor = in.readFloat();
+        init(Math.max((int) (size / loadFactor) + 1,
                 DEFAULT_INITIAL_CAPACITY));
         for (int i = 0; i < size; i++) {
-            this.put((K) in.readObject(), (V) in.readObject());
+            put((K) in.readObject(), (V) in.readObject());
         }
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(this.size());
-        out.writeFloat(this.loadFactor);
-        for (int i = 0; i < this.table.length; i += 2) {
-            Object o = this.table[i];
+        out.writeInt(size());
+        out.writeFloat(loadFactor);
+        for (int i = 0; i < table.length; i += 2) {
+            Object o = table[i];
             if (o != null) {
                 if (o == CHAINED_KEY) {
-                    this.writeExternalChain(out, (Object[]) this.table[i + 1]);
+                    writeExternalChain(out, (Object[]) table[i + 1]);
                 } else {
-                    out.writeObject(this.nonSentinel(o));
-                    out.writeObject(this.table[i + 1]);
+                    out.writeObject(nonSentinel(o));
+                    out.writeObject(table[i + 1]);
                 }
             }
         }
@@ -1324,7 +1320,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (cur == null) {
                 return;
             }
-            out.writeObject(this.nonSentinel(cur));
+            out.writeObject(nonSentinel(cur));
             out.writeObject(chain[i + 1]);
         }
     }
@@ -1332,12 +1328,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     @Override
     public void forEachWithIndex(ObjectIntProcedure<? super V> objectIntProcedure) {
         int index = 0;
-        for (int i = 0; i < this.table.length; i += 2) {
-            Object cur = this.table[i];
+        for (int i = 0; i < table.length; i += 2) {
+            Object cur = table[i];
             if (cur == CHAINED_KEY) {
-                index = this.chainedForEachValueWithIndex((Object[]) this.table[i + 1], objectIntProcedure, index);
+                index = chainedForEachValueWithIndex((Object[]) table[i + 1], objectIntProcedure, index);
             } else if (cur != null) {
-                objectIntProcedure.value((V) this.table[i + 1], index++);
+                objectIntProcedure.value((V) table[i + 1], index++);
             }
         }
     }
@@ -1355,12 +1351,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public <P> void forEachWith(Procedure2<? super V, ? super P> procedure, P parameter) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            Object cur = this.table[i];
+        for (int i = 0; i < table.length; i += 2) {
+            Object cur = table[i];
             if (cur == CHAINED_KEY) {
-                this.chainedForEachValueWith((Object[]) this.table[i + 1], procedure, parameter);
+                chainedForEachValueWith((Object[]) table[i + 1], procedure, parameter);
             } else if (cur != null) {
-                procedure.value((V) this.table[i + 1], parameter);
+                procedure.value((V) table[i + 1], parameter);
             }
         }
     }
@@ -1381,25 +1377,25 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     @Override
     public <R> MutableMap<K, R> collectValues(Function2<? super K, ? super V, ? extends R> function) {
         UnifriedMap<K, R> target = UnifriedMap.newMap();
-        target.loadFactor = this.loadFactor;
-        target.occupied = this.occupied;
-        target.allocate(this.table.length >> 1);
+        target.loadFactor = loadFactor;
+        target.occupied = occupied;
+        target.allocate(table.length >> 1);
 
         for (int i = 0; i < target.table.length; i += 2) {
-            target.table[i] = this.table[i];
+            target.table[i] = table[i];
 
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 Object[] chainedTargetTable = new Object[chainedTable.length];
                 for (int j = 0; j < chainedTargetTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         chainedTargetTable[j] = chainedTable[j];
-                        chainedTargetTable[j + 1] = function.value((K)this.nonSentinel(chainedTable[j]), (V) chainedTable[j + 1]);
+                        chainedTargetTable[j + 1] = function.value((K) nonSentinel(chainedTable[j]), (V) chainedTable[j + 1]);
                     }
                 }
                 target.table[i + 1] = chainedTargetTable;
-            } else if (this.table[i] != null) {
-                target.table[i + 1] = function.value((K)this.nonSentinel(this.table[i]), (V) this.table[i + 1]);
+            } else if (table[i] != null) {
+                target.table[i + 1] = function.value((K) nonSentinel(table[i]), (V) table[i + 1]);
             }
         }
 
@@ -1408,21 +1404,21 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public Pair<K, V> detect(Predicate2<? super K, ? super V> predicate) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
-                        K key = (K)this.nonSentinel(chainedTable[j]);
+                        K key = (K) nonSentinel(chainedTable[j]);
                         V value = (V) chainedTable[j + 1];
                         if (predicate.accept(key, value)) {
                             return Tuples.pair(key, value);
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                K key = (K)this.nonSentinel(this.table[i]);
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                K key = (K) nonSentinel(table[i]);
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(key, value)) {
                     return Tuples.pair(key, value);
@@ -1435,9 +1431,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public V detect(Predicate<? super V> predicate) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         V value = (V) chainedTable[j + 1];
@@ -1446,8 +1442,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(value)) {
                     return value;
@@ -1460,9 +1456,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public <P> V detectWith(Predicate2<? super V, ? super P> predicate, P parameter) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         V value = (V) chainedTable[j + 1];
@@ -1471,8 +1467,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(value, parameter)) {
                     return value;
@@ -1485,9 +1481,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public V detectIfNone(Predicate<? super V> predicate, Function0<? extends V> function) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         V value = (V) chainedTable[j + 1];
@@ -1496,8 +1492,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(value)) {
                     return value;
@@ -1513,9 +1509,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             Predicate2<? super V, ? super P> predicate,
             P parameter,
             Function0<? extends V> function) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         V value = (V) chainedTable[j + 1];
@@ -1524,8 +1520,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(value, parameter)) {
                     return value;
@@ -1541,9 +1537,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             boolean expected,
             boolean onShortCircuit,
             boolean atEnd) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         V value = (V) chainedTable[j + 1];
@@ -1552,8 +1548,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(value) == expected) {
                     return onShortCircuit;
@@ -1570,9 +1566,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             boolean expected,
             boolean onShortCircuit,
             boolean atEnd) {
-        for (int i = 0; i < this.table.length; i += 2) {
-            if (this.table[i] == CHAINED_KEY) {
-                Object[] chainedTable = (Object[]) this.table[i + 1];
+        for (int i = 0; i < table.length; i += 2) {
+            if (table[i] == CHAINED_KEY) {
+                Object[] chainedTable = (Object[]) table[i + 1];
                 for (int j = 0; j < chainedTable.length; j += 2) {
                     if (chainedTable[j] != null) {
                         V value = (V) chainedTable[j + 1];
@@ -1581,8 +1577,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                         }
                     }
                 }
-            } else if (this.table[i] != null) {
-                V value = (V) this.table[i + 1];
+            } else if (table[i] != null) {
+                V value = (V) table[i + 1];
 
                 if (predicate.accept(value, parameter) == expected) {
                     return onShortCircuit;
@@ -1595,43 +1591,43 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public boolean anySatisfy(Predicate<? super V> predicate) {
-        return this.shortCircuit(predicate, true, true, false);
+        return shortCircuit(predicate, true, true, false);
     }
 
     @Override
     public <P> boolean anySatisfyWith(Predicate2<? super V, ? super P> predicate, P parameter) {
-        return this.shortCircuitWith(predicate, parameter, true, true, false);
+        return shortCircuitWith(predicate, parameter, true, true, false);
     }
 
     @Override
     public boolean allSatisfy(Predicate<? super V> predicate) {
-        return this.shortCircuit(predicate, false, false, true);
+        return shortCircuit(predicate, false, false, true);
     }
 
     @Override
     public <P> boolean allSatisfyWith(Predicate2<? super V, ? super P> predicate, P parameter) {
-        return this.shortCircuitWith(predicate, parameter, false, false, true);
+        return shortCircuitWith(predicate, parameter, false, false, true);
     }
 
     @Override
     public boolean noneSatisfy(Predicate<? super V> predicate) {
-        return this.shortCircuit(predicate, true, false, true);
+        return shortCircuit(predicate, true, false, true);
     }
 
     @Override
     public <P> boolean noneSatisfyWith(Predicate2<? super V, ? super P> predicate, P parameter) {
-        return this.shortCircuitWith(predicate, parameter, true, false, true);
+        return shortCircuitWith(predicate, parameter, true, false, true);
     }
 
     protected class KeySet implements Set<K>, Serializable, BatchIterable<K> {
         private static final long serialVersionUID = 1L;
 
         public boolean add(K key) {
-            throw new UnsupportedOperationException("Cannot call add() on " + this.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Cannot call add() on " + getClass().getSimpleName());
         }
 
         public boolean addAll(Collection<? extends K> collection) {
-            throw new UnsupportedOperationException("Cannot call addAll() on " + this.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Cannot call addAll() on " + getClass().getSimpleName());
         }
 
         public void clear() {
@@ -1639,12 +1635,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public boolean contains(Object o) {
-            return UnifriedMap.this.containsKey(o);
+            return containsKey(o);
         }
 
         public boolean containsAll(Collection<?> collection) {
             for (Object aCollection : collection) {
-                if (!UnifriedMap.this.containsKey(aCollection)) {
+                if (!containsKey(aCollection)) {
                     return false;
                 }
             }
@@ -1660,30 +1656,28 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public boolean remove(Object key) {
-            int oldSize = UnifriedMap.this.occupied;
+            int oldSize = occupied;
             UnifriedMap.this.remove(key);
-            return UnifriedMap.this.occupied != oldSize;
+            return occupied != oldSize;
         }
 
         public boolean removeAll(Collection<?> collection) {
-            int oldSize = UnifriedMap.this.occupied;
-            for (Object object : collection) {
-                UnifriedMap.this.remove(object);
-            }
-            return oldSize != UnifriedMap.this.occupied;
+            int oldSize = occupied;
+            collection.forEach(UnifriedMap.this::remove);
+            return oldSize != occupied;
         }
 
         public void putIfFound(Object key, Map<K, V> other) {
-            int index = UnifriedMap.this.index(key);
-            Object cur = UnifriedMap.this.table[index];
+            int index = index(key);
+            Object cur = table[index];
             if (cur != null) {
-                Object val = UnifriedMap.this.table[index + 1];
+                Object val = table[index + 1];
                 if (cur == CHAINED_KEY) {
-                    this.putIfFoundFromChain((Object[]) val, (K) key, other);
+                    putIfFoundFromChain((Object[]) val, (K) key, other);
                     return;
                 }
-                if (UnifriedMap.this.nonNullTableObjectEquals(cur, (K) key)) {
-                    other.put((K)UnifriedMap.this.nonSentinel(cur), (V) val);
+                if (nonNullTableObjectEquals(cur, (K) key)) {
+                    other.put((K) nonSentinel(cur), (V) val);
                 }
             }
         }
@@ -1694,22 +1688,22 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 if (k == null) {
                     return;
                 }
-                if (UnifriedMap.this.nonNullTableObjectEquals(k, key)) {
-                    other.put((K)UnifriedMap.this.nonSentinel(k), (V) chain[i + 1]);
+                if (nonNullTableObjectEquals(k, key)) {
+                    other.put((K) nonSentinel(k), (V) chain[i + 1]);
                 }
             }
         }
 
         public boolean retainAll(Collection<?> collection) {
             int retainedSize = collection.size();
-            UnifriedMap<K, V> retainedCopy = new UnifriedMap<K, V>(retainedSize, UnifriedMap.this.loadFactor);
+            UnifriedMap<K, V> retainedCopy = new UnifriedMap<>(retainedSize, loadFactor);
             for (Object key : collection) {
-                this.putIfFound(key, retainedCopy);
+                putIfFound(key, retainedCopy);
             }
-            if (retainedCopy.size() < this.size()) {
-                UnifriedMap.this.maxSize = retainedCopy.maxSize;
-                UnifriedMap.this.occupied = retainedCopy.occupied;
-                UnifriedMap.this.table = retainedCopy.table;
+            if (retainedCopy.size() < size()) {
+                maxSize = retainedCopy.maxSize;
+                occupied = retainedCopy.occupied;
+                table = retainedCopy.table;
                 return true;
             }
             return false;
@@ -1720,7 +1714,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public void forEach(Procedure<? super K> procedure) {
-            UnifriedMap.this.forEachKey(procedure);
+            forEachKey(procedure);
         }
 
         public int getBatchCount(int batchSize) {
@@ -1728,7 +1722,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public void batchForEach(Procedure<? super K> procedure, int sectionIndex, int sectionCount) {
-            Object[] map = UnifriedMap.this.table;
+            Object[] map = table;
             int sectionSize = map.length / sectionCount;
             int start = sectionIndex * sectionSize;
             int end = sectionIndex == sectionCount - 1 ? map.length : start + sectionSize;
@@ -1738,9 +1732,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             for (int i = start; i < end; i += 2) {
                 Object cur = map[i];
                 if (cur == CHAINED_KEY) {
-                    UnifriedMap.this.chainedForEachKey((Object[]) map[i + 1], procedure);
+                    chainedForEachKey((Object[]) map[i + 1], procedure);
                 } else if (cur != null) {
-                    procedure.value((K)UnifriedMap.this.nonSentinel(cur));
+                    procedure.value((K) nonSentinel(cur));
                 }
             }
         }
@@ -1758,10 +1752,10 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                             if (cur == null) {
                                 break;
                             }
-                            result[count++] = UnifriedMap.this.nonSentinel(cur);
+                            result[count++] = nonSentinel(cur);
                         }
                     } else {
-                        result[count++] = UnifriedMap.this.nonSentinel(x);
+                        result[count++] = nonSentinel(x);
                     }
                 }
             }
@@ -1771,8 +1765,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         public boolean equals(Object obj) {
             if (obj instanceof Set) {
                 Set<?> other = (Set<?>) obj;
-                if (other.size() == this.size()) {
-                    return this.containsAll(other);
+                if (other.size() == size()) {
+                    return containsAll(other);
                 }
             }
             return false;
@@ -1810,7 +1804,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         public Object[] toArray() {
             int size = UnifriedMap.this.size();
             Object[] result = new Object[size];
-            this.copyKeys(result);
+            copyKeys(result);
             return result;
         }
 
@@ -1819,7 +1813,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (result.length < size) {
                 result = (T[]) Array.newInstance(result.getClass().getComponentType(), size);
             }
-            this.copyKeys(result);
+            copyKeys(result);
             if (size < result.length) {
                 result[size] = null;
             }
@@ -1828,12 +1822,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         protected Object writeReplace() {
             UnifiedSet<K> replace = UnifiedSet.newSet(UnifriedMap.this.size());
-            for (int i = 0; i < UnifriedMap.this.table.length; i += 2) {
-                Object cur = UnifriedMap.this.table[i];
+            for (int i = 0; i < table.length; i += 2) {
+                Object cur = table[i];
                 if (cur == CHAINED_KEY) {
-                    this.chainedAddToSet((Object[]) UnifriedMap.this.table[i + 1], replace);
+                    chainedAddToSet((Object[]) table[i + 1], replace);
                 } else if (cur != null) {
-                    replace.add((K)UnifriedMap.this.nonSentinel(cur));
+                    replace.add((K) nonSentinel(cur));
                 }
             }
             return replace;
@@ -1845,7 +1839,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 if (cur == null) {
                     return;
                 }
-                replace.add((K)UnifriedMap.this.nonSentinel(cur));
+                replace.add((K) nonSentinel(cur));
             }
         }
     }
@@ -1857,37 +1851,37 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         protected boolean lastReturned;
 
         public final boolean hasNext() {
-            return this.count < UnifriedMap.this.size();
+            return count < size();
         }
 
         public void remove() {
-            if (!this.lastReturned) {
+            if (!lastReturned) {
                 throw new IllegalStateException("next() must be called as many times as remove()");
             }
-            this.count--;
-            UnifriedMap.this.occupied--;
+            count--;
+            occupied--;
 
-            if (this.chainPosition != 0) {
-                this.removeFromChain();
+            if (chainPosition != 0) {
+                removeFromChain();
                 return;
             }
 
-            int pos = this.position - 2;
-            Object cur = UnifriedMap.this.table[pos];
+            int pos = position - 2;
+            Object cur = table[pos];
             if (cur == CHAINED_KEY) {
-                this.removeLastFromChain((Object[]) UnifriedMap.this.table[pos + 1], pos);
+                removeLastFromChain((Object[]) table[pos + 1], pos);
                 return;
             }
-            UnifriedMap.this.table[pos] = null;
-            UnifriedMap.this.table[pos + 1] = null;
-            this.position = pos;
-            this.lastReturned = false;
+            table[pos] = null;
+            table[pos + 1] = null;
+            position = pos;
+            lastReturned = false;
         }
 
         protected void removeFromChain() {
-            Object[] chain = (Object[]) UnifriedMap.this.table[this.position + 1];
-            int pos = this.chainPosition - 2;
-            int replacePos = this.chainPosition;
+            Object[] chain = (Object[]) table[position + 1];
+            int pos = chainPosition - 2;
+            int replacePos = chainPosition;
             while (replacePos < chain.length - 2 && chain[replacePos + 2] != null) {
                 replacePos += 2;
             }
@@ -1895,8 +1889,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             chain[pos + 1] = chain[replacePos + 1];
             chain[replacePos] = null;
             chain[replacePos + 1] = null;
-            this.chainPosition = pos;
-            this.lastReturned = false;
+            chainPosition = pos;
+            lastReturned = false;
         }
 
         protected void removeLastFromChain(Object[] chain, int tableIndex) {
@@ -1905,49 +1899,49 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 pos -= 2;
             }
             if (pos == 0) {
-                UnifriedMap.this.table[tableIndex] = null;
-                UnifriedMap.this.table[tableIndex + 1] = null;
+                table[tableIndex] = null;
+                table[tableIndex + 1] = null;
             } else {
                 chain[pos] = null;
                 chain[pos + 1] = null;
             }
-            this.lastReturned = false;
+            lastReturned = false;
         }
     }
 
     protected class KeySetIterator extends PositionalIterator<K> {
         protected K nextFromChain() {
-            Object[] chain = (Object[]) UnifriedMap.this.table[this.position + 1];
-            Object cur = chain[this.chainPosition];
-            this.chainPosition += 2;
-            if (this.chainPosition >= chain.length
-                    || chain[this.chainPosition] == null) {
-                this.chainPosition = 0;
-                this.position += 2;
+            Object[] chain = (Object[]) table[position + 1];
+            Object cur = chain[chainPosition];
+            chainPosition += 2;
+            if (chainPosition >= chain.length
+                    || chain[chainPosition] == null) {
+                chainPosition = 0;
+                position += 2;
             }
-            this.lastReturned = true;
-            return (K)UnifriedMap.this.nonSentinel(cur);
+            lastReturned = true;
+            return (K) nonSentinel(cur);
         }
 
         public K next() {
-            if (!this.hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException("next() called, but the iterator is exhausted");
             }
-            this.count++;
+            count++;
             Object[] table = UnifriedMap.this.table;
-            if (this.chainPosition != 0) {
-                return this.nextFromChain();
+            if (chainPosition != 0) {
+                return nextFromChain();
             }
-            while (table[this.position] == null) {
-                this.position += 2;
+            while (table[position] == null) {
+                position += 2;
             }
-            Object cur = table[this.position];
+            Object cur = table[position];
             if (cur == CHAINED_KEY) {
-                return this.nextFromChain();
+                return nextFromChain();
             }
-            this.position += 2;
-            this.lastReturned = true;
-            return (K)UnifriedMap.this.nonSentinel(cur);
+            position += 2;
+            lastReturned = true;
+            return (K) nonSentinel(cur);
         }
     }
 
@@ -1955,14 +1949,14 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         private static final long serialVersionUID = 1L;
 
-        private final transient WeakReference<UnifriedMap<K, V>> holder = new WeakReference<UnifriedMap<K, V>>(UnifriedMap.this);
+        private final transient WeakReference<UnifriedMap<K, V>> holder = new WeakReference<>(UnifriedMap.this);
 
         public boolean add(Entry<K, V> entry) {
-            throw new UnsupportedOperationException("Cannot call add() on " + this.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Cannot call add() on " + getClass().getSimpleName());
         }
 
         public boolean addAll(Collection<? extends Entry<K, V>> collection) {
-            throw new UnsupportedOperationException("Cannot call addAll() on " + this.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Cannot call addAll() on " + getClass().getSimpleName());
         }
 
         public final void clear() {
@@ -1970,15 +1964,15 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public final boolean containsEntry(Entry<?, ?> entry) {
-            return this.getEntry(entry) != null;
+            return getEntry(entry) != null;
         }
 
         private final Entry<K, V> getEntry(Entry<?, ?> entry) {
             Object key = entry.getKey();
             Object value = entry.getValue();
-            int index = UnifriedMap.this.index(key);
+            int index = index(key);
 
-            final Object[] tt = UnifriedMap.this.table;
+            Object[] tt = table;
 
             Object cur =        tt[index++];
             if (cur == null) {
@@ -1988,11 +1982,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 Object curValue = tt[index];
 
                 if (cur == CHAINED_KEY) {
-                    return this.chainGetEntry((Object[]) curValue, key, value);
+                    return chainGetEntry((Object[]) curValue, key, value);
                 }
-                if (UnifriedMap.this.nonNullTableObjectEquals(cur, key)) {
+                if (nonNullTableObjectEquals(cur, key)) {
                     if (Objects.equals(value, curValue)) {
-                        return ImmutableEntry.of((K) UnifriedMap.this.nonSentinel(cur), (V) curValue);
+                        return ImmutableEntry.of((K) nonSentinel(cur), (V) curValue);
                     }
                 }
                 return null;
@@ -2005,7 +1999,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 if (cur == null) {
                     return null;
                 }
-                if (UnifriedMap.this.nonNullTableObjectEquals(cur, key)) {
+                if (nonNullTableObjectEquals(cur, key)) {
                     Object curValue = chain[i + 1];
                     //        if (value == null) {
 //            if (other == null) {
@@ -2016,7 +2010,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 //        }
 //        return false;
                     if (Objects.equals(value, curValue)) {
-                        return ImmutableEntry.of((K)UnifriedMap.this.nonSentinel(cur), (V) curValue);
+                        return ImmutableEntry.of((K) nonSentinel(cur), (V) curValue);
                     }
                 }
             }
@@ -2024,12 +2018,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public boolean contains(Object o) {
-            return o instanceof Entry && this.containsEntry((Entry<?, ?>) o);
+            return o instanceof Entry && containsEntry((Entry<?, ?>) o);
         }
 
         public boolean containsAll(Collection<?> collection) {
             for (Object obj : collection) {
-                if (!this.contains(obj)) {
+                if (!contains(obj)) {
                     return false;
                 }
             }
@@ -2041,7 +2035,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public Iterator<Entry<K, V>> iterator() {
-            return new EntrySetIterator(this.holder);
+            return new EntrySetIterator(holder);
         }
 
         public boolean remove(Object e) {
@@ -2052,13 +2046,13 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             K key = (K) entry.getKey();
             V value = (V) entry.getValue();
 
-            int index = UnifriedMap.this.index(key);
+            int index = index(key);
 
-            Object cur = UnifriedMap.this.table[index];
+            Object cur = table[index];
             if (cur != null) {
-                Object val = UnifriedMap.this.table[index + 1];
+                Object val = table[index + 1];
                 if (cur == CHAINED_KEY) {
-                    return this.removeFromChain((Object[]) val, key, value, index);
+                    return removeFromChain((Object[]) val, key, value, index);
                 }
                 //        if (value == null) {
 //            if (other == null) {
@@ -2068,10 +2062,10 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 //            return true;
 //        }
 //        return false;
-                if (UnifriedMap.this.nonNullTableObjectEquals(cur, key) && Objects.equals(value, val)) {
-                    UnifriedMap.this.table[index] = null;
-                    UnifriedMap.this.table[index + 1] = null;
-                    UnifriedMap.this.occupied--;
+                if (nonNullTableObjectEquals(cur, key) && Objects.equals(value, val)) {
+                    table[index] = null;
+                    table[index + 1] = null;
+                    occupied--;
                     return true;
                 }
             }
@@ -2084,7 +2078,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 if (k == null) {
                     return false;
                 }
-                if (UnifriedMap.this.nonNullTableObjectEquals(k, key)) {
+                if (nonNullTableObjectEquals(k, key)) {
                     V val = (V) chain[i + 1];
                     //        if (value == null) {
 //            if (other == null) {
@@ -2095,7 +2089,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 //        }
 //        return false;
                     if (Objects.equals(val, value)) {
-                        UnifriedMap.this.overwriteWithLastElementFromChain(chain, index, i);
+                        overwriteWithLastElementFromChain(chain, index, i);
                         return true;
                     }
                 }
@@ -2106,7 +2100,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         public boolean removeAll(Collection<?> collection) {
             boolean changed = false;
             for (Object obj : collection) {
-                if (this.remove(obj)) {
+                if (remove(obj)) {
                     changed = true;
                 }
             }
@@ -2115,21 +2109,19 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         public boolean retainAll(Collection<?> collection) {
             int retainedSize = collection.size();
-            UnifriedMap<K, V> retainedCopy = new UnifriedMap<K, V>(retainedSize, UnifriedMap.this.loadFactor);
+            UnifriedMap<K, V> retainedCopy = new UnifriedMap<>(retainedSize, loadFactor);
 
-            for (Object obj : collection) {
-                if (obj instanceof Entry) {
-                    Entry<?, ?> otherEntry = (Entry<?, ?>) obj;
-                    Entry<K, V> thisEntry = this.getEntry(otherEntry);
-                    if (thisEntry != null) {
-                        retainedCopy.put(thisEntry.getKey(), thisEntry.getValue());
-                    }
+            collection.stream().filter(obj -> obj instanceof Entry).forEach(obj -> {
+                Entry<?, ?> otherEntry = (Entry<?, ?>) obj;
+                Entry<K, V> thisEntry = getEntry(otherEntry);
+                if (thisEntry != null) {
+                    retainedCopy.put(thisEntry.getKey(), thisEntry.getValue());
                 }
-            }
-            if (retainedCopy.size() < this.size()) {
-                UnifriedMap.this.maxSize = retainedCopy.maxSize;
-                UnifriedMap.this.occupied = retainedCopy.occupied;
-                UnifriedMap.this.table = retainedCopy.table;
+            });
+            if (retainedCopy.size() < size()) {
+                maxSize = retainedCopy.maxSize;
+                occupied = retainedCopy.occupied;
+                table = retainedCopy.table;
                 return true;
             }
             return false;
@@ -2140,16 +2132,16 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public final void forEach(Procedure<? super Entry<K, V>> procedure) {
-            Object[] tt = UnifriedMap.this.table;
+            Object[] tt = table;
             int len = tt.length;
 
             for (int i = 0; i < len; i += 2) {
 
                 Object cur = tt[i];
                 if (cur == CHAINED_KEY) {
-                    this.chainedForEachEntry((Object[]) tt[i + 1], procedure);
+                    chainedForEachEntry((Object[]) tt[i + 1], procedure);
                 } else if (cur != null) {
-                    procedure.value(ImmutableEntry.of((K)UnifriedMap.this.nonSentinel(cur), (V) tt[i + 1]));
+                    procedure.value(ImmutableEntry.of((K) nonSentinel(cur), (V) tt[i + 1]));
                 }
             }
         }
@@ -2160,7 +2152,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 if (cur == null) {
                     return;
                 }
-                procedure.value(ImmutableEntry.of((K)UnifriedMap.this.nonSentinel(cur), (V) chain[i + 1]));
+                procedure.value(ImmutableEntry.of((K) nonSentinel(cur), (V) chain[i + 1]));
             }
         }
 
@@ -2169,7 +2161,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public final void batchForEach(Procedure<? super Entry<K, V>> procedure, int sectionIndex, int sectionCount) {
-            Object[] map = UnifriedMap.this.table;
+            Object[] map = table;
             int sectionSize = map.length / sectionCount;
             int start = sectionIndex * sectionSize;
             int end = sectionIndex == sectionCount - 1 ? map.length : start + sectionSize;
@@ -2179,9 +2171,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             for (int i = start; i < end; i += 2) {
                 Object cur = map[i];
                 if (cur == CHAINED_KEY) {
-                    this.chainedForEachEntry((Object[]) map[i + 1], procedure);
+                    chainedForEachEntry((Object[]) map[i + 1], procedure);
                 } else if (cur != null) {
-                    procedure.value(ImmutableEntry.of((K)UnifriedMap.this.nonSentinel(cur), (V) map[i + 1]));
+                    procedure.value(ImmutableEntry.of((K) nonSentinel(cur), (V) map[i + 1]));
                 }
             }
         }
@@ -2200,10 +2192,10 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                                 break;
                             }
                             result[count++] =
-                                    new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(cur), (V) chain[j + 1], this.holder);
+                                    new WeakBoundEntry<>((K) nonSentinel(cur), (V) chain[j + 1], holder);
                         }
                     } else {
-                        result[count++] = new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(x), (V) table[i + 1], this.holder);
+                        result[count++] = new WeakBoundEntry<>((K) nonSentinel(x), (V) table[i + 1], holder);
                     }
                 }
             }
@@ -2211,7 +2203,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         public Object[] toArray() {
             Object[] result = new Object[UnifriedMap.this.size()];
-            this.copyEntries(result);
+            copyEntries(result);
             return result;
         }
 
@@ -2220,7 +2212,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (result.length < size) {
                 result = (T[]) Array.newInstance(result.getClass().getComponentType(), size);
             }
-            this.copyEntries(result);
+            copyEntries(result);
             if (size < result.length) {
                 result[size] = null;
             }
@@ -2238,8 +2230,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         public boolean equals(Object obj) {
             if (obj instanceof Set) {
                 Set<?> other = (Set<?>) obj;
-                if (other.size() == this.size()) {
-                    return this.containsAll(other);
+                if (other.size() == size()) {
+                    return containsAll(other);
                 }
             }
             return false;
@@ -2259,7 +2251,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         protected Entry<K, V> nextFromChain() {
-            Object[] chain = (Object[]) UnifriedMap.this.table[this.position + 1];
+            Object[] chain = (Object[]) table[position + 1];
 
             int chainPosition = this.chainPosition;
             Object cur = chain[chainPosition];
@@ -2268,33 +2260,33 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (chainPosition >= chain.length
                     || chain[chainPosition] == null) {
                 chainPosition = 0;
-                this.position += 2;
+                position += 2;
             }
             this.chainPosition = chainPosition; //save
-            this.lastReturned = true;
-            return new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(cur), (V) value, this.holder);
+            lastReturned = true;
+            return new WeakBoundEntry<>((K) nonSentinel(cur), (V) value, holder);
         }
 
         public Entry<K, V> next() {
-            if (!this.hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException("next() called, but the iterator is exhausted");
             }
-            this.count++;
+            count++;
             Object[] table = UnifriedMap.this.table;
-            if (this.chainPosition != 0) {
-                return this.nextFromChain();
+            if (chainPosition != 0) {
+                return nextFromChain();
             }
-            while (table[this.position] == null) {
-                this.position += 2;
+            while (table[position] == null) {
+                position += 2;
             }
-            Object cur = table[this.position];
-            Object value = table[this.position + 1];
+            Object cur = table[position];
+            Object value = table[position + 1];
             if (cur == CHAINED_KEY) {
-                return this.nextFromChain();
+                return nextFromChain();
             }
-            this.position += 2;
-            this.lastReturned = true;
-            return new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(cur), (V) value, this.holder);
+            position += 2;
+            lastReturned = true;
+            return new WeakBoundEntry<>((K) nonSentinel(cur), (V) value, holder);
         }
     }
 
@@ -2310,18 +2302,18 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public K getKey() {
-            return this.key;
+            return key;
         }
 
         public V getValue() {
-            return this.value;
+            return value;
         }
 
         public V setValue(V value) {
             this.value = value;
-            UnifriedMap<K, V> map = this.holder.get();
-            if (map != null && map.containsKey(this.key)) {
-                return map.put(this.key, value);
+            UnifriedMap<K, V> map = holder.get();
+            if (map != null && map.containsKey(key)) {
+                return map.put(key, value);
             }
             return null;
         }
@@ -2348,21 +2340,21 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 //            return true;
 //        }
 //        return false;
-                return Objects.equals(this.key, otherKey)
-                        && Objects.equals(this.value, otherValue);
+                return Objects.equals(key, otherKey)
+                        && Objects.equals(value, otherValue);
             }
             return false;
         }
 
         @Override
         public int hashCode() {
-            return (this.key == null ? 0 : this.key.hashCode())
-                    ^ (this.value == null ? 0 : this.value.hashCode());
+            return (key == null ? 0 : key.hashCode())
+                    ^ (value == null ? 0 : value.hashCode());
         }
 
         @Override
         public String toString() {
-            return this.key + "=" + this.value;
+            return key + "=" + value;
         }
     }
 
@@ -2375,7 +2367,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public boolean contains(Object o) {
-            return UnifriedMap.this.containsValue(o);
+            return containsValue(o);
         }
 
         public boolean containsAll(Collection<?> collection) {
@@ -2394,14 +2386,14 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         public boolean remove(Object o) {
             // this is so slow that the extra overhead of the iterator won't be noticeable
             if (o == null) {
-                for (Iterator<V> it = this.iterator(); it.hasNext(); ) {
+                for (Iterator<V> it = iterator(); it.hasNext(); ) {
                     if (it.next() == null) {
                         it.remove();
                         return true;
                     }
                 }
             } else {
-                for (Iterator<V> it = this.iterator(); it.hasNext(); ) {
+                for (Iterator<V> it = iterator(); it.hasNext(); ) {
                     V o2 = it.next();
                     if (o == o2 || o2.equals(o)) {
                         it.remove();
@@ -2417,7 +2409,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             boolean changed = false;
 
             for (Object obj : collection) {
-                if (this.remove(obj)) {
+                if (remove(obj)) {
                     changed = true;
                 }
             }
@@ -2426,7 +2418,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         public boolean retainAll(Collection<?> collection) {
             boolean modified = false;
-            Iterator<V> e = this.iterator();
+            Iterator<V> e = iterator();
             while (e.hasNext()) {
                 if (!collection.contains(e.next())) {
                     e.remove();
@@ -2441,7 +2433,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
 
         public void forEach(Procedure<? super V> procedure) {
-            UnifriedMap.this.forEachValue(procedure);
+            forEachValue(procedure);
         }
 
         public int getBatchCount(int batchSize) {
@@ -2454,11 +2446,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         protected void copyValues(Object[] result) {
             int count = 0;
-            for (int i = 0; i < UnifriedMap.this.table.length; i += 2) {
-                Object x = UnifriedMap.this.table[i];
+            for (int i = 0; i < table.length; i += 2) {
+                Object x = table[i];
                 if (x != null) {
                     if (x == CHAINED_KEY) {
-                        Object[] chain = (Object[]) UnifriedMap.this.table[i + 1];
+                        Object[] chain = (Object[]) table[i + 1];
                         for (int j = 0; j < chain.length; j += 2) {
                             Object cur = chain[j];
                             if (cur == null) {
@@ -2467,7 +2459,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                             result[count++] = chain[j + 1];
                         }
                     } else {
-                        result[count++] = UnifriedMap.this.table[i + 1];
+                        result[count++] = table[i + 1];
                     }
                 }
             }
@@ -2476,7 +2468,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         public Object[] toArray() {
             int size = UnifriedMap.this.size();
             Object[] result = new Object[size];
-            this.copyValues(result);
+            copyValues(result);
             return result;
         }
 
@@ -2485,7 +2477,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             if (result.length < size) {
                 result = (T[]) Array.newInstance(result.getClass().getComponentType(), size);
             }
-            this.copyValues(result);
+            copyValues(result);
             if (size < result.length) {
                 result[size] = null;
             }
@@ -2494,12 +2486,12 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         protected Object writeReplace() {
             FastList<V> replace = FastList.newList(UnifriedMap.this.size());
-            for (int i = 0; i < UnifriedMap.this.table.length; i += 2) {
-                Object cur = UnifriedMap.this.table[i];
+            for (int i = 0; i < table.length; i += 2) {
+                Object cur = table[i];
                 if (cur == CHAINED_KEY) {
-                    this.chainedAddToList((Object[]) UnifriedMap.this.table[i + 1], replace);
+                    chainedAddToList((Object[]) table[i + 1], replace);
                 } else if (cur != null) {
-                    replace.add((V) UnifriedMap.this.table[i + 1]);
+                    replace.add((V) table[i + 1]);
                 }
             }
             return replace;
@@ -2523,43 +2515,43 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     protected class ValuesIterator extends PositionalIterator<V> {
         protected V nextFromChain() {
-            Object[] chain = (Object[]) UnifriedMap.this.table[this.position + 1];
-            V val = (V) chain[this.chainPosition + 1];
-            this.chainPosition += 2;
-            if (this.chainPosition >= chain.length
-                    || chain[this.chainPosition] == null) {
-                this.chainPosition = 0;
-                this.position += 2;
+            Object[] chain = (Object[]) table[position + 1];
+            V val = (V) chain[chainPosition + 1];
+            chainPosition += 2;
+            if (chainPosition >= chain.length
+                    || chain[chainPosition] == null) {
+                chainPosition = 0;
+                position += 2;
             }
-            this.lastReturned = true;
+            lastReturned = true;
             return val;
         }
 
         public V next() {
-            if (!this.hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException("next() called, but the iterator is exhausted");
             }
-            this.count++;
+            count++;
             Object[] table = UnifriedMap.this.table;
-            if (this.chainPosition != 0) {
-                return this.nextFromChain();
+            if (chainPosition != 0) {
+                return nextFromChain();
             }
-            while (table[this.position] == null) {
-                this.position += 2;
+            while (table[position] == null) {
+                position += 2;
             }
-            Object cur = table[this.position];
-            Object val = table[this.position + 1];
+            Object cur = table[position];
+            Object val = table[position + 1];
             if (cur == CHAINED_KEY) {
-                return this.nextFromChain();
+                return nextFromChain();
             }
-            this.position += 2;
-            this.lastReturned = true;
+            position += 2;
+            lastReturned = true;
             return (V) val;
         }
     }
 
 
-    private final static Object nonSentinel(Object key) {
+    private static final Object nonSentinel(Object key) {
         return key == NULL_KEY ? null : key;
     }
 

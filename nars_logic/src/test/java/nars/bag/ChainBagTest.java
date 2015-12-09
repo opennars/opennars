@@ -21,7 +21,7 @@ public class ChainBagTest {
         testChainBagSequence(8, 8*8); //no restriction
         testChainBagSequence(8, 8); //restricted
     }
-    public void testChainBagSequence(int loops, final int capacity) {
+    public void testChainBagSequence(int loops, int capacity) {
 
         XORShiftRandom rng = new XORShiftRandom();
 

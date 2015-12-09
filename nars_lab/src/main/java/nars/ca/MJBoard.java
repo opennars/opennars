@@ -56,7 +56,7 @@ class MJBoard extends Panel implements Runnable {
 	private final Point LastPanelSize;// last panel size, for resizing handling
 
 	// Graphics
-	private int screen[];
+	private int[] screen;
 	private Image offImg; // the image
 
 	//private Graphics offGrx; // the image's graphics
@@ -344,7 +344,7 @@ class MJBoard extends Panel implements Runnable {
 	// ----------------------------------------------------------------
 	// Set one cell
 	// This should be *the only* fuction that modifies the board (crrState)
-	final public void SetCell(int x, int y, short bState) {
+	public final void SetCell(int x, int y, short bState) {
 		if ((x >= 0) && (y >= 0) && (x < UnivSize.x) && (y < UnivSize.y)) {
 			if (crrState[x][y] != bState) {
 				Populations[crrState[x][y]]--;
@@ -360,7 +360,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// Set one cell
-	final public void SetCell(CACell cell) {
+	public final void SetCell(CACell cell) {
 		if ((cell.x >= 0) && (cell.y >= 0) && (cell.x < UnivSize.x)
 				&& (cell.y < UnivSize.y)) {
 			if (crrState[cell.x][cell.y] != cell.state) {
@@ -469,8 +469,8 @@ class MJBoard extends Panel implements Runnable {
 	public boolean RecalcLayout() {
 		boolean retVal = true;
 		int wdt, hgt, iTmp;
-		wdt = this.getSize().width; // panel size, in pixels
-		hgt = this.getSize().height;
+		wdt = getSize().width; // panel size, in pixels
+		hgt = getSize().height;
 		LastPanelSize.x = wdt;
 		LastPanelSize.y = hgt;
 
@@ -593,11 +593,7 @@ class MJBoard extends Panel implements Runnable {
 		ctrPnt.x = UnivSize.x / 2;
 		ctrPnt.y = UnivSize.y / 2;
 		ViewOrg.x = ctrPnt.x - (CellsInView.x / 2);
-		if (GameType == MJRules.GAMTYP_2D) {
-			ViewOrg.y = ctrPnt.y - (CellsInView.y / 2);
-		} else {
-			ViewOrg.y = i1DLastRow;
-		}
+		ViewOrg.y = GameType == MJRules.GAMTYP_2D ? ctrPnt.y - (CellsInView.y / 2) : i1DLastRow;
 		ValidateBoard(); // validate all parameters
 	}
 
@@ -669,12 +665,10 @@ class MJBoard extends Panel implements Runnable {
 			facX = LastPanelSize.x / rct.width;
 			facY = LastPanelSize.y / rct.height;
 
-			if (facX < facY)
-				fac = facX;
-			else
-				fac = facY;
+			fac = facX < facY ? facX : facY;
 
 			// select the biggest size that covers the full pattern
+			//noinspection IfStatementWithTooManyBranches
 			if (fac >= 12)
 				iFac = 11;
 			else if (fac >= 10)
@@ -718,6 +712,7 @@ class MJBoard extends Panel implements Runnable {
 		ctrPnt.x = ViewOrg.x + CellsInView.x / 2;
 		ctrPnt.y = ViewOrg.y + CellsInView.y / 2;
 		if (fIn) {
+			//noinspection IfStatementWithTooManyBranches
 			if (CellSize >= 20)
 				CellSize += 4;
 			else if (CellSize >= 11)
@@ -729,6 +724,7 @@ class MJBoard extends Panel implements Runnable {
 			if (CellSize > MAX_CELLSIZE)
 				CellSize = MAX_CELLSIZE;
 		} else {
+			//noinspection IfStatementWithTooManyBranches
 			if (CellSize > 20)
 				CellSize -= 4;
 			else if (CellSize > 11)
@@ -794,8 +790,8 @@ class MJBoard extends Panel implements Runnable {
 	// ----------------------------------------------------------------
 	// put the pixel buffer to the screen
 	public void paint(Graphics g) {
-		if ((LastPanelSize.x != this.getSize().width)
-				|| (LastPanelSize.y != this.getSize().height)) {
+		if ((LastPanelSize.x != getSize().width)
+				|| (LastPanelSize.y != getSize().height)) {
 			InitBoard(UnivSize.x, UnivSize.y, CellSize); // resized, update
 			// board parameters
 		}
@@ -855,13 +851,8 @@ class MJBoard extends Panel implements Runnable {
 								for (jc = 0; jc < CellSize; jc++) {
 									if (fDrawGrid
 											&& ((ic == CellSize - 1) || (jc == CellSize - 1))) {
-										if (((ic == CellSize - 1) && ((ViewOrg.y + j) % 5 == 0))
-												|| ((jc == CellSize - 1) && ((ViewOrg.x + i) % 5 == 0)))
-											screen[iTmpCol++] = mjPal.GridColor[1]; // bold
-										// grid
-										// line
-										else
-											screen[iTmpCol++] = mjPal.GridColor[0]; // normal
+										screen[iTmpCol++] = ((ic == CellSize - 1) && ((ViewOrg.y + j) % 5 == 0))
+												|| ((jc == CellSize - 1) && ((ViewOrg.x + i) % 5 == 0)) ? mjPal.GridColor[1] : mjPal.GridColor[0];
 										// grid
 										// line
 									} else {
@@ -893,11 +884,12 @@ class MJBoard extends Panel implements Runnable {
 	// Interprete and apply the rule definition
 	public void SetRule(int iGame, String sRuleNam, String sRuleDef) {
 		sRuleDef = sRuleDef.trim();
-		if (sRuleDef.length() == 0)
+		if (sRuleDef.isEmpty())
 			return;
 
 		GameType = MJRules.GAMTYP_2D; // most are 2-dimensional
 
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		char cChar;
@@ -1069,14 +1061,8 @@ class MJBoard extends Panel implements Runnable {
 			longDiff = yDiff;
 		}
 
-		if (x2 > x1)
-			xRight = 1;
-		else
-			xRight = -1;
-		if (y2 > y1)
-			yDown = 1;
-		else
-			yDown = -1;
+		xRight = x2 > x1 ? 1 : -1;
+		yDown = y2 > y1 ? 1 : -1;
 
 		j = 0;
 		wrap = 0;

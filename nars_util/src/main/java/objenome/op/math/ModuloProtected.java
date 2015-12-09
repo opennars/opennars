@@ -72,6 +72,7 @@ public class ModuloProtected extends Node {
 
         Class<?> returnType = TypeUtil.widestNumberType(c1.getClass(), c2.getClass());
 
+        //noinspection IfStatementWithTooManyBranches
         if (returnType == Double.class) {
             double d1 = NumericUtils.asDouble(c1);
             double d2 = NumericUtils.asDouble(c2);

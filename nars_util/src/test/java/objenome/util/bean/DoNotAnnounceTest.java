@@ -37,11 +37,8 @@ public class DoNotAnnounceTest {
     @Test
     public void testDoNotAnnounce() {
         TestBean bean = BeanProxyBuilder.on(TestBean.class).build();
-        bean.addVetoableChangeListener(new VetoableChangeListener() {
-
-            public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-                throw new PropertyVetoException("No changes allowed!", evt); //$NON-NLS-1$
-            }
+        bean.addVetoableChangeListener(evt -> {
+            throw new PropertyVetoException("No changes allowed!", evt); //$NON-NLS-1$
         });
         bean.setFoo(4);
         bean.setBar(5);

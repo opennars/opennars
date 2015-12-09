@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
+import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
@@ -21,7 +22,7 @@ import java.util.function.Predicate;
 public class Terminal extends AbstractNAR {
 
     final Predicate<Task> taskFilter =
-            task -> task.isCommand();
+            Sentence::isCommand;
 
     public Terminal(TermIndex termIndex) {
         super(new Memory(
@@ -68,7 +69,7 @@ public class Terminal extends AbstractNAR {
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
                 taskFilter,
-                task -> process(task)
+                this::process
         );
         return input;
     }

@@ -25,7 +25,7 @@ public class SetMethodsGPEvolved implements Solution {
 
     
     public SetMethodsGPEvolved(DevelopMethod... m) {
-        this.methods = Sets.newHashSet(m);
+        methods = Sets.newHashSet(m);
     }
 
     @Override

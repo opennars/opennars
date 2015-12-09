@@ -77,7 +77,7 @@ public final class DefaultValueStackTest
     public void singleElementStackPushPeekPopPokeWorks()
     {
         Object element = new Object();
-        final SoftAssertions soft = new SoftAssertions();
+        SoftAssertions soft = new SoftAssertions();
 
         stack.push(element);
 
@@ -111,8 +111,8 @@ public final class DefaultValueStackTest
     @Test
     public void multiPushPeekPopPokeDupAndClearWorks()
     {
-        final SoftAssertions soft = new SoftAssertions();
-        final Integer two = new Integer(2000000000);
+        SoftAssertions soft = new SoftAssertions();
+        Integer two = 2000000000;
         stack.push(1);
         stack.push(two);
 
@@ -218,7 +218,7 @@ public final class DefaultValueStackTest
     @DataProvider
     public Iterator<Object[]> getSwapData()
     {
-        final List<Object[]> list = Lists.newArrayList();
+        List<Object[]> list = Lists.newArrayList();
 
         int n;
         List<Object> l;
@@ -247,14 +247,14 @@ public final class DefaultValueStackTest
     }
 
     @Test(dataProvider = "getSwapData")
-    public void swappingWorks(final int n, final List<Object> expected)
+    public void swappingWorks(int n, List<Object> expected)
     {
-        final List<Object> orig = Arrays.<Object>asList(1, 2, 3, 4, 5, 6);
-        final SoftAssertions soft = new SoftAssertions();
+        List<Object> orig = Arrays.<Object>asList(1, 2, 3, 4, 5, 6);
+        SoftAssertions soft = new SoftAssertions();
 
-        final List<Object> l = new ArrayList<>(orig);
+        List<Object> l = new ArrayList<>(orig);
         Collections.reverse(l);
-        for (final Object o: l)
+        for (Object o: l)
             stack.push(o);
 
         stack.swap(n);
@@ -275,7 +275,7 @@ public final class DefaultValueStackTest
         stack.push(1);
 
         try {
-            final Iterator<Object> iterator = stack.iterator();
+            Iterator<Object> iterator = stack.iterator();
             iterator.next();
             iterator.remove();
             failBecauseExceptionWasNotThrown(
@@ -287,16 +287,16 @@ public final class DefaultValueStackTest
     @Test
     public void snapshotAndRestoreWorksAsExpected()
     {
-        final List<Object> orig = Arrays.<Object>asList(1, 2, 3);
-        final List<Object> replace = Arrays.<Object>asList(4, 5, 6);
-        final SoftAssertions soft = new SoftAssertions();
+        List<Object> orig = Arrays.<Object>asList(1, 2, 3);
+        List<Object> replace = Arrays.<Object>asList(4, 5, 6);
+        SoftAssertions soft = new SoftAssertions();
 
         stack.push(3);
         stack.push(2);
         stack.push(1);
 
-        final Object snapshot = stack.takeSnapshot();
-        final Object poison = Lists.newLinkedList();
+        Object snapshot = stack.takeSnapshot();
+        Object poison = Lists.newLinkedList();
 
         try {
             stack.restoreSnapshot(poison);

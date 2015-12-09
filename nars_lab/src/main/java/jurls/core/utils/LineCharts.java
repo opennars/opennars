@@ -27,10 +27,9 @@ public class LineCharts extends JFXPanel {
     private final String yAxisLabel;
 
     public LineCharts(String yAxis, int numSeries, int historyLength) {
-        super();
         this.numSeries = numSeries;
         this.historyLength = historyLength;
-        this.yAxisLabel = yAxis;
+        yAxisLabel = yAxis;
 
         if (numSeries != -1) {
             update();
@@ -38,12 +37,7 @@ public class LineCharts extends JFXPanel {
     }
 
     protected void update() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                setScene(scene());
-            }
-        });
+        Platform.runLater(() -> setScene(scene()));
     }
 
     public void setSeries(int numSeries) {
@@ -79,7 +73,7 @@ public class LineCharts extends JFXPanel {
         xAxis.setLabel("Time");
         yAxis.setLabel(yAxisLabel);
         yAxis.setForceZeroInRange(false);
-        lineChart = new LineChart<Number, Number>(xAxis, yAxis);
+        lineChart = new LineChart<>(xAxis, yAxis);
 
         lineChart.setAnimated(false);
 

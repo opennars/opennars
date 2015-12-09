@@ -12,7 +12,7 @@ public class PeriodicForgettingTest {
         int forgetCycles = 5;
         int maxTime = 100;
 
-        float initPriority = 1f;
+        float initPriority = 1.0f;
         float durability = 0.5f;
         float quality = 0.5f;
         float budgetThreshold = 0.01f;
@@ -21,7 +21,7 @@ public class PeriodicForgettingTest {
 
         for (int t = 0; t < maxTime; t++) {
             b.forget(t, forgetCycles, 0);
-            System.out.println(t + "," + b.getPriority() + "," + b.getDurability() + "," + b.getQuality());
+            System.out.println(t + "," + b.getPriority() + ',' + b.getDurability() + ',' + b.getQuality());
         }
 
     }

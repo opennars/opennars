@@ -147,10 +147,8 @@ public class Add extends MathNode {
             if (an == -bn) return zero;
             return new Doubliteral(an + bn);
         }
-        else {
-            if (an == 0) return b;
-            if (bn == 0) return a;
-        }
+        if (an == 0) return b;
+        if (bn == 0) return a;
 
         return super.normalize();
     }

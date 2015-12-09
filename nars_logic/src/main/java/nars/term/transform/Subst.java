@@ -16,7 +16,7 @@ public interface Subst  {
 
     /** match a range of subterms of Y */
     static Term[] collect(Compound y, int from, int to) {
-        final int s = to-from;
+        int s = to-from;
         Term[] m = new Term[s];
         for (int i = 0; i < s; i++) {
             int k = i+from;
@@ -28,12 +28,7 @@ public interface Subst  {
 
 
     static boolean isSubstitutionComplete(Term a, Op o) {
-        if (o == Op.VAR_PATTERN) {
-            return !Variable.hasPatternVariable(a);
-        }
-        else {
-            return !a.hasAny(o);
-        }
+        return o == Op.VAR_PATTERN ? !Variable.hasPatternVariable(a) : !a.hasAny(o);
     }
 
 

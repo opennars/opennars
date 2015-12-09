@@ -16,6 +16,6 @@ import java.util.Map;
  */
 public interface Solver {
 
-    public void solve(Multitainer g, Map<Problem, Solution> p, Object[] targets);
+    void solve(Multitainer g, Map<Problem, Solution> p, Object[] targets);
     
 }

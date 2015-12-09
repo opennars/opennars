@@ -39,10 +39,10 @@ public class QZeroAgent extends LearnerAndActor {
             double[] previousSate,
             int numActions
     ) {
-        this.parameterizedFunction = parameterizedFunctionGenerator.generate(previousSate.length + 1);
+        parameterizedFunction = parameterizedFunctionGenerator.generate(previousSate.length + 1);
         this.numActions = numActions;
         this.rLParameters = rLParameters;
-        this.actionSelector = as;
+        actionSelector = as;
         stateAction = new double[previousSate.length + 1];
     }
 
@@ -51,7 +51,7 @@ public class QZeroAgent extends LearnerAndActor {
         Utils.join(stateAction, previousState, previousAction);
         double q0 = parameterizedFunction.value(stateAction);
         double q = q0 + rLParameters.getAlpha() * (reward
-                + this.rLParameters.getGamma() * Utils.v(
+                + rLParameters.getGamma() * Utils.v(
                         parameterizedFunction,
                         stateAction,
                         state, numActions

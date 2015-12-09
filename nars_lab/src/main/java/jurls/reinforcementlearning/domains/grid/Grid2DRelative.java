@@ -51,8 +51,8 @@ public class Grid2DRelative implements World {
             g2.clearRect(0, 0, width, height);
             
             int px = 0, py = 0;
-            for (int i = 0; i < sensor.length; i++) {
-                g2.setPaint(Color.getHSBColor(0.5f, 0.5f, (float)sensor[i]));
+            for (double aSensor : sensor) {
+                g2.setPaint(Color.getHSBColor(0.5f, 0.5f, (float) aSensor));
                 g2.fillRect(px, py, 1, 1);
                 px++;
                 if (px == width) {
@@ -83,14 +83,14 @@ public class Grid2DRelative implements World {
     }
 
     public Grid2DRelative(int width, int height, int totalTime, double noise, double focusVelocity) {
-        this.time = 1;
+        time = 1;
         this.width = width;
         this.height = height;
-        this.ENERGY_COST_FACTOR = 0.01;
-        this.MATCH_REWARD_FACTOR = 1.0;
-        this.REWARD_MAGNITUDE = 1;
-        this.JUMP_FRACTION = 0.002;
-        this.POSITION_VELOCITY = 0.1;
+        ENERGY_COST_FACTOR = 0.01;
+        MATCH_REWARD_FACTOR = 1.0;
+        REWARD_MAGNITUDE = 1;
+        JUMP_FRACTION = 0.002;
+        POSITION_VELOCITY = 0.1;
         this.noise = noise;
 
         if (Simulation.DISPLAY) {
@@ -103,8 +103,8 @@ public class Grid2DRelative implements World {
     }
 
     protected void randomFocus() {
-        this.nextFocusPositionX = (int) (Math.random() * width);
-        this.nextFocusPositionY = (int) (Math.random() * height);
+        nextFocusPositionX = (int) (Math.random() * width);
+        nextFocusPositionY = (int) (Math.random() * height);
     }
 
     @Override
@@ -139,8 +139,8 @@ public class Grid2DRelative implements World {
         this.action = action;
         
         double speed = 0.001;
-        focusPositionX = speed * ((double)nextFocusPositionX) + (1.0 - speed) * focusPositionX;
-        focusPositionY = speed * ((double)nextFocusPositionY) + (1.0 - speed) * focusPositionY;
+        focusPositionX = speed * (nextFocusPositionX) + (1.0 - speed) * focusPositionX;
+        focusPositionY = speed * (nextFocusPositionY) + (1.0 - speed) * focusPositionY;
 
         //# At random intervals, jump to a random position in the world
         if (Math.random() < JUMP_FRACTION) {
@@ -200,7 +200,7 @@ public class Grid2DRelative implements World {
         int iy = (int)Math.round(positionY);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                final double exp = 1.0; //sharpen
+                double exp = 1.0; //sharpen
 
                 double fdx = x - focusPositionX;
                 double fdy = y - focusPositionY;

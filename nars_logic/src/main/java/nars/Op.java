@@ -165,12 +165,12 @@ public enum Op implements Serializable {
 
     Op(String string, boolean commutative, int minLevel, OpType type, int... ibytes) {
 
-        this.str = string;
+        str = string;
         this.commutative = commutative;
 
-        final byte bb[];
+        byte[] bb;
 
-        final boolean hasCompact = (ibytes.length == 1);
+        boolean hasCompact = (ibytes.length == 1);
         if (!hasCompact) {
             bb = Utf8.toUtf8(string);
         } else {
@@ -179,26 +179,23 @@ public enum Op implements Serializable {
                 bb[i] = (byte) ibytes[i];
         }
 
-        this.bytes = bb;
+        bytes = bb;
 
         if (hasCompact) {
             int p = bb[0];
-            if (p < 31) //do not assign if it's an ordinary non-control char
-                this.byt = (byte) (p);
-            else
-                this.byt = (byte) 0;
+            byt = p < 31 ? (byte) (p) : 0;
         } else {
             //multiple ibytes, use the provided array
-            this.byt = (byte) 0;
+            byt = 0;
         }
 
         this.minLevel = minLevel;
         this.type = type;
 
-        this.ch = string.length() == 1 ? string.charAt(0) : 0;
+        ch = string.length() == 1 ? string.charAt(0) : 0;
 
-        this.opener = name().endsWith("_OPENER");
-        this.closer = name().endsWith("_CLOSER");
+        opener = name().endsWith("_OPENER");
+        closer = name().endsWith("_CLOSER");
 
 
     }
@@ -220,8 +217,8 @@ public enum Op implements Serializable {
     /**
      * writes this operator to a Writer in (human-readable) expanded UTF16 mode
      */
-    public final void expand(final Appendable w) throws IOException {
-        if (this.ch == 0)
+    public final void expand(Appendable w) throws IOException {
+        if (ch == 0)
             w.append(str);
         else
             w.append(ch);
@@ -232,7 +229,7 @@ public enum Op implements Serializable {
     }
 
 
-    public final static int or(final Op... o) {
+    public static final int or(Op... o) {
         int bits = 0;
         for (Op n : o) {
             bits |= n.bit();
@@ -244,18 +241,18 @@ public enum Op implements Serializable {
         return (1 << ordinal());
     }
 
-    public final static int or(int bits, final Op o) {
+    public static final int or(int bits, Op o) {
         return bits | o.bit();
     }
 
-    public final boolean levelValid(final int nal) {
+    public final boolean levelValid(int nal) {
         return (nal >= minLevel);
     }
 
     /**
      * specifier for any NAL level
      */
-    public final static int ANY = 0;
+    public static final int ANY = 0;
 
     public final boolean isVar() {
         return type == Op.OpType.Variable;

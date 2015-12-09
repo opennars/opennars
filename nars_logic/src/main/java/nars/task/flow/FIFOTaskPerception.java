@@ -87,7 +87,7 @@ public class FIFOTaskPerception extends TaskPerception {
 
         //n will be equal to or greater than r
         for (; n > 0 && r > 0; r--) {
-            final Task t = buffer.removeFirst();
+            Task t = buffer.removeFirst();
 
             if (t.isDeleted()) {
                 //the task became deleted while this was in the buffer. no need to repeat Memory.removed

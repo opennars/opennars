@@ -86,11 +86,7 @@ public class Literal<X extends Object> extends Node<Void,X> {
             throw new IllegalArgumentException("literals have no input types");
         }
 
-        if (value != null) {
-            return value.getClass();
-        } else {
-            return null;
-        }
+        return value != null ? value.getClass() : null;
     }
 
     /**
@@ -121,11 +117,7 @@ public class Literal<X extends Object> extends Node<Void,X> {
      */
     @Override
     public String toString() {
-        if (value != null) {
-            return value.toString();
-        } else {
-            return "";
-        }
+        return value != null ? value.toString() : "";
     }
 
     /**

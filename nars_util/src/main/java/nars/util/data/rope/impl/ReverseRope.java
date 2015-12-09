@@ -47,23 +47,23 @@ public final class ReverseRope extends AbstractRope {
      *
      * @param rope
      */
-    public ReverseRope(final Rope rope) {
+    public ReverseRope(Rope rope) {
         this.rope = rope;
     }
 
     @Override
-    public char charAt(final int index) {
-        return this.rope.charAt(this.length() - index - 1);
+    public char charAt(int index) {
+        return rope.charAt(length() - index - 1);
     }
 
     @Override
     public byte depth() {
-        return Rope.depth(this.rope);
+        return Rope.depth(rope);
     }
 
     @Override
-    public Iterator<Character> iterator(final int start) {
-        if (start < 0 || start > this.length()) {
+    public Iterator<Character> iterator(int start) {
+        if (start < 0 || start > length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
         return new Iterator<Character>() {
@@ -71,12 +71,12 @@ public final class ReverseRope extends AbstractRope {
 
             @Override
             public boolean hasNext() {
-                return this.current < ReverseRope.this.length();
+                return current < length();
             }
 
             @Override
             public Character next() {
-                return ReverseRope.this.charAt(this.current++);
+                return charAt(current++);
             }
 
             @Override
@@ -88,30 +88,30 @@ public final class ReverseRope extends AbstractRope {
 
     @Override
     public int length() {
-        return this.rope.length();
+        return rope.length();
     }
 
     @Override
     public Rope reverse() {
-        return this.rope;
+        return rope;
     }
 
     @Override
-    public Iterator<Character> reverseIterator(final int start) {
-        if (start < 0 || start > this.length()) {
+    public Iterator<Character> reverseIterator(int start) {
+        if (start < 0 || start > length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
         return new Iterator<Character>() {
-            int current = ReverseRope.this.length() - start;
+            int current = length() - start;
 
             @Override
             public boolean hasNext() {
-                return this.current > 0;
+                return current > 0;
             }
 
             @Override
             public Character next() {
-                return ReverseRope.this.charAt(--this.current);
+                return charAt(--current);
             }
 
             @Override
@@ -122,25 +122,25 @@ public final class ReverseRope extends AbstractRope {
     }
 
     @Override
-    public Rope subSequence(final int start, final int end) {
-        if (start == 0 && end == this.length()) {
+    public Rope subSequence(int start, int end) {
+        if (start == 0 && end == length()) {
             return this;
         }
-        return this.rope.subSequence(this.length() - end, this.length() - start).reverse();
+        return rope.subSequence(length() - end, length() - start).reverse();
     }
 
     @Override
-    public void write(final Writer out) throws IOException {
-        this.write(out, 0, this.length());
+    public void write(Writer out) throws IOException {
+        write(out, 0, length());
     }
 
     @Override
-    public void write(final Writer out, final int offset, final int length) throws IOException {
-        if (offset < 0 || offset + length > this.length()) {
+    public void write(Writer out, int offset, int length) throws IOException {
+        if (offset < 0 || offset + length > length()) {
             throw new IndexOutOfBoundsException("Rope index out of bounds:" + (offset < 0 ? offset : offset + length));
         }
         for (int j = offset; j < offset + length; ++j) {
-            out.write(this.charAt(j));
+            out.write(charAt(j));
         }
     }
 }

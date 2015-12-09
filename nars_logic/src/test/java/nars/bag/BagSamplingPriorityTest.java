@@ -48,7 +48,7 @@ public class BagSamplingPriorityTest {
             removal.clear();
         }
 
-        public int discretize(final float p) {
+        public int discretize(float p) {
             //return (int)Math.floor(p * (bins-1));
             return Util.bin(p, bins);
         }
@@ -65,7 +65,7 @@ public class BagSamplingPriorityTest {
 
         }
 
-        private void record(final Frequency removal, final V p) {
+        private void record(Frequency removal, V p) {
             if (p != null) {
                 removal.addValue(discretize(p.getPriority()));
             } else {
@@ -120,7 +120,7 @@ public class BagSamplingPriorityTest {
 
                 if (p!=null) {
                     p.println(
-                            Texts.n3(a) + ".." + Texts.n3(b) + "(" + Texts.n3(pctBagItemsInBin) + "):   " +
+                            Texts.n3(a) + ".." + Texts.n3(b) + '(' + Texts.n3(pctBagItemsInBin) + "):   " +
                                     "prob: " + Texts.n3(prob) + "    idealProb: " + Texts.n3(idealProb) + "    err: " + Texts.n3(errorNormalized));
                 }
 
@@ -168,7 +168,7 @@ public class BagSamplingPriorityTest {
         }
     }
 
-    final static Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift1024StarRandom(1);
 
     static final Function<Float,Float> uniform = ( x -> x);
     static final Function<Float,Float> skewedLow = ( x -> (float)Math.pow(1.0f - x, 2) );

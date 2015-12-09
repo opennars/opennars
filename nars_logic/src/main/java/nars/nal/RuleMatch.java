@@ -103,7 +103,7 @@ public class RuleMatch extends FindSubst {
     public final void start(Premise p, Consumer<Task> receiver, Deriver d) {
         clear();
 
-        this.premise = p;
+        premise = p;
         this.receiver = receiver;
 
         Compound taskTerm = p.getTask().getTerm();
@@ -111,7 +111,7 @@ public class RuleMatch extends FindSubst {
             p.getBelief().getTerm()
             : p.getTermLink().getTerm() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
-        this.parent.set( new TaskBeliefPair(
+        parent.set( new TaskBeliefPair(
             taskTerm,
             beliefTerm
         ) );
@@ -157,7 +157,7 @@ public class RuleMatch extends FindSubst {
 
 
 
-    public final void occurrenceAdd(final long cyclesDelta) {
+    public final void occurrenceAdd(long cyclesDelta) {
         //TODO move to post
         int oc = occurrenceShift.getIfAbsent(Tense.TIMELESS);
         if (oc == Tense.TIMELESS)

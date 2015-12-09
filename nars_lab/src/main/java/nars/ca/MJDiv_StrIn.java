@@ -26,6 +26,7 @@ public class MJDiv_StrIn {
 	private void SetStr(String sStr) {
 		String sTok, sBff;
 		int i, iPos, iCnt;
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 
 		m_Str = sStr;
@@ -37,11 +38,11 @@ public class MJDiv_StrIn {
 			sTok = sTok.trim();
 			if (sTok.contains("(")) // multiple items
 			{
-				iPos = sTok.indexOf("(");
+				iPos = sTok.indexOf('(');
 				sBff = sTok.substring(0, iPos);
 				iCnt = Integer.valueOf(sBff); // count
 				sBff = sTok.substring(iPos + 1); // value
-				iPos = sBff.indexOf(")");
+				iPos = sBff.indexOf(')');
 				if (iPos >= 0)
 					sBff = sBff.substring(0, iPos);
 				while (iCnt > 0) {
@@ -68,6 +69,7 @@ public class MJDiv_StrIn {
 	//------------------------------------------------------------------------------
 	// Example: #STRIN,act=1,rep=1,x=0,y=-40,str=1,2,1,0,10(1),5(0)
 	public void SetFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		String sBff;
@@ -78,6 +80,7 @@ public class MJDiv_StrIn {
 		st = new StringTokenizer(sStr, ",", false);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
+			//noinspection IfStatementWithTooManyBranches
 			if (sTok.startsWith("ACT="))
 				m_Active = Integer.valueOf(sTok.substring(4)) != 0;
 			else if (sTok.startsWith("REP="))

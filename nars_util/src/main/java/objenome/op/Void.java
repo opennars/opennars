@@ -13,7 +13,6 @@ public class Void extends Node {
     protected static Void the = new Void();
     
     private Void() {
-        super();
     }
     
     public static Void get() {

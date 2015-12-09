@@ -35,7 +35,7 @@ public class JFX {
         Toolkit.getToolkit().init();
     }
 
-    final static ColorArray grayscale = new ColorArray(
+    static final ColorArray grayscale = new ColorArray(
             128,
             Color.rgb(0, 0, 0, 1.0),
             Color.rgb(255,255,255,1.0)
@@ -77,9 +77,7 @@ public class JFX {
 
 
     public static String fontSize(float pct) {
-        return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(pct, 1), _v -> {
-            return "-fx-font-size: " + pct + '%';
-        });
+        return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(pct, 1), _v -> "-fx-font-size: " + pct + '%');
     }
 
     public static Polygon newPoly(int sides, double d) {

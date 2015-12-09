@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** uses a predefined set of terms that will be mapped */
-abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
+public abstract class ConceptSet<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
     public final Map<T,Concept> values = new LinkedHashMap();
 
@@ -38,7 +38,7 @@ abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> im
 
 
     @Override
-    public boolean contains(final T t) {
+    public boolean contains(T t) {
         if (!values.containsKey(t)) {
             return super.contains(t);
         }

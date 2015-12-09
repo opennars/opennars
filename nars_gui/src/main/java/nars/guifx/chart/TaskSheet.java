@@ -18,18 +18,17 @@ public class TaskSheet extends BorderPane {
     private final FlowPane header;
 
     public TaskSheet(NAR n) {
-        super();
 
-        this.nar = n;
+        nar = n;
 
         Button refreshButton = new Button("Update");
         refreshButton.setOnAction(e -> update());
 
-        setTop(this.header = new FlowPane(
+        setTop(header = new FlowPane(
             refreshButton
         ));
 
-        this.sheet = new SpreadsheetView(getSampleGrid());
+        sheet = new SpreadsheetView(getSampleGrid());
 
         sheet.setMaxWidth(Double.MAX_VALUE);
         sheet.setMaxHeight(Double.MAX_VALUE);

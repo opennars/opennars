@@ -22,7 +22,7 @@ public interface ConfigurableBuilder extends Builder {
      * @param value A parameter value to be used by a constructor.
      * @return The factory itself. (Fluent API)
      */
-    public ConfigurableBuilder addInitValue(Object value);
+    ConfigurableBuilder addInitValue(Object value);
 
     /**
      * Add a constructor parameter that is a primitive to be used when the bean
@@ -40,7 +40,7 @@ public interface ConfigurableBuilder extends Builder {
      * primitive that will be autoboxed.
      * @return The factory itself. (Fluent API)
      */
-    public ConfigurableBuilder addInitPrimitive(Object value);
+    ConfigurableBuilder addInitPrimitive(Object value);
 
     /**
      * Add a constructor parameter that is a dependency, in other words, it gets
@@ -49,8 +49,8 @@ public interface ConfigurableBuilder extends Builder {
      *
      * @param key The key used to get an instance from the container
      * @return The set of possible builders itself. (Fluent API)
-     */    
-    public ConfigurableBuilder constructorUse(Object key);
+     */
+    ConfigurableBuilder constructorUse(Object key);
     
     /**
      * In case you want to force the use of a zero argument constructor and
@@ -62,7 +62,7 @@ public interface ConfigurableBuilder extends Builder {
      *
      * @return The factory itself. (Fluent API)
      */
-    public ConfigurableBuilder useZeroArgumentConstructor();
+    ConfigurableBuilder useZeroArgumentConstructor();
 
     /**
      * Add a property to be injected through a setter when the factory
@@ -72,7 +72,7 @@ public interface ConfigurableBuilder extends Builder {
      * @param value The property value.
      * @return The factory itself. (Fluent API)
      */
-    public ConfigurableBuilder addPropertyValue(String name, Object value);
+    ConfigurableBuilder addPropertyValue(String name, Object value);
 
     /**
      * Add a setter property that is a dependency, in other words, its value
@@ -85,7 +85,7 @@ public interface ConfigurableBuilder extends Builder {
      * @param property The dependency name which is equal to the property name.
      * @return The factory itself. (Fluent API)
      */
-    public ConfigurableBuilder addPropertyDependency(String property);
+    ConfigurableBuilder addPropertyDependency(String property);
 
     /**
      * Add a setter property that is a dependency, in other words, its value
@@ -98,5 +98,5 @@ public interface ConfigurableBuilder extends Builder {
      * bean from the container.
      * @return The factory itself. (Fluent API)
      */
-    public ConfigurableBuilder addPropertyDependency(String property, Object key);
+    ConfigurableBuilder addPropertyDependency(String property, Object key);
 }

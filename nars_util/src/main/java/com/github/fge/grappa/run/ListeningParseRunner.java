@@ -49,17 +49,11 @@ public class ListeningParseRunner<V>
     // TODO: does it need to be volatile?
     private volatile Throwable throwable = null;
 
-    private final EventBus bus = new EventBus(new SubscriberExceptionHandler()
-    {
-        @Override
-        public void handleException(final Throwable exception,
-            final SubscriberExceptionContext context)
-        {
-            if (throwable == null)
-                throwable = exception;
-            else
-                throwable.addSuppressed(exception);
-        }
+    private final EventBus bus = new EventBus((exception, context) -> {
+        if (throwable == null)
+            throwable = exception;
+        else
+            throwable.addSuppressed(exception);
     });
 
     /**
@@ -67,24 +61,24 @@ public class ListeningParseRunner<V>
      *
      * @param rule the parser rule
      */
-    public ListeningParseRunner(final Rule rule)
+    public ListeningParseRunner(Rule rule)
     {
         super(rule);
     }
 
     // TODO: replace with a supplier mechanism
-    public final void registerListener(final ParseRunnerListener<V> listener)
+    public final void registerListener(ParseRunnerListener<V> listener)
     {
         bus.register(listener);
     }
 
     @Override
-    public ParsingResult<V> run(final InputBuffer inputBuffer)
+    public ParsingResult<V> run(InputBuffer inputBuffer)
     {
         Objects.requireNonNull(inputBuffer, "inputBuffer");
         resetValueStack();
 
-        final MatcherContext<V> rootContext
+        MatcherContext<V> rootContext
             = createRootContext(inputBuffer, this);
         bus.post(new PreParseEvent<>(rootContext));
 
@@ -92,8 +86,8 @@ public class ListeningParseRunner<V>
             throw new GrappaException("parsing listener error (before parse)",
                 throwable);
 
-        final boolean matched = rootContext.runMatcher();
-        final ParsingResult<V> result
+        boolean matched = rootContext.runMatcher();
+        ParsingResult<V> result
             = createParsingResult(matched, rootContext);
 
         bus.post(new PostParseEvent<>(result));
@@ -106,11 +100,11 @@ public class ListeningParseRunner<V>
     }
 
     @Override
-    public <T> boolean match(final MatcherContext<T> context)
+    public <T> boolean match(MatcherContext<T> context)
     {
-        final Matcher matcher = context.getMatcher();
+        Matcher matcher = context.getMatcher();
 
-        final PreMatchEvent<T> preMatchEvent = new PreMatchEvent<>(context);
+        PreMatchEvent<T> preMatchEvent = new PreMatchEvent<>(context);
         bus.post(preMatchEvent);
 
         if (throwable != null)
@@ -118,10 +112,9 @@ public class ListeningParseRunner<V>
                 throwable);
 
         // FIXME: is there any case at all where context.getMatcher() is null?
-        @SuppressWarnings("ConstantConditions")
-        final boolean match = matcher.match(context);
+        @SuppressWarnings("ConstantConditions") boolean match = matcher.match(context);
 
-        final MatchContextEvent<T> postMatchEvent = match
+        MatchContextEvent<T> postMatchEvent = match
             ? new MatchSuccessEvent<>(context)
             : new MatchFailureEvent<>(context);
 

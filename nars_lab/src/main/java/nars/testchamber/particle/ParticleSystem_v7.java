@@ -16,51 +16,49 @@ public class ParticleSystem_v7 extends Canvas {
 
 	{
 
-		final JFrame frame = new JFrame("");
+		JFrame frame = new JFrame("");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setUndecorated(false);
 		frame.setResizable(false);
 		frame.setFocusable(true);
 
-		final RenderClass_v7 ren = new RenderClass_v7(WIDTH, HEIGHT);
+		RenderClass_v7 ren = new RenderClass_v7(WIDTH, HEIGHT);
 		frame.add(ren);
 
 		frame.setVisible(true);
 
-		Thread runThread = new Thread(new Runnable() {
-                        @Override
-			public void run() {
-				while (true) {
-					long time = System.currentTimeMillis();
+		Thread runThread = new Thread(() -> {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+    long time = System.currentTimeMillis();
 
-					paused = ren.getPaused();
+    paused = ren.getPaused();
 
-					if( !paused ){
-						//ren.tick();
-						//frame.setOpacity(1f);
-						ren.repaint();
-					} else {
-						//frame.setOpacity(.5f);
-					}
-
-
-					quit = ren.getQuit();
-					
-					if( quit ){
-						frame.dispose();
-					}
+    if( !paused ){
+        //ren.tick();
+        //frame.setOpacity(1f);
+        ren.repaint();
+    } else {
+        //frame.setOpacity(.5f);
+    }
 
 
-					long endtime = System.currentTimeMillis();
-					try {
-						Thread.sleep( - (endtime - time));
-					} catch (Exception e) {
-						// System.out.println("cannot sleep");
-					}
-				}
-			}
-		});
+    quit = ren.getQuit();
+
+    if( quit ){
+        frame.dispose();
+    }
+
+
+    long endtime = System.currentTimeMillis();
+    try {
+        Thread.sleep( - (endtime - time));
+    } catch (Exception e) {
+        // System.out.println("cannot sleep");
+    }
+}
+});
 
 		runThread.start();
 

@@ -42,7 +42,7 @@ import javafx.scene.paint.Color;
  *
  * @author cmcastil
  */
-abstract public class SpaceNet extends Group {
+public abstract class SpaceNet extends Group {
 
 
     //final Xform axisGroup = new Xform();
@@ -149,7 +149,6 @@ abstract public class SpaceNet extends Group {
 
 
     public SpaceNet() {
-        super();
 
         getChildren().add(world);
 

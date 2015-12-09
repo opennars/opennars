@@ -40,29 +40,28 @@ public class SequenceMatcher
     extends CustomDefaultLabelMatcher<SequenceMatcher>
 {
 
-    public SequenceMatcher(final Rule[] subRules)
+    public SequenceMatcher(Rule[] subRules)
     {
         super(Objects.requireNonNull(subRules, "subRules"), "sequence");
     }
 
     @Override
-    final public MatcherType getType()
+    public final MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    final public <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(MatcherContext<V> context)
     {
-        final List<Matcher> children = getChildren();
+        List<Matcher> children = getChildren();
         int cs = children.size();
 
 
-        final ValueStack<V> stack = context.getValueStack();
-        final Object snapshot = stack.takeSnapshot();
+        ValueStack<V> stack = context.getValueStack();
+        Object snapshot = stack.takeSnapshot();
 
-        for (int i = 0; i < cs; i++) {
-            final Matcher matcher = children.get(i);
+        for (Matcher matcher : children) {
             if (!matcher.getSubContext(context).runMatcher()) {
                 stack.restoreSnapshot(snapshot);
                 return false;

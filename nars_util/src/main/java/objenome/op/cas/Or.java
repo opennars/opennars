@@ -22,7 +22,7 @@ public class Or extends Operation {
     }
     
     public static Expr make(Expr expr1, Expr expr2) {
-        ArrayList<Expr> exprs = new ArrayList<Expr>();
+        ArrayList<Expr> exprs = new ArrayList<>();
         exprs.add(expr1);
         exprs.add(expr2);
         return make(exprs);
@@ -35,7 +35,7 @@ public class Or extends Operation {
         for (int i = 0; i < exprs.size(); i++) {
             for (int j = 0; j < exprs.size(); j++) {
                 if (i != j) {
-                    HashMap<Expr, Expr> subs = new HashMap<Expr, Expr>();
+                    HashMap<Expr, Expr> subs = new HashMap<>();
                     subs.put(exprs.get(i), nope());
                     exprs.set(j, exprs.get(j).copy(subs));
                 }
@@ -95,7 +95,7 @@ public class Or extends Operation {
     
     public String pretty() {
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);

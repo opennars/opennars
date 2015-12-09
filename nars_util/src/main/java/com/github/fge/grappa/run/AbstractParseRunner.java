@@ -36,7 +36,7 @@ public abstract class AbstractParseRunner<V>
     protected ValueStack<V> valueStack;
     protected Object stackSnapshot;
 
-    protected AbstractParseRunner(@Nonnull final Rule rule)
+    protected AbstractParseRunner(@Nonnull Rule rule)
     {
         rootMatcher = Objects.requireNonNull((Matcher) rule, "rule");
     }
@@ -47,7 +47,7 @@ public abstract class AbstractParseRunner<V>
     }
 
     @Override
-    public final ParsingResult<V> run(final CharSequence input)
+    public final ParsingResult<V> run(CharSequence input)
     {
         Objects.requireNonNull(input, "input");
         return run(new CharSequenceInputBuffer(input));
@@ -62,15 +62,15 @@ public abstract class AbstractParseRunner<V>
 
     @NonFinalForTesting
     protected MatcherContext<V> createRootContext(
-        final InputBuffer inputBuffer, final MatchHandler matchHandler)
+        InputBuffer inputBuffer, MatchHandler matchHandler)
     {
         return new DefaultMatcherContext<>(inputBuffer, valueStack,
             matchHandler, rootMatcher);
     }
 
     @NonFinalForTesting
-    protected ParsingResult<V> createParsingResult(final boolean matched,
-        final MatcherContext<V> rootContext)
+    protected ParsingResult<V> createParsingResult(boolean matched,
+                                                   MatcherContext<V> rootContext)
     {
         return new ParsingResult<>(matched, valueStack,
             rootContext.getInputBuffer());

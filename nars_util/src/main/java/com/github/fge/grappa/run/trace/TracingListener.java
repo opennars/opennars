@@ -57,7 +57,7 @@ public final class TracingListener<V>
     private final BufferedWriter writer;
     private final StringBuilder sb = new StringBuilder();
 
-    public TracingListener(final Path zipPath, final boolean delete)
+    public TracingListener(Path zipPath, boolean delete)
         throws IOException
     {
         this.zipPath = zipPath;
@@ -68,7 +68,7 @@ public final class TracingListener<V>
     }
 
     @Override
-    public void beforeParse(final PreParseEvent<V> event)
+    public void beforeParse(PreParseEvent<V> event)
     {
         nodeIds.put(-1, -1);
         inputBuffer = event.getContext().getInputBuffer();
@@ -78,10 +78,10 @@ public final class TracingListener<V>
     }
 
     @Override
-    public void beforeMatch(final PreMatchEvent<V> event)
+    public void beforeMatch(PreMatchEvent<V> event)
     {
-        final MatcherContext<V> context = event.getContext();
-        final Matcher matcher = context.getMatcher();
+        MatcherContext<V> context = event.getContext();
+        Matcher matcher = context.getMatcher();
 
         Integer id = matcherIds.get(matcher);
         if (id == null) {
@@ -93,35 +93,35 @@ public final class TracingListener<V>
             nextMatcherId++;
         }
 
-        final int level = context.getLevel();
+        int level = context.getLevel();
 
         nodeIds.put(level, nextNodeId);
         nextNodeId++;
 
         prematchMatcherIds.put(level, id);
-        final int startIndex = Math.min(nrChars, context.getCurrentIndex());
+        int startIndex = Math.min(nrChars, context.getCurrentIndex());
         prematchIndices.put(level, startIndex);
         prematchTimes.put(level, System.nanoTime());
     }
 
     @SuppressWarnings({ "AutoBoxing", "AutoUnboxing" })
     @Override
-    public void matchSuccess(final MatchSuccessEvent<V> event)
+    public void matchSuccess(MatchSuccessEvent<V> event)
     {
-        final long endTime = System.nanoTime();
-        final MatcherContext<V> context = event.getContext();
-        final int level = context.getLevel();
+        long endTime = System.nanoTime();
+        MatcherContext<V> context = event.getContext();
+        int level = context.getLevel();
 
-        final Integer parentNodeId = nodeIds.get(level - 1);
-        final Integer nodeId = nodeIds.get(level);
+        Integer parentNodeId = nodeIds.get(level - 1);
+        Integer nodeId = nodeIds.get(level);
 
-        final int startIndex = prematchIndices.get(level);
-        final int endIndex
+        int startIndex = prematchIndices.get(level);
+        int endIndex
             = Math.min(nrChars, context.getCurrentIndex());
 
-        final Integer matcherId = prematchMatcherIds.get(level);
+        Integer matcherId = prematchMatcherIds.get(level);
 
-        final long time = endTime - prematchTimes.get(level);
+        long time = endTime - prematchTimes.get(level);
 
         // Write:
         // parent;id;level;success;matcherId;start;end;time
@@ -142,21 +142,21 @@ public final class TracingListener<V>
 
     @SuppressWarnings({ "AutoBoxing", "AutoUnboxing" })
     @Override
-    public void matchFailure(final MatchFailureEvent<V> event)
+    public void matchFailure(MatchFailureEvent<V> event)
     {
-        final long endTime = System.nanoTime();
-        final MatcherContext<V> context = event.getContext();
-        final int level = context.getLevel();
+        long endTime = System.nanoTime();
+        MatcherContext<V> context = event.getContext();
+        int level = context.getLevel();
 
-        final Integer parentNodeId = nodeIds.get(level - 1);
-        final Integer nodeId = nodeIds.get(level);
+        Integer parentNodeId = nodeIds.get(level - 1);
+        Integer nodeId = nodeIds.get(level);
 
-        final int startIndex = prematchIndices.get(level);
-        final int endIndex = context.getCurrentIndex();
+        int startIndex = prematchIndices.get(level);
+        int endIndex = context.getCurrentIndex();
 
-        final Integer matcherId = prematchMatcherIds.get(level);
+        Integer matcherId = prematchMatcherIds.get(level);
 
-        final long time = endTime - prematchTimes.get(level);
+        long time = endTime - prematchTimes.get(level);
 
         // Write:
         // parent;id;level;success;matcherId;start;end;time
@@ -176,7 +176,7 @@ public final class TracingListener<V>
     }
 
     @Override
-    public void afterParse(final PostParseEvent<V> event)
+    public void afterParse(PostParseEvent<V> event)
     {
         try {
             writer.flush();
@@ -185,7 +185,7 @@ public final class TracingListener<V>
             throw cleanup(e);
         }
 
-        final URI uri = URI.create("jar:" + zipPath.toUri());
+        URI uri = URI.create("jar:" + zipPath.toUri());
 
         try (
             final FileSystem zipfs = FileSystems.newFileSystem(uri, ENV);
@@ -199,12 +199,12 @@ public final class TracingListener<V>
         }
     }
 
-    private void copyInputText(final FileSystem zipfs)
+    private void copyInputText(FileSystem zipfs)
         throws IOException
     {
-        final Path path = zipfs.getPath(INPUT_TEXT_PATH);
+        Path path = zipfs.getPath(INPUT_TEXT_PATH);
 
-        final String s = inputBuffer.extract(0, nrChars);
+        String s = inputBuffer.extract(0, nrChars);
         nrCodePoints = s.codePointCount(0, nrChars);
 
         try (
@@ -215,14 +215,14 @@ public final class TracingListener<V>
         }
     }
 
-    private void copyMatcherInfo(final FileSystem zipfs)
+    private void copyMatcherInfo(FileSystem zipfs)
     {
-        final Path path = zipfs.getPath(MATCHERS_PATH);
+        Path path = zipfs.getPath(MATCHERS_PATH);
 
         try (
             final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8);
         ) {
-            for (final MatcherDescriptor descriptor:
+            for (MatcherDescriptor descriptor:
                 matcherDescriptors.values()) {
                 sb.setLength(0);
                 sb.append(descriptor.getId()).append(';')
@@ -238,10 +238,10 @@ public final class TracingListener<V>
     }
 
     // MUST be called after copyInputText!
-    private void copyParseInfo(final FileSystem zipfs)
+    private void copyParseInfo(FileSystem zipfs)
         throws IOException
     {
-        final Path path = zipfs.getPath(INFO_PATH);
+        Path path = zipfs.getPath(INFO_PATH);
         try (
 
             final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8);
@@ -259,9 +259,9 @@ public final class TracingListener<V>
         }
     }
 
-    private GrappaException cleanup(final IOException e)
+    private GrappaException cleanup(IOException e)
     {
-        final GrappaException ret
+        GrappaException ret
             = new GrappaException("failed to write event", e);
         try {
             writer.close();

@@ -13,12 +13,11 @@ import java.io.InputStreamReader;
  * @author me
  */
 public class NARjs {
-    final static ScriptEngineManager factory = new ScriptEngineManager();
+    static final ScriptEngineManager factory = new ScriptEngineManager();
     
     final ScriptEngine js = factory.getEngineByName("JavaScript");
 
     public NARjs() throws Exception {
-        super();
         js.eval("load('nashorn:mozilla_compat.js')");
         
         js.eval("importPackage('java.lang')");
@@ -55,13 +54,13 @@ public class NARjs {
             
             
             try {
-                if (s.equals(":q"))
+                if (":q".equals(s))
                     break;
-                else if (s.startsWith(":h")) {
+                if (s.startsWith(":h")) {
                     printHelp();
                     continue;
                 }
-                    
+
                 Object ret = j.eval(s);
                 
                 if (ret != null) {

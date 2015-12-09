@@ -39,11 +39,7 @@ public class EventManagerTest extends TestCase {
      */
     public void testReset() {
         EventManager manager = new EventManager();
-        Listener<RunEvent> listener = new Listener<RunEvent>() {
-
-            @Override
-            public void onEvent(RunEvent event) {
-            }
+        Listener<RunEvent> listener = event -> {
         };
 
         manager.add(RunEvent.class, listener);

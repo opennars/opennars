@@ -49,8 +49,8 @@ public final class SgMethod extends SgBehavior {
      * @param name
      *            Name of the method.
      */
-    public SgMethod(final SgClass owner, final String modifiers, final SgClass returnType,
-            final String name) {
+    public SgMethod(SgClass owner, String modifiers, SgClass returnType,
+                    String name) {
         super(owner, modifiers);
         if (returnType == null) {
             throw new IllegalArgumentException("The argument 'returnType' cannot be NULL!");
@@ -86,7 +86,7 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Type - Always non-null.
      */
-    public final SgClass getReturnType() {
+    public SgClass getReturnType() {
         return returnType;
     }
 
@@ -95,7 +95,7 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Body - Always non-null, maybe empty and is unmodifiable.
      */
-    public final List<String> getBody() {
+    public List<String> getBody() {
         return Collections.unmodifiableList(body);
     }
 
@@ -105,7 +105,7 @@ public final class SgMethod extends SgBehavior {
      * @param line
      *            Line to add - Cannot be null (but empty).
      */
-    public final void addBodyLine(final String line) {
+    public void addBodyLine(String line) {
         if (line == null) {
             throw new IllegalArgumentException("The argument 'line' cannot be NULL!");
         }
@@ -117,7 +117,7 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Name - Always non-null.
      */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
@@ -127,7 +127,7 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Name usable as a package - Always non-null.
      */
-    public final String getNameAsPackage() {
+    public String getNameAsPackage() {
         return SgUtils.uppercaseToUnderscore(getName());
     }
 
@@ -136,9 +136,9 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Modifiers, return type, name and arguments - Always non-null.
      */
-    public final String getSignature() {
-        final StringBuffer sb = new StringBuffer();
-        if (getModifiers().length() > 0) {
+    public String getSignature() {
+        StringBuilder sb = new StringBuilder();
+        if (!getModifiers().isEmpty()) {
             sb.append(getModifiers());
             sb.append(' ');
         }
@@ -153,7 +153,7 @@ public final class SgMethod extends SgBehavior {
             sb.append(getArguments().get(i));
         }
         sb.append(')');
-        if (getExceptions().size() > 0) {
+        if (!getExceptions().isEmpty()) {
             sb.append(" throws ");
             for (int i = 0; i < getExceptions().size(); i++) {
                 if (i > 0) {
@@ -170,15 +170,15 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Method name and argument names (like "methodXY(a, b, c)").
      */
-    public final String getCallSignature() {
-        final StringBuffer sb = new StringBuffer();
+    public String getCallSignature() {
+        StringBuilder sb = new StringBuilder();
         sb.append(getName());
         sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
             }
-            final SgArgument arg = getArguments().get(i);
+            SgArgument arg = getArguments().get(i);
             sb.append(arg.getName());
         }
         sb.append(')');
@@ -191,15 +191,15 @@ public final class SgMethod extends SgBehavior {
      * @return Method name and argument types (like
      *         "methodXY(String, int, boolean)").
      */
-    public final String getTypeSignature() {
-        final StringBuffer sb = new StringBuffer();
+    public String getTypeSignature() {
+        StringBuilder sb = new StringBuilder();
         sb.append(getName());
         sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
             }
-            final SgArgument arg = getArguments().get(i);
+            SgArgument arg = getArguments().get(i);
             sb.append(arg.getType().getSimpleName());
         }
         sb.append(')');
@@ -213,16 +213,16 @@ public final class SgMethod extends SgBehavior {
      * @return Method name and argument types (like
      *         "MethodXY_String_int_boolean").
      */
-    public final String getUnderscoredNameAndTypes() {
-        final StringBuffer sb = new StringBuffer();
+    public String getUnderscoredNameAndTypes() {
+        StringBuilder sb = new StringBuilder();
         sb.append(SgUtils.firstCharUpper(getName()));
         sb.append('_');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append('_');
             }
-            final SgArgument arg = getArguments().get(i);
-            final String typeName = arg.getType().getSimpleName();
+            SgArgument arg = getArguments().get(i);
+            String typeName = arg.getType().getSimpleName();
             sb.append(SgUtils.replace(typeName, "[]", "ARRAY", -1));
         }
         return sb.toString();
@@ -232,7 +232,7 @@ public final class SgMethod extends SgBehavior {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return toString(true);
     }
 
@@ -245,9 +245,9 @@ public final class SgMethod extends SgBehavior {
      * 
      * @return Source code of the method.
      */
-    public final String toString(final boolean showAnnotations) {
-        final StringBuffer sb = new StringBuffer();
-        if (showAnnotations && (getAnnotations().size() > 0)) {
+    public String toString(boolean showAnnotations) {
+        StringBuilder sb = new StringBuilder();
+        if (showAnnotations && (!getAnnotations().isEmpty())) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
                     sb.append(' ');
@@ -261,11 +261,11 @@ public final class SgMethod extends SgBehavior {
             sb.append(';');
         } else {
             sb.append("{\n");
-            if (body.size() == 0) {
+            if (body.isEmpty()) {
                 sb.append("// No method source available\n");
             } else {
-                for (int i = 0; i < body.size(); i++) {
-                    sb.append(body.get(i));
+                for (String aBody : body) {
+                    sb.append(aBody);
                     sb.append('\n');
                 }
             }

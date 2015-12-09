@@ -20,30 +20,30 @@ public class ClassVisitorExample
 {
     private String className;
 
-    public ClassVisitorExample(final ClassVisitor cv)
+    public ClassVisitorExample(ClassVisitor cv)
     {
         super(Opcodes.ASM5, cv);
     }
 
-    public static void findAreturnBlocks(final Path path)
+    public static void findAreturnBlocks(Path path)
         throws Exception
     {
-        final ClassReader cr = new ClassReader(Files.readAllBytes(path));
+        ClassReader cr = new ClassReader(Files.readAllBytes(path));
         cr.accept(new ClassVisitorExample(null), ClassReader.EXPAND_FRAMES);
     }
 
     @Override
-    public void visit(final int version, final int access, final String name,
-        final String signature, final String superName,
-        final String[] interfaces)
+    public void visit(int version, int access, String name,
+                      String signature, String superName,
+                      String[] interfaces)
     {
         super.visit(version, access, name, signature, superName, interfaces);
         className = name;
     }
 
     @Override
-    public MethodVisitor visitMethod(final int access, final String name,
-        final String desc, final String signature, final String[] exceptions)
+    public MethodVisitor visitMethod(int access, String name,
+                                     String desc, String signature, String[] exceptions)
     {
         // Unused?
         /*
@@ -60,30 +60,30 @@ public class ClassVisitorExample
                 super.visitEnd();
 
                 try {
-                    final BasicInterpreter basicInterpreter
+                    BasicInterpreter basicInterpreter
                         = new BasicInterpreter();
-                    final Analyzer<BasicValue> analyzer
+                    Analyzer<BasicValue> analyzer
                         = new Analyzer<>(basicInterpreter);
-                    final AbstractInsnNode[] nodes = instructions.toArray();
-                    final Frame<BasicValue>[] frames
+                    AbstractInsnNode[] nodes = instructions.toArray();
+                    Frame<BasicValue>[] frames
                         = analyzer.analyze(className, this);
                     int areturn = -1;
                     for (int i = nodes.length -1; i >= 0; i--)
                     {
                         if (nodes[i].getOpcode() == Opcodes.ARETURN) {
                             areturn = i;
-                            System.out.println(className + "." + name + desc);
+                            System.out.println(className + '.' + name + desc);
                             System.out.println("Found areturn at: " + i);
                         } else if (areturn != -1
                             && nodes[i].getOpcode() != -1
                             && frames[i].getStackSize() == 0) {
                             System.out.println("Found start of block at: " + i);
 
-                            final InsnList list = new InsnList();
+                            InsnList list = new InsnList();
                             for (int j = i; j <= areturn; j++)
                                 list.add(nodes[j]);
-                            final Textifier textifier = new Textifier();
-                            final PrintWriter pw = new PrintWriter(System.out);
+                            Textifier textifier = new Textifier();
+                            PrintWriter pw = new PrintWriter(System.out);
                             list.accept(new TraceMethodVisitor(textifier));
                             textifier.print(pw);
                             pw.flush();

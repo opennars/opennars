@@ -48,7 +48,7 @@ public class FitnessEvaluator<I extends Organism> extends ProxyComponent<Fitness
     /** constructs an evaluator with a specific fitness function */
     public FitnessEvaluator(FitnessFunction f) {
         super(FUNCTION);
-        this.function = f;
+        function = f;
     }
     
     /**
@@ -57,11 +57,11 @@ public class FitnessEvaluator<I extends Organism> extends ProxyComponent<Fitness
      */
     @Override
     public Population<I> process(Population<I> population) {
-        if (this.config == null)
+        if (config == null)
             setConfig(population.getConfig());
         
-        if (this.function!=null) {
-            this.function.evaluate(population);
+        if (function !=null) {
+            function.evaluate(population);
         }
         else {
             FitnessFunction handler = getHandler();

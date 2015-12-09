@@ -5,11 +5,12 @@ import objenome.op.cas.util.ArrayLists;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Sum extends Operation {
     
     public static void main(String[] args) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>();
+        ArrayList<Expr> tmp1 = new ArrayList<>();
         tmp1.add(new E());
         tmp1.add(Num.make(1));
         tmp1.add(new Var('x'));
@@ -33,7 +34,7 @@ public class Sum extends Operation {
     }
     
     public static Expr make(Expr expr1, Expr expr2) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>();
+        ArrayList<Expr> tmp1 = new ArrayList<>();
         tmp1.add(expr1);
         tmp1.add(expr2);
         return new Sum(tmp1).simplify();
@@ -41,10 +42,8 @@ public class Sum extends Operation {
     
     public Expr deriv(Var respected) {
         // if (debug) System.err.println("derivative of " + dump());
-        ArrayList<Expr> exprsDiffed = new ArrayList<Expr>(exprs.size());
-        for (Expr expr : exprs) {
-            exprsDiffed.add(expr.deriv(respected));
-        }
+        ArrayList<Expr> exprsDiffed = new ArrayList<>(exprs.size());
+        exprsDiffed.addAll(exprs.stream().map(expr -> expr.deriv(respected)).collect(Collectors.toList()));
         // if (debug) System.err.println(dump() + " => ArrayList: " + exprsDiffed);
         // if (debug) System.err.println(dump() + " => " + new Sum(exprsDiffed).toString());
         return Sum.make(exprsDiffed);
@@ -54,7 +53,7 @@ public class Sum extends Operation {
         if (exprs.size() == 2 && exprs.get(0) instanceof Product && ((Operation) exprs.get(0)).getExprs().size() == 2
                 && ((Operation) exprs.get(0)).getExpr(0).equalsExpr(Num.make(-1))
                 && exprs.get(1).equalsExpr(Num.make(1))) return new Not(((Operation) exprs.get(0)).getExpr(1));
-        this.printSimplified = true;
+        printSimplified = true;
         return this;
     }
     
@@ -64,7 +63,7 @@ public class Sum extends Operation {
         if (exprs.size() == 1) return exprs.get(0).pretty();
         
         String string = "";
-        Integer classOrder = this.classOrder();
+        Integer classOrder = classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);
@@ -90,7 +89,7 @@ public class Sum extends Operation {
         Expr conditioned = conditioned();
         if (conditioned != null) return conditioned;
         
-        List<Expr> constants = new ArrayList<Expr>();
+        List<Expr> constants = new ArrayList<>();
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);
             
@@ -252,7 +251,8 @@ public class Sum extends Operation {
                     
                     // if (debug) System.err.println("Sum.simplify: (2 Constants): constant1: (" + constant1Mult + ")*(" + constant1OtherThing + "); "
                     //                                                             + "constant2: (" + constant2Mult + ")*(" + constant2OtherThing + ")");
-                    
+
+                    //noinspection IfStatementWithTooManyBranches
                     if (number1 != null && number2 != null && number1 + number2 - number1 - number2 == 0 && number2 + number1 - number2 - number1 == 0) {
                         constants.set(i, Num.make(number1 + number2));
                         combined = true;
@@ -280,7 +280,7 @@ public class Sum extends Operation {
             }
         }
         
-        List<Expr> numbers = new ArrayList<Expr>();
+        List<Expr> numbers = new ArrayList<>();
         for (int i = 0; i < constants.size(); i++) {
             if (constants.get(i).isNumber()) {
                 numbers.add(constants.remove(i));

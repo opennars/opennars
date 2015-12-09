@@ -28,7 +28,6 @@ public abstract class TaskPerception implements Consumer<Task> {
     public TaskPerception(Memory m,
                           Predicate<Task> filter,
                           Consumer<Task> receiver) {
-        super();
 
         this.filter = filter;
         this.receiver = receiver;

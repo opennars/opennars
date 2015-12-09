@@ -24,12 +24,12 @@ public class TreemapChart extends Parent {
 
     public TreemapChart(Item root) {
         this.root = root;
-        final SortedSet<Item> items = root.getItems();
+        SortedSet<Item> items = root.getItems();
         treemapLayouter = elementFactory.createTreemapLayout(width.doubleValue(), height.doubleValue(), items);
         ChangeListener<Number> changeListener = (observableValue, number, number2) -> treemapLayouter.update(width.doubleValue(), height.doubleValue(), items);
         width.addListener(changeListener);
         height.addListener(changeListener);
-        this.getChildren().add(treemapLayouter);
+        getChildren().add(treemapLayouter);
 
     }
 

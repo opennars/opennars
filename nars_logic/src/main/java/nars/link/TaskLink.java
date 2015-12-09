@@ -47,7 +47,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
         if (t.isDeleted())
             throw new RuntimeException(this + " deleted task");
 
-        this.targetTask = t;
+        targetTask = t;
     }
 
 
@@ -70,7 +70,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(Object obj) {
         //if (obj == this) return true;
         //return false;
         //throw new RuntimeException("tasklinks should be compared by their sentences, not directly");

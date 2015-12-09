@@ -273,7 +273,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      *                              does not permit null elements
      */
     @Override
-    public boolean remove(final Object o) {
+    public boolean remove(Object o) {
         return m.remove(o) == PRESENT;
     }
 
@@ -302,14 +302,14 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
     @Override
     public boolean addAll(Collection<? extends E> c) {
         // Use linear-time version if applicable
-        if (m.size() == 0 && c.size() > 0 &&
+        if (m.isEmpty() && !c.isEmpty() &&
                 c instanceof SortedSet &&
                 m instanceof IndexedTreeMap) {
             SortedSet<? extends E> set = (SortedSet<? extends E>) c;
             IndexedTreeMap<E, Object> map = (IndexedTreeMap<E, Object>) m;
             Comparator<? super E> cc = (Comparator<? super E>) set.comparator();
             Comparator<? super E> mc = map.comparator();
-            if (cc == mc || (cc != null && cc.equals(mc))) {
+            if (Objects.equals(cc, mc)) {
                 map.addAllForTreeSet(set, PRESENT);
                 return true;
             }
@@ -526,8 +526,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
         s.writeInt(m.size());
 
         // Write out all elements in the proper order.
-        for (Iterator i = m.keySet().iterator(); i.hasNext(); )
-            s.writeObject(i.next());
+        for (E e : m.keySet()) s.writeObject(e);
     }
 
     /**
@@ -544,10 +543,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
 
         // Create backing IndexedTreeMap
         IndexedTreeMap<E, Object> tm;
-        if (c == null)
-            tm = new IndexedTreeMap<>();
-        else
-            tm = new IndexedTreeMap<>(c);
+        tm = c == null ? new IndexedTreeMap<>() : new IndexedTreeMap<>(c);
         m = tm;
 
         // Read in size

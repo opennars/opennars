@@ -55,7 +55,7 @@ class VectorN    {
         for(int i = 0; i < size(); i++)   
             s = s + (i != 0 ? "," : "") + get(i);   
    
-        return s + "}";   
+        return s + '}';
     }   
    
     void transform(MatrixN matrixn)   
@@ -71,9 +71,9 @@ class VectorN    {
         }   
    
         set(vectorn);   
-    }   
-   
-    private double v[];   
+    }
+
+    private double[] v;
 }  
 
 class Vector3D extends VectorN   

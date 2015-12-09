@@ -24,12 +24,12 @@ import static java.lang.System.out;
  */
 public class OneDHaar {
 
-    private final static double FSNORM = Math.sqrt(2);
-    private final static double FDNORM = 1/FSNORM;
-    public final static double log2 = Math.log(2);
+    private static final double FSNORM = Math.sqrt(2);
+    private static final double FDNORM = 1/FSNORM;
+    public static final double log2 = Math.log(2);
     
-    private final static double ISNORM = FDNORM;
-    private final static double IDNORM = FSNORM;
+    private static final double ISNORM = FDNORM;
+    private static final double IDNORM = FSNORM;
     
     private static void displaySample(double[] sample) {
         out.print("Sample: ");
@@ -85,7 +85,7 @@ public class OneDHaar {
         if (!isPowerOf2(sample.length)) {
             return;
         }
-        final int num_sweeps = (int) (Math.log(sample.length) / log2);
+        int num_sweeps = (int) (Math.log(sample.length) / log2);
         inPlaceFastHaarWaveletTransform(sample, num_sweeps);
     }
     // compute in-place fast haar wavelet transform.
@@ -96,7 +96,7 @@ public class OneDHaar {
 //        if (!isPowerOf2(sample.length)) {
 //            throw new RuntimeException(sample.length + " is not power of 2");
 //        }
-        final int num_sweeps = (int) (Math.log(sample.length) / log2);
+        int num_sweeps = (int) (Math.log(sample.length) / log2);
         inPlaceFastHaarWaveletTransform(sample, num_sweeps);
     }
 
@@ -109,7 +109,7 @@ public class OneDHaar {
             throw new RuntimeException(sample.length + " is not power of 2");
         }
         int NUM_SAMPLE_VALS = sample.length; // number of values in the sample
-        final int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
+        int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
         if (num_iters < 1 || num_iters > n) {
             throw new RuntimeException(sample.length + " invalid number sweeps");
         }
@@ -139,7 +139,7 @@ public class OneDHaar {
             return;
         }
         int NUM_SAMPLE_VALS = sample.length; // number of values in the sample
-        final int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
+        int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
         if (num_iters < 1 || num_iters > n) {
             return;
         }
@@ -169,7 +169,7 @@ public class OneDHaar {
         int I = (int) (Math.pow(2.0, sweep_number - 1));
         int GAP_SIZE = (int) (Math.pow(2.0, sweep_number));
         int NUM_SAMPLE_VALS = sample.length;
-        final int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
+        int n = (int) (Math.log(NUM_SAMPLE_VALS) / Math.log(2));
         if (sweep_number < 1 || sweep_number > n) {
             return;
         }
@@ -224,13 +224,13 @@ public class OneDHaar {
     }
 
     private static void orderedFastHaarWaveletTransform(double[] signal) {
-        final int n = signal.length;
+        int n = signal.length;
         // if n is not an integral power of 2, then return
         if (!isPowerOf2(n)) {
             return;
         }
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
-        final int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
+        int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
         double acoeff, ccoeff;
         if (NUM_SWEEPS == 1) {
             acoeff = (signal[0] + signal[1]) / 2.0;
@@ -245,7 +245,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -254,7 +254,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = (signal[i] + signal[i + 1]) / 2.0;
                 ccoeffs[ci++] = (signal[i] - signal[i + 1]) / 2.0;
@@ -301,13 +301,13 @@ public class OneDHaar {
     
     // the transform as defined on p. 21 in "Ripples in Mathematics."
     private static void orderedNormalizedFastHaarWaveletTransform(double[] sample) {
-        final int n = sample.length;
+        int n = sample.length;
         // if n is not an integral power of 2, then return
         if (!isPowerOf2(n)) {
             return;
         }
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
-        final int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
+        int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
         double acoeff, ccoeff;
         if (NUM_SWEEPS == 1) {
             acoeff = FSNORM * (sample[0] + sample[1])/2.0;
@@ -322,7 +322,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -331,7 +331,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = FSNORM * (sample[i] + sample[i + 1])/2.0;
                 ccoeffs[ci++] = FDNORM * (sample[i] - sample[i + 1]);
@@ -378,11 +378,11 @@ public class OneDHaar {
     
     // same as above but does ordered FHWT for a specified number of iterations
     private static void orderedFastHaarWaveletTransformForNumIters(double[] signal, int num_iters) {
-        final int n = signal.length;
+        int n = signal.length;
         // if n is not an integral power of 2, then return
         if ( !isPowerOf2(n) ) return;
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
-        final int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
+        int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
         if ( num_iters > NUM_SWEEPS ) return;
         if ( NUM_SWEEPS == 1 ) {
             double acoeff = (signal[0] + signal[1]) / 2.0;
@@ -397,7 +397,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -406,7 +406,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = (signal[i] + signal[i + 1]) / 2.0;
                 ccoeffs[ci++] = (signal[i] - signal[i + 1]) / 2.0;
@@ -430,11 +430,11 @@ public class OneDHaar {
     // same as above but does ordered FHWT for a specified number of iterations but
     // normalized.
     private static void orderedNormalizedFastHaarWaveletTransformForNumIters(double[] sample, int num_iters) {
-        final int n = sample.length;
+        int n = sample.length;
         // if n is not an integral power of 2, then return
         if ( !isPowerOf2(n) ) return;
         // compute the number of sweeps; e.g., if n = 8, then NUM_SWEEPS is 3.
-        final int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
+        int NUM_SWEEPS = (int) (Math.log(n) / Math.log(2.0));
         if ( num_iters > NUM_SWEEPS ) return;
         if ( NUM_SWEEPS == 1 ) {
             double acoeff = FSNORM * (sample[0] + sample[1]) / 2.0;
@@ -449,7 +449,7 @@ public class OneDHaar {
             // at sweep 1, we have 4 a-coefficients and 4 c-coefficients;
             // at sweep 2, we have 2 a-coefficients and 2 c-coefficients;
             // at sweep 3, we have 1 a-coefficient and 1 c-coefficient.
-            int size = (int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM));
+            int size = (int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM));
             double[] acoeffs = new double[size];
             double[] ccoeffs = new double[size];
             int ai = 0; // index over acoeffs
@@ -458,7 +458,7 @@ public class OneDHaar {
             // sweep SWEEP_NUM. For example, if NUM_SWEEPS = 3, then
             // at sweep 1, end = 2^{3-1+1} - 1 = 7
             // at sweep 2, end = 2^{3-2+1} - 1 = 3
-            int end = ((int) Math.pow(2.0, (double) (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
+            int end = ((int) Math.pow(2.0, (NUM_SWEEPS - SWEEP_NUM + 1))) - 1;
             for (int i = 0; i <= end; i += 2) {
                 acoeffs[ai++] = FSNORM * (sample[i] + sample[i + 1])/2.0;
                 ccoeffs[ci++] = FDNORM * (sample[i] - sample[i + 1]);
@@ -547,14 +547,11 @@ public class OneDHaar {
     }
     
     private static void thresholdSignal(double[] signal, double thresh) {
-        final int n = signal.length;
-        double thresholdedSignal[] = new double[n];
+        int n = signal.length;
+        double[] thresholdedSignal = new double[n];
         //System.out.println("n = " + n);
         for(int t = 0; t < n; t++) {
-            if ( Math.abs(signal[t]) > thresh )
-                thresholdedSignal[t] = signal[t];
-            else
-                thresholdedSignal[t] = 0;
+            thresholdedSignal[t] = Math.abs(signal[t]) > thresh ? signal[t] : 0;
         }
         
         arraycopy(thresholdedSignal, 0, signal, 0, n);
@@ -690,7 +687,7 @@ public class OneDHaar {
         //int GAP_SIZE = (int) (Math.pow(2.0, num_sweeps - 1));
         //int JUMP = 2 * GAP_SIZE;
         //int NUM_FREQS = 1;
-        final int lower_bound = n - num_iters + 1;
+        int lower_bound = n - num_iters + 1;
         for (int ITER_NUM = lower_bound; ITER_NUM <= n; ITER_NUM++) {
             int GAP_SIZE = (int) (Math.pow(2.0, n - ITER_NUM));
             int JUMP = 2 * GAP_SIZE;
@@ -881,7 +878,7 @@ public class OneDHaar {
         String binstr = Integer.toBinaryString(k);
 
         if (binstr.length() < n) {
-            final int diff = n - binstr.length();
+            int diff = n - binstr.length();
             for (int i = 0; i < diff; i++) {
                 binstr = '0' + binstr;
             }
@@ -917,10 +914,7 @@ public class OneDHaar {
         double[][] fhw = new double[size][size];
         for(int col_num = 0; col_num < size; col_num++) {
             for(int i = 0; i < size; i++) {
-                if ( i == col_num )
-                    base_vector[i] = 1;
-                else
-                    base_vector[i] = 0;
+                base_vector[i] = i == col_num ? 1 : 0;
             }
             orderedFastHaarWaveletTransform(base_vector);
             for(int row_num = 0; row_num < size; row_num++) {
@@ -938,10 +932,7 @@ public class OneDHaar {
         double[][] ihw = new double[size][size];
         for(int col_num = 0; col_num < size; col_num++) {
             for(int i = 0; i < size; i++) {
-                if ( i == col_num )
-                    base_vector[i] = 1;
-                else
-                    base_vector[i] = 0;
+                base_vector[i] = i == col_num ? 1 : 0;
             }
             orderedFastInverseHaarWaveletTransform(base_vector);
             for(int row_num = 0; row_num < size; row_num++) {

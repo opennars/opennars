@@ -1,6 +1,7 @@
 package nars.util.io;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class StringUtil {
     public static String[] splitInclusive(CharSequence input, char[] splitChars) {
@@ -35,16 +36,16 @@ public class StringUtil {
     }
     
     // http://stackoverflow.com/questions/1128723/in-java-how-can-i-test-if-an-array-contains-a-certain-value
-    public static <T> boolean contains(final T[] array, final T v) {
-        for (final T e : array)
-            if (e == v || v != null && v.equals(e))
+    public static <T> boolean contains(T[] array, T v) {
+        for (T e : array)
+            if (Objects.equals(v, e))
                 return true;
 
         return false;
     }
     
-    public static boolean containsChar(final char[] array, final char v) {
-        for (final char e : array)
+    public static boolean containsChar(char[] array, char v) {
+        for (char e : array)
             if (e == v)
                 return true;
 

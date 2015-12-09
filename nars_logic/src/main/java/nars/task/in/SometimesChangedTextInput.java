@@ -17,7 +17,7 @@ public class SometimesChangedTextInput extends ChangedTextInput {
 
     public SometimesChangedTextInput(NAR n, double probability) {
         super(n);
-        this.prob = probability;
+        prob = probability;
     }
 
     public void setProbability(double prob) {

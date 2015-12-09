@@ -54,11 +54,7 @@ public class ConverterRegistry implements Converter {
 
 	public Converter getConverter(Class from, Class to) {
 		Map toMap = (Map) fromMap.get(from);
-		if (toMap != null) {
-			return (Converter) toMap.get(to);
-		} else {
-			return null;
-		}
+		return toMap != null ? (Converter) toMap.get(to) : null;
 	}
 
 	@Override

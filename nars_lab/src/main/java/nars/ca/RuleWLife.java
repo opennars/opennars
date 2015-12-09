@@ -39,6 +39,7 @@ public class RuleWLife {
 	// Parse the rule string
 	// Example: #RULE NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI7,RS2,RB1,RB2,RB3
 	public void InitFromString(String sStr) {
+		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i;
@@ -48,6 +49,7 @@ public class RuleWLife {
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
 			//System.out.println(sTok);
+			//noinspection IfStatementWithTooManyBranches
 			if (sTok.startsWith("NW"))
 				wgtAry[1] = Integer.valueOf(sTok.substring(2));
 			else if (sTok.startsWith("NN"))
@@ -101,10 +103,7 @@ public class RuleWLife {
 		// correct parameters first
 		Validate();
 
-		if (isHist)
-			ih = iClo;
-		else
-			ih = 0;
+		ih = isHist ? iClo : 0;
 
 		sBff = "NW" + String.valueOf(wgtAry[1]) + ",NN"
 				+ String.valueOf(wgtAry[2]) + ",NE" + String.valueOf(wgtAry[3])
@@ -138,11 +137,11 @@ public class RuleWLife {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-			short crrState[][], short tmpState[][], MJBoard mjb) {
+					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
-		int lurd[] = new int[4]; // 0-left, 1-up, 2-right, 3-down
+		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 
 		for (i = 0; i < sizX; ++i) {
 			// determine left and right cells
@@ -193,18 +192,12 @@ public class RuleWLife {
 								bNewVal = 1;
 							} else // isolation or overpopulation
 							{
-								if (bOldVal < (iClo - 1))
-									bNewVal = (short) (bOldVal + 1); // getting older...
-								else
-									bNewVal = 0; // bye, bye!
+								bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 							}
 						}
 					} else // was older than 1
 					{
-						if (bOldVal < (iClo - 1))
-							bNewVal = (short) (bOldVal + 1); // getting older...
-						else
-							bNewVal = 0; // bye, bye!
+						bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
 					}
 				} else // no history
 				{
@@ -233,21 +226,15 @@ public class RuleWLife {
 					if (bOldVal == 0) // was dead
 					{
 						if (rulesB[iCnt]) // rules for birth
-							if (ColoringMethod == 1) // standard
-								bNewVal = 1; // birth
-							else
-								bNewVal = (short) (mjb.Cycle
-										% (mjb.StatesCount - 1) + 1); // birth
+							bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
+									% (mjb.StatesCount - 1) + 1);
 					} else // was alive
 					{
 						if (rulesS[iCnt]) // rules for surviving
 						{
 							if (ColoringMethod == 1) // standard
 							{
-								if (bOldVal < (mjb.StatesCount - 1))
-									bNewVal = (short) (bOldVal + 1); // getting older...
-								else
-									bNewVal = (short) (mjb.StatesCount - 1);
+								bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
 							} else {
 								// alternate coloring - cells remain not changed
 							}

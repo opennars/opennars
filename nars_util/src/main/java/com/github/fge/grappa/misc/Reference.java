@@ -42,7 +42,7 @@ public class Reference<T>
      *
      * @param value the value object
      */
-    public Reference(@Nullable final T value)
+    public Reference(@Nullable T value)
     {
         this.value = value;
     }
@@ -63,7 +63,7 @@ public class Reference<T>
      * @param value the value
      * @return true
      */
-    public final boolean set(@Nullable final T value)
+    public final boolean set(@Nullable T value)
     {
         this.value = value;
         return true;
@@ -103,9 +103,9 @@ public class Reference<T>
      * @param value the new value
      * @return the previous value
      */
-    public final T getAndSet(final T value)
+    public final T getAndSet(T value)
     {
-        final T ret = this.value;
+        T ret = this.value;
         this.value = value;
         return ret;
     }

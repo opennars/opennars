@@ -48,7 +48,7 @@ public class json {
                 return Atom.the((String) x);
             }
             else /*if (x instanceof Number)*/ {
-                return Atom.the("\"" + x.toString() + "\"");
+                return Atom.the('"' + x.toString() + '"');
             }
         }
 

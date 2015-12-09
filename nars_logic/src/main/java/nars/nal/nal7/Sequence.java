@@ -32,7 +32,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
      *  duration at the time the Sequence is formed. */
     private int eventDuration = -1;
 
-    transient private int duration = -1;
+    private transient int duration = -1;
 
     /**
      * for subterms: (A, B, C) and intervals (i0, i1, i2, i3)
@@ -66,7 +66,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
     @Override
     public int compareTo(Object that) {
-        final int i = super.compareTo(that);
+        int i = super.compareTo(that);
         /*if (i == 0) {
             if (!equals2((Sequence)that)) {
                 System.err.println("equality compared but not actually equal");
@@ -77,7 +77,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
     @Override
     public boolean equals(Object that) {
-        final boolean e = super.equals(that);
+        boolean e = super.equals(that);
 //        if (e) {
 //            /**
 //             * allowed for:
@@ -119,7 +119,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     public final void setDuration(int duration) {
         super.setDuration(duration);
         //if (this.eventDuration!=duration) {
-            this.eventDuration = duration;
+        eventDuration = duration;
             this.duration = -1; //force recalculate
         //}
     }
@@ -128,22 +128,22 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     public final int duration() {
         int duration = this.duration;
         if (duration < 0) {
-            return this.duration = duration(this.eventDuration);
+            return this.duration = duration(eventDuration);
         }
         return duration;
     }
 
     @Override
     public final int duration(int eventDuration) {
-        if (this.duration >= 0 && this.eventDuration==eventDuration)
-            return this.duration; //return the cached value because it will be the same as recalculating
+        if (duration >= 0 && this.eventDuration==eventDuration)
+            return duration; //return the cached value because it will be the same as recalculating
 
         int l = 0;
-        for (final int x : intervals())
+        for (int x : intervals())
             l += x;
 
         //if eventDuration is not set, then
-        final int defaultEventDuration = Math.max(0, eventDuration);
+        int defaultEventDuration = Math.max(0, eventDuration);
 
         //add embedded terms with temporal duration
         for (Term t : this) {
@@ -161,7 +161,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     }
 
 
-    @Deprecated public static final Term make(final Term[] argList) {
+    @Deprecated public static final Term make(Term[] argList) {
         throw new RuntimeException("Use Sequence.makeSequence");
     }
 
@@ -177,7 +177,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     }
 
     @Override
-    public Term clone(final Term[] t) {
+    public Term clone(Term[] t) {
 
 //        if (Variable.hasPatternVariable(this)) {
 //            // this is a pattern, in which case all intervals will be zero.
@@ -186,24 +186,18 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 //
 //        }
 
-        if (size()!=t.length) {
-            //direct clone, ignoring this instance's intervals which have different dimensions
-            return makeSequence(t);
-        }
-        else {
-            return cloneIntervals(t);
-        }
+        return size() != t.length ? makeSequence(t) : cloneIntervals(t);
     }
 
     /** only works if the # of terms are the same as this */
-    protected Term cloneIntervals(final Term[] t) {
+    protected Term cloneIntervals(Term[] t) {
 
 
         //HACK this reconstructs a dummy sequence of terms to send through makeSequence,
         // avoiding a cyclical normalization process necessary in order to avoid reduction
         //TODO do this without constructing such an array but just copying the int[] interval array to the result
 
-        final int tLen = t.length;
+        int tLen = t.length;
 
         List<Term> c = Global.newArrayList(tLen);
 
@@ -250,7 +244,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     }
 
 
-    public static Term makeSequence(final Term[] a) {
+    public static Term makeSequence(Term[] a) {
         return makeSequence(a, true);
     }
 
@@ -265,10 +259,10 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
      * @param a
      * @return
      */
-    public static Term makeSequence(final Term[] a, boolean allowReduction) {
+    public static Term makeSequence(Term[] a, boolean allowReduction) {
 
         //count how many intervals so we know how to resize the final arrays
-        final int intervalsPresent = Interval.intervalCount(a);
+        int intervalsPresent = Interval.intervalCount(a);
 
         if (intervalsPresent == 0) {
             if (allowReduction && (a.length == 1)) return a[0]; //TODO combine this with singleton condition at end of this method
@@ -286,7 +280,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
         int[] i = new int[b.length + 1];
 
         int p = 0;
-        for (final Term x : a) {
+        for (Term x : a) {
             /*if (x == Ellipsis.Expand)
                 continue;*/
             if (x instanceof CyclesInterval) {
@@ -315,7 +309,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
 
     public static Term makeSequence(Term term1, Term term2) {
-        final Term[] components;
+        Term[] components;
 
         if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == Tense.ORDER_FORWARD)) {
 
@@ -371,7 +365,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
                 break;
             }
 
-            final long c = ii[i];
+            long c = ii[i];
 
             if (c != 0) {
 
@@ -426,7 +420,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
 
     public Term cloneRemovingSuffixInterval(long[] offsetAdjustment) {
-        final int s = size();
+        int s = size();
         int[] ii = intervals();
 
         if (ii[s]!=0) {

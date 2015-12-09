@@ -8,7 +8,7 @@ public class DrawGraphAppPanel extends Panel {
     private static final long serialVersionUID = 1L;
     private final GraphApp outer;
 
-    public DrawGraphAppPanel(GraphApp graphanim, int i, final GraphApp outer) {
+    public DrawGraphAppPanel(GraphApp graphanim, int i, GraphApp outer) {
         this.outer = outer;
         rent = graphanim;
         type = i;

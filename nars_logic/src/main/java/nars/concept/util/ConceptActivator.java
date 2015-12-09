@@ -78,8 +78,8 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
         setBudget(b);
 
-        final Param param = nar.memory;
-        this.conceptForgetCycles = param.durationToCycles( param.conceptForgetDurations );
+        Param param = nar.memory;
+        conceptForgetCycles = param.durationToCycles( param.conceptForgetDurations );
         this.activationFactor = activationFactor;
         this.now = now;
 

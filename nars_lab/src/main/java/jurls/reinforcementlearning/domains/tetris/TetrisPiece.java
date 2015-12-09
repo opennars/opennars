@@ -20,10 +20,10 @@ package jurls.reinforcementlearning.domains.tetris;
 
 public class TetrisPiece {
 
-    int thePiece[][][] = new int[4][5][5];
+    int[][][] thePiece = new int[4][5][5];
     int currentOrientation = 0;
 
-    public void setShape(int Direction, int row0[], int row1[], int row2[], int row3[], int row4[]) {
+    public void setShape(int Direction, int[] row0, int[] row1, int[] row2, int[] row3, int[] row4) {
         thePiece[Direction][0] = row0;
         thePiece[Direction][1] = row1;
         thePiece[Direction][2] = row2;
@@ -275,9 +275,9 @@ public class TetrisPiece {
         StringBuilder shapeBuffer = new StringBuilder();
         for (int i = 0; i < thePiece[currentOrientation].length; i++) {
             for (int j = 0; j < thePiece[currentOrientation][i].length; j++) {
-                shapeBuffer.append(" ").append(thePiece[currentOrientation][i][j]);
+                shapeBuffer.append(' ').append(thePiece[currentOrientation][i][j]);
             }
-            shapeBuffer.append("\n");
+            shapeBuffer.append('\n');
         }
         return shapeBuffer.toString();
 

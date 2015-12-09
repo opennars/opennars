@@ -38,6 +38,6 @@ public interface PopulationTermination {
      * @return <code>true</code> if the current evolutionary run should
      * terminate or <code>false</code> if it should continue.
      */
-    public boolean terminate(GPContainer config);
+    boolean terminate(GPContainer config);
 
 }

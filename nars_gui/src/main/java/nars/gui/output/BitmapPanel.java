@@ -23,10 +23,8 @@ public class BitmapPanel extends JComponent {
      * Creates the new image pannel by colling the constructor of the JPanel
      */
     public BitmapPanel() {
-        super();
     }
     public BitmapPanel(BufferedImage i) {
-        super();
         setImage(i);
     }
 
@@ -49,13 +47,13 @@ public class BitmapPanel extends JComponent {
         BufferedImage img;
         try {
             img = ImageIO.read(new File(imagePath));
-            this.image = img;
+            image = img;
             repaint();
         } catch (IOException ex) { }
     }
     
     public void setImage(BufferedImage img) {
-        this.image = img;
+        image = img;
         repaint();
     }
 

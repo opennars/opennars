@@ -94,11 +94,7 @@ public class Or extends BooleanNode {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 2) && TypeUtil.allEqual(inputTypes, Boolean.class)) {
-            return Boolean.class;
-        } else {
-            return null;
-        }
+        return (inputTypes.length == 2) && TypeUtil.allEqual(inputTypes, Boolean.class) ? Boolean.class : null;
     }
 
     @Override
@@ -111,8 +107,8 @@ public class Or extends BooleanNode {
         int bn = getChildConstantValue(1);
 
         if (an == 1) return True;
-        else if (bn == 1) return True;
-        else if ((an == 0) && (bn == 0)) return False;
+        if (bn == 1) return True;
+        if ((an == 0) && (bn == 0)) return False;
 
         //TODO other minifications, eX; demorgans
 

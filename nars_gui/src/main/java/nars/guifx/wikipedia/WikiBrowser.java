@@ -34,7 +34,7 @@ import java.util.List;
 *      --language switch
  *
  */
-abstract public class WikiBrowser extends BorderPane {
+public abstract class WikiBrowser extends BorderPane {
 
     public final int TIMEOUT_MS = 15 * 1000;
     private final WebView webview;
@@ -42,9 +42,8 @@ abstract public class WikiBrowser extends BorderPane {
     private final WikiOntology wikiOntology;
 
     public WikiBrowser(String startWikiPage) {
-        super();
 
-        this.wikiOntology = new WikiOntology();
+        wikiOntology = new WikiOntology();
 
         webview = new WebView();
         webEngine = webview.getEngine();
@@ -295,12 +294,12 @@ abstract public class WikiBrowser extends BorderPane {
 
     public void tagAdd(String url) {
 
-        final String wikiPrefix = "/wiki/";
+        String wikiPrefix = "/wiki/";
         String tag;
         if (url.startsWith(wikiPrefix)) {
             //ordinary wikilink
             tag = url.substring(wikiPrefix.length());
-        } else if (url.equals("undefined")) {
+        } else if ("undefined".equals(url)) {
             //section header link
             tag = getCurrentPageTag();
         } else {
@@ -311,7 +310,7 @@ abstract public class WikiBrowser extends BorderPane {
         onTagClicked(tag);
     }
 
-    abstract public void onTagClicked(String id);
+    public abstract void onTagClicked(String id);
 
     protected Node newControls() {
         Button nearButton = new Button("Near");
@@ -405,7 +404,7 @@ abstract public class WikiBrowser extends BorderPane {
                 }
             }
 
-            if (categories.size() > 0) {
+            if (!categories.isEmpty()) {
 //                NTag n = new NTag(getCurrentPageTag(), getCurrentPageTag(), categories);
 //                core.publish(n);
             }

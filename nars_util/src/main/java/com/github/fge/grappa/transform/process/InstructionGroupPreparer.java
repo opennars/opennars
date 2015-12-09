@@ -36,8 +36,8 @@ public final class InstructionGroupPreparer
     private RuleMethod method;
 
     @Override
-    public boolean appliesTo(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public boolean appliesTo(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         Objects.requireNonNull(classNode, "classNode");
         Objects.requireNonNull(method, "method");
@@ -45,13 +45,13 @@ public final class InstructionGroupPreparer
     }
 
     @Override
-    public void process(@Nonnull final ParserClassNode classNode,
-        @Nonnull final RuleMethod method)
+    public void process(@Nonnull ParserClassNode classNode,
+        @Nonnull RuleMethod method)
     {
         this.method = Objects.requireNonNull(method, "method");
 
         // prepare groups for later stages
-        for (final InstructionGroup group: method.getGroups()) {
+        for (InstructionGroup group: method.getGroups()) {
             extractInstructions(group);
             extractFields(group);
             InstructionGroupHasher.hash(group, classNode.name);
@@ -60,10 +60,10 @@ public final class InstructionGroupPreparer
 
     // move all group instructions except for the root from the underlying
     // method into the groups Insnlist
-    private void extractInstructions(final InstructionGroup group)
+    private void extractInstructions(InstructionGroup group)
     {
         AbstractInsnNode insn;
-        for (final InstructionGraphNode node: group.getNodes()) {
+        for (InstructionGraphNode node: group.getNodes()) {
             if (node == group.getRoot())
                 continue;
             insn = node.getInstruction();
@@ -73,12 +73,12 @@ public final class InstructionGroupPreparer
     }
 
     // create FieldNodes for all xLoad instructions
-    private static void extractFields(final InstructionGroup group)
+    private static void extractFields(InstructionGroup group)
     {
-        final List<FieldNode> fields = group.getFields();
+        List<FieldNode> fields = group.getFields();
 
         VarInsnNode insn;
-        for (final InstructionGraphNode node : group.getNodes()) {
+        for (InstructionGraphNode node : group.getNodes()) {
             if (!node.isXLoad())
                 continue;
 
@@ -101,7 +101,7 @@ public final class InstructionGroupPreparer
                  * (respectively) so we need to make sure that we correct
                  * for this when the field is actually written
                  */
-                final Type type = node.getResultValue().getType();
+                Type type = node.getResultValue().getType();
                 fields.add(new FieldNode(insn.var, "field$" + index,
                     type.getDescriptor(), null, type));
             }

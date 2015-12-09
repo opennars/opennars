@@ -125,28 +125,27 @@ public class NumberConverters implements Converter {
   public Object convert(Class targetType, Object value) {
     // are we dealing with a number to number conversion?
     if ((value instanceof Number) && Number.class.isAssignableFrom(targetType)) {
+      //noinspection IfStatementWithTooManyBranches
       if (Double.class.equals(targetType)) {
-        return new Double(((Number)value).doubleValue());
+        return ((Number) value).doubleValue();
       } else if (Float.class.equals(targetType)) {
-        return new Float(((Number)value).floatValue());
+        return ((Number) value).floatValue();
       } else if (Integer.class.equals(targetType)) {
-        return new Integer(((Number)value).intValue());
+        return ((Number) value).intValue();
       } else if (Long.class.equals(targetType)) {
-        return new Long(((Number)value).longValue());
+        return ((Number) value).longValue();
       } else if (Short.class.equals(targetType)) {
-        return new Short(((Number)value).shortValue());
+        return ((Number) value).shortValue();
       } else if (Byte.class.equals(targetType)) {
-          return new Byte(((Number)value).byteValue());
+          return ((Number) value).byteValue();
       } else {
         throw new IllegalArgumentException("this code must not be reached");
       }
-    } else if ((value instanceof Number) && String.class.equals(targetType)) {
-      if ((value instanceof Double) || (value instanceof Float)) {
-        return format.format(((Number)value).doubleValue());
-      } else {
-        return format.format(((Number)value).longValue());
-      }
-    } else if ((value instanceof String) && Number.class.isAssignableFrom(targetType)) {
+    }
+    if ((value instanceof Number) && String.class.equals(targetType)) {
+      return (value instanceof Double) || (value instanceof Float) ? format.format(((Number) value).doubleValue()) : format.format(((Number) value).longValue());
+    }
+    if ((value instanceof String) && Number.class.isAssignableFrom(targetType)) {
       if (Double.class.equals(targetType)) {
         return new Double((String)value);
       } else if (Float.class.equals(targetType)) {

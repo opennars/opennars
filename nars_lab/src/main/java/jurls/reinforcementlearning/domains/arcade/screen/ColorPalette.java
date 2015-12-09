@@ -46,7 +46,7 @@ public abstract class ColorPalette {
      * @return
      */
     public int numEntries() {
-        return this.numEntries;
+        return numEntries;
     }
 
     /** Adds Color c at index i.

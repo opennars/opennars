@@ -26,11 +26,12 @@ import static nars.nal.UtilityFunctions.or;
  * A model storing, ranking, and projecting beliefs or goals (tasks with TruthValue).
  * It should iterate in top-down order (highest ranking first)
  */
+@SuppressWarnings("OverlyComplexAnonymousInnerClass")
 public interface BeliefTable extends TaskTable {
 
     /** main method */
 
-    Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
+    Task add(Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
 
     /* when does projecting to now not play a role? I guess there is no case,
     //wo we use just one ranker anymore, the normal solution ranker which takes
@@ -42,71 +43,71 @@ public interface BeliefTable extends TaskTable {
         return or(confidence, originality);
     };*/
 
-    final static BeliefTable EMPTY = new BeliefTable() {
+    BeliefTable EMPTY = new BeliefTable() {
 
         @Override
-        final public Iterator<Task> iterator() {
+        public Iterator<Task> iterator() {
             return Iterators.emptyIterator();
         }
 
         @Override
-        public final void writeValues(ObjectOutput output) throws IOException {
+        public void writeValues(ObjectOutput output) throws IOException {
             output.writeInt(0);
             output.writeInt(0);
         }
 
         @Override
-        public final <T> void readValues(ObjectInput input) throws IOException {
+        public <T> void readValues(ObjectInput input) throws IOException {
             input.readInt();
             input.readInt();
         }
 
         @Override
-        public final int getCapacity() {
+        public int getCapacity() {
             return 0;
         }
 
         @Override
-        public final void setCapacity(int newCapacity) {
+        public void setCapacity(int newCapacity) {
 
         }
 
         @Override
-        public final int size() {
+        public int size() {
             return 0;
         }
 
         @Override
-        public final void clear() {
+        public void clear() {
 
         }
 
         @Override
-        public final boolean isEmpty() {
+        public boolean isEmpty() {
             return true;
         }
         @Override
-        public final Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
+        public Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
             return null;
         }
 
         @Override
-        public final Task add(Task input, Ranker ranking, Concept c, Premise nal) {
+        public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
             return null;
         }
 
         @Override
-        public final boolean tryAdd(Task input, Ranker r, Memory memory) {
+        public boolean tryAdd(Task input, Ranker r, Memory memory) {
             return false;
         }
 
         @Override
-        public final boolean add(Task t) {
+        public boolean add(Task t) {
             return false;
         }
 
         @Override
-        public final boolean contains(Task t) {
+        public boolean contains(Task t) {
             return false;
         }
 
@@ -170,7 +171,7 @@ public interface BeliefTable extends TaskTable {
 
     static float getConfidenceSum(Iterable<? extends Truthed> beliefs) {
         float t = 0;
-        for (final Truthed s : beliefs)
+        for (Truthed s : beliefs)
             t += s.getTruth().getConfidence();
         return t;
     }
@@ -179,14 +180,14 @@ public interface BeliefTable extends TaskTable {
         if (beliefs.isEmpty()) return 0.5f;
 
         float t = 0;
-        for (final Truthed s : beliefs)
+        for (Truthed s : beliefs)
             t += s.getTruth().getFrequency();
         return t / beliefs.size();
     }
 
-    default Task top(final Task query, final long now) {
+    default Task top(Task query, long now) {
 
-        final Task top = top();
+        Task top = top();
         if (top == null) return null;
 
 //        if (!Tense.matchingOrder(query, top.getTerm())) {
@@ -221,7 +222,7 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    final static class SolutionQualityMatchingOrderRanker implements Ranker {
+    final class SolutionQualityMatchingOrderRanker implements Ranker {
 
         private final Task query;
         private final long now;
@@ -230,12 +231,12 @@ public interface BeliefTable extends TaskTable {
         public SolutionQualityMatchingOrderRanker(Task query, long now) {
             this.query = query;
             this.now = now;
-            this.hasQueryVar = query.hasQueryVar();
+            hasQueryVar = query.hasQueryVar();
         }
 
         @Override
-        public final float rank(final Task t, final float bestToBeat) {
-            Task q = this.query;
+        public float rank(Task t, float bestToBeat) {
+            Task q = query;
 
             if (t.equals(q)) return Float.NaN; //dont compare to self
 
@@ -244,7 +245,7 @@ public interface BeliefTable extends TaskTable {
         }
     }
 
-    default Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
+    default Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
 
         if (isEmpty()) return null;
 
@@ -298,7 +299,7 @@ public interface BeliefTable extends TaskTable {
 
     default void print(PrintStream out) {
         for (Task t : this) {
-            out.println(t + " " + Arrays.toString(t.getEvidence()) + " " + t.getLog());
+            out.println(t + " " + Arrays.toString(t.getEvidence()) + ' ' + t.getLog());
         }
     }
 
@@ -310,14 +311,14 @@ public interface BeliefTable extends TaskTable {
     /** computes the truth/desire as an aggregate of projections of all
      * beliefs to current time
      */
-    default float getMeanProjectedExpectation(final long time) {
-        final int size = size();
+    default float getMeanProjectedExpectation(long time) {
+        int size = size();
         if (size == 0) return 0;
 
-        final float[] d = {0};
-        this.forEach(t -> d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation());
+        float[] d = {0};
+        forEach(t -> d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation());
 
-        final float dd = d[0];
+        float dd = d[0];
 
         if (dd == 0) return 0;
 

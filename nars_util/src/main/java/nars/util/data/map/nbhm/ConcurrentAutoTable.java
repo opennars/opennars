@@ -136,12 +136,12 @@ public class ConcurrentAutoTable implements Serializable {
       assert i >= 0 && i < ary.length;
       return _Lbase + i * _Lscale;
     }
-    private final static boolean CAS( long[] A, int idx, long old, long nnn ) {
+    private static final boolean CAS(long[] A, int idx, long old, long nnn ) {
       return _unsafe.compareAndSwapLong( A, rawIndex(A,idx), old, nnn );
     }
    
     volatile long _resizers;    // count of threads attempting a resize
-    static private final AtomicLongFieldUpdater<CAT> _resizerUpdater =
+    private static final AtomicLongFieldUpdater<CAT> _resizerUpdater =
       AtomicLongFieldUpdater.newUpdater(CAT.class, "_resizers");
 
     private final CAT _next;
@@ -209,9 +209,8 @@ public class ConcurrentAutoTable implements Serializable {
     // sum is only locally accurate.
     public long sum( long mask ) {
       long sum = _next == null ? 0 : _next.sum(mask); // Recursively get cached sum
-      final long[] t = _t;
-      for( int i=0; i<t.length; i++ )
-        sum += t[i]&(~mask);
+      long[] t = _t;
+      for (long aT : t) sum += aT & (~mask);
       return sum;
     }
 

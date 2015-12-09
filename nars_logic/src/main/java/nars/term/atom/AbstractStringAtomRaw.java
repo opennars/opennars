@@ -26,7 +26,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
             id, op().ordinal()
         );
      */
-    abstract public int hashCode();
+    public abstract int hashCode();
 
     @Override
     public abstract Op op();
@@ -35,13 +35,13 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
     public abstract int structure();
 
     @Override
-    public void append(final Appendable w, final boolean pretty) throws IOException {
+    public void append(Appendable w, boolean pretty) throws IOException {
         w.append(id);
     }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     @Override
-    public StringBuilder toStringBuilder(final boolean pretty) {
+    public StringBuilder toStringBuilder(boolean pretty) {
         return new StringBuilder(id);
     }
 
@@ -53,7 +53,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
     }
 
     @Override
-    public boolean equals(final Object x) {
+    public boolean equals(Object x) {
         if (this == x) return true;
 
         if (x instanceof AbstractStringAtomRaw) {
@@ -68,7 +68,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
      * @param that The Term to be compared with the current Term
      */
     @Override
-    public final int compareTo(final Object that) {
+    public final int compareTo(Object that) {
         if (that==this) return 0;
 
         Term t = (Term)that;

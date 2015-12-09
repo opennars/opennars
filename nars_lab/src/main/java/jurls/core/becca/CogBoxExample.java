@@ -9,16 +9,15 @@ package jurls.core.becca;
  *
  * @author me
  */
-abstract public class CogBoxExample extends IOMatrixExample  {
+public abstract class CogBoxExample extends IOMatrixExample  {
 
     int delayMS = 5;
     final CogBox cog;
     double[] output;
     
     public CogBoxExample(CogBox z) {
-        super();
-        
-        this.cog = z;
+
+        cog = z;
     }
 
     @Override

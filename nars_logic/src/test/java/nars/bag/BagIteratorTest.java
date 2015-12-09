@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BagIteratorTest {
 
-    final static Random rng = new XORShiftRandom();
+    static final Random rng = new XORShiftRandom();
 
     int L = 4;
 
@@ -24,12 +24,10 @@ public class BagIteratorTest {
     public void testIterator(Bag<CharSequence, NullItem> b, int expectedCount) {
         int count = 0;
         NullItem first = null, current = null;
-        Iterator<NullItem> i = b.iterator();
-        while (i.hasNext()) {
-            NullItem n = i.next();
+        for (NullItem n : b) {
             if (first == null)
                 first = n;
-            current =n;
+            current = n;
             count++;
         }
 

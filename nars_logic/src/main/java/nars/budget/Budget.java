@@ -101,7 +101,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 //                qualityFromTruth);
 //    }
 
-    public Budget(final float p, final float d, final Truth qualityFromTruth) {
+    public Budget(float p, float d, Truth qualityFromTruth) {
         this(p, d, qualityFromTruth !=
                 null ? BudgetFunctions.truthToQuality(qualityFromTruth) : 1.0f);
     }
@@ -114,7 +114,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * @param d Initial durability
      * @param q Initial quality
      */
-    public Budget(final float p, final float d, final float q) {
+    public Budget(float p, float d, float q) {
         setPriority(p);
         setDurability(d);
         setQuality(q);
@@ -125,7 +125,6 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * begins with 0.0f for all components
      */
     public Budget() {
-        super();
     }
 
     /**
@@ -133,7 +132,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v Budget value to be cloned
      */
-    public Budget(final Budget v, boolean copyLastForgetTime) {
+    public Budget(Budget v, boolean copyLastForgetTime) {
         this();
         if (v != null) {
             budget(v);
@@ -163,13 +162,13 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 //        return null;
 //    }
 
-    public static String toString(final Budget b) {
+    public static String toString(Budget b) {
         //return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
         return Budget.toStringBuilder(new StringBuilder(), Texts.n4(b.priority), Texts.n4(b.durability), Texts.n4(b.quality)).toString();
     }
 
-    private static StringBuilder toStringBuilder(StringBuilder sb, final CharSequence priorityString, final CharSequence durabilityString, final CharSequence qualityString) {
-        final int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
+    private static StringBuilder toStringBuilder(StringBuilder sb, CharSequence priorityString, CharSequence durabilityString, CharSequence qualityString) {
+        int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
         if (sb == null)
             sb = new StringBuilder(c);
         else
@@ -188,14 +187,14 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
     public static float summarySum(Iterable<? extends Budgeted> dd) {
         float f = 0;
-        for (final Budgeted x : dd)
+        for (Budgeted x : dd)
             f += x.getBudget().summary();
         return f;
     }
 
     public static float prioritySum(Iterable<? extends Budgeted> dd) {
         float f = 0;
-        for (final Budgeted x : dd)
+        for (Budgeted x : dd)
             f += x.getPriority();
         return f;
     }
@@ -211,7 +210,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     /** the max priority, durability, and quality of two tasks */
-    public final Budget mergeMax(final Budget b) {
+    public final Budget mergeMax(Budget b) {
         return budget(
                 Util.max(getPriority(), b.getPriority()),
                 Util.max(getDurability(), b.getDurability()),
@@ -224,33 +223,33 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * durability: max(this, b) (similar to merge)
      * quality: max(this, b)    (similar to merge)
      */
-    public final Budget mergePlus(final Budget b) {
-        return mergePlus(b, 1f);
+    public final Budget mergePlus(Budget b) {
+        return mergePlus(b, 1.0f);
     }
 
-    public final Budget mergePlus(final Budget b, float factor) {
+    public final Budget mergePlus(Budget b, float factor) {
         return mergePlus(b.getPriority(), b.getDurability(), b.getQuality(), factor);
     }
 
-    public final Budget mergePlus(float addPriority, final float otherDurability, final float otherQuality) {
-        return mergePlus(addPriority, otherDurability, otherQuality, 1f);
+    public final Budget mergePlus(float addPriority, float otherDurability, float otherQuality) {
+        return mergePlus(addPriority, otherDurability, otherQuality, 1.0f);
     }
 
     /** linearly interpolates the change affected to determine dur, qua */
-    final Budget mergePlus(final float addPriority, final float otherDurability, final float otherQuality, float factor) {
+    final Budget mergePlus(float addPriority, float otherDurability, float otherQuality, float factor) {
 
-        final float dp = addPriority * factor;
+        float dp = addPriority * factor;
 
-        final float currentPriority = getPriorityIfNaNThenZero();
+        float currentPriority = getPriorityIfNaNThenZero();
 
-        final float nextPriority = Math.min(1,currentPriority + dp);
+        float nextPriority = Math.min(1,currentPriority + dp);
 
-        final float currentNextPrioritySum = (currentPriority + nextPriority);
+        float currentNextPrioritySum = (currentPriority + nextPriority);
 
-        /* current proportion */ final float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
+        /* current proportion */ float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
                 0.5f : /* both are zero so they have equal infleunce */
                 (currentPriority / currentNextPrioritySum);
-        /* next proportion */ final float np = 1f - cp;
+        /* next proportion */ float np = 1.0f - cp;
 
 
         float D = getDurability();
@@ -265,22 +264,22 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * merges another budget into this one, averaging each component
      */
-    public void mergeAverageLERP(final Budget that) {
+    public void mergeAverageLERP(Budget that) {
         if (this == that) return;
 
-        final float currentPriority = getPriority();
+        float currentPriority = getPriority();
 
-        final float otherPriority = that.getPriority();
+        float otherPriority = that.getPriority();
 
-        final float prisum = (currentPriority + otherPriority);
+        float prisum = (currentPriority + otherPriority);
 
         /* current proportion */
-        final float cp = (Util.equal(prisum, 0, BUDGET_EPSILON)) ?
+        float cp = (Util.equal(prisum, 0, BUDGET_EPSILON)) ?
                 0.5f : /* both are zero so they have equal infleunce */
                 (currentPriority / prisum);
 
         /* next proportion */
-        final float np = 1f - cp;
+        float np = 1.0f - cp;
 
         budget(
                 cp * getPriority() + np * that.getPriority(),
@@ -309,7 +308,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * set all quantities to zero
      */
     public final Budget zero() {
-        this.priority = this.durability = this.quality = 0f;
+        priority = durability = quality = 0.0f;
         return this;
     }
 
@@ -330,11 +329,11 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * @return whether the operation had any effect
      */
     @Override
-    public final void setPriority(final float p) {
+    public final void setPriority(float p) {
         if (isDeleted(p)) {
             throw new RuntimeException("NaN priority");
         }
-        this.priority = Util.clamp(p);
+        priority = Util.clamp(p);
     }
 
     /**
@@ -343,7 +342,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The increasing percent
      */
-    public void orPriority(final float v) {
+    public void orPriority(float v) {
         setPriority( or(priority, v) );
     }
 
@@ -358,7 +357,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * AND's (multiplies) priority with another value
      */
-    public void andPriority(final float v) {
+    public void andPriority(float v) {
         setPriority(and(getPriority(), v));
     }
 
@@ -378,8 +377,8 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param d The new durability
      */
-    public final void setDurability(final float d) {
-        this.durability = Util.clamp(d);
+    public final void setDurability(float d) {
+        durability = Util.clamp(d);
 //        if (this.durability < 0.5) {
 //            System.err.println("low durability");
 //        }
@@ -390,7 +389,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The increasing percent
      */
-    public final void orDurability(final float v) {
+    public final void orDurability(float v) {
         setDurability(or(durability, v));
     }
 
@@ -399,7 +398,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The decreasing percent
      */
-    public final void andDurability(final float v) {
+    public final void andDurability(float v) {
         setDurability(and(durability, v));
     }
 
@@ -431,8 +430,8 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param q The new quality
      */
-    public final void setQuality(final float q) {
-        this.quality = Util.clamp(q);
+    public final void setQuality(float q) {
+        quality = Util.clamp(q);
     }
 
 //    public float summary(float additionalPriority) {
@@ -444,7 +443,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The increasing percent
      */
-    public void orQuality(final float v) {
+    public void orQuality(float v) {
         quality = or(quality, v);
     }
 
@@ -453,7 +452,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The decreasing percent
      */
-    public void andQuality(final float v) {
+    public void andQuality(float v) {
         quality = and(quality, v);
     }
 
@@ -471,7 +470,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * merges another budget into this one, averaging each component
      */
-    public void mergeAverage(final Budget that) {
+    public void mergeAverage(Budget that) {
         if (this == that) return;
 
         budget(
@@ -517,7 +516,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * uses optimized aveGeoNotLessThan to avoid a cube root operation
      */
-    public boolean summaryNotLessThan(final float min) {
+    public boolean summaryNotLessThan(float min) {
         return aveGeoNotLessThan(min, priority, durability, quality);
     }
 
@@ -544,21 +543,21 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 //        return Float.NaN;
 //    }
 
-    public final boolean equalsByPrecision(final Budget t) {
+    public final boolean equalsByPrecision(Budget t) {
         return equalsByPrecision(t, BUDGET_EPSILON);
     }
 
-    public final boolean equalsByPrecision(final Budget t, final float epsilon) {
+    public final boolean equalsByPrecision(Budget t, float epsilon) {
         return  equal(getPriority(), t.getPriority(), epsilon) &&
                 equal(getDurability(), t.getDurability(), epsilon) &&
                 equal(getQuality(), t.getQuality(), epsilon);
     }
 
-    public final boolean equalsBudget(final Budget t) {
+    public final boolean equalsBudget(Budget t) {
         return equalsByPrecision(t) && (getLastForgetTime() == t.getLastForgetTime());
     }
 
-    public boolean equals(final Object that) {
+    public boolean equals(Object that) {
         if (that instanceof Budget) {
             return equalsBudget((Budget) that);
         }
@@ -581,7 +580,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @return The decision on whether to process the Item
      */
-    final public boolean summaryGreaterOrEqual(final float budgetThreshold) {
+    public final boolean summaryGreaterOrEqual(float budgetThreshold) {
 
         if (isDeleted()) return false;
 
@@ -592,7 +591,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return summaryNotLessThan(budgetThreshold);
     }
 
-    final public boolean summaryGreaterOrEqual(final AtomicDouble budgetThreshold) {
+    public final boolean summaryGreaterOrEqual(AtomicDouble budgetThreshold) {
         return summaryGreaterOrEqual(budgetThreshold.floatValue());
     }
 
@@ -635,9 +634,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public StringBuilder toBudgetStringExternal(StringBuilder sb) {
         //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
 
-        final CharSequence priorityString = Texts.n2(priority);
-        final CharSequence durabilityString = Texts.n2(durability);
-        final CharSequence qualityString = Texts.n2(quality);
+        CharSequence priorityString = Texts.n2(priority);
+        CharSequence durabilityString = Texts.n2(durability);
+        CharSequence qualityString = Texts.n2(quality);
 
         return toStringBuilder(sb, priorityString, durabilityString, qualityString);
     }
@@ -650,8 +649,8 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * 1 digit resolution
      */
     public String toStringExternalBudget1(boolean includeQuality) {
-        final char priorityString = Texts.n1char(priority);
-        final char durabilityString = Texts.n1char(durability);
+        char priorityString = Texts.n1char(priority);
+        char durabilityString = Texts.n1char(durability);
         StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
                 .append(Symbols.BUDGET_VALUE_MARK)
                 .append(priorityString).append(Symbols.VALUE_SEPARATOR)
@@ -667,18 +666,13 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime
      */
     @Override
-    final public long setLastForgetTime(final long currentTime) {
+    public final long setLastForgetTime(long currentTime) {
 
-        final long period;
+        long period;
 
-        if (this.lastForgetTime == Tense.TIMELESS) {
-            period = 0;
-        }
-        else {
-            period = currentTime - lastForgetTime;
-        }
+        period = lastForgetTime == Tense.TIMELESS ? 0 : currentTime - lastForgetTime;
 
-        this.lastForgetTime = currentTime;
+        lastForgetTime = currentTime;
         return period;
     }
 
@@ -697,24 +691,24 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance
      */
-    protected final Budget budgetDirect(final float p, final float d, final float q) {
+    protected final Budget budgetDirect(float p, float d, float q) {
 
         if (isDeleted(p)) {
             throw new RuntimeException("source budget invalid");
         }
 
-        this.priority = p;
-        this.durability = d;
-        this.quality = q;
+        priority = p;
+        durability = d;
+        quality = q;
         return this;
     }
 
-    public final Budget budget(final Budgeted source) {
+    public final Budget budget(Budgeted source) {
         return budget(source.getBudget());
     }
 
     /** copies a budget into this; if source is null, it deletes the budget */
-    public Budget budget(@Nullable final Budget source) {
+    public Budget budget(@Nullable Budget source) {
         if (source == null) {
             zero();
         }
@@ -733,15 +727,15 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * returns this budget, after being modified
      */
-    protected Budget budget(final float p, final float d, final float q) {
+    protected Budget budget(float p, float d, float q) {
         setPriority(p);
         setDurability(d);
         setQuality(q);
         return this;
     }
 
-    final public float getPriorityIfNaNThenZero() {
-        final float p;
+    public final float getPriorityIfNaNThenZero() {
+        float p;
         if (!Float.isNaN(p = getPriority()))
             return p;
         return 0;
@@ -775,19 +769,19 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 //    }
 
     @Override
-    public void mulPriority(final float factor) {
+    public void mulPriority(float factor) {
         setPriority(getPriority() * factor);
     }
 
-    public void mulDurability(final float factor) {
+    public void mulDurability(float factor) {
         setDurability(getDurability() * factor);
     }
 
-    public final boolean summaryLessThan(final float s) {
+    public final boolean summaryLessThan(float s) {
         return !summaryNotLessThan(s);
     }
 
-    final public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
+    public final Budget forget(long now, float forgetCycles, float relativeThreshold) {
         if (!isDeleted()) {
             //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
             BudgetFunctions.forgetAlann(this, forgetCycles, now);
@@ -803,9 +797,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     public final void deleteBudget() {
-        this.priority = Float.NaN;
-        this.durability = 0;
-        this.quality = 0;
+        priority = Float.NaN;
+        durability = 0;
+        quality = 0;
     }
 
     public static final boolean isDeleted(float pri) {

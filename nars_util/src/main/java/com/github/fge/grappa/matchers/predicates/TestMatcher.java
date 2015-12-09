@@ -33,7 +33,7 @@ public final class TestMatcher
 {
     private final Matcher subMatcher;
 
-    public TestMatcher(final Rule subRule)
+    public TestMatcher(Rule subRule)
     {
         super(Objects.requireNonNull(subRule, "subRule"), "test");
         subMatcher = getChildren().get(0);
@@ -46,10 +46,10 @@ public final class TestMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final int lastIndex = context.getCurrentIndex();
-        final Object valueStackSnapshot
+        int lastIndex = context.getCurrentIndex();
+        Object valueStackSnapshot
             = context.getValueStack().takeSnapshot();
 
         if (!subMatcher.getSubContext(context).runMatcher())

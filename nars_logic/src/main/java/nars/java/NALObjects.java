@@ -62,7 +62,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     private final AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
     /** for externally-puppeted method invocation goals */
-    private float invocationGoalFreq = 1f;
+    private float invocationGoalFreq = 1.0f;
     private float invocationGoalConf = 0.9f;
 
 //    /** for method invocation result beliefs  */
@@ -70,17 +70,17 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 //    private float invocationResultConf = 0.9f;
 
     /** for meta-data beliefs about (classes, objects, packages, etc..) */
-    private float metadataBeliefFreq = 1f;
+    private float metadataBeliefFreq = 1.0f;
     private float metadataBeliefConf = 0.99f;
     private float metadataPriority = 0.1f;
 
 
     public NALObjects(NAR n) {
-        this.nar = n;
+        nar = n;
     }
 
     public static <N extends NAR> N wrap(N n) throws Exception {
-        final NALObjects nalObjects = new NALObjects(n);
+        NALObjects nalObjects = new NALObjects(n);
         return nalObjects.wrap("this", n);
     }
 
@@ -161,7 +161,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             return result;
         }
 
-        final Operator op = getMethodOperator(method);
+        Operator op = getMethodOperator(method);
 
 
         Compound invocationArgs = getMethodInvocationTerms(method, object, args);
@@ -169,12 +169,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
 
         Term effect;
-        if (result!=null) {
-            effect = term(result);
-        }
-        else {
-            effect = VOID;
-        }
+        effect = result != null ? term(result) : VOID;
 
         //TODO re-use static copy for 'VOID' instances
         InvocationResult ir = new InvocationResult(effect);
@@ -240,7 +235,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
             c = c.getSuperclass();
 
         return Operator.the(
-            c.getSimpleName() + "_" + overridden.getName()
+            c.getSimpleName() + '_' + overridden.getName()
         );
     }
 
@@ -374,7 +369,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     }
 
     public void setGoalInvoke(boolean b) {
-        this.goalInvoke.set(b);
+        goalInvoke.set(b);
     }
 
 

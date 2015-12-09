@@ -22,10 +22,9 @@ import java.util.List;
 /**
  * ProblemSTGP with some generally useful default settings
  */
-abstract public class DefaultProblemSTGP extends ProblemSTGP {
+public abstract class DefaultProblemSTGP extends ProblemSTGP {
 
     public DefaultProblemSTGP(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
-        super();
 
         the(Population.SIZE, populationSize);
 
@@ -67,7 +66,7 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
         the(RandomSequence.RANDOM_SEQUENCE, randomSequence);
 
 
-        final ArrayList syntax = new ArrayList();
+        ArrayList syntax = new ArrayList();
 
         //+2.0 allows it to grow
         syntax.add( new DoubleERC(randomSequence, -1.0, 2.0, 2));
@@ -104,8 +103,8 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
     }
 
 
-    abstract protected FitnessFunction initFitness();
-    abstract protected Iterable<Variable> initVariables();
+    protected abstract FitnessFunction initFitness();
+    protected abstract Iterable<Variable> initVariables();
 
     public static DoubleVariable doubleVariable(String n) {
         return new DoubleVariable(n);

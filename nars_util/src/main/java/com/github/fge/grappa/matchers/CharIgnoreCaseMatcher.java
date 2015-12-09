@@ -31,7 +31,7 @@ public final class CharIgnoreCaseMatcher
     private final char lowerBound;
     private final char upperBound;
 
-    public CharIgnoreCaseMatcher(final char character)
+    public CharIgnoreCaseMatcher(char character)
     {
         super('\'' + escape(Character.toLowerCase(character))
             + '/' + escape(Character.toUpperCase(character)) + '\''
@@ -47,9 +47,9 @@ public final class CharIgnoreCaseMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
-        final char c = context.getCurrentChar();
+        char c = context.getCurrentChar();
         if (c != lowerBound && c != upperBound)
             return false;
         context.advanceIndex(1);

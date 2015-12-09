@@ -40,7 +40,7 @@ public final class ActionMatcher
     private final List<ContextAware<?>> contextAwares;
     private final boolean skipInPredicates;
 
-    public ActionMatcher(final Action<?> action)
+    public ActionMatcher(Action<?> action)
     {
         super(Objects.requireNonNull(action).toString());
         this.action = action;
@@ -54,10 +54,10 @@ public final class ActionMatcher
         /*
          * NOTE: was Class<? extends Action> before, but see constructor
          */
-        final Class<?> actionClass = action.getClass();
+        Class<?> actionClass = action.getClass();
 
         if (actionClass.isSynthetic()) {
-            this.contextAwares = Collections.emptyList();
+            contextAwares = Collections.emptyList();
             return;
         }
 
@@ -70,7 +70,7 @@ public final class ActionMatcher
         // work seamlessly we collect the synthetic references to the outer
         // parent classes and inform them of the current parsing context if they
         // implement ContextAware
-        for (final Field field: actionClass.getDeclaredFields()) {
+        for (Field field: actionClass.getDeclaredFields()) {
             if (!field.isSynthetic())
                 continue;
             if (!ContextAware.class.isAssignableFrom(field.getType()))
@@ -78,7 +78,7 @@ public final class ActionMatcher
 
             field.setAccessible(true);
             try {
-                final ContextAware<?> contextAware
+                ContextAware<?> contextAware
                     = (ContextAware<?>) field.get(action);
                 if (contextAware != null)
                     contextAwares.add(contextAware);
@@ -93,15 +93,15 @@ public final class ActionMatcher
     }
 
     @Override
-    public final MatcherType getType()
+    public MatcherType getType()
     {
         return MatcherType.ACTION;
     }
 
     @Override
-    public final <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public <V> MatcherContext<V> getSubContext(MatcherContext<V> context)
     {
-        final MatcherContext<V> subContext = context.getBasicSubContext();
+        MatcherContext<V> subContext = context.getBasicSubContext();
         subContext.setMatcher(this);
         // if we have already matched something we must be in a sequence at the
         // second or later position the subcontext contains match data that the
@@ -114,19 +114,19 @@ public final class ActionMatcher
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <V> boolean match(final MatcherContext<V> context)
+    public <V> boolean match(MatcherContext<V> context)
     {
         if (skipInPredicates && context.inPredicate())
             return true;
 
         // actions need to run in the parent context
-        final MatcherContext parentContext = context.getParent();
-        for (final ContextAware contextAware: contextAwares)
+        MatcherContext parentContext = context.getParent();
+        for (ContextAware contextAware: contextAwares)
             contextAware.setContext(parentContext);
 
-        final ValueStack valueStack = context.getValueStack();
+        ValueStack valueStack = context.getValueStack();
 
-        final Object valueStackSnapshot  = valueStack.takeSnapshot();
+        Object valueStackSnapshot  = valueStack.takeSnapshot();
 
         if (!(/*(Action<V>)*/ action).run(parentContext)) {
             // failing actions are not allowed to change the ValueStack

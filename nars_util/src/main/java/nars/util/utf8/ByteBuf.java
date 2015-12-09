@@ -71,18 +71,18 @@ public final class ByteBuf  {
         buffer = new byte[ capacity ];
     }
 
-    final public ByteBuf append(final String str) {
-        this.append(Utf8.toUtf8(str));
+    public ByteBuf append(String str) {
+        append(Utf8.toUtf8(str));
         return this;
     }
 
-    final public ByteBuf add( final String str ) {
-        this.add(Utf8.toUtf8(str));
+    public ByteBuf add( String str ) {
+        add(Utf8.toUtf8(str));
         return this;
     }
 
 
-    public ByteBuf append(final int value) {
+    public ByteBuf append(int value) {
 
         grow(4);
         Byt.intTo( buffer, length, value );
@@ -93,7 +93,7 @@ public final class ByteBuf  {
     }
 
 
-    public ByteBuf append(final float value) {
+    public ByteBuf append(float value) {
 
         grow(4);
         Byt.floatTo( buffer, length, value );
@@ -104,13 +104,13 @@ public final class ByteBuf  {
 
     }
 
-    public ByteBuf add(final char value) {
+    public ByteBuf add(char value) {
         Byt.charTo( buffer, length, value );
         length += 2;
         return this;
     }
 
-    public ByteBuf append(final char value) {
+    public ByteBuf append(char value) {
 
         grow(2);
         add(value);
@@ -119,7 +119,7 @@ public final class ByteBuf  {
     }
 
 
-    public ByteBuf append(final short value) {
+    public ByteBuf append(short value) {
 
         if ( 2 + length < getCapacity()) {
             Byt.shortTo( buffer, length, value );
@@ -135,7 +135,7 @@ public final class ByteBuf  {
     }
 
     public ByteBuf addByte( int value ) {
-        this.append((byte) value);
+        append((byte) value);
         return this;
     }
 
@@ -150,7 +150,7 @@ public final class ByteBuf  {
 
     }
 
-    final void grow(int bytes) {
+    void grow(int bytes) {
         if ( bytes + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + bytes );
         }
@@ -177,18 +177,18 @@ public final class ByteBuf  {
 
 
 
-    public int _idx( final byte[] buf, byte[] input ) {
+    public int _idx( byte[] buf, byte[] input ) {
         return Byt._idx(buf, length, input);
     }
 
-    public ByteBuf add(final byte value) {
+    public ByteBuf add(byte value) {
         if (length >= buffer.length)
             throw new RuntimeException("overflow");
         buffer[length++] = value;
         return this;
     }
 
-    public ByteBuf append(final byte value) {
+    public ByteBuf append(byte value) {
 
         if ( 1 + length > getCapacity()) {
             buffer = Byt.grow( buffer );
@@ -198,14 +198,14 @@ public final class ByteBuf  {
         return add(value);
     }
 
-    public ByteBuf add(final byte[] array) {
+    public ByteBuf add(byte[] array) {
         length += _idx(buffer, array);
         return this;
     }
 
-    public ByteBuf append(final byte[] array) {
-        final int al = array.length;
-        if ( al + this.length > getCapacity()) {
+    public ByteBuf append(byte[] array) {
+        int al = array.length;
+        if ( al + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length + al );
             
         }
@@ -213,12 +213,12 @@ public final class ByteBuf  {
         return this;
     }
 
-    public ByteBuf add(final byte[] array, final int subLen) {
-        this.length += Byt._idx( buffer, subLen, array );
+    public ByteBuf add(byte[] array, int subLen) {
+        length += Byt._idx( buffer, subLen, array );
         return this;
     }
 
-    public ByteBuf append(final byte[] array, final int length) {
+    public ByteBuf append(byte[] array, int length) {
         if ( ( this.length + length ) > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + length );
             
@@ -228,7 +228,7 @@ public final class ByteBuf  {
         return this;
     }
 
-    public ByteBuf append(byte[] array, final int offset, final int length) {
+    public ByteBuf append(byte[] array, int offset, int length) {
         if ( ( this.length + length ) > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + length );
             
@@ -244,14 +244,14 @@ public final class ByteBuf  {
     }
 
     public byte[] readAndReset() {
-        byte[] bytes = this.buffer;
-        this.buffer = null;
+        byte[] bytes = buffer;
+        buffer = null;
         return bytes;
     }
 
     public byte[] readForRecycle() {
-        this.length = 0;
-        return this.buffer;
+        length = 0;
+        return buffer;
     }
 
     public int len() {
@@ -385,11 +385,11 @@ public final class ByteBuf  {
 //    }
 
     public void write( int b ) {
-        this.addByte( b );
+        addByte( b );
     }
 
     public void write( byte[] b ) {
-        this.append(b);
+        append(b);
     }
 
 //    public void write( byte[] b, int off, int len ) {
@@ -397,15 +397,15 @@ public final class ByteBuf  {
 //    }
 
     public void writeBoolean( boolean v ) {
-        this.addByte( v ? 1 : 0 );
+        addByte( v ? 1 : 0 );
     }
 
     public void writeByte( byte v ) {
-        this.addByte(v);
+        addByte(v);
     }
 
     public void writeUnsignedByte( short v ) {
-        this.addUnsignedByte( v );
+        addUnsignedByte( v );
     }
 
     public void addUnsignedByte( short value ) {
@@ -424,12 +424,12 @@ public final class ByteBuf  {
 
     
     public void writeShort( short v ) {
-        this.append(v);
+        append(v);
     }
 
     
     public void writeUnsignedShort( int v ) {
-        this.addUnsignedShort( v );
+        addUnsignedShort( v );
     }
 
     public void addUnsignedShort( int value ) {
@@ -450,91 +450,91 @@ public final class ByteBuf  {
 
     
     public void writeChar( char v ) {
-        this.append(v);
+        append(v);
     }
 
     
     public void writeInt( int v ) {
-        this.append(v);
+        append(v);
     }
 
     
     public void writeUnsignedInt( long v ) {
-        this.addUnsignedInt( v );
+        addUnsignedInt( v );
     }
 
     
     public void writeLong( long v ) {
-        this.append(v);
+        append(v);
     }
 
     
     public void writeFloat( float v ) {
-        this.append(v);
+        append(v);
     }
 
     
     public void writeDouble( double v ) {
-        this.append(v);
+        append(v);
     }
 
     
     public void writeLargeString( String s ) {
-        final byte[] bytes = Utf8.toUtf8(s);
-        this.append(bytes.length);
-        this.append(bytes);
+        byte[] bytes = Utf8.toUtf8(s);
+        append(bytes.length);
+        append(bytes);
     }
 
     
     public void writeSmallString( String s ) {
-        final byte[] bytes = Utf8.toUtf8(s);
-        this.addUnsignedByte( ( short ) bytes.length );
-        this.append(bytes);
+        byte[] bytes = Utf8.toUtf8(s);
+        addUnsignedByte( ( short ) bytes.length );
+        append(bytes);
     }
 
     
     public void writeMediumString( String s ) {
-        final byte[] bytes = Utf8.toUtf8(s);
-        this.addUnsignedShort( bytes.length );
-        this.append(bytes);
+        byte[] bytes = Utf8.toUtf8(s);
+        addUnsignedShort( bytes.length );
+        append(bytes);
     }
 
     
     public void writeLargeByteArray( byte[] bytes ) {
-        this.append(bytes.length);
-        this.append(bytes);
+        append(bytes.length);
+        append(bytes);
     }
 
     
     public void writeSmallByteArray( byte[] bytes ) {
-        this.addUnsignedByte( ( short ) bytes.length );
-        this.append(bytes);
+        addUnsignedByte( ( short ) bytes.length );
+        append(bytes);
     }
 
     
     public void writeMediumByteArray( byte[] bytes ) {
-        this.addUnsignedShort( bytes.length );
-        this.append(bytes);
+        addUnsignedShort( bytes.length );
+        append(bytes);
     }
 
     
     public void writeLargeShortArray( short[] values ) {
         int byteSize = values.length * 2 + 4;
-        this.append(values.length);
+        append(values.length);
         doWriteShortArray( values, byteSize );
     }
 
     
     public void writeSmallShortArray( short[] values ) {
         int byteSize = values.length * 2 + 1;
-        this.addUnsignedByte( ( short ) values.length );
+        addUnsignedByte( ( short ) values.length );
         doWriteShortArray( values, byteSize );
     }
 
     
     public void writeMediumShortArray( short[] values ) {
         int byteSize = values.length * 2 + 2;
-        this.addUnsignedShort( values.length );
+        addUnsignedShort( values.length );
         doWriteShortArray( values, byteSize );
     }
 
@@ -543,8 +543,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.append(values[index]);
+        for (short value : values) {
+            append(value);
         }
     }
 
@@ -552,21 +552,21 @@ public final class ByteBuf  {
     
     public void writeLargeIntArray( int[] values ) {
         int byteSize = values.length * 4 + 4;
-        this.append(values.length);
+        append(values.length);
         doWriteIntArray( values, byteSize );
     }
 
     
     public void writeSmallIntArray( int[] values ) {
         int byteSize = values.length * 4 + 1;
-        this.addUnsignedByte( ( short ) values.length );
+        addUnsignedByte( ( short ) values.length );
         doWriteIntArray( values, byteSize );
     }
 
     
     public void writeMediumIntArray( int[] values ) {
         int byteSize = values.length * 4 + 2;
-        this.addUnsignedShort( values.length );
+        addUnsignedShort( values.length );
         doWriteIntArray( values, byteSize );
     }
 
@@ -575,8 +575,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.append(values[index]);
+        for (int value : values) {
+            append(value);
         }
     }
 //
@@ -588,21 +588,21 @@ public final class ByteBuf  {
     
     public void writeLargeLongArray( long[] values ) {
         int byteSize = values.length * 8 + 4;
-        this.append(values.length);
+        append(values.length);
         doWriteLongArray( values, byteSize );
     }
 
     
     public void writeSmallLongArray( long[] values ) {
         int byteSize = values.length * 8 + 1;
-        this.addUnsignedByte((short) values.length);
+        addUnsignedByte((short) values.length);
         doWriteLongArray( values, byteSize );
     }
 
     
     public void writeMediumLongArray( long[] values ) {
         int byteSize = values.length * 8 + 2;
-        this.addUnsignedShort(values.length);
+        addUnsignedShort(values.length);
         doWriteLongArray( values, byteSize );
     }
 
@@ -611,8 +611,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.append(values[index]);
+        for (long value : values) {
+            append(value);
         }
     }
 
@@ -620,7 +620,7 @@ public final class ByteBuf  {
     
     public void writeLargeFloatArray( float[] values ) {
         int byteSize = values.length * 4 + 4;
-        this.append(values.length);
+        append(values.length);
         doWriteFloatArray( values, byteSize );
 
     }
@@ -628,14 +628,14 @@ public final class ByteBuf  {
     
     public void writeSmallFloatArray( float[] values ) {
         int byteSize = values.length * 4 + 1;
-        this.addUnsignedByte((short) values.length);
+        addUnsignedByte((short) values.length);
         doWriteFloatArray( values, byteSize );
     }
 
     
     public void writeMediumFloatArray( float[] values ) {
         int byteSize = values.length * 4 + 2;
-        this.addUnsignedShort(values.length);
+        addUnsignedShort(values.length);
         doWriteFloatArray( values, byteSize );
 
     }
@@ -644,8 +644,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.append(values[index]);
+        for (float value : values) {
+            append(value);
         }
     }
 
@@ -653,7 +653,7 @@ public final class ByteBuf  {
     
     public void writeLargeDoubleArray( double[] values ) {
         int byteSize = values.length * 8 + 4;
-        this.append(values.length);
+        append(values.length);
         doWriteDoubleArray( values, byteSize );
 
 
@@ -662,7 +662,7 @@ public final class ByteBuf  {
     
     public void writeSmallDoubleArray( double[] values ) {
         int byteSize = values.length * 8 + 1;
-        this.addUnsignedByte((short) values.length);
+        addUnsignedByte((short) values.length);
         doWriteDoubleArray( values, byteSize );
 
     }
@@ -670,7 +670,7 @@ public final class ByteBuf  {
     
     public void writeMediumDoubleArray( double[] values ) {
         int byteSize = values.length * 8 + 2;
-        this.addUnsignedShort(values.length);
+        addUnsignedShort(values.length);
         doWriteDoubleArray( values, byteSize );
 
     }
@@ -680,8 +680,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.append(values[index]);
+        for (double value : values) {
+            append(value);
         }
     }
 
@@ -699,15 +699,15 @@ public final class ByteBuf  {
 
 
     public byte[] toBytes() {
-        return Byt.slc( this.buffer, 0, length );
+        return Byt.slc(buffer, 0, length );
     }
     public byte[] toBytes(int start) {
-        return Byt.slc( this.buffer, start, length-start+1);
+        return Byt.slc(buffer, start, length-start+1);
     }
 
 
     public byte[] slc( int startIndex, int endIndex ) {
-        return Byt.slc( this.buffer, startIndex, endIndex );
+        return Byt.slc(buffer, startIndex, endIndex );
     }
 
     public ByteBuf space() {
@@ -715,7 +715,7 @@ public final class ByteBuf  {
         return this;
     }
 
-    final public int getCapacity() {
+    public int getCapacity() {
         return buffer.length;
     }
 }

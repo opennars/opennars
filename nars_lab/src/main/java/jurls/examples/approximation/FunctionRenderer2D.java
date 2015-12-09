@@ -25,12 +25,12 @@ public class FunctionRenderer2D extends JPanel {
     protected void paintComponent(Graphics g) {
         if (renderFunction2D != null) {
             for (int i = 0; i < n; ++i) {
-                final int x = i * getWidth() / n;
+                int x = i * getWidth() / n;
                 double mx = (i + 0.5) / n;
 
                 for (int j = 0; j < n; ++j) {
 
-                    final int y = j * getHeight() / n;
+                    int y = j * getHeight() / n;
                     double my = (j + 0.5) / n;
 
                     double z = renderFunction2D.compute(mx, my);

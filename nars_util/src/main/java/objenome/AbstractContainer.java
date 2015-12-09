@@ -64,7 +64,7 @@ public interface AbstractContainer extends Prototainer {
      *
      * @param scope The scope to be cleared.
      */
-    public void remove(Scope scope);
+    void remove(Scope scope);
 
     /**
      * Clear a single key from cache and return the instance that was cached.
@@ -73,7 +73,7 @@ public interface AbstractContainer extends Prototainer {
      * @return The value that was cached and it is not anymore (was cleared) or
      * null if nothing was cleared
      */
-    public <T> T remove(Object key);    
+    <T> T remove(Object key);
 
 
     /**
@@ -86,7 +86,7 @@ public interface AbstractContainer extends Prototainer {
      * @return true if the container has an instance cached in the scope for
      * this key
      */
-    public boolean contains(Object key);
+    boolean contains(Object key);
     
 
 }

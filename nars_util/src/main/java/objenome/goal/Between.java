@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.PARAMETER)
 public @interface Between {
 
-    public double min();
+    double min();
 
-    public double max();
+    double max();
     
 }

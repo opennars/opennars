@@ -52,11 +52,10 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     public BubbleBag(Random rng, int initialCapacity, float loadFactor) {
-        super();
         this.rng = rng;
-        this.capacity = initialCapacity;
-        this.index = new CuckooMap(rng, capacity, loadFactor);
-        this.queue = new CircularArrayList<>(capacity*2 /* extra space for invalid items */ );
+        capacity = initialCapacity;
+        index = new CuckooMap(rng, capacity, loadFactor);
+        queue = new CircularArrayList<>(capacity*2 /* extra space for invalid items */ );
 
     }
 
@@ -116,17 +115,17 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
         return selected;
     }
 
-    final public boolean contains(K k) {
+    public final boolean contains(K k) {
         return index.containsKey(k);
     }
 
     @Override
-    final public boolean contains(E it) {
+    public final boolean contains(E it) {
             return index.containsKey(it.name());
     }
 
     @Override
-    final public void forEach(Consumer<? super E> action) {
+    public final void forEach(Consumer<? super E> action) {
         queue.forEach(action);
     }
 
@@ -138,10 +137,10 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     protected E next(boolean remove, boolean highEnd) {
         if (size() == 0) return null;
 
-        final int s = queue.size();
-        final int start = highEnd ? 0 : s;
-        final int stop = highEnd ? s-1 : -1;
-        final int inc = highEnd ? 1 : -1;
+        int s = queue.size();
+        int start = highEnd ? 0 : s;
+        int stop = highEnd ? s-1 : -1;
+        int inc = highEnd ? 1 : -1;
 
         E result = null;
         while (size() > 0) {
@@ -223,7 +222,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
     @Override
     public void setCapacity(int c) {
-        this.capacity = c;
+        capacity = c;
     }
 
     /** find starting point, removing trailing invalid items */
@@ -233,7 +232,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
             root = queue.getFirst();
             if (!valid(root)) {
                 queue.removeFirstFast();
-                continue;
             } else
                 break;
         }
@@ -245,7 +243,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
             root = queue.getLast();
             if (!valid(root)) {
                 queue.removeLastFast();
-                continue;
             } else
                 break;
         }
