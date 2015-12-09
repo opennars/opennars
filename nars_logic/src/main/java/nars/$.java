@@ -95,11 +95,16 @@ abstract public class $  {
         return oper(opTerm, $.p(arg));
     }
 
+    public static Compound oper(Atom opTerm, Compound args) {
+        return oper(new Operator(opTerm), args);
+    }
+
     public static Compound oper(Operator opTerm, Compound arg) {
         return new GenericCompound(
                 Op.INHERITANCE,
-                opTerm,
-                arg == null ? Product.Empty : arg);
+                arg == null ? Product.Empty : arg,
+                opTerm
+        );
     }
 
 

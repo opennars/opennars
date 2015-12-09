@@ -27,6 +27,7 @@ import nars.term.Statement;
 import nars.term.Term;
 import nars.term.TermSet;
 import nars.term.TermVector;
+import nars.term.compound.GenericCompound;
 
 /**
  * A Statement about an Equivalence relation.
@@ -121,7 +122,10 @@ public class Equivalence extends Statement {
             predicate = interm;
         }
 
-        return new Equivalence(subject, predicate, temporalOrder);
+        return new GenericCompound(
+            op(temporalOrder),
+            subject, predicate
+        );
     }
 
     /**

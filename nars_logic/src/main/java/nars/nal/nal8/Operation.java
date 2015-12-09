@@ -200,7 +200,7 @@ public interface Operation  {
         return (Compound) operation.term(1);
     }
     static Term opTerm(Compound operation) {
-        return ((Compound)((Compound)operation).term(0)).term(0);
+        return ((Operator)((Compound)operation).term(0)).getTerm();
     }
 
 
@@ -274,16 +274,16 @@ public interface Operation  {
     static <T extends Term> String toString(Compound argsProduct, Term operator, boolean pretty) {
         try {
             StringWriter s = new StringWriter();
-            appendOperation(argsProduct, operator, s, pretty);
+            appendOperation(argsProduct, (Operator)operator, s, pretty);
             return s.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void appendOperation(Compound argsProduct, Term operator, Appendable p, boolean pretty) throws IOException {
+    public static void appendOperation(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
 
-        Term predTerm = operator; //getOperatorTerm();
+        Term predTerm = operator.getTerm(); //getOperatorTerm();
 
         if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format

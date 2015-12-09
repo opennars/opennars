@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import nars.$;
 import nars.NAR;
 import nars.Op;
+import nars.budget.Budget;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
@@ -221,7 +222,7 @@ public class OperatorTest {
                             .eternal()
                             .truth(1f, 0.99f)
                             .parent(question)
-                            .budgetScaled(question.getPriority(), 1f)
+                            .budget((Budget)question)
                             .because("Addition")
                 );
             }

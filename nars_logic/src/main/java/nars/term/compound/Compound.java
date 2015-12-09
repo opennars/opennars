@@ -196,6 +196,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
         final boolean appendedOperator = c.appendOperator(p);
 
+        if (c.size() == 1)
+            p.append(ARGUMENT_SEPARATOR);
 
         c.appendArgs(p, pretty, appendedOperator);
 

@@ -63,15 +63,18 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     }
 
     public static Task command(Class<? extends ImmediateOperator> opClass, Object... args) {
-        return Task.command(operation(opClass, args));
+        return Task.command(
+                operation(opClass,
+                        termizedProduct(args))
+        );
     }
 
-    public static Compound operation(Class<? extends ImmediateOperator> opClass, Object... args) {
-        return operation( opClass, termizedProduct(args));
-    }
-    public static Compound operation(Class<? extends ImmediateOperator> opClass, Product args) {
+//    public static Compound operation(Class<? extends ImmediateOperator> opClass, Object... args) {
+//        return operation( opClass, termizedProduct(args));
+//    }
+    public static Compound operation(Class<? extends ImmediateOperator> opClass, Compound args) {
         return $.oper(
-                $.$(opClass.getSimpleName().toString()),
+                (Atom)$.$(opClass.getSimpleName().toString()),
                 args);
     }
 

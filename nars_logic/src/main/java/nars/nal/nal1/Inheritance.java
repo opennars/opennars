@@ -28,7 +28,7 @@ import nars.term.compound.GenericCompound;
 /**
  * A Statement about an Inheritance relation.
  */
-public interface Inheritance<A extends Term, B extends Term> {
+public interface Inheritance {
 
 
     /** alternate version of Inheritance.make that allows equivalent subject and predicate

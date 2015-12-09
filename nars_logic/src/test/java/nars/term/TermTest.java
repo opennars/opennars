@@ -502,8 +502,8 @@ public class TermTest {
 
     public <C extends Compound> C testStructure(String term, String bits) {
         C a = n.term(term);
-        assertEquals(term, a.toString(true));
         assertEquals(bits, toBinaryString(a.structure()));
+        assertEquals(term, a.toString(true));
         return a;
     }
 

@@ -126,7 +126,7 @@ public class NarseseTest {
         assertEquals(7, t.getTerm().complexity());
     }
 
-    protected void testProductABC(Product p) throws Narsese.NarseseException {
+    protected void testProductABC(Compound p) throws Narsese.NarseseException {
         assertEquals(p.toString() + " should have 3 sub-terms", 3, p.size());
         assertEquals("a", p.term(0).toString());
         assertEquals("b", p.term(1).toString());
@@ -161,7 +161,7 @@ public class NarseseTest {
     @Test
     public void testProduct() throws Narsese.NarseseException {
 
-        Product pt = term("(a, b, c)");
+        Compound pt = term("(a, b, c)");
 
         assertNotNull(pt);
         assertEquals(Op.PRODUCT, pt.op());
@@ -226,7 +226,7 @@ public class NarseseTest {
     protected void testBelieveAB(Compound t) {
         Term[] aa = Operation.argTerms(t);
         assertEquals(2, aa.length);
-        assertEquals("believe", Operation.opTerm(t).toString());
+        assertEquals("^believe", Operation.opTerm(t).toString());
         assertEquals("a", aa[0].toString());
         assertEquals("b", aa[1].toString());
     }
@@ -247,10 +247,15 @@ public class NarseseTest {
 
     @Test
     public void testOperationEquivalence() throws Narsese.NarseseException {
-        assertEquals(
-                term("a(b,c)"),
-                term("<(b,c) --> ^a>")
-        );
+        Term a, b;
+        a = term("a(b,c)");
+        b = term("<(b,c) --> ^a>");
+        assertEquals(a.op(), b.op());
+        assertEquals(a.getClass(), b.getClass());
+        assertEquals(a, b);
+
+
+
     }
 
     @Test
@@ -483,7 +488,7 @@ public class NarseseTest {
 
 
     @Test public void testEmptyProduct() {
-        Product e = term("()");
+        Compound e = term("()");
         assertNotNull(e);
         assertEquals(0, e.size());
 

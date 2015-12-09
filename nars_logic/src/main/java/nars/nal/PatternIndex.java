@@ -39,9 +39,8 @@ public class PatternIndex extends MapIndex {
     /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
     final static class LinearCompoundPattern extends GenericCompound {
 
-        private final Compound seed;
+
         private final Op op;
-        private final int structureCached;
         private final int sizeCached;
         private final int volCached;
         private final int structureCachedWithoutVars;
@@ -53,9 +52,7 @@ public class PatternIndex extends MapIndex {
             super(seed.op(), seed.terms(),
                     (int)((seed instanceof Image) ? (((Image)seed).relation()) : 0)
             );
-            this.seed = seed;
             this.op = seed.op();
-            this.structureCached = seed.structure();
             this.structureCachedWithoutVars =
                 seed.structure() & ~(Op.VARIABLE_BITS);
 
