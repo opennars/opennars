@@ -32,7 +32,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     protected long now;
 
     public TermLinkBuilder(Termed c) {
-        super();
 
         concept = c;
 

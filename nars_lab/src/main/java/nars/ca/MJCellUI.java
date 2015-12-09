@@ -1155,8 +1155,7 @@ class MJCellUI extends Frame {
 		ta.setEditable(false);
 
 		if (!vDescr.isEmpty())
-			for (int i = 0; i < vDescr.size(); i++)
-				ta.append(vDescr.get(i) + '\n');
+			for (String aVDescr : vDescr) ta.append(aVDescr + '\n');
 		else
 			ta.append("\n No description");
 

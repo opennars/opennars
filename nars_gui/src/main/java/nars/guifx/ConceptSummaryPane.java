@@ -112,7 +112,6 @@ public class ConceptSummaryPane extends Text {
 
     class ConceptSummaryPaneIcon extends SummaryIcon {
         public ConceptSummaryPaneIcon() {
-            super();
             repaint();
         }
 

@@ -47,8 +47,7 @@ public class CFGAnalysisExample implements Opcodes {
         cr.accept(cn, ClassReader.SKIP_DEBUG);
 
         List<MethodNode> methods = cn.methods;
-        for (int i = 0; i < methods.size(); ++i) {
-            MethodNode method = methods.get(i);
+        for (MethodNode method : methods) {
             if (method.instructions.size() > 0) {
                 if (!analyzeUselessStores(cn, method)) {
                     Analyzer<?> a = new Analyzer<>(
@@ -120,9 +119,8 @@ public class CFGAnalysisExample implements Opcodes {
                 Frame<SourceValue> f = frames[i];
                 if (f != null) {
                     Set<AbstractInsnNode> s = f.getLocal(var).insns;
-                    Iterator<AbstractInsnNode> j = s.iterator();
-                    while (j.hasNext()) {
-                        insn = j.next();
+                    for (AbstractInsnNode value : s) {
+                        insn = value;
                         if (insn instanceof VarInsnNode) {
                             stores.add(insn);
                         }

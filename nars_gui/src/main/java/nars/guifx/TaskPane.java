@@ -17,7 +17,6 @@ import static nars.guifx.NARfx.scrolled;
 public class TaskPane extends BorderPane {
 
     public TaskPane(NAR nar, Task c) {
-        super();
 
         TextArea ta = new TextArea(c.getExplanation());
         ta.setEditable(false);

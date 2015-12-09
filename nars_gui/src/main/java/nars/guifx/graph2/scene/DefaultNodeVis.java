@@ -55,7 +55,6 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     final Rectangle hoverPanel = new Rectangle();
 
     public DefaultNodeVis() {
-        super();
         nodeScale.addListener((e) -> {
             nodeScaleCache = nodeScale.get();
         });

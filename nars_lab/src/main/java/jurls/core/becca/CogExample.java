@@ -16,7 +16,6 @@ public abstract class CogExample extends IOMatrixExample  {
     double[] output;
     
     public CogExample(Cog z) {
-        super();
 
         cog = z;
     }

@@ -17,7 +17,6 @@ class TreemapRectangle extends Parent {
     private final Rectangle rectangle = new Rectangle();
 
     public TreemapRectangle(TreemapDtoElement child, Color color) {
-        super();
 
         rectangle.setHeight(child.getHeight());
         rectangle.setWidth(child.getWidth());

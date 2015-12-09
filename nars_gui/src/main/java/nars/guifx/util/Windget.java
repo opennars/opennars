@@ -194,7 +194,6 @@ public class Windget extends DefaultWindow  {
         }
 
         public TriangleEdge(RectPort source, RectPort target) {
-            super();
 
             setPickOnBounds(false);
 

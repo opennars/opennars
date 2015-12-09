@@ -21,7 +21,6 @@ public class Permutations  {
     //public E[] output;//next() returns this array, make it public
 
     public Permutations() {
-        super();
     }
 
     public Permutations restart(int size) {

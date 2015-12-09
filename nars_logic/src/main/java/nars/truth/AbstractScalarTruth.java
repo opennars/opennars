@@ -15,7 +15,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
 
     public AbstractScalarTruth() {
-        super();
     }
 
     @Override

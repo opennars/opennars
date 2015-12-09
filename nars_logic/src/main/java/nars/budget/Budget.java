@@ -125,7 +125,6 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * begins with 0.0f for all components
      */
     public Budget() {
-        super();
     }
 
     /**

@@ -80,7 +80,6 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
     }
 
     public Civilization(int threads, int populationSize, int maximumDepth, Collection<Node> additionalOperators) {
-        super();
         this.threads = threads;
         this.populationSize = populationSize;
 

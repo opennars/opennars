@@ -11,7 +11,6 @@ import nars.task.Task;
 public final class TaskNegative extends PreCondition {
 
     public TaskNegative() {
-        super();
     }
 
     @Override

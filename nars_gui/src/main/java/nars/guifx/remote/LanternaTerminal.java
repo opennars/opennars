@@ -49,7 +49,6 @@ public class LanternaTerminal extends Application {
         }
 
         public NTerminal() {
-            super();
 
 
             getStyleClass().addAll("code-area","monoconsole");

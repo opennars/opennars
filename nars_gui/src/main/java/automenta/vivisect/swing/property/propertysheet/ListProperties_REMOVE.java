@@ -107,9 +107,9 @@ public class ListProperties_REMOVE {
 		};
 
 		JToolBar toolbar = new JToolBar();
-		for (int i = 0, n = looks.length; i < n; i++) {
-			JButton button = new JButton(looks[i].getName());
-			button.setActionCommand(looks[i].getClassName());
+		for (UIManager.LookAndFeelInfo look : looks) {
+			JButton button = new JButton(look.getName());
+			button.setActionCommand(look.getClassName());
 			button.addActionListener(actionListener);
 			toolbar.add(button);
 		}
@@ -234,8 +234,8 @@ class TableSorter extends TableMap implements TableModelListener {
 	}
 
 	public int compare(int row1, int row2) {
-		for (int level = 0, n = sortingColumns.size(); level < n; level++) {
-			Integer column = (Integer) sortingColumns.get(level);
+		for (Object sortingColumn : sortingColumns) {
+			Integer column = (Integer) sortingColumn;
 			int result = compareRowsByColumn(row1, row2, column);
 			if (result != 0) {
 				return (ascending ? result : -result);

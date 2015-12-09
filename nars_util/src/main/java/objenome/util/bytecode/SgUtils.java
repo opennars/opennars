@@ -554,9 +554,9 @@ public final class SgUtils {
     public static List<SgAnnotation> createAnnotations(Annotation[] ann) {
         List<SgAnnotation> list = new ArrayList<>();
         if ((ann != null) && (ann.length > 0)) {
-            for (int i = 0; i < ann.length; i++) {
-                SgAnnotation annotation = new SgAnnotation(ann[i].annotationType()
-                        .getPackage().getName(), ann[i].annotationType().getSimpleName());
+            for (Annotation anAnn : ann) {
+                SgAnnotation annotation = new SgAnnotation(anAnn.annotationType()
+                        .getPackage().getName(), anAnn.annotationType().getSimpleName());
                 // TODO Handle annotation arguments
                 list.add(annotation);
             }

@@ -73,7 +73,6 @@ import java.util.Map;
      *
      */
     public GPContainer() {
-        super();
 
     }
 

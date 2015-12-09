@@ -66,7 +66,6 @@ public class NTSCPalette extends ColorPalette {
      * 
      */
     public NTSCPalette() {
-        super();
 
         // Set the palette as given above
         for (int index = 0; index < colorData.length; index++) {

@@ -8,7 +8,6 @@ public class TokenList<T> extends ArrayList<Token<T>> {
     public Integer fromStrBegin = null;
     
     public TokenList(int fromStrBegin) {
-        super();
         this.fromStrBegin = fromStrBegin;
     }
     

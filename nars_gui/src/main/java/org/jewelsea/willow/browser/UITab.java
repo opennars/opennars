@@ -20,7 +20,6 @@ public class UITab<N extends Node> extends Tab {
     
 
     public UITab(N content) {
-        super();
         contnt = content;
     }
     

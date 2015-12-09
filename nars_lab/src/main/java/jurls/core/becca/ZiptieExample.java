@@ -16,7 +16,6 @@ public abstract class ZiptieExample extends IOMatrixExample  {
     double[] output;
     
     public ZiptieExample(Ziptie z) {
-        super();
 
         ziptie = z;
     }

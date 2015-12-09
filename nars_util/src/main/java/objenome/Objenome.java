@@ -36,8 +36,7 @@ public class Objenome {
     private Phenotainer pheno = null;
 
     public Objenome(Multitainer context, Iterable<Solution> parameters) throws InvalidRepresentationException {
-        super();
-                
+
         for (Solution o : parameters)
             genes.put(o.key(), o);
 

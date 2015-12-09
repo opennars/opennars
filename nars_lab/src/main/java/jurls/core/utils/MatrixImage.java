@@ -39,7 +39,6 @@ public class MatrixImage extends JComponent {
     private double minValue;
 
     public MatrixImage(int width, int height) {
-        super();
 
         setDoubleBuffered(true);
         setIgnoreRepaint(true);

@@ -103,7 +103,6 @@ public class WaveCapture implements Runnable {
     }
 
     public WaveCapture(WaveSource source, float updateFrameRate) {
-        super();
 
         setSource(source);
 

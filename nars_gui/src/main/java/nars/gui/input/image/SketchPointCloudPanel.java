@@ -50,8 +50,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
         String[] s = _library.getNames().toArray(new String[0]);
 
-        for (int i = 0; i < s.length; i++) {
-            standardNames.add(s[i]);
+        for (String value : s) {
+            standardNames.add(value);
         }
 
         setLayout(new BorderLayout());

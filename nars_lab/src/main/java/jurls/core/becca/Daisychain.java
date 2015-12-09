@@ -72,12 +72,10 @@ public class Daisychain {
         int p = 0;
         
         double factor = min!=max ? (1.0 / (max-min)) : 1.0;
-        
-        for (int r = 0; r< xd.length; r++) {
-            double[] row = xd[r];
-                        
+
+        for (double[] row : xd) {
             for (int i = 0; i < row.length; i++) row[i] = (row[i] - min) * factor;
-            
+
             System.arraycopy(row, 0, x, p, row.length);
             p += row.length;
         }

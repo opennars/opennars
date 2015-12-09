@@ -152,7 +152,6 @@ public class WebBrowser extends BorderPane {
     }*/
 
     public WebBrowser() {
-        super();
 
         System.out.println("WebBrowser.start()" + (System.currentTimeMillis() - start)/1000.0);
 

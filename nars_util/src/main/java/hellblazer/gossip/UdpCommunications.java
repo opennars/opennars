@@ -91,14 +91,13 @@ public class UdpCommunications implements GossipCommunications {
             InetSocketAddress gossipper = this.gossipper;
 
             int n = deltaState.size();
-            for (int i = 0; i < n; i++) {
-                Update state = deltaState.get(i);
+            for (Update state : deltaState) {
                 if (state.node.equals(gossipper)) {
                     //log.fine(()->"Not sending % to the node that owns it " + state);
 
                 } else {
                     UdpCommunications.this.update(UPDATE, state, gossipper,
-                                                  buffer);
+                            buffer);
                     //buffer.clear();
                 }
             }

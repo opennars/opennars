@@ -31,8 +31,7 @@ public class LevelsParser {
     }
     
     public boolean validDelims(Token[] tokenPair) {
-        for (int i = 0; i < levelDelims.length; i++) {
-            Token[] delims = levelDelims[i];
+        for (Token[] delims : levelDelims) {
             if (delims[0].equals(tokenPair[0]) && delims[1].equals(tokenPair[1])) return true;
         }
         return false;

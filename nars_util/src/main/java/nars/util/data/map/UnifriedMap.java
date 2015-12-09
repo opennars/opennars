@@ -1032,9 +1032,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                 }
             });
         } else {
-            Iterator<? extends Entry<? extends K, ? extends V>> iterator = getEntrySetFrom(map).iterator();
-            while (iterator.hasNext()) {
-                Entry<? extends K, ? extends V> entry = iterator.next();
+            for (Entry<? extends K, ? extends V> entry : getEntrySetFrom(map)) {
                 put(entry.getKey(), entry.getValue());
             }
         }

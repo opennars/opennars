@@ -127,7 +127,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
 
     public NAR(Memory m) {
-        super();
 
         memory = m;
 

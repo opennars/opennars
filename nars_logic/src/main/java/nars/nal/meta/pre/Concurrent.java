@@ -14,7 +14,6 @@ public class Concurrent extends PreCondition {
     public static Concurrent the = new Concurrent();
 
     protected Concurrent() {
-        super();
     }
 
     @Override

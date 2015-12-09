@@ -63,9 +63,8 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
     }
     
     public NSliderSwing(AtomicDouble value, float min, float max) {
-        super();
-        
-        
+
+
         nf.setMaximumFractionDigits(3);
         
         this.value = value;        

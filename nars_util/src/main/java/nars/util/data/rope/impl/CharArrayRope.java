@@ -50,7 +50,6 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
      * @param sequence the character array.
      */
     public CharArrayRope(char[] sequence) {
-        super();
         this.sequence = sequence;
         len = sequence.length;
     }

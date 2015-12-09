@@ -115,8 +115,8 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
             getEngine().eval(code);
 
             // Evaluate each argument set.
-            for (int i = 0; i < noParamSets; i++) {
-                invocableEngine.invokeFunction("expr", argValues[i]);
+            for (Object[] argValue : argValues) {
+                invocableEngine.invokeFunction("expr", argValue);
             }
         } catch (ScriptException | NoSuchMethodException ex) {
             ex.printStackTrace();

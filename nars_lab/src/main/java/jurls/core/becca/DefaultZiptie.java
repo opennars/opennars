@@ -115,7 +115,6 @@ public class DefaultZiptie extends Ziptie {
         private double activity;
         
         public Bundle(int index) {
-            super();
             this.index = index;
         }
 

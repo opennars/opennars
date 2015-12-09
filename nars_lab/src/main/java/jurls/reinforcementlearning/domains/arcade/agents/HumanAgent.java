@@ -58,7 +58,6 @@ public class HumanAgent extends AbstractAgent {
     protected int numFramesToDisplayRewardFor = framesPerSecond * 1;
 
     public HumanAgent() {
-        super();
     }
 
     public HumanAgent(boolean useGUI, String namedPipesName, boolean exportFrames) {

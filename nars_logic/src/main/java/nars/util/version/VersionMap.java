@@ -23,7 +23,6 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     }
 
     public VersionMap(Versioning context, Map<X, Versioned<Y>/*<Y>*/> map) {
-        super();
         this.context = context;
         this.map = map;
     }

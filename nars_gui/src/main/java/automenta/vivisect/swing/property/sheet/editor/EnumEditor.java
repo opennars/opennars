@@ -36,7 +36,6 @@ public class EnumEditor extends ComboBoxPropertyEditor {
 	private Class<? extends Enum<?>> enumeration = null;
 
 	public EnumEditor(Object property) {
-		super();
 
 		if (!(property instanceof Property)) {
 			throw new IllegalArgumentException(String.format("Property has to be a %s instance", Property.class));

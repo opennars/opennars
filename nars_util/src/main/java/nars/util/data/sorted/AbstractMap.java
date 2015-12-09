@@ -444,9 +444,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
             return false;
 
         try {
-            Iterator<Entry<K, V>> i = entrySet().iterator();
-            while (i.hasNext()) {
-                Entry<K, V> e = i.next();
+            for (Entry<K, V> e : entrySet()) {
                 K key = e.getKey();
                 V value = e.getValue();
                 if (value == null) {
@@ -485,9 +483,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     public int hashCode() {
         int h = 0;
-        Iterator<Entry<K, V>> i = entrySet().iterator();
-        while (i.hasNext())
-            h += i.next().hashCode();
+        for (Entry<K, V> kvEntry : entrySet()) h += kvEntry.hashCode();
         return h;
     }
 

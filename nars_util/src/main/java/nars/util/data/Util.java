@@ -371,8 +371,8 @@ public class Util {
 
         int len = str.length;
 
-        for (int i = 0; i < len; i++) {
-            hash = (hash << 4) + str[i];
+        for (byte aStr : str) {
+            hash = (hash << 4) + aStr;
 
             long x;
             if ((x = hash & 0xF0000000L) != 0) {

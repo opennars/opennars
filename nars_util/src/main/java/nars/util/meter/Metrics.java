@@ -95,14 +95,12 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         double max = Double.NEGATIVE_INFINITY;
 
 
-
-        Iterator<Object[]> ii = iterator(); //signal);
-        while (ii.hasNext()) {
-            Object e = ii.next()[signal];
+        for (Object[] objects : (Iterable<Object[]>) this) {
+            Object e = objects[signal];
             if (e instanceof Number) {
-                double d = ((Number)e).doubleValue();
+                double d = ((Number) e).doubleValue();
                 if (d < min) min = d;
-                if (d > max) max = d;                
+                if (d > max) max = d;
             }
         }
         s.setMin(min);
@@ -223,7 +221,6 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
     /** fixed size */
     public Metrics(int historySize) {
-        super();
         history = historySize;
         
         add(new RowKeyMeter());

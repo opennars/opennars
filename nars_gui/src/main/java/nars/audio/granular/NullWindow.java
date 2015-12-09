@@ -8,7 +8,6 @@ public class NullWindow implements GrainWindow {
     private int samples;
 
     public NullWindow(int samples) {
-        super();
         this.samples = samples;
     }
 

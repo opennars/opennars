@@ -144,8 +144,8 @@ public class BrainfuckInterpreter<T extends Organism> extends BrainfuckMachine i
             reset();
 
             // Set inputs as first x memory cells.
-            for (int j = 0; j < paramSet.length; j++) {
-                memory[i] = paramSet[j];
+            for (Byte aParamSet : paramSet) {
+                memory[i] = aParamSet;
             }
 
             // Get the program source code.

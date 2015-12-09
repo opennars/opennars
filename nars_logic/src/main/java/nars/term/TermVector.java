@@ -70,7 +70,6 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @SafeVarargs
     public TermVector(T... t) {
-        super();
         term = t;
         init();
     }

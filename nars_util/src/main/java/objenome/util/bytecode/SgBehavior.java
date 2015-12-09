@@ -46,7 +46,6 @@ public abstract class SgBehavior {
      *            empty).
      */
     public SgBehavior(SgClass owner, String modifiers) {
-        super();
         if (owner == null) {
             throw new IllegalArgumentException("The argument 'owner' cannot be null!");
         }
@@ -258,8 +257,7 @@ public abstract class SgBehavior {
         if (name == null) {
             throw new IllegalArgumentException("The argument 'name' cannot be NULL!");
         }
-        for (int i = 0; i < annotations.size(); i++) {
-            SgAnnotation annotation = annotations.get(i);
+        for (SgAnnotation annotation : annotations) {
             if (annotation.getName().equals(name)) {
                 return true;
             }

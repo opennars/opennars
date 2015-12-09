@@ -30,7 +30,6 @@ public class POJOPane<X> extends BorderPane {
     public final X obj;
 
     public POJOPane(X obj) {
-        super();
         this.obj = obj;
 
         List<Node> pn = propertyNodes(obj);

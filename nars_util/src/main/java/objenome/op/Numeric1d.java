@@ -13,7 +13,6 @@ import objenome.util.TypeUtil;
 public abstract class Numeric1d<Y extends Number> extends Numeric1 {
 
     public Numeric1d() {
-        super();
     }
 
     

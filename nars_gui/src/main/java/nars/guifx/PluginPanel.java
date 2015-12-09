@@ -28,7 +28,6 @@ public class PluginPanel extends VBox {
     double itemSpacing = 8.0;
 
     public PluginPanel(NARide ide) {
-        super();
 
         setSpacing(itemSpacing);
 

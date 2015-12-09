@@ -14,7 +14,6 @@ public class GraphNode extends Group {
 	private double ty = 0.0;
 
 	public GraphNode() {
-		super();
 		setManaged(false);
 		setPickOnBounds(true);
 	}

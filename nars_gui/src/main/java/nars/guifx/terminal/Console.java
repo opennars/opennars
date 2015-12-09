@@ -76,7 +76,6 @@ public class Console extends BorderPane {
 
     public static class WordWrapConsole extends Console {
         public WordWrapConsole() {
-            super();
             textArea.setWrapText(true);
         }
     }

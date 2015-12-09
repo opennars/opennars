@@ -28,7 +28,6 @@ public class Tangible {
         private final Animate boundsTracker;
 
         public Overlay(Node target) {
-            super();
 
             this.target = target;
             setMouseTransparent(true);

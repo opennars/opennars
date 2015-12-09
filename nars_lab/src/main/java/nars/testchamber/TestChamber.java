@@ -152,7 +152,6 @@ public class TestChamber {
     private long lastDrawn = 0;
 
     public TestChamber() {
-        super();
     }
 
     public TestChamber(NAR nar) {
@@ -160,7 +159,6 @@ public class TestChamber {
     }
 
     public TestChamber(NAR nar, boolean showWindow) {
-        super();
 
         int w = 50;
         int h = 50;

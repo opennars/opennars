@@ -36,7 +36,6 @@ public class MalformedProgramException extends Exception {
      * Constructs an exception without a message.
      */
     public MalformedProgramException() {
-        super();
     }
 
     /**

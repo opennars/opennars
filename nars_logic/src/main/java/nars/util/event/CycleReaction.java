@@ -15,7 +15,6 @@ public abstract class CycleReaction implements Consumer<Memory> {
     }
 
     public CycleReaction(Memory memory) {
-        super();
         cycleReg = memory.eventCycleEnd.on(this);
 
     }

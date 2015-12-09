@@ -248,9 +248,8 @@ public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneabl
         result.makeTable(mTable.length);
         result.mSize = 0;
 
-        Iterator<T> it = iterator();
-        while (it.hasNext()) {
-            result.add(it.next());
+        for (T t : (Iterable<T>) this) {
+            result.add(t);
         }
         return result;
     }

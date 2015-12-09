@@ -526,8 +526,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
         s.writeInt(m.size());
 
         // Write out all elements in the proper order.
-        for (Iterator i = m.keySet().iterator(); i.hasNext(); )
-            s.writeObject(i.next());
+        for (E e : m.keySet()) s.writeObject(e);
     }
 
     /**

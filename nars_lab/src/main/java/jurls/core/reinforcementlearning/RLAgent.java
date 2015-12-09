@@ -99,8 +99,7 @@ public class RLAgent extends LearnerAndActor {
         }
 
         double nextFactor1 = 0;
-        for (int i = 0; i < memory.length; ++i) {
-            double[] m = memory[i];
+        for (double[] m : memory) {
             double sum2 = 0;
             for (int j = 0; j < m.length; ++j) {
                 double d = normalizedState[j] - m[j];

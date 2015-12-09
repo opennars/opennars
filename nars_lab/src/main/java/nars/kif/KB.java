@@ -508,8 +508,8 @@ public class KB {
                         } else {
                             valSet = (Set) c1.get(keyTerm);
                             valArr = valSet.toArray();
-                            for (int i = 0; i < valArr.length; i++) {
-                                valTerm = (String) valArr[i];
+                            for (Object aValArr : valArr) {
+                                valTerm = (String) aValArr;
 
                                 valSet2 = (Set) c1.get(valTerm);
                                 if (valSet2 != null) {
@@ -605,8 +605,8 @@ public class KB {
                 ic1KeyTerm = (String) it1.next();
                 ic1ValSet = (Set) ic1.get(ic1KeyTerm);
                 ic1ValArr = ic1ValSet.toArray();
-                for (int i = 0; i < ic1ValArr.length; i++) {
-                    ic1ValTerm = (String) ic1ValArr[i];
+                for (Object anIc1ValArr : ic1ValArr) {
+                    ic1ValTerm = (String) anIc1ValArr;
                     if (ic1ValTerm != null) {
                         sc1ValSet = (Set) sc1.get(ic1ValTerm);
                         if (sc1ValSet != null) {
@@ -686,8 +686,8 @@ public class KB {
                 dc1KeyTerm = (String) dc1KeyArr[i];
                 dc1ValSet = (Set) dc1.get(dc1KeyTerm);
                 dc1ValArr = dc1ValSet.toArray();
-                for (int j = 0; j < dc1ValArr.length; j++) {
-                    dc1ValTerm = (String) dc1ValArr[j];
+                for (Object aDc1ValArr : dc1ValArr) {
+                    dc1ValTerm = (String) aDc1ValArr;
                     sc2ValSet = (Set) sc2.get(dc1ValTerm);
                     if (sc2ValSet != null) {
                         if (dc1ValSet.addAll(sc2ValSet)) {
@@ -1360,8 +1360,8 @@ public class KB {
         ArrayList partial = ask("arg", argnum1, term1);
         ArrayList result = new ArrayList();
         if (partial != null) {
-            for (int i = 0; i < partial.size(); i++) {
-                Formula f = (Formula) partial.get(i);
+            for (Object aPartial : partial) {
+                Formula f = (Formula) aPartial;
                 if (f.getArgument(argnum2).equals(term2)) {
                     result.add(f);
                 }
@@ -1412,15 +1412,15 @@ public class KB {
                 ArrayList newFormulas = new ArrayList((Collection) kif.formulas.get(key));
                 if (formulas.containsKey(key)) {
                     ArrayList oldFormulas = (ArrayList) formulas.get(key);
-                    for (int i = 0; i < newFormulas.size(); i++) {
-                        Formula newFormula = (Formula) newFormulas.get(i);
+                    for (Object newFormula1 : newFormulas) {
+                        Formula newFormula = (Formula) newFormula1;
                         if (pathname != null) {
                             newFormula.sourceFile = pathname;
                         }
 
                         boolean found = false;
-                        for (int j = 0; j < oldFormulas.size(); j++) {
-                            Formula oldFormula = (Formula) oldFormulas.get(j);
+                        for (Object oldFormula1 : oldFormulas) {
+                            Formula oldFormula = (Formula) oldFormula1;
                             if (newFormula.theFormula.equals(oldFormula.theFormula)) {
                                 found = true;
                                 formulasPresent.add(oldFormula);
@@ -2355,10 +2355,10 @@ public class KB {
             Pattern p;
             Integer groupN;
             ArrayList pVal;
-            for (int i = 0; i < patternArray.length; i++) {
-                pName = patternArray[i][0];
-                p = Pattern.compile(patternArray[i][1]);
-                groupN = new Integer(patternArray[i][2]);
+            for (String[] aPatternArray : patternArray) {
+                pName = aPatternArray[0];
+                p = Pattern.compile(aPatternArray[1]);
+                groupN = new Integer(aPatternArray[2]);
                 pVal = new ArrayList();
                 pVal.add(p);
                 pVal.add(groupN);
@@ -3159,9 +3159,8 @@ public class KB {
                 int goodCount = 0;
                 int badCount = 0;
                 List badList = new ArrayList();
-                Iterator it = formulaMap.values().iterator();
-                while (it.hasNext()) {
-                    f = (Formula) it.next();
+                for (Object o : formulaMap.values()) {
+                    f = (Formula) o;
                     if (f.getTheTptpFormulas().isEmpty()) {
                         badCount++;
                         if (badCount < 11) {
@@ -3185,7 +3184,7 @@ public class KB {
                         + ((badCount == 1) ? "" : "s")
                         + (someAreBad ? ":" : ""));
                 if (someAreBad) {
-                    it = badList.iterator();
+                    Iterator it = badList.iterator();
                     for (int i = 1; it.hasNext(); i++) {
                         f = (Formula) it.next();
                         System.out.println("[" + i + "]: " + f);

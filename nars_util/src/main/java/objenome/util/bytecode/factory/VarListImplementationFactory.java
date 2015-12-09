@@ -36,7 +36,6 @@ public final class VarListImplementationFactory {
      *            Pool to use.
      */
     public VarListImplementationFactory(SgClassPool pool) {
-        super();
         factory = new ImplementationFactory(pool);
     }
 
@@ -92,7 +91,6 @@ public final class VarListImplementationFactory {
          */
         public VarListImplFactoryListener(List<SgVariable> vars,
                                           ImplementationFactoryListener listener) {
-            super();
 
             if (vars == null) {
                 throw new IllegalArgumentException("The argument 'args' cannot be null!");
@@ -113,8 +111,7 @@ public final class VarListImplementationFactory {
 
             // Add all arguments as fields and to the constructor
             SgConstructor constructor = new SgConstructor(clasz);
-            for (int i = 0; i < vars.size(); i++) {
-                SgVariable var = vars.get(i);
+            for (SgVariable var : vars) {
                 clasz.addField(new SgField(clasz, "private", var.getType(), var.getName(), ""));
                 SgArgument constructorArg = new SgArgument(constructor, var.getModifiers(),
                         var.getType(), var.getName());

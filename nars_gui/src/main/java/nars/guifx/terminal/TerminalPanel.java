@@ -18,7 +18,6 @@ public class TerminalPanel extends StackPane {
 
 
     public TerminalPanel() {
-        super();
         textArea = new TextArea();
         textArea.setFont(Font.font("Monospaced", 14));
         getChildren().add(textArea);

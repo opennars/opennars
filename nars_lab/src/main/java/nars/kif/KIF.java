@@ -283,10 +283,10 @@ public class KIF {
 
                         keySet.add(f.theFormula);           // Make the formula itself a key
                         f.endLine = st.lineno() + totalLinesForComments;
-                        for (int i = 0; i < keySet.size(); i++) {             // Add the expression but ...
-                            if (formulas.containsKey(keySet.get(i))) {
+                        for (Object aKeySet : keySet) {             // Add the expression but ...
+                            if (formulas.containsKey(aKeySet)) {
                                 if (!formulaSet.contains(f.theFormula)) {  // don't add keys if formula is already present
-                                    list = (ArrayList) formulas.get(keySet.get(i));
+                                    list = (ArrayList) formulas.get(aKeySet);
                                     if (!list.contains(f)) {
                                         list.add(f);
                                     }
@@ -294,7 +294,7 @@ public class KIF {
                             } else {
                                 list = new ArrayList();
                                 list.add(f);
-                                formulas.put((String) keySet.get(i), list);
+                                formulas.put((String) aKeySet, list);
                             }
                         }
                         formulaSet.add(f.theFormula);
@@ -475,8 +475,8 @@ public class KIF {
 
         int len = 0;
         char[] cArray = str.toCharArray();
-        for (int i = 0; i < cArray.length; i++) {
-            if (cArray[i] == c) {
+        for (char aCArray : cArray) {
+            if (aCArray == c) {
                 len++;
             }
         }

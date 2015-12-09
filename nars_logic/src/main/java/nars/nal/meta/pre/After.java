@@ -15,7 +15,6 @@ public class After extends PreCondition {
     public static final After the = new After();
 
     protected After() {
-        super();
     }
 
     @Override

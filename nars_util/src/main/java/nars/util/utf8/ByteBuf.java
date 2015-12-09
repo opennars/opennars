@@ -543,8 +543,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            append(values[index]);
+        for (short value : values) {
+            append(value);
         }
     }
 
@@ -575,8 +575,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            append(values[index]);
+        for (int value : values) {
+            append(value);
         }
     }
 //
@@ -611,8 +611,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            append(values[index]);
+        for (long value : values) {
+            append(value);
         }
     }
 
@@ -644,8 +644,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            append(values[index]);
+        for (float value : values) {
+            append(value);
         }
     }
 
@@ -680,8 +680,8 @@ public final class ByteBuf  {
         if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            append(values[index]);
+        for (double value : values) {
+            append(value);
         }
     }
 

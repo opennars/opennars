@@ -25,7 +25,6 @@ public class JBindedCheckBox extends javax.swing.JCheckBox {
 	 * 
 	 */
 	public JBindedCheckBox() {
-		super();
 	}
 
 	/**

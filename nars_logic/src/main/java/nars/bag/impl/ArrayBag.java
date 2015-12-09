@@ -37,7 +37,6 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     }
 
     public ArrayBag(SortedIndex<V> items, Map<K,V> map) {
-        super();
 
         items.clear();
 

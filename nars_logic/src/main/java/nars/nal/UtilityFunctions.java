@@ -31,7 +31,8 @@ import static java.lang.Math.sqrt;
  */
 public class UtilityFunctions extends Util {
 
-    protected UtilityFunctions() { super();    }
+    protected UtilityFunctions() {
+    }
 
     /**
      * A function where the output is conjunctively determined by the inputs

@@ -283,9 +283,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
                     yVel = 0.97f * yVel;
                 } else {
 
-                    for (int gi = 0; gi < gravitonAL.size(); gi++) { // for every graviton
-
-                        Graviton v = gravitonAL.get(gi);
+                    for (Graviton v : gravitonAL) { // for every graviton
 
                         if (v != null) {
 
@@ -406,8 +404,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
         g.drawString("Particles : " + particleAL.size(), 5, 28);
         g.drawString("Gravity Well : " + gravitonAL.size(), 5, 41);
 
-        for (int gi = 0, gAL = gravitonAL.size(); gi < gAL; gi++) {
-            Graviton v = gravitonAL.get(gi);
+        for (Graviton v : gravitonAL) {
             g.fillRect((int) v.xPos * 2, 0, 2, 16);
             g.fillRect(0, (int) v.yPos * 2, 16, 2);
         }
@@ -528,9 +525,9 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
         }
 
         if (KeyChar == 120 /*KeyEvent.VK_X*/) {
-            for (int x_I = 0; x_I < blockArray.length; x_I++) {
+            for (Block[] aBlockArray : blockArray) {
                 for (int y_I = 0; y_I < blockArray[1].length; y_I++) {
-                    blockArray[x_I][y_I].setBlock(0, 0, 0, 0);
+                    aBlockArray[y_I].setBlock(0, 0, 0, 0);
                 }
             }
         }

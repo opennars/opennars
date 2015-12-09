@@ -22,7 +22,6 @@ public class DefaultSurfaceModel extends AbstractSurfaceModel implements Surface
 	 * Empty Surface Model
 	 */
 	public DefaultSurfaceModel() {
-		super();
 	}
 
 	

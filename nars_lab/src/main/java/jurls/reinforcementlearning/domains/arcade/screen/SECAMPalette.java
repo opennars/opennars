@@ -66,7 +66,6 @@ public class SECAMPalette extends ColorPalette {
      * 
      */
     public SECAMPalette() {
-        super();
 
         // Set the palette as given above
         for (int index = 0; index < colorData.length; index++) {

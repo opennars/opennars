@@ -1793,10 +1793,8 @@ public class IndexedTreeMap<K, V>
                 if (size == -1 || sizeModCount != m.modCount) {
                     sizeModCount = m.modCount;
                     size = 0;
-                    Iterator i = iterator();
-                    while (i.hasNext()) {
+                    for (Object o : this) {
                         size++;
-                        i.next();
                     }
                 }
                 return size;
@@ -2731,8 +2729,7 @@ public class IndexedTreeMap<K, V>
         s.writeInt(size);
 
         // Write out keys and values (alternating)
-        for (Iterator<Map.Entry<K, V>> i = entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry<K, V> e = i.next();
+        for (Map.Entry<K, V> e : entrySet()) {
             s.writeObject(e.getKey());
             s.writeObject(e.getValue());
         }

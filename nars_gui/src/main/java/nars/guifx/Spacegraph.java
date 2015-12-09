@@ -168,7 +168,6 @@ public class Spacegraph extends ZoomFX {
 
 
     public Spacegraph() {
-        super();
 
         //setCacheShape(false);
         //getChildren().add(0, new GridCanvas(true));

@@ -135,9 +135,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
         boolean activity = false;
 
-        for (int i = 0; i < numTemplates; i++) {
-
-            TermLinkTemplate t = tl.get(i);
+        for (TermLinkTemplate t : tl) {
 
             /*if ((t.getTarget().equals(getTerm()))) {
                 //self
@@ -247,9 +245,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
         taskLinkBuilder.setBudget(subBudget);
 
 
-        for (int i = 0; i < numTemplates; i++) {
-            TermLinkTemplate linkTemplate = templates.get(i);
-
+        for (TermLinkTemplate linkTemplate : templates) {
             //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
 
 //            final Term componentTerm = linkTemplate.getTarget();

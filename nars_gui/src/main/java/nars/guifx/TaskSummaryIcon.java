@@ -23,7 +23,6 @@ public class TaskSummaryIcon extends SummaryIcon implements Runnable {
     transient float lastPriority = -1;
 
     public TaskSummaryIcon(Task i, Region parent) {
-        super();
 
         task = i;
 

@@ -149,7 +149,6 @@ public abstract class SpaceNet extends Group {
 
 
     public SpaceNet() {
-        super();
 
         getChildren().add(world);
 

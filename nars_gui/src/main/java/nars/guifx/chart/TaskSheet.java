@@ -18,7 +18,6 @@ public class TaskSheet extends BorderPane {
     private final FlowPane header;
 
     public TaskSheet(NAR n) {
-        super();
 
         nar = n;
 

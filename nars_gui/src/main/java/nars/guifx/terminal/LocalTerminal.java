@@ -15,7 +15,6 @@ public class LocalTerminal extends TerminalPanel {
     private Process pty;
 
     public LocalTerminal()  {
-        super();
 
         try {
             connect();

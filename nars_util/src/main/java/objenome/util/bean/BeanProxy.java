@@ -6,7 +6,6 @@ import java.lang.reflect.Proxy;
 public final class BeanProxy {
 
     private BeanProxy() {
-        super();
     }
 
     public static boolean isProxyClass(Object o) {

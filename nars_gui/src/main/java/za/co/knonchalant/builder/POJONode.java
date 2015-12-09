@@ -674,7 +674,6 @@ public class POJONode {
     /** //attach listener that updates content inside its own managed wrapper */
     public static class ObjectPropertyNode<O> extends VBox implements ChangeListener<O> {
         public ObjectPropertyNode(ObjectProperty<O> op) {
-            super();
             op.addListener(this);
             changed(op, null, op.get());
         }

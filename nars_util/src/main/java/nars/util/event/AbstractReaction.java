@@ -20,7 +20,6 @@ public abstract class AbstractReaction<K,V> implements Reaction<K,V> {
 
     @SafeVarargs
     public AbstractReaction(EventEmitter<K,V> source, boolean active, K... events) {
-        super();
 
         this.events = events;
         this.source = source;

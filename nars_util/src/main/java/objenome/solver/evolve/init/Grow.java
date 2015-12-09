@@ -465,8 +465,8 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
                     for (int i = 0; i < n.getArity(); i++) {
                         // Build list of the valid arg types for this child
                         returnTypes = new ArrayList<>();
-                        for (int j = 0; j < valid.size(); j++) {
-                            returnTypes.add(valid.get(j)[i]);
+                        for (Class<?>[] aValid : valid) {
+                            returnTypes.add(aValid[i]);
                         }
 
                         BigInteger childVarieties = varieties(remainingDepth - 1, returnTypes);
@@ -554,8 +554,8 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
                     for (int i = 0; i < n.getArity(); i++) {
                         // Build list of the valid arg types for this child
                         returnTypes = new ArrayList<>();
-                        for (int j = 0; j < valid.size(); j++) {
-                            returnTypes.add(valid.get(j)[i]);
+                        for (Class<?>[] aValid : valid) {
+                            returnTypes.add(aValid[i]);
                         }
 
                         //TODO This shouldn't be using varieties here - needs to call self

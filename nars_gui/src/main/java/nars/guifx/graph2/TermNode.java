@@ -47,7 +47,6 @@ public class TermNode<K extends Termed> extends GraphNode {
 
 
     public TermNode(K t, int maxEdges) {
-        super();
 
         if (t instanceof Concept) c = (Concept)t; //HACK
 

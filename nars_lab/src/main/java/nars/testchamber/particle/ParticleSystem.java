@@ -248,9 +248,7 @@ public class ParticleSystem  {
                     yVel = 0.97f * yVel;
                 } else {
 
-                    for (int gi = 0; gi < gravitonAL.size(); gi++) { // for every graviton
-
-                        Graviton v = gravitonAL.get(gi);
+                    for (Graviton v : gravitonAL) { // for every graviton
 
                         if (v != null) {
 

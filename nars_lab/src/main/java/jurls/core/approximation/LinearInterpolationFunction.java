@@ -19,7 +19,6 @@ public class LinearInterpolationFunction implements ParameterizedFunction, Funct
     protected TreeMap<Double,Double> evidence = new TreeMap();
 
     public LinearInterpolationFunction(int numInputs, int numPoints) {
-        super();
         this.numPoints = numPoints;
     }
 

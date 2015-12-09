@@ -15,7 +15,6 @@ package nars.util.data.id;
 public abstract class CompressedUTF8Identifier extends UTF8Identifier {
 
     public CompressedUTF8Identifier(byte[] source) {
-        super();
 
     }
 

@@ -21,7 +21,6 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     private final T term;
 
     public Operator(T the) {
-        super();
 
         term = the;
     }

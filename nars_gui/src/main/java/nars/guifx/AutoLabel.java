@@ -16,7 +16,6 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
     protected String text;
 
     public AutoLabel(T obj) {
-        super();
 
         this.obj = obj;
         text = null;

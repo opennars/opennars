@@ -330,8 +330,8 @@ public abstract boolean isActive(K event);
 //        }
 
         public synchronized void off() {
-            for (int i = 0; i < size(); i++) {
-                get(i).off();
+            for (EventRegistration eventRegistration : this) {
+                eventRegistration.off();
             }
             clear();
         }

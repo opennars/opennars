@@ -34,7 +34,6 @@ public class TextInput extends TaskQueue {
 
 
     public TextInput(NAR n, String input) {
-        super();
         process(n, input);
     }
 

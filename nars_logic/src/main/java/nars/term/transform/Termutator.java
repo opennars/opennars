@@ -16,7 +16,6 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     private final TermContainer compound;
 
     public Termutator(Random rng, TermContainer x) {
-        super();
         restart(x.size(), rng);
         compound = x;
     }

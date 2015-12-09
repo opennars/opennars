@@ -1067,8 +1067,8 @@ public class WordNet {
                 HashMap senseAssoc = (HashMap) wordFrequencies.get(sense.intern());
                 if (senseAssoc != null) {
                     int total = 0;
-                    for (int j = 0; j < words.size(); j++) {
-                        String lowercase = ((String) words.get(j)).toLowerCase().intern();
+                    for (Object word1 : words) {
+                        String lowercase = ((String) word1).toLowerCase().intern();
                         if (senseAssoc.containsKey(lowercase)) {
                             total += ((Number) senseAssoc.get(lowercase)).intValue();
                         }
@@ -1253,8 +1253,8 @@ public class WordNet {
 
         String result = "";
         ArrayList al = splitToArrayList(sentence);
-        for (int i = 0; i < al.size(); i++) {
-            String word = (String) al.get(i);
+        for (Object anAl : al) {
+            String word = (String) anAl;
             if (!stopwords.contains(word.toLowerCase())) {
                 result = "".equals(result) ? word : result + ' ' + word;
             }
@@ -1636,8 +1636,8 @@ public class WordNet {
         String nounRoot = nounRootForm(word, word.toLowerCase());
         ArrayList senses = (ArrayList) wordsToSenses.get(verbRoot);
         if (senses != null) {
-            for (int i = 0; i < senses.size(); i++) {
-                String sense = (String) senses.get(i);                // returns a word_POS_num
+            for (Object sense1 : senses) {
+                String sense = (String) sense1;                // returns a word_POS_num
                 String POS = WordNetUtilities.getPOSfromKey(sense);
                 String synset = WordNetUtilities.posLettersToNumber(POS) + senseIndex.get(sense);
                 ArrayList words = (ArrayList) synsetsToWords.get(synset);
@@ -1654,8 +1654,8 @@ public class WordNet {
         }
         senses = (ArrayList) wordsToSenses.get(nounRoot);
         if (senses != null) {
-            for (int i = 0; i < senses.size(); i++) {
-                String sense = (String) senses.get(i);                // returns a word_POS_num                                
+            for (Object sense1 : senses) {
+                String sense = (String) sense1;                // returns a word_POS_num
                 String POS = WordNetUtilities.getPOSfromKey(sense);
                 String synset = WordNetUtilities.posLettersToNumber(POS) + senseIndex.get(sense);
                 ArrayList words = (ArrayList) synsetsToWords.get(synset);
@@ -1912,8 +1912,8 @@ public class WordNet {
     private static boolean arrayContains(int[] ar, int value) {
 
         //System.out.println("INFO in WordNet.arrayContains: value: " + value);
-        for (int i = 0; i < ar.length; i++) {
-            if (ar[i] == value) {
+        for (int anAr : ar) {
+            if (anAr == value) {
                 return true;
             }
         }
@@ -1942,8 +1942,8 @@ public class WordNet {
         if (res != null) {
             frames.addAll(res);
         }
-        for (int i = 0; i < frames.size(); i++) {
-            int value = Integer.valueOf((String) frames.get(i));
+        for (Object frame : frames) {
+            int value = Integer.valueOf((String) frame);
             if (arrayContains(intrans, value)) {
                 intransitive = "intransitive";
             } else if (arrayContains(ditrans, value)) {
@@ -2015,8 +2015,7 @@ public class WordNet {
             }
             String[] synsetList = splitSynsets(stringSynsets);
             Iterator it2 = verbSUMOHash.keySet().iterator();
-            for (int i = 0; i < synsetList.length; i++) {
-                String synset = synsetList[i];
+            for (String synset : synsetList) {
                 String sumoTerm = (String) verbSUMOHash.get(synset);
                 if (sumoTerm != null && !"".equals(sumoTerm)) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
@@ -2060,8 +2059,7 @@ public class WordNet {
             }
             String[] synsetList = splitSynsets(stringSynsets);
             Iterator it2 = adjectiveSUMOHash.keySet().iterator();
-            for (int i = 0; i < synsetList.length; i++) {
-                String synset = synsetList[i];
+            for (String synset : synsetList) {
                 String sumoTerm = (String) adjectiveSUMOHash.get(synset);
                 if (sumoTerm != null && !"".equals(sumoTerm)) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
@@ -2099,8 +2097,7 @@ public class WordNet {
             }
             String[] synsetList = splitSynsets(stringSynsets);
             Iterator it2 = verbSUMOHash.keySet().iterator();
-            for (int i = 0; i < synsetList.length; i++) {
-                String synset = synsetList[i];
+            for (String synset : synsetList) {
                 String sumoTerm = (String) verbSUMOHash.get(synset);
                 if (sumoTerm != null && !"".equals(sumoTerm)) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
@@ -2134,8 +2131,7 @@ public class WordNet {
                 }
             }
             String[] synsetList = splitSynsets(stringSynsets);
-            for (int i = 0; i < synsetList.length; i++) {
-                String synset = synsetList[i];
+            for (String synset : synsetList) {
                 String sumoTerm = (String) nounSUMOHash.get(synset);
                 if (sumoTerm != null && !"".equals(sumoTerm)) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);

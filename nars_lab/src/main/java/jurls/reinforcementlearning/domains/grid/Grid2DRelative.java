@@ -51,8 +51,8 @@ public class Grid2DRelative implements World {
             g2.clearRect(0, 0, width, height);
             
             int px = 0, py = 0;
-            for (int i = 0; i < sensor.length; i++) {
-                g2.setPaint(Color.getHSBColor(0.5f, 0.5f, (float)sensor[i]));
+            for (double aSensor : sensor) {
+                g2.setPaint(Color.getHSBColor(0.5f, 0.5f, (float) aSensor));
                 g2.fillRect(px, py, 1, 1);
                 px++;
                 if (px == width) {

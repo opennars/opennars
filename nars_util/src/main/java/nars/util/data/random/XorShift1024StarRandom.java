@@ -64,8 +64,7 @@ public class XorShift1024StarRandom extends Random {
 	 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 	 */
 	public XorShift1024StarRandom( long seed ) {
-		super(  );
-        setSeed(seed);
+		setSeed(seed);
 	}
 
 	@Override

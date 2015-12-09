@@ -298,7 +298,6 @@ public class NARide extends BorderPane {
 
 
     public NARide(NARLoop l) {
-        super();
 
 
         nar = l.nar;

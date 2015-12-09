@@ -13,7 +13,6 @@ public final class PostSolve extends PreCondition {
     public static final PostSolve the = new PostSolve();
 
     protected PostSolve() {
-        super();
     }
 
 

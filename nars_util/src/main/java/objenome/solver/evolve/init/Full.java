@@ -350,8 +350,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
 
         if (remainingDepth > 0) {
             int nts = nonTerminals.size();
-            for (int i = 0; i < nts; i++) {
-                Node n = nonTerminals.get(i);
+            for (Node n : nonTerminals) {
                 Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[remainingDepth - 1]);
 
                 for (Class<?>[] argTypes : argTypeSets) {
@@ -364,8 +363,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
             }
         } else {
             int nts = terminals.size();
-            for (int i = 0; i < nts; i++) {
-                Node n = terminals.get(i);
+            for (Node n : terminals) {
                 if (n.dataType().isAssignableFrom(requiredType)) {
                     validNodeTemporary.add(n);
                 }

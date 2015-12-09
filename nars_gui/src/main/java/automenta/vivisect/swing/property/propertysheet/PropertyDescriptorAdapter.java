@@ -36,7 +36,6 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 	private PropertyDescriptor descriptor;
 
 	public PropertyDescriptorAdapter() {
-		super();
 	}
 
 	public PropertyDescriptorAdapter(PropertyDescriptor descriptor) {

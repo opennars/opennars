@@ -61,8 +61,8 @@ public class GenerationStandardDeviationDoubleFitness extends AbstractStat<EndGe
 
         // Sum the squared differences.
         double sqDiff = 0;
-        for (int i = 0; i < fitnesses.length; i++) {
-            sqDiff += Math.pow(((DoubleFitness) fitnesses[i]).getValue() - average, 2);
+        for (Fitness fitness : fitnesses) {
+            sqDiff += Math.pow(((DoubleFitness) fitness).getValue() - average, 2);
         }
 
         // Take the square root of the average.

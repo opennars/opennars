@@ -34,7 +34,6 @@ public abstract class Temporality extends PreCondition {
     };
 
     protected Temporality() {
-        super();
     }
 
 }

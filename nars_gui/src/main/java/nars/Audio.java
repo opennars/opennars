@@ -114,7 +114,6 @@ public class Audio implements Runnable
         final float distanceFactor = 1.0f;
 
         DefaultSource(SoundProducer p) {
-            super();
             producer = p;
         }
 

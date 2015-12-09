@@ -58,9 +58,8 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
     BufferedImageOp op = new ConvolveOp(kernel);
     
     public BaseClass()   
-    {   
-        super();
-        db = null;   
+    {
+        db = null;
         buffer = null;   
         mouseMove = false;   
         mouseDown = false;   

@@ -109,8 +109,7 @@ public class STGPBoolean extends ProblemSTGP {
     }
 
     public STGPBoolean(Boolean[][] inputValues, Boolean[] expectedOutputs, int populationSize, int maxGenerations) {
-        super();
-        
+
 
         the(Population.SIZE, populationSize);
         

@@ -39,7 +39,6 @@ final class ImplementedMethod {
      *            Method - Cannot be <code>null</code>.
      */
     public ImplementedMethod(SgMethod method) {
-        super();
         if (method == null) {
             throw new IllegalArgumentException("The argument 'method' cannot be null!");
         }

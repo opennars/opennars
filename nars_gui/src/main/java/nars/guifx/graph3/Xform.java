@@ -55,12 +55,10 @@ public class Xform extends Group {
     public Scale s = new Scale();
 
     public Xform() {
-        super();
         getTransforms().addAll(t, rz, ry, rx, s);
     }
 
-    public Xform(RotateOrder rotateOrder) { 
-        super();
+    public Xform(RotateOrder rotateOrder) {
         // choose the order of rotations based on the rotateOrder
         switch (rotateOrder) {
         case XYZ:

@@ -88,7 +88,6 @@ public final class ByteCodeGenerator {
      */
     public ByteCodeGenerator(ClassPool pool, ClassLoader classLoader,
                              ProtectionDomain domain) {
-        super();
         this.pool = pool == null ? ClassPool.getDefault() : pool;
         this.classLoader = this.pool.getClassLoader();
         this.domain = null;
@@ -130,9 +129,8 @@ public final class ByteCodeGenerator {
     private void addMethods(SgClass modelClass, CtClass clasz)
             throws CannotCompileException, NotFoundException {
         List<SgMethod> methods = modelClass.getMethods();
-        for (int i = 0; i < methods.size(); i++) {
+        for (SgMethod method : methods) {
 
-            SgMethod method = methods.get(i);
             // TODO Javassist cannot handle annotations
             String src = method.toString(false);
             CtMethod ctMethod = CtNewMethod.make(src, clasz);
@@ -154,9 +152,8 @@ public final class ByteCodeGenerator {
     private void addConstructors(SgClass modelClass, CtClass clasz)
             throws CannotCompileException, NotFoundException {
         List<SgConstructor> constructors = modelClass.getConstructors();
-        for (int i = 0; i < constructors.size(); i++) {
+        for (SgConstructor constructor : constructors) {
 
-            SgConstructor constructor = constructors.get(i);
             String src = constructor.toString();
             CtConstructor ctConstructor = CtNewConstructor.make(src, clasz);
             clasz.addConstructor(ctConstructor);
@@ -165,7 +162,7 @@ public final class ByteCodeGenerator {
             List<SgClass> exceptions = constructor.getExceptions();
             if (!exceptions.isEmpty()) {
                 CtClass[] exceptionTypes = new CtClass[exceptions.size()];
-                for (int j = 0; j < exceptions.size(); j++) {                    
+                for (int j = 0; j < exceptions.size(); j++) {
                     exceptionTypes[j] = pool.get(exceptions.get(j).getName());
                 }
                 ctConstructor.setExceptionTypes(exceptionTypes);
@@ -177,8 +174,7 @@ public final class ByteCodeGenerator {
     private static void addFields(SgClass modelClass, CtClass clasz)
             throws CannotCompileException {
         List<SgField> fields = modelClass.getFields();
-        for (int i = 0; i < fields.size(); i++) {
-            SgField field = fields.get(i);
+        for (SgField field : fields) {
             String src = field.toString();
             CtField ctField = CtField.make(src, clasz);
             clasz.addField(ctField);
@@ -189,8 +185,7 @@ public final class ByteCodeGenerator {
             throws NotFoundException {
         List<SgClass> interfaces = modelClass.getInterfaces();
         if (!interfaces.isEmpty()) {
-            for (int i = 0; i < interfaces.size(); i++) {
-                SgClass intf = interfaces.get(i);
+            for (SgClass intf : interfaces) {
                 clasz.addInterface(pool.get(intf.getName()));
             }
         }

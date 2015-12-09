@@ -285,9 +285,9 @@ public class MidiClock extends JPanel implements Clock {
 
 
         public Key getKey(Point point) {
-            for (int i = 0; i < keys.size(); i++) {
-                if (((Key) keys.get(i)).contains(point)) {
-                    return (Key) keys.get(i);
+            for (Object key : keys) {
+                if (((Key) key).contains(point)) {
+                    return (Key) key;
                 }
             }
             return null;
@@ -303,8 +303,8 @@ public class MidiClock extends JPanel implements Clock {
             g2.setColor(Color.white);
             g2.fillRect(0, 0, 42*kw, kh);
 
-            for (int i = 0; i < whiteKeys.size(); i++) {
-                Key key = (Key) whiteKeys.get(i);
+            for (Object whiteKey : whiteKeys) {
+                Key key = (Key) whiteKey;
                 if (key.isNoteOn()) {
                     g2.setColor(record ? pink : jfcBlue);
                     g2.fill(key);
@@ -312,8 +312,8 @@ public class MidiClock extends JPanel implements Clock {
                 g2.setColor(Color.black);
                 g2.draw(key);
             }
-            for (int i = 0; i < blackKeys.size(); i++) {
-                Key key = (Key) blackKeys.get(i);
+            for (Object blackKey : blackKeys) {
+                Key key = (Key) blackKey;
                 if (key.isNoteOn()) {
                     g2.setColor(record ? pink : jfcBlue);
                     g2.fill(key);
@@ -429,8 +429,8 @@ public class MidiClock extends JPanel implements Clock {
             table.setPreferredScrollableViewportSize(new Dimension(nCols*110, 200));
             table.setCellSelectionEnabled(true);
             table.setColumnSelectionAllowed(true);
-            for (int i = 0; i < names.length; i++) {
-                TableColumn column = table.getColumn(names[i]);
+            for (String name : names) {
+                TableColumn column = table.getColumn(name);
                 column.setPreferredWidth(110);
             }
             table.setAutoResizeMode(table.AUTO_RESIZE_OFF);
@@ -593,11 +593,11 @@ public class MidiClock extends JPanel implements Clock {
         public void actionPerformed(ActionEvent e) {
             JButton button = (JButton) e.getSource();
             if (button.getText().startsWith("All")) {
-                for (int i = 0; i < channels.length; i++) {
-                    channels[i].channel.allNotesOff();
+                for (ChannelData channel : channels) {
+                    channel.channel.allNotesOff();
                 }
-                for (int i = 0; i < keys.size(); i++) {
-                    ((Key) keys.get(i)).setNoteState(OFF);
+                for (Object key : keys) {
+                    ((Key) key).setNoteState(OFF);
                 }
             } else if (button.getText().startsWith("Record")) {
                 if (recordFrame != null) {

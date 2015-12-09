@@ -29,7 +29,6 @@ public abstract class TermFunction<O> extends SyncOperator {
     private final float feedbackDurabilityMultiplier = 1.0f;
 
     protected TermFunction() {
-        super();
     }
 
     protected TermFunction(Term name) {

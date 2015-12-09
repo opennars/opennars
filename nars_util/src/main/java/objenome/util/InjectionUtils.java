@@ -30,9 +30,7 @@ public class InjectionUtils {
 
         Method[] methods = klass.getMethods();
 
-        for (int i = 0; i < methods.length; i++) {
-
-            Method m = methods[i];
+        for (Method m : methods) {
 
             String name = m.getName();
 
@@ -95,9 +93,7 @@ public class InjectionUtils {
 
         Field[] f = klass.getDeclaredFields();
 
-        for (int i = 0; i < f.length; i++) {
-
-            Field field = f[i];
+        for (Field field : f) {
 
             field.setAccessible(true);
 
@@ -376,9 +372,9 @@ public class InjectionUtils {
 
     public static Field getField(Class<?> target, String name) {
         Field[] fields = target.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            if (name.equals(fields[i].getName())) {
-                return fields[i];
+        for (Field field : fields) {
+            if (name.equals(field.getName())) {
+                return field;
             }
         }
         return null;
@@ -689,11 +685,8 @@ public class InjectionUtils {
             }
         }
 
-        Iterator<Map.Entry<String, Object>> iter = setters.entrySet().iterator();
+        for (Map.Entry<String, Object> evar : setters.entrySet()) {
 
-        while (iter.hasNext()) {
-
-            Map.Entry<String, Object> evar = iter.next();
             String var = evar.getKey();
 
             boolean hasValue = provider.hasValue(var);
@@ -801,11 +794,8 @@ public class InjectionUtils {
 
         if (fields != null) {
 
-            Iterator<Map.Entry<String, Object>> x = fields.entrySet().iterator();
+            for (Map.Entry<String, Object> evar : fields.entrySet()) {
 
-            while (x.hasNext()) {
-
-                Map.Entry<String, Object> evar = x.next();
                 String var = evar.getKey();
 
                 boolean hasValue = provider.hasValue(var);
@@ -836,7 +826,7 @@ public class InjectionUtils {
                 // if (value == null) continue;
                 if (value == null
                         || (type.isAssignableFrom(value.getClass()) || checkPrimitives(type, value.getClass()) || (tryToConvert && ((isBlank(value) && (value = shouldConvertToNull(
-                                value, type)) == null) || (value = tryToConvert(value, type)) != null)))) {
+                        value, type)) == null) || (value = tryToConvert(value, type)) != null)))) {
 
                     try {
 

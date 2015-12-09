@@ -62,7 +62,6 @@ public class FaceGUI extends BaseClass {
 
     
     public FaceGUI() {
-        super();
         firstVertices = true;
         isVectors = false;
         doShade = false;

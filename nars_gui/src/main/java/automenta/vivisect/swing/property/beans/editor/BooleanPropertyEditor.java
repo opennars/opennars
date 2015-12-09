@@ -26,7 +26,6 @@ import automenta.vivisect.swing.property.util.ResourceManager;
 public class BooleanPropertyEditor extends ComboBoxPropertyEditor {
 
   public BooleanPropertyEditor() {
-    super();
     setAvailableValues(new Object[]{
         new Value(Boolean.TRUE, ResourceManager.common().getString("true")),
         new Value(Boolean.FALSE, ResourceManager.common().getString("false"))

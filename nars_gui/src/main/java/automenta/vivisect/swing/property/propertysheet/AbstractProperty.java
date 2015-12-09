@@ -63,16 +63,14 @@ public abstract class AbstractProperty implements Property {
     listeners.addPropertyChangeListener(listener);
     Property[] subProperties = getSubProperties();
     if (subProperties != null)
-	  for ( int i = 0; i < subProperties.length; ++i )
-	    subProperties[i].addPropertyChangeListener( listener );
+      for (Property subProperty : subProperties) subProperty.addPropertyChangeListener(listener);
   }
 
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     listeners.removePropertyChangeListener(listener);
     Property[] subProperties = getSubProperties();
     if (subProperties != null)
-	  for ( int i = 0; i < subProperties.length; ++i )
-	    subProperties[i].removePropertyChangeListener( listener );
+      for (Property subProperty : subProperties) subProperty.removePropertyChangeListener(listener);
   }
 
   protected void firePropertyChange(Object oldValue, Object newValue) {

@@ -464,7 +464,6 @@ public abstract class AbstractNAR extends NAR {
         /* ---------- Short-term workspace for a single cycle ------- */
 
         public DefaultCycle(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
-            super();
 
             this.nar = nar;
             conceptActivator = ca;

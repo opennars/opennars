@@ -52,7 +52,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     }
 
     public BubbleBag(Random rng, int initialCapacity, float loadFactor) {
-        super();
         this.rng = rng;
         capacity = initialCapacity;
         index = new CuckooMap(rng, capacity, loadFactor);

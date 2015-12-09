@@ -32,7 +32,6 @@ public class NARui {
 
 
     public NARui(NAR s) {
-        super();
         nar = s;
 
     }

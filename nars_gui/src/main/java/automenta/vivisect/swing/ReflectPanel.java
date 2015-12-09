@@ -23,6 +23,7 @@ package automenta.vivisect.swing;
  * the License.
  */
 
+import automenta.vivisect.swing.property.propertysheet.Property;
 import automenta.vivisect.swing.property.propertysheet.PropertySheet;
 import automenta.vivisect.swing.property.propertysheet.PropertySheetPanel;
 
@@ -72,9 +73,9 @@ public class ReflectPanel<O> extends JPanel {
         // does not happen when not using Web Start. Load properties one
         // by one as follow will do the trick
         automenta.vivisect.swing.property.propertysheet.Property[] properties = sheet.getProperties();
-        for (int i = 0, c = properties.length; i < c; i++) {
+        for (Property property : properties) {
             try {
-                properties[i].readFromObject(instance);
+                property.readFromObject(instance);
             } catch (Exception e) {
                 ///e.printStackTrace();
             }

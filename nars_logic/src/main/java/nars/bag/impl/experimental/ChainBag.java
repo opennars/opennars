@@ -108,7 +108,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     public ChainBag(Random rng, DDNodePool<V> nodePool, int capacity) {
-        super();
 
         d = Distributor.get((int)(Math.sqrt(capacity))).order;
 

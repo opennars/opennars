@@ -67,7 +67,6 @@ public class LogPane extends BorderPane  {
     }
 
     public LogPane() {
-        super();
 
         content = new VBox(1);
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);

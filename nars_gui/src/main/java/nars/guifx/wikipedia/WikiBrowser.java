@@ -42,7 +42,6 @@ public abstract class WikiBrowser extends BorderPane {
     private final WikiOntology wikiOntology;
 
     public WikiBrowser(String startWikiPage) {
-        super();
 
         wikiOntology = new WikiOntology();
 

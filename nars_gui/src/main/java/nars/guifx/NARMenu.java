@@ -34,7 +34,6 @@ public class NARMenu extends HBox {
 
 
     public NARMenu(NAR n) {
-        super();
 
         nar = n;
         //Canvas canvas = new NARWindow.ResizableCanvas(this);
@@ -230,7 +229,6 @@ public class NARMenu extends HBox {
         }
 
         public CycleClockPane(NAR n) {
-            super();
 
             getStyleClass().add("thread_control");
 

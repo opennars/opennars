@@ -113,9 +113,9 @@ public class Pair implements IPair {
         } else if (x instanceof char[]) {
             char[] chars = (char[]) x;
             if (quoted) buf.append('"');
-            for (int i = 0; i < chars.length; i++) {
-                if (quoted && chars[i] == '"') buf.append('\\');
-                buf.append(chars[i]);
+            for (char aChar : chars) {
+                if (quoted && aChar == '"') buf.append('\\');
+                buf.append(aChar);
             }
             if (quoted) buf.append('"');
         } else if (x instanceof Object[]) {

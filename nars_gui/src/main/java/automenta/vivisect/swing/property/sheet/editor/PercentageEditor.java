@@ -38,7 +38,6 @@ public class PercentageEditor extends SpinnerEditor {
 	 * @param property the property object (instance of {@link Property})
 	 */
 	public PercentageEditor(Object property) {
-		super();
 
 		if (!(property instanceof Property)) {
 			throw new IllegalArgumentException(String.format("Property has to be %s instance. Instead found %s", Property.class, property.getClass()));

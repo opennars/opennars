@@ -45,7 +45,6 @@ public final class SgAnnotation {
      *            Name (without package) - Cannot be null.
      */
     public SgAnnotation(String packageName, String simpleName) {
-        super();
         if (packageName == null) {
             throw new IllegalArgumentException("The argument 'packageName' cannot be null!");
         }
@@ -132,9 +131,7 @@ public final class SgAnnotation {
         if (!arguments.isEmpty()) {
             sb.append('(');
             if (arguments.size() == 1) {
-                Iterator<String> it = arguments.keySet().iterator();
-                while (it.hasNext()) {
-                    String name = it.next();
+                for (String name : arguments.keySet()) {
                     Object value = arguments.get(name);
                     if (!"value".equals(name)) {
                         sb.append(name);
@@ -144,9 +141,7 @@ public final class SgAnnotation {
                 }
             } else {
                 int count = 0;
-                Iterator<String> it = arguments.keySet().iterator();
-                while (it.hasNext()) {
-                    String name = it.next();
+                for (String name : arguments.keySet()) {
                     Object value = arguments.get(name);
                     if (count > 0) {
                         sb.append(", ");

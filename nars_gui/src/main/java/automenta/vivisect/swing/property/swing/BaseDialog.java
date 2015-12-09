@@ -75,7 +75,6 @@ public class BaseDialog extends JDialog {
   };
 
   public BaseDialog() throws HeadlessException {
-    super();
     buildUI();
   }
 

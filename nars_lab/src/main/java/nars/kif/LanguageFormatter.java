@@ -870,10 +870,10 @@ public class LanguageFormatter {
                                 range = ss.trim();
                                 rangeArr = range.split(",");
                                 // System.out.println( "INFO in LanguageFormatter.expandStar(): rangeArr == " + rangeArr );
-                                for (int i = 0; i < rangeArr.length; i++) {
-                                    if (Formula.isNonEmptyString(rangeArr[i])) {
-                                        isRange = (rangeArr[i].indexOf('-') != -1);
-                                        rangeArr2 = rangeArr[i].split("-");
+                                for (String aRangeArr : rangeArr) {
+                                    if (Formula.isNonEmptyString(aRangeArr)) {
+                                        isRange = (aRangeArr.indexOf('-') != -1);
+                                        rangeArr2 = aRangeArr.split("-");
                                         lowStr = rangeArr2[0].trim();
                                         try {
                                             low = Integer.parseInt(lowStr);

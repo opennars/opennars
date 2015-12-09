@@ -208,7 +208,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
     public HeapBag(Random rng, int capacity, CurveBag.BagCurve curve) {
-        super();
         this.rng = rng;
         this.capacity = capacity;
         this.curve = curve;

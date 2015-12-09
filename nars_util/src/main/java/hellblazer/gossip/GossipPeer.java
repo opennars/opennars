@@ -20,7 +20,6 @@ public class GossipPeer implements GossipListener {
 
 
     public GossipPeer(int port) throws SocketException {
-        super();
 
         GossipConfiguration config = new GossipConfiguration();
         config.seeds = new FasterList();

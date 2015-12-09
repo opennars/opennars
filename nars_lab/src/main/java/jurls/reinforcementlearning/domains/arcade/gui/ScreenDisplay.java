@@ -57,7 +57,6 @@ public class ScreenDisplay extends JPanel {
     long maxMessageAge = 3000;
     
     public ScreenDisplay() {
-        super();
 
         messages = new MessageHistory();
     }

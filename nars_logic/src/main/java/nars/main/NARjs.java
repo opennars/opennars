@@ -18,7 +18,6 @@ public class NARjs {
     final ScriptEngine js = factory.getEngineByName("JavaScript");
 
     public NARjs() throws Exception {
-        super();
         js.eval("load('nashorn:mozilla_compat.js')");
         
         js.eval("importPackage('java.lang')");

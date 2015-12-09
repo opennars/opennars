@@ -17,7 +17,6 @@ public class SetImplementationClass implements SetNumericValue {
     double value;
 
     public SetImplementationClass(DecideImplementationClass multiclass, @Between(min=0,max=1) double normalizedValue) {
-        super();
         value = normalizedValue;
         this.multiclass = multiclass;
     }

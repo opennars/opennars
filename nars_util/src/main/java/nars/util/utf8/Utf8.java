@@ -191,10 +191,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         int slen = s.length;
         byte[] b = new byte[slen *2];
         int j = 0;
-        for (int i = 0; i< slen; i++) {
-            int c = s[i];
-            b[j++] = (byte)((c & 0xFF00)>>8);
-            b[j++] = (byte)((c & 0x00FF));
+        for (char c : s) {
+            b[j++] = (byte) ((c & 0xFF00) >> 8);
+            b[j++] = (byte) ((c & 0x00FF));
         }
         return b;
     }

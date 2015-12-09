@@ -110,7 +110,6 @@ public class InternalExperience {
 
 
     public InternalExperience(NAR n) {
-        super();
 
         n.memory.eventTaskProcess.on(tp -> {
 

@@ -389,7 +389,6 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Constructor for HyperOrganicLayout.
 	 */
 	public HyperOrganicLayout(Rectangle2D.Float bounds) {
-		super();
 		boundsX = bounds.x;
 		boundsY = bounds.y;
 		boundsWidth = bounds.width;

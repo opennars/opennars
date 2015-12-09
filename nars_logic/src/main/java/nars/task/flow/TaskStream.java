@@ -13,7 +13,6 @@ public class TaskStream implements Input {
         this(s.iterator());
     }
     public TaskStream(Iterator<Task> s) {
-        super();
         stream = s;
     }
 

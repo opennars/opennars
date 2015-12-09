@@ -58,7 +58,6 @@ public class DerivationRules extends FastList<TaskRule> {
     static final Logger logger = Logger.getLogger(DerivationRules.class.toString());
 
     public DerivationRules(Set<TaskRule> r) {
-        super();
         r.forEach(t -> add( t.setup(patterns) ));
 
         logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");

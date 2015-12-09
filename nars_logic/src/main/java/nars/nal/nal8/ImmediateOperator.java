@@ -19,7 +19,6 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
     public final Operator op;
 
     public ImmediateOperator() {
-        super();
         op = Operator.the(getOperatorTerm());
     }
 

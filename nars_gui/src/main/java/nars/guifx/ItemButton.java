@@ -18,7 +18,6 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
     private final Function<I, String> labeler;
 
     public ItemButton(I i, Function<I,String> labeler, Consumer<I> clicked) {
-        super();
 
         item = i;
         this.labeler = labeler;

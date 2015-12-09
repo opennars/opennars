@@ -783,9 +783,9 @@ public class Formula implements Comparable {
             return false;
         }
 
-        for (int i = 0; i < thisList.size(); i++) {
+        for (Object aThisList : thisList) {
             for (int j = 0; j < sList.size(); j++) {
-                if (((Formula) thisList.get(i)).logicallyEquals(((Formula) sList.get(j)).theFormula)) {
+                if (((Formula) aThisList).logicallyEquals(((Formula) sList.get(j)).theFormula)) {
                     // System.out.println("INFO in Formula.compareFormulaSets(): " + 
                     //       ((Formula) thisList.get(i)).toString() + " equal to " +
                     //       ((Formula) sList.get(j)).theFormula);
@@ -1143,9 +1143,8 @@ public class Formula implements Comparable {
             Set relns = kb.getCachedRelationValues("instance", "VariableArityRelation", 2, 1);
             if (relns != null) {
                 String r = null;
-                Iterator it = relns.iterator();
-                while (it.hasNext()) {
-                    r = (String) it.next();
+                for (Object reln : relns) {
+                    r = (String) reln;
                     ans = (theFormula.contains(r));
                     if (ans) {
                         break;
@@ -1327,8 +1326,8 @@ public class Formula implements Comparable {
                     // System.out.println("INFO in Formula.expandRowVars(" + this + ")");
                     // System.out.println("  al == " + al);
                     Formula newF = null;
-                    for (int i = 0; i < al.size(); i++) {
-                        newF = (Formula) al.get(i);
+                    for (Object anAl : al) {
+                        newF = (Formula) anAl;
                         // Copy the source file information for each expanded formula.
                         newF.sourceFile = sourceFile;
                         resultList.add(newF);
@@ -1381,8 +1380,8 @@ public class Formula implements Comparable {
                     working.clear();
                     working.addAll(accumulator);
                     accumulator.clear();
-                    for (int i = 0; i < working.size(); i++) {
-                        Formula f = (Formula) working.get(i);
+                    for (Object aWorking : working) {
+                        Formula f = (Formula) aWorking;
                         List literal = f.literalToArrayList();
 
                         // System.out.println(literal);
@@ -1502,8 +1501,8 @@ public class Formula implements Comparable {
 
             Map varMap = (Map) clauseData.get(2);
             Map rowVarRelns = new HashMap();
-            for (int i = 0; i < clauses.size(); i++) {
-                ArrayList clause = (ArrayList) clauses.get(i);
+            for (Object clause1 : clauses) {
+                ArrayList clause = (ArrayList) clause1;
 
                 // System.out.println("clause == " + clause);
                 if ((clause != null) && !(clause.isEmpty())) {
@@ -1516,17 +1515,16 @@ public class Formula implements Comparable {
                     ArrayList literals = (ArrayList) clause.get(0);
                     ArrayList posLits = (ArrayList) clause.get(1);
                     literals.addAll(posLits);
-                    for (int j = 0; j < literals.size(); j++) {
-                        Formula litF = (Formula) literals.get(j);
+                    for (Object literal : literals) {
+                        Formula litF = (Formula) literal;
                         litF.getRowVarsWithRelations_1(rowVarRelns);
                     }
                 }
 
                 // System.out.println("rowVarRelns == " + rowVarRelns);
                 if (!(rowVarRelns.isEmpty())) {
-                    Iterator kit = rowVarRelns.keySet().iterator();
-                    while (kit.hasNext()) {
-                        String rowVar = (String) kit.next();
+                    for (Object o : rowVarRelns.keySet()) {
+                        String rowVar = (String) o;
                         String origRowVar = getOriginalVar(rowVar, varMap);
                         int[] minMax = (int[]) ans.get(origRowVar);
                         if (minMax == null) {
@@ -1536,9 +1534,8 @@ public class Formula implements Comparable {
                             ans.put(origRowVar, minMax);
                         }
                         TreeSet val = (TreeSet) rowVarRelns.get(rowVar);
-                        Iterator vit = val.iterator();
-                        while (vit.hasNext()) {
-                            String reln = (String) vit.next();
+                        for (Object aVal : val) {
+                            String reln = (String) aVal;
                             int arity = kb.getValence(reln);
                             if (arity < 1) {
                                 // It's a VariableArityRelation or we
@@ -1638,8 +1635,8 @@ public class Formula implements Comparable {
     private ArrayList formulasToStrings(ArrayList list) {
 
         ArrayList result = new ArrayList();
-        for (int i = 0; i < list.size(); i++) {
-            result.add(((Formula) list.get(i)).theFormula);
+        for (Object aList : list) {
+            result.add(((Formula) aList).theFormula);
         }
         return result;
     }
@@ -1726,8 +1723,8 @@ public class Formula implements Comparable {
     public static boolean isLogicalOperator(String pred) {
 
         String[] logOps = {"and", "or", "not", "=>", "<=>", "forall", "exists", "holds"};
-        for (int i = 0; i < logOps.length; i++) {
-            if (logOps[i].equals(pred)) {
+        for (String logOp : logOps) {
+            if (logOp.equals(pred)) {
                 return true;
             }
         }
@@ -2015,8 +2012,8 @@ public class Formula implements Comparable {
                     newPred = (String) it.next();
                     if (numarg > 0) {
                         axioms = kb.askWithRestriction(0, "domain", 1, newPred);
-                        for (int j = 0; j < axioms.size(); j++) {
-                            f = (Formula) axioms.get(j);
+                        for (Object axiom1 : axioms) {
+                            f = (Formula) axiom1;
                             int argnum = Integer.parseInt(f.getArgument(2));
                             if (argnum == numarg) {
                                 result = f.getArgument(3);
@@ -2026,8 +2023,8 @@ public class Formula implements Comparable {
                         }
                         if (!found) {
                             axioms = kb.askWithRestriction(0, "domainSubclass", 1, newPred);
-                            for (int j = 0; j < axioms.size(); j++) {
-                                f = (Formula) axioms.get(j);
+                            for (Object axiom : axioms) {
+                                f = (Formula) axiom;
                                 int argnum = Integer.parseInt(f.getArgument(2));
                                 if (argnum == numarg) {
                                     result = f.getArgument(3) + '+';
@@ -2391,8 +2388,8 @@ public class Formula implements Comparable {
                 if (clen > 1) {
                     result += " (and";
                 }
-                for (int j = 0; j < clen; j++) {
-                    result += " " + constraints.get(j);
+                for (Object constraint1 : constraints) {
+                    result += " " + constraint1;
                 }
                 if (clen > 1) {
                     result += ")";
@@ -2477,8 +2474,8 @@ public class Formula implements Comparable {
             } else {
                 result += " (and";
                 int clen = constraints.size();
-                for (int j = 0; j < clen; j++) {
-                    result += " " + constraints.get(j);
+                for (Object constraint1 : constraints) {
+                    result += " " + constraint1;
                 }
                 if ("and".equals(nextF.car())) {
                     int nextFLen = nextF.listLength();
@@ -3579,9 +3576,8 @@ public class Formula implements Comparable {
                         List litsToRemove = null;
 
                         // First, gather all substitutions.
-                        Iterator it1 = indexedQueryLits.iterator();
-                        while (it1.hasNext()) {
-                            varQueryTuples = (List) it1.next();
+                        for (Object indexedQueryLit : indexedQueryLits) {
+                            varQueryTuples = (List) indexedQueryLit;
                             substTuples = computeSubstitutionTuples(kb, varQueryTuples);
                             if ((substTuples instanceof List) && !(substTuples.isEmpty())) {
                                 if (substForms.isEmpty()) {
@@ -3609,7 +3605,7 @@ public class Formula implements Comparable {
 
                             // Try to simplify the Formula.
                             Formula f = this;
-                            it1 = substForms.iterator();
+                            Iterator it1 = substForms.iterator();
                             Iterator it2 = null;
                             while (it1.hasNext()) {
                                 substTuples = (List) it1.next();
@@ -3658,9 +3654,8 @@ public class Formula implements Comparable {
                                         // Iterate over all formula templates,
                                         // substituting terms from each ground lit
                                         // for vars in the template.
-                                        Iterator it3 = templates.iterator();
-                                        while (it3.hasNext()) {
-                                            template = (String) it3.next();
+                                        for (Object template1 : templates) {
+                                            template = (String) template1;
                                             quantVars = collectQuantifiedVariables(template);
                                             for (i = 0; i < varTuple.size(); i++) {
                                                 var = (String) varTuple.get(i);
@@ -3674,17 +3669,17 @@ public class Formula implements Comparable {
 
                                                         List patternStrings
                                                                 = Arrays.asList("(\\W*\\()(\\s*holds\\s+\\" + var + ")(\\W+)",
-                                                                        // "(\\W*\\()(\\s*\\" + var + ")(\\W+)",
-                                                                        "(\\W*)(\\" + var + ")(\\W+)"
-                                                                );
+                                                                // "(\\W*\\()(\\s*\\" + var + ")(\\W+)",
+                                                                "(\\W*)(\\" + var + ")(\\W+)"
+                                                        );
                                                         List patterns = new ArrayList();
-                                                        for (int j = 0; j < patternStrings.size(); j++) {
-                                                            patterns.add(Pattern.compile((String) (patternStrings.get(j))));
+                                                        for (Object patternString : patternStrings) {
+                                                            patterns.add(Pattern.compile((String) patternString));
                                                         }
                                                         Pattern p = null;
                                                         Matcher m = null;
-                                                        for (int j = 0; j < patterns.size(); j++) {
-                                                            p = (Pattern) patterns.get(j);
+                                                        for (Object pattern : patterns) {
+                                                            p = (Pattern) pattern;
                                                             m = p.matcher(template);
                                                             template = m.replaceAll("$1" + term + "$3");
                                                         }
@@ -3733,8 +3728,8 @@ public class Formula implements Comparable {
         int ans = 0;
         if (queryLiteral instanceof List) {
             String term = null;
-            for (int i = 0; i < queryLiteral.size(); i++) {
-                term = (String) queryLiteral.get(i);
+            for (Object aQueryLiteral : queryLiteral) {
+                term = (String) aQueryLiteral;
                 if (term.length() > 0 && term.charAt(0) == '?') {
                     ans++;
                 }
@@ -3902,9 +3897,8 @@ public class Formula implements Comparable {
                 ArrayList indexedQueryLits = null;
 
                 String var = null;
-                Iterator it = varsWithTypes.keySet().iterator();
-                while (it.hasNext()) {
-                    var = (String) it.next();
+                for (Object o : varsWithTypes.keySet()) {
+                    var = (String) o;
                     if (isVariable(var)) {
                         varWithTypes = (ArrayList) varsWithTypes.get(var);
                         indexedQueryLits = gatherPredVarQueryLits(kb, varWithTypes);
@@ -3957,8 +3951,8 @@ public class Formula implements Comparable {
                     String arg2 = null;
                     ArrayList vals = null;
                     int len = -1;
-                    for (int i = 0; i < working.size(); i++) {
-                        f = (Formula) working.get(i);
+                    for (Object aWorking : working) {
+                        f = (Formula) aWorking;
                         len = f.listLength();
                         arg0 = f.getArgument(0);
                         //noinspection IfStatementWithTooManyBranches
@@ -4169,9 +4163,8 @@ public class Formula implements Comparable {
             if (clauses != null) {
                 Iterator it2 = null;
                 Formula f = null;
-                Iterator it1 = clauses.iterator();
-                while (it1.hasNext()) {
-                    List clause = (List) it1.next();
+                for (Object clause1 : clauses) {
+                    List clause = (List) clause1;
                     List negLits = (List) clause.get(0);
                     // List poslits = (List) clause.get(1);
 
@@ -4183,9 +4176,9 @@ public class Formula implements Comparable {
                         String origVar = null;
                         boolean working = true;
                         for (int ci = 0;
-                                ci < 1;
-                                // (ci < clause.size()) && ans.isEmpty() ; 
-                                ci++) {
+                             ci < 1;
+                            // (ci < clause.size()) && ans.isEmpty() ;
+                             ci++) {
                             // Try the neglits first.  Then try the poslits only
                             // if there still are no resuls.
                             it2 = ((Iterable) (clause.get(ci))).iterator();
@@ -4462,13 +4455,13 @@ public class Formula implements Comparable {
                     ArrayList posLits = null;
                     ArrayList literals = null;
                     Formula clause = null;
-                    for (int i = 0; i < clauses.size(); i++) {
+                    for (Object clause1 : clauses) {
                         negLits = new ArrayList();
                         posLits = new ArrayList();
                         literals = new ArrayList();
                         literals.add(negLits);
                         literals.add(posLits);
-                        clause = (Formula) clauses.get(i);
+                        clause = (Formula) clause1;
                         if (clause.listP()) {
                             while (!(clause.empty())) {
                                 boolean isNegLit = false;
@@ -4980,9 +4973,8 @@ public class Formula implements Comparable {
         int idx = incSkolemIndex();
         if ((vars != null) && !(vars.isEmpty())) {
             ans += ("Fn " + idx);
-            Iterator it = vars.iterator();
-            while (it.hasNext()) {
-                String var = (String) it.next();
+            for (Object var1 : vars) {
+                String var = (String) var1;
                 ans += (' ' + var);
             }
             ans = ('(' + ans + ')');
@@ -5094,8 +5086,8 @@ public class Formula implements Comparable {
                         // For each existentially quantified variable,
                         // create a corresponding skolem term, and
                         // store the pair in the evSubs map.
-                        for (int i = 0; i < eQVs.size(); i++) {
-                            String var = (String) eQVs.get(i);
+                        for (Object eQV : eQVs) {
+                            String var = (String) eQV;
                             String skTerm = result.newSkolemTerm(uQVs);
                             evSubs.put(var, skTerm);
                         }
@@ -5303,8 +5295,8 @@ public class Formula implements Comparable {
                             restF = restF.cdrAsFormula();
                         }
                         String theNewFormula = ('(' + arg0);
-                        for (int i = 0; i < literals.size(); i++) {
-                            theNewFormula += (" " + literals.get(i));
+                        for (Object literal : literals) {
+                            theNewFormula += (" " + literal);
                         }
                         theNewFormula += ")";
                         Formula newF = new Formula();
@@ -5403,15 +5395,15 @@ public class Formula implements Comparable {
                     Formula resultF = new Formula();
                     resultF.read("()");
                     String disjunctsString = "";
-                    for (int i = 0; i < disjuncts.size(); i++) {
-                        disjunctsString += (" " + disjuncts.get(i));
+                    for (Object disjunct : disjuncts) {
+                        disjunctsString += (" " + disjunct);
                     }
                     disjunctsString = ('(' + disjunctsString.trim() + ')');
                     Formula disjunctsF = new Formula();
                     disjunctsF.read(disjunctsString);
-                    for (int ci = 0; ci < conjuncts.size(); ci++) {
+                    for (Object conjunct : conjuncts) {
                         String newDisjuncts
-                                = disjunctsF.cons((String) conjuncts.get(ci)).cons("or").disjunctionsIn_1().theFormula;
+                                = disjunctsF.cons((String) conjunct).cons("or").disjunctionsIn_1().theFormula;
                         resultF = resultF.cons(newDisjuncts);
                     }
                     resultF = resultF.cons("and");
@@ -5461,10 +5453,10 @@ public class Formula implements Comparable {
                 if (clauses.isEmpty()) {
                     clauses.add(this);
                 }
-                for (int i = 0; i < clauses.size(); i++) {
+                for (Object clause : clauses) {
                     Formula clauseF = new Formula();
                     clauseF.read("()");
-                    Formula f = (Formula) clauses.get(i);
+                    Formula f = (Formula) clause;
                     if (f.listP()) {
                         if ("or".equals(f.car())) {
                             f = f.cdrAsFormula();
@@ -5557,8 +5549,8 @@ public class Formula implements Comparable {
                 // Construct the new Formula to return.
                 if (n > 1) {
                     String theNewFormula = "(and";
-                    for (int i = 0; i < n; i++) {
-                        Formula f = (Formula) clauses.get(i);
+                    for (Object clause : clauses) {
+                        Formula f = (Formula) clause;
                         theNewFormula += (' ' + f.theFormula);
                     }
                     theNewFormula += ")";

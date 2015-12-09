@@ -44,7 +44,6 @@ public class Commander implements Consumer<NAR> {
     }
 
     public Commander(NAR nar, TaskAccumulator buffer) {
-        super();
 
         //this.nar = nar;
 

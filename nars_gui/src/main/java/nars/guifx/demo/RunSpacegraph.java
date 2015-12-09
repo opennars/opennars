@@ -23,7 +23,6 @@ public class RunSpacegraph extends Application {
     public static class DemoSpacegraph extends Spacegraph {
 
         public DemoSpacegraph() {
-            super();
             //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
 
 

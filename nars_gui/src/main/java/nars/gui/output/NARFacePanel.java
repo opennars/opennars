@@ -9,7 +9,6 @@ public class NARFacePanel extends HumanoidFacePanel  {
     private final NAR nar;
 
     public NARFacePanel(NAR n) {
-        super();
         nar = n;
     }
     

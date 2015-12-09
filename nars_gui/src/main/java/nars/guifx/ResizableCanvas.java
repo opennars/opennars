@@ -13,7 +13,6 @@ public class ResizableCanvas extends Canvas {
 
 
     public ResizableCanvas() {
-        super();
 
         parentProperty().addListener((z,p,n) -> {
             if (n==null) return;
@@ -32,7 +31,6 @@ public class ResizableCanvas extends Canvas {
     }
 
     public ResizableCanvas(ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height) {
-        super();
 
         // Bind canvas size to stack pane size.
         widthProperty().bind(width);

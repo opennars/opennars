@@ -201,9 +201,7 @@ public interface Premise extends Level, Tasked {
         //String prevMethodID;
 
         List<String> path = new ArrayList();
-        for (int i = 0; i < s.length; i++) {
-            StackTraceElement e = s[i];
-
+        for (StackTraceElement e : s) {
             String className = e.getClassName();
             String methodName = e.getMethodName();
 

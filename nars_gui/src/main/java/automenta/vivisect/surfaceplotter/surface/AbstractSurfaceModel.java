@@ -180,7 +180,6 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	 * Empty Surface Model
 	 */
 	public AbstractSurfaceModel() {
-		super();
 		property = new SwingPropertyChangeSupport(this);
 		setColorModel(new ColorModelSet());
 		

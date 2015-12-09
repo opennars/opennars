@@ -11,7 +11,6 @@ public abstract class SummaryIcon extends Canvas implements ChangeListener<Numbe
 
 
     public SummaryIcon() {
-        super();
     }
 
 

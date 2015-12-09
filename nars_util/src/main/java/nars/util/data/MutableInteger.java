@@ -42,7 +42,6 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * Constructs a new MutableDouble with the default value of zero.
    */
   public MutableInteger() {
-    super();
   }
 
   /**
@@ -52,7 +51,6 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *          a value.
    */
   public MutableInteger(int value) {
-    super();
     this.value = value;
   }
 
@@ -65,7 +63,6 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    *           if the object is null
    */
   public MutableInteger(Number value) {
-    super();
     this.value = value.intValue();
   }
 

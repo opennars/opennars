@@ -15,7 +15,6 @@ public class WebMap extends BorderPane {
     private Slider slider;
 
     public WebMap() {
-        super();
 
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 

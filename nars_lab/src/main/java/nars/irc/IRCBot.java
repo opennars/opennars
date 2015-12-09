@@ -168,8 +168,7 @@ public abstract class IRCBot {
 
                 rawTags = line.substring(1, nextspace).split(";");
 
-                for (int i = 0; i < rawTags.length; i++) {
-                    String tag = rawTags[i];
+                for (String tag : rawTags) {
                     String[] pair = tag.split("=");
 
                     if (pair.length == 2) {

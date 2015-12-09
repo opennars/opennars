@@ -23,7 +23,6 @@ public class JGridBagScrollPane extends JScrollPane{
 	
 	
 	public JGridBagScrollPane() {
-		super();
 	}
 
 

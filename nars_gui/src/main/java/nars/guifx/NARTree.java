@@ -21,7 +21,6 @@ public class NARTree extends TreeView {
     private final NAR nar;
 
     public NARTree(NAR n) {
-        super();
         nar = n;
         CheckBoxTreeItem<String> rootItem =
                 new CheckBoxTreeItem<>("View Source Files");

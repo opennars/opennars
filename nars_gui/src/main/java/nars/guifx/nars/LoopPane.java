@@ -40,7 +40,6 @@ public class LoopPane extends VBox {
     };
 
     public LoopPane(NARLoop loop) {
-        super();
 
         this.loop = loop;
 

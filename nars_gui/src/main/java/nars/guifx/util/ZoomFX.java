@@ -50,7 +50,6 @@ public class ZoomFX extends AnchorPane {
     private Animate positionAnimation;
 
     public ZoomFX() {
-        super();
 
 
         //setupScrollbar(hscroll, Orientation.HORIZONTAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);

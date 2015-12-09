@@ -33,7 +33,6 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 	 * Empty Surface Model
 	 */
 	public ProgressiveSurfaceModel() {
-		super();
 	}
 
 	public void setMapper(Mapper mapper) {

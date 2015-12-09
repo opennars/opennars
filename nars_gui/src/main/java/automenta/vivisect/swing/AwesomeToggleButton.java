@@ -13,7 +13,6 @@ public class AwesomeToggleButton extends JToggleButton {
     private final char codeSelected;
 
     public AwesomeToggleButton(char faCodeUnselected, char faCodeSelected) {
-        super();
         codeUnselected = faCodeUnselected;
         codeSelected = faCodeSelected;
         setFont(Video.FontAwesome);

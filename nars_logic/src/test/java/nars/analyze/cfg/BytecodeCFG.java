@@ -34,9 +34,9 @@ UnitGraph g = new BriefUnitGraph(b);
         ClassNode cn = new ClassNode();
         new ClassReader("nars.nal.FireConcept").accept(cn, 0);
         List<?> methods = cn.methods;
-        for (int i = 0; i < methods.size(); ++i) {
+        for (Object method1 : methods) {
 
-            MethodNode method = (MethodNode) methods.get(i);
+            MethodNode method = (MethodNode) method1;
             ControlFlowGraph cfg = ControlFlowGraph.create(null, cn, method);
             System.out.println(cfg);
 

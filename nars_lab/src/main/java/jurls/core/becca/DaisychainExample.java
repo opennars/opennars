@@ -16,7 +16,6 @@ public abstract class DaisychainExample extends IOMatrixExample  {
     double[] output;
     
     public DaisychainExample(Daisychain z) {
-        super();
 
         daisy = z;
     }

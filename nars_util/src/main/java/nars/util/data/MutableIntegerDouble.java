@@ -36,7 +36,6 @@ public class MutableIntegerDouble extends MutableInteger implements Comparable, 
    * Constructs a new MutableDouble with the default value of zero.
    */
   public MutableIntegerDouble() {
-    super();
   }
 
   /**

@@ -391,14 +391,15 @@ public class Sokoban extends Applet {
 		}
 
 		int y = -16 + h, x = -16 + w;
-		for (int i = 0; i < level.length; i++)
-			if (level[i] == cr) {
-				x = -16 + w; y += 16;
+		for (char aLevel : level)
+			if (aLevel == cr) {
+				x = -16 + w;
+				y += 16;
 			} else {
 				x += 16;
-				if (level[i] == blank) continue;
-				if (r.inside(x,y)) // only draw the images necessary for move!
-					g.drawImage(tiles[level[i]], x, y, this);
+				if (aLevel == blank) continue;
+				if (r.inside(x, y)) // only draw the images necessary for move!
+					g.drawImage(tiles[aLevel], x, y, this);
 			}
 	}
 	
@@ -446,10 +447,12 @@ public class Sokoban extends Applet {
 		w = 0; h = 0; level = levels[currlevel].toCharArray();
 		lastcount = 0;
 		int W = 0;
-		for (int i = 0; i < level.length; i++)
-			if (level[i] == cr)
-				{ if (W > w) w = W; W = 0; h++; }
-			else W++;
+		for (char aLevel : level)
+			if (aLevel == cr) {
+				if (W > w) w = W;
+				W = 0;
+				h++;
+			} else W++;
 		Dimension d = size();
 		w = 72 + (d.width - 72 - 16 * w) / 2; h = (d.height - 16 * h) / 2;
 	}
@@ -507,7 +510,7 @@ public class Sokoban extends Applet {
 					(Math.abs(xo - x) + 1) * 16, (Math.abs(yo - y) + 1) * 16);
 				drawMove();
 				boolean b = true;
-				for (int i = 0; i < level.length; i++) if (level[i] == dollar) b = false;
+				for (char aLevel : level) if (aLevel == dollar) b = false;
 				if (b) {
 					wow.play();
 					try { Thread.sleep(2000); } catch (InterruptedException e) {}

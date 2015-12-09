@@ -10,7 +10,6 @@ public abstract class AutoCanvas extends Canvas {
 
 
     public AutoCanvas() {
-        super();
         // Redraw canvas when size changes.
         widthProperty().addListener(evt -> render());
         heightProperty().addListener(evt -> render());

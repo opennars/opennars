@@ -67,7 +67,6 @@ import java.util.StringTokenizer;
 public class AWTConverters implements Converter {
 
 	public AWTConverters() {
-		super();
 	}
 
 	public void register(ConverterRegistry registry) {

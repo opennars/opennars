@@ -57,7 +57,6 @@ public class TestChamber2 extends TestChamber {
     
 
     public TestChamber2(NAR nar) {
-        super();
         int w = 50;
         int h = 50;
         int water_threshold = 30;

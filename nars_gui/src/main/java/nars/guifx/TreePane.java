@@ -43,7 +43,6 @@ public class TreePane extends BorderPane {
     final AtomicBoolean ready = new AtomicBoolean(true);
 
     public TreePane(NAR n) {
-        super();
 
         nar = n;
 
@@ -87,7 +86,6 @@ public class TreePane extends BorderPane {
     public class TaskCell extends TreeCell<Task> {
 
         public TaskCell() {
-            super();
             setEditable(false);
         }
 

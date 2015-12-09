@@ -48,8 +48,7 @@ public class FirstOfMatcher
 
 
         List<Matcher> children = getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            Matcher matcher = children.get(i);
+        for (Matcher matcher : children) {
             if (matcher.getSubContext(context).runMatcher())
                 return true;
         }

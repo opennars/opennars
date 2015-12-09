@@ -12,7 +12,6 @@ import java.awt.event.HierarchyListener;
 public abstract class NPanel extends JPanel implements HierarchyListener {
 
     public NPanel() {
-        super();
         initialize();
     }
 

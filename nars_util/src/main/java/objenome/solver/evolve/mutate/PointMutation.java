@@ -94,7 +94,6 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      * configuration settings from the config
      */
     public PointMutation(boolean autoConfig) {
-        super();
 
         // Default config values
         pointProbability = 0.01;

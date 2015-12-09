@@ -58,7 +58,6 @@ public class TestNAR  {
 
 
     public TestNAR(NAR nar) {
-        super();
 
         this.nar = nar;
 
@@ -145,8 +144,8 @@ public class TestNAR  {
                 boolean finished = true;
 
                 int nr = requires.size();
-                for (int i = 0; i < nr; i++) {
-                    if (!requires.get(i).isTrue()) {
+                for (NARCondition require : requires) {
+                    if (!require.isTrue()) {
                         finished = false;
                         break;
                     }

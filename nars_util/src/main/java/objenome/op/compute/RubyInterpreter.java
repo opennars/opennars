@@ -116,8 +116,8 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
         try {
             getEngine().eval(code);
 
-            for (int i = 0; i < noParamSets; i++) {
-                invocableEngine.invokeFunction("expr", argValues[i]);
+            for (Object[] argValue : argValues) {
+                invocableEngine.invokeFunction("expr", argValue);
             }
         } catch (ScriptException | NoSuchMethodException ex) {
             throw new MalformedProgramException();

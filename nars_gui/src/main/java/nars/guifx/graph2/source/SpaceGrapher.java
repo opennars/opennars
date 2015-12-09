@@ -456,7 +456,6 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
                         int maxNodes,
                         BiFunction<N, N, TermEdge> edgeVis,
                         CanvasEdgeRenderer edgeRenderer) {
-        super();
 
         source.set(g);
 

@@ -11,7 +11,6 @@ public class XORShiftRandom extends Random {
     private long seed;
 
     public XORShiftRandom() {
-        super();
         seed = System.nanoTime();
     }
 

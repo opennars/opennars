@@ -32,7 +32,6 @@ public class Graph1 extends SpacenetApp {
         final Box base;
 
         public RectNode() {
-            super();
 
             base = new Box(25, 25, 1);
             base.setTranslateZ(4);

@@ -13,11 +13,9 @@ import java.util.List;
 public class CharacterEditor extends SpinnerEditor {
 
 	public CharacterEditor() {
-		super();
 	}
 
 	public CharacterEditor(Object property) {
-		super();
 		buildModel(Character.MIN_VALUE, (char) (Character.MAX_VALUE - 1));
 		formatSpinner();
 	}

@@ -140,11 +140,9 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 		super.repaint();
 
 		if(squares != null)
-		{			
-			for(int i = 0; i < squares.length; i++)
-			{
-				for(int j = 0; j < squares[i].length; j++)
-					squares[i][j].repaint();
+		{
+			for (Square[] square : squares) {
+				for (Square aSquare : square) aSquare.repaint();
 			}
 		}
 	}
@@ -233,10 +231,8 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	 */
 	private void detargetAllSquares()
 	{
-		for(int i = 0; i < squares.length; i++)
-		{
-			for(int j = 0; j < squares[i].length; j++)
-				squares[i][j].detarget();
+		for (Square[] square : squares) {
+			for (Square aSquare : square) aSquare.detarget();
 		}
 	}
 

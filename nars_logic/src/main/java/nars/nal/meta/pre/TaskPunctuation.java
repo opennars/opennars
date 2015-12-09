@@ -40,7 +40,6 @@ public class TaskPunctuation extends PreCondition {
     }
 
     TaskPunctuation(char p, String id) {
-        super();
         punc = p;
         this.id = id;
     }

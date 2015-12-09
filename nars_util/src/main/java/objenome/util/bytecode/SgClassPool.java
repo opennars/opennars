@@ -31,7 +31,6 @@ public final class SgClassPool {
      * Default constructor.
      */
     public SgClassPool() {
-        super();
         cache.put(void.class.getName(), SgClass.VOID);
         cache.put(boolean.class.getName(), SgClass.BOOLEAN);
         cache.put(byte.class.getName(), SgClass.BYTE);

@@ -109,7 +109,6 @@ public class AEZiptie2 extends AEZiptie {
         private double activity;
         
         public Bundle(int index) {
-            super();
             this.index = index;
         }
 

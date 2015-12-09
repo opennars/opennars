@@ -68,7 +68,6 @@ public class ExampleTrackerObjectQuad extends WebcamFX {
     }
 
     public ExampleTrackerObjectQuad() throws LineUnavailableException {
-        super();
 
         motionOverlay.setOpacity(0.5);
         motionOverlay.setBlendMode(BlendMode.DIFFERENCE);

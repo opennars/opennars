@@ -12,7 +12,6 @@ public final class Animate extends AnimationTimer {
     private long last;
 
     public Animate(int periodMS, Consumer<Animate> r) {
-        super();
         this.periodMS = periodMS;
         run = r;
     }

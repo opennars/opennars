@@ -35,7 +35,6 @@ public class RepeatedCharacterSequence implements CharSequence {
     private int repeat;
 
     public RepeatedCharacterSequence(char character, int repeat) {
-        super();
         this.character = character;
         this.repeat = repeat;
     }

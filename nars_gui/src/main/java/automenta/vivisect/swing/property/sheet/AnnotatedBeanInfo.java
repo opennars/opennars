@@ -41,7 +41,6 @@ public class AnnotatedBeanInfo extends BaseBeanInfo {
 		private Field field;
 
 		public PropertyPair(PropertyInfo property, Field field) {
-			super();
 			this.property = property;
 			this.field = field;
 		}

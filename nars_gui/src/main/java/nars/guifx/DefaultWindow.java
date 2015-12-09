@@ -156,7 +156,6 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
 
     public DefaultWindow(String title) {
-        super();
 
         titleBar = new Label(title);
 

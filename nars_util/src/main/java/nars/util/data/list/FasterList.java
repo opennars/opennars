@@ -18,7 +18,6 @@ import java.util.function.IntFunction;
 public class FasterList<X> extends FastList<X> {
 
     public FasterList() {
-        super();
     }
 
     public FasterList(int capacity) {

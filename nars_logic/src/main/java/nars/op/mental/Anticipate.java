@@ -198,7 +198,6 @@ public final class Anticipate {
         public float tolerance = 0;
 
         public TaskTime(Task task, long creationTime) {
-            super();
             this.task = task;
             this.creationTime = task.getCreationTime();
             occurrTime = task.getOccurrenceTime();

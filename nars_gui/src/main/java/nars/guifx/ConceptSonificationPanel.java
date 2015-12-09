@@ -21,7 +21,6 @@ class ConceptSonificationPanel extends BorderPane {
     private ConceptSonification son;
 
     public ConceptSonificationPanel(NAR nar) {
-        super();
 
         this.nar = nar;
         info = new Label();

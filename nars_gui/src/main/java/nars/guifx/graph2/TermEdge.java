@@ -17,7 +17,6 @@ public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/
 
 
     public TermEdge(N aSrc, N bSrc) {
-        super();
 
 
         //setAutoSizeChildren(true);

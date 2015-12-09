@@ -101,8 +101,7 @@ public class DefaultProperty extends AbstractProperty {
 				initializeValue(value); // avoid updating parent or firing
 										// property change
 				if (value != null) {
-					for (Iterator iter = subProperties.iterator(); iter.hasNext();) {
-						Property subProperty = (Property) iter.next();
+					for (Property subProperty : subProperties) {
 						subProperty.readFromObject(value);
 					}
 				}
@@ -144,8 +143,7 @@ public class DefaultProperty extends AbstractProperty {
 			}
 		}
 		if (value != null) {
-			for (Iterator iter = subProperties.iterator(); iter.hasNext();) {
-				Property subProperty = (Property) iter.next();
+			for (Property subProperty : subProperties) {
 				subProperty.readFromObject(value);
 			}
 		}
@@ -213,8 +211,7 @@ public class DefaultProperty extends AbstractProperty {
 	}
 
 	public void clearSubProperties() {
-		for (Iterator iter = subProperties.iterator(); iter.hasNext();) {
-			Property subProp = (Property) iter.next();
+		for (Property subProp : subProperties) {
 			if (subProp instanceof DefaultProperty)
 				((DefaultProperty) subProp).setParentProperty(null);
 		}
@@ -223,8 +220,7 @@ public class DefaultProperty extends AbstractProperty {
 
 	public void addSubProperties(Collection subProperties) {
 		this.subProperties.addAll(subProperties);
-		for (Iterator iter = this.subProperties.iterator(); iter.hasNext();) {
-			Property subProp = (Property) iter.next();
+		for (Property subProp : this.subProperties) {
 			if (subProp instanceof DefaultProperty)
 				((DefaultProperty) subProp).setParentProperty(this);
 		}

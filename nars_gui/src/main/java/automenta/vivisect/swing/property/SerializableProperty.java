@@ -19,7 +19,6 @@ public class SerializableProperty extends DefaultProperty {
 	private Object editor = null;
 	
 	public SerializableProperty() {
-		super();
 	}
 	
 	public SerializableProperty(Property prop) {

@@ -36,7 +36,6 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
             (S,T) -> new TLinkEdge(S,T);
 
     public ConceptsSource(NAR nar) {
-        super();
 
         this.nar = nar;
 

@@ -14,7 +14,6 @@ public class ImagePanel extends JComponent {
     public BufferedImage image;
 
     public ImagePanel(int width, int height) {
-        super();
 
         w = width;
         h = height;

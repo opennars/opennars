@@ -1089,8 +1089,8 @@ public class FindSubst extends Versioning implements Subst {
                         //SUFFIX - match the remaining terms against what the ellipsis previously collected
                         //HACK this only works with ArrayEllipsisMatch type
                         Term[] sp = ((ArrayEllipsisMatch) eMatched).term;
-                        for (int k = 0; k < sp.length; k++) {
-                            if (!match(sp[k], Y.term(j++)))
+                        for (Term aSp : sp) {
+                            if (!match(aSp, Y.term(j++)))
                                 return false;
                         }
                     } else {

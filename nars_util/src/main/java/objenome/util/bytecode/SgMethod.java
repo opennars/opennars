@@ -264,8 +264,8 @@ public final class SgMethod extends SgBehavior {
             if (body.isEmpty()) {
                 sb.append("// No method source available\n");
             } else {
-                for (int i = 0; i < body.size(); i++) {
-                    sb.append(body.get(i));
+                for (String aBody : body) {
+                    sb.append(aBody);
                     sb.append('\n');
                 }
             }

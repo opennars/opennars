@@ -71,8 +71,7 @@ public interface Stamp  {
         int uniques = 0; //# of unique items
         int sLen = sorted.length;
 
-        for (int i = 0; i < sLen; i++) {
-            long v = sorted[i];
+        for (long v : sorted) {
             if (lastValue != v)
                 uniques++;
             lastValue = v;
@@ -87,8 +86,7 @@ public interface Stamp  {
         lastValue = -1;
         long[] deduplicated = new long[uniques];
         uniques = 0;
-        for (int i = 0; i < sLen; i++) {
-            long v = sorted[i];
+        for (long v : sorted) {
             if (lastValue != v)
                 deduplicated[uniques++] = v;
             lastValue = v;

@@ -33,7 +33,6 @@ public class ArraySharingList<C> implements Iterable<C> {
     private final transient AtomicBoolean change = new AtomicBoolean(true);
 
     public ArraySharingList(IntFunction<C[]> arrayBuilder) {
-        super();
         this.arrayBuilder = arrayBuilder;
     }
 

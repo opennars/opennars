@@ -209,8 +209,8 @@ public class DependencyVisitor extends ClassVisitor {
                                            Handle bsm, Object... bsmArgs) {
             addMethodDesc(desc);
             addConstant(bsm);
-            for (int i = 0; i < bsmArgs.length; i++) {
-                addConstant(bsmArgs[i]);
+            for (Object bsmArg : bsmArgs) {
+                addConstant(bsmArg);
             }
         }
 
@@ -324,8 +324,8 @@ public class DependencyVisitor extends ClassVisitor {
         addType(Type.getReturnType(dscrptor));
 
         Type[] types = Type.getArgumentTypes(dscrptor);
-        for (int i = 0; i < types.length; i++) {
-            addType(types[i]);
+        for (Type type : types) {
+            addType(type);
         }
 
     }

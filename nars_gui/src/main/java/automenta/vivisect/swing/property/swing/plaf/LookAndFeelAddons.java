@@ -95,8 +95,8 @@ public class LookAndFeelAddons {
   }
 
   public void uninitialize() {
-    for (Iterator iter = contributedComponents.iterator(); iter.hasNext();) {
-      ComponentAddon addon = (ComponentAddon)iter.next();
+    for (Object contributedComponent : contributedComponents) {
+      ComponentAddon addon = (ComponentAddon) contributedComponent;
       addon.uninitialize(this);
     }
   }

@@ -246,9 +246,9 @@ public class PercentLayout implements LayoutManager2 {
     int height = 0;
     Dimension componentPreferredSize;
     boolean firstVisibleComponent = true;
-    for (int i = 0, c = components.length; i < c; i++) {
-      if (components[i].isVisible()) {
-        componentPreferredSize = components[i].getPreferredSize();
+    for (Component component : components) {
+      if (component.isVisible()) {
+        componentPreferredSize = component.getPreferredSize();
         if (orientation == HORIZONTAL) {
           height = Math.max(height, componentPreferredSize.height);
           width += componentPreferredSize.width;
@@ -343,8 +343,8 @@ public class PercentLayout implements LayoutManager2 {
 
     if (!remaining.isEmpty()) {
       int rest = availableSize / remaining.size();
-      for (Iterator iter = remaining.iterator(); iter.hasNext();) {
-        sizes[((Integer) iter.next())] = rest;
+      for (Object aRemaining : remaining) {
+        sizes[((Integer) aRemaining)] = rest;
       }
     }
 

@@ -106,9 +106,8 @@ public class JSurface extends javax.swing.JComponent {
 	 */
 
 	public JSurface(SurfaceModel model) {
-		super();
-                
-                setIgnoreRepaint(true);
+
+		setIgnoreRepaint(true);
 		surfaceChangesListener = new JSurfaceChangesListener();
 		JSurfaceMouseListener my = new JSurfaceMouseListener();
 		addMouseListener(my);

@@ -86,12 +86,12 @@ public class CNFBooleanFunction implements ParameterizedFunction {
     private static List<List<Integer>> extend(List<List<Integer>> xs, int k) {
         List<List<Integer>> ys = new ArrayList<>();
 
-        for (int i = 0; i < xs.size(); ++i) {
+        for (List<Integer> x : xs) {
             List<Integer> is;
-            is = new ArrayList<>(xs.get(i));
+            is = new ArrayList<>(x);
             is.add(-k);
             ys.add(is);
-            is = new ArrayList<>(xs.get(i));
+            is = new ArrayList<>(x);
             is.add(k);
             ys.add(is);
         }
@@ -103,8 +103,7 @@ public class CNFBooleanFunction implements ParameterizedFunction {
         long b = 0;
         int[] maxTerm = cnf[clauseIndex];
 
-        for (int i = 0; i < maxTerm.length; ++i) {
-            int literal = maxTerm[i];
+        for (int literal : maxTerm) {
             b |= literal > 0 ? variables[literal - 1] : ~variables[-literal - 1];
         }
         b |= parameters[clauseIndex];

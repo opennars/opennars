@@ -25,7 +25,6 @@ import java.util.List;
 public abstract class DefaultProblemSTGP extends ProblemSTGP {
 
     public DefaultProblemSTGP(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
-        super();
 
         the(Population.SIZE, populationSize);
 

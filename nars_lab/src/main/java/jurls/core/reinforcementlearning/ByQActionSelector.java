@@ -25,40 +25,40 @@ public class ByQActionSelector implements ActionSelector {
         }
 
         double min = Double.MAX_VALUE;
-        for (int i = 0; i < ret.length; ++i) {
-            if (ret[i].getV() < min) {
-                min = ret[i].getV();
+        for (ActionValuePair aRet6 : ret) {
+            if (aRet6.getV() < min) {
+                min = aRet6.getV();
             }
         }
 
-        for (int i = 0; i < ret.length; ++i) {
-            ret[i].setV(ret[i].getV() + min);
+        for (ActionValuePair aRet5 : ret) {
+            aRet5.setV(aRet5.getV() + min);
         }
 
         double sum = 0;
-        for (int i = 0; i < ret.length; ++i) {
-            sum += ret[i].getV();
+        for (ActionValuePair aRet4 : ret) {
+            sum += aRet4.getV();
         }
 
-        for (int i = 0; i < ret.length; ++i) {
-            ret[i].setV(ret[i].getV() / sum);
+        for (ActionValuePair aRet3 : ret) {
+            aRet3.setV(aRet3.getV() / sum);
         }
 
-        for (int i = 0; i < ret.length; ++i) {
-            double v = ret[i].getV();
-            ret[i].setV(
+        for (ActionValuePair aRet2 : ret) {
+            double v = aRet2.getV();
+            aRet2.setV(
                     //Math.pow(v, 2)
                     v * v
             );
         }
 
         sum = 0;
-        for (int i = 0; i < ret.length; ++i) {
-            sum += ret[i].getV();
+        for (ActionValuePair aRet1 : ret) {
+            sum += aRet1.getV();
         }
 
-        for (int i = 0; i < ret.length; ++i) {
-            ret[i].setV(ret[i].getV() / sum);
+        for (ActionValuePair aRet : ret) {
+            aRet.setV(aRet.getV() / sum);
         }
         return ret;
     }

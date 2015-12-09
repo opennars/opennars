@@ -200,8 +200,8 @@ public class MJOpen {
 		m_rectMinX = m_rectMinY = 999999;
 		m_rectMaxX = m_rectMaxY = -999999;
 
-		for (int i = 0; i < m_vCells.size(); i++) {
-			cell = m_vCells.get(i);
+		for (CACell m_vCell : m_vCells) {
+			cell = m_vCell;
 
 			if (m_rectMinX > cell.x)
 				m_rectMinX = cell.x;

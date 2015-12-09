@@ -76,7 +76,6 @@ public class NARio extends Run implements RLEnvironment {
 
 
     public NARio(NAR n) {
-        super();
         nar = n;
         //start();
         run();

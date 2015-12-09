@@ -63,8 +63,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
     private static Term[] _flatten(Term[] args, int order, int expandedSize) {
         Term[] ret = new Term[expandedSize];
         int k = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
+        for (Term a : args) {
             Conjunctive c = isConjunction(a, order);
             if (c != null) {
                 //arraycopy?
@@ -81,8 +80,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
 
     protected static int getFlattenedLength(Term[] args, int order) {
         int sz = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
+        for (Term a : args) {
             Conjunctive c = isConjunction(a, order);
             sz += c != null ? c.size() : 1;
         }

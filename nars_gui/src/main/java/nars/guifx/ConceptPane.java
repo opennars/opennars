@@ -53,8 +53,6 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         final ColorArray ca = new ColorArray(32, Color.BLUE, Color.RED);
 
         public Scatter3D() {
-            super();
-
 
 
             frame();
@@ -77,7 +75,6 @@ public class ConceptPane extends BorderPane implements ChangeListener {
             private Color color = Color.WHITE;
 
             public DataPoint(X tl) {
-                super();
 
                 shape = new Box(0.8, 0.8, 0.8);
                 mat = new PhongMaterial(color);
@@ -210,7 +207,6 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         final AtomicBoolean queued = new AtomicBoolean();
 
         public BagView(Bag<X, Y> bag, Function<Y,Node> builder) {
-            super();
             this.bag = bag;
             this.builder = builder;
             frame();

@@ -40,7 +40,6 @@ public class NARWebServer extends PathHandler {
         private Active active;
 
         public WebSocketCore() {
-            super();
         }
 
 
@@ -166,7 +165,6 @@ public class NARWebServer extends PathHandler {
     }
 
     public NARWebServer(NAR nar, int httpPort) throws IOException {
-        super();
 
         this.nar = nar;
 

@@ -10,7 +10,6 @@ public class FIFO<B> extends ArrayDeque<B> implements Buffer<B> {
     public static final int DEFAULT_CAPACITY = 1024;
     
     public FIFO() {
-        super();
     }
 
     

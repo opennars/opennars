@@ -56,7 +56,6 @@ public class ImplementationFactory {
      *            Should only declared methods be implemented?
      */
     public ImplementationFactory(SgClassPool pool, boolean onlyDeclaredMethods) {
-        super();
 
         assureNotNull("pool", pool);
         this.pool = pool;
@@ -116,27 +115,26 @@ public class ImplementationFactory {
         // Create class with all interfaces
         SgClass clasz = new SgClass("public", implPackageName, implClassName, superClass,
                 false, enclosingClass);
-        for (int i = 0; i < intf.length; i++) {
-            clasz.addInterface(SgClass.create(pool, intf[i]));
+        for (Class<?> anIntf1 : intf) {
+            clasz.addInterface(SgClass.create(pool, anIntf1));
         }
         listener.afterClassCreated(clasz);
 
         Map<String, ImplementedMethod> implMethods = new HashMap<>();
 
         // Iterate through interfaces and add methods
-        for (int i = 0; i < intf.length; i++) {
-            addInterfaceMethods(implMethods, clasz, intf[i], listener);
+        for (Class<?> anIntf : intf) {
+            addInterfaceMethods(implMethods, clasz, anIntf, listener);
         }
 
         // Iterate through methods and create body
-        Iterator<String> it = implMethods.keySet().iterator();
-        while (it.hasNext()) {
-            ImplementedMethod implMethod = implMethods.get(it.next());
+        for (String s : implMethods.keySet()) {
+            ImplementedMethod implMethod = implMethods.get(s);
             SgMethod method = implMethod.getMethod();
             Class<?>[] interfaces = implMethod.getInterfaces();
             List<String> lines = listener.createBody(method, interfaces);
-            for (int k = 0; k < lines.size(); k++) {
-                implMethod.getMethod().addBodyLine(lines.get(k));
+            for (String line : lines) {
+                implMethod.getMethod().addBodyLine(line);
             }
         }
 
@@ -148,28 +146,28 @@ public class ImplementationFactory {
 
         Method[] methods;
         methods = onlyDeclaredMethods ? intf.getDeclaredMethods() : intf.getMethods();
-        for (int j = 0; j < methods.length; j++) {
+        for (Method method1 : methods) {
 
             // Create method signature
-            String name = methods[j].getName();
-            String typeSignature = SgUtils.createTypeSignature(name, methods[j]
+            String name = method1.getName();
+            String typeSignature = SgUtils.createTypeSignature(name, method1
                     .getParameterTypes());
 
             // Get return type
             SgClass returnType;
-            returnType = methods[j].getReturnType() == null ? SgClass.VOID : SgClass.create(pool, methods[j].getReturnType());
+            returnType = method1.getReturnType() == null ? SgClass.VOID : SgClass.create(pool, method1.getReturnType());
 
             // Check if we already implemented this method
             ImplementedMethod implMethod = implMethods.get(typeSignature);
             if (implMethod == null) {
                 SgMethod method = new SgMethod(clasz, "public", returnType, name);
                 // Add arguments
-                Class<?>[] paramTypes = methods[j].getParameterTypes();
+                Class<?>[] paramTypes = method1.getParameterTypes();
                 for (int k = 0; k < paramTypes.length; k++) {
                     SgClass paramType = SgClass.create(pool, paramTypes[k]);
                     method.addArgument(new SgArgument(method, paramType, ("arg" + k)));
                 }
-                method.addAnnotations(SgUtils.createAnnotations(methods[j].getAnnotations()));
+                method.addAnnotations(SgUtils.createAnnotations(method1.getAnnotations()));
                 implMethod = new ImplementedMethod(method);
                 implMethod.addInterface(intf);
                 implMethods.put(typeSignature, implMethod);
@@ -191,9 +189,9 @@ public class ImplementationFactory {
 
             // Add exceptions if missing
             SgMethod method = implMethod.getMethod();
-            Class<?>[] exceptionTypes = methods[j].getExceptionTypes();
-            for (int k = 0; k < exceptionTypes.length; k++) {
-                SgClass ex = SgClass.create(pool, exceptionTypes[k]);
+            Class<?>[] exceptionTypes = method1.getExceptionTypes();
+            for (Class<?> exceptionType : exceptionTypes) {
+                SgClass ex = SgClass.create(pool, exceptionType);
                 if (!method.getExceptions().contains(ex)) {
                     method.addException(ex);
                 }

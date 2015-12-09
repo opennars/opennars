@@ -30,7 +30,6 @@ public class WebcamFX extends StackPane implements Runnable {
 
 
     public WebcamFX() throws LineUnavailableException {
-        super();
 
         //newAudioCaptureThread(5).start();
 

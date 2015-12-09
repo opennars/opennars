@@ -16,7 +16,6 @@ public class Shell extends Terminal {
 
     /** do not call directly */
     Shell()  {
-        super();
     }
 
 //    public static void main(String[] arg) throws Exception {

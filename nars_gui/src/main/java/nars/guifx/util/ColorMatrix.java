@@ -19,7 +19,6 @@ public class ColorMatrix {
     }
 
     public ColorMatrix(int w, int h, Double2Function<Color> compute) {
-        super();
         cc = new Color[w][];
         for (int i = 0; i < w; i++)
             cc[i] = new Color[h];

@@ -27,7 +27,6 @@ public class LineCharts extends JFXPanel {
     private final String yAxisLabel;
 
     public LineCharts(String yAxis, int numSeries, int historyLength) {
-        super();
         this.numSeries = numSeries;
         this.historyLength = historyLength;
         yAxisLabel = yAxis;

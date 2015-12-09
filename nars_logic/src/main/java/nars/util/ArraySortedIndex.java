@@ -47,7 +47,6 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
     
     public ArraySortedIndex(List<E> list, int capacity) {
-        super();
         this.list = list;
         setCapacity(capacity);
     }

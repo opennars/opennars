@@ -25,7 +25,6 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     private final Map<Object, Object> out = new HashMap();
 
     public CachedObjectGraph(Collection<Object> items) {
-        super();
 
         this.items = new HashSet(items);
 

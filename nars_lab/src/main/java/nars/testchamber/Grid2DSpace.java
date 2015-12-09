@@ -58,7 +58,6 @@ public class Grid2DSpace extends PApplet {
     public NAR nar;
     
     public Grid2DSpace(Hauto cells, NAR nar) {
-        super();
 
         this.cells = cells;
         world_used=true;
@@ -349,9 +348,8 @@ public class Grid2DSpace extends PApplet {
         
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
         translate(rendersize/ 4.0f, rendersize/ 4.0f);
-                
-        for (int i = 0; i < objects.size(); i++)
-            objects.get(i).draw();
+
+        for (GridObject object : objects) object.draw();
         popMatrix();
     }
     

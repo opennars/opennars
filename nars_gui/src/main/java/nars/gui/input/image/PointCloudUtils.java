@@ -85,9 +85,7 @@ public class PointCloudUtils
     PointCloudPoint c = centroid(points);
     ArrayList<PointCloudPoint> newpoints = new ArrayList<>();
 
-    for(int i = 0; i < points.size(); i++)
-    {
-      PointCloudPoint p = points.get(i);
+    for (PointCloudPoint p : points) {
       double qx = p.getX() + pt.getX() - c.getX();
       double qy = p.getY() + pt.getY() - c.getY();
       newpoints.add(new PointCloudPoint(qx, qy, p.getID()));
@@ -101,9 +99,7 @@ public class PointCloudUtils
     double x = 0.0;
     double y = 0.0;
 
-    for(int i = 0; i < points.size(); i++)
-    {
-      PointCloudPoint p = points.get(i);
+    for (PointCloudPoint p : points) {
       x += p.getX();
       y += p.getY();
     }
@@ -122,10 +118,7 @@ public class PointCloudUtils
     double minY = Double.POSITIVE_INFINITY;
     double maxY = Double.NEGATIVE_INFINITY;
 
-    for(int i = 0; i < points.size(); i++)
-    {
-      PointCloudPoint p = points.get(i);
-      
+    for (PointCloudPoint p : points) {
       minX = Math.min(minX, p.getX());
       minY = Math.min(minY, p.getY());
       maxX = Math.max(maxX, p.getX());
@@ -136,9 +129,7 @@ public class PointCloudUtils
 
     ArrayList<PointCloudPoint> newpoints = new ArrayList<>();
 
-    for(int i = 0; i < points.size(); i++)
-    {
-      PointCloudPoint p = points.get(i);
+    for (PointCloudPoint p : points) {
       double qx = (p.getX() - minX) / size;
       double qy = (p.getY() - minY) / size;
       newpoints.add(new PointCloudPoint(qx, qy, p.getID()));

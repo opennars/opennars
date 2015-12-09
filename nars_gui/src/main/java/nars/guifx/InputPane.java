@@ -24,7 +24,6 @@ public class InputPane extends TabPane {
     private final NAR nar;
 
     public InputPane(NAR n) {
-        super();
 
         nar = n;
 
@@ -76,7 +75,6 @@ public class InputPane extends TabPane {
         final Map<String, String> absPath;
 
         public LibraryInputPane() {
-            super();
 
             GridPane buttons = new GridPane();
             buttons.setMaxHeight(Double.MAX_VALUE);

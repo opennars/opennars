@@ -23,10 +23,8 @@ public class BitmapPanel extends JComponent {
      * Creates the new image pannel by colling the constructor of the JPanel
      */
     public BitmapPanel() {
-        super();
     }
     public BitmapPanel(BufferedImage i) {
-        super();
         setImage(i);
     }
 

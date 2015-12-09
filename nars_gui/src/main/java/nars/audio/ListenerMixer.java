@@ -124,8 +124,7 @@ public class ListenerMixer implements StereoSoundProducer
 
     public void skip(int samplesToSkip, int readRate)
     {
-        for (int i = 0; i < sounds.size(); i++) {
-            Sound sound = sounds.get(i);
+        for (Sound sound : sounds) {
             sound.skip(samplesToSkip, readRate);
         }
     }

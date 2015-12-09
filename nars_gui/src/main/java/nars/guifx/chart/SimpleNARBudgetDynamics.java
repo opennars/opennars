@@ -169,9 +169,9 @@ public class SimpleNARBudgetDynamics {
                     //abFwdClosed;
                     //abBidiClosed;
                     abcClosed;
-            for (int i = 0; i < x.length; i++) {
+            for (String aX : x) {
 
-                Task t = n.task(x[i]);
+                Task t = n.task(aX);
                 t.getBudget().setPriority(pri);
                 t.getBudget().setQuality(qua);
                 t.getBudget().setDurability(dur);

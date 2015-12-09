@@ -66,7 +66,6 @@ public abstract class AbstractAgent {
         init(useGUI, namedPipesBasename);
     }
     public AbstractAgent() {
-        super();
     }
 
     protected void init(boolean useGUI, String namedPipesBasename) {

@@ -12,7 +12,6 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap2D<N> {
 
     public HyperassociativeMap1D() {
-        super();
     }
 
     @Override

@@ -12,7 +12,6 @@ public class TaskLinkBuilder extends BagActivator<Task,TaskLink> {
     private long now;
 
     public TaskLinkBuilder(Memory m) {
-        super();
         memory = m;
     }
 

@@ -35,7 +35,6 @@ public class TracePane extends LogPane {
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
 
     public TracePane(NAR nar, DoubleProperty volume) {
-        super();
 
         this.volume = volume;
         this.nar = nar;

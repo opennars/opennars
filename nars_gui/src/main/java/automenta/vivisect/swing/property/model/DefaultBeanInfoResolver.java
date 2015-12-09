@@ -28,7 +28,6 @@ import java.beans.BeanInfo;
 public class DefaultBeanInfoResolver implements BeanInfoResolver {
 
   public DefaultBeanInfoResolver() {
-    super();
   }
 
   public BeanInfo getBeanInfo(Object object) {

@@ -363,8 +363,8 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         if (Global.DEBUG) {
             boolean actuallyAnyNonEmpty = false;
-            for (int i = 0; i < levelEmpty.length; i++) {
-                if (!levelEmpty[i]) {
+            for (boolean aLevelEmpty : levelEmpty) {
+                if (!aLevelEmpty) {
                     actuallyAnyNonEmpty = true;
                     break;
                 }

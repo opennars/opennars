@@ -29,7 +29,6 @@ public class JScrollablePanel extends JPanel implements Scrollable {
 	 * 
 	 */
 	public JScrollablePanel() {
-		super();
 	}
 
 	/**

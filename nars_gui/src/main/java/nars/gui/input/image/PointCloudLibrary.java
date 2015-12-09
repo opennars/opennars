@@ -98,10 +98,8 @@ public class PointCloudLibrary
   // which represent unistroke gestures
   public boolean containsOnlyUnistrokes()
   {
-    for(int i = 0; i < _pointClouds.size(); i++)
-    {
-      if(!_pointClouds.get(i).isUnistroke())
-      {
+    for (PointCloud _pointCloud : _pointClouds) {
+      if (!_pointCloud.isUnistroke()) {
         return false;
       }
     }
@@ -112,12 +110,10 @@ public class PointCloudLibrary
   Set<PointCloud> getPointCloud(String name)
   {
     HashSet<PointCloud> result = new HashSet<>();
-    
-    for(int i = 0; i < _pointClouds.size(); i++)
-    {
-      if(_pointClouds.get(i).getName().equals(name))
-      {
-        result.add(_pointClouds.get(i));
+
+    for (PointCloud _pointCloud : _pointClouds) {
+      if (_pointCloud.getName().equals(name)) {
+        result.add(_pointCloud);
       }
     }
     
@@ -127,9 +123,8 @@ public class PointCloudLibrary
   public Set<String> getNames()
   {
     HashSet<String> result = new HashSet<>();
-    for(int i = 0; i < _pointClouds.size(); i++)
-    {
-      result.add(_pointClouds.get(i).getName());
+    for (PointCloud _pointCloud : _pointClouds) {
+      result.add(_pointCloud.getName());
     }
     
     return result;

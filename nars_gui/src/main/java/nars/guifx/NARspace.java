@@ -18,7 +18,6 @@ public class NARspace extends Spacegraph {
     private final NAR nar;
 
     public NARspace(NAR n) {
-        super();
 
         nar = n;
 

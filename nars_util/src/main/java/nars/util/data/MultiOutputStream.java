@@ -32,9 +32,7 @@ public class MultiOutputStream extends OutputStream {
 
         out = new ArrayList<>();
 
-        for (Iterator<OutputStream> i = outStreams.iterator(); i.hasNext();) {
-            OutputStream outputStream = i.next();
-
+        for (OutputStream outputStream : outStreams) {
             if (outputStream == null) {
                 throw new NullPointerException();
             }
@@ -43,36 +41,36 @@ public class MultiOutputStream extends OutputStream {
     }
 
     @Override public void write(int arg0) throws IOException {
-        for (int i=0; i < out.size(); i++) {            
-            out.get(i).write(arg0);
+        for (OutputStream anOut : out) {
+            anOut.write(arg0);
         }
     }
 
     @Override
     public void write(byte[] b) throws IOException {
-        for (int i=0; i < out.size(); i++) {            
-            out.get(i).write(b);
+        for (OutputStream anOut : out) {
+            anOut.write(b);
         }
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        for (int i=0; i < out.size(); i++) {            
-            out.get(i).write(b, off, len);
+        for (OutputStream anOut : out) {
+            anOut.write(b, off, len);
         }
     }
 
     @Override
     public void close() throws IOException {
-        for (int i=0; i < out.size(); i++) {            
-            out.get(i).close();
+        for (OutputStream anOut : out) {
+            anOut.close();
         }
     }
 
     @Override
     public void flush() throws IOException {
-        for (int i=0; i < out.size(); i++) {            
-            out.get(i).flush();
+        for (OutputStream anOut : out) {
+            anOut.flush();
         }
     }
 

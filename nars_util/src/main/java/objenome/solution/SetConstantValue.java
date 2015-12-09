@@ -17,7 +17,6 @@ public abstract class SetConstantValue<X> extends AtomicDouble implements Soluti
     public final DecideNumericValue problem;
     
     public SetConstantValue(DecideNumericValue p) {
-        super();
         problem = p;
     }
     

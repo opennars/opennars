@@ -30,7 +30,6 @@ public class AnalyticTruth extends DefaultTruth {
 //    }
 
     public AnalyticTruth(float f, float c) {
-        super();
         set(f, c);
     }
 
