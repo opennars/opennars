@@ -17,7 +17,6 @@ import nars.nal.Deriver;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.op.data.Flat;
-import nars.op.data.json;
 import nars.op.data.similaritree;
 import nars.op.io.echo;
 import nars.op.io.reset;
@@ -276,8 +275,8 @@ public abstract class AbstractNAR extends NAR {
 
             new js(), //javascdript evalaution
 
-            new json.jsonfrom(),
-            new json.jsonto()
+            /*new json.jsonfrom(),
+            new json.jsonto()*/
          /*
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)

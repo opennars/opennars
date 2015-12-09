@@ -258,7 +258,7 @@ public abstract class NQuadsRDF {
 
         //http://www.w3.org/TR/owl-ref/
 
-        Compound belief = null;
+        Term belief = null;
 
         //noinspection IfStatementWithTooManyBranches
         if (predicate.equals(parentOf) || predicate.equals(type)
@@ -292,7 +292,7 @@ public abstract class NQuadsRDF {
 
             Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
             Term b = $.$("<{#subj} --> [" +  object + "]>");
-            belief = $.impl(a,b);
+            belief = $.conj(a,b);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
@@ -300,7 +300,7 @@ public abstract class NQuadsRDF {
 
             Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
             Term b = $.$("<{#obj} --> [" +  object + "]>");
-            belief = $.impl(a,b);
+            belief = $.conj(a,b);
 
 //            belief = nar.term(
 //                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"
@@ -331,8 +331,8 @@ public abstract class NQuadsRDF {
             }
         }
 
-        if (belief!=null) {
-            return new MutableTask().term(belief).
+        if (belief instanceof Compound) {
+            return new MutableTask().term((Compound)belief).
                     belief().truth(1.0f,0.9f)
                     .time(nar.time(),
                     Tense.ETERNAL //TODO Tense parameter

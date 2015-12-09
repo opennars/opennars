@@ -24,7 +24,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Tense;
+import nars.nal.nal7.Order;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
@@ -279,11 +279,8 @@ public interface Sentence extends Stamp, Named<Sentence>, Termed, Truthed {
         return !(t instanceof Conjunction && t.hasVarDep());
     }
 
-    default int getTemporalOrder() {
-        int t = getTerm().getTemporalOrder();
-        if (t == Tense.ORDER_INVALID)
-            throw new RuntimeException(this + " has INVALID temporal order");
-        return t;
+    default Order getTemporalOrder() {
+        return getTerm().getTemporalOrder();
     }
 
 

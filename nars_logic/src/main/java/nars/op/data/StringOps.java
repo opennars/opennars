@@ -21,7 +21,7 @@ public interface StringOps {
 
             //first argument is substitution map
             Compound<?> substitutions = (Compound<?>) X[0];
-            Sequence strings = (Sequence) X[1];
+            Sequence<?> strings = (Sequence) X[1];
 
             //convert this set to a Map<Term,Term>
             Map<Term, Term> substs = Terms.

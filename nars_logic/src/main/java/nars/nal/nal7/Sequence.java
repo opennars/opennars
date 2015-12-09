@@ -9,6 +9,7 @@ import nars.nal.nal5.Conjunctive;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ import static nars.nal.nal7.Tense.appendInterval;
 /**
  * Sequential Conjunction (&/)
  */
-public class Sequence extends Conjunctive<Term> implements Intermval {
+public class Sequence<T extends Term> extends GenericCompound<T> implements Intermval {
 
     protected final int[] intervals;
 
@@ -40,8 +41,8 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
      *      (&/,   /i0, A, /i1, B, /i2, C, /i3)
      *
      */
-    private Sequence(Term[] subterms, int[] intervals) {
-        super(subterms);
+    private Sequence(T[] subterms, int[] intervals) {
+        super(Op.SEQUENCE, subterms, 0);
 
         if (intervals == null) {
             //TODO leave as null, avoiding allocating this array if all zeros
@@ -64,41 +65,41 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
     }
 
-    @Override
-    public int compareTo(Object that) {
-        int i = super.compareTo(that);
-        /*if (i == 0) {
-            if (!equals2((Sequence)that)) {
-                System.err.println("equality compared but not actually equal");
-            }
-        }*/
-        return i;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        boolean e = super.equals(that);
-//        if (e) {
-//            /**
-//             * allowed for:
-//             *      Conceptualize, Concept Activation, Concept lookup
-//             *
-//             * should disallow for:
-//             *      task tables
-//             *
-//             * to be decided:
-//             *      substitution maps
-//             *      term index
-//             *
-//             */
+//    @Override
+//    public int compareTo(Object that) {
+//        int i = super.compareTo(that);
+//        /*if (i == 0) {
 //            if (!equals2((Sequence)that)) {
 //                System.err.println("equality compared but not actually equal");
 //            }
+//        }*/
+//        return i;
+//    }
 //
-//            return true;
-//        }
-        return e;
-    }
+//    @Override
+//    public boolean equals(Object that) {
+//        boolean e = super.equals(that);
+////        if (e) {
+////            /**
+////             * allowed for:
+////             *      Conceptualize, Concept Activation, Concept lookup
+////             *
+////             * should disallow for:
+////             *      task tables
+////             *
+////             * to be decided:
+////             *      substitution maps
+////             *      term index
+////             *
+////             */
+////            if (!equals2((Sequence)that)) {
+////                System.err.println("equality compared but not actually equal");
+////            }
+////
+////            return true;
+////        }
+//        return e;
+//    }
 
     /** compares 2nd-order "metadata" components: intervals, duration
      */
@@ -111,9 +112,6 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
     }
 
-    @Override public final boolean isCommutative() {
-        return false;
-    }
 
     @Override
     public final void setDuration(int duration) {
@@ -165,10 +163,6 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
         throw new RuntimeException("Use Sequence.makeSequence");
     }
 
-    @Override
-    public final int getTemporalOrder() {
-        return Tense.ORDER_FORWARD;
-    }
 
 
     @Override
@@ -236,11 +230,6 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     @Override
     public final int[] intervals() {
         return intervals;
-    }
-
-    @Override
-    public final Op op() {
-        return Op.SEQUENCE;
     }
 
 
@@ -318,7 +307,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
             List<Term> list = Global.newArrayList(cterm1.size());
             cterm1.addAllTo(list);
 
-            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
+            if (Conjunctive.isConjunction(term2, Tense.ORDER_FORWARD)) {
                 // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 ((Compound) term2).addAllTo(list);
             } else {
@@ -328,8 +317,8 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
 
             components = list.toArray(new Term[list.size()]);
 
-        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Tense.ORDER_FORWARD)) {
-            Conjunction cterm2 = (Conjunction) term2;
+        } else if (Conjunctive.isConjunction(term2, Tense.ORDER_FORWARD)) {
+            Compound cterm2 = (Compound) term2;
             components = new Term[term2.size() + 1];
             components[0] = term1;
             arraycopy(cterm2.terms(), 0, components, 1, cterm2.size());

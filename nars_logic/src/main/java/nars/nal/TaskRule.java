@@ -13,8 +13,8 @@ import nars.nal.meta.op.PostSolve;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.*;
 import nars.nal.meta.pre.*;
-import nars.nal.nal1.Inheritance;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
@@ -69,6 +69,11 @@ public class TaskRule extends GenericCompound implements Level {
 
     public final Compound getConclusion() {
         return (Compound) term(1);
+    }
+
+    @Override
+    public Term clone(Term[] replaced) {
+        return new TaskRule((Compound)replaced[0], (Compound)replaced[1]);
     }
 
     public TaskRule(Compound premises, Compound result) {
@@ -304,7 +309,7 @@ public class TaskRule extends GenericCompound implements Level {
         public Term apply(Compound containingCompound, Term v, int depth) {
 
             //do not alter postconditions
-            if ((containingCompound instanceof Inheritance)
+            if ((containingCompound.op() == Op.INHERITANCE)
                     && PostCondition.reservedMetaInfoCategories.contains(
                     ((Compound) containingCompound).term(1)))
                 return v;
@@ -318,10 +323,7 @@ public class TaskRule extends GenericCompound implements Level {
 
 
     public final TaskRule normalizeRule() {
-        TaskRule tr = (TaskRule) new TaskRuleVariableNormalization(this).get();
-        if (tr == null)
-            return null;
-        return tr;
+        return (TaskRule) new TaskRuleVariableNormalization(this).get();
     }
 
 
@@ -569,22 +571,6 @@ public class TaskRule extends GenericCompound implements Level {
     }
 
 
-    //    //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality
-//    boolean deepEquals(Object obj) {
-//        /*
-//        the precondition uniqueness is guaranted because they exist as the terms of the rule meta-term which equality is already tested for
-//         */
-//        if (super.equals(obj)) {
-//            if (!Arrays.equals(postconditions, ((TaskRule)obj).postconditions)) {
-//                throw new RuntimeException(this + " and " + obj + " have equal Rule Product but inequal postconditions");
-//            }
-//
-//            return true;
-//        }
-//        return false;
-//    }
-
-
     /**
      * for each calculable "question reverse" rule,
      * supply to the consumer
@@ -620,7 +606,13 @@ public class TaskRule extends GenericCompound implements Level {
     }
 
 
-//    @Override
+
+    @Override
+    public Term clone(TermContainer subs) {
+        return null;
+    }
+
+    //    @Override
 //    public Term clone(Term[] x) {
 //        return new TaskRule((Compound)x[0], (Compound)x[1]);
 //    }

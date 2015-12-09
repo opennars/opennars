@@ -5,8 +5,6 @@
  */
 package nars.util.meter.event;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.util.meter.FunctionMeter;
 import org.apache.commons.lang3.mutable.MutableLong;
 
@@ -16,7 +14,6 @@ import java.io.Serializable;
  *
  * @author me
  */
-@JsonSerialize(using = ToStringSerializer.class)
 public class HitMeter extends FunctionMeter<Long> implements Serializable {
     
     private boolean autoReset;

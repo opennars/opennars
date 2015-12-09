@@ -277,7 +277,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final int bytesLength() {
+    public int bytesLength() {
         int len = /* opener byte */1 + 1;
 
         int n = size();
@@ -311,7 +311,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final void appendSubtermBytes(ByteBuf b) {
+    public void appendSubtermBytes(ByteBuf b) {
         terms.appendSubtermBytes(b);
     }
 

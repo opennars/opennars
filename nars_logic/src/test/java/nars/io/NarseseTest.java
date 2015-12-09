@@ -1,9 +1,7 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Image;
-import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Terminal;
@@ -185,11 +183,11 @@ public class NarseseTest {
         assertEquals("x", t.term(0).toString());
         assertEquals("y", t.term(1).toString());
 
-        IntersectionInt a = term("(x | y)");
+        Compound a = term("(x | y)");
         assertEquals(Op.INTERSECTION_INT, a.op());
         assertEquals(2, a.size());
 
-        Product b = term("(x * y)");
+        Compound b = term("(x * y)");
         assertEquals(Op.PRODUCT, b.op());
         assertEquals(2, b.size());
 
@@ -225,7 +223,8 @@ public class NarseseTest {
     protected void testBelieveAB(Compound t) {
         Term[] aa = Operation.argTerms(t);
         assertEquals(2, aa.length);
-        assertEquals("^believe", Operation.opTerm(t).toString());
+        assertEquals("^believe", t.term(1).toString());
+        assertEquals("believe", Operation.opTerm(t).toString());
         assertEquals("a", aa[0].toString());
         assertEquals("b", aa[1].toString());
     }

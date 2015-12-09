@@ -5,10 +5,12 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Premise;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition1;
-import nars.nal.nal5.Implication;
 import nars.nal.nal7.Sequence;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+
+import static nars.Op.IMPLICATION;
 
 /**
  * Created by me on 8/15/15.
@@ -70,8 +72,8 @@ public class ShiftOccurrence extends PreCondition1 {
 
         if (positive) {
             Term ret = p.getTermLink().getTerm();
-            if (ret instanceof Implication) {
-                Term impSubj = ((Implication) ret).getSubject();
+            if (ret.op() == IMPLICATION) {
+                Term impSubj = ((Compound) ret).term(0);
                 if (impSubj instanceof Sequence) {
                     Sequence seq = (Sequence)impSubj;
 

@@ -1,6 +1,5 @@
 package nars.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
@@ -13,11 +12,9 @@ import nars.NAR;
 import nars.NARLoop;
 import nars.nar.Default;
 import nars.util.event.Active;
-import nars.util.io.JSON;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import static io.undertow.Handlers.resource;
 import static io.undertow.Handlers.websocket;
@@ -136,16 +133,16 @@ public class NARWebServer extends PathHandler {
 
 
         public void send(WebSocketChannel socket, Object object) {
-            try {
-
-                ByteBuffer data = ByteBuffer.wrap(JSON.omDeep.writeValueAsBytes(object));
-
-                WebSockets.sendText(data, socket, this);
-
-
-            } catch (JsonProcessingException ex) {
-                ex.printStackTrace();
-            }
+//            try {
+//
+//                ByteBuffer data = ByteBuffer.wrap(JSON.omDeep.writeValueAsBytes(object));
+//
+//                WebSockets.sendText(data, socket, this);
+//
+//
+//            } catch (JsonProcessingException ex) {
+//                ex.printStackTrace();
+//            }
         }
 
 //    @Override

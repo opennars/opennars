@@ -5,6 +5,9 @@ import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
 import nars.MapIndex;
+import nars.term.compound.Compound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -15,7 +18,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,12 +57,24 @@ public class DerivationRules extends FastList<TaskRule> {
     /** for compiling and de-duplicating pattern term components */
     final MapIndex patterns = new PatternIndex();
 
-    static final Logger logger = Logger.getLogger(DerivationRules.class.toString());
+    static final Logger logger = LoggerFactory.getLogger(DerivationRules.class);
 
     public DerivationRules(Set<TaskRule> r) {
-        r.forEach(t -> add( t.setup(patterns) ));
+        final int[] errors = {0};
+        r.forEach(t -> {
+            try {
+                TaskRule p = t.setup(patterns);
+                add( p );
+            } catch (RuntimeException e) {
+                logger.warn("rule '{}': {}", t, e.getMessage());
+                errors[0]++;
+            }
+        });
 
         logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
+        if (errors[0] > 0) {
+            logger.warn("\trule errors: " + errors[0]);
+        }
     }
 
 //    public DerivationRules(Stream<TaskRule[]> r, Predicate<TaskRule[]> filter) {
@@ -288,11 +302,11 @@ public class DerivationRules extends FastList<TaskRule> {
 
                 TaskRule rUnnorm = $.$(s);
 
-                TaskRule r = rUnnorm.normalizeRule();
+                Compound r = rUnnorm.normalizeRule();
                 if (r != null) {
                     AcceptRule(ur, rUnnorm, s);
 
-                    TaskRule rFwd = r.forwardPermutation();
+                    TaskRule rFwd = rUnnorm.forwardPermutation();
                     AcceptRule(ur, rFwd, s);
                 }
                 else {

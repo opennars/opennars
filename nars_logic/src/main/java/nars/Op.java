@@ -1,6 +1,7 @@
 package nars;
 
 
+import nars.nal.nal7.Order;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
@@ -29,13 +30,13 @@ public enum Op implements Serializable {
 
     OPERATOR("^", 8),
 
-    NEGATION("--", 5, 1) {
+    NEGATION("--", 5) {
 
     },
 
     /* Relations */
-    INHERITANCE("-->", 1, OpType.Relation, 2),
-    SIMILARITY("<->", true, 2, OpType.Relation, 3),
+    INHERITANCE("-->", 1, OpType.Relation),
+    SIMILARITY("<->", true, 2, OpType.Relation),
 
 
     /* CompountTerm operators, length = 1 */
@@ -51,11 +52,11 @@ public enum Op implements Serializable {
     IMAGE_INT("\\", 4),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCTION("||", true, 5, 4),
-    CONJUNCTION("&&", true, 5, 5),
+    DISJUNCTION("||", true, 5),
+    CONJUNCTION("&&", true, 5),
 
-    SEQUENCE("&/", 7, 6),
-    PARALLEL("&|", true, 7, 7),
+    SEQUENCE("&/", 7),
+    PARALLEL("&|", true, 7),
 
 
     /* CompountTerm delimiters, must use 4 different pairs */
@@ -63,16 +64,16 @@ public enum Op implements Serializable {
     SET_EXT_OPENER("{", true, 3), //OPENER also functions as the symbol for the entire compound
 
 
-    IMPLICATION("==>", 5, OpType.Relation, 8),
+    IMPLICATION("==>", 5, OpType.Relation),
 
     /* Temporal Relations */
-    IMPLICATION_AFTER("=/>", 7, OpType.Relation, 9),
-    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, 10),
-    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, 11),
+    IMPLICATION_AFTER("=/>", 7, OpType.Relation),
+    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation),
+    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation),
 
-    EQUIVALENCE("<=>", true, 5, OpType.Relation, 12),
-    EQUIVALENCE_AFTER("</>", 7, OpType.Relation, 13),
-    EQUIVALENCE_WHEN("<|>", true, 7, OpType.Relation, 14),
+    EQUIVALENCE("<=>", true, 5, OpType.Relation),
+    EQUIVALENCE_AFTER("</>", 7, OpType.Relation),
+    EQUIVALENCE_WHEN("<|>", true, 7, OpType.Relation),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -131,15 +132,12 @@ public enum Op implements Serializable {
      */
     public final byte[] bytes;
 
-    /**
-     * 1-character representation, or 0 if a multibyte must be used
-     */
-    public final byte byt;
     private final boolean commutative;
+    private Order temporalOrder;
 
 
     Op(char c, int minLevel, int... bytes) {
-        this(c, minLevel, OpType.Other, bytes);
+        this(c, minLevel, OpType.Other);
     }
 
     Op(String s, boolean commutative, int minLevel) {
@@ -147,47 +145,24 @@ public enum Op implements Serializable {
     }
 
 
-    Op(char c, int minLevel, OpType type, int... bytes) {
-        this(Character.toString(c), minLevel, type, bytes);
+    Op(char c, int minLevel, OpType type) {
+        this(Character.toString(c), minLevel, type);
     }
 
-    Op(String string, boolean commutative, int minLevel, int... ibytes) {
-        this(string, commutative, minLevel, OpType.Other, ibytes);
+    Op(String string, int minLevel) {
+        this(string, minLevel, OpType.Other);
     }
 
-    Op(String string, int minLevel, int... ibytes) {
-        this(string, minLevel, OpType.Other, ibytes);
+    Op(String string, int minLevel, OpType type) {
+        this(string, false, minLevel, type);
     }
 
-    Op(String string, int minLevel, OpType type, int... ibytes) {
-        this(string, false, minLevel, type, ibytes);
-    }
-
-    Op(String string, boolean commutative, int minLevel, OpType type, int... ibytes) {
+    Op(String string, boolean commutative, int minLevel, OpType type) {
 
         str = string;
         this.commutative = commutative;
 
-        byte[] bb;
-
-        boolean hasCompact = (ibytes.length == 1);
-        if (!hasCompact) {
-            bb = Utf8.toUtf8(string);
-        } else {
-            bb = new byte[ibytes.length];
-            for (int i = 0; i < ibytes.length; i++)
-                bb[i] = (byte) ibytes[i];
-        }
-
-        bytes = bb;
-
-        if (hasCompact) {
-            int p = bb[0];
-            byt = p < 31 ? (byte) (p) : 0;
-        } else {
-            //multiple ibytes, use the provided array
-            byt = 0;
-        }
+        bytes = Utf8.toUtf8(string);
 
         this.minLevel = minLevel;
         this.type = type;
@@ -224,11 +199,6 @@ public enum Op implements Serializable {
             w.append(ch);
     }
 
-    public final boolean has8BitRepresentation() {
-        return byt != 0;
-    }
-
-
     public static final int or(Op... o) {
         int bits = 0;
         for (Op n : o) {
@@ -260,6 +230,10 @@ public enum Op implements Serializable {
 
     public boolean isCommutative() {
         return commutative;
+    }
+
+    public Order getTemporalOrder() {
+        return temporalOrder;
     }
 
     /** top-level Op categories */

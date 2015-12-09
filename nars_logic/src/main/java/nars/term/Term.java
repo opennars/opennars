@@ -22,7 +22,7 @@ package nars.term;
 
 
 import nars.Op;
-import nars.nal.nal7.Tense;
+import nars.nal.nal7.Order;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
@@ -103,8 +103,8 @@ public interface Term extends Termed, Comparable, Termlike {
         return vars() > 0;
     }
 
-    default int getTemporalOrder() {
-        return Tense.ORDER_NONE;
+    default Order getTemporalOrder() {
+        return op().getTemporalOrder();
     }
 
     //boolean hasVar(final Op type);
@@ -116,8 +116,11 @@ public interface Term extends Termed, Comparable, Termlike {
     default boolean hasAny(Op op) {
 //        if (op == Op.VAR_PATTERN)
 //            return Variable.hasPatternVariable(this);
-        return hasAny((1<<op.ordinal()));
+        return hasAny((1<<  op.ordinal()));
     }
+
+
+
 
 //    default boolean hasAll(int structuralVector) {
 //        final int s = structure();
@@ -129,7 +132,14 @@ public interface Term extends Termed, Comparable, Termlike {
         int s = structure();
         return (s & structuralVector) != 0;
     }
-
+    default boolean isAny(int structuralVector) {
+        int s = op().bit();
+        return (s & structuralVector) != 0;
+    }
+    /** for multiple Op comparsions, use Op.or */
+    default boolean isAny(Op op) {
+        return isAny(op.bit());
+    }
 
     /** # of contained independent variables */
     int varIndep();

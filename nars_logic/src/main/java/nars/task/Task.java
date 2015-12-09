@@ -26,6 +26,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
+import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
@@ -40,8 +41,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static nars.Global.dereference;
-import static nars.nal.nal7.Tense.ORDER_BACKWARD;
-import static nars.nal.nal7.Tense.ORDER_FORWARD;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -459,7 +458,7 @@ public interface Task extends Sentence,
 
 
     @Override
-    default int getTemporalOrder() {
+    default Order getTemporalOrder() {
         return getTerm().getTemporalOrder();
     }
 
@@ -554,9 +553,9 @@ public interface Task extends Sentence,
         }
 
         switch (Tense.order(currentTime, getOccurrenceTime(), duration)) {
-            case ORDER_FORWARD:
+            case Forward:
                 return Symbols.TENSE_FUTURE;
-            case ORDER_BACKWARD:
+            case Backward:
                 return Symbols.TENSE_PAST;
             default:
                 return Symbols.TENSE_PRESENT;

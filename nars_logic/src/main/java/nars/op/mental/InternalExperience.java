@@ -4,8 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.budget.Budget;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -138,8 +136,8 @@ public class InternalExperience {
 
             Term beliefTerm = belief.getTerm();
 
-            if (beliefTerm instanceof Implication && r.nextFloat() <= INTERNAL_EXPERIENCE_PROBABILITY) {
-                internalizeImplication(task, p, (Implication) beliefTerm);
+            if (beliefTerm.op()==Op.IMPLICATION && r.nextFloat() <= INTERNAL_EXPERIENCE_PROBABILITY) {
+                internalizeImplication(task, p, (Compound)beliefTerm);
             }
         });
     }
@@ -266,15 +264,15 @@ public class InternalExperience {
             Operator.the("want")
     };
 
-    private void internalizeImplication(Task task, Premise nal, Implication beliefTerm) {
+    private void internalizeImplication(Task task, Premise nal, Compound beliefImpl) {
         Term taskTerm = task.getTerm();
-        Implication imp = beliefTerm;
+        Compound imp = beliefImpl;
         if (imp.getTemporalOrder() == Tense.ORDER_FORWARD) {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
             boolean valid = true;
-            Term impsub = imp.getSubject();
-            if (impsub instanceof Conjunction) {
-                Conjunction conj = (Conjunction) impsub;
+            Term impsub = imp.term(0);
+            if (impsub.op() == Op.CONJUNCTION) {
+                Compound conj = (Compound) impsub;
                 if (!conj.term(0).equals(taskTerm)) {
                     valid = false; //the expected needed term is not included
                 }
@@ -291,7 +289,7 @@ public class InternalExperience {
                 long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
 
                 beliefReasonDerive(task,
-                        $.oper(anticipate, Product.only(imp.getPredicate())),
+                        $.oper(anticipate, $.p(imp.term(1))),
                         nal, interval);
             }
         }

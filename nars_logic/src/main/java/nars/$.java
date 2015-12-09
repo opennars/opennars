@@ -8,6 +8,7 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
+import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -108,8 +109,8 @@ public abstract class $  {
     }
 
 
-    public static Compound impl(Term a, Term b) {
-        return Implication.make(a, b);
+    public static Term impl(Term a, Term b) {
+        return Implication.implication(a, b);
     }
 
     public static <X extends Term> X not(Term x) {
@@ -226,8 +227,8 @@ public abstract class $  {
         return new MutableTask(term).goal().truth(freq, conf);
     }
 
-    public static Implication implForward(Term condition, Term consequence) {
-        return Implication.make(condition, consequence, Tense.ORDER_FORWARD);
+    public static Compound implForward(Term condition, Term consequence) {
+        return Implication.implication(condition, consequence, Tense.ORDER_FORWARD);
     }
 
     public static <T extends Term> Compound<T> extset(Collection<T> t) {
@@ -296,5 +297,46 @@ public abstract class $  {
         }
 
         return v(type.ch, String.valueOf(counter));
+    }
+
+    public static Term conj(Term a, Term b) {
+        return Conjunction.conjunction(a,b);
+    }
+
+    static {
+//        // assume SLF4J is bound to logback in the current environment
+//        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+//
+//        try {
+//            JoranConfigurator configurator = new JoranConfigurator();
+//            configurator.setContext(context);
+//            // Call context.reset() to clear any previous configuration, e.g. default
+//            // configuration. For multi-step configuration, omit calling context.reset().
+//            context.reset();
+//            //configurator.doConfigure(args[0]);
+//        } catch (Exception je) {
+//            // StatusPrinter will handle this
+//        }
+//        StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+//
+//        Logger logger = LoggerFactory.getLogger($.class);
+//        logger.info("Entering application.");
+//
+//
+//
+//        logger.info("Exiting application.");
+//
+//        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        // print logback's internal status
+//        StatusPrinter.print(lc);
+//
+//        // assume SLF4J is bound to logback-classic in the current environment
+//        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        loggerContext.start();
+//        //loggerContext.stop();
+    }
+
+    public static void main(String[] args) {
+
     }
 }

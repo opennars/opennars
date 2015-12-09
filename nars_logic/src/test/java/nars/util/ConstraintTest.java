@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
-import nars.nal.nal5.Implication;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -47,12 +46,12 @@ public class ConstraintTest {
             public void addConstraintsFor(Concept c) {
                 Term t = c.getTerm();
                 if (t.op() == Op.IMPLICATION) {
-                    Implication i = (Implication)t;
-                    Term effect = i.getPredicate();
+                    Compound i = (Compound)t;
+                    Term effect = i.term(1);
                     if (!concepts.contains(effect))
                         return;
 
-                    Term causeTerm = i.getSubject();
+                    Term causeTerm = i.term(0);
 
 
                     //TODO recurse the contents of this node if conjunction, etc

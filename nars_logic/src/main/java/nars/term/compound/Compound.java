@@ -83,14 +83,11 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     static byte[] newCompound1Key(Op op, Term singleTerm) {
 
-        byte[] opBytes = op.bytes;
-        if (opBytes.length > 1)
-            throw new RuntimeException("Compound1 operators must have a 1 char representation; invalid: " + op);
-        byte opByte = opBytes[0];
+        byte opByte = (byte) op.ordinal();
 
         byte[] termBytes = singleTerm.bytes();
 
-        return ByteBuf.create(opBytes.length + termBytes.length)
+        return ByteBuf.create(1 + termBytes.length)
                 .add(opByte)
                 .add(termBytes)
                 .toBytes();

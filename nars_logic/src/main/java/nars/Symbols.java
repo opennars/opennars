@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public abstract class Symbols {
+public final class Symbols {
 
     /* sentence type and delimitors
        TODO use an enum
@@ -39,8 +39,7 @@ public abstract class Symbols {
     public static final char QUEST = '@';
     public static final char COMMAND = ';';
 
-    
-    
+
     
     /* Tense markers */
     public static final String TENSE_SEPARATOR = ":";
@@ -137,12 +136,9 @@ public abstract class Symbols {
         //Setup NativeOperator String index hashtable 
         for (Op r : Op.values()) {
             _stringToOperator.put(r.toString(), r);
-
-
-            if (r.has8BitRepresentation()) {
-                //store the 8bit representation in the table
-                byteSymbols[r.byt] = r;
-            }
+            int ordinal = r.ordinal();
+            if (ordinal < 15)
+                byteSymbols[ordinal] = r;
         }
 
         //System.out.println(Arrays.toString(byteSymbols));
@@ -262,5 +258,10 @@ public abstract class Symbols {
         return false;
     }
     */
+
+//    public static void main(String[] args) {
+//        new Symbols();
+//
+//    }
 
 }

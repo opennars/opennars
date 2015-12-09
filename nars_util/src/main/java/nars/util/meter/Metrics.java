@@ -5,8 +5,6 @@
  */
 package nars.util.meter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -32,18 +30,18 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
 
 
-    static final ObjectMapper json = new ObjectMapper();
+    //static final ObjectMapper json = new ObjectMapper();
 
     public static void printJSONArray(PrintStream out, Object[] row, boolean includeBrackets) {
-        try {
-            String r = json.writeValueAsString(row);
-            if (!includeBrackets) {
-                r = r.substring(1, r.length()-1);
-            }
-            out.println(r);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String r = json.writeValueAsString(row);
+//            if (!includeBrackets) {
+//                r = r.substring(1, r.length()-1);
+//            }
+//            out.println(r);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
     }
 
     

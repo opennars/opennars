@@ -22,59 +22,36 @@ package nars.nal.nal5;
 
 import nars.Op;
 import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.term.TermSet;
-import nars.term.TermVector;
+import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 
 /**
  * A Statement about an Inheritance copula.
  */
-public class Implication<A extends Term, B extends Term> extends Statement<A,B> {
+public interface Implication {
 
-    //TODO use subclasses like Conjunction
-    @Deprecated protected final int temporalOrder;
-
-    @Deprecated static Op op(int order) {
+    @Deprecated static Op op(Order order) {
         switch (order) {
-            case Tense.ORDER_BACKWARD:
+            case Backward:
                 return Op.IMPLICATION_BEFORE;
-            case Tense.ORDER_FORWARD:
+            case Forward:
                 return Op.IMPLICATION_AFTER;
-            case Tense.ORDER_CONCURRENT:
+            case Concurrent:
                 return Op.IMPLICATION_WHEN;
         }
         return Op.IMPLICATION;
     }
 
-    /**
-     * Constructor with partial values, called by make
-     *
-     */
-    private Implication(A subject, B predicate, int order) {
-        super( op(order),
-                order!=Tense.ORDER_FORWARD ?
-                        new TermSet(subject, predicate) :
-                        new TermVector(subject, predicate)
-        );
-
-        if (order == Tense.ORDER_INVALID) {
-            throw new RuntimeException("Invalid temporal order; args=" + subject + ',' + predicate);
-        }
-
-        temporalOrder = order;
-    }
 
 
-    @Override public final boolean isCommutative() {
-        return false;
-    }
-
-    public static Term makeImplication(Term subject, Term predicate) {
+    static Term implication(Term subject, Term predicate) {
         if (subject.equals(predicate))
             return subject;
-        return make(subject, predicate, Tense.ORDER_NONE);
+        return implication(subject, predicate, Tense.ORDER_NONE);
     }
 
     /**
@@ -83,30 +60,12 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
      * @param predicate The second component
      * @return A compound generated or a term it reduced to
      */
-    public static <A extends Term> Implication<A,A> make(A subject, A predicate) {
-        return make(subject, predicate, Tense.ORDER_NONE);
+    static <A extends Term> Compound implies(A subject, A predicate) {
+        return implication(subject, predicate, Tense.ORDER_NONE);
     }
 
-//    public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
-//        Op copula;
-//        switch (temporalOrder) {
-//            case TemporalRules.ORDER_FORWARD:
-//                copula = Op.IMPLICATION_AFTER;
-//                break;
-//            case TemporalRules.ORDER_CONCURRENT:
-//                copula = Op.IMPLICATION_WHEN;
-//                break;
-//            case TemporalRules.ORDER_BACKWARD:
-//                copula = Op.IMPLICATION_BEFORE;
-//                break;
-//            default:
-//                copula = Op.IMPLICATION;
-//        }
-//        return makeStatementName(subject, copula, predicate);
-//    }
-    
-    public static Implication make(Term subject, Term predicate, int temporalOrder) {
-        if (invalidStatement(subject, predicate)) {
+    static Compound implication(Term subject, Term predicate, Order temporalOrder) {
+        if (Statement.invalidStatement(subject, predicate)) {
             return null;
         }
         
@@ -121,34 +80,11 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
                 return null;
             }
             Term newCondition = Conjunctive.make(subject, oldCondition, temporalOrder);
-            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
+            return implication(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
-            return new Implication(subject, predicate, temporalOrder);
+            return new GenericCompound(op(temporalOrder), subject, predicate);
         }
     }
 
-    /**
-     * Get the operate of the term.
-     * @return the operate of the term
-     */
-    @Override
-    public Op op() {
-        return op(temporalOrder);
-    }
-    
-    @Override
-    public int getTemporalOrder() {
-        return temporalOrder;
-    }
 
-    public boolean isForward() {
-        return getTemporalOrder()== Tense.ORDER_FORWARD;
-    }
-    public boolean isBackward() {
-        return getTemporalOrder()== Tense.ORDER_BACKWARD;
-    }
-    public boolean isConcurrent() {
-        return getTemporalOrder()== Tense.ORDER_CONCURRENT;
-    }
-    
 }
