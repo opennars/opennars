@@ -56,14 +56,14 @@ public final class ArrayLists {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexIn(arrayList, splitOn, objectFound));
                 List<T> tmp = new ArrayList<T>(subList);
-                if (tmp.size() > 0) {
+                if (!tmp.isEmpty()) {
                     splitted.add(tmp);
                 }
                 
                 subList.clear();
                 arrayList.remove(0);
             }
-            if (arrayList.size() > 0) {
+            if (!arrayList.isEmpty()) {
                 splitted.add(arrayList);
             }
         }
@@ -93,7 +93,7 @@ public final class ArrayLists {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexInMultFound(arrayList, splitOn, objectFound));
                 List<T> tmp = new ArrayList<T>(subList);
-                if (tmp.size() > 0) {
+                if (!tmp.isEmpty()) {
                     splitted.add(tmp);
                 } else {
                     objectFound.remove(objectFound.size() - 1);
@@ -102,7 +102,7 @@ public final class ArrayLists {
                 subList.clear();
                 arrayList.remove(0);
             }
-            if (arrayList.size() > 0) {
+            if (!arrayList.isEmpty()) {
                 splitted.add(arrayList);
             } else {
                 objectFound.remove(objectFound.size() - 1);
@@ -124,7 +124,7 @@ public final class ArrayLists {
             if (indexOf != -1 && (index == -1 || indexOf < index)) {
                 index = indexOf;
                 if (objectFound != null) {
-                    if (objectFound.size() == 0) {
+                    if (objectFound.isEmpty()) {
                         objectFound.add(arrayList.get(indexOf));
                     } else {
                         objectFound.set(0, arrayList.get(indexOf));
@@ -169,7 +169,7 @@ public final class ArrayLists {
             if (lastIndexOf > index) {
                 index = lastIndexOf;
                 if (objectFound != null) {
-                    if (objectFound.size() == 0) {
+                    if (objectFound.isEmpty()) {
                         objectFound.add(arrayList.get(lastIndexOf));
                     } else {
                         objectFound.set(0, arrayList.get(lastIndexOf));

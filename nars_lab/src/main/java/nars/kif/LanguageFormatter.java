@@ -236,7 +236,7 @@ public class LanguageFormatter {
                             }
                             languageKeyArray.add(line.substring(i, i + 2));
                         } else if (line.startsWith(";")) {  // ignore comment lines
-                        } else if (line.length() == 0) {  // ignore blank lines
+                        } else if (line.isEmpty()) {  // ignore blank lines
                         } else if (line.indexOf('|') > -1) { // Line with phrase alternates in different languages.
                             newLine = new HashMap();
                             key = line.substring(0, line.indexOf('|'));
@@ -506,7 +506,7 @@ public class LanguageFormatter {
             String arg = f.car();
             String result = nlStmtPara(arg, false, phraseMap, termMap, language, depth + 1);
 
-            if (result != null && !"".equals(result) && result.length() > 0) {
+            if (result != null && !"".equals(result) && !result.isEmpty()) {
                 args.add(result);
             } else {
                 System.out.println("INFO in LanguageFormatter.paraphraseLogicalOperators(): bad result for: " + arg);

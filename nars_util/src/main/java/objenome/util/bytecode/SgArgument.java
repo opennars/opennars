@@ -96,7 +96,7 @@ public final class SgArgument extends SgVariable {
             sb.append(getAnnotations().get(i));
             sb.append(' ');
         }
-        if (getModifiers().length() == 0) {
+        if (getModifiers().isEmpty()) {
             sb.append(getType().getSourceName()).append(' ').append(getName());
         } else {
             sb.append(getModifiers()).append(' ').append(getType().getSourceName()).append(' ').append(getName());

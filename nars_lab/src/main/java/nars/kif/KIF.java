@@ -394,7 +394,7 @@ public class KIF {
             ex.printStackTrace();
         }
 
-        if (warningSet.size() > 0) {
+        if (!warningSet.isEmpty()) {
             Iterator it = warningSet.iterator();
             StringBuilder warnings = new StringBuilder();
             while (it.hasNext()) {

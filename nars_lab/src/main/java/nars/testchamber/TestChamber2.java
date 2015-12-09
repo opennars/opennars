@@ -246,7 +246,7 @@ public class TestChamber2 extends TestChamber {
                 String actionParam = e.action.toParamString();                
                 String success = String.valueOf(e.success);
                 if (actionParam == null) actionParam = "";
-                if (actionParam.length() != 0) actionParam = "(*," + actionParam + ")";
+                if (!actionParam.isEmpty()) actionParam = "(*," + actionParam + ")";
                 
                 nar.input("$0.60$ (*,effect," + action + "," + actionParam + "," + success + "). :|:");
                 

@@ -41,7 +41,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
     PropertyDescriptor[] pd = getPropertyDescriptors();
     for (int i = 0; i != pd.length; i++) {
       if (order.indexOf(pd[i].getName()) == -1) {
-        order = order + (order.length() == 0?"":":") + pd[i].getName();
+        order = order + (order.isEmpty() ?"":":") + pd[i].getName();
       }
     }
     getBeanDescriptor().setValue("propertyorder", order);

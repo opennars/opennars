@@ -158,7 +158,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
         List<Integer> matchingIndexes = new ArrayList<>();
         nodesOfType(program2.getRoot(), subtree1Type, 0, matchingNodes, matchingIndexes);
 
-        if (matchingNodes.size() > 0) {
+        if (!matchingNodes.isEmpty()) {
             // Select second swap point with the same data-type
             int index = selectNodeIndex(matchingNodes);
             Node subtree2 = matchingNodes.get(index);
@@ -284,7 +284,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
                 }
             }
 
-            if ((nonTerminalIndexes.size() > 0) && (random.nextDouble() >= terminalProbability)) {
+            if ((!nonTerminalIndexes.isEmpty()) && (random.nextDouble() >= terminalProbability)) {
                 return nonTerminalIndexes.get(random.nextInt(nonTerminalIndexes.size()));
             } else {
                 return terminalIndexes.get(random.nextInt(terminalIndexes.size()));

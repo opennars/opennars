@@ -184,7 +184,7 @@ public class SystemView {
         } else if (seeds.containsAll(members)) {
             return null;
         }
-        if (seeds.size() == 0 || seeds.size() == 1
+        if (seeds.isEmpty() || seeds.size() == 1
             && seeds.contains(localAddress)) {
             return null;
         }

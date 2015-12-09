@@ -197,7 +197,7 @@ public class ALEPipes {
         }
 
         // Ignore blank lines (still send an action)
-        if (line.length() > 0) {
+        if (!line.isEmpty()) {
             // The data format is:
             // <ram-string>:<screen-string>:<rl-data-string>:\n
             //  Some of these elements may be missing, in which case the separating

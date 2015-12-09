@@ -783,7 +783,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
     final Function<Level, Iterator<E>> levelIteratorFunc = new Function<Level,Iterator<E>>() {
 
-        final Iterator<E> empty = Collections.EMPTY_LIST.iterator();
+        final Iterator<E> empty = Collections.emptyList().iterator();
 
         @Override
         public Iterator<E> apply(Level o) {

@@ -137,7 +137,7 @@ public class FileEditor extends AbstractPropertyEditor {
 				@SuppressWarnings("unchecked")
 				List<Object> list = (List<Object>) t.getTransferData(DataFlavor.javaFileListFlavor);
 
-				if (list.size() > 0) {
+				if (!list.isEmpty()) {
 
 					File oldFile = (File) getValue();
 					File newFile = (File) list.get(0);

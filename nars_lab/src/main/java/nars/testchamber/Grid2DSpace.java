@@ -216,7 +216,7 @@ public class Grid2DSpace extends PApplet {
 
                     if (g instanceof GridAgent) {
                         GridAgent b = (GridAgent)g;
-                        if (b.actions.size() > 0) {
+                        if (!b.actions.isEmpty()) {
                             Action a = b.actions.pop();
                             if (a!=null) {
                                 process(b, a);

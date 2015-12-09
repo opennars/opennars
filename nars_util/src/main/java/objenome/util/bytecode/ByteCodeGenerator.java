@@ -144,7 +144,7 @@ public final class ByteCodeGenerator {
 
             // Add exceptions
             final List<SgClass> exceptions = method.getExceptions();
-            if (exceptions.size() > 0) {
+            if (!exceptions.isEmpty()) {
                 final CtClass[] exceptionTypes = new CtClass[exceptions.size()];
                 for (int j = 0; j < exceptions.size(); j++) {
                     exceptionTypes[j] = pool.get(exceptions.get(j).getName());
@@ -167,7 +167,7 @@ public final class ByteCodeGenerator {
 
             // Add exceptions
             final List<SgClass> exceptions = constructor.getExceptions();
-            if (exceptions.size() > 0) {
+            if (!exceptions.isEmpty()) {
                 final CtClass[] exceptionTypes = new CtClass[exceptions.size()];
                 for (int j = 0; j < exceptions.size(); j++) {                    
                     exceptionTypes[j] = pool.get(exceptions.get(j).getName());
@@ -192,7 +192,7 @@ public final class ByteCodeGenerator {
     private void addInterfaces(final SgClass modelClass, final CtClass clasz)
             throws NotFoundException {
         final List<SgClass> interfaces = modelClass.getInterfaces();
-        if (interfaces.size() > 0) {
+        if (!interfaces.isEmpty()) {
             for (int i = 0; i < interfaces.size(); i++) {
                 final SgClass intf = interfaces.get(i);
                 clasz.addInterface(pool.get(intf.getName()));

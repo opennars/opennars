@@ -306,7 +306,7 @@ public final class SgUtils {
         if (str == null) {
             return null;
         }
-        if (str.length() == 0) {
+        if (str.isEmpty()) {
             return str;
         }
         if (str.length() == 1) {
@@ -327,14 +327,14 @@ public final class SgUtils {
      * @return Both packages added with ".".
      */
     public static String concatPackages(final String package1, final String package2) {
-        if ((package1 == null) || (package1.length() == 0)) {
-            if ((package2 == null) || (package2.length() == 0)) {
+        if ((package1 == null) || (package1.isEmpty())) {
+            if ((package2 == null) || (package2.isEmpty())) {
                 return "";
             } else {
                 return package2;
             }
         } else {
-            if ((package2 == null) || (package2.length() == 0)) {
+            if ((package2 == null) || (package2.isEmpty())) {
                 return package1;
             } else {
                 return package1 + '.' + package2;
@@ -530,7 +530,7 @@ public final class SgUtils {
      * @author See org.apache.commons.lang.StringUtils
      */
     public static boolean isEmpty(final String str) {
-        return str == null || str.length() == 0;
+        return str == null || str.isEmpty();
     }
 
     /**

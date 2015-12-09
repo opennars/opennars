@@ -156,7 +156,7 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 			// startx and starty are outside of acceptable range
 		}
 
-		while( heap.size() > 0 ){
+		while(!heap.isEmpty()){
 
 			Node n = heap.peekFirst();
                         

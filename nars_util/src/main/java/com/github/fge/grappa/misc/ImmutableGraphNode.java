@@ -43,7 +43,7 @@ public class ImmutableGraphNode<T extends GraphNode<T>>
 
     public ImmutableGraphNode()
     {
-        this(Collections.EMPTY_LIST/*ImmutableList.<T>of()*/);
+        this(Collections.<T>emptyList()/*ImmutableList.<T>of()*/);
     }
 
     // TODO! Null! Again! I need a gun!

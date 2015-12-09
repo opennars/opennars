@@ -296,7 +296,7 @@ public class TrieNode<S, T> implements Entry<S, T>
     */
    public boolean hasChildren()
    {
-      return children != null && children.size() > 0;
+      return children != null && !children.isEmpty();
    }
 
    /**

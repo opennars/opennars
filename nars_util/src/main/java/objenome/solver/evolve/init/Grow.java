@@ -457,7 +457,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
                     }
                 }
 
-                if (valid.size() > 0) {
+                if (!valid.isEmpty()) {
                     BigInteger totalChildVarieties = BigInteger.ONE;
                     for (int i = 0; i < n.getArity(); i++) {
                         // Build list of the valid arg types for this child
@@ -546,7 +546,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
                     }
                 }
 
-                if (valid.size() > 0) {
+                if (!valid.isEmpty()) {
                     BigInteger totalChildVarieties = BigInteger.ONE;
                     for (int i = 0; i < n.getArity(); i++) {
                         // Build list of the valid arg types for this child

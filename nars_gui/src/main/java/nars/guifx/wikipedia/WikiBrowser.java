@@ -405,7 +405,7 @@ abstract public class WikiBrowser extends BorderPane {
                 }
             }
 
-            if (categories.size() > 0) {
+            if (!categories.isEmpty()) {
 //                NTag n = new NTag(getCurrentPageTag(), getCurrentPageTag(), categories);
 //                core.publish(n);
             }

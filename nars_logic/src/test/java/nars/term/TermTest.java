@@ -192,7 +192,7 @@ public class TermTest {
         Concept ca = n.concept(a2);
         assertTrue(ca != null);
 
-        assertEquals(true, n.core.active.size() > 0);
+        assertEquals(true, !n.core.active.isEmpty());
 
     }
 

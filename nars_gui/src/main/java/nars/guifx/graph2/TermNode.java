@@ -171,7 +171,7 @@ public class TermNode<K extends Termed> extends GraphNode {
     public void commitEdges() {
         if (modified) {
             modified = false;
-            if (edge.size() > 0)
+            if (!edge.isEmpty())
                 edges = updateEdges();
             else
                 edges = TermEdge.empty;

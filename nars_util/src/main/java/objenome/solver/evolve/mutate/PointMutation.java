@@ -185,7 +185,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
             }
         }
 
-        if (points == null) points = Collections.EMPTY_LIST;
+        if (points == null) points = Collections.emptyList();
 
         ((EndEvent) event).setMutationPoints(points);
 

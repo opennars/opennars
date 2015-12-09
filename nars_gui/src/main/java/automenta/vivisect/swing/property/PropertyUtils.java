@@ -33,10 +33,10 @@ public class PropertyUtils {
 			Class<? extends PropertyEditor> editClass = null;
 			String category = a.category();
 
-			if (a.name().length() == 0)
+			if (a.name().isEmpty())
 				displayName = f.getName();
 
-			if (a.description().length() == 0) {
+			if (a.description().isEmpty()) {
 				desc = displayName;
 			}
 
@@ -44,7 +44,7 @@ public class PropertyUtils {
 				editClass = a.editorClass();
 			}
 
-			if (category == null || category.length() == 0) {
+			if (category == null || category.isEmpty()) {
 				category = "Base";
 			}
 
@@ -68,7 +68,7 @@ public class PropertyUtils {
 			pp.setEditable(a.editable());
 			pp.setDisplayName(displayName);
 			pp.setEditor(editClass);
-			if (category != null && category.length() > 0) {
+			if (category != null && !category.isEmpty()) {
 				pp.setCategory(category);
 			}
 			return pp;

@@ -501,7 +501,7 @@ public class InjectionUtils {
 
             String s = ((String) value).trim();
 
-            if (s.length() == 0) {
+            if (s.isEmpty()) {
                 return true;
             }
         }

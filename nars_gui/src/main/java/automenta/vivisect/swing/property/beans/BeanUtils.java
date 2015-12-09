@@ -70,7 +70,7 @@ public class BeanUtils {
 	}
 
 	private static String capitalize(String s) {
-		if (s.length() == 0) {
+		if (s.isEmpty()) {
 			return s;
 		} else {
 			char[] chars = s.toCharArray();

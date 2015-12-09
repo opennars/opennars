@@ -72,7 +72,7 @@ public class MJOpen {
 				String sFirstLine = "";
 				while (i < vLines.size()) {
 					sBff = (String) vLines.elementAt(i);
-					if ((sBff.length() == 0) || (sBff.startsWith("#C"))
+					if ((sBff.isEmpty()) || (sBff.startsWith("#C"))
 							|| (sBff.startsWith("#D"))
 							|| (sBff.startsWith("!"))) {
 						i++; // comment found, go on searching
@@ -111,7 +111,7 @@ public class MJOpen {
 
 				if (fOk) // pattern loaded
 				{
-					if (m_vCells.size() > 0) // any cells found
+					if (!m_vCells.isEmpty()) // any cells found
 						AddPattern();
 				} else {
 					System.out
@@ -191,11 +191,11 @@ public class MJOpen {
 			mjUI.SetColoringMethod(m_Coloring);
 
 		// color palette
-		if (m_sPalette.length() > 0)
+		if (!m_sPalette.isEmpty())
 			mjUI.SetColorPalette(m_sPalette);
 
 		// set rules
-		if (m_sRules.length() > 0) {
+		if (!m_sRules.isEmpty()) {
 			mjb.SetRule(mjUI.mjr.GetGameIndex(m_sGame), "", m_sRules);
 		}
 
@@ -265,7 +265,7 @@ public class MJOpen {
 
 		bff = bff.trim();
 
-		if (bff.length() > 0) {
+		if (!bff.isEmpty()) {
 			// special characters?
 			if ((bff.charAt(0) == '#') || (bff.charAt(0) == '!')
 					|| (bff.charAt(0) == '/')) {
@@ -296,14 +296,14 @@ public class MJOpen {
 				} else if (bff.startsWith("#D") || bff.startsWith("#C")) // description
 				{
 					sTok = bff.substring(2);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
 				} else if (bff.startsWith("!")) // description
 				{
 					sTok = bff.substring(1);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
@@ -393,7 +393,7 @@ public class MJOpen {
 
 		bff = bff.trim();
 
-		if (bff.length() > 0) {
+		if (!bff.isEmpty()) {
 			if (bff.startsWith("#RULE")) // specific rules
 			{
 				sTok = bff.substring(5);
@@ -411,7 +411,7 @@ public class MJOpen {
 			} else if (bff.startsWith("#D")) // description
 			{
 				sTok = bff.substring(2);
-				if (sTok.length() > 0) // remove one leading blank
+				if (!sTok.isEmpty()) // remove one leading blank
 					if (sTok.charAt(0) == ' ')
 						sTok = sTok.substring(1);
 				m_vDescr.add(sTok); // add the comment line
@@ -547,7 +547,7 @@ public class MJOpen {
 		if (bff.startsWith("#D") || bff.startsWith("#C")) // strange description
 		{
 			sTok = bff.substring(2);
-			if (sTok.length() > 0) // remove one leading blank
+			if (!sTok.isEmpty()) // remove one leading blank
 				if (sTok.charAt(0) == ' ')
 					sTok = sTok.substring(1);
 			m_vDescr.add(sTok); // add the comment line
@@ -556,7 +556,7 @@ public class MJOpen {
 			{
 				m_vDescr.add(bff); // add the comment line
 			} else {
-				if (bff.length() > 0) {
+				if (!bff.isEmpty()) {
 					if ((!fXYFound) && bff.startsWith("x")) // the first line
 					{
 						fXYFound = true;
@@ -698,7 +698,7 @@ public class MJOpen {
 
 		bff = bff.trim();
 
-		if (bff.length() > 0) {
+		if (!bff.isEmpty()) {
 			// a keyword or a comment?
 			if ((bff.charAt(0) == '#') || (bff.charAt(0) == '/')
 					|| (bff.charAt(0) == '!')) {
@@ -720,14 +720,14 @@ public class MJOpen {
 				} else if (bff.startsWith("#D") || bff.startsWith("#C")) {
 					// description
 					sTok = bff.substring(2);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line
 				} else if (bff.startsWith("!")) {
 					// description
 					sTok = bff.substring(1);
-					if (sTok.length() > 0) // remove one leading blank
+					if (!sTok.isEmpty()) // remove one leading blank
 						if (sTok.charAt(0) == ' ')
 							sTok = sTok.substring(1);
 					m_vDescr.add(sTok); // add the comment line

@@ -389,7 +389,7 @@ public class PropertySheetTableModel
   private void buildModel() {
     model.clear();
 
-    if (properties != null && properties.size() > 0) {
+    if (properties != null && !properties.isEmpty()) {
       List sortedProperties = sortProperties(properties);
       
       switch (mode) {

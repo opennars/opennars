@@ -368,7 +368,7 @@ public final class SgClass {
     }
 
     private final String getName(final String innerDivider) {
-        if (packageName.length() == 0) {
+        if (packageName.isEmpty()) {
             if (enclosingClass == null) {
                 return simpleName;
             } else {
@@ -429,7 +429,7 @@ public final class SgClass {
      */
     public final String getInterfacesCommaSeparated() {
         final StringBuffer sb = new StringBuffer();
-        if (interfaces.size() > 0) {
+        if (!interfaces.isEmpty()) {
             for (int i = 0; i < interfaces.size(); i++) {
                 if (i > 0) {
                     sb.append(", ");
@@ -581,7 +581,7 @@ public final class SgClass {
 
     private void addPackageLine(final StringBuffer sb) {
         if (enclosingClass == null) {
-            if (packageName.length() > 0) {
+            if (!packageName.isEmpty()) {
                 sb.append("package ");
                 sb.append(packageName);
                 sb.append(";\n");
@@ -591,7 +591,7 @@ public final class SgClass {
     }
 
     private void addNameLine(final StringBuffer sb, final boolean showAnnotations) {
-        if (showAnnotations && (getAnnotations().size() > 0)) {
+        if (showAnnotations && (!getAnnotations().isEmpty())) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
                     sb.append(' ');
@@ -600,7 +600,7 @@ public final class SgClass {
             }
             sb.append('\n');
         }
-        if (modifiers.length() > 0) {
+        if (!modifiers.isEmpty()) {
             sb.append(modifiers);
             sb.append(' ');
         }
@@ -611,7 +611,7 @@ public final class SgClass {
         }
         sb.append(getSimpleName());
         if (isinterface) {
-            if (interfaces.size() > 0) {
+            if (!interfaces.isEmpty()) {
                 sb.append(" extends ");
                 sb.append(getInterfacesCommaSeparated());
             }
@@ -620,7 +620,7 @@ public final class SgClass {
                 sb.append(" extends ");
                 sb.append(superClass.getSourceName());
             }
-            if (interfaces.size() > 0) {
+            if (!interfaces.isEmpty()) {
                 sb.append(" implements ");
                 sb.append(getInterfacesCommaSeparated());
             }

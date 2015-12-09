@@ -62,7 +62,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 		{
 			for (i = 0; i < vLines.size(); i++) {
 				sBff = ((String) vLines.elementAt(i)).trim();
-				if ((sBff.length() > 0)
+				if ((!sBff.isEmpty())
 						&& !((String) vLines.elementAt(i)).startsWith("//")) {
 					if (sBff.startsWith("#")) // next family of rules
 					{

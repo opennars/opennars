@@ -302,7 +302,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
     @Override
     public boolean addAll(Collection<? extends E> c) {
         // Use linear-time version if applicable
-        if (m.size() == 0 && c.size() > 0 &&
+        if (m.isEmpty() && !c.isEmpty() &&
                 c instanceof SortedSet &&
                 m instanceof IndexedTreeMap) {
             SortedSet<? extends E> set = (SortedSet<? extends E>) c;

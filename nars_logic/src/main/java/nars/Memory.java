@@ -269,7 +269,7 @@ public class Memory extends Param {
      */
     public final void remove(final Task task, final Object removalReason) {
 
-        final boolean willBeReceived = eventTaskRemoved.size() > 0;
+        final boolean willBeReceived = !eventTaskRemoved.isEmpty();
 
         if (willBeReceived && removalReason!=null)
             task.log(removalReason);

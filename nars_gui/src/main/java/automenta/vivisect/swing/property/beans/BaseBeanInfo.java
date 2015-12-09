@@ -82,7 +82,7 @@ public class BaseBeanInfo extends SimpleBeanInfo {
 	public ExtendedPropertyDescriptor addProperty(String propertyName) {
 		ExtendedPropertyDescriptor descriptor;
 		try {
-			if (propertyName == null || propertyName.trim().length() == 0) {
+			if (propertyName == null || propertyName.trim().isEmpty()) {
 				throw new IntrospectionException("bad property name");
 			}
 

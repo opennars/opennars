@@ -341,7 +341,7 @@ public class PercentLayout implements LayoutManager2 {
       }
     }
 
-    if (remaining.size() > 0) {
+    if (!remaining.isEmpty()) {
       int rest = availableSize / remaining.size();
       for (Iterator iter = remaining.iterator(); iter.hasNext();) {
         sizes[((Integer)iter.next()).intValue()] = rest;

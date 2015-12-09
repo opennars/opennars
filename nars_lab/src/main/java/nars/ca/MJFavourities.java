@@ -88,7 +88,7 @@ public class MJFavourities extends Dialog implements ActionListener {
 				}
 			}
 
-			if ((sGameName.length() > 0) && (sRuleName.length() > 0)) {
+			if ((!sGameName.isEmpty()) && (!sRuleName.isEmpty())) {
 				lblPrompt.setText("Please wait...");
 				try {
 					mjUI.mjo.OpenFile(sGameName + "/" + sRuleName + "/"

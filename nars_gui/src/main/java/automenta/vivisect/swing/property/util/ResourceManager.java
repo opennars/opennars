@@ -162,7 +162,7 @@ public class ResourceManager {
    */
   public char getChar(String key) {
     String s = getString(key);
-    if (s == null || s.trim().length() == 0) {
+    if (s == null || s.trim().isEmpty()) {
       return (char)0;
     } else {
       return s.charAt(0);

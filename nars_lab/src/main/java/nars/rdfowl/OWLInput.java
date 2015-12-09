@@ -228,7 +228,7 @@ public class OWLInput  {
                                     String id = parser.getAttributeValue(0);
 
                                     System.out.println("  " + tagName);
-                                    if (id != null && id.length() > 0) {
+                                    if (id != null && !id.isEmpty()) {
                                         // this is the entity
                                         Entity entity = new Entity();
                                         entity.setName(id);
@@ -494,7 +494,7 @@ public class OWLInput  {
 
         suffix = suffix.replace("http://dbpedia.org/ontology/", "");
 
-        if (prefix == null || prefix.length() == 0) {
+        if (prefix == null || prefix.isEmpty()) {
             return suffix;
         } else {
             return prefix + ":" + suffix;

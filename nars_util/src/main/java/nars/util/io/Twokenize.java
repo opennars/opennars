@@ -364,7 +364,7 @@ public class Twokenize {
     private static List<Pair<String, Object>> addAllnonempty(List<Pair<String, Object>> master, List<Pair<String, Object>> smaller) {
         for (Pair<String, Object> s : smaller) {
             String strim = s.first.trim();
-            if (strim.length() > 0) {
+            if (!strim.isEmpty()) {
                 s.first = strim;
                 master.add(s);
             }

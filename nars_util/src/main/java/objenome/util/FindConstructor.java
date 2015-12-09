@@ -39,8 +39,8 @@ public class FindConstructor {
             Class<?>[] parameterTypes)
             throws NoSuchMethodException {
         return internalFind(source.getDeclaredConstructors(),
-                parameterTypes, 
-                Collections.EMPTY_MAP);
+                parameterTypes,
+                Collections.<Parameter, Object>emptyMap());
     }
 
     

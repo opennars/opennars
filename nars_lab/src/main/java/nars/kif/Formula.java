@@ -936,7 +936,7 @@ public class Formula implements Comparable {
         int index = start;
         ArrayList<String> result = new ArrayList();
         String arg = getArgument(index);
-        while (arg != null && !"".equals(arg) && arg.length() > 0) {
+        while (arg != null && !"".equals(arg) && !arg.isEmpty()) {
             result.add(arg.intern());
             index++;
             arg = getArgument(index);
@@ -1129,7 +1129,7 @@ public class Formula implements Comparable {
         ArrayList quantVariables = collectQuantifiedVariables(theFormula);
         ArrayList unquantVariables = collectUnquantifiedVariables(theFormula, quantVariables);
 
-        if (unquantVariables.size() > 0) {       // Quantify all the unquantified variables
+        if (!unquantVariables.isEmpty()) {       // Quantify all the unquantified variables
             StringBuilder quant = new StringBuilder("(forall (");
             if (query) {
                 quant = new StringBuilder("(exists (");
@@ -1329,7 +1329,7 @@ public class Formula implements Comparable {
                         StringBuilder rowResult = new StringBuilder();
                         StringBuilder rowReplace = new StringBuilder();
                         for (int j = 1; j < range[1]; j++) {
-                            if (rowReplace.toString().length() > 0) {
+                            if (!rowReplace.toString().isEmpty()) {
                                 rowReplace = rowReplace.append(" ");
                             }
                             rowReplace = rowReplace.append("?").append(row).append((new Integer(j)).toString());
@@ -3489,7 +3489,7 @@ public class Formula implements Comparable {
                     if (parenLevel == 0) {
                         //findFreeVariables(allVariables,quantifiedVariables);
                         allVariables.removeAll(quantifiedVariables);
-                        if (allVariables.size() > 0) {
+                        if (!allVariables.isEmpty()) {
                             quantification = "! [";
                             for (index = 0; index < allVariables.size(); index++) {
                                 if (index > 0) {

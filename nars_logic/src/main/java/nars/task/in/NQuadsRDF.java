@@ -357,7 +357,7 @@ abstract public class NQuadsRDF {
 
         suffix = suffix.replace("http://dbpedia.org/ontology/", "");
 
-        if (prefix == null || prefix.length() == 0) {
+        if (prefix == null || prefix.isEmpty()) {
             return suffix;
         } else {
             return prefix + ":" + suffix;

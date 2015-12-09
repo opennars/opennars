@@ -893,7 +893,7 @@ class MJBoard extends Panel implements Runnable {
 	// Interprete and apply the rule definition
 	public void SetRule(int iGame, String sRuleNam, String sRuleDef) {
 		sRuleDef = sRuleDef.trim();
-		if (sRuleDef.length() == 0)
+		if (sRuleDef.isEmpty())
 			return;
 
 		GameType = MJRules.GAMTYP_2D; // most are 2-dimensional

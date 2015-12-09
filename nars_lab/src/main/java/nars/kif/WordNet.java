@@ -320,7 +320,7 @@ public class WordNet {
                     synsets = "";
                 }
                 if (!synsets.contains(synsetStr)) {
-                    if (synsets.length() > 0) {
+                    if (!synsets.isEmpty()) {
                         synsets += " ";
                     }
                     synsets += synsetStr;
@@ -333,7 +333,7 @@ public class WordNet {
                     synsets = "";
                 }
                 if (!synsets.contains(synsetStr)) {
-                    if (synsets.length() > 0) {
+                    if (!synsets.isEmpty()) {
                         synsets += " ";
                     }
                     synsets += synsetStr;
@@ -346,7 +346,7 @@ public class WordNet {
                     synsets = "";
                 }
                 if (!synsets.contains(synsetStr)) {
-                    if (synsets.length() > 0) {
+                    if (!synsets.isEmpty()) {
                         synsets += " ";
                     }
                     synsets += synsetStr;
@@ -359,7 +359,7 @@ public class WordNet {
                     synsets = "";
                 }
                 if (!synsets.contains(synsetStr)) {
-                    if (synsets.length() > 0) {
+                    if (!synsets.isEmpty()) {
                         synsets += " ";
                     }
                     synsets += synsetStr;
@@ -438,7 +438,7 @@ public class WordNet {
             //                   " " + synset + " " + avp.value);
             al.add(avp);
         }
-        if ((!"".equals(pointers)) && (pointers.length() > 0) && !pointers.equals(" ")) {
+        if ((!"".equals(pointers)) && (!pointers.isEmpty()) && !pointers.equals(" ")) {
             // Only for verbs may we have the following leftover
             // f_cnt + f_num  w_num  [ +  f_num  w_num...] 
             if (synset.charAt(0) == '2') {
@@ -582,7 +582,7 @@ public class WordNet {
                         processPointers("1" + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
-                        if (line.length() > 0 && line.charAt(0) != ';') {
+                        if (!line.isEmpty() && line.charAt(0) != ';') {
                             System.out.println();
                             System.out.println("Error in WordNet.readNouns(): No match in "
                                     + nounFile.getCanonicalPath()
@@ -621,7 +621,7 @@ public class WordNet {
                         exceptionNounHash.put(m.group(1), m.group(2));      // 1-plural, 2-singular 3-alternate singular 
                         exceptionNounPluralHash.put(m.group(2), m.group(1));
                         exceptionNounPluralHash.put(m.group(3), m.group(1));
-                    } else if (line.length() > 0 && line.charAt(0) != ';') {
+                    } else if (!line.isEmpty() && line.charAt(0) != ';') {
                         System.out.println("Error in WordNet.readNouns(): No match in "
                                 + nounFile.getCanonicalPath()
                                 + " for line "
@@ -679,7 +679,7 @@ public class WordNet {
                         processPointers("2" + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
-                        if (line.length() > 0 && line.charAt(0) != ';') {
+                        if (!line.isEmpty() && line.charAt(0) != ';') {
                             System.out.println();
                             System.out.println("Error in WordNet.readVerbs(): No match in "
                                     + verbFile.getCanonicalPath()
@@ -711,7 +711,7 @@ public class WordNet {
                 if (m.matches()) {
                     exceptionVerbHash.put(m.group(1), m.group(2));          // 1-past, 2-infinitive
                     exceptionVerbPastHash.put(m.group(2), m.group(1));
-                } else if (line.length() > 0 && line.charAt(0) != ';') {
+                } else if (!line.isEmpty() && line.charAt(0) != ';') {
                     System.out.println("Error in WordNet.readVerbs(): No match in "
                             + verbFile.getCanonicalPath()
                             + " for line "
@@ -768,7 +768,7 @@ public class WordNet {
                         processPointers("3" + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
-                        if (line.length() > 0 && line.charAt(0) != ';') {
+                        if (!line.isEmpty() && line.charAt(0) != ';') {
                             System.out.println();
                             System.out.println("Error in WordNet.readAdjectives(): No match in "
                                     + adjFile.getCanonicalPath()
@@ -829,7 +829,7 @@ public class WordNet {
                         processPointers("4" + m.group(1), m.group(2));
                     } else {
                         //System.out.println("line: " + line);
-                        if (line.length() > 0 && line.charAt(0) != ';') {
+                        if (!line.isEmpty() && line.charAt(0) != ';') {
                             System.out.println();
                             System.out.println("Error in WordNet.readAdverbs(): No match in "
                                     + advFile.getCanonicalPath()
@@ -1153,7 +1153,7 @@ public class WordNet {
                 word = newWord;
             }
             ArrayList al = findSUMOWordSenseArray(word, words, i);
-            if (al != null && al.size() > 0) {
+            if (al != null && !al.isEmpty()) {
                 String synset = (String) al.get(0); // 9-digit
                 String SUMOterm = (String) al.get(1);
                 String bestTotal = (String) al.get(2);
@@ -1996,7 +1996,7 @@ public class WordNet {
         String[] words = word.split(",");
         word = "";
         for (int i = 0; i < words.length; i++) {
-            if (words[i].length() > 0
+            if (!words[i].isEmpty()
                     && (words[i].indexOf('-') > -1 || (words[i].indexOf('.') > -1)
                     || (words[i].contains("\\'")) || Character.isUpperCase(words[i].charAt(0)) || Character.isDigit(words[i].charAt(0)))) {
                 words[i] = "'" + words[i] + "'";
@@ -2186,14 +2186,14 @@ public class WordNet {
                     if (mapping == '=') {
                         ArrayList al;
                         al = kb.instancesOf(bareSumoTerm);
-                        if (al.size() > 0) {
+                        if (!al.isEmpty()) {
                             instance = true;
                         }
                     }
                     if (instance && uppercase) {
                         ArrayList al = kb.askWithRestriction(1, bareSumoTerm, 0, "instance");
                         String parentTerm;
-                        if (al != null && al.size() > 0) {
+                        if (al != null && !al.isEmpty()) {
                             parentTerm = ((Formula) al.get(0)).getArgument(2);
                         } else {
                             parentTerm = bareSumoTerm;

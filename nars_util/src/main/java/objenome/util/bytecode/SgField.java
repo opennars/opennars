@@ -91,7 +91,7 @@ public final class SgField extends SgVariable {
     @Override
     public final String toString() {
         final StringBuffer sb = new StringBuffer();
-        if (getAnnotations().size() > 0) {
+        if (!getAnnotations().isEmpty()) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
                     sb.append(' ');
@@ -100,7 +100,7 @@ public final class SgField extends SgVariable {
             }
             sb.append('\n');
         }
-        if (getModifiers().length() == 0) {
+        if (getModifiers().isEmpty()) {
             sb.append(getType().getSourceName()).append(' ').append(getName());
         } else {
             sb.append(getModifiers()).append(' ').append(getType().getSourceName()).append(' ').append(getName());
@@ -108,7 +108,7 @@ public final class SgField extends SgVariable {
         if (initializer == null) {
             sb.append(" /** No initializer source available */ ");
         } else {
-            if (initializer.length() > 0) {
+            if (!initializer.isEmpty()) {
                 sb.append(" = ");
                 sb.append(initializer);
             }

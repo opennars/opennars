@@ -86,7 +86,7 @@ public class Rule1DBin {
 			iRng = MAX_RANGE;
 
 		sHex.toUpperCase();
-		if ((sHex.length() > 0) && (sHex.charAt(0) == 'W'))
+		if ((!sHex.isEmpty()) && (sHex.charAt(0) == 'W'))
 			sHex = sHex.substring(1); // skip 'W' prefix
 	}
 
@@ -224,7 +224,7 @@ public class Rule1DBin {
 	// ----------------------------------------------------------------
 	// Remove all leading characters 'cChar' from the string
 	private String DelLedChr(String sStr, char cChar) {
-		while ((sStr.length() > 0) && (sStr.charAt(0) == cChar))
+		while ((!sStr.isEmpty()) && (sStr.charAt(0) == cChar))
 			sStr = sStr.substring(1);
 
 		return sStr;

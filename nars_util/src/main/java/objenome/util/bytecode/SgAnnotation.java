@@ -55,7 +55,7 @@ public final class SgAnnotation {
             throw new IllegalArgumentException("The argument 'simpleName' cannot be null!");
         }
         final String trimmed = simpleName.trim();
-        if (trimmed.length() == 0) {
+        if (trimmed.isEmpty()) {
             throw new IllegalArgumentException(
                     "The argument 'simpleName' cannot be an empty string!");
         }
@@ -70,7 +70,7 @@ public final class SgAnnotation {
      * @return Name including package - Always non-null.
      */
     public final String getName() {
-        if (packageName.length() == 0) {
+        if (packageName.isEmpty()) {
             return simpleName;
         }
         return packageName + '.' + simpleName;
@@ -129,7 +129,7 @@ public final class SgAnnotation {
         final StringBuffer sb = new StringBuffer();
         sb.append('@');
         sb.append(getName());
-        if (arguments.size() > 0) {
+        if (!arguments.isEmpty()) {
             sb.append('(');
             if (arguments.size() == 1) {
                 final Iterator<String> it = arguments.keySet().iterator();

@@ -502,7 +502,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         printJSONArray(out, getSignalIDs(),false );
     }
     public void printCSVLastLine(PrintStream out) {
-        if (rows.size() > 0)
+        if (!rows.isEmpty())
             printJSONArray(out, rowLast(), false);
     }
 

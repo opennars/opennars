@@ -71,7 +71,7 @@ public class NumberEditor extends AbstractPropertyEditor {
    
     public Object getValue() {
         String text = ((JTextField) editor).getText();
-        if (text == null || text.trim().length() == 0) {
+        if (text == null || text.trim().isEmpty()) {
             return getDefaultValue();
         }
 

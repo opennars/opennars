@@ -42,7 +42,7 @@ public abstract class StringConverterPropertyEditor extends AbstractPropertyEdit
 	@Override
 	public Object getValue() {
 		String text = ((JTextComponent) editor).getText();
-		if (text == null || text.trim().length() == 0) {
+		if (text == null || text.trim().isEmpty()) {
 			return null;
 		} else {
 			try {

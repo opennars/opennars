@@ -190,7 +190,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
         if (parentPath == null) path = new ArrayList();
         else path = new ArrayList(parentPath);
 
-        Object previousPathElement = path.size() > 0 ? path.get(path.size()-1) : null;
+        Object previousPathElement = !path.isEmpty() ? path.get(path.size()-1) : null;
 
         Builder b = (k instanceof Builder) ? (Builder)k : getBuilder(k);
 

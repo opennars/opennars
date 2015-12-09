@@ -614,7 +614,7 @@ import java.util.regex.Pattern;
         final ArrayDeque<Rope> toExamine = new ArrayDeque<>();
         // begin a depth first loop.
         toExamine.add(r);
-        while (toExamine.size() > 0) {
+        while (!toExamine.isEmpty()) {
             final Rope x = toExamine.pop();
             if (x instanceof ConcatenationRope) {
                 toExamine.push(((ConcatenationRope) x).getRight());
@@ -689,7 +689,7 @@ import java.util.regex.Pattern;
         final ArrayDeque<Rope> toExamine = new ArrayDeque<>();
         // begin a depth first loop.
         toExamine.add(r);
-        while (toExamine.size() > 0) {
+        while (!toExamine.isEmpty()) {
             final Rope x = toExamine.pop();
             if (x instanceof ConcatenationRope) {
                 ++nonLeaf;

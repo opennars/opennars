@@ -517,7 +517,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
     @Override
     public Set<K> keySet() {
-        if (size() == 0) return Collections.EMPTY_SET;
+        if (size() == 0) return Collections.emptySet();
 
         //NOTE use of arrayunenforcedset here is good for iterating but bad for checking contains()
         Set<K> s = new ArrayUnenforcedSet<>(size()); //Global.newHashSet(size());

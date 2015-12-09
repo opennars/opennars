@@ -94,7 +94,7 @@ public class AdaptiveResonanceTheory2
         }
         // if the particular prototype is empty now - delete whole prototype
         // delete also line (prototype) in prototype sequence
-        if (seq.get(iprot).size() == 0)
+        if (seq.get(iprot).isEmpty())
         {
             prot.remove(iprot);
             seq.remove(iprot);
@@ -247,7 +247,7 @@ public class AdaptiveResonanceTheory2
                  
             } 
         }
-        if (sameScore.size() == 0)
+        if (sameScore.isEmpty())
         {
             return empty;
         }

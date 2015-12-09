@@ -404,7 +404,7 @@ class MJCellUI extends Frame {
 		mjb.Randomize(cmbRand.getSelectedItem(), mjb.RAND_ALL);
 
 		// initial pattern
-		if (sInitPatt.length() > 0) {
+		if (!sInitPatt.isEmpty()) {
 			mjo.OpenFile(cmbGames.getSelectedItem() + "/"
 					+ cmbRules.getSelectedItem() + "/" + sInitPatt);
 		}
@@ -811,7 +811,7 @@ class MJCellUI extends Frame {
 
 			// if the rule is new, add it as a user rule
 			String sRuleName = mjr.GetRuleName(sGameName, sRuleDef);
-			if (sRuleName.length() == 0) // no such rule yet, add it
+			if (sRuleName.isEmpty()) // no such rule yet, add it
 			{
 				cmbRules.select(MJRules.S_USERRULE); // activate "User rule"
 				// item
@@ -1152,7 +1152,7 @@ class MJCellUI extends Frame {
 		btnPnl.add(btnOk);
 		ta.setEditable(false);
 
-		if (vDescr.size() > 0)
+		if (!vDescr.isEmpty())
 			for (int i = 0; i < vDescr.size(); i++)
 				ta.append(vDescr.get(i) + "\n");
 		else

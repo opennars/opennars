@@ -353,7 +353,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         if (container instanceof Phenotainer) {
             return ((Phenotainer)container).parameterValues;
         }
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
     
     @Override
@@ -465,7 +465,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         }
 
         //set Bean properties
-        if (props != null && props.size() > 0) {
+        if (props != null && !props.isEmpty()) {
 
             //TODO use entrySet
             for (Map.Entry<String, Object> stringObjectEntry : props.entrySet()) {
