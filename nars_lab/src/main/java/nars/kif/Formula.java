@@ -5073,98 +5073,98 @@ public class Formula implements Comparable {
      * This method returns a new Formula in which all existentially quantified
      * variables have been replaced by Skolem terms.
      *
-     * @see existentialsOut()
-     *
-     * @param evSubs A Map of variable - skolem term substitution pairs.
-     *
-     * @param iUQVs A TreeSet of implicitly universally quantified variables.
-     *
+     * @param evSubs     A Map of variable - skolem term substitution pairs.
+     * @param iUQVs      A TreeSet of implicitly universally quantified variables.
      * @param scopedUQVs A TreeSet of explicitly universally quantified
-     * variables.
-     *
+     *                   variables.
      * @return A new SUO-KIF Formula without existentially quantified variables.
+     * @see existentialsOut()
      */
     private Formula existentialsOut(Map evSubs, TreeSet iUQVs, TreeSet scopedUQVs) {
-        // System.out.println("INFO in existentialsOut(" + this.theFormula + ", " + evSubs + ", " + iUQVs + ", " + scopedUQVs + ")");
-        try {
-            if (this.listP()) {
-                if (this.empty()) {
-                    return this;
-                }
-                String arg0 = this.car();
-                if (arg0.equals("forall")) {
-
-                    // Copy the scoped variables set to protect
-                    // variable scope as we descend below this
-                    // quantifier.
-                    TreeSet newScopedUQVs = new TreeSet(scopedUQVs);
-
-                    String varList = this.cadr();
-                    Formula varListF = new Formula();
-                    varListF.read(varList);
-                    while (!(varListF.empty())) {
-                        String var = varListF.car();
-                        newScopedUQVs.add(var);
-                        varListF.read(varListF.cdr());
+        Formula result = this;
+        while (true) {
+            // System.out.println("INFO in existentialsOut(" + this.theFormula + ", " + evSubs + ", " + iUQVs + ", " + scopedUQVs + ")");
+            try {
+                if (result.listP()) {
+                    if (result.empty()) {
+                        return result;
                     }
-                    String arg2 = this.caddr();
-                    Formula arg2F = new Formula();
-                    arg2F.read(arg2);
-                    String theNewFormula = ("(forall "
-                            + varList
-                            + " "
-                            + arg2F.existentialsOut(evSubs, iUQVs, newScopedUQVs).theFormula + ")");
-                    this.read(theNewFormula);
-                    return this;
-                }
-                if (arg0.equals("exists")) {
+                    String arg0 = result.car();
+                    if (arg0.equals("forall")) {
 
-                    // Collect the relevant universally quantified
-                    // variables.
-                    TreeSet uQVs = new TreeSet(iUQVs);
-                    uQVs.addAll(scopedUQVs);
+                        // Copy the scoped variables set to protect
+                        // variable scope as we descend below this
+                        // quantifier.
+                        TreeSet newScopedUQVs = new TreeSet(scopedUQVs);
 
-                    // Collect the existentially quantified
-                    // variables.
-                    ArrayList eQVs = new ArrayList();
-                    String varList = this.cadr();
-                    Formula varListF = new Formula();
-                    varListF.read(varList);
-                    while (!(varListF.empty())) {
-                        String var = varListF.car();
-                        eQVs.add(var);
-                        varListF.read(varListF.cdr());
+                        String varList = result.cadr();
+                        Formula varListF = new Formula();
+                        varListF.read(varList);
+                        while (!(varListF.empty())) {
+                            String var = varListF.car();
+                            newScopedUQVs.add(var);
+                            varListF.read(varListF.cdr());
+                        }
+                        String arg2 = result.caddr();
+                        Formula arg2F = new Formula();
+                        arg2F.read(arg2);
+                        String theNewFormula = ("(forall "
+                                + varList
+                                + " "
+                                + arg2F.existentialsOut(evSubs, iUQVs, newScopedUQVs).theFormula + ")");
+                        result.read(theNewFormula);
+                        return result;
                     }
+                    if (arg0.equals("exists")) {
 
-                    // For each existentially quantified variable,
-                    // create a corresponding skolem term, and
-                    // store the pair in the evSubs map.
-                    for (int i = 0; i < eQVs.size(); i++) {
-                        String var = (String) eQVs.get(i);
-                        String skTerm = newSkolemTerm(uQVs);
-                        evSubs.put(var, skTerm);
+                        // Collect the relevant universally quantified
+                        // variables.
+                        TreeSet uQVs = new TreeSet(iUQVs);
+                        uQVs.addAll(scopedUQVs);
+
+                        // Collect the existentially quantified
+                        // variables.
+                        ArrayList eQVs = new ArrayList();
+                        String varList = result.cadr();
+                        Formula varListF = new Formula();
+                        varListF.read(varList);
+                        while (!(varListF.empty())) {
+                            String var = varListF.car();
+                            eQVs.add(var);
+                            varListF.read(varListF.cdr());
+                        }
+
+                        // For each existentially quantified variable,
+                        // create a corresponding skolem term, and
+                        // store the pair in the evSubs map.
+                        for (int i = 0; i < eQVs.size(); i++) {
+                            String var = (String) eQVs.get(i);
+                            String skTerm = result.newSkolemTerm(uQVs);
+                            evSubs.put(var, skTerm);
+                        }
+                        String arg2 = result.caddr();
+                        Formula arg2F = new Formula();
+                        arg2F.read(arg2);
+                        result = arg2F;
+                        continue;
                     }
-                    String arg2 = this.caddr();
-                    Formula arg2F = new Formula();
-                    arg2F.read(arg2);
-                    return arg2F.existentialsOut(evSubs, iUQVs, scopedUQVs);
+                    Formula arg0F = new Formula();
+                    arg0F.read(arg0);
+                    String newArg0 = arg0F.existentialsOut(evSubs, iUQVs, scopedUQVs).theFormula;
+                    return result.cdrAsFormula().existentialsOut(evSubs, iUQVs, scopedUQVs).cons(newArg0);
                 }
-                Formula arg0F = new Formula();
-                arg0F.read(arg0);
-                String newArg0 = arg0F.existentialsOut(evSubs, iUQVs, scopedUQVs).theFormula;
-                return this.cdrAsFormula().existentialsOut(evSubs, iUQVs, scopedUQVs).cons(newArg0);
+                if (result.isVariable(this.theFormula)) {
+                    String newTerm = (String) evSubs.get(result.theFormula);
+                    if (result.isNonEmptyString(newTerm)) {
+                        result.read(newTerm);
+                    }
+                    return result;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            if (isVariable(this.theFormula)) {
-                String newTerm = (String) evSubs.get(this.theFormula);
-                if (isNonEmptyString(newTerm)) {
-                    this.read(newTerm);
-                }
-                return this;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return result;
         }
-        return this;
     }
 
     /**
@@ -5224,32 +5224,35 @@ public class Formula implements Comparable {
      * This method returns a new Formula in which explicit univeral quantifiers
      * have been removed.
      *
-     * @see clausify()
-     *
      * @return A new SUO-KIF Formula without explicit universal quantifiers.
+     * @see clausify()
      */
     private Formula universalsOut() {
-        // System.out.println("INFO in universalsOut(" + this.theFormula + ")");
-        try {
-            if (this.listP()) {
-                if (this.empty()) {
-                    return this;
+        Formula result = this;
+        while (true) {
+            // System.out.println("INFO in universalsOut(" + this.theFormula + ")");
+            try {
+                if (result.listP()) {
+                    if (result.empty()) {
+                        return result;
+                    }
+                    String arg0 = result.car();
+                    if (arg0.equals("forall")) {
+                        String arg2 = result.caddr();
+                        result.read(arg2);
+                        result = result;
+                        continue;
+                    }
+                    Formula arg0F = new Formula();
+                    arg0F.read(arg0);
+                    String newArg0 = arg0F.universalsOut().theFormula;
+                    return result.cdrAsFormula().universalsOut().cons(newArg0);
                 }
-                String arg0 = this.car();
-                if (arg0.equals("forall")) {
-                    String arg2 = this.caddr();
-                    this.read(arg2);
-                    return this.universalsOut();
-                }
-                Formula arg0F = new Formula();
-                arg0F.read(arg0);
-                String newArg0 = arg0F.universalsOut().theFormula;
-                return this.cdrAsFormula().universalsOut().cons(newArg0);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return result;
         }
-        return this;
     }
 
     /**
@@ -5292,71 +5295,75 @@ public class Formula implements Comparable {
     /**
      * ***************************************************************
      *
-     * @see clausify()
-     * @see nestedOperatorsOut_1()
-     *
      * @return A new SUO-KIF Formula in which nested commutative operators and
      * 'not' have been unnested.
+     * @see clausify()
+     * @see nestedOperatorsOut_1()
      */
     private Formula nestedOperatorsOut_1() {
+        Formula result = this;
+        nestedOperatorsOut_1:
+        while (true) {
 
-        // System.out.println("INFO in nestedOperatorsOut_1(" + this.theFormula + ")");
-        try {
-            if (this.listP()) {
-                if (this.empty()) {
-                    return this;
-                }
-                String arg0 = this.car();
-                if (isCommutative(arg0) || arg0.equals("not")) {
-                    ArrayList literals = new ArrayList();
-                    Formula restF = this.cdrAsFormula();
-                    while (!(restF.empty())) {
-                        String lit = restF.car();
-                        Formula litF = new Formula();
-                        litF.read(lit);
-                        if (litF.listP()) {
-                            String litFarg0 = litF.car();
-                            if (litFarg0.equals(arg0)) {
-                                if (arg0.equals("not")) {
-                                    String theNewFormula = litF.cadr();
-                                    Formula newF = new Formula();
-                                    newF.read(theNewFormula);
-                                    return newF.nestedOperatorsOut_1();
-                                }
-                                Formula rest2F = litF.cdrAsFormula();
-                                while (!(rest2F.empty())) {
-                                    String rest2arg0 = rest2F.car();
-                                    Formula rest2arg0F = new Formula();
-                                    rest2arg0F.read(rest2arg0);
-                                    literals.add(rest2arg0F.nestedOperatorsOut_1().theFormula);
-                                    rest2F = rest2F.cdrAsFormula();
+            // System.out.println("INFO in nestedOperatorsOut_1(" + this.theFormula + ")");
+            try {
+                if (result.listP()) {
+                    if (result.empty()) {
+                        return result;
+                    }
+                    String arg0 = result.car();
+                    if (result.isCommutative(arg0) || arg0.equals("not")) {
+                        ArrayList literals = new ArrayList();
+                        Formula restF = result.cdrAsFormula();
+                        while (!(restF.empty())) {
+                            String lit = restF.car();
+                            Formula litF = new Formula();
+                            litF.read(lit);
+                            if (litF.listP()) {
+                                String litFarg0 = litF.car();
+                                if (litFarg0.equals(arg0)) {
+                                    if (arg0.equals("not")) {
+                                        String theNewFormula = litF.cadr();
+                                        Formula newF = new Formula();
+                                        newF.read(theNewFormula);
+                                        result = newF;
+                                        continue nestedOperatorsOut_1;
+                                    }
+                                    Formula rest2F = litF.cdrAsFormula();
+                                    while (!(rest2F.empty())) {
+                                        String rest2arg0 = rest2F.car();
+                                        Formula rest2arg0F = new Formula();
+                                        rest2arg0F.read(rest2arg0);
+                                        literals.add(rest2arg0F.nestedOperatorsOut_1().theFormula);
+                                        rest2F = rest2F.cdrAsFormula();
+                                    }
+                                } else {
+                                    literals.add(litF.nestedOperatorsOut_1().theFormula);
                                 }
                             } else {
-                                literals.add(litF.nestedOperatorsOut_1().theFormula);
+                                literals.add(lit);
                             }
-                        } else {
-                            literals.add(lit);
+                            restF = restF.cdrAsFormula();
                         }
-                        restF = restF.cdrAsFormula();
+                        String theNewFormula = ("(" + arg0);
+                        for (int i = 0; i < literals.size(); i++) {
+                            theNewFormula += (" " + literals.get(i));
+                        }
+                        theNewFormula += ")";
+                        Formula newF = new Formula();
+                        newF.read(theNewFormula);
+                        return newF;
                     }
-                    String theNewFormula = ("(" + arg0);
-                    for (int i = 0; i < literals.size(); i++) {
-                        theNewFormula += (" " + literals.get(i));
-                    }
-                    theNewFormula += ")";
-                    Formula newF = new Formula();
-                    newF.read(theNewFormula);
-                    return newF;
+                    Formula arg0F = new Formula();
+                    arg0F.read(arg0);
+                    String newArg0 = arg0F.nestedOperatorsOut_1().theFormula;
+                    return result.cdrAsFormula().nestedOperatorsOut_1().cons(newArg0);
                 }
-                Formula arg0F = new Formula();
-                arg0F.read(arg0);
-                String newArg0 = arg0F.nestedOperatorsOut_1().theFormula;
-                return this.cdrAsFormula().nestedOperatorsOut_1().cons(newArg0);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return result;
         }
-        return this;
     }
 
     /**

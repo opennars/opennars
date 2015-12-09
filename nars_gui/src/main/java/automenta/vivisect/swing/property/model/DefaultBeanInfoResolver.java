@@ -40,32 +40,34 @@ public class DefaultBeanInfoResolver implements BeanInfoResolver {
   }
 
   public BeanInfo getBeanInfo(Class clazz) {
-    if (clazz == null) {
-      return null;
-    }
-
-    String classname = clazz.getName();
-
-    // look for .impl.basic., remove it and call getBeanInfo(class)
-    int index = classname.indexOf(".impl.basic");
-    if (index != -1 && classname.endsWith("Basic")) {
-      classname =
-        classname.substring(0, index)
-          + classname.substring(
-            index + ".impl.basic".length(),
-            classname.lastIndexOf("Basic"));
-      try {
-        return getBeanInfo(Class.forName(classname));
-      } catch (ClassNotFoundException e) {
+    while (true) {
+      if (clazz == null) {
         return null;
       }
-    } else {
-      try {
-        BeanInfo beanInfo =
-          (BeanInfo)Class.forName(classname + "BeanInfo").newInstance();
-        return beanInfo;
-      } catch (Exception e) {
-        return null;
+
+      String classname = clazz.getName();
+
+      // look for .impl.basic., remove it and call getBeanInfo(class)
+      int index = classname.indexOf(".impl.basic");
+      if (index != -1 && classname.endsWith("Basic")) {
+        classname =
+                classname.substring(0, index)
+                        + classname.substring(
+                        index + ".impl.basic".length(),
+                        classname.lastIndexOf("Basic"));
+        try {
+          clazz = Class.forName(classname);
+        } catch (ClassNotFoundException e) {
+          return null;
+        }
+      } else {
+        try {
+          BeanInfo beanInfo =
+                  (BeanInfo) Class.forName(classname + "BeanInfo").newInstance();
+          return beanInfo;
+        } catch (Exception e) {
+          return null;
+        }
       }
     }
   }
