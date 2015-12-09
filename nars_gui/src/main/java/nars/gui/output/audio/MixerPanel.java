@@ -58,7 +58,7 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
             playing.removeRow(0);
         }
 
-        List<Sound> ss = new ArrayList<Sound>( sound.getSounds() );
+        List<Sound> ss = new ArrayList<>(sound.getSounds());
         for (Sound s : ss) {
             playing.addRow(new Object[]{s.toString(), s.amplitude, s.pan});
         }

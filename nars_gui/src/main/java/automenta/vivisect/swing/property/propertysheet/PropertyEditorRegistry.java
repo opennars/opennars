@@ -46,8 +46,8 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 	private Map<Property, Object> propertyToEditor;
 
 	public PropertyEditorRegistry() {
-		typeToEditor = new HashMap<Class<?>, Object>();
-		propertyToEditor = new HashMap<Property, Object>();
+		typeToEditor = new HashMap<>();
+		propertyToEditor = new HashMap<>();
 		registerDefaults();
 	}
 

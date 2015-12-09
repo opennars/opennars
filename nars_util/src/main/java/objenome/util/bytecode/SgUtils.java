@@ -278,7 +278,7 @@ public final class SgUtils {
         if (str == null) {
             return null;
         }
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             final char ch = str.charAt(i);
             if (Character.isUpperCase(ch)) {
@@ -377,7 +377,7 @@ public final class SgUtils {
      * @return Modifier matrix HTML table.
      */
     public static String modifierMatrixToHtml() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("<table border=\"1\">\n");
 
         // Header
@@ -492,7 +492,7 @@ public final class SgUtils {
         int increase = replacement.length() - replLength;
         increase = (increase < 0 ? 0 : increase);
         increase *= (maxx < 0 ? 16 : (maxx > 64 ? 64 : maxx));
-        final StringBuffer buf = new StringBuffer(text.length() + increase);
+        final StringBuilder buf = new StringBuilder(text.length() + increase);
         while (end != -1) {
             buf.append(text.substring(start, end)).append(replacement);
             start = end + replLength;
@@ -545,7 +545,7 @@ public final class SgUtils {
      *         "methodXY(String, int, boolean)").
      */
     public static String createTypeSignature(final String methodName, final Class<?>[] paramTypes) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(methodName);
         sb.append('(');
         for (int i = 0; i < paramTypes.length; i++) {

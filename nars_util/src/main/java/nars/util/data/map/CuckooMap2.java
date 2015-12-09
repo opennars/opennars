@@ -192,7 +192,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
             /* Return a default hash function initialized with random values
              * and the log of the number of buckets.
              */
-            return new DefaultHashFunction<T>(mRandom.nextInt(), mRandom.nextInt(),
+            return new DefaultHashFunction<>(mRandom.nextInt(), mRandom.nextInt(),
                     lgBuckets);
         }
     }
@@ -273,7 +273,7 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
         /* Otherwise, continously try to insert the value into the hash table,
          * rehashing whenever that fails.
          */
-        Entry<K, V> toInsert = new SimpleEntry<K, V>(key, value);
+        Entry<K, V> toInsert = new SimpleEntry<>(key, value);
         while (true) {
             /* Add the entry to the table, then see what element was
              * ultimately displaced.

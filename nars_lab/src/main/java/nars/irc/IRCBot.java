@@ -146,7 +146,7 @@ public abstract class IRCBot {
         String prefix;
         String nick;
         String command;
-        ArrayList<String> params = new ArrayList<String>();
+        ArrayList<String> params = new ArrayList<>();
 
         @Override
         public String toString() {

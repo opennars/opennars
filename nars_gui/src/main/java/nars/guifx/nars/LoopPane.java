@@ -97,7 +97,7 @@ public class LoopPane extends VBox {
         //-2 here is a magic number to indicate that nothing is pending and can be changed now
         cpuSlider.value[0].addListener(updateLoopOnChange);
 
-        this.multiplier = new ComboBox<Integer>();
+        this.multiplier = new ComboBox<>();
         multiplier.getItems().addAll( 1, 4, 16, 64, 128, 512);
         multiplier.setValue(1);
         multiplier.valueProperty().addListener(updateLoopOnChange);

@@ -60,7 +60,7 @@ public class Division extends Operation {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(numerator);
         arrayList.add(denom);
         return arrayList;
@@ -106,10 +106,10 @@ public class Division extends Operation {
 
             //if (debug) System.err.println("Division simplify: " + dump());
 
-            ArrayList<Expr> numeratorExprs = new ArrayList<Expr>();
+            ArrayList<Expr> numeratorExprs = new ArrayList<>();
             if (other.numerator instanceof Product) numeratorExprs = ((Operation) other.numerator).getExprs();
             else numeratorExprs.add(other.numerator);
-            ArrayList<Expr> denomExprs = new ArrayList<Expr>();
+            ArrayList<Expr> denomExprs = new ArrayList<>();
             if (other.denom instanceof Product) denomExprs = ((Operation) other.denom).getExprs();
             else denomExprs.add(other.denom);
 

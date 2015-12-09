@@ -28,7 +28,7 @@ public class Cos extends Function {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(ofExpr);
         return arrayList;
     }

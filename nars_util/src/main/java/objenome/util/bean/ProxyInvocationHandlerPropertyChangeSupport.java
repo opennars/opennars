@@ -22,8 +22,8 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
     private static final long serialVersionUID = 0L;
 
     // TODO switch Soft/Hard
-    private BeanListenerSupport<PropertyChangeListener> propertyChangeListeners = new BeanListenerSupportSoftRef<PropertyChangeListener>();
-    private BeanListenerSupport<VetoableChangeListener> vetoableChangeListeners = new BeanListenerSupportSoftRef<VetoableChangeListener>();
+    private BeanListenerSupport<PropertyChangeListener> propertyChangeListeners = new BeanListenerSupportSoftRef<>();
+    private BeanListenerSupport<VetoableChangeListener> vetoableChangeListeners = new BeanListenerSupportSoftRef<>();
 
     public ProxyInvocationHandlerPropertyChangeSupport(final Class<?> proxiedIface, final Collection<Class<?>> ifaces) {
         super(proxiedIface, ifaces);

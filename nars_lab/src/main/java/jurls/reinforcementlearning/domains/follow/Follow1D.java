@@ -44,8 +44,8 @@ public class Follow1D implements RLEnvironment {
 
     private class RenderComponent extends JComponent {
 
-        private final List<Double> _positions = Collections.synchronizedList(new ArrayList<Double>(history));
-        private final List<Double> _targets = Collections.synchronizedList(new ArrayList<Double>(history));
+        private final List<Double> _positions = Collections.synchronizedList(new ArrayList<>(history));
+        private final List<Double> _targets = Collections.synchronizedList(new ArrayList<>(history));
 
         @Override
         protected void paintComponent(Graphics g) {
@@ -94,8 +94,8 @@ public class Follow1D implements RLEnvironment {
         }
     }
 
-    private final List<Double> positions = Collections.synchronizedList(new ArrayList<Double>(history));
-    private final List<Double> targets = Collections.synchronizedList(new ArrayList<Double>(history));
+    private final List<Double> positions = Collections.synchronizedList(new ArrayList<>(history));
+    private final List<Double> targets = Collections.synchronizedList(new ArrayList<>(history));
     private final double maxPos = 1.0;
     private double myPos = 0.5;
     private double targetPos = 0.5;

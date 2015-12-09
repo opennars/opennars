@@ -19,7 +19,7 @@ public class Var extends Expr {
 
     private Character character;
     
-    public HashMap<Var, Expr> derivrespected = new HashMap<Var, Expr>();
+    public HashMap<Var, Expr> derivrespected = new HashMap<>();
     
     public Var() {
         this('x');

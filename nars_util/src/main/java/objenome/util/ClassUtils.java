@@ -76,7 +76,7 @@ public class ClassUtils {
     /**
      * Maps primitive {@code Class}es to their corresponding wrapper {@code Class}.
      */
-    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
         primitiveWrapperMap.put(Byte.TYPE, Byte.class);
@@ -92,7 +92,7 @@ public class ClassUtils {
     /**
      * Maps wrapper {@code Class}es to their corresponding primitive types.
      */
-    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>();
     static {
         for (final Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperMap.entrySet()) {
             final Class<?> primitiveClass = entry.getKey();
@@ -117,7 +117,7 @@ public class ClassUtils {
      * Feed abbreviation maps
      */
     static {
-        final Map<String, String> m = new HashMap<String, String>();
+        final Map<String, String> m = new HashMap<>();
         m.put("int", "I");
         m.put("boolean", "Z");
         m.put("float", "F");
@@ -127,7 +127,7 @@ public class ClassUtils {
         m.put("double", "D");
         m.put("char", "C");
         m.put("void", "V");
-        final Map<String, String> r = new HashMap<String, String>();
+        final Map<String, String> r = new HashMap<>();
         for (final Map.Entry<String, String> e : m.entrySet()) {
             r.put(e.getValue(), e.getKey());
         }
@@ -409,7 +409,7 @@ public class ClassUtils {
         if (cls == null) {
             return null;
         }
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        final List<Class<?>> classes = new ArrayList<>();
         Class<?> superclass = cls.getSuperclass();
         while (superclass != null) {
             classes.add(superclass);
@@ -436,10 +436,10 @@ public class ClassUtils {
             return null;
         }
 
-        final LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<Class<?>>();
+        final LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<>();
         getAllInterfaces(cls, interfacesFound);
 
-        return new ArrayList<Class<?>>(interfacesFound);
+        return new ArrayList<>(interfacesFound);
     }
 
     /**
@@ -480,7 +480,7 @@ public class ClassUtils {
         if (classNames == null) {
             return null;
         }
-        final List<Class<?>> classes = new ArrayList<Class<?>>(classNames.size());
+        final List<Class<?>> classes = new ArrayList<>(classNames.size());
         for (final String className : classNames) {
             try {
                 classes.add(Class.forName(className));
@@ -507,7 +507,7 @@ public class ClassUtils {
         if (classes == null) {
             return null;
         }
-        final List<String> classNames = new ArrayList<String>(classes.size());
+        final List<String> classNames = new ArrayList<>(classes.size());
         for (final Class<?> cls : classes) {
             if (cls == null) {
                 classNames.add(null);
@@ -1008,7 +1008,7 @@ public class ClassUtils {
             return declaredMethod;
         }
 
-        final List<Class<?>> candidateClasses = new ArrayList<Class<?>>(getAllInterfaces(cls));
+        final List<Class<?>> candidateClasses = new ArrayList<>(getAllInterfaces(cls));
         candidateClasses.addAll(getAllSuperclasses(cls));
 
         for (final Class<?> candidateClass : candidateClasses) {
@@ -1239,7 +1239,7 @@ public class ClassUtils {
      */
     public static Iterable<Class<?>> hierarchy(final Class<?> type, final Interfaces interfacesBehavior) {
         final Iterable<Class<?>> classes = () -> {
-            final MutableObject<Class<?>> next = new MutableObject<Class<?>>(type);
+            final MutableObject<Class<?>> next = new MutableObject<>(type);
             return new Iterator<Class<?>>() {
 
                 @Override
@@ -1265,7 +1265,7 @@ public class ClassUtils {
             return classes;
         }
         return () -> {
-            final Set<Class<?>> seenInterfaces = new HashSet<Class<?>>();
+            final Set<Class<?>> seenInterfaces = new HashSet<>();
             final Iterator<Class<?>> wrapped = classes.iterator();
 
             return new Iterator<Class<?>>() {
@@ -1284,7 +1284,7 @@ public class ClassUtils {
                         return nextInterface;
                     }
                     final Class<?> nextSuperclass = wrapped.next();
-                    final Set<Class<?>> currentInterfaces = new LinkedHashSet<Class<?>>();
+                    final Set<Class<?>> currentInterfaces = new LinkedHashSet<>();
                     walkInterfaces(currentInterfaces, nextSuperclass);
                     interfaces = currentInterfaces.iterator();
                     return nextSuperclass;

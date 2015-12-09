@@ -62,8 +62,8 @@ public class ExampleFeatureSurf {
 		// define the feature detection algorithm
 		NonMaxSuppression extractor =
 				FactoryFeatureExtractor.nonmax(new ConfigExtract(minPixelScale, 0, 5, true));
-		FastHessianFeatureDetector<II> detector = 
-				new FastHessianFeatureDetector<II>(extractor,200,4, minPixelScale,4,4);
+		FastHessianFeatureDetector<II> detector =
+				new FastHessianFeatureDetector<>(extractor, 200, 4, minPixelScale, 4, 4);
 
 		// estimate orientation
 		OrientationIntegral<II> orientation =

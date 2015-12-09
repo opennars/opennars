@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class PartialParseExpr {
     
-    public HashMap<String, Object> hash = new HashMap<String, Object>();
+    public HashMap<String, Object> hash = new HashMap<>();
     
     public PartialParseExpr() {
     }

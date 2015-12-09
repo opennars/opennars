@@ -20,7 +20,7 @@ public class FixedMap<K, V> implements Serializable {
     private final Map<K, V> map;
 
     public FixedMap(final Collection<K> keys) {
-        this.map = new HashMap<K, V>(keys.size(), 1.0f);
+        this.map = new HashMap<>(keys.size(), 1.0f);
         for (final K key : keys) {
             // init all keys using null value so all keys exists (and beside the map guaranteed has
             // the correct size)
@@ -29,7 +29,7 @@ public class FixedMap<K, V> implements Serializable {
     }
 
     public FixedMap(final FixedMap<K, V> fixedMap) {
-        this.map = new HashMap<K, V>(fixedMap.map);
+        this.map = new HashMap<>(fixedMap.map);
     }
 
     public void put(final K key, final V value) {

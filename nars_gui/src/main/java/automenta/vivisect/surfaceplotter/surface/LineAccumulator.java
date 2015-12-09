@@ -47,7 +47,7 @@ public class LineAccumulator {
    */
    
   LineAccumulator() {
-    accumulator = new ArrayList<LineRecord>();
+    accumulator = new ArrayList<>();
   } 
   
   /**

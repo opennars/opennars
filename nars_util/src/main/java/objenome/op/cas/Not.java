@@ -44,7 +44,7 @@ public class Not extends Operation {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(notExpr);
         return arrayList;
     }
@@ -58,7 +58,7 @@ public class Not extends Operation {
                 if (maybeNot.printSimplify() instanceof Not) aNot = true;
             }
             if (aNot) {
-                ArrayList<Expr> ands = new ArrayList<Expr>();
+                ArrayList<Expr> ands = new ArrayList<>();
                 for (Expr expr : ((Operation) notExpr).getExprs()) {
                     ands.add(Not.make(expr));
                 }

@@ -45,7 +45,7 @@ public abstract class Operation extends Expr {
     }
     
     public static Expr conditions(ArrayList<? extends Expr> exprs) {
-        ArrayList<Expr> condsArr = new ArrayList<Expr>();
+        ArrayList<Expr> condsArr = new ArrayList<>();
         for (Expr expr : exprs) {
             condsArr.add(expr.condition());
         }
@@ -57,7 +57,7 @@ public abstract class Operation extends Expr {
     }
     
     public static ArrayList<Expr> defineds(ArrayList<? extends Expr> exprsOrig) {
-        ArrayList<Expr> exprs = new ArrayList<Expr>(exprsOrig);
+        ArrayList<Expr> exprs = new ArrayList<>(exprsOrig);
         for (int i = 0; i < exprs.size(); i++) {
             Expr exprOn = exprs.get(i);
             if (exprOn instanceof Undef) {

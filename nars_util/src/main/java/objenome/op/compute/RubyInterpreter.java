@@ -134,7 +134,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
      * the given expression.
      */
     private String getEvalCode(String expression, String[] argNames) {
-        StringBuffer code = new StringBuffer();
+        StringBuilder code = new StringBuilder();
 
         code.append("def expr(");
         for (int i = 0; i < argNames.length; i++) {
@@ -158,7 +158,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
      * method containing the given program.
      */
     private String getExecCode(String program, String[] argNames) {
-        final StringBuffer code = new StringBuffer();
+        final StringBuilder code = new StringBuilder();
 
         // code.append("class Evaluation\n");
         code.append("def expr(");

@@ -114,7 +114,7 @@ public class AnnotatedBeanInfo extends BaseBeanInfo {
 
 	private List<PropertyPair> getProperties(Class<?> type) {
 
-		List<PropertyPair> pairs = new ArrayList<PropertyPair>();
+		List<PropertyPair> pairs = new ArrayList<>();
 		Field[] fields = type.getDeclaredFields();
 
 		for (Field field : fields) {

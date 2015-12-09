@@ -33,7 +33,7 @@ public class TestTrieSequencerCharSequenceCaseInsensitive
    @Test
    public void testMatches()
    {
-      TrieSequencer<String> seq = new TrieSequencerCharSequenceCaseInsensitive<String>();
+      TrieSequencer<String> seq = new TrieSequencerCharSequenceCaseInsensitive<>();
       
       assertEquals( 2, seq.matches( SEQ1, 0, SEQ2, 0, 2 ) );
       assertEquals( 0, seq.matches( SEQ1, 1, SEQ2, 0, 2 ) );
@@ -45,7 +45,7 @@ public class TestTrieSequencerCharSequenceCaseInsensitive
    @Test
    public void testLengthOf()
    {
-      TrieSequencer<String> seq = new TrieSequencerCharSequenceCaseInsensitive<String>();
+      TrieSequencer<String> seq = new TrieSequencerCharSequenceCaseInsensitive<>();
       
       assertEquals( 5, seq.lengthOf( SEQ1 ) );
       assertEquals( 2, seq.lengthOf( SEQ2 ) );
@@ -57,7 +57,7 @@ public class TestTrieSequencerCharSequenceCaseInsensitive
    @Test
    public void testHashOf()
    {
-      TrieSequencer<String> seq = new TrieSequencerCharSequenceCaseInsensitive<String>();
+      TrieSequencer<String> seq = new TrieSequencerCharSequenceCaseInsensitive<>();
       
       assertEquals( 'w', seq.hashOf( SEQ3, 0 ) );
       assertEquals( 'o', seq.hashOf( SEQ3, 1 ) );

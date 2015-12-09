@@ -30,7 +30,7 @@ public class MultiOutputStream extends OutputStream {
     
     public MultiOutputStream(Collection<OutputStream> outStreams) {
 
-        this.out = new ArrayList<OutputStream>();
+        this.out = new ArrayList<>();
 
         for (Iterator<OutputStream> i = outStreams.iterator(); i.hasNext();) {
             OutputStream outputStream = i.next();

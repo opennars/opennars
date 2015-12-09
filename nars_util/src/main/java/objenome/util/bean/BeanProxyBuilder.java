@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class BeanProxyBuilder<T> {
 
     /** Check each class only once so cache the check classes. */
-    private static final Set<Class<?>> CHECKED_CLASSES = new CopyOnWriteArraySet<Class<?>>();
+    private static final Set<Class<?>> CHECKED_CLASSES = new CopyOnWriteArraySet<>();
 
     private final Class<T> iface;
 
@@ -67,7 +67,7 @@ public class BeanProxyBuilder<T> {
     }
 
     public static <T> BeanProxyBuilder<T> on(final Class<T> iface) {
-        return new BeanProxyBuilder<T>(iface);
+        return new BeanProxyBuilder<>(iface);
     }
 
     private BeanProxyBuilder(final Class<T> iface) {
@@ -78,7 +78,7 @@ public class BeanProxyBuilder<T> {
             throw new IllegalArgumentException(iface + " must be an interface"); //$NON-NLS-1$
         }
         this.iface = iface;
-        this.allIfaces = new HashSet<Class<?>>(ObjectUtil.collectInterfaces(this.iface));
+        this.allIfaces = new HashSet<>(ObjectUtil.collectInterfaces(this.iface));
         this.propertyChangeSupport = Annotations.hasMethodWithAnnotation(this.allIfaces,
                 PropertyChangeEventMethod.class);
         this.genericSupport = checkForGenericSupport(this.allIfaces);

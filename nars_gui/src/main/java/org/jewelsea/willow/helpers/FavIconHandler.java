@@ -55,7 +55,7 @@ public class FavIconHandler {
      * least recently used cache of favicons
      */
     private Map<String, ImageView> faviconCache =
-            new ConcurrentHashMap<String, ImageView>(
+            new ConcurrentHashMap<>(
                     new LruCache<>(200)
             );
 

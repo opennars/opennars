@@ -99,7 +99,7 @@ public class PropertyUtils {
 
 	public static LinkedHashMap<String, SerializableProperty> getProperties(
 			Object obj, boolean editable) {
-		LinkedHashMap<String, SerializableProperty> props = new LinkedHashMap<String, SerializableProperty>();
+		LinkedHashMap<String, SerializableProperty> props = new LinkedHashMap<>();
 
 		for (Field f : getFields(obj)) {
 			SerializableProperty pp = createProperty(obj, f, editable);

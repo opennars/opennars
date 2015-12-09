@@ -76,7 +76,7 @@ public class NumberEditor extends AbstractPropertyEditor {
         }
 
         // collect all numbers from this textfield
-        StringBuffer number = new StringBuffer();
+        StringBuilder number = new StringBuilder();
         number.ensureCapacity(text.length());
         for (int i = 0, c = text.length(); i < c; i++) {
             char character = text.charAt(i);

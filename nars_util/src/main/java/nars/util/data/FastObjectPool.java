@@ -29,7 +29,7 @@ public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
 
     @Override
     public Holder<T> create() {
-        return new Holder<T>(creation());
+        return new Holder<>(creation());
     }
 
     public abstract T creation();

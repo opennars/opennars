@@ -307,7 +307,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label goals = new Label("Goals diagram");
 //        Label questions = new Label("Questions diagram");
         SplitPane links = new SplitPane(
-                scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
+                scrolled(termLinkView = new BagView<>(c.getTermLinks(),
                                 (t) -> new ItemButton(t, (i) -> i.toString(),
                                         (i) -> {
 

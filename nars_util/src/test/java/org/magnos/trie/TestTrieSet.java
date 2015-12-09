@@ -30,7 +30,7 @@ public class TestTrieSet
    @Test
    public void testConstructor()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       assertTrue( set.isEmpty() );
       assertEquals( 0, set.size() );
@@ -39,7 +39,7 @@ public class TestTrieSet
    @Test
    public void testAdd()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       assertFalse( set.contains( "meow" ) );
       assertTrue( set.add( "meow" ) );
@@ -56,7 +56,7 @@ public class TestTrieSet
    @Test
    public void testAddAll()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       List<String> words = Arrays.asList( "meow", "kitten", "purr" );
 
@@ -71,7 +71,7 @@ public class TestTrieSet
    @Test
    public void testClear()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       set.add( "meow" );
       set.add( "kitten" );
@@ -94,7 +94,7 @@ public class TestTrieSet
    @Test
    public void testContainsAll()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       set.add( "meow" );
       set.add( "kitten" );
@@ -116,7 +116,7 @@ public class TestTrieSet
    @Test
    public void testIterator()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       set.add( "meow" );
       set.add( "kitten" );
@@ -136,7 +136,7 @@ public class TestTrieSet
    @Test
    public void testRemove()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       set.add( "meow" );
       set.add( "kitten" );
@@ -151,7 +151,7 @@ public class TestTrieSet
    @Test
    public void testRemoveAll()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
 
       set.add( "meow" );
       set.add( "kitten" );
@@ -168,7 +168,7 @@ public class TestTrieSet
    @Test
    public void testRetainAll()
    {
-      TrieSet<String> set = new TrieSet<String>( Tries.forStrings() );
+      TrieSet<String> set = new TrieSet<>(Tries.forStrings());
       
       set.add( "meow" );
       set.add( "kitten" );

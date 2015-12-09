@@ -305,7 +305,7 @@ public class TestTrie
 
       assertEquals( 5, t.size() );
       
-      Map<String, Boolean> map = new HashMap<String, Boolean>();
+      Map<String, Boolean> map = new HashMap<>();
       map.putAll( t );
 
       assertEquals( 5, map.size() );
@@ -330,7 +330,7 @@ public class TestTrie
 
       assertEquals( 5, t.size() );
 
-      Map<String, Boolean> map = new HashMap<String, Boolean>();
+      Map<String, Boolean> map = new HashMap<>();
       
       for(Entry<String, Boolean> e : t.entrySet( "java.u", TrieMatch.PARTIAL ))
       {

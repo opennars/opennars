@@ -55,7 +55,7 @@ public final class ArrayLists {
         if (direction == 0) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexIn(arrayList, splitOn, objectFound));
-                List<T> tmp = new ArrayList<T>(subList);
+                List<T> tmp = new ArrayList<>(subList);
                 if (!tmp.isEmpty()) {
                     splitted.add(tmp);
                 }
@@ -80,7 +80,7 @@ public final class ArrayLists {
         }
         else if (direction == 1) {
             List<T> subList = arrayList.subList(lastIndexIn(arrayList, splitOn, objectFound) + 1, arrayList.size());
-            List<T> tmp = new ArrayList<T>(subList);
+            List<T> tmp = new ArrayList<>(subList);
             
             splitted.add(tmp);
             
@@ -92,7 +92,7 @@ public final class ArrayLists {
         else if (direction == 2) {
             while (containsIn(arrayList, splitOn)) {
                 List<? extends T> subList = arrayList.subList(0, indexInMultFound(arrayList, splitOn, objectFound));
-                List<T> tmp = new ArrayList<T>(subList);
+                List<T> tmp = new ArrayList<>(subList);
                 if (!tmp.isEmpty()) {
                     splitted.add(tmp);
                 } else {
@@ -207,7 +207,7 @@ public final class ArrayLists {
     }
     
     public static <T> ArrayList<T> castAll(Iterable arrList, Class<T> toClass) {
-        ArrayList<T> newArrList = new ArrayList<T>();
+        ArrayList<T> newArrList = new ArrayList<>();
         for (Object o : arrList) {
             newArrList.add((T) o);
         }
@@ -215,7 +215,7 @@ public final class ArrayLists {
     }
     
     public static String dumpAll(Iterable<Expr> exprs) {
-        ArrayList<String> strs = new ArrayList<String>();
+        ArrayList<String> strs = new ArrayList<>();
         for (Expr expr: exprs) {
             strs.add(expr.toString());
         }

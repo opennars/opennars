@@ -129,7 +129,7 @@ public abstract class Wave {
     }
 
     public void clearData() {
-        this.data = new LinkedList<String>();
+        this.data = new LinkedList<>();
     }
 
 }

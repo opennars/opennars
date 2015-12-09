@@ -17,7 +17,7 @@ public class Logarithm extends Function {
     public static Expr make(Expr base, Expr ofExpr) {
         Logarithm log = new Logarithm(base, ofExpr);
         
-        ArrayList<Expr> norConditions = new ArrayList<Expr>();
+        ArrayList<Expr> norConditions = new ArrayList<>();
         norConditions.add(LessThanOrEqual.make(base, nope()));
         norConditions.add(Equals.make(base, yep()));
         norConditions.add(LessThanOrEqual.make(ofExpr, nope()));
@@ -48,7 +48,7 @@ public class Logarithm extends Function {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(base);
         arrayList.add(ofExpr);
         return arrayList;

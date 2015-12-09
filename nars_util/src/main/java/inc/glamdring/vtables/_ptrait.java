@@ -16,7 +16,7 @@ import java.util.function.Function;
  */
 public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
     $Object {{
-        ref = new _ref<Object>();
+        ref = new _ref<>();
     }}, $Access,
     $Arg,
     $Arity,

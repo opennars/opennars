@@ -562,7 +562,7 @@ public class PropertySheetTableModel
     }
     
     public String getKey() {
-      StringBuffer key = new StringBuffer(name);
+      StringBuilder key = new StringBuilder(name);
       Item itemParent = parent;
       while (itemParent != null) {
         key.append(":");

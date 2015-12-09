@@ -20,7 +20,7 @@ public final class WrapperMapper {
     }
 
     private static Map<String, Object> createMapping() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put(Double.TYPE.getName(), 0d);
         map.put(Float.TYPE.getName(), 0f);
         map.put(Long.TYPE.getName(), 0L);

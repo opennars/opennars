@@ -56,7 +56,7 @@ public class TetrisState {
     public double[] worldState;/*what the world looks like without the current block*/
 
     //	/*Hold all the possible bricks that can fall*/
-    Vector<TetrisPiece> possibleBlocks = new Vector<TetrisPiece>();
+    Vector<TetrisPiece> possibleBlocks = new Vector<>();
     private double[] worldObservation;
 
 
@@ -551,7 +551,7 @@ public class TetrisState {
         this.worldState = new double[stateToCopy.worldState.length];
         System.arraycopy(stateToCopy.worldState, 0, this.worldState, 0, this.worldState.length);
 
-        this.possibleBlocks = new Vector<TetrisPiece>();
+        this.possibleBlocks = new Vector<>();
         //hopefully nobody modifies the pieces as they go
         for (TetrisPiece thisPiece : stateToCopy.possibleBlocks) {
             this.possibleBlocks.add(thisPiece);

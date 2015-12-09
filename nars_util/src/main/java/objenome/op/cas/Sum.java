@@ -9,7 +9,7 @@ import java.util.List;
 public class Sum extends Operation {
     
     public static void main(String[] args) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>();
+        ArrayList<Expr> tmp1 = new ArrayList<>();
         tmp1.add(new E());
         tmp1.add(Num.make(1));
         tmp1.add(new Var('x'));
@@ -33,7 +33,7 @@ public class Sum extends Operation {
     }
     
     public static Expr make(Expr expr1, Expr expr2) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>();
+        ArrayList<Expr> tmp1 = new ArrayList<>();
         tmp1.add(expr1);
         tmp1.add(expr2);
         return new Sum(tmp1).simplify();
@@ -41,7 +41,7 @@ public class Sum extends Operation {
     
     public Expr deriv(Var respected) {
         // if (debug) System.err.println("derivative of " + dump());
-        ArrayList<Expr> exprsDiffed = new ArrayList<Expr>(exprs.size());
+        ArrayList<Expr> exprsDiffed = new ArrayList<>(exprs.size());
         for (Expr expr : exprs) {
             exprsDiffed.add(expr.deriv(respected));
         }
@@ -90,7 +90,7 @@ public class Sum extends Operation {
         Expr conditioned = conditioned();
         if (conditioned != null) return conditioned;
         
-        List<Expr> constants = new ArrayList<Expr>();
+        List<Expr> constants = new ArrayList<>();
         for (int i = 0; i < exprs.size(); i++) {
             Expr expr = exprs.get(i);
             
@@ -280,7 +280,7 @@ public class Sum extends Operation {
             }
         }
         
-        List<Expr> numbers = new ArrayList<Expr>();
+        List<Expr> numbers = new ArrayList<>();
         for (int i = 0; i < constants.size(); i++) {
             if (constants.get(i).isNumber()) {
                 numbers.add(constants.remove(i));

@@ -59,7 +59,7 @@ public final class SgAssert {
         try {
             final LineNumberReader lnr = new LineNumberReader(new FileReader(file));
             try {
-                final StringBuffer sb = new StringBuffer();
+                final StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = lnr.readLine()) != null) {
                     sb.append(line);

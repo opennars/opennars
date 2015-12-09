@@ -313,11 +313,11 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     }
 
     public ListIterator<E> listIterator() {
-        return new ArrayIterator<E>(getArray(), 0);
+        return new ArrayIterator<>(getArray(), 0);
     }
 
     public ListIterator<E> listIterator(int index) {
-        return new ArrayIterator<E>(getArray(), index);
+        return new ArrayIterator<>(getArray(), index);
     }
 
     public List<E> subList(int fromIndex, int toIndex) {

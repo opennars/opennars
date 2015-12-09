@@ -86,7 +86,7 @@ public class Actions {
 
     /** Construct the map from names to actions */
     public static void makeMap() {
-        actionsMap = new HashMap<String,Integer>();
+        actionsMap = new HashMap<>();
         
         for (int i = 0; i < actionNames.length; i++) {
             int v;

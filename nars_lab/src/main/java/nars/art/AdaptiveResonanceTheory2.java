@@ -48,7 +48,7 @@ public class AdaptiveResonanceTheory2
         norm = 0.0f;
         
         try {
-            temp = new DynamicVector<Float>(prototype.array.length);
+            temp = new DynamicVector<>(prototype.array.length);
         }
         catch( Exception ex ) {
             throw new RuntimeException("array ctor exception");
@@ -136,7 +136,7 @@ public class AdaptiveResonanceTheory2
              * */
     private static void createPrototype(ArrayList<DynamicVector<Float>> inst, int iinst, ArrayList<DynamicVector<Float>> prot, ArrayList<ArrayList<Integer>> prot_seq, float vigilance) {
         float score;
-        ArrayList<Integer> new_seq = new ArrayList<Integer>();
+        ArrayList<Integer> new_seq = new ArrayList<>();
         // if PE < vigilance -- it won't stop
         score = countScore(inst.get(iinst), inst.get(iinst));
         if (score < vigilance)
@@ -161,7 +161,7 @@ public class AdaptiveResonanceTheory2
         // create a new prototype
         prot.add(inst.get(iinst));
         // create a new prototype sequence and insert the first index of instance
-        new_seq = new ArrayList<Integer>();
+        new_seq = new ArrayList<>();
         new_seq.add(iinst);
         prot_seq.add(new_seq);
     }
@@ -176,15 +176,15 @@ public class AdaptiveResonanceTheory2
              **/
     private DynamicVector<Float> bestPrototype2A(DynamicVector<Float> inst, ArrayList<DynamicVector<Float>> prot, ArrayList<DynamicVector<Float>> used) {
         // prototypes with the same score
-        ArrayList<DynamicVector<Float>> sameScore = new ArrayList<DynamicVector<Float>>();
+        ArrayList<DynamicVector<Float>> sameScore = new ArrayList<>();
         DynamicVector<Float> empty;
         int usize;
         int psize;
         float[] score;
         int i, j;
         float higher;
-        sameScore = new ArrayList<DynamicVector<Float>>();
-        empty = new DynamicVector<Float>(0);
+        sameScore = new ArrayList<>();
+        empty = new DynamicVector<>(0);
         // ASK< is size 0 right? >
         usize = used.size();
         psize = prot.size();
@@ -276,7 +276,7 @@ public class AdaptiveResonanceTheory2
         /** 
                  * proto is a set of created prototypes
                  */
-        public ArrayList<DynamicVector<Float>> proto = new ArrayList<DynamicVector<Float>>();
+        public ArrayList<DynamicVector<Float>> proto = new ArrayList<>();
         /** 
                 * proto_seq it is a sequence of sequences (a matrix). Where each line
                 * represents one prototype and each column in the line represents some
@@ -289,7 +289,7 @@ public class AdaptiveResonanceTheory2
                 * The second cluster consist of the following examples: 7, 3 and 5<br>
                 * An example with ID 5 is a vector. In fact, it is an input line
                 */
-        public ArrayList<ArrayList<Integer>> proto_seq = new ArrayList<ArrayList<Integer>>();
+        public ArrayList<ArrayList<Integer>> proto_seq = new ArrayList<>();
         /** 
                 * How many examples
                 * were re-assign (they are in a different cluster then they were before) 
@@ -374,22 +374,22 @@ public class AdaptiveResonanceTheory2
         // prototype with highest score
         DynamicVector<Float> P;
         // list of all prototypes
-        ArrayList<DynamicVector<Float>> prot = new ArrayList<DynamicVector<Float>>();
+        ArrayList<DynamicVector<Float>> prot = new ArrayList<>();
         // the best representation of the prototypes of the whole history
-        ArrayList<DynamicVector<Float>> prot_best = new ArrayList<DynamicVector<Float>>();
+        ArrayList<DynamicVector<Float>> prot_best = new ArrayList<>();
         // sequences of samples Ek from which prototype has been created
         // it is possible to reconstruct a prototype from the sequence
         // defined in art_common.h
-        ArrayList<ArrayList<Integer>> prot_seq = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Integer>> prot_seq = new ArrayList<>();
         // the best representation of the prototypes of the whole history
-        ArrayList<ArrayList<Integer>> prot_seq_best = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Integer>> prot_seq_best = new ArrayList<>();
         // list of prototypes which were used already
-        ArrayList<DynamicVector<Float>> used = new ArrayList<DynamicVector<Float>>();
-        used = new ArrayList<DynamicVector<Float>>();
-        prot = new ArrayList<DynamicVector<Float>>();
-        prot_seq = new ArrayList<ArrayList<Integer>>();
-        prot_best = new ArrayList<DynamicVector<Float>>();
-        prot_seq_best = new ArrayList<ArrayList<Integer>>();
+        ArrayList<DynamicVector<Float>> used = new ArrayList<>();
+        used = new ArrayList<>();
+        prot = new ArrayList<>();
+        prot_seq = new ArrayList<>();
+        prot_best = new ArrayList<>();
+        prot_seq_best = new ArrayList<>();
         float fluctuation = 100.0f;
         // the lowest error of the whole history
         // it is initialized as some impossible number(higher than 100% can't be), to avoid problems with first iteration
@@ -397,9 +397,9 @@ public class AdaptiveResonanceTheory2
         // how many times it run throughout the samples
         int pass = 0;
         // how many Ek's has been reassign to other cluster (prototype) in a previous pass (run)
-        ArrayList<Boolean> changed = new ArrayList<Boolean>();
+        ArrayList<Boolean> changed = new ArrayList<>();
         int i, j;
-        changed = new ArrayList<Boolean>();
+        changed = new ArrayList<>();
         for (i = 0;i < sample.size();i++)
         {
             changed.add(true);

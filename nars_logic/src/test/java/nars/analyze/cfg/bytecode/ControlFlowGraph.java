@@ -91,9 +91,9 @@ public class ControlFlowGraph {
         /** The instruction */
         public final AbstractInsnNode instruction;
         /** Any normal successors (e.g. following instruction, or goto or conditional flow) */
-        public final List<Node> successors = new ArrayList<Node>(2);
+        public final List<Node> successors = new ArrayList<>(2);
         /** Any abnormal successors (e.g. the handler to go to following an exception) */
-        public final List<Node> exceptions = new ArrayList<Node>(1);
+        public final List<Node> exceptions = new ArrayList<>(1);
 
         /** A tag for use during depth-first-search iteration of the graph etc */
         public int visit;

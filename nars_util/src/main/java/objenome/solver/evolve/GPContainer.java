@@ -117,7 +117,7 @@ import java.util.Map;
     }
 
     protected Population<I> newPopulation() {
-        return new Population<I>(this);
+        return new Population<>(this);
     }
 
     public Population<I> getPopulation() {

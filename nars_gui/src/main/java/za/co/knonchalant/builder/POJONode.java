@@ -80,7 +80,7 @@ public class POJONode {
             }
 
             tableColumn.getStyleClass().add("column-header-text");
-            tableColumn.setCellValueFactory(new PropertyValueFactory<T, Boolean>(getFieldName(method)));
+            tableColumn.setCellValueFactory(new PropertyValueFactory<>(getFieldName(method)));
 
             table.getColumns().add(tableColumn);
         }

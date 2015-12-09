@@ -40,10 +40,10 @@ public class LevelsParser {
     
     public Token<Object> parseLevels(TokenList<?> tokened) throws ParseException {
 
-        ArrayList<TokenList<Object>> parenContextStack = new ArrayList<TokenList<Object>>();
-        parenContextStack.add(new TokenList<Object>(tokened.fromStrBegin));
-        ArrayList<Token<Object>> parenStack = new ArrayList<Token<Object>>();
-        parenStack.add(new Token<Object>("stringBeg"));
+        ArrayList<TokenList<Object>> parenContextStack = new ArrayList<>();
+        parenContextStack.add(new TokenList<>(tokened.fromStrBegin));
+        ArrayList<Token<Object>> parenStack = new ArrayList<>();
+        parenStack.add(new Token<>("stringBeg"));
 
         int indexOn = 0;
         while (indexOn < tokened.size()) {
@@ -58,7 +58,7 @@ public class LevelsParser {
             
             if (direction == 1) {
                 if (debug) System.err.println("pushing level on " + tokenValueOn);
-                parenContextStack.add(new TokenList<Object>(tokenOn.fromStrBegin));
+                parenContextStack.add(new TokenList<>(tokenOn.fromStrBegin));
                 parenStack.add(tokenOn);
             }
             else if (direction == -1) {

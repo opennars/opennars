@@ -56,8 +56,8 @@ public class CloneTest {
         // check implemented interfaces
         // 10: A, B1, B2, B, C, List, Collection, Iterable, Cloneable, Serializable
         assertEquals(Integer.valueOf(10), Integer.valueOf(clone.getClass().getInterfaces().length));
-        assertEquals(new HashSet<Class<?>>(Arrays.asList(orig.getClass().getInterfaces())),
-                new HashSet<Class<?>>(Arrays.asList(clone.getClass().getInterfaces())));
+        assertEquals(new HashSet<>(Arrays.asList(orig.getClass().getInterfaces())),
+                new HashSet<>(Arrays.asList(clone.getClass().getInterfaces())));
 
         // check equals
         assertNotSame(orig, clone);

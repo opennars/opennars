@@ -42,7 +42,7 @@ public class MessageHistory {
     protected LinkedList<Message> messages;
 
     public MessageHistory() {
-        messages = new LinkedList<Message>();
+        messages = new LinkedList<>();
     }
     
     /** Adds a message to our history. The time at which the message was added

@@ -90,7 +90,7 @@ public abstract class SgBehavior {
     }
 
     private static final String commaSeparated(final List<SgArgument> args) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < args.size(); i++) {
             if (i > 0) {
                 sb.append(',');

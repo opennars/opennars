@@ -20,7 +20,7 @@ public abstract class Expr {
                                                   {Product.class, Division.class},
                                                   {Exponent.class}};
     
-    public static final Map<Class, Integer> classOrder = new HashMap<Class,Integer>();
+    public static final Map<Class, Integer> classOrder = new HashMap<>();
     static {
         for (int i = 0; i < Array.getLength(classOrderA); i++) {
             for (int j = 0; j < Array.getLength(classOrderA[i]); j++) {
@@ -36,7 +36,7 @@ public abstract class Expr {
                                                           {Exponent.class,   0, -1},
                                                           {Conditional.class, -1, 0}};
     
-    public static final HashMap<Class, Integer[]> printLevelSidesHM = new HashMap<Class, Integer[]>();
+    public static final HashMap<Class, Integer[]> printLevelSidesHM = new HashMap<>();
     static {
         for (Object[] objects : printLevelSidesAddA) {
             Integer thisClassOrder = classOrder.get((Class) objects[0]);
@@ -243,8 +243,8 @@ public abstract class Expr {
     
     public ArrayList<Expr>[] toTopsBottoms() {
         ArrayList<Expr>[] topsBottoms = new ArrayList[2];
-        ArrayList<Expr> tops = new ArrayList<Expr>();
-        ArrayList<Expr> bottoms = new ArrayList<Expr>();
+        ArrayList<Expr> tops = new ArrayList<>();
+        ArrayList<Expr> bottoms = new ArrayList<>();
         topsBottoms[0] = tops;
         topsBottoms[1] = bottoms;
         
@@ -313,7 +313,7 @@ public abstract class Expr {
     }
     
     public Expr copy() {
-        return copy(new HashMap<Expr, Expr>());
+        return copy(new HashMap<>());
     }
     
     public Expr copy(HashMap<Expr, Expr> subs) {
@@ -389,7 +389,7 @@ public abstract class Expr {
     }
     
     public ArrayList<Expr> implies() {
-        ArrayList<Expr> implied = new ArrayList<Expr>();
+        ArrayList<Expr> implied = new ArrayList<>();
         implied.add(this);
         return implied;
     }

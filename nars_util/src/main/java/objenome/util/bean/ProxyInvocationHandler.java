@@ -27,11 +27,11 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
 
     public ProxyInvocationHandler(Class<?> proxiedIface, final Collection<Class<?>> beanClasses) {
         this.proxiedIface = proxiedIface;
-        this.data = new FixedMap<String, Object>(countAttributes(beanClasses));
+        this.data = new FixedMap<>(countAttributes(beanClasses));
     }
 
     private static Set<String> countAttributes(final Collection<Class<?>> beanClasses) {
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
         for (final Class<?> clazz : beanClasses) {
             for (final PropertyDescriptor propertyDescriptor : ObjectUtil.getBeanInfo(clazz)
                     .getPropertyDescriptors()) {
@@ -130,7 +130,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
 
     protected ProxyInvocationHandler clone() throws CloneNotSupportedException {
         final ProxyInvocationHandler result = (ProxyInvocationHandler) super.clone();
-        result.data = new FixedMap<String, Object>(this.data);
+        result.data = new FixedMap<>(this.data);
         return result;
     }
 

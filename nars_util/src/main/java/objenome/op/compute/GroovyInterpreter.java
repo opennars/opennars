@@ -159,7 +159,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
      * method containing the given program.
      */
     private String getExecCode(String program, String[] argNames) {
-        final StringBuffer code = new StringBuffer();
+        final StringBuilder code = new StringBuilder();
 
         code.append("public Object expr(");
         for (int i = 0; i < argNames.length; i++) {

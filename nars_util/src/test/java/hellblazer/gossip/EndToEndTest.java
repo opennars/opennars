@@ -117,8 +117,8 @@ public class EndToEndTest extends TestCase {
         for (int i = 0; i < membership; i++) {
             receivers[i] = new Receiver(membership, i);
         }
-        members = new ArrayList<Gossip>();
-        List<InetSocketAddress> seedHosts = new ArrayList<InetSocketAddress>();
+        members = new ArrayList<>();
+        List<InetSocketAddress> seedHosts = new ArrayList<>();
         for (int i = 0; i < membership; i++) {
             members.add(createDefaultCommunications(receivers[i], seedHosts, i));
             if (i == 0) { // always add first member

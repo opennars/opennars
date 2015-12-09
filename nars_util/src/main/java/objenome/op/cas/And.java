@@ -33,7 +33,7 @@ public class And extends Operation {
         if (exprs.isEmpty()) return yep();
         if (exprs.size() == 1) return exprs.get(0);
         
-        ArrayList<Expr> ors = new ArrayList<Expr>();
+        ArrayList<Expr> ors = new ArrayList<>();
         for (Expr expr : exprs) {
             ors.add(Not.make(expr));
         }

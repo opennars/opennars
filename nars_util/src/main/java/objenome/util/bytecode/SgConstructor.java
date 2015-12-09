@@ -85,7 +85,7 @@ public final class SgConstructor extends SgBehavior {
      * @return Modifiers and arguments.
      */
     public String getSignature() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         if (!getModifiers().isEmpty()) {
             sb.append(getModifiers());
             sb.append(' ');
@@ -116,7 +116,7 @@ public final class SgConstructor extends SgBehavior {
      */
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         if (!getAnnotations().isEmpty()) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {

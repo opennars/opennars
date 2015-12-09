@@ -26,7 +26,7 @@ public final class ObjectUtil {
      * @return all valid getters of class <code>clazz</code>
      */
     public static Method[] getAllGetters(final Class<?> clazz) {
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
         fillGetters(clazz, methods);
         for (final Class<?> parent : clazz.getInterfaces()) {
             fillGetters(parent, methods);
@@ -53,7 +53,7 @@ public final class ObjectUtil {
      * @return all valid setters of class <code>clazz</code>
      */
     public static Method[] getAllSetters(final Class<?> clazz) {
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
         fillSetters(clazz, methods);
         for (final Class<?> parent : clazz.getInterfaces()) {
             fillSetters(parent, methods);
@@ -190,7 +190,7 @@ public final class ObjectUtil {
     }
 
     public static Collection<Class<?>> collectInterfaces(final Class<?> clazz) {
-        final Collection<Class<?>> all = new HashSet<Class<?>>();
+        final Collection<Class<?>> all = new HashSet<>();
         if (Modifier.isInterface(clazz.getModifiers())) {
             all.add(clazz);
         }

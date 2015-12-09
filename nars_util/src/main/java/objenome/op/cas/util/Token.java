@@ -38,7 +38,7 @@ public class Token<T> {
     }
     
     public static <T> ArrayList<T> getValues(ArrayList<Token<T>> tokens) {
-        ArrayList<T> values = new ArrayList<T>();
+        ArrayList<T> values = new ArrayList<>();
         for (Token<T> token : tokens) {
             values.add(token.tokenValue);
         }
@@ -46,7 +46,7 @@ public class Token<T> {
     }
     
     public <U> Token<U> castValueTo(Class<U> toClass) {
-        return new Token<U>((U) tokenValue, fromStr, fromStrBegin, fromStrEnd);
+        return new Token<>((U) tokenValue, fromStr, fromStrBegin, fromStrEnd);
     }
     
     public boolean equals(Object o) {

@@ -137,7 +137,7 @@ public final class SgMethod extends SgBehavior {
      * @return Modifiers, return type, name and arguments - Always non-null.
      */
     public String getSignature() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         if (!getModifiers().isEmpty()) {
             sb.append(getModifiers());
             sb.append(' ');
@@ -171,7 +171,7 @@ public final class SgMethod extends SgBehavior {
      * @return Method name and argument names (like "methodXY(a, b, c)").
      */
     public String getCallSignature() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getName());
         sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
@@ -192,7 +192,7 @@ public final class SgMethod extends SgBehavior {
      *         "methodXY(String, int, boolean)").
      */
     public String getTypeSignature() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getName());
         sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
@@ -214,7 +214,7 @@ public final class SgMethod extends SgBehavior {
      *         "MethodXY_String_int_boolean").
      */
     public String getUnderscoredNameAndTypes() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(SgUtils.firstCharUpper(getName()));
         sb.append('_');
         for (int i = 0; i < getArguments().size(); i++) {
@@ -246,7 +246,7 @@ public final class SgMethod extends SgBehavior {
      * @return Source code of the method.
      */
     public String toString(final boolean showAnnotations) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         if (showAnnotations && (!getAnnotations().isEmpty())) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {

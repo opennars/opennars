@@ -35,7 +35,7 @@ public class Conditional extends Operation {
             return make(And.make(then.condition(), ifIs), then.defined());
         }
         
-        HashMap<Expr, Expr> subs = new HashMap<Expr, Expr>();
+        HashMap<Expr, Expr> subs = new HashMap<>();
         subs.put(ifIs, Expr.yep());
         then = then.copy(subs);
         return this;
@@ -77,7 +77,7 @@ public class Conditional extends Operation {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(then);
         arrayList.add(ifIs);
         return arrayList;

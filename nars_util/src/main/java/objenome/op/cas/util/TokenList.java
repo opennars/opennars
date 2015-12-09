@@ -23,9 +23,9 @@ public class TokenList<T> extends ArrayList<Token<T>> {
     }
     
     public static <T> ArrayList<TokenList<T>> toArrTokenList(Collection<ArrayList<Token<T>>> tokenArrArr) {
-        ArrayList<TokenList<T>> tokenListList = new ArrayList<TokenList<T>>();
+        ArrayList<TokenList<T>> tokenListList = new ArrayList<>();
         for (Collection<Token<T>> tokenArr : tokenArrArr) {
-            tokenListList.add(new TokenList<T>(tokenArr));
+            tokenListList.add(new TokenList<>(tokenArr));
         }
         return tokenListList;
     }

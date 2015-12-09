@@ -335,7 +335,7 @@ public class GossipTest extends TestCase {
         gossip.examine(dd, gossipHandler);
 
         verify(gossipHandler).reply(asList(digest1a, digest2a, digest3a,
-                                           digest4a), new ArrayList<Update>());
+                                           digest4a), new ArrayList<>());
         verifyNoMoreInteractions(gossipHandler);
     }
 

@@ -55,7 +55,7 @@ public class SystemViewTest extends TestCase {
         SystemView view = new SystemView(random, local, seedHosts,
                                          quarantineDelay, unreachableDelay);
 
-        List<InetSocketAddress> liveSet = new ArrayList<InetSocketAddress>();
+        List<InetSocketAddress> liveSet = new ArrayList<>();
         liveSet.add(live1);
         liveSet.add(live2);
         liveSet.add(live3);

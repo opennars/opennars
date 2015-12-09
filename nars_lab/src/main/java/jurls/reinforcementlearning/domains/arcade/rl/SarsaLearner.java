@@ -242,7 +242,7 @@ public class SarsaLearner {
         double worstValue = Double.POSITIVE_INFINITY;
 
         int bestAction = -1;
-        ArrayList<Integer> ties = new ArrayList<Integer>();
+        ArrayList<Integer> ties = new ArrayList<>();
 
         // E-greedy
         if (Math.random() < epsilon) {

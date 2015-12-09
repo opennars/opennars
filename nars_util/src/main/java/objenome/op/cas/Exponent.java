@@ -34,14 +34,14 @@ public class Exponent extends Operation {
         Exponent other = this;
         while (true) {
             if (other.exponent.isConstant()) {
-                ArrayList<Expr> tmp = new ArrayList<Expr>();
+                ArrayList<Expr> tmp = new ArrayList<>();
                 tmp.add(other.exponent);
                 tmp.add(Exponent.make(other.base, Sum.make(other.exponent, Num.make(-1))));
                 tmp.add(other.base.deriv(respected));
                 return Product.make(tmp);
             }
             if (other.base.isConstant()) {
-                ArrayList<Expr> tmp = new ArrayList<Expr>();
+                ArrayList<Expr> tmp = new ArrayList<>();
                 tmp.add(Logarithm.make(new E(), other.base));
                 tmp.add(other.simplify());
                 tmp.add(other.exponent.deriv(respected));
@@ -134,7 +134,7 @@ public class Exponent extends Operation {
     }
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(base);
         arrayList.add(exponent);
         return arrayList;

@@ -79,7 +79,7 @@ public class LineCharts extends JFXPanel {
         xAxis.setLabel("Time");
         yAxis.setLabel(yAxisLabel);
         yAxis.setForceZeroInRange(false);
-        lineChart = new LineChart<Number, Number>(xAxis, yAxis);
+        lineChart = new LineChart<>(xAxis, yAxis);
 
         lineChart.setAnimated(false);
 

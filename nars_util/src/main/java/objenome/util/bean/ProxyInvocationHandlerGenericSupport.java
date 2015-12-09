@@ -24,8 +24,8 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
     public ProxyInvocationHandlerGenericSupport(final Collection<Class<?>> ifaces,
             final ProxyInvocationHandler delegate) {
         this.delegate = delegate;
-        final Map<Object, Method> localGetters = new HashMap<Object, Method>();
-        final Map<Object, Method> localSetters = new HashMap<Object, Method>();
+        final Map<Object, Method> localGetters = new HashMap<>();
+        final Map<Object, Method> localSetters = new HashMap<>();
         try {
             fillMaps(ifaces, localGetters, localSetters);
         } catch (final Exception e) {
@@ -37,7 +37,7 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
     }
 
     private static Set<Object> determineKeys(final Map<Object, Method> gm, final Map<Object, Method> sm) {
-        final Set<Object> result = new HashSet<Object>(gm.keySet().size() + sm.keySet().size());
+        final Set<Object> result = new HashSet<>(gm.keySet().size() + sm.keySet().size());
         result.addAll(gm.keySet());
         result.addAll(sm.keySet());
         return result;

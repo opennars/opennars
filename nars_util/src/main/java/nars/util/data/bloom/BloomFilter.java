@@ -237,7 +237,7 @@ public class BloomFilter {
      * @return bloom filter as list of long
      */
     public List<Long> serialize() {
-        List<Long> serialized = new ArrayList<Long>();
+        List<Long> serialized = new ArrayList<>();
         serialized.add(n);
         serialized.add(Double.doubleToLongBits(fpp));
         for (long l : bitSet.getData()) {

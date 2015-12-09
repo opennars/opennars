@@ -242,7 +242,7 @@ public abstract class EventEmitter<K,V>  {
         }
 
         protected ArraySharingList<Reaction<K,V>> newChannelList() {
-            return new ArraySharingList<Reaction<K,V>>(
+            return new ArraySharingList<>(
                     r -> new Reaction[r]
             );
         }

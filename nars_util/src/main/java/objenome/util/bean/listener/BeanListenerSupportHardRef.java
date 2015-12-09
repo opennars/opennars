@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BeanListenerSupportHardRef<T> implements BeanListenerSupport<T> {
 
-    private Collection<T> propertyChangeListeners = new ConcurrentLinkedQueue<T>();
+    private Collection<T> propertyChangeListeners = new ConcurrentLinkedQueue<>();
 
     public void add(final T t) {
         this.propertyChangeListeners.add(t);
@@ -24,7 +24,7 @@ public class BeanListenerSupportHardRef<T> implements BeanListenerSupport<T> {
     public BeanListenerSupportHardRef<T> clone() throws CloneNotSupportedException {
         @SuppressWarnings("unchecked")
         final BeanListenerSupportHardRef<T> clone = (BeanListenerSupportHardRef<T>) super.clone();
-        clone.propertyChangeListeners = new ConcurrentLinkedQueue<T>(this.propertyChangeListeners);
+        clone.propertyChangeListeners = new ConcurrentLinkedQueue<>(this.propertyChangeListeners);
         return clone;
     }
 

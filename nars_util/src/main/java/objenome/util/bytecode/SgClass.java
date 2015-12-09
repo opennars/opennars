@@ -357,7 +357,7 @@ public final class SgClass {
     }
 
     private String getEnclosingSimpleNames(final String innerDivider) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         SgClass clasz = enclosingClass;
         while (clasz != null) {
             sb.insert(0, innerDivider);
@@ -428,7 +428,7 @@ public final class SgClass {
      * @return Names separated by a comma - Always non-null.
      */
     public String getInterfacesCommaSeparated() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         if (!interfaces.isEmpty()) {
             for (int i = 0; i < interfaces.size(); i++) {
                 if (i > 0) {

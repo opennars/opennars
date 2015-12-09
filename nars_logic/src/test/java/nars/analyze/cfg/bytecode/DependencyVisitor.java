@@ -18,9 +18,9 @@ import java.util.Set;
  * @author Eugene Kuleshov
  */
 public class DependencyVisitor extends ClassVisitor {
-    Set<String> packages = new HashSet<String>();
+    Set<String> packages = new HashSet<>();
 
-    Map<String, Map<String, Integer>> groups = new HashMap<String, Map<String, Integer>>();
+    Map<String, Map<String, Integer>> groups = new HashMap<>();
 
     Map<String, Integer> current;
 
@@ -45,7 +45,7 @@ public class DependencyVisitor extends ClassVisitor {
         String p = getGroupKey(name);
         current = groups.get(p);
         if (current == null) {
-            current = new HashMap<String, Integer>();
+            current = new HashMap<>();
             groups.put(p, current);
         }
 

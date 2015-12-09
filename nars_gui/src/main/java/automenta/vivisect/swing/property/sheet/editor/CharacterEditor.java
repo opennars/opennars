@@ -24,7 +24,7 @@ public class CharacterEditor extends SpinnerEditor {
 
 	protected void buildModel(char min, char max) {
 
-		List<Character> characters = new ArrayList<Character>();
+		List<Character> characters = new ArrayList<>();
 
 		for (char c = min; c <= max; c++) {
 			characters.add(c);

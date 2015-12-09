@@ -184,7 +184,7 @@ public class ImplementationFactory {
             } else {
                 implMethod.addInterface(intf);
                 if (!returnType.getName().equals(implMethod.getReturnType().getName())) {
-                    final StringBuffer sb = new StringBuffer();
+                    final StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < implMethod.getInterfaces().length; i++) {
                         if (i > 0) {
                             sb.append("' or '");

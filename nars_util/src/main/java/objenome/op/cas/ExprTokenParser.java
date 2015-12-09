@@ -23,10 +23,10 @@ public class ExprTokenParser extends TokenParser {
         String matched = origString.substring(begin, end);
         
         if (tokenValue.equals("piWord") || tokenValue.equals("pi")) {
-            return new Token<Object>(new Pi(), origString, begin, end);
+            return new Token<>(new Pi(), origString, begin, end);
         }
         else if (tokenValue.equals("e")) {
-            return new Token<Object>(new E(), origString, begin, end);
+            return new Token<>(new E(), origString, begin, end);
         }
         else if (tokenValue.equals("lonely-E")) {
             throw new ParseException("E is lonely", begin);
@@ -39,10 +39,10 @@ public class ExprTokenParser extends TokenParser {
             throw new ParseException("i am not yet supported", begin);
         }
         else if (tokenValue.equals("var")) {
-            return new Token<Object>(context.getVar(matched.charAt(0)), origString, begin, end);
+            return new Token<>(context.getVar(matched.charAt(0)), origString, begin, end);
         }
         else if (tokenValue.equals("number")) {
-            return new Token<Object>(Num.make(Double.parseDouble(matched)), origString, begin, end);
+            return new Token<>(Num.make(Double.parseDouble(matched)), origString, begin, end);
         }
         else if (tokenValue.equals("derivativeFunc")) {
             Pattern pattern1 = Pattern.compile("^d(?:\\^(\\d+))?/d([a-zA-Z])(?:\\^(\\d+))?$");
@@ -59,7 +59,7 @@ public class ExprTokenParser extends TokenParser {
             PartialParseExpr partial = new PartialParseExpr("derivativeFunc");
             partial.put("character", character.charAt(0));
             partial.put("degree", Integer.parseInt(firstNum));
-            return new Token<Object>(partial, origString, begin, end);
+            return new Token<>(partial, origString, begin, end);
         }
         else if (tokenValue.equals("varDerivative")) {
             Pattern pattern1 = Pattern.compile("^d(?:\\^(\\d+))?([a-zA-Z])/d([a-zA-Z])(?:\\^(\\d+))?$");
@@ -74,23 +74,23 @@ public class ExprTokenParser extends TokenParser {
                 lastNum = "1";
             }
             if (firstNum == null || lastNum == null || Integer.parseInt(firstNum) != Integer.parseInt(lastNum)) throw new ParseException("derivative degrees don't match", begin);
-            return new Token<Object>(Derivative.make(context.getVar(var.charAt(0)), context.getVar(character.charAt(0)), Integer.parseInt(firstNum)), origString, begin, end);
+            return new Token<>(Derivative.make(context.getVar(var.charAt(0)), context.getVar(character.charAt(0)), Integer.parseInt(firstNum)), origString, begin, end);
         }
         else if (tokenValue.equals("undef")) {
-            return new Token<Object>(new Undef(), origString, begin, end);
+            return new Token<>(new Undef(), origString, begin, end);
         }
         else if (tokenValue.equals("true")) {
-            return new Token<Object>(Expr.yep(), origString, begin, end);
+            return new Token<>(Expr.yep(), origString, begin, end);
         }
         else if (tokenValue.equals("false")) {
-            return new Token<Object>(Expr.nope(), origString, begin, end);
+            return new Token<>(Expr.nope(), origString, begin, end);
         }
         else if (tokenValue.equals("equals") || tokenValue.equals("notEqual")
               || tokenValue.equals("lessThan") || tokenValue.equals("greaterThan")
               || tokenValue.equals("lessThanOrEqual") || tokenValue.equals("greaterThanOrEqual")) {
             PartialParseExpr partial = new PartialParseExpr("comparison");
             partial.put("operation", tokenValue);
-            return new Token<Object>(partial, origString, begin, end);
+            return new Token<>(partial, origString, begin, end);
         }
         
         return token.castValueTo(Object.class);

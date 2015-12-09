@@ -51,7 +51,7 @@ public class CFGAnalysisExample implements Opcodes {
             MethodNode method = methods.get(i);
             if (method.instructions.size() > 0) {
                 if (!analyzeUselessStores(cn, method)) {
-                    Analyzer<?> a = new Analyzer<BasicValue>(
+                    Analyzer<?> a = new Analyzer<>(
                             new BasicVerifier());
                     try {
                         a.analyze(cn.name, method);
@@ -103,14 +103,14 @@ public class CFGAnalysisExample implements Opcodes {
      */
     public static boolean analyzeUselessStores(final ClassNode c, final MethodNode m)
             throws Exception {
-        Analyzer<SourceValue> a = new Analyzer<SourceValue>(
+        Analyzer<SourceValue> a = new Analyzer<>(
                 new SourceInterpreter());
         Frame<SourceValue>[] frames = a.analyze(c.name, m);
 
         // for each xLOAD instruction, we find the xSTORE instructions that can
         // produce the value loaded by this instruction, and we put them in
         // 'stores'
-        Set<AbstractInsnNode> stores = new HashSet<AbstractInsnNode>();
+        Set<AbstractInsnNode> stores = new HashSet<>();
         for (int i = 0; i < m.instructions.size(); ++i) {
             AbstractInsnNode insn = m.instructions.get(i);
             int opcode = insn.getOpcode();

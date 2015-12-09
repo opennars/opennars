@@ -37,7 +37,7 @@ public class FunctionalRangeTest {
         fooBar.setBar(testString);
         assertEquals("Wrong value of set type", testString, fooBar.getBar()); //$NON-NLS-1$ 
 
-        final int minLength = new HashMap<Object, Object>().toString().length();
+        final int minLength = new HashMap<>().toString().length();
         assertTrue("toString.length <= " + minLength, fooBar.toString().length() > minLength); //$NON-NLS-1$
         assertFalse("hashCode returned 0", 0 == fooBar.hashCode()); //$NON-NLS-1$
 

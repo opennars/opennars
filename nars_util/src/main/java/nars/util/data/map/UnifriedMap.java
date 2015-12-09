@@ -155,24 +155,24 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public static <K, V> UnifriedMap<K, V> newMap() {
-        return new UnifriedMap<K, V>();
+        return new UnifriedMap<>();
     }
 
     public static <K, V> UnifriedMap<K, V> newMap(int size) {
-        return new UnifriedMap<K, V>(size);
+        return new UnifriedMap<>(size);
     }
 
     public static <K, V> UnifriedMap<K, V> newMap(int size, float loadFactor) {
-        return new UnifriedMap<K, V>(size, loadFactor);
+        return new UnifriedMap<>(size, loadFactor);
     }
 
     public static <K, V> UnifriedMap<K, V> newMap(Map<? extends K, ? extends V> map) {
-        return new UnifriedMap<K, V>(map);
+        return new UnifriedMap<>(map);
     }
 
     @SafeVarargs
     public static <K, V> UnifriedMap<K, V> newMapWith(Pair<K, V>... pairs) {
-        return new UnifriedMap<K, V>(pairs);
+        return new UnifriedMap<>(pairs);
     }
 
     public static <K, V> UnifriedMap<K, V> newMapWith(Iterable<Pair<K, V>> inputIterable) {
@@ -231,11 +231,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public UnifriedMap<K, V> clone() {
-        return new UnifriedMap<K, V>(this);
+        return new UnifriedMap<>(this);
     }
 
     public MutableMap<K, V> newEmpty() {
-        return new UnifriedMap<K, V>();
+        return new UnifriedMap<>();
     }
 
     @Override
@@ -916,7 +916,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             Iterable<E> iterable,
             Function<? super E, ? extends K> keyFunction,
             Function<? super E, ? extends V> valueFunction) {
-        Iterate.forEach(iterable, new MapCollectProcedure<E, K, V>(this, keyFunction, valueFunction));
+        Iterate.forEach(iterable, new MapCollectProcedure<>(this, keyFunction, valueFunction));
         return this;
     }
 
@@ -1704,7 +1704,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         public boolean retainAll(Collection<?> collection) {
             int retainedSize = collection.size();
-            UnifriedMap<K, V> retainedCopy = new UnifriedMap<K, V>(retainedSize, UnifriedMap.this.loadFactor);
+            UnifriedMap<K, V> retainedCopy = new UnifriedMap<>(retainedSize, UnifriedMap.this.loadFactor);
             for (Object key : collection) {
                 this.putIfFound(key, retainedCopy);
             }
@@ -1957,7 +1957,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         private static final long serialVersionUID = 1L;
 
-        private final transient WeakReference<UnifriedMap<K, V>> holder = new WeakReference<UnifriedMap<K, V>>(UnifriedMap.this);
+        private final transient WeakReference<UnifriedMap<K, V>> holder = new WeakReference<>(UnifriedMap.this);
 
         public boolean add(Entry<K, V> entry) {
             throw new UnsupportedOperationException("Cannot call add() on " + this.getClass().getSimpleName());
@@ -2117,7 +2117,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         public boolean retainAll(Collection<?> collection) {
             int retainedSize = collection.size();
-            UnifriedMap<K, V> retainedCopy = new UnifriedMap<K, V>(retainedSize, UnifriedMap.this.loadFactor);
+            UnifriedMap<K, V> retainedCopy = new UnifriedMap<>(retainedSize, UnifriedMap.this.loadFactor);
 
             for (Object obj : collection) {
                 if (obj instanceof Entry) {
@@ -2202,10 +2202,10 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
                                 break;
                             }
                             result[count++] =
-                                    new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(cur), (V) chain[j + 1], this.holder);
+                                    new WeakBoundEntry<>((K) UnifriedMap.this.nonSentinel(cur), (V) chain[j + 1], this.holder);
                         }
                     } else {
-                        result[count++] = new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(x), (V) table[i + 1], this.holder);
+                        result[count++] = new WeakBoundEntry<>((K) UnifriedMap.this.nonSentinel(x), (V) table[i + 1], this.holder);
                     }
                 }
             }
@@ -2274,7 +2274,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             }
             this.chainPosition = chainPosition; //save
             this.lastReturned = true;
-            return new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(cur), (V) value, this.holder);
+            return new WeakBoundEntry<>((K) UnifriedMap.this.nonSentinel(cur), (V) value, this.holder);
         }
 
         public Entry<K, V> next() {
@@ -2296,7 +2296,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             }
             this.position += 2;
             this.lastReturned = true;
-            return new WeakBoundEntry<K, V>((K)UnifriedMap.this.nonSentinel(cur), (V) value, this.holder);
+            return new WeakBoundEntry<>((K) UnifriedMap.this.nonSentinel(cur), (V) value, this.holder);
         }
     }
 

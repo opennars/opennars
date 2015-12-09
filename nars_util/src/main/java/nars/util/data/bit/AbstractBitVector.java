@@ -616,7 +616,7 @@ public abstract class AbstractBitVector implements BitVector {
 	 */
 	
 	public String toString() {
-		final StringBuffer s = new StringBuffer();
+		final StringBuilder s = new StringBuilder();
 		final long size = size64();
 		for( long i = 0; i < size; i++ ) s.append( getInt( i ) );
 		return s.toString();

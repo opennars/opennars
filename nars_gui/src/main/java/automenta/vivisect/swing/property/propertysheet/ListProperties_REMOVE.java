@@ -20,8 +20,8 @@ public class ListProperties_REMOVE {
 
 		private static final long serialVersionUID = -8352295145276923539L;
 
-		private List<Object> keys = new ArrayList<Object>();
-		private List<Object> values = new ArrayList<Object>();
+		private List<Object> keys = new ArrayList<>();
+		private List<Object> values = new ArrayList<>();
 
 		private static final String[] columnNames = {"Property String", "Value"};
 
@@ -129,7 +129,7 @@ class TableSorter extends TableMap implements TableModelListener {
 
 	private int[] indexes = new int[0];
 
-	private List<Object> sortingColumns = new ArrayList<Object>();
+	private List<Object> sortingColumns = new ArrayList<>();
 
 	boolean ascending = true;
 

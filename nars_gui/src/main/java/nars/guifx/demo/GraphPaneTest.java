@@ -88,7 +88,7 @@ public class GraphPaneTest {
     }
 
     private static DirectedGraph<Term, Inheritance> newExampleGraph() {
-        DirectedGraph<Term, Inheritance> g = new SimpleDirectedGraph<Term, Inheritance>(new EdgeFactory<Term, Inheritance>() {
+        DirectedGraph<Term, Inheritance> g = new SimpleDirectedGraph<>(new EdgeFactory<Term, Inheritance>() {
             @Override
             public Inheritance createEdge(Term s, Term t) {
                 return $.inh(s, t);

@@ -1476,12 +1476,12 @@ public class IntArrays {
 			return;
 		}
 		final int maxLevel = DIGITS_PER_ELEMENT - 1;
-		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<Segment>();
+		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
 		queue.add( new Segment( from, to - from, 0 ) );
 		final AtomicInteger queueSize = new AtomicInteger( 1 );
 		final int numberOfThreads = Runtime.getRuntime().availableProcessors();
 		final ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
-		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<Void>( executorService );
+		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		for ( int i = numberOfThreads; i-- != 0; )
 			executorCompletionService.submit( new Callable<Void>() {
 				public Void call() throws Exception {
@@ -1688,12 +1688,12 @@ public class IntArrays {
 			return;
 		}
 		final int maxLevel = DIGITS_PER_ELEMENT - 1;
-		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<Segment>();
+		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
 		queue.add( new Segment( from, to - from, 0 ) );
 		final AtomicInteger queueSize = new AtomicInteger( 1 );
 		final int numberOfThreads = Runtime.getRuntime().availableProcessors();
 		final ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
-		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<Void>( executorService );
+		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		final int[] support = stable ? new int[ perm.length ] : null;
 		for ( int i = numberOfThreads; i-- != 0; )
 			executorCompletionService.submit( new Callable<Void>() {
@@ -1906,12 +1906,12 @@ public class IntArrays {
 		final int layers = 2;
 		if ( a.length != b.length ) throw new IllegalArgumentException( "Array size mismatch." );
 		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
-		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<Segment>();
+		final LinkedBlockingQueue<Segment> queue = new LinkedBlockingQueue<>();
 		queue.add( new Segment( from, to - from, 0 ) );
 		final AtomicInteger queueSize = new AtomicInteger( 1 );
 		final int numberOfThreads = Runtime.getRuntime().availableProcessors();
 		final ExecutorService executorService = Executors.newFixedThreadPool( numberOfThreads, Executors.defaultThreadFactory() );
-		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<Void>( executorService );
+		final ExecutorCompletionService<Void> executorCompletionService = new ExecutorCompletionService<>(executorService);
 		for ( int i = numberOfThreads; i-- != 0; )
 			executorCompletionService.submit( new Callable<Void>() {
 				public Void call() throws Exception {

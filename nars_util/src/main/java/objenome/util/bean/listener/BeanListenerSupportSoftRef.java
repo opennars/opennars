@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
 
-    private ConcurrentLinkedQueue<Reference<T>> propertyChangeListeners = new ConcurrentLinkedQueue<Reference<T>>();
+    private ConcurrentLinkedQueue<Reference<T>> propertyChangeListeners = new ConcurrentLinkedQueue<>();
 
     private class Itr implements Iterator<T> {
 
@@ -50,7 +50,7 @@ public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
     }
 
     public void add(final T t) {
-        this.propertyChangeListeners.add(new WeakReference<T>(t));
+        this.propertyChangeListeners.add(new WeakReference<>(t));
     }
 
     public void remove(final T object) {
@@ -71,7 +71,7 @@ public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
     public BeanListenerSupportSoftRef<T> clone() throws CloneNotSupportedException {
         @SuppressWarnings("unchecked")
         final BeanListenerSupportSoftRef<T> clone = (BeanListenerSupportSoftRef<T>) super.clone();
-        clone.propertyChangeListeners = new ConcurrentLinkedQueue<Reference<T>>(this.propertyChangeListeners);
+        clone.propertyChangeListeners = new ConcurrentLinkedQueue<>(this.propertyChangeListeners);
         return clone;
     }
 

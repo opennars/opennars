@@ -8,7 +8,7 @@ public abstract class Comparison extends Operation {
     Expr expr2;
     
     public ArrayList<Expr> getExprs() {
-        ArrayList<Expr> arrayList = new ArrayList<Expr>();
+        ArrayList<Expr> arrayList = new ArrayList<>();
         arrayList.add(expr1);
         arrayList.add(expr2);
         return arrayList;

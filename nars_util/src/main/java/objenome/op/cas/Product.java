@@ -48,7 +48,7 @@ public class Product extends Operation {
             return Sum.make(Product.make(exprs.get(0), exprs.get(1).deriv(respected)), Product.make(exprs.get(0).deriv(respected), exprs.get(1)));
         }
         // if (debug) System.err.println(ArrayLists.dumpAll(exprs));
-        return Product.make(new Product(new ArrayList<Expr>(exprs.subList(0, exprs.size() - 1))), exprs.get(exprs.size() - 1), false).deriv(respected);
+        return Product.make(new Product(new ArrayList<>(exprs.subList(0, exprs.size() - 1))), exprs.get(exprs.size() - 1), false).deriv(respected);
     }
     
     public ArrayList<Expr> getExprs() {
@@ -62,7 +62,7 @@ public class Product extends Operation {
             Expr conditioned = other.conditioned();
             if (conditioned != null) return conditioned;
 
-            ArrayList<Expr> bottoms = new ArrayList<Expr>();
+            ArrayList<Expr> bottoms = new ArrayList<>();
             for (int i = 0; i < other.exprs.size(); i++) {
                 Expr expr = other.exprs.get(i);
                 if (expr instanceof Division) {
@@ -73,8 +73,8 @@ public class Product extends Operation {
             if (!bottoms.isEmpty()) return Division.make(Product.make(other.exprs), Product.make(bottoms));
 
 
-            ArrayList<Double> numbers = new ArrayList<Double>();
-            ArrayList<Expr> constants = new ArrayList<Expr>();
+            ArrayList<Double> numbers = new ArrayList<>();
+            ArrayList<Expr> constants = new ArrayList<>();
             for (int i = 0; i < other.exprs.size(); i++) {
                 Expr expr = other.exprs.get(i);
                 // if (debug) System.err.println("simplify: on expr: " + expr);
@@ -117,7 +117,7 @@ public class Product extends Operation {
             if (other.exprs.isEmpty() && numbers.size() == 1) return Num.make(numbers.get(0));
 
             if (!(numbers.size() == 1 && numbers.get(0) == 1)) {
-                ArrayList<Expr> tmp = new ArrayList<Expr>();
+                ArrayList<Expr> tmp = new ArrayList<>();
                 for (Double number : numbers) {
                     tmp.add(Num.make(number));
                 }
@@ -167,7 +167,7 @@ public class Product extends Operation {
                             continue simplify;
                         }
                         if (!(expr instanceof Operation) && expr2 instanceof Sum) {
-                            ArrayList<Expr> products = new ArrayList<Expr>();
+                            ArrayList<Expr> products = new ArrayList<>();
                             for (Expr addend : ((Operation) expr2).getExprs()) {
                                 products.add(Product.make(expr, addend));
                             }

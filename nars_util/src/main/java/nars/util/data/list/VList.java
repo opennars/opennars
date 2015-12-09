@@ -135,7 +135,7 @@ public final class VList<T> extends AbstractList<T> {
     public boolean add(T elem) {
     /* If no free space exists, add a new element to the list. */
         if (mHead == null || mHead.mFreeSpace == 0)
-            mHead = new VListCell<T>(mHead == null ? 1 : mHead.mElems.length * 2, mHead);
+            mHead = new VListCell<>(mHead == null ? 1 : mHead.mElems.length * 2, mHead);
 
     /* Prepend this element to the current cell. */
         mHead.mElems[(mHead.mFreeSpace--) - 1] = elem;
@@ -187,7 +187,7 @@ public final class VList<T> extends AbstractList<T> {
      * we want can be found by indexing the proper amount beyond the free
      * space.
      */
-        return new VListLocation<T>(curr, index + curr.mFreeSpace);
+        return new VListLocation<>(curr, index + curr.mFreeSpace);
     }
 
 
@@ -469,7 +469,7 @@ public final class VList<T> extends AbstractList<T> {
          * next element to visit.
          */
                 ++mCurrIndex;
-                removeAtPosition(new VListLocation<T>(mCurrCell, mCurrIndex));
+                removeAtPosition(new VListLocation<>(mCurrCell, mCurrIndex));
             }
       /* Case 3. */
             else {
@@ -482,7 +482,7 @@ public final class VList<T> extends AbstractList<T> {
          */
                 mCurrCell = mCurrCell.mNext;
                 mCurrIndex = 0;
-                removeAtPosition(new VListLocation<T>(mCurrCell, mCurrIndex));
+                removeAtPosition(new VListLocation<>(mCurrCell, mCurrIndex));
             }
         }
     }

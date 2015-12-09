@@ -80,7 +80,7 @@ public class Piecewise extends Operation {
     }
     
     public Expr deriv(Var respected) {
-        ArrayList<Expr> newpossibilities = new ArrayList<Expr>();
+        ArrayList<Expr> newpossibilities = new ArrayList<>();
         for (Expr expr : possibilities) {
             newpossibilities.add(expr.deriv(respected));
         }
