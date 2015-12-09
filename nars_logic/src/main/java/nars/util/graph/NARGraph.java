@@ -17,6 +17,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Stores the contents of some, all, or of multiple NAR memory snapshots.
@@ -27,10 +28,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     public <X> Set<X> vertices(Class<? extends X> type) {
         Set<X> s = Global.newHashSet(vertexSet().size());
-        for (Object o : vertexSet()) {
-            if (type.isInstance(o))
-                s.add((X)o);
-        }
+        s.addAll(vertexSet().stream().filter(o -> type.isInstance(o)).map(o -> (X) o).collect(Collectors.toList()));
         return s;
     }
     

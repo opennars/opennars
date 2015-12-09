@@ -24,30 +24,26 @@ public class scheme extends TermFunction {
 
     public static final SchemeClosure env = DefaultEnvironment.newInstance();
 
-    final static Function<Term,Expression> narsToScheme = new Function<Term, Expression>() {
+    final static Function<Term,Expression> narsToScheme = term -> {
 
-        @Override
-        public Expression apply(Term term) {
-
-            if (term instanceof Compound) {
-                //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
-                return new SchemeProduct((Compound)term);
-            }
-            else if (term instanceof Atom) {
-
-                String s = term.toString();
-
-                //attempt to parse as number
-                try {
-                    double d = Double.parseDouble(s);
-                    return new NumberExpression((long)d);
-                }
-                catch (NumberFormatException e) { }
-                //atomic symbol
-                return new SymbolExpression(s);
-            }
-            throw new RuntimeException("Invalid term for scheme: " + term);
+        if (term instanceof Compound) {
+            //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
+            return new SchemeProduct((Compound)term);
         }
+        else if (term instanceof Atom) {
+
+            String s = term.toString();
+
+            //attempt to parse as number
+            try {
+                double d = Double.parseDouble(s);
+                return new NumberExpression((long)d);
+            }
+            catch (NumberFormatException e) { }
+            //atomic symbol
+            return new SymbolExpression(s);
+        }
+        throw new RuntimeException("Invalid term for scheme: " + term);
     };
 
     /** adapter class for NARS term -> Scheme expression; temporary until the two API are merged better */

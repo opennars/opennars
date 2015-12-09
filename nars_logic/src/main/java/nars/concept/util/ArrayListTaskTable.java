@@ -33,7 +33,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
     }
 
     public ArrayListTaskTable(int capacity) {
-        super(i -> new Task[i]);
+        super(Task[]::new);
         setCapacity(capacity);
     }
 

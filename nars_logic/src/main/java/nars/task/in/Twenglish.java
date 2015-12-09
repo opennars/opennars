@@ -258,7 +258,7 @@ public class Twenglish {
     public static List<Term> tokenize(String msg) {
         List<Twokenize.Span> sp = Twokenize.tokenize(msg);
 
-        List<Term> ll = Lists.transform(sp, x -> Twenglish.spanToTerm(x));
+        List<Term> ll = Lists.transform(sp, Twenglish::spanToTerm);
         return ll;
     }
 }

@@ -21,9 +21,7 @@ public class TaskRemovalReasons {
 
     public TaskRemovalReasons(NAR n) {
         this.nar = n;
-        all = n.memory.eventTaskProcess.on(t -> {
-            processed++;
-        });
+        all = n.memory.eventTaskProcess.on(t -> processed++);
         removals = n.memory.eventTaskRemoved.on(t -> {
             freq.addValue(t.getLogLast().toString());
             final long age = ((Temporal)t).getLifespan(nar.memory);
@@ -33,9 +31,7 @@ public class TaskRemovalReasons {
 
     public SummaryStatistics getLifespanOfActive() {
         SummaryStatistics s = new SummaryStatistics();
-        nar.forEachConceptTask(t -> {
-            s.addValue(((Temporal)t).getLifespan(nar.memory));
-        });
+        nar.forEachConceptTask(t -> s.addValue(((Temporal)t).getLifespan(nar.memory)));
         return s;
     }
 

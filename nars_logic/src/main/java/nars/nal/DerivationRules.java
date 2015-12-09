@@ -59,9 +59,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
     public DerivationRules(Set<TaskRule> r) {
         super();
-        r.forEach(t -> {
-            add( t.setup(patterns) );
-        });
+        r.forEach(t -> add( t.setup(patterns) ));
 
         logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
     }

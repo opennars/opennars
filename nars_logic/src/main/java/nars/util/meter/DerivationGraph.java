@@ -184,7 +184,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     }
 
     public DerivationGraph(boolean includeDerivedBudget, boolean includeDerivedTruth) {
-        super((a, b) -> Tuples.twin(a,b));
+        super(Tuples::twin);
 
         premiseResult =
                 new TreeMap();
@@ -438,11 +438,9 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
 
     public static String genericLiteral(Term c, ObjectIntHashMap<Term> unique) {
-        c.recurseTerms(new SubtermVisitor() {
-            @Override public void accept(Term t, Term superterm) {
-                if ((t instanceof Atom) && (!(t instanceof Variable))) {
-                    unique.getIfAbsentPut(t, unique.size());
-                }
+        c.recurseTerms((t, superterm) -> {
+            if ((t instanceof Atom) && (!(t instanceof Variable))) {
+                unique.getIfAbsentPut(t, unique.size());
             }
         });
 

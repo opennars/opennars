@@ -484,9 +484,7 @@ public class TestNAR  {
 
         //explain all validated conditions
         if (requires!=null) {
-            requires.forEach(c -> {
-                c.report();
-            });
+            requires.forEach(NARCondition::report);
         }
 
 

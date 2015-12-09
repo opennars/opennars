@@ -237,14 +237,13 @@ public class NarseseTemplatePanel {
     
     
     public static void main(String[] args) {
-        List<NarseseTemplate> templates = new ArrayList();
-        templates.addAll(Arrays.asList(new NarseseTemplate("<~#a--> ~#b>? %~t%",  "Is ~#a is a ~#b? ~t"),
+        List<NarseseTemplate> templates = new ArrayList(Arrays.asList(new NarseseTemplate("<~#a--> ~#b>? %~t%",  "Is ~#a is a ~#b? ~t"),
                 new NarseseTemplate("<~#a--> ~#b>. %~t%",  "~#a is a ~#b. ~t"),
                 new NarseseTemplate("<~#a --> ~#b>. %1.00;0.99%",  "~#a is a ~#b."),
                 new NarseseTemplate("<~#a --> ~#b>. %0.00;0.99%",  "~#a is not a ~#b."),
                 new NarseseTemplate("<~#a --> ~#b>. %1.00;0.50%",  "~#a is possibly a ~#b."),
                 new NarseseTemplate("<~#a --> ~#b>. %0.00;0.50%",  "~#a is possibly not a ~#b.")));
-        
+
         NWindow w = new NWindow("NarseseTemplatePanel test", NarseseTemplatePanel.newPanel(templates) );
         w.setSize(400, 200);
         w.setVisible(true);

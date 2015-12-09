@@ -183,7 +183,7 @@ public class LibraryInput extends TextInput {
 
         List<Object[]> rr = Global.newArrayList();
 
-        Narsese.tasksRaw(script, x -> rr.add(x));
+        Narsese.tasksRaw(script, rr::add);
 
         return rr;
     }

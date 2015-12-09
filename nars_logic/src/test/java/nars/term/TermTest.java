@@ -403,6 +403,8 @@ public class TermTest {
 
         assertTrue(a!=b);
         assertEquals(a, b);
+
+        //todo: method results ignored ?
         b.equals(a.normalized());
 
         assertEquals("re-normalizing doesn't affect: " + a.normalized(), b,

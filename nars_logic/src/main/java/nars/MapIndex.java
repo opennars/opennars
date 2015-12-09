@@ -65,9 +65,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
     }
 
     public void print(PrintStream out) {
-        BiConsumer itemPrinter = (k, v) -> {
-            System.out.println(v.getClass().getSimpleName() + ": " + v);
-        };
+        BiConsumer itemPrinter = (k, v) -> System.out.println(v.getClass().getSimpleName() + ": " + v);
         data.forEach(itemPrinter);
         System.out.println("--");
         subterms.forEach(itemPrinter);

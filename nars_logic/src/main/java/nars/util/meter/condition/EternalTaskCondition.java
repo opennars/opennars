@@ -364,10 +364,8 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     @Override
     public void report() {
         if (valid != null) {
-            valid.forEach(t -> {
-                System.out.println(t.getExplanation()
-                );
-            });
+            valid.forEach(t -> System.out.println(t.getExplanation()
+            ));
         }
     }
 

@@ -1789,8 +1789,7 @@ public class KB {
      */
     public TreeSet getFormulas() {
 
-        TreeSet newFormulaSet = new TreeSet();
-        newFormulaSet.addAll(formulaMap.keySet());
+        TreeSet newFormulaSet = new TreeSet(formulaMap.keySet());
         return newFormulaSet;
     }
 
@@ -3223,8 +3222,7 @@ public class KB {
      */
     private void writePrologFormulas(ArrayList forms, PrintWriter pr) {
 
-        TreeSet ts = new TreeSet();
-        ts.addAll(forms);
+        TreeSet ts = new TreeSet(forms);
         if (forms != null) {
             int i = 0;
             for (Object t : ts) {

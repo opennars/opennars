@@ -147,22 +147,11 @@ public final class Anticipate {
 
         long cOccurr = c.getOccurrenceTime();
 
-        for(TaskTime tt : anticipations.get(c.getTerm())) {
-
-            if(tt.inTime(cOccurr) && !c.equals(tt.task) &&
-                    tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
-
-                toRemove.add(tt);
-
-                happeneds++;
-//                if(testing) {
-//                    String s = "happened as expected: "+tt.task.getTerm().toString();
-//                    System.out.println(s);
-//                    teststring += s + "\n";
-//                }
-            }
-
-        }
+        anticipations.get(c.getTerm()).stream().filter(tt -> tt.inTime(cOccurr) && !c.equals(tt.task) &&
+                tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION).forEach(tt -> {
+            toRemove.add(tt);
+            happeneds++;
+        });
 
         toRemove.forEach(tt -> anticipations.remove(c.getTerm(),tt));
     }

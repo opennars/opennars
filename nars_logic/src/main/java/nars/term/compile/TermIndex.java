@@ -54,7 +54,7 @@ public interface TermIndex extends CacheBag<Term,Termed> {
     }
 
     default void print(PrintStream out) {
-        forEach(c -> out.println(c) );
+        forEach(out::println);
     }
 
 //    /** for long-running processes, this uses

@@ -850,7 +850,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         return log(out, null);
     }
     public NAR log(Appendable out, Predicate includeValue) {
-        return trace(out, k -> logEvents.contains(k), includeValue);
+        return trace(out, logEvents::contains, includeValue);
     }
 
     public void outputEvent(Appendable out, String previou, String k, Object v) throws IOException {
@@ -988,15 +988,11 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     }
 
     public boolean execAsync(Consumer<NAR> t) {
-        return execAsync( /* Runnable */ () -> {
-            t.accept(NAR.this);
-        });
+        return execAsync( /* Runnable */ () -> t.accept(NAR.this));
     }
 
     public <X> Future<X> execAsync(Function<NAR, X> t) {
-        return asyncs.submit( /* (Callable) */() -> {
-            return t.apply(NAR.this);
-        });
+        return asyncs.submit( /* (Callable) */() -> t.apply(NAR.this));
     }
 
     @Override
@@ -1360,9 +1356,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
                 beforeNextFrame(() -> {
                     List<Task> l = p.apply(question);
                     if (l != null) {
-                        l.forEach(answer -> {
-                            memory.eventAnswer.emit(Tuples.twin(question, answer));
-                        });
+                        l.forEach(answer -> memory.eventAnswer.emit(Tuples.twin(question, answer)));
                         input(l);
                     }
                 });

@@ -128,7 +128,7 @@ public class NARTest {
                 .input("<a <-> b>. %1.0;0.5%",
                         "<b --> a>. %1.0;0.5%")
                 .answer(question, t -> b.set(true) )
-                .stopIf( () -> b.get() );
+                .stopIf(b::get);
 
         nar.frame(cyclesAfterQuestion);
 
@@ -140,7 +140,7 @@ public class NARTest {
         AtomicInteger b = new AtomicInteger(0);
         NAR n = new Terminal();
 
-        n.beforeNextFrame(() -> b.incrementAndGet());
+        n.beforeNextFrame(b::incrementAndGet);
         n.frame(4);
         assertEquals(1, b.get());
 

@@ -1008,9 +1008,7 @@ public class Narsese extends BaseParser<Object>  {
      * ondemand
      */
     public static void tasks(String input, Consumer<Task> c, final Memory m) {
-        tasksRaw(input, o -> {
-            c.accept(decodeTask(input, m, o));
-        });
+        tasksRaw(input, o -> c.accept(decodeTask(input, m, o)));
     }
 
 

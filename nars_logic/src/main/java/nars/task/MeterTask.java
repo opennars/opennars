@@ -17,9 +17,7 @@ abstract public class MeterTask extends MutableTask {
     @Override
     protected void onNormalized(Memory memory) {
         active.add(
-                memory.eventFrameStart.on((n) -> {
-                    onFrame(memory);
-                })
+                memory.eventFrameStart.on((n) -> onFrame(memory))
         );
     }
 

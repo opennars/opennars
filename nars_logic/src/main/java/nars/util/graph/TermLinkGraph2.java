@@ -23,11 +23,8 @@ import java.util.Set;
 public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
 
     public TermLinkGraph2() {
-        super(new EdgeFactory<Term, Compound>() {
-            @Override
-            public Compound createEdge(Term a, Term b) {
-                return $.p(a,b);
-            }
+        super((a, b) -> {
+            return $.p(a,b);
         });
     }
 

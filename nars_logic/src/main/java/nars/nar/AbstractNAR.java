@@ -99,9 +99,7 @@ abstract public class AbstractNAR extends NAR {
         ));
 
         if (core!=null) {
-            beforeNextFrame(() -> {
-                initTime();
-            });
+            beforeNextFrame(this::initTime);
         }
 
     }
@@ -146,7 +144,7 @@ abstract public class AbstractNAR extends NAR {
     public TaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
-            task -> process(task)
+                this::process
         );
         return input;
     }
@@ -483,12 +481,8 @@ abstract public class AbstractNAR extends NAR {
             this.active = concepts;
 
             handlers.add(
-                nar.memory.eventCycleEnd.on((m) -> {
-                    fireConcepts(conceptsFiredPerCycle.intValue());
-                }),
-                nar.memory.eventReset.on((m) -> {
-                    reset();
-                })
+                nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue())),
+                nar.memory.eventReset.on((m) -> reset())
             );
         }
 

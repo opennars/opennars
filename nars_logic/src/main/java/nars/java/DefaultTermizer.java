@@ -117,13 +117,13 @@ public class DefaultTermizer implements Termizer {
 
         if (o instanceof int[]) {
             final List<Term> arg = Arrays.stream((int[]) o)
-                    .mapToObj(e -> Atom.the(e)).collect(Collectors.toList());
+                    .mapToObj(Atom::the).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
             );
         } else if (o instanceof Object[]) {
-            final List<Term> arg = Arrays.stream((Object[]) o).map(e -> term(e)).collect(Collectors.toList());
+            final List<Term> arg = Arrays.stream((Object[]) o).map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
@@ -149,7 +149,7 @@ public class DefaultTermizer implements Termizer {
             return Atom.quote(o.toString().substring(17));
         }*/
         } else if (o instanceof Set) {
-            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
+            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return SetExt.make(arg);
         } else if (o instanceof Map) {
