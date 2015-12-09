@@ -102,7 +102,6 @@ public enum Op implements Serializable {
 
 
 
-
     /**
      * symbol representation of this getOperator
      */
@@ -302,4 +301,14 @@ public enum Op implements Serializable {
 
     }
 
+    public static int[] NALLevelEqualAndAbove = new int[8+1]; //indexed from 0..7, meaning index 7 is NAL8, index 0 is NAL1
+    static {
+        for (Op o : Op.values()) {
+            int l = o.minLevel;
+            if (l < 0) l = 0; //count special ops as level 0, so they can be detected there
+            for (int i = l; i <= 8; i++) {
+                NALLevelEqualAndAbove[i] |= o.bit();
+            }
+        }
+    }
 }

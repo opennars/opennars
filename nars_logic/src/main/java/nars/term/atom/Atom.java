@@ -182,8 +182,9 @@ public class Atom extends StringAtom {
     }
 
     public static String toUnquoted(String x) {
-        if (x.length() > 0 && x.charAt(0) == '\"' && x.charAt(x.length() - 1) == '\"') {
-            return x.substring(1, x.length() - 1);
+        int len = x.length();
+        if (len > 0 && x.charAt(0) == '\"' && x.charAt(len - 1) == '\"') {
+            return x.substring(1, len - 1);
         }
         return x;
     }

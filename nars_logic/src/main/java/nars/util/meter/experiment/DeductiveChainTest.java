@@ -1,140 +1,139 @@
-//package nars.util.meter.experiment;
+package nars.util.meter.experiment;
+
+import nars.$;
+import nars.Global;
+import nars.NAR;
+import nars.nar.AbstractNAR;
+import nars.nar.Default;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.util.meter.TestNAR;
+
+/**
+ * Created by me on 8/25/15.
+ */
+public class DeductiveChainTest extends TestNAR {
+
+    public final Compound q;
+    public final Compound[] beliefs;
+
+    @FunctionalInterface
+    public interface IndexedStatementBuilder {
+        Compound apply(int x, int y);
+    }
+
+    final static public IndexedStatementBuilder inh = (int x, int y) ->
+            (Compound)$.inh(a(x), a(y));
+    final static public IndexedStatementBuilder sim = (int x, int y) ->
+            (Compound)$.simi(a(x), a(y));
+    final static public IndexedStatementBuilder impl = (int x, int y) ->
+            (Compound)$.impl(a(x), a(y));
+    final static public IndexedStatementBuilder equiv = (int x, int y) ->
+            (Compound)$.equiv(a(x), a(y));
+
+    public DeductiveChainTest(NAR n, int length, int timeLimit, IndexedStatementBuilder b) {
+        super(n);
+
+        beliefs = new Compound[length];
+        for (int x = 0; x < length; x++) {
+            beliefs[x] = b.apply(x, x+1);
+        }
+
+        q = b.apply(0, length);
+
+        for (int x = 0; x < beliefs.length; x++) {
+            n.believe( beliefs[x]  );
+        }
+        n.ask( q );
+
+        mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 1f);
+
+    }
+
+
+    public static Atom a(int i) {
+        return Atom.the((byte)('a' + i));
+    }
+
+
+    public static void main(String[] args) {
+
+        Global.DEBUG = false;
+
+        for (int length = 3; length < 10; length++) {
+            test(new Default(1024,1,1,3).nal(6), length, 1000*length, inh);
+        }
+    }
+
+    static void test(NAR n, int chainLen, int cycles, IndexedStatementBuilder statementType) {
+
+
+        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, cycles, statementType) {
+//            @Override
+//            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
+//                return this;
+//            }
+        };
+
+        System.out.print(DeductiveChainTest.class.getSimpleName() + " test: "
+                + test.q + "?\t");
+
+        final long start = System.currentTimeMillis();
+
+//        new AnswerReaction(n) {
 //
-//import nars.Global;
-//import nars.NAR;
-//import nars.nal.nal1.Inheritance;
-//import nars.nal.nal2.Similarity;
-//import nars.nal.nal5.Equivalence;
-//import nars.nal.nal5.Implication;
-//import nars.nar.AbstractNAR;
-//import nars.nar.Default;
-//import nars.term.Statement;
-//import nars.term.atom.Atom;
-//import nars.util.meter.TestNAR;
-//
-///**
-// * Created by me on 8/25/15.
-// */
-//public class DeductiveChainTest extends TestNAR {
-//
-//    public final Statement q;
-//    public final Statement[] beliefs;
-//
-//    @FunctionalInterface
-//    public interface IndexedStatementBuilder {
-//        Statement apply(int x, int y);
-//    }
-//
-//    final static public IndexedStatementBuilder inh = (int x, int y) ->
-//        Inheritance.make(a(x), a(y));
-//    final static public IndexedStatementBuilder sim = (int x, int y) -> (Statement) Similarity.make(a(x), a(y));
-//    final static public IndexedStatementBuilder impl = (int x, int y) ->
-//        Implication.make(a(x), a(y));
-//    final static public IndexedStatementBuilder equiv = (int x, int y) -> (Statement) Equivalence.make(a(x), a(y));
-//
-//    public DeductiveChainTest(NAR n, int length, int timeLimit, IndexedStatementBuilder b) {
-//        super(n);
-//
-//        beliefs = new Statement[length];
-//        for (int x = 0; x < length; x++) {
-//            beliefs[x] = b.apply(x, x+1);
-//        }
-//
-//        q = b.apply(0, length);
-//
-//        for (int x = 0; x < beliefs.length; x++) {
-//            n.believe( beliefs[x]  );
-//        }
-//        n.ask( q );
-//
-//        mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 1f);
-//
-//    }
-//
-//
-//    public static Atom a(int i) {
-//        return Atom.the((byte)('a' + i));
-//    }
-//
-//
-//    public static void main(String[] args) {
-//
-//        Global.DEBUG = false;
-//
-//        for (int length = 3; length < 10; length++) {
-//            test(new Default(1024,1,1,3).nal(6), length, 1000*length, inh);
-//        }
-//    }
-//
-//    static void test(NAR n, int chainLen, int cycles, IndexedStatementBuilder statementType) {
-//
-//
-//        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, cycles, statementType) {
-////            @Override
-////            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
-////                return this;
-////            }
+//            @Override
+//            public void onSolution(Task belief) {
+//                if (belief.getTerm().equals(test.q)) {
+//                    System.out.println(belief + " " + timestamp(start) + " " +
+//                            n.concepts().size() + " concepts");
+//                    System.out.println(belief.getExplanation());
+//                    System.out.println();
+//                }
+//            }
 //        };
+
+
+        test.run(false);
+
+
+        //n.stdout();
+        //n.frame(5000);
+
+        int nc = ((AbstractNAR)n).core.concepts().size();
+        String ts = timestamp(start);
+        long time = n.time();
+
+        //n.stdout();
+        //n.frame(55); //to print the ending
+
+        //while (true) {
+
+        Report r = test.getReport();
+
+        System.out.println(
+                (r.isSuccess() ? "OK" : "ERR") +
+                "\t@" + time + " (" + ts + "ms) " +
+                nc + "C");
+
+
+        //TextOutput.out(n).setOutputPriorityMin(0.85f);
+
+//        while (true) {
 //
-//        System.out.print(DeductiveChainTest.class.getSimpleName() + " test: "
-//                + test.q + "?\t");
+//            n.run(500);
+//            //sleep(20);
 //
-//        final long start = System.currentTimeMillis();
-//
-////        new AnswerReaction(n) {
-////
-////            @Override
-////            public void onSolution(Task belief) {
-////                if (belief.getTerm().equals(test.q)) {
-////                    System.out.println(belief + " " + timestamp(start) + " " +
-////                            n.concepts().size() + " concepts");
-////                    System.out.println(belief.getExplanation());
-////                    System.out.println();
-////                }
-////            }
-////        };
-//
-//
-//        test.run(false);
-//
-//
-//        //n.stdout();
-//        //n.frame(5000);
-//
-//        int nc = ((AbstractNAR)n).core.concepts().size();
-//        String ts = timestamp(start);
-//        long time = n.time();
-//
-//        //n.stdout();
-//        //n.frame(55); //to print the ending
-//
-//        //while (true) {
-//
-//        Report r = test.getReport();
-//
-//        System.out.println(
-//                (r.isSuccess() ? "OK" : "ERR") +
-//                "\t@" + time + " (" + ts + "ms) " +
-//                nc + "C");
-//
-//
-//        //TextOutput.out(n).setOutputPriorityMin(0.85f);
-//
-////        while (true) {
-////
-////            n.run(500);
-////            //sleep(20);
-////
-////            if (n.time() % printEvery == 0) {
-////                System.out.println(n.time() + " " + timestamp(start) + " " +
-////                        n.memory().size());
-////            }
-////        }
-//
-//
-//    }
-//
-//    private static String timestamp(long start) {
-//        return (System.currentTimeMillis() - start) + " ms";
-//    }
-//}
+//            if (n.time() % printEvery == 0) {
+//                System.out.println(n.time() + " " + timestamp(start) + " " +
+//                        n.memory().size());
+//            }
+//        }
+
+
+    }
+
+    private static String timestamp(long start) {
+        return (System.currentTimeMillis() - start) + " ms";
+    }
+}

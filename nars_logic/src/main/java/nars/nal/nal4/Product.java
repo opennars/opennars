@@ -35,7 +35,7 @@ import java.util.Collection;
 /**
  * A Product is a sequence of 1 or more terms.
  */
-public interface Product<T extends Term> {
+public interface Product {
 
     /**
      * universal zero-length product

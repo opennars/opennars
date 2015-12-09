@@ -2,10 +2,14 @@ package nars.nal.nal1;
 
 import nars.NAR;
 import nars.nal.AbstractNALTester;
+import nars.util.meter.experiment.DeductiveChainTest;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
+
+import static nars.util.meter.experiment.DeductiveChainTest.inh;
 
 //import static nars.util.meter.experiment.DeductiveChainTest.inh;
 
@@ -21,18 +25,19 @@ public class NAL1MultistepTest extends AbstractNALTester {
         return AbstractNALTester.nars(1, true);
     }
 
-//
-//    @Test public void multistep2() {
-//        new DeductiveChainTest(nar(), 2, 500, inh);
-//    }
-//
-//    @Test public void multistep3() {
-//        new DeductiveChainTest(nar(), 3, 1000, inh);
-//    }
-//
-//    @Test public void multistep4() {
-//        new DeductiveChainTest(nar(), 4, 1500, inh);
-//    }
+
+    @Test public void multistep2() {
+        new DeductiveChainTest(nar(), 2, 500, inh);
+    }
+
+    @Test
+    public void multistep3() {
+        new DeductiveChainTest(nar(), 3, 1000, inh);
+    }
+
+    @Test public void multistep4() {
+        new DeductiveChainTest(nar(), 4, 1500, inh);
+    }
 
 
 

@@ -61,6 +61,13 @@ public class TestNAR  {
 
     public TestNAR(NAR nar) {
 
+        this.outputEvents = new Topic[] {
+            //nar.memory.eventDerived,
+            nar.memory.eventInput,
+            nar.memory.eventTaskRemoved,
+            nar.memory.eventRevision
+        };
+
         this.nar = nar;
 
         //HACK sends 'answer' events' answers through derived so they can be detected by TaskCondition
@@ -173,19 +180,13 @@ public class TestNAR  {
     //TODO initialize this once in constructor
     Topic<Task>[] outputEvents;
 
-
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws Narsese.NarseseException {
-        if (outputEvents == null) outputEvents = new Topic[] {
-            nar.memory.eventDerived, nar.memory.eventTaskRemoved, nar.memory.eventRevision
-        };
         mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, occTimeAbsolute);
         return this;
     }
 
 
     public TestNAR mustOutput(long withinCycles, String task) throws Narsese.NarseseException {
-        if (outputEvents == null) outputEvents = new Topic[] {
-                nar.memory.eventDerived, nar.memory.eventTaskRemoved, nar.memory.eventRevision };
         return mustEmit(outputEvents, withinCycles, task);
     }
 

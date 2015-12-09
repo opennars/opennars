@@ -142,13 +142,17 @@ public class GenericCompound<T extends Term> implements Compound<T> {
             case PRODUCT:
                 p.append(Product.toString(this)); //TODO Appender
                 break;
+            case IMAGE_INT:
+            case IMAGE_EXT:
+                Image.appendImage(this, p, pretty);
+                break;
             default:
                 if (op.isStatement()) {
                     if (Operation.isOperation(this)) {
                         Operation.appendOperation((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
                     }
                     else {
-                        Statement.Appender.accept(this, p);
+                        Statement.append(this, p, pretty);
                     }
                 } else {
                     Compound.appendCompound(this, p, pretty);
@@ -177,7 +181,12 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         //int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
-        return subterms().compareTo( ((Compound)o).subterms() );
+        Compound c = (Compound)t;
+        diff = Integer.compare(relation(), c.relation());
+        //int diff = op().compareTo(t.op());
+        if (diff != 0) return diff;
+
+        return subterms().compareTo( c.subterms() );
     }
 
 
@@ -205,12 +214,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
             return false;
 
         GenericCompound c = (GenericCompound)that;
-        if (hash != c.hash||
-            (op != c.op) || (relation!=c.relation)
-            )
-            return false;
-
-        return subterms().equals(c.subterms());
+        return
+            (hash == c.hash) &&
+            (op == c.op) &&
+            (relation == c.relation) &&
+            (terms.equals(c.subterms()));
     }
 
 
@@ -373,9 +381,13 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public String toString() {
-        return toString(true); //TODO make this default to false
+        return toString(false); //TODO make this default to false
     }
 
+    @Override
+    public int relation() {
+        return relation;
+    }
 
     @Override
     public final byte[] bytes() {

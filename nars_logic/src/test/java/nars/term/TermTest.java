@@ -28,6 +28,7 @@ import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -47,7 +48,7 @@ public class TermTest {
     }
 
     NAR n = new Terminal();
-    NAR n2 = new Terminal();
+
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
@@ -279,7 +280,8 @@ public class TermTest {
 
         try {
             Term x = n.term("wonder(a,b)");
-            assertEquals(Operation.class, x.getClass());
+            assertEquals(Op.INHERIT, x.op());
+            assertTrue(Operation.isOperation(x));
             assertEquals("wonder(a, b)", x.toString());
 
         } catch (Narsese.NarseseException ex) {
@@ -339,6 +341,10 @@ public class TermTest {
 //        nullCachedName("{x}");
 //    }
 
+    @Test public void testPatternVar() {
+        assertTrue($("%x").op(Op.VAR_PATTERN));
+    }
+
     @Test
     public void termEqualityWithQueryVariables() {
         NAR n = new Terminal();
@@ -351,6 +357,8 @@ public class TermTest {
     protected void testTermEquality(String s) {
 
         Term a = n.term(s);
+
+        NAR n2 = new Terminal();
         Term b = n2.term(s);
 
         assertTrue(a != b);
@@ -416,6 +424,8 @@ public class TermTest {
 
         String s = "(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)";
         Term a = n.term(s);
+
+        NAR n2 = new Terminal();
         Term b = n2.term(s);
 
         assertTrue(a != b);
@@ -583,12 +593,14 @@ public class TermTest {
 
     @Test public void testStatemntString() {
         assertTrue( $.inh("a", "b").op().isStatement() );
+        Term aInhB = $("<a-->b>");
+        assertEquals(GenericCompound.class, aInhB.getClass());
         assertEquals("<a-->b>",
-                     $("<a-->b>").toString());
+                     aInhB.toString());
     }
 
     @Test
-    public void testImageConstruction3() {
+    public void testImageConstructionExt() {
         assertEquals(
                 imageExt($("X"), $("_"), $("Y")), $("(/, X, _, Y)")
         );
@@ -598,6 +610,9 @@ public class TermTest {
         assertEquals(
                 imageExt($("X"), $("Y"), $("_")), $("(/, X, Y, _)")
         );
+    }
+    @Test
+    public void testImageConstructionInt() {
         assertEquals(
                 imageInt($("X"), $("_"), $("Y")), $("(\\, X, _, Y)")
         );
@@ -635,14 +650,14 @@ public class TermTest {
         assertNotEquals(b.hashCode(), c.hashCode());
         assertNotEquals(a.hashCode(), c.hashCode());
 
-        assertEquals(-1, a.compareTo(b));
-        assertEquals(+1, b.compareTo(a));
+        assertEquals(+1, a.compareTo(b));
+        assertEquals(-1, b.compareTo(a));
 
-        assertEquals(-1, a.compareTo(c));
-        assertEquals(+1, c.compareTo(a));
+        assertEquals(+1, a.compareTo(c));
+        assertEquals(-1, c.compareTo(a));
 
-        assertEquals(-1, b.compareTo(c));
-        assertEquals(+1, c.compareTo(b));
+        assertEquals(+1, b.compareTo(c));
+        assertEquals(-1, c.compareTo(b));
 
 
     }

@@ -28,7 +28,6 @@ import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.function.BiConsumer;
 
 import static nars.Symbols.STATEMENT_CLOSER;
 import static nars.Symbols.STATEMENT_OPENER;
@@ -41,12 +40,10 @@ import static nars.Symbols.STATEMENT_OPENER;
 public interface Statement {
 
 
-    BiConsumer<Compound,Appendable> Appender = (Compound c, Appendable w) -> {
+    static void append(Compound c, Appendable w, boolean pretty) {
 
         Term a = subj(c);
         Term b = pred(c);
-
-        boolean pretty = false;
 
         try {
             w.append(STATEMENT_OPENER);
@@ -67,8 +64,7 @@ public interface Statement {
 
         }
 
-    };
-
+    }
 
 
 //    /**

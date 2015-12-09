@@ -379,7 +379,7 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         public boolean match(Term t) {
-            return ((GenericCompound) t).relation == index;
+            return ((Compound) t).relation() == index;
         }
 
         @Override
@@ -796,8 +796,8 @@ public class FindSubst extends Versioning implements Subst {
                 //if the ellipsis is normal, then interpret the relationIndex as it is
 
                 int xEllipseIndex = X.indexOf(e);
-                int xRelationIndex = ((GenericCompound) X).relation;
-                int yRelationIndex = ((GenericCompound) Y).relation;
+                int xRelationIndex = ((GenericCompound) X).relation();
+                int yRelationIndex = ((GenericCompound) Y).relation();
 
                 if (xEllipseIndex >= xRelationIndex) {
                     //compare relation from beginning as in non-ellipsis case

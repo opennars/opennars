@@ -7,9 +7,9 @@ import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.AbstractTask;
 import nars.task.Task;
+import nars.term.Terms;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.Texts;
 import org.slf4j.Logger;
 
 import java.io.PrintStream;
@@ -251,29 +251,28 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         float difference = 0;
         difference +=
                 task.getTerm()==getTerm() ? 0 : (getTerm().volume());
-        if (difference > worstDiff)
+        if (difference >= worstDiff)
             return;
 
         float freqDiff = Math.min(
                 Math.abs(task.getFrequency() - freqMin),
                 Math.abs(task.getFrequency() - freqMax));
         difference += 2 * freqDiff;
-        if (difference > worstDiff)
+        if (difference >= worstDiff)
             return;
 
         float confDiff = Math.min(
                 Math.abs(task.getConfidence() - confMin),
                 Math.abs(task.getConfidence() - confMax));
         difference += 1 * confDiff;
-        if (difference > worstDiff)
+        if (difference >= worstDiff)
             return;
 
         float termDifference =
-                Texts.levenshteinDistancePercent(
-                    task.getTerm().toString(),
-                    getTerm().toString());
+                Terms.termDistance(task.getTerm(), getTerm());
         difference += 3 * termDifference;
-        if (difference > worstDiff)
+
+        if (difference >= worstDiff)
             return;
 
         {

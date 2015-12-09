@@ -390,20 +390,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-    @Override
-    default boolean levelValid(int nal) {
-        if (!op().levelValid(nal))
-            return false;
-
-        //TODO use structural hash
-        int n = size();
-        for (int i = 0; i < n; i++) {
-            Term sub = term(i);
-            if (!sub.levelValid(nal))
-                return false;
-        }
-        return true;
-    }
 
     //boolean transform(CompoundTransform<Compound<T>, T> trans, int depth);
 

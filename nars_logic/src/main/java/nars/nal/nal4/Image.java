@@ -23,14 +23,14 @@ public interface Image {
         /** Image index ("imdex") symbol */
     Atom Index = $.$(String.valueOf(IMAGE_PLACE_HOLDER));
 
-    static void appendImage(Appendable p, GenericCompound image, boolean pretty) throws IOException {
+    static void appendImage(GenericCompound image, Appendable p, boolean pretty) throws IOException {
 
         int len = image.size();
 
         p.append(COMPOUND_TERM_OPENER);
         p.append(image.op().str);
 
-        int relationIndex = image.relation;
+        int relationIndex = image.relation();
         int i;
         for (i = 0; i < len; i++) {
             Term tt = image.term(i);

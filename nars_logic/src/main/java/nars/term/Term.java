@@ -256,16 +256,12 @@ public interface Term extends Termed, Comparable, Termlike {
 //        return this;
 //    }
 //
-
-
-
-
-
-
-
-
     default boolean levelValid(int nal) {
-        return op().levelValid(nal);
+
+        if (nal >= 8) return true;
+
+        int mask = Op.NALLevelEqualAndAbove[nal];
+        return (structure() | mask) == mask;
     }
 
 

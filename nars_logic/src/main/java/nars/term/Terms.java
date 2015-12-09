@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Global;
 import nars.Op;
 import nars.term.compound.Compound;
+import nars.util.Texts;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
@@ -375,5 +376,18 @@ public class Terms {
             y[i++] = x;
         }
         return y;
+    }
+
+    /** a heuristic for measuring the difference between terms
+     *  in range of 0..100%, 0 meaning equal
+     * */
+    public static float termDistance(Term a, Term b) {
+        if (a.equals(b)) return 0;
+        //TODO handle TermMetadata terms
+
+        //HACK use toString for now
+        return Texts.levenshteinDistancePercent(
+                a.toString(false),
+                b.toString(false));
     }
 }

@@ -17,7 +17,6 @@ import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
 import nars.nal.meta.match.EllipsisTransform;
 import nars.nal.meta.match.EllipsisZeroOrMore;
-import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
@@ -493,8 +492,7 @@ public class Narsese extends BaseParser<Object>  {
 
                         //BacktickReverseInstance(),
 
-                        Atom(),
-                        ImageIndex()
+                        Atom()
 
                 ),
 
@@ -637,9 +635,6 @@ public class Narsese extends BaseParser<Object>  {
 //        return newParser((Memory)null);
 //    }
 
-    Rule ImageIndex() {
-        return sequence('_', push(Image.Index));
-    }
 
     Rule QuotedLiteral() {
         return sequence(dquote(), AnyString(), push('\"' + match() + '\"'), dquote());

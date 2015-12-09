@@ -349,8 +349,8 @@ public class PremiseRule extends GenericCompound implements Level {
         Term taskTermPattern = getTaskTermPattern();
         Term beliefTermPattern = getBeliefTermPattern();
 
-        if (beliefTermPattern.hasAny(Op.ATOM)) {
-            throw new RuntimeException("belief term must be a pattern: " + beliefTermPattern);
+        if (beliefTermPattern.op(Op.ATOM)) {
+            throw new RuntimeException("belief term must contain no atoms: " + beliefTermPattern);
         }
 
         //if it contains an atom term, this means it is a modifier,
