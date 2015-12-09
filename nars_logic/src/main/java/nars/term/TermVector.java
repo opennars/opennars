@@ -1,6 +1,5 @@
 package nars.term;
 
-import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
@@ -143,94 +142,6 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return "(" + Arrays.toString(term) + ')';
     }
 
-    //    /**
-//     * Cloned array of Terms, except for one or more Terms.
-//     *
-//     * @param toRemove
-//     * @return the cloned array with the missing terms removed,
-//     * OR null if no terms were actually removed when requireModification=true
-//     */
-//    public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
-//
-//        final int toRemoveLen = toRemove.length;
-//        if (toRemoveLen == 0)
-//            throw new RuntimeException("no removals specified");
-//        else if (toRemoveLen == 1) {
-//            //use the 1-term optimized version of this method
-//            return cloneTermsExcept(requireModification, toRemove[0]);
-//        }
-//
-//        final int n = length();
-//        final Term[] l = new Term[n];
-//
-//        final Set<Term> toRemoveSet = Terms.toSet(toRemove);
-//
-//
-//        int remain = 0;
-//        for (int i = 0; i < n; i++) {
-//            final Term x = term(i);
-//            if (!toRemoveSet.contains(x))
-//                l[remain++] = x;
-//        }
-//
-//        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
-//    }
-
-//    /**
-//     * Cloned array of Terms, except for a specific Term.
-//     *
-//     * @param toRemove
-//     * @return the cloned array with the missing terms removed,
-//     * OR null if no terms were actually removed when requireModification=true
-//     */
-//    public Term[] cloneTermsExcept(final boolean requireModification, final Term toRemove) {
-//
-//        final int n = length();
-//        final Term[] l = new Term[n];
-//
-//
-//        int remain = 0;
-//        for (int i = 0; i < n; i++) {
-//            final Term x = term(i);
-//            if (!toRemove.equals(x))
-//                l[remain++] = x;
-//        }
-//
-//        return Compound.resultOfCloneTermsExcept(requireModification, l, remain);
-//    }
-//
-//    /**
-//     * creates a new ArrayList for terms
-//     */
-//    public List<Term> asTermList() {
-//        List<Term> l = Global.newArrayList(length());
-//        addTermsTo(l);
-//        return l;
-//    }
-
-
-//    /**
-//     * clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step
-//     */
-//    public Compound cloneVariablesDeep() {
-//        return (Compound) clone(cloneTermsDeepIfContainingVariables());
-//    }
-//
-//    public Term[] cloneTermsDeepIfContainingVariables() {
-//        Term[] l = new Term[length()];
-//        for (int i = 0; i < l.length; i++) {
-//            Term t = term[i];
-//
-//            if ((!(t instanceof Variable)) && (t.hasVar())) {
-//                t = t.cloneDeep();
-//            }
-//
-//            //else it is an atomic term or a compoundterm with no variables, so use as-is:
-//            l[i] = t;
-//        }
-//        return l;
-//    }
-
 
     public final int varDep() {
         return hasVarDeps;
@@ -247,10 +158,6 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     public final int vars() {
         return varTotal;
     }
-
-//    final public void addTermsTo(final Collection<Term> c) {
-//        Collections.addAll(c, term);
-//    }
 
     public Term[] cloneTermsReplacing(int index, final Term replaced) {
         Term[] y = termsCopy();
@@ -276,7 +183,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
     @Override
     public final Iterator<T> iterator() {
-        return Iterators.forArray(term);
+        return Arrays.stream(term).iterator();
     }
 
 

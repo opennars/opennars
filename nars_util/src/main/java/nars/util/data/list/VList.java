@@ -321,8 +321,7 @@ public final class VList<T> extends AbstractList<T> {
        * necessary, but is harmless and doesn't change the asymptotic
        * runtime (since the last block has size O(n)).
        */
-            for (int i = shuffleTargetPosition - 1; i >= 0; --i)
-                curr.mElems[i + 1] = curr.mElems[i];
+            System.arraycopy(curr.mElems, 0, curr.mElems, 1, shuffleTargetPosition - 1 + 1);
 
       /* Copy the last element of the next array to the top of this array,
        * unless this is the first block (in which case there is no next

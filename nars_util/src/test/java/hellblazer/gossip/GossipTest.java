@@ -20,10 +20,7 @@ import org.mockito.internal.verification.Times;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -334,8 +331,7 @@ public class GossipTest extends TestCase {
         gossip.setListener(listener);
 
         TreeSet<Digest> dd = new TreeSet();
-        for (Digest d : new Digest[] { digest1, digest2, digest3, digest4 })
-            dd.add(d);
+        Collections.addAll(dd, new Digest[]{digest1, digest2, digest3, digest4});
         gossip.examine(dd, gossipHandler);
 
         verify(gossipHandler).reply(asList(digest1a, digest2a, digest3a,
@@ -391,8 +387,7 @@ public class GossipTest extends TestCase {
         endpoints.put(address4, new Endpoint(address4, state4, gossipHandler));
 
         TreeSet<Digest> dd = new TreeSet();
-        for (Digest d : new Digest[] { digest1, digest2, digest3, digest4 })
-            dd.add(d);
+        Collections.addAll(dd, new Digest[]{digest1, digest2, digest3, digest4});
         gossip.examine(dd, gossipHandler);
 
         verify(gossipHandler).reply(eq(asList(digest1a, digest3a)),

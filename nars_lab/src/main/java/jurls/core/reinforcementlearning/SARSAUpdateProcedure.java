@@ -66,8 +66,6 @@ public class SARSAUpdateProcedure implements UpdateProcedure {
                     + gradient[i];
         }
 
-        for (int i = 0; i < deltas.length; ++i) {
-            context.previousDeltas[i] = deltas[i];
-        }
+        System.arraycopy(deltas, 0, context.previousDeltas, 0, deltas.length);
     }
 }

@@ -86,8 +86,7 @@ public class PropertyUtils {
 		HashSet<Field> fields = new HashSet<>();
 		
 		while (c != Object.class) {
-			for (Field f : c.getFields())
-				fields.add(f);
+			Collections.addAll(fields, c.getFields());
 			for (Field f : c.getDeclaredFields()) {
 				f.setAccessible(true);
 				fields.add(f);

@@ -2,6 +2,7 @@ package inc.glamdring.vtables;
 
 
 import java.lang.reflect.*;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
@@ -470,9 +471,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
     public EnumSet<_ptrait> getTraits() {
         if (traits == null) {
             traits = EnumSet.of(this);
-            for (_ptrait a : as) {
-                traits.add(a);
-            }
+            Collections.addAll(traits, as);
 
             System.err.println("" + String.valueOf(traits) + "");
             final String[] strings = name().split("$");

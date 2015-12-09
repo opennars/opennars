@@ -549,9 +549,7 @@ public class TetrisState {
         this.worldHeight = stateToCopy.worldHeight;
 
         this.worldState = new double[stateToCopy.worldState.length];
-        for (int i = 0; i < this.worldState.length; i++) {
-            this.worldState[i] = stateToCopy.worldState[i];
-        }
+        System.arraycopy(stateToCopy.worldState, 0, this.worldState, 0, this.worldState.length);
 
         this.possibleBlocks = new Vector<TetrisPiece>();
         //hopefully nobody modifies the pieces as they go

@@ -177,7 +177,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
         if (a.length < array.length) {
             return (T[])Arrays.copyOf(array, array.length, a.getClass());
         }
-
+        //todo: suspicious type of 'a'
         System.arraycopy( array, 0, a, 0, array.length );
 
         if (a.length > array.length) {
