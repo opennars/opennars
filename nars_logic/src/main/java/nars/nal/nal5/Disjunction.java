@@ -28,7 +28,7 @@ import nars.term.compound.GenericCompound;
 
 import java.util.List;
 
-import static nars.Op.DISJUNCTION;
+import static nars.Op.DISJUNCT;
 
 /** 
  * A disjunction of Statements.
@@ -43,11 +43,11 @@ public interface Disjunction  {
      */
     static Term disjunction(Term term1, Term term2) {
 
-        if (term1.op() == DISJUNCTION) {
+        if (term1.op() == DISJUNCT) {
             Compound ct1 = ((Compound) term1);
             List<Term> l = Global.newArrayList(ct1.size());
             ct1.addAllTo(l);
-            if (term2.op() == DISJUNCTION) {
+            if (term2.op() == DISJUNCT) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                 ((Compound)term2).addAllTo(l);
             }
@@ -56,7 +56,7 @@ public interface Disjunction  {
                 l.add(term2);
             }
             return disjunction(l);
-        } else if (term2.op() == DISJUNCTION) {
+        } else if (term2.op() == DISJUNCT) {
             Compound ct2 = ((Compound) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             List<Term> l = Global.newArrayList(ct2.size());
@@ -88,7 +88,7 @@ public interface Disjunction  {
             return t[0];
         }
 
-        return GenericCompound.COMPOUND(DISJUNCTION, t);
+        return GenericCompound.COMPOUND(DISJUNCT, t);
     }
 
 

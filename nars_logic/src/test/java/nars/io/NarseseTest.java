@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Terminal;
@@ -79,7 +78,7 @@ public class NarseseTest {
     public void testIncompleteTask() throws Narsese.NarseseException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(Op.INHERITANCE, t.getTerm().op());
+        assertEquals(Op.INHERIT, t.getTerm().op());
         Compound i = t.getTerm();
         assertEquals("a", i.term(0).toString());
         assertEquals("b", i.term(1).toString());
@@ -102,7 +101,7 @@ public class NarseseTest {
     public void testNoBudget() throws Narsese.NarseseException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(Op.EQUIVALENCE, t.getTerm().op());
+        assertEquals(Op.EQUIV, t.getTerm().op());
 
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
@@ -116,7 +115,7 @@ public class NarseseTest {
         String tt = "<<a <=> b> --> <c ==> d>>";
         Task t = task(tt + '?');
         assertNotNull(t);
-        assertEquals(Op.INHERITANCE, t.getTerm().op());
+        assertEquals(Op.INHERIT, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.getTruth());
@@ -178,13 +177,13 @@ public class NarseseTest {
     @Test
     public void testInfix2() throws Narsese.NarseseException {
         Compound t = term("(x & y)");
-        assertEquals(Op.INTERSECTION_EXT, t.op());
+        assertEquals(Op.INTERSECT_EXT, t.op());
         assertEquals(2, t.size());
         assertEquals("x", t.term(0).toString());
         assertEquals("y", t.term(1).toString());
 
         Compound a = term("(x | y)");
-        assertEquals(Op.INTERSECTION_INT, a.op());
+        assertEquals(Op.INTERSECT_INT, a.op());
         assertEquals(2, a.size());
 
         Compound b = term("(x * y)");
@@ -192,10 +191,10 @@ public class NarseseTest {
         assertEquals(2, b.size());
 
         Compound c = term("(<a -->b> && y)");
-        assertEquals(Op.CONJUNCTION, c.op());
+        assertEquals(Op.CONJUNCT, c.op());
         assertEquals(2, c.size());
         assertEquals(5, c.complexity());
-        assertEquals(Op.INHERITANCE, c.term(1).op());
+        assertEquals(Op.INHERIT, c.term(1).op());
     }
 
 
@@ -268,7 +267,7 @@ public class NarseseTest {
         Term a = term("<a --> b>");
         Term x = term("(a --> b)");
         Term y = term("(a-->b)");
-        assertEquals(Op.INHERITANCE, x.op());
+        assertEquals(Op.INHERIT, x.op());
         assertEquals(x, a);
         assertEquals(x, y);
 
@@ -282,7 +281,7 @@ public class NarseseTest {
 
         Term abcd = term("((a,b) --> (c,d))");
         Term ABCD = term("<(*,a,b) --> (*,c,d)>");
-        assertEquals(Op.INHERITANCE, x.op());
+        assertEquals(Op.INHERIT, x.op());
         assertEquals(abcd + " != " + ABCD, abcd, ABCD);
     }
 
@@ -407,13 +406,13 @@ public class NarseseTest {
 
     private void testImageIntRel(String imageTerm, int relationIndexExpected) {
         Compound ti = term(imageTerm);
-        assertEquals(relationIndexExpected, ((Image)(ti.term(0))).relationIndex );
+        assertEquals(relationIndexExpected, ((Compound)ti.term(0)).relation()  );
         assertEquals(imageTerm, ti.toString());
     }
 
     private void testImageExtRel(String imageTerm, int relationIndexExpected) {
         Compound ti = term(imageTerm);
-        assertEquals(relationIndexExpected, ((Image)ti.term(1)).relationIndex );
+        assertEquals(relationIndexExpected, ((Compound)ti.term(1)).relation() );
         assertEquals(imageTerm, ti.toString());
     }
 

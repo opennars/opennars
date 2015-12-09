@@ -265,7 +265,7 @@ public interface Operation  {
     static boolean isOperation(Term t) {
         if (!(t instanceof Compound)) return false;
         Compound c = (Compound)t;
-        return c.op() == Op.INHERITANCE &&
+        return c.op() == Op.INHERIT &&
             c.size() == 2 &&
             c.term(1).op() == Op.OPERATOR
             && c.term(0).op() == Op.PRODUCT;

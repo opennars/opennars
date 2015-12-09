@@ -27,27 +27,27 @@ public enum Op implements Serializable {
 //            return Atom.the(i);
 //        }}
 //
-    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, 6 /*NAL6 for Indep Vars */, OpType.Variable),
-    VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
+    VAR_INDEP(Symbols.VAR_INDEPENDENT, 6 /*NAL6 for Indep Vars */, OpType.Variable),
+    VAR_DEP(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
     VAR_QUERY(Symbols.VAR_QUERY, Op.ANY, OpType.Variable),
 
     OPERATOR("^", 8, Args.OneArg),
 
-    NEGATION("--", 5, Args.OneArg) {
+    NEGATE("--", 5, Args.OneArg) {
 
     },
 
     /* Relations */
-    INHERITANCE("-->", 1, OpType.Relation, Args.TwoArgs),
-    SIMILARITY("<->", true, 2, OpType.Relation, Args.TwoArgs),
+    INHERIT("-->", 1, OpType.Relation, Args.TwoArgs),
+    SIMILAR("<->", true, 2, OpType.Relation, Args.TwoArgs),
 
 
     /* CompountTerm operators */
-    INTERSECTION_EXT("&", true, 3, Args.TwoArgs),
-    INTERSECTION_INT("|", true, 3, Args.TwoArgs),
+    INTERSECT_EXT("&", true, 3, Args.TwoArgs),
+    INTERSECT_INT("|", true, 3, Args.TwoArgs),
 
-    DIFFERENCE_EXT("-", 3, Args.TwoArgs),
-    DIFFERENCE_INT("~", 3, Args.TwoArgs),
+    DIFF_EXT("-", 3, Args.TwoArgs),
+    DIFF_INT("~", 3, Args.TwoArgs),
 
     PRODUCT("*", 4, Args.GTEZeroArgs),
 
@@ -55,8 +55,8 @@ public enum Op implements Serializable {
     IMAGE_INT("\\", 4, Args.GTEOneArgs),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCTION("||", true, 5, Args.GTEOneArgs),
-    CONJUNCTION("&&", true, 5, Args.GTEOneArgs),
+    DISJUNCT("||", true, 5, Args.GTEOneArgs),
+    CONJUNCT("&&", true, 5, Args.GTEOneArgs),
 
     SEQUENCE("&/", 7, Args.GTEOneArgs),
     PARALLEL("&|", true, 7, Args.GTEOneArgs),
@@ -74,9 +74,9 @@ public enum Op implements Serializable {
     IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, Args.TwoArgs),
     IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.TwoArgs),
 
-    EQUIVALENCE("<=>", true, 5, OpType.Relation, Args.TwoArgs),
-    EQUIVALENCE_AFTER("</>", 7, OpType.Relation, Args.TwoArgs),
-    EQUIVALENCE_WHEN("<|>", true, 7, OpType.Relation, Args.TwoArgs),
+    EQUIV("<=>", true, 5, OpType.Relation, Args.TwoArgs),
+    EQUIV_AFTER("</>", 7, OpType.Relation, Args.TwoArgs),
+    EQUIV_WHEN("<|>", true, 7, OpType.Relation, Args.TwoArgs),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -277,13 +277,13 @@ public enum Op implements Serializable {
     }
 
     public static int StatementBits =
-        Op.or(Op.INHERITANCE, Op.SIMILARITY, Op.EQUIVALENCE, Op.IMPLICATION);
+        Op.or(Op.INHERIT, Op.SIMILAR, Op.EQUIV, Op.IMPLICATION);
 
     public static final int ImageBits =
         Op.or(Op.IMAGE_EXT,Op.IMAGE_INT);
 
     public static final int VariableBits =
-        Op.or(Op.VAR_PATTERN,Op.VAR_INDEPENDENT,Op.VAR_DEPENDENT,Op.VAR_QUERY);
+        Op.or(Op.VAR_PATTERN,Op.VAR_INDEP,Op.VAR_DEP,Op.VAR_QUERY);
 
     static class Args {
         static final IntIntPair NoArgs = PrimitiveTuples.pair(0,0);

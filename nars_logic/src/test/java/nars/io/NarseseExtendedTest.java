@@ -4,7 +4,6 @@ import nars.Narsese;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.nal1.Negation;
-import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -77,7 +76,7 @@ public class NarseseExtendedTest {
     @Test
     public void testColonReverseInheritance() {
         Compound t = term("namespace:named");
-        assertEquals(t.op(), Op.INHERITANCE);
+        assertEquals(t.op(), Op.INHERIT);
         assertEquals("named", t.term(0).toString());
         assertEquals("namespace", t.term(1).toString());
 
@@ -166,7 +165,7 @@ public class NarseseExtendedTest {
             */
 
             Term tt = t.getTerm();
-            assertEquals(Op.NEGATION, tt.op());
+            assertEquals(Op.NEGATE, tt.op());
             assertTrue("negated".equals(((Compound) tt).term(0).toString()));
             assertTrue(t.getPunctuation() == Symbols.GOAL);
         }
@@ -183,8 +182,8 @@ public class NarseseExtendedTest {
 
         Compound nab = term("--(a & b)");
         assertTrue(nab instanceof Negation);
-        IntersectionExt ab = (IntersectionExt) nab.term(0);
-        assertTrue(ab instanceof IntersectionExt);
+
+        assertTrue(nab.term(0).op(Op.INTERSECT_EXT));
 
 //        try {
 //            task("(-- negated illegal_extra_term)!");

@@ -27,9 +27,9 @@ public final class NotImplOrEquiv extends PreCondition1 {
             case IMPLICATION_AFTER:
             case IMPLICATION_BEFORE:
             case IMPLICATION_WHEN:
-            case EQUIVALENCE:
-            case EQUIVALENCE_AFTER:
-            case EQUIVALENCE_WHEN:
+            case EQUIV:
+            case EQUIV_AFTER:
+            case EQUIV_WHEN:
                 return false;
         }
         return true;

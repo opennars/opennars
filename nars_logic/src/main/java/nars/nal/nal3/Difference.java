@@ -40,7 +40,7 @@ public interface Difference {
             return SetInt.subtractInt((Compound)a, (Compound)b);
         }
 
-        return GenericCompound.COMPOUND(Op.DIFFERENCE_INT, a, b);
+        return GenericCompound.COMPOUND(Op.DIFF_INT, a, b);
     }
     /**
      * Try to make a new DifferenceExt
@@ -51,7 +51,7 @@ public interface Difference {
             return SetExt.subtractExt((Compound)a, (Compound)b);
         }
 
-        return GenericCompound.COMPOUND(Op.DIFFERENCE_EXT, a, b);
+        return GenericCompound.COMPOUND(Op.DIFF_EXT, a, b);
     }
 
 

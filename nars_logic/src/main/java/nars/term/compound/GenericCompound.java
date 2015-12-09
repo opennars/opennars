@@ -39,7 +39,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return COMPOUND(op, new Term[] { a, b, c });
     }
 
-    public static Term COMPOUND(Op op, Term[] subterms) {
+    public static Term COMPOUND(Op op, Term... subterms) {
 
         //if no relation is specified and it's an Image:
         if (op.isImage() && Image.hasPlaceHolder(subterms)) {
@@ -60,7 +60,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 return null;
             }
         }
-        if (op == Op.CONJUNCTION) {
+        if (op == Op.CONJUNCT) {
             subterms = flattenAndSort(subterms, Order.None);
         }
 

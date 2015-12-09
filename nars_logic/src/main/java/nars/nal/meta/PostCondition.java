@@ -104,7 +104,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         char puncOverride = 0;
 
         for (Term m : modifiers) {
-            if (m.op() != Op.INHERITANCE) {
+            if (m.op() != Op.INHERIT) {
                 throw new RuntimeException("Unknown postcondition format: " + m);
             }
 

@@ -36,13 +36,13 @@ public interface Equivalence  {
     @Deprecated static Op equivOp(Order order) {
         switch (order) {
             case Forward:
-                return Op.EQUIVALENCE_AFTER;
+                return Op.EQUIV_AFTER;
             case Concurrent:
-                return Op.EQUIVALENCE_WHEN;
+                return Op.EQUIV_WHEN;
             case Backward:
                 throw new RuntimeException("invalid order");
         }
-        return Op.EQUIVALENCE;
+        return Op.EQUIV;
     }
 
 

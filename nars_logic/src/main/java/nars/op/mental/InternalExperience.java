@@ -271,7 +271,7 @@ public class InternalExperience {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
             boolean valid = true;
             Term impsub = imp.term(0);
-            if (impsub.op() == Op.CONJUNCTION) {
+            if (impsub.op() == Op.CONJUNCT) {
                 Compound conj = (Compound) impsub;
                 if (!conj.term(0).equals(taskTerm)) {
                     valid = false; //the expected needed term is not included

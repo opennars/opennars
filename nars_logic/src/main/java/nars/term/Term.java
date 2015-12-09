@@ -286,7 +286,7 @@ public interface Term extends Termed, Comparable, Termlike {
     default boolean containsTemporal() {
         //TODO construct bit vector for one comparison
         return hasAny(Op.PARALLEL) || hasAny(Op.SEQUENCE) ||
-                hasAny(Op.EQUIVALENCE_AFTER) || hasAny(Op.EQUIVALENCE_WHEN) ||
+                hasAny(Op.EQUIV_AFTER) || hasAny(Op.EQUIV_WHEN) ||
                 hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
     }
 

@@ -447,7 +447,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
 //                        //negation shorthand
-                        seq(Op.NEGATION.str, s(), Term(), push(
+                        seq(Op.NEGATE.str, s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
                             $.neg(Atom.the(pop())))),
 
@@ -754,27 +754,27 @@ public class Narsese extends BaseParser<Object>  {
     Rule Op() {
         return sequence(
                 trie(
-                        INTERSECTION_EXT.str, INTERSECTION_INT.str,
-                        DIFFERENCE_EXT.str, DIFFERENCE_INT.str,
+                        INTERSECT_EXT.str, INTERSECT_INT.str,
+                        DIFF_EXT.str, DIFF_INT.str,
                         PRODUCT.str,
                         IMAGE_EXT.str, IMAGE_INT.str,
 
-                        INHERITANCE.str,
+                        INHERIT.str,
 
-                        SIMILARITY.str,
+                        SIMILAR.str,
 
                         PROPERTY.str,
                         INSTANCE.str,
                         INSTANCE_PROPERTY.str,
 
-                        NEGATION.str,
+                        NEGATE.str,
 
                         IMPLICATION.str,
-                        EQUIVALENCE.str,
+                        EQUIV.str,
                         IMPLICATION_AFTER.str, IMPLICATION_BEFORE.str, IMPLICATION_WHEN.str,
-                        EQUIVALENCE_AFTER.str, EQUIVALENCE_WHEN.str,
-                        DISJUNCTION.str,
-                        CONJUNCTION.str,
+                        EQUIV_AFTER.str, EQUIV_WHEN.str,
+                        DISJUNCT.str,
+                        CONJUNCT.str,
                         SEQUENCE.str,
                         PARALLEL.str
                 ),

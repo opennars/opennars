@@ -28,7 +28,7 @@ public interface Intersect {
 
         }
         return GenericCompound.COMPOUND(
-                intOrExt ? Op.INTERSECTION_INT : Op.INTERSECTION_EXT,
+                intOrExt ? Op.INTERSECT_INT : Op.INTERSECT_EXT,
                 t);
     }
 

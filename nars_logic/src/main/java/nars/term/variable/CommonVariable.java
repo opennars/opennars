@@ -32,12 +32,12 @@ public class CommonVariable extends Variable  {
 
     @Override
     public final int varIndep() {
-        return op() == Op.VAR_INDEPENDENT ? 1 : 0;
+        return op() == Op.VAR_INDEP ? 1 : 0;
     }
 
     @Override
     public final int varDep() {
-        return op() == Op.VAR_DEPENDENT ? 1 : 0;
+        return op() == Op.VAR_DEP ? 1 : 0;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class CommonVariable extends Variable  {
      *  triangular matrix because the pairs is sorted */
     static final EnumMap<Op,CommonVariable[][]> common = new EnumMap(Op.class);
     static {
-        for (Op o : new Op[] { Op.VAR_PATTERN, Op.VAR_QUERY, Op.VAR_INDEPENDENT, Op.VAR_DEPENDENT }) {
+        for (Op o : new Op[] { Op.VAR_PATTERN, Op.VAR_QUERY, Op.VAR_INDEP, Op.VAR_DEP}) {
             CommonVariable[][] cm = new CommonVariable[10][];
             for (int i = 0; i < 10; i++) {
                 cm[i] = new CommonVariable[i+2];

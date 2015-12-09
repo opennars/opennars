@@ -17,7 +17,7 @@ public class TermHashTest {
 
         assertTrue( inh("a", "b").hasAny(Op.ATOM) );
         assertTrue( inh( p("a"), $("b") ).hasAny(Op.or(Op.ATOM, Op.PRODUCT) ) );
-        assertFalse( inh("a", "b").hasAny(Op.INHERITANCE) );
-        assertTrue( inh("a", "b").isAny(Op.INHERITANCE) );
+        assertFalse( inh("a", "b").hasAny(Op.INHERIT) );
+        assertTrue( inh("a", "b").isAny(Op.INHERIT) );
     }
 }

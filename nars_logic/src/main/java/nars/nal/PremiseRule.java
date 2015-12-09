@@ -309,7 +309,7 @@ public class PremiseRule extends GenericCompound implements Level {
         public Term apply(Compound containingCompound, Term v, int depth) {
 
             //do not alter postconditions
-            if ((containingCompound.op() == Op.INHERITANCE)
+            if ((containingCompound.op() == Op.INHERIT)
                     && PostCondition.reservedMetaInfoCategories.contains(
                     ((Compound) containingCompound).term(1)))
                 return v;

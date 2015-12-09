@@ -37,10 +37,10 @@ public class Terms {
 
         if (equalOps) {
             switch (o) {
-                case INHERITANCE:
+                case INHERIT:
                     return equalSubjectPredicateInRespectToImageAndProduct((Compound)a, (Compound)b);
 
-                case SIMILARITY:
+                case SIMILAR:
                     return equalSubjectPredicateInRespectToImageAndProduct((Compound)a,(Compound)b)
                             || equalSubjectPredicateInRespectToImageAndProduct((Compound)b, (Compound)a);
             }
@@ -295,7 +295,7 @@ public class Terms {
 
         t.forEach(a -> {
             if (a.size() == 2) {
-                if ((a.op() == PRODUCT) || (a.op() == Op.INHERITANCE)) {
+                if ((a.op() == PRODUCT) || (a.op() == Op.INHERIT)) {
                     Compound ii = (Compound) a;
                     result.put(ii.term(0), ii.term(1));
                 }

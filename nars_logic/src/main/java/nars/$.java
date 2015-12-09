@@ -84,7 +84,7 @@ public abstract class $  {
 //            return new GenericCompound(Op.INHERITANCE, (Operator)predicate, (Product)subject);
 //        else
 
-        return (T) COMPOUND(Op.INHERITANCE, subj, pred);
+        return (T) COMPOUND(Op.INHERIT, subj, pred);
     }
 
 
@@ -94,7 +94,7 @@ public abstract class $  {
 
 
     public static Term simi(Term subj, Term pred) {
-        return COMPOUND(Op.SIMILARITY, subj, pred);
+        return COMPOUND(Op.SIMILAR, subj, pred);
     }
 
     public static Compound oper(String operator, String... args) {
@@ -112,7 +112,7 @@ public abstract class $  {
 
     public static Compound oper(Operator opTerm, Compound arg) {
         return (Compound) COMPOUND(
-                Op.INHERITANCE,
+                Op.INHERIT,
                 arg == null ? Product.Empty : arg,
                 opTerm
         );
@@ -165,19 +165,19 @@ public abstract class $  {
 
 
     public static Variable varDep(int i) {
-        return v(Op.VAR_DEPENDENT, i);
+        return v(Op.VAR_DEP, i);
     }
 
     public static Variable varDep(String s) {
-        return v(Op.VAR_DEPENDENT, s);
+        return v(Op.VAR_DEP, s);
     }
 
     public static Variable varIndep(int i) {
-        return v(Op.VAR_INDEPENDENT, i);
+        return v(Op.VAR_INDEP, i);
     }
 
     public static Variable varIndep(String s) {
-        return v(Op.VAR_INDEPENDENT, s);
+        return v(Op.VAR_INDEP, s);
     }
 
     public static Variable varQuery(int i) {
@@ -378,14 +378,27 @@ public abstract class $  {
     }
 
     public static Term equiv(Term subject, Term pred) {
-        return COMPOUND(Op.EQUIVALENCE, subject, pred);
+        return COMPOUND(Op.EQUIV, subject, pred);
     }
     public static Term equivAfter(Term subject, Term pred) {
-        return COMPOUND(Op.EQUIVALENCE_AFTER, subject, pred);
+        return COMPOUND(Op.EQUIV_AFTER, subject, pred);
     }
     public static Term equivWhen(Term subject, Term pred) {
-        return COMPOUND(Op.EQUIVALENCE_WHEN, subject, pred);
+        return COMPOUND(Op.EQUIV_WHEN, subject, pred);
     }
 
+    public static Term diffInt(Term a, Term b) {
+        return COMPOUND(Op.DIFF_INT, a, b);
+    }
 
+    public static Term diffExt(Term a, Term b) {
+        return COMPOUND(Op.DIFF_EXT, a, b);
+    }
+
+    public static Term imageExt(Term... x) {
+        return COMPOUND(Op.IMAGE_EXT, x);
+    }
+    public static Term imageInt(Term... x) {
+        return COMPOUND(Op.IMAGE_EXT, x);
+    }
 }

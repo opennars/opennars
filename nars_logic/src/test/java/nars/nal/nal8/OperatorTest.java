@@ -78,7 +78,7 @@ public class OperatorTest {
 
     @Test public void testOperationIsInheritance() {
         Compound o = $.oper(Operator.the("x"), Product.make("x"));
-        assertEquals(Op.INHERITANCE, o.op());
+        assertEquals(Op.INHERIT, o.op());
     }
 
     @Test public void testInhIsOperation() {
@@ -86,7 +86,7 @@ public class OperatorTest {
         assertTrue(o.term(0) instanceof Product);
         assertTrue(o.term(1) instanceof Operator);
         assertEquals("x(a, b, c)", o.toString());
-        assertEquals(Op.INHERITANCE, o.op());
+        assertEquals(Op.INHERIT, o.op());
     }
 
     @Test public void testTermReactionRegistration() {
@@ -190,7 +190,7 @@ public class OperatorTest {
             public List<Task> run(Task t, Subst s) {
                 assertEquals($("x"), s.getXY($("%a")));
                 assertEquals($("y"), s.getXY($("%b")));
-                assertEquals(Op.VAR_DEPENDENT, s.getXY($("#x")).op());
+                assertEquals(Op.VAR_DEP, s.getXY($("#x")).op());
                 count.getAndIncrement();
                 return null;
             }

@@ -564,7 +564,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     default int relation() {
-        return 0;
+        return -1; //by default, not relation present except for Images
     }
 
 

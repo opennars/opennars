@@ -31,11 +31,11 @@ import nars.term.compound.GenericCompound;
 public interface Negation {
 
     static Term negation(Term t) {
-        if (t.op() == Op.NEGATION) {
+        if (t.op() == Op.NEGATE) {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return GenericCompound.COMPOUND(Op.NEGATION, t);
+        return GenericCompound.COMPOUND(Op.NEGATE, t);
     }
 
 }

@@ -22,7 +22,7 @@ import static nars.nal.nal7.Order.Forward;
 public interface Conjunctive<T extends Term>  {
 
 
-    int conjunctiveBits = Op.or(Op.CONJUNCTION, Op.SEQUENCE, Op.PARALLEL);
+    int conjunctiveBits = Op.or(Op.CONJUNCT, Op.SEQUENCE, Op.PARALLEL);
 
     /** null if not conjunction with same order */
     public static boolean isConjunction(Term t, Order order) {

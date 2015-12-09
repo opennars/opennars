@@ -32,9 +32,9 @@ public class SubstituteIfUnified extends Substitute {
         if (varType.equals(QUERY_VAR))  {
             type = Op.VAR_QUERY;
         } else if (varType.equals(INDEP_VAR)) {
-            type = Op.VAR_INDEPENDENT;
+            type = Op.VAR_INDEP;
         } else if (varType.equals(DEP_VAR)) {
-            type = Op.VAR_DEPENDENT;
+            type = Op.VAR_DEP;
         } else {
             throw new RuntimeException("invalid variable type: " + varType);
         }

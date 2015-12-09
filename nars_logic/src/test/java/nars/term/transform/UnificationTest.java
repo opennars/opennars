@@ -91,7 +91,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        FindSubst wu = new FindSubst(Op.VAR_INDEPENDENT, tester.nar.memory.random);
+        FindSubst wu = new FindSubst(Op.VAR_INDEP, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (unifies)
             assertTrue("Unification is nonsensical", false);
@@ -172,7 +172,7 @@ public class UnificationTest  {
         Term Term1 = ret.getTerm();
         Term Term2 = ret2.getTerm();
 
-        FindSubst wu = new FindSubst(Op.VAR_DEPENDENT, tester.nar.memory.random);
+        FindSubst wu = new FindSubst(Op.VAR_DEP, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
         if (!unifies)
             assertTrue("Unification is nonsensical", false);
@@ -225,13 +225,13 @@ public class UnificationTest  {
     }
 
     @Test public void pattern_trySubs_Indep_Var_2_parallel()  {
-        test(Op.VAR_INDEPENDENT,
+        test(Op.VAR_INDEP,
               "(&|,<($1,#2) --> on>,<(SELF,#2) --> at>)",
               "(&|,<({t002},#1) --> on>,<(SELF,#1) --> at>)",
               true);
     }
     @Test public void pattern_trySubs_Indep_Var_2_product_and_common_depvar()  {
-        FindSubst sub = test(Op.VAR_INDEPENDENT,
+        FindSubst sub = test(Op.VAR_INDEP,
                 "(<($1,#2) --> on>,<(SELF,#2) --> at>)",
                 "(<({t002},#1) --> on>,<(SELF,#1) --> at>)",
                 true);
@@ -241,25 +241,25 @@ public class UnificationTest  {
         //assertEquals("{#1=#1#2}", sub.yx().toString());
     }
     @Test public void pattern_trySubs_Indep_Var_2_product()  {
-        test(Op.VAR_INDEPENDENT,
+        test(Op.VAR_INDEP,
                 "(<($1,x) --> on>,<(SELF,x) --> at>)",
                 "(<({t002},x) --> on>,<(SELF,x) --> at>)",
                 true);
     }
     @Test public void pattern_trySubs_Dep_Var_2_product()  {
-        test(Op.VAR_DEPENDENT,
+        test(Op.VAR_DEP,
                 "(<(#1,x) --> on>,<(SELF,x) --> at>)",
                 "(<({t002},x) --> on>,<(SELF,x) --> at>)",
                 true);
     }
     @Test public void pattern_trySubs_Indep_Var_2_set()  {
-        test(Op.VAR_INDEPENDENT,
+        test(Op.VAR_INDEP,
                 "{<($1,x) --> on>,<(SELF,x) --> at>}",
                 "{<({t002},x) --> on>,<(SELF,x) --> at>}",
                 true);
     }
     @Test public void pattern_trySubs_Indep_Var_2_set2()  {
-        test(Op.VAR_INDEPENDENT,
+        test(Op.VAR_INDEP,
                 "{<($1,x) --> on>,<(SELF,x) --> at>}",
                 "{<(z,x) --> on>,<(SELF,x) --> at>}",
                 true);
@@ -370,7 +370,7 @@ public class UnificationTest  {
     }
 
     @Test public void pattern_trySubs_Dep_Var_2_set()  {
-        test(Op.VAR_DEPENDENT,
+        test(Op.VAR_DEP,
                 "{<(#1,x) --> on>,<(SELF,x) --> at>}",
                 "{<({t002},x) --> on>,<(SELF,x) --> at>}",
                 true);
@@ -442,13 +442,13 @@ public class UnificationTest  {
                 true);
     }
     @Test public void diffVarTypes1()  {
-        test(Op.VAR_DEPENDENT,
+        test(Op.VAR_DEP,
                 "(a,$1)",
                 "(#1,$1)",
                 true);
     }
     @Test public void impossibleMatch1()  {
-        test(Op.VAR_DEPENDENT,
+        test(Op.VAR_DEP,
                 "(a,#1)",
                 "(b,b)",
                 false);
