@@ -6,7 +6,6 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.util.data.Util;
-import nars.util.utf8.Utf8;
 
 /** default Atom implementation */
 public class Atom extends StringAtom {
@@ -51,7 +50,7 @@ public class Atom extends StringAtom {
     }
 
     public Atom(String n) {
-        this(Utf8.toUtf8(n));
+        super(n);//Utf8.toUtf8(n)
     }
 
 

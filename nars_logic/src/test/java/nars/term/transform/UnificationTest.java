@@ -575,15 +575,15 @@ public class UnificationTest  {
     @Test public void patternImage()  {
         test(Op.VAR_PATTERN,
                 "<A --> (/, _, %X)>",
-                "<A --> (/, _, A)>", true);
+                "<A --> (/, _, B)>", true);
         test(Op.VAR_PATTERN,
                 "<A --> (/, %X, _)>",
-                "<A --> (/, A, _)>", true);
+                "<A --> (/, B, _)>", true);
 
 
         test(Op.VAR_PATTERN,
                 "<A --> (/, %X, _)>",
-                "<A --> (/, _, A)>", false);
+                "<A --> (/, _, B)>", false);
 
 
         test(Op.VAR_PATTERN,

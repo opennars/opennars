@@ -584,12 +584,21 @@ public class TermTest {
 
     @Test
     public void testImageConstruction2() {
+        assertTrue( $("(/,_,X,Y)").op().isImage() );
+        assertFalse( $("(X,Y)").op().isImage() );
+
+        assertEquals(null, imageExt($("X"), $("Y")));
+        assertEquals(null, imageInt($("X"), $("Y")));
+
+        assertEquals("(/,X,_)", $("(/,X,_)").toString());
+        assertEquals("(/,X,_)", imageExt($("X"), $("_")).toString());
+
+        assertEquals("(/,X,Y,_)", imageExt($("X"), $("Y"), $("_")).toString());
         assertEquals("(/,X,_,Y)", imageExt($("X"), $("_"), $("Y")).toString());
-        assertEquals("(/,X,Y,_)", imageExt($("X"), $("Y")).toString());
         assertEquals("(/,_,X,Y)", imageExt($("_"), $("X"), $("Y")).toString());
 
+        assertEquals("(\\,X,Y,_)", imageInt($("X"), $("Y"), $("_")).toString());
         assertEquals("(\\,X,_,Y)", imageInt($("X"), $("_"), $("Y")).toString());
-        assertEquals("(\\,X,Y,_)", imageInt($("X"), $("Y")).toString());
         assertEquals("(\\,_,X,Y)", imageInt($("_"), $("X"), $("Y")).toString());
 
     }
@@ -640,6 +649,7 @@ public class TermTest {
     }
 
 
+
     //TODO:
         /*
             (&,(&,P,Q),R) = (&,P,Q,R)
@@ -663,6 +673,20 @@ public class TermTest {
 
     @Test
     public void testImageConstructionExt() {
+
+
+
+
+        assertEquals(
+            "<A-->(/,%X,_)>", $("<A --> (/, %X, _)>").toString()
+        );
+        assertEquals(
+            "<A-->(/,_,%X)>", $("<A --> (/, _, %X)>").toString()
+        );
+//        assertEquals(
+//                "(/,_,%X)", $("(/, _, %X)").toString()
+//        );
+
         assertEquals(
                 imageExt($("X"), $("_"), $("Y")), $("(/, X, _, Y)")
         );

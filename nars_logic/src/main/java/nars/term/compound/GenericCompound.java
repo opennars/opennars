@@ -55,9 +55,13 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     public static Term COMPOUND(Op op, Term... subterms) {
 
-        //if no relation is specified and it's an Image:
-        if (op.isImage() && Image.hasPlaceHolder(subterms)) {
-            return Image.build(op, subterms);
+        //if no relation was specified and it's an Image,
+        if (op.isImage()) {
+            //it must contain a _ placeholder
+            if (Image.hasPlaceHolder(subterms)) {
+                return Image.build(op, subterms);
+            }
+            return null;
         }
 
         return COMPOUND(op, subterms, -1);
@@ -237,7 +241,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         TermVector<T> terms = this.terms = op.isCommutative() ?
                 TermSet.newTermSetPresorted(subterms) :
                 new TermVector(subterms);
-        hash = Compound.hash(terms, op, relation);
+        hash = Compound.hash(terms, op, relation+1);
         this.relation = relation;
     }
 

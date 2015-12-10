@@ -3,7 +3,6 @@ package nars.nal;
 import nars.MapIndex;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
@@ -28,9 +27,7 @@ public class PatternIndex extends MapIndex {
         Compound x = super.compileCompound(c);
         if (x instanceof Compound) {
             if (!x.isCommutative() && !Ellipsis.hasEllipsis(x)) {
-                if (!(x instanceof Image)) {
-                    x = new LinearCompoundPattern(x);
-                }
+                x = new LinearCompoundPattern(x);
             }
         }
         return x;
@@ -110,6 +107,8 @@ public class PatternIndex extends MapIndex {
                 return false;
             int yStructure = y.structure();
             if ((yStructure | structureCachedWithoutVars) != yStructure)
+                return false;
+            if (relation != y.relation())
                 return false;
 
             return matchLinear(y, subst);

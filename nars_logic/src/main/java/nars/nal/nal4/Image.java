@@ -1,7 +1,6 @@
 package nars.nal.nal4;
 
 import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
-import nars.$;
 import nars.Op;
 import nars.Symbols;
 import nars.term.Term;
@@ -21,7 +20,7 @@ import static nars.Symbols.*;
 public interface Image {
 
         /** Image index ("imdex") symbol */
-    Atom Index = $.$(String.valueOf(IMAGE_PLACE_HOLDER));
+    Atom Index = Atom.the("_");
 
     static void appendImage(GenericCompound image, Appendable p, boolean pretty) throws IOException {
 
@@ -108,7 +107,8 @@ public interface Image {
         }
 
         if (index == -1) {
-            index = 0;
+            //index = 0;
+            return null;
         } else {
             int serN = res.length-1;
             Term[] ser = new Term[serN];

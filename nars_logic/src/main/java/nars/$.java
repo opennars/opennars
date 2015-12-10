@@ -399,7 +399,7 @@ public abstract class $  {
         return COMPOUND(Op.IMAGE_EXT, x);
     }
     public static Term imageInt(Term... x) {
-        return COMPOUND(Op.IMAGE_EXT, x);
+        return COMPOUND(Op.IMAGE_INT, x);
     }
     public static Term sect(Term... x) {
         return COMPOUND(Op.INTERSECT_EXT, x);
