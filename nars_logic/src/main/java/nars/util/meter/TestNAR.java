@@ -44,7 +44,7 @@ public class TestNAR  {
     private Exception error;
     private final transient boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
-    private int temporalTolerance = 500;
+    private int temporalTolerance = 0;
     protected static final float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 

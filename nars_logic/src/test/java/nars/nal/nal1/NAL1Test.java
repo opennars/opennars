@@ -170,7 +170,7 @@ public class NAL1Test extends AbstractNALTester {
 
     @Test
     public void backwardInference() throws Narsese.NarseseException {
-        long time = /*nar instanceof Solid ? 15 :*/ 4;
+        long time = /*nar instanceof Solid ? 15 :*/ 16;
 
 
         test().mustOutput(time, "<?1 --> bird>?") //.en("What is a type of bird?");

@@ -15,6 +15,14 @@ public class SortedTaskPerception extends TaskPerception {
 
     public final MutableInteger inputPerCycle = new MutableInteger();
 
+    /**
+     *
+     * @param nar
+     * @param filter
+     * @param receiver
+     * @param capacity
+     * @param inputPerCycle -1 for everything
+     */
     public SortedTaskPerception(NAR nar,
                                 Predicate<Task> filter,
                                 Consumer<Task> receiver,
@@ -29,17 +37,38 @@ public class SortedTaskPerception extends TaskPerception {
 
     @Override
     public final void accept(Task t) {
-        if (!t.isDeleted())
-            buffer.put(t);
+        if (!t.isDeleted()) {
+            Task overflow = buffer.put(t);
+            if (overflow!=null)
+                onOverflow(overflow);
+        }
+    }
+
+    protected void onOverflow(Task t) {
+
     }
 
     @Override
-    public final void send() {
+    public void forEach(Consumer<? super Task> each) {
+        buffer.forEach(each);
+    }
+
+    @Override
+    public final void nextFrame() {
         //ItemAccumulator<> b = this.buffer;
         TaskAccumulator buffer = this.buffer;
         int available = size();
         if (available > 0) {
-            buffer.pop(receiver, Math.min(available, inputPerCycle.intValue()));
+
+            int inputsPerCyc = inputPerCycle.intValue();
+            if (inputsPerCyc == -1) {
+                //send everything
+                inputsPerCyc = available;
+            }
+
+            buffer.pop(receiver,
+                Math.min(available, inputsPerCyc)
+            );
         }
     }
 

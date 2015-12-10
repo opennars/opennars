@@ -57,8 +57,6 @@ public class Default extends AbstractNAR {
     @Override
     protected DefaultCycle2 initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
 
-        int inputCapacity = activeConcepts/8; //HACK heuristic
-
         return new DefaultCycle2(this, deriver,
                 conceptBag, activator
         );
@@ -155,15 +153,22 @@ public class Default extends AbstractNAR {
 
     @Override
     public SortedTaskPerception initInput() {
+
         int perceptionCapacity = 64;
+        int inputsPerCycle = -1 /* everything */;
 
         SortedTaskPerception input = new SortedTaskPerception(
                 this,
                 task -> true /* allow everything */,
                 this::process,
                 perceptionCapacity,
-                1
-        );
+                inputsPerCycle
+        ) {
+            @Override
+            protected void onOverflow(Task t) {
+                memory.eventError.emit("Overflow: " + t + " " + getStatistics());
+            }
+        };
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
     }

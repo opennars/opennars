@@ -45,6 +45,11 @@ public class FIFOTaskPerception extends TaskPerception {
     }
 
     @Override
+    public void forEach(Consumer<? super Task> each) {
+        buffer.forEach(each);
+    }
+
+    @Override
     public void accept(Task t) {
         if (filter == null || filter.test(t)) {
 
@@ -77,7 +82,7 @@ public class FIFOTaskPerception extends TaskPerception {
 
     /** sends the next batch of tasks to the receiver */
     @Override
-    public void send() {
+    public void nextFrame() {
 
 
         int s = buffer.size();
