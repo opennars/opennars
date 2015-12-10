@@ -7,15 +7,16 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 /** responds to questions by inserting beliefs as answers */
 public abstract class PatternAnswer implements Function<Task, List<Task>> {
 
-    final XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
+    final Random rng = new XorShift128PlusRandom(1);
     public final Term pattern;
 
     public PatternAnswer(String pattern) {

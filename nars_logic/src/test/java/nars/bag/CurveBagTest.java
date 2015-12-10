@@ -7,7 +7,7 @@ import nars.bag.impl.LevelBag;
 import nars.budget.Item;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.meter.bag.NullItem;
 import org.apache.commons.math3.util.MathArrays;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class CurveBagTest extends AbstractBagTest {
 
-    static final Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift128PlusRandom(1);
 
     static {
         Global.DEBUG = true;
@@ -185,7 +185,7 @@ public class CurveBagTest extends AbstractBagTest {
 
 
     public static double[] testRemovalDistribution(float priMin, float priMax, int capacity) {
-        int samples = 128 * capacity;
+        int samples = 512 * capacity;
         
         double[] count = new double[capacity];
 

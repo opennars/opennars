@@ -7,7 +7,7 @@ import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
 import nars.util.Texts;
 import nars.util.data.Util;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.meter.bag.NullItem;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -168,7 +168,7 @@ public class BagSamplingPriorityTest {
         }
     }
 
-    static final Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift128PlusRandom(1);
 
     static final Function<Float,Float> uniform = ( x -> x);
     static final Function<Float,Float> skewedLow = ( x -> (float)Math.pow(1.0f - x, 2) );

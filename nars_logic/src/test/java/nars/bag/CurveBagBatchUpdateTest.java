@@ -5,13 +5,14 @@ import nars.Global;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.meter.bag.BagGenerators;
 import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class CurveBagBatchUpdateTest {
 
-    final XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
+    final Random rng = new XorShift128PlusRandom(1);
 
     @Test
     public void testDefaultBatchImpl() {

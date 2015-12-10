@@ -38,7 +38,7 @@ import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
 import nars.util.data.MutableInteger;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.event.Active;
 import org.apache.commons.lang3.mutable.MutableFloat;
 
@@ -85,7 +85,7 @@ public abstract class AbstractNAR extends NAR {
     public AbstractNAR(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(memory);
 
-        rng = new XorShift1024StarRandom(1);
+        rng = new XorShift128PlusRandom(1);
 
         initDefaults(memory);
 

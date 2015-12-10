@@ -5,10 +5,7 @@ import nars.Premise;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nal.Deriver;
 import nars.task.Task;
-
-import java.util.function.Consumer;
 
 /**
  * Created by me on 8/5/15.
@@ -55,10 +52,6 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     }
 
 
-    @Override
-    public final void derive(Deriver p, Consumer<Task> t) {
-        p.run(this, t);
-    }
 
 //    /**
 //     * the current termlink / belieflink's concept

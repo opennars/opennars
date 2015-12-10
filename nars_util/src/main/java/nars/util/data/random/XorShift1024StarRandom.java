@@ -46,7 +46,7 @@ import static nars.util.data.random.SplitMix64Random.murmurHash3;
  * @see Random
  * @see XorShift1024StarRandomGenerator
  */
-public class XorShift1024StarRandom extends Random {
+@Deprecated public class XorShift1024StarRandom extends Random {
 	private static final long serialVersionUID = 1L;
 
 	/** 2<sup>-53</sup>. */
@@ -60,10 +60,11 @@ public class XorShift1024StarRandom extends Random {
 	
 
 	/** Creates a new generator using a given seed.
-	 * 
+	 * NOT RECOMMENDED it seems to offer very poor distribution
+	 *
 	 * @param seed a nonzero seed for the generator (if zero, the generator will be seeded with -1).
 	 */
-	public XorShift1024StarRandom( long seed ) {
+	private XorShift1024StarRandom( long seed ) {
 		setSeed(seed);
 	}
 

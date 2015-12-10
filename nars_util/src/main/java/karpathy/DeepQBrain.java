@@ -1,6 +1,6 @@
 package karpathy;
 
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 
 import java.util.Random;
 
@@ -143,7 +143,7 @@ public class DeepQBrain {
         learning = true;
     }
 
-    public final Random rng = new XorShift1024StarRandom(1);
+    public final Random rng = new XorShift128PlusRandom(1);
 
     public int getActionRandom() {
         return rng.nextInt(num_actions);

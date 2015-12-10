@@ -18,15 +18,12 @@ package nars.term;
 
 import nars.*;
 import nars.concept.Concept;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
 import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
-import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import org.junit.Test;
@@ -320,29 +317,6 @@ public class TermTest {
 
     }
 
-    @Test
-    public void testDifferenceImmediate() {
-
-        Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
-        Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-        Term d = diffInt(a, b);
-        assertEquals(Op.SET_INT, d.op());
-        assertEquals(d.toString(), 2, d.size());
-        assertEquals("[a,c]", d.toString());
-    }
-
-    @Test
-    public void testDifferenceImmediate2() {
-
-
-        Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
-        Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
-        Term d = diffExt(a, b);
-        assertEquals(Op.SET_EXT, d.op());
-        assertEquals(d.toString(), 2, d.size());
-        assertEquals("{a,c}", d.toString());
-
-    }
 
 //    public void nullCachedName(String term) {
 //        NAR n = new Terminal();

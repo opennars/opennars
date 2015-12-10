@@ -74,10 +74,8 @@ public abstract class Deriver  {
      *  this method does not provide a way to stop or interrupt
      *  the process once it begins.
      */
-    public final void run(ConceptProcess premise, Consumer<Task> t) {
+    public final void run(ConceptProcess premise, RuleMatch m, Consumer<Task> t) {
         premise.memory().eventConceptProcess.emit(premise);
-
-        RuleMatch m = RuleMatch.matchers.get();
 
         m.start(premise, t, this);
     }

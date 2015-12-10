@@ -1,12 +1,9 @@
 package nars.util.math;
 
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static com.google.common.math.IntMath.factorial;
 import static junit.framework.TestCase.assertEquals;
@@ -64,8 +61,8 @@ public class PermutationsTest {
         Set<String> sequences = new HashSet();
         Set<String> arrays = new TreeSet();
 
-        XorShift1024StarRandom rng =
-                new XorShift1024StarRandom(2);
+        Random rng =
+                new XorShift128PlusRandom(2);
 
         int[] n = new int[size];
 

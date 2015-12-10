@@ -32,7 +32,7 @@ import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
 import nars.util.event.Topic;
@@ -127,7 +127,7 @@ public class Memory extends Param {
 
 
     public Memory(Clock clock, TermIndex index) {
-        this(clock, new XorShift1024StarRandom(1), index);
+        this(clock, new XorShift128PlusRandom(1), index);
     }
 
     /**

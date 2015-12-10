@@ -11,7 +11,6 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
-import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.version.Versioned;
 
 import java.util.Random;
@@ -51,14 +50,14 @@ public class RuleMatch extends FindSubst {
     }
 
 
-    /**
-     * thread-specific pool of RuleMatchers
-     * this pool is local to this deriver
-     */
-    public static final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
-        //TODO use the memory's RNG for complete deterministic reproducibility
-        return new RuleMatch(new XorShift1024StarRandom(1));
-    });
+//    /**
+//     * thread-specific pool of RuleMatchers
+//     * this pool is local to this deriver
+//     */
+//    public static final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+//        //TODO use the memory's RNG for complete deterministic reproducibility
+//        return new RuleMatch(new XorShift128PlusRandom(1));
+//    });
 
 
     public Task derive(Task derived) {

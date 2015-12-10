@@ -10,11 +10,13 @@ import nars.nar.Terminal;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.meter.TestNAR;
+import org.apache.commons.math3.stat.Frequency;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -72,7 +74,9 @@ public class CompiledUnificationTest extends UnificationTest {
         int power = 1 + t1.volume() * t2.volume();
         power *= power;
 
-        XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
+        Random rng = new XorShift128PlusRandom(seed);
+        //Random rng = new Random(seed);
+
 
         TermPattern tp = new TermPattern(type, t1);
 
@@ -119,9 +123,12 @@ public class CompiledUnificationTest extends UnificationTest {
 //        nar.believe(s2);
 //        nar.frame(2);
 
-        XorShift1024StarRandom rng = new XorShift1024StarRandom(seed);
 
 
+        Random rng =
+                //new Random(seed); //GOOD
+                new XorShift128PlusRandom(seed); //OK
+                //new XorShift1024StarRandom(seed); //BAD
 
         FindSubst subst = new FindSubst(type, rng);
 
@@ -149,30 +156,38 @@ public class CompiledUnificationTest extends UnificationTest {
         Term t2 = $.$(s2);
         TermPattern tp = new TermPattern(Op.VAR_PATTERN, t1);
 
-        Set<String> found = Global.newHashSet(expectedPermutations);
+
+        Frequency found = new Frequency();
+        //Set<String> found = Global.newHashSet(expectedPermutations);
         int success = 0, tries = 0;
 
         int v = t1.volume()+1;
-        for (int p = 100; p < v * v * 8; p+=1) {
-            for (int s = 1; s<16; s++) {
+        //for (int p = 100; p < v * v * 8; p+=1) {
+        int p = v * v * 8;
+        System.out.println(v + " " +  p);
+            for (int s = 1; s<1024; s+=3) {
                 FindSubst r = permuteTest(s, tp, t2, p);
                 if (r!=null) {
 
                     String res = r.xy.toString();
 
                     //System.out.println(s + " " + p + " " + res);
-                    found.add(res);
+                    found.addValue(res);
 
                     success++;
                 }
                 tries++;
             }
             //System.out.println(p + ":\t" + ( ((double)success)/tries) );
-        }
+        //}
 
         System.out.println(found + " " + success + " " + tries);
-        assertEquals(expectedPermutations, found.size());
-        return found;
+        assertEquals(expectedPermutations, found.getUniqueCount());
+        System.out.println(found);
+
+        Set<String> s = Global.newHashSet(1);
+        found.valuesIterator().forEachRemaining(x -> s.add((String)x));
+        return s;
     }
 
     @Test public void testPermutationPowerA() {
@@ -198,7 +213,7 @@ public class CompiledUnificationTest extends UnificationTest {
         //combination of 4
         permuteTest(
                 "<{%1,%2,%3,%4} <-> {a,%1,%4,%2,%3}>",
-                "<{b,d,e,c} <-> {a,b,c,d,e}>", 12);
+                "<{b,d,e,c} <-> {a,b,c,d,e}>", 24);
     }
     @Test public void testPermutationPowerC() {
         //one permutation, determined by the product

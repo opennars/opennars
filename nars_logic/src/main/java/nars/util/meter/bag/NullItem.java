@@ -1,14 +1,14 @@
 package nars.util.meter.bag;
 
 import nars.budget.Item;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 
 import java.util.Random;
 
 /** Empty Item implementation useful for testing */
 public class NullItem extends Item.StringKeyItem {
 
-    static final Random rng = new XorShift1024StarRandom(1);
+    static final Random rng = new XorShift128PlusRandom(1);
     static int ID = 1;
 
     public final CharSequence key;

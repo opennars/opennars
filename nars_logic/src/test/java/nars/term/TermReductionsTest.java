@@ -1,6 +1,11 @@
 package nars.term;
 
 import nars.$;
+import nars.Op;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import org.junit.Test;
 
 import static nars.$.*;
@@ -111,5 +116,28 @@ public class TermReductionsTest {
 
          */
 
+    @Test
+    public void testDifferenceImmediate() {
+
+        Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
+        Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
+        Term d = diffInt(a, b);
+        assertEquals(Op.SET_INT, d.op());
+        assertEquals(d.toString(), 2, d.size());
+        assertEquals("[c,a]", d.toString());
+    }
+
+    @Test
+    public void testDifferenceImmediate2() {
+
+
+        Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
+        Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
+        Term d = diffExt(a, b);
+        assertEquals(Op.SET_EXT, d.op());
+        assertEquals(d.toString(), 2, d.size());
+        assertEquals("{c,a}", d.toString());
+
+    }
 
 }

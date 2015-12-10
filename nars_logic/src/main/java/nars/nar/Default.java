@@ -8,6 +8,7 @@ import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
+import nars.nal.RuleMatch;
 import nars.task.Task;
 import nars.task.flow.SortedTaskPerception;
 import nars.term.Term;
@@ -72,9 +73,21 @@ public class Default extends AbstractNAR {
      */
     public static class DefaultCycle2 extends DefaultCycle {
 
+        /** re-used, not to be used outside of this */
+        private final RuleMatch matcher;
+
+        /**
+         * holds the resulting tasks of one derivation so they can
+         * be normalized or some other filter or aggregation
+         * applied collectively.
+         */
+        final Collection<Task> derivedTasksBuffer;
+
+
         public DefaultCycle2(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
             super(nar, deriver, concepts, ca);
 
+            matcher = new RuleMatch(nar.memory.random);
             /* if detecting duplicates, use a list. otherwise use a set to deduplicate anyway */
             derivedTasksBuffer =
                     Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS ?
@@ -83,12 +96,6 @@ public class Default extends AbstractNAR {
         }
 
 
-        /**
-         * holds the resulting tasks of one derivation so they can
-         * be normalized or some other filter or aggregation
-         * applied collectively.
-         */
-        final Collection<Task> derivedTasksBuffer;
 
         @Override
         protected void fireConcept(Concept c) {
@@ -99,7 +106,7 @@ public class Default extends AbstractNAR {
 
             fireConcept(c, p -> {
 
-                deriver.run(p, buffer::add);
+                deriver.run(p, matcher, buffer::add);
 
                 if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
                     HashBag<Task> b = detectDuplicates(buffer);

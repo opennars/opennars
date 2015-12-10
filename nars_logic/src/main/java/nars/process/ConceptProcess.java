@@ -9,7 +9,6 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nal.Deriver;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.Terms;
@@ -54,8 +53,6 @@ public abstract class ConceptProcess extends AbstractPremise {
         this.concept = concept;
 
     }
-
-    public abstract void derive(Deriver p, Consumer<Task> t);
 
     @Override
     public String toString() {

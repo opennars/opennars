@@ -13,7 +13,7 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.term.variable.Variable;
-import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;
 
 import java.util.Random;
@@ -202,7 +202,7 @@ public class DerivationRuleTest extends TestCase {
 
             for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
-                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift1024StarRandom(1+seed));
+                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift128PlusRandom(1+seed));
 
                 boolean matched = f.next(x, y, 16);
                 //System.out.println(x + "\t" + y + "\t" +f);
@@ -397,7 +397,7 @@ public class DerivationRuleTest extends TestCase {
 
         Set<String> results = Global.newHashSet(0);
         for (int seed = 0; seed < expect*5; seed++) {
-            Random rng = new XorShift1024StarRandom(seed);
+            Random rng = new XorShift128PlusRandom(seed);
             FindSubst f = new FindSubst(Op.VAR_PATTERN, rng);
             f.setPower(1000);
             boolean b = f.match(X, Y);
